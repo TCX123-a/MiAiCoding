@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-05-static-this",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-05",
+  "type": "codefix",
+  "concept": ["挂在图纸上的招式", "喊它的时候没有「本喵自己」", "this 在它肚子里是空的"],
+  "instances": 2,
+  "params": {
+    "nameA": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "nameB": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stemTemplate": "本喵写了一个**挂在图纸上**的招式 `static int howMany()`，用来报「一共出生了几只」。肚子里本喵顺手写了那句平时常用的「本喵自己那一格」的写法 —— 翻译官喵当场拦下喵。\n\n你帮本喵改**一处**，让它跑起来、印出这两行：先一行 `一共出生了 2 只`，再一行 `第一只叫 XX`（`XX` 是第一只猫的名字）。**`main` 里那几句和图纸上别的地方都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int count;\n    string name;\n\n    Cat(string n) : name(n) {\n        count = count + 1;\n    }\n\n    static int howMany() {\n        return this->count;\n    }\n};\n\nint Cat::count = 0;\n\nint main() {\n    Cat a(\"{nameA}\");\n    Cat b(\"{nameB}\");\n    cout << \"一共出生了 \" << Cat::howMany() << \" 只\" << endl;\n    cout << \"第一只叫 \" << a.name << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int count;\n    string name;\n\n    Cat(string n) : name(n) {\n        count = count + 1;\n    }\n\n    static int howMany() {\n        return count;\n    }\n};\n\nint Cat::count = 0;\n\nint main() {\n    Cat a(\"{nameA}\");\n    Cat b(\"{nameB}\");\n    cout << \"一共出生了 \" << Cat::howMany() << \" 只\" << endl;\n    cout << \"第一只叫 \" << a.name << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:15:16: error: 'this' is unavailable for static member functions`\n\n念作：**「挂在图纸上的招式里，没有『本喵自己』这个东西 —— `this` 在这儿是空的。」**\n\n`this` 是每喊一次招式时悄悄递进来的**那只猫** —— 上一课学的。可在**挂在图纸上**的招式里，喊它的时候根本不需要先有一只猫，也就不可能有什么递进来，所以 `this` 在这里没有意义，翻译官喵直接不许写。\n\n改法：把 `return this->count;` 写成 `return count;` 就行。共用的那一格只有一份，不需要指名道姓地找「哪只猫的」——挂着图纸名去念它（`Cat::count`）本来也一样。\n\n⚠️ 这一条和「碰每只猫自己的格子」是同一个毛病的两种样子：根子都在「喊它的时候手里没有猫」。看到 `is unavailable for static member functions`，先找那一招前面是不是带着挂在图纸上的标记。"
+}

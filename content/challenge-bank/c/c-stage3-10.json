@@ -1,0 +1,382 @@
+{
+  "lessonId": "c-stage3-10",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-10-date-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的怀表上有一个**固定的**秒数：`1700000000`（稿子里已经写好了）。你要把它换成**人看的日子**印出来，就一行：\n\n```text\n那个数换成日子是：YYYY-MM-DD，一年里的第 D 天\n```\n\n规矩说清楚：年份要**四位**；月份和日子要**两位**，不够的前面补 `0`；「一年里的第几天」不用补 0。\n\n换日子那一招（`gmtime`）稿子里已经调好了，**牌子也叼回来了**，你要做的就是把牌子上的几格搬进 `printf` 里。哪几格得**自己加一加**才像人话，课文里讲得明明白白喵。",
+      "starter": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = 1700000000L;          /* 那一刻的秒数，已经给你了 */\n    struct tm *t = gmtime(&fixed);  /* 换成写着年月日的那张牌子 */\n\n    /* ↓ 自己写：照下面这个格式印一行 ——\n       那个数换成日子是：YYYY-MM-DD，一年里的第 D 天\n       年份要四位；月份和日子要两位、不够的前面补 0；「第几天」不用补 0 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = 1700000000L;          /* 那一刻的秒数，已经给你了 */\n    struct tm *t = gmtime(&fixed);  /* 换成写着年月日的那张牌子 */\n\n    printf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n           t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n    return 0;\n}\n",
+      "expectedOutput": "那个数换成日子是：2023-11-14，一年里的第 318 天",
+      "stdin": null,
+      "explanation": "牌子上有三格**都不按常理起数**，往外拿的时候得自己挪回来喵：\n\n- `tm_year` 是「**从 1900 起数**过了几年」→ 要 `+ 1900`；\n- `tm_mon` 是「**从 0 起数**的月份」（0 是一月）→ 要 `+ 1`；\n- `tm_yday` 是「**从 0 起数**的第几天」→ 要 `+ 1`。\n\n```text\nprintf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n       t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n```\n\n`%02d` 里的那个 `02` 说的是「**至少印两位，不够的前面补 0**」：一月印成 `01`、九号印成 `09`，这就是稿子里要的两位格式。年份和第几天直接 `%d` 就行。\n\n顺带记一句：秒数**可以直接比大小**，不用换成日子就能比谁早谁晚 —— 课文里那句 `now > 1767225600L` 就是这么比的（那个数是 2026 年开年那一刻的秒数）喵。",
+      "templateId": "c-s3-10-date-report",
+      "params": {
+        "sec": "1700000000"
+      },
+      "verified": {
+        "at": "2026-09-16T11:39:09.015Z",
+        "hash": "683e89afe23731e1"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-date-report-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的怀表上有一个**固定的**秒数：`1767225600`（稿子里已经写好了）。你要把它换成**人看的日子**印出来，就一行：\n\n```text\n那个数换成日子是：YYYY-MM-DD，一年里的第 D 天\n```\n\n规矩说清楚：年份要**四位**；月份和日子要**两位**，不够的前面补 `0`；「一年里的第几天」不用补 0。\n\n换日子那一招（`gmtime`）稿子里已经调好了，**牌子也叼回来了**，你要做的就是把牌子上的几格搬进 `printf` 里。哪几格得**自己加一加**才像人话，课文里讲得明明白白喵。",
+      "starter": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = 1767225600L;          /* 那一刻的秒数，已经给你了 */\n    struct tm *t = gmtime(&fixed);  /* 换成写着年月日的那张牌子 */\n\n    /* ↓ 自己写：照下面这个格式印一行 ——\n       那个数换成日子是：YYYY-MM-DD，一年里的第 D 天\n       年份要四位；月份和日子要两位、不够的前面补 0；「第几天」不用补 0 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = 1767225600L;          /* 那一刻的秒数，已经给你了 */\n    struct tm *t = gmtime(&fixed);  /* 换成写着年月日的那张牌子 */\n\n    printf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n           t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n    return 0;\n}\n",
+      "expectedOutput": "那个数换成日子是：2026-01-01，一年里的第 1 天",
+      "stdin": null,
+      "explanation": "牌子上有三格**都不按常理起数**，往外拿的时候得自己挪回来喵：\n\n- `tm_year` 是「**从 1900 起数**过了几年」→ 要 `+ 1900`；\n- `tm_mon` 是「**从 0 起数**的月份」（0 是一月）→ 要 `+ 1`；\n- `tm_yday` 是「**从 0 起数**的第几天」→ 要 `+ 1`。\n\n```text\nprintf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n       t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n```\n\n`%02d` 里的那个 `02` 说的是「**至少印两位，不够的前面补 0**」：一月印成 `01`、九号印成 `09`，这就是稿子里要的两位格式。年份和第几天直接 `%d` 就行。\n\n顺带记一句：秒数**可以直接比大小**，不用换成日子就能比谁早谁晚 —— 课文里那句 `now > 1767225600L` 就是这么比的（那个数是 2026 年开年那一刻的秒数）喵。",
+      "templateId": "c-s3-10-date-report",
+      "params": {
+        "sec": "1767225600"
+      },
+      "verified": {
+        "at": "2026-09-16T11:39:10.370Z",
+        "hash": "0f8ece24774d2a22"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-dice-line-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要给骰子定个起点，再摇 **4 把**，每把 1 到 6。起点 `main` 里已经定好了：种子给的是 `3`。\n\n你要把 `roll_dice` 这一招补完（`main` 已经写在稿子里了，别改它）：**摇 4 把**，每摇一把就印出来，**每个数后面跟一个空格**。\n\n印出来的样子：先是 `main` 里那句 `掷 4 把：`，接着是 4 个数（每个数后面一个空格），最后换行。\n\n⚠️ 这一招里**别再用 `srand`** —— 起点在 `main` 里已经定过一次了，这里只管**摇**（摇的招式是 `rand()`，要 1 到 6 就照课文里那句写）。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\n/* 摇 n 把骰子（每把 1 到 6），一把一把印在同一行，每把后面跟一个空格 */\nvoid roll_dice(int n) {\n    /* ↓ 自己写：\n       ① 绕 n 圈，每圈摇一次\n       ② 摇出来的是 1 到 6（照课文里那句写）\n       ③ 摇一把印一把，每个数后面跟一个空格 */\n}\n\nint main(void) {\n    srand(3);\n    printf(\"掷 4 把：\");\n    roll_dice(4);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\n/* 摇 n 把骰子（每把 1 到 6），一把一把印在同一行，每把后面跟一个空格 */\nvoid roll_dice(int n) {\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", rand() % 6 + 1);\n    }\n}\n\nint main(void) {\n    srand(3);\n    printf(\"掷 4 把：\");\n    roll_dice(4);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "掷 4 把：1 3 1 2",
+      "stdin": null,
+      "explanation": "要「1 到 6」的数，句式就是课文里那句 `rand() % 6 + 1` 喵：先 `% 6` 拿到 0 到 5 的余数，`+ 1` 把整个范围往前挪一格，正好是 1 到 6。摇 `n` 把就绕 `n` 圈，每圈摇一次、印一次。\n\n起点 `srand(种子)` 是**开场前的事**：摆在 `main` 里定一次就够。要是把它搬进这一招、跟摇的动作一起一遍一遍地来，那每一把之前骰子都被拨回起点，摇出来的就是同一个数从头印到尾 —— 看着像随机，其实一点都不随机。\n\n最后记一句：**同一个种子永远给你同一串**。这正是本喵的好玩意儿每次跑都能复现的原因，也是内容里那串标准答案定得下来的原因喵。",
+      "templateId": "c-s3-10-dice-line",
+      "params": {
+        "seed": 3,
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:40:15.766Z",
+        "hash": "477e834955e33dc5"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-dice-line-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要给骰子定个起点，再摇 **5 把**，每把 1 到 6。起点 `main` 里已经定好了：种子给的是 `3`。\n\n你要把 `roll_dice` 这一招补完（`main` 已经写在稿子里了，别改它）：**摇 5 把**，每摇一把就印出来，**每个数后面跟一个空格**。\n\n印出来的样子：先是 `main` 里那句 `掷 5 把：`，接着是 5 个数（每个数后面一个空格），最后换行。\n\n⚠️ 这一招里**别再用 `srand`** —— 起点在 `main` 里已经定过一次了，这里只管**摇**（摇的招式是 `rand()`，要 1 到 6 就照课文里那句写）。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\n/* 摇 n 把骰子（每把 1 到 6），一把一把印在同一行，每把后面跟一个空格 */\nvoid roll_dice(int n) {\n    /* ↓ 自己写：\n       ① 绕 n 圈，每圈摇一次\n       ② 摇出来的是 1 到 6（照课文里那句写）\n       ③ 摇一把印一把，每个数后面跟一个空格 */\n}\n\nint main(void) {\n    srand(3);\n    printf(\"掷 5 把：\");\n    roll_dice(5);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\n/* 摇 n 把骰子（每把 1 到 6），一把一把印在同一行，每把后面跟一个空格 */\nvoid roll_dice(int n) {\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", rand() % 6 + 1);\n    }\n}\n\nint main(void) {\n    srand(3);\n    printf(\"掷 5 把：\");\n    roll_dice(5);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "掷 5 把：1 3 1 2 6",
+      "stdin": null,
+      "explanation": "要「1 到 6」的数，句式就是课文里那句 `rand() % 6 + 1` 喵：先 `% 6` 拿到 0 到 5 的余数，`+ 1` 把整个范围往前挪一格，正好是 1 到 6。摇 `n` 把就绕 `n` 圈，每圈摇一次、印一次。\n\n起点 `srand(种子)` 是**开场前的事**：摆在 `main` 里定一次就够。要是把它搬进这一招、跟摇的动作一起一遍一遍地来，那每一把之前骰子都被拨回起点，摇出来的就是同一个数从头印到尾 —— 看着像随机，其实一点都不随机。\n\n最后记一句：**同一个种子永远给你同一串**。这正是本喵的好玩意儿每次跑都能复现的原因，也是内容里那串标准答案定得下来的原因喵。",
+      "templateId": "c-s3-10-dice-line",
+      "params": {
+        "seed": 3,
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:54.219Z",
+        "hash": "f869088d17e370fc"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-dice-line-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要给骰子定个起点，再摇 **4 把**，每把 1 到 6。起点 `main` 里已经定好了：种子给的是 `4`。\n\n你要把 `roll_dice` 这一招补完（`main` 已经写在稿子里了，别改它）：**摇 4 把**，每摇一把就印出来，**每个数后面跟一个空格**。\n\n印出来的样子：先是 `main` 里那句 `掷 4 把：`，接着是 4 个数（每个数后面一个空格），最后换行。\n\n⚠️ 这一招里**别再用 `srand`** —— 起点在 `main` 里已经定过一次了，这里只管**摇**（摇的招式是 `rand()`，要 1 到 6 就照课文里那句写）。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\n/* 摇 n 把骰子（每把 1 到 6），一把一把印在同一行，每把后面跟一个空格 */\nvoid roll_dice(int n) {\n    /* ↓ 自己写：\n       ① 绕 n 圈，每圈摇一次\n       ② 摇出来的是 1 到 6（照课文里那句写）\n       ③ 摇一把印一把，每个数后面跟一个空格 */\n}\n\nint main(void) {\n    srand(4);\n    printf(\"掷 4 把：\");\n    roll_dice(4);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\n/* 摇 n 把骰子（每把 1 到 6），一把一把印在同一行，每把后面跟一个空格 */\nvoid roll_dice(int n) {\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", rand() % 6 + 1);\n    }\n}\n\nint main(void) {\n    srand(4);\n    printf(\"掷 4 把：\");\n    roll_dice(4);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "掷 4 把：4 6 4 3",
+      "stdin": null,
+      "explanation": "要「1 到 6」的数，句式就是课文里那句 `rand() % 6 + 1` 喵：先 `% 6` 拿到 0 到 5 的余数，`+ 1` 把整个范围往前挪一格，正好是 1 到 6。摇 `n` 把就绕 `n` 圈，每圈摇一次、印一次。\n\n起点 `srand(种子)` 是**开场前的事**：摆在 `main` 里定一次就够。要是把它搬进这一招、跟摇的动作一起一遍一遍地来，那每一把之前骰子都被拨回起点，摇出来的就是同一个数从头印到尾 —— 看着像随机，其实一点都不随机。\n\n最后记一句：**同一个种子永远给你同一串**。这正是本喵的好玩意儿每次跑都能复现的原因，也是内容里那串标准答案定得下来的原因喵。",
+      "templateId": "c-s3-10-dice-line",
+      "params": {
+        "seed": 4,
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:56.383Z",
+        "hash": "cd964b4762ab913c"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-dice-line-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要给骰子定个起点，再摇 **5 把**，每把 1 到 6。起点 `main` 里已经定好了：种子给的是 `4`。\n\n你要把 `roll_dice` 这一招补完（`main` 已经写在稿子里了，别改它）：**摇 5 把**，每摇一把就印出来，**每个数后面跟一个空格**。\n\n印出来的样子：先是 `main` 里那句 `掷 5 把：`，接着是 5 个数（每个数后面一个空格），最后换行。\n\n⚠️ 这一招里**别再用 `srand`** —— 起点在 `main` 里已经定过一次了，这里只管**摇**（摇的招式是 `rand()`，要 1 到 6 就照课文里那句写）。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\n/* 摇 n 把骰子（每把 1 到 6），一把一把印在同一行，每把后面跟一个空格 */\nvoid roll_dice(int n) {\n    /* ↓ 自己写：\n       ① 绕 n 圈，每圈摇一次\n       ② 摇出来的是 1 到 6（照课文里那句写）\n       ③ 摇一把印一把，每个数后面跟一个空格 */\n}\n\nint main(void) {\n    srand(4);\n    printf(\"掷 5 把：\");\n    roll_dice(5);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\n/* 摇 n 把骰子（每把 1 到 6），一把一把印在同一行，每把后面跟一个空格 */\nvoid roll_dice(int n) {\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", rand() % 6 + 1);\n    }\n}\n\nint main(void) {\n    srand(4);\n    printf(\"掷 5 把：\");\n    roll_dice(5);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "掷 5 把：4 6 4 3 6",
+      "stdin": null,
+      "explanation": "要「1 到 6」的数，句式就是课文里那句 `rand() % 6 + 1` 喵：先 `% 6` 拿到 0 到 5 的余数，`+ 1` 把整个范围往前挪一格，正好是 1 到 6。摇 `n` 把就绕 `n` 圈，每圈摇一次、印一次。\n\n起点 `srand(种子)` 是**开场前的事**：摆在 `main` 里定一次就够。要是把它搬进这一招、跟摇的动作一起一遍一遍地来，那每一把之前骰子都被拨回起点，摇出来的就是同一个数从头印到尾 —— 看着像随机，其实一点都不随机。\n\n最后记一句：**同一个种子永远给你同一串**。这正是本喵的好玩意儿每次跑都能复现的原因，也是内容里那串标准答案定得下来的原因喵。",
+      "templateId": "c-s3-10-dice-line",
+      "params": {
+        "seed": 4,
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:40:16.977Z",
+        "hash": "f61f539425c68cff"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-gmtime-year-base-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把怀表上那串数字换成了人看的日子。**月份和「第几天」那两格都是对的**，可**年份那一格**印出来是个**三位数**（`123` 这种）—— 谁家的年份长这样喵？\n\n请你把那一行改对（别的都别动）。改好之后：\n\n- 年份得是**四位数**（`2023` 这样）；\n- 还是那个格式：`那个数换成日子是：YYYY-MM-DD，一年里的第 D 天`，月份和日子该补 0 的补 0；\n- 「一年里的第几天」那一格本来就是对的，别顺手改坏了。",
+      "brokenCode": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = 1700000000L;\n    struct tm *t = gmtime(&fixed);\n\n    printf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n           t->tm_year, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = 1700000000L;\n    struct tm *t = gmtime(&fixed);\n\n    printf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n           t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n    return 0;\n}\n",
+      "expectedOutput": "那个数换成日子是：2023-11-14，一年里的第 318 天",
+      "stdin": null,
+      "explanation": "牌子上的 `tm_year` 装的不是年份本身，而是「**从 1900 起数过了几年**」喵：本喵那串数字是 2023 年，牌子上写的是 `123`（2023 减掉 1900）。往外拿的时候得自己**加回 1900**，这就跟月份、第几天那两格一样，都是「它从别处起数、你得自己挪回来」。\n\n```text\nt->tm_year + 1900\n```\n\n这一课最容易咬人的就是这三个**起数点**各不相同：\n\n- 年份从 **1900** 起数 → 要 `+ 1900`；\n- 月份从 **0** 起数（0 是一月）→ 要 `+ 1`；\n- 「一年里的第几天」也从 **0** 起数 → 要 `+ 1`。\n\n上一行里月份和第几天都加对了，只有年份没加 —— 于是年份那一格只剩个三位数。查这种错的口诀是：**把牌子上的每一格都问一遍「你是从哪儿起数的」**。",
+      "templateId": "c-s3-10-gmtime-year-base",
+      "params": {
+        "sec": "1700000000"
+      },
+      "verified": {
+        "at": "2026-09-16T11:39:01.236Z",
+        "hash": "9397b653705fccd8"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-gmtime-year-base-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把怀表上那串数字换成了人看的日子。**月份和「第几天」那两格都是对的**，可**年份那一格**印出来是个**三位数**（`123` 这种）—— 谁家的年份长这样喵？\n\n请你把那一行改对（别的都别动）。改好之后：\n\n- 年份得是**四位数**（`2023` 这样）；\n- 还是那个格式：`那个数换成日子是：YYYY-MM-DD，一年里的第 D 天`，月份和日子该补 0 的补 0；\n- 「一年里的第几天」那一格本来就是对的，别顺手改坏了。",
+      "brokenCode": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = 1600000000L;\n    struct tm *t = gmtime(&fixed);\n\n    printf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n           t->tm_year, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = 1600000000L;\n    struct tm *t = gmtime(&fixed);\n\n    printf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n           t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n    return 0;\n}\n",
+      "expectedOutput": "那个数换成日子是：2020-09-13，一年里的第 257 天",
+      "stdin": null,
+      "explanation": "牌子上的 `tm_year` 装的不是年份本身，而是「**从 1900 起数过了几年**」喵：本喵那串数字是 2023 年，牌子上写的是 `123`（2023 减掉 1900）。往外拿的时候得自己**加回 1900**，这就跟月份、第几天那两格一样，都是「它从别处起数、你得自己挪回来」。\n\n```text\nt->tm_year + 1900\n```\n\n这一课最容易咬人的就是这三个**起数点**各不相同：\n\n- 年份从 **1900** 起数 → 要 `+ 1900`；\n- 月份从 **0** 起数（0 是一月）→ 要 `+ 1`；\n- 「一年里的第几天」也从 **0** 起数 → 要 `+ 1`。\n\n上一行里月份和第几天都加对了，只有年份没加 —— 于是年份那一格只剩个三位数。查这种错的口诀是：**把牌子上的每一格都问一遍「你是从哪儿起数的」**。",
+      "templateId": "c-s3-10-gmtime-year-base",
+      "params": {
+        "sec": "1600000000"
+      },
+      "verified": {
+        "at": "2026-09-16T11:39:03.324Z",
+        "hash": "022b7b6adcc105bd"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-guess-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "骰子已经想好了一个 **1 到 100** 的秘密数（稿子里已经摇出来了）。投喂口里递进来 **5 个猜想，一行一个**。你要**一句一句往上猜**，印出来的格式是写死的：\n\n- 猜小了 → 一行 `猜 X：小了`；\n- 猜大了 → 一行 `猜 X：大了`；\n- 猜中了 → 一行 `猜 X：猜中啦，一共猜了 N 次`，**然后就不猜了**；\n- 5 个猜想全试完还没中 → 最后补一行 `5 次都没猜中`。\n\n样例输入：\n\n```text\n1\n2\n3\n4\n5\n```\n\n样例跑出来是这样：\n\n```text\n猜 1：小了\n猜 2：小了\n猜 3：小了\n猜 4：小了\n猜 5：小了\n5 次都没猜中\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(5);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    /* ↓ 自己写：一句一句往上猜 ——\n       ① 从投喂口里一行一个读猜想，一共 5 个\n       ② 猜小了印「猜 X：小了」；猜大了印「猜 X：大了」\n       ③ 猜中印「猜 X：猜中啦，一共猜了 N 次」，然后收工\n       ④ 5 个都猜完还没中，最后补一行「5 次都没猜中」 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(5);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    int g;\n    int times = 0;\n    while (scanf(\"%d\", &g) == 1) {\n        times++;\n        if (g < secret) {\n            printf(\"猜 %d：小了\\n\", g);\n        } else if (g > secret) {\n            printf(\"猜 %d：大了\\n\", g);\n        } else {\n            printf(\"猜 %d：猜中啦，一共猜了 %d 次\\n\", g, times);\n            return 0;\n        }\n    }\n\n    printf(\"%d 次都没猜中\\n\", times);\n    return 0;\n}\n",
+      "expectedOutput": "猜 50：小了\n猜 75：大了\n猜 62：大了\n猜 56：大了\n猜 55：猜中啦，一共猜了 5 次",
+      "stdin": "50\n75\n62\n56\n55\n",
+      "explanation": "这一招是把前几样凑一块儿喵：**骰子想一个秘密数**，本喵一句一句往上猜，猜大猜小全看它的脾气。\n\n两句关键的话：\n\n```text\nint secret = rand() % 100 + 1;\n```\n\n要 1 到 100 的秘密，还是那句老句式：`% 100` 拿余数（0 到 99）、`+ 1` 挪到 1 到 100。\n\n```text\nwhile (scanf(\"%d\", &g) == 1)\n```\n\n一句一句地收猜想：收得到就往下比，收不到（投喂口空了）就退出圈圈。收满了 5 个还没中，最后补一行「都没猜中」。\n\n猜的路数跟「砍一半」是同一门功夫：**猜小了就往大抬、猜大了就往小收** —— 只不过这里每一句都得骰子点头才算数。\n\n⚠️ 一个容易踩的坑：`srand` 是**开场前**的事（稿子里已经在 `main` 开头定好了）。别把它搬进收猜想的圈圈里 —— 那样每收一句都把骰子拨回起点，秘密数每次都被重摇一个一模一样的，看着挺神秘，其实一点变化都没有。",
+      "templateId": "c-s3-10-guess-report",
+      "params": {
+        "seed": "5",
+        "g1": "50",
+        "g2": "75",
+        "g3": "62",
+        "g4": "56",
+        "g5": "55"
+      },
+      "verified": {
+        "at": "2026-09-16T11:39:12.622Z",
+        "hash": "014be23490dafc59"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-guess-report-013",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "骰子已经想好了一个 **1 到 100** 的秘密数（稿子里已经摇出来了）。投喂口里递进来 **5 个猜想，一行一个**。你要**一句一句往上猜**，印出来的格式是写死的：\n\n- 猜小了 → 一行 `猜 X：小了`；\n- 猜大了 → 一行 `猜 X：大了`；\n- 猜中了 → 一行 `猜 X：猜中啦，一共猜了 N 次`，**然后就不猜了**；\n- 5 个猜想全试完还没中 → 最后补一行 `5 次都没猜中`。\n\n样例输入：\n\n```text\n1\n2\n3\n4\n5\n```\n\n样例跑出来是这样：\n\n```text\n猜 1：小了\n猜 2：小了\n猜 3：小了\n猜 4：小了\n猜 5：小了\n5 次都没猜中\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(5);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    /* ↓ 自己写：一句一句往上猜 ——\n       ① 从投喂口里一行一个读猜想，一共 5 个\n       ② 猜小了印「猜 X：小了」；猜大了印「猜 X：大了」\n       ③ 猜中印「猜 X：猜中啦，一共猜了 N 次」，然后收工\n       ④ 5 个都猜完还没中，最后补一行「5 次都没猜中」 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(5);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    int g;\n    int times = 0;\n    while (scanf(\"%d\", &g) == 1) {\n        times++;\n        if (g < secret) {\n            printf(\"猜 %d：小了\\n\", g);\n        } else if (g > secret) {\n            printf(\"猜 %d：大了\\n\", g);\n        } else {\n            printf(\"猜 %d：猜中啦，一共猜了 %d 次\\n\", g, times);\n            return 0;\n        }\n    }\n\n    printf(\"%d 次都没猜中\\n\", times);\n    return 0;\n}\n",
+      "expectedOutput": "猜 50：小了\n猜 70：大了\n猜 60：大了\n猜 56：大了\n猜 45：小了\n5 次都没猜中",
+      "stdin": "50\n70\n60\n56\n45\n",
+      "explanation": "这一招是把前几样凑一块儿喵：**骰子想一个秘密数**，本喵一句一句往上猜，猜大猜小全看它的脾气。\n\n两句关键的话：\n\n```text\nint secret = rand() % 100 + 1;\n```\n\n要 1 到 100 的秘密，还是那句老句式：`% 100` 拿余数（0 到 99）、`+ 1` 挪到 1 到 100。\n\n```text\nwhile (scanf(\"%d\", &g) == 1)\n```\n\n一句一句地收猜想：收得到就往下比，收不到（投喂口空了）就退出圈圈。收满了 5 个还没中，最后补一行「都没猜中」。\n\n猜的路数跟「砍一半」是同一门功夫：**猜小了就往大抬、猜大了就往小收** —— 只不过这里每一句都得骰子点头才算数。\n\n⚠️ 一个容易踩的坑：`srand` 是**开场前**的事（稿子里已经在 `main` 开头定好了）。别把它搬进收猜想的圈圈里 —— 那样每收一句都把骰子拨回起点，秘密数每次都被重摇一个一模一样的，看着挺神秘，其实一点变化都没有。",
+      "templateId": "c-s3-10-guess-report",
+      "params": {
+        "seed": "5",
+        "g1": "50",
+        "g2": "70",
+        "g3": "60",
+        "g4": "56",
+        "g5": "45"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:59.374Z",
+        "hash": "c7a55d493c71646d"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-guess-report-025",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "骰子已经想好了一个 **1 到 100** 的秘密数（稿子里已经摇出来了）。投喂口里递进来 **5 个猜想，一行一个**。你要**一句一句往上猜**，印出来的格式是写死的：\n\n- 猜小了 → 一行 `猜 X：小了`；\n- 猜大了 → 一行 `猜 X：大了`；\n- 猜中了 → 一行 `猜 X：猜中啦，一共猜了 N 次`，**然后就不猜了**；\n- 5 个猜想全试完还没中 → 最后补一行 `5 次都没猜中`。\n\n样例输入：\n\n```text\n1\n2\n3\n4\n5\n```\n\n样例跑出来是这样：\n\n```text\n猜 1：小了\n猜 2：小了\n猜 3：小了\n猜 4：小了\n猜 5：小了\n5 次都没猜中\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(5);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    /* ↓ 自己写：一句一句往上猜 ——\n       ① 从投喂口里一行一个读猜想，一共 5 个\n       ② 猜小了印「猜 X：小了」；猜大了印「猜 X：大了」\n       ③ 猜中印「猜 X：猜中啦，一共猜了 N 次」，然后收工\n       ④ 5 个都猜完还没中，最后补一行「5 次都没猜中」 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(5);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    int g;\n    int times = 0;\n    while (scanf(\"%d\", &g) == 1) {\n        times++;\n        if (g < secret) {\n            printf(\"猜 %d：小了\\n\", g);\n        } else if (g > secret) {\n            printf(\"猜 %d：大了\\n\", g);\n        } else {\n            printf(\"猜 %d：猜中啦，一共猜了 %d 次\\n\", g, times);\n            return 0;\n        }\n    }\n\n    printf(\"%d 次都没猜中\\n\", times);\n    return 0;\n}\n",
+      "expectedOutput": "猜 40：小了\n猜 70：大了\n猜 62：大了\n猜 56：大了\n猜 45：小了\n5 次都没猜中",
+      "stdin": "40\n70\n62\n56\n45\n",
+      "explanation": "这一招是把前几样凑一块儿喵：**骰子想一个秘密数**，本喵一句一句往上猜，猜大猜小全看它的脾气。\n\n两句关键的话：\n\n```text\nint secret = rand() % 100 + 1;\n```\n\n要 1 到 100 的秘密，还是那句老句式：`% 100` 拿余数（0 到 99）、`+ 1` 挪到 1 到 100。\n\n```text\nwhile (scanf(\"%d\", &g) == 1)\n```\n\n一句一句地收猜想：收得到就往下比，收不到（投喂口空了）就退出圈圈。收满了 5 个还没中，最后补一行「都没猜中」。\n\n猜的路数跟「砍一半」是同一门功夫：**猜小了就往大抬、猜大了就往小收** —— 只不过这里每一句都得骰子点头才算数。\n\n⚠️ 一个容易踩的坑：`srand` 是**开场前**的事（稿子里已经在 `main` 开头定好了）。别把它搬进收猜想的圈圈里 —— 那样每收一句都把骰子拨回起点，秘密数每次都被重摇一个一模一样的，看着挺神秘，其实一点变化都没有。",
+      "templateId": "c-s3-10-guess-report",
+      "params": {
+        "seed": "5",
+        "g1": "40",
+        "g2": "70",
+        "g3": "62",
+        "g4": "56",
+        "g5": "45"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:02.419Z",
+        "hash": "38b5f97a1ec8cb90"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-guess-report-038",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "骰子已经想好了一个 **1 到 100** 的秘密数（稿子里已经摇出来了）。投喂口里递进来 **5 个猜想，一行一个**。你要**一句一句往上猜**，印出来的格式是写死的：\n\n- 猜小了 → 一行 `猜 X：小了`；\n- 猜大了 → 一行 `猜 X：大了`；\n- 猜中了 → 一行 `猜 X：猜中啦，一共猜了 N 次`，**然后就不猜了**；\n- 5 个猜想全试完还没中 → 最后补一行 `5 次都没猜中`。\n\n样例输入：\n\n```text\n1\n2\n3\n4\n5\n```\n\n样例跑出来是这样：\n\n```text\n猜 1：小了\n猜 2：小了\n猜 3：小了\n猜 4：小了\n猜 5：小了\n5 次都没猜中\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    /* ↓ 自己写：一句一句往上猜 ——\n       ① 从投喂口里一行一个读猜想，一共 5 个\n       ② 猜小了印「猜 X：小了」；猜大了印「猜 X：大了」\n       ③ 猜中印「猜 X：猜中啦，一共猜了 N 次」，然后收工\n       ④ 5 个都猜完还没中，最后补一行「5 次都没猜中」 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    int g;\n    int times = 0;\n    while (scanf(\"%d\", &g) == 1) {\n        times++;\n        if (g < secret) {\n            printf(\"猜 %d：小了\\n\", g);\n        } else if (g > secret) {\n            printf(\"猜 %d：大了\\n\", g);\n        } else {\n            printf(\"猜 %d：猜中啦，一共猜了 %d 次\\n\", g, times);\n            return 0;\n        }\n    }\n\n    printf(\"%d 次都没猜中\\n\", times);\n    return 0;\n}\n",
+      "expectedOutput": "猜 50：小了\n猜 75：大了\n猜 60：小了\n猜 55：小了\n猜 55：小了\n5 次都没猜中",
+      "stdin": "50\n75\n60\n55\n55\n",
+      "explanation": "这一招是把前几样凑一块儿喵：**骰子想一个秘密数**，本喵一句一句往上猜，猜大猜小全看它的脾气。\n\n两句关键的话：\n\n```text\nint secret = rand() % 100 + 1;\n```\n\n要 1 到 100 的秘密，还是那句老句式：`% 100` 拿余数（0 到 99）、`+ 1` 挪到 1 到 100。\n\n```text\nwhile (scanf(\"%d\", &g) == 1)\n```\n\n一句一句地收猜想：收得到就往下比，收不到（投喂口空了）就退出圈圈。收满了 5 个还没中，最后补一行「都没猜中」。\n\n猜的路数跟「砍一半」是同一门功夫：**猜小了就往大抬、猜大了就往小收** —— 只不过这里每一句都得骰子点头才算数。\n\n⚠️ 一个容易踩的坑：`srand` 是**开场前**的事（稿子里已经在 `main` 开头定好了）。别把它搬进收猜想的圈圈里 —— 那样每收一句都把骰子拨回起点，秘密数每次都被重摇一个一模一样的，看着挺神秘，其实一点变化都没有。",
+      "templateId": "c-s3-10-guess-report",
+      "params": {
+        "seed": "7",
+        "g1": "50",
+        "g2": "75",
+        "g3": "60",
+        "g4": "55",
+        "g5": "55"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:05.453Z",
+        "hash": "78b5ed230af42e21"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-guess-report-050",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "骰子已经想好了一个 **1 到 100** 的秘密数（稿子里已经摇出来了）。投喂口里递进来 **5 个猜想，一行一个**。你要**一句一句往上猜**，印出来的格式是写死的：\n\n- 猜小了 → 一行 `猜 X：小了`；\n- 猜大了 → 一行 `猜 X：大了`；\n- 猜中了 → 一行 `猜 X：猜中啦，一共猜了 N 次`，**然后就不猜了**；\n- 5 个猜想全试完还没中 → 最后补一行 `5 次都没猜中`。\n\n样例输入：\n\n```text\n1\n2\n3\n4\n5\n```\n\n样例跑出来是这样：\n\n```text\n猜 1：小了\n猜 2：小了\n猜 3：小了\n猜 4：小了\n猜 5：小了\n5 次都没猜中\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    /* ↓ 自己写：一句一句往上猜 ——\n       ① 从投喂口里一行一个读猜想，一共 5 个\n       ② 猜小了印「猜 X：小了」；猜大了印「猜 X：大了」\n       ③ 猜中印「猜 X：猜中啦，一共猜了 N 次」，然后收工\n       ④ 5 个都猜完还没中，最后补一行「5 次都没猜中」 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    int g;\n    int times = 0;\n    while (scanf(\"%d\", &g) == 1) {\n        times++;\n        if (g < secret) {\n            printf(\"猜 %d：小了\\n\", g);\n        } else if (g > secret) {\n            printf(\"猜 %d：大了\\n\", g);\n        } else {\n            printf(\"猜 %d：猜中啦，一共猜了 %d 次\\n\", g, times);\n            return 0;\n        }\n    }\n\n    printf(\"%d 次都没猜中\\n\", times);\n    return 0;\n}\n",
+      "expectedOutput": "猜 40：小了\n猜 75：大了\n猜 62：猜中啦，一共猜了 3 次",
+      "stdin": "40\n75\n62\n55\n55\n",
+      "explanation": "这一招是把前几样凑一块儿喵：**骰子想一个秘密数**，本喵一句一句往上猜，猜大猜小全看它的脾气。\n\n两句关键的话：\n\n```text\nint secret = rand() % 100 + 1;\n```\n\n要 1 到 100 的秘密，还是那句老句式：`% 100` 拿余数（0 到 99）、`+ 1` 挪到 1 到 100。\n\n```text\nwhile (scanf(\"%d\", &g) == 1)\n```\n\n一句一句地收猜想：收得到就往下比，收不到（投喂口空了）就退出圈圈。收满了 5 个还没中，最后补一行「都没猜中」。\n\n猜的路数跟「砍一半」是同一门功夫：**猜小了就往大抬、猜大了就往小收** —— 只不过这里每一句都得骰子点头才算数。\n\n⚠️ 一个容易踩的坑：`srand` 是**开场前**的事（稿子里已经在 `main` 开头定好了）。别把它搬进收猜想的圈圈里 —— 那样每收一句都把骰子拨回起点，秘密数每次都被重摇一个一模一样的，看着挺神秘，其实一点变化都没有。",
+      "templateId": "c-s3-10-guess-report",
+      "params": {
+        "seed": "7",
+        "g1": "40",
+        "g2": "75",
+        "g3": "62",
+        "g4": "55",
+        "g5": "55"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:08.466Z",
+        "hash": "a258fe89c940cc65"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-guess-report-063",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "骰子已经想好了一个 **1 到 100** 的秘密数（稿子里已经摇出来了）。投喂口里递进来 **5 个猜想，一行一个**。你要**一句一句往上猜**，印出来的格式是写死的：\n\n- 猜小了 → 一行 `猜 X：小了`；\n- 猜大了 → 一行 `猜 X：大了`；\n- 猜中了 → 一行 `猜 X：猜中啦，一共猜了 N 次`，**然后就不猜了**；\n- 5 个猜想全试完还没中 → 最后补一行 `5 次都没猜中`。\n\n样例输入：\n\n```text\n1\n2\n3\n4\n5\n```\n\n样例跑出来是这样：\n\n```text\n猜 1：小了\n猜 2：小了\n猜 3：小了\n猜 4：小了\n猜 5：小了\n5 次都没猜中\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    /* ↓ 自己写：一句一句往上猜 ——\n       ① 从投喂口里一行一个读猜想，一共 5 个\n       ② 猜小了印「猜 X：小了」；猜大了印「猜 X：大了」\n       ③ 猜中印「猜 X：猜中啦，一共猜了 N 次」，然后收工\n       ④ 5 个都猜完还没中，最后补一行「5 次都没猜中」 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    int g;\n    int times = 0;\n    while (scanf(\"%d\", &g) == 1) {\n        times++;\n        if (g < secret) {\n            printf(\"猜 %d：小了\\n\", g);\n        } else if (g > secret) {\n            printf(\"猜 %d：大了\\n\", g);\n        } else {\n            printf(\"猜 %d：猜中啦，一共猜了 %d 次\\n\", g, times);\n            return 0;\n        }\n    }\n\n    printf(\"%d 次都没猜中\\n\", times);\n    return 0;\n}\n",
+      "expectedOutput": "猜 40：小了\n猜 70：大了\n猜 60：小了\n猜 55：小了\n猜 45：小了\n5 次都没猜中",
+      "stdin": "40\n70\n60\n55\n45\n",
+      "explanation": "这一招是把前几样凑一块儿喵：**骰子想一个秘密数**，本喵一句一句往上猜，猜大猜小全看它的脾气。\n\n两句关键的话：\n\n```text\nint secret = rand() % 100 + 1;\n```\n\n要 1 到 100 的秘密，还是那句老句式：`% 100` 拿余数（0 到 99）、`+ 1` 挪到 1 到 100。\n\n```text\nwhile (scanf(\"%d\", &g) == 1)\n```\n\n一句一句地收猜想：收得到就往下比，收不到（投喂口空了）就退出圈圈。收满了 5 个还没中，最后补一行「都没猜中」。\n\n猜的路数跟「砍一半」是同一门功夫：**猜小了就往大抬、猜大了就往小收** —— 只不过这里每一句都得骰子点头才算数。\n\n⚠️ 一个容易踩的坑：`srand` 是**开场前**的事（稿子里已经在 `main` 开头定好了）。别把它搬进收猜想的圈圈里 —— 那样每收一句都把骰子拨回起点，秘密数每次都被重摇一个一模一样的，看着挺神秘，其实一点变化都没有。",
+      "templateId": "c-s3-10-guess-report",
+      "params": {
+        "seed": "7",
+        "g1": "40",
+        "g2": "70",
+        "g3": "60",
+        "g4": "55",
+        "g5": "45"
+      },
+      "verified": {
+        "at": "2026-09-16T11:39:14.629Z",
+        "hash": "c5a383b802723cd5"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-rand-range-no-one-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要摇**三个**数，**每一个都得落在 1 到 100 之间**（`1` 和 `100` 都算数）。\n\n可它这支骰子在 `0` 到 `99` 那一档里打转：最小的可能是 `0`（骰子上根本没这一面），`100` 却永远摇不出来。翻译官喵一声没吭，跑起来也不摔。\n\n请你把**摇的那一下**改对（`main` 里其余几行别动）。改好之后，这三行数**每一个**都得落在 1 到 100 之间（跟本喵真跑出来的那一串一模一样）。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d\\n\", rand() % 100);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d\\n\", rand() % 100 + 1);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "62\n23\n16",
+      "stdin": null,
+      "explanation": "`rand()` 摇出来的是一个**很大的数**，直接用没法使。想要「1 到 100」，得**先取余数、再加一**喵：\n\n```text\nrand() % 100 + 1\n```\n\n- `% 100` 这一步只给 `0` 到 `99` —— 余数天生就是从 `0` 起数的，最大的一个余数是 99；\n- 那个 `+ 1` 不是装饰：它把整个范围**往前挪一格**，把 `0` 赶走、把 `100` 迎进来。\n\n课文里那句提醒就是这个意思：**想要什么范围，自己去取余数再加，写清楚**。写成 `% 100` 得到的是 0 到 99，写成 `% 100 + 1` 才是 1 到 100 —— 两个都「能跑」，可答案差一格。\n\n顺带记一句：范围不是非要从 1 起。想要 0 到 99 就写 `% 100`，想要 1 到 6 就写 `% 6 + 1` —— **看你要的起点在哪，再决定加多少**。",
+      "templateId": "c-s3-10-rand-range-no-one",
+      "params": {
+        "seed": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T11:38:52.160Z",
+        "hash": "67409dff77d2e74f"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-rand-range-no-one-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要摇**三个**数，**每一个都得落在 1 到 100 之间**（`1` 和 `100` 都算数）。\n\n可它这支骰子在 `0` 到 `99` 那一档里打转：最小的可能是 `0`（骰子上根本没这一面），`100` 却永远摇不出来。翻译官喵一声没吭，跑起来也不摔。\n\n请你把**摇的那一下**改对（`main` 里其余几行别动）。改好之后，这三行数**每一个**都得落在 1 到 100 之间（跟本喵真跑出来的那一串一模一样）。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(3);\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d\\n\", rand() % 100);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(3);\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d\\n\", rand() % 100 + 1);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "49\n97\n95",
+      "stdin": null,
+      "explanation": "`rand()` 摇出来的是一个**很大的数**，直接用没法使。想要「1 到 100」，得**先取余数、再加一**喵：\n\n```text\nrand() % 100 + 1\n```\n\n- `% 100` 这一步只给 `0` 到 `99` —— 余数天生就是从 `0` 起数的，最大的一个余数是 99；\n- 那个 `+ 1` 不是装饰：它把整个范围**往前挪一格**，把 `0` 赶走、把 `100` 迎进来。\n\n课文里那句提醒就是这个意思：**想要什么范围，自己去取余数再加，写清楚**。写成 `% 100` 得到的是 0 到 99，写成 `% 100 + 1` 才是 1 到 100 —— 两个都「能跑」，可答案差一格。\n\n顺带记一句：范围不是非要从 1 起。想要 0 到 99 就写 `% 100`，想要 1 到 6 就写 `% 6 + 1` —— **看你要的起点在哪，再决定加多少**。",
+      "templateId": "c-s3-10-rand-range-no-one",
+      "params": {
+        "seed": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:38:54.246Z",
+        "hash": "117d91ca06cdf532"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-srand-in-loop-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要摇 3 把骰子，每把 1 到 6，印成一行：先是 `掷 3 把：`，后面跟着每一把的数，**每个数后面跟一个空格**。\n\n可它印出来的**几把长得一模一样** —— 同一个数从头重复到尾，像是骰子卡住了。翻译官喵一声没吭，跑起来也不摔。\n\n请你把它改对（`main` 里那几行骨架别动）。改好之后，这几把就是**一把一把摇出来的**了。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    printf(\"掷 3 把：\");\n    for (int i = 0; i < 3; i++) {\n        srand(7);\n        printf(\"%d \", rand() % 6 + 1);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    printf(\"掷 3 把：\");\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d \", rand() % 6 + 1);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "掷 3 把：2 5 6",
+      "stdin": null,
+      "explanation": "骰子的规矩是：**种子一样，摇出来的那一串就一模一样**喵。`srand(种子)` 干的活是给骰子**定一个起点**；起点定好之后，`rand()` 才一把一把往下摇新的数。\n\n本喵把 `srand` 放进了摇骰子那个圈圈的**里面**：每摇一把，都先把骰子**拨回起点**再摇 —— 拨回起点摇出来的当然还是同一个数，于是几把全长一个样。\n\n```text\nsrand(7);                          /* 起点：开场前定一次 */\nfor (int i = 0; i < n; i++) {\n    printf(\"%d \", rand() % 6 + 1);  /* 圈圈里只管摇 */\n}\n```\n\n一句话记住：**`srand` 是开场前的事，`rand` 才是圈圈里的事**。谁被摆进圈圈里，谁就会一遍一遍地重来。\n\n顺带说：这里种子写成常数 `7` 是有意的 —— 内容里的标准答案是本机真跑算出来的，种子写死了，**每次跑都是同一串**，答案才定得下来。",
+      "templateId": "c-s3-10-srand-in-loop",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T11:38:56.622Z",
+        "hash": "84d04f9d0ba86ef2"
+      }
+    },
+    {
+      "id": "bank-c-s3-10-srand-in-loop-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要摇 4 把骰子，每把 1 到 6，印成一行：先是 `掷 4 把：`，后面跟着每一把的数，**每个数后面跟一个空格**。\n\n可它印出来的**几把长得一模一样** —— 同一个数从头重复到尾，像是骰子卡住了。翻译官喵一声没吭，跑起来也不摔。\n\n请你把它改对（`main` 里那几行骨架别动）。改好之后，这几把就是**一把一把摇出来的**了。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    printf(\"掷 4 把：\");\n    for (int i = 0; i < 4; i++) {\n        srand(7);\n        printf(\"%d \", rand() % 6 + 1);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    printf(\"掷 4 把：\");\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d \", rand() % 6 + 1);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "掷 4 把：2 5 6 3",
+      "stdin": null,
+      "explanation": "骰子的规矩是：**种子一样，摇出来的那一串就一模一样**喵。`srand(种子)` 干的活是给骰子**定一个起点**；起点定好之后，`rand()` 才一把一把往下摇新的数。\n\n本喵把 `srand` 放进了摇骰子那个圈圈的**里面**：每摇一把，都先把骰子**拨回起点**再摇 —— 拨回起点摇出来的当然还是同一个数，于是几把全长一个样。\n\n```text\nsrand(7);                          /* 起点：开场前定一次 */\nfor (int i = 0; i < n; i++) {\n    printf(\"%d \", rand() % 6 + 1);  /* 圈圈里只管摇 */\n}\n```\n\n一句话记住：**`srand` 是开场前的事，`rand` 才是圈圈里的事**。谁被摆进圈圈里，谁就会一遍一遍地重来。\n\n顺带说：这里种子写成常数 `7` 是有意的 —— 内容里的标准答案是本机真跑算出来的，种子写死了，**每次跑都是同一串**，答案才定得下来。",
+      "templateId": "c-s3-10-srand-in-loop",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:38:58.764Z",
+        "hash": "3cabf96088f31ecf"
+      }
+    }
+  ]
+}

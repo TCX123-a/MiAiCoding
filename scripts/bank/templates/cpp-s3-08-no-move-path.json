@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-08-no-move-path",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-08",
+  "type": "codefix",
+  "concept": ["图纸上要有那条近路", "光打招呼没用", "补一条会搬的图纸路"],
+  "instances": 2,
+  "params": {
+    "goods": { "kind": "pick", "values": ["鱼干", "鱼汤", "鱼丸"] }
+  },
+  "stemTemplate": "本喵这次**记得打招呼了**（`basket.push_back(move(a));`），可跑出来还是印了 `拷贝一份`。\n\n问题出在图纸上：这张图纸只画了「抄一份」那条路，本喵那句「这份不要了」**没地方用**。你帮本喵把缺的那条路补上（`main` 不用动）。\n\n改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `搬走`\n2. `{goods}`\n\n补上去的那条路也要印一句 `搬走`（不带货名），跟抄一份那条路印的话对上。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nstruct Box {\n    string goods;\n    Box(string g) : goods(g) {}\n    Box(const Box& other) : goods(other.goods) { cout << \"拷贝一份\" << endl; }\n};\n\nint main() {\n    vector<Box> basket;\n    Box a(\"{goods}\");\n    basket.push_back(move(a));\n    cout << basket[0].goods << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nstruct Box {\n    string goods;\n    Box(string g) : goods(g) {}\n    Box(const Box& other) : goods(other.goods) { cout << \"拷贝一份\" << endl; }\n    Box(Box&& other) : goods(move(other.goods)) { cout << \"搬走\" << endl; }\n};\n\nint main() {\n    vector<Box> basket;\n    Box a(\"{goods}\");\n    basket.push_back(move(a));\n    cout << basket[0].goods << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题要看清一件事喵：**搬家得两头都到位**。\n\n- 一头是**有人打招呼** —— 本喵写了 `move(a)`，这个已经有了；\n- 另一头是**图纸上有那条近路** —— 那张 `Box(Box&& other)`，这张图纸上缺的正是它。\n\n只有一头的时候，程序会**退回去走拷贝那条路**：招呼没人接，那就抄一份呗。所以本喵明明打了招呼，印出来还是 `拷贝一份` —— 货也一样好好地进了篮子，只是白抄了一份。\n\n补上那条路的写法：多写一行图纸，拿 `Box&&` 当路牌，里头用 `move` 把对方的货接管过来（本喵在课文第一节写过完整的两行，照着抄就行）。补好之后同样的代码印的就是 `搬走` 了。"
+}

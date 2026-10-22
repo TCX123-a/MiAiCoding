@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-02-find-zero-miss",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-02",
+  "type": "codefix",
+  "concept": ["找着时叼回来的是编号", "开头那一段的编号是 0", "拿它跟没找着的记号比"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["小鱼干", "猫薄荷"] },
+    "tail": { "kind": "pick", "values": ["项链", "大礼包"] }
+  },
+  "stemTemplate": "本喵在一串字里找一小段字：那段字**明明就顶在最开头**，程序却说没找着喵。\n\n你帮本喵把它改对：**只要那段字出现过，就该印「找到了喵」** —— 不管它出现在最开头还是中间。印字那几句不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s = \"{w}{tail}\";\n    string t = \"{w}\";\n\n    if (s.find(t) > 0) {\n        cout << \"找到了喵\" << endl;\n    } else {\n        cout << \"没有喵\" << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s = \"{w}{tail}\";\n    string t = \"{w}\";\n\n    if (s.find(t) != string::npos) {\n        cout << \"找到了喵\" << endl;\n    } else {\n        cout << \"没有喵\" << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的坑全在「**开头**」这两个字上喵。\n\n`find` 找着了的时候，叼回来的是一枚**编号**：那一段字是从第几个格后面开始的（编号从 0 数起）。**顶在最开头的那一段，编号就是 0**。\n\n本喵写的 `> 0` 念作「编号比 0 大」—— 于是「在开头」这一种被本喵自己判成了没找着。**翻译官喵一个字都不说**：编得过、跑得完，只是悄悄判反了一种情况。\n\n正确写法是**拿它和那枚「没找着」的记号比**：\n\n`if (s.find(t) != string::npos)`\n\n念作「叼回来的**不是**『没找着』」—— 那就是找着了，编号是几都不影响。\n\n⚠️ 别写成 `>= 0`：编号没有负的，这句话**永远成立**，等于这门功课白写。\n\n⚠️ 也别拿 `== 0` 当「找着了」：那只认最开头那一段，中间的又漏了 —— 和原来的毛病刚好反过来。"
+}

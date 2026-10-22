@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-str-bead-codes",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-11",
+  "type": "codewrite",
+  "concept": ["char数组", "word[i]", "\\0", "strlen", "%s", "循环"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 65, "max": 90 },
+  "stemTemplate": "本喵今天不用双引号，要**一颗一颗亲手串**一条项链喵。\n\n请你写个程序：**先读进来一个数**（这次要串几颗珠子），**再读进来 {n} 行数**（一行一个，每颗珠子的编号，都在 65~90 之间；这些编号对应的都是能在屏幕上看见的字）。把这些编号一颗一颗按顺序摆进一排碗里，**再在下一只碗里亲手挂上暗号**，然后用 `%s` 把整条项链印成一行。最后另起一行印 `一共 N 颗珠子`（`N` 是**真珠子**的颗数，暗号不算）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n;\n\n    // 第一步：读进来「这次要串几颗」\n\n    // 第二步：一颗一颗读编号、摆进碗里\n\n    // 第三步：挂上暗号\n\n    // 第四步：印项链、再印真珠子的颗数\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    char word[20];\n    int i;\n    for (i = 0; i < n; i++) {\n        int code;\n        if (scanf(\"%d\", &code) != 1) {\n            return 1;\n        }\n        word[i] = (char)code;\n    }\n    word[n] = '\\0';\n\n    printf(\"%s\\n\", word);\n    printf(\"一共 %d 颗珠子\\n\", (int)strlen(word));\n    return 0;\n}\n",
+  "explanationTemplate": "这一题最要紧的是**第三步那颗暗号**喵。\n\n`%s` 的脾气是「从第一颗开始一颗颗往外念，**念到暗号就闭嘴**」。所以珠子串完之后，**必须在下一只碗里挂上 `'\\0'`** —— 不挂的话，它会一路念到你**根本没摆碗**的地方去，念出来的东西每次都不一样（课文里那一节专门讲过这条，本喵就不演示了）。\n\n碗也得留够：`{n}` 颗珠子要占 `{n}` 只碗，暗号还要**再占一只**，一共 `{n} + 1` 只。所以那排碗别抠着尺寸摆，多给几只最稳。\n\n想让程序自己算这个数，可以写 `char word[{n} + 1];` 吗？不行喵 —— 方括号里必须是**摆碗的时候就定死的数**，不能用转圈里才知道的数去填。所以本喵直接摆一排够宽的（比如 `char word[20];`），反正多余的空碗不碍事。\n\n（顺带说一句：用 `%c` 一颗一颗印出来，屏幕上跟 `%s` 一模一样 —— 两条路都对，判分只看屏幕。）"
+}

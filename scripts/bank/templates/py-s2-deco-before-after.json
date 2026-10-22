@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-deco-before-after",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-09",
+  "type": "codewrite",
+  "concept": ["壳的三步", "接住战利品", "functools.wraps"],
+  "instances": 6,
+  "params": {
+    "thing": { "kind": "pick", "values": ["小鱼干", "猫粮", "冻干"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 2, "max": 9 },
+  "stemTemplate": "本喵想要一层**报时**特效喵，形状是：开演前印一句 `……开演`；**把里面那一招喊起来、战利品先接住**；等印完 `……收工`，再把战利品原样交出去。\n\n再写一招 `加鱼干(a, b)` —— 把两堆{thing}合起来，也就是把两个数加起来、叼回它们的和 —— 并给它套上这层特效。\n\n最后**读两行整数**（一行一个，先读到的是 `a`，后读到的是 `b`），**印两行**：\n\n1. `加鱼干(a, b)` 的结果\n2. `加鱼干.__name__`\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "import functools\n\n\ndef 报时(fn):\n    @functools.wraps(fn)\n    def 包装(*args, **kwargs):\n        print(\"……开演\")\n        result = fn(*args, **kwargs)\n        print(\"……收工\")\n        return result\n\n    return 包装\n\n\n@报时\ndef 加鱼干(a, b):\n    return a + b\n\n\na = int(input())\nb = int(input())\nprint(加鱼干(a, b))\nprint(加鱼干.__name__)\n",
+  "explanationTemplate": "壳里那三步，一步都不能少，顺序也不能乱喵：\n\n1. **开演前**：`print(\"……开演\")`\n2. **把里面那一招喊起来，战利品先接住**：`result = fn(*args, **kwargs)`\n3. **收尾之后再把战利品交出去**：`return result`\n\n⚠️ **第 2 步那个 `result` 的名字很讲究**。要是写成 `return fn(*args, **kwargs)`，本喵就直接从这一招里出去了，第 3 步那句 `……收工` **永远轮不到印**。所以先接住、干完活、最后再交出去 —— 这正是「开演后做点什么」那一种特效（报时、记账）的标准写法。\n\n⚠️ `*args, **kwargs` 是「来多少收多少」：不管里面那一招要收几个小鱼干，壳都接得住、原样递进去。这一题里面那招收两个，下一次换成一招收三个，壳**一个字都不用改** —— 这就是特效最划算的地方。\n\n⚠️ `@报时` 写在 `def 加鱼干(a, b):` 的**正上方**，意思是「把下面这一招整个塞进 `报时` 里过一遍，再拿回来的那份重新挂回 `加鱼干` 这个名字底下」，和补一句 `加鱼干 = 报时(加鱼干)` 是一模一样的两件事。\n\n⚠️ `@functools.wraps(fn)` 是壳身上那张「本喵其实是 `加鱼干`」的标签。**少了它，第二行印出来会是 `包装`** —— 名字被特效盖住了。"
+}

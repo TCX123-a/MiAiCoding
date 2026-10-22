@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-10-virtual-two-yells",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-10",
+  "type": "codewrite",
+  "concept": ["一声开饭各猫各样", "牌子上写猫", "老图纸那一手挂 virtual"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "本喵要看清一件事：**同一只橘猫，用两种名字喊，结果一不一样**。投喂口会递进来**一个数**（这只猫吃了多少条）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏够得着的那一档的 `name`（一串字），一个出生招式；再画一招 `speak`，印一行 `X：喵～`。这一手要让小猫图纸能改写它，所以**要挂上那个三个字母的招牌**。\n2. **让橘猫图纸照它画下来**：叫 `OrangeCat`，自己添一栏 `fish`（一个整数，出生招式里一并填上）；把 `speak` **改写成自己的版本**，印一行 `X：本喵是橘猫，吃了 N 条，喵喵喵！`。改写那一手请挂上护身符 `override`。\n3. 在 `main` 里：读进那个数 → 生一只橘猫 → **拿一张写着「猫」的牌子指向它**（用「不必还的名字」那种写法）→ **先顺着牌子喊一声、再用橘猫自己的名字喊一声**，两声前面各印一句前缀：\n\n```text\n牌子写「猫」，喊出来：<台词>\n写「橘猫」的名字，喊出来：<台词>\n```\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n**两行会一模一样** —— 那正是本喵要的效果：牌子写的是谁不重要，喊下去的那一刻看的是**屋里住的是谁**。\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n    virtual void speak() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass OrangeCat : public Cat {\n    int fish;\npublic:\n    OrangeCat(string n, int f) : Cat(n), fish(f) {}\n    void speak() const override {\n        cout << name << \"：本喵是橘猫，吃了 \" << fish << \" 条，喵喵喵！\" << endl;\n    }\n};\n\nint main() {\n    int f = 0;\n    cin >> f;\n\n    OrangeCat o(\"{name}\", f);\n    Cat& r = o;\n    cout << \"牌子写「猫」，喊出来：\";\n    r.speak();\n    cout << \"写「橘猫」的名字，喊出来：\";\n    o.speak();\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题（投喂 4 时），屏幕上两行是：\n\n```text\n牌子写「猫」，喊出来：小橘：本喵是橘猫，吃了 4 条，喵喵喵！\n写「橘猫」的名字，喊出来：小橘：本喵是橘猫，吃了 4 条，喵喵喵！\n```\n\n**两行一模一样**，这就是本课要的效果：本喵手里那张牌子上写的是「猫」，可它指向的是橘猫 —— 喊下去的那一刻，程序低头看了一眼**屋里住的是谁**，于是跑了橘猫那一版。\n\n两根关键线各说一句喵：\n\n1. **`virtual` 挂在老图纸那一手的开头**（`virtual void speak() const`）。它说的是「**这一手别急着定死，等真跑起来再看手里到底是哪只猫**」。\n2. **改写的那一份请挂 `override`**。它是护身符：名字、料、`const` 要和老图纸**一字不差**，差一个字就变成「另外长了一手新的」而不是改写 —— 挂着 `override` 的时候，翻译官喵会当场把这种错拦下来。\n\n⚠️ 三件容易摔的事，本喵替你钉住：\n\n- **只有老图纸那一手需要挂 `virtual`。** 小猫图纸改写出来的那份**自动也是「会看屋里住的是谁」的**，不用再挂。往小猫那一手上挂、老图纸不挂，是不管用的。\n- **挂 `virtual` 的那一手不能是 `private`。** 小猫图纸得看得见它，才谈得上改写 —— 所以老图纸那一格挂的是「照着画的图纸也够得着」的那一档。\n- **只有顺着牌子（或「不必还的名字」）喊，才会回头看一眼屋里住的是谁。** 手里拿着一只实打实的真猫（像 `o.speak()`），那本来就是它自己那一版，跟 `virtual` 没关系 —— 所以这一题两行都是橘猫版，不是因为第二行也「回头看了一眼屋里住的是谁」，而是因为它本来就是橘猫。"
+}

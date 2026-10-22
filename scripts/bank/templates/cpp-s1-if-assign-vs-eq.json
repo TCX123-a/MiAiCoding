@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s1-if-assign-vs-eq",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-06",
+  "type": "codefix",
+  "concept": ["=", "==", "赋值当眼色", "两个等号"],
+  "instances": 2,
+  "params": {
+    "bowl": { "kind": "int", "min": 1, "max": 4 },
+    "need": { "kind": "int", "min": 6, "max": 9 }
+  },
+  "stemTemplate": "本喵跟大肥鱼说好了：碗里正好 {need} 条就交货，对不上数就照实报。碗里现在有 {bowl} 条。\n\n要印两行：\n\n- 第一行报数目对不对：对得上印 `正好 {need} 条，可以交货喵`，对不上印 `对不上数喵，碗里是 {bowl} 条`\n- 第二行照实报碗里还剩几条（本喵什么都没往里加、也没往外拿，所以它还是 {bowl}）\n\n可这段代码跑出来，两行都在说 {need} —— 它一口咬定「对得上」，还把碗里的数改成了 {need}。翻译官喵没拦它（只在旁边轻轻提醒了一句，不影响它跑），可**印出来的东西不对**。\n\n你帮本喵把第一行的眼色改对：{bowl} 和 {need} 对不上，就该走「对不上」那条路。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int bowl = {bowl};\n    int need = {need};\n\n    if (bowl = need) {\n        cout << \"正好 \" << need << \" 条，可以交货喵\" << endl;\n    } else {\n        cout << \"对不上数喵，碗里是 \" << bowl << \" 条\" << endl;\n    }\n    cout << \"碗里现在还剩 \" << bowl << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int bowl = {bowl};\n    int need = {need};\n\n    if (bowl == need) {\n        cout << \"正好 \" << need << \" 条，可以交货喵\" << endl;\n    } else {\n        cout << \"对不上数喵，碗里是 \" << bowl << \" 条\" << endl;\n    }\n    cout << \"碗里现在还剩 \" << bowl << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "毛病出在 `if` 那一行的**等号个数**上。\n\n`=` 是**「把右边那份东西装进左边这只碗」** —— 它是一件**动手做**的事，不是一句问话。`if (bowl = need)` 的读法是：先把 `need` 装进 `bowl`，装完**再看**这只碗里有什么。刚装进去的数当然不是 0，所以这个眼色**永远答真**，「对不上」那条路一次都走不到。\n\n而且它是真动了手：第二行印出来的数就是这么被改掉的 —— 碗里原本是 {bowl}，被装满了一次。\n\n问「两边一样吗」要用**两个等号** `==`。这一条是本课最容易栽的坑，因为 `=` 和 `==` 在翻译官喵眼里都是**认识**的写法，它不会拦你。\n\n它其实提醒过一句：`warning: suggest parentheses around assignment used as truth value` —— 意思是「哟，你在这儿装东西呢？真要是故意的就加一对括号说清楚」。可**加了括号也还是「装」，不是「问」**：想比较，只有换成 `==` 这一条路喵。\n\n顺带记一条：看见「明明对着代码念，眼色却永远走同一头」，第一件事就是**数等号**。"
+}

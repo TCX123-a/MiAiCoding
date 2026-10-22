@@ -1,0 +1,209 @@
+{
+  "version": 1,
+  "note": "C++ 错误库（g++ / MinGW-w64）。rule 形如 { pattern: '正则（可用 {1} 占位符）', flags: 'i', title, explain, fixHint }。M7 继续填充。\n\n⚠️ 两条约定：① pattern 按书写顺序匹配，先命中先用 —— 更具体的必须排在更笼统的前面。② 想匹配 . ( ) { } + ? 这些符号本身时用 [.] [(] [)] 字符类，别用反斜杠转义。\n\nC 语言的基础错误（少分号、少大括号、中文标点）走 common.json 和 c.json 的规则；这里放 C++ 特有的那部分。",
+  "rules": [
+    {
+      "pattern": "'([^']+)' was not declared in this scope; did you mean 'std::([^']+)'",
+      "title": "「{1}」前面要加上 `std::` 喵",
+      "explain": "翻译官喵认识「{1}」，但它住在 `std` 这个「小区」里，你得写全名 `std::{1}` 才能找到它喵。\n\nC++ 的标准工具（`cout`、`cin`、`endl`、`string`、`vector`……）全都住在 `std` 这个小区里喵。有两种写法：\n① 每次都写全名：`std::cout`；\n② 在文件最上面（`#include` 下面）写一句 `using namespace std;`，之后就能直接写 `cout` 了喵。\n\n**零基础阶段推荐第 ② 种**，省得每次都要多打几个字喵。",
+      "fixHint": "在 `#include` 那几行下面加一句 `using namespace std;` 喵"
+    },
+    {
+      "pattern": "non-member function '([^']+)' cannot have cv-qualifier",
+      "title": "「{1}」不是图纸上的招式，不能自称只读喵",
+      "explain": "「{1}」的肚子写在图纸外面，名字前面**忘了挂 `Cat::`** —— 翻译官喵把它当成了外面一只**野生招式**，可它尾巴上还留着 `const` 这个「只读封印」喵。\n\n野生招式连格子都没有，凭什么自称只读呢？翻译官喵当场就把它拦下了喵。\n\n（看到报错里有 `non-member function`，先看看招式名字前面是不是漏了那一小段喵。）",
+      "fixHint": "在这一招名字前面补上 `Cat::`，写成 `void Cat::show() const` 喵",
+      "note": "2026-09-16 用本机 g++ 16.1.0 实测：只写一个空的 void show() const { } 时只有一行 main.cpp:5:13: error: non-member function 'void show()' cannot have cv-qualifier。但 stage2 第 03 课那段**完整演示**（招式肚子里真的用了 name/fish）真实输出是三行，后两行是 'name' was not declared in this scope; did you mean 'tzname'? 和 'fish' was not declared in this scope。所以这条**故意插在「was not declared in this scope」那条的前面**（顺序即优先级）—— 排后面的话，真场景里必被那句抢走，用户会看到「头文件没 include」这种指错方向的解释。"
+    },
+    {
+      "pattern": "'([^']+)' was not declared in this scope",
+      "title": "「{1}」还没请进来喵",
+      "explain": "你用了「{1}」，但翻译官喵在这个位置不认识它喵。\n\nC++ 里要用现成的东西，得先在文件最上面 `#include` 对应的头文件，再用 `using namespace std;` 放开名字喵。\n\n常见的几组搭配：`cout`/`cin`/`endl` 要 `#include <iostream>`；`string` 要 `#include <string>`；`vector` 要 `#include <vector>`喵。",
+      "fixHint": "检查「{1}」需要的头文件有没有 include，以及 `using namespace std;` 写了没喵"
+    },
+    {
+      "pattern": "unable to find numeric literal operator 'operator\"\"([^']+)'",
+      "title": "数字后面跟了个中文标点喵",
+      "explain": "翻译官喵读到一串数字，本来以为读完了，结果后面紧跟着一个它不认识的东西，只好把它当成数字的一部分接着往下读，越读越不对喵。\n\n报错里那串 `{1}` 看着像天书，其实**就是那个中文标点本身**——C++ 不认得它，就把它写成了 `\\U0000ff1b` 这样的编号喵。\n\n**看到 `\\U0000` 后面跟着一串数字和字母，基本可以直接断定：这是中文标点。**\n\n九成是**中文输入法没切回来**：`；` `，` `：` `）` 这些全角标点在电脑眼里和英文的半角符号是**两种完全不同的字符**，长得像，但翻译官喵只认英文的那种喵。",
+      "fixHint": "把这一行的 `{1}` 删掉，换成英文输入法重新打一个半角符号喵",
+      "note": "C++ 和 C 对同一个错误**说法不同**：C 报 invalid suffix '；'（把中文标点原样打出来），C++ 报 unable to find numeric literal operator 'operator\"\"\\U0000ff1b'（写成编号）。这条规则原来是从 c.json 抄过来的，在 g++ 上永远不会命中。2026-09-14 用本机 g++ 16.1.0 实测改写。"
+    },
+    {
+      "pattern": "error: expected ';' (?:before|after) '?[^']*'?",
+      "title": "这里少了一个分号喵",
+      "explain": "C++ 规定**每条语句末尾必须有分号**，少一个翻译官喵就读不下去了喵。\n\n刚开始写 C++ 特别容易漏，因为 `cout << ... << endl` 这种写法看起来挺完整，很容易忘了结尾那个分号喵。",
+      "fixHint": "在报错指的那一行（或它上一行）末尾补一个 `;` 喵"
+    },
+    {
+      "pattern": "a function-definition is not allowed here before '\\{' token",
+      "title": "招式套着招式写啦喵",
+      "explain": "C++ **不允许在一个招式里面再定义一个招式**喵。\n\n不过别急着改结构——**九成是上面少关了一个 `}`**，导致翻译官喵以为上一个招式还没写完，于是把下面这个新招式当成了「套在里面」的喵。\n\n（注意：如果报错信息里还提到「这里已经有一个招式体了」，基本可以确定就是少括号喵。）",
+      "fixHint": "往上看，把上一个招式的 `}` 补上喵"
+    },
+    {
+      "pattern": "error: expected '}' at end of input|expected declaration or statement at end of input",
+      "title": "少了几个右花括号喵",
+      "explain": "翻译官喵一路读到了文件结尾，还在等着 `}` 把前面开的 `{` 关上喵。\n\nC++ 和 C 一样，`{` 和 `}` 必须**成对**喵。小技巧：写招式的时候先把 `{}` 一起打出来，再往中间填东西喵。",
+      "fixHint": "从下往上数一数 `{` 和 `}` 是不是一样多喵"
+    },
+    {
+      "pattern": "error: expected primary-expression before '([^']+)'",
+      "title": "「{1}」前面缺了东西喵",
+      "explain": "翻译官喵读到「{1}」时，发现前面该有个表达式、但是空的喵。\n\n最常见的两种：① **多打了一个符号**（比如 `;;` 或 `,`）；② 上一行的**运算符悬空**了——比如写了个 `<<` 却没跟东西喵。",
+      "fixHint": "看报错指的那一行，检查「{1}」前面是不是多了个符号或者少了内容喵"
+    },
+    {
+      "pattern": "error: expected initializer before '?([^'\\r\\n]+?)'?(?=[\\r\\n]|$)",
+      "title": "「{1}」前面少了初始化的写法喵",
+      "explain": "翻译官喵读到「{1}」时觉得前面那句没写完喵。\n\n十有八九是**上一行的末尾少了分号**——少了它，翻译官喵会把两行连起来读，然后就在「{1}」这里卡住了喵。",
+      "fixHint": "检查「{1}」上面那一行的末尾有没有 `;` 喵"
+    },
+    {
+      "pattern": "'([^']+)'(?: {aka '[^']+'})? has no member named '([^']+)'",
+      "title": "「{1}」身上没有「{2}」喵",
+      "explain": "你用「{1}」这个类型的仓库去取它的「{2}」，但「{1}」里没有这个成员喵。\n\n几乎总是**名字拼错了**，或者你把两个类型记混了（比如 `length()` 和 `size()`）喵。",
+      "fixHint": "检查「{2}」的拼写，确认「{1}」确实有这个成员喵",
+      "note": "g++ 的语序和 clang 不一样：g++ 是 `'类型' has no member named '成员'`，clang 是 `no member named '成员' in '类型'`。旧的 pattern 抄的是 clang 的语序，在 g++ 上永远不会命中。另外类型是 typedef 时 g++ 会在中间插一段 `{aka '真实类型'}`，必须能跳过它。2026-09-14 用本机 g++ 16.1.0 实测改写。"
+    },
+    {
+      "pattern": "no matching function for call to '([^']+)'",
+      "title": "「{1}」没有能对上号的版本喵",
+      "explain": "你调用「{1}」时给的**投喂小鱼干的类型**，跟它所有能接受的版本都对不上喵。\n\nC++ 允许同名招式有好几个版本（投喂小鱼干的类型不同），这叫「重载」喵。你给的东西哪个版本都套不上，翻译官喵只好说「没找到」喵。\n\n常撞的场景：招式要的是 `string`，你给了 `int`；或者要的是猫爪指向牌，你给了别的喵。",
+      "fixHint": "检查「{1}」要的是什么样的投喂小鱼干，把你给的值转成那个类型喵"
+    },
+    {
+      "pattern": "invalid conversion from '([^']+)' to '([^']+)'|cannot convert '([^']+)' to '([^']+)'",
+      "title": "`{1}` 变不成 `{4}` 喵",
+      "explain": "你给的东西是 `{1}` 类型，但这里需要一个 `{4}` 类型的喵。\n\nC++ 比 C 更严格，**不会偷偷帮你转换**喵。比如把一个猫爪指向牌塞进整数里、或者把 `const` 的东西交给要改它的地方，都会被拦下来喵。",
+      "fixHint": "检查两边类型，用强制转换 `(类型)` 或者换个小鱼干仓库喵"
+    },
+    {
+      "pattern": "'([^']+)' does not name a type",
+      "title": "「{1}」不是一个类型喵",
+      "explain": "你把「{1}」当类型名用了，但翻译官喵不这么认为喵。\n\n最常见的是**忘了 `#include` 对应的头文件**，或者漏了 `std::` 前缀——比如写 `string name;` 却没写 `using namespace std;`，翻译官喵就不知道 `string` 是什么喵。",
+      "fixHint": "检查「{1}」需要的头文件 include 了没、`std::` 或 `using namespace std;` 写了没喵"
+    },
+    {
+      "pattern": "'([^']+)' is not a member of '([^']+)'",
+      "title": "「{2}」里面没有「{1}」喵",
+      "explain": "你以为「{1}」住在「{2}」里面，但那里没有这个东西喵。\n\n基本是拼写问题，或者是你记错了它在哪儿喵。",
+      "fixHint": "检查「{1}」的拼写喵"
+    },
+    {
+      "pattern": "call of overloaded '([^']+)' is ambiguous",
+      "title": "「{1}」有好几个版本，翻译官喵不知道选哪个喵",
+      "explain": "「{1}」有多个能接受的版本，你给的东西**每一个都能凑合套上**，翻译官喵选不出来喵。\n\n最常见的场景是：给了个整数，而它有「收 `int`」和「收 `double`」两个版本，翻译官喵不知道你想用哪个喵。",
+      "fixHint": "把给的值的类型写明确一点，比如加个 `(double)` 或者 `(int)` 喵"
+    },
+    {
+      "pattern": "no match for 'operator([^']+)'",
+      "title": "`{1}` 这两边不能用这个运算符喵",
+      "explain": "运算符 `{1}` 两边的类型配不上喵。\n\nC++ 里常见的坑是 `cout <<`：`<<` 左边必须是 `cout` 这种输出流，右边得是能打印的东西。如果你把顺序写反了，或者中间插了个不能打印的类型，就会撞上这个喵。",
+      "fixHint": "检查运算符两边的类型，看看是不是写反了或者类型不对喵"
+    },
+    {
+      "pattern": "error: '([^']+)' cannot be used as a function",
+      "title": "「{1}」不是个招式喵",
+      "explain": "你对着「{1}」写了「名字后面跟括号」的调用写法，但它不是招式喵。\n\n最常见的原因是**仓库名跟招式名（或类型名）撞了**——比如你定义了个小鱼干仓库叫 `count`，可标准库里也有个 `count` 招式喵。",
+      "fixHint": "给小鱼干仓库换个不重名的名字喵"
+    },
+    {
+      "pattern": "error: expected unqualified-id before '?([^'\\r\\n]+?)'?(?: token)?(?=[\\r\\n]|$)",
+      "title": "「{1}」这个位置写错了喵",
+      "explain": "翻译官喵在这个位置等着一个**名字**，结果读到了「{1}」喵。\n\n常撞的是：**上一行少了分号**（导致两行被连起来读），或者多打了一个 `;`、用了关键字当名字喵。",
+      "fixHint": "检查「{1}」上面那一行的末尾，以及这一行有没有多余的符号喵"
+    },
+    {
+      "pattern": "error: too few arguments to function",
+      "title": "招式要的东西没给够喵",
+      "explain": "施展招式的时候给的值比它要的少喵。\n\n招式就像一台机器，需要几个原料就得喂几个喵。",
+      "fixHint": "数一数括号里给了几个值，再对一下它要几个喵"
+    },
+    {
+      "pattern": "error: return-statement with a value, in function returning 'void'",
+      "title": "这个招式说好不带东西回来的喵",
+      "explain": "你把招式定义成了 `void`（意思是「**不用带任何东西回来**」），但你在里面 `return` 了一个值喵。",
+      "fixHint": "要么把 return 后面的东西去掉，要么把招式的 `void` 改成真正的类型喵"
+    },
+    {
+      "pattern": "error: void value not ignored as it ought to be",
+      "title": "这个招式不叼东西回来，不能拿去用喵",
+      "explain": "你把一个 `void`（不返回任何东西）的招式**当成会叼回战利品来用了**——比如 `int x = 某个void招式();`喵。",
+      "fixHint": "把赋值去掉，直接调用它就好喵"
+    },
+    {
+      "pattern": "fatal error: ([^:]+): No such file or directory",
+      "title": "找不到 `{1}` 这个头文件喵",
+      "explain": "你 `#include` 了「{1}」，但翻译官喵在它的工具箱里没找到喵。\n\n两种常见情况：① **名字拼错了**；② 你在用**很老的写法**——比如 `#include <iostream.h>`，那个 `.h` 是几十年前的老教材才有的，现在要写成 `#include <iostream>`（不带 `.h`）喵。",
+      "fixHint": "检查「{1}」的拼写；C++ 的头文件一般不带 `.h` 喵"
+    },
+    {
+      "pattern": "error: template argument 1 is invalid|template argument .* is invalid",
+      "title": "尖括号里写的东西不对喵",
+      "explain": "会量体裁衣的图纸（`< >` 里那个类型）写得翻译官喵没法理解喵。\n\n常见的是**忘了 `#include` 对应的头文件**（比如用了 `vector` 却没 `#include <vector>`），或者尖括号里写了个翻译官喵不认识的名字喵。",
+      "fixHint": "检查尖括号里的类型名，以及它需要的头文件 include 了没喵"
+    },
+    {
+      "pattern": "error: binding reference of type .* discards qualifiers",
+      "title": "不能把只读的东西交给要改它的地方喵",
+      "explain": "你把一个 `const`（**只读**）的东西，交给了需要能修改它的招式或猫爪指向牌喵。\n\n`const` 的意思就是「这个值不许改」，翻译官喵在拦着你喵。",
+      "fixHint": "把接收方的类型也加上 `const`，或者别用 const 定义那个小鱼干仓库喵"
+    },
+    {
+      "pattern": "error: expected ',' or ';' before '([^']+)'",
+      "title": "「{1}」前面少了分号喵",
+      "explain": "翻译官喵读到「{1}」的时候愣了一下：**上一句还没收尾**喵。\n\nC++ 规定每条语句末尾必须有分号。少了它，翻译官喵会把上下两行**连起来读**，读不通就在下一行的「{1}」这里抱怨 —— 所以它指的位置，**往往不是真正缺分号的位置**喵。\n\n（报错原文写成 `expected ',' or ';'`：「逗号」和「分号」二选一，意思都是「这里得有个东西，把上一句断开」喵。）",
+      "fixHint": "看「{1}」**上面那一行**的末尾（或者这一行「{1}」的前面），补一个 `;` 喵",
+      "note": "2026-09-16 用本机 g++ 16.1.0（MinGW-W64，与应用同一套参数）实测：main.cpp:4:5: error: expected ',' or ';' before 'std'。它**不会**被「expected ';' before/after」那条抢走：那句的正则要求紧跟 expected ';' 这个字面串，而这里分号前面还夹着 ',' or。"
+    },
+    {
+      "pattern": "error: expected declaration before '[}]' token",
+      "title": "多打了一个右花括号喵",
+      "explain": "翻译官喵一路读出了招式外面，迎面撞上一个孤零零的 `}` —— 它前面没有开着的门，翻译官喵不知道它在关哪一扇喵。\n\n这只和「少了几个右花括号」正好相反：那个是**没关够**，这个是**关多了**喵。\n\n小技巧：从下往上数，`{` 和 `}` 的个数应该一样多；对不上就是这里的事喵。",
+      "fixHint": "把多出来的那个 `}` 删掉喵",
+      "note": "2026-09-16 用本机 g++ 16.1.0 实测：整份文件只报一条 main.cpp:6:1: error: expected declaration before '}' token。别和「expected '}' at end of input」那条（少括号）合成一条 —— 那是「不够」，这是「多了」，改法相反。"
+    },
+    {
+      "pattern": "invalid operands of types '([^']+)' and '([^']+)' to binary 'operator([^']+)'",
+      "title": "「{1}」和「{2}」不能用 `{3}` 拼起来喵",
+      "explain": "你在两样东西中间用了 `{3}`，可翻译官喵两边**对不上号**喵。报错原文里那两样才作准 —— 上面写着 `{1}` 和 `{2}`：它们**不是同一类**，`{3}` 就拼不起来，项链配数字、牌子配小数，都算喵。\n\n初学者最常撞的一堵墙是**两块直接写在引号里的字**：C++ 里 `\"你好\"` 这种写法是一块**硬邦邦的小鱼干**，它没有「自己长个子、把别人接上来」的本事，所以不认识 `+` 喵。要拼，得先把它变成「一串小鱼干的项链」那种会自己长个子的东西喵。",
+      "fixHint": "把两边弄成**同一类**再拼：两边都是字，就先用 `std::string(\"你好\") + \"喵\"` 把一边包成会自己长个子的项链；一边是数字就先用 `std::to_string(...)` 把它变成项链（或者把项链用 `stod` / `stoi` 变成数字）再接；实在不想拼，分两次 `<<` 打印也行喵",
+      "note": "2026-09-16 用本机 g++ 16.1.0 实测：error: invalid operands of types 'const char [7]' and 'const char [4]' to binary 'operator+'。注意它**不是** no match for 'operator+' 那条 —— 字面量这一支 g++ 用的是 invalid operands 的说法，两者互不抢。"
+    },
+    {
+      "pattern": "error: return type specification for constructor invalid",
+      "title": "出生招式头上不能写 `void` 喵",
+      "explain": "「出生招式」（名字跟图纸同名的那个）是**不许写「叼不叼东西回来」**的 —— 它天生就负责把猫生出来，头上写 `void` 翻译官喵不认喵。\n\n这是刚学图纸时最顺手的错：别的招式都带个类型，轮到出生招式也顺手把 `void` 敲上去了喵。",
+      "fixHint": "把出生招式名字前面那个 `void` 删掉，只留 `Cat(...)` 喵",
+      "note": "2026-09-16 用本机 g++ 16.1.0 实测：main.cpp:5:5: error: return type specification for constructor invalid（源码 void Cat(std::string n) {...}，整个文件只报这一条）。stage2 第 02 课「出生招式不能写 void」用的就是这段演示。"
+    },
+    {
+      "pattern": "error: too many arguments to function '([^']+)'",
+      "title": "「{1}」收不了这么多小鱼干喵",
+      "explain": "你往「{1}」嘴里塞的小鱼干，比它接得住的多喵。\n\n招式就像一台机器，开几个口就收几只，多塞的它**接不住**喵。",
+      "fixHint": "数一数括号里喂了几个，再对一下「{1}」收几个喵",
+      "note": "2026-09-16 用本机 g++ 16.1.0 实测：error: too many arguments to function 'void feed(int)'。C++ 的说法里会把类型一起写出来，和 c.json 那条不带类型的不是同一句。「too few arguments」那条是「给少了」，这条是「给多了」，正好成对。"
+    },
+    {
+      "pattern": "'([^']+)' is private within this context",
+      "title": "「{1}」是上了锁的格子喵",
+      "explain": "「{1}」在图纸的 `private:` 那一段底下 —— 那是**带盖的小鱼干盒**，盖子上写着「只有本喵自己能开」，从外面伸手，翻译官喵就会把你拦住喵。\n\n这不是坏事：画图纸的猫故意锁上它，就是不希望外面的人随便改喵。\n\n（报错里的 `{1}` 会长成 `int Cat::secret` 这样，那是它顺手告诉你：**是哪张图纸的哪一格**喵。）",
+      "fixHint": "把它挪到 `public:` 底下，或者在图纸里加一个公开的招式，替外面改它喵",
+      "note": "2026-09-16 用本机 g++ 16.1.0 实测：error: 'int Cat::secret' is private within this context（下面还跟一行 note: declared private here）。"
+    },
+    {
+      "pattern": "error: passing '([^']+)' as 'this' argument discards qualifiers",
+      "title": "带封印的猫喊不动这一招喵",
+      "explain": "「{1}」是一只**带封印的猫**（`const`）—— 封印的意思是「本喵身上每一格都不许改」喵。\n\n你喊的这一招，尾巴上没写 `const`，翻译官喵不敢保证它不动格子，只好拦下来喵。\n\n反过来记就好：**带封印的猫，只认尾巴上有 `const` 的只读招式**喵。",
+      "fixHint": "在这一招名字后面补上 `const`（比如 `void meow() const`）；它要是确实要改格子，那就别用 `const` 定义这只猫喵",
+      "note": "2026-09-16 用本机 g++ 16.1.0 实测：error: passing 'const Cat' as 'this' argument discards qualifiers [-fpermissive]。和「binding reference of type ... discards qualifiers」那条是**两句不同的话**，互不抢。"
+    },
+    {
+      "pattern": "cannot declare variable '([^']+)' to be of abstract type '([^']+)'",
+      "title": "图纸「{2}」还没画完，生不出猫喵",
+      "explain": "「{2}」那张图纸上有一招写着 `= 0`（纯虚招），意思是「**这一招本喵没画，留给照着这张图纸再画一张的后辈去画**」喵。\n\n只要图纸上还留着这种没画完的招，它就是一张**半成品图纸**，翻译官喵不许你直接照着它生猫 —— 生出来那只猫，喊到这一招时根本不知道该干什么喵。\n\n（「图纸套图纸、后辈把没画的招补上」，正是这门课要教的核心玩法喵。）",
+      "fixHint": "要么照着「{2}」再画一张图纸、把没画的招补上，再照新的那张生猫；要么把 `= 0` 去掉、当场把这一招写出来喵",
+      "note": "2026-09-16 用本机 g++ 16.1.0 实测：error: cannot declare variable 'a' to be of abstract type 'Animal'（后面还跟 note，列出没落实的纯虚招）。"
+    }
+  ]
+}

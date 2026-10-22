@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-diy-bowl",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-10",
+  "type": "codewrite",
+  "concept": ["量体裁衣的图纸", "空着的尺码", "同一张图纸量好几只", "不用自己贴标签"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["小鱼干", "小黄鱼"] },
+    "v": { "kind": "int", "min": 6, "max": 7 }
+  },
+  "stemTemplate": "本喵要**自己画一张会量体裁衣的图纸**，再拿它量出两只尺码不同的柜子喵。\n\n第一件事，画图纸：\n\n1. 图纸叫 `Bowl`，名字后面挂一对尖括号、里面写个 `T`；\n2. 图纸里有一个**装东西的地方**，用 `T` 当它的名分；\n3. 图纸上挂两招：一招 `put` 收一件东西**存进去**，一招 `take` 把存着的那件**叼回来**；招式的名分也都跟着 `T` 走。\n\n第二件事，`main` 里用这张图纸量两只柜子：\n\n1. 一只尺码填成**项链**，塞进 `{word}`，印一行 `项链那只是 ` 接上叼回来的那件；\n2. 另一只尺码填成**装数字的那张图纸**，塞进 `{v}`，印一行 `数字那只是 ` 接上叼回来的那件、再接上逗号加「加一是」、再接上**加一之后**的结果，格式照 `数字那只是 6，加一是 7` 这样来。\n\n那只数字柜子叼回来的东西**直接就能做加法**，本喵不用自己贴标签喵。\n\n这一题**不用投喂任何东西**，程序自己就能跑。",
+  "starterTemplate": "class Bowl<T> {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "class Bowl<T> {\n    private T thing;\n\n    void put(T thing) {\n        this.thing = thing;\n    }\n\n    T take() {\n        return thing;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Bowl<String> fish = new Bowl<>();\n        fish.put(\"{word}\");\n        System.out.println(\"项链那只是 \" + fish.take());\n\n        Bowl<Integer> num = new Bowl<>();\n        num.put({v});\n        System.out.println(\"数字那只是 \" + num.take() + \"，加一是 \" + (num.take() + 1));\n    }\n}\n",
+  "explanationTemplate": "这题是本课的**正身**：图纸上留一块空尺码，用的时候再填喵。\n\n**一、图纸上那几个 `T` 是什么。** `class Bowl<T>` 里那个 `T` 就是**空着的尺码**。图纸上凡是写 `T` 的地方 —— 存东西那一处、`put` 收什么、`take` 叼回什么 —— 都读作「**用的时候填什么，这里就是什么**」。它自己**不是**某种具体的东西，只是「这里会有一块尺码」的记号。\n\n**二、尺码怎么填。** `Bowl<String> fish = new Bowl<>();` 就是把尺码填成了项链：这只柜子只装项链。另一只填成 `Integer`（**装数字的那张图纸**，不是光溜溜的 `int`），于是：\n\n- `num.put({v})` 塞进去的光溜溜的数字，翻译官喵会顺手照图纸生一只口袋装进去（上一课的装箱）；\n- **`num.take() + 1` 可以直接做加法** —— 因为 `take` 叼回来的时候，Java 已经知道它是数字，**不用本喵再贴标签**。\n\n这一条正是本课最值钱的地方：不填尺码的那种**万能口袋**，取出来的时候本喵得自己写一笔 `(Integer)` 去作保，作保落空就跑到那一步炸；填了尺码，作保的活儿翻译官喵替本喵干了。\n\n**三、为什么两招的名分都跟着 `T`。** 因为它们处理的就是**这只柜子里装的那种东西**。尺码一填，两招的名分当场跟着定下来：填项链，`put` 就只收项链；填数字，`take` 叼回来就是数字。\n\n**四、一对空尖括号是省事写法。** `new Bowl<>()` 里那对空尖括号的意思是「**跟左边一样**」—— 左边填的是什么尺码，新量的这只就是什么尺码，不用再抄一遍。\n\n同一张图纸，本喵量了一只项链的、一只数字的 —— 往后装别的尺码，还是这张图纸，一次都不用重画喵。"
+}

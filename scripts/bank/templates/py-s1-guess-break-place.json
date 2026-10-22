@@ -1,0 +1,19 @@
+{
+  "templateId": "py-s1-guess-break-place",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-15",
+  "type": "codefix",
+  "concept": ["while True", "break 的位置", "缩进"],
+  "instances": 2,
+  "params": {
+    "secret": { "kind": "int", "min": 3, "max": 5 },
+    "g1": { "kind": "int", "min": 1, "max": 2 },
+    "g2": { "kind": "int", "min": 6, "max": 7 },
+    "g3": { "kind": "int", "min": 8, "max": 9 }
+  },
+  "stemTemplate": "本喵在旁边当裁判，替身柜子里按顺序排好了四条报数喵：先报 {g1}、再报 {g2} 和 {g3}，最后才是大肥鱼心里那个数。规矩是**报一条、回一句话，一直报到猜中才收工**。\n\n可程序**只报了头一条就收工了**，后面三条一条都没轮到……你帮本喵把收工机关挪到该去的地方，让它一条一条报下去，直到猜中为止。",
+  "brokenCodeTemplate": "target = {secret}\nguesses = [{g1}, {g2}, {g3}, {secret}]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n    break\n",
+  "referenceFixTemplate": "target = {secret}\nguesses = [{g1}, {g2}, {g3}, {secret}]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        break\n",
+  "explanationTemplate": "`break` 是「**提前收工**」，但它在哪一层缩进里，就在哪儿收工喵。\n\n现在这一句 `break` 顶格缩得和 `if` 齐平 —— 它是**每一圈都会撞上**的一步。于是第一圈刚报完头一条（{g1}），圈就被收掉了，柜子里剩下的 {g2}、{g3}、{secret} 全都没轮到。\n\n它该去的地方是 `else:` 底下：那样只有**猜中那一圈**才走得到它。报「太大」「太小」的那两圈只印一句话，圈照旧往下转 —— 这就是「只有猜中才收工」的写法喵。\n\n（写完 `while True:` 一定要回头问自己一句：**猜中真的会走到那句 `break` 吗？** 万一 `break` 缩错了位置或者干脆没写，这个圈就永远停不下来，只能硬关窗口。）"
+}

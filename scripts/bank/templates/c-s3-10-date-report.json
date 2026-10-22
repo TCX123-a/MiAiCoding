@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-10-date-report",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-10",
+  "type": "codewrite",
+  "concept": ["把秒数换成日子", "年份加 1900", "月份加 1", "第几天加 1"],
+  "instances": 6,
+  "params": {
+    "sec": { "kind": "pick", "values": ["1700000000", "1767225600"] }
+  },
+  "stemTemplate": "本喵的怀表上有一个**固定的**秒数：`{sec}`（稿子里已经写好了）。你要把它换成**人看的日子**印出来，就一行：\n\n```text\n那个数换成日子是：YYYY-MM-DD，一年里的第 D 天\n```\n\n规矩说清楚：年份要**四位**；月份和日子要**两位**，不够的前面补 `0`；「一年里的第几天」不用补 0。\n\n换日子那一招（`gmtime`）稿子里已经调好了，**牌子也叼回来了**，你要做的就是把牌子上的几格搬进 `printf` 里。哪几格得**自己加一加**才像人话，课文里讲得明明白白喵。",
+  "starterTemplate": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = {sec}L;          /* 那一刻的秒数，已经给你了 */\n    struct tm *t = gmtime(&fixed);  /* 换成写着年月日的那张牌子 */\n\n    /* ↓ 自己写：照下面这个格式印一行 ——\n       那个数换成日子是：YYYY-MM-DD，一年里的第 D 天\n       年份要四位；月份和日子要两位、不够的前面补 0；「第几天」不用补 0 */\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = {sec}L;          /* 那一刻的秒数，已经给你了 */\n    struct tm *t = gmtime(&fixed);  /* 换成写着年月日的那张牌子 */\n\n    printf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n           t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n    return 0;\n}\n",
+  "explanationTemplate": "牌子上有三格**都不按常理起数**，往外拿的时候得自己挪回来喵：\n\n- `tm_year` 是「**从 1900 起数**过了几年」→ 要 `+ 1900`；\n- `tm_mon` 是「**从 0 起数**的月份」（0 是一月）→ 要 `+ 1`；\n- `tm_yday` 是「**从 0 起数**的第几天」→ 要 `+ 1`。\n\n```text\nprintf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n       t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n```\n\n`%02d` 里的那个 `02` 说的是「**至少印两位，不够的前面补 0**」：一月印成 `01`、九号印成 `09`，这就是稿子里要的两位格式。年份和第几天直接 `%d` 就行。\n\n顺带记一句：秒数**可以直接比大小**，不用换成日子就能比谁早谁晚 —— 课文里那句 `now > 1767225600L` 就是这么比的（那个数是 2026 年开年那一刻的秒数）喵。"
+}

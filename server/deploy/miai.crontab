@@ -1,0 +1,12 @@
+# miai 定时任务（2026-10-12 S7 步骤 6 安装；ubuntu 用户）
+# 时区：宿主机已确认 Asia/Shanghai（CST +0800），cron 的时:分按北京时间解释。
+# 2026-10-22 起 daily 00:05 / backup 00:17：日榜在北京 0 点后立刻铸「刚结束的一天」，
+# 前端「每日 0 点刷新」才是真话。错峰纪律不变（同刻并发 = 2C2G 机器内存红线）。
+# -T 显式禁 TTY（cron 无 tty；docker compose run 默认尝试分配 TTY，无 tty 环境下行为不可靠）
+5 0 * * * cd /opt/miai && docker compose run --rm --no-deps -T api node dist/jobs/daily.js >> /var/log/miai-daily.log 2>&1
+17 0 * * * /opt/miai/bin/backup.sh >> /var/log/miai-backup.log 2>&1
+*/5 * * * * /opt/miai/bin/healthcheck.sh >> /var/log/miai-health.log 2>&1
+# 失联自检邮件（方案B，2026-10-12 落装；health 失败发 163 邮件，状态翻转或 ≥6h 节流；3 分起错开 healthcheck）
+3-58/5 * * * * /opt/miai/bin/monitor-mail.sh >> /var/log/miai-monitor.log 2>&1
+# 资源水位观测（24h+ 观察窗；每小时 07 分，避开 healthcheck 的 0/5 整点）
+7 * * * * /usr/bin/docker stats --no-stream --format '{{.Name}} {{.MemUsage}} {{.CPUPerc}}' | sort >> /opt/miai/stats.log 2>&1

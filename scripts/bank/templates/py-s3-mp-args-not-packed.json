@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-mp-args-not-packed",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-04",
+  "type": "codefix",
+  "concept": ["multiprocessing", "Process", "args 元组", "投喂给子进程"],
+  "instances": 2,
+  "params": {
+    "board": { "kind": "pick", "values": ["小黑板", "记分板", "石板"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 3, "min": 1, "max": 9 },
+  "stemTemplate": "本喵想让 3 只小猫分头干活：第 i 只猫把**第 i 个数**平方一下，写回**同一块{board}**上的**第 i 个位子**。三个数会一行一个报给你，最后本喵把{board}上的三个位子**一行一个**念出来喵。\n\n可这段代码**根本没跑起来** —— 翻译官喵劈头就摔了一句，本喵连一只猫都没见到。你帮本喵改好它。\n\n改好之后要印出**三个平方数**，**一行一个**：第一行是第一个数的平方，第二行是第二个数的平方，第三行是第三个数的平方。",
+  "brokenCodeTemplate": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = []\n    for _ in range(3):\n        起点.append(int(input()))\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=起点[i])\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\nif __name__ == '__main__':\n    主流程()\n",
+  "referenceFixTemplate": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = []\n    for _ in range(3):\n        起点.append(int(input()))\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\nif __name__ == '__main__':\n    主流程()\n",
+  "explanationTemplate": "`mp.Process(target=招式, args=...)` 里那个 `args`，要的是**一串**要投喂的东西喵。\n\n坏代码递过去的是 `args=起点[i]` —— 一条**光溜溜的数**。翻译官喵要把它拆成一串，可一个数**拆不开**，于是当场摔 `TypeError: 'int' object is not iterable`（意思是「这东西没法拆成一串」），程序连一只猫都还没生出来就停住了。\n\n修法是：把这只猫要的东西**全装进括号里**再递过去。它要三样 —— **写去哪块{board}**（`位子`）、**第几个位子**（`i`）、**算哪个数**（`起点[i]`）：\n\n```python\nargs=(位子, i, 起点[i])\n```\n\n⚠️ 哪怕只喂**一样**东西，也得先装成一串，末尾那个逗号不能省：`(7,)` 才叫「装了一样的串」，写成 `(7)` 就只是个光溜溜的数、等于什么都没装。这个逗号本喵当年也栽过喵。"
+}

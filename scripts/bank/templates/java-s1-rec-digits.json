@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-rec-digits",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-17",
+  "type": "codewrite",
+  "concept": ["自己写递归招式", "把自己砍小一圈", "整数除法", "刹车摆在哪一格"],
+  "instances": 6,
+  "params": {
+    "tail": { "kind": "pick", "values": ["喵", "啦喵"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "", "count": 1, "min": 5, "max": 9999 },
+  "stemTemplate": "本喵要自己写一招，名字叫 `digits`：**喂一个数进去，它数一数这个数一共有几位，把位数叼回来**（喂 7 进去叼回 1，喂 1234 进去叼回 4）。\n\n请你写个程序：**读进来一个数、把这一招喊起来、把它叼回的位数印出来**。屏幕上只要一行，形如 `X 一共有 Y 位数{tail}`（X 是喂进去的数，Y 是叼回来的位数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n**提示**（这一题的钥匙，本喵直接给你）：两个**整数**相除的时候，叼回来的是砍掉小数尾巴的那一份 —— `1234 / 10` 得到的是 `123`，也就是「把最后一位砍掉」的那个数。往下喊的时候，这一手正好用得上喵。\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static int digits(int n) {\n        if (n < 10) {\n            return 1;\n        }\n        return 1 + digits(n / 10);\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        System.out.println(n + \" 一共有 \" + digits(n) + \" 位数{tail}\");\n    }\n}\n",
+  "explanationTemplate": "这一招最妙的地方在**往下喊的那一步**：`1 + digits(n / 10)`。\n\n它的意思是一句话：**「把这最后一位砍掉，剩下那份有几位，我就比它多一位。」** 摊开看（喂 1234）：\n\n```\ndigits(1234) = 1 + digits(123) = 1 + 1 + digits(12) = 1 + 1 + 1 + digits(1)\n```\n\n- **往下喊的那一步**：砍掉最后一位（`n / 10`）—— 一定比原来**小**，所以走得下去，不会原地转圈；\n- **刹车那一格**：`if (n < 10)` —— 只剩一位的那种数，不用再数了，直接叼回 **1**。\n\n⚠️ 这一题最值得记的是**刹车摆在哪一格**。要是照抄前面那道题的 `if (n == 0)`，喂 5 进去会一路 5、0、0、0 …… **永远停不下来**，最后把那一摞碗摞爆（跑起来才断气，翻译官喵一个字都不会说）。\n\n**刹车不是「照着别的题抄一格」，它是「这一条链子最小的那一头长什么样」** —— 数位数的链子，最小那一头是「一位数」，不是「0」。\n\n最后自己验一遍：喂 7 该叼回 1，喂 10 该叼回 2，喂 999 该叼回 3。三个数对得上就对了喵。"
+}

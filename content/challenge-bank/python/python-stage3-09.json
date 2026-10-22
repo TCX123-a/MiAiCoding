@@ -1,0 +1,425 @@
+{
+  "lessonId": "python-stage3-09",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-py-s3-log-debug-probe-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵查「哪一筐条数最多」的时候，最想知道的是**跑到第几筐那会儿，本喵见过的最大的数是几**喵。\n\n真设断点的话，程序一停就得等人敲键盘；本喵不敲它就一直杵在那儿，跑不完。所以本喵换个**不打断**的法子：**只在那一筐上留一条痕迹**，别处一声不吭。\n\n**外面给的数分三段**：第一行是一个数（要数几筐），第二行是一个数（要在这一筐上看一眼），后面**每一行一个数**（一筐的条数）。\n\n请你写个程序：\n\n① **数到第二行指的那一筐时**，记一条 **`DEBUG`** 级别的日志，话是「停在第 i 筐：到这一步最多 X 条」—— i 就是第二行那个数；X 是**从开头到这一筐为止**见过的最大的条数。\n② 全部数完，用**正文**印一行：`最多 X 条`—— X 是全部筐里最大的条数。\n\n⚠️ 三件事本喵说死：\n\n① 那条日志**必须出现在正文里**（躺在侧渠里的本喵不认）：开头是 `DEBUG` 五个大写字母，后面跟**一个英文冒号**；消息里「第 i 筐」后面紧跟的是**一个全角冒号**。\n② 这种啰嗦话**平时是记不下来的**—— 你得自己动手，让本子愿意把它写上。\n③ 除了那一筐，**别的地方一条日志都不许留**（本喵只在那一个地方停下来看）。\n\n比如输入是\n\n4\n2\n6\n9\n8\n6\n\n就要输出\n\nDEBUG:停在第 2 筐：到这一步最多 9 条\n最多 9 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)\n\n筐数 = int(sys.stdin.readline())\n看第几 = int(sys.stdin.readline())\n最多 = 0\n\nfor i in range(筐数):\n    一条 = int(sys.stdin.readline())\n    if 一条 > 最多:\n        最多 = 一条\n    if i + 1 == 看第几:\n        logging.debug(\"停在第 \" + str(i + 1) + \" 筐：到这一步最多 \" + str(最多) + \" 条\")\n\nprint(\"最多 \" + str(最多) + \" 条\")\n",
+      "expectedOutput": "DEBUG:停在第 2 筐：到这一步最多 9 条\n最多 9 条",
+      "stdin": "4\n2\n9\n7\n3\n2\n",
+      "explanation": "这道题练的是**「让本子记下那一刻」**喵 —— 它正是断点的**不打断版**。\n\n设断点的做法是：在那一行停住，爪子悬在半空，翻看那一刻碗里装着什么。它最准的地方在于**你只挑那一个地方看**；可它有个绕不开的脾气 —— **一停下来就得等人敲键盘**，没人敲它就杵在那儿不动。所以本喵在要交付的代码里从不留 `breakpoint()`，改用**记一笔**：程序跑到那一筐的时候把数写进本子，接着往下跑，回头翻开本子，那一刻的值就摆在那儿。\n\n⚠️ 所以本题只许你在**那一筐**上留一条 —— 这跟「挑一行停下来看」是同一个思路：**别处处都停，挑一个看得出对错的位置看**。处处都停，等于没停。\n\n⚠️ 第二个关键是**门槛**。这句用的是 `logging.debug(...)`，而 `DEBUG` 是**最矮**的一档；**不写 `level=` 的时候门槛在 `WARNING`**，比门槛矮的一律不写进本子。所以光把那句 `logging.debug` 摆进去，本子上**一个字都不会有**，正文里就少了一行 —— 而且它**一个字都不报错**，最容易被当成「本子坏了」。\n\n把门槛放下来就好：`logging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)`。三样各管一件事：`stream=sys.stdout` 把本子挪到正文那条渠；`format` 定「级别 + 英文冒号 + 那句话」的长相；`level=logging.DEBUG` 把门槛放到最矮，啰嗦话才过得去。\n\n⚠️ 顺带记一条本喵的规矩：**门槛越低，本子越吵**。抓虫的时候放到 `DEBUG` 看得最细，事情办完了就该把它抬回去 —— 一屋子碎碎念的本子，真出事那天你反而翻不出来。",
+      "templateId": "py-s3-log-debug-probe",
+      "params": {
+        "n": 4,
+        "k": 2,
+        "unit": "筐"
+      },
+      "verified": {
+        "at": "2026-09-16T03:39:59.429Z",
+        "hash": "9b3eeb292f6eb8be"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-debug-probe-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵查「哪一筐条数最多」的时候，最想知道的是**跑到第几筐那会儿，本喵见过的最大的数是几**喵。\n\n真设断点的话，程序一停就得等人敲键盘；本喵不敲它就一直杵在那儿，跑不完。所以本喵换个**不打断**的法子：**只在那一筐上留一条痕迹**，别处一声不吭。\n\n**外面给的数分三段**：第一行是一个数（要数几筐），第二行是一个数（要在这一筐上看一眼），后面**每一行一个数**（一筐的条数）。\n\n请你写个程序：\n\n① **数到第二行指的那一筐时**，记一条 **`DEBUG`** 级别的日志，话是「停在第 i 筐：到这一步最多 X 条」—— i 就是第二行那个数；X 是**从开头到这一筐为止**见过的最大的条数。\n② 全部数完，用**正文**印一行：`最多 X 条`—— X 是全部筐里最大的条数。\n\n⚠️ 三件事本喵说死：\n\n① 那条日志**必须出现在正文里**（躺在侧渠里的本喵不认）：开头是 `DEBUG` 五个大写字母，后面跟**一个英文冒号**；消息里「第 i 筐」后面紧跟的是**一个全角冒号**。\n② 这种啰嗦话**平时是记不下来的**—— 你得自己动手，让本子愿意把它写上。\n③ 除了那一筐，**别的地方一条日志都不许留**（本喵只在那一个地方停下来看）。\n\n比如输入是\n\n4\n3\n1\n3\n2\n4\n\n就要输出\n\nDEBUG:停在第 3 筐：到这一步最多 3 条\n最多 4 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)\n\n筐数 = int(sys.stdin.readline())\n看第几 = int(sys.stdin.readline())\n最多 = 0\n\nfor i in range(筐数):\n    一条 = int(sys.stdin.readline())\n    if 一条 > 最多:\n        最多 = 一条\n    if i + 1 == 看第几:\n        logging.debug(\"停在第 \" + str(i + 1) + \" 筐：到这一步最多 \" + str(最多) + \" 条\")\n\nprint(\"最多 \" + str(最多) + \" 条\")\n",
+      "expectedOutput": "DEBUG:停在第 3 筐：到这一步最多 6 条\n最多 7 条",
+      "stdin": "4\n3\n2\n6\n3\n7\n",
+      "explanation": "这道题练的是**「让本子记下那一刻」**喵 —— 它正是断点的**不打断版**。\n\n设断点的做法是：在那一行停住，爪子悬在半空，翻看那一刻碗里装着什么。它最准的地方在于**你只挑那一个地方看**；可它有个绕不开的脾气 —— **一停下来就得等人敲键盘**，没人敲它就杵在那儿不动。所以本喵在要交付的代码里从不留 `breakpoint()`，改用**记一笔**：程序跑到那一筐的时候把数写进本子，接着往下跑，回头翻开本子，那一刻的值就摆在那儿。\n\n⚠️ 所以本题只许你在**那一筐**上留一条 —— 这跟「挑一行停下来看」是同一个思路：**别处处都停，挑一个看得出对错的位置看**。处处都停，等于没停。\n\n⚠️ 第二个关键是**门槛**。这句用的是 `logging.debug(...)`，而 `DEBUG` 是**最矮**的一档；**不写 `level=` 的时候门槛在 `WARNING`**，比门槛矮的一律不写进本子。所以光把那句 `logging.debug` 摆进去，本子上**一个字都不会有**，正文里就少了一行 —— 而且它**一个字都不报错**，最容易被当成「本子坏了」。\n\n把门槛放下来就好：`logging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)`。三样各管一件事：`stream=sys.stdout` 把本子挪到正文那条渠；`format` 定「级别 + 英文冒号 + 那句话」的长相；`level=logging.DEBUG` 把门槛放到最矮，啰嗦话才过得去。\n\n⚠️ 顺带记一条本喵的规矩：**门槛越低，本子越吵**。抓虫的时候放到 `DEBUG` 看得最细，事情办完了就该把它抬回去 —— 一屋子碎碎念的本子，真出事那天你反而翻不出来。",
+      "templateId": "py-s3-log-debug-probe",
+      "params": {
+        "n": 4,
+        "k": 3,
+        "unit": "筐"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:38.148Z",
+        "hash": "beb9aa732ae4142d"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-debug-probe-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵查「哪一箱条数最多」的时候，最想知道的是**跑到第几箱那会儿，本喵见过的最大的数是几**喵。\n\n真设断点的话，程序一停就得等人敲键盘；本喵不敲它就一直杵在那儿，跑不完。所以本喵换个**不打断**的法子：**只在那一箱上留一条痕迹**，别处一声不吭。\n\n**外面给的数分三段**：第一行是一个数（要数几箱），第二行是一个数（要在这一箱上看一眼），后面**每一行一个数**（一箱的条数）。\n\n请你写个程序：\n\n① **数到第二行指的那一箱时**，记一条 **`DEBUG`** 级别的日志，话是「停在第 i 箱：到这一步最多 X 条」—— i 就是第二行那个数；X 是**从开头到这一箱为止**见过的最大的条数。\n② 全部数完，用**正文**印一行：`最多 X 条`—— X 是全部箱里最大的条数。\n\n⚠️ 三件事本喵说死：\n\n① 那条日志**必须出现在正文里**（躺在侧渠里的本喵不认）：开头是 `DEBUG` 五个大写字母，后面跟**一个英文冒号**；消息里「第 i 箱」后面紧跟的是**一个全角冒号**。\n② 这种啰嗦话**平时是记不下来的**—— 你得自己动手，让本子愿意把它写上。\n③ 除了那一箱，**别的地方一条日志都不许留**（本喵只在那一个地方停下来看）。\n\n比如输入是\n\n5\n2\n9\n8\n8\n3\n1\n\n就要输出\n\nDEBUG:停在第 2 箱：到这一步最多 9 条\n最多 9 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)\n\n筐数 = int(sys.stdin.readline())\n看第几 = int(sys.stdin.readline())\n最多 = 0\n\nfor i in range(筐数):\n    一条 = int(sys.stdin.readline())\n    if 一条 > 最多:\n        最多 = 一条\n    if i + 1 == 看第几:\n        logging.debug(\"停在第 \" + str(i + 1) + \" 箱：到这一步最多 \" + str(最多) + \" 条\")\n\nprint(\"最多 \" + str(最多) + \" 条\")\n",
+      "expectedOutput": "DEBUG:停在第 2 箱：到这一步最多 9 条\n最多 9 条",
+      "stdin": "5\n2\n9\n4\n1\n4\n4\n",
+      "explanation": "这道题练的是**「让本子记下那一刻」**喵 —— 它正是断点的**不打断版**。\n\n设断点的做法是：在那一行停住，爪子悬在半空，翻看那一刻碗里装着什么。它最准的地方在于**你只挑那一个地方看**；可它有个绕不开的脾气 —— **一停下来就得等人敲键盘**，没人敲它就杵在那儿不动。所以本喵在要交付的代码里从不留 `breakpoint()`，改用**记一笔**：程序跑到那一箱的时候把数写进本子，接着往下跑，回头翻开本子，那一刻的值就摆在那儿。\n\n⚠️ 所以本题只许你在**那一箱**上留一条 —— 这跟「挑一行停下来看」是同一个思路：**别处处都停，挑一个看得出对错的位置看**。处处都停，等于没停。\n\n⚠️ 第二个关键是**门槛**。这句用的是 `logging.debug(...)`，而 `DEBUG` 是**最矮**的一档；**不写 `level=` 的时候门槛在 `WARNING`**，比门槛矮的一律不写进本子。所以光把那句 `logging.debug` 摆进去，本子上**一个字都不会有**，正文里就少了一行 —— 而且它**一个字都不报错**，最容易被当成「本子坏了」。\n\n把门槛放下来就好：`logging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)`。三样各管一件事：`stream=sys.stdout` 把本子挪到正文那条渠；`format` 定「级别 + 英文冒号 + 那句话」的长相；`level=logging.DEBUG` 把门槛放到最矮，啰嗦话才过得去。\n\n⚠️ 顺带记一条本喵的规矩：**门槛越低，本子越吵**。抓虫的时候放到 `DEBUG` 看得最细，事情办完了就该把它抬回去 —— 一屋子碎碎念的本子，真出事那天你反而翻不出来。",
+      "templateId": "py-s3-log-debug-probe",
+      "params": {
+        "n": 5,
+        "k": 2,
+        "unit": "箱"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:38.537Z",
+        "hash": "0dbf4528bfd15706"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-debug-probe-010",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵查「哪一箱条数最多」的时候，最想知道的是**跑到第几箱那会儿，本喵见过的最大的数是几**喵。\n\n真设断点的话，程序一停就得等人敲键盘；本喵不敲它就一直杵在那儿，跑不完。所以本喵换个**不打断**的法子：**只在那一箱上留一条痕迹**，别处一声不吭。\n\n**外面给的数分三段**：第一行是一个数（要数几箱），第二行是一个数（要在这一箱上看一眼），后面**每一行一个数**（一箱的条数）。\n\n请你写个程序：\n\n① **数到第二行指的那一箱时**，记一条 **`DEBUG`** 级别的日志，话是「停在第 i 箱：到这一步最多 X 条」—— i 就是第二行那个数；X 是**从开头到这一箱为止**见过的最大的条数。\n② 全部数完，用**正文**印一行：`最多 X 条`—— X 是全部箱里最大的条数。\n\n⚠️ 三件事本喵说死：\n\n① 那条日志**必须出现在正文里**（躺在侧渠里的本喵不认）：开头是 `DEBUG` 五个大写字母，后面跟**一个英文冒号**；消息里「第 i 箱」后面紧跟的是**一个全角冒号**。\n② 这种啰嗦话**平时是记不下来的**—— 你得自己动手，让本子愿意把它写上。\n③ 除了那一箱，**别的地方一条日志都不许留**（本喵只在那一个地方停下来看）。\n\n比如输入是\n\n5\n3\n3\n8\n4\n1\n5\n\n就要输出\n\nDEBUG:停在第 3 箱：到这一步最多 8 条\n最多 8 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)\n\n筐数 = int(sys.stdin.readline())\n看第几 = int(sys.stdin.readline())\n最多 = 0\n\nfor i in range(筐数):\n    一条 = int(sys.stdin.readline())\n    if 一条 > 最多:\n        最多 = 一条\n    if i + 1 == 看第几:\n        logging.debug(\"停在第 \" + str(i + 1) + \" 箱：到这一步最多 \" + str(最多) + \" 条\")\n\nprint(\"最多 \" + str(最多) + \" 条\")\n",
+      "expectedOutput": "DEBUG:停在第 3 箱：到这一步最多 5 条\n最多 5 条",
+      "stdin": "5\n3\n5\n3\n3\n2\n4\n",
+      "explanation": "这道题练的是**「让本子记下那一刻」**喵 —— 它正是断点的**不打断版**。\n\n设断点的做法是：在那一行停住，爪子悬在半空，翻看那一刻碗里装着什么。它最准的地方在于**你只挑那一个地方看**；可它有个绕不开的脾气 —— **一停下来就得等人敲键盘**，没人敲它就杵在那儿不动。所以本喵在要交付的代码里从不留 `breakpoint()`，改用**记一笔**：程序跑到那一箱的时候把数写进本子，接着往下跑，回头翻开本子，那一刻的值就摆在那儿。\n\n⚠️ 所以本题只许你在**那一箱**上留一条 —— 这跟「挑一行停下来看」是同一个思路：**别处处都停，挑一个看得出对错的位置看**。处处都停，等于没停。\n\n⚠️ 第二个关键是**门槛**。这句用的是 `logging.debug(...)`，而 `DEBUG` 是**最矮**的一档；**不写 `level=` 的时候门槛在 `WARNING`**，比门槛矮的一律不写进本子。所以光把那句 `logging.debug` 摆进去，本子上**一个字都不会有**，正文里就少了一行 —— 而且它**一个字都不报错**，最容易被当成「本子坏了」。\n\n把门槛放下来就好：`logging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)`。三样各管一件事：`stream=sys.stdout` 把本子挪到正文那条渠；`format` 定「级别 + 英文冒号 + 那句话」的长相；`level=logging.DEBUG` 把门槛放到最矮，啰嗦话才过得去。\n\n⚠️ 顺带记一条本喵的规矩：**门槛越低，本子越吵**。抓虫的时候放到 `DEBUG` 看得最细，事情办完了就该把它抬回去 —— 一屋子碎碎念的本子，真出事那天你反而翻不出来。",
+      "templateId": "py-s3-log-debug-probe",
+      "params": {
+        "n": 5,
+        "k": 3,
+        "unit": "箱"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:38.915Z",
+        "hash": "8c0ce28a8fa6b1d8"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-debug-probe-014",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵查「哪一袋条数最多」的时候，最想知道的是**跑到第几袋那会儿，本喵见过的最大的数是几**喵。\n\n真设断点的话，程序一停就得等人敲键盘；本喵不敲它就一直杵在那儿，跑不完。所以本喵换个**不打断**的法子：**只在那一袋上留一条痕迹**，别处一声不吭。\n\n**外面给的数分三段**：第一行是一个数（要数几袋），第二行是一个数（要在这一袋上看一眼），后面**每一行一个数**（一袋的条数）。\n\n请你写个程序：\n\n① **数到第二行指的那一袋时**，记一条 **`DEBUG`** 级别的日志，话是「停在第 i 袋：到这一步最多 X 条」—— i 就是第二行那个数；X 是**从开头到这一袋为止**见过的最大的条数。\n② 全部数完，用**正文**印一行：`最多 X 条`—— X 是全部袋里最大的条数。\n\n⚠️ 三件事本喵说死：\n\n① 那条日志**必须出现在正文里**（躺在侧渠里的本喵不认）：开头是 `DEBUG` 五个大写字母，后面跟**一个英文冒号**；消息里「第 i 袋」后面紧跟的是**一个全角冒号**。\n② 这种啰嗦话**平时是记不下来的**—— 你得自己动手，让本子愿意把它写上。\n③ 除了那一袋，**别的地方一条日志都不许留**（本喵只在那一个地方停下来看）。\n\n比如输入是\n\n6\n2\n1\n6\n6\n7\n7\n4\n\n就要输出\n\nDEBUG:停在第 2 袋：到这一步最多 6 条\n最多 7 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)\n\n筐数 = int(sys.stdin.readline())\n看第几 = int(sys.stdin.readline())\n最多 = 0\n\nfor i in range(筐数):\n    一条 = int(sys.stdin.readline())\n    if 一条 > 最多:\n        最多 = 一条\n    if i + 1 == 看第几:\n        logging.debug(\"停在第 \" + str(i + 1) + \" 袋：到这一步最多 \" + str(最多) + \" 条\")\n\nprint(\"最多 \" + str(最多) + \" 条\")\n",
+      "expectedOutput": "DEBUG:停在第 2 袋：到这一步最多 8 条\n最多 9 条",
+      "stdin": "6\n2\n8\n8\n9\n7\n7\n6\n",
+      "explanation": "这道题练的是**「让本子记下那一刻」**喵 —— 它正是断点的**不打断版**。\n\n设断点的做法是：在那一行停住，爪子悬在半空，翻看那一刻碗里装着什么。它最准的地方在于**你只挑那一个地方看**；可它有个绕不开的脾气 —— **一停下来就得等人敲键盘**，没人敲它就杵在那儿不动。所以本喵在要交付的代码里从不留 `breakpoint()`，改用**记一笔**：程序跑到那一袋的时候把数写进本子，接着往下跑，回头翻开本子，那一刻的值就摆在那儿。\n\n⚠️ 所以本题只许你在**那一袋**上留一条 —— 这跟「挑一行停下来看」是同一个思路：**别处处都停，挑一个看得出对错的位置看**。处处都停，等于没停。\n\n⚠️ 第二个关键是**门槛**。这句用的是 `logging.debug(...)`，而 `DEBUG` 是**最矮**的一档；**不写 `level=` 的时候门槛在 `WARNING`**，比门槛矮的一律不写进本子。所以光把那句 `logging.debug` 摆进去，本子上**一个字都不会有**，正文里就少了一行 —— 而且它**一个字都不报错**，最容易被当成「本子坏了」。\n\n把门槛放下来就好：`logging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)`。三样各管一件事：`stream=sys.stdout` 把本子挪到正文那条渠；`format` 定「级别 + 英文冒号 + 那句话」的长相；`level=logging.DEBUG` 把门槛放到最矮，啰嗦话才过得去。\n\n⚠️ 顺带记一条本喵的规矩：**门槛越低，本子越吵**。抓虫的时候放到 `DEBUG` 看得最细，事情办完了就该把它抬回去 —— 一屋子碎碎念的本子，真出事那天你反而翻不出来。",
+      "templateId": "py-s3-log-debug-probe",
+      "params": {
+        "n": 6,
+        "k": 2,
+        "unit": "袋"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:39.297Z",
+        "hash": "68c8d19b0b31f8d9"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-debug-probe-017",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵查「哪一袋条数最多」的时候，最想知道的是**跑到第几袋那会儿，本喵见过的最大的数是几**喵。\n\n真设断点的话，程序一停就得等人敲键盘；本喵不敲它就一直杵在那儿，跑不完。所以本喵换个**不打断**的法子：**只在那一袋上留一条痕迹**，别处一声不吭。\n\n**外面给的数分三段**：第一行是一个数（要数几袋），第二行是一个数（要在这一袋上看一眼），后面**每一行一个数**（一袋的条数）。\n\n请你写个程序：\n\n① **数到第二行指的那一袋时**，记一条 **`DEBUG`** 级别的日志，话是「停在第 i 袋：到这一步最多 X 条」—— i 就是第二行那个数；X 是**从开头到这一袋为止**见过的最大的条数。\n② 全部数完，用**正文**印一行：`最多 X 条`—— X 是全部袋里最大的条数。\n\n⚠️ 三件事本喵说死：\n\n① 那条日志**必须出现在正文里**（躺在侧渠里的本喵不认）：开头是 `DEBUG` 五个大写字母，后面跟**一个英文冒号**；消息里「第 i 袋」后面紧跟的是**一个全角冒号**。\n② 这种啰嗦话**平时是记不下来的**—— 你得自己动手，让本子愿意把它写上。\n③ 除了那一袋，**别的地方一条日志都不许留**（本喵只在那一个地方停下来看）。\n\n比如输入是\n\n6\n3\n7\n8\n7\n6\n2\n3\n\n就要输出\n\nDEBUG:停在第 3 袋：到这一步最多 8 条\n最多 8 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)\n\n筐数 = int(sys.stdin.readline())\n看第几 = int(sys.stdin.readline())\n最多 = 0\n\nfor i in range(筐数):\n    一条 = int(sys.stdin.readline())\n    if 一条 > 最多:\n        最多 = 一条\n    if i + 1 == 看第几:\n        logging.debug(\"停在第 \" + str(i + 1) + \" 袋：到这一步最多 \" + str(最多) + \" 条\")\n\nprint(\"最多 \" + str(最多) + \" 条\")\n",
+      "expectedOutput": "DEBUG:停在第 3 袋：到这一步最多 4 条\n最多 7 条",
+      "stdin": "6\n3\n1\n3\n4\n7\n4\n2\n",
+      "explanation": "这道题练的是**「让本子记下那一刻」**喵 —— 它正是断点的**不打断版**。\n\n设断点的做法是：在那一行停住，爪子悬在半空，翻看那一刻碗里装着什么。它最准的地方在于**你只挑那一个地方看**；可它有个绕不开的脾气 —— **一停下来就得等人敲键盘**，没人敲它就杵在那儿不动。所以本喵在要交付的代码里从不留 `breakpoint()`，改用**记一笔**：程序跑到那一袋的时候把数写进本子，接着往下跑，回头翻开本子，那一刻的值就摆在那儿。\n\n⚠️ 所以本题只许你在**那一袋**上留一条 —— 这跟「挑一行停下来看」是同一个思路：**别处处都停，挑一个看得出对错的位置看**。处处都停，等于没停。\n\n⚠️ 第二个关键是**门槛**。这句用的是 `logging.debug(...)`，而 `DEBUG` 是**最矮**的一档；**不写 `level=` 的时候门槛在 `WARNING`**，比门槛矮的一律不写进本子。所以光把那句 `logging.debug` 摆进去，本子上**一个字都不会有**，正文里就少了一行 —— 而且它**一个字都不报错**，最容易被当成「本子坏了」。\n\n把门槛放下来就好：`logging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)`。三样各管一件事：`stream=sys.stdout` 把本子挪到正文那条渠；`format` 定「级别 + 英文冒号 + 那句话」的长相；`level=logging.DEBUG` 把门槛放到最矮，啰嗦话才过得去。\n\n⚠️ 顺带记一条本喵的规矩：**门槛越低，本子越吵**。抓虫的时候放到 `DEBUG` 看得最细，事情办完了就该把它抬回去 —— 一屋子碎碎念的本子，真出事那天你反而翻不出来。",
+      "templateId": "py-s3-log-debug-probe",
+      "params": {
+        "n": 6,
+        "k": 3,
+        "unit": "袋"
+      },
+      "verified": {
+        "at": "2026-09-16T03:39:59.676Z",
+        "hash": "d786c003f634cfa1"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-level-gate-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵要写个「到货播报」喵：**外面给一个数**（一行一个，这一批到了几筐）。\n\n规矩是：进来先记一条**平常**的日志（级别 `INFO`），再记一条提醒（级别 `WARNING`），最后用正文印一行总共到了几筐。\n\n本喵这段跑出来**少了一行** —— 那条 `INFO` 一点影子都没有。你帮本喵看看是哪一步把路堵上了。\n\n比如输入是\n\n7\n\n就要输出\n\nINFO:到了 7 筐\nWARNING:底下那筐要盯紧一点\n一共 7 筐\n\n⚠️ 样子别改：日志行开头是**级别**（大写英文），级别和后面那句话之间隔着**一个英文冒号**。\n\n⚠️ 也**不许**把那条 `INFO` 换成别的级别糊弄过去 —— 本喵要的就是屏幕上明明白白写着 `INFO` 两个字。\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "brokenCode": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.WARNING)\n\n到货 = int(sys.stdin.readline())\n\nlogging.info(\"到了 \" + str(到货) + \" 筐\")\nlogging.warning(\"底下那筐要盯紧一点\")\nprint(\"一共 \" + str(到货) + \" 筐\")\n",
+      "referenceFix": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n到货 = int(sys.stdin.readline())\n\nlogging.info(\"到了 \" + str(到货) + \" 筐\")\nlogging.warning(\"底下那筐要盯紧一点\")\nprint(\"一共 \" + str(到货) + \" 筐\")\n",
+      "expectedOutput": "INFO:到了 4 筐\nWARNING:底下那筐要盯紧一点\n一共 4 筐",
+      "stdin": "4\n",
+      "explanation": "关键就两个字：**门槛**喵。\n\n本喵开日志的时候写了 `level=logging.WARNING` —— 那是**门槛**，意思是「Warning 这一档**及它以上**的才放行」。而 `INFO` 比 `WARNING` **矮**，卡在门槛底下，于是那条被**拦下**了：它连印都没印出来。\n\n级别是**有高矮的**，从矮到高排过来是：`DEBUG`、`INFO`、`WARNING`、`ERROR`、`CRITICAL`。门槛设在哪一档，就是「哪一档及以上能过」，比它矮的一律拦掉。\n\n所以本喵这次是把门槛抬得太高了，改回 `level=logging.INFO` 就通了（写 `DEBUG` 也通，因为 `DEBUG` 更矮、放行的更多 —— 只是那样会把排查用的碎碎念也一起放出来）。\n\n⚠️ 顺带记一件事：**不写 `level` 那一句的时候，门槛默认就是 `WARNING`** —— 这就是为什么很多人的 `INFO` 日志「明明写了却没出现」。本喵这道题里门槛是**明着写**的，所以毛病一眼能看见；等门槛藏起来的时候，记得回来翻这一条。\n\n还有一点：门槛**只管印不印**。那条日志的代码照样在跑，一个字都不报错 —— 所以「日志不见了」这件事别去代码里找被划掉的行，要去看门槛。",
+      "templateId": "py-s3-log-level-gate",
+      "params": {
+        "unit": "筐"
+      },
+      "verified": {
+        "at": "2026-09-16T03:29:42.454Z",
+        "hash": "519b2b848a269f32"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-level-gate-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵要写个「到货播报」喵：**外面给一个数**（一行一个，这一批到了几箱）。\n\n规矩是：进来先记一条**平常**的日志（级别 `INFO`），再记一条提醒（级别 `WARNING`），最后用正文印一行总共到了几箱。\n\n本喵这段跑出来**少了一行** —— 那条 `INFO` 一点影子都没有。你帮本喵看看是哪一步把路堵上了。\n\n比如输入是\n\n9\n\n就要输出\n\nINFO:到了 9 箱\nWARNING:底下那箱要盯紧一点\n一共 9 箱\n\n⚠️ 样子别改：日志行开头是**级别**（大写英文），级别和后面那句话之间隔着**一个英文冒号**。\n\n⚠️ 也**不许**把那条 `INFO` 换成别的级别糊弄过去 —— 本喵要的就是屏幕上明明白白写着 `INFO` 两个字。\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "brokenCode": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.WARNING)\n\n到货 = int(sys.stdin.readline())\n\nlogging.info(\"到了 \" + str(到货) + \" 箱\")\nlogging.warning(\"底下那箱要盯紧一点\")\nprint(\"一共 \" + str(到货) + \" 箱\")\n",
+      "referenceFix": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n到货 = int(sys.stdin.readline())\n\nlogging.info(\"到了 \" + str(到货) + \" 箱\")\nlogging.warning(\"底下那箱要盯紧一点\")\nprint(\"一共 \" + str(到货) + \" 箱\")\n",
+      "expectedOutput": "INFO:到了 1 箱\nWARNING:底下那箱要盯紧一点\n一共 1 箱",
+      "stdin": "1\n",
+      "explanation": "关键就两个字：**门槛**喵。\n\n本喵开日志的时候写了 `level=logging.WARNING` —— 那是**门槛**，意思是「Warning 这一档**及它以上**的才放行」。而 `INFO` 比 `WARNING` **矮**，卡在门槛底下，于是那条被**拦下**了：它连印都没印出来。\n\n级别是**有高矮的**，从矮到高排过来是：`DEBUG`、`INFO`、`WARNING`、`ERROR`、`CRITICAL`。门槛设在哪一档，就是「哪一档及以上能过」，比它矮的一律拦掉。\n\n所以本喵这次是把门槛抬得太高了，改回 `level=logging.INFO` 就通了（写 `DEBUG` 也通，因为 `DEBUG` 更矮、放行的更多 —— 只是那样会把排查用的碎碎念也一起放出来）。\n\n⚠️ 顺带记一件事：**不写 `level` 那一句的时候，门槛默认就是 `WARNING`** —— 这就是为什么很多人的 `INFO` 日志「明明写了却没出现」。本喵这道题里门槛是**明着写**的，所以毛病一眼能看见；等门槛藏起来的时候，记得回来翻这一条。\n\n还有一点：门槛**只管印不印**。那条日志的代码照样在跑，一个字都不报错 —— 所以「日志不见了」这件事别去代码里找被划掉的行，要去看门槛。",
+      "templateId": "py-s3-log-level-gate",
+      "params": {
+        "unit": "箱"
+      },
+      "verified": {
+        "at": "2026-09-16T03:29:42.806Z",
+        "hash": "3cee51dac0926088"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-off-by-one-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵要清点 3 筐小鱼干，看看一共有多少条喵。\n\n**外面给的数分两段**：第一行是一个数（本喵要过的筐数），后面**每一行一个数**（一筐的条数）。\n\n规矩是：\n\n① 每过一筐，就记一条 **`INFO`** 日志 —— 记下这是第几筐、这一筐多少条、**加起来**现在是多少。\n② 全部过完，用正文印一行报总数。\n\n日志那行的样子看下面的样例（`INFO:` 开头，后面是「第 i 筐：X 条，加起来 Y」，X 前面那个冒号是全角的）。\n\n本喵这段跑是跑得起来，**报出来的总数却不对**。本喵把日志从头到尾盯了一遍，还是没看出毛病在哪儿 —— 你帮本喵改好它。\n\n比如输入是\n\n3\n8\n8\n3\n\n就要输出\n\nINFO:第 1 筐：8 条，加起来 8\nINFO:第 2 筐：8 条，加起来 16\nINFO:第 3 筐：3 条，加起来 19\n一共 19 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "brokenCode": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(sys.stdin.readline())\n总共 = 0\n\nfor i in range(筐数 - 1):\n    一条 = int(sys.stdin.readline())\n    总共 = 总共 + 一条\n    logging.info(\"第 \" + str(i + 1) + \" 筐：\" + str(一条) + \" 条，加起来 \" + str(总共))\n\nprint(\"一共 \" + str(总共) + \" 条\")\n",
+      "referenceFix": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(sys.stdin.readline())\n总共 = 0\n\nfor i in range(筐数):\n    一条 = int(sys.stdin.readline())\n    总共 = 总共 + 一条\n    logging.info(\"第 \" + str(i + 1) + \" 筐：\" + str(一条) + \" 条，加起来 \" + str(总共))\n\nprint(\"一共 \" + str(总共) + \" 条\")\n",
+      "expectedOutput": "INFO:第 1 筐：3 条，加起来 3\nINFO:第 2 筐：7 条，加起来 10\nINFO:第 3 筐：5 条，加起来 15\n一共 15 条",
+      "stdin": "3\n3\n7\n5\n",
+      "explanation": "这道题练的是**怎么拿日志抓虫**喵 —— 日志不是写着好看的，是拿来**摆事实**的。\n\n先看日志告诉了本喵什么：本喵要过 3 个筐，可日志拉出来一看，**最后一个筐压根没出现过** —— 日志只报到了倒数第二个。**第一处不对**就落在这儿。它不是「数算错了」，是「没轮到它」。\n\n⚠️ 这就是抓虫的第一步：**别盯着结果看，先找「第一处和预期不一样」的地方**。总数不对只是个结果，你盯着它看一天也看不出原因；而日志把每一步都摆了出来，一眼就能看到「少了一步」。\n\n第二步：**顺着这个线索回去读那一行**。「少了一次」说明绕圈的次数少了 —— 那句 `range(筐数 - 1)` 就是它：`range` 停在最后一个数**之前**，所以最后一个筐轮不上。改成 `range(筐数)` 就对上了。\n\n⚠️ 这种毛病最阴的地方在于**它一个字都不报错**：外面给的数还剩一个没人读，程序也不吭声，只是安安静静地少算一筐。要是没有日志，你只会看到一个「莫名其妙的错总数」；有了日志，你至少知道**从哪一步开始歪的**。\n\n本喵再补一句：真正设断点的思路跟这个一模一样 —— 断点就是挑一行**停下来看一眼**这一刻碗里有什么。你不可能在每一行都停下来，所以要挑那种「看一眼就能分辨对错」的位置，本喵这些日志就是照着这个挑的。",
+      "templateId": "py-s3-log-off-by-one",
+      "params": {
+        "n": 3,
+        "unit": "筐"
+      },
+      "verified": {
+        "at": "2026-09-16T03:29:58.080Z",
+        "hash": "eb9790d0786ad265"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-off-by-one-008",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵要清点 5 袋小鱼干，看看一共有多少条喵。\n\n**外面给的数分两段**：第一行是一个数（本喵要过的袋数），后面**每一行一个数**（一袋的条数）。\n\n规矩是：\n\n① 每过一袋，就记一条 **`INFO`** 日志 —— 记下这是第几袋、这一袋多少条、**加起来**现在是多少。\n② 全部过完，用正文印一行报总数。\n\n日志那行的样子看下面的样例（`INFO:` 开头，后面是「第 i 袋：X 条，加起来 Y」，X 前面那个冒号是全角的）。\n\n本喵这段跑是跑得起来，**报出来的总数却不对**。本喵把日志从头到尾盯了一遍，还是没看出毛病在哪儿 —— 你帮本喵改好它。\n\n比如输入是\n\n5\n5\n3\n7\n4\n4\n\n就要输出\n\nINFO:第 1 袋：5 条，加起来 5\nINFO:第 2 袋：3 条，加起来 8\nINFO:第 3 袋：7 条，加起来 15\nINFO:第 4 袋：4 条，加起来 19\nINFO:第 5 袋：4 条，加起来 23\n一共 23 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "brokenCode": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(sys.stdin.readline())\n总共 = 0\n\nfor i in range(筐数 - 1):\n    一条 = int(sys.stdin.readline())\n    总共 = 总共 + 一条\n    logging.info(\"第 \" + str(i + 1) + \" 袋：\" + str(一条) + \" 条，加起来 \" + str(总共))\n\nprint(\"一共 \" + str(总共) + \" 条\")\n",
+      "referenceFix": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(sys.stdin.readline())\n总共 = 0\n\nfor i in range(筐数):\n    一条 = int(sys.stdin.readline())\n    总共 = 总共 + 一条\n    logging.info(\"第 \" + str(i + 1) + \" 袋：\" + str(一条) + \" 条，加起来 \" + str(总共))\n\nprint(\"一共 \" + str(总共) + \" 条\")\n",
+      "expectedOutput": "INFO:第 1 袋：4 条，加起来 4\nINFO:第 2 袋：7 条，加起来 11\nINFO:第 3 袋：6 条，加起来 17\nINFO:第 4 袋：6 条，加起来 23\nINFO:第 5 袋：3 条，加起来 26\n一共 26 条",
+      "stdin": "5\n4\n7\n6\n6\n3\n",
+      "explanation": "这道题练的是**怎么拿日志抓虫**喵 —— 日志不是写着好看的，是拿来**摆事实**的。\n\n先看日志告诉了本喵什么：本喵要过 5 个袋，可日志拉出来一看，**最后一个袋压根没出现过** —— 日志只报到了倒数第二个。**第一处不对**就落在这儿。它不是「数算错了」，是「没轮到它」。\n\n⚠️ 这就是抓虫的第一步：**别盯着结果看，先找「第一处和预期不一样」的地方**。总数不对只是个结果，你盯着它看一天也看不出原因；而日志把每一步都摆了出来，一眼就能看到「少了一步」。\n\n第二步：**顺着这个线索回去读那一行**。「少了一次」说明绕圈的次数少了 —— 那句 `range(筐数 - 1)` 就是它：`range` 停在最后一个数**之前**，所以最后一个袋轮不上。改成 `range(筐数)` 就对上了。\n\n⚠️ 这种毛病最阴的地方在于**它一个字都不报错**：外面给的数还剩一个没人读，程序也不吭声，只是安安静静地少算一袋。要是没有日志，你只会看到一个「莫名其妙的错总数」；有了日志，你至少知道**从哪一步开始歪的**。\n\n本喵再补一句：真正设断点的思路跟这个一模一样 —— 断点就是挑一行**停下来看一眼**这一刻碗里有什么。你不可能在每一行都停下来，所以要挑那种「看一眼就能分辨对错」的位置，本喵这些日志就是照着这个挑的。",
+      "templateId": "py-s3-log-off-by-one",
+      "params": {
+        "n": 5,
+        "unit": "袋"
+      },
+      "verified": {
+        "at": "2026-09-16T03:29:58.446Z",
+        "hash": "7136133f2c6d84e6"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-side-channel-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的仓库里还剩多少条小鱼干，本喵想一边记进日志、一边报给本喵看喵。\n\n**外面给的是一个数**（一行一个，就是剩下的条数）。\n\n本喵写好的这段，跑是跑得起来，正文那行也在 —— 可是**日志那一行没落在正文里**，它跑到旁边那条道上去了。你帮本喵把它请回正文来。\n\n比如输入是\n\n5\n\n就要输出\n\nWARNING:仓库只剩 5 条了\n仓库还剩 5 条\n\n⚠️ 两行的样子有讲究：日志那行的开头是**级别**（大写英文，这里是 `WARNING`），级别和后面那句话之间隔着**一个英文冒号**，一个多余的字符都不许有。\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "brokenCode": "import sys\nimport logging\n\n条数 = int(sys.stdin.readline())\n\nlogging.warning(\"仓库只剩 \" + str(条数) + \" 条了\")\nprint(\"仓库还剩 \" + str(条数) + \" 条\")\n",
+      "referenceFix": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\")\n\n条数 = int(sys.stdin.readline())\n\nlogging.warning(\"仓库只剩 \" + str(条数) + \" 条了\")\nprint(\"仓库还剩 \" + str(条数) + \" 条\")\n",
+      "expectedOutput": "WARNING:仓库只剩 8 条了\n仓库还剩 8 条",
+      "stdin": "8\n",
+      "explanation": "本喵这次的毛病不在算错，在**走错了道**喵。\n\n`logging` 印出来的字默认**不走正文**（正文就是程序平常印东西的那条道），它走旁边那条叫「侧渠」的道。所以那行日志其实**出来了** —— 只是没落在本喵要的地方。这个分工以前不容易被注意到，是因为跑失败的时候两道会一起给你看。\n\n把它请回正文的办法，是开日志的时候**把道指过来**：\n\n`logging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\")`\n\n这三样各管一件事，缺一样本喵就不认：\n\n① `stream=sys.stdout` —— 道指到正文上来。**不写它就回侧渠**，这正是这道题的毛病。\n② `format` —— 本喵要的样子是「级别 + 英文冒号 + 那句话」。不写它的话，中间还会多插一个名字出来（那是记日志那只猫的名字），样子就不对了。\n③ 级别用的是大写的 `WARNING`，它在**默认门槛**之上（不写 `level` 那一句的时候，门槛就是 `WARNING`），所以正好过得去。\n\n⚠️ 这一句要写在**任何一条日志之前**。它是「开张」的那一句：要是有哪条日志先跑过了，后面再写这套设置就**什么也不做**了 —— 开张这件事只算第一次。\n\n顺带记住：这套设置**一次就够**，写在开头，后面所有日志都按它来。",
+      "templateId": "py-s3-log-side-channel",
+      "params": {
+        "room": "仓库"
+      },
+      "verified": {
+        "at": "2026-09-16T03:29:29.518Z",
+        "hash": "2f4ceabe24a3276f"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-side-channel-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的储物间里还剩多少条小鱼干，本喵想一边记进日志、一边报给本喵看喵。\n\n**外面给的是一个数**（一行一个，就是剩下的条数）。\n\n本喵写好的这段，跑是跑得起来，正文那行也在 —— 可是**日志那一行没落在正文里**，它跑到旁边那条道上去了。你帮本喵把它请回正文来。\n\n比如输入是\n\n2\n\n就要输出\n\nWARNING:储物间只剩 2 条了\n储物间还剩 2 条\n\n⚠️ 两行的样子有讲究：日志那行的开头是**级别**（大写英文，这里是 `WARNING`），级别和后面那句话之间隔着**一个英文冒号**，一个多余的字符都不许有。\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "brokenCode": "import sys\nimport logging\n\n条数 = int(sys.stdin.readline())\n\nlogging.warning(\"储物间只剩 \" + str(条数) + \" 条了\")\nprint(\"储物间还剩 \" + str(条数) + \" 条\")\n",
+      "referenceFix": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\")\n\n条数 = int(sys.stdin.readline())\n\nlogging.warning(\"储物间只剩 \" + str(条数) + \" 条了\")\nprint(\"储物间还剩 \" + str(条数) + \" 条\")\n",
+      "expectedOutput": "WARNING:储物间只剩 8 条了\n储物间还剩 8 条",
+      "stdin": "8\n",
+      "explanation": "本喵这次的毛病不在算错，在**走错了道**喵。\n\n`logging` 印出来的字默认**不走正文**（正文就是程序平常印东西的那条道），它走旁边那条叫「侧渠」的道。所以那行日志其实**出来了** —— 只是没落在本喵要的地方。这个分工以前不容易被注意到，是因为跑失败的时候两道会一起给你看。\n\n把它请回正文的办法，是开日志的时候**把道指过来**：\n\n`logging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\")`\n\n这三样各管一件事，缺一样本喵就不认：\n\n① `stream=sys.stdout` —— 道指到正文上来。**不写它就回侧渠**，这正是这道题的毛病。\n② `format` —— 本喵要的样子是「级别 + 英文冒号 + 那句话」。不写它的话，中间还会多插一个名字出来（那是记日志那只猫的名字），样子就不对了。\n③ 级别用的是大写的 `WARNING`，它在**默认门槛**之上（不写 `level` 那一句的时候，门槛就是 `WARNING`），所以正好过得去。\n\n⚠️ 这一句要写在**任何一条日志之前**。它是「开张」的那一句：要是有哪条日志先跑过了，后面再写这套设置就**什么也不做**了 —— 开张这件事只算第一次。\n\n顺带记住：这套设置**一次就够**，写在开头，后面所有日志都按它来。",
+      "templateId": "py-s3-log-side-channel",
+      "params": {
+        "room": "储物间"
+      },
+      "verified": {
+        "at": "2026-09-16T03:29:29.866Z",
+        "hash": "6d0a8db2ca9f10a6"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-three-levels-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要按条数给每一筐小鱼干**分档报信**喵。\n\n**外面给的数分两段**：第一行是一个数（要清点的筐数），后面**每一行一个数**（一筐的条数）。\n\n请你写个程序：**一筐一筐地看**，每看一筐就**记一条日志**：\n\n- 条数**少于 3** 的 → 级别用 `ERROR`，话是「第 i 筐告急：X 条」\n- 条数**3 到 6**（两头都算）的 → 级别用 `WARNING`，话是「第 i 筐偏少：X 条」\n- 条数**7 及以上**的 → 级别用 `INFO`，话是「第 i 筐充足：X 条」\n\n（i 从 1 数起；X 就是那一筐的条数。）\n\n最后再用**正文**印一行：`一共 n 筐`（n 就是外面给的那个筐数）。\n\n⚠️ 三件事本喵说死：\n\n① 日志那几行**必须出现在正文里**（躺在侧渠里的本喵不认）。级别和那句话中间是**一个英文冒号**；话里面「告急／偏少／充足」后面紧跟的是**一个全角冒号**。\n② 每一条的**级别要对**：告急就是 `ERROR`，别全拿 `INFO` 糊过去。\n③ 最后那行**用平常那个印**，别拿日志替它。\n\n比如输入是\n\n3\n4\n4\n9\n\n就要输出\n\nWARNING:第 1 筐偏少：4 条\nWARNING:第 2 筐偏少：4 条\nINFO:第 3 筐充足：9 条\n一共 3 筐\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(input())\n\nfor i in range(筐数):\n    一条 = int(input())\n    if 一条 < 3:\n        logging.error(\"第 \" + str(i + 1) + \" 筐告急：\" + str(一条) + \" 条\")\n    elif 一条 < 7:\n        logging.warning(\"第 \" + str(i + 1) + \" 筐偏少：\" + str(一条) + \" 条\")\n    else:\n        logging.info(\"第 \" + str(i + 1) + \" 筐充足：\" + str(一条) + \" 条\")\n\nprint(\"一共 \" + str(筐数) + \" 筐\")\n",
+      "expectedOutput": "WARNING:第 1 筐偏少：5 条\nWARNING:第 2 筐偏少：6 条\nERROR:第 3 筐告急：1 条\n一共 3 筐",
+      "stdin": "3\n5\n6\n1\n",
+      "explanation": "这道题的重点是**「挑对级别」**喵 —— `logging` 最有用的地方就在这儿：一句话该报得多急，你可以在写的时候就说清楚。\n\n本喵这三档是照「有多少条」分的：\n\n- `ERROR` 那一档留给**告急**（少于 3 条）—— 这是要人马上管的事。\n- `WARNING` 那一档留给**偏少**（3 到 6 条）—— 不用马上管，但得有人知道。\n- `INFO` 那一档是**平常的报信**（7 条及以上）—— 就是「本喵只是说说」。\n\n⚠️ 级别选对了，好处是**以后能一句话调音量**：想安静点就把门槛抬到 `WARNING`，那堆 `INFO` 立刻闭嘴，而告急的一条不少；想看得细就把门槛放到 `DEBUG`。要是这几句全用 `print` 写的，你就只能**一条条删** —— 这就是本喵说「日志比 `print` 好用」的意思。\n\n还有两个容易翻车的地方：\n\n① **日志默认不走正文**（走侧渠），所以 `logging.basicConfig` 那一句得把 `stream` 指到正文上来，同时把样子设成「级别 + 英文冒号 + 话」—— 不设 `format` 的话中间会多插一个名字。\n② 门槛要**放 `INFO` 过得去**（`level=logging.INFO`），不然最矮的那一档会被拦掉 —— 本喵这次要三档齐全，门槛就不能抬太高。\n\n最后那行「一共」是**给用户看的正文**，用平常那个印就好 —— 它是程序的结果，不是记录。",
+      "templateId": "py-s3-log-three-levels",
+      "params": {
+        "n": 3,
+        "unit": "筐"
+      },
+      "verified": {
+        "at": "2026-09-16T03:39:39.658Z",
+        "hash": "b1e0893079bc69f9"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-three-levels-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要按条数给每一袋小鱼干**分档报信**喵。\n\n**外面给的数分两段**：第一行是一个数（要清点的袋数），后面**每一行一个数**（一袋的条数）。\n\n请你写个程序：**一袋一袋地看**，每看一袋就**记一条日志**：\n\n- 条数**少于 3** 的 → 级别用 `ERROR`，话是「第 i 袋告急：X 条」\n- 条数**3 到 6**（两头都算）的 → 级别用 `WARNING`，话是「第 i 袋偏少：X 条」\n- 条数**7 及以上**的 → 级别用 `INFO`，话是「第 i 袋充足：X 条」\n\n（i 从 1 数起；X 就是那一袋的条数。）\n\n最后再用**正文**印一行：`一共 n 袋`（n 就是外面给的那个袋数）。\n\n⚠️ 三件事本喵说死：\n\n① 日志那几行**必须出现在正文里**（躺在侧渠里的本喵不认）。级别和那句话中间是**一个英文冒号**；话里面「告急／偏少／充足」后面紧跟的是**一个全角冒号**。\n② 每一条的**级别要对**：告急就是 `ERROR`，别全拿 `INFO` 糊过去。\n③ 最后那行**用平常那个印**，别拿日志替它。\n\n比如输入是\n\n3\n2\n2\n8\n\n就要输出\n\nERROR:第 1 袋告急：2 条\nERROR:第 2 袋告急：2 条\nINFO:第 3 袋充足：8 条\n一共 3 袋\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(input())\n\nfor i in range(筐数):\n    一条 = int(input())\n    if 一条 < 3:\n        logging.error(\"第 \" + str(i + 1) + \" 袋告急：\" + str(一条) + \" 条\")\n    elif 一条 < 7:\n        logging.warning(\"第 \" + str(i + 1) + \" 袋偏少：\" + str(一条) + \" 条\")\n    else:\n        logging.info(\"第 \" + str(i + 1) + \" 袋充足：\" + str(一条) + \" 条\")\n\nprint(\"一共 \" + str(筐数) + \" 袋\")\n",
+      "expectedOutput": "WARNING:第 1 袋偏少：5 条\nERROR:第 2 袋告急：1 条\nERROR:第 3 袋告急：2 条\n一共 3 袋",
+      "stdin": "3\n5\n1\n2\n",
+      "explanation": "这道题的重点是**「挑对级别」**喵 —— `logging` 最有用的地方就在这儿：一句话该报得多急，你可以在写的时候就说清楚。\n\n本喵这三档是照「有多少条」分的：\n\n- `ERROR` 那一档留给**告急**（少于 3 条）—— 这是要人马上管的事。\n- `WARNING` 那一档留给**偏少**（3 到 6 条）—— 不用马上管，但得有人知道。\n- `INFO` 那一档是**平常的报信**（7 条及以上）—— 就是「本喵只是说说」。\n\n⚠️ 级别选对了，好处是**以后能一句话调音量**：想安静点就把门槛抬到 `WARNING`，那堆 `INFO` 立刻闭嘴，而告急的一条不少；想看得细就把门槛放到 `DEBUG`。要是这几句全用 `print` 写的，你就只能**一条条删** —— 这就是本喵说「日志比 `print` 好用」的意思。\n\n还有两个容易翻车的地方：\n\n① **日志默认不走正文**（走侧渠），所以 `logging.basicConfig` 那一句得把 `stream` 指到正文上来，同时把样子设成「级别 + 英文冒号 + 话」—— 不设 `format` 的话中间会多插一个名字。\n② 门槛要**放 `INFO` 过得去**（`level=logging.INFO`），不然最矮的那一档会被拦掉 —— 本喵这次要三档齐全，门槛就不能抬太高。\n\n最后那行「一共」是**给用户看的正文**，用平常那个印就好 —— 它是程序的结果，不是记录。",
+      "templateId": "py-s3-log-three-levels",
+      "params": {
+        "n": 3,
+        "unit": "袋"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:39.672Z",
+        "hash": "c7b6e696004f473a"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-three-levels-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要按条数给每一筐小鱼干**分档报信**喵。\n\n**外面给的数分两段**：第一行是一个数（要清点的筐数），后面**每一行一个数**（一筐的条数）。\n\n请你写个程序：**一筐一筐地看**，每看一筐就**记一条日志**：\n\n- 条数**少于 3** 的 → 级别用 `ERROR`，话是「第 i 筐告急：X 条」\n- 条数**3 到 6**（两头都算）的 → 级别用 `WARNING`，话是「第 i 筐偏少：X 条」\n- 条数**7 及以上**的 → 级别用 `INFO`，话是「第 i 筐充足：X 条」\n\n（i 从 1 数起；X 就是那一筐的条数。）\n\n最后再用**正文**印一行：`一共 n 筐`（n 就是外面给的那个筐数）。\n\n⚠️ 三件事本喵说死：\n\n① 日志那几行**必须出现在正文里**（躺在侧渠里的本喵不认）。级别和那句话中间是**一个英文冒号**；话里面「告急／偏少／充足」后面紧跟的是**一个全角冒号**。\n② 每一条的**级别要对**：告急就是 `ERROR`，别全拿 `INFO` 糊过去。\n③ 最后那行**用平常那个印**，别拿日志替它。\n\n比如输入是\n\n4\n7\n5\n6\n7\n\n就要输出\n\nINFO:第 1 筐充足：7 条\nWARNING:第 2 筐偏少：5 条\nWARNING:第 3 筐偏少：6 条\nINFO:第 4 筐充足：7 条\n一共 4 筐\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(input())\n\nfor i in range(筐数):\n    一条 = int(input())\n    if 一条 < 3:\n        logging.error(\"第 \" + str(i + 1) + \" 筐告急：\" + str(一条) + \" 条\")\n    elif 一条 < 7:\n        logging.warning(\"第 \" + str(i + 1) + \" 筐偏少：\" + str(一条) + \" 条\")\n    else:\n        logging.info(\"第 \" + str(i + 1) + \" 筐充足：\" + str(一条) + \" 条\")\n\nprint(\"一共 \" + str(筐数) + \" 筐\")\n",
+      "expectedOutput": "INFO:第 1 筐充足：8 条\nWARNING:第 2 筐偏少：4 条\nWARNING:第 3 筐偏少：4 条\nERROR:第 4 筐告急：2 条\n一共 4 筐",
+      "stdin": "4\n8\n4\n4\n2\n",
+      "explanation": "这道题的重点是**「挑对级别」**喵 —— `logging` 最有用的地方就在这儿：一句话该报得多急，你可以在写的时候就说清楚。\n\n本喵这三档是照「有多少条」分的：\n\n- `ERROR` 那一档留给**告急**（少于 3 条）—— 这是要人马上管的事。\n- `WARNING` 那一档留给**偏少**（3 到 6 条）—— 不用马上管，但得有人知道。\n- `INFO` 那一档是**平常的报信**（7 条及以上）—— 就是「本喵只是说说」。\n\n⚠️ 级别选对了，好处是**以后能一句话调音量**：想安静点就把门槛抬到 `WARNING`，那堆 `INFO` 立刻闭嘴，而告急的一条不少；想看得细就把门槛放到 `DEBUG`。要是这几句全用 `print` 写的，你就只能**一条条删** —— 这就是本喵说「日志比 `print` 好用」的意思。\n\n还有两个容易翻车的地方：\n\n① **日志默认不走正文**（走侧渠），所以 `logging.basicConfig` 那一句得把 `stream` 指到正文上来，同时把样子设成「级别 + 英文冒号 + 话」—— 不设 `format` 的话中间会多插一个名字。\n② 门槛要**放 `INFO` 过得去**（`level=logging.INFO`），不然最矮的那一档会被拦掉 —— 本喵这次要三档齐全，门槛就不能抬太高。\n\n最后那行「一共」是**给用户看的正文**，用平常那个印就好 —— 它是程序的结果，不是记录。",
+      "templateId": "py-s3-log-three-levels",
+      "params": {
+        "n": 4,
+        "unit": "筐"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:40.052Z",
+        "hash": "32022a2177c9df36"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-three-levels-005",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要按条数给每一袋小鱼干**分档报信**喵。\n\n**外面给的数分两段**：第一行是一个数（要清点的袋数），后面**每一行一个数**（一袋的条数）。\n\n请你写个程序：**一袋一袋地看**，每看一袋就**记一条日志**：\n\n- 条数**少于 3** 的 → 级别用 `ERROR`，话是「第 i 袋告急：X 条」\n- 条数**3 到 6**（两头都算）的 → 级别用 `WARNING`，话是「第 i 袋偏少：X 条」\n- 条数**7 及以上**的 → 级别用 `INFO`，话是「第 i 袋充足：X 条」\n\n（i 从 1 数起；X 就是那一袋的条数。）\n\n最后再用**正文**印一行：`一共 n 袋`（n 就是外面给的那个袋数）。\n\n⚠️ 三件事本喵说死：\n\n① 日志那几行**必须出现在正文里**（躺在侧渠里的本喵不认）。级别和那句话中间是**一个英文冒号**；话里面「告急／偏少／充足」后面紧跟的是**一个全角冒号**。\n② 每一条的**级别要对**：告急就是 `ERROR`，别全拿 `INFO` 糊过去。\n③ 最后那行**用平常那个印**，别拿日志替它。\n\n比如输入是\n\n4\n3\n5\n6\n9\n\n就要输出\n\nWARNING:第 1 袋偏少：3 条\nWARNING:第 2 袋偏少：5 条\nWARNING:第 3 袋偏少：6 条\nINFO:第 4 袋充足：9 条\n一共 4 袋\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(input())\n\nfor i in range(筐数):\n    一条 = int(input())\n    if 一条 < 3:\n        logging.error(\"第 \" + str(i + 1) + \" 袋告急：\" + str(一条) + \" 条\")\n    elif 一条 < 7:\n        logging.warning(\"第 \" + str(i + 1) + \" 袋偏少：\" + str(一条) + \" 条\")\n    else:\n        logging.info(\"第 \" + str(i + 1) + \" 袋充足：\" + str(一条) + \" 条\")\n\nprint(\"一共 \" + str(筐数) + \" 袋\")\n",
+      "expectedOutput": "INFO:第 1 袋充足：9 条\nWARNING:第 2 袋偏少：3 条\nWARNING:第 3 袋偏少：5 条\nINFO:第 4 袋充足：7 条\n一共 4 袋",
+      "stdin": "4\n9\n3\n5\n7\n",
+      "explanation": "这道题的重点是**「挑对级别」**喵 —— `logging` 最有用的地方就在这儿：一句话该报得多急，你可以在写的时候就说清楚。\n\n本喵这三档是照「有多少条」分的：\n\n- `ERROR` 那一档留给**告急**（少于 3 条）—— 这是要人马上管的事。\n- `WARNING` 那一档留给**偏少**（3 到 6 条）—— 不用马上管，但得有人知道。\n- `INFO` 那一档是**平常的报信**（7 条及以上）—— 就是「本喵只是说说」。\n\n⚠️ 级别选对了，好处是**以后能一句话调音量**：想安静点就把门槛抬到 `WARNING`，那堆 `INFO` 立刻闭嘴，而告急的一条不少；想看得细就把门槛放到 `DEBUG`。要是这几句全用 `print` 写的，你就只能**一条条删** —— 这就是本喵说「日志比 `print` 好用」的意思。\n\n还有两个容易翻车的地方：\n\n① **日志默认不走正文**（走侧渠），所以 `logging.basicConfig` 那一句得把 `stream` 指到正文上来，同时把样子设成「级别 + 英文冒号 + 话」—— 不设 `format` 的话中间会多插一个名字。\n② 门槛要**放 `INFO` 过得去**（`level=logging.INFO`），不然最矮的那一档会被拦掉 —— 本喵这次要三档齐全，门槛就不能抬太高。\n\n最后那行「一共」是**给用户看的正文**，用平常那个印就好 —— 它是程序的结果，不是记录。",
+      "templateId": "py-s3-log-three-levels",
+      "params": {
+        "n": 4,
+        "unit": "袋"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:40.429Z",
+        "hash": "658b4c081545b7c9"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-three-levels-006",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要按条数给每一筐小鱼干**分档报信**喵。\n\n**外面给的数分两段**：第一行是一个数（要清点的筐数），后面**每一行一个数**（一筐的条数）。\n\n请你写个程序：**一筐一筐地看**，每看一筐就**记一条日志**：\n\n- 条数**少于 3** 的 → 级别用 `ERROR`，话是「第 i 筐告急：X 条」\n- 条数**3 到 6**（两头都算）的 → 级别用 `WARNING`，话是「第 i 筐偏少：X 条」\n- 条数**7 及以上**的 → 级别用 `INFO`，话是「第 i 筐充足：X 条」\n\n（i 从 1 数起；X 就是那一筐的条数。）\n\n最后再用**正文**印一行：`一共 n 筐`（n 就是外面给的那个筐数）。\n\n⚠️ 三件事本喵说死：\n\n① 日志那几行**必须出现在正文里**（躺在侧渠里的本喵不认）。级别和那句话中间是**一个英文冒号**；话里面「告急／偏少／充足」后面紧跟的是**一个全角冒号**。\n② 每一条的**级别要对**：告急就是 `ERROR`，别全拿 `INFO` 糊过去。\n③ 最后那行**用平常那个印**，别拿日志替它。\n\n比如输入是\n\n5\n7\n9\n8\n4\n5\n\n就要输出\n\nINFO:第 1 筐充足：7 条\nINFO:第 2 筐充足：9 条\nINFO:第 3 筐充足：8 条\nWARNING:第 4 筐偏少：4 条\nWARNING:第 5 筐偏少：5 条\n一共 5 筐\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(input())\n\nfor i in range(筐数):\n    一条 = int(input())\n    if 一条 < 3:\n        logging.error(\"第 \" + str(i + 1) + \" 筐告急：\" + str(一条) + \" 条\")\n    elif 一条 < 7:\n        logging.warning(\"第 \" + str(i + 1) + \" 筐偏少：\" + str(一条) + \" 条\")\n    else:\n        logging.info(\"第 \" + str(i + 1) + \" 筐充足：\" + str(一条) + \" 条\")\n\nprint(\"一共 \" + str(筐数) + \" 筐\")\n",
+      "expectedOutput": "WARNING:第 1 筐偏少：4 条\nERROR:第 2 筐告急：2 条\nERROR:第 3 筐告急：1 条\nWARNING:第 4 筐偏少：5 条\nINFO:第 5 筐充足：8 条\n一共 5 筐",
+      "stdin": "5\n4\n2\n1\n5\n8\n",
+      "explanation": "这道题的重点是**「挑对级别」**喵 —— `logging` 最有用的地方就在这儿：一句话该报得多急，你可以在写的时候就说清楚。\n\n本喵这三档是照「有多少条」分的：\n\n- `ERROR` 那一档留给**告急**（少于 3 条）—— 这是要人马上管的事。\n- `WARNING` 那一档留给**偏少**（3 到 6 条）—— 不用马上管，但得有人知道。\n- `INFO` 那一档是**平常的报信**（7 条及以上）—— 就是「本喵只是说说」。\n\n⚠️ 级别选对了，好处是**以后能一句话调音量**：想安静点就把门槛抬到 `WARNING`，那堆 `INFO` 立刻闭嘴，而告急的一条不少；想看得细就把门槛放到 `DEBUG`。要是这几句全用 `print` 写的，你就只能**一条条删** —— 这就是本喵说「日志比 `print` 好用」的意思。\n\n还有两个容易翻车的地方：\n\n① **日志默认不走正文**（走侧渠），所以 `logging.basicConfig` 那一句得把 `stream` 指到正文上来，同时把样子设成「级别 + 英文冒号 + 话」—— 不设 `format` 的话中间会多插一个名字。\n② 门槛要**放 `INFO` 过得去**（`level=logging.INFO`），不然最矮的那一档会被拦掉 —— 本喵这次要三档齐全，门槛就不能抬太高。\n\n最后那行「一共」是**给用户看的正文**，用平常那个印就好 —— 它是程序的结果，不是记录。",
+      "templateId": "py-s3-log-three-levels",
+      "params": {
+        "n": 5,
+        "unit": "筐"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:40.799Z",
+        "hash": "0f8dd10f594813f2"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-three-levels-008",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要按条数给每一袋小鱼干**分档报信**喵。\n\n**外面给的数分两段**：第一行是一个数（要清点的袋数），后面**每一行一个数**（一袋的条数）。\n\n请你写个程序：**一袋一袋地看**，每看一袋就**记一条日志**：\n\n- 条数**少于 3** 的 → 级别用 `ERROR`，话是「第 i 袋告急：X 条」\n- 条数**3 到 6**（两头都算）的 → 级别用 `WARNING`，话是「第 i 袋偏少：X 条」\n- 条数**7 及以上**的 → 级别用 `INFO`，话是「第 i 袋充足：X 条」\n\n（i 从 1 数起；X 就是那一袋的条数。）\n\n最后再用**正文**印一行：`一共 n 袋`（n 就是外面给的那个袋数）。\n\n⚠️ 三件事本喵说死：\n\n① 日志那几行**必须出现在正文里**（躺在侧渠里的本喵不认）。级别和那句话中间是**一个英文冒号**；话里面「告急／偏少／充足」后面紧跟的是**一个全角冒号**。\n② 每一条的**级别要对**：告急就是 `ERROR`，别全拿 `INFO` 糊过去。\n③ 最后那行**用平常那个印**，别拿日志替它。\n\n比如输入是\n\n5\n3\n6\n1\n7\n4\n\n就要输出\n\nWARNING:第 1 袋偏少：3 条\nWARNING:第 2 袋偏少：6 条\nERROR:第 3 袋告急：1 条\nINFO:第 4 袋充足：7 条\nWARNING:第 5 袋偏少：4 条\n一共 5 袋\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(input())\n\nfor i in range(筐数):\n    一条 = int(input())\n    if 一条 < 3:\n        logging.error(\"第 \" + str(i + 1) + \" 袋告急：\" + str(一条) + \" 条\")\n    elif 一条 < 7:\n        logging.warning(\"第 \" + str(i + 1) + \" 袋偏少：\" + str(一条) + \" 条\")\n    else:\n        logging.info(\"第 \" + str(i + 1) + \" 袋充足：\" + str(一条) + \" 条\")\n\nprint(\"一共 \" + str(筐数) + \" 袋\")\n",
+      "expectedOutput": "INFO:第 1 袋充足：7 条\nWARNING:第 2 袋偏少：4 条\nINFO:第 3 袋充足：9 条\nWARNING:第 4 袋偏少：4 条\nWARNING:第 5 袋偏少：6 条\n一共 5 袋",
+      "stdin": "5\n7\n4\n9\n4\n6\n",
+      "explanation": "这道题的重点是**「挑对级别」**喵 —— `logging` 最有用的地方就在这儿：一句话该报得多急，你可以在写的时候就说清楚。\n\n本喵这三档是照「有多少条」分的：\n\n- `ERROR` 那一档留给**告急**（少于 3 条）—— 这是要人马上管的事。\n- `WARNING` 那一档留给**偏少**（3 到 6 条）—— 不用马上管，但得有人知道。\n- `INFO` 那一档是**平常的报信**（7 条及以上）—— 就是「本喵只是说说」。\n\n⚠️ 级别选对了，好处是**以后能一句话调音量**：想安静点就把门槛抬到 `WARNING`，那堆 `INFO` 立刻闭嘴，而告急的一条不少；想看得细就把门槛放到 `DEBUG`。要是这几句全用 `print` 写的，你就只能**一条条删** —— 这就是本喵说「日志比 `print` 好用」的意思。\n\n还有两个容易翻车的地方：\n\n① **日志默认不走正文**（走侧渠），所以 `logging.basicConfig` 那一句得把 `stream` 指到正文上来，同时把样子设成「级别 + 英文冒号 + 话」—— 不设 `format` 的话中间会多插一个名字。\n② 门槛要**放 `INFO` 过得去**（`level=logging.INFO`），不然最矮的那一档会被拦掉 —— 本喵这次要三档齐全，门槛就不能抬太高。\n\n最后那行「一共」是**给用户看的正文**，用平常那个印就好 —— 它是程序的结果，不是记录。",
+      "templateId": "py-s3-log-three-levels",
+      "params": {
+        "n": 5,
+        "unit": "袋"
+      },
+      "verified": {
+        "at": "2026-09-16T03:39:39.941Z",
+        "hash": "7abcde291f63467d"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-with-sign-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的**小本子**上记的东西，这回要印到正文里来，而且本喵想一眼认出「这条是谁记的」喵。\n\n**外面给的是一个数**（一行一个，就是本喵这木桶里还剩多少条小鱼干）。\n\n请你写个程序，印出**两行**：\n\n① 第一行是**本子上的那段记录**：用 `WARNING` 级别记一句「木桶里只剩 X 条了」（X 就是外面给的那个数）。\n② 第二行是**给本喵看的结果**：用平常那个印，写「木桶里还剩 X 条」。\n\n⚠️ 本喵对第一行的长相有讲究：它分成**三段** —— **级别**、**本子的署名**、**那句话**，两处都用**一个英文冒号**隔开，一个多余的字符都不许有。\n\n本喵从没给这个本子起过名字，用它**自带的那份署名**就行。\n\n比如输入是\n\n2\n\n就要输出\n\nWARNING:root:木桶里只剩 2 条了\n木桶里还剩 2 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout)\n\n条数 = int(sys.stdin.readline())\n\nlogging.warning(\"木桶里只剩 \" + str(条数) + \" 条了\")\nprint(\"木桶里还剩 \" + str(条数) + \" 条\")\n",
+      "expectedOutput": "WARNING:root:木桶里只剩 3 条了\n木桶里还剩 3 条",
+      "stdin": "3\n",
+      "explanation": "这道题的坑**不在算错，也不在走错道**，在**本子自带的长相**喵。\n\n先说说长相是谁定的：**你给的那张版式图纸**（`format=`）。写了图纸，本子就照图纸一笔一划地写；**不写图纸，本子就按自带的那套样子写**。\n\n自带的样子是**三段**：`级别`、`本子的署名`、`那句话`，中间各夹**一个英文冒号** —— 也就是 `WARNING:root:...` 这个形状。中间那段是**署名**：本喵从没给这个本子起过名字，它就用自带的那一份，书上给它起的原文是 `root`。\n\n所以这道题只要两样：\n\n① `logging.basicConfig(stream=sys.stdout)` —— 把本子**挪到正文那条渠**。不写它，日志就留在侧渠里，正文里一个字都不会有。⚠️ 本喵这次**故意不写 `format=`** —— 一写图纸，署名那一段就要由图纸说了算；你想留住它，图纸里就得自己把署名那一段写进去。\n\n② `logging.warning(...)` —— `WARNING` 这一档在**默认门槛**之上（不写 `level=` 的时候，门槛就设在 `WARNING`），所以这一句正好过得去。\n\n⚠️ 想改长相就把图纸写出来，这写法后面每次都要用：`format=\"%(levelname)s:%(message)s\"` 只剩两段（署名被丢掉了）；而 `format=\"%(levelname)s:%(name)s:%(message)s\"` 和自带的那份长得一模一样 —— 里面那个 `%(name)s` 就是「把署名填这儿」。\n\n顺带记一笔：这两行**分工不同**。第一行是本子的**记录**，第二行是**给用户的结果**（用平常那个印）。日志比 `print` 强的地方就在这儿：记录可以一直开着，而结果那一行**永远只有一条**，不会混进一堆碎碎念里。",
+      "templateId": "py-s3-log-with-sign",
+      "params": {
+        "unit": "木桶"
+      },
+      "verified": {
+        "at": "2026-09-16T03:41:00.864Z",
+        "hash": "995169439e6e5b8c"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-with-sign-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的**小本子**上记的东西，这回要印到正文里来，而且本喵想一眼认出「这条是谁记的」喵。\n\n**外面给的是一个数**（一行一个，就是本喵这篮子里还剩多少条小鱼干）。\n\n请你写个程序，印出**两行**：\n\n① 第一行是**本子上的那段记录**：用 `WARNING` 级别记一句「篮子里只剩 X 条了」（X 就是外面给的那个数）。\n② 第二行是**给本喵看的结果**：用平常那个印，写「篮子里还剩 X 条」。\n\n⚠️ 本喵对第一行的长相有讲究：它分成**三段** —— **级别**、**本子的署名**、**那句话**，两处都用**一个英文冒号**隔开，一个多余的字符都不许有。\n\n本喵从没给这个本子起过名字，用它**自带的那份署名**就行。\n\n比如输入是\n\n5\n\n就要输出\n\nWARNING:root:篮子里只剩 5 条了\n篮子里还剩 5 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout)\n\n条数 = int(sys.stdin.readline())\n\nlogging.warning(\"篮子里只剩 \" + str(条数) + \" 条了\")\nprint(\"篮子里还剩 \" + str(条数) + \" 条\")\n",
+      "expectedOutput": "WARNING:root:篮子里只剩 8 条了\n篮子里还剩 8 条",
+      "stdin": "8\n",
+      "explanation": "这道题的坑**不在算错，也不在走错道**，在**本子自带的长相**喵。\n\n先说说长相是谁定的：**你给的那张版式图纸**（`format=`）。写了图纸，本子就照图纸一笔一划地写；**不写图纸，本子就按自带的那套样子写**。\n\n自带的样子是**三段**：`级别`、`本子的署名`、`那句话`，中间各夹**一个英文冒号** —— 也就是 `WARNING:root:...` 这个形状。中间那段是**署名**：本喵从没给这个本子起过名字，它就用自带的那一份，书上给它起的原文是 `root`。\n\n所以这道题只要两样：\n\n① `logging.basicConfig(stream=sys.stdout)` —— 把本子**挪到正文那条渠**。不写它，日志就留在侧渠里，正文里一个字都不会有。⚠️ 本喵这次**故意不写 `format=`** —— 一写图纸，署名那一段就要由图纸说了算；你想留住它，图纸里就得自己把署名那一段写进去。\n\n② `logging.warning(...)` —— `WARNING` 这一档在**默认门槛**之上（不写 `level=` 的时候，门槛就设在 `WARNING`），所以这一句正好过得去。\n\n⚠️ 想改长相就把图纸写出来，这写法后面每次都要用：`format=\"%(levelname)s:%(message)s\"` 只剩两段（署名被丢掉了）；而 `format=\"%(levelname)s:%(name)s:%(message)s\"` 和自带的那份长得一模一样 —— 里面那个 `%(name)s` 就是「把署名填这儿」。\n\n顺带记一笔：这两行**分工不同**。第一行是本子的**记录**，第二行是**给用户的结果**（用平常那个印）。日志比 `print` 强的地方就在这儿：记录可以一直开着，而结果那一行**永远只有一条**，不会混进一堆碎碎念里。",
+      "templateId": "py-s3-log-with-sign",
+      "params": {
+        "unit": "篮子"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:41.165Z",
+        "hash": "353bf01ef225c1c8"
+      }
+    },
+    {
+      "id": "bank-py-s3-log-with-sign-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的**小本子**上记的东西，这回要印到正文里来，而且本喵想一眼认出「这条是谁记的」喵。\n\n**外面给的是一个数**（一行一个，就是本喵这罐头盒里还剩多少条小鱼干）。\n\n请你写个程序，印出**两行**：\n\n① 第一行是**本子上的那段记录**：用 `WARNING` 级别记一句「罐头盒里只剩 X 条了」（X 就是外面给的那个数）。\n② 第二行是**给本喵看的结果**：用平常那个印，写「罐头盒里还剩 X 条」。\n\n⚠️ 本喵对第一行的长相有讲究：它分成**三段** —— **级别**、**本子的署名**、**那句话**，两处都用**一个英文冒号**隔开，一个多余的字符都不许有。\n\n本喵从没给这个本子起过名字，用它**自带的那份署名**就行。\n\n比如输入是\n\n9\n\n就要输出\n\nWARNING:root:罐头盒里只剩 9 条了\n罐头盒里还剩 9 条\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout)\n\n条数 = int(sys.stdin.readline())\n\nlogging.warning(\"罐头盒里只剩 \" + str(条数) + \" 条了\")\nprint(\"罐头盒里还剩 \" + str(条数) + \" 条\")\n",
+      "expectedOutput": "WARNING:root:罐头盒里只剩 6 条了\n罐头盒里还剩 6 条",
+      "stdin": "6\n",
+      "explanation": "这道题的坑**不在算错，也不在走错道**，在**本子自带的长相**喵。\n\n先说说长相是谁定的：**你给的那张版式图纸**（`format=`）。写了图纸，本子就照图纸一笔一划地写；**不写图纸，本子就按自带的那套样子写**。\n\n自带的样子是**三段**：`级别`、`本子的署名`、`那句话`，中间各夹**一个英文冒号** —— 也就是 `WARNING:root:...` 这个形状。中间那段是**署名**：本喵从没给这个本子起过名字，它就用自带的那一份，书上给它起的原文是 `root`。\n\n所以这道题只要两样：\n\n① `logging.basicConfig(stream=sys.stdout)` —— 把本子**挪到正文那条渠**。不写它，日志就留在侧渠里，正文里一个字都不会有。⚠️ 本喵这次**故意不写 `format=`** —— 一写图纸，署名那一段就要由图纸说了算；你想留住它，图纸里就得自己把署名那一段写进去。\n\n② `logging.warning(...)` —— `WARNING` 这一档在**默认门槛**之上（不写 `level=` 的时候，门槛就设在 `WARNING`），所以这一句正好过得去。\n\n⚠️ 想改长相就把图纸写出来，这写法后面每次都要用：`format=\"%(levelname)s:%(message)s\"` 只剩两段（署名被丢掉了）；而 `format=\"%(levelname)s:%(name)s:%(message)s\"` 和自带的那份长得一模一样 —— 里面那个 `%(name)s` 就是「把署名填这儿」。\n\n顺带记一笔：这两行**分工不同**。第一行是本子的**记录**，第二行是**给用户的结果**（用平常那个印）。日志比 `print` 强的地方就在这儿：记录可以一直开着，而结果那一行**永远只有一条**，不会混进一堆碎碎念里。",
+      "templateId": "py-s3-log-with-sign",
+      "params": {
+        "unit": "罐头盒"
+      },
+      "verified": {
+        "at": "2026-09-16T03:41:01.120Z",
+        "hash": "6bbd7869a53db4f6"
+      }
+    }
+  ]
+}

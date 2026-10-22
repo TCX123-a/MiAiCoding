@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-ptr-row-no-null-guard",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-18",
+  "type": "codefix",
+  "concept": ["空牌子是把「不能走」写在牌面上", "照着一排走之前先看一眼牌面", "空牌子那一格整格跳过"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["阿花", "小橘"] },
+    "b": { "kind": "pick", "values": ["大肥鱼", "煤球"] }
+  },
+  "stemTemplate": "本喵这排三张牌子里，中间那一格插的是**空牌子**（牌面上写着「哪儿都不指」）。本喵没细看就照着走了一圈，中间那行印出来的东西明显不对喵 —— 本喵这台机器上它印的是 `(null)`，换一台机器同样这一句也可能当场断气。\n\n请你给这一圈**加一道先看一眼的关卡**：碰上空牌子就整格跳过、什么都不印；有东西的两格照原样印出来。改好之后屏幕上只剩两行 —— {a} 和 {b}。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"{a}\", NULL, \"{b}\"};\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"{a}\", NULL, \"{b}\"};\n\n    for (int i = 0; i < 3; i++) {\n        if (row[i] == NULL) {\n            continue;\n        }\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+  "explanationTemplate": "照着空牌子走过去会怎么样，本喵真跑过：这台机器上它把 `(null)` 几个字印了出来，看着还挺温柔。可那几个字母**不是这门语言保证的**，是这套运行环境顺手帮的忙 —— 换一套环境，同一句就可能当场断气。\n\n所以这事不能靠运气，得靠**关卡**：走一格之前先看一眼牌面（`row[i] == NULL`），是空的就整格跳过去（`continue`），压根不碰它指的地方。\n\n改完前后的行数也不一样喵：原来印三行（中间那行是 `(null)`，或者干脆断气），改完只剩**两行** —— 第 `0` 格和第 `2` 格。"
+}

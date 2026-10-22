@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-join-before-start",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-03",
+  "type": "codefix",
+  "concept": ["threading.Thread", "start 与 join 的顺序", "join 之前必须先把猫叫起来"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": [3, 7] },
+    "n2": { "kind": "pick", "values": [4, 8] },
+    "n3": { "kind": "pick", "values": [5, 6] }
+  },
+  "stemTemplate": "本喵请了三只小猫帮忙：每只小猫管一只碗，把自己那只碗里的数**翻个倍**，写进结果柜里**属于自己**的那一格。最后本喵再一格一格念出来。\n\n可是这段代码一按运行就**摔了** —— 翻译官喵在屏幕上吐了一串红字，柜子里的东西**一个字都没印出来**。你帮本喵看看问题出在哪，把它改好。\n\n改好之后，程序应该把三只碗翻倍后的数**各印一行**：先印第一只碗的、再印第二只碗的、最后第三只碗的。",
+  "brokenCodeTemplate": "import threading\n\n碗 = [{n1}, {n2}, {n3}]\n结果 = [0, 0, 0]\n\n\ndef 翻倍(序号, 数):\n    结果[序号] = 数 * 2\n\n\n猫们 = []\nfor i in range(3):\n    一只猫 = threading.Thread(target=翻倍, args=(i, 碗[i]))\n    猫们.append(一只猫)\n\nfor 一只猫 in 猫们:\n    一只猫.join()\n\nfor 一只猫 in 猫们:\n    一只猫.start()\n\nfor 一个数 in 结果:\n    print(一个数)\n",
+  "referenceFixTemplate": "import threading\n\n碗 = [{n1}, {n2}, {n3}]\n结果 = [0, 0, 0]\n\n\ndef 翻倍(序号, 数):\n    结果[序号] = 数 * 2\n\n\n猫们 = []\nfor i in range(3):\n    一只猫 = threading.Thread(target=翻倍, args=(i, 碗[i]))\n    猫们.append(一只猫)\n\nfor 一只猫 in 猫们:\n    一只猫.start()\n\nfor 一只猫 in 猫们:\n    一只猫.join()\n\nfor 一个数 in 结果:\n    print(一个数)\n",
+  "explanationTemplate": "`start()` 的意思是「**去干活吧**」，`join()` 的意思是「**本喵等你干完**」—— 这两句话的顺序反不得喵。\n\n一只还没被叫去干活的小猫，本喵上来就要等它干完，它自己都愣住了：它压根还没开始呢。`join()` 只好当场翻脸，摔给本喵看（`RuntimeError: cannot join thread before it is started`），整个程序就在第一句 `join()` 那里停住了 —— 所以柜子里一个字都没印出来。\n\n改法就是这两段对调一下：**先把三只小猫全都放出去**（一个圈里全 `start()`），**再回头一只一只等**（另一个圈里全 `join()`）。\n\n⚠️ 为什么推荐「先全放出去、再全等」而不是「放一只等一只」（`start()` 完立刻 `join()`，也跑得对）？因为后者其实**没有一起干活** —— 每只小猫都是等前一只干完了才被叫醒的，跟一只一只排队做没有区别。要让它们真的同时动手，就得先都放出去喵。"
+}

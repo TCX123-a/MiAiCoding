@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-06-parse-slash",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-06",
+  "type": "codefix",
+  "concept": ["parse 的默认规矩是定死的", "自己的花样要递念法清单", "跑起来才拦的错"],
+  "instances": 2,
+  "params": {
+    "m1": { "kind": "pick", "values": ["03", "09"] },
+    "d1": { "kind": "pick", "values": ["07", "16"] }
+  },
+  "stemTemplate": "本喵手里有一串字：`2026/{m1}/{d1}`，想把它念成一张日期纸条。\n\n可它跑起来那一刻**当场翻脸**（`javac` 那一步不管这种错），纸条一张也没撕出来。\n\n你帮本喵看看：这串字自己是没问题的，差的是本喵没递**另一样东西** —— 把它补上。\n\n改好之后该印出 `2026-{m1}-{d1}`（纸条自己的正规模样是短横的）。\n\n（这一题**不用投喂任何东西**，那串字就写在程序里。）",
+  "brokenCodeTemplate": "import java.time.LocalDate;\n\npublic class Main {\n    public static void main(String[] args) {\n        LocalDate d = LocalDate.parse(\"2026/{m1}/{d1}\");\n        System.out.println(d);\n    }\n}\n",
+  "referenceFixTemplate": "import java.time.LocalDate;\nimport java.time.format.DateTimeFormatter;\n\npublic class Main {\n    public static void main(String[] args) {\n        DateTimeFormatter fmt = DateTimeFormatter.ofPattern(\"yyyy/MM/dd\");\n\n        LocalDate d = LocalDate.parse(\"2026/{m1}/{d1}\", fmt);\n        System.out.println(d);\n    }\n}\n",
+  "explanationTemplate": "**一、不带任何东西的 `parse`，只认一种形状：** 四位年、一个短横、两位月、一个短横、两位日（`2026-09-16`）。本喵递进去的那串字用的是**斜杠**，它读不通，读不通就当场翻脸：\n\n```text\nException in thread \"main\" java.time.format.DateTimeParseException: Text '2026/{m1}/{d1}' could not be parsed at index 4\n```\n\n原话里那个 `index 4` 就是**从第 0 位起数、第一个不对的位置** —— 正是本喵写成斜杠的那一格，它在那儿等着短横。\n\n**二、这串字本身没问题，差的是「念法清单」。** 想让它念自己的花样，就得**同时把花样也递过去**：`DateTimeFormatter.ofPattern(\"yyyy/MM/dd\")`，然后用两个格子那一版 `parse(字, 清单)`。\n\n**三、清单里写的是「哪一位念成什么」**：`yyyy` 四位年、`MM` 两位月、`dd` 两位日，中间的斜杠是**原样**隔开用的 —— 递进去什么花样，清单就得照着那个花样写，一个符号对不上照样翻脸。\n\n**四、为什么这个错值得记。** 翻译官喵只管语法，`parse(\"2026/{m1}/{d1}\")` 语法上挑不出毛病；真要拦的是**跑起来那一刻**。看见 `DateTimeParseException` 就知道：不是程序写坏了，是**递进去的那串字跟它的规矩对不上**。"
+}

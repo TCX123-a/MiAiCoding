@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-getline-needs-ignore",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-04",
+  "type": "codefix",
+  "concept": ["cin.ignore", "混用的坑", "不报错的错"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 3, "max": 4 },
+    "name": { "kind": "pick", "values": ["大肥鱼 二号", "小橘 喵", "三花 小喵"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{fish}\n{name}\n", "sampleText": "9\n三花 小喵\n" },
+  "stemTemplate": "本喵给点单机装上了耳朵，投喂口里会递进来两行：第一行是今天攒的条数，第二行是猫的名字（名字里可能带空格）。\n\n可它叼回来的名字**是空的**——屏幕上「名字是」后面什么都没有，条数倒是叼对了。它一个错都不报，安安静静就跑完了。\n\n你帮本喵改好：让第二行原样叼进那间屋。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    int fish;\n    string name;\n    cin >> fish;\n    getline(cin, name);\n    cout << \"小鱼干 \" << fish << \" 条\" << endl;\n    cout << \"名字是 \" << name << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    int fish;\n    string name;\n    cin >> fish;\n    cin.ignore();\n    getline(cin, name);\n    cout << \"小鱼干 \" << fish << \" 条\" << endl;\n    cout << \"名字是 \" << name << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这道题**一个错都不报**，可它就是叼错了——这样的坑最难受喵。\n\n事情要一步一步看：\n\n1. `cin >> fish` 只认「一样东西」，它读到第一行那个数后面的**换行**时就停下来了；\n2. 可它**没把那个换行拿走**——换行还留在管子里；\n3. `getline` 一开口，先叼到的东西正是那个换行。它确实叼到了「一整行」，只不过**这一行是空的**，所以那间屋里什么都没有。\n\n多出来的那一句 `cin.ignore();` 就是「**把管子里剩着的那一个字符丢掉**」——丢掉的正是那个捣乱的换行。丢完再开口，`getline` 叼到的才是真正的第二行。\n\n记住这条口令喵：**`cin >>` 和 `getline` 混着用的时候，中间垫一句 `cin.ignore();`**。一个只认「一样东西」、还把换行留在管子里，一个专吃「一整行」——它俩的分工要记清，别让换行钻了空子。"
+}

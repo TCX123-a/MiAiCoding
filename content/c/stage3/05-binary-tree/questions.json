@@ -1,0 +1,88 @@
+{
+  "lessonId": "c-stage3-05",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "一棵有规矩的猫爬架（小的往左、大的往右），用**中序**报数：先报左边、再报自己、最后报右边。报出来的顺序有什么特点喵？",
+      "options": [
+        "正好是从小到大排好的",
+        "正好是从大到小排好的",
+        "和挂上去的顺序一模一样",
+        "每次都不一样，是随机的"
+      ],
+      "answer": 0,
+      "explanation": "中序把「自己」夹在两只叉**中间**报，而挂东西的规矩又是小的在左、大的在右，两件事凑在一起，报出来自然就是从最小的开始排队喵。想验证自己画的架子对不对，看中序那一行就够了；报出来的不是从小到大，一定是哪一层的左右挂反了。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "**前序**报数是「先自己、再左边、最后右边」。对着架子这么报一遍，第一个报出来的会是谁喵？",
+      "options": [
+        "最上面那层（根）那个数",
+        "最左边那个数",
+        "最小的那个数",
+        "最右边那个数"
+      ],
+      "answer": 0,
+      "explanation": "前序的「前」说的就是**自己排最前**喵：从最上面那层出发，先把自己这一层报掉，再钻左边的叉。所以第一个报出来的永远是根上那个数 —— 它不是最小的（最小的大概要等到中序才排在头一个），只是住得最高而已。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "招式里又喊自己一遍的时候，**哪一句**能让它及时收手、不至于一直喊下去喵？",
+      "options": [
+        "摸到空叉就立刻收手：`if (root == NULL)` 里返回",
+        "把牌子设成空之后继续往下喊",
+        "喊到第 100 遍再停",
+        "不用管，机器自己会停"
+      ],
+      "answer": 0,
+      "explanation": "`root == NULL` 的意思就是「这一叉上什么都没挂」，摸到这儿必须立刻返回，招式才会一层层收回来喵。少了这一句，它会没完没了地喊自己，把机器的耐心耗光（退出码会是一个很难看的数字）。「喊到第 100 遍再停」也是错的：C 里没有任何东西会替你数到 100 遍就喊停，收手只能自己写喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->____ = insert(root->____, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nint main(void) {\n    Node *root = NULL;\n    root = insert(root, 5);\n    root = insert(root, 3);\n    printf(\"左边挂着 %d\\n\", root->left->value);\n    free(root->left);\n    free(root);\n    return 0;\n}",
+      "stem": "这一招的规矩是「小的往左、大的往右」：比这一层小的就交给左边的叉去安排。把两个空补完整 —— 补完之后它会印出「左边挂着 3」喵～",
+      "blanks": [
+        { "answer": "left" },
+        { "answer": "left" }
+      ],
+      "explanation": "比这一层小的就走左边的叉（`root->left`），左边本来就是空的就挂到左边去，两个空填的都是 `left` 喵。左边那叉接过任务后，又会照同样的办法再往下问一遍，一直到摸到空位为止 —— 3 比 5 小，就那么挂到了 5 的左边。要是把它写到右边去，报数时从小到大的顺序整个就乱了。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *node(int value, Node *left, Node *right) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    p->value = value;\n    p->left = left;\n    p->right = right;\n    return p;\n}\n\nvoid inorder(Node *root) {\n    if (root ____ NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d\\n\", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *n1 = node(1, NULL, NULL);\n    Node *n3 = node(3, NULL, NULL);\n    Node *root = node(2, n1, n3);\n    inorder(root);\n    free(n1);\n    free(n3);\n    free(root);\n    return 0;\n}",
+      "stem": "中序报数要一层层喊下去，最先得有一句「摸到空叉就收手」。把那个空补完整 —— 补完之后它会依次印出 1、2、3 喵～",
+      "blanks": [
+        { "answer": "==" }
+      ],
+      "explanation": "`root == NULL` 的意思就是「这一叉上什么都没挂」，摸到这儿就该收手，不然招式会一直往下喊、喊到把机器耐心耗光喵。收手这一句写对之后，中序才按「先左边、再自己、最后右边」的次序把数字念出来：左边那叉是 1，自己是 2，右边那叉是 3，所以依次印出 1、2、3。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d\\n\", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[4] = {4, 2, 6, 1};\n    for (int i = 0; i < 4; i++) {\n        root = insert(root, values[i]);\n    }\n    inorder(root);\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "1\n2\n4\n6",
+      "accept": ["1\n2\n4\n6\n"],
+      "explanation": "挂上去的顺序是 4、2、6、1 喵：4 在最上面，2 比 4 小挂左边，6 比 4 大挂右边，1 比 2 还小，又挂到 2 的左边。中序按「先左边、再自己、最后右边」报数，所以最左边的 1 先出来，接着是 2、4，最后才是右边的 6 —— 印出来是 1、2、4、6，正好从小到大。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid preorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    printf(\"%d \", root->value);\n    preorder(root->left);\n    preorder(root->right);\n}\n\nvoid postorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    postorder(root->left);\n    postorder(root->right);\n    printf(\"%d \", root->value);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[4] = {3, 1, 5, 2};\n    for (int i = 0; i < 4; i++) {\n        root = insert(root, values[i]);\n    }\n    printf(\"前序：\");\n    preorder(root);\n    printf(\"\\n后序：\");\n    postorder(root);\n    printf(\"\\n\");\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "前序：3 1 2 5\n后序：2 1 5 3",
+      "accept": ["前序：3 1 2 5\n后序：2 1 5 3\n"],
+      "explanation": "挂上去的顺序是 3、1、5、2 喵：3 在最上面，1 比 3 小挂左边，5 比 3 大挂右边，2 比 1 大、又比 3 小，于是挂在 1 的右边。前序「先自己、再左边、最后右边」，报出来是 3 1 2 5；后序「左右两只叉都报完才轮到自己」，先把左边的 1、2 报完，再报右边的 5，最后才报自己 3，所以是 2 1 5 3。"
+    }
+  ]
+}

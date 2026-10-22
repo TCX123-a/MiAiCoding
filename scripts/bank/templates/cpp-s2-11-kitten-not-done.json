@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-11-kitten-not-done",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-11",
+  "type": "codefix",
+  "concept": ["招牌上的活必须干完", "漏了一手就生不出来", "翻译官喵替本喵记着"],
+  "instances": 2,
+  "params": {
+    "catName": { "kind": "pick", "values": ["小橘", "大胖"] }
+  },
+  "stemTemplate": "本喵画了一张**抽象图纸** `Animal`，那一手 `speak` 只挂了招牌（`= 0`）、没写动作；小猫图纸 `Cat` 照着它画了下来。\n\n翻译官喵当场把本喵拦下了，说这一格要的是一只**真猫**，可本喵手上这张**生不出真猫**。\n\n你帮本喵把小猫那一手补上，让它能生、叫出 {catName} 自己那一版台词（`X：喵～`）。**别的都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Animal {\nprotected:\n    string name;\npublic:\n    Animal(string n) : name(n) {}\n    virtual void speak() const = 0;\n};\n\nclass Cat : public Animal {\npublic:\n    Cat(string n) : Animal(n) {}\n};\n\nint main() {\n    Cat c(\"{catName}\");\n    Animal& r = c;\n    r.speak();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Animal {\nprotected:\n    string name;\npublic:\n    Animal(string n) : name(n) {}\n    virtual void speak() const = 0;\n};\n\nclass Cat : public Animal {\npublic:\n    Cat(string n) : Animal(n) {}\n    void speak() const override {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nint main() {\n    Cat c(\"{catName}\");\n    Animal& r = c;\n    r.speak();\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`error: cannot declare variable 'c' to be of abstract type 'Cat'`\n\n念作：**「`c` 这一格要的是一只真猫，可 `Cat` 身上还挂着没干完的活，它生不出真身喵。」** 后面还跟一句 `note`，把本喵漏掉的那一手名字原样念出来 —— 那正是本喵该去看的地方。\n\n**为什么是 `Cat` 而不是 `Animal` 被点名？** 因为老图纸那一手挂着 `= 0`，是**一份约定**：说好会这一手的，都得真的会。小猫图纸照着画了下来，就等于答应了这份约定 —— 可它没把活干完，于是**它自己也成了生不出真身的那一张**。\n\n修法就是在小猫图纸里，把招牌上那一手**原样补上**：\n\n```text\nvoid speak() const override {\n    cout << name << \"：喵～\" << endl;\n}\n```\n\n三样要和老图纸那一手**一字不差**（名字、料、行尾的 `const`），末尾再挂上 `override` 当护身符 —— 名字打错的时候翻译官喵会当场拦住本喵。\n\n补完之后，本喵手上那张牌子上写的还是「会叫的动物」，可屋里住的是一只真猫，喊下去的那一刻会低头看一眼屋里住的是谁，所以印出来的是小猫自己那一版。\n\n⚠️ 这一条规矩请记牢：**只要老图纸上挂着 `= 0` 的那一手，照它画下来的就一手都不能漏。** 漏了的好处是**翻译官喵会替本喵记着** —— 它当场拦下，绝不放本喵带着半成品上街。"
+}

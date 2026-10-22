@@ -1,0 +1,23 @@
+{
+  "templateId": "py-s2-stdlib-os-path",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-06",
+  "type": "codewrite",
+  "concept": ["os.path.basename", "os.path.splitext", "路径"],
+  "instances": 6,
+  "params": {
+    "p": {
+      "kind": "pick",
+      "values": ["鱼塘/小鱼干.txt", "冰箱/猫粮.md"]
+    },
+    "q": {
+      "kind": "pick",
+      "values": ["阁楼/冻干.dat", "仓库/毛线球.py"]
+    }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{p}\n", "sampleText": "{q}\n" },
+  "stemTemplate": "本喵的柜子里存了太多路径，念一条就头晕，想练练怎么从一整条路径里只叼出文件名喵。\n\n请你写个程序：**读进来一整行**（一条路径），然后印两行：\n\n1. 这条路径里**最后那截文件名** —— 请 `os.path.basename` 出手\n2. 把上面那截文件名**切成名字和后缀两样**，原样印出来 —— 请 `os.path.splitext` 出手\n\n切出来的是**两样**，包在一对小括号里；直接印就是它本来的样子，别自己拼。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一条路径**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "import os\n\np = input()\nname = os.path.basename(p)\nprint(name)\nprint(os.path.splitext(name))\n",
+  "explanationTemplate": "- **`os.path.basename(...)`** 读作「**这一长串里，最后那截是什么**」：喂进去一整条路径，前面那些文件夹名它替你扔掉，只把文件名叼回来。\n- **`os.path.splitext(...)`** 读作「**把尾巴上的后缀切下来**」：它一次叼回来**两样**（前面是名字、后面是后缀），包在一对小括号里。所以直接印出来长这样：`('小鱼干', '.txt')`。\n\n⚠️ 这两招**只认那串字，不看地方**：路径里那些文件夹到底存不存在、硬盘上是不是真有这份档案，它们一概不管。想确认「这个地方到底有没有东西」，得请 `os.path.exists(...)` 出手。\n\n⚠️ 后缀是按**最后一个点**切的。名字里本来就带点的话 —— 比如 `笔记.tar.gz` —— 切出来的后缀是 `.gz`，前面那一整截都算名字。\n\n⚠️ `splitext` 只是**算给你看**，原来那串字它一个字都不动。想留结果就得自己接住（本喵这里接进了 `name`，再拿它去切）。"
+}

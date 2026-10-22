@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-10-dtor-no-virtual",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-10",
+  "type": "codefix",
+  "concept": ["拆屋子别只拆一半", "收尾招式漏挂招牌", "一个错都不报"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "本喵照小猫图纸生了一只 {name}，把它的门牌地址交给一张写着「猫」的牌子，然后顺着牌子把它拆掉。\n\n搭的时候印了两行（妈妈那一半、小猫那一半），拆的时候**只印了一行** —— 小猫那一半临走该印的那句话没了。程序照样跑完，翻译官喵一个字都没说。\n\n你帮本喵在**老图纸的收尾招式**上补一样东西，让拆的时候四行齐全。**别的都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {\n        cout << \"搭猫妈妈那一半：\" << name << endl;\n    }\n    ~Cat() {\n        cout << \"拆猫妈妈那一半：\" << name << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"搭小猫那一半：\" << name << endl;\n    }\n    ~Kitten() {\n        cout << \"拆小猫那一半：\" << name << endl;\n    }\n};\n\nint main() {\n    Cat* p = new Kitten(\"{name}\");\n    delete p;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {\n        cout << \"搭猫妈妈那一半：\" << name << endl;\n    }\n    virtual ~Cat() {\n        cout << \"拆猫妈妈那一半：\" << name << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"搭小猫那一半：\" << name << endl;\n    }\n    ~Kitten() {\n        cout << \"拆小猫那一半：\" << name << endl;\n    }\n};\n\nint main() {\n    Cat* p = new Kitten(\"{name}\");\n    delete p;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题也**一个报错都没有**。本喵在本机跑过没补的样子，屏幕上是三行：\n\n```text\n搭猫妈妈那一半：{name}\n搭小猫那一半：{name}\n拆猫妈妈那一半：{name}\n```\n\n**数一数：搭的时候是两半，拆的时候只剩一半。** 「拆小猫那一半」那一行**根本没出现** —— 小猫那一半里的东西就这么留在原地了。程序跑得完完整整，翻译官喵一个字都没说。\n\n原因和「名字定终身」那一题一模一样：本喵手上那张牌子上写的是「猫」，翻译官喵在翻译阶段就把「拆」指到老图纸那一半上去了，**压根没打算看一眼屋里住的是不是一只小猫**。\n\n解法是同一个：**给老图纸的收尾招式也挂上招牌** ——\n\n```text\nvirtual ~Cat()\n```\n\n挂上之后，「拆」的时候程序会先低头看一眼屋里住的是谁，从小猫那一半一直拆到妈妈那一半，四行就齐了。\n\n⚠️ 这一条规矩请连同上一课那句「**妈妈那一半的收尾动作一定要跑到**」一起记：\n\n> **只要老图纸上有一手挂了招牌，它的收尾招式就也该挂上招牌。**\n\n这一条在后面尤其要命：小猫那一半里很可能装着上一课刚学会的「现要现租的仓库」。收尾没跑到，那间屋就再也没人还了 —— 而且**这种错只能靠数输出行数发现**，本喵第一次就是这么栽的。"
+}

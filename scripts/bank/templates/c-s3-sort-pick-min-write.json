@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-sort-pick-min-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-06",
+  "type": "codewrite",
+  "concept": ["给小鱼干排排坐", "挑最短", "换到前面", "一轮挑一只"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 5, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "本喵这摊鱼干，想让「**挑最短**」那一招来收拾：**一轮挑一只最短的，换到最前面**，下一轮在剩下的里再挑。\n\n请你把 `pick_min` 这一招补完：\n\n1. 每一轮先假定「**还没排好的那一段**」开头那只最短（记住它的**位子**，不是它的数）；\n2. 把这一段里后面每只都跟它比一比，谁更短就换成记谁；\n3. 一轮结束时，把最短那只跟这一段**开头那只换个个儿**。\n\n输入先给一个数（一共几只），然后一行一只。样例输入：\n\n```text\n{sampleInput}\n```\n\n该印出来**一行**：`挑最短：` 后面跟着排好的鱼干（每只后面一个空格）：\n\n```text\n{sampleOutput}\n```",
+  "starterTemplate": "#include <stdio.h>\n\n/* 挑最短：一轮挑一只最短的换到最前面 */\nvoid pick_min(int a[], int n) {\n\n    /* ① 一轮一轮走：先假定这一段的开头那只最短 */\n    /* ② 把这一段里后面每只都跟它比一比，谁更短就记住谁的位子 */\n    /* ③ 一轮收尾：把最短那只和这一段开头那只换个个儿 */\n\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    pick_min(a, n);\n\n    printf(\"挑最短：\");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", a[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* 挑最短：一轮挑一只最短的换到最前面 */\nvoid pick_min(int a[], int n) {\n    for (int i = 0; i < n - 1; i++) {\n        int min_idx = i;\n        for (int j = i + 1; j < n; j++) {\n            if (a[j] < a[min_idx]) {\n                min_idx = j;\n            }\n        }\n        int t = a[i];\n        a[i] = a[min_idx];\n        a[min_idx] = t;\n    }\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    pick_min(a, n);\n\n    printf(\"挑最短：\");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", a[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "这一招的骨架是一条**两层的活儿**：外面挑「轮到哪一段了」，里面挑「这一段里最短的是谁」喵。\n\n```text\nfor (int i = 0; i < n - 1; i++) {\n    int min_idx = i;\n    for (int j = i + 1; j < n; j++) {\n        if (a[j] < a[min_idx]) {\n            min_idx = j;\n        }\n    }\n    int t = a[i];\n    a[i] = a[min_idx];\n    a[min_idx] = t;\n}\n```\n\n三处值得多念两遍：\n\n**① `min_idx` 记的是位子，不是数。** 记数的话，换的时候你就不知道该跟谁换了 —— 记住「第几只」，才有得换。\n\n**② `min_idx = i;` 里的那个 `i` 不能写成 `0`。** 每一轮挑的是**还没排好的那一段**（从第 `i` 只开始），写成 `0` 就变成每一轮都在整排里找最小 —— 已经排好的前几只又被卷进来，越排越乱。\n\n**③ 换的是 `a[i]` 和 `a[min_idx]`。** 把「这一段的开头」和「最短的那只」调个个儿；下一轮开头往后挪一格，再挑一次。外层走到 `n - 1` 就够了 —— 最后一只不用挑，它一定是剩下的里最大的那只喵。\n\n本喵给你留一句分头记：**一轮一只，挑最短的换到前面。**"
+}

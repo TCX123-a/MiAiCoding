@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-17-parens-cout-and",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-17",
+  "type": "codefix",
+  "concept": ["屏幕上那个箭头", "两副面孔撞车", "括号改读法"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "pick", "values": [1, 2, 3] }
+  },
+  "stemTemplate": "这张牌亮了最低 4 格（`00001111`），本喵想印出「第 {n} 格那一盏灯的值」—— 拿牌去和那一盏灯一「与」，屏幕上就该出现那一盏灯的值。\n\n可这段代码**根本编不过**，翻译官喵当场把本喵拦下了。\n\n你帮本喵改好：改完能过，而且印出来的数要正好是那一盏灯的值喵。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    const unsigned char LAMP = 1u << {n};\n    cout << card & LAMP << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    const unsigned char LAMP = 1u << {n};\n    cout << (card & LAMP) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一行编不过的根子，是**同一个记号的两副面孔撞在了一起**喵。\n\n`<<` 在这个语言里有两副面孔：一副是「整排往左挪格子」，另一副是「把东西印到屏幕上」。翻译官喵按**优先级**去读，而印东西那副绑得更紧 —— 于是它先把 `card` 塞进屏幕，塞完的那个东西已经不是本喵的牌了，再拿它去「与」一个数，没有这种招式，当场拦下。\n\n本喵要的是「**先算与、再把结果印出去**」。要改读法就得**加括号**：把「先算与」那一段整个括起来，让它先算完，再交给屏幕上那个箭头。\n\n⚠️ 这一题最该记住的是：**屏幕上那个箭头和挪格子那个箭头是同一个记号**。撞在一起的时候，括号是唯一能说清「先算哪一步」的办法 —— 翻译官喵读不懂你的心思，它只读优先级。\n\n⚠️ 顺带记一句：这一题是**少数会当场喊疼的错**，编不过，所以一定会被发现。真正难查的是那些默默算错、一声不吭的 —— 同一课里 `x & 1 == 0` 那一个就是。"
+}

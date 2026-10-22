@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-10-release-without-take",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-10",
+  "type": "codefix",
+  "concept": ["拿锁和还锁必须配对", "没拿的先还，机器当场拦住", "猫停在半路、账只记了一笔"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "c1": { "kind": "int", "min": 5, "max": 7 }
+  },
+  "stemTemplate": "本喵照课文第四节那个「自己拿、自己放」的写法，派了一只猫去记账。\n\n它半路就红着脸停下了 —— 猫那边印出来的是：\n\n```text\nException in thread \"Thread-0\" java.lang.IllegalMonitorStateException\n```\n\n（后面那几行是机器指给本喵看的位置，本喵掐了。）而本喵这边的账本只记到 `账本：1 条`：{n1}要记 {c1} 笔，一笔都不该落下。\n\n你帮本喵把它改对 —— 改好之后该印出 {c1} 笔那个总数。\n\n（这一题**不用投喂任何东西**。）",
+  "brokenCodeTemplate": "import java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"{n1}\", {c1});\n\n        一只.start();\n        一只.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            try {\n                账本 = 账本 + 1;\n            } finally {\n                锁.unlock();\n            }\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"{n1}\", {c1});\n\n        一只.start();\n        一只.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            锁.lock();\n            try {\n                账本 = 账本 + 1;\n            } finally {\n                锁.unlock();\n            }\n        }\n    }\n}\n",
+  "explanationTemplate": "**一、猫没先拿锁，就先还了锁。** 转圈里那一句 `锁.unlock();` 是**还锁**，可它上面根本**没有 `锁.lock();`** —— 一只手上没锁的猫去还锁，机器当场把它拦住：`IllegalMonitorStateException`（读作「你手上没这把锁」）。\n\n**二、它停在还锁那一句上，后面全没记。** 第一圈才走到还锁就被拦住，所以账本上只有它进 `try` 之前记的那一笔 —— `账本：1 条`。{c1} 笔里剩下的那些，一笔都没记上。\n\n**三、改法：把 `锁.lock();` 补回 `try` 前面。** 拿和放必须**配对**：转一圈，拿一次、还一次。课文第四节那个形状就是这个道理 —— `锁.lock();` 在 `try` 外面（没拿到手就不进 `try`），`锁.unlock();` 在 `finally` 里（不管顺不顺，收尾都还回去）。"
+}

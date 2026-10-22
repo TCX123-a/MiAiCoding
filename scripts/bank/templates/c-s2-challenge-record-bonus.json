@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-challenge-record-bonus",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-15",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "图纸", "借牌子改原件", "改了却没生效"],
+  "instances": 1,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵的通讯录换代了：每一号都画了一张**图纸**，上面有两格 —— 一格记它攒了几条小鱼干，一格记奖励。\n\n规矩是：收到的一串数里，**攒得最多的那一号**发 10 条奖励（大家一样多的时候算最前面那一号）。程序把每一号的「攒了多少、奖励多少」都念一遍。\n\n现在的问题是：**奖励怎么都发不出去** —— 念出来的每一行奖励都是 0 喵。本喵明明看见它喊了一嗓子 `give_bonus` 呀……你帮本喵看看，把它改对。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nstruct rec {\n    int fish;\n    int bonus;\n};\n\nvoid give_bonus(struct rec r, int k) {\n    r.bonus = r.bonus + k;\n}\n\nint main(void) {\n    struct rec list[8] = {0};\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &list[i].fish) != 1) {\n            return 1;\n        }\n    }\n\n    int top = 0;\n    for (int i = 1; i < n; i++) {\n        if (list[i].fish > list[top].fish) {\n            top = i;\n        }\n    }\n\n    give_bonus(list[top], 10);\n\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 号：%d 条，奖励 %d 条喵\\n\", i + 1, list[i].fish, list[i].bonus);\n    }\n\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nstruct rec {\n    int fish;\n    int bonus;\n};\n\nvoid give_bonus(struct rec *r, int k) {\n    r->bonus = r->bonus + k;\n}\n\nint main(void) {\n    struct rec list[8] = {0};\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &list[i].fish) != 1) {\n            return 1;\n        }\n    }\n\n    int top = 0;\n    for (int i = 1; i < n; i++) {\n        if (list[i].fish > list[top].fish) {\n            top = i;\n        }\n    }\n\n    give_bonus(&list[top], 10);\n\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 号：%d 条，奖励 %d 条喵\\n\", i + 1, list[i].fish, list[i].bonus);\n    }\n\n    return 0;\n}\n",
+  "explanationTemplate": "「喊了一嗓子，可原件没变」是这张图纸最经典的一跤喵。\n\n看这行：`give_bonus(list[top], 10);` —— 递过去的是一张**图纸的复印件**。C 里把整张图纸传给别人时，对方拿到的是**照抄的一份**：他在那份上写多少、改多少，跟本喵手里这张原件一点关系都没有。所以奖励确实发了，发在了复印件上，散场就没了。\n\n要改，得让这一招拿到的是**原件的猫爪牌**，而不是复印件：\n\n1. 招式那一头把图纸换成「指向图纸的牌子」：`void give_bonus(struct rec *r, int k)`；\n2. 招式里顺着牌子取格子：`r->bonus = r->bonus + k;`（`r->bonus` 就是「顺着牌子找到那一格」）；\n3. 喊它的那一头**递牌子**：`give_bonus(&list[top], 10);` —— 名字前面多一个 `&`，意思是「这是那一号的原件，牌子拿去」。\n\n三处要一起改，少一处翻译官喵就翻脸（类型对不上）。判据很好记：**「想改原件的事，递牌子；只想看一眼的事，递复印件。」**"
+}

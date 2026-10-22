@@ -1,0 +1,79 @@
+{
+  "lessonId": "java-stage3-04",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下 `nums.stream().filter(n -> n >= 5).map(n -> n * 10)`，**没有**再挂收尾那一道。会发生什么？",
+      "options": [
+        "**一件东西都不会被处理** —— 中间那两道只是登记，没挂收尾就还没开工",
+        "过筛子会跑、加工不会跑",
+        "两件都会跑，只是结果被丢掉了",
+        "整段当场就红，翻译稿子时过不去"
+      ],
+      "answer": 0,
+      "explanation": "整条线的脾气是**中间几道记账、收尾那一道才开工**喵。过筛子和加工写下去的时候，只是把「要做什么」登记在线上，一件东西都不会真的过；`.filter(...)` 也好、`.map(...)` 也好，都是中间那一道。非得挂上 `collect`、`count`、`sum` 这种**要吐出结果**的收尾，前面登记的才动起来。所以它**不是坏了，是还没开工** —— 安安静静，一个字不红喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写了这么一段：`nums.stream().filter(n -> n >= 5).map(n -> n * 10).collect(Collectors.toList());`，后面接一句 `System.out.println(\"撑过筛子的：\");`。它**跑得成功、一个字不红**，可印出来后面**空着**。问题出在哪？",
+      "options": [
+        "`.collect(...)` 是**要叼东西回来**的，本喵没伸手接 —— 叼回来的新柜子**当场就丢了**",
+        "`.collect(...)` 这一句是错的写法，应该改成 `.count()`",
+        "因为过筛子那一句写错了，`n >= 5` 应该是 `n > 5`",
+        "因为中间那道 `.map(...)` 把东西改坏了"
+      ],
+      "answer": 0,
+      "explanation": "要害是**没人接**喵：`.collect(Collectors.toList())` 会给出一只新柜子，本喵没把它接住，它当场就丢了 —— 下一句能印的只剩那句空话。这种错最坏的地方正是**不红不响**：翻译官喵一句都不说，它只是让本喵少看见一串东西。改法就一句：**伸手接住它**，然后用接住的那只新柜子去印喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵已经用 `nums.stream().filter(n -> n >= 5).count()` 算了一笔，还想在**同一个柜子**上再算一笔「加起来多少」。该怎么写？",
+      "options": [
+        "重新接一条线：`nums.stream().mapToInt(n -> n).sum()` —— **一条线只能挂一次收尾**，上一那条用过了",
+        "在原来那条线后面再接一个 `.sum()` 就行",
+        "在原来那条线后面再接一个 `.count()` 和一个 `.sum()`，一次挂完",
+        "`count` 和 `sum` 不能同时算，得先复制一份柜子"
+      ],
+      "answer": 0,
+      "explanation": "**收尾那一道一条线只能挂一次，挂完这条线就用过了**喵。想在同一个柜子上算第二笔，就再写一次 `.stream()` 从头接一条新的出来 —— 原柜子本来一件都没被动过，所以重新接线完全没负担。另外要记得求和那一手**只认光溜溜的整数**，中间得先挂一道 `.mapToInt(n -> n)` 把每一件换过去，`.sum()` 才叫得动喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.stream.Collectors;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        nums.add(3);\n        nums.add(8);\n        nums.add(1);\n        nums.add(6);\n\n        System.out.println(nums.stream().filter(n -> n >= 5).map(n -> n * 10).____);\n    }\n}",
+      "stem": "这条线中间两道都挂好了，就差**收尾那一道**。空里该写什么，才能把它收成一只新柜子并直接印出来？",
+      "blanks": [
+        {
+          "answer": "collect(Collectors.toList())",
+          "accept": []
+        }
+      ],
+      "explanation": "填 `collect(Collectors.toList())`：这是**收起来**那一道，把流过来的一件件收成一只新柜子交出来喵。有了它，前面登记的过筛子和加工才真的开工。填好后印出来是 [80, 60] —— 柜子里 `3`、`8`、`1`、`6`，够得上 5 的是 `8` 和 `6`，翻十倍就是 80 和 60。要是空着不填，那段根本编译不过；要是填一道不吐结果的中间活儿，它照样一声不吭喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        nums.add(2);\n        nums.add(7);\n        nums.add(4);\n        nums.add(9);\n\n        System.out.println(nums.stream().filter(n -> n % 2 == 1).count());\n        System.out.println(nums.stream().mapToInt(n -> n).sum());\n        System.out.println(nums);\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "2\n22\n[2, 7, 4, 9]",
+      "accept": ["2\n22\n[2, 7, 4, 9]\n"],
+      "explanation": "三行分别看喵：第一行过筛子留下了奇数 `7` 和 `9`，`.count()` 报 2；第二行没挂过筛子，`.mapToInt(n -> n).sum()` 把四件全加起来，2 + 7 + 4 + 9 = 22；第三行印的是**原柜子**，还是 [2, 7, 4, 9] —— 一件都没少。最后这行才是今天最该记住的：`.stream()` 和中间那两道动的都是**流过去的东西**，原柜子从头到尾没被弄脏。这也是本喵敢在同一个柜子上接第二条线的原因喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        nums.add(1);\n        nums.add(5);\n        nums.add(3);\n\n        nums.stream().filter(n -> n >= 4).map(n -> {\n            System.out.println(\"加工 \" + n);\n            return n + 100;\n        });\n\n        System.out.println(\"完事\");\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "完事",
+      "accept": ["完事\n"],
+      "explanation": "只有一行「完事」喵 —— 那句「加工 …」**一次都没印出来**。因为整条线上**没有任何收尾**：过筛子和加工都只是登记在线上，一件东西都不会真的过，所以那一小截里的话一遍都没跑到。然后程序接着往下走，印出「完事」就收工了。这一题正是「中间几道记账、收尾那一道才开工」最直接的一个样子：**没挂收尾，整条线一声不吭，而且它真的不红**喵。"
+    }
+  ]
+}

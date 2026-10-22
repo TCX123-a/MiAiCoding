@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-07-dtor-not-written",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-07",
+  "type": "codefix",
+  "concept": ["还的那一半没写", "没写析构函数就什么都不做", "不报错才最危险"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["库房门", "柴房门", "后门"] }
+  },
+  "stemTemplate": "本喵把「{who}」做成了牌子，可**只写了一半**：出生时推门那半写了，死去时关门那半忘了写。\n\n结果就是门再也不会关上了 —— 程序不报错，翻译官喵一个字都不说，只是 `关上 {who}` 那一行**永远不出现**。\n\n你帮本喵把缺的那半补上。改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `推开 {who}`\n2. `在屋里翻了半天鱼干`\n3. `关上 {who}`\n4. `收工`\n\n出生活儿（构造函数）不用动，`main` 也不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"推开 \" << who << endl; }\n};\n\nint main() {\n    {\n        Door d(\"{who}\");\n        cout << \"在屋里翻了半天鱼干\" << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"推开 \" << who << endl; }\n    ~Door() { cout << \"关上 \" << who << endl; }\n};\n\nint main() {\n    {\n        Door d(\"{who}\");\n        cout << \"在屋里翻了半天鱼干\" << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "黄金法则有两半：**领**写进出生招式，**还**写进收尾招式。这段代码只写了前一半，所以牌子出生时会推门，死去时**什么都不做** —— C++ 会给没写收尾招式的图纸补一个「什么都不做」的默认版本，程序照样编得过、跑得完，只是 `关上 {who}` 再也不会出现。\n\n补上那块「死去时要做什么」就对了：给图纸接一个 `~Door()`，花括号里写一句印 `关上 ` 加名字。`~` 念作「析构」，是这块牌子**死去时**要做的事 —— 牌子走出它出生的那片花括号（这里是 `main` 里那层花括号）就会被喊一声，所以 `关上 {who}` 会印在 `收工` **前面**。\n\n⚠️ 这一题最该记住的是它的**安静**：忘了写「还」的那一半，翻译官喵不会提醒、运行也不会崩，只是那件事**没发生**。所以本喵写牌子的习惯是 —— 写完出生招式，立刻回头看有没有配一个 `~`。"
+}

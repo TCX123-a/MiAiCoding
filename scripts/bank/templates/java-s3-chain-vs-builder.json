@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-chain-vs-builder",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-16",
+  "type": "codewrite",
+  "concept": ["接一串的两种写法", "搬家搬了多少字符", "预留空地只塞一次"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["本喵接好啦", "本喵记好啦"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 6, "max": 7 },
+  "stemTemplate": "本喵要用**两种写法**接同一串小鱼干项链（每接一条都是一句话的功夫），然后把两本账都记下来喵：\n\n1. **直接拼**：每接一条都另开一串新的，把手上那一串**整个抄过去**再挂上新的一条 —— 抄掉的字符数记在账上；\n2. **会自己长大的那只**：它手上有一块**预留的空地**，新的一条直接塞进空位，旧的一条都不用抄 —— 塞的次数记在账上。\n\n投喂给程序的是：**一行一个数 n**（要接多少条）。请它印四行：\n\n```text\n{word}\n直接拼搬了 A 个字符\n会自己长大的塞了 B 次\n两边一样长：true\n```\n\n- 第一行把 {word} **原样**印出来；\n- `A` 是第一种写法抄掉的字符总数；\n- `B` 是第二种写法塞的次数；\n- 第四行把那两串的**长度一样不一样**直接印出来（会是 `true`，照印就好）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        long moved = 0;\n        String chain = \"\";\n        for (int i = 0; i < n; i++) {\n            moved += chain.length();\n            chain = chain + \"鱼\";\n        }\n\n        StringBuilder fast = new StringBuilder();\n        int puts = 0;\n        for (int i = 0; i < n; i++) {\n            fast.append(\"鱼\");\n            puts++;\n        }\n\n        System.out.println(\"{word}\");\n        System.out.println(\"直接拼搬了 \" + moved + \" 个字符\");\n        System.out.println(\"会自己长大的塞了 \" + puts + \" 次\");\n        System.out.println(\"两边一样长：\" + (chain.length() == fast.length()));\n    }\n}\n",
+  "explanationTemplate": "这道题把课文第六节那笔账**自己算了一遍** —— 值得对着四行输出多看两眼喵。\n\n**第一本账是「搬家」的账。** 第一种写法每接一条都要把手上那一串整个抄走，所以第 1 趟抄 0 个（手上还是空的）、第 2 趟抄 1 个、第 3 趟抄 2 个……第 n 趟抄 n - 1 个。加起来是 `0 + 1 + … + (n - 1)`。本喵真按过这个数：n 是 1024 时，这一本账是 **523776** —— 跟课文第二节「两两试」那本账是同一个形状，也就是同一个量级。\n\n**第二本账是「塞」的账。** 另一只手上有一块预留的空地，塞进去一条就占一格，旧的一条都不用搬，所以它一共只干 n 件事。n 是 1024 时这本账就是 **1024**。\n\n**同一个需求、两种写法：一本账是 n 的平方那个形状，另一本只是 n。** 这就是第六节想让你亲眼看见的那件事。\n\n最后一行那个「一样长」不是凑数的：它证明两种写法接出来的是**同一串东西** —— 不是「快的写法偷工减料」，而是「干同一件事，一种写法的账大得多」。这一点很要紧：往后挑写法的时候，先看结果一不一样，再看账差多少喵。"
+}

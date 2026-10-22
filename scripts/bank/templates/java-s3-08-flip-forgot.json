@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-08-flip-forgot",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-08",
+  "type": "codefix",
+  "concept": ["货舱里的书签", "念之前要 flip", "不红不响的空"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "c1": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵开管子把一笔账灌进文件，接着换一根管子把它拉回来念。\n\n可印出来是 `念到：` 后面**光秃秃的什么都没有**，而且一个字都不红。\n\n你帮本喵看看货舱那边少了哪一步，把它补上 —— 改好之后该印出 `念到：{n1} {c1} 条`。\n\n（这一题**不用投喂任何东西**。）",
+  "brokenCodeTemplate": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"{n1} {c1} 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+  "referenceFixTemplate": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"{n1} {c1} 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+  "explanationTemplate": "**一、字节一个都没少，是书签的位置不对。** 货舱里夹着一枚书签，记着「本喵现在读到哪儿了」。`入口.read(另一个)` 拉字节的时候它一路往前挪，拉完停在**末尾** —— 那意思是「本喵**写到这儿**了」。\n\n**二、念要的是另一头。** 本喵那句长长的拼字读作「从书签**现在这个位置**起，取**还剩的这些**字节」：书签停在末尾，「还剩的这些」就是 `0` 个 —— 取 0 个字节拼回一串字，自然是空的。\n\n**三、补的那一步就是 `另一个.flip();`**，读作「把书签拨回第一格，同时记下读到哪儿为止」—— 拨完位置是 `0`、剩下的是刚拉进来的那一整排，才念得出东西。这一句要写在 `read` **之后**、拼字**之前**。\n\n**四、为什么这一脚最坑。** 管子开了、字节真拉进来了、程序也跑完了 —— 不红不响，只是念出来空着。所以往后记住这个动作：**管子的「写」那一头不用拨；要从货舱里念，先 `flip()`。**"
+}

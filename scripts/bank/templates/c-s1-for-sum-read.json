@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-for-sum-read",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-07",
+  "type": "codewrite",
+  "concept": ["for", "小碗累加", "读进来再算"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫粮"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵今天要喂 **{n} 只猫**。\n\n请你写个程序：**先从投喂口读进来一个数**（就是今天要来几只猫），**再读进来 {n} 行数**（一行一个，是每只猫要几条{unit}）。用一个跑圈把这些数**全加起来**，最后单独印一行总数：`一共 %d 条{unit}喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int one = 0;\n        if (scanf(\"%d\", &one) != 1) {\n            return 1;\n        }\n        total = total + one;\n    }\n    printf(\"一共 %d 条{unit}喵\\n\", total);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题把这一课的两样东西串在了一起：**数得清圈数就用 `for`，把每圈领到的东西攒起来就用小碗**喵。\n\n- **小碗先洗成 0。** `int total = 0;` 要摆在圈**外面** —— 它得在开盘前就备好，圈跑完了再端出来看。要是把它摆进圈里，每一圈都会被重新洗成 0，跑完只剩最后一圈那个数。\n- **眼色写 `i < n`。** `i` 领到的是 0、1、2……直到 n 减一，正好 n 圈，一圈不多一圈不少。注意这里的 `n` 是**读进来的**，不是写死的 —— 所以这道题的圈数只有跑起来才知道。这也正是 `for` 那句「起点、眼色、收尾」挤在一行里的好处：三件家当自己会转。\n- **每圈读一个数、马上加进碗里。** 数不用存着，攒完就丢 —— 所以这道题压根不需要一排碗喵。"
+}

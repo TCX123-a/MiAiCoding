@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-func-void-value-assign",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-12",
+  "type": "codefix",
+  "concept": ["void", "return", "招式头", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "三花"] },
+    "words": { "kind": "pick", "values": ["问候完了喵", "招呼打完啦喵"] }
+  },
+  "stemTemplate": "本喵写了一招 `greet` 专门打招呼，它只要喂进去一只猫的名字就行，打完招呼就收工、**不叼任何东西回来**。\n\n本喵想在 `main` 里这么用它：先喊 `greet` 跟 `{name}` 打个招呼，然后再印一行 `{words}`。\n\n可翻译官喵念到喊它的那一行就停下了，说本喵想接的东西**根本不存在**……\n\n你帮本喵看看是哪儿写岔了，把它改好。改好之后，程序应该**先**印 `你好，{name}喵～`、**再**印 `{words}`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nvoid greet(char name[]) {\n    printf(\"你好，%s喵～\\n\", name);\n}\n\nint main(void) {\n    int x = greet(\"{name}\");\n    printf(\"{words}\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nvoid greet(char name[]) {\n    printf(\"你好，%s喵～\\n\", name);\n}\n\nint main(void) {\n    greet(\"{name}\");\n    printf(\"{words}\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: void value not ignored as it ought to be`，翻过来就是 **「这一招什么都没叼回来，你想接也接不到东西。」**\n\n钥匙在招式**最前面那个词**上，它说的是「这招叼什么回来」：\n\n- 头一个词写 `void` → 这招只管干活，**不叼东西回来**；\n- 头一个词写 `int` → 这招干完会叼回**一个整数**，喊它的时候可以伸手接住。\n\n`greet` 的头一个词是 `void`，它只负责印那一行，叼回来的只有空气。可本喵写的是 `int x = greet(...);` —— 让一只空爪子往碗里放东西，翻译官喵当然不干。\n\n最省事的修法：**把 `int x = ` 那半截去掉**，写成 `greet(\"{name}\");` —— 单纯喊它一声，不接东西。\n\n（要是真想接点什么回来，那就得改招式头：把 `void` 换成 `int`，身体里再加一句 `return 某个整数;`。这两个动作必须**成对**，改一个不改另一个，还是要被退回来。）"
+}

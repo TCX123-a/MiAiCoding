@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-rec-no-brake",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-17",
+  "type": "codefix",
+  "concept": ["基线条件", "刹车忘写", "跑起来才断气", "编译期不吭声"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stemTemplate": "本喵写了个自己咬自己尾巴的招式 `sumTo`：喂一个数进去，它把 **1 一路加到那个数**，加出来的总数叼回来（喂 4 进去，叼回的就是 1+2+3+4）。\n\n喂 {n} 进去，它该叼回 **1 加到 {n} 的总数**。\n\n可这一份稿子**根本交不出东西**：屏幕上一条输出都没有，只有翻译官喵甩出来的最后一句大实话 —— 跑着跑着，它把自己那摞碗摞爆了。\n\n你帮本喵改好：改完跑起来，屏幕上正好是 1 加到 {n} 的总数，多一条都不行喵。",
+  "brokenCodeTemplate": "public class Main {\n    public static int sumTo(int n) {\n        return n + sumTo(n - 1);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(sumTo({n}));\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static int sumTo(int n) {\n        if (n == 0) {\n            return 0;\n        }\n        return n + sumTo(n - 1);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(sumTo({n}));\n    }\n}\n",
+  "explanationTemplate": "坏的地方是**少了一整块**：这一招里没有「什么时候停」那一句喵。\n\n递推那一步（`n + sumTo(n - 1)`）写得完全正确 —— 可它是「喊完下一位、等它把战利品叼回来」的意思，而下一位又会去喊下下一位……**永远没有人喊停**。于是每一位都得在摞顶上再放一只碗（记着「等会儿回到哪儿」），碗越摞越高，最后把地方摞爆：屏幕上一条输出都没有，只留下最后那一句 `Exception in thread \"main\" java.lang.StackOverflowError`。\n\n⚠️ 最要命的是**翻译官喵一个字都没说**：这份稿子它翻得干干净净（本喵真跑过，编译那一步屏幕上零输出），连个提醒都没有。**「翻得过去」和「跑得下去」是两件事。**\n\n补法就是给这一招安上刹车，摆在**最先被问到**的地方：\n\n1. **刹车那一格**：先写下「最小的那一种情况」。1 一路加到 0，一条都没加，所以刹车该**叼回 0**；\n2. **然后才是递推那一格**：喂进来的数，加上「**少一圈的自己**」叼回来的东西。\n\n自己验一遍的办法很朴素：**拿最小的数代进去**。喂 1 进去该叼回 1，式子写的是 `1 + sumTo(0)` —— 一减就知道刹车那格只能是 0 喵。\n\n再往深想一层「为什么它跑着跑着就断气」：每一位喊完下一位都得在那儿等着，谁也没算完；等的那件事要一摞碗来记，碗摞到地方不够 —— 那就是那句大实话的意思。**写这一招，第一件事永远是先想清楚什么时候停。**"
+}

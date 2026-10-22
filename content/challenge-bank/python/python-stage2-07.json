@@ -1,0 +1,414 @@
+{
+  "lessonId": "python-stage2-07",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-py-s2-inherit-isinstance-reversed-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵画了两张图纸：`Animal` 大图纸，和照着它画的 `Cat` 小图纸。\n\n现在本喵想确认一件事：**照 `Cat` 生的这只，是不是也算一只 `Animal`**。可写出来这一句一跑就报错喵。\n\n你帮本喵**把用错的那一处改过来**，让它印出 `True`。\n\n⚠️ 本喵问的就是「这只猫算不算动物」这一件事，**别改成问别的**。",
+      "brokenCode": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Cat(Animal):\n    pass\n\n\nc = Cat(\"橘猫\")\nprint(isinstance(Animal, c))\n",
+      "referenceFix": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Cat(Animal):\n    pass\n\n\nc = Cat(\"橘猫\")\nprint(isinstance(c, Animal))\n",
+      "expectedOutput": "True",
+      "stdin": null,
+      "explanation": "毛病是**两格东西放反了**喵。\n\n`isinstance(...)` 的两个格有自己的分工，读法是固定的：\n\n1. **第一格：要认的那一只**（一只已经生出来的真猫）\n2. **第二格：拿着比对的图纸**（图纸的名字）\n\n本喵写成了 `isinstance(Animal, c)` —— 把图纸放第一格、把猫放第二格，等于拿着图纸去认猫。翻译官喵第二格收不到一张图纸，只好翻脸：第二格必须是图纸（或者一排图纸）。\n\n⚠️ 认亲的结论是**从上往下认，不往上看**：`Cat` 是套在 `Animal` 上画的，所以照 `Cat` 生的那只**也**算 `Animal`（叼回 `True`）；反过来，照 `Animal` 直接生的那只**不是** `Cat`（叼回 `False`）。\n\n⚠️ 顺便记一句：这个 `isinstance(...)` 叼回来的是 `True` 或者 `False`，`print` 出来就是这两个词本身 —— 别自己手写一个 `True` 交差，那样什么都没验证。",
+      "templateId": "py-s2-inherit-isinstance-reversed",
+      "params": {
+        "name": "橘猫"
+      },
+      "verified": {
+        "at": "2026-09-16T01:32:48.616Z",
+        "hash": "5d345630565db791"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-isinstance-reversed-001",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵画了两张图纸：`Animal` 大图纸，和照着它画的 `Cat` 小图纸。\n\n现在本喵想确认一件事：**照 `Cat` 生的这只，是不是也算一只 `Animal`**。可写出来这一句一跑就报错喵。\n\n你帮本喵**把用错的那一处改过来**，让它印出 `True`。\n\n⚠️ 本喵问的就是「这只猫算不算动物」这一件事，**别改成问别的**。",
+      "brokenCode": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Cat(Animal):\n    pass\n\n\nc = Cat(\"狸花猫\")\nprint(isinstance(Animal, c))\n",
+      "referenceFix": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Cat(Animal):\n    pass\n\n\nc = Cat(\"狸花猫\")\nprint(isinstance(c, Animal))\n",
+      "expectedOutput": "True",
+      "stdin": null,
+      "explanation": "毛病是**两格东西放反了**喵。\n\n`isinstance(...)` 的两个格有自己的分工，读法是固定的：\n\n1. **第一格：要认的那一只**（一只已经生出来的真猫）\n2. **第二格：拿着比对的图纸**（图纸的名字）\n\n本喵写成了 `isinstance(Animal, c)` —— 把图纸放第一格、把猫放第二格，等于拿着图纸去认猫。翻译官喵第二格收不到一张图纸，只好翻脸：第二格必须是图纸（或者一排图纸）。\n\n⚠️ 认亲的结论是**从上往下认，不往上看**：`Cat` 是套在 `Animal` 上画的，所以照 `Cat` 生的那只**也**算 `Animal`（叼回 `True`）；反过来，照 `Animal` 直接生的那只**不是** `Cat`（叼回 `False`）。\n\n⚠️ 顺便记一句：这个 `isinstance(...)` 叼回来的是 `True` 或者 `False`，`print` 出来就是这两个词本身 —— 别自己手写一个 `True` 交差，那样什么都没验证。",
+      "templateId": "py-s2-inherit-isinstance-reversed",
+      "params": {
+        "name": "狸花猫"
+      },
+      "verified": {
+        "at": "2026-09-16T01:32:48.764Z",
+        "hash": "5870b0d964814d1a"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-override-speak-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上；再有一招 `speak(self)`，印出名字，后面**直接接上** `发出了一声叫`（中间不加空格）。\n2. 一张 `Cat` 小图纸，**照着 `Animal` 画**，并且把 `speak` **盖掉、换自己那版**：印出名字，后面接 `：喵～`。\n\n然后**读一行名字**，用这个名字：\n\n- 照 `Animal` 直接造一只，喊它的 `speak`\n- 再照 `Cat` 造一只，喊它的 `speak`\n- 最后印一行 `isinstance(这只猫, Animal)` 的结果\n\n比如输入是\n\n狸花猫\n\n就要输出\n\n狸花猫发出了一声叫\n狸花猫：喵～\nTrue\n\n（判分用的是**另外一个名字**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print(self.name + \"发出了一声叫\")\n\n\nclass Cat(Animal):\n    def speak(self):\n        print(self.name + \"：喵～\")\n\n\nname = input()\na = Animal(name)\nc = Cat(name)\na.speak()\nc.speak()\nprint(isinstance(c, Animal))\n",
+      "expectedOutput": "大肥鱼发出了一声叫\n大肥鱼：喵～\nTrue",
+      "stdin": "大肥鱼\n",
+      "explanation": "三个地方要盯住喵：\n\n- **`class Cat(Animal):`** —— 名字后面那对小括号里填**大图纸的名字**，读作「照 `Animal` 那张图纸，再画一张 `Cat`」。这一写，大图纸上的说明和招式小图纸**天生就会**：本喵在小图纸里根本没写 `__init__`，可名字照样喂得进去。\n- **盖掉、换自己那版** —— 小图纸上把 `speak` 又写了一遍（名字一样、投喂的东西也一样），于是**小图纸这一版就把大图纸那一版盖住了**。照 `Cat` 生的那只走的是「喵～」，照 `Animal` 生的大图纸那只，还是老老实实印「发出了一声叫」。这叫**盖住只盖住这一条下游的路**，大图纸本身一个字都没被改。\n- **`isinstance(这只猫, 一张图纸)`** —— 读作「这只猫是不是照这张图纸（**或它的下游图纸**）生出来的」。`Cat` 是套在 `Animal` 上画的，所以照 `Cat` 生出来的那只**也算**一只 `Animal`，叼回 `True`。\n\n⚠️ 反过来可就不成立了：照 `Animal` 直接生的那只**不是** `Cat`。认亲是**从上往下认，不往上看** —— 小图纸认大图纸这门亲，大图纸不认小图纸。",
+      "templateId": "py-s2-inherit-override-speak",
+      "params": {
+        "name": "大肥鱼",
+        "sname": "狸花猫"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:35.308Z",
+        "hash": "fcde2ef7d4605aef"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-override-speak-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上；再有一招 `speak(self)`，印出名字，后面**直接接上** `发出了一声叫`（中间不加空格）。\n2. 一张 `Cat` 小图纸，**照着 `Animal` 画**，并且把 `speak` **盖掉、换自己那版**：印出名字，后面接 `：喵～`。\n\n然后**读一行名字**，用这个名字：\n\n- 照 `Animal` 直接造一只，喊它的 `speak`\n- 再照 `Cat` 造一只，喊它的 `speak`\n- 最后印一行 `isinstance(这只猫, Animal)` 的结果\n\n比如输入是\n\n小白猫\n\n就要输出\n\n小白猫发出了一声叫\n小白猫：喵～\nTrue\n\n（判分用的是**另外一个名字**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print(self.name + \"发出了一声叫\")\n\n\nclass Cat(Animal):\n    def speak(self):\n        print(self.name + \"：喵～\")\n\n\nname = input()\na = Animal(name)\nc = Cat(name)\na.speak()\nc.speak()\nprint(isinstance(c, Animal))\n",
+      "expectedOutput": "大肥鱼发出了一声叫\n大肥鱼：喵～\nTrue",
+      "stdin": "大肥鱼\n",
+      "explanation": "三个地方要盯住喵：\n\n- **`class Cat(Animal):`** —— 名字后面那对小括号里填**大图纸的名字**，读作「照 `Animal` 那张图纸，再画一张 `Cat`」。这一写，大图纸上的说明和招式小图纸**天生就会**：本喵在小图纸里根本没写 `__init__`，可名字照样喂得进去。\n- **盖掉、换自己那版** —— 小图纸上把 `speak` 又写了一遍（名字一样、投喂的东西也一样），于是**小图纸这一版就把大图纸那一版盖住了**。照 `Cat` 生的那只走的是「喵～」，照 `Animal` 生的大图纸那只，还是老老实实印「发出了一声叫」。这叫**盖住只盖住这一条下游的路**，大图纸本身一个字都没被改。\n- **`isinstance(这只猫, 一张图纸)`** —— 读作「这只猫是不是照这张图纸（**或它的下游图纸**）生出来的」。`Cat` 是套在 `Animal` 上画的，所以照 `Cat` 生出来的那只**也算**一只 `Animal`，叼回 `True`。\n\n⚠️ 反过来可就不成立了：照 `Animal` 直接生的那只**不是** `Cat`。认亲是**从上往下认，不往上看** —— 小图纸认大图纸这门亲，大图纸不认小图纸。",
+      "templateId": "py-s2-inherit-override-speak",
+      "params": {
+        "name": "大肥鱼",
+        "sname": "小白猫"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:03.678Z",
+        "hash": "8fc156d5f1a30ba6"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-override-speak-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上；再有一招 `speak(self)`，印出名字，后面**直接接上** `发出了一声叫`（中间不加空格）。\n2. 一张 `Cat` 小图纸，**照着 `Animal` 画**，并且把 `speak` **盖掉、换自己那版**：印出名字，后面接 `：喵～`。\n\n然后**读一行名字**，用这个名字：\n\n- 照 `Animal` 直接造一只，喊它的 `speak`\n- 再照 `Cat` 造一只，喊它的 `speak`\n- 最后印一行 `isinstance(这只猫, Animal)` 的结果\n\n比如输入是\n\n狸花猫\n\n就要输出\n\n狸花猫发出了一声叫\n狸花猫：喵～\nTrue\n\n（判分用的是**另外一个名字**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print(self.name + \"发出了一声叫\")\n\n\nclass Cat(Animal):\n    def speak(self):\n        print(self.name + \"：喵～\")\n\n\nname = input()\na = Animal(name)\nc = Cat(name)\na.speak()\nc.speak()\nprint(isinstance(c, Animal))\n",
+      "expectedOutput": "橘猫发出了一声叫\n橘猫：喵～\nTrue",
+      "stdin": "橘猫\n",
+      "explanation": "三个地方要盯住喵：\n\n- **`class Cat(Animal):`** —— 名字后面那对小括号里填**大图纸的名字**，读作「照 `Animal` 那张图纸，再画一张 `Cat`」。这一写，大图纸上的说明和招式小图纸**天生就会**：本喵在小图纸里根本没写 `__init__`，可名字照样喂得进去。\n- **盖掉、换自己那版** —— 小图纸上把 `speak` 又写了一遍（名字一样、投喂的东西也一样），于是**小图纸这一版就把大图纸那一版盖住了**。照 `Cat` 生的那只走的是「喵～」，照 `Animal` 生的大图纸那只，还是老老实实印「发出了一声叫」。这叫**盖住只盖住这一条下游的路**，大图纸本身一个字都没被改。\n- **`isinstance(这只猫, 一张图纸)`** —— 读作「这只猫是不是照这张图纸（**或它的下游图纸**）生出来的」。`Cat` 是套在 `Animal` 上画的，所以照 `Cat` 生出来的那只**也算**一只 `Animal`，叼回 `True`。\n\n⚠️ 反过来可就不成立了：照 `Animal` 直接生的那只**不是** `Cat`。认亲是**从上往下认，不往上看** —— 小图纸认大图纸这门亲，大图纸不认小图纸。",
+      "templateId": "py-s2-inherit-override-speak",
+      "params": {
+        "name": "橘猫",
+        "sname": "狸花猫"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:03.864Z",
+        "hash": "6e230a66cbdeba29"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-override-speak-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上；再有一招 `speak(self)`，印出名字，后面**直接接上** `发出了一声叫`（中间不加空格）。\n2. 一张 `Cat` 小图纸，**照着 `Animal` 画**，并且把 `speak` **盖掉、换自己那版**：印出名字，后面接 `：喵～`。\n\n然后**读一行名字**，用这个名字：\n\n- 照 `Animal` 直接造一只，喊它的 `speak`\n- 再照 `Cat` 造一只，喊它的 `speak`\n- 最后印一行 `isinstance(这只猫, Animal)` 的结果\n\n比如输入是\n\n小白猫\n\n就要输出\n\n小白猫发出了一声叫\n小白猫：喵～\nTrue\n\n（判分用的是**另外一个名字**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print(self.name + \"发出了一声叫\")\n\n\nclass Cat(Animal):\n    def speak(self):\n        print(self.name + \"：喵～\")\n\n\nname = input()\na = Animal(name)\nc = Cat(name)\na.speak()\nc.speak()\nprint(isinstance(c, Animal))\n",
+      "expectedOutput": "橘猫发出了一声叫\n橘猫：喵～\nTrue",
+      "stdin": "橘猫\n",
+      "explanation": "三个地方要盯住喵：\n\n- **`class Cat(Animal):`** —— 名字后面那对小括号里填**大图纸的名字**，读作「照 `Animal` 那张图纸，再画一张 `Cat`」。这一写，大图纸上的说明和招式小图纸**天生就会**：本喵在小图纸里根本没写 `__init__`，可名字照样喂得进去。\n- **盖掉、换自己那版** —— 小图纸上把 `speak` 又写了一遍（名字一样、投喂的东西也一样），于是**小图纸这一版就把大图纸那一版盖住了**。照 `Cat` 生的那只走的是「喵～」，照 `Animal` 生的大图纸那只，还是老老实实印「发出了一声叫」。这叫**盖住只盖住这一条下游的路**，大图纸本身一个字都没被改。\n- **`isinstance(这只猫, 一张图纸)`** —— 读作「这只猫是不是照这张图纸（**或它的下游图纸**）生出来的」。`Cat` 是套在 `Animal` 上画的，所以照 `Cat` 生出来的那只**也算**一只 `Animal`，叼回 `True`。\n\n⚠️ 反过来可就不成立了：照 `Animal` 直接生的那只**不是** `Cat`。认亲是**从上往下认，不往上看** —— 小图纸认大图纸这门亲，大图纸不认小图纸。",
+      "templateId": "py-s2-inherit-override-speak",
+      "params": {
+        "name": "橘猫",
+        "sname": "小白猫"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:35.429Z",
+        "hash": "666853e49da3be2b"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-pass-missing-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵画了一张 `Animal` 大图纸（管着名字），又照着它画了一张 `Cat` 小图纸 —— 小图纸这会儿**什么都不想加**，白着就行喵。\n\n可这段代码一跑就报错，翻译官喵说那张图纸里**少了点东西**。你帮本喵改对，让它最后印出 `橘猫`。\n\n⚠️ `Animal` 那张大图纸**一个字都不许改**，`Cat` 小图纸**照着 `Animal` 画**这件事也不能改。",
+      "brokenCode": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Cat(Animal):\n\n\nc = Cat(\"橘猫\")\nprint(c.name)\n",
+      "referenceFix": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Cat(Animal):\n    pass\n\n\nc = Cat(\"橘猫\")\nprint(c.name)\n",
+      "expectedOutput": "橘猫",
+      "stdin": null,
+      "explanation": "毛病是**图纸里面一个字都没有**喵。\n\nPython 有个死规矩：一张图纸（还有一招招式）**底下必须缩进着写点什么**。小图纸是照 `Animal` 画的没错，可它自己**一行内容都没有** —— 翻译官喵读到这儿就不知道「刚才那句 `class Cat(Animal):` 要管到哪儿」，只好当场拦下，报的是「这张图纸后面少了缩进的内容」。\n\n修法就是补一个 `pass`，读作「**这里先空着**」。它是一句空话，什么都不干，但它在语法上**算一行内容**，于是图纸就站得住了。\n\n⚠️ `pass` 里那四个字母别写错，也**不能只写一个注释充数** —— 注释不算内容，图纸照样立不起来。\n\n⚠️ 顺带记住：小图纸白着**不代表它什么都没有**。`__init__` 大图纸上有，小图纸**天生就会** —— 所以 `Cat(\"橘猫\")` 照样能把名字喂进去，`c.name` 也照样取得出来。这正是套图纸最省事的地方。\n\n⚠️ 什么时候用得上 `pass`：图纸一时没东西可加的时候、或者一招招式先占个位以后再写的时候。它只是占位，别拿它当「把东西删掉」的手段。",
+      "templateId": "py-s2-inherit-pass-missing",
+      "params": {
+        "name": "橘猫"
+      },
+      "verified": {
+        "at": "2026-09-16T01:32:49.215Z",
+        "hash": "a579f1614dfb2526"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-pass-missing-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵画了一张 `Animal` 大图纸（管着名字），又照着它画了一张 `Cat` 小图纸 —— 小图纸这会儿**什么都不想加**，白着就行喵。\n\n可这段代码一跑就报错，翻译官喵说那张图纸里**少了点东西**。你帮本喵改对，让它最后印出 `小花猫`。\n\n⚠️ `Animal` 那张大图纸**一个字都不许改**，`Cat` 小图纸**照着 `Animal` 画**这件事也不能改。",
+      "brokenCode": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Cat(Animal):\n\n\nc = Cat(\"小花猫\")\nprint(c.name)\n",
+      "referenceFix": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Cat(Animal):\n    pass\n\n\nc = Cat(\"小花猫\")\nprint(c.name)\n",
+      "expectedOutput": "小花猫",
+      "stdin": null,
+      "explanation": "毛病是**图纸里面一个字都没有**喵。\n\nPython 有个死规矩：一张图纸（还有一招招式）**底下必须缩进着写点什么**。小图纸是照 `Animal` 画的没错，可它自己**一行内容都没有** —— 翻译官喵读到这儿就不知道「刚才那句 `class Cat(Animal):` 要管到哪儿」，只好当场拦下，报的是「这张图纸后面少了缩进的内容」。\n\n修法就是补一个 `pass`，读作「**这里先空着**」。它是一句空话，什么都不干，但它在语法上**算一行内容**，于是图纸就站得住了。\n\n⚠️ `pass` 里那四个字母别写错，也**不能只写一个注释充数** —— 注释不算内容，图纸照样立不起来。\n\n⚠️ 顺带记住：小图纸白着**不代表它什么都没有**。`__init__` 大图纸上有，小图纸**天生就会** —— 所以 `Cat(\"小花猫\")` 照样能把名字喂进去，`c.name` 也照样取得出来。这正是套图纸最省事的地方。\n\n⚠️ 什么时候用得上 `pass`：图纸一时没东西可加的时候、或者一招招式先占个位以后再写的时候。它只是占位，别拿它当「把东西删掉」的手段。",
+      "templateId": "py-s2-inherit-pass-missing",
+      "params": {
+        "name": "小花猫"
+      },
+      "verified": {
+        "at": "2026-09-16T01:32:49.375Z",
+        "hash": "5e5a8288a5813169"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-polymorph-loop-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要一声开饭、各猫各样喵。\n\n请你画三张图纸：\n\n1. 一张 `Animal` 大图纸，只有一招 `speak(self)`，印一行 `……`（就是两个省略号）\n2. 一张 `Cat` 小图纸，照着 `Animal` 画，把 `speak` **盖成自己那版**，印 `喵～`\n3. 一张 `Dog` 小图纸，照着 `Animal` 画，把 `speak` **盖成自己那版**，印 `汪！`\n\n然后照这个顺序造三只：**先一只 `Cat`、再一只 `Dog`、最后再一只 `Cat`**，把它们排成一排。\n\n最后**用一个 `for` 挨个喊 `speak`** —— 喊的那一行里**不许看出它是猫还是狗**，就写「对着一只喊一声」。\n\n跑完印出来的三行，正好是这三只各自的那一声。",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def speak(self):\n        print(\"……\")\n\n\nclass Cat(Animal):\n    def speak(self):\n        print(\"喵～\")\n\n\nclass Dog(Animal):\n    def speak(self):\n        print(\"汪！\")\n\n\npets = [Cat(), Dog(), Cat()]\nfor pet in pets:\n    pet.speak()\n",
+      "expectedOutput": "喵～\n汪！\n喵～",
+      "stdin": null,
+      "explanation": "这一题考的是那个最省心的地方喵：**写 `for` 的时候，本喵压根不知道下一只是谁**。\n\n`for pet in pets:` 里那个 `pet` 每一轮抓到的都是**一只真猫**（照哪张图纸生的，它自己知道）。喊 `pet.speak()` 的时候，Python 是**照着那只真猫自己的图纸**去找这一招的 —— 不是照着 `Animal` 大图纸找，也不是照着写代码时脑子里想的那张找。\n\n于是同一句 `pet.speak()`：是猫就喵、是狗就汪，**各猫各样**。\n\n⚠️ 关键在于**每张小图纸都自己把 `speak` 盖了一遍**。要是小图纸里没写，那三只喊出来的都会是大图纸那一版（三行 `……`）—— 一样能跑，就是没了「各样」。\n\n⚠️ 还有一个容易写错的地方：`pets` 那一排装的是**三只已经生出来的**（`Cat()`、`Dog()` 后面都带着小括号）。写成 `pets = [Cat, Dog, Cat]` 装的就是**三张图纸本身**，`for` 里喊 `pet.speak()` 会当场报错说这招用不了。",
+      "templateId": "py-s2-inherit-polymorph-loop",
+      "params": {
+        "a": "Cat",
+        "b": "Dog"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:35.899Z",
+        "hash": "b1a6e9372f0987fd"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-polymorph-loop-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要一声开饭、各猫各样喵。\n\n请你画三张图纸：\n\n1. 一张 `Animal` 大图纸，只有一招 `speak(self)`，印一行 `……`（就是两个省略号）\n2. 一张 `Cat` 小图纸，照着 `Animal` 画，把 `speak` **盖成自己那版**，印 `喵～`\n3. 一张 `Dog` 小图纸，照着 `Animal` 画，把 `speak` **盖成自己那版**，印 `汪！`\n\n然后照这个顺序造三只：**先一只 `Cat`、再一只 `Cat`、最后再一只 `Cat`**，把它们排成一排。\n\n最后**用一个 `for` 挨个喊 `speak`** —— 喊的那一行里**不许看出它是猫还是狗**，就写「对着一只喊一声」。\n\n跑完印出来的三行，正好是这三只各自的那一声。",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def speak(self):\n        print(\"……\")\n\n\nclass Cat(Animal):\n    def speak(self):\n        print(\"喵～\")\n\n\nclass Dog(Animal):\n    def speak(self):\n        print(\"汪！\")\n\n\npets = [Cat(), Cat(), Cat()]\nfor pet in pets:\n    pet.speak()\n",
+      "expectedOutput": "喵～\n喵～\n喵～",
+      "stdin": null,
+      "explanation": "这一题考的是那个最省心的地方喵：**写 `for` 的时候，本喵压根不知道下一只是谁**。\n\n`for pet in pets:` 里那个 `pet` 每一轮抓到的都是**一只真猫**（照哪张图纸生的，它自己知道）。喊 `pet.speak()` 的时候，Python 是**照着那只真猫自己的图纸**去找这一招的 —— 不是照着 `Animal` 大图纸找，也不是照着写代码时脑子里想的那张找。\n\n于是同一句 `pet.speak()`：是猫就喵、是狗就汪，**各猫各样**。\n\n⚠️ 关键在于**每张小图纸都自己把 `speak` 盖了一遍**。要是小图纸里没写，那三只喊出来的都会是大图纸那一版（三行 `……`）—— 一样能跑，就是没了「各样」。\n\n⚠️ 还有一个容易写错的地方：`pets` 那一排装的是**三只已经生出来的**（`Cat()`、`Dog()` 后面都带着小括号）。写成 `pets = [Cat, Dog, Cat]` 装的就是**三张图纸本身**，`for` 里喊 `pet.speak()` 会当场报错说这招用不了。",
+      "templateId": "py-s2-inherit-polymorph-loop",
+      "params": {
+        "a": "Cat",
+        "b": "Cat"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:03.988Z",
+        "hash": "7bf74c72ca482283"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-polymorph-loop-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要一声开饭、各猫各样喵。\n\n请你画三张图纸：\n\n1. 一张 `Animal` 大图纸，只有一招 `speak(self)`，印一行 `……`（就是两个省略号）\n2. 一张 `Cat` 小图纸，照着 `Animal` 画，把 `speak` **盖成自己那版**，印 `喵～`\n3. 一张 `Dog` 小图纸，照着 `Animal` 画，把 `speak` **盖成自己那版**，印 `汪！`\n\n然后照这个顺序造三只：**先一只 `Dog`、再一只 `Dog`、最后再一只 `Dog`**，把它们排成一排。\n\n最后**用一个 `for` 挨个喊 `speak`** —— 喊的那一行里**不许看出它是猫还是狗**，就写「对着一只喊一声」。\n\n跑完印出来的三行，正好是这三只各自的那一声。",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def speak(self):\n        print(\"……\")\n\n\nclass Cat(Animal):\n    def speak(self):\n        print(\"喵～\")\n\n\nclass Dog(Animal):\n    def speak(self):\n        print(\"汪！\")\n\n\npets = [Dog(), Dog(), Dog()]\nfor pet in pets:\n    pet.speak()\n",
+      "expectedOutput": "汪！\n汪！\n汪！",
+      "stdin": null,
+      "explanation": "这一题考的是那个最省心的地方喵：**写 `for` 的时候，本喵压根不知道下一只是谁**。\n\n`for pet in pets:` 里那个 `pet` 每一轮抓到的都是**一只真猫**（照哪张图纸生的，它自己知道）。喊 `pet.speak()` 的时候，Python 是**照着那只真猫自己的图纸**去找这一招的 —— 不是照着 `Animal` 大图纸找，也不是照着写代码时脑子里想的那张找。\n\n于是同一句 `pet.speak()`：是猫就喵、是狗就汪，**各猫各样**。\n\n⚠️ 关键在于**每张小图纸都自己把 `speak` 盖了一遍**。要是小图纸里没写，那三只喊出来的都会是大图纸那一版（三行 `……`）—— 一样能跑，就是没了「各样」。\n\n⚠️ 还有一个容易写错的地方：`pets` 那一排装的是**三只已经生出来的**（`Cat()`、`Dog()` 后面都带着小括号）。写成 `pets = [Cat, Dog, Cat]` 装的就是**三张图纸本身**，`for` 里喊 `pet.speak()` 会当场报错说这招用不了。",
+      "templateId": "py-s2-inherit-polymorph-loop",
+      "params": {
+        "a": "Dog",
+        "b": "Dog"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:04.115Z",
+        "hash": "13c654ff38fd2bf0"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-polymorph-loop-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要一声开饭、各猫各样喵。\n\n请你画三张图纸：\n\n1. 一张 `Animal` 大图纸，只有一招 `speak(self)`，印一行 `……`（就是两个省略号）\n2. 一张 `Cat` 小图纸，照着 `Animal` 画，把 `speak` **盖成自己那版**，印 `喵～`\n3. 一张 `Dog` 小图纸，照着 `Animal` 画，把 `speak` **盖成自己那版**，印 `汪！`\n\n然后照这个顺序造三只：**先一只 `Dog`、再一只 `Cat`、最后再一只 `Dog`**，把它们排成一排。\n\n最后**用一个 `for` 挨个喊 `speak`** —— 喊的那一行里**不许看出它是猫还是狗**，就写「对着一只喊一声」。\n\n跑完印出来的三行，正好是这三只各自的那一声。",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def speak(self):\n        print(\"……\")\n\n\nclass Cat(Animal):\n    def speak(self):\n        print(\"喵～\")\n\n\nclass Dog(Animal):\n    def speak(self):\n        print(\"汪！\")\n\n\npets = [Dog(), Cat(), Dog()]\nfor pet in pets:\n    pet.speak()\n",
+      "expectedOutput": "汪！\n喵～\n汪！",
+      "stdin": null,
+      "explanation": "这一题考的是那个最省心的地方喵：**写 `for` 的时候，本喵压根不知道下一只是谁**。\n\n`for pet in pets:` 里那个 `pet` 每一轮抓到的都是**一只真猫**（照哪张图纸生的，它自己知道）。喊 `pet.speak()` 的时候，Python 是**照着那只真猫自己的图纸**去找这一招的 —— 不是照着 `Animal` 大图纸找，也不是照着写代码时脑子里想的那张找。\n\n于是同一句 `pet.speak()`：是猫就喵、是狗就汪，**各猫各样**。\n\n⚠️ 关键在于**每张小图纸都自己把 `speak` 盖了一遍**。要是小图纸里没写，那三只喊出来的都会是大图纸那一版（三行 `……`）—— 一样能跑，就是没了「各样」。\n\n⚠️ 还有一个容易写错的地方：`pets` 那一排装的是**三只已经生出来的**（`Cat()`、`Dog()` 后面都带着小括号）。写成 `pets = [Cat, Dog, Cat]` 装的就是**三张图纸本身**，`for` 里喊 `pet.speak()` 会当场报错说这招用不了。",
+      "templateId": "py-s2-inherit-polymorph-loop",
+      "params": {
+        "a": "Dog",
+        "b": "Cat"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:35.980Z",
+        "hash": "efb17b76857e4f88"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-super-init-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上。\n2. 一张 `Fish` 小图纸，照着 `Animal` 画，但**自己盖了一版 `__init__`** —— 除了名字，还要多存一样：本鱼有几斤小鱼干。\n3. 小图纸上再写一招 `speak(self)`，印出一行：名字后面接 `：咕噜咕噜，本鱼有 `，再接上斤数，最后接 ` 斤`（斤数前后**各有一个空格**，别漏）。\n\n然后**读两行**：第一行是名字，第二行是一个整数（斤数）。用它们造一条鱼，喊它的 `speak`。\n\n比如输入是\n\n鲸鱼\n7\n\n就要输出\n\n鲸鱼：咕噜咕噜，本鱼有 7 斤\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        super().__init__(name)\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nname = input()\nfat = int(input())\nf = Fish(name, fat)\nf.speak()\n",
+      "expectedOutput": "大肥鱼：咕噜咕噜，本鱼有 3 斤",
+      "stdin": "大肥鱼\n3\n",
+      "explanation": "这一题的关键在**小图纸自己写了 `__init__`** 这件事上喵。\n\n大图纸上原本有那么一段（把名字存好）。小图纸**只要自己写了** `__init__`，就**把大图纸那一版整个盖住了** —— 于是「把名字存好」这一步**不会自动发生**了，得本喵自己请回来干。\n\n请的办法就是开头那一句 `super().__init__(name)` —— 读作「**先请上一层图纸，把它那版 `__init__` 跑一遍**」。`super()` 就是「上一层」的意思。\n\n⚠️ `super()` 后面**不用喂 `self`**。你站在哪张小图纸上，Python 自己清楚，它会替你把 `self` 递过去。写成 `super(self)` 反而会被当场拦下。\n\n⚠️ 顺序很讲究：**先请上一层把名字放好，再存自己那一样**。要是漏了 `super()` 这句，名字那个仓库**压根没被建起来** —— 程序在喊 `speak` 的那一刻才翻脸说「没有 name 这样东西」，报错位置离真正的毛病远得很，最难查。\n\n⚠️ 别忘了第二行读进来的是**一串字**，要转成整数才能拿去拼：本喵这里用 `str(...)` 往回接，或者用别的方式也都行，只要拼出来的字一模一样。",
+      "templateId": "py-s2-inherit-super-init",
+      "params": {
+        "name": "大肥鱼",
+        "fish": 3,
+        "sname": "鲸鱼",
+        "sfish": 7
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:36.500Z",
+        "hash": "a035daa122cd3171"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-super-init-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上。\n2. 一张 `Fish` 小图纸，照着 `Animal` 画，但**自己盖了一版 `__init__`** —— 除了名字，还要多存一样：本鱼有几斤小鱼干。\n3. 小图纸上再写一招 `speak(self)`，印出一行：名字后面接 `：咕噜咕噜，本鱼有 `，再接上斤数，最后接 ` 斤`（斤数前后**各有一个空格**，别漏）。\n\n然后**读两行**：第一行是名字，第二行是一个整数（斤数）。用它们造一条鱼，喊它的 `speak`。\n\n比如输入是\n\n鲸鱼\n8\n\n就要输出\n\n鲸鱼：咕噜咕噜，本鱼有 8 斤\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        super().__init__(name)\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nname = input()\nfat = int(input())\nf = Fish(name, fat)\nf.speak()\n",
+      "expectedOutput": "大肥鱼：咕噜咕噜，本鱼有 4 斤",
+      "stdin": "大肥鱼\n4\n",
+      "explanation": "这一题的关键在**小图纸自己写了 `__init__`** 这件事上喵。\n\n大图纸上原本有那么一段（把名字存好）。小图纸**只要自己写了** `__init__`，就**把大图纸那一版整个盖住了** —— 于是「把名字存好」这一步**不会自动发生**了，得本喵自己请回来干。\n\n请的办法就是开头那一句 `super().__init__(name)` —— 读作「**先请上一层图纸，把它那版 `__init__` 跑一遍**」。`super()` 就是「上一层」的意思。\n\n⚠️ `super()` 后面**不用喂 `self`**。你站在哪张小图纸上，Python 自己清楚，它会替你把 `self` 递过去。写成 `super(self)` 反而会被当场拦下。\n\n⚠️ 顺序很讲究：**先请上一层把名字放好，再存自己那一样**。要是漏了 `super()` 这句，名字那个仓库**压根没被建起来** —— 程序在喊 `speak` 的那一刻才翻脸说「没有 name 这样东西」，报错位置离真正的毛病远得很，最难查。\n\n⚠️ 别忘了第二行读进来的是**一串字**，要转成整数才能拿去拼：本喵这里用 `str(...)` 往回接，或者用别的方式也都行，只要拼出来的字一模一样。",
+      "templateId": "py-s2-inherit-super-init",
+      "params": {
+        "name": "大肥鱼",
+        "fish": 4,
+        "sname": "鲸鱼",
+        "sfish": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:04.315Z",
+        "hash": "fae7b0a8de48ca99"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-super-init-014",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上。\n2. 一张 `Fish` 小图纸，照着 `Animal` 画，但**自己盖了一版 `__init__`** —— 除了名字，还要多存一样：本鱼有几斤小鱼干。\n3. 小图纸上再写一招 `speak(self)`，印出一行：名字后面接 `：咕噜咕噜，本鱼有 `，再接上斤数，最后接 ` 斤`（斤数前后**各有一个空格**，别漏）。\n\n然后**读两行**：第一行是名字，第二行是一个整数（斤数）。用它们造一条鱼，喊它的 `speak`。\n\n比如输入是\n\n鲸鱼\n9\n\n就要输出\n\n鲸鱼：咕噜咕噜，本鱼有 9 斤\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        super().__init__(name)\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nname = input()\nfat = int(input())\nf = Fish(name, fat)\nf.speak()\n",
+      "expectedOutput": "大肥鱼：咕噜咕噜，本鱼有 5 斤",
+      "stdin": "大肥鱼\n5\n",
+      "explanation": "这一题的关键在**小图纸自己写了 `__init__`** 这件事上喵。\n\n大图纸上原本有那么一段（把名字存好）。小图纸**只要自己写了** `__init__`，就**把大图纸那一版整个盖住了** —— 于是「把名字存好」这一步**不会自动发生**了，得本喵自己请回来干。\n\n请的办法就是开头那一句 `super().__init__(name)` —— 读作「**先请上一层图纸，把它那版 `__init__` 跑一遍**」。`super()` 就是「上一层」的意思。\n\n⚠️ `super()` 后面**不用喂 `self`**。你站在哪张小图纸上，Python 自己清楚，它会替你把 `self` 递过去。写成 `super(self)` 反而会被当场拦下。\n\n⚠️ 顺序很讲究：**先请上一层把名字放好，再存自己那一样**。要是漏了 `super()` 这句，名字那个仓库**压根没被建起来** —— 程序在喊 `speak` 的那一刻才翻脸说「没有 name 这样东西」，报错位置离真正的毛病远得很，最难查。\n\n⚠️ 别忘了第二行读进来的是**一串字**，要转成整数才能拿去拼：本喵这里用 `str(...)` 往回接，或者用别的方式也都行，只要拼出来的字一模一样。",
+      "templateId": "py-s2-inherit-super-init",
+      "params": {
+        "name": "大肥鱼",
+        "fish": 5,
+        "sname": "鲸鱼",
+        "sfish": 9
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:04.514Z",
+        "hash": "f4c4a0df2231d157"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-super-init-021",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上。\n2. 一张 `Fish` 小图纸，照着 `Animal` 画，但**自己盖了一版 `__init__`** —— 除了名字，还要多存一样：本鱼有几斤小鱼干。\n3. 小图纸上再写一招 `speak(self)`，印出一行：名字后面接 `：咕噜咕噜，本鱼有 `，再接上斤数，最后接 ` 斤`（斤数前后**各有一个空格**，别漏）。\n\n然后**读两行**：第一行是名字，第二行是一个整数（斤数）。用它们造一条鱼，喊它的 `speak`。\n\n比如输入是\n\n小黄鱼\n7\n\n就要输出\n\n小黄鱼：咕噜咕噜，本鱼有 7 斤\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        super().__init__(name)\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nname = input()\nfat = int(input())\nf = Fish(name, fat)\nf.speak()\n",
+      "expectedOutput": "小鳕鱼：咕噜咕噜，本鱼有 3 斤",
+      "stdin": "小鳕鱼\n3\n",
+      "explanation": "这一题的关键在**小图纸自己写了 `__init__`** 这件事上喵。\n\n大图纸上原本有那么一段（把名字存好）。小图纸**只要自己写了** `__init__`，就**把大图纸那一版整个盖住了** —— 于是「把名字存好」这一步**不会自动发生**了，得本喵自己请回来干。\n\n请的办法就是开头那一句 `super().__init__(name)` —— 读作「**先请上一层图纸，把它那版 `__init__` 跑一遍**」。`super()` 就是「上一层」的意思。\n\n⚠️ `super()` 后面**不用喂 `self`**。你站在哪张小图纸上，Python 自己清楚，它会替你把 `self` 递过去。写成 `super(self)` 反而会被当场拦下。\n\n⚠️ 顺序很讲究：**先请上一层把名字放好，再存自己那一样**。要是漏了 `super()` 这句，名字那个仓库**压根没被建起来** —— 程序在喊 `speak` 的那一刻才翻脸说「没有 name 这样东西」，报错位置离真正的毛病远得很，最难查。\n\n⚠️ 别忘了第二行读进来的是**一串字**，要转成整数才能拿去拼：本喵这里用 `str(...)` 往回接，或者用别的方式也都行，只要拼出来的字一模一样。",
+      "templateId": "py-s2-inherit-super-init",
+      "params": {
+        "name": "小鳕鱼",
+        "fish": 3,
+        "sname": "小黄鱼",
+        "sfish": 7
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:04.703Z",
+        "hash": "545ae3addf6c186f"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-super-init-028",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上。\n2. 一张 `Fish` 小图纸，照着 `Animal` 画，但**自己盖了一版 `__init__`** —— 除了名字，还要多存一样：本鱼有几斤小鱼干。\n3. 小图纸上再写一招 `speak(self)`，印出一行：名字后面接 `：咕噜咕噜，本鱼有 `，再接上斤数，最后接 ` 斤`（斤数前后**各有一个空格**，别漏）。\n\n然后**读两行**：第一行是名字，第二行是一个整数（斤数）。用它们造一条鱼，喊它的 `speak`。\n\n比如输入是\n\n小黄鱼\n8\n\n就要输出\n\n小黄鱼：咕噜咕噜，本鱼有 8 斤\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        super().__init__(name)\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nname = input()\nfat = int(input())\nf = Fish(name, fat)\nf.speak()\n",
+      "expectedOutput": "小鳕鱼：咕噜咕噜，本鱼有 4 斤",
+      "stdin": "小鳕鱼\n4\n",
+      "explanation": "这一题的关键在**小图纸自己写了 `__init__`** 这件事上喵。\n\n大图纸上原本有那么一段（把名字存好）。小图纸**只要自己写了** `__init__`，就**把大图纸那一版整个盖住了** —— 于是「把名字存好」这一步**不会自动发生**了，得本喵自己请回来干。\n\n请的办法就是开头那一句 `super().__init__(name)` —— 读作「**先请上一层图纸，把它那版 `__init__` 跑一遍**」。`super()` 就是「上一层」的意思。\n\n⚠️ `super()` 后面**不用喂 `self`**。你站在哪张小图纸上，Python 自己清楚，它会替你把 `self` 递过去。写成 `super(self)` 反而会被当场拦下。\n\n⚠️ 顺序很讲究：**先请上一层把名字放好，再存自己那一样**。要是漏了 `super()` 这句，名字那个仓库**压根没被建起来** —— 程序在喊 `speak` 的那一刻才翻脸说「没有 name 这样东西」，报错位置离真正的毛病远得很，最难查。\n\n⚠️ 别忘了第二行读进来的是**一串字**，要转成整数才能拿去拼：本喵这里用 `str(...)` 往回接，或者用别的方式也都行，只要拼出来的字一模一样。",
+      "templateId": "py-s2-inherit-super-init",
+      "params": {
+        "name": "小鳕鱼",
+        "fish": 4,
+        "sname": "小黄鱼",
+        "sfish": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:04.892Z",
+        "hash": "96b009f291018eb2"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-super-init-035",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上。\n2. 一张 `Fish` 小图纸，照着 `Animal` 画，但**自己盖了一版 `__init__`** —— 除了名字，还要多存一样：本鱼有几斤小鱼干。\n3. 小图纸上再写一招 `speak(self)`，印出一行：名字后面接 `：咕噜咕噜，本鱼有 `，再接上斤数，最后接 ` 斤`（斤数前后**各有一个空格**，别漏）。\n\n然后**读两行**：第一行是名字，第二行是一个整数（斤数）。用它们造一条鱼，喊它的 `speak`。\n\n比如输入是\n\n小黄鱼\n9\n\n就要输出\n\n小黄鱼：咕噜咕噜，本鱼有 9 斤\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        super().__init__(name)\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nname = input()\nfat = int(input())\nf = Fish(name, fat)\nf.speak()\n",
+      "expectedOutput": "小鳕鱼：咕噜咕噜，本鱼有 5 斤",
+      "stdin": "小鳕鱼\n5\n",
+      "explanation": "这一题的关键在**小图纸自己写了 `__init__`** 这件事上喵。\n\n大图纸上原本有那么一段（把名字存好）。小图纸**只要自己写了** `__init__`，就**把大图纸那一版整个盖住了** —— 于是「把名字存好」这一步**不会自动发生**了，得本喵自己请回来干。\n\n请的办法就是开头那一句 `super().__init__(name)` —— 读作「**先请上一层图纸，把它那版 `__init__` 跑一遍**」。`super()` 就是「上一层」的意思。\n\n⚠️ `super()` 后面**不用喂 `self`**。你站在哪张小图纸上，Python 自己清楚，它会替你把 `self` 递过去。写成 `super(self)` 反而会被当场拦下。\n\n⚠️ 顺序很讲究：**先请上一层把名字放好，再存自己那一样**。要是漏了 `super()` 这句，名字那个仓库**压根没被建起来** —— 程序在喊 `speak` 的那一刻才翻脸说「没有 name 这样东西」，报错位置离真正的毛病远得很，最难查。\n\n⚠️ 别忘了第二行读进来的是**一串字**，要转成整数才能拿去拼：本喵这里用 `str(...)` 往回接，或者用别的方式也都行，只要拼出来的字一模一样。",
+      "templateId": "py-s2-inherit-super-init",
+      "params": {
+        "name": "小鳕鱼",
+        "fish": 5,
+        "sname": "小黄鱼",
+        "sfish": 9
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:36.617Z",
+        "hash": "3144e539c87c306b"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-super-missing-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵画了两张图纸喵：一张 `Animal`（有名字），一张照它画的 `Fish`。\n\n小图纸上本喵**自己盖了一版 `__init__`** —— 除了名字，还要多存一样「本鱼有几斤」；`speak` 也盖了一版。\n\n可这段代码一跑就报错。你帮本喵改对，让它印出这样的一行：\n\n```text\n大肥鱼：咕噜咕噜，本鱼有 3 斤\n```\n\n⚠️ 两段已经写好的东西**一个字都不许改**：`Animal` 那张大图纸，还有 `speak` 里印的那句话。",
+      "brokenCode": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nf = Fish(\"大肥鱼\", 3)\nf.speak()\n",
+      "referenceFix": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        super().__init__(name)\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nf = Fish(\"大肥鱼\", 3)\nf.speak()\n",
+      "expectedOutput": "大肥鱼：咕噜咕噜，本鱼有 3 斤",
+      "stdin": null,
+      "explanation": "毛病出在小图纸**自己写了 `__init__`** 这件事上喵。\n\n大图纸上那一段（把名字放进仓库）本来是小图纸天生就会的。可**小图纸只要自己写了一版 `__init__`，大图纸那一版就被整个盖住了** —— 于是「把名字放好」这一步**没有人干**，`self.name` 这个仓库压根没建起来。\n\n所以程序能一路跑到 `speak`，直到那里去取 `self.name` 才翻脸：`'Fish' object has no attribute 'name'`（这条鱼身上没有 `name` 这样东西）。\n\n⚠️ **报错位置离真正的毛病很远** —— 报的是取名字的那一行，可错的是建仓库的那一段。这是套图纸最容易栽的坑。\n\n修法是在小图纸的 `__init__` 里**先请上一层图纸把它那版跑一遍**：`super().__init__(name)`。几点要记牢：\n\n- `super()` 就是「**上一层图纸**」的意思，写在小图纸里面。\n- 它后面**不用喂 `self`**，Python 自己会递过去。\n- 这一句要放在**存自己那一样之前** —— 顺序反了不影响这个例子，但先请完上一层再动自己的仓库，才是不会出事的那一种写法。",
+      "templateId": "py-s2-inherit-super-missing",
+      "params": {
+        "name": "大肥鱼",
+        "fat": 3
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:37.089Z",
+        "hash": "43acda0c40873bdd"
+      }
+    },
+    {
+      "id": "bank-py-s2-inherit-super-missing-013",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵画了两张图纸喵：一张 `Animal`（有名字），一张照它画的 `Fish`。\n\n小图纸上本喵**自己盖了一版 `__init__`** —— 除了名字，还要多存一样「本鱼有几斤」；`speak` 也盖了一版。\n\n可这段代码一跑就报错。你帮本喵改对，让它印出这样的一行：\n\n```text\n小鳕鱼：咕噜咕噜，本鱼有 9 斤\n```\n\n⚠️ 两段已经写好的东西**一个字都不许改**：`Animal` 那张大图纸，还有 `speak` 里印的那句话。",
+      "brokenCode": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nf = Fish(\"小鳕鱼\", 9)\nf.speak()\n",
+      "referenceFix": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        super().__init__(name)\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nf = Fish(\"小鳕鱼\", 9)\nf.speak()\n",
+      "expectedOutput": "小鳕鱼：咕噜咕噜，本鱼有 9 斤",
+      "stdin": null,
+      "explanation": "毛病出在小图纸**自己写了 `__init__`** 这件事上喵。\n\n大图纸上那一段（把名字放进仓库）本来是小图纸天生就会的。可**小图纸只要自己写了一版 `__init__`，大图纸那一版就被整个盖住了** —— 于是「把名字放好」这一步**没有人干**，`self.name` 这个仓库压根没建起来。\n\n所以程序能一路跑到 `speak`，直到那里去取 `self.name` 才翻脸：`'Fish' object has no attribute 'name'`（这条鱼身上没有 `name` 这样东西）。\n\n⚠️ **报错位置离真正的毛病很远** —— 报的是取名字的那一行，可错的是建仓库的那一段。这是套图纸最容易栽的坑。\n\n修法是在小图纸的 `__init__` 里**先请上一层图纸把它那版跑一遍**：`super().__init__(name)`。几点要记牢：\n\n- `super()` 就是「**上一层图纸**」的意思，写在小图纸里面。\n- 它后面**不用喂 `self`**，Python 自己会递过去。\n- 这一句要放在**存自己那一样之前** —— 顺序反了不影响这个例子，但先请完上一层再动自己的仓库，才是不会出事的那一种写法。",
+      "templateId": "py-s2-inherit-super-missing",
+      "params": {
+        "name": "小鳕鱼",
+        "fat": 9
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:37.208Z",
+        "hash": "da2eb04de242afbd"
+      }
+    }
+  ]
+}

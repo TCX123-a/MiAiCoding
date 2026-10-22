@@ -1,0 +1,2608 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "咪爱编程 云端 API",
+    "version": "1",
+    "description": "自建后端（docs/22 §3.4 的 15 端点 + docs/26 新增 6 端点 + 榜面开关端点 + 本文档端点）。协议版本 current=1 / floor=1；鉴权为不透明 Bearer 令牌；错误体形状全站统一（见 components.schemas.ErrorBody）。"
+  },
+  "paths": {
+    "/v1/health": {
+      "get": {
+        "operationId": "getV1Health",
+        "summary": "存活 + schemaVer（健康检查是限流例外）",
+        "tags": [
+          "health"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "schemaVer": {
+                      "type": "number"
+                    },
+                    "serverTime": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "schemaVer",
+                    "serverTime"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/meta": {
+      "get": {
+        "operationId": "getV1Meta",
+        "summary": "版本协商：apiVersion / protocol / capabilities",
+        "tags": [
+          "meta"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "apiVersion": {
+                      "type": "number"
+                    },
+                    "protocol": {
+                      "type": "object",
+                      "properties": {
+                        "current": {
+                          "type": "number"
+                        },
+                        "floor": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "current",
+                        "floor"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "serverTime": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "apiVersion",
+                    "protocol",
+                    "capabilities",
+                    "serverTime"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/register": {
+      "post": {
+        "operationId": "postV1AuthRegister",
+        "summary": "注册（自动登录）",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "expiresAt": {
+                      "type": "string"
+                    },
+                    "absoluteExpiresAt": {
+                      "type": "string"
+                    },
+                    "account": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "avatarHash": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "username",
+                        "avatarHash",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "token",
+                    "expiresAt",
+                    "absoluteExpiresAt",
+                    "account"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_一-鿿][A-Za-z0-9_一-鿿]{1,29}$"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "maxLength": 128
+                  },
+                  "securityQuestion": {
+                    "type": "string",
+                    "enum": [
+                      "你的第一只宠物叫什么？",
+                      "你小学班主任的名字是？",
+                      "你出生的城市是哪里？",
+                      "你最喜欢的动画片是哪部？",
+                      "你童年最好的朋友叫什么？",
+                      "你妈妈最拿手的一道菜是什么？",
+                      "你最喜欢的一本书是哪本？",
+                      "你最想去哪个城市旅行？"
+                    ]
+                  },
+                  "securityAnswer": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "clientLabel": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  }
+                },
+                "required": [
+                  "username",
+                  "password",
+                  "securityQuestion",
+                  "securityAnswer"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "operationId": "postV1AuthLogin",
+        "summary": "登录（失败统一 BAD_CREDENTIALS 防枚举）",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    },
+                    "expiresAt": {
+                      "type": "string"
+                    },
+                    "absoluteExpiresAt": {
+                      "type": "string"
+                    },
+                    "account": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "avatarHash": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "username",
+                        "avatarHash",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "token",
+                    "expiresAt",
+                    "absoluteExpiresAt",
+                    "account"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_一-鿿][A-Za-z0-9_一-鿿]{1,29}$"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "clientLabel": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "operationId": "postV1AuthLogout",
+        "summary": "登出（幂等：已失效令牌同样 204）",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/logout-all": {
+      "post": {
+        "operationId": "postV1AuthLogoutAll",
+        "summary": "全设备登出（吊销全部会话，含当前）",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/auth/sessions": {
+      "get": {
+        "operationId": "getV1AuthSessions",
+        "summary": "设备列表（创建/最近活跃/是否当前）",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "lastSeenAt": {
+                        "type": "string"
+                      },
+                      "clientLabel": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "current": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "createdAt",
+                      "lastSeenAt",
+                      "clientLabel",
+                      "current"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/auth/change-password": {
+      "post": {
+        "operationId": "postV1AuthChangePassword",
+        "summary": "改密（保留当前会话、吊销其他）",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 6,
+                    "maxLength": 128
+                  }
+                },
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/auth/delete-account": {
+      "post": {
+        "operationId": "postV1AuthDeleteAccount",
+        "summary": "注销（幂等；会话墓碑 24h）",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128
+                  }
+                },
+                "required": [
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/auth/recover/question": {
+      "post": {
+        "operationId": "postV1AuthRecoverQuestion",
+        "summary": "找回·取安全问题（账号不存在 404；无问答 NO_SECURITY_QUESTION）",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "question": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "question"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_一-鿿][A-Za-z0-9_一-鿿]{1,29}$"
+                  }
+                },
+                "required": [
+                  "username"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/recover/verify": {
+      "post": {
+        "operationId": "postV1AuthRecoverVerify",
+        "summary": "找回·验安全答案（错 → BAD_SECURITY_ANSWER；含退避与日闸）",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "verified": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "verified"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_一-鿿][A-Za-z0-9_一-鿿]{1,29}$"
+                  },
+                  "answer": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  }
+                },
+                "required": [
+                  "username",
+                  "answer"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/recover/reset": {
+      "post": {
+        "operationId": "postV1AuthRecoverReset",
+        "summary": "找回·重置密码（答案再核 → 换哈希 → 吊销全部会话）",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_一-鿿][A-Za-z0-9_一-鿿]{1,29}$"
+                  },
+                  "answer": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 6,
+                    "maxLength": 128
+                  }
+                },
+                "required": [
+                  "username",
+                  "answer",
+                  "newPassword"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/session": {
+      "get": {
+        "operationId": "getV1AuthSession",
+        "summary": "会话有效 + 账号信息",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "avatarHash": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "username",
+                        "avatarHash",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "idleExpiresAt": {
+                      "type": "string"
+                    },
+                    "absoluteExpiresAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account",
+                    "idleExpiresAt",
+                    "absoluteExpiresAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/me/username": {
+      "put": {
+        "operationId": "putV1MeUsername",
+        "summary": "改用户名（登录名同步换；违禁词/唯一性/日闸 5 次）",
+        "tags": [
+          "me"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "account": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "avatarHash": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "username",
+                        "avatarHash",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "account"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_一-鿿][A-Za-z0-9_一-鿿]{1,29}$"
+                  }
+                },
+                "required": [
+                  "username"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/me/summary": {
+      "get": {
+        "operationId": "getV1MeSummary",
+        "summary": "面板一屏：stats + 余额 + 名次",
+        "tags": [
+          "me"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "stats": {
+                      "type": "object",
+                      "properties": {
+                        "learnedCount": {
+                          "type": "number"
+                        },
+                        "practicedCount": {
+                          "type": "number"
+                        },
+                        "streakDays": {
+                          "type": "number"
+                        },
+                        "lastActiveDay": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "totalScore": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "learnedCount",
+                        "practicedCount",
+                        "streakDays",
+                        "lastActiveDay",
+                        "totalScore"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "rice": {
+                      "type": "object",
+                      "properties": {
+                        "balance": {
+                          "type": "number"
+                        },
+                        "earnedTotal": {
+                          "type": "number"
+                        },
+                        "spentTotal": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "balance",
+                        "earnedTotal",
+                        "spentTotal"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "leaderboard": {
+                      "type": "object",
+                      "properties": {
+                        "rankAllTime": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "scoreAllTime": {
+                          "type": "number"
+                        },
+                        "scoreToday": {
+                          "type": "number"
+                        },
+                        "optedIn": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "rankAllTime",
+                        "scoreAllTime",
+                        "scoreToday",
+                        "optedIn"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "stats",
+                    "rice",
+                    "leaderboard"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "dateKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "可选：把「今天」显式指到客户端北京日（YYYY-MM-DD 形状；与服务器日容差 ±1 天），scoreToday 按它查；省略 = 服务器北京日",
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/me/leaderboard-opt-in": {
+      "put": {
+        "operationId": "putV1MeLeaderboardOptIn",
+        "summary": "榜面曝光开关（幂等；唯一写口，2026-10-10 A4 裁定）",
+        "tags": [
+          "me"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "optIn": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "optIn"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "optIn": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "optIn"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/docs": {
+      "get": {
+        "operationId": "getV1Docs",
+        "summary": "四文档摘要（不含 payload）",
+        "tags": [
+          "docs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "profile": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "revision": {
+                              "type": "number"
+                            },
+                            "docVer": {
+                              "type": "number"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "sizeBytes": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "revision",
+                            "docVer",
+                            "updatedAt",
+                            "sizeBytes"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "wrongbook": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "revision": {
+                              "type": "number"
+                            },
+                            "docVer": {
+                              "type": "number"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "sizeBytes": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "revision",
+                            "docVer",
+                            "updatedAt",
+                            "sizeBytes"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "favorites": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "revision": {
+                              "type": "number"
+                            },
+                            "docVer": {
+                              "type": "number"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "sizeBytes": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "revision",
+                            "docVer",
+                            "updatedAt",
+                            "sizeBytes"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "practice": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "revision": {
+                              "type": "number"
+                            },
+                            "docVer": {
+                              "type": "number"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "sizeBytes": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "revision",
+                            "docVer",
+                            "updatedAt",
+                            "sizeBytes"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "profile",
+                    "wrongbook",
+                    "favorites",
+                    "practice"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/docs/{docType}": {
+      "get": {
+        "operationId": "getV1DocsByDocType",
+        "summary": "拉取文档（支持 ETag 条件读）",
+        "tags": [
+          "docs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "docVer": {
+                      "type": "number"
+                    },
+                    "revision": {
+                      "type": "number"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "payload": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "docVer",
+                    "revision",
+                    "updatedAt",
+                    "payload"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "HTTP 304",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "docType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "profile",
+                "wrongbook",
+                "favorites",
+                "practice"
+              ]
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "putV1DocsByDocType",
+        "summary": "条件写（CAS：baseRevision）",
+        "tags": [
+          "docs"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "revision": {
+                      "type": "number"
+                    },
+                    "docVer": {
+                      "type": "number"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "revision",
+                    "docVer",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "docType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "profile",
+                "wrongbook",
+                "favorites",
+                "practice"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "docVer": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "baseRevision": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "payload": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {}
+                  }
+                },
+                "required": [
+                  "docVer",
+                  "baseRevision",
+                  "payload"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/challenge/days": {
+      "post": {
+        "operationId": "postV1ChallengeDays",
+        "summary": "挑战结算（提交逐题事实，服务端算分）",
+        "tags": [
+          "challenge"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "settled": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "idempotent": {
+                      "type": "boolean"
+                    },
+                    "dateKey": {
+                      "type": "string"
+                    },
+                    "correct": {
+                      "type": "number"
+                    },
+                    "total": {
+                      "type": "number"
+                    },
+                    "score": {
+                      "type": "number"
+                    },
+                    "scoreMax": {
+                      "type": "number"
+                    },
+                    "flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "settled",
+                    "idempotent",
+                    "dateKey",
+                    "correct",
+                    "total",
+                    "score",
+                    "scoreMax",
+                    "flags"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "submissionId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "installId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "dateKey": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "local",
+                      "ai"
+                    ]
+                  },
+                  "startedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "finishedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  "questions": {
+                    "minItems": 1,
+                    "maxItems": 5000,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "minLength": 3,
+                          "maxLength": 128,
+                          "pattern": "^[A-Za-z0-9_.-]+:[A-Za-z0-9_.-]+$"
+                        },
+                        "lessonId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64
+                        },
+                        "qid": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64
+                        },
+                        "lang": {
+                          "type": "string",
+                          "enum": [
+                            "common",
+                            "c",
+                            "cpp",
+                            "java",
+                            "python"
+                          ]
+                        },
+                        "stage": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 3
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "choice",
+                            "fill",
+                            "code",
+                            "codefill",
+                            "codefix",
+                            "codewrite"
+                          ]
+                        },
+                        "difficulty": {
+                          "type": "string",
+                          "enum": [
+                            "easy",
+                            "medium",
+                            "hard",
+                            "challenge"
+                          ]
+                        },
+                        "source": {
+                          "type": "string",
+                          "enum": [
+                            "local",
+                            "ai"
+                          ]
+                        },
+                        "ok": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "lessonId",
+                        "qid",
+                        "lang",
+                        "stage",
+                        "type",
+                        "difficulty",
+                        "source",
+                        "ok"
+                      ]
+                    }
+                  },
+                  "pickedLangs": {
+                    "minItems": 1,
+                    "maxItems": 4,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "c",
+                        "cpp",
+                        "java",
+                        "python"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "submissionId",
+                  "installId",
+                  "dateKey",
+                  "source",
+                  "finishedAt",
+                  "questions"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getV1ChallengeDays",
+        "summary": "挑战结算历史（近 N 天）",
+        "tags": [
+          "challenge"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "days": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "dateKey": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "correct": {
+                            "type": "number"
+                          },
+                          "total": {
+                            "type": "number"
+                          },
+                          "score": {
+                            "type": "number"
+                          },
+                          "scoreMax": {
+                            "type": "number"
+                          },
+                          "pickedLangs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "c",
+                                "cpp",
+                                "java",
+                                "python"
+                              ]
+                            }
+                          },
+                          "settledAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "dateKey",
+                          "source",
+                          "correct",
+                          "total",
+                          "score",
+                          "scoreMax",
+                          "pickedLangs",
+                          "settledAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "days"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 90
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/rice/entries": {
+      "post": {
+        "operationId": "postV1RiceEntries",
+        "summary": "流水上行（批量推送本地真饭条目）",
+        "tags": [
+          "rice"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accepted": {
+                      "type": "number"
+                    },
+                    "duplicated": {
+                      "type": "number"
+                    },
+                    "rejected": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "entryKey": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "detail": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "entryKey",
+                          "code",
+                          "detail"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "balance": {
+                      "type": "number"
+                    },
+                    "earnedTotal": {
+                      "type": "number"
+                    },
+                    "spentTotal": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "accepted",
+                    "duplicated",
+                    "rejected",
+                    "balance",
+                    "earnedTotal",
+                    "spentTotal"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "installId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "entries": {
+                    "minItems": 1,
+                    "maxItems": 200,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "entryKey": {
+                          "type": "string",
+                          "minLength": 8,
+                          "maxLength": 80
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "adopt",
+                            "lesson",
+                            "review",
+                            "answer",
+                            "run",
+                            "feed",
+                            "chase",
+                            "chat",
+                            "checkin"
+                          ]
+                        },
+                        "delta": {
+                          "type": "integer",
+                          "minimum": -999,
+                          "maximum": 999
+                        },
+                        "dayKey": {
+                          "type": "string"
+                        },
+                        "at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        "ref": {
+                          "default": null,
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "entryKey",
+                        "kind",
+                        "delta",
+                        "dayKey",
+                        "at"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "installId",
+                  "entries"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getV1RiceEntries",
+        "summary": "流水下行（seq 游标增量拉取）",
+        "tags": [
+          "rice"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "seq": {
+                            "type": "number"
+                          },
+                          "entryKey": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "delta": {
+                            "type": "number"
+                          },
+                          "dayKey": {
+                            "type": "string"
+                          },
+                          "at": {
+                            "type": "string"
+                          },
+                          "ref": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {}
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "flags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "seq",
+                          "entryKey",
+                          "kind",
+                          "delta",
+                          "dayKey",
+                          "at",
+                          "ref",
+                          "flags"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextSeq": {
+                      "type": "number"
+                    },
+                    "balance": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "entries",
+                    "nextSeq",
+                    "balance"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": 500,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/leaderboard": {
+      "get": {
+        "operationId": "getV1Leaderboard",
+        "summary": "排行榜（快照 + 实算两条路径，含本人名次）",
+        "tags": [
+          "leaderboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "period": {
+                      "type": "string",
+                      "enum": [
+                        "daily",
+                        "weekly",
+                        "monthly",
+                        "yearly",
+                        "alltime"
+                      ]
+                    },
+                    "periodKey": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "filter": {
+                      "type": "object",
+                      "properties": {
+                        "lang": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "common",
+                                "c",
+                                "cpp",
+                                "java",
+                                "python"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "difficulty": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "easy",
+                                "medium",
+                                "hard",
+                                "challenge"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "lang",
+                        "difficulty"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rank": {
+                            "type": "number"
+                          },
+                          "username": {
+                            "type": "string"
+                          },
+                          "avatarHash": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "score": {
+                            "type": "number"
+                          },
+                          "days": {
+                            "type": "number"
+                          },
+                          "langs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "common",
+                                "c",
+                                "cpp",
+                                "java",
+                                "python"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "rank",
+                          "username",
+                          "avatarHash",
+                          "score",
+                          "days",
+                          "langs"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "me": {
+                      "type": "object",
+                      "properties": {
+                        "rank": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "score": {
+                          "type": "number"
+                        },
+                        "optedIn": {
+                          "type": "boolean"
+                        },
+                        "scoreToday": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "rank",
+                        "score",
+                        "optedIn",
+                        "scoreToday"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "computedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "nextCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "period",
+                    "periodKey",
+                    "filter",
+                    "entries",
+                    "me",
+                    "computedAt",
+                    "nextCursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly",
+                "yearly",
+                "alltime"
+              ]
+            }
+          },
+          {
+            "name": "periodKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "榜期键；省略时的默认：daily=刚结束的一天（北京时间服务器日 −1，与每日快照铸期同源）、weekly/monthly/yearly=服务器北京日所在周/月/年（UTC+8）；alltime 不接受本参数",
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "common",
+                "c",
+                "cpp",
+                "java",
+                "python"
+              ]
+            }
+          },
+          {
+            "name": "difficulty",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "easy",
+                "medium",
+                "hard",
+                "challenge"
+              ]
+            }
+          },
+          {
+            "name": "dateKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "可选：把「今天」显式指到客户端北京日（YYYY-MM-DD 形状；与服务器日容差 ±1 天），me.scoreToday 按它查；省略 = 服务器北京日",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/avatar/{hash}": {
+      "get": {
+        "operationId": "getV1AvatarByHash",
+        "summary": "取头像（内容寻址 image/png；任意未封禁账号可读，hash 过期 404）",
+        "tags": [
+          "avatar"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/avatar": {
+      "put": {
+        "operationId": "putV1Avatar",
+        "summary": "上传头像（image/png ≤512KB；PNG magic 校验；内容寻址幂等）",
+        "tags": [
+          "avatar"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "hash": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "hash"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "image/png": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              },
+              "description": "PNG 原始字节（≤512KB）"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/openapi.json": {
+      "get": {
+        "operationId": "getV1OpenapiJson",
+        "summary": "本 OpenAPI 3.1 文档",
+        "tags": [
+          "meta"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "错误（统一错误体；code 见 components.schemas.ErrorBody）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "登录/注册返回的不透明令牌（服务端只存 sha256）。"
+      }
+    },
+    "schemas": {
+      "ErrorBody": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "BAD_REQUEST",
+                  "VALIDATION_FAILED",
+                  "UNAUTHENTICATED",
+                  "TOKEN_EXPIRED",
+                  "BAD_CREDENTIALS",
+                  "FORBIDDEN",
+                  "NOT_FOUND",
+                  "USERNAME_TAKEN",
+                  "USERNAME_FORBIDDEN",
+                  "CONFLICT_STALE",
+                  "DOC_VER_BLOCKED",
+                  "CHALLENGE_DUPLICATE",
+                  "ENTRY_CONFLICT",
+                  "OVER_DAILY_CAP",
+                  "PAYLOAD_TOO_LARGE",
+                  "UNSUPPORTED_MEDIA_TYPE",
+                  "PROTOCOL_TOO_OLD",
+                  "RATE_LIMITED",
+                  "INTERNAL",
+                  "DB_UNAVAILABLE",
+                  "NO_SECURITY_QUESTION",
+                  "BAD_SECURITY_ANSWER"
+                ]
+              },
+              "message": {
+                "type": "string"
+              },
+              "retryAfterMs": {
+                "type": "number"
+              },
+              "details": {},
+              "requestId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "message",
+              "requestId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

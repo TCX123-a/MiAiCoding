@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-ptr-neighbor-diff",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-01",
+  "type": "codewrite",
+  "concept": ["指针算术", "相邻相减", "括号"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵把 {n} 只碗一字排开，碗里各放着几条小鱼干。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 {n} 个数（就是每只碗里的数）。\n\n然后**从第 0 只碗开始，一只一只往后看相邻的两只**：每看一对就报一行，格式是 `第 i 只和第 j 只差 d` —— `i` 是前面那只的编号，`j` 是紧挨着它后面那只的编号，`d` 是**后面那只碗里的数减去前面那只碗里的数**。最后一只碗后面没有碗了，所以它不参与，一行都不报。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *p = bowls;\n    for (int i = 0; i + 1 < n; i++) {\n        printf(\"第 %d 只和第 %d 只差 %d\\n\", i, i + 1, *(p + 1) - *p);\n        p = p + 1;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这道题是给「星号只吃紧挨着它的那一样东西」这句话练手的喵。\n\n看 `*(p + 1) - *p` 这一小段，它是**两半**：\n\n- `*(p + 1)` —— 括号先把门牌号算好（「往后挪一只」），外面的星号才去吃它，拿到的是**后面那只**碗里的数；\n- `*p` —— 星号只吃 `p` 一个，拿到的是**当前这只**碗里的数。\n\n两半一减，就是相邻两只的差。要是把括号丢了写成 `*p + 1 - *p`，那就变成「当前这只的数加 1 再减当前这只的数」，答案永远是 1 —— 而且翻译官喵一声都不会吭，这种坑只有你自己盯着括号。\n\n差是**可能为负**的：后面那只碗里的数比前面少的时候，印出来就是负数，那是对的，别去给它加绝对值喵。\n\n绕几圈？最后一只后面没有碗了，所以一共报 `n - 1` 行。参考解把停的条件写成 `i + 1 < n` —— 这句话的意思是「后面还有碗才继续」。"
+}

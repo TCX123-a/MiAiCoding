@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-07-close-forgotten",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-07",
+  "type": "codefix",
+  "concept": ["还写在手写的那一句上", "提前出门就漏", "把还交给牌子去记"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["库房门", "柴房门", "后门"] }
+  },
+  "stemTemplate": "这段小活儿是**手写开关**的写法：进门喊一句 `openDoor`，出门喊一句 `closeDoor`，全靠本喵自己记着。\n\n它有个老毛病：**只要半路提前出门，门就忘了关**（程序不报错，就是少印一行）。你帮本喵改对。\n\n改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `推开 {who}`\n2. `取了鱼干`\n3. `关上 {who}`\n4. `--- 提前出门那一趟 ---`\n5. `推开 {who}`\n6. `关上 {who}`\n7. `收工`\n\n**本喵不想再手写关门的活儿了** —— 那扇门要自己关上，不管这趟活儿是从哪条路上出门的。几句印字的不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid openDoor(string who) { cout << \"推开 \" << who << endl; }\nvoid closeDoor(string who) { cout << \"关上 \" << who << endl; }\n\nvoid work(bool early) {\n    openDoor(\"{who}\");\n    if (early) {\n        return;\n    }\n    cout << \"取了鱼干\" << endl;\n    closeDoor(\"{who}\");\n}\n\nint main() {\n    work(false);\n    cout << \"--- 提前出门那一趟 ---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"推开 \" << who << endl; }\n    ~Door() { cout << \"关上 \" << who << endl; }\n};\n\nvoid work(bool early) {\n    Door d(\"{who}\");\n    if (early) {\n        return;\n    }\n    cout << \"取了鱼干\" << endl;\n}\n\nint main() {\n    work(false);\n    cout << \"--- 提前出门那一趟 ---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "漏的原因一眼就能找到：「关门」这件事在这段代码里**就写在 `closeDoor(\"{who}\");` 那一句上** —— `return` 把后面全跳过去了，那一句自然也没执行。翻译官喵不会为这件事报警，本喵上一次就是这么安静地漏了一扇门。\n\n改法是**换谁来记这件事**：别再用两个招式手动开关，把「推开」写进**出生招式（构造函数）**、「关上」写进**收尾招式（析构函数）**（`~Door()`）。这样一来，门什么时候关就跟本喵从哪条路出门没关系了 —— 牌子走出它出生的那片花括号，`~Door()` 自己会被喊一声。\n\n⚠️ 改完之后 `closeDoor` 那一句**不用再写了**：留着它反而会跟牌子抢着关（上一课讲过，`delete` 和牌子抢着还就是这个下场）。"
+}

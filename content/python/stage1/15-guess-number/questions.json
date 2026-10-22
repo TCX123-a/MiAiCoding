@@ -1,0 +1,87 @@
+{
+  "lessonId": "python-stage1-15",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "大肥鱼心里那个数，本喵是用 `random.randint(1, 100)` 抽的。下面哪个说法对喵？",
+      "options": [
+        "抽出来的可能是 1 到 100 里的任意一个整数，1 和 100 两头都算数",
+        "只能抽到 1 到 99，100 永远抽不到",
+        "只能抽到 2 到 99，两头都抽不到",
+        "抽出来的是 1 到 100 之间的小数"
+      ],
+      "answer": 0,
+      "explanation": "`randint` 是「**两头都含**」的脾气：1 和 100 都可能被抽到喵。这一点和 `range` 正好相反——`range(1, 100)` 含头不含尾，100 是吃不到的。大肥鱼说的是「1 到 100」，两头都得算数，所以这里必须用 `randint`，换成 `range` 就少掉一个 100 啦。本喵的小口诀：「range 的尾巴咬不动，randint 的两头都能舔」喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "大肥鱼想的数是 `18`，你报 `50`。跑起来的时候，程序会走哪条岔路、屏幕上出现哪句话喵？",
+      "options": [
+        "走 `guess < target` 那条，印出「太小啦喵」",
+        "走 `guess > target` 那条，印出「太大啦喵」",
+        "走 `else` 那条，印出「猜中啦喵！」",
+        "三条岔路都会走一遍，三句话全印出来"
+      ],
+      "answer": 1,
+      "explanation": "`50` 比 `18` 大，所以 `guess > target` 答真，走的是第二条岔路，屏幕上只出现「太大啦喵」喵。三条岔路**每次只走一条**：走进一条，后面两条连问都不问，所以不会三句话一起印。`else` 是前面两条都不成立时的兜底——兜住的正好是「你报的数和答案一样大」这一种情况。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵把「比一比、报个信」这段活儿包成了一个招式 `check_guess(guess, target)`。这样拆开，最大的好处是什么喵？",
+      "options": [
+        "这段逻辑一个程序里要用好多次，包成函数后主流程只剩「取一个数、调用一次函数、看看要不要结束」，一眼就读得懂",
+        "包成函数以后程序跑得更快，电脑省力气",
+        "包成函数以后就不用写 `if` 了",
+        "函数里只能写中文，包起来才不会和英文打架"
+      ],
+      "answer": 0,
+      "explanation": "拆招式的意义是**让一块活儿只干一件事**喵：`check_guess` 只管比一比、把该印哪句话叼回来；印字和收工交给外面。好处有两个——往后想改提示语，只要动招式里那一处；想让主流程更清楚，也不用在一个圈里翻来翻去。它**不会**让程序变快（该算的还是那些），更**不会**让 `if` 消失：比大小这件事本身就是招式的活儿喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "python",
+      "code": "target = 18\nguess = 50\n\nif guess < target:\n    print(\"太小啦喵\")\nelif guess > target:\n    print(\"太大啦喵\")\nelse:\n    print(\"猜中啦喵！\")",
+      "stem": "这段代码的输出是什么？",
+      "answer": "太大啦喵",
+      "accept": ["太大啦喵\n"],
+      "explanation": "`guess` 是 50、`target` 是 18，`50 < 18` 答假，第一条岔路不走喵；接着问 `50 > 18`，答真，于是走 `elif` 那条，印出「太大啦喵」。第三条 `else` 连问都不问——三条岔路每次只走一条，这就是为什么屏幕上只有一行字。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "target = 42\nguesses = [20, 60, 42]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        break",
+      "stem": "这段代码的输出是什么？",
+      "answer": "20 太小啦喵\n60 太大啦喵\n42 猜中啦喵！",
+      "accept": ["20 太小啦喵\n60 太大啦喵\n42 猜中啦喵！\n"],
+      "explanation": "`guesses.pop(0)` 一圈从储物柜头上取一个数出来，取走就没了喵。第一圈取到 20，比 42 小，印「20 太小啦喵」；第二圈取到 60，比 42 大，印「60 太大啦喵」；第三圈取到 42，两条都不成立，走 `else` 印出「42 猜中啦喵！」，紧接着撞上那句 `break`——**圈立刻收工**，柜子里有没有剩都不管了。所以正好三行，不会是四行。"
+    },
+    {
+      "id": "q6",
+      "type": "codefill",
+      "lang": "python",
+      "code": "import random\n\ntarget = random.____(1, 100)\nprint(\"大肥鱼想的数是\", target)",
+      "stem": "这段程序要请随机工具箱在 **1 到 100 之间（含 1 和 100）** 抽一个整数当答案。空里该填哪个招式名喵？",
+      "blanks": [
+        { "answer": "randint", "accept": [] }
+      ],
+      "explanation": "随机工具箱里那个「在两头之间随便挑一个整数」的招式就叫 `randint`，喊法是先报工具箱的名字 `random`、加一个点，再报招式名喵。要是填成 `range` 就坏了：`range` 含头不含尾，100 永远抽不到；而且它数出来的一串数，跟「抽一个数」根本是两回事喵。"
+    },
+    {
+      "id": "q7",
+      "type": "codefill",
+      "lang": "python",
+      "code": "target = 18\nguesses = [10, 50, 25, 18]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        ____",
+      "stem": "这段程序要在猜中的那一刻**收工**，可猜中那条岔路里少了一句。空里该填什么喵？",
+      "blanks": [
+        { "answer": "break", "accept": [] }
+      ],
+      "explanation": "`while True:` 的眼色永远是「真」，所以圈光靠自己停不下来，必须有人在圈里喊停喵。猜中那一圈走到 `else` 里，印完「猜中啦喵！」再撞上 `break`，圈立刻收工、跳到圈外——这才是这道题的收工机关。填 `continue` 可不行：它只是「这一圈剩下的活儿不干了，马上开下一圈」，圈本身照转，猜中了也停不下来喵。"
+    }
+  ]
+}

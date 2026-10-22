@@ -1,0 +1,114 @@
+{
+  "lessonId": "common-30",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵今天立了一块新招牌：「名字是遥控器，不是电视机。」这句话在说什么喵？",
+      "options": [
+        "变量名里装的是一支对着某只真猫的遥控器 —— 抄一支遥控器不会多出一只猫，顺着它改电视机，两个名字都看得见",
+        "变量名里装的就是那只真猫本体 —— 抄一份就是又生了一只猫",
+        "「遥控器」是 C 里指针的另一个名字，别的语言没有这回事",
+        "名字和真猫各改各的，谁也影响不了谁"
+      ],
+      "answer": 0,
+      "explanation": "引用语义就一条：名字是遥控器，猫屋里那只真猫才是电视机喵。抄一支遥控器（`Cat c2 = c1;`）不会多出一只猫 —— 猫屋还是那一只，只是名册上多了一支对着它的遥控器；所以顺着 c2 改的，c1 也看得见。反过来，「名字里装的就是货本身、抄一份就是又一份货」那套老规矩叫值语义，你一路写的 int、double 走的都是那条道。「变量名里装的就是那只真猫本体 —— 抄一份就是又生了一只猫」正是本课要盯住的错觉 —— 它有时候成立（C、C++ 默认），有时候不成立（Java、Python），所以才要按语言分开记喵。"
+    },
+    {
+      "id": "q2",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\ntypedef struct {\n    int fish;\n} Cat;\n\nint main(void) {\n    Cat c1;\n    Cat c2;\n    c1.fish = 3;\n    c2 = c1;\n    c2.fish = 99;\n    printf(\"%d %d\\n\", c1.fish, c2.fish);\n    return 0;\n}",
+      "stem": "这段 C 代码的输出是什么？",
+      "answer": "3 99",
+      "accept": ["3 99\n"],
+      "explanation": "`c2 = c1;` 在 C 里是整只复印（值语义）喵：猫屋里真的站起了第二只猫，3 条鱼干原样搬过去。所以 `c2.fish = 99` 改的是第二只，`c1` 那只还是 3 —— 先印 3、再印 99。想让它俩共享同一只，在 C 里得自己递一张猫爪指向牌（`Cat *p = &c1;`），等号是不会自动帮你共享的喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵在 C++ 里把「同一只猫的第二个名字」写明白：`Cat& c2 = c1;`，接着 `c2.fish = 99;`。这时候 `c1.fish` 会是多少喵？",
+      "options": [
+        "99 —— `Cat&` 是给同一只猫再挂一个名字，改哪个都是改它",
+        "3 —— C++ 默认是复印，写不写 `&` 都各是各的",
+        "编译不过 —— `&` 只能写在数字后面",
+        "说不准 —— 看翻译官喵当时的心情"
+      ],
+      "answer": 0,
+      "explanation": "`Cat& c2 = c1;` 里的 `&` 是「别名」：c2 不是第二只猫，是同一只猫的第二个名字（定义即初始化、从一而终，前面几课立的规矩）喵。所以 `c2.fish = 99` 改的就是 c1 那只本体 —— 印出来 99。对比着记：C++ 默认写 `Cat c2 = c1;`（不带 `&`）走的是整只复印那条老路，c1 还是 3；想共享，那个 `&` 一个字都不能省喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "class Cat {\n    int fish;\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c1 = new Cat();\n        c1.fish = 3;\n        Cat c2 = c1;\n        c2.fish = 99;\n        System.out.println(c1.fish);\n    }\n}",
+      "stem": "这段 Java 代码的输出是什么？",
+      "answer": "99",
+      "accept": ["99\n"],
+      "explanation": "Java 里 `Cat c2 = c1;` 抄的是遥控器（引用语义）喵：名册上多了一格，猫屋里还是那一只小橘。`c2.fish = 99` 顺着 c2 这支遥控器走进猫屋，改的是本体 —— c1 手里那支对着同一只猫，所以 `System.out.println(c1.fish)` 印出来是 99。这正是本课开场那个案发现场：写的是 c2，变的是 c1喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "class Cat:\n    def __init__(self, fish):\n        self.fish = fish\n\nc1 = Cat(3)\nc2 = c1\nc3 = Cat(3)\nc3.fish = 5\nprint(c1.fish, c2.fish, c3.fish)",
+      "stem": "这段 Python 代码的输出是什么？",
+      "answer": "3 3 5",
+      "accept": ["3 3 5\n"],
+      "explanation": "一行一行数喵：`c2 = c1` 只是又一支对着同一只猫的遥控器；`c3 = Cat(3)` 是另造的一只新猫（右边带着出生口令），它和 c1 那只从出生那一刻起就是两只。`c3.fish = 5` 改的是新猫自己，碰不到 c1 那只 —— 所以三个数是 3、3、5。这一题就是两张内存图的分水岭：「抄遥控器」的名字们共用一只，「另造」的那只各管各的喵。"
+    },
+    {
+      "id": "q6",
+      "type": "codefill",
+      "lang": "java",
+      "code": "class Cat {\n    int fish;\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c1 = new Cat();\n        c1.fish = 3;\n\n        Cat c2 = ____;\n        Cat c3 = new Cat();\n\n        ____ = c1.fish;\n\n        c2.fish = 99;\n        System.out.println(c1.fish);\n        System.out.println(c3.fish);\n    }\n}",
+      "stem": "两问都要写喵：第一空 —— 让 c2 这支遥控器对着同一只猫；第二空 —— 把 3 照搬进新猫（c3）自己那一格，往后改谁都不影响谁。",
+      "blanks": [
+        {
+          "answer": "c1",
+          "accept": []
+        },
+        {
+          "answer": "c3.fish",
+          "accept": []
+        }
+      ],
+      "explanation": "第一空填 `c1`：`Cat c2 = c1;` 抄的是遥控器，c2 和 c1 对着同一只猫 —— 所以后面 `c2.fish = 99` 连 c1 一起变，印出来 99。第二空填 `c3.fish`：数要装进新猫自己那一格（`c3.fish = c1.fish;`），c3 才是另一只猫、各管各的 —— 所以它始终是 3。跑完屏幕上两行：99、3。第一空考「怎么共享」，第二空考「怎么分家」，正是本课两张内存图喵。"
+    },
+    {
+      "id": "q7",
+      "type": "choice",
+      "stem": "本喵在 Java 里先造了一只小橘：`Cat c1 = new Cat();`。手一滑，写下 `Cat c2 = null;`，紧接着又来一句 `c2.fish = 99;`。会发生什么喵？",
+      "options": [
+        "运行时当场崩：null 是一支空遥控器，谁也没对着，一按就报 NullPointerException",
+        "编译就不过：Java 不许把 null 交给对象变量",
+        "一切正常：系统会先自动造一只猫，再把它改成 99",
+        "c2 会自动对上上一句里的 c1"
+      ],
+      "answer": 0,
+      "explanation": "`null` 是空遥控器：名册上摆着一格，可它谁也没对着喵。`Cat c2 = null;` 本身合法，但接着 `c2.fish = 99` 是「按一支没对着电视机的遥控器」—— 运行时当场崩，Java 报的是 NullPointerException。Python 那边的同款是 `c3 = None` 再写 `c3.fish`，报 AttributeError。老熟人喵：这就是 C 段那张空牌子换了身行头 —— `Cat *p = NULL;` 谁也没指，顺着走（`p->fish`）也是当场栽。"
+    },
+    {
+      "id": "q8",
+      "type": "choice",
+      "stem": "本喵想给「小橘」留个备份，写下了 `Cat c2 = c1;`，转头又写 `c2.fish = 0;` —— 第二天发现小橘（c1）也被清零了。想真正留一份互不打扰的备份，该写成什么喵？",
+      "options": [
+        "Cat c2 = new Cat(); c2.fish = c1.fish; —— 先另造一只新猫，再把数照搬进它自己的格子",
+        "Cat c2 = c1; 再多抄一遍 —— 抄两次就自动分家了",
+        "Cat c2 = null; —— 空着最保险，不碰原来的",
+        "不用改：Java 的等号本来就各管各的"
+      ],
+      "answer": 0,
+      "explanation": "`Cat c2 = c1;` 抄的是遥控器喵：c2 不是备份，是「同一只猫的第二支遥控器」—— 所以 `c2.fish = 0` 改的就是小橘本体，原件当然被清零。真备份要让 c2 对着另一只猫：先 `new Cat()` 另造一只，再把数照搬进它自己的格子（`c2.fish = c1.fish;`）。记住本课的分水岭：带 `new`（或 `Cat(...)`）才是请新猫，光写等号只是抄遥控器喵。"
+    },
+    {
+      "id": "q9",
+      "type": "fill",
+      "stem": "本课立了两套规矩。其中「名字里装的就是货本身，抄一份就是又一份货」这套，行话里叫____语义。（一个字）",
+      "answer": "值",
+      "accept": ["值", "值语义"],
+      "explanation": "这套叫值语义喵 —— 名字里装的就是货本身，抄一份就是又一份货，你一路写的 `int`、`double` 走的全是这条道。另一套叫引用语义：名字里装的是一支遥控器，抄一份只是多一支遥控器，改的却是同一台电视机 —— Java、Python 的等号走这条。两条一起记，才不会把「抄的是遥控器还是电视机」搞混喵。"
+    }
+  ]
+}

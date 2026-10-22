@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-args-main-nobrackets",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-14",
+  "type": "codefix",
+  "concept": ["argc", "argv", "少写方括号", "警告不是错误"],
+  "instances": 2,
+  "params": {
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫罐头", "冻干块"] }
+  },
+  "stemTemplate": "本喵想让程序把外面递进来的投喂念出来：先报一行 `一共收到 <几条> 条投喂`；要是**一条多的都没给**，就印一行 `这次一条都没多给喵，{unit}也没准备好` 然后收工；真给了才去念第一条。\n\n空着手跑（也就是判分时的情形）应当印：\n\n```\n一共收到 1 条投喂\n这次一条都没多给喵，{unit}也没准备好\n```\n\n可这段代码翻译官喵**只是出了两声**，没把本喵拦下 —— 一跑起来什么都没印就没了。你帮本喵看出是哪一处形状没写全（`main` 头上那一行），把它改好、顺手把空着手时该走的那条路也补上。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(int argc, char *argv) {\n    printf(\"一共收到 %d 条投喂\\n\", argc);\n    printf(\"第一条：%s\\n\", argv[1]);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(int argc, char *argv[]) {\n    printf(\"一共收到 %d 条投喂\\n\", argc);\n    if (argc < 2) {\n        printf(\"这次一条都没多给喵，{unit}也没准备好\\n\");\n        return 0;\n    }\n    printf(\"第一条：%s\\n\", argv[1]);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵那两声原话是这样的：\n\n```\nwarning: second argument of 'main' should be 'char **' [-Wmain]\nwarning: format '%s' expects argument of type 'char *', but argument 2 has type 'int' [-Wformat=]\n```\n\n第一句说的正是本课那件事 —— 「**这一格该写的是 `char **`**」，也就是「**一排装着项链的碗**」。本喵少写的，就是那对方括号：\n\n```c\nchar *argv[]     /* 对：一排装着项链的碗 */\nchar *argv       /* 少了一对方括号，它就不是那串投喂了 */\n```\n\n少了方括号以后 `argv` 变成了**一个一个的字**（一根项链），`argv[1]` 就被读成「那一排里的第 2 格」—— 而那里根本不归本喵管。所以程序一跑就伸手摸到了不该摸的地方，什么都没印就没了。\n\n**可它只是出声，没把本喵拦下** —— 程序照样被编了出来。**「警告」不是「错误」**：错误是拦下的那只手，警告只是它顺口提醒的一句 —— 手一抖、眼一花，那两行就过去了。**这一类错最难缠的地方就在这里：警告容易看漏，出事却在最后一步。**\n\n还有一处得顺手补上：**投喂不够的时候不能硬往下摸。** 本喵空着手来的，`argv[1]` 那一格压根不存在，就算形状写对了也不该去碰它。所以要先用 `argc` 挡一道：\n\n```c\nif (argc < 2) {\n    ...\n    return 0;\n}\n```\n\n`argc` 最少也是 **1**（程序自己的名字永远算第一条），所以「一条多的都没给」就是 `argc == 1`，写成 `argc < 2` 一样的意思。**先检查、再干活** —— 这一条在本课不只是习惯，是保命的喵。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-halving-asks-total",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-16",
+  "type": "codewrite",
+  "concept": ["砍半的刀数", "每只碗都砍一遍的总额", "砍半那档量级"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["本喵砍完啦", "本喵数好啦"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 16, "max": 17 },
+  "stemTemplate": "本喵有一排猫粮碗，编号从 1 排到 n。要连着做两件事喵：\n\n1. **一把砍到底**：把这一排反复**掰成两半、只留左边那一半**，一直留到只剩一只碗为止 —— 掰一下记一刀；\n2. **每一只碗都从头砍一遍**：对每一只碗，都照着上面那件事做一遍，每一刀算**一句问话**。\n\n投喂给程序的是：**一行一个数 n**（碗的只数）。请它印三行：\n\n```text\n{word}\n一把砍到底要 C 刀\n一共问 T 句\n```\n\n- 第一行把 {word} **原样**印出来；\n- `C` 是第一件事掰的刀数；\n- `T` 是第二件事一共问的句数。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        int cuts = 0;\n        int left = n;\n        while (left > 1) {\n            left = left / 2;\n            cuts++;\n        }\n\n        long asks = 0;\n        for (int i = 0; i < n; i++) {\n            left = n;\n            while (left > 1) {\n                left = left / 2;\n                asks++;\n            }\n        }\n\n        System.out.println(\"{word}\");\n        System.out.println(\"一把砍到底要 \" + cuts + \" 刀\");\n        System.out.println(\"一共问 \" + asks + \" 句\");\n    }\n}\n",
+  "explanationTemplate": "这题的两行输出，正好是**同一个动作在两个高度上数出来的** —— 值得对着看一会儿喵。\n\n**第一行：一只碗要砍几刀。** 每一刀都把剩下的只数砍掉一半：n 只砍到 1 只，刀数是「n 能被 2 连除几次」。这件事**长起来非常慢** —— 只数翻一倍，刀数才多 1。所以第二件事里那 n 只碗，每只都砍一遍，一共是 `n × 刀数`。\n\n**第二行：整个活儿一共问多少句。** 把上面那个动作对每一只碗各做一遍，就是 `n × 刀数` —— 这正好是课本里 `n log n` 那一行的形状：**每只碗都要照顾到（n），而照顾一只只要砍半着问几次（log n）。**\n\n⚠️ 跟课文里的锚点数对照一下：n 是 1024 的时候，砍半着问只要 10 句，而「两两试」那本账是 523776 圈 —— **差着五万多倍**。同一个「找最靠里那一只」的需求，砍半着问就是比挨对儿试省这么多。这就是量级这件事为什么值得先量一量再动手喵。"
+}

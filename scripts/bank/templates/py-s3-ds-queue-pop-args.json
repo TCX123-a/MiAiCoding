@@ -1,0 +1,19 @@
+{
+  "templateId": "py-s3-ds-queue-pop-args",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-19",
+  "type": "codefix",
+  "concept": ["两头都能进出的绳子", "从头领走用 popleft", "一排碗的习惯搬不过来", "先来先领"],
+  "instances": 2,
+  "params": {
+    "n": {
+      "kind": "pick",
+      "values": [3, 4]
+    }
+  },
+  "stemTemplate": "本喵用一根**两头都能进出的绳子**（`deque`）排了一条队：新来的用 `append` 排到**尾巴**上，领的时候该从**头上**领走 —— 先来的先领到。\n\n可它一跑就当场躺下，一条都没领出来，先甩了一屏红字给本喵看。\n\n请你帮本喵改好它：让 {n} 条按先来后到的顺序印出来，先进去的 1 先印，**一行一个数**。\n\n⚠️ 提醒一句喵：这根绳子和一排碗**不是一家人**，别拿一排碗的招式名往它身上套。别的行一个字都别动。",
+  "brokenCodeTemplate": "from collections import deque\n\n排队 = deque()\nfor 号 in range(1, {n} + 1):\n    排队.append(号)\nfor _ in range({n}):\n    print(排队.pop(0))\n",
+  "referenceFixTemplate": "from collections import deque\n\n排队 = deque()\nfor 号 in range(1, {n} + 1):\n    排队.append(号)\nfor _ in range({n}):\n    print(排队.popleft())\n",
+  "explanationTemplate": "坏的是最后那一行里那句「从头上领」的写法。\n\n这根两头都能进出的绳子**没有**「报个编号」这种说法 —— 它那只从尾巴上拿东西的招式**本来就不吃编号**，你给它塞一个 `0` 进去，翻译官喵当场就把这一句拦下来了，还顺口告诉你「它不吃东西」。所以程序一条都没领出来就断了。\n\n改法是换成**从头那一头**拿的招式：`popleft()`。「left」在英文里就是「左」＝头这一边 —— 新来的排到右（尾巴），领的从左（头）走，这就是先来先领。\n\n⚠️ 这里最容易踩的是「习惯性照搬」：一排碗那套从头上拿的写法太顺手了，一看到排队就想往绳子上套。可那一套不但在这根绳子上不成立，在一排碗上也是本课专门数过代价的**贵**做法（一千条要挪 499500 次）；而这根绳子的两头都留着一截空位，从头上领一条，后面谁都不用动。\n\n改完自己推一遍：{n} 条按 1 到 {n} 的顺序一条行一个地印出来 —— 先来先领，谁也不插队。"
+}

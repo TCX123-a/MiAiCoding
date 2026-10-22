@@ -1,0 +1,85 @@
+{
+  "lessonId": "c-stage3-19",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "小鱼干的账本要分成三本了。大肥鱼问：`fish.h` 这本招牌本上，到底该放什么？",
+      "options": [
+        "`total_fish` 这个招式的完整做法（连同大括号里的全部步骤）",
+        "招式的声明 —— 名字、收什么、吐什么，不写做法",
+        "`main` 那一段本身，好让别的纸也能来跑它",
+        "把三个 `.c` 文件挨个 `#include` 一遍"
+      ],
+      "answer": 1,
+      "explanation": "招牌只报菜名、不写菜谱：声明告诉别人「有这么一招、怎么喊它」，真正的做法留在 `fish.c` 里。要是把做法也写进招牌，招牌被抄到哪一本上，就等于同一份工多报了一次 —— 这正是第五节那个「两位来报同一份工」的来路。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵说，`#include` 没什么魔法。它拿 `fish.h` 这个文件到底干了什么？",
+      "options": [
+        "把它指到的那个文件，原地抄到这一行的位置 —— 说到底就是一次拼接",
+        "让翻译官喵先去把那个文件运行一遍",
+        "先记下这个文件，等程序跑起来的时候再去看它",
+        "把那个文件译成半成品，等最后一步拼进来"
+      ],
+      "answer": 0,
+      "explanation": "预处理那一步，翻译官喵的徒弟看到 `#include \"fish.h\"`，就把 `fish.h` 的内容在原地抄一遍 —— 不多一字、不少一字。所以招牌里放什么，等于往每本抄它的本子上放什么；这正是招牌本头上要站守卫（`#ifndef`）的原因，第 21 课会接着展开。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "手工分步造程序的时候，`gcc -c main.c -o main.o` 这一句让翻译官喵干了哪一段活？",
+      "options": [
+        "一条龙：译完顺手就拼成 `prog.exe`",
+        "只检查代码有没有写错，什么都不产出",
+        "把 `main.c` 一个字不改地抄进 `main.o`",
+        "先把 `main.c` 译成半成品，拼的事先不干"
+      ],
+      "answer": 3,
+      "explanation": "`-c` 是 compile-only 的简写：只管译、出一个半成品（目标文件 `.o`），拼的事留给最后那一步。第三节的三连命令就是这么分工的：先译出 `main.o`、`fish.o`，最后才把它们拼成 `prog.exe`。"
+    },
+    {
+      "id": "q4",
+      "type": "choice",
+      "stem": "两种撞法要分清：翻译官喵报『`undefined reference to` 某某』和报『`multiple definition of` 某某』，分别是什么意思？",
+      "options": [
+        "前者是几张纸的顺序放反了；后者是成品的名字写错了",
+        "两者都是翻译官喵心情不好，重启一下就好",
+        "前者是名字找不到做法（没人定义它）；后者是同一个名字被定义了不止一遍",
+        "前者是同一个名字被定义了不止一遍；后者是名字找不到做法"
+      ],
+      "answer": 2,
+      "explanation": "口诀：**undefined 是「找不到」，multiple 是「找多了」**。忘了把 `fish.o` 那份半成品带上，就是找不到；两张纸都写了同一招的完整做法，就是找多了。第四节和第五节各撞了一次，报错里都会带上闹事的那个名字。"
+    },
+    {
+      "id": "q5",
+      "type": "fill",
+      "stem": "手工分步造程序时，让翻译官喵「只管译、先别拼」的那个开关，怎么写？",
+      "answer": "-c",
+      "accept": [],
+      "explanation": "`-c`（compile-only）：译出半成品就收手。它在第三节的命令里排在最前头 —— `gcc -c main.c -o main.o`。"
+    },
+    {
+      "id": "q6",
+      "type": "fill",
+      "stem": "翻译官喵把一张 `.c` 单独译出来的那个 `.o` 半成品，中文正名是什么？（四个字）",
+      "answer": "目标文件",
+      "accept": [],
+      "explanation": "目标文件（object file）—— 还没拼成成品、但已经译好了的那一块。第三节那句「`.c` 进、`.o` 出」说的就是它。"
+    },
+    {
+      "id": "q7",
+      "type": "codefill",
+      "lang": "c",
+      "stem": "下面的程序里，声明那行和调用那行各空了一块 —— 把两处空缺补成同一个名字，让程序能编过、并印出总数。（名字就藏在下面的做法里。）",
+      "code": "#include <stdio.h>\n\nint ____(int bowls[], int count);\n\nint main(void) {\n    int bowls[3] = {2, 5, 3};\n    printf(\"一共 %d 条小鱼干\\n\", ____(bowls, 3));\n    return 0;\n}\n\nint total_fish(int bowls[], int count) {\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum += bowls[i];\n    }\n    return sum;\n}\n",
+      "blanks": [
+        { "answer": "total_fish", "accept": [] },
+        { "answer": "total_fish", "accept": [] }
+      ],
+      "explanation": "补完的两处都是 `total_fish`：声明、调用、做法三个地方用同一个名字，翻译官喵才对得上号。第二节的实验和它是同一份程序 —— 招牌本上要写的，正是这一句 `int total_fish(int bowls[], int count);`。"
+    }
+  ]
+}

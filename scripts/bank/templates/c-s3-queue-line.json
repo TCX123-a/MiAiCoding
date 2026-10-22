@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-queue-line",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-04",
+  "type": "codewrite",
+  "concept": ["一条队伍", "head 送客 tail 接客", "先来后到", "假满"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["10", "40"] },
+    "b": { "kind": "pick", "values": ["20", "50"] },
+    "c": { "kind": "pick", "values": ["30", "60"] }
+  },
+  "stemTemplate": "本喵要开一条**领小鱼干的队伍**：最先来的最先领到。\n\n请你写：\n\n1. 底座是一排摆好的格子，能站 **5** 只猫（`#define` 一个 5 出来）；再摆**两个**数：一个记「队头在哪儿」、一个记「下一个空位在哪儿」。\n2. `is_empty()`：队头跟空位**走到同一个地方**就是空；`is_full()`：空位已经走到头了就是满。\n3. `enqueue(int value)`：**先问满没满** —— 满了答 0；没满就让新来的站好、**把空位往后挪一格**、答 1。\n4. `dequeue(int *value)`：**先问空没空** —— 空了答 0；没空就**从队头**把猫领走、把队头往后挪一格、答 1。\n5. `main` 里依次让 **{a}、{b}、{c}** 站进来；先印一行 `队伍里有 3 只猫`；然后一只一只领走，领一只印一行 `领到 几只`；最后印一行 `队空了吗？空了，可 head 已经走到 3`。\n\n该印出来**五行**：\n\n```text\n队伍里有 3 只猫\n领到 {a}\n领到 {b}\n领到 {c}\n队空了吗？空了，可 head 已经走到 3\n```",
+  "starterTemplate": "#include <stdio.h>\n\n#define MAX_CATS 5\n\n/* ① 底座 + 两个数：队头在哪儿 / 下一个空位在哪儿 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 新来的站进来 */\n\n/* ④ 从队头领走一只 */\n\nint main(void) {\n    /* ⑤ 让 {a}、{b}、{c} 站进来，报个数，再一只一只领走 */\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue({a});\n    enqueue({b});\n    enqueue({c});\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    printf(\"队空了吗？%s，可 head 已经走到 %d\\n\", is_empty() ? \"空了\" : \"还有\", head);\n    return 0;\n}\n",
+  "explanationTemplate": "一条队伍比碗摞多一个数，是因为它**两头都要动**喵。\n\n**① 两个下标各管一头。**\n\n- `tail` 负责**接客**：新来的站在 `line[tail]`，站好之后 `tail++`，指向下一个空位。\n- `head` 负责**送客**：队头那位先领走（`*value = line[head];`），然后 `head++`，指向队伍里新的第一位。\n\n**② 数一数有几只，用 `tail - head`。** 空位在哪儿减去队头在哪儿，中间的就是队伍里站着的猫。领猫的时候从 `head` 那一头拿、让 `head` 往前走 —— 先来的那个 `head` 最小，所以**先来的先领到**。\n\n**③ 空不空看两个数是不是走到一起。** `head == tail` —— 接客的和送客的站到同一个地方，说明中间的猫都领完了。\n\n**④ 这个写法有个小毛病。** `head` 只会往前走，**前面空出来的格子再也回不来**。本喵真跑过一遍：三只都领完之后 `head` 和 `tail` 都走到 3；再排两只进来，`tail` 就到 5 了；**想排第三只，它就说「满了」—— 可那时候队伍里明明只有 2 只猫，前头还空着三格。** 这个现象叫「假满」，等你学到转圈的写法（走到头就绕回 0），第一件事就是把今天这个坑填上喵。\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`；两个数走到一起，就是空了。**"
+}

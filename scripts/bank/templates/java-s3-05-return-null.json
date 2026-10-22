@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-05-return-null",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-05",
+  "type": "codefix",
+  "concept": ["名分上写了盒子就一条路都不能交空东西", "货不对板用的人一开就炸", "没找到也交一只空盒子"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["罐头", "猫条"] },
+    "v": { "kind": "pick", "values": ["一个罐头", "两根猫条"] }
+  },
+  "stemTemplate": "本喵写了一招 `find`：名分上写着「叼回来的是一只**盒子**」（可能有、可能没有）喵。\n\n可它**一跑就当场炸了** —— 第一行印出来了，第二行刚跑到就炸。红字里说：叫不动那一手，因为 `find` 交回来的东西是**空的**（原话那句 `because the return value of \"Main.find(String)\" is null`）。\n\n你帮本喵看看：**没找到的那条路，本喵交回的是什么**。\n\n改好之后它该印**两行**：\n\n```text\n{v}\n啥也没有\n```\n\n名字、货、和用盒子那两句都别去改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"{w}\")) {\n            return Optional.of(\"{v}\");\n        }\n        return null;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(find(\"{w}\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"{w}\")) {\n            return Optional.of(\"{v}\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        System.out.println(find(\"{w}\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+  "explanationTemplate": "**一、红字怎么念。** `Cannot invoke ... because the return value of \"Main.find(String)\" is null` 直译是「**叫不动那一手，因为 `find` 交回来的东西是空的**」。翻译官喵说得很准：毛病不在用盒子那两句上，在**交回来的东西**上。\n\n**二、错在哪：名分上写着盒子，交回来的却是空东西。** `find` 的名分上写得清清楚楚：叼回来的是一只**盒子**（可能有、可能没有）。可没找到那条路上，本喵交回的是一个**空东西** —— 拿名分跟货一对，**货不对板**：说好交盒子的，结果交了个空气。用的人照着名分去开盒，一开就炸。\n\n**三、为什么这比别处更阴。** 名分本来是本课最值钱的东西 —— 它把「可能没有」**写在明处**，用的人一眼看得见、就得交代一句。可名分上说盒子、货却是空的，**这个承诺就成了假的**：用的人照着它写，写的时候一点毛病都没有，跑起来才炸。\n\n**四、改法：交回一只真盒子。** 没找到那条路别交空东西，交回**一只空盒子**（`Optional.empty()`）。空盒子和空东西**长得像、意思正好相反**：空盒子是「本喵找过了，没有」这件**写在名分里的事实**；空东西只是「这儿什么都没有」，什么也没交代。\n\n一句话记住：**名分上写了盒子，就一条路都不许交空东西 —— 没找到也交一只空盒子。**"
+}

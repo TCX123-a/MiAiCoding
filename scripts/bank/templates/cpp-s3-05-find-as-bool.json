@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-05-find-as-bool",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-05",
+  "type": "codefix",
+  "concept": ["找回来的是一把爪子", "爪子变不成真和假", "拿它跟走完的位置比"],
+  "instances": 2,
+  "params": {
+    "t": { "kind": "pick", "values": [3, 6] },
+    "b": { "kind": "pick", "values": [8, 1] },
+    "c": { "kind": "pick", "values": [5, 9] }
+  },
+  "stemTemplate": "本喵想知道某个数**在不在柜子里**：在就印「找到了喵」，不在就印「没有喵」喵。\n\n可它**编不过** —— 翻译官喵拦在了看眼色那一声上。你帮本喵把它改对：**「在不在」要问对**。塞货和印字那几句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back({t});\n    v.push_back({b});\n    v.push_back({c});\n\n    if (find(v.begin(), v.end(), {t})) {\n        cout << \"找到了喵\" << endl;\n    } else {\n        cout << \"没有喵\" << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back({t});\n    v.push_back({b});\n    v.push_back({c});\n\n    if (find(v.begin(), v.end(), {t}) != v.end()) {\n        cout << \"找到了喵\" << endl;\n    } else {\n        cout << \"没有喵\" << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题错在**拿一把爪子去当真和假用**喵。\n\n找回货那一招叼回来的**不是真 / 假**，而是**一把爪子** —— 指着「找着的那个数在第几格」。爪子压根变不成真和假，所以翻译官喵不认；它的原话里有 `could not convert`，念作「**这个转换我做不了**」，后面还点出了它想转过去的那个词 `bool`（就是「真 / 假」那两种值）。\n\n要判「在不在」，得**拿这把爪子跟「走完」的位置比**：\n\n`if (find(v.begin(), v.end(), {t}) != v.end())`\n\n念作「指着的位置**不是**『走完』」。找着了的时候它指在柜子里的某一格上；**一个都没找着**的时候，它指的正好是 `v.end()`（走完那个位置）。\n\n⚠️ 所以这一对要一起记：`!= v.end()` 是「**找着了**」，`== v.end()` 是「**没找着**」—— 正好反过来念也行，别记成「`find` 叼回来的是真 / 假」。\n\n⚠️ 也别拿 `find` 的结果去和 0、和编号比大小 —— 它比的是**位置**，不是数。"
+}

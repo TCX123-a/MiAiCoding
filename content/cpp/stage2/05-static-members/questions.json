@@ -1,0 +1,78 @@
+{
+  "lessonId": "cpp-stage2-05",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "图纸上有一格共用的 `static int count;`，并且图纸外面那一行也写了。本喵现在写下 `a.count = 100;`（`a` 是一只已经生出来的猫）—— 之后 `Cat::count` 和 `b.count` 各是多少？",
+      "options": [
+        "两个都是 `100` —— 三种念法指的是**同一份**，一共就这一格",
+        "`Cat::count` 是 `100`，`b.count` 还是原来的数 —— 每只猫各有一份",
+        "两个都编不过 —— 共用的那一份不许用猫名去碰",
+        "`b.count` 是 `100`，`Cat::count` 还是原来的数"
+      ],
+      "answer": 0,
+      "explanation": "共用的格子**只有一份**，它不属于任何一只猫喵。所以 `a.count`、`b.count`、`Cat::count` 三种写法指的是同一个地方 —— 拿 `a` 去改，`b` 和他图纸名那一侧看到的都跟着变，印出来就是 `100 100`。本喵拿最啰嗦的那档念叨真跑过：编得过、跑得动、**翻译官喵一个字都没说** —— 它不会提醒你「喂，你改的是共用的那一份」。这就是本喵给自己立规矩「共用的只写图纸名」的原因：这么写一眼就知道它不是某只猫自己的一格。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "图纸里写了 `static int count;`，可**图纸外面那一行**（给它落地、给起步的数的那一行）本喵忘了写。这段代码会怎样？",
+      "options": [
+        "逐句看的那一关全过，直到**把所有零件拼起来那一刻**才报错，最末一句是 `collect2.exe: error: ld returned 1 exit status`",
+        "图纸里那句 `static int count;` 当场就编不过，说这个名字没落地",
+        "编得过、跑得动，只是每次生猫都会把 `count` 重置成 `0`，数不出只数",
+        "编得过、跑得动，只是印出来的数每次都不一样"
+      ],
+      "answer": 0,
+      "explanation": "图纸里那句只是**报个名字**：有这么一格、它是整张图纸共用的。可它**没有落地** —— 每只猫自己那两格是跟着真猫一起被造出来的，共用的这一格没有这份待遇，得在图纸外面亲手写一行给它。少了这一行，前面每一句都被逐句看过、都说没问题，直到**拼装那一刻**才炸喵（原话里那个 `ld` 就是干拼装这活的工具）。所以看到 `collect2.exe: error: ld returned 1 exit status`，先回头数一数是不是有哪个共用的格子忘了写那一行。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "一个 `static` 招式（前面带着 `static` 的那种）的肚子里，本喵写了一句 `return name.size();` —— 而这个 `name` 是每只猫自己的那一格。会怎样？",
+      "options": [
+        "编不过，原话里有 `invalid use of member 'Cat::name' in static member function`",
+        "编得过，只是会拿到**最后出生**的那只猫的名字",
+        "编得过，只是会拿到某只猫随机的名字",
+        "编不过，因为 `name` 装的是字，而 `static` 函数只许碰整数"
+      ],
+      "answer": 0,
+      "explanation": "`static` 招式是**挂在图纸上**的：喊它的时候不需要先有一只猫，所以它手里根本没有「哪只猫」这个信息喵。每只猫自己那一格（`name`、`fish`）都得有个具体的猫才能取到 —— 没有猫，它不知道该取谁的，翻译官喵当场就拦下。共用的格子（`count` 那种）反过来，谁都能碰，`static` 招式里碰它一点问题都没有。「编得过，只是会拿到**最后出生**的那只猫的名字」和「编得过，只是会拿到某只猫随机的名字」错在同一处：这一段**编都编不过**，压根到不了「拿到谁的名字」那一步。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    ____ int count;\n    string name;\n\n    Cat(string n) : name(n) {\n        count = count + 1;\n    }\n\n    static int howMany() {\n        return ____;\n    }\n};\n\n____ Cat::count = 0;\n\nint main() {\n    Cat a(\"小橘\");\n    Cat b(\"狸花\");\n    cout << \"一共出生了 \" << Cat::howMany() << \" 只\" << endl;\n    return 0;\n}",
+      "stem": "这段代码里有三处被本喵挖空了（用 `____` 标出）。补上之后它会印出「一共出生了 2 只」喵。",
+      "blanks": [
+        { "answer": "static", "accept": [] },
+        { "answer": "count", "accept": [] },
+        { "answer": "int", "accept": [] }
+      ],
+      "explanation": "三处各有一个讲究喵：\n\n- 第一处是图纸里给这格贴的标记 `static` —— 写上它才表示「这一格整张图纸共用，不属于任何一只猫」；\n- 第二处是把共用的那一格叼回来：肚子里写 `return count;`（这一招是 `static` 的，碰共用的格子完全没问题）；\n- 第三处是**图纸外面**那一行的开头：`int Cat::count = 0;` —— 这里要写的是**这一格装什么**（`int`），然后挂上图纸名 `Cat::` 再写格子名，最后给它一个起步的数。\n\n少了第三处的那个词，或者少了整行，都会在**拼装那一刻**炸掉。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int count;\n    string name;\n\n    Cat(string n) : name(n) {\n        count = count + 1;\n    }\n\n    static int howMany() {\n        return count;\n    }\n};\n\nint Cat::count = 0;\n\nint main() {\n    Cat a(\"小橘\");\n    Cat b(\"狸花\");\n    Cat c(\"大胖\");\n    cout << Cat::howMany() << endl;\n    Cat d(\"三花\");\n    cout << Cat::howMany() << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？（两行）",
+      "answer": "3\n4",
+      "accept": ["3\n4\n"],
+      "explanation": "共用的那一格**只有一份**，而每生一只猫，出生招式都会去同一个格子上加一喵。所以印第一行的时候已经生过三只（`a`、`b`、`c`），是 `3`；紧接着又生了 `d`，第四只出生时那个格子又加了一，于是第二行是 `4`。注意印数用的是 `Cat::howMany()` —— 这件事跟具体哪只猫无关，从图纸上问最自然。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int total;\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {\n        total = total + f;\n    }\n};\n\nint Cat::total = 0;\n\nint main() {\n    Cat a(\"小橘\", 3);\n    Cat b(\"狸花\", 4);\n    a.fish = 100;\n    cout << \"一共 \" << Cat::total << \" 条\" << endl;\n    cout << \"小橘 \" << a.fish << \" 条\" << endl;\n    cout << \"狸花 \" << b.fish << \" 条\" << endl;\n    return 0;\n}",
+      "stem": "图纸上有一本共用的账，每只猫自己也带一格条数。这段代码的输出是什么？（三行）",
+      "answer": "一共 7 条\n小橘 100 条\n狸花 4 条",
+      "accept": ["一共 7 条\n小橘 100 条\n狸花 4 条\n"],
+      "explanation": "这题把「**共用的**」和「**自己的**」摆在一起看喵：\n\n- 共用的那本账（`total`）只在**出生那一刻**被加过一次：`3 + 4 = 7`。它是一份，两只猫看到的是同一本。\n- 每只猫的 `fish` 是**自己的一份**。所以 `a.fish = 100;` 只改了小橘那一格 —— 狸花那一格还是 `4`，共用的账也还是 `7`（出生招式早就跑完了，没人再去动那本账）。\n\n第 2 行和第 3 行正好把「一份」和「两份」的区别摆出来了：改一个，另一个纹丝不动。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-guard-missing-ring",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-12",
+  "type": "codefix",
+  "concept": ["门卫", "__name__", "被请进来会当场走一遍"],
+  "instances": 2,
+  "params": {
+    "mod": { "kind": "pick", "values": ["bell", "chime"] },
+    "ring": { "kind": "pick", "values": ["开饭啦喵", "集合啦喵"] }
+  },
+  "stemTemplate": "仓库里躺着一个本子 `{mod}.py`，它的尾巴上写了一句 `摇铃()`。\n\n正门那边只想**请它来当帮手**，然后自己伸手喊一次铃。可程序一跑，铃**响了两回**：头一回本喵还没伸手它就自己响了。\n\n本喵要的是这样：请它进来的时候它**一声都不许吭**；只有本喵自己伸手喊 `摇铃()`，铃才响。\n\n你改 `{mod}.py` 里那几行，让它闭嘴。正门那几行一个字都不用动。\n\n（铃本身那句 `print` 不许改，本喵要听的就是它。）",
+  "brokenCodeTemplate": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n内容 = '''def 摇铃():\n    print(\"{ring}\")\n\n\n摇铃()\n'''\nwith open(os.path.join(仓库, \"{mod}.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(内容)\n\nsys.path.insert(0, 仓库)\nimport {mod}\n\nprint(\"本喵来请帮手了\")\n{mod}.摇铃()\n",
+  "referenceFixTemplate": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n内容 = '''def 摇铃():\n    print(\"{ring}\")\n\n\nif __name__ == \"__main__\":\n    摇铃()\n'''\nwith open(os.path.join(仓库, \"{mod}.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(内容)\n\nsys.path.insert(0, 仓库)\nimport {mod}\n\nprint(\"本喵来请帮手了\")\n{mod}.摇铃()\n",
+  "explanationTemplate": "改之前那句 `摇铃()` 是**敞着**写在尾巴上的：本子只要被请进来，从头到尾走一遍，走到尾巴就顺手把铃摇了。请它的人和它自己都没想到这一层 —— 于是铃白响了一次。\n\n改法是在它上面加一道门卫：\n\n```text\nif __name__ == \"__main__\":\n    摇铃()\n```\n\n念作「**只有当本喵是走正门的那位，才摇这声铃**」。被请来当帮手的时候，本子心里那块牌子写的是它自己的名字（`{mod}`），不是 `__main__`，门卫一看牌子不对，就把这一句拦下了。\n\n所以改完以后，程序只剩两行：先 `本喵来请帮手了`，再一声铃。\n\n本喵要你把这条记牢：**被请进来的本子会当场从头到尾走一遍**。它在尾巴上写的每一句话都会被执行 —— 你想让它「只有当班时才做的事」，就都得搁在门卫底下喵。\n\n（这道门卫还有个好处：这个本子从此**既能走正门自己当班，也能被别人请去当帮手**，一份代码两用。）"
+}

@@ -1,0 +1,77 @@
+{
+  "lessonId": "java-stage1-14",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵有一段活儿翻车了，可本喵既没写 `try` 也没写 `catch`。会怎么样？",
+      "options": [
+        "程序当场断气，翻车那句后面的话全都不跑了",
+        "程序跳过翻车那一句，接着往下跑",
+        "屏幕上什么都不印，悄悄过去",
+        "编译当场拦下，说不许写会翻车的活儿"
+      ],
+      "answer": 0,
+      "explanation": "没人接住的翻车会让程序**当场断气**喵：翻车那一句前面印出来的还在屏幕上，从翻车那一点起，后面的活儿**一句都不再跑**。第一节那个演示就是这样 —— 「这句跑不到了喵」一个字都没印出来。翻译官那边**不会**提前拦下：翻不翻车得真跑起来才知道（喂进来的字长得不对、编号超出碗的数量，这些它编译的时候看不见），所以这类事故拦在运行这一步，只能靠 `try` / `catch` 接住喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵在 `try` 里写了三句，第二句翻车了，也写了对应的 `catch`。`try` 里**第三句**会怎么样？",
+      "options": [
+        "被跳过 —— 翻车之后直接跳到 `catch`，第三句不跑",
+        "照跑不误，`catch` 放在它后面",
+        "跑一遍再跳到 `catch`",
+        "看情况，如果第三句和 `catch` 里的话一样就照跑"
+      ],
+      "answer": 0,
+      "explanation": "`try` 这块地盘的脾气是：**哪一句翻了车，它后面的句子就全都不跑了**，直接跳到 `catch` 去喵。第五节那个演示里，「这句跑不到喵」夹在越界那句后面，一个字都没印出来 —— 这就是证据。想让「无论如何都要干」的活儿跑上，得把它放进 `finally` 那一块（收碗那类活儿），它排在 `catch` 后面、照跑不误喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵写了 `try`，`catch` 括号里写的是 `NumberFormatException`。可跑起来程序**还是断气**了，`catch` 里那句一个字没印。最可能是什么原因？",
+      "options": [
+        "翻的不是这一路车 —— 括号里的名字得换成断气那行字上写的那个名字",
+        "`catch` 得写在 `try` 前面才对",
+        "`e` 这个牌子名字起得不好，换一个就行",
+        "还缺一块 `finally`，补上就接住了"
+      ],
+      "answer": 0,
+      "explanation": "`catch` 括号里写的是「**哪一路**」：名字和它真翻的那一路对不上，它就**接不住**喵 —— 而且断气的时候，`catch` 里的活儿一句都不会干，这正是第六节那个演示的样子。查的办法很简单：看断气那行字上写的是什么名字（比如 `ArithmeticException`），拿它换上就行。另外三条都不对：`catch` 必须跟在 `try` 后面（先盯着、再接住）；`e` 是本喵自己起的牌子名，随便叫什么都不影响接不接得住；`finally` 管的是「不管翻没翻车都要干的收尾活儿」，它**不接车** —— 只有 `finally` 没有 `catch` 的写法还会照样断气喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int[] bowls = {2, 4, 6, 8};\n        try {\n            System.out.println(bowls[0]);\n            System.out.println(bowls[4]);\n            System.out.println(\"这句跑不到喵\");\n        } catch (ArrayIndexOutOfBoundsException e) {\n            System.out.println(\"编号越界了喵\");\n        } finally {\n            System.out.println(\"碗收好了\");\n        }\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "2\n编号越界了喵\n碗收好了",
+      "accept": ["2\n编号越界了喵\n碗收好了\n"],
+      "explanation": "四只碗的编号只有 `0`、`1`、`2`、`3` 喵。第一句 `bowls[0]` 是好的，印出 `2`；第二句 `bowls[4]` 编号超出去了，**当场翻车** —— 翻车之后 `try` 里剩下的那句「这句跑不到喵」**直接被跳过**，屏幕上看不见它；接着跳到 `catch`，印出「编号越界了喵」；最后 `finally` 那块不管翻没翻车都要跑，印出「碗收好了」。三行的顺序就是这么来的喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        try {\n            int n = Integer.parseInt(\"喵\");\n            System.out.println(\"拿到了 \" + n);\n        } catch (NumberFormatException e) {\n            System.out.println(\"这串字变不成数喵\");\n        }\n        System.out.println(\"记下了 0 条\");\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "这串字变不成数喵\n记下了 0 条",
+      "accept": ["这串字变不成数喵\n记下了 0 条\n"],
+      "explanation": "`Integer.parseInt(\"喵\")` 想把「喵」这串字变成一个数，可它变不成 —— 翻的是「一串字变不成数」这一路（`NumberFormatException`），`catch` 括号里的名字正好就是它，所以接住了，印出「这串字变不成数喵」喵。`try` 里那句「拿到了 ……」**一句没跑**（翻车那行的后面全跳过）。接住之后程序照常往下走，最后那句在 `try` / `catch` 外面，稳稳印出「记下了 0 条」—— 这就是接住翻车的意义：账接着记喵。"
+    },
+    {
+      "id": "q6",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        try {\n            System.out.println(10 / 0);\n        } ____ (ArithmeticException e) {\n            System.out.println(\"接住了喵\");\n        } ____ {\n            System.out.println(\"碗收好了\");\n        }\n    }\n}",
+      "stem": "本喵这段代码缺了两个地名：一处是「翻车之后接住它、办点事」的那一块，一处是「不管翻没翻车都要干」的那一块。补上两个空，让这段代码跑起来、屏幕上先印 `接住了喵`、再印 `碗收好了` 喵。",
+      "blanks": [
+        { "answer": "catch" },
+        { "answer": "finally" }
+      ],
+      "explanation": "第一个空填 `catch` —— 它跟在 `try` 后面，括号里写明「翻的是哪一路」（这里是 `ArithmeticException`，除以 0 那一路），接住之后印出「接住了喵」喵。第二个空填 `finally` —— 它管的是**不管翻没翻车都要干**的收尾活儿，所以排在 `catch` 后面，照样印出「碗收好了」。两块的名字都不能写错：`catch` 写错成别的，接不住车，程序还是断气；把收尾那句放进 `try` 里则会因为翻车被跳过 —— 都不行喵。"
+    }
+  ]
+}

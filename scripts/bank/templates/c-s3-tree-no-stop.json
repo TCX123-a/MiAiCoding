@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s3-tree-no-stop",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-05",
+  "type": "codefix",
+  "concept": ["自己咬自己尾巴的招式", "收手那一句", "空叉也要有人管", "当场摔了"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["5", "50"] },
+    "b": { "kind": "pick", "values": ["3", "20"] },
+    "c": { "kind": "pick", "values": ["8", "70"] },
+    "d": { "kind": "pick", "values": ["1", "10"] },
+    "e": { "kind": "pick", "values": ["4", "40"] }
+  },
+  "stemTemplate": "本喵把 **{a}、{b}、{c}、{d}、{e}** 这五个数挂上了猫爬架，架子搭得没错，可**报数那一招**一跑就出事：程序当场摔了，屏幕上一个字都没印出来。\n\n翻译官喵这次**嘀咕了**一句：\n\n```text\nwarning: infinite recursion detected [-Winfinite-recursion]\n```\n\n嘀咕归嘀咕，编译照样过（答 0）；真正摔的是跑起来那一下 —— 程序**答回来一个巨大的数**，输出是空的。\n\n请你把**报数那一招**补好。改好之后该印：\n\n```text\n中序：{d} {b} {e} {a} {c}\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {{a}, {b}, {c}, {d}, {e}};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {{a}, {b}, {c}, {d}, {e}};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "少的是**收手那一句**喵。\n\n本喵那一版把两边的叉都摸遍了，偏偏忘了问一句「**这只叉是不是空的**」：\n\n```text\nif (root == NULL) {\n    return;\n}\n```\n\n少了它，一只空叉传进来，程序照样去摸 `root->left` —— 可 `root` 本来就是空的，那里根本没有东西可摸。**自己咬自己尾巴的招式，最要紧的就是「咬到空处就松口」这一句**：它不松口，就会一代一代往下喊，永远回不了头。\n\n翻译官喵这次**确实嘀咕了**（`-Winfinite-recursion`：「这一招会没完没了地喊自己」），但那只算**提醒**，编译照样过 —— 真正摔的是跑起来：本喵真跑过，程序**输出是空的**，退出码是一串很大的数（不是 0）。所以这道题的判据不是「翻译官喵吭没吭声」，而是**跑起来摔不摔、印不印得出那一行**。\n\n顺一句：`insert` 里为什么不用愁这一句？因为它**第一句就问过了** —— 摸到空位就地现造一个接头，直接把它交回去（`return new_node(value);`），压根不会往空处摸第二下。报数这一招摸到空位没东西可造，只能**松口往回走**，这就是两句长得不一样的原因。"
+}

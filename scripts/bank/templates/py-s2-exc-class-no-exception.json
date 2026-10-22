@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-exc-class-no-exception",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-13",
+  "type": "codefix",
+  "concept": ["自己画的图纸", "必须是 Exception 的后代"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 3 },
+    "need": { "kind": "pick", "values": [4, 5] }
+  },
+  "stemTemplate": "本喵照书上的样子画了一张**只属于自己这摊**的毛病图纸，画完还在底下写了主动甩纸条的一行，外面也写好接住的了 —— 本喵觉得万无一失。\n\n可它**跑到甩纸条那一行就断了气**，后面接住的那一段一个字都没轮到。\n\n你帮本喵改对喵。要求：\n\n1. 改完跑起来要印**一行**，就是接住之后该印的那句话（样例输出里就是这个样子）。\n2. 图纸的名字、纸条上那句话、还有比大小的那两个数，**一个字都不许动**。\n3. 只改**画图纸那一行**，别处不许碰。",
+  "brokenCodeTemplate": "class 鱼干不够:\n    pass\n\n碗里 = {a}\ntry:\n    if 碗里 < {need}:\n        raise 鱼干不够(f\"只有 {a} 条喵\")\n    print(\"够分了\")\nexcept Exception as e:\n    print(\"逮住了：\", e)\n",
+  "referenceFixTemplate": "class 鱼干不够(Exception):\n    pass\n\n碗里 = {a}\ntry:\n    if 碗里 < {need}:\n        raise 鱼干不够(f\"只有 {a} 条喵\")\n    print(\"够分了\")\nexcept Exception as e:\n    print(\"逮住了：\", e)\n",
+  "explanationTemplate": "毛病图纸的**后面那个括号才是身份**喵：`class 名字(Exception):` 里的 `Exception` 是在说「**这张新图纸是从大图纸底下生出来的**」。有了这层身份，别处接住的规矩才认它 —— 「甩出来的纸条是它、或者是它的**后代**，就算接住」。\n\n本喵这张图纸没套那个括号，它就成了**孤零零一张**：程序照样能把它画出来、照样能把它甩出去，可**没有一条接住的规矩认它**，纸条落地，翻译官喵只好当场断气。\n\n⚠️ 这种坏法特别容易漏过去，因为它**断气的地方和出毛病的地方不是同一个地方**：本喵盯着断气那一行的 `raise` 看半天，怎么看都看不出毛病 —— `raise 名字(话)` 这个写法本身是完全对的，真正的病根在**上面那张图纸少了括号**。查这种毛病，得**往回看几张图纸**，别只盯断气的那一行喵。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-19-sign-mismatch",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-19",
+  "type": "codefix",
+  "concept": ["招牌和身子要收一样的货", "对不上当场退稿：conflicting types", "招牌先说下契约，身子照着接手", "分家后形状错查不查得到，全看招牌誊没誊"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["2", "3"] },
+    "b": { "kind": "pick", "values": ["4", "6"] },
+    "c": { "kind": "pick", "values": ["5", "7"] }
+  },
+  "stemTemplate": "这段稿子里，**招牌**和**身子**说的不是一回事喵：招牌上挂着「这一招收三只数」，身子落笔的时候只接了两只。翻译官喵一眼就看出两块对不上，当场把稿子退回，指着身子说 `conflicting types`（两边收的货对不上）。\n\n本喵的规矩：招牌是**先说下的契约** —— 收几只、还什么，都写得清清楚楚；身子必须一字不差地照着接手，不能自作主张。等往后招牌本和干活本分了家，这一错还查不查得到，就看干活本有没有把招牌誊进去：誊了，翻它那本的时候照样在半路拦下；没誊，链接器只管名字、不管形状，两块会安安静静缝到一起 —— 错留到跑起来才现形，比现在难查。\n\n请你把身子改得跟招牌对上（招牌和 `main` 一个字都别动）。改好之后该印一行：三只数**加起来**那么多条。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n/* 招牌：这一招收三只数，还一只 */\nint fish_mix(int base, int bonus, int extra);\n\n/* 身子：手一滑，只接了两只 */\nint fish_mix(int base, int bonus) {\n    return base + bonus;\n}\n\nint main(void) {\n    printf(\"混起来 %d 条\\n\", fish_mix({a}, {b}, {c}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n/* 招牌：这一招收三只数，还一只 */\nint fish_mix(int base, int bonus, int extra);\n\n/* 身子：照着招牌接手，收三只 */\nint fish_mix(int base, int bonus, int extra) {\n    return base + bonus + extra;\n}\n\nint main(void) {\n    printf(\"混起来 %d 条\\n\", fish_mix({a}, {b}, {c}));\n    return 0;\n}\n",
+  "explanationTemplate": "两块对不上，翻译官喵在**翻译**的时候一眼就看出来了喵：它既认识招牌、也认识身子，两块一比 —— 招牌说收三只，身子说收两只，`conflicting types`，退稿。\n\n- 招牌挂在前头，是挂给**后来的人**看的：先照这个形状收货、照这个形状还货；\n- 身子是真正干活的，它接手的形状必须跟招牌**对齐** —— 少接一只，招牌许出去的活它根本接不住；\n- 修的时候对齐**身子**，不去动招牌：`main` 那行递的就是三只，契约在先，身子来迁就它。\n\n注意这根坑的**晚熟**版喵：现在两块写在同一张纸上，翻译官喵一次看全，当场就拦；等本子分了家（招牌本 + 干活本），`main` 手里只剩招牌，身子长什么样，翻译官喵当场根本看不见 —— 这一错还查不查得到，就看干活本有没有把招牌誊进去：誊了，翻它那本的时候照样半路拦下；没誊，链接器只管名字、不管形状，两块安安静静缝到一起，错留到跑起来才现形。一句话：分了家，查错的**时机**不是往后拖，是跟着招牌走 —— 招牌跟到哪本，哪本当场拦。\n\n顺一句：真要拖到**缝一起**（链接）那一步才报的，是课文里那两根坑 —— 「名字找不到做法」（`undefined reference`）和「同一份工报了两次」（`multiple definition`），这两根全在名字上打转，形状它们一个字都不看。所以「少一只」这种对不上，要么当场拦下、要么静静溜到跑起来才现形 —— 从第一天就养成「招牌和身子一起看」的习惯，最省事。"
+}

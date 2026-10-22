@@ -1,0 +1,460 @@
+{
+  "lessonId": "c-stage1-03",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s1-house-char-double-quote-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵想在一间屋里装一个字母 **A**，然后报出等级。可这份稿子**翻不过去** —— 翻译官喵说「你递过来的是一串字，不是单个字」。\n\n你帮本喵改好：屏幕上要出现 `等级 A`。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char grade = \"A\";\n    printf(\"等级 %c\\n\", grade);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char grade = 'A';\n    printf(\"等级 %c\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "等级 A",
+      "stdin": null,
+      "explanation": "这处错看着只是两个标点换了个方向，其实差得很远喵。\n\n- **单引号**包起来的是一个**字符**：`'A'` —— 「一个字」本身，`char` 那间屋正好装得下。\n- **双引号**包起来的是**一串字** —— 哪怕里面只写了一个字母，它也是一串。它是一排字排起来的项链，屋名只能指一指那串东西的头一个位置，装不进屋里。\n\n所以你递过去一串，翻译官喵就翻了脸：\n\n```\nerror: initialization of 'char' from 'char *' makes integer from pointer without a cast [-Wint-conversion]\n```\n\n`from 'char *'` 是它给「一串字」记的账（那个带星星的写法，意思是「一串」），`makes integer from pointer` 翻过来是**「你想把一串东西硬塞成一个小整数」**。\n\n就记这一条喵：**一个字符用单引号，一串字用双引号。** 一个字母、一个数字、一个符号，都是「一个字符」—— 都得用单引号。",
+      "templateId": "c-s1-house-char-double-quote",
+      "params": {
+        "L": "A"
+      },
+      "verified": {
+        "at": "2026-09-16T07:27:21.091Z",
+        "hash": "411ed37440fd4324"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-char-double-quote-002",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵想在一间屋里装一个字母 **C**，然后报出等级。可这份稿子**翻不过去** —— 翻译官喵说「你递过来的是一串字，不是单个字」。\n\n你帮本喵改好：屏幕上要出现 `等级 C`。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char grade = \"C\";\n    printf(\"等级 %c\\n\", grade);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char grade = 'C';\n    printf(\"等级 %c\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "等级 C",
+      "stdin": null,
+      "explanation": "这处错看着只是两个标点换了个方向，其实差得很远喵。\n\n- **单引号**包起来的是一个**字符**：`'C'` —— 「一个字」本身，`char` 那间屋正好装得下。\n- **双引号**包起来的是**一串字** —— 哪怕里面只写了一个字母，它也是一串。它是一排字排起来的项链，屋名只能指一指那串东西的头一个位置，装不进屋里。\n\n所以你递过去一串，翻译官喵就翻了脸：\n\n```\nerror: initialization of 'char' from 'char *' makes integer from pointer without a cast [-Wint-conversion]\n```\n\n`from 'char *'` 是它给「一串字」记的账（那个带星星的写法，意思是「一串」），`makes integer from pointer` 翻过来是**「你想把一串东西硬塞成一个小整数」**。\n\n就记这一条喵：**一个字符用单引号，一串字用双引号。** 一个字母、一个数字、一个符号，都是「一个字符」—— 都得用单引号。",
+      "templateId": "c-s1-house-char-double-quote",
+      "params": {
+        "L": "C"
+      },
+      "verified": {
+        "at": "2026-09-16T07:27:22.628Z",
+        "hash": "e3b9cdf93b3c4528"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-char-two-faces-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "请你盖一间装**一个字符**的屋，里面装上 `A`。然后念两行：\n\n- 第一行用按**字符**念的钩子（`%c`）\n- 第二行用按**数字**念的钩子（`%d`）\n\n本喵想看看同一个字符的**两张脸**喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char grade = 'A';\n    printf(\"%c\\n\", grade);\n    printf(\"%d\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "A\n65",
+      "stdin": null,
+      "explanation": "**同一件货，可以有两张脸。** 一个字符在屏幕上的样子（`%c`），和它内部的那个小整数（`%d`），都是它喵。\n\n为什么一个字母会有个数字？因为 C 里**字符本来就是小整数**：每个字母、数字、符号都编了一个号，排在一张编码表上。`A` 在那张表上的号是第二行印出来的那个数 —— 你可以自己跑一遍对一对。\n\n这件事往后会一直用得上：\n\n- `'a'` 和 `'A'` 的号不一样，所以它们能比大小、能按号排先后；\n- `'0'` 到 `'9'` 的号是**挨着**的，所以字符也能拿来做加减；\n- 你要是拿 `%d` 去念一个字符、或者拿 `%c` 去念一个整数，C 多半也照念，**只是念出来的东西不是你要的** —— 和货牌配钩子对不上号是同一个毛病。",
+      "templateId": "c-s1-house-char-two-faces",
+      "params": {
+        "L": "A"
+      },
+      "verified": {
+        "at": "2026-09-16T07:31:16.885Z",
+        "hash": "49db3fa0bfaf92bd"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-char-two-faces-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "请你盖一间装**一个字符**的屋，里面装上 `C`。然后念两行：\n\n- 第一行用按**字符**念的钩子（`%c`）\n- 第二行用按**数字**念的钩子（`%d`）\n\n本喵想看看同一个字符的**两张脸**喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char grade = 'C';\n    printf(\"%c\\n\", grade);\n    printf(\"%d\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "C\n67",
+      "stdin": null,
+      "explanation": "**同一件货，可以有两张脸。** 一个字符在屏幕上的样子（`%c`），和它内部的那个小整数（`%d`），都是它喵。\n\n为什么一个字母会有个数字？因为 C 里**字符本来就是小整数**：每个字母、数字、符号都编了一个号，排在一张编码表上。`C` 在那张表上的号是第二行印出来的那个数 —— 你可以自己跑一遍对一对。\n\n这件事往后会一直用得上：\n\n- `'a'` 和 `'A'` 的号不一样，所以它们能比大小、能按号排先后；\n- `'0'` 到 `'9'` 的号是**挨着**的，所以字符也能拿来做加减；\n- 你要是拿 `%d` 去念一个字符、或者拿 `%c` 去念一个整数，C 多半也照念，**只是念出来的东西不是你要的** —— 和货牌配钩子对不上号是同一个毛病。",
+      "templateId": "c-s1-house-char-two-faces",
+      "params": {
+        "L": "C"
+      },
+      "verified": {
+        "at": "2026-10-20T16:28:26.815Z",
+        "hash": "b5a4be7af76be27a"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-char-two-faces-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "请你盖一间装**一个字符**的屋，里面装上 `F`。然后念两行：\n\n- 第一行用按**字符**念的钩子（`%c`）\n- 第二行用按**数字**念的钩子（`%d`）\n\n本喵想看看同一个字符的**两张脸**喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char grade = 'F';\n    printf(\"%c\\n\", grade);\n    printf(\"%d\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "F\n70",
+      "stdin": null,
+      "explanation": "**同一件货，可以有两张脸。** 一个字符在屏幕上的样子（`%c`），和它内部的那个小整数（`%d`），都是它喵。\n\n为什么一个字母会有个数字？因为 C 里**字符本来就是小整数**：每个字母、数字、符号都编了一个号，排在一张编码表上。`F` 在那张表上的号是第二行印出来的那个数 —— 你可以自己跑一遍对一对。\n\n这件事往后会一直用得上：\n\n- `'a'` 和 `'A'` 的号不一样，所以它们能比大小、能按号排先后；\n- `'0'` 到 `'9'` 的号是**挨着**的，所以字符也能拿来做加减；\n- 你要是拿 `%d` 去念一个字符、或者拿 `%c` 去念一个整数，C 多半也照念，**只是念出来的东西不是你要的** —— 和货牌配钩子对不上号是同一个毛病。",
+      "templateId": "c-s1-house-char-two-faces",
+      "params": {
+        "L": "F"
+      },
+      "verified": {
+        "at": "2026-10-20T16:28:29.010Z",
+        "hash": "65891dfc083557d7"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-char-two-faces-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "请你盖一间装**一个字符**的屋，里面装上 `M`。然后念两行：\n\n- 第一行用按**字符**念的钩子（`%c`）\n- 第二行用按**数字**念的钩子（`%d`）\n\n本喵想看看同一个字符的**两张脸**喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char grade = 'M';\n    printf(\"%c\\n\", grade);\n    printf(\"%d\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "M\n77",
+      "stdin": null,
+      "explanation": "**同一件货，可以有两张脸。** 一个字符在屏幕上的样子（`%c`），和它内部的那个小整数（`%d`），都是它喵。\n\n为什么一个字母会有个数字？因为 C 里**字符本来就是小整数**：每个字母、数字、符号都编了一个号，排在一张编码表上。`M` 在那张表上的号是第二行印出来的那个数 —— 你可以自己跑一遍对一对。\n\n这件事往后会一直用得上：\n\n- `'a'` 和 `'A'` 的号不一样，所以它们能比大小、能按号排先后；\n- `'0'` 到 `'9'` 的号是**挨着**的，所以字符也能拿来做加减；\n- 你要是拿 `%d` 去念一个字符、或者拿 `%c` 去念一个整数，C 多半也照念，**只是念出来的东西不是你要的** —— 和货牌配钩子对不上号是同一个毛病。",
+      "templateId": "c-s1-house-char-two-faces",
+      "params": {
+        "L": "M"
+      },
+      "verified": {
+        "at": "2026-09-16T07:31:18.487Z",
+        "hash": "19da34cc5b531e6d"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-int-eats-fraction-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵称了一筐小鱼干，秤上写的是 **1.5 斤**。可这份稿子报出来的斤数，**小数点后面那截不见了** —— 它一个错都不报，安安静静地给了个错数。\n\n你帮本喵改对：屏幕上要照实出现 `这筐小鱼干 1.5 斤`。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    int weight = 1.5;\n    printf(\"这筐小鱼干 %d 斤\\n\", weight);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    double weight = 1.5;\n    printf(\"这筐小鱼干 %.1f 斤\\n\", weight);\n    return 0;\n}\n",
+      "expectedOutput": "这筐小鱼干 1.5 斤",
+      "stdin": null,
+      "explanation": "C 有一个**不吭声**的老实脾气喵：把带小数点的货装进 `int` 那间屋，它不拦你、不报错，直接**把小数点后面那截砍掉** —— 1.5 进屋变成 1，而且它是**直接砍**，不是四舍五入。\n\n于是这份稿子跑得起来、屏幕上也有字，就是那个数**错了**。这类毛病最费眼睛：翻译官喵一个字都没说，屏幕上看起来一切正常。\n\n要留住小数，两处得一起改 —— 它们本来就是一件事：**这间屋收的是小数**。\n\n```c\ndouble weight = 1.5;\nprintf(\"这筐小鱼干 %.1f 斤\\n\", weight);\n```\n\n- **货牌换成 `double`** —— 这间屋从此收小数。\n- **钩子换成 `%.1f`** —— `%d` 是「按整数念」的钩子；`%.1f` 里的这个 `1` 是「小数点后留一位」。\n\n请把这句话记牢喵：**「能跑」不等于「对了」。** 从这一课起，你要开始习惯「屏幕上跑出东西来了」之后，再盯一眼那个东西**对不对**。",
+      "templateId": "c-s1-house-int-eats-fraction",
+      "params": {
+        "a": 1,
+        "b": 5,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T07:27:17.023Z",
+        "hash": "6340491a7433c061"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-int-eats-fraction-039",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵称了一筐冻干块，秤上写的是 **4.9 斤**。可这份稿子报出来的斤数，**小数点后面那截不见了** —— 它一个错都不报，安安静静地给了个错数。\n\n你帮本喵改对：屏幕上要照实出现 `这筐冻干块 4.9 斤`。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    int weight = 4.9;\n    printf(\"这筐冻干块 %d 斤\\n\", weight);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    double weight = 4.9;\n    printf(\"这筐冻干块 %.1f 斤\\n\", weight);\n    return 0;\n}\n",
+      "expectedOutput": "这筐冻干块 4.9 斤",
+      "stdin": null,
+      "explanation": "C 有一个**不吭声**的老实脾气喵：把带小数点的货装进 `int` 那间屋，它不拦你、不报错，直接**把小数点后面那截砍掉** —— 4.9 进屋变成 4，而且它是**直接砍**，不是四舍五入。\n\n于是这份稿子跑得起来、屏幕上也有字，就是那个数**错了**。这类毛病最费眼睛：翻译官喵一个字都没说，屏幕上看起来一切正常。\n\n要留住小数，两处得一起改 —— 它们本来就是一件事：**这间屋收的是小数**。\n\n```c\ndouble weight = 4.9;\nprintf(\"这筐冻干块 %.1f 斤\\n\", weight);\n```\n\n- **货牌换成 `double`** —— 这间屋从此收小数。\n- **钩子换成 `%.1f`** —— `%d` 是「按整数念」的钩子；`%.1f` 里的这个 `1` 是「小数点后留一位」。\n\n请把这句话记牢喵：**「能跑」不等于「对了」。** 从这一课起，你要开始习惯「屏幕上跑出东西来了」之后，再盯一眼那个东西**对不对**。",
+      "templateId": "c-s1-house-int-eats-fraction",
+      "params": {
+        "a": 4,
+        "b": 9,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T07:27:18.953Z",
+        "hash": "d70f56e29ec8d1c0"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-names-rules-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想考考 C 的**起名规矩**。请你按本喵给的名字盖四间屋，各装上本喵给的数：\n\n- 叫 `fish_2` 的装 1\n- 叫 `_cat` 的装 3\n- 叫 `Fish` 的装 5\n- 叫 `fish` 的装 7\n\n然后用**一句**念话把四个数按上面的顺序印在一行里，数之间各空一格。\n\n（这四个名字都是**合法**的喵 —— 本喵故意挑了几个最能说明规矩的。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish_2 = 1;\n    int _cat = 3;\n    int Fish = 5;\n    int fish = 7;\n\n    printf(\"%d %d %d %d\\n\", fish_2, _cat, Fish, fish);\n    return 0;\n}\n",
+      "expectedOutput": "1 3 5 7",
+      "stdin": null,
+      "explanation": "这四个名字，一个说明一条规矩喵：\n\n**① `fish_2` —— 字母、数字、下划线都能用，但第一个字不能是数字。** 写成 `2fish` 翻译官喵会当场翻脸（它会把那个 `2` 当成一个数，然后问你「`fish` 是个什么记号」）。\n\n**② `_cat` —— 下划线开头是允许的**（就是不太好看，一般留给内部用的名字）。\n\n**③ `Fish` 和 `fish` —— 大小写算两间不同的屋。** 别指望 C 看得出这是「同一个名字的两种写法」：它只一个字一个字地比。所以这两间屋各装各的货，谁也不会把谁顶掉 —— 这也是为什么上面四个数印出来是四个不同的值。\n\n**④ 名字要能看懂。** 这一条翻译官喵不管，但半个月后回头看稿子的是你自己：`fish` 比 `a1` 好懂，`total_price` 比 `tp` 好懂。\n\n顺手把「一句念话配多件货」再对一遍喵：**一个钩子对一件货，谁在前谁对应第一个钩子**。中间那格空格写在**引号里**（`\"%d %d %d %d\\n\"`）—— 它是照念的字，跟几只钩子没关系。",
+      "templateId": "c-s1-house-names-rules",
+      "params": {
+        "a": 1,
+        "b": 3,
+        "c": 5,
+        "d": 7
+      },
+      "verified": {
+        "at": "2026-09-16T07:27:30.380Z",
+        "hash": "d82cbc3db4cd7d3c"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-names-rules-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想考考 C 的**起名规矩**。请你按本喵给的名字盖四间屋，各装上本喵给的数：\n\n- 叫 `fish_2` 的装 1\n- 叫 `_cat` 的装 3\n- 叫 `Fish` 的装 6\n- 叫 `fish` 的装 8\n\n然后用**一句**念话把四个数按上面的顺序印在一行里，数之间各空一格。\n\n（这四个名字都是**合法**的喵 —— 本喵故意挑了几个最能说明规矩的。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish_2 = 1;\n    int _cat = 3;\n    int Fish = 6;\n    int fish = 8;\n\n    printf(\"%d %d %d %d\\n\", fish_2, _cat, Fish, fish);\n    return 0;\n}\n",
+      "expectedOutput": "1 3 6 8",
+      "stdin": null,
+      "explanation": "这四个名字，一个说明一条规矩喵：\n\n**① `fish_2` —— 字母、数字、下划线都能用，但第一个字不能是数字。** 写成 `2fish` 翻译官喵会当场翻脸（它会把那个 `2` 当成一个数，然后问你「`fish` 是个什么记号」）。\n\n**② `_cat` —— 下划线开头是允许的**（就是不太好看，一般留给内部用的名字）。\n\n**③ `Fish` 和 `fish` —— 大小写算两间不同的屋。** 别指望 C 看得出这是「同一个名字的两种写法」：它只一个字一个字地比。所以这两间屋各装各的货，谁也不会把谁顶掉 —— 这也是为什么上面四个数印出来是四个不同的值。\n\n**④ 名字要能看懂。** 这一条翻译官喵不管，但半个月后回头看稿子的是你自己：`fish` 比 `a1` 好懂，`total_price` 比 `tp` 好懂。\n\n顺手把「一句念话配多件货」再对一遍喵：**一个钩子对一件货，谁在前谁对应第一个钩子**。中间那格空格写在**引号里**（`\"%d %d %d %d\\n\"`）—— 它是照念的字，跟几只钩子没关系。",
+      "templateId": "c-s1-house-names-rules",
+      "params": {
+        "a": 1,
+        "b": 3,
+        "c": 6,
+        "d": 8
+      },
+      "verified": {
+        "at": "2026-10-20T16:28:31.166Z",
+        "hash": "950a5ef3956b9acc"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-names-rules-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想考考 C 的**起名规矩**。请你按本喵给的名字盖四间屋，各装上本喵给的数：\n\n- 叫 `fish_2` 的装 1\n- 叫 `_cat` 的装 4\n- 叫 `Fish` 的装 6\n- 叫 `fish` 的装 7\n\n然后用**一句**念话把四个数按上面的顺序印在一行里，数之间各空一格。\n\n（这四个名字都是**合法**的喵 —— 本喵故意挑了几个最能说明规矩的。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish_2 = 1;\n    int _cat = 4;\n    int Fish = 6;\n    int fish = 7;\n\n    printf(\"%d %d %d %d\\n\", fish_2, _cat, Fish, fish);\n    return 0;\n}\n",
+      "expectedOutput": "1 4 6 7",
+      "stdin": null,
+      "explanation": "这四个名字，一个说明一条规矩喵：\n\n**① `fish_2` —— 字母、数字、下划线都能用，但第一个字不能是数字。** 写成 `2fish` 翻译官喵会当场翻脸（它会把那个 `2` 当成一个数，然后问你「`fish` 是个什么记号」）。\n\n**② `_cat` —— 下划线开头是允许的**（就是不太好看，一般留给内部用的名字）。\n\n**③ `Fish` 和 `fish` —— 大小写算两间不同的屋。** 别指望 C 看得出这是「同一个名字的两种写法」：它只一个字一个字地比。所以这两间屋各装各的货，谁也不会把谁顶掉 —— 这也是为什么上面四个数印出来是四个不同的值。\n\n**④ 名字要能看懂。** 这一条翻译官喵不管，但半个月后回头看稿子的是你自己：`fish` 比 `a1` 好懂，`total_price` 比 `tp` 好懂。\n\n顺手把「一句念话配多件货」再对一遍喵：**一个钩子对一件货，谁在前谁对应第一个钩子**。中间那格空格写在**引号里**（`\"%d %d %d %d\\n\"`）—— 它是照念的字，跟几只钩子没关系。",
+      "templateId": "c-s1-house-names-rules",
+      "params": {
+        "a": 1,
+        "b": 4,
+        "c": 6,
+        "d": 7
+      },
+      "verified": {
+        "at": "2026-10-20T16:28:33.479Z",
+        "hash": "5802743a11e9d694"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-names-rules-009",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想考考 C 的**起名规矩**。请你按本喵给的名字盖四间屋，各装上本喵给的数：\n\n- 叫 `fish_2` 的装 2\n- 叫 `_cat` 的装 3\n- 叫 `Fish` 的装 5\n- 叫 `fish` 的装 8\n\n然后用**一句**念话把四个数按上面的顺序印在一行里，数之间各空一格。\n\n（这四个名字都是**合法**的喵 —— 本喵故意挑了几个最能说明规矩的。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish_2 = 2;\n    int _cat = 3;\n    int Fish = 5;\n    int fish = 8;\n\n    printf(\"%d %d %d %d\\n\", fish_2, _cat, Fish, fish);\n    return 0;\n}\n",
+      "expectedOutput": "2 3 5 8",
+      "stdin": null,
+      "explanation": "这四个名字，一个说明一条规矩喵：\n\n**① `fish_2` —— 字母、数字、下划线都能用，但第一个字不能是数字。** 写成 `2fish` 翻译官喵会当场翻脸（它会把那个 `2` 当成一个数，然后问你「`fish` 是个什么记号」）。\n\n**② `_cat` —— 下划线开头是允许的**（就是不太好看，一般留给内部用的名字）。\n\n**③ `Fish` 和 `fish` —— 大小写算两间不同的屋。** 别指望 C 看得出这是「同一个名字的两种写法」：它只一个字一个字地比。所以这两间屋各装各的货，谁也不会把谁顶掉 —— 这也是为什么上面四个数印出来是四个不同的值。\n\n**④ 名字要能看懂。** 这一条翻译官喵不管，但半个月后回头看稿子的是你自己：`fish` 比 `a1` 好懂，`total_price` 比 `tp` 好懂。\n\n顺手把「一句念话配多件货」再对一遍喵：**一个钩子对一件货，谁在前谁对应第一个钩子**。中间那格空格写在**引号里**（`\"%d %d %d %d\\n\"`）—— 它是照念的字，跟几只钩子没关系。",
+      "templateId": "c-s1-house-names-rules",
+      "params": {
+        "a": 2,
+        "b": 3,
+        "c": 5,
+        "d": 8
+      },
+      "verified": {
+        "at": "2026-10-20T16:28:35.583Z",
+        "hash": "9ec0a753c6aece18"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-names-rules-012",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想考考 C 的**起名规矩**。请你按本喵给的名字盖四间屋，各装上本喵给的数：\n\n- 叫 `fish_2` 的装 2\n- 叫 `_cat` 的装 4\n- 叫 `Fish` 的装 5\n- 叫 `fish` 的装 7\n\n然后用**一句**念话把四个数按上面的顺序印在一行里，数之间各空一格。\n\n（这四个名字都是**合法**的喵 —— 本喵故意挑了几个最能说明规矩的。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish_2 = 2;\n    int _cat = 4;\n    int Fish = 5;\n    int fish = 7;\n\n    printf(\"%d %d %d %d\\n\", fish_2, _cat, Fish, fish);\n    return 0;\n}\n",
+      "expectedOutput": "2 4 5 7",
+      "stdin": null,
+      "explanation": "这四个名字，一个说明一条规矩喵：\n\n**① `fish_2` —— 字母、数字、下划线都能用，但第一个字不能是数字。** 写成 `2fish` 翻译官喵会当场翻脸（它会把那个 `2` 当成一个数，然后问你「`fish` 是个什么记号」）。\n\n**② `_cat` —— 下划线开头是允许的**（就是不太好看，一般留给内部用的名字）。\n\n**③ `Fish` 和 `fish` —— 大小写算两间不同的屋。** 别指望 C 看得出这是「同一个名字的两种写法」：它只一个字一个字地比。所以这两间屋各装各的货，谁也不会把谁顶掉 —— 这也是为什么上面四个数印出来是四个不同的值。\n\n**④ 名字要能看懂。** 这一条翻译官喵不管，但半个月后回头看稿子的是你自己：`fish` 比 `a1` 好懂，`total_price` 比 `tp` 好懂。\n\n顺手把「一句念话配多件货」再对一遍喵：**一个钩子对一件货，谁在前谁对应第一个钩子**。中间那格空格写在**引号里**（`\"%d %d %d %d\\n\"`）—— 它是照念的字，跟几只钩子没关系。",
+      "templateId": "c-s1-house-names-rules",
+      "params": {
+        "a": 2,
+        "b": 4,
+        "c": 5,
+        "d": 7
+      },
+      "verified": {
+        "at": "2026-10-20T16:28:37.775Z",
+        "hash": "a9317f9257a029aa"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-names-rules-015",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想考考 C 的**起名规矩**。请你按本喵给的名字盖四间屋，各装上本喵给的数：\n\n- 叫 `fish_2` 的装 2\n- 叫 `_cat` 的装 4\n- 叫 `Fish` 的装 6\n- 叫 `fish` 的装 8\n\n然后用**一句**念话把四个数按上面的顺序印在一行里，数之间各空一格。\n\n（这四个名字都是**合法**的喵 —— 本喵故意挑了几个最能说明规矩的。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish_2 = 2;\n    int _cat = 4;\n    int Fish = 6;\n    int fish = 8;\n\n    printf(\"%d %d %d %d\\n\", fish_2, _cat, Fish, fish);\n    return 0;\n}\n",
+      "expectedOutput": "2 4 6 8",
+      "stdin": null,
+      "explanation": "这四个名字，一个说明一条规矩喵：\n\n**① `fish_2` —— 字母、数字、下划线都能用，但第一个字不能是数字。** 写成 `2fish` 翻译官喵会当场翻脸（它会把那个 `2` 当成一个数，然后问你「`fish` 是个什么记号」）。\n\n**② `_cat` —— 下划线开头是允许的**（就是不太好看，一般留给内部用的名字）。\n\n**③ `Fish` 和 `fish` —— 大小写算两间不同的屋。** 别指望 C 看得出这是「同一个名字的两种写法」：它只一个字一个字地比。所以这两间屋各装各的货，谁也不会把谁顶掉 —— 这也是为什么上面四个数印出来是四个不同的值。\n\n**④ 名字要能看懂。** 这一条翻译官喵不管，但半个月后回头看稿子的是你自己：`fish` 比 `a1` 好懂，`total_price` 比 `tp` 好懂。\n\n顺手把「一句念话配多件货」再对一遍喵：**一个钩子对一件货，谁在前谁对应第一个钩子**。中间那格空格写在**引号里**（`\"%d %d %d %d\\n\"`）—— 它是照念的字，跟几只钩子没关系。",
+      "templateId": "c-s1-house-names-rules",
+      "params": {
+        "a": 2,
+        "b": 4,
+        "c": 6,
+        "d": 8
+      },
+      "verified": {
+        "at": "2026-09-16T07:27:31.833Z",
+        "hash": "5075b30b63714751"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-three-kinds-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "请你盖**三间屋**，一块货牌一间（名字随你，本喵叫它们 `fish`、`price`、`grade`）：\n\n- 一间装**整数** 3（仓库里的小鱼干条数）\n- 一间装**小数** 2.5（一斤的价钱）\n- 一间装**一个字符** A（等级）\n\n然后按这个顺序念三行：\n\n`小鱼干 3 条`\n`价钱 2.5 元`\n`等级 A`\n\n念小数那一行要**留住一位小数**喵 —— 哪怕是 `2.5` 这样的数，也要把它的小数位明明白白念出来。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish = 3;\n    double price = 2.5;\n    char grade = 'A';\n\n    printf(\"小鱼干 %d 条\\n\", fish);\n    printf(\"价钱 %.1f 元\\n\", price);\n    printf(\"等级 %c\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 3 条\n价钱 2.5 元\n等级 A",
+      "stdin": null,
+      "explanation": "这一课的三块货牌、三只钩子，这道题全用上了喵。配对表请背下来：\n\n- 屋里装**整数**（几条）→ 货牌 `int` → 钩子 `%d`\n- 屋里装**小数**（几元）→ 货牌 `double` → 钩子 `%f`（`%.1f` 就是「小数点后留一位」）\n- 屋里装**一个字符** → 货牌 `char` → 钩子 `%c`\n\n对不上号的时候，C **不一定拦你**：它常常照念不误，只是念出来的东西不是你要的（这一课前面那处「砍零头」就是这么来的）。所以配对这件事得你自己上心。\n\n两句小提醒喵：\n\n**① 小数写进稿子时不要加引号。** `2.5` 直接写就行；写成 `\"2.5\"` 它就变成一串字了，`double` 那间屋会翻脸。\n\n**② 字符永远用单引号。** `'A'`；写成双引号，它就成了「一串字」，`char` 装不下。",
+      "templateId": "c-s1-house-three-kinds",
+      "params": {
+        "n": 3,
+        "price": "2.5",
+        "grade": "A"
+      },
+      "verified": {
+        "at": "2026-09-16T07:27:24.393Z",
+        "hash": "124c8bc634ad97aa"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-three-kinds-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "请你盖**三间屋**，一块货牌一间（名字随你，本喵叫它们 `fish`、`price`、`grade`）：\n\n- 一间装**整数** 3（仓库里的小鱼干条数）\n- 一间装**小数** 3.5（一斤的价钱）\n- 一间装**一个字符** B（等级）\n\n然后按这个顺序念三行：\n\n`小鱼干 3 条`\n`价钱 3.5 元`\n`等级 B`\n\n念小数那一行要**留住一位小数**喵 —— 哪怕是 `3.5` 这样的数，也要把它的小数位明明白白念出来。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish = 3;\n    double price = 3.5;\n    char grade = 'B';\n\n    printf(\"小鱼干 %d 条\\n\", fish);\n    printf(\"价钱 %.1f 元\\n\", price);\n    printf(\"等级 %c\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 3 条\n价钱 3.5 元\n等级 B",
+      "stdin": null,
+      "explanation": "这一课的三块货牌、三只钩子，这道题全用上了喵。配对表请背下来：\n\n- 屋里装**整数**（几条）→ 货牌 `int` → 钩子 `%d`\n- 屋里装**小数**（几元）→ 货牌 `double` → 钩子 `%f`（`%.1f` 就是「小数点后留一位」）\n- 屋里装**一个字符** → 货牌 `char` → 钩子 `%c`\n\n对不上号的时候，C **不一定拦你**：它常常照念不误，只是念出来的东西不是你要的（这一课前面那处「砍零头」就是这么来的）。所以配对这件事得你自己上心。\n\n两句小提醒喵：\n\n**① 小数写进稿子时不要加引号。** `3.5` 直接写就行；写成 `\"3.5\"` 它就变成一串字了，`double` 那间屋会翻脸。\n\n**② 字符永远用单引号。** `'B'`；写成双引号，它就成了「一串字」，`char` 装不下。",
+      "templateId": "c-s1-house-three-kinds",
+      "params": {
+        "n": 3,
+        "price": "3.5",
+        "grade": "B"
+      },
+      "verified": {
+        "at": "2026-10-20T16:28:39.915Z",
+        "hash": "4a1cf469e2441163"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-three-kinds-007",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "请你盖**三间屋**，一块货牌一间（名字随你，本喵叫它们 `fish`、`price`、`grade`）：\n\n- 一间装**整数** 4（仓库里的小鱼干条数）\n- 一间装**小数** 2.5（一斤的价钱）\n- 一间装**一个字符** B（等级）\n\n然后按这个顺序念三行：\n\n`小鱼干 4 条`\n`价钱 2.5 元`\n`等级 B`\n\n念小数那一行要**留住一位小数**喵 —— 哪怕是 `2.5` 这样的数，也要把它的小数位明明白白念出来。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish = 4;\n    double price = 2.5;\n    char grade = 'B';\n\n    printf(\"小鱼干 %d 条\\n\", fish);\n    printf(\"价钱 %.1f 元\\n\", price);\n    printf(\"等级 %c\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 4 条\n价钱 2.5 元\n等级 B",
+      "stdin": null,
+      "explanation": "这一课的三块货牌、三只钩子，这道题全用上了喵。配对表请背下来：\n\n- 屋里装**整数**（几条）→ 货牌 `int` → 钩子 `%d`\n- 屋里装**小数**（几元）→ 货牌 `double` → 钩子 `%f`（`%.1f` 就是「小数点后留一位」）\n- 屋里装**一个字符** → 货牌 `char` → 钩子 `%c`\n\n对不上号的时候，C **不一定拦你**：它常常照念不误，只是念出来的东西不是你要的（这一课前面那处「砍零头」就是这么来的）。所以配对这件事得你自己上心。\n\n两句小提醒喵：\n\n**① 小数写进稿子时不要加引号。** `2.5` 直接写就行；写成 `\"2.5\"` 它就变成一串字了，`double` 那间屋会翻脸。\n\n**② 字符永远用单引号。** `'B'`；写成双引号，它就成了「一串字」，`char` 装不下。",
+      "templateId": "c-s1-house-three-kinds",
+      "params": {
+        "n": 4,
+        "price": "2.5",
+        "grade": "B"
+      },
+      "verified": {
+        "at": "2026-10-20T16:28:42.131Z",
+        "hash": "d90aa24d4892ea12"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-three-kinds-010",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "请你盖**三间屋**，一块货牌一间（名字随你，本喵叫它们 `fish`、`price`、`grade`）：\n\n- 一间装**整数** 4（仓库里的小鱼干条数）\n- 一间装**小数** 4.5（一斤的价钱）\n- 一间装**一个字符** A（等级）\n\n然后按这个顺序念三行：\n\n`小鱼干 4 条`\n`价钱 4.5 元`\n`等级 A`\n\n念小数那一行要**留住一位小数**喵 —— 哪怕是 `4.5` 这样的数，也要把它的小数位明明白白念出来。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish = 4;\n    double price = 4.5;\n    char grade = 'A';\n\n    printf(\"小鱼干 %d 条\\n\", fish);\n    printf(\"价钱 %.1f 元\\n\", price);\n    printf(\"等级 %c\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 4 条\n价钱 4.5 元\n等级 A",
+      "stdin": null,
+      "explanation": "这一课的三块货牌、三只钩子，这道题全用上了喵。配对表请背下来：\n\n- 屋里装**整数**（几条）→ 货牌 `int` → 钩子 `%d`\n- 屋里装**小数**（几元）→ 货牌 `double` → 钩子 `%f`（`%.1f` 就是「小数点后留一位」）\n- 屋里装**一个字符** → 货牌 `char` → 钩子 `%c`\n\n对不上号的时候，C **不一定拦你**：它常常照念不误，只是念出来的东西不是你要的（这一课前面那处「砍零头」就是这么来的）。所以配对这件事得你自己上心。\n\n两句小提醒喵：\n\n**① 小数写进稿子时不要加引号。** `4.5` 直接写就行；写成 `\"4.5\"` 它就变成一串字了，`double` 那间屋会翻脸。\n\n**② 字符永远用单引号。** `'A'`；写成双引号，它就成了「一串字」，`char` 装不下。",
+      "templateId": "c-s1-house-three-kinds",
+      "params": {
+        "n": 4,
+        "price": "4.5",
+        "grade": "A"
+      },
+      "verified": {
+        "at": "2026-10-20T16:28:44.315Z",
+        "hash": "b8dbbf62d0366dfc"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-three-kinds-014",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "请你盖**三间屋**，一块货牌一间（名字随你，本喵叫它们 `fish`、`price`、`grade`）：\n\n- 一间装**整数** 5（仓库里的小鱼干条数）\n- 一间装**小数** 3.5（一斤的价钱）\n- 一间装**一个字符** A（等级）\n\n然后按这个顺序念三行：\n\n`小鱼干 5 条`\n`价钱 3.5 元`\n`等级 A`\n\n念小数那一行要**留住一位小数**喵 —— 哪怕是 `3.5` 这样的数，也要把它的小数位明明白白念出来。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish = 5;\n    double price = 3.5;\n    char grade = 'A';\n\n    printf(\"小鱼干 %d 条\\n\", fish);\n    printf(\"价钱 %.1f 元\\n\", price);\n    printf(\"等级 %c\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 5 条\n价钱 3.5 元\n等级 A",
+      "stdin": null,
+      "explanation": "这一课的三块货牌、三只钩子，这道题全用上了喵。配对表请背下来：\n\n- 屋里装**整数**（几条）→ 货牌 `int` → 钩子 `%d`\n- 屋里装**小数**（几元）→ 货牌 `double` → 钩子 `%f`（`%.1f` 就是「小数点后留一位」）\n- 屋里装**一个字符** → 货牌 `char` → 钩子 `%c`\n\n对不上号的时候，C **不一定拦你**：它常常照念不误，只是念出来的东西不是你要的（这一课前面那处「砍零头」就是这么来的）。所以配对这件事得你自己上心。\n\n两句小提醒喵：\n\n**① 小数写进稿子时不要加引号。** `3.5` 直接写就行；写成 `\"3.5\"` 它就变成一串字了，`double` 那间屋会翻脸。\n\n**② 字符永远用单引号。** `'A'`；写成双引号，它就成了「一串字」，`char` 装不下。",
+      "templateId": "c-s1-house-three-kinds",
+      "params": {
+        "n": 5,
+        "price": "3.5",
+        "grade": "A"
+      },
+      "verified": {
+        "at": "2026-10-20T16:28:46.383Z",
+        "hash": "a86f27fd44b7d492"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-three-kinds-017",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "请你盖**三间屋**，一块货牌一间（名字随你，本喵叫它们 `fish`、`price`、`grade`）：\n\n- 一间装**整数** 5（仓库里的小鱼干条数）\n- 一间装**小数** 4.5（一斤的价钱）\n- 一间装**一个字符** B（等级）\n\n然后按这个顺序念三行：\n\n`小鱼干 5 条`\n`价钱 4.5 元`\n`等级 B`\n\n念小数那一行要**留住一位小数**喵 —— 哪怕是 `4.5` 这样的数，也要把它的小数位明明白白念出来。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int fish = 5;\n    double price = 4.5;\n    char grade = 'B';\n\n    printf(\"小鱼干 %d 条\\n\", fish);\n    printf(\"价钱 %.1f 元\\n\", price);\n    printf(\"等级 %c\\n\", grade);\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 5 条\n价钱 4.5 元\n等级 B",
+      "stdin": null,
+      "explanation": "这一课的三块货牌、三只钩子，这道题全用上了喵。配对表请背下来：\n\n- 屋里装**整数**（几条）→ 货牌 `int` → 钩子 `%d`\n- 屋里装**小数**（几元）→ 货牌 `double` → 钩子 `%f`（`%.1f` 就是「小数点后留一位」）\n- 屋里装**一个字符** → 货牌 `char` → 钩子 `%c`\n\n对不上号的时候，C **不一定拦你**：它常常照念不误，只是念出来的东西不是你要的（这一课前面那处「砍零头」就是这么来的）。所以配对这件事得你自己上心。\n\n两句小提醒喵：\n\n**① 小数写进稿子时不要加引号。** `4.5` 直接写就行；写成 `\"4.5\"` 它就变成一串字了，`double` 那间屋会翻脸。\n\n**② 字符永远用单引号。** `'B'`；写成双引号，它就成了「一串字」，`char` 装不下。",
+      "templateId": "c-s1-house-three-kinds",
+      "params": {
+        "n": 5,
+        "price": "4.5",
+        "grade": "B"
+      },
+      "verified": {
+        "at": "2026-09-16T07:27:25.746Z",
+        "hash": "2ef74057f1e36c17"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-undeclared-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵想报一下仓库里存着几条小鱼干。可这份稿子**跑不起来** —— 翻译官喵说它不认识 `fish` 这个名字。\n\n你帮本喵把那间屋盖起来：改完跑起来，屏幕上要出现 `仓库里存着 3 条小鱼干`。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    printf(\"仓库里存着 %d 条小鱼干\\n\", fish);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    int fish = 3;\n    printf(\"仓库里存着 %d 条小鱼干\\n\", fish);\n    return 0;\n}\n",
+      "expectedOutput": "仓库里存着 3 条小鱼干",
+      "stdin": null,
+      "explanation": "C 在这件事上很硬气喵：**屋子必须先申报，才能装货。** 翻译官喵从上往下一句一句念，念到 `fish` 的时候它在登记簿上翻了个遍 —— 没见过这个名字，于是原地停活：\n\n```\nerror: 'fish' undeclared (first use in this function)\n```\n\n`undeclared` 就是**「没申报过」**，后面那半句是说「第一次用到它，就在大门里面」。\n\n缺的这一行是这样的：\n\n```c\nint fish = 3;\n```\n\n一行里其实是三件事喵：`int` 是**货牌**（这间屋只收整数），`fish` 是**屋名**，`= 3` 是**当场装货**。三样齐了才是一间能用的屋。\n\n新手最常犯的是**只挂牌不盖屋** —— 心里想着「我说过了呀」，可稿子里一个字都没写；翻译官喵只认稿子上有的东西。",
+      "templateId": "c-s1-house-undeclared",
+      "params": {
+        "n": 3,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T07:27:14.026Z",
+        "hash": "ffb12c69a3509ffb"
+      }
+    },
+    {
+      "id": "bank-c-s1-house-undeclared-005",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵想报一下仓库里存着几条猫粮。可这份稿子**跑不起来** —— 翻译官喵说它不认识 `fish` 这个名字。\n\n你帮本喵把那间屋盖起来：改完跑起来，屏幕上要出现 `仓库里存着 5 条猫粮`。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    printf(\"仓库里存着 %d 条猫粮\\n\", fish);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    int fish = 5;\n    printf(\"仓库里存着 %d 条猫粮\\n\", fish);\n    return 0;\n}\n",
+      "expectedOutput": "仓库里存着 5 条猫粮",
+      "stdin": null,
+      "explanation": "C 在这件事上很硬气喵：**屋子必须先申报，才能装货。** 翻译官喵从上往下一句一句念，念到 `fish` 的时候它在登记簿上翻了个遍 —— 没见过这个名字，于是原地停活：\n\n```\nerror: 'fish' undeclared (first use in this function)\n```\n\n`undeclared` 就是**「没申报过」**，后面那半句是说「第一次用到它，就在大门里面」。\n\n缺的这一行是这样的：\n\n```c\nint fish = 5;\n```\n\n一行里其实是三件事喵：`int` 是**货牌**（这间屋只收整数），`fish` 是**屋名**，`= 5` 是**当场装货**。三样齐了才是一间能用的屋。\n\n新手最常犯的是**只挂牌不盖屋** —— 心里想着「我说过了呀」，可稿子里一个字都没写；翻译官喵只认稿子上有的东西。",
+      "templateId": "c-s1-house-undeclared",
+      "params": {
+        "n": 5,
+        "unit": "猫粮"
+      },
+      "verified": {
+        "at": "2026-09-16T07:27:15.419Z",
+        "hash": "823cd067fb7d8ff0"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-average-with-decimals",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-05",
+  "type": "codewrite",
+  "concept": ["整数除法砍零头", "小数写法", "算与念分开"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 17, "max": 19 },
+    "b": { "kind": "int", "min": 4, "max": 6 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫粮"] }
+  },
+  "stemTemplate": "本喵想把 {a} 条{unit}**平均**装进 {b} 只碗，每碗装几条？\n\n本喵要的是**带零头的真答案**，保留两位小数。请你写个程序，照 `每碗 %.2f 条` 这个形状印一行。\n\n（这一课你已经知道「两个整数相除会砍零头」了喵 —— 这次本喵要的就是**不砍**的那个答案。）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int total = {a};\n    int bowls = {b};\n\n    printf(\"每碗 %.2f 条\\n\", {a}.0 / bowls);\n    return 0;\n}\n",
+  "explanationTemplate": "这一课的坑就在这儿喵：**两个整数相除，C 会砍零头。**\n\n`total / bowls` 里两边都是整数，于是它先按整数的规矩算出一个整数，再拿去念 —— 小数那截早就没了。想让答案留住小数，就得**让参与计算的两边里至少有一头是小数的样子**：\n\n```c\nprintf(\"每碗 %.2f 条\\n\", {a}.0 / bowls);\n```\n\n那个 `.0` 就是干这个用的：它把 {a} 写成了「小数形状的 {a}」。只要有一头是小数，整道除法就按小数的规矩算，零头就留住了。\n\n顺手把两件事分清楚喵：\n\n- **`%.2f` 管「怎么念」** —— 小数点后留两位；\n- **`.0` 管「怎么算」** —— 按小数除法算。\n\n只改念法不改算法，答案还是错的；只改算法念法写错（拿 `%d` 去念一个小数），屏幕上就会冒出谁也看不懂的东西。"
+}

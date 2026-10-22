@@ -1,0 +1,23 @@
+{
+  "templateId": "c-s1-calc-until-quit",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-15",
+  "type": "codewrite",
+  "concept": ["while循环", "continue", "综合项目", "选项重来"],
+  "instances": 6,
+  "params": {
+    "c": { "kind": "pick", "values": [1, 2, 3, 4] },
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "9\n{c}\n{a}\n{b}\n5\n",
+    "sampleText": "6\n3\n7\n2\n5\n"
+  },
+  "stemTemplate": "本喵要做一台**能一直用下去**的小鱼干计算器喵：算完一次不算完，把菜单重新摆出来接着问，直到用户敲 `5` 才收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，**一直转到选项等于 `5` 为止**。每一圈里按这个顺序来：\n\n- 摆菜单，读一个选项；\n- 选项是 `5` → 印 `收工啦喵～`，收工走人；\n- 选项**不在 1~5 之间** → 印 `没有这一项喵，再选一次～`，然后**回到圈的开头重新摆菜单**（别收摊喵）；\n- 选项正常 → 印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数，算一次、印一行结果。\n\n4. 结果那一行的样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选乘法、喂 7 和 2，就印 `7 * 2 = 14`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会先喂一个菜单上没有的数**，所以「重新摆菜单」这条路必须走通。）",
+  "starterTemplate": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n        }\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的关键是**两个出口要分清楚**喵，也就是 `continue` 和 `break` 各自管什么：\n\n- **选项不对** → `continue`：这一圈剩下的活儿不干了，**回到圈的开头**。回到开头，`showMenu()` 就又摆一次菜单 —— 用户看到菜单重新出现，可以再挑。\n- **敲 `5` 收工** → `break`：**整圈都不干了**，直接跳到圈外，程序结束。\n\n写成 `break` 会怎么样？那句「没有这一项」印完之后**整圈收摊**，菜单再也不出现 —— 用户刚敲错一个数就被赶出门了，这显然不是本喵想要的。\n\n还有几处细节：\n\n- **`while (choice != 5)` 里的那只碗要先摆好、装上初值**（`int choice = 0;`）。要是装上 `5`，圈一次都不转；要是不装，那里面躺着的就是垃圾。\n- **菜单最后一行别写 `\\n`** —— 那是在等人回答，光标得停在冒号后面。\n- **结果那一行的空格一个都不能错**。判分是拿屏幕上的字一个字符一个字符比的。"
+}

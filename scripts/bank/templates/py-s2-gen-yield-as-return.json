@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s2-gen-yield-as-return",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-10",
+  "type": "codefix",
+  "concept": ["yield", "return", "收摊"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["小鱼干", "小银鱼"] },
+    "b": { "kind": "pick", "values": ["猫粮", "鸡肉条"] },
+    "c": { "kind": "pick", "values": ["冻干", "小虾米"] }
+  },
+  "stemTemplate": "本喵想让 `数鱼干()` 一样一样递出三样东西：`{a}`、`{b}`、`{c}` —— 外面连着印三次 `next`，就该印出三行喵。\n\n可这一段跑到**第二行**就翻脸了。你帮本喵改对。\n\n⚠️ 这三样东西、它们的**先后顺序**、还有那三行 `print(next(it))`，都**不许改**。",
+  "brokenCodeTemplate": "def 数鱼干():\n    return \"{a}\"\n    yield \"{b}\"\n    yield \"{c}\"\n\n\nit = iter(数鱼干())\nprint(next(it))\nprint(next(it))\nprint(next(it))\n",
+  "referenceFixTemplate": "def 数鱼干():\n    yield \"{a}\"\n    yield \"{b}\"\n    yield \"{c}\"\n\n\nit = iter(数鱼干())\nprint(next(it))\nprint(next(it))\nprint(next(it))\n",
+  "explanationTemplate": "这一处**最容易误判**：第一行印得好好的，翻脸的是第二行，本喵会以为「后面两样写坏了」，其实**第一行就把话说完了**喵。\n\n- 招式里一出现 `yield`，这一招就**变了性质**：喊它的时候它**不马上跑**，而是叼回来一只「**会下一条的手**」。\n- **每喊一次 `next`，它才从上次停下的地方接着往下跑**，跑到下一个 `yield` 就停住，把 `yield` 后面那一样递出来。\n- `return` 的脾气正好相反：它是「**本喵干完收摊，整招就这一回**」。\n\n所以写成 `return \"{a}\"` 的话：第一次 `next` 喊下去，招式一路跑到 `return`，把 `{a}` 递出来的**同时也整招收摊了** —— 后面那两行 `yield` 再也轮不到。第二次再喊 `next`，手上已经没有下一条，只好甩出那个信号 `StopIteration`。\n\n⚠️ 改法就一个字：把 `return` 换成 `yield`。**递一样东西出去，不等于干完收摊** —— 前者是「待会儿还回来接着干」，后者是「就这一回」。\n\n⚠️ 顺带记牢：`StopIteration` 不是程序坏掉，而是这套机制**故意**留的信号，意思就一句「本喵这儿没有下一条了」。`for` 之所以能安安静静走完不翻脸，就是因为它**背后悄悄接住了这个信号**。"
+}

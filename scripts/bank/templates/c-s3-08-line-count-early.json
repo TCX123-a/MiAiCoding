@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s3-08-line-count-early",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-08",
+  "type": "codefix",
+  "concept": ["挨着看", "数比了几次", "记账的时机", "中了的这一下也算一次"],
+  "instances": 2,
+  "params": {
+    "e1": { "kind": "pick", "values": ["3", "30"] },
+    "e2": { "kind": "pick", "values": ["7", "70"] },
+    "t": { "kind": "pick", "values": ["11", "110"] },
+    "e4": { "kind": "pick", "values": ["15", "150"] },
+    "e5": { "kind": "pick", "values": ["19", "190"] }
+  },
+  "stemTemplate": "本喵这一排鱼干是这么摆的：**{e1}、{e2}、{t}、{e4}、{e5}**，要找的是编号 **{t}**。用「**挨着看**」那一招，从第一只开始一只一只比过去，顺便数一数**比了几次**。\n\n可它印出来的是：\n\n```text\n找 {t}：比了 2 次就找到了\n```\n\n{t} 明明躺在**第 3 只碗**里 —— 从第一只数过去，怎么也得比 3 次才对得上。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `line_find` 这一招改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n找 {t}：比了 3 次就找到了\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint bowl[5] = {{e1}, {e2}, {t}, {e4}, {e5}};\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int target) {\n    int tries = 0;\n    for (int i = 0; i < 5; i++) {\n        if (bowl[i] == target) {\n            return tries;\n        }\n        tries++;\n    }\n    return -tries;\n}\n\nint main(void) {\n    int want = {t};\n    int n = line_find(want);\n    if (n < 0) {\n        printf(\"找 %d：一只都没对上\\n\", want);\n    } else {\n        printf(\"找 %d：比了 %d 次就找到了\\n\", want, n);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint bowl[5] = {{e1}, {e2}, {t}, {e4}, {e5}};\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int target) {\n    int tries = 0;\n    for (int i = 0; i < 5; i++) {\n        tries++;\n        if (bowl[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int want = {t};\n    int n = line_find(want);\n    if (n < 0) {\n        printf(\"找 %d：一只都没对上\\n\", want);\n    } else {\n        printf(\"找 %d：比了 %d 次就找到了\\n\", want, n);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "毛病出在**记账的时机**上喵：`tries++` 被放到了「比一下、对不上、接着走」那一步的**后头**，可它得放在**比之前**。\n\n```text\nfor (int i = 0; i < 5; i++) {\n    if (bowl[i] == target) {\n        return tries;\n    }\n    tries++;\n}\n```\n\n圈圈走到 {t} 那一只时，`if` 一看对上了，就**当场**把 `tries` 叼回去 —— 可这一下「比过了」还没记进账，于是答出来的是 2。把 `tries++` 挪到 `if` **前头**就好了：先记一笔，再判对没对上。\n\n课文里那两个找法数出来的次数，都是**一共比了几次** —— 中了的这一下也算一次喵：比一下、记一笔，对上了才算完。数漏了这一下，找得越靠后、答案差得越远。"
+}

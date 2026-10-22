@@ -1,0 +1,84 @@
+{
+  "lessonId": "java-stage2-14",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵给一条事项画的图纸，造物招式里**漏了一句** —— 只写了 `this.done = done;`，`this.what = what;` 那一句没写。\n\n本喵用 `new Todo(\"喂鱼\", false)` 生了一条，再 `System.out.println` 它。会发生什么？",
+      "options": [
+        "印出来是 `[ ] null` —— 缺的那一行是 `this.what = what;`，编译器连一句抱怨都没有",
+        "编不过，编译器会指出来说 `what` 找不到落脚的地方",
+        "印出来是 `[ ] 喂鱼` —— 那一格会自己拿到括号里喂进来的值",
+        "跑起来的那一刻当场断气（`NullPointerException`）"
+      ],
+      "answer": 0,
+      "explanation": "本喵真跑过这一对：**坏的那版印出来是 `[ ] null`，补上 `this.what = what;` 那一句之后才是 `[ ] 喂鱼`。**\n\n要害在**重名**那件事上：括号里喂进来的那一样叫 `what`，图纸里那一格家当也叫 `what`。光写 `what`，指的是**喂进来的那一样**；要动图纸里那一格，必须写 `this.what`。坏稿子里那格家当从头到尾没人管过 —— 它一直是「什么都没有」（`null`），于是 `toString()` 把 `[ ] ` 和 `null` 接在一起印了出来。\n\n三个错项各自的毛病喵：**「编不过，编译器会指出来说 `what` 找不到落脚的地方」** —— 这稿子**编得过**（`this.done = done;` 那语法没毛病，没人规定造物招式里必须把每格都填上）；**「印出来是 `[ ] 喂鱼` —— 那一格会自己拿到括号里喂进来的值」** —— 家当不会自己拿到值，赋值那一句得自己写，这是这一课最值钱的教训；**「跑起来的那一刻当场断气（`NullPointerException`）」** —— `null` 和「一串字」接在一起在 Java 里是**合法**的，它会老老实实把 `null` 这四个字母印出来，不会断气。（断气是另一回事：你**拿着** `null` 去喊本事，那才会。）"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "菜单上本喵敲的是 `done 2`，代码里把编号抠出来之后**忘了减一** —— 本该写 `zhi.get(k - 1)`，这一稿直接照着编号去柜子里取，取出来就喊 `markDone()`。\n\n柜子里收着三条：`喂鱼`、`铲屎`、`买猫粮`（编号从 `0` 起）。会发生什么？",
+      "options": [
+        "办完的是「买猫粮」—— 屏幕上第 3 条打了勾，本喵想办的那一条还空着",
+        "办完的是「铲屎」，这条写法没问题",
+        "跑起来的那一刻当场断气，说编号够不着",
+        "编不过，编译器说 `get` 不吃数字"
+      ],
+      "answer": 0,
+      "explanation": "这一处是这一课最爱摔的地方：**屏幕上写给本喵看的编号从 `1` 起，柜子里的编号从 `0` 起，中间差 1。** 本喵敲 `done 2`，意思是「第 2 条 —— 铲屎」；可 `get(2)` 摸到的是**柜子里的第 3 件**，于是勾打在了「买猫粮」头上，而「铲屎」还空着。本喵真跑过这一版：印出来正是 `1. [ ] 喂鱼`、`2. [ ] 铲屎`、`3. [x] 买猫粮`，那句 `办完了：` 后面跟的也是「买猫粮」。\n\n所以补法是 `zhi.get(k - 1)`。\n\n还有一条要留个心眼喵：**这个错法是会看运气的。** 三条的时候敲 `done 2`，`get(2)` 还够得着（最大只能喊到 `2`），所以程序照跑；可要是敲 `done 3`（本喵想办的是最后一条），`get(3)` 就**够不着**了，程序当场断气 —— 也就是说这个毛病有时候只是勾错位置，有时候是直接翻车，别拿「这回跑出来了」当没事。「办完的是「铲屎」，这条写法没问题」正是「差 1」的反面；「跑起来的那一刻当场断气，说编号够不着」和「编不过，编译器说 `get` 不吃数字」都不是这条代码的脾气（`get` 吃数字，数字够得着就不会断气）。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "`System.out.println(t)` 括号里那个 `t` 是一条**事项**，不是一串字。可屏幕上印出来的是 `[ ] 喂鱼`。为什么？",
+      "options": [
+        "因为类里写了 `toString()` 那个函数 —— 印一张类之前，编译器会先去问它",
+        "因为那两格家当是 `private` 的，印的时候自带方框和记号",
+        "因为 `println` 不管收到什么，都印成 `[ ] ` 加内容",
+        "因为储物柜替本喵把每条事项都提前换成了一串字"
+      ],
+      "answer": 0,
+      "explanation": "这是翻译官喵和本喵的一个约定：**要印一张图纸的时候，它先去问这张图纸有没有 `toString()` 那一招**，有就照那一招给的东西印。图纸里那一招写的是：\n\n```java\nreturn (done ? \"[x] \" : \"[ ] \") + what;\n```\n\n—— 办完了就 `[x] `，没办就 `[ ] `，再接上内容。所以印出来的是 `[ ] 喂鱼`。本喵**从来没喊过 `toString()` 这个名字**，是翻译官喵自己在背后喊的；`@Override` 那顶小帽子是提醒「本喵在重写师父就有的那一招」。\n\n顺带说清楚三件事喵：**「因为那两格家当是 `private` 的，印的时候自带方框和记号」** —— `private` 管的是「外面能不能直接伸手动这格家当」，跟印出来长什么样一点关系都没有（没有 `toString()` 的时候，印出来是一串看不懂的字母加数字，那是另一回事）；**「因为 `println` 不管收到什么，都印成 `[ ] ` 加内容」** —— `println` 只会照收到的样子印，它不认得什么 `[ ]`；**「因为储物柜替本喵把每条事项都提前换成了一串字」** —— 储物柜只负责帮你收着、按编号递给你，它不会替你改造里面的东西。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.File;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.ArrayList;\nimport java.util.List;\n\nclass Todo {\n    private String what;\n    private boolean done;\n\n    Todo(String what, boolean done) {\n        this.what = what;\n        this.done = done;\n    }\n\n    String getWhat() { return what; }\n    boolean isDone() { return done; }\n    void markDone() { done = true; }\n\n    @Override\n    public String toString() {\n        return (done ? \"[x] \" : \"[ ] \") + what;\n    }\n}\n\npublic class Main {\n    static final String BOOK = \"zhi.txt\";\n\n    public static void main(String[] args) throws IOException {\n        List<Todo> zhi = load();\n        System.out.println(\"册子上原有 \" + zhi.size() + \" 件\");\n\n        List<String> orders = new ArrayList<>();\n        orders.add(\"add 喂鱼\");\n        orders.add(\"add 铲屎\");\n        orders.add(\"done 1\");\n        orders.add(\"list\");\n        orders.add(\"q\");\n\n        for (String line : orders) {\n            if (line.equals(\"q\")) {\n                ____;\n            }\n            if (line.____(\"add \")) {\n                zhi.add(new Todo(line.____(4), false));\n                System.out.println(\"记下了：\" + line.substring(4));\n            } else if (line.startsWith(\"done \")) {\n                int k = Integer.parseInt(line.substring(5));\n                zhi.get(____).markDone();\n                System.out.println(\"办完了：\" + zhi.get(k - 1).getWhat());\n            } else if (line.equals(\"list\")) {\n                for (int i = 0; i < zhi.size(); i++) {\n                    System.out.println((____) + \". \" + zhi.get(i));\n                }\n            }\n        }\n        save(zhi);\n        System.out.println(\"收工，一共 \" + zhi.size() + \" 件\");\n    }\n\n    static List<Todo> load() throws IOException {\n        List<Todo> out = new ArrayList<>();\n        File f = new File(BOOK);\n        if (!f.exists()) {\n            return out;\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(f))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                int cut = hang.indexOf(\"|\");\n                String flag = hang.substring(0, cut);\n                String what = hang.substring(cut + 1);\n                out.add(new Todo(what, flag.equals(\"1\")));\n                hang = r.readLine();\n            }\n        }\n        return out;\n    }\n\n    static void save(List<Todo> zhi) throws IOException {\n        try (FileWriter w = new FileWriter(BOOK)) {\n            for (Todo t : zhi) {\n                w.write((t.isDone() ? \"1\" : \"0\") + \"|\" + t.getWhat() + \"\\n\");\n            }\n        }\n    }\n}\n",
+      "stem": "本喵写了一段「照命令一条条办」的小管家（开头先把册子读回来），把五处抠掉了。填上让它跑起来、并且印出：\n\n```text\n册子上原有 0 件\n记下了：喂鱼\n记下了：铲屎\n办完了：喂鱼\n1. [x] 喂鱼\n2. [ ] 铲屎\n收工，一共 2 件\n```",
+      "blanks": [
+        { "answer": "break", "accept": [] },
+        { "answer": "startsWith", "accept": [] },
+        { "answer": "substring", "accept": [] },
+        { "answer": "k - 1", "accept": ["k-1"] },
+        { "answer": "i + 1", "accept": ["i+1"] }
+      ],
+      "explanation": "五个空正好是菜单骨架的五处关节喵。\n\n**一、`break`** —— 敲了 `q` 就**跳出这一圈**，后面的命令一概不理。写 `break` 那一句是这一圈里唯一「往外跳」的一句话。\n\n**二、`startsWith`** —— 「这条命令是不是以 `add ` 开头」。这里**不能用 `equals`**：命令后面还跟着内容（`add 喂鱼`），整串比是比不上的。\n\n**三、`substring`** —— 认出了开头，就把**开头那四个字母之后的部分**切下来当内容（`substring(4)`）。\n\n**四、`k - 1`** —— 菜单上写 `done 1`，本喵喊的却是 `zhi.get(k - 1)`：屏幕上的编号从 `1` 起、柜子里的编号从 `0` 起，**差 1 的那一下就在这里补**。漏了它，勾就打在隔壁那条头上。\n\n**五、`i + 1`** —— 印给本喵看的编号从 `1` 起。柜子那边还是老老实实 `zhi.get(i)`（`i` 从 `0` 起），**括号里那句只负责印出来的样子**。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\nclass Todo {\n    private String what;\n    private boolean done;\n\n    Todo(String what, boolean done) {\n        this.what = what;\n        this.done = done;\n    }\n\n    String getWhat() { return what; }\n    void markDone() { done = true; }\n\n    @Override\n    public String toString() {\n        return (done ? \"[x] \" : \"[ ] \") + what;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Todo> zhi = new ArrayList<>();\n        zhi.add(new Todo(\"喂鱼\", false));\n        zhi.add(new Todo(\"铲屎\", false));\n        String line = \"done 2\";\n        int k = Integer.parseInt(line.substring(5));\n        zhi.get(k - 1).markDone();\n        for (int i = 0; i < zhi.size(); i++) {\n            System.out.println((i + 1) + \". \" + zhi.get(i));\n        }\n        System.out.println(\"办完了：\" + zhi.get(k - 1).getWhat());\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "1. [ ] 喂鱼\n2. [x] 铲屎\n办完了：铲屎",
+      "accept": [
+        "1. [ ] 喂鱼\n2. [x] 铲屎\n办完了：铲屎\n"
+      ],
+      "explanation": "三行喵。\n\n**绕圈那两行**是「印编号 + 印事项」：`(i + 1)` 给本喵看的编号从 `1` 起，`zhi.get(i)` 里的 `i` 从 `0` 起 —— 前两件印出来就是 `1. ` 和 `2. `。印的**不是内容本身、是事项**，所以走的是图纸里那一招 `toString()`：办完了的带 `[x] `，没办的带 `[ ] `。\n\n**第三行 `办完了：`** 后面跟的是 `zhi.get(k - 1).getWhat()` —— `line` 里那个数是 `2`，`k` 就是 `2`，`k - 1` 是 `1`，摸到的是**第 2 件**（柜子里编号从 `0` 起），所以是「铲屎」，不是「买猫粮」那种隔壁邻居。\n\n三行连起来看：第 2 行打了勾、第 1 行还空着 —— `markDone()` 动的是**它自己那一格家当**，柜子里装的是真猫，喊谁谁变，别的东西一概不动。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.File;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"zhi.txt\");\n        try (FileWriter w = new FileWriter(f)) {\n            w.write(\"0|喂鱼\\n\");\n            w.write(\"1|铲屎\\n\");\n            w.write(\"0|买猫粮\\n\");\n        }\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(f))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                int cut = hang.indexOf(\"|\");\n                String flag = hang.substring(0, cut);\n                String what = hang.substring(cut + 1);\n                System.out.println((flag.equals(\"1\") ? \"[x] \" : \"[ ] \") + what);\n                n++;\n                hang = r.readLine();\n            }\n        }\n        System.out.println(\"册子上有 \" + n + \" 条\");\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "[ ] 喂鱼\n[x] 铲屎\n[ ] 买猫粮\n册子上有 3 条",
+      "accept": [
+        "[ ] 喂鱼\n[x] 铲屎\n[ ] 买猫粮\n册子上有 3 条\n"
+      ],
+      "explanation": "四行喵。册子上存的是三行 `办完了没|内容`，一个一个拆开看：\n\n- **`hang.indexOf(\"|\")`** 找的是那根**竖线在第几个字母上**。`0|喂鱼` 里，`0` 在第 `0` 位、竖线在第 `1` 位，所以 `cut` 是 `1`。\n- **`hang.substring(0, cut)`** 是竖线**左边**那一截 —— 也就是「办完了没」的那个标记；**`hang.substring(cut + 1)`** 是竖线**右边**那一截 —— 内容。加一那一下是为了**把竖线本身跳过去**，不加，读回来的内容前面就多一根竖线。\n- **`(flag.equals(\"1\") ? \"[x] \" : \"[ ] \")`** 才是这一题真正的考点：**读回来的样子得照册子上的标记来**。三行里的标记是 `0`、`1`、`0`，所以印出来依次是空的、打勾的、空的。要是图省事写成一律 `[ ] `（或者一律 `[x] `），册子上的记号就白记了 —— 本喵真跑过那一版，三行全成了 `[ ] `，一个勾都看不见。\n\n最后一行 `册子上有 3 条` 数的是**读到的行数**：`n` 在每一圈里加一，读到 `null` 就停。三个空标记那一行也在数 —— 空标记是「没办完」，不是「不算一条」喵。"
+    }
+  ]
+}

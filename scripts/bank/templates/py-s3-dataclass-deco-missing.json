@@ -1,0 +1,28 @@
+{
+  "templateId": "py-s3-dataclass-deco-missing",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-01",
+  "type": "codefix",
+  "concept": ["dataclass", "自动生成 __init__", "字段标注"],
+  "instances": 2,
+  "params": {
+    "a": {
+      "kind": "pick",
+      "values": [
+        "小鱼干",
+        "冻干块",
+        "毛线球"
+      ]
+    },
+    "n": {
+      "kind": "int",
+      "min": 2,
+      "max": 4
+    }
+  },
+  "stemTemplate": "本喵照着自己想的样子画了一张「鱼干卷」的图纸，上面标着两样东西：`kind`（卖的是什么）和 `n`（几份）。\n\n可是真拿这张图纸去造一卷的时候，**程序跑不起来**。翻译官喵说，这张图纸造东西的时候**不收东西**。\n\n你帮本喵改对，让它印出\n\n```\n{a} {n} 份\n```\n\n⚠️ 图纸上那两行（`kind` 和 `n`）**一个字都不许动**，也不许在图纸里面补一段收东西的规矩（`__init__`）—— 本喵要你把缺的那一层加在**图纸外面**。\n\n⚠️ 造卷的那一行、还有最后印的那一行，也都不许动。",
+  "brokenCodeTemplate": "from dataclasses import dataclass\n\n\nclass 鱼干卷:\n    kind: str\n    n: int\n\n\nd = 鱼干卷(\"{a}\", {n})\nprint(d.kind + \" \" + str(d.n) + \" 份\")\n",
+  "referenceFixTemplate": "from dataclasses import dataclass\n\n\n@dataclass\nclass 鱼干卷:\n    kind: str\n    n: int\n\n\nd = 鱼干卷(\"{a}\", {n})\nprint(d.kind + \" \" + str(d.n) + \" 份\")\n",
+  "explanationTemplate": "画图纸的时候只写了「这张图上有哪两样东西」，**没写怎么把它们接进来**喵。\n\n平时本喵画图纸都要顺手写一段 `__init__`，那一段是「收东西、再把东西挂到图纸身上」的规矩。这张图没有那一段 —— 所以拿它造真卷的时候，翻译官喵只会说「它不收东西」。\n\n`kind: str` 这种「名字 + 冒号 + 它该长成什么样」的写法，本身只是**给图纸做的标注**，它不会自己变成那段收东西的规矩。\n\n要让它自动长出来，就在图纸的**正上方**加这一行：\n\n```text\n@dataclass\n```\n\n`@` 开头的这种写法，是给底下的招式**套一层特效**的。`dataclass` 这层特效专门干一件事：**照着图纸上标好的字段，把那段收东西的规矩替你生成出来** —— 收哪几样、先收哪样后收哪样，全按标注的先后排。\n\n⚠️ 所以加了这一行之后，上面那两行 `kind: str` / `n: int` **一个字都不用改**，它们就是那层特效照着生成时看的清单。\n\n⚠️ 写之前别忘了从 `dataclasses` 那本手册里把它请进来（`from dataclasses import dataclass`）—— 请不进来的话，翻译官喵连 `dataclass` 是什么都不知道。"
+}

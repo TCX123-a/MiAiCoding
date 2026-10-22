@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-ptr-from-k",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-01",
+  "type": "codewrite",
+  "concept": ["指针算术", "指针遍历", "从中间起报"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 },
+    "k": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n{k}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵把 {n} 只碗一字排开，碗里各放着几条小鱼干。\n\n请你写个程序：\n\n1. 先读进来**两个数**，一个占一行 —— 第一个是碗的只数，第二个是**要从第几只开始报**；\n2. 再一行一个读进来 {n} 个数，就是每只碗里的数；\n3. 然后从那个起报编号开始，**一直报到最后一只**，一只一行，格式是 `第 i 只：v`（`i` 是碗的编号，从 0 数起；`v` 是那只碗里的数）。起报编号**之前**的那几只碗，一声不吭地跳过去，不要报。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[8];\n    int n, k;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *p = bowls + k;\n    for (int i = k; i < n; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *p);\n        p = p + 1;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这道题要用到本课的**往前挪**，分三步喵。\n\n**① 一排碗的名字，交出来就是第 0 只的门牌号。** 前面几课已经见过很多次了：`bowls` 单独写出来，等于 `&bowls[0]`。\n\n**② 想从第 k 只起，就在门牌号上加 k。** `int *p = bowls + k;` —— 加法落在**门牌号**上，所以往后跨了 k 只碗。写成 `int *p = &bowls[k];` 是同一件事，看你顺哪只手。\n\n**③ 往后挪要存回牌子。** `p = p + 1;`（`p++` 也行）。光写 `p + 1;` 是算完就丢，牌子会一直钉在第一只上 —— 那样报出来的每个数都一样，而且翻译官喵只会嘀咕一句 `warning:`，不会拦你。\n\n什么时候停？起报编号是 `k`，一共 `n` 只碗，所以一共报 `n - k` 行。参考解是把编号 `i` 和牌子一路陪着走：`i` 从 `k` 数到 `n - 1`，正好一只不落。\n\n**这一步的规矩收下：牌子加几，就往后跨几只碗 —— 加的是「几只」，不是「几个格子」。**"
+}

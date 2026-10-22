@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-bit-mask-slice",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-17",
+  "type": "codewrite",
+  "concept": ["先往右挪、再用格子纸盖", "挪多少格决定从哪开始", "纸多宽决定取几格"],
+  "instances": 6,
+  "params": {
+    "nb": { "kind": "pick", "values": ["10110110", "01101101"] },
+    "k": { "kind": "int", "min": 1, "max": 3 }
+  },
+  "stemTemplate": "本喵手上这排格子是 `0b{nb}`，想从**第 {k} 位**起，往左连着取**三格**，把这三格原样取出来（别的格子一格都不要）。\n\n请你写个程序印**两行**：\n\n- `取出来的三位：` 后面接取出来那三格的样子 —— **三位都要写全**，是 `011` 就不能印成 `11`；\n- `它是多少：` 后面接这三格当数字读是多少。\n\n提示：先**往右挪 {k} 格**，把那三格挪到最右边；再用一张「只有最右边三格是 1」的格子纸盖上去（`0b111`）。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+  "starterTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b{nb};\n        int k = {k};\n\n        // 先往右挪 k 格，再用 0b111 盖上去\n\n    }\n}\n",
+  "referenceSolutionTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b{nb};\n        int k = {k};\n\n        int part = (n >> k) & 0b111;\n\n        System.out.println(\"取出来的三位：\" + bits3(part));\n        System.out.println(\"它是多少：\" + part);\n    }\n\n    static String bits3(int v) {\n        String s = Integer.toBinaryString(v & 0b111);\n        while (s.length() < 3) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+  "explanationTemplate": "**一、先挪再盖 —— 取一段格子的固定两步。** 往右挪 {k} 格，是想让**第 {k} 位挪到最右边**；挪完之后，右边那三格正是本喵要的那三格。\n\n**二、格子纸 `0b111` 是「最右边三格是 1」。** 拿它去 `&`：右边三格原样留下，其余全被按成 0 —— 取出来的数必然落在 0 到 7 之间。\n\n**三、两步的顺序不能反。** 反过来的话，盖住的是**原来**最右边那三格，想取的位置全错了。\n\n**四、印的时候记得补 0。** 取出来的东西当数字读是分不出前头的 0 的（`011` 和 `11` 是同一个数），所以要求印三位就得自己把 0 补到前面 —— `Integer.toBinaryString` 只给「有意义的那几位」。\n\n**五、宽度和位置要分开盯。** 想取四格，就把 `0b111` 换成 `0b1111`；要从第 4 格起，就把挪的格数改成 4。**挪多少格决定从哪开始，纸多宽决定取几格** —— 这两件事各管一段，改的时候别互相带错。\n\n**六、这就是「一格装好几件事」的做法。** 一格本来只装 0 和 1；把连着几格当一段来读，一段就能装下好几样状态（比如权限的「可读／可写／可执行」）。要读某一段，永远是这个动作：**先挪到最右边，再拿对应宽度的格子纸盖上去**。"
+}

@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-gdb-start-offbyone",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-13",
+  "type": "codefix",
+  "concept": ["请看守 gdb 之前先带 -g", "把递进来的东西翻出来看", "跑圈起点传错：漏掉最前头那碗"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["3", "5"] },
+    "b": { "kind": "pick", "values": ["1", "2"] },
+    "c": { "kind": "pick", "values": ["4", "6"] },
+    "d": { "kind": "pick", "values": ["1", "3"] }
+  },
+  "stemTemplate": "本喵这份稿子跑得起来、印得出数，屏幕上却**一句提示都没有** —— 数就是不对喵。本喵把看守（`gdb`）请了来，让稿子停在 `sum_from` 这招的门口，把递进来的东西一件一件翻出来看，病根已经抓着了：**绕鱼干跑圈的起点不对**，排在最前头那碗压根没进过圈。\n\n这招本身没错，病在**喊它的那一句**上。一排碗里放着 {a}、{b}、{c}、{d} 四条小鱼干，请你把病治好 —— 改好之后该印出这**四碗全都加起来**的数。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { {a}, {b}, {c}, {d} };\n    int sum = sum_from(fish, 1, 4);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { {a}, {b}, {c}, {d} };\n    int sum = sum_from(fish, 0, 4);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+  "explanationTemplate": "看守停在招式门口的时候，`print start` 翻出来的是 `1`喵 —— 跑圈从第二碗开始，排在最前头那碗（里头是 {a}）压根没进过圈，所以印出来的数正好**少了 {a}**。\n\n改法就是把起点换成 `0`：`0` 是从头数的第一位，这一圈才把四碗全算上。\n\n记一句：**别猜**。本喵要是不请看守、只盯着稿子看，说不定就去改招式里那个跑圈的范围了 —— 而病压根不在这儿。"
+}

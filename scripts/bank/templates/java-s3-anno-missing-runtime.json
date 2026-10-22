@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-anno-missing-runtime",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-13",
+  "type": "codefix",
+  "concept": ["纸条默认只留到翻译那一步", "留到跑的时候要自己写一句说明书", "照 X 光是在跑起来之后读的"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["别烦我", "困了"] },
+    "m": { "kind": "pick", "values": ["招手", "打盹"] }
+  },
+  "stemTemplate": "本喵画了一张纸条、贴到招式上，又照 X 光想把纸条读出来 —— 程序**跑起来了**，可读到的是一片空白喵。\n\n纸条上少写了一句话。你帮本喵把**纸条上那一句**补对 —— 别的都别动。改好之后，程序该印出**一行**：`读到的备注：` 后面跟着纸条上写的那串字。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.reflect.Method;\n\npublic class Main {\n    @Retention(RetentionPolicy.CLASS)\n    @interface 纸条 {\n        String value();\n    }\n\n    static class 小猫 {\n        @纸条(\"{a}\")\n        void {m}() {\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Method 一招 = 小猫.class.getDeclaredMethod(\"{m}\");\n        纸条 小纸条 = 一招.getAnnotation(纸条.class);\n        System.out.println(\"读到的备注：\" + (小纸条 == null ? \"空的\" : 小纸条.value()));\n    }\n}\n",
+  "referenceFixTemplate": "import java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.reflect.Method;\n\npublic class Main {\n    @Retention(RetentionPolicy.RUNTIME)\n    @interface 纸条 {\n        String value();\n    }\n\n    static class 小猫 {\n        @纸条(\"{a}\")\n        void {m}() {\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Method 一招 = 小猫.class.getDeclaredMethod(\"{m}\");\n        纸条 小纸条 = 一招.getAnnotation(纸条.class);\n        System.out.println(\"读到的备注：\" + (小纸条 == null ? \"空的\" : 小纸条.value()));\n    }\n}\n",
+  "explanationTemplate": "这一摔**不是翻译那一关拦的** —— 程序照样跑起来了，只是光片上空着，印出来的是 `读到的备注：空的`。\n\n原因就在纸条上那一句：\n\n```java\n@Retention(RetentionPolicy.CLASS)\n```\n\n`CLASS` 那一档的意思是「**留到翻译那一步**」：翻译官喵翻稿子的时候看得见它，翻完就不跟着上路了。照 X 光是在**跑起来之后**才读的 —— 这时候纸条早就不在光片上了，`getAnnotation(...)` 交回来的是 `null`，所以走的是「空的」那一支。\n\n要让它留到跑的时候，那一档得换成：\n\n```java\n@Retention(RetentionPolicy.RUNTIME)\n```\n\n顺带记一句：**这一句不写的时候，就停在 `CLASS` 那一档** —— 所以「忘了写这句」和「写了 `CLASS`」是同一个结果，照 X 光都读不到。\n\n改完再跑，就印出 `读到的备注：` 后面跟着纸条上写的那串字喵。"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-catchall-not-last",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-13",
+  "type": "codefix",
+  "concept": ["兜底软垫必须排最后", "handler must be the last handler", "从上往下挑第一个对得上的"],
+  "instances": 2,
+  "params": {
+    "msg": { "kind": "pick", "values": ["猫粮碗打翻了", "鱼干不够了"] }
+  },
+  "stemTemplate": "本喵往上一扔了一串字 `{msg}`，地上铺了**两张**软垫：一张专门接一串字，一张什么都接的兜底。\n\n本喵想让**专门那张**接到车，印出 `接到一串字：` 后面接上车上那串字。\n\n可翻译官喵当场就把稿子退回来了，屏幕上连一个字都没有。\n\n你帮本喵把它改好：改完要能印出 `接到一串字：` 接上那串字。扔出去的那串字，不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    try {\n        throw string(\"{msg}\");\n    } catch (...) {\n        cout << \"不管是什么，先接住再说喵\" << endl;\n    } catch (const string& e) {\n        cout << \"接到一串字：\" << e << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    try {\n        throw string(\"{msg}\");\n    } catch (const string& e) {\n        cout << \"接到一串字：\" << e << endl;\n    } catch (...) {\n        cout << \"不管是什么，先接住再说喵\" << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵这一回的原话是：\n\n`error: '...' handler must be the last handler for its try block [-fpermissive]`\n\n`handler` 就是「接车的那一张软垫」，`must be the last` 是「**必须排在最后一个**」—— 兜底那张排到前面去了。\n\n为什么这么定规矩喵？因为 `catch` 是**从上往下挑第一个对得上的**：兜底那张什么都接，它要是排在最前面，**第一眼就被它挑走了，后面的软垫一辈子轮不到**。所以那张 `catch (...)` 只能排在队尾 —— 前面的先挑，挑剩下的才轮到它。\n\n改法：把两个 `catch` 的顺序**掉个个儿**，专门接一串字的那张先挑，兜底那张守在最后。\n\n（对照着记喵：这是「**先挑具体、后挑兜底**」。和它成对的一句是：一个车只会被一张软垫接走 —— 接走之后别的软垫就不管了。）"
+}

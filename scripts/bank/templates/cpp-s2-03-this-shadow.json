@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-03-this-shadow",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-03",
+  "type": "codefix",
+  "concept": ["投喂口和格子同名", "不写 this 就够不到格子", "跑得成功但结果全错"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "三花"] },
+    "newName": { "kind": "pick", "values": ["大胖", "狸花"] }
+  },
+  "stemTemplate": "本喵画了一张叫 `Cat` 的图纸，上面有一招 `rename`，用来给猫改名字 —— 投喂口本喵图省事也叫 `name`。\n\n`main` 里喊的是「改名」，可印出来还是老名字喵：**它跑得成功、也没报错，就是活干歪了。**\n\n你帮本喵改一处，让它真的把名字改掉。**`main` 里那几句和图纸上别的地方都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void rename(string name) {\n        name = name;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\");\n    c1.rename(\"{newName}\");\n    cout << \"现在叫 \" << c1.name << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void rename(string name) {\n        this->name = name;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\");\n    c1.rename(\"{newName}\");\n    cout << \"现在叫 \" << c1.name << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题**没有报错**喵 —— 翻译官喵放它一路跑到底，屏幕上安安静静（本喵拿最啰嗦的那档念叨真跑过，它一个字都没说）。\n\n问题在肚子里那一句 `name = name;`：招式里站着**两个 `name`**，一个是投喂口，一个是格子，而规矩是「**近的那个赢**」—— 所以这一句念作「把投喂口装进投喂口里」，格子从头到尾没被碰过。喊「改名叫大胖」，名字格里装着的还是原来那个。\n\n改法是指名道姓：\n\n`this->name = name;`\n\n`this` 是每喊一次招式时悄悄递进来的**那只猫**，`this->name` 就是「本喵自己那一格 `name`」。\n\n⚠️ 这一类错最值得记住的不是怎么改，而是它**不吵不闹**：没有报错、没有警告，只有印出来的结果悄悄不对。所以自己写招式时，只要投喂口和格子同名，格子那一侧就必须写 `this->`。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-ptr-bump-first",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-14",
+  "type": "codewrite",
+  "concept": ["整排碗的名字就是门牌号", "指针参数", "解引用赋值", "循环"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "k": { "kind": "int", "min": 6, "max": 8 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵这一招只动**第一只碗**喵。\n\n请你写个程序：**先读进来一个数**（这次有 {n} 只碗），**再读进来 {n} 行数**（一行一个，按顺序摆进那排碗里）。\n\n先写一招 `bumpFirst`：头里摆**两只**碗 —— 一块指整数碗的牌子（`int *p`）、一个要加的数（`int k`）；身体里只改**牌子指的那只碗**，把它加上 `{k}`。\n\n然后喊一声这一招，把**那排碗的名字**和 `{k}` 一起喂进去（不用写 `&`，想想为什么），最后把那排碗从头到尾印出来，一行一只。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\n// 在这里登记 bumpFirst 这一招（只动牌子指的那一只碗）\n\nint main(void) {\n    int n;\n\n    // 先读「有几只碗」\n\n    // 摆一排够宽的碗，把 {n} 个数读进去\n\n    // 喊一声 bumpFirst（第一样喂那排碗的名字）\n\n    // 把整排碗从头到尾印出来\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nvoid bumpFirst(int *p, int k) {\n    *p = *p + k;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bowl[10];\n    int i;\n    for (i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowl[i]) != 1) {\n            return 1;\n        }\n    }\n\n    bumpFirst(bowl, {k});\n\n    for (i = 0; i < n; i++) {\n        printf(\"%d\\n\", bowl[i]);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的关键是**整排碗的名字自己就充当了门牌号**喵。\n\n上一课那个谜团在这儿彻底解开了：为什么整排碗交进招式、改的却是你本人的原件？因为整排碗交出去的时候，交的正是**第一只碗的门牌号** —— 名字 `bowl` 本身就顶得上一块牌子，招式里的 `int *p` 接的正是它。于是招式里那句 `*p = *p + k;` 改的，就是你本人的第一只碗，其余的碗一动不动。\n\n这也正是为什么喂它的时候**不用写 `&`**：`bowl` 本来就是门牌号。再写 `&bowl` 意思就变了 —— 那成了「整排碗的门牌号」，跟招式头里那块指整数碗的牌子对不上类型，翻译官喵要拦你。\n\n招式头里的两只碗一只都不能少：一只接**门牌号**（`int *p`），一只接**要加的数**（`int k`）—— 名字叫什么随便，形状和顺序才要紧。"
+}

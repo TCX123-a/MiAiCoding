@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-challenge-calc-reverse-report",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-15",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "一排碗", "倒着念", "从后往前走"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 3, "max": 40 },
+  "stemTemplate": "本喵的记账本又厚了，今天想**倒着**念一遍喵：最新的一笔先念，最老的一笔最后念。\n\n投喂口先给一个数（今天记了几笔），再一笔一笔给数。请你写个程序：\n\n1. 先把这一天的账**一笔不漏地收进一排碗里**（第 0 只碗装第一笔，第 1 只碗装第二笔……）；\n2. 再从**最后一只碗**开始往前走，一边走一边念：`第 X 笔是 Y 条喵`（X 是这一笔是第几笔，从 1 数起；Y 是那一笔的数）；\n3. 念完最后一行报总账：`一共 %d 条喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～ 本喵最多只摆 8 只碗，今天用的是前面几只。）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bills[8];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bills[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = n - 1; i >= 0; i--) {\n        printf(\"第 %d 笔是 %d 条喵\\n\", i + 1, bills[i]);\n        total = total + bills[i];\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n\n    return 0;\n}\n",
+  "explanationTemplate": "这一题最值得记的是：**收账和念账可以各走各的方向**。\n\n- **收账那一趟**：从第 0 只碗往右走，`i` 从 0 走到 n 减 1 —— 让「第几笔」和「第几只碗」一一对上，收的时候顺顺当当。\n- **念账那一趟**：`i` 从 `n - 1` 出发，每念一笔就 `i--`，一直念到 `i` 变成负数为止（所以圈的条件是 `i >= 0`，不是 `i > 0` —— 写成 `i > 0` 的话第 0 只碗会被漏掉，那可是最老的一笔喵）。\n\n碗的编号是从 0 数起的，可人念账是从「第 1 笔」数起的 —— 所以印的时候要 `i + 1`。这个「差一位」的地方，念一遍样例再对一遍就不容易错。\n\n总账也可以在念的那一趟里顺手加上：**每一趟都加一笔**，比最后再单独跑一趟省事，而且不会漏。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-stream-pipeline",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-04",
+  "type": "codewrite",
+  "concept": ["一条流水线三道工序", "过筛子、加工、收起来", "收尾才能吐出东西"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "t": { "kind": "int", "min": 5, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要搭一条流水线，一口气干三件事喵：**过筛子 → 加工 → 收起来**。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请先把它们收进柜子，然后**用柜子开一条流水线**，让它依次做：\n\n1. **过筛子**：只留**不小于 {t}** 的；\n2. **加工**：留下来的每一件**都乘二**；\n3. **收起来**：收成一只新柜子。\n\n最后印三行：\n\n```text\n够大又翻倍之后：那一串\n一共挑出 C 件\n加起来是 S\n```\n\n- 第一行：把收起来的那只新柜子直接印出来（方括号加逗号空格那个样子），**前面别自己拼**；\n- `C` 是新柜子的件数；\n- `S` 是新柜子里所有数**加起来**的和。这两笔都用**流水线**上的收尾招式来算，别自己另写绕圈。\n\n注意中间那两道工序**只在流水线上登记**就行，别去动原来的柜子 —— 原柜子从头到尾一件都不该少。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\nimport java.util.stream.Collectors;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\nimport java.util.stream.Collectors;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n        List<Integer> picked = nums.stream()\n                .filter(x -> x >= {t})\n                .map(x -> x * 2)\n                .collect(Collectors.toList());\n\n        System.out.println(\"够大又翻倍之后：\" + picked);\n        System.out.println(\"一共挑出 \" + picked.stream().count() + \" 件\");\n        System.out.println(\"加起来是 \" + picked.stream().mapToInt(x -> x).sum());\n    }\n}\n",
+  "explanationTemplate": "这题是本课那条流水线的完整走法喵：**开头、中间两道、收尾、再接一遍。**\n\n**一、开头那一句 `.stream()`。** 它不是在柜子上动手，而是**从柜子头上接出一条流水线**。原柜子一个字都没变 —— 这也是本课反复强调的那句：流水线干完活，原来的柜子还是原样。\n\n**二、中间两道只在登记。** `.filter(x -> x >= {t})` 是过筛子，`.map(x -> x * 2)` 是加工。这两句写下去的时候**一件东西都不会真的过**，它们只是把「要做什么」登记在这条线身上。所以少挂了收尾那道，整条线就是一声不吭 —— 这一课那道改错题演的就是这件事。\n\n**三、收尾那道一挂，前面登记的才动起来。** `.collect(Collectors.toList())` 把流过来的东西**收成一只新柜子**叼回来，本喵伸手接住了它（存进 `picked`）。从这一句开始，前面的过筛子和加工才真的按顺序跑了一遍。\n\n**四、为什么后面两笔要再开两条小流水线。** 收尾那道**一条线只能挂一次**，挂完这条线就用过了 —— 所以算件数和算和的时候，本喵从那只新柜子上**重新接出**流水线（`picked.stream()`），各自挂一道收尾：\n\n- `.count()` 报件数；\n- `.mapToInt(x -> x).sum()` 报总和。中间那一句 `mapToInt(x -> x)` 是把每一件**从「装东西的口袋」换成「光溜溜的整数」**，因为求和那一手只认光溜溜的整数。\n\n**五、原柜子为什么一件都没少。** 因为中间那两道从头到尾都只是在登记，动的只有流过来的东西的**副本**；新柜子是收尾那道另起的。所以原柜子还是原来那几件 —— 这也是流水线最好用的地方之一：**不会把原来看的数据弄脏**。\n\n一句话记住这条线的形状：**从柜子头上接出来 → 中间登记几道 → 挂一道收尾 → 伸手接住。** 少任何一段，它都不会给你东西喵。"
+}

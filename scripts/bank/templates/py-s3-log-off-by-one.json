@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-log-off-by-one",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-09",
+  "type": "codefix",
+  "concept": ["用日志找第一处不对", "从日志回到那一行", "少绕了一圈的毛病不报错"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["筐", "箱", "袋"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要清点 {n} {unit}小鱼干，看看一共有多少条喵。\n\n**外面给的数分两段**：第一行是一个数（本喵要过的{unit}数），后面**每一行一个数**（一{unit}的条数）。\n\n规矩是：\n\n① 每过一{unit}，就记一条 **`INFO`** 日志 —— 记下这是第几{unit}、这一{unit}多少条、**加起来**现在是多少。\n② 全部过完，用正文印一行报总数。\n\n日志那行的样子看下面的样例（`INFO:` 开头，后面是「第 i {unit}：X 条，加起来 Y」，X 前面那个冒号是全角的）。\n\n本喵这段跑是跑得起来，**报出来的总数却不对**。本喵把日志从头到尾盯了一遍，还是没看出毛病在哪儿 —— 你帮本喵改好它。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+  "brokenCodeTemplate": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(sys.stdin.readline())\n总共 = 0\n\nfor i in range(筐数 - 1):\n    一条 = int(sys.stdin.readline())\n    总共 = 总共 + 一条\n    logging.info(\"第 \" + str(i + 1) + \" {unit}：\" + str(一条) + \" 条，加起来 \" + str(总共))\n\nprint(\"一共 \" + str(总共) + \" 条\")\n",
+  "referenceFixTemplate": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n筐数 = int(sys.stdin.readline())\n总共 = 0\n\nfor i in range(筐数):\n    一条 = int(sys.stdin.readline())\n    总共 = 总共 + 一条\n    logging.info(\"第 \" + str(i + 1) + \" {unit}：\" + str(一条) + \" 条，加起来 \" + str(总共))\n\nprint(\"一共 \" + str(总共) + \" 条\")\n",
+  "explanationTemplate": "这道题练的是**怎么拿日志抓虫**喵 —— 日志不是写着好看的，是拿来**摆事实**的。\n\n先看日志告诉了本喵什么：本喵要过 {n} 个{unit}，可日志拉出来一看，**最后一个{unit}压根没出现过** —— 日志只报到了倒数第二个。**第一处不对**就落在这儿。它不是「数算错了」，是「没轮到它」。\n\n⚠️ 这就是抓虫的第一步：**别盯着结果看，先找「第一处和预期不一样」的地方**。总数不对只是个结果，你盯着它看一天也看不出原因；而日志把每一步都摆了出来，一眼就能看到「少了一步」。\n\n第二步：**顺着这个线索回去读那一行**。「少了一次」说明绕圈的次数少了 —— 那句 `range(筐数 - 1)` 就是它：`range` 停在最后一个数**之前**，所以最后一个{unit}轮不上。改成 `range(筐数)` 就对上了。\n\n⚠️ 这种毛病最阴的地方在于**它一个字都不报错**：外面给的数还剩一个没人读，程序也不吭声，只是安安静静地少算一{unit}。要是没有日志，你只会看到一个「莫名其妙的错总数」；有了日志，你至少知道**从哪一步开始歪的**。\n\n本喵再补一句：真正设断点的思路跟这个一模一样 —— 断点就是挑一行**停下来看一眼**这一刻碗里有什么。你不可能在每一行都停下来，所以要挑那种「看一眼就能分辨对错」的位置，本喵这些日志就是照着这个挑的。"
+}

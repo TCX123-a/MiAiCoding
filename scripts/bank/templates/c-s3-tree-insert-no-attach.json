@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s3-tree-insert-no-attach",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-05",
+  "type": "codefix",
+  "concept": ["会分叉的猫爬架", "挂上去要接回来", "中序从小到大", "忘了接回来"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["5", "50"] },
+    "b": { "kind": "pick", "values": ["3", "20"] },
+    "c": { "kind": "pick", "values": ["8", "70"] },
+    "d": { "kind": "pick", "values": ["1", "10"] },
+    "e": { "kind": "pick", "values": ["4", "40"] }
+  },
+  "stemTemplate": "本喵把 **{a}、{b}、{c}、{d}、{e}** 这五个数按这个次序挂到猫爬架上，然后**中序**报一遍 —— 照规矩该是**从小到大**。\n\n可印出来只有一个数：\n\n```text\n中序：{a}\n```\n\n五个数只挂上了最上面那一个。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**挂东西那一招**改好。改好之后该印：\n\n```text\n中序：{d} {b} {e} {a} {c}\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        insert(root->left, value);\n    } else if (value > root->value) {\n        insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {{a}, {b}, {c}, {d}, {e}};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {{a}, {b}, {c}, {d}, {e}};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "毛病是**挂好的叉没接回来**喵。\n\n本喵那一版写的是 `insert(root->left, value);` —— 这一句本身没错：它照样一路往下摸，摸到空位就现造了一个新接头。可**造好的那个接头没人接**：那只新接头的牌子被拿在手上，一转头就丢了。所以整架架子上永远只有最上面那一个。\n\n要接上的是这一句前面的 `root->left = `：\n\n```text\nroot->left = insert(root->left, value);\n```\n\n念作「**让左边那只叉照同样的办法挂一遍，挂完把结果接回我左边这只牌子上**」。右边那一句同理。\n\n这也是「自己咬自己尾巴的招式」一定要**自己接自己**的地方喵：招式答回来的是**挂好之后那半边的架子顶**，不接回来，新挂的东西就白挂了。\n\n⚠️ 翻译官喵**不会吭声** —— 本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，跑起来也不摔，它只是**丢东西**。这一课里这一句 `root->left = `（还有它的右边兄弟）最值得你多念两遍喵。"
+}

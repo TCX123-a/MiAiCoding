@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s1-challenge-cabinet-alias",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-15",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "会自己长大的储物柜", "名字只是绳", "彩排不许动原排"],
+  "instances": 1,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵想给一排碗做个**彩排**喵：把原来那排**复制一份**，在复制品上每只碗都加一条鱼干试试，而原排**一根鱼毛都不许动** —— 彩排完要两边对照给本喵看。\n\n程序印三行：\n\n- `原来的碗：` 后面跟着原来那排；\n- `试加一条后：` 后面跟着彩排过的那排；\n- `原来的总数：` 后面跟着原排的总数。\n\n可现在出了怪事：**原排也跟着变了** —— 彩排完一看，原排每只碗都多了一条，总数也对不上喵……你帮本喵看看病根。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}",
+  "brokenCodeTemplate": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\ntrial = bowls\nfor i in range(n):\n    trial[i] = trial[i] + 1\n\nprint(\"原来的碗：\", bowls)\nprint(\"试加一条后：\", trial)\nprint(\"原来的总数：\", sum(bowls))\n",
+  "referenceFixTemplate": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\ntrial = list(bowls)\nfor i in range(n):\n    trial[i] = trial[i] + 1\n\nprint(\"原来的碗：\", bowls)\nprint(\"试加一条后：\", trial)\nprint(\"原来的总数：\", sum(bowls))\n",
+  "explanationTemplate": "病根在这一行：`trial = bowls` 喵。\n\n它**没有复制那排碗** —— 只是给同一排碗**又贴了一个名字**。Python 里一排碗是「一整只搬不走的东西」，名字只是牵住它的一根绳：`bowls` 是一根绳，`trial = bowls` 只是把**第二根绳也拴在同一个东西上**。之后不管拽哪根绳去动碗，动的都是同一排。\n\n所以彩排根本不存在：`trial[i] = trial[i] + 1` 动的是原排，「原排一根鱼毛都不许动」的约定当场作废 —— 这也是为什么「原排」和「彩排排」印出来一模一样。\n\n要真正复制一份，得**造一只新的**：\n\n```python\ntrial = list(bowls)\n```\n\n`list(bowls)` 是拿原排的内容**另造一只新排**，两根绳分别牵着两只碗 —— 之后从 `trial` 这边怎么动，`bowls` 那边都纹丝不动。等价的写法还有 `trial = bowls[:]` 和 `trial = bowls.copy()`，挑一个顺手的。\n\n记一句喵：**名字只是绳，拴着的才是碗 —— 想让两边各改各的，先造一只新的。**"
+}

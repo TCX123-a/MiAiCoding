@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-bound-missing",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-01",
+  "type": "codefix",
+  "concept": ["尖括号里漏写了门槛", "招式里叫不动那一家的本事", "补上只收数字那一家"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["21", "14"] }
+  },
+  "stemTemplate": "本喵写了一段小代码，想把投喂进来的东西**翻一倍**印出来喵。\n\n结果翻稿子的时候就红了，连第一行都没印出来。\n\n你帮本喵看看招式名后面那对尖括号 —— 本喵**漏写了一样东西**，所以招式里叫不动「翻一倍」要用到的那手本事。把它补上。\n\n补好之后它该印一行，说「整数 的两倍是 42.0」那个样子。\n\n（这一题**不用投喂任何东西**，那两样字都是固定死的，别去改它们。）",
+  "brokenCodeTemplate": "public class Main {\n    static <T> void show(String label, T value) {\n        System.out.println(label + \" 的两倍是 \" + (value.doubleValue() * 2));\n    }\n\n    public static void main(String[] args) {\n        show(\"整数\", {a});\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    static <T extends Number> void show(String label, T value) {\n        System.out.println(label + \" 的两倍是 \" + (value.doubleValue() * 2));\n    }\n\n    public static void main(String[] args) {\n        show(\"整数\", {a});\n    }\n}\n",
+  "explanationTemplate": "这题演的就是尖括号里那句门槛**存在的全部理由**喵。\n\n**一、尖括号里只写一个 `T`，意思是「什么都能填」。** 什么都收听着豪爽，代价是招式里**只有万物都会的那几手**叫得动 —— 而「翻一倍」用的那手本事不是万物都会的。\n\n**二、翻译官喵的红字指着 `doubleValue` 说不认识。** 它的原话是三行：`symbol: method doubleValue()`（不认识这个名字）、`location: variable value of type T`（本喵手上那个东西的尺码是 `T`），最后一行的落点最值得抄进小本本：\n\n```text\n  where T is a type-variable:\n    T extends Object declared in method <T>show(String,T)\n```\n\n**本喵一个字都没写门槛，翻译官喵就默认门槛是「万物」** —— 所以在它眼里，本喵手上拿着的只是一只万物，而万物身上没有「翻一倍」这手本事。\n\n**注意它不是说这段语法写错了。** 语法一个字都没错；错的是本喵**没有事先声明**这东西属于「数字那一家」。\n\n**三、补上 `extends Number` 就好了。** 这一句读作「这只空尺码**只能填数字那一家的成员**」。写上门槛的好处是：招式里就敢放心用这一家都会的本事 —— 因为填进来的东西**保证**带着它们。这就是那句加法：**门槛写什么，招式里就敢用什么。**\n\n**四、为什么不能干脆不写门槛。** 不写也能跑，可那样本喵在招式里就只能干万物都会的事（印出来、比是不是同一个）。想要「翻一倍」，就必须先把门槛立起来喵。"
+}

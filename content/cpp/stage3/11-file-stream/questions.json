@@ -1,0 +1,78 @@
+{
+  "lessonId": "cpp-stage3-11",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想把几行小鱼干的名字**记下来、明天打开还能看**。该请哪一件工具？",
+      "options": [
+        "`ifstream` —— 它是往里读的那一件",
+        "`ofstream` —— 它是往外写的那一件",
+        "`getline` —— 它负责把本子合上",
+        "`cout` —— 它平时就在往外印字，用它记就行"
+      ],
+      "answer": 1,
+      "explanation": "名字里那个 of 就是 out file，念作「往外送」喵 —— 它的活是把东西**写进**小本本。反过来的 `ifstream` 是 in file，专门**读回来**。另外两个都不对：`getline` 是「一次叼回一整行」的写法，合上本子是 `close()`；而 `cout` 只往屏幕上印，程序一收工屏幕上那些字就跟着没了 —— 那正是本喵开头找不到上礼拜账目的原因喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵翻开小本本之后写了 `while (getline(in, line))`，后面接着念肚子里的那段。这一整句在说什么？",
+      "options": [
+        "只要还能从本子里叼回一整行，就接着念肚子里的那段",
+        "本子里有几行，要本喵先另外写一个数告诉它",
+        "它只叼回每一行的头一个字",
+        "它把整本本子重新写一遍"
+      ],
+      "answer": 0,
+      "explanation": "`getline` 一次叼回**一整行**（行尾那个换行不算在里面），叼到了这一圈就继续；本子读到头、叼不动了，这一圈自己就停 —— 所以本子里有几行，就等于转了几圈，不用本喵另外数喵。它叼的是一整行，不是头一个字，更不会去改本子。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵想在小本本**打不开**的时候印一句提醒。条件该写成哪一句？",
+      "options": [
+        "`if (in.is_open()) { cout << \"本子没找着喵\" << endl; }`",
+        "`if (!in.is_open()) { cout << \"本子没找着喵\" << endl; }`",
+        "`in.close();` —— 合上本子就等于检查过了",
+        "`in.open(\"meiyou.txt\");` —— 再开一次就知道在不在"
+      ],
+      "answer": 1,
+      "explanation": "`is_open()` 问的是「**本子打开了吗**」：本子不在的时候它给出 `0`（没打开），前面加个感叹号，正好在「没打开」时把提醒印出来喵。「`if (in.is_open()) { cout << \"本子没找着喵\" << endl; }`」把感叹号丢了，变成「打得开的时候才印提醒」，恰好反了；`close()` 是合上本子，跟检不检查没关系；`open` 只是翻本子的动作，翻完不查，本子不在它也不会告诉你。课文里本喵真跑过一遍：这台机器上单写 `if (!in)` 是抓不到「本子不在」的，所以这一课统一用 `is_open()` 问。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <fstream>\n#include <string>\nusing namespace std;\n\nint main() {\n    ____ out(\"fish.txt\");\n    out << \"小鱼干\" << endl;\n    out.close();\n\n    ____ in(\"fish.txt\");\n    string line;\n    while (____(in, line)) {\n        cout << line << endl;\n    }\n    return 0;\n}",
+      "stem": "这段代码先把一行字写进小本本，再把它读回来印一遍。三个空位（用 `____` 标出）该填什么？",
+      "blanks": [
+        { "answer": "ofstream", "accept": [] },
+        { "answer": "ifstream", "accept": [] },
+        { "answer": "getline", "accept": [] }
+      ],
+      "explanation": "第一个空位请的是**只管写**的那一件 `ofstream` 喵 —— 后面跟着的书名号里是小本本的名字，一句就把本子翻开准备好。第二个空位请的是**只管读**的那一件 `ifstream`：仔细看，它念的正是刚刚写好的那个名字，所以读得到东西。第三个空位是 `getline`，它一次叼回**一整行**（行尾的换行不算），叼不动了就说明本子到头了。开头那句请工具进门的活，`#include <fstream>` 已经替本喵干好了。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <fstream>\n#include <string>\nusing namespace std;\n\nint main() {\n    ofstream out(\"fish.txt\");\n    out << \"小鱼干\" << endl;\n    out << \"猫粮\" << endl;\n    out.close();\n\n    ifstream in(\"fish.txt\");\n    string line;\n    while (getline(in, line)) {\n        cout << \"读到：\" << line << endl;\n    }\n    return 0;\n}",
+      "stem": "本喵先往小本本里写了两行，再翻开读回来。这段代码的输出是什么？（一行一行照抄）",
+      "answer": "读到：小鱼干\n读到：猫粮",
+      "accept": ["读到：小鱼干\n读到：猫粮\n"],
+      "explanation": "纸条上写了几行，读回来就是几行喵。写的时候 `endl` 每次都换了一行，所以本子里躺着的是 `小鱼干` 和 `猫粮` 两行；读的时候 `getline` 一次叼一整行，行尾的换行不算在里面，于是印出来是 `读到：小鱼干`、`读到：猫粮` 两行。第三行也没有：本子读到头，`getline` 叼不动了，这一圈自己就停。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <fstream>\nusing namespace std;\n\nint main() {\n    ofstream out(\"nums.txt\");\n    out << 7 << \" \" << 5 << \" \" << 6 << endl;\n    out.close();\n\n    ifstream in(\"nums.txt\");\n    int x = 0;\n    int total = 0;\n    while (in >> x) {\n        total = total + x;\n    }\n    cout << \"一共 \" << total << \" 条\" << endl;\n    return 0;\n}",
+      "stem": "本喵往小本本里写了 `7 5 6` 三个数，再一个个叼回来加在一起。这段代码的输出是什么？（照抄那一行）",
+      "answer": "一共 18 条",
+      "accept": ["一共 18 条\n"],
+      "explanation": "`in >> x` 遇到空格就停，所以它挨个把 `7`、`5`、`6` 叼进仓库喵：`total` 先是 `0`，加完三个数变成 `18`。叼到本子末尾时 `in >> x` 读不动了，这一圈才停 —— 所以本子里有几个数，就加几个，不用本喵提前告诉它几个。最后印出来是 `一共 18 条`。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-anno-claim-hint",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-10",
+  "type": "codefix",
+  "concept": ["注解写成引号包着的一串字", "__annotations__ 是原样照抄", "get_type_hints 是照着名字认领"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["咪爱", "团子", "小花"] },
+    "n": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵给这招钉了三块木牌，钉法很特别喵：**木牌上的字是用引号包着写成的**（写成了一串字，而不是那个东西本身）。\n\n这段代码跑起来一声不吭、也不摔，可它印出来的那格木牌**没被认领** —— 印出来的是一串光溜溜的字。本喵要的是**照着名字认领之后**的样子，也就是那个东西**本身**（本喵管这种样子叫「带着尖括号的」）。\n\n请你帮本喵改好它，让 `次数` 那一格印出认领之后的样子。\n\n改好之后照样印**两行**，第一行还是那串字（名字重复几遍的那个）；第二行要变成**认领之后**的样子 —— 印出来带着尖括号，而不是现在这样一串光溜溜的字。\n\n（判分时名字和相乘的次数都会换一套喵，所以别把答案写死～）",
+  "brokenCodeTemplate": "def 招呼(名字: \"str\", 次数: \"int\") -> \"str\":\n    return 名字 * 次数\n\n\nprint(招呼(\"{name}\", {n}))\nprint(招呼.__annotations__[\"次数\"])\n",
+  "referenceFixTemplate": "from typing import get_type_hints\n\n\ndef 招呼(名字: \"str\", 次数: \"int\") -> \"str\":\n    return 名字 * 次数\n\n\nprint(招呼(\"{name}\", {n}))\nprint(get_type_hints(招呼)[\"次数\"])\n",
+  "explanationTemplate": "同一份木牌有**两个读法**，这一课里正好都讲过喵：\n\n- **`__annotations__` 是原样照抄**：木牌上写的是引号包着的一串字，它读出来就还是那串字（`int` 这三个字母），一个字母都不换。\n- **`get_type_hints()` 是照着名字去认领**：它拿着木牌上写的那几个名字，一个一个去找，找回来的才是那个东西**本身** —— 所以印出来带着尖括号。\n\n坏代码那一句 `招呼.__annotations__[\"次数\"]` 走的是第一条路，交回来的是一串字；换成 `get_type_hints(招呼)[\"次数\"]` 才走第二条路（`get_type_hints` 得先从 `typing` 那本手册里请进来）。\n\n⚠️ 一条记牢：**别指望 `__annotations__` 替你认领。** 它只把木牌上写了什么**原样**端给你；「把名字换成真东西」是 `get_type_hints()` 的活。"
+}

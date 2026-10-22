@@ -1,0 +1,492 @@
+{
+  "lessonId": "python-stage3-06",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-py-s3-http-missing-body-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵摆了个小摊守着鱼塘，又派了只客人去要一份吃食。\n\n两边都跑得起来，摊主也回话了（**状态行是对的**），可客人**手里是空的** —— 正文一个字都没接到，本喵数出来是 **0** 个字。\n\n改好之后，客人要印出**两行**：\n\n- 第一行：摊主回话的**状态行**，一个字不改地原样印出来；\n- 第二行：摊主递过来的**正文一共有几个字**（正文是空的就是 0）。\n\n（摊主那段有问题喵，不是客人的错。）",
+      "brokenCode": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        正文 = \"小鱼干已送达\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n文本 = 回应.decode(\"utf-8\")\n头, _, 正文 = 文本.partition(\"\\r\\n\\r\\n\")\nprint(头.split(\"\\r\\n\")[0])\nprint(len(正文))\n",
+      "referenceFix": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        正文 = \"小鱼干已送达\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n文本 = 回应.decode(\"utf-8\")\n头, _, 正文 = 文本.partition(\"\\r\\n\\r\\n\")\nprint(头.split(\"\\r\\n\")[0])\nprint(len(正文))\n",
+      "expectedOutput": "HTTP/1.0 200 OK\n6",
+      "stdin": null,
+      "explanation": "客人拿到了**状态行**，却一个字正文都没接到 —— 这说明摊主把回话的**开头**送出去了，「要递的东西」却没送出去喵。\n\n回话是**分两步**走的：\n\n1. `send_response` 和 `send_header` 只是把几张**说明牌**（状态行加上各种头）先摆好，它们会一直攒着，等 `end_headers()` 那一下才真的过鱼塘；\n2. 牌子送出去之后，**正文还得自己动手送** —— `self.wfile.write(身子)` 那一句，才是那份吃食真正过鱼塘的动作。\n\n少了第 2 步，客人拿到的就是一份「说好有多少字节、结果一个字都没有」的回话：说明书上写着有东西，袋子里是空的。这正是本题要你数出来的那个数（数出来是 0，因为正文那串字一个字都没到）。\n\n⚠️ 顺带记住两件事：\n\n1. `Content-Length` 数的是**字节**，不是字数。同一句话里只要带中文，这两个数就不一样（本喵这份吃食，字节数差不多是字数的三倍）。\n2. **摊主那段代码是「说」和「递」分开写的** —— 说完了不等于递出去了。真隔着一片鱼塘的时候，你觉得最不该忘的那一步，恰恰是最容易整段漏掉的喵。",
+      "templateId": "py-s3-http-missing-body",
+      "params": {
+        "word": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T03:29:45.059Z",
+        "hash": "a0e2922cd846acd4"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-missing-body-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵摆了个小摊守着鱼塘，又派了只客人去要一份吃食。\n\n两边都跑得起来，摊主也回话了（**状态行是对的**），可客人**手里是空的** —— 正文一个字都没接到，本喵数出来是 **0** 个字。\n\n改好之后，客人要印出**两行**：\n\n- 第一行：摊主回话的**状态行**，一个字不改地原样印出来；\n- 第二行：摊主递过来的**正文一共有几个字**（正文是空的就是 0）。\n\n（摊主那段有问题喵，不是客人的错。）",
+      "brokenCode": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        正文 = \"小虾米已送达\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n文本 = 回应.decode(\"utf-8\")\n头, _, 正文 = 文本.partition(\"\\r\\n\\r\\n\")\nprint(头.split(\"\\r\\n\")[0])\nprint(len(正文))\n",
+      "referenceFix": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        正文 = \"小虾米已送达\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n文本 = 回应.decode(\"utf-8\")\n头, _, 正文 = 文本.partition(\"\\r\\n\\r\\n\")\nprint(头.split(\"\\r\\n\")[0])\nprint(len(正文))\n",
+      "expectedOutput": "HTTP/1.0 200 OK\n6",
+      "stdin": null,
+      "explanation": "客人拿到了**状态行**，却一个字正文都没接到 —— 这说明摊主把回话的**开头**送出去了，「要递的东西」却没送出去喵。\n\n回话是**分两步**走的：\n\n1. `send_response` 和 `send_header` 只是把几张**说明牌**（状态行加上各种头）先摆好，它们会一直攒着，等 `end_headers()` 那一下才真的过鱼塘；\n2. 牌子送出去之后，**正文还得自己动手送** —— `self.wfile.write(身子)` 那一句，才是那份吃食真正过鱼塘的动作。\n\n少了第 2 步，客人拿到的就是一份「说好有多少字节、结果一个字都没有」的回话：说明书上写着有东西，袋子里是空的。这正是本题要你数出来的那个数（数出来是 0，因为正文那串字一个字都没到）。\n\n⚠️ 顺带记住两件事：\n\n1. `Content-Length` 数的是**字节**，不是字数。同一句话里只要带中文，这两个数就不一样（本喵这份吃食，字节数差不多是字数的三倍）。\n2. **摊主那段代码是「说」和「递」分开写的** —— 说完了不等于递出去了。真隔着一片鱼塘的时候，你觉得最不该忘的那一步，恰恰是最容易整段漏掉的喵。",
+      "templateId": "py-s3-http-missing-body",
+      "params": {
+        "word": "小虾米"
+      },
+      "verified": {
+        "at": "2026-09-16T03:29:47.071Z",
+        "hash": "8d9953e811b1e665"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-post-body-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「把东西装进报文的肚子里送过去」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死），摊子摆好就一直守着。摊主**只接那种开口就说 `POST` 的客人**（也就是「东西装在肚子里送过来」这一种）：它照着客人报的**长度**，从肚子里把东西原样掏出来，回话的肚子里是 `收到了` 接上掏出来的那件东西，中间不加空格。\n3. 摊主摆好摊之后，客人**自己动手拼一份报文**送过去（用 `socket` 建连，别用现成的客人）：第一段请求行写 `POST /fish HTTP/1.1`，接着几张**说明牌**里要写清肚子里装了几个字节（`Content-Length`），再隔**一个空行**，最后才是那件东西本身。客人收到回话后，只印**肚子那一段**。\n\n印出来只有**一行**：`收到了` 后面直接跟着那件东西的名字。\n\n比如投喂的是\n\n鸡肉冻干\n\n就要输出\n\n收到了鸡肉冻干\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_POST(self):\n        长度 = int(self.headers[\"Content-Length\"])\n        收到的东西 = self.rfile.read(长度).decode(\"utf-8\")\n        回话 = (\"收到了\" + 收到的东西).encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(回话)))\n        self.end_headers()\n        self.wfile.write(回话)\n\n    def log_message(self, *args):\n        pass\n\n\n东西 = input()\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n肚子 = 东西.encode(\"utf-8\")\n报文 = (\n    \"POST /fish HTTP/1.1\\r\\n\"\n    \"Host: 127.0.0.1\\r\\n\"\n    \"Content-Type: text/plain; charset=utf-8\\r\\n\"\n    \"Content-Length: \" + str(len(肚子)) + \"\\r\\n\"\n    \"Connection: close\\r\\n\"\n    \"\\r\\n\"\n).encode(\"utf-8\") + 肚子\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(报文)\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到了小鱼干",
+      "stdin": "小鱼干\n",
+      "explanation": "一份 HTTP 报文就是**四段**拼起来的，顺序不能乱喵：\n\n1. **请求行** —— 怎么要（`POST`）、要哪条路（`/fish`）、按哪一版规矩说话（`HTTP/1.1`）；\n2. **说明牌**（头上那些）—— 一张张「名字冒号值」的小纸条，每张末尾都要跟一个回车加换行。其中 `Content-Length` 那张最要紧：**它说的是肚子里装了几个字节**；\n3. **一个空行** —— 它是「牌子摆完了、后面是肚子」的记号。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等；\n4. **肚子**（正文）—— 真正要送过去的那件东西。\n\n摊主是怎么把东西掏出来的？它先从 `Content-Length` 那张牌上拿到数字，再 `self.rfile.read(长度)` —— 读到的**不多不少**就是这几个字节。\n\n**为什么非得自己报个数**：隔着鱼塘过来的是一截一截的字节，没有任何一截上写着「肚子到此为止」。送东西的人**自己报个数**，收东西的人才能照着数收完。真实世界的 HTTP 也是这么干的喵。\n\n⚠️ 三件容易翻车的事：\n\n1. `Content-Length` 数的是**字节**，不是字数。「小鱼干」三个字，字节数是 **9** —— 报成字数的话摊主会少读一截，剩下那截还赖在门口，把后面的事一起搅乱。\n2. 长度要和**同一次** `encode(\"utf-8\")` 的结果对得上：先把它变成字节，再拿这串字节的个数去报，两处必须是同一个数。\n3. 报文里的换行是**回车加换行**一对儿（写成 `\\r\\n`），不是单独一个换行。拼错了它**大多不报错** —— 本喵量过：全用 `\\n`、或者只有末尾那个空行偷懒写成 `\\n`，摊主照样把整句读出来，回执里正文**一个字都不缺**。可**「不报错」不等于「没事」**：要是换行全写成 `\\r`（少了那个 `\\n`），摊主压根不知道从哪儿下嘴 —— 本喵把等回音的耐心设成八秒，八秒到了它还在那儿干等，最后是被超时掐掉的。这种「不说错了、也不答话」的毛病，就是上面第 3 点说的那个干等喵。",
+      "templateId": "py-s3-http-post-body",
+      "params": {
+        "food": "小鱼干",
+        "sampleFood": "鸡肉冻干"
+      },
+      "verified": {
+        "at": "2026-09-16T13:12:02.321Z",
+        "hash": "9fafed0615489733"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-post-body-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「把东西装进报文的肚子里送过去」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死），摊子摆好就一直守着。摊主**只接那种开口就说 `POST` 的客人**（也就是「东西装在肚子里送过来」这一种）：它照着客人报的**长度**，从肚子里把东西原样掏出来，回话的肚子里是 `收到了` 接上掏出来的那件东西，中间不加空格。\n3. 摊主摆好摊之后，客人**自己动手拼一份报文**送过去（用 `socket` 建连，别用现成的客人）：第一段请求行写 `POST /fish HTTP/1.1`，接着几张**说明牌**里要写清肚子里装了几个字节（`Content-Length`），再隔**一个空行**，最后才是那件东西本身。客人收到回话后，只印**肚子那一段**。\n\n印出来只有**一行**：`收到了` 后面直接跟着那件东西的名字。\n\n比如投喂的是\n\n南瓜泥\n\n就要输出\n\n收到了南瓜泥\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_POST(self):\n        长度 = int(self.headers[\"Content-Length\"])\n        收到的东西 = self.rfile.read(长度).decode(\"utf-8\")\n        回话 = (\"收到了\" + 收到的东西).encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(回话)))\n        self.end_headers()\n        self.wfile.write(回话)\n\n    def log_message(self, *args):\n        pass\n\n\n东西 = input()\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n肚子 = 东西.encode(\"utf-8\")\n报文 = (\n    \"POST /fish HTTP/1.1\\r\\n\"\n    \"Host: 127.0.0.1\\r\\n\"\n    \"Content-Type: text/plain; charset=utf-8\\r\\n\"\n    \"Content-Length: \" + str(len(肚子)) + \"\\r\\n\"\n    \"Connection: close\\r\\n\"\n    \"\\r\\n\"\n).encode(\"utf-8\") + 肚子\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(报文)\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到了小鱼干",
+      "stdin": "小鱼干\n",
+      "explanation": "一份 HTTP 报文就是**四段**拼起来的，顺序不能乱喵：\n\n1. **请求行** —— 怎么要（`POST`）、要哪条路（`/fish`）、按哪一版规矩说话（`HTTP/1.1`）；\n2. **说明牌**（头上那些）—— 一张张「名字冒号值」的小纸条，每张末尾都要跟一个回车加换行。其中 `Content-Length` 那张最要紧：**它说的是肚子里装了几个字节**；\n3. **一个空行** —— 它是「牌子摆完了、后面是肚子」的记号。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等；\n4. **肚子**（正文）—— 真正要送过去的那件东西。\n\n摊主是怎么把东西掏出来的？它先从 `Content-Length` 那张牌上拿到数字，再 `self.rfile.read(长度)` —— 读到的**不多不少**就是这几个字节。\n\n**为什么非得自己报个数**：隔着鱼塘过来的是一截一截的字节，没有任何一截上写着「肚子到此为止」。送东西的人**自己报个数**，收东西的人才能照着数收完。真实世界的 HTTP 也是这么干的喵。\n\n⚠️ 三件容易翻车的事：\n\n1. `Content-Length` 数的是**字节**，不是字数。「小鱼干」三个字，字节数是 **9** —— 报成字数的话摊主会少读一截，剩下那截还赖在门口，把后面的事一起搅乱。\n2. 长度要和**同一次** `encode(\"utf-8\")` 的结果对得上：先把它变成字节，再拿这串字节的个数去报，两处必须是同一个数。\n3. 报文里的换行是**回车加换行**一对儿（写成 `\\r\\n`），不是单独一个换行。拼错了它**大多不报错** —— 本喵量过：全用 `\\n`、或者只有末尾那个空行偷懒写成 `\\n`，摊主照样把整句读出来，回执里正文**一个字都不缺**。可**「不报错」不等于「没事」**：要是换行全写成 `\\r`（少了那个 `\\n`），摊主压根不知道从哪儿下嘴 —— 本喵把等回音的耐心设成八秒，八秒到了它还在那儿干等，最后是被超时掐掉的。这种「不说错了、也不答话」的毛病，就是上面第 3 点说的那个干等喵。",
+      "templateId": "py-s3-http-post-body",
+      "params": {
+        "food": "小鱼干",
+        "sampleFood": "南瓜泥"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:41.575Z",
+        "hash": "3102ebb95680096b"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-post-body-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「把东西装进报文的肚子里送过去」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死），摊子摆好就一直守着。摊主**只接那种开口就说 `POST` 的客人**（也就是「东西装在肚子里送过来」这一种）：它照着客人报的**长度**，从肚子里把东西原样掏出来，回话的肚子里是 `收到了` 接上掏出来的那件东西，中间不加空格。\n3. 摊主摆好摊之后，客人**自己动手拼一份报文**送过去（用 `socket` 建连，别用现成的客人）：第一段请求行写 `POST /fish HTTP/1.1`，接着几张**说明牌**里要写清肚子里装了几个字节（`Content-Length`），再隔**一个空行**，最后才是那件东西本身。客人收到回话后，只印**肚子那一段**。\n\n印出来只有**一行**：`收到了` 后面直接跟着那件东西的名字。\n\n比如投喂的是\n\n鸡肉冻干\n\n就要输出\n\n收到了鸡肉冻干\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_POST(self):\n        长度 = int(self.headers[\"Content-Length\"])\n        收到的东西 = self.rfile.read(长度).decode(\"utf-8\")\n        回话 = (\"收到了\" + 收到的东西).encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(回话)))\n        self.end_headers()\n        self.wfile.write(回话)\n\n    def log_message(self, *args):\n        pass\n\n\n东西 = input()\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n肚子 = 东西.encode(\"utf-8\")\n报文 = (\n    \"POST /fish HTTP/1.1\\r\\n\"\n    \"Host: 127.0.0.1\\r\\n\"\n    \"Content-Type: text/plain; charset=utf-8\\r\\n\"\n    \"Content-Length: \" + str(len(肚子)) + \"\\r\\n\"\n    \"Connection: close\\r\\n\"\n    \"\\r\\n\"\n).encode(\"utf-8\") + 肚子\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(报文)\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到了猫粮",
+      "stdin": "猫粮\n",
+      "explanation": "一份 HTTP 报文就是**四段**拼起来的，顺序不能乱喵：\n\n1. **请求行** —— 怎么要（`POST`）、要哪条路（`/fish`）、按哪一版规矩说话（`HTTP/1.1`）；\n2. **说明牌**（头上那些）—— 一张张「名字冒号值」的小纸条，每张末尾都要跟一个回车加换行。其中 `Content-Length` 那张最要紧：**它说的是肚子里装了几个字节**；\n3. **一个空行** —— 它是「牌子摆完了、后面是肚子」的记号。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等；\n4. **肚子**（正文）—— 真正要送过去的那件东西。\n\n摊主是怎么把东西掏出来的？它先从 `Content-Length` 那张牌上拿到数字，再 `self.rfile.read(长度)` —— 读到的**不多不少**就是这几个字节。\n\n**为什么非得自己报个数**：隔着鱼塘过来的是一截一截的字节，没有任何一截上写着「肚子到此为止」。送东西的人**自己报个数**，收东西的人才能照着数收完。真实世界的 HTTP 也是这么干的喵。\n\n⚠️ 三件容易翻车的事：\n\n1. `Content-Length` 数的是**字节**，不是字数。「小鱼干」三个字，字节数是 **9** —— 报成字数的话摊主会少读一截，剩下那截还赖在门口，把后面的事一起搅乱。\n2. 长度要和**同一次** `encode(\"utf-8\")` 的结果对得上：先把它变成字节，再拿这串字节的个数去报，两处必须是同一个数。\n3. 报文里的换行是**回车加换行**一对儿（写成 `\\r\\n`），不是单独一个换行。拼错了它**大多不报错** —— 本喵量过：全用 `\\n`、或者只有末尾那个空行偷懒写成 `\\n`，摊主照样把整句读出来，回执里正文**一个字都不缺**。可**「不报错」不等于「没事」**：要是换行全写成 `\\r`（少了那个 `\\n`），摊主压根不知道从哪儿下嘴 —— 本喵把等回音的耐心设成八秒，八秒到了它还在那儿干等，最后是被超时掐掉的。这种「不说错了、也不答话」的毛病，就是上面第 3 点说的那个干等喵。",
+      "templateId": "py-s3-http-post-body",
+      "params": {
+        "food": "猫粮",
+        "sampleFood": "鸡肉冻干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:43.826Z",
+        "hash": "87b4861b15ae99f4"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-post-body-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「把东西装进报文的肚子里送过去」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死），摊子摆好就一直守着。摊主**只接那种开口就说 `POST` 的客人**（也就是「东西装在肚子里送过来」这一种）：它照着客人报的**长度**，从肚子里把东西原样掏出来，回话的肚子里是 `收到了` 接上掏出来的那件东西，中间不加空格。\n3. 摊主摆好摊之后，客人**自己动手拼一份报文**送过去（用 `socket` 建连，别用现成的客人）：第一段请求行写 `POST /fish HTTP/1.1`，接着几张**说明牌**里要写清肚子里装了几个字节（`Content-Length`），再隔**一个空行**，最后才是那件东西本身。客人收到回话后，只印**肚子那一段**。\n\n印出来只有**一行**：`收到了` 后面直接跟着那件东西的名字。\n\n比如投喂的是\n\n南瓜泥\n\n就要输出\n\n收到了南瓜泥\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_POST(self):\n        长度 = int(self.headers[\"Content-Length\"])\n        收到的东西 = self.rfile.read(长度).decode(\"utf-8\")\n        回话 = (\"收到了\" + 收到的东西).encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(回话)))\n        self.end_headers()\n        self.wfile.write(回话)\n\n    def log_message(self, *args):\n        pass\n\n\n东西 = input()\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n肚子 = 东西.encode(\"utf-8\")\n报文 = (\n    \"POST /fish HTTP/1.1\\r\\n\"\n    \"Host: 127.0.0.1\\r\\n\"\n    \"Content-Type: text/plain; charset=utf-8\\r\\n\"\n    \"Content-Length: \" + str(len(肚子)) + \"\\r\\n\"\n    \"Connection: close\\r\\n\"\n    \"\\r\\n\"\n).encode(\"utf-8\") + 肚子\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(报文)\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到了猫粮",
+      "stdin": "猫粮\n",
+      "explanation": "一份 HTTP 报文就是**四段**拼起来的，顺序不能乱喵：\n\n1. **请求行** —— 怎么要（`POST`）、要哪条路（`/fish`）、按哪一版规矩说话（`HTTP/1.1`）；\n2. **说明牌**（头上那些）—— 一张张「名字冒号值」的小纸条，每张末尾都要跟一个回车加换行。其中 `Content-Length` 那张最要紧：**它说的是肚子里装了几个字节**；\n3. **一个空行** —— 它是「牌子摆完了、后面是肚子」的记号。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等；\n4. **肚子**（正文）—— 真正要送过去的那件东西。\n\n摊主是怎么把东西掏出来的？它先从 `Content-Length` 那张牌上拿到数字，再 `self.rfile.read(长度)` —— 读到的**不多不少**就是这几个字节。\n\n**为什么非得自己报个数**：隔着鱼塘过来的是一截一截的字节，没有任何一截上写着「肚子到此为止」。送东西的人**自己报个数**，收东西的人才能照着数收完。真实世界的 HTTP 也是这么干的喵。\n\n⚠️ 三件容易翻车的事：\n\n1. `Content-Length` 数的是**字节**，不是字数。「小鱼干」三个字，字节数是 **9** —— 报成字数的话摊主会少读一截，剩下那截还赖在门口，把后面的事一起搅乱。\n2. 长度要和**同一次** `encode(\"utf-8\")` 的结果对得上：先把它变成字节，再拿这串字节的个数去报，两处必须是同一个数。\n3. 报文里的换行是**回车加换行**一对儿（写成 `\\r\\n`），不是单独一个换行。拼错了它**大多不报错** —— 本喵量过：全用 `\\n`、或者只有末尾那个空行偷懒写成 `\\n`，摊主照样把整句读出来，回执里正文**一个字都不缺**。可**「不报错」不等于「没事」**：要是换行全写成 `\\r`（少了那个 `\\n`），摊主压根不知道从哪儿下嘴 —— 本喵把等回音的耐心设成八秒，八秒到了它还在那儿干等，最后是被超时掐掉的。这种「不说错了、也不答话」的毛病，就是上面第 3 点说的那个干等喵。",
+      "templateId": "py-s3-http-post-body",
+      "params": {
+        "food": "猫粮",
+        "sampleFood": "南瓜泥"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:46.067Z",
+        "hash": "a5d3a78342fc3d37"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-post-body-004",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「把东西装进报文的肚子里送过去」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死），摊子摆好就一直守着。摊主**只接那种开口就说 `POST` 的客人**（也就是「东西装在肚子里送过来」这一种）：它照着客人报的**长度**，从肚子里把东西原样掏出来，回话的肚子里是 `收到了` 接上掏出来的那件东西，中间不加空格。\n3. 摊主摆好摊之后，客人**自己动手拼一份报文**送过去（用 `socket` 建连，别用现成的客人）：第一段请求行写 `POST /fish HTTP/1.1`，接着几张**说明牌**里要写清肚子里装了几个字节（`Content-Length`），再隔**一个空行**，最后才是那件东西本身。客人收到回话后，只印**肚子那一段**。\n\n印出来只有**一行**：`收到了` 后面直接跟着那件东西的名字。\n\n比如投喂的是\n\n鸡肉冻干\n\n就要输出\n\n收到了鸡肉冻干\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_POST(self):\n        长度 = int(self.headers[\"Content-Length\"])\n        收到的东西 = self.rfile.read(长度).decode(\"utf-8\")\n        回话 = (\"收到了\" + 收到的东西).encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(回话)))\n        self.end_headers()\n        self.wfile.write(回话)\n\n    def log_message(self, *args):\n        pass\n\n\n东西 = input()\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n肚子 = 东西.encode(\"utf-8\")\n报文 = (\n    \"POST /fish HTTP/1.1\\r\\n\"\n    \"Host: 127.0.0.1\\r\\n\"\n    \"Content-Type: text/plain; charset=utf-8\\r\\n\"\n    \"Content-Length: \" + str(len(肚子)) + \"\\r\\n\"\n    \"Connection: close\\r\\n\"\n    \"\\r\\n\"\n).encode(\"utf-8\") + 肚子\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(报文)\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到了毛线球",
+      "stdin": "毛线球\n",
+      "explanation": "一份 HTTP 报文就是**四段**拼起来的，顺序不能乱喵：\n\n1. **请求行** —— 怎么要（`POST`）、要哪条路（`/fish`）、按哪一版规矩说话（`HTTP/1.1`）；\n2. **说明牌**（头上那些）—— 一张张「名字冒号值」的小纸条，每张末尾都要跟一个回车加换行。其中 `Content-Length` 那张最要紧：**它说的是肚子里装了几个字节**；\n3. **一个空行** —— 它是「牌子摆完了、后面是肚子」的记号。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等；\n4. **肚子**（正文）—— 真正要送过去的那件东西。\n\n摊主是怎么把东西掏出来的？它先从 `Content-Length` 那张牌上拿到数字，再 `self.rfile.read(长度)` —— 读到的**不多不少**就是这几个字节。\n\n**为什么非得自己报个数**：隔着鱼塘过来的是一截一截的字节，没有任何一截上写着「肚子到此为止」。送东西的人**自己报个数**，收东西的人才能照着数收完。真实世界的 HTTP 也是这么干的喵。\n\n⚠️ 三件容易翻车的事：\n\n1. `Content-Length` 数的是**字节**，不是字数。「小鱼干」三个字，字节数是 **9** —— 报成字数的话摊主会少读一截，剩下那截还赖在门口，把后面的事一起搅乱。\n2. 长度要和**同一次** `encode(\"utf-8\")` 的结果对得上：先把它变成字节，再拿这串字节的个数去报，两处必须是同一个数。\n3. 报文里的换行是**回车加换行**一对儿（写成 `\\r\\n`），不是单独一个换行。拼错了它**大多不报错** —— 本喵量过：全用 `\\n`、或者只有末尾那个空行偷懒写成 `\\n`，摊主照样把整句读出来，回执里正文**一个字都不缺**。可**「不报错」不等于「没事」**：要是换行全写成 `\\r`（少了那个 `\\n`），摊主压根不知道从哪儿下嘴 —— 本喵把等回音的耐心设成八秒，八秒到了它还在那儿干等，最后是被超时掐掉的。这种「不说错了、也不答话」的毛病，就是上面第 3 点说的那个干等喵。",
+      "templateId": "py-s3-http-post-body",
+      "params": {
+        "food": "毛线球",
+        "sampleFood": "鸡肉冻干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:48.324Z",
+        "hash": "52e7f15b6fe8f37b"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-post-body-005",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「把东西装进报文的肚子里送过去」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死），摊子摆好就一直守着。摊主**只接那种开口就说 `POST` 的客人**（也就是「东西装在肚子里送过来」这一种）：它照着客人报的**长度**，从肚子里把东西原样掏出来，回话的肚子里是 `收到了` 接上掏出来的那件东西，中间不加空格。\n3. 摊主摆好摊之后，客人**自己动手拼一份报文**送过去（用 `socket` 建连，别用现成的客人）：第一段请求行写 `POST /fish HTTP/1.1`，接着几张**说明牌**里要写清肚子里装了几个字节（`Content-Length`），再隔**一个空行**，最后才是那件东西本身。客人收到回话后，只印**肚子那一段**。\n\n印出来只有**一行**：`收到了` 后面直接跟着那件东西的名字。\n\n比如投喂的是\n\n南瓜泥\n\n就要输出\n\n收到了南瓜泥\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_POST(self):\n        长度 = int(self.headers[\"Content-Length\"])\n        收到的东西 = self.rfile.read(长度).decode(\"utf-8\")\n        回话 = (\"收到了\" + 收到的东西).encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(回话)))\n        self.end_headers()\n        self.wfile.write(回话)\n\n    def log_message(self, *args):\n        pass\n\n\n东西 = input()\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n肚子 = 东西.encode(\"utf-8\")\n报文 = (\n    \"POST /fish HTTP/1.1\\r\\n\"\n    \"Host: 127.0.0.1\\r\\n\"\n    \"Content-Type: text/plain; charset=utf-8\\r\\n\"\n    \"Content-Length: \" + str(len(肚子)) + \"\\r\\n\"\n    \"Connection: close\\r\\n\"\n    \"\\r\\n\"\n).encode(\"utf-8\") + 肚子\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(报文)\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到了毛线球",
+      "stdin": "毛线球\n",
+      "explanation": "一份 HTTP 报文就是**四段**拼起来的，顺序不能乱喵：\n\n1. **请求行** —— 怎么要（`POST`）、要哪条路（`/fish`）、按哪一版规矩说话（`HTTP/1.1`）；\n2. **说明牌**（头上那些）—— 一张张「名字冒号值」的小纸条，每张末尾都要跟一个回车加换行。其中 `Content-Length` 那张最要紧：**它说的是肚子里装了几个字节**；\n3. **一个空行** —— 它是「牌子摆完了、后面是肚子」的记号。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等；\n4. **肚子**（正文）—— 真正要送过去的那件东西。\n\n摊主是怎么把东西掏出来的？它先从 `Content-Length` 那张牌上拿到数字，再 `self.rfile.read(长度)` —— 读到的**不多不少**就是这几个字节。\n\n**为什么非得自己报个数**：隔着鱼塘过来的是一截一截的字节，没有任何一截上写着「肚子到此为止」。送东西的人**自己报个数**，收东西的人才能照着数收完。真实世界的 HTTP 也是这么干的喵。\n\n⚠️ 三件容易翻车的事：\n\n1. `Content-Length` 数的是**字节**，不是字数。「小鱼干」三个字，字节数是 **9** —— 报成字数的话摊主会少读一截，剩下那截还赖在门口，把后面的事一起搅乱。\n2. 长度要和**同一次** `encode(\"utf-8\")` 的结果对得上：先把它变成字节，再拿这串字节的个数去报，两处必须是同一个数。\n3. 报文里的换行是**回车加换行**一对儿（写成 `\\r\\n`），不是单独一个换行。拼错了它**大多不报错** —— 本喵量过：全用 `\\n`、或者只有末尾那个空行偷懒写成 `\\n`，摊主照样把整句读出来，回执里正文**一个字都不缺**。可**「不报错」不等于「没事」**：要是换行全写成 `\\r`（少了那个 `\\n`），摊主压根不知道从哪儿下嘴 —— 本喵把等回音的耐心设成八秒，八秒到了它还在那儿干等，最后是被超时掐掉的。这种「不说错了、也不答话」的毛病，就是上面第 3 点说的那个干等喵。",
+      "templateId": "py-s3-http-post-body",
+      "params": {
+        "food": "毛线球",
+        "sampleFood": "南瓜泥"
+      },
+      "verified": {
+        "at": "2026-09-16T13:12:04.371Z",
+        "hash": "f5ebb2492b56327c"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-request-line-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵摆了个小摊守着鱼塘，又派了只客人拿着**自己亲手拼的报文**去要一份吃食。\n\n两边都跑得起来，摊主也回话了，可回话的**第一行**脸色不对 —— 客人印出来那个数字不是 **200**，本喵要的那条路压根没走通。\n\n改好之后，客人要印出**两行**：\n\n- 第一行：摊主回话的**状态行**，一个字不改地原样印出来；\n- 第二行：摊主递过来的**正文**（就是小摊里写着的那句话）。\n\n（摊主那段本喵是照着规矩写的喵，不用动它；不对劲的东西在客人送出去的那份报文里。）",
+      "brokenCode": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/fish\":\n            号码 = 200\n            正文 = \"小鱼干已送达\"\n        else:\n            号码 = 404\n            正文 = \"这条路上没有吃食\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(号码)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"POST /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n文本 = 回应.decode(\"utf-8\")\n头, _, 正文 = 文本.partition(\"\\r\\n\\r\\n\")\nprint(头.split(\"\\r\\n\")[0])\nprint(正文)\n",
+      "referenceFix": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/fish\":\n            号码 = 200\n            正文 = \"小鱼干已送达\"\n        else:\n            号码 = 404\n            正文 = \"这条路上没有吃食\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(号码)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n文本 = 回应.decode(\"utf-8\")\n头, _, 正文 = 文本.partition(\"\\r\\n\\r\\n\")\nprint(头.split(\"\\r\\n\")[0])\nprint(正文)\n",
+      "expectedOutput": "HTTP/1.0 200 OK\n小鱼干已送达",
+      "stdin": null,
+      "explanation": "摊主回的**状态行**，是它照着客人送来的**请求行**挑出来的。请求行必须写成三件套：**怎么要（动作）+ 要哪条路（路径）+ 用的是哪一版规矩（版本）**。\n\n小摊手里只备了「客人用 `GET` 来要」这一条回路 —— 客人报文第一段写了什么动作，摊主就去找同名的招式；客人张口写了 `POST`，摊主手里没这一招，只能回一张写着 **501**（本摊不会这一招）的脸色。所以小鱼干必然落空，正文也变成了摊主自己写的那张报错纸。\n\n要改的地方只有一个词：把 `POST` 换成 `GET`。请求行成了 `GET /fish HTTP/1.1`，摊主认得这条路，回话立刻变成 **200**，正文里稳稳躺着那句话。\n\n⚠️ 有个地方值得盯一眼喵：状态行**开头那段版本记号**（本喵这边印出来是 `HTTP/1.0`）**不是**客人报文里写的那个 —— 那是**摊主自己那本规矩**里定下的。客人报的是自己用的版本，摊主回的是自己用的版本，两边各说各话，这在真实世界里也一样。\n\n⚠️ 还有两个小提醒：\n\n1. 客人那段报文里每一行末尾的 `\\r\\n` 和**最后那一行空行**都是规矩的一部分 —— 少了那行空行，摊主会以为客人还没说完，两边就都站在那儿干等。\n2. 摊主回话的头上会跟着一些**每次都不一样**的东西（比如 `Date:` 那一行）。所以判分也好、自己玩也好，**只印稳当的那几样**：状态行、状态码、正文、正文长度。整段回话原样倒出来，那答案永远没人对得上喵。",
+      "templateId": "py-s3-http-request-line",
+      "params": {
+        "word": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T03:29:29.611Z",
+        "hash": "9c29bd58d11ee917"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-request-line-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵摆了个小摊守着鱼塘，又派了只客人拿着**自己亲手拼的报文**去要一份吃食。\n\n两边都跑得起来，摊主也回话了，可回话的**第一行**脸色不对 —— 客人印出来那个数字不是 **200**，本喵要的那条路压根没走通。\n\n改好之后，客人要印出**两行**：\n\n- 第一行：摊主回话的**状态行**，一个字不改地原样印出来；\n- 第二行：摊主递过来的**正文**（就是小摊里写着的那句话）。\n\n（摊主那段本喵是照着规矩写的喵，不用动它；不对劲的东西在客人送出去的那份报文里。）",
+      "brokenCode": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/fish\":\n            号码 = 200\n            正文 = \"小虾米已送达\"\n        else:\n            号码 = 404\n            正文 = \"这条路上没有吃食\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(号码)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"POST /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n文本 = 回应.decode(\"utf-8\")\n头, _, 正文 = 文本.partition(\"\\r\\n\\r\\n\")\nprint(头.split(\"\\r\\n\")[0])\nprint(正文)\n",
+      "referenceFix": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/fish\":\n            号码 = 200\n            正文 = \"小虾米已送达\"\n        else:\n            号码 = 404\n            正文 = \"这条路上没有吃食\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(号码)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n文本 = 回应.decode(\"utf-8\")\n头, _, 正文 = 文本.partition(\"\\r\\n\\r\\n\")\nprint(头.split(\"\\r\\n\")[0])\nprint(正文)\n",
+      "expectedOutput": "HTTP/1.0 200 OK\n小虾米已送达",
+      "stdin": null,
+      "explanation": "摊主回的**状态行**，是它照着客人送来的**请求行**挑出来的。请求行必须写成三件套：**怎么要（动作）+ 要哪条路（路径）+ 用的是哪一版规矩（版本）**。\n\n小摊手里只备了「客人用 `GET` 来要」这一条回路 —— 客人报文第一段写了什么动作，摊主就去找同名的招式；客人张口写了 `POST`，摊主手里没这一招，只能回一张写着 **501**（本摊不会这一招）的脸色。所以小鱼干必然落空，正文也变成了摊主自己写的那张报错纸。\n\n要改的地方只有一个词：把 `POST` 换成 `GET`。请求行成了 `GET /fish HTTP/1.1`，摊主认得这条路，回话立刻变成 **200**，正文里稳稳躺着那句话。\n\n⚠️ 有个地方值得盯一眼喵：状态行**开头那段版本记号**（本喵这边印出来是 `HTTP/1.0`）**不是**客人报文里写的那个 —— 那是**摊主自己那本规矩**里定下的。客人报的是自己用的版本，摊主回的是自己用的版本，两边各说各话，这在真实世界里也一样。\n\n⚠️ 还有两个小提醒：\n\n1. 客人那段报文里每一行末尾的 `\\r\\n` 和**最后那一行空行**都是规矩的一部分 —— 少了那行空行，摊主会以为客人还没说完，两边就都站在那儿干等。\n2. 摊主回话的头上会跟着一些**每次都不一样**的东西（比如 `Date:` 那一行）。所以判分也好、自己玩也好，**只印稳当的那几样**：状态行、状态码、正文、正文长度。整段回话原样倒出来，那答案永远没人对得上喵。",
+      "templateId": "py-s3-http-request-line",
+      "params": {
+        "word": "小虾米"
+      },
+      "verified": {
+        "at": "2026-09-16T03:29:31.592Z",
+        "hash": "3082ebc15d3e2dbc"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-two-visits-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「摊子一直摆着，客人一趟一趟来」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人。**\n\n请写个程序：\n\n1. **先读进来两行文字**：第一行是要的**吃食**，第二行是要的**喝的**。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死）。摊主可以用标准库里那个现成的摊子（`http.server`）来摆。摊子摆好之后就**一直守着** —— 客人来几趟就招待几趟，不是招待一位就收摊。摊主备了两条路：\n   - 客人走 `/fish` 这条路 → 回话的肚子里是：**第一行**那件吃食接上 `已送达`；\n   - 客人走 `/milk` 这条路 → 回话的肚子里是：**第二行**那份喝的接上 `也送到了`。\n3. 摊主摆好摊之后，客人**去两趟**：第一趟走 `/fish`，第二趟走 `/milk`。**每趟都要自己重新连一次**（上一趟说完话，那条线两边的猫都收了，不能再拿来用），报文自己拼（用 `socket` 建连，别用现成的客人）。摊主的回话里，客人只印**肚子那一段**。\n\n印出来**两行**，一趟一行 —— 第一行是第一趟要到的，第二行是第二趟要到的。\n\n比如投喂的是\n\n鸡肉冻干\n小米粥\n\n就要输出\n\n鸡肉冻干已送达\n小米粥也送到了\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n吃食 = input()\n饮料 = input()\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/fish\":\n            正文 = 吃食 + \"已送达\"\n        else:\n            正文 = 饮料 + \"也送到了\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n\ndef 去要一趟(路):\n    客 = socket.create_connection((\"127.0.0.1\", 端口))\n    报文 = (\n        \"GET \" + 路 + \" HTTP/1.1\\r\\n\"\n        \"Host: 127.0.0.1\\r\\n\"\n        \"Connection: close\\r\\n\"\n        \"\\r\\n\"\n    ).encode(\"utf-8\")\n    客.sendall(报文)\n    回应 = b\"\"\n    while True:\n        一小块 = 客.recv(4096)\n        if not 一小块:\n            break\n        回应 += 一小块\n    客.close()\n    _, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\n    return 正文.decode(\"utf-8\")\n\n\nprint(去要一趟(\"/fish\"))\nprint(去要一趟(\"/milk\"))\n摊.shutdown()\n",
+      "expectedOutput": "小鱼干已送达\n牛奶也送到了",
+      "stdin": "小鱼干\n牛奶\n",
+      "explanation": "这一招考的是**两边各管一摊**喵：\n\n- **摊主管「一直摆着」**：它把摊子支好，然后一直守着 —— 客人一来就招待，招待完接着守，不是招待一位就收摊走人。摆摊和待客这两件事得分给不同的猫干：本喵要是自己站在门口干等，就腾不出手干别的了，所以守摊那位交给**另一只猫**去当。\n- **客人管「自己上门」**：两趟就是两条线，每趟都得**自己重新连一次**。上一趟说完话，那条线两边的猫都已经把它收了，**它不能再拿来送东西** —— 再用它送，东西会直接掉进鱼塘，谁也收不到，而且**一个字都不会报**。\n- **摊主管「按路发货」**：客人走哪条路，写在**请求行**里（`GET /fish HTTP/1.1` 中间那一截），摊主照着这一截挑要回什么。客人不必喊「给我小鱼干」—— 它只要说清走哪条路，回什么由摊主说了算。这就是两边分工的样子喵。\n\n⚠️ 两个容易翻车的点：\n\n1. 两份报文都要**各自拼、各自送**，而且每份末尾都要有那个**空行**（「说明牌摆完了」的记号）。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等。\n2. 收话要**收到「对面收线了」为止**（收到交回空的东西才停），别只收一截就当成收完了。\n\n顺带看一眼本喵的参考解：去要一趟那件事写成了一个**招式**（`def 去要一趟(路)`），两趟只是换了条路各喊一次 —— 两趟的走法一模一样，只有路不同，那就只该写一遍。",
+      "templateId": "py-s3-http-two-visits",
+      "params": {
+        "food": "小鱼干",
+        "drink": "牛奶",
+        "sampleFood": "鸡肉冻干",
+        "sampleDrink": "小米粥"
+      },
+      "verified": {
+        "at": "2026-09-16T06:49:35.858Z",
+        "hash": "71db1f57fd924bf1"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-two-visits-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「摊子一直摆着，客人一趟一趟来」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人。**\n\n请写个程序：\n\n1. **先读进来两行文字**：第一行是要的**吃食**，第二行是要的**喝的**。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死）。摊主可以用标准库里那个现成的摊子（`http.server`）来摆。摊子摆好之后就**一直守着** —— 客人来几趟就招待几趟，不是招待一位就收摊。摊主备了两条路：\n   - 客人走 `/fish` 这条路 → 回话的肚子里是：**第一行**那件吃食接上 `已送达`；\n   - 客人走 `/milk` 这条路 → 回话的肚子里是：**第二行**那份喝的接上 `也送到了`。\n3. 摊主摆好摊之后，客人**去两趟**：第一趟走 `/fish`，第二趟走 `/milk`。**每趟都要自己重新连一次**（上一趟说完话，那条线两边的猫都收了，不能再拿来用），报文自己拼（用 `socket` 建连，别用现成的客人）。摊主的回话里，客人只印**肚子那一段**。\n\n印出来**两行**，一趟一行 —— 第一行是第一趟要到的，第二行是第二趟要到的。\n\n比如投喂的是\n\n南瓜泥\n蛋羹\n\n就要输出\n\n南瓜泥已送达\n蛋羹也送到了\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n吃食 = input()\n饮料 = input()\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/fish\":\n            正文 = 吃食 + \"已送达\"\n        else:\n            正文 = 饮料 + \"也送到了\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n\ndef 去要一趟(路):\n    客 = socket.create_connection((\"127.0.0.1\", 端口))\n    报文 = (\n        \"GET \" + 路 + \" HTTP/1.1\\r\\n\"\n        \"Host: 127.0.0.1\\r\\n\"\n        \"Connection: close\\r\\n\"\n        \"\\r\\n\"\n    ).encode(\"utf-8\")\n    客.sendall(报文)\n    回应 = b\"\"\n    while True:\n        一小块 = 客.recv(4096)\n        if not 一小块:\n            break\n        回应 += 一小块\n    客.close()\n    _, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\n    return 正文.decode(\"utf-8\")\n\n\nprint(去要一趟(\"/fish\"))\nprint(去要一趟(\"/milk\"))\n摊.shutdown()\n",
+      "expectedOutput": "小鱼干已送达\n羊奶也送到了",
+      "stdin": "小鱼干\n羊奶\n",
+      "explanation": "这一招考的是**两边各管一摊**喵：\n\n- **摊主管「一直摆着」**：它把摊子支好，然后一直守着 —— 客人一来就招待，招待完接着守，不是招待一位就收摊走人。摆摊和待客这两件事得分给不同的猫干：本喵要是自己站在门口干等，就腾不出手干别的了，所以守摊那位交给**另一只猫**去当。\n- **客人管「自己上门」**：两趟就是两条线，每趟都得**自己重新连一次**。上一趟说完话，那条线两边的猫都已经把它收了，**它不能再拿来送东西** —— 再用它送，东西会直接掉进鱼塘，谁也收不到，而且**一个字都不会报**。\n- **摊主管「按路发货」**：客人走哪条路，写在**请求行**里（`GET /fish HTTP/1.1` 中间那一截），摊主照着这一截挑要回什么。客人不必喊「给我小鱼干」—— 它只要说清走哪条路，回什么由摊主说了算。这就是两边分工的样子喵。\n\n⚠️ 两个容易翻车的点：\n\n1. 两份报文都要**各自拼、各自送**，而且每份末尾都要有那个**空行**（「说明牌摆完了」的记号）。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等。\n2. 收话要**收到「对面收线了」为止**（收到交回空的东西才停），别只收一截就当成收完了。\n\n顺带看一眼本喵的参考解：去要一趟那件事写成了一个**招式**（`def 去要一趟(路)`），两趟只是换了条路各喊一次 —— 两趟的走法一模一样，只有路不同，那就只该写一遍。",
+      "templateId": "py-s3-http-two-visits",
+      "params": {
+        "food": "小鱼干",
+        "drink": "羊奶",
+        "sampleFood": "南瓜泥",
+        "sampleDrink": "蛋羹"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:50.596Z",
+        "hash": "9dc5593354fd8a40"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-two-visits-014",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「摊子一直摆着，客人一趟一趟来」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人。**\n\n请写个程序：\n\n1. **先读进来两行文字**：第一行是要的**吃食**，第二行是要的**喝的**。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死）。摊主可以用标准库里那个现成的摊子（`http.server`）来摆。摊子摆好之后就**一直守着** —— 客人来几趟就招待几趟，不是招待一位就收摊。摊主备了两条路：\n   - 客人走 `/fish` 这条路 → 回话的肚子里是：**第一行**那件吃食接上 `已送达`；\n   - 客人走 `/milk` 这条路 → 回话的肚子里是：**第二行**那份喝的接上 `也送到了`。\n3. 摊主摆好摊之后，客人**去两趟**：第一趟走 `/fish`，第二趟走 `/milk`。**每趟都要自己重新连一次**（上一趟说完话，那条线两边的猫都收了，不能再拿来用），报文自己拼（用 `socket` 建连，别用现成的客人）。摊主的回话里，客人只印**肚子那一段**。\n\n印出来**两行**，一趟一行 —— 第一行是第一趟要到的，第二行是第二趟要到的。\n\n比如投喂的是\n\n南瓜泥\n小米粥\n\n就要输出\n\n南瓜泥已送达\n小米粥也送到了\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n吃食 = input()\n饮料 = input()\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/fish\":\n            正文 = 吃食 + \"已送达\"\n        else:\n            正文 = 饮料 + \"也送到了\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n\ndef 去要一趟(路):\n    客 = socket.create_connection((\"127.0.0.1\", 端口))\n    报文 = (\n        \"GET \" + 路 + \" HTTP/1.1\\r\\n\"\n        \"Host: 127.0.0.1\\r\\n\"\n        \"Connection: close\\r\\n\"\n        \"\\r\\n\"\n    ).encode(\"utf-8\")\n    客.sendall(报文)\n    回应 = b\"\"\n    while True:\n        一小块 = 客.recv(4096)\n        if not 一小块:\n            break\n        回应 += 一小块\n    客.close()\n    _, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\n    return 正文.decode(\"utf-8\")\n\n\nprint(去要一趟(\"/fish\"))\nprint(去要一趟(\"/milk\"))\n摊.shutdown()\n",
+      "expectedOutput": "猫粮已送达\n牛奶也送到了",
+      "stdin": "猫粮\n牛奶\n",
+      "explanation": "这一招考的是**两边各管一摊**喵：\n\n- **摊主管「一直摆着」**：它把摊子支好，然后一直守着 —— 客人一来就招待，招待完接着守，不是招待一位就收摊走人。摆摊和待客这两件事得分给不同的猫干：本喵要是自己站在门口干等，就腾不出手干别的了，所以守摊那位交给**另一只猫**去当。\n- **客人管「自己上门」**：两趟就是两条线，每趟都得**自己重新连一次**。上一趟说完话，那条线两边的猫都已经把它收了，**它不能再拿来送东西** —— 再用它送，东西会直接掉进鱼塘，谁也收不到，而且**一个字都不会报**。\n- **摊主管「按路发货」**：客人走哪条路，写在**请求行**里（`GET /fish HTTP/1.1` 中间那一截），摊主照着这一截挑要回什么。客人不必喊「给我小鱼干」—— 它只要说清走哪条路，回什么由摊主说了算。这就是两边分工的样子喵。\n\n⚠️ 两个容易翻车的点：\n\n1. 两份报文都要**各自拼、各自送**，而且每份末尾都要有那个**空行**（「说明牌摆完了」的记号）。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等。\n2. 收话要**收到「对面收线了」为止**（收到交回空的东西才停），别只收一截就当成收完了。\n\n顺带看一眼本喵的参考解：去要一趟那件事写成了一个**招式**（`def 去要一趟(路)`），两趟只是换了条路各喊一次 —— 两趟的走法一模一样，只有路不同，那就只该写一遍。",
+      "templateId": "py-s3-http-two-visits",
+      "params": {
+        "food": "猫粮",
+        "drink": "牛奶",
+        "sampleFood": "南瓜泥",
+        "sampleDrink": "小米粥"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:52.862Z",
+        "hash": "7285b7a81da3278b"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-two-visits-021",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「摊子一直摆着，客人一趟一趟来」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人。**\n\n请写个程序：\n\n1. **先读进来两行文字**：第一行是要的**吃食**，第二行是要的**喝的**。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死）。摊主可以用标准库里那个现成的摊子（`http.server`）来摆。摊子摆好之后就**一直守着** —— 客人来几趟就招待几趟，不是招待一位就收摊。摊主备了两条路：\n   - 客人走 `/fish` 这条路 → 回话的肚子里是：**第一行**那件吃食接上 `已送达`；\n   - 客人走 `/milk` 这条路 → 回话的肚子里是：**第二行**那份喝的接上 `也送到了`。\n3. 摊主摆好摊之后，客人**去两趟**：第一趟走 `/fish`，第二趟走 `/milk`。**每趟都要自己重新连一次**（上一趟说完话，那条线两边的猫都收了，不能再拿来用），报文自己拼（用 `socket` 建连，别用现成的客人）。摊主的回话里，客人只印**肚子那一段**。\n\n印出来**两行**，一趟一行 —— 第一行是第一趟要到的，第二行是第二趟要到的。\n\n比如投喂的是\n\n鸡肉冻干\n蛋羹\n\n就要输出\n\n鸡肉冻干已送达\n蛋羹也送到了\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n吃食 = input()\n饮料 = input()\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/fish\":\n            正文 = 吃食 + \"已送达\"\n        else:\n            正文 = 饮料 + \"也送到了\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n\ndef 去要一趟(路):\n    客 = socket.create_connection((\"127.0.0.1\", 端口))\n    报文 = (\n        \"GET \" + 路 + \" HTTP/1.1\\r\\n\"\n        \"Host: 127.0.0.1\\r\\n\"\n        \"Connection: close\\r\\n\"\n        \"\\r\\n\"\n    ).encode(\"utf-8\")\n    客.sendall(报文)\n    回应 = b\"\"\n    while True:\n        一小块 = 客.recv(4096)\n        if not 一小块:\n            break\n        回应 += 一小块\n    客.close()\n    _, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\n    return 正文.decode(\"utf-8\")\n\n\nprint(去要一趟(\"/fish\"))\nprint(去要一趟(\"/milk\"))\n摊.shutdown()\n",
+      "expectedOutput": "猫粮已送达\n鱼汤也送到了",
+      "stdin": "猫粮\n鱼汤\n",
+      "explanation": "这一招考的是**两边各管一摊**喵：\n\n- **摊主管「一直摆着」**：它把摊子支好，然后一直守着 —— 客人一来就招待，招待完接着守，不是招待一位就收摊走人。摆摊和待客这两件事得分给不同的猫干：本喵要是自己站在门口干等，就腾不出手干别的了，所以守摊那位交给**另一只猫**去当。\n- **客人管「自己上门」**：两趟就是两条线，每趟都得**自己重新连一次**。上一趟说完话，那条线两边的猫都已经把它收了，**它不能再拿来送东西** —— 再用它送，东西会直接掉进鱼塘，谁也收不到，而且**一个字都不会报**。\n- **摊主管「按路发货」**：客人走哪条路，写在**请求行**里（`GET /fish HTTP/1.1` 中间那一截），摊主照着这一截挑要回什么。客人不必喊「给我小鱼干」—— 它只要说清走哪条路，回什么由摊主说了算。这就是两边分工的样子喵。\n\n⚠️ 两个容易翻车的点：\n\n1. 两份报文都要**各自拼、各自送**，而且每份末尾都要有那个**空行**（「说明牌摆完了」的记号）。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等。\n2. 收话要**收到「对面收线了」为止**（收到交回空的东西才停），别只收一截就当成收完了。\n\n顺带看一眼本喵的参考解：去要一趟那件事写成了一个**招式**（`def 去要一趟(路)`），两趟只是换了条路各喊一次 —— 两趟的走法一模一样，只有路不同，那就只该写一遍。",
+      "templateId": "py-s3-http-two-visits",
+      "params": {
+        "food": "猫粮",
+        "drink": "鱼汤",
+        "sampleFood": "鸡肉冻干",
+        "sampleDrink": "蛋羹"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:55.152Z",
+        "hash": "7c8ddb3ad85f2e6a"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-two-visits-028",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「摊子一直摆着，客人一趟一趟来」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人。**\n\n请写个程序：\n\n1. **先读进来两行文字**：第一行是要的**吃食**，第二行是要的**喝的**。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死）。摊主可以用标准库里那个现成的摊子（`http.server`）来摆。摊子摆好之后就**一直守着** —— 客人来几趟就招待几趟，不是招待一位就收摊。摊主备了两条路：\n   - 客人走 `/fish` 这条路 → 回话的肚子里是：**第一行**那件吃食接上 `已送达`；\n   - 客人走 `/milk` 这条路 → 回话的肚子里是：**第二行**那份喝的接上 `也送到了`。\n3. 摊主摆好摊之后，客人**去两趟**：第一趟走 `/fish`，第二趟走 `/milk`。**每趟都要自己重新连一次**（上一趟说完话，那条线两边的猫都收了，不能再拿来用），报文自己拼（用 `socket` 建连，别用现成的客人）。摊主的回话里，客人只印**肚子那一段**。\n\n印出来**两行**，一趟一行 —— 第一行是第一趟要到的，第二行是第二趟要到的。\n\n比如投喂的是\n\n鸡肉冻干\n小米粥\n\n就要输出\n\n鸡肉冻干已送达\n小米粥也送到了\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n吃食 = input()\n饮料 = input()\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/fish\":\n            正文 = 吃食 + \"已送达\"\n        else:\n            正文 = 饮料 + \"也送到了\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n\ndef 去要一趟(路):\n    客 = socket.create_connection((\"127.0.0.1\", 端口))\n    报文 = (\n        \"GET \" + 路 + \" HTTP/1.1\\r\\n\"\n        \"Host: 127.0.0.1\\r\\n\"\n        \"Connection: close\\r\\n\"\n        \"\\r\\n\"\n    ).encode(\"utf-8\")\n    客.sendall(报文)\n    回应 = b\"\"\n    while True:\n        一小块 = 客.recv(4096)\n        if not 一小块:\n            break\n        回应 += 一小块\n    客.close()\n    _, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\n    return 正文.decode(\"utf-8\")\n\n\nprint(去要一趟(\"/fish\"))\nprint(去要一趟(\"/milk\"))\n摊.shutdown()\n",
+      "expectedOutput": "毛线球已送达\n羊奶也送到了",
+      "stdin": "毛线球\n羊奶\n",
+      "explanation": "这一招考的是**两边各管一摊**喵：\n\n- **摊主管「一直摆着」**：它把摊子支好，然后一直守着 —— 客人一来就招待，招待完接着守，不是招待一位就收摊走人。摆摊和待客这两件事得分给不同的猫干：本喵要是自己站在门口干等，就腾不出手干别的了，所以守摊那位交给**另一只猫**去当。\n- **客人管「自己上门」**：两趟就是两条线，每趟都得**自己重新连一次**。上一趟说完话，那条线两边的猫都已经把它收了，**它不能再拿来送东西** —— 再用它送，东西会直接掉进鱼塘，谁也收不到，而且**一个字都不会报**。\n- **摊主管「按路发货」**：客人走哪条路，写在**请求行**里（`GET /fish HTTP/1.1` 中间那一截），摊主照着这一截挑要回什么。客人不必喊「给我小鱼干」—— 它只要说清走哪条路，回什么由摊主说了算。这就是两边分工的样子喵。\n\n⚠️ 两个容易翻车的点：\n\n1. 两份报文都要**各自拼、各自送**，而且每份末尾都要有那个**空行**（「说明牌摆完了」的记号）。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等。\n2. 收话要**收到「对面收线了」为止**（收到交回空的东西才停），别只收一截就当成收完了。\n\n顺带看一眼本喵的参考解：去要一趟那件事写成了一个**招式**（`def 去要一趟(路)`），两趟只是换了条路各喊一次 —— 两趟的走法一模一样，只有路不同，那就只该写一遍。",
+      "templateId": "py-s3-http-two-visits",
+      "params": {
+        "food": "毛线球",
+        "drink": "羊奶",
+        "sampleFood": "鸡肉冻干",
+        "sampleDrink": "小米粥"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:57.384Z",
+        "hash": "2c2008a4d6e2d127"
+      }
+    },
+    {
+      "id": "bank-py-s3-http-two-visits-035",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「摊子一直摆着，客人一趟一趟来」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人。**\n\n请写个程序：\n\n1. **先读进来两行文字**：第一行是要的**吃食**，第二行是要的**喝的**。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死）。摊主可以用标准库里那个现成的摊子（`http.server`）来摆。摊子摆好之后就**一直守着** —— 客人来几趟就招待几趟，不是招待一位就收摊。摊主备了两条路：\n   - 客人走 `/fish` 这条路 → 回话的肚子里是：**第一行**那件吃食接上 `已送达`；\n   - 客人走 `/milk` 这条路 → 回话的肚子里是：**第二行**那份喝的接上 `也送到了`。\n3. 摊主摆好摊之后，客人**去两趟**：第一趟走 `/fish`，第二趟走 `/milk`。**每趟都要自己重新连一次**（上一趟说完话，那条线两边的猫都收了，不能再拿来用），报文自己拼（用 `socket` 建连，别用现成的客人）。摊主的回话里，客人只印**肚子那一段**。\n\n印出来**两行**，一趟一行 —— 第一行是第一趟要到的，第二行是第二趟要到的。\n\n比如投喂的是\n\n南瓜泥\n蛋羹\n\n就要输出\n\n南瓜泥已送达\n蛋羹也送到了\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import http.server\nimport socket\nimport threading\n\n吃食 = input()\n饮料 = input()\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        if self.path == \"/fish\":\n            正文 = 吃食 + \"已送达\"\n        else:\n            正文 = 饮料 + \"也送到了\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n\ndef 去要一趟(路):\n    客 = socket.create_connection((\"127.0.0.1\", 端口))\n    报文 = (\n        \"GET \" + 路 + \" HTTP/1.1\\r\\n\"\n        \"Host: 127.0.0.1\\r\\n\"\n        \"Connection: close\\r\\n\"\n        \"\\r\\n\"\n    ).encode(\"utf-8\")\n    客.sendall(报文)\n    回应 = b\"\"\n    while True:\n        一小块 = 客.recv(4096)\n        if not 一小块:\n            break\n        回应 += 一小块\n    客.close()\n    _, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\n    return 正文.decode(\"utf-8\")\n\n\nprint(去要一趟(\"/fish\"))\nprint(去要一趟(\"/milk\"))\n摊.shutdown()\n",
+      "expectedOutput": "毛线球已送达\n鱼汤也送到了",
+      "stdin": "毛线球\n鱼汤\n",
+      "explanation": "这一招考的是**两边各管一摊**喵：\n\n- **摊主管「一直摆着」**：它把摊子支好，然后一直守着 —— 客人一来就招待，招待完接着守，不是招待一位就收摊走人。摆摊和待客这两件事得分给不同的猫干：本喵要是自己站在门口干等，就腾不出手干别的了，所以守摊那位交给**另一只猫**去当。\n- **客人管「自己上门」**：两趟就是两条线，每趟都得**自己重新连一次**。上一趟说完话，那条线两边的猫都已经把它收了，**它不能再拿来送东西** —— 再用它送，东西会直接掉进鱼塘，谁也收不到，而且**一个字都不会报**。\n- **摊主管「按路发货」**：客人走哪条路，写在**请求行**里（`GET /fish HTTP/1.1` 中间那一截），摊主照着这一截挑要回什么。客人不必喊「给我小鱼干」—— 它只要说清走哪条路，回什么由摊主说了算。这就是两边分工的样子喵。\n\n⚠️ 两个容易翻车的点：\n\n1. 两份报文都要**各自拼、各自送**，而且每份末尾都要有那个**空行**（「说明牌摆完了」的记号）。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等。\n2. 收话要**收到「对面收线了」为止**（收到交回空的东西才停），别只收一截就当成收完了。\n\n顺带看一眼本喵的参考解：去要一趟那件事写成了一个**招式**（`def 去要一趟(路)`），两趟只是换了条路各喊一次 —— 两趟的走法一模一样，只有路不同，那就只该写一遍。",
+      "templateId": "py-s3-http-two-visits",
+      "params": {
+        "food": "毛线球",
+        "drink": "鱼汤",
+        "sampleFood": "南瓜泥",
+        "sampleDrink": "蛋羹"
+      },
+      "verified": {
+        "at": "2026-09-16T06:49:37.960Z",
+        "hash": "207a9e11eafb3993"
+      }
+    },
+    {
+      "id": "bank-py-s3-socket-echo-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「隔着鱼塘传小鱼干」：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 在本机摆一个摊：摊主在 `127.0.0.1` 上等客人（端口号码写 `0`，让系统自己挑一个空闲的，别写死）。有客人上门时，摊主**收下客人送来的那行文字**，把 `收到：` 和那行文字**接在一起**当回话送回去，然后收摊。\n3. 摊子摆好之后，客人连上去，把第 1 步读到的那行文字送出去，再把摊主送回来的那句话印出来。\n\n印出来只有**一行**：`收到：` 后面直接跟着那件东西的名字，中间不加空格。\n\n比如投喂的是\n\n鸡肉冻干\n就要输出\n\n收到：鸡肉冻干\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import socket\nimport threading\n\n食物 = input()\n\n摊 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n摊.bind((\"127.0.0.1\", 0))\n摊.listen(1)\n端口 = 摊.getsockname()[1]\n\n\ndef 招待():\n    客人, _ = 摊.accept()\n    收到 = 客人.recv(1024).decode(\"utf-8\")\n    回话 = \"收到：\" + 收到.strip()\n    客人.sendall(回话.encode(\"utf-8\"))\n    客人.close()\n    摊.close()\n\n\nthreading.Thread(target=招待, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(食物.encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(1024)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n\nprint(回应.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到：小鱼干",
+      "stdin": "小鱼干\n",
+      "explanation": "这一招的骨架是**两只猫各干各的**喵：\n\n- **摊主那边**：`bind` 是「把摊子支在哪个门口」，`listen` 是「摆好摊、开始等」，`accept` 是「真有一位客人上门了，跟他搭上话」。`accept` 会**一直站在那儿干等**，所以它不能占着本喵自己 —— 本喵把它塞进**另一只猫**（`threading` 里的招式）里，自己好接着往下走。\n- **客人那边**：`connect` 是「照着地址找上门」，`sendall` 是「把话说完」，`recv` 是「听对方说了什么」。\n\n两个细节最容易翻车喵：\n\n1. **端口写 `0`**：意思是「本喵不挑，你随便给个空闲的」。自己写死一个号码，撞上别的程序在用就**时灵时不灵** —— 而门口支好之后，可以用 `getsockname()` 把号码问出来，客人拿着这个号码去找门，两边一定对得上。\n2. **`recv` 要一直接到「话说完」的信号为止**：对方的话是**一截一截**过来的，接一次不一定接得完整。本喵写的是「接到交回空的东西为止」—— 对方收摊了，`recv` 才会交回一个空串，那才是「说完了」的记号。\n\n⚠️ 还有一条：**同一份代码里两只猫，只有本喵自己能印东西**。要是摊主也抢着印，两边的字就会掺在一起、先后不定 —— 这道题就永远没有稳定答案了。所以摊主只管收和回，印字这活儿留给本喵。",
+      "templateId": "py-s3-socket-echo",
+      "params": {
+        "food": "小鱼干",
+        "sampleFood": "鸡肉冻干"
+      },
+      "verified": {
+        "at": "2026-09-16T03:41:28.703Z",
+        "hash": "65c918fe57076a55"
+      }
+    },
+    {
+      "id": "bank-py-s3-socket-echo-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「隔着鱼塘传小鱼干」：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 在本机摆一个摊：摊主在 `127.0.0.1` 上等客人（端口号码写 `0`，让系统自己挑一个空闲的，别写死）。有客人上门时，摊主**收下客人送来的那行文字**，把 `收到：` 和那行文字**接在一起**当回话送回去，然后收摊。\n3. 摊子摆好之后，客人连上去，把第 1 步读到的那行文字送出去，再把摊主送回来的那句话印出来。\n\n印出来只有**一行**：`收到：` 后面直接跟着那件东西的名字，中间不加空格。\n\n比如投喂的是\n\n南瓜泥\n就要输出\n\n收到：南瓜泥\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import socket\nimport threading\n\n食物 = input()\n\n摊 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n摊.bind((\"127.0.0.1\", 0))\n摊.listen(1)\n端口 = 摊.getsockname()[1]\n\n\ndef 招待():\n    客人, _ = 摊.accept()\n    收到 = 客人.recv(1024).decode(\"utf-8\")\n    回话 = \"收到：\" + 收到.strip()\n    客人.sendall(回话.encode(\"utf-8\"))\n    客人.close()\n    摊.close()\n\n\nthreading.Thread(target=招待, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(食物.encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(1024)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n\nprint(回应.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到：小鱼干",
+      "stdin": "小鱼干\n",
+      "explanation": "这一招的骨架是**两只猫各干各的**喵：\n\n- **摊主那边**：`bind` 是「把摊子支在哪个门口」，`listen` 是「摆好摊、开始等」，`accept` 是「真有一位客人上门了，跟他搭上话」。`accept` 会**一直站在那儿干等**，所以它不能占着本喵自己 —— 本喵把它塞进**另一只猫**（`threading` 里的招式）里，自己好接着往下走。\n- **客人那边**：`connect` 是「照着地址找上门」，`sendall` 是「把话说完」，`recv` 是「听对方说了什么」。\n\n两个细节最容易翻车喵：\n\n1. **端口写 `0`**：意思是「本喵不挑，你随便给个空闲的」。自己写死一个号码，撞上别的程序在用就**时灵时不灵** —— 而门口支好之后，可以用 `getsockname()` 把号码问出来，客人拿着这个号码去找门，两边一定对得上。\n2. **`recv` 要一直接到「话说完」的信号为止**：对方的话是**一截一截**过来的，接一次不一定接得完整。本喵写的是「接到交回空的东西为止」—— 对方收摊了，`recv` 才会交回一个空串，那才是「说完了」的记号。\n\n⚠️ 还有一条：**同一份代码里两只猫，只有本喵自己能印东西**。要是摊主也抢着印，两边的字就会掺在一起、先后不定 —— 这道题就永远没有稳定答案了。所以摊主只管收和回，印字这活儿留给本喵。",
+      "templateId": "py-s3-socket-echo",
+      "params": {
+        "food": "小鱼干",
+        "sampleFood": "南瓜泥"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:49.493Z",
+        "hash": "19483a103fe7ece9"
+      }
+    },
+    {
+      "id": "bank-py-s3-socket-echo-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「隔着鱼塘传小鱼干」：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 在本机摆一个摊：摊主在 `127.0.0.1` 上等客人（端口号码写 `0`，让系统自己挑一个空闲的，别写死）。有客人上门时，摊主**收下客人送来的那行文字**，把 `收到：` 和那行文字**接在一起**当回话送回去，然后收摊。\n3. 摊子摆好之后，客人连上去，把第 1 步读到的那行文字送出去，再把摊主送回来的那句话印出来。\n\n印出来只有**一行**：`收到：` 后面直接跟着那件东西的名字，中间不加空格。\n\n比如投喂的是\n\n鸡肉冻干\n就要输出\n\n收到：鸡肉冻干\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import socket\nimport threading\n\n食物 = input()\n\n摊 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n摊.bind((\"127.0.0.1\", 0))\n摊.listen(1)\n端口 = 摊.getsockname()[1]\n\n\ndef 招待():\n    客人, _ = 摊.accept()\n    收到 = 客人.recv(1024).decode(\"utf-8\")\n    回话 = \"收到：\" + 收到.strip()\n    客人.sendall(回话.encode(\"utf-8\"))\n    客人.close()\n    摊.close()\n\n\nthreading.Thread(target=招待, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(食物.encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(1024)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n\nprint(回应.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到：猫粮",
+      "stdin": "猫粮\n",
+      "explanation": "这一招的骨架是**两只猫各干各的**喵：\n\n- **摊主那边**：`bind` 是「把摊子支在哪个门口」，`listen` 是「摆好摊、开始等」，`accept` 是「真有一位客人上门了，跟他搭上话」。`accept` 会**一直站在那儿干等**，所以它不能占着本喵自己 —— 本喵把它塞进**另一只猫**（`threading` 里的招式）里，自己好接着往下走。\n- **客人那边**：`connect` 是「照着地址找上门」，`sendall` 是「把话说完」，`recv` 是「听对方说了什么」。\n\n两个细节最容易翻车喵：\n\n1. **端口写 `0`**：意思是「本喵不挑，你随便给个空闲的」。自己写死一个号码，撞上别的程序在用就**时灵时不灵** —— 而门口支好之后，可以用 `getsockname()` 把号码问出来，客人拿着这个号码去找门，两边一定对得上。\n2. **`recv` 要一直接到「话说完」的信号为止**：对方的话是**一截一截**过来的，接一次不一定接得完整。本喵写的是「接到交回空的东西为止」—— 对方收摊了，`recv` 才会交回一个空串，那才是「说完了」的记号。\n\n⚠️ 还有一条：**同一份代码里两只猫，只有本喵自己能印东西**。要是摊主也抢着印，两边的字就会掺在一起、先后不定 —— 这道题就永远没有稳定答案了。所以摊主只管收和回，印字这活儿留给本喵。",
+      "templateId": "py-s3-socket-echo",
+      "params": {
+        "food": "猫粮",
+        "sampleFood": "鸡肉冻干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:49.859Z",
+        "hash": "456ea128f352221f"
+      }
+    },
+    {
+      "id": "bank-py-s3-socket-echo-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「隔着鱼塘传小鱼干」：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 在本机摆一个摊：摊主在 `127.0.0.1` 上等客人（端口号码写 `0`，让系统自己挑一个空闲的，别写死）。有客人上门时，摊主**收下客人送来的那行文字**，把 `收到：` 和那行文字**接在一起**当回话送回去，然后收摊。\n3. 摊子摆好之后，客人连上去，把第 1 步读到的那行文字送出去，再把摊主送回来的那句话印出来。\n\n印出来只有**一行**：`收到：` 后面直接跟着那件东西的名字，中间不加空格。\n\n比如投喂的是\n\n南瓜泥\n就要输出\n\n收到：南瓜泥\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import socket\nimport threading\n\n食物 = input()\n\n摊 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n摊.bind((\"127.0.0.1\", 0))\n摊.listen(1)\n端口 = 摊.getsockname()[1]\n\n\ndef 招待():\n    客人, _ = 摊.accept()\n    收到 = 客人.recv(1024).decode(\"utf-8\")\n    回话 = \"收到：\" + 收到.strip()\n    客人.sendall(回话.encode(\"utf-8\"))\n    客人.close()\n    摊.close()\n\n\nthreading.Thread(target=招待, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(食物.encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(1024)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n\nprint(回应.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到：猫粮",
+      "stdin": "猫粮\n",
+      "explanation": "这一招的骨架是**两只猫各干各的**喵：\n\n- **摊主那边**：`bind` 是「把摊子支在哪个门口」，`listen` 是「摆好摊、开始等」，`accept` 是「真有一位客人上门了，跟他搭上话」。`accept` 会**一直站在那儿干等**，所以它不能占着本喵自己 —— 本喵把它塞进**另一只猫**（`threading` 里的招式）里，自己好接着往下走。\n- **客人那边**：`connect` 是「照着地址找上门」，`sendall` 是「把话说完」，`recv` 是「听对方说了什么」。\n\n两个细节最容易翻车喵：\n\n1. **端口写 `0`**：意思是「本喵不挑，你随便给个空闲的」。自己写死一个号码，撞上别的程序在用就**时灵时不灵** —— 而门口支好之后，可以用 `getsockname()` 把号码问出来，客人拿着这个号码去找门，两边一定对得上。\n2. **`recv` 要一直接到「话说完」的信号为止**：对方的话是**一截一截**过来的，接一次不一定接得完整。本喵写的是「接到交回空的东西为止」—— 对方收摊了，`recv` 才会交回一个空串，那才是「说完了」的记号。\n\n⚠️ 还有一条：**同一份代码里两只猫，只有本喵自己能印东西**。要是摊主也抢着印，两边的字就会掺在一起、先后不定 —— 这道题就永远没有稳定答案了。所以摊主只管收和回，印字这活儿留给本喵。",
+      "templateId": "py-s3-socket-echo",
+      "params": {
+        "food": "猫粮",
+        "sampleFood": "南瓜泥"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:50.212Z",
+        "hash": "9473ed598eda9630"
+      }
+    },
+    {
+      "id": "bank-py-s3-socket-echo-004",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「隔着鱼塘传小鱼干」：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 在本机摆一个摊：摊主在 `127.0.0.1` 上等客人（端口号码写 `0`，让系统自己挑一个空闲的，别写死）。有客人上门时，摊主**收下客人送来的那行文字**，把 `收到：` 和那行文字**接在一起**当回话送回去，然后收摊。\n3. 摊子摆好之后，客人连上去，把第 1 步读到的那行文字送出去，再把摊主送回来的那句话印出来。\n\n印出来只有**一行**：`收到：` 后面直接跟着那件东西的名字，中间不加空格。\n\n比如投喂的是\n\n鸡肉冻干\n就要输出\n\n收到：鸡肉冻干\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import socket\nimport threading\n\n食物 = input()\n\n摊 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n摊.bind((\"127.0.0.1\", 0))\n摊.listen(1)\n端口 = 摊.getsockname()[1]\n\n\ndef 招待():\n    客人, _ = 摊.accept()\n    收到 = 客人.recv(1024).decode(\"utf-8\")\n    回话 = \"收到：\" + 收到.strip()\n    客人.sendall(回话.encode(\"utf-8\"))\n    客人.close()\n    摊.close()\n\n\nthreading.Thread(target=招待, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(食物.encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(1024)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n\nprint(回应.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到：毛线球",
+      "stdin": "毛线球\n",
+      "explanation": "这一招的骨架是**两只猫各干各的**喵：\n\n- **摊主那边**：`bind` 是「把摊子支在哪个门口」，`listen` 是「摆好摊、开始等」，`accept` 是「真有一位客人上门了，跟他搭上话」。`accept` 会**一直站在那儿干等**，所以它不能占着本喵自己 —— 本喵把它塞进**另一只猫**（`threading` 里的招式）里，自己好接着往下走。\n- **客人那边**：`connect` 是「照着地址找上门」，`sendall` 是「把话说完」，`recv` 是「听对方说了什么」。\n\n两个细节最容易翻车喵：\n\n1. **端口写 `0`**：意思是「本喵不挑，你随便给个空闲的」。自己写死一个号码，撞上别的程序在用就**时灵时不灵** —— 而门口支好之后，可以用 `getsockname()` 把号码问出来，客人拿着这个号码去找门，两边一定对得上。\n2. **`recv` 要一直接到「话说完」的信号为止**：对方的话是**一截一截**过来的，接一次不一定接得完整。本喵写的是「接到交回空的东西为止」—— 对方收摊了，`recv` 才会交回一个空串，那才是「说完了」的记号。\n\n⚠️ 还有一条：**同一份代码里两只猫，只有本喵自己能印东西**。要是摊主也抢着印，两边的字就会掺在一起、先后不定 —— 这道题就永远没有稳定答案了。所以摊主只管收和回，印字这活儿留给本喵。",
+      "templateId": "py-s3-socket-echo",
+      "params": {
+        "food": "毛线球",
+        "sampleFood": "鸡肉冻干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:50.564Z",
+        "hash": "607b134077e217ee"
+      }
+    },
+    {
+      "id": "bank-py-s3-socket-echo-005",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要练一招「隔着鱼塘传小鱼干」：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 在本机摆一个摊：摊主在 `127.0.0.1` 上等客人（端口号码写 `0`，让系统自己挑一个空闲的，别写死）。有客人上门时，摊主**收下客人送来的那行文字**，把 `收到：` 和那行文字**接在一起**当回话送回去，然后收摊。\n3. 摊子摆好之后，客人连上去，把第 1 步读到的那行文字送出去，再把摊主送回来的那句话印出来。\n\n印出来只有**一行**：`收到：` 后面直接跟着那件东西的名字，中间不加空格。\n\n比如投喂的是\n\n南瓜泥\n就要输出\n\n收到：南瓜泥\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import socket\nimport threading\n\n食物 = input()\n\n摊 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n摊.bind((\"127.0.0.1\", 0))\n摊.listen(1)\n端口 = 摊.getsockname()[1]\n\n\ndef 招待():\n    客人, _ = 摊.accept()\n    收到 = 客人.recv(1024).decode(\"utf-8\")\n    回话 = \"收到：\" + 收到.strip()\n    客人.sendall(回话.encode(\"utf-8\"))\n    客人.close()\n    摊.close()\n\n\nthreading.Thread(target=招待, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(食物.encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(1024)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n\nprint(回应.decode(\"utf-8\"))\n",
+      "expectedOutput": "收到：毛线球",
+      "stdin": "毛线球\n",
+      "explanation": "这一招的骨架是**两只猫各干各的**喵：\n\n- **摊主那边**：`bind` 是「把摊子支在哪个门口」，`listen` 是「摆好摊、开始等」，`accept` 是「真有一位客人上门了，跟他搭上话」。`accept` 会**一直站在那儿干等**，所以它不能占着本喵自己 —— 本喵把它塞进**另一只猫**（`threading` 里的招式）里，自己好接着往下走。\n- **客人那边**：`connect` 是「照着地址找上门」，`sendall` 是「把话说完」，`recv` 是「听对方说了什么」。\n\n两个细节最容易翻车喵：\n\n1. **端口写 `0`**：意思是「本喵不挑，你随便给个空闲的」。自己写死一个号码，撞上别的程序在用就**时灵时不灵** —— 而门口支好之后，可以用 `getsockname()` 把号码问出来，客人拿着这个号码去找门，两边一定对得上。\n2. **`recv` 要一直接到「话说完」的信号为止**：对方的话是**一截一截**过来的，接一次不一定接得完整。本喵写的是「接到交回空的东西为止」—— 对方收摊了，`recv` 才会交回一个空串，那才是「说完了」的记号。\n\n⚠️ 还有一条：**同一份代码里两只猫，只有本喵自己能印东西**。要是摊主也抢着印，两边的字就会掺在一起、先后不定 —— 这道题就永远没有稳定答案了。所以摊主只管收和回，印字这活儿留给本喵。",
+      "templateId": "py-s3-socket-echo",
+      "params": {
+        "food": "毛线球",
+        "sampleFood": "南瓜泥"
+      },
+      "verified": {
+        "at": "2026-09-16T03:41:28.963Z",
+        "hash": "28767abea466bcb2"
+      }
+    },
+    {
+      "id": "bank-py-s3-socket-no-decode-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵摆了个小摊守着鱼塘，又派了只客人去要一份吃食。摊主稳稳当当把话说完了，客人也全须全尾地接住了 —— **一个字都没漏**。\n\n可客人**印出来的不是那句话**：是一串看不懂的东西，里面全是 `\\x` 加上数字字母，还顶着一对 `b` 开头的小括号。\n\n改好之后，客人要印出**一行**：摊主递过来的**正文**，就是小摊里写着的那句话（本喵要看见那几个中文字，不要那串怪东西）。",
+      "brokenCode": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        正文 = \"小鱼干已送达\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文)\n",
+      "referenceFix": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        正文 = \"小鱼干已送达\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文.decode(\"utf-8\"))\n",
+      "expectedOutput": "小鱼干已送达",
+      "stdin": null,
+      "explanation": "**鱼塘里跑的从来不是「字」，是「字节」。** 这是所有隔着鱼塘说话的招式的第一课喵。\n\n- `sendall(...)` 送出去的东西必须是字节，所以摊主那边先做了 `encode(\"utf-8\")` —— 把话翻成一串字节再扔进鱼塘；\n- 客人这边接回来的 `回应` 也是**字节**：`recv` 接到的、`partition` 切出来的，通通还是字节。\n\n`print(正文)` 印出来的那串怪东西，其实是 Python 在告诉你「这是一串字节，里面装的是这些」—— 顶头那个 `b` 和小括号就是它的记号，中间每一个 `\\x` 后面跟一个数字，就是**一个字节**。要看见字，得**翻回来**：`正文.decode(\"utf-8\")`。\n\n⚠️ 两边用的**必须是同一套翻译规矩**（这里都是 `utf-8`）。写错一边，中文就会变成一堆看不懂的东西 —— **可它不一定报错，而且「报不报」还得看凑巧**。本喵把三种馅都跑了一遍：`小鱼干已送达` 安安静静变成 `灏忛奔骞插凡閫佽揪`，`小虾米已送达` 也一样；偏偏 `猫粮已送达` **当场甩**`UnicodeDecodeError`（那串字节按 `gbk` 切不成对，翻译官喵没得猜）。同一个错，三种馅两种脾气 —— 正是这种「有时安静有时翻脸」才最难查，所以两边必须钉死同一套规矩。",
+      "templateId": "py-s3-socket-no-decode",
+      "params": {
+        "word": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T13:11:52.755Z",
+        "hash": "b9c85ebcf85d1036"
+      }
+    },
+    {
+      "id": "bank-py-s3-socket-no-decode-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵摆了个小摊守着鱼塘，又派了只客人去要一份吃食。摊主稳稳当当把话说完了，客人也全须全尾地接住了 —— **一个字都没漏**。\n\n可客人**印出来的不是那句话**：是一串看不懂的东西，里面全是 `\\x` 加上数字字母，还顶着一对 `b` 开头的小括号。\n\n改好之后，客人要印出**一行**：摊主递过来的**正文**，就是小摊里写着的那句话（本喵要看见那几个中文字，不要那串怪东西）。",
+      "brokenCode": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        正文 = \"小虾米已送达\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文)\n",
+      "referenceFix": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        正文 = \"小虾米已送达\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文.decode(\"utf-8\"))\n",
+      "expectedOutput": "小虾米已送达",
+      "stdin": null,
+      "explanation": "**鱼塘里跑的从来不是「字」，是「字节」。** 这是所有隔着鱼塘说话的招式的第一课喵。\n\n- `sendall(...)` 送出去的东西必须是字节，所以摊主那边先做了 `encode(\"utf-8\")` —— 把话翻成一串字节再扔进鱼塘；\n- 客人这边接回来的 `回应` 也是**字节**：`recv` 接到的、`partition` 切出来的，通通还是字节。\n\n`print(正文)` 印出来的那串怪东西，其实是 Python 在告诉你「这是一串字节，里面装的是这些」—— 顶头那个 `b` 和小括号就是它的记号，中间每一个 `\\x` 后面跟一个数字，就是**一个字节**。要看见字，得**翻回来**：`正文.decode(\"utf-8\")`。\n\n⚠️ 两边用的**必须是同一套翻译规矩**（这里都是 `utf-8`）。写错一边，中文就会变成一堆看不懂的东西 —— **可它不一定报错，而且「报不报」还得看凑巧**。本喵把三种馅都跑了一遍：`小鱼干已送达` 安安静静变成 `灏忛奔骞插凡閫佽揪`，`小虾米已送达` 也一样；偏偏 `猫粮已送达` **当场甩**`UnicodeDecodeError`（那串字节按 `gbk` 切不成对，翻译官喵没得猜）。同一个错，三种馅两种脾气 —— 正是这种「有时安静有时翻脸」才最难查，所以两边必须钉死同一套规矩。",
+      "templateId": "py-s3-socket-no-decode",
+      "params": {
+        "word": "小虾米"
+      },
+      "verified": {
+        "at": "2026-09-16T13:11:54.820Z",
+        "hash": "95881076fc9fa852"
+      }
+    }
+  ]
+}

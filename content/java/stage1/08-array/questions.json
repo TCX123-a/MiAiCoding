@@ -1,0 +1,77 @@
+{
+  "lessonId": "java-stage1-08",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵摆了一排 4 只碗，编号分别是几？**最后一只**是几号喵？",
+      "options": ["`0`、`1`、`2`、`3`，最后是 `3` 号", "`1`、`2`、`3`、`4`，最后是 `4` 号", "`0`、`1`、`2`、`3`，最后是 `4` 号", "随本喵高兴，摆的时候自己报号"],
+      "answer": 0,
+      "explanation": "编号**从 `0` 开始数**：4 只碗就是 `0`、`1`、`2`、`3`，所以最后一只的编号是「碗数减一」，也就是 `3` 号喵。绕圈看整排的时候这一条最要紧——牌子从 `0` 摆起、眼色写 `i < bowls.length`，正好把 `0` 到 `3` 走一遍。要是心里按 `1` 数起，写成 `bowls[4]` 就是端一只根本不存在的碗，跑起来当场炸喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵想问「这一排碗有几只」，该写哪一个喵？",
+      "options": ["`bowls.length`", "`bowls.length()`", "`len(bowls)`", "`bowls.size`"],
+      "answer": 0,
+      "explanation": "一排碗身上的那个数叫 `length`，**光秃秃的、不带小括号**喵。多加一对括号，翻译官会当场拦下，说 `cannot find symbol: method length()`——它找不到这么个带括号的活儿。这一处跟项链正好相反：一串项链问长度是 `word.length()`，**带括号**。同是问长度，两边的写法不一样，这是 Java 最容易绊人的一处不一致，记成「**碗不带、项链带**」最省事喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "一排摆了 3 只碗（编号 `0`、`1`、`2`），本喵写了 `bowls[3]`。会在什么时候出问题喵？",
+      "options": [
+        "编译的时候就拦下，程序根本编不出来",
+        "编译时一声不吭，**跑起来才炸**，抛出一句越界",
+        "不会出问题，Java 自动给一个 `0`",
+        "不会出问题，Java 自动再摆一只空碗"
+      ],
+      "answer": 1,
+      "explanation": "翻译官编译的时候**只管方括号里是不是整数**，不管那只碗在不在——所以你一点提示都收不到，程序照样编好喵。非得跑到那一行，它才当场炸掉，抛出一句「编号 3 越界了，这一排只有 3 只碗」，后面的活儿全都不干了。正因为它是**跑起来才炸**的，绕圈的眼色才一定要写 `i < bowls.length`：写 `<=`、或者把数字写死，都是在给这句炸弹铺路喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int[] bowls = {4, 8, 6};\n        bowls[1] = 2;\n        System.out.println(bowls[0]);\n        System.out.println(bowls[1]);\n        System.out.println(bowls.length);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "4\n2\n3",
+      "accept": ["4\n2\n3\n"],
+      "explanation": "一排三只碗，编号 `0`、`1`、`2`，里面是 `4`、`8`、`6`喵。`bowls[1] = 2;` 把 1 号碗里的 `8` 倒掉换成 `2`——`bowls[0]` 没被动过，还是 `4`；`bowls[1]` 成了 `2`。最后 `bowls.length` 还是 `3`：**换碗里的东西不会改变碗数**，这两件事分得清清楚楚喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int[] bowls = {4, 8, 6};\n        int total = 0;\n        for (int n : bowls) {\n            total = total + n;\n        }\n        System.out.println(total / bowls.length);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "6",
+      "accept": ["6\n"],
+      "explanation": "`for (int n : bowls)` 把这一排里的每一样挨个端出来：`4`、`8`、`6`，`total` 一路攒成 `18`喵。最后那句是 `18 / 3`——两边都是整数，按「装满几整份」来切，正好装 6 份，印出 `6`。要是这一排的和是 `19`，`19 / 3` 也照样印 `6`：**整数相除的零头被直接扔掉**，这条上一课学过的规矩在这儿一样管用喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int[] bowls = {3, 5, 7};\n\n        for (int i = 0; i < bowls.length; i++) {\n            System.out.println(i + \" 号碗里有 \" + bowls[i] + \" 条喵\");\n        }\n\n        int total = 0;\n        for (int n : bowls) {\n            total = total + n;\n        }\n        System.out.println(total);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "0 号碗里有 3 条喵\n1 号碗里有 5 条喵\n2 号碗里有 7 条喵\n15",
+      "accept": ["0 号碗里有 3 条喵\n1 号碗里有 5 条喵\n2 号碗里有 7 条喵\n15\n"],
+      "explanation": "第一个圈子走编号：牌子从 `0` 摆起，眼色是 `i < bowls.length`（也就是 `i < 3`），于是 `i` 走过 `0`、`1`、`2`，每圈用 `bowls[i]` 端出当前那只碗——三行「几号碗里有几条」喵。撞到 `3 < 3` 答假就收工。第二个圈子是「只要碗里的东西」的写法：`n` 依次拿到 `3`、`5`、`7`，`total` 攒成 `15`，圈外那句把它印出来。两种走法一个管编号、一个管东西，屏幕上一共四行喵。"
+    },
+    {
+      "id": "q7",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int[] bowls = {3, 5, 7, 9};\n        for (int i = 0; i < bowls.____; i++) {\n            System.out.println(bowls[____]);\n        }\n    }\n}",
+      "stem": "本喵想把这一排四只碗里的数挨个印出来（`3`、`5`、`7`、`9`）。两个空补上喵——第一个空问「这排有几只碗」，第二个空是「当前这只碗的编号」。",
+      "blanks": [
+        { "answer": "length" },
+        { "answer": "i" }
+      ],
+      "explanation": "写全了就是 `for (int i = 0; i < bowls.length; i++)` 配 `bowls[i]` 喵。第一个空要的是 `length`——一排碗的碗数**不带小括号**，写成 `length()` 翻译官会当场拦下。第二个空要的是圈数牌 `i`：它从 `0` 摆起，跟编号正好对上，所以每圈都能端出「当前这只碗」。眼色写 `i < bowls.length` 而不是写死 `4`，碗多了少了都不用改这一行喵。"
+    }
+  ]
+}

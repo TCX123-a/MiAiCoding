@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-12-swap2-no-ref",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-12",
+  "type": "codefix",
+  "concept": ["图纸里两处塞料漏了一个 &", "换的是抄件不是真身", "一声不吭的错"],
+  "instances": 2,
+  "params": {
+    "x": { "kind": "pick", "values": [3, 4] },
+    "y": { "kind": "pick", "values": [8, 9] }
+  },
+  "stemTemplate": "本喵画了一张「把两个数换个个儿」的图纸，喊它一声之后再把两个数印出来。\n\n本喵手上是 {x} 和 {y}，可屏幕上印出来的**还是** {x} 和 {y} —— 顺序一点没动。翻译官喵**一个字都没说**，程序跑得完完整整。\n\n你帮本喵把图纸上那两处塞料的写法补对，让两个数**真的换过来**（屏幕上要变成 {y} 和 {x}）。`main` 里那几句不用动。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nvoid swap2(T a, T b) {\n    T t = a;\n    a = b;\n    b = t;\n}\n\nint main() {\n    int x = {x};\n    int y = {y};\n    swap2(x, y);\n    cout << x << \" \" << y << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nvoid swap2(T& a, T& b) {\n    T t = a;\n    a = b;\n    b = t;\n}\n\nint main() {\n    int x = {x};\n    int y = {y};\n    swap2(x, y);\n    cout << x << \" \" << y << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过没修的版本，屏幕上就一行：\n\n```text\n{x} {y}\n```\n\n**换了个寂寞。** 图纸里那三行确实换得热火朝天，可换的是**两份抄件** —— 塞料写成 `T a, T b` 的时候，`x` 和 `y` 交进来的是「照料的样子又抄的一份」，真身留在原地，从头到尾没人碰过。\n\n上一课的规矩在这儿照样管用：**要让图纸里改得动真身，塞料上得添一个 `&`。**\n\n补法是两处塞料各添一个字符：\n\n```text\nvoid swap2(T& a, T& b)\n```\n\n补完之后本喵真跑过，屏幕上是 `{y} {x}` —— 真的换过来了。\n\n⚠️ 三件事钉住：\n\n1. **这一路一个报错都没有、一个警告都没有。** 编得过、跑得完，只是结果不是本喵要的 —— 这种错只能靠自己盯屏幕，翻译官喵帮不上忙。\n2. **`&` 是「指着真身」，不是「又抄一份」。** 图纸上留空位的只是「料的款式」，这件事跟空位没关系：`T& a` 里的 `T` 照样是空的，谁塞什么料，它就指着哪一份真身。\n3. **`main` 里那句喊话一个字都不用改。** 改的是图纸、喊法没变 —— 这也正是图纸值钱的地方。"
+}

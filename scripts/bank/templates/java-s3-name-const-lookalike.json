@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-name-const-lookalike",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-26",
+  "type": "codefix",
+  "concept": [
+    "常量名全大写、单词间下划线是【强制】形状",
+    "常量名要语义完整、不要嫌名字长：WEEK_LIMIT 没说清「谁的上限」，补成 WEEKLY_FISH_LIMIT",
+    "常量撞脸（WEEK_LIMIT / WEEK_LIMITS）比变量撞脸更毒：大写字堆里一个字母的差别更难发现"
+  ],
+  "instances": 2,
+  "params": {
+    "u": { "kind": "int", "min": 8, "max": 10 }
+  },
+  "stemTemplate": "本喵的领用台账上有**两只常量箱子并排站着**喵：\n\n```java\nstatic final int WEEK_LIMIT = 20;\nstatic final int WEEK_LIMITS = 120;\n```\n\n它俩只差结尾一个 `S`，扫一眼几乎并成一只。结果报数那行捡错了箱子 —— 把这周还能领的数算歪了（比该有的数多出一大截，屏幕上那个数就是证据）。\n\n你把这行改对：让它印出**一行**：`这周还能领 ` 拼上「**每周上限 − 已领走**」的结余，再拼 ` 条`；顺手把那只没人用的兄弟删掉，留下的这只名字写**语义完整**一点（本课的尺子：常量全大写、单词间下划线、别嫌名字长）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "public class Main {\n    static final int WEEK_LIMIT = 20;\n    static final int WEEK_LIMITS = 120;\n\n    public static void main(String[] args) {\n        int used = {u};\n        System.out.println(\"这周还能领 \" + (WEEK_LIMITS - used) + \" 条\");\n    }\n}",
+  "referenceFixTemplate": "public class Main {\n    static final int WEEKLY_FISH_LIMIT = 20;\n\n    public static void main(String[] args) {\n        int used = {u};\n        System.out.println(\"这周还能领 \" + (WEEKLY_FISH_LIMIT - used) + \" 条\");\n    }\n}",
+  "explanationTemplate": "**一、这题的算术一步都没错 —— 错的是「捡箱子」。** `WEEK_LIMIT`（每周上限）和 `WEEK_LIMITS`（上一任手滑留下的、多一个 `S` 的兄弟）在大写字母堆里几乎一模一样；报数那行捡到了后者：拿 120 去减已领的数，当然偏出一大截。\n\n**二、常量名的两把尺子**（手册【强制】）：\n\n- 全部大写、单词间下划线 —— `WEEK_LIMIT` 是对的形状；\n- **语义完整，不要嫌名字长** —— `WEEK_LIMIT` 只说了「上限」，没说**是谁的上限**；补成 `WEEKLY_FISH_LIMIT`，「每周、鱼干、上限」三件事全在名字里。\n\n**三、撞脸常量的真凶是「差不多的两只」。** 一只 20、一只 120，名字只差一个 `S` —— 别说人眼，自动补全都能点错。所以修法是**删多余、补语义**：没人用的清掉，留下的写到一眼读全。\n\n一句话记住：**常量名要长到「一眼读全、绝不撞脸」—— 短不是美德，撞脸才是事故。**"
+}

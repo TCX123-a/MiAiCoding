@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-brand-switch-down",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-03",
+  "type": "codewrite",
+  "concept": ["牌子上的图纸名", "认亲", "换牌子", "向上转型"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "dog": { "kind": "pick", "values": ["大黄", "旺财"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 2, "max": 4 },
+  "stemTemplate": "本喵手里这块牌子写的是 `Animal`，底下装的是一只猫。猫除了出声还会睡 —— 可**牌子上没有「睡」这一招**，直接喊会被翻译官拦下来。\n\n要画的图纸：\n\n- 大图纸 `Animal`（这张**不是**半张，能直接生）：一盒名字家当、出生那一手记名字、一招 `speak` 印 **名字 + `：……`**。\n- 小图纸 `Cat` 套在大图纸上：把 `speak` **盖掉、换上自己那版**（**名字 + `：喵～`**），另外**自己新添一招** `sleep`，印 **名字 + `睡着了，呼噜呼噜`**。\n- 小图纸 `Dog` 套在大图纸上：把 `speak` **盖掉、换上自己那版**（**名字 + `：汪！`**），别的不添。\n\n`main` 里这么走：\n\n1. 读那个数；\n2. 生一只猫装进写 `Animal` 的牌子，再生一只狗也装进写 `Animal` 的牌子；\n3. 两块牌子各喊一声 `speak`；\n4. 再**先认亲、后给猫换一块写 `Cat` 的牌子**，喊那么多声 `sleep`。\n\n狗那块牌子本喵不碰，它**没有**睡这一招喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Cat extends Animal {\n\n}\n\nclass Dog extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"：……\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n\n    void sleep() {\n        System.out.println(name + \"睡着了，呼噜呼噜\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Animal a = new Cat(\"{name}\");\n        Animal b = new Dog(\"{dog}\");\n        a.speak();\n        b.speak();\n        if (a instanceof Cat) {\n            Cat c = (Cat) a;\n            for (int i = 0; i < n; i++) {\n                c.sleep();\n            }\n        }\n    }\n}\n",
+  "explanationTemplate": "这题把上一课和这一课的两手接在一起用喵。\n\n**装进去的时候很容易。** 牌子写 `Animal`，给的是猫和狗 —— 照 `Cat` 生的猫本来也是一只 `Animal`，收得下（这一步叫向上转型，随到随收）。\n\n**喊起来就分岔了。** Java 是**认字**的：本喵喊得出哪些招式，**是照着牌子上写的图纸名去查的**。两块牌子都写 `Animal`，那就只有 `Animal` 上也画着的招式喊得动。\n\n- `a.speak();` 和 `b.speak();` 都找得到 —— 因为大图纸上有这一招。**至于喊出来是哪一声，由底下那只真猫的图纸说了算**，所以一个喵一个汪。\n- `a.sleep();` 就喊不动了：大图纸上**没有**这一招，本喵会撞上 `cannot find symbol`，底下还跟着一行 `location: variable a of type Animal` 告诉本喵「你是在这块牌子上找的」。\n\n**所以要先认亲、后换牌子**：\n\n```java\nif (a instanceof Cat) {\n    Cat c = (Cat) a;\n    ...\n}\n```\n\n`a instanceof Cat` 问一句「本喵手里这只到底是不是猫」，问准了再用 `(Cat) a` 换一块写 `Cat` 的牌子。换牌子**不会换掉底下那只真猫**，只是牌子上的名字换了 —— 换了之后，翻译官才找得到 `sleep`。\n\n顺手记：**换牌子之前必须先认亲**。要是本喵把狗换成猫的牌子再喊，那就是另一种翻车法了喵。"
+}

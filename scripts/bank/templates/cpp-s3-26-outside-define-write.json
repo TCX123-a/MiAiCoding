@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-26-outside-define-write",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-26",
+  "type": "codewrite",
+  "concept": ["大宅子分居", "图纸外补正文", "每条记得报家门"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "本喵把这口大宅子（`Pond`）的图纸画好了：两条招式 —— 往里放一条（`put`）、把最重的那条叼回来（`heaviest`）—— 都只在图纸里**报了个名**，正文留在图纸外面。\n\n请你把两条正文补完。这题要练的就是「**分居**」喵：正文住在图纸外面时，开头的**门牌**（`Pond::`）一个都不能少，不然翻译官喵翻脸。\n\n比如投喂给程序的是：\n\n```text\n{sampleInput}\n```\n\n补好之后就要叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外一组数；`main` 那一段一个字都别动喵。）",
+  "starterTemplate": "#include <iostream>\n#include <vector>\n\nclass Pond {\npublic:\n    void put(int w);\n\n    int heaviest() const;\n\nprivate:\n    std::vector<int> weights;\n};\n\nvoid Pond::put(int w) {\n    /* ① 把这一条放进 Pond 的水里 */\n}\n\nint Pond::heaviest() const {\n    /* ② 一圈圈比过去，把最重的那条叼回来 */\n    return 0;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    Pond p;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        p.put(w);\n    }\n    std::cout << \"最重的那条：\" << p.heaviest() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <vector>\n\nclass Pond {\npublic:\n    void put(int w);\n\n    int heaviest() const;\n\nprivate:\n    std::vector<int> weights;\n};\n\nvoid Pond::put(int w) {\n    weights.push_back(w);\n}\n\nint Pond::heaviest() const {\n    int best = 0;\n    for (int i = 0; i < static_cast<int>(weights.size()); i++) {\n        if (weights[i] > best) {\n            best = weights[i];\n        }\n    }\n    return best;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    Pond p;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        p.put(w);\n    }\n    std::cout << \"最重的那条：\" << p.heaviest() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "两条正文的主意都不难，难的是**站在图纸外面说话要报家门**。\n\n**① `put`：把货收进宅子。** 收一条，就是往宅子里那排格子末尾推一格：\n\n```cpp\nvoid Pond::put(int w) {\n    weights.push_back(w);\n}\n```\n\n`Pond::` 念作「**这是大宅子 `Pond` 名下**的招式」。报过家门之后，正文就算住在门外，摸宅子里的 `weights` 也是自家人摸自留地，翻译官喵放行。\n\n**② `heaviest`：一圈比过去挑最重的。** 先立一个最重的位子（本喵从 0 起步 —— 货都是正数，不怕），一条条跟它比，比它重就换成记这条：\n\n```cpp\nint Pond::heaviest() const {\n    int best = 0;\n    for (int i = 0; i < static_cast<int>(weights.size()); i++) {\n        if (weights[i] > best) {\n            best = weights[i];\n        }\n    }\n    return best;\n}\n```\n\n⚠️ 三条记性念一遍：\n\n1. **正文挪到图纸外面，门牌 `Pond::` 必须报** —— 少报一次就是 `non-member function` 那张脸；\n2. **签名要和图纸里报名的那行一字不差**（`int`、`const`、名字、括号里的东西，全对上）；\n3. **`main` 一个字都别动** —— 它是验收员，改验收员的眼睛可没用喵。"
+}

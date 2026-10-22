@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-06-plusdays-dropped",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-06",
+  "type": "codefix",
+  "concept": ["纸条改不动", "新纸条要接住", "不红不响的白写"],
+  "instances": 2,
+  "params": {
+    "d1": { "kind": "int", "min": 3, "max": 5 },
+    "k": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵想让一张日期纸条往后挪 {k} 天。\n\n可印出来的纸条**跟原来那张一模一样**，而且一个字都不红。\n\n你帮本喵看看哪儿不对，把它改好 —— 改好之后该印出挪过以后的日期。\n\n（这一题**不用投喂任何东西**。）",
+  "brokenCodeTemplate": "import java.time.LocalDate;\n\npublic class Main {\n    public static void main(String[] args) {\n        LocalDate d = LocalDate.of(2026, 9, {d1});\n\n        d.plusDays({k});\n        System.out.println(\"挪过之后：\" + d);\n    }\n}\n",
+  "referenceFixTemplate": "import java.time.LocalDate;\n\npublic class Main {\n    public static void main(String[] args) {\n        LocalDate d = LocalDate.of(2026, 9, {d1});\n\n        LocalDate 挪过的 = d.plusDays({k});\n        System.out.println(\"挪过之后：\" + 挪过的);\n    }\n}\n",
+  "explanationTemplate": "**一、这类纸条是撕下来就定死的。** `d.plusDays({k})` 不会在原来那张纸上改一个字 —— 它是**另撕一张**、上面写着 {k} 天之后，然后把新的那张递出来给你。\n\n**二、本喵没伸爪接住，新的那张当场就丢了。** 所以印 `d` 的时候，它还是 9 月 {d1} 日那张老纸。这跟上一课那只空盒子是同一种脾气：**递过来的东西，不接就没了**。\n\n**三、修法就是「要哪张纸，就把哪张纸接到一个名字里」：**\n\n```java\nLocalDate 挪过的 = d.plusDays({k});\nSystem.out.println(\"挪过之后：\" + 挪过的);\n```\n\n接了之后，`d` 还是原来那张（它一点没动），`挪过的` 才是 {k} 天之后那张 —— 两张纸同时都在，想印哪张印哪张。\n\n**四、这一脚为什么最坑。** 单独写一句 `d.plusDays({k});` 语法上挑不出错，`javac` 一声不响，跑起来也一声不响 —— 只是印出来的日子不对。往后每回写 `.plusDays` / `.plusMonths` / `.withDayOfMonth`，都要顺手问自己一句：**新纸本喵接住了吗？**"
+}

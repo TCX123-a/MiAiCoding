@@ -1,0 +1,87 @@
+{
+  "lessonId": "java-stage3-07",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写完两行账，忘了喊收工那一句（既没 `close()` 也没 `flush()`），转身就把文件念了一遍。念出来会是什么？",
+      "options": [
+        "一个字都没有 —— 那些字还躺在**篮子**里，根本没倒进文件",
+        "两行都在 —— 写过了就是写过了",
+        "只有第一行 —— 篮子刚好装得下一行",
+        "当场红，提醒本喵「你还没喊收工」"
+      ],
+      "answer": 0,
+      "explanation": "答案是一个字都没有喵。套了篮子之后，`笔.write(...)` 塞的是**篮子**，不是文件 —— 篮子要等**满了**、或者本喵喊一声倒，才会整趟搬进文件。`close()` 就是「把篮子倒干净、再收工」那一声；本喵没喊，篮子里的字就跟着程序一起没了。\n\n最坑的是它**一个字都不红**：不报错、不提醒，只有本喵去念文件才发现是空的。所以记住这条习惯：**写了就喊 `close()`**；要是还想接着写、只是想把篮子先倒一趟，喊 `flush()`。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵把那个「一喊吞一行」的错法写了下来：`while (眼.readLine() != null)` 的绕圈身子里，再套一句 `眼.readLine()`、把叼回来的直接印出去。文件里正好有**三行**字。屏幕上会印出什么？",
+      "options": [
+        "只印出**第二行**，末尾再多印一行 `null`",
+        "三行原样印出来",
+        "一行都不印",
+        "当场红，说 `readLine` 不许对着同一个管子喊两回"
+      ],
+      "answer": 0,
+      "explanation": "`readLine()` 每喊一次就**吞掉一整行**、眼睛往前挪一格喵。看这个绕圈的走法：条件里第一次喊，吞掉第 1 行（不是没有，放行）；身子里那一喊，吞掉的是**第 2 行**，于是印出来的正是第 2 行。第二圈：条件再喊，吞掉第 3 行（还不是没有，放行）；身子里再喊 —— 这回后面没有了，叼回来的是 `null`，印出来就是一行 `null`。第三圈：条件是 `null`，绕圈停。\n\n所以三行的文件，这么写只会印出中间那一行加一行 `null`。**同一行字不能喊两次**：条件里喊过的那一行，身子里拿到的必须是那一次的**结果**（存在 `行` 里），这就是那个 `(行 = 眼.readLine())` 要写成一对括号的原因喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵在图纸上给那一格戴了牌子：`transient String 备注 = \"本喵的私房话\";`。冻好再解冻回来，那一格印出来会是什么？",
+      "options": [
+        "`null` —— 戴了牌子就不跟着冻，而且那句初始话也不会重跑",
+        "`本喵的私房话` —— 解冻的时候会照图纸重新填一遍",
+        "一对空引号 `\"\"` —— 有个位置，只是里面空的",
+        "当场红，说不许冻带了牌子的格子"
+      ],
+      "answer": 0,
+      "explanation": "`transient` 只有四个字：**这格不冻**喵。冻的时候它被跳过，写进文件的那串字节里压根没有它。\n\n要紧的是解冻回来为什么是 `null` 而不是那句「本喵的私房话」：解冻走的**不是**平时那条路 —— 它不喊构造方法、也不执行格子后面那半句初始值，只是把冻存的那几格原样填回去。被跳过的这一格没人填，于是空的。所以那句私房话既没被带走、也没在解冻时重新写上去喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"账本.txt\"));\n        笔.write(\"小橘 3 条\");\n        笔.newLine();\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new ____(\"账本.txt\"));\n\n        String 行;\n        while ((行 = 眼.readLine()) != ____) {\n            System.out.println(\"念到：\" + 行);\n        }\n        眼.close();\n    }\n}",
+      "stem": "本喵要把账本一行一行念出来。两个空按顺序各该填什么？",
+      "blanks": [
+        {
+          "answer": "FileReader",
+          "accept": []
+        },
+        {
+          "answer": "null",
+          "accept": []
+        }
+      ],
+      "explanation": "第一个空填 `FileReader` 喵：外面那只 `BufferedReader` 是**篮子**，篮子得套在**管子**上才有用 —— 这条通到文件的管子就是 `FileReader`。\n\n第二个空填 `null`：`readLine()` 念到文件末尾时给的就是它，意思是「**没有了**」。所以那句条件读作「念一行存进 `行`，只要它不是没有，就跑这一圈」。\n\n这个空别填 `0`、也别填 `\"\"`（空引号）：管子给的是 `null`，拿别的去比，条件永远成立，绕圈就停不下来了喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"鱼.txt\"));\n        笔.write(\"大肥鱼\");\n        笔.newLine();\n        笔.write(\"小橘\");\n        笔.newLine();\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"鱼.txt\"));\n        String 行;\n        int 号 = 0;\n        while ((行 = 眼.readLine()) != null) {\n            号 = 号 + 1;\n        }\n        眼.close();\n\n        System.out.println(\"一共 \" + 号 + \" 行\");\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "一共 2 行",
+      "accept": [
+        "一共 2 行\n"
+      ],
+      "explanation": "只印一行：`一共 2 行` 喵。\n\n前半截用篮子写了两行进 `鱼.txt`，喊了 `close()` 把篮子倒干净；后半截把同一份文件念回来，每念到一行就把 `号` 加一 —— 文件里正好两行，所以 `号` 加到 2。\n\n这里有两个小地方值得对一眼：数数的篮子 `号` 立在**绕圈外面**（立在圈里的话每圈归零，最后永远报 1）；`眼.readLine()` 只出现在**条件那一处**，身子里一个字都没再喊它 —— 要是身子里又喊一次，那就成了「一喊吞一行」，这个数会跟着变喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass Fish implements Serializable {\n    String 名字;\n    transient int 条数 = 7;\n\n    Fish(String 名字) {\n        this.名字 = 名字;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Fish 原猫 = new Fish(\"小橘\");\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(原猫);\n        出口.close();\n\n        ObjectInputStream 入口 = new ObjectInputStream(new FileInputStream(\"猫.bin\"));\n        Fish 回来的猫 = (Fish) 入口.readObject();\n        入口.close();\n\n        System.out.println(回来的猫.名字);\n        System.out.println(回来的猫.条数);\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "小橘\n0",
+      "accept": [
+        "小橘\n0\n"
+      ],
+      "explanation": "两行分别是 `小橘` 和 `0` 喵。\n\n第一行好懂：`名字` 没戴牌子，冻进去了，解冻回来还是「小橘」。\n\n第二行才是今天要留意的地方：`条数` 戴了 `transient`，**这一格不冻**。解冻的时候既没有把原来的 7 填回去，也没有重跑图纸上那句 `= 7`（解冻不喊构造方法、也不执行初始值），所以它保持「刚发下来」的状态 —— `int` 那类格子刚发下来是 `0`，于是印出 `0`。\n\n对照着看：`String` 那类格子刚发下来是 `null`（前面题里印的 `备注：null` 就是这个），`int` 那类格子刚发下来是 `0` —— 戴了牌子的格子解冻回来是几，看的就是「刚发下来」的那个值喵。"
+    }
+  ]
+}

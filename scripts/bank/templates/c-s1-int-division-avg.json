@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-int-division-avg",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-07",
+  "type": "codefix",
+  "concept": ["整数除法", "小数点写法", "%.2f"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 7, "max": 9 },
+    "b": { "kind": "int", "min": 5, "max": 6 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫粮"] }
+  },
+  "stemTemplate": "本喵要把 {a} 条{unit}平分给 {b} 只猫：一共多少条要照实报，平均每只分到多少条**要带两位小数**。\n\n可这段代码跑出来的第二行，小数部分整个变成了 0 —— 明明除不尽，它却当成除得尽报了出来。你帮本喵改对：第二行要印出 {a} 除以 {b} 的**真答案**（保留两位小数），第一行别动。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int total = {a};\n    int n = {b};\n\n    double avg = total / n;\n    printf(\"一共 %d 条{unit}喵\\n\", total);\n    printf(\"平均 %.2f 条{unit}喵\\n\", avg);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int total = {a};\n    int n = {b};\n\n    double avg = {a}.0 / n;\n    printf(\"一共 %d 条{unit}喵\\n\", total);\n    printf(\"平均 %.2f 条{unit}喵\\n\", avg);\n    return 0;\n}\n",
+  "explanationTemplate": "C 有一个老实脾气：**两边都是整数的时候，做出来的除法就叫整数除法 —— 结果的小数部分直接切掉，不四舍五入**喵。\n\n`total / n` 里两个数都是整数，所以 {a} 除以 {b} 先算出一个整数，**再**装进 `avg` 那间装小数的屋子。切掉的部分已经没了，装进去的当然只剩整数 —— `%.2f` 老老实实把小数位补成 0，看着就像「本来就除得尽」。\n\n想让答案留住小数，就得**让参与计算的两边里至少有一个是小数的形状**：把 {a} 写成 `{a}.0`（带小数点的写法），翻译官喵就乖乖按小数除法算，答案才对得上。\n\n这一条和 Python 不一样 —— 那边 `10 / 4` 直接给你 `2.5`。C 更「老实」，也更需要你留个心眼：**看见两个整数相除，先问一句「我要的是不是小数？」**喵。"
+}

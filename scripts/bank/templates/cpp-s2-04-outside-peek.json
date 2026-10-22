@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-04-outside-peek",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-04",
+  "type": "codefix",
+  "concept": ["盖上盖子的格子", "外面伸手被拦", "改走那道门"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "三花"] },
+    "n": { "kind": "int", "min": 1, "max": 4 }
+  },
+  "stemTemplate": "本喵把两格家常都盖上盖子（`private:`），只在图纸上留了一道**问数的门**。可 `main` 里本喵还照着老习惯伸手去摸 `c1.name` —— 翻译官喵当场拦下喵。\n\n你帮本喵改**一处**，让程序跑起来、印出这一行：`XX 有 N 条`（`XX` 是这只猫的名字，`N` 是它自己的条数）。**图纸上那几招一个都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprivate:\n    string name;\n    int fish;\n\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    string getName() const {\n        return name;\n    }\n\n    int getFish() const {\n        return fish;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\", {n});\n    cout << c1.name << \" 有 \" << c1.getFish() << \" 条\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprivate:\n    string name;\n    int fish;\n\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    string getName() const {\n        return name;\n    }\n\n    int getFish() const {\n        return fish;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\", {n});\n    cout << c1.getName() << \" 有 \" << c1.getFish() << \" 条\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:24:16: error: 'std::string Cat::name' is private within this context`\n`main.cpp:7:12: note: declared private here`\n\n翻成猫话：**「`name` 是 `Cat` 的 `private` 格子，你现在站的这个地方碰不着它 —— 它是在第 7 行被盖上盖子的。」**（`context` 就是「你现在站的这个地方」。）\n\n注意被拦下的是**伸手那一下**，不是那条数据：格子里的东西好好的，只是不该这么拿。图纸上明明已经有一道问数的门 `getName()`，站到门前面去就行 —— 把那一处 `c1.name` 换成 `c1.getName()`，程序立刻顺着跑，印出来的还是同样的名字。\n\n⚠️ 顺带记住更容易踩的那一半：**读取**和**改动**是两道不同的门。这一题只用到问数的门；要是题目要你**改**格子，那就得另开一道改数的门（`setName` 之类）。"
+}

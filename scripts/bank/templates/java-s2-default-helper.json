@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s2-default-helper",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-04",
+  "type": "codewrite",
+  "concept": ["与猫的约定", "default 招式", "白拿与重写", "implements"],
+  "instances": 6,
+  "params": {
+    "cat": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "robot": { "kind": "pick", "values": ["铁喵", "阿铁"] },
+    "cry": { "kind": "pick", "values": ["嘀嘀", "哔啵"] },
+    "times": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 1, "max": 2 },
+  "stemTemplate": "这一回本喵要让「约定里**写好了的**那一手」和「自己**盖掉重画的那版**」同台演一遍。\n\n要立的东西：\n\n- 一份约定 `Greeter`：一手 `void greet();`（**只有名头**、没有身子），**外加一手 `default` 的 `greetMany()`** —— 它带身子，身子就是**连着喊 {times} 遍 `greet`**。\n- 图纸 `Cat`：认下这份约定，**只补 `greet`** —— 印 **名字 + `：喵～`**。`greetMany` 它**白拿**，自己一个字都不写。\n- 图纸 `Robot`：认下这份约定，补 `greet` —— 印 **名字 + `：` + 它平时那声叫**；**另外把 `greetMany` 盖成自己那版** —— 它嫌吵，只喊**一遍**。\n\n`main` 里这么走：读一个数（喊几轮）。每一轮先把猫那块牌子喊一声 `greetMany()`，再把机器那块牌子喊一声 `greetMany()`。\n\n所以每一轮里，猫该连着印 **{times}** 行，机器只印 **一行**。\n\n两条叮嘱：白拿的那一手**不许在 `Cat` 里再写一遍**（写了就不叫白拿了）；盖掉的那一手头上照旧挂 `@Override`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\ninterface Greeter {\n\n}\n\nclass Cat implements Greeter {\n\n}\n\nclass Robot implements Greeter {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\ninterface Greeter {\n    void greet();\n\n    default void greetMany() {\n        for (int i = 0; i < {times}; i++) {\n            greet();\n        }\n    }\n}\n\nclass Cat implements Greeter {\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    @Override\n    public void greet() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\nclass Robot implements Greeter {\n    String name;\n\n    Robot(String name) {\n        this.name = name;\n    }\n\n    @Override\n    public void greet() {\n        System.out.println(name + \"：{cry}\");\n    }\n\n    @Override\n    public void greetMany() {\n        greet();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int rounds = sc.nextInt();\n        Greeter cat = new Cat(\"{cat}\");\n        Greeter robot = new Robot(\"{robot}\");\n        for (int r = 0; r < rounds; r++) {\n            cat.greetMany();\n            robot.greetMany();\n        }\n    }\n}\n",
+  "explanationTemplate": "本题的关节是 `default` 那一手喵 —— 约定里**第一次**出现了「带着身子」的招式。\n\n**一、`default` 是什么意思。** 约定上列着的名头，平时**一律只有名头**，谁认下谁自己补。`default` 是例外：这一手**在约定里就把身子写好了**，认下它的人**不用补**，白拿。\n\n**二、白拿的那边一个字都不写。** `Cat` 里只该有 `greet` 一手 —— `greetMany` 是它从未写过的，可你照样喊得动，喊着喊着就把 `greet` 连着喊了 {times} 遍。这两层是**分工**的：约定里写好的那一手负责「喊几遍」，`Cat` 自己补的那一手负责「这一声是什么样」。\n\n**三、嫌吵的就自己盖一版。** `Robot` 把 `greetMany` 盖成了自己那版：只说一遍。盖掉之后，**约定里那版对它就不作数了** —— 喊的是它自己这一版。头上的 `@Override` 照旧挂着，翻译官喵会替你盯着「名头对不对得上」。\n\n**四、为什么大家愿意白拿。** 往后院里再添三只会出声的，只要它们补一手 `greet`，「连着喊好几遍」这件事**一处都不用再写**。约定把「怎么喊」钉死一处，各猫只写「自己那一声」—— 这就是它比上一课那张半张图纸更省心的地方喵。\n\n小心一处：`default` 那一手也是**谁都能喊**的，认下它的人盖那一手时别把 `public` 漏了，不然又是 `attempting to assign weaker access privileges` 那句老话。"
+}

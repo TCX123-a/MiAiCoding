@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-halving-step-too-big",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-16",
+  "type": "codefix",
+  "concept": ["第一跨得从中间起", "每跨一步就短一半", "只用砍半那几圈"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 8, "max": 9 },
+    "word": { "kind": "pick", "values": ["本喵问到啦", "本喵数好啦"] }
+  },
+  "stemTemplate": "本喵有一排猫粮碗，只数正好是 **2 的 {n} 次方**，碗里的小鱼干一条比一条多。\n\n本喵要找最靠里那一只，用的办法是「**一步短一半**」：先跨一大步出去，看看站的那一格够不够大；够就往里挪一步，不够就待在原地；然后**把步子砍一半**再试，一直到步子短得迈不动为止。\n\n可这段稿子**第一步就摔了**：屏幕上红着一行字，说本喵要端的那只碗不在这排上。你帮本喵修好**起手那一格**：只改这一处，别动别的。改好之后该印一行 —— {word}，再加上问了多少句、停在哪只碗上。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = 1 << {n};\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int target = bowls[n - 1];\n        int pos = 0;\n        int asks = 0;\n        for (int step = n; step > 0; step = step / 2) {\n            if (bowls[pos + step] <= target) {\n                pos = pos + step;\n            }\n            asks++;\n        }\n        System.out.println(\"{word}：问了 \" + asks + \" 句，停在 \" + bowls[pos] + \" 号碗\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = 1 << {n};\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int target = bowls[n - 1];\n        int pos = 0;\n        int asks = 0;\n        for (int step = n / 2; step > 0; step = step / 2) {\n            if (bowls[pos + step] <= target) {\n                pos = pos + step;\n            }\n            asks++;\n        }\n        System.out.println(\"{word}：问了 \" + asks + \" 句，停在 \" + bowls[pos] + \" 号碗\");\n    }\n}\n",
+  "explanationTemplate": "坏的那一处是起手那一格：`step = n` —— 第一跨就想跨出**整整一排那么远**。\n\n本喵这会儿站在 0 号碗上，第一脚要落的地方是 `0 + n`：那一格压根不在这排上（这排一共 {n} 个数量的碗，编号从 0 排到 n - 1），当场炸掉 —— 屏幕上那句 `ArrayIndexOutOfBoundsException` 念出来就是「**报的这个编号，这一排没那么多只碗**」。\n\n治法是把起手那一跨收到**正中间**：`step = n / 2`。这一改不是随便凑的，它管着两件事喵：\n\n1. **第一脚落在正中间**，这一排碗里哪一格都到得了，而且**一脚都不会踩出去** —— 往后每一步都比上一步短一半，站在哪都不会越过最后一格；\n2. **步子从「一半」开始，就正好是 `log₂ n` 步**。这一排有 2 的 {n} 次方只碗，所以只需要问 **{n} 句**：一脚到中间、再一脚到四分之三……每问一句，剩下的范围就砍掉一半。\n\n⚠️ 这题最值钱的就是第 2 条：**「每问一句砍一半」的活儿，圈数是用「这个数能砍几次」来数的**，不是用碗数来数的。同样一排碗，挨个摸一遍要 n 句，砍半着问只要 log₂ n 句 —— n = 1024 时是 10240 对 10，差着三个数量级。课文第四节的对照表里，`log n` 那一行说的就是这种干活方式喵。"
+}

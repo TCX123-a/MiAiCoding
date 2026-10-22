@@ -1,0 +1,280 @@
+{
+  "lessonId": "c-stage3-17",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-17-dp-pick-max-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要从架子上挑出**最大**的那只碗，然后把它的门牌号挂到外面那张牌上。\n\n投喂口里递进来的第一份是**账本**：架子上有几只碗；后头跟着的就是那几只碗里的数。样例输入：\n\n```text\n5\n42\n36\n19\n55\n68\n```\n\n你要把 `pick_biggest` 这一招**自己写出来**（写在上头那段注释的位置，`main` 里那几行别动）：\n\n1. 三份投喂依次是：那一排碗、碗的只数、**外面那张牌的门牌号**；\n2. 绕鱼干跑圈找出最大那只碗，记下它的位子；\n3. 把那只碗的门牌号挂到外面那张牌上 —— 写回去的时候只剥一层。\n\n样例跑出来是这样：\n\n```text\n最大的那只碗里：68\n```",
+      "starter": "#include <stdio.h>\n\n/* ↓ 在这儿写 pick_biggest 这一招：\n   ① 三份投喂：那一排碗、碗的只数、还有外面那张牌的门牌号\n   ② 绕鱼干跑圈找出最大那只碗，记下它的位子\n   ③ 把那只碗的门牌号挂到外面那张牌上（剥一层往里写） */\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bowls[100];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *p = &bowls[0];\n    pick_biggest(bowls, n, &p);\n\n    printf(\"最大的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 挑出最大那只碗，把它的门牌号挂到外面那张牌上 */\nvoid pick_biggest(int *bowls, int n, int **out) {\n    int best = 0;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] > bowls[best]) {\n            best = i;\n        }\n    }\n    *out = &bowls[best];\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bowls[100];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *p = &bowls[0];\n    pick_biggest(bowls, n, &p);\n\n    printf(\"最大的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "expectedOutput": "最大的那只碗里：85",
+      "stdin": "5\n48\n85\n14\n27\n36\n",
+      "explanation": "这一招的要害是**第三份投喂**喵：它接的不是一只碗，是**一张牌的门牌号** —— 所以接料格写 `int **out`，而外面喊它的时候递的是 `&p`。\n\n写回去的那一行是：\n\n```text\n*out = &bowls[best];\n```\n\n`*out` 读作「外面那张牌」，右边是最大那只碗的门牌号。这一行一落笔，`main` 里那个 `p` 就被真的换过去了，`*p` 印出来自然是那一排里最大的数。\n\n要是把接料格写成 `int *out`（少一颗星），招式里那句 `out = &bowls[best];` 只动了一份复印件 —— 翻译官喵不拦、跑起来也不摔，可印出来的永远是**第一只碗**里的数。这是这一课最值钱的一句：**要改的原件是一张牌，就得递这张牌的门牌号**。\n\n两个小地方也别踩：挑最大的时候用**严格大于**（并列时留靠前的那只）；`best` 从第 0 只起步，因为账本说至少有一只碗喵。",
+      "templateId": "c-s3-17-dp-pick-max-write",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:34.898Z",
+        "hash": "bcd97a9ded78fc11"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-pick-max-write-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要从架子上挑出**最大**的那只碗，然后把它的门牌号挂到外面那张牌上。\n\n投喂口里递进来的第一份是**账本**：架子上有几只碗；后头跟着的就是那几只碗里的数。样例输入：\n\n```text\n6\n42\n87\n81\n80\n30\n4\n```\n\n你要把 `pick_biggest` 这一招**自己写出来**（写在上头那段注释的位置，`main` 里那几行别动）：\n\n1. 三份投喂依次是：那一排碗、碗的只数、**外面那张牌的门牌号**；\n2. 绕鱼干跑圈找出最大那只碗，记下它的位子；\n3. 把那只碗的门牌号挂到外面那张牌上 —— 写回去的时候只剥一层。\n\n样例跑出来是这样：\n\n```text\n最大的那只碗里：87\n```",
+      "starter": "#include <stdio.h>\n\n/* ↓ 在这儿写 pick_biggest 这一招：\n   ① 三份投喂：那一排碗、碗的只数、还有外面那张牌的门牌号\n   ② 绕鱼干跑圈找出最大那只碗，记下它的位子\n   ③ 把那只碗的门牌号挂到外面那张牌上（剥一层往里写） */\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bowls[100];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *p = &bowls[0];\n    pick_biggest(bowls, n, &p);\n\n    printf(\"最大的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 挑出最大那只碗，把它的门牌号挂到外面那张牌上 */\nvoid pick_biggest(int *bowls, int n, int **out) {\n    int best = 0;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] > bowls[best]) {\n            best = i;\n        }\n    }\n    *out = &bowls[best];\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bowls[100];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *p = &bowls[0];\n    pick_biggest(bowls, n, &p);\n\n    printf(\"最大的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "expectedOutput": "最大的那只碗里：93",
+      "stdin": "6\n52\n79\n51\n87\n46\n93\n",
+      "explanation": "这一招的要害是**第三份投喂**喵：它接的不是一只碗，是**一张牌的门牌号** —— 所以接料格写 `int **out`，而外面喊它的时候递的是 `&p`。\n\n写回去的那一行是：\n\n```text\n*out = &bowls[best];\n```\n\n`*out` 读作「外面那张牌」，右边是最大那只碗的门牌号。这一行一落笔，`main` 里那个 `p` 就被真的换过去了，`*p` 印出来自然是那一排里最大的数。\n\n要是把接料格写成 `int *out`（少一颗星），招式里那句 `out = &bowls[best];` 只动了一份复印件 —— 翻译官喵不拦、跑起来也不摔，可印出来的永远是**第一只碗**里的数。这是这一课最值钱的一句：**要改的原件是一张牌，就得递这张牌的门牌号**。\n\n两个小地方也别踩：挑最大的时候用**严格大于**（并列时留靠前的那只）；`best` 从第 0 只起步，因为账本说至少有一只碗喵。",
+      "templateId": "c-s3-17-dp-pick-max-write",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:36.174Z",
+        "hash": "f86f0c37de43acbf"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-point-to-value-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵摆了两只碗：一只装着 5 条小鱼干，一只装着 9 条。外面那张牌一开始指着**第一只碗**，现在要把它改成指着**第二只碗**，然后印两行：第一行报「牌子换过去了吗：1」或者「：0」，第二行报牌子现在指着的那只碗里有多少。\n\n`point_to` 这一招的意图写在注释里了：把外面那张牌改成指着 `target` 那只碗。可跑完第一行报的是 **0** —— 牌子没换过去，而且第一只碗里的数还被动了。翻译官喵一声没吭，跑起来也不摔。\n\n请你把这一招改对（`main` 里那几行别动）。改好之后第一行该报 `1`，第二行该报 9。",
+      "brokenCode": "#include <stdio.h>\n\n/* 把外面那张牌改成指着 target 那只碗 */\nvoid point_to(int **pp, int *target) {\n    **pp = *target;\n}\n\nint main(void) {\n    int fish = 5;\n    int bone = 9;\n    int *p = &fish;\n\n    point_to(&p, &bone);\n    printf(\"牌子换过去了吗：%d\\n\", p == &bone);\n    printf(\"牌子指着的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n/* 把外面那张牌改成指着 target 那只碗 */\nvoid point_to(int **pp, int *target) {\n    *pp = target;\n}\n\nint main(void) {\n    int fish = 5;\n    int bone = 9;\n    int *p = &fish;\n\n    point_to(&p, &bone);\n    printf(\"牌子换过去了吗：%d\\n\", p == &bone);\n    printf(\"牌子指着的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "expectedOutput": "牌子换过去了吗：1\n牌子指着的那只碗里：9",
+      "stdin": null,
+      "explanation": "毛病在**剥了几层**喵：`**pp = *target;` 剥的是**两层**，落点是最里面那只碗**本身** —— 于是它把 `target` 那只碗里的数**抄进了**外面那张牌指着的那只碗里。牌子一步没挪（所以第一行报 `0`），可碗里的数被改了（所以第二行照样印出了 9，看着倒像成功了，其实是巧合）。\n\n要改的是**牌子指着哪只碗**，那就只剥一层、把门牌号写进去：\n\n```text\n*pp = target;\n```\n\n左边剥一层 = 外面那张牌本人；右边 `target` 是一只碗的门牌号 —— 类型正好对上。这一行和原来那行**差的是一颗星的位置**，屏幕上差的可是一整件事：一个是换牌子，一个是改数。课文第二节那两句背下来就够用了 —— **剥一层改牌子，剥两层改数**喵。\n\n⚠️ 自己验的时候有个笨办法很好用：多问一句「**牌子到底动了没有**」—— 印一行 `p == &bone` 看看它是 `1` 还是 `0`，比盯着第二行猜靠谱得多。",
+      "templateId": "c-s3-17-dp-point-to-value",
+      "params": {
+        "fish": 5,
+        "bone": 9
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:37.021Z",
+        "hash": "46aa671a63897e3e"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-point-to-value-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵摆了两只碗：一只装着 6 条小鱼干，一只装着 10 条。外面那张牌一开始指着**第一只碗**，现在要把它改成指着**第二只碗**，然后印两行：第一行报「牌子换过去了吗：1」或者「：0」，第二行报牌子现在指着的那只碗里有多少。\n\n`point_to` 这一招的意图写在注释里了：把外面那张牌改成指着 `target` 那只碗。可跑完第一行报的是 **0** —— 牌子没换过去，而且第一只碗里的数还被动了。翻译官喵一声没吭，跑起来也不摔。\n\n请你把这一招改对（`main` 里那几行别动）。改好之后第一行该报 `1`，第二行该报 10。",
+      "brokenCode": "#include <stdio.h>\n\n/* 把外面那张牌改成指着 target 那只碗 */\nvoid point_to(int **pp, int *target) {\n    **pp = *target;\n}\n\nint main(void) {\n    int fish = 6;\n    int bone = 10;\n    int *p = &fish;\n\n    point_to(&p, &bone);\n    printf(\"牌子换过去了吗：%d\\n\", p == &bone);\n    printf(\"牌子指着的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n/* 把外面那张牌改成指着 target 那只碗 */\nvoid point_to(int **pp, int *target) {\n    *pp = target;\n}\n\nint main(void) {\n    int fish = 6;\n    int bone = 10;\n    int *p = &fish;\n\n    point_to(&p, &bone);\n    printf(\"牌子换过去了吗：%d\\n\", p == &bone);\n    printf(\"牌子指着的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "expectedOutput": "牌子换过去了吗：1\n牌子指着的那只碗里：10",
+      "stdin": null,
+      "explanation": "毛病在**剥了几层**喵：`**pp = *target;` 剥的是**两层**，落点是最里面那只碗**本身** —— 于是它把 `target` 那只碗里的数**抄进了**外面那张牌指着的那只碗里。牌子一步没挪（所以第一行报 `0`），可碗里的数被改了（所以第二行照样印出了 10，看着倒像成功了，其实是巧合）。\n\n要改的是**牌子指着哪只碗**，那就只剥一层、把门牌号写进去：\n\n```text\n*pp = target;\n```\n\n左边剥一层 = 外面那张牌本人；右边 `target` 是一只碗的门牌号 —— 类型正好对上。这一行和原来那行**差的是一颗星的位置**，屏幕上差的可是一整件事：一个是换牌子，一个是改数。课文第二节那两句背下来就够用了 —— **剥一层改牌子，剥两层改数**喵。\n\n⚠️ 自己验的时候有个笨办法很好用：多问一句「**牌子到底动了没有**」—— 印一行 `p == &bone` 看看它是 `1` 还是 `0`，比盯着第二行猜靠谱得多。",
+      "templateId": "c-s3-17-dp-point-to-value",
+      "params": {
+        "fish": 6,
+        "bone": 10
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:38.408Z",
+        "hash": "6411b7c3dc10802a"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-step-copy-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵在架子上摆了 **5 只碗**，里面的数分别是 2, 7, 5, 8, 3。外面那张牌一开始指着**第一只碗**，本喵想让它往后挪 **2 只碗**，再印一行「牌子现在指着：几」。\n\n`step` 这一招里的绕鱼干跑圈一圈不少地跑了 2 圈，可印出来的还是**第一只碗**里的数 —— 外面那张牌一步没挪。翻译官喵一声没吭，跑起来也不摔。\n\n请你把这一招改对（`main` 里那几行别动）。改好之后，「牌子现在指着：」后面该是往后数 2 只碗落在的那只碗里的数。",
+      "brokenCode": "#include <stdio.h>\n\n/* 把外面那张牌往后挪 count 只碗 */\nvoid step(int **pp, int count) {\n    for (int i = 0; i < count; i++) {\n        pp = pp + 1;\n    }\n}\n\nint main(void) {\n    int bowls[5] = {2, 7, 5, 8, 3};\n    int *p = &bowls[0];\n\n    step(&p, 2);\n    printf(\"牌子现在指着：%d\\n\", *p);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n/* 把外面那张牌往后挪 count 只碗 */\nvoid step(int **pp, int count) {\n    for (int i = 0; i < count; i++) {\n        *pp = *pp + 1;\n    }\n}\n\nint main(void) {\n    int bowls[5] = {2, 7, 5, 8, 3};\n    int *p = &bowls[0];\n\n    step(&p, 2);\n    printf(\"牌子现在指着：%d\\n\", *p);\n    return 0;\n}\n",
+      "expectedOutput": "牌子现在指着：5",
+      "stdin": null,
+      "explanation": "毛病在**挪的是哪张牌**喵：`pp = pp + 1;` 挪的是招式里那个接料格**自己** —— 它收下的本来是一张复印件，一圈一圈挪到最后，也只是复印件自己在打转。外面那张牌一步没挪，还牢牢指着第一只碗。\n\n要挪的是外面那张，就得**剥一层往里写**：\n\n```text\n*pp = *pp + 1;\n```\n\n读法就一句：`*pp` 是「外面那张牌」，`= *pp + 1` 是「让它往后跨一只碗」。改对之后，往后跨过 2 只碗，落在第 2 只碗上，2, 7, 5, 8, 3 里那个位置的数就会被印出来喵。\n\n⚠️ 这两个写法**翻译官喵都不拦**：一个挪复印件、一个挪真牌，屏幕上什么都没有报 —— 差的就是那颗星。以后每次写到 `**`，都回头问自己一句：**这一行要改的到底是哪张牌？**",
+      "templateId": "c-s3-17-dp-step-copy",
+      "params": {
+        "row": "2, 7, 5, 8, 3",
+        "count": 2
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:39.674Z",
+        "hash": "109767abc1e28af0"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-step-copy-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵在架子上摆了 **5 只碗**，里面的数分别是 10, 4, 6, 9, 1。外面那张牌一开始指着**第一只碗**，本喵想让它往后挪 **3 只碗**，再印一行「牌子现在指着：几」。\n\n`step` 这一招里的绕鱼干跑圈一圈不少地跑了 3 圈，可印出来的还是**第一只碗**里的数 —— 外面那张牌一步没挪。翻译官喵一声没吭，跑起来也不摔。\n\n请你把这一招改对（`main` 里那几行别动）。改好之后，「牌子现在指着：」后面该是往后数 3 只碗落在的那只碗里的数。",
+      "brokenCode": "#include <stdio.h>\n\n/* 把外面那张牌往后挪 count 只碗 */\nvoid step(int **pp, int count) {\n    for (int i = 0; i < count; i++) {\n        pp = pp + 1;\n    }\n}\n\nint main(void) {\n    int bowls[5] = {10, 4, 6, 9, 1};\n    int *p = &bowls[0];\n\n    step(&p, 3);\n    printf(\"牌子现在指着：%d\\n\", *p);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n/* 把外面那张牌往后挪 count 只碗 */\nvoid step(int **pp, int count) {\n    for (int i = 0; i < count; i++) {\n        *pp = *pp + 1;\n    }\n}\n\nint main(void) {\n    int bowls[5] = {10, 4, 6, 9, 1};\n    int *p = &bowls[0];\n\n    step(&p, 3);\n    printf(\"牌子现在指着：%d\\n\", *p);\n    return 0;\n}\n",
+      "expectedOutput": "牌子现在指着：9",
+      "stdin": null,
+      "explanation": "毛病在**挪的是哪张牌**喵：`pp = pp + 1;` 挪的是招式里那个接料格**自己** —— 它收下的本来是一张复印件，一圈一圈挪到最后，也只是复印件自己在打转。外面那张牌一步没挪，还牢牢指着第一只碗。\n\n要挪的是外面那张，就得**剥一层往里写**：\n\n```text\n*pp = *pp + 1;\n```\n\n读法就一句：`*pp` 是「外面那张牌」，`= *pp + 1` 是「让它往后跨一只碗」。改对之后，往后跨过 3 只碗，落在第 3 只碗上，10, 4, 6, 9, 1 里那个位置的数就会被印出来喵。\n\n⚠️ 这两个写法**翻译官喵都不拦**：一个挪复印件、一个挪真牌，屏幕上什么都没有报 —— 差的就是那颗星。以后每次写到 `**`，都回头问自己一句：**这一行要改的到底是哪张牌？**",
+      "templateId": "c-s3-17-dp-step-copy",
+      "params": {
+        "row": "10, 4, 6, 9, 1",
+        "count": 3
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:40.990Z",
+        "hash": "15b9b39f8add4ab6"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-step-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要让一张牌在 **4 只碗**上绕圈走：每印一次牌子当前指着的那只碗里的数，就把牌子往后挪一只碗；挪到最后一只碗**后面**，就绕回第一只碗。\n\n四只碗里的数依次是 2, 7, 5, 8。`main` 里那六次印法已经写死了，你要写的是 `step` 这一招本体：三份投喂依次是**外面那张牌的门牌号**、第一只碗的门牌号、一共几只碗。\n\n该印 6 行，一行一个数：从第一只碗开始，一只一只往后走，走到头就绕回第一只，转两圈差两只。",
+      "starter": "#include <stdio.h>\n\n/* 把外面那张牌往后挪一只碗；挪过了最后一只就绕回第一只 */\nvoid step(int **pp, int *base, int count) {\n    /* ↓ 在这儿写：\n       ① 剥一层往里写，让外面那张牌往后跨一只碗\n       ② 跨过了最后一只（也就是走到「第一只再往后 count 只」那一格），就拨回 base */\n}\n\nint main(void) {\n    int bowls[4] = {2, 7, 5, 8};\n    int *p = &bowls[0];\n\n    for (int i = 0; i < 6; i++) {\n        printf(\"%d\\n\", *p);\n        step(&p, &bowls[0], 4);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 把外面那张牌往后挪一只碗；挪过了最后一只就绕回第一只 */\nvoid step(int **pp, int *base, int count) {\n    *pp = *pp + 1;\n    if (*pp == base + count) {\n        *pp = base;\n    }\n}\n\nint main(void) {\n    int bowls[4] = {2, 7, 5, 8};\n    int *p = &bowls[0];\n\n    for (int i = 0; i < 6; i++) {\n        printf(\"%d\\n\", *p);\n        step(&p, &bowls[0], 4);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "2\n7\n5\n8\n2\n7",
+      "stdin": null,
+      "explanation": "这一招是两件事喵。\n\n**第一件：挪牌子要用剥一层的写法。**\n\n```text\n*pp = *pp + 1;\n```\n\n`*pp` 才是**外面那张牌**。写成 `pp = pp + 1;` 挪的只是一份复印件 —— 外面一步没挪，翻译官喵还一声不吭（这是这一课最阴的一个坑）。\n\n**第二件：走到头要绕回来。**\n\n```text\nif (*pp == base + count) {\n    *pp = base;\n}\n```\n\n`base` 是第一只碗的门牌号，`base + count` 正好是**最后一只碗的后面那一格** —— 牌子跨到那一格就说明它走过了头，拨回第一只就行。注意判的是「等于最后一只的后面」，不是「等于最后一只」：写成 `base + count - 1` 会让最后那只碗被跳过，印出来的行数照样是 6 行，可数字整个错一圈。\n\n改对之后，6 行会把 2, 7, 5, 8 这么一圈一圈转的样子数出来：先走完 4 只，再从头来 2 只喵。",
+      "templateId": "c-s3-17-dp-step-report",
+      "params": {
+        "row": "2, 7, 5, 8"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:42.336Z",
+        "hash": "060bf7063a642de7"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-step-report-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要让一张牌在 **4 只碗**上绕圈走：每印一次牌子当前指着的那只碗里的数，就把牌子往后挪一只碗；挪到最后一只碗**后面**，就绕回第一只碗。\n\n四只碗里的数依次是 1, 3, 9, 4。`main` 里那六次印法已经写死了，你要写的是 `step` 这一招本体：三份投喂依次是**外面那张牌的门牌号**、第一只碗的门牌号、一共几只碗。\n\n该印 6 行，一行一个数：从第一只碗开始，一只一只往后走，走到头就绕回第一只，转两圈差两只。",
+      "starter": "#include <stdio.h>\n\n/* 把外面那张牌往后挪一只碗；挪过了最后一只就绕回第一只 */\nvoid step(int **pp, int *base, int count) {\n    /* ↓ 在这儿写：\n       ① 剥一层往里写，让外面那张牌往后跨一只碗\n       ② 跨过了最后一只（也就是走到「第一只再往后 count 只」那一格），就拨回 base */\n}\n\nint main(void) {\n    int bowls[4] = {1, 3, 9, 4};\n    int *p = &bowls[0];\n\n    for (int i = 0; i < 6; i++) {\n        printf(\"%d\\n\", *p);\n        step(&p, &bowls[0], 4);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 把外面那张牌往后挪一只碗；挪过了最后一只就绕回第一只 */\nvoid step(int **pp, int *base, int count) {\n    *pp = *pp + 1;\n    if (*pp == base + count) {\n        *pp = base;\n    }\n}\n\nint main(void) {\n    int bowls[4] = {1, 3, 9, 4};\n    int *p = &bowls[0];\n\n    for (int i = 0; i < 6; i++) {\n        printf(\"%d\\n\", *p);\n        step(&p, &bowls[0], 4);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "1\n3\n9\n4\n1\n3",
+      "stdin": null,
+      "explanation": "这一招是两件事喵。\n\n**第一件：挪牌子要用剥一层的写法。**\n\n```text\n*pp = *pp + 1;\n```\n\n`*pp` 才是**外面那张牌**。写成 `pp = pp + 1;` 挪的只是一份复印件 —— 外面一步没挪，翻译官喵还一声不吭（这是这一课最阴的一个坑）。\n\n**第二件：走到头要绕回来。**\n\n```text\nif (*pp == base + count) {\n    *pp = base;\n}\n```\n\n`base` 是第一只碗的门牌号，`base + count` 正好是**最后一只碗的后面那一格** —— 牌子跨到那一格就说明它走过了头，拨回第一只就行。注意判的是「等于最后一只的后面」，不是「等于最后一只」：写成 `base + count - 1` 会让最后那只碗被跳过，印出来的行数照样是 6 行，可数字整个错一圈。\n\n改对之后，6 行会把 1, 3, 9, 4 这么一圈一圈转的样子数出来：先走完 4 只，再从头来 2 只喵。",
+      "templateId": "c-s3-17-dp-step-report",
+      "params": {
+        "row": "1, 3, 9, 4"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:43.208Z",
+        "hash": "19dc6cf74ae0aa4e"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-swap-two-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵手里有**两张牌**：一张指着装着 3 条小鱼干的那只碗，一张指着装着 8 条的那只碗。现在要把这两张牌**换个个儿** —— 原来指着第一只碗的改成指着第二只，原来指着第二只的改成指着第一只。\n\n`main` 里那行 `swap_ptr(&p, &q);` 已经写好了，递的正是**两张牌的门牌号**。你要写的是招式本体：接料格已经给好，是两个 `int **`。\n\n印出来的该是两行：第一行「p 指着：」跟着第二只碗里的数，第二行「q 指着：」跟着第一只碗里的数。",
+      "starter": "#include <stdio.h>\n\n/* 把两张牌换个个儿 */\nvoid swap_ptr(int **a, int **b) {\n    /* ↓ 在这儿写：三行的活 —— 先收好一张、再换、再补上\n       （收好的那一只也得是「牌」，别把星星丢了） */\n}\n\nint main(void) {\n    int x = 3;\n    int y = 8;\n    int *p = &x;\n    int *q = &y;\n\n    swap_ptr(&p, &q);\n    printf(\"p 指着：%d\\n\", *p);\n    printf(\"q 指着：%d\\n\", *q);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 把两张牌换个个儿 */\nvoid swap_ptr(int **a, int **b) {\n    int *t = *a;\n    *a = *b;\n    *b = t;\n}\n\nint main(void) {\n    int x = 3;\n    int y = 8;\n    int *p = &x;\n    int *q = &y;\n\n    swap_ptr(&p, &q);\n    printf(\"p 指着：%d\\n\", *p);\n    printf(\"q 指着：%d\\n\", *q);\n    return 0;\n}\n",
+      "expectedOutput": "p 指着：8\nq 指着：3",
+      "stdin": null,
+      "explanation": "换两张牌，和换两只碗里的数是一个套路，只是**每一步都要剥一层**喵：\n\n```text\nint *t = *a;\n*a = *b;\n*b = t;\n```\n\n- `*a` / `*b` 就是「外面那两张牌」—— 剥一层拿到的正好是牌本人；\n- `t` 是一只临时碗，类型必须是 `int *` —— **别把星星丢了**：写成 `int t = *a;` 就是往整数格子里塞门牌号，翻译官喵当场翻脸；\n- 三行的顺序不能乱：先把 `*a` 收好，再让 `*a` 拿到 `*b`，最后把收好的还给 `*b`。少一步或者换顺序，两张牌就会指着同一只碗、另一只再也没人指。\n\n改完之后，第一行跟着的是**第二只碗**里的数、第二行跟着的是**第一只碗**里的数 —— 两张牌真的换了个儿，不是把碗里的数抄来抄去喵。",
+      "templateId": "c-s3-17-dp-swap-two",
+      "params": {
+        "x": 3,
+        "y": 8
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:44.072Z",
+        "hash": "5f88662245007cec"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-swap-two-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵手里有**两张牌**：一张指着装着 3 条小鱼干的那只碗，一张指着装着 9 条的那只碗。现在要把这两张牌**换个个儿** —— 原来指着第一只碗的改成指着第二只，原来指着第二只的改成指着第一只。\n\n`main` 里那行 `swap_ptr(&p, &q);` 已经写好了，递的正是**两张牌的门牌号**。你要写的是招式本体：接料格已经给好，是两个 `int **`。\n\n印出来的该是两行：第一行「p 指着：」跟着第二只碗里的数，第二行「q 指着：」跟着第一只碗里的数。",
+      "starter": "#include <stdio.h>\n\n/* 把两张牌换个个儿 */\nvoid swap_ptr(int **a, int **b) {\n    /* ↓ 在这儿写：三行的活 —— 先收好一张、再换、再补上\n       （收好的那一只也得是「牌」，别把星星丢了） */\n}\n\nint main(void) {\n    int x = 3;\n    int y = 9;\n    int *p = &x;\n    int *q = &y;\n\n    swap_ptr(&p, &q);\n    printf(\"p 指着：%d\\n\", *p);\n    printf(\"q 指着：%d\\n\", *q);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 把两张牌换个个儿 */\nvoid swap_ptr(int **a, int **b) {\n    int *t = *a;\n    *a = *b;\n    *b = t;\n}\n\nint main(void) {\n    int x = 3;\n    int y = 9;\n    int *p = &x;\n    int *q = &y;\n\n    swap_ptr(&p, &q);\n    printf(\"p 指着：%d\\n\", *p);\n    printf(\"q 指着：%d\\n\", *q);\n    return 0;\n}\n",
+      "expectedOutput": "p 指着：9\nq 指着：3",
+      "stdin": null,
+      "explanation": "换两张牌，和换两只碗里的数是一个套路，只是**每一步都要剥一层**喵：\n\n```text\nint *t = *a;\n*a = *b;\n*b = t;\n```\n\n- `*a` / `*b` 就是「外面那两张牌」—— 剥一层拿到的正好是牌本人；\n- `t` 是一只临时碗，类型必须是 `int *` —— **别把星星丢了**：写成 `int t = *a;` 就是往整数格子里塞门牌号，翻译官喵当场翻脸；\n- 三行的顺序不能乱：先把 `*a` 收好，再让 `*a` 拿到 `*b`，最后把收好的还给 `*b`。少一步或者换顺序，两张牌就会指着同一只碗、另一只再也没人指。\n\n改完之后，第一行跟着的是**第二只碗**里的数、第二行跟着的是**第一只碗**里的数 —— 两张牌真的换了个儿，不是把碗里的数抄来抄去喵。",
+      "templateId": "c-s3-17-dp-swap-two",
+      "params": {
+        "x": 3,
+        "y": 9
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:10.672Z",
+        "hash": "882ebb18c56952ab"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-swap-two-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵手里有**两张牌**：一张指着装着 4 条小鱼干的那只碗，一张指着装着 8 条的那只碗。现在要把这两张牌**换个个儿** —— 原来指着第一只碗的改成指着第二只，原来指着第二只的改成指着第一只。\n\n`main` 里那行 `swap_ptr(&p, &q);` 已经写好了，递的正是**两张牌的门牌号**。你要写的是招式本体：接料格已经给好，是两个 `int **`。\n\n印出来的该是两行：第一行「p 指着：」跟着第二只碗里的数，第二行「q 指着：」跟着第一只碗里的数。",
+      "starter": "#include <stdio.h>\n\n/* 把两张牌换个个儿 */\nvoid swap_ptr(int **a, int **b) {\n    /* ↓ 在这儿写：三行的活 —— 先收好一张、再换、再补上\n       （收好的那一只也得是「牌」，别把星星丢了） */\n}\n\nint main(void) {\n    int x = 4;\n    int y = 8;\n    int *p = &x;\n    int *q = &y;\n\n    swap_ptr(&p, &q);\n    printf(\"p 指着：%d\\n\", *p);\n    printf(\"q 指着：%d\\n\", *q);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 把两张牌换个个儿 */\nvoid swap_ptr(int **a, int **b) {\n    int *t = *a;\n    *a = *b;\n    *b = t;\n}\n\nint main(void) {\n    int x = 4;\n    int y = 8;\n    int *p = &x;\n    int *q = &y;\n\n    swap_ptr(&p, &q);\n    printf(\"p 指着：%d\\n\", *p);\n    printf(\"q 指着：%d\\n\", *q);\n    return 0;\n}\n",
+      "expectedOutput": "p 指着：8\nq 指着：4",
+      "stdin": null,
+      "explanation": "换两张牌，和换两只碗里的数是一个套路，只是**每一步都要剥一层**喵：\n\n```text\nint *t = *a;\n*a = *b;\n*b = t;\n```\n\n- `*a` / `*b` 就是「外面那两张牌」—— 剥一层拿到的正好是牌本人；\n- `t` 是一只临时碗，类型必须是 `int *` —— **别把星星丢了**：写成 `int t = *a;` 就是往整数格子里塞门牌号，翻译官喵当场翻脸；\n- 三行的顺序不能乱：先把 `*a` 收好，再让 `*a` 拿到 `*b`，最后把收好的还给 `*b`。少一步或者换顺序，两张牌就会指着同一只碗、另一只再也没人指。\n\n改完之后，第一行跟着的是**第二只碗**里的数、第二行跟着的是**第一只碗**里的数 —— 两张牌真的换了个儿，不是把碗里的数抄来抄去喵。",
+      "templateId": "c-s3-17-dp-swap-two",
+      "params": {
+        "x": 4,
+        "y": 8
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:12.918Z",
+        "hash": "2ac9e4b70892f170"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-swap-two-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵手里有**两张牌**：一张指着装着 4 条小鱼干的那只碗，一张指着装着 9 条的那只碗。现在要把这两张牌**换个个儿** —— 原来指着第一只碗的改成指着第二只，原来指着第二只的改成指着第一只。\n\n`main` 里那行 `swap_ptr(&p, &q);` 已经写好了，递的正是**两张牌的门牌号**。你要写的是招式本体：接料格已经给好，是两个 `int **`。\n\n印出来的该是两行：第一行「p 指着：」跟着第二只碗里的数，第二行「q 指着：」跟着第一只碗里的数。",
+      "starter": "#include <stdio.h>\n\n/* 把两张牌换个个儿 */\nvoid swap_ptr(int **a, int **b) {\n    /* ↓ 在这儿写：三行的活 —— 先收好一张、再换、再补上\n       （收好的那一只也得是「牌」，别把星星丢了） */\n}\n\nint main(void) {\n    int x = 4;\n    int y = 9;\n    int *p = &x;\n    int *q = &y;\n\n    swap_ptr(&p, &q);\n    printf(\"p 指着：%d\\n\", *p);\n    printf(\"q 指着：%d\\n\", *q);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 把两张牌换个个儿 */\nvoid swap_ptr(int **a, int **b) {\n    int *t = *a;\n    *a = *b;\n    *b = t;\n}\n\nint main(void) {\n    int x = 4;\n    int y = 9;\n    int *p = &x;\n    int *q = &y;\n\n    swap_ptr(&p, &q);\n    printf(\"p 指着：%d\\n\", *p);\n    printf(\"q 指着：%d\\n\", *q);\n    return 0;\n}\n",
+      "expectedOutput": "p 指着：9\nq 指着：4",
+      "stdin": null,
+      "explanation": "换两张牌，和换两只碗里的数是一个套路，只是**每一步都要剥一层**喵：\n\n```text\nint *t = *a;\n*a = *b;\n*b = t;\n```\n\n- `*a` / `*b` 就是「外面那两张牌」—— 剥一层拿到的正好是牌本人；\n- `t` 是一只临时碗，类型必须是 `int *` —— **别把星星丢了**：写成 `int t = *a;` 就是往整数格子里塞门牌号，翻译官喵当场翻脸；\n- 三行的顺序不能乱：先把 `*a` 收好，再让 `*a` 拿到 `*b`，最后把收好的还给 `*b`。少一步或者换顺序，两张牌就会指着同一只碗、另一只再也没人指。\n\n改完之后，第一行跟着的是**第二只碗**里的数、第二行跟着的是**第一只碗**里的数 —— 两张牌真的换了个儿，不是把碗里的数抄来抄去喵。",
+      "templateId": "c-s3-17-dp-swap-two",
+      "params": {
+        "x": 4,
+        "y": 9
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:44.961Z",
+        "hash": "bc49d07dc2f3aada"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-write-back-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵在架子上摆了 **3 只碗**，里面的数分别是 4, 9, 6。现在要挑出**最大**的那只碗，把它的门牌号挂到外面那张牌上，再印一行「最大的那只碗里：几」。\n\n`pick_biggest` 这一招里，挑最大那只的绕鱼干跑圈写得一点没错，可印出来的是**第一只碗**里的数 —— 外面那张牌压根没被换掉。翻译官喵一声没吭，跑起来也不摔。\n\n请你把这一招改对（`main` 里那几行别动）。改好之后该印一行：「最大的那只碗里：」后面跟着 4, 9, 6 里最大那个数。",
+      "brokenCode": "#include <stdio.h>\n\n/* 挑出最大那只碗，把它的门牌号挂到外面那张牌上 */\nvoid pick_biggest(int *bowls, int n, int *out) {\n    int best = 0;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] > bowls[best]) {\n            best = i;\n        }\n    }\n    out = &bowls[best];\n}\n\nint main(void) {\n    int bowls[3] = {4, 9, 6};\n    int *p = &bowls[0];\n\n    pick_biggest(bowls, 3, p);\n    printf(\"最大的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n/* 挑出最大那只碗，把它的门牌号挂到外面那张牌上 */\nvoid pick_biggest(int *bowls, int n, int **out) {\n    int best = 0;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] > bowls[best]) {\n            best = i;\n        }\n    }\n    *out = &bowls[best];\n}\n\nint main(void) {\n    int bowls[3] = {4, 9, 6};\n    int *p = &bowls[0];\n\n    pick_biggest(bowls, 3, &p);\n    printf(\"最大的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "expectedOutput": "最大的那只碗里：9",
+      "stdin": null,
+      "explanation": "毛病在**接料格收的是什么**喵：`int *out` 收下的只是外面那张牌的一张**复印件**，招式里那句 `out = &bowls[best];` 动的就是这份复印件，招式一收工它就没了 —— 外面那张牌一步没挪，还牢牢指着第一只碗，所以印出来的**永远是第一只碗里的数**。\n\n规矩是：**要改的原件是一张牌，就得递这张牌的门牌号**。所以接料格写成 `int **out`，喊它的时候递 `&p`，招式里剥一层往里写：\n\n```text\n*out = &bowls[best];\n```\n\n`*out` 读作「外面那张牌」，右边是最大那只碗的门牌号。这一行和「只写 `out = ...`」差一颗星，屏幕上差的是一整只碗。改对之后该印出来的是 4, 9, 6 里最大那个数喵。\n\n⚠️ 顺带记牢：这两个写法**翻译官喵都不拦** —— 一个改复印件、一个改真牌，一声不吭，只有印出来的东西不一样。",
+      "templateId": "c-s3-17-dp-write-back",
+      "params": {
+        "row": "4, 9, 6"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:45.882Z",
+        "hash": "670ef93ce8f8649e"
+      }
+    },
+    {
+      "id": "bank-c-s3-17-dp-write-back-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵在架子上摆了 **3 只碗**，里面的数分别是 12, 5, 20。现在要挑出**最大**的那只碗，把它的门牌号挂到外面那张牌上，再印一行「最大的那只碗里：几」。\n\n`pick_biggest` 这一招里，挑最大那只的绕鱼干跑圈写得一点没错，可印出来的是**第一只碗**里的数 —— 外面那张牌压根没被换掉。翻译官喵一声没吭，跑起来也不摔。\n\n请你把这一招改对（`main` 里那几行别动）。改好之后该印一行：「最大的那只碗里：」后面跟着 12, 5, 20 里最大那个数。",
+      "brokenCode": "#include <stdio.h>\n\n/* 挑出最大那只碗，把它的门牌号挂到外面那张牌上 */\nvoid pick_biggest(int *bowls, int n, int *out) {\n    int best = 0;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] > bowls[best]) {\n            best = i;\n        }\n    }\n    out = &bowls[best];\n}\n\nint main(void) {\n    int bowls[3] = {12, 5, 20};\n    int *p = &bowls[0];\n\n    pick_biggest(bowls, 3, p);\n    printf(\"最大的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n/* 挑出最大那只碗，把它的门牌号挂到外面那张牌上 */\nvoid pick_biggest(int *bowls, int n, int **out) {\n    int best = 0;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] > bowls[best]) {\n            best = i;\n        }\n    }\n    *out = &bowls[best];\n}\n\nint main(void) {\n    int bowls[3] = {12, 5, 20};\n    int *p = &bowls[0];\n\n    pick_biggest(bowls, 3, &p);\n    printf(\"最大的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+      "expectedOutput": "最大的那只碗里：20",
+      "stdin": null,
+      "explanation": "毛病在**接料格收的是什么**喵：`int *out` 收下的只是外面那张牌的一张**复印件**，招式里那句 `out = &bowls[best];` 动的就是这份复印件，招式一收工它就没了 —— 外面那张牌一步没挪，还牢牢指着第一只碗，所以印出来的**永远是第一只碗里的数**。\n\n规矩是：**要改的原件是一张牌，就得递这张牌的门牌号**。所以接料格写成 `int **out`，喊它的时候递 `&p`，招式里剥一层往里写：\n\n```text\n*out = &bowls[best];\n```\n\n`*out` 读作「外面那张牌」，右边是最大那只碗的门牌号。这一行和「只写 `out = ...`」差一颗星，屏幕上差的是一整只碗。改对之后该印出来的是 12, 5, 20 里最大那个数喵。\n\n⚠️ 顺带记牢：这两个写法**翻译官喵都不拦** —— 一个改复印件、一个改真牌，一声不吭，只有印出来的东西不一样。",
+      "templateId": "c-s3-17-dp-write-back",
+      "params": {
+        "row": "12, 5, 20"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:47.234Z",
+        "hash": "c91264e726612d7a"
+      }
+    }
+  ]
+}

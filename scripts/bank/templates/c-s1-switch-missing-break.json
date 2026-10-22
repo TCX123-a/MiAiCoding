@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-switch-missing-break",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-06",
+  "type": "codefix",
+  "concept": ["switch", "case", "break 漏了"],
+  "instances": 2,
+  "params": {
+    "k": { "kind": "int", "min": 1, "max": 2 },
+    "k2": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stemTemplate": "本喵在做一个「报编号点鱼」的小程序：报 {k} 号就一条三文鱼，报 {k2} 号就一条秋刀鱼，报了别的编号就说不认识。\n\n这回本喵只报了 **{k}** 号，屏幕上却冒出了**两条**鱼 —— 多出来的那一条是哪儿来的喵？你帮本喵改对：报 {k} 号的时候，只许印一行 `本喵要一条三文鱼喵`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int choice = {k};\n\n    switch (choice) {\n        case {k}:\n            printf(\"本喵要一条三文鱼喵\\n\");\n        case {k2}:\n            printf(\"本喵要一条秋刀鱼喵\\n\");\n            break;\n        default:\n            printf(\"这个编号本喵不认识喵\\n\");\n            break;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int choice = {k};\n\n    switch (choice) {\n        case {k}:\n            printf(\"本喵要一条三文鱼喵\\n\");\n            break;\n        case {k2}:\n            printf(\"本喵要一条秋刀鱼喵\\n\");\n            break;\n        default:\n            printf(\"这个编号本喵不认识喵\\n\");\n            break;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "`case` 干的事不是「只干这一格」，而是**「跳到这张标签这儿，然后一路往下走」** —— 真正让路停下来的是 `break` 喵。\n\n本喵报的是 {k} 号，翻译官喵跳到 `case {k}:` 这张标签上，印完三文鱼之后**没有回头再看编号**，而是顺顺当当滑进了下一张标签，一直滑到撞见 `break` 才停。所以屏幕上多出了秋刀鱼那一行。\n\n最坑的是：**翻译官喵一个字都不会警告你。** 这段程序语法上一点毛病都没有，它只是安安静静地干错事 —— 只能靠自己回头扫一遍。\n\n修法就是在 `case {k}:` 那一段的**尾巴上**补一句 `break;`（跟下面那两段一样）。写完一串 `case`，回头把每一段的尾巴扫一遍，这是写 `switch` 的固定动作喵。"
+}

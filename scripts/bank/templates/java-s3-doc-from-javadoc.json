@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-doc-from-javadoc",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-27",
+  "type": "codewrite",
+  "concept": [
+    "Javadoc 是写给实现者的需求单：@param 定参数含义，@return 定返回值与边界",
+    "按文档实现后要逐条对齐：参数名、返回含义、边界情形的措辞与代码行为一致",
+    "参数只留必要的：数组自带 length，不用再传一个「几天」进来"
+  ],
+  "instances": 6,
+  "params": {
+    "d": { "kind": "int", "min": 5, "max": 8 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{d}\n", "count": "{d}", "min": 1, "max": 9 },
+  "stemTemplate": "这一题反过来练：**需求方只给了文档，代码归你写**喵。\n\n要交出的是一张图纸 `Main`，上面有一只方法，它的 Javadoc 是这样的（**照它写实现**，每个词都是需求）：\n\n```java\n/**\n * 算这些天平均每天攒下多少条（向下取整）。\n *\n * @param dailyCounts 每天攒到的条数（至少一天）\n * @return 平均每天攒到的条数\n */\nstatic int averageOf(int[] dailyCounts);\n```\n\n投喂口：先给一个数（记了几天），再一行一个当天的条数。印**一行**：`平均每天 ` 拼上平均条数，再拼 ` 条`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n就该叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。）",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    /**\n     * 算这些天平均每天攒下多少条（向下取整）。\n     *\n     * @param dailyCounts 每天攒到的条数（至少一天）\n     * @return 平均每天攒到的条数\n     */\n    static int averageOf(int[] dailyCounts) {\n        int total = 0;\n        for (int count : dailyCounts) {\n            total = total + count;\n        }\n        return total / dailyCounts.length;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int days = sc.nextInt();\n        int[] dailyCounts = new int[days];\n        for (int i = 0; i < days; i++) {\n            dailyCounts[i] = sc.nextInt();\n        }\n        System.out.println(\"平均每天 \" + averageOf(dailyCounts) + \" 条\");\n    }\n}",
+  "explanationTemplate": "**一、Javadoc 就是「写给实现者的需求单」。** 这一题故意不给你代码、只给文档 —— 因为企业里真会有这种时刻：需求单先定下来，实现照着它落。文档上两句关键：**向下取整**（除法的整数版），以及 `@param dailyCounts` 说的是「每天攒到的条数」这一排贴编号的猫粮碗。\n\n**二、参考实现（方法部分）。**\n\n```java\nstatic int averageOf(int[] dailyCounts) {\n    int total = 0;\n    for (int count : dailyCounts) {\n        total = total + count;\n    }\n    return total / dailyCounts.length;\n}\n```\n\n顺着 Javadoc 看：投喂的小鱼干的名字 `dailyCounts` 和 `@param` 对上了；`total / dailyCounts.length` 用整数除法，正好兑现「向下取整」那句；天数直接取 `length`，不用再传一个「几天」进来 —— **投喂的小鱼干只留必要的**，文档里没写的别乱加。\n\n**三、你写完之后的对齐动作。** 回头**逐条对**：`@param` 的名字对不对、`@return` 的话和实际返回对不对、注释里写的边界（至少一天）和代码行为对不对。这一步「回头对」，就是对「注释与代码同步」的日常操练。\n\n一句话记住：**文档写之前是设计，写完是合同 —— 实现是照着合同交货。**"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-ambiguous-date",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-16",
+  "type": "codefix",
+  "concept": ["import", "同名冲突", "java.util", "java.sql", "编译错误"],
+  "instances": 2,
+  "params": {
+    "ms": { "kind": "int", "min": 1, "max": 5 }
+  },
+  "stemTemplate": "本喵想拿一个时刻出来，看看它对应的那个数喵。两只外卖箱本喵都打了招呼：一只 `java.util`、一只 `java.sql`。可翻译官喵当场犯起了难，丢下一句 `ambiguous`（拿不准）就不吭声了……\n\n你帮本喵看看它为什么拿不准，把它改好。改好之后，程序应该把 `new Date(...)` 里放着的那个数原样印出来。",
+  "brokenCodeTemplate": "import java.util.*;\nimport java.sql.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Date d = new Date({ms});\n        System.out.println(d.getTime());\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.*;\nimport java.sql.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        java.util.Date d = new java.util.Date({ms});\n        System.out.println(d.getTime());\n    }\n}\n",
+  "explanationTemplate": "`ambiguous` 是「**拿不准**」喵：`java.util` 里有个 `Date`，`java.sql` 里也有个 `Date`。本喵一句 `import java.util.*;` 加一句 `import java.sql.*;`，把两只箱子都拉了过来 —— 现在写一个光秃秃的 `Date`，翻译官喵不知道本喵要的是**哪只箱子里的那一张图纸**，只好停下来问一句。\n\n规矩很简单：**简名一旦打架，就只能老老实实写全名。** 上面那两行 `import` 留着没关系，把用到的地方写成 `java.util.Date`（想用哪只箱子就写哪只），翻译官喵立刻就不啰嗦了。\n\n顺带记一句：`import` 只负责省字，**不搬任何东西** —— 「写全名」和「先 `import` 再写简名」是同一件事，后者只是让你少打一截喵。"
+}

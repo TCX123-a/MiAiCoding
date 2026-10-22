@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-optional-of-null",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-05",
+  "type": "codefix",
+  "concept": ["兜里是空的不许直接装箱", "换成那个宽容的装箱写法", "空盒子一样能接着往下写"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["鱼干", "猫粮"] },
+    "v": { "kind": "pick", "values": ["三袋鱼干", "两袋猫粮"] }
+  },
+  "stemTemplate": "本喵写了一段小代码，想把「兜里可能是空的」这种情况用盒子接住，空了就报一句兜底的话喵。\n\n可它**一跑就当场炸了** —— 连第一行都没印出来。\n\n你帮本喵看看：那只盒子是**怎么装进去的**。装的时候用错了哪一手？把它改好。\n\n改好之后它该印**三行**：\n\n- 第一行是兜底那句话；\n- 第二行是本喵要找的那样东西；\n- 第三行还是兜底那句话（因为要找的那样东西**不在这里**）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑；那两样字都是固定死的，别去改它们。）",
+  "brokenCodeTemplate": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"{w}\")) {\n            return Optional.of(\"{v}\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        String maybe = null;\n        System.out.println(Optional.of(maybe).orElse(\"兜里是空的\"));\n        System.out.println(find(\"{w}\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"{w}\")) {\n            return Optional.of(\"{v}\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        String maybe = null;\n        System.out.println(Optional.ofNullable(maybe).orElse(\"兜里是空的\"));\n        System.out.println(find(\"{w}\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+  "explanationTemplate": "这题把本课最容易被绊倒的那一手演了一遍喵：**装箱的那两手，脾气完全不一样。**\n\n**一、`Optional.of(...)` 是「严厉」那一手。** 它的意思是「本喵拿命担保，这里头的东西**一定不是空的**」。所以本喵把一个**真的是空**的东西递给它，它当场翻脸，扔出一个 `NullPointerException` 从里面冒出来 —— 而且注意：它是**在装箱那一步就炸的**，不是等到后面用的时候。所以第一行都没印出来。\n\n**二、炸出来的红字还指得很准。** 那串名字里有一句 `Objects.requireNonNull` —— 念作「本喵要求这东西不是空的」，就是它干的。看见这一句，就知道问题出在「拿空东西去撞严厉那一手」，而不是别的地方。\n\n**三、`Optional.ofNullable(...)` 才是「宽容」那一手。** 它读作「装了，要是空的就给我一只空盒子」。本喵这里兜里正好是空的，于是它老老实实交回一只**空盒子** —— 不炸。后面 `.orElse(\"兜里是空的\")` 一看盒子是空的，就报出兜底那句话。\n\n**四、另一半没坏，一个字都别动。** 第二个 `find(\"{w}\")` 里用的是严厉那一手，可它**递进去的东西真的不是空的**（开头已经跟 `{w}` 比过了），所以那一手用在那儿完全没问题。这也是本课要分清的地方：**不是严厉那一手不能用，而是别拿空东西去撞它。**\n\n**五、盒子的价值在哪。** 「兜里可能是空的」这件事，从前只能靠本喵心里记着，忘了就是一行红字；现在它**明明白白写在名分上**了（叼回来的是一只盒子），用的时候必须当场交代一句「空了怎么办」。红字就从「不知道哪一行」提前到了「写的时候就想清楚」喵。"
+}

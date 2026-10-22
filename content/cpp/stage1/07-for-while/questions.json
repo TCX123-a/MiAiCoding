@@ -1,0 +1,84 @@
+{
+  "lessonId": "cpp-stage1-07",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "C++ 的 `for`，小括号里那三件家当之间是用什么隔开的？",
+      "options": ["两个分号 `;`", "两个逗号 `,`", "两个冒号 `:`", "什么都不用，挨着写就行"],
+      "answer": 0,
+      "explanation": "`for` 的三件家当挤在一对小括号里，写成 `for (起手; 眼色; 收尾)`，中间**只认分号**。写成逗号的话，翻译官喵会指着那一行说 `expected ';'` —— 看到这句话，先去看 `for` 那对小括号是不是少了个分号喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "写了一个 `while`，可圈里**没有任何一句**能让那个眼色变假，跑起来会怎样？",
+      "options": [
+        "圈停不下来，只能强行把窗口按掉",
+        "编译器会拦下它，报一个错误",
+        "它自己数到一千圈就收工",
+        "它会一圈都不跑，直接跳过"
+      ],
+      "answer": 0,
+      "explanation": "`while` 每一圈开场前都要瞄一眼眼色，只有答假才收工。圈里的活儿要是没让那个数挪动过，眼色就永远答真，圈一圈接一圈停不下来，只能强行关窗口喵。所以写完 `while` 要自问一句：圈里有没有一句代码，能让眼色早晚变成假？"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "圈跑到一半撞上了 `continue`，接下来会发生什么？",
+      "options": [
+        "这一圈剩下的活儿不干了，圈本身接着跑下一圈",
+        "圈整个停住，剩下的圈数全部作废",
+        "程序从第一圈重新开始跑",
+        "圈里剩下的活儿照旧干完，然后才停"
+      ],
+      "answer": 0,
+      "explanation": "`break` 和 `continue` 都管「半路变卦」，脾气却不同：`break` 是**提前收工**，圈整个停住、剩下的圈数全部作废；`continue` 只是**这一圈剩下的活儿跳过去**，圈本身还在跑，马上开始下一圈喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "stem": "把下面的 C++ 代码补全，让它把 `0`、`1`、`2` 三个数一行一个印出来：",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    for (int i = ____; i ____ 3; i++) {\n        cout << i << endl;\n    }\n    return 0;\n}",
+      "blanks": [
+        { "answer": "0" },
+        { "answer": "<" }
+      ],
+      "explanation": "第一个空填 `0`：这是起手，圈还没开始跑之前先把装「第几圈」的那只仓库洗成 0 —— 它从 0 起数，所以第一圈拿到的就是 0。第二个空填 `<`：这是眼色，每圈开场前瞄一眼「`i` 比 3 小吗」。填 0 和 1 的时候答真，轮到 2 还是答真，到 3 就答假收工，屏幕上正好三行喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "cpp",
+      "stem": "下面这段想让圈里的活儿**至少会干一遍**（不管眼色答真还是答假，第一遍都跑完再说）。把缺的两件家当补上：",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 0;\n    ____ {\n        cout << \"先干一圈喵\" << endl;\n        fish++;\n    } ____ (fish < 3);\n    return 0;\n}",
+      "blanks": [
+        { "answer": "do" },
+        { "answer": "while" }
+      ],
+      "explanation": "这两个空补上，整段就是 `do { ... } while (fish < 3);`。`do` 站在最前头，意思是「先干这一圈」；`while (眼色);` 排在最后，意思是「干完了再看一眼眼色，答真就再来一圈，答假才收工」。因为问话排在了干活后面，所以第一遍**一定**会跑完 —— 这就是它和普通 `while` 最大的不同喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    for (int i = 1; i <= 6; i++) {\n        if (i == 4) {\n            continue;\n        }\n        cout << i << endl;\n    }\n    cout << \"跑完喵\" << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "1\n2\n3\n5\n6\n跑完喵",
+      "accept": [],
+      "explanation": "圈从 1 跑到 6。跑到 `i` 是 4 那一圈时撞上 `continue`，这一圈剩下的活儿（那句 `cout`）被跳过去，所以 4 没被印出来；可圈**没停**，马上开始下一圈，5 和 6 照常跑完。最后轮到圈外那句「跑完喵」。要是把 `continue` 换成 `break`，屏幕上就只剩 1、2、3 了喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int total = 0;\n    int i = 1;\n    while (i <= 5) {\n        total = total + i;\n        i++;\n    }\n    cout << total << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "15",
+      "accept": ["15\n"],
+      "explanation": "小碗 `total` 先洗成 0，然后每跑一圈把 `i` 加进碗里。`i` 从 1 开始，一直加到 5（`i++` 那句让眼色早晚变成假），1＋2＋3＋4＋5＝15，最后把碗端出来印一下。瞪大眼睛看：最后那句 `cout` 在大括号**外面**，所以它只印一次喵。"
+    }
+  ]
+}

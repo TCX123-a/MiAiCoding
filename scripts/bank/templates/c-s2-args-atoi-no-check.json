@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-args-atoi-no-check",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-14",
+  "type": "codefix",
+  "concept": ["atoi", "防御式检查", "先检查再干活", "跑得成功但分错支"],
+  "instances": 2,
+  "params": {
+    "bad": { "kind": "pick", "values": ["0", "-3", "喵"] },
+    "good": { "kind": "pick", "values": ["5", "8", "2"] }
+  },
+  "stemTemplate": "本喵要办一个「收货」的小招式：念一串字，**能用就收下、不能用就挡在门外**。规矩是：念出来的数**不能是 0，也不能是负数**。\n\n本喵自己捏了一串投喂试试：`{bad}` 和 `{good}`。念出来应当是这样（`{bad}` 被挡下、`{good}` 放行）：\n\n```\n「{bad}」不是个能用的数，本喵不收\n收到 {good} 条，记下了\n```\n\n可跑出来两个都放行了。翻译官喵**一个字都没说**。你帮本喵看看那道门槛是哪儿写歪了。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nvoid check(int n, char *text) {\n    if (n > 1000) {\n        printf(\"「%s」不是个能用的数，本喵不收\\n\", text);\n    } else {\n        printf(\"收到 %d 条，记下了\\n\", n);\n    }\n}\n\nint main(void) {\n    char *args[3] = {\"benmiao\", \"{bad}\", \"{good}\"};\n\n    check(atoi(args[1]), args[1]);\n    check(atoi(args[2]), args[2]);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nvoid check(int n, char *text) {\n    if (n <= 0) {\n        printf(\"「%s」不是个能用的数，本喵不收\\n\", text);\n    } else {\n        printf(\"收到 %d 条，记下了\\n\", n);\n    }\n}\n\nint main(void) {\n    char *args[3] = {\"benmiao\", \"{bad}\", \"{good}\"};\n\n    check(atoi(args[1]), args[1]);\n    check(atoi(args[2]), args[2]);\n    return 0;\n}\n",
+  "explanationTemplate": "门槛写反了喵。规矩是「**不能是 0、也不能是负数**」，翻成条件就是：\n\n```c\nif (n <= 0)\n```\n\n原来写的是 `if (n > 1000)`，那是「超过一千才不收」—— 而本喵手里这两个数（`{bad}` 和 `{good}`）一个都没超过一千，于是两个都放行了。\n\n**为什么非得自己挡这一道？** 因为 `atoi` 有个脾气：**它不吭声、也不报错，念不动就丢、一个字都念不出就给你 0。**\n\n- `atoi(\"35\")` 念成 35；\n- `atoi(\"3个\")` 念成 3 —— 后面看不懂的字，它眼都不眨就丢掉了（它从**头**开始念，念到念不动为止）；\n- `atoi(\"喵\")` 念成 **0** —— 一个字都看不上，于是吐个 0 交差。\n\n看出来麻烦在哪儿了吗：**`atoi(\"喵\")` 给 0、`atoi(\"0\")` 也给 0** —— 两种完全不同的处境，落到本喵手里是同一个数。光靠「念出来是 0」分不清是「真的是 0」还是「一个字都没听懂」。\n\n所以本喵不但要挡 0，还要挡负数 —— 因为负数（比如 `-3`）也是「念得出来、但这个活不能这么干」。**「念得出来」和「能用」是两件事，中间那道理智的检查，只能本喵自己补。**\n\n这就是**防御式检查**：不指望进来的东西是对的，**先验一遍，不对就当场拦住**，而不是让它带着错往下跑。为什么非要这么啰嗦？因为**程序跑到一半才炸**是最难看的下场：册子写了一半、账记了一半，外面还什么都不知道。检查写在最前面，坏东西就根本进不来喵。"
+}

@@ -1,0 +1,594 @@
+{
+  "lessonId": "java-stage3-20",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-challenge-bit-count-000",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵要练一门「**数底片上的 1**」的手艺喵：每个数都有一张 0 和 1 的底片（比如 5 的底片是 101），这门手艺要数出里面藏着几个 1。\n\n两个小动作给你备好了：\n\n- `x & 1` —— **只看最右边那一位**（是 1 就得 1，是 0 就得 0）；\n- `x >> 1` —— 把整个数**往右挪一格**（把刚看过的那位挪掉）。\n\n干法就一句口诀：**反复「看一眼最右、把数往右挪」，直到整个数变成 0 为止。**\n\n投喂口先给一个数（今天几个数），再一个一个给数（1 到 63 的整数）。每数完一个，印一行：`X 里有 Y 个 1 喵`。\n\n比如投喂给程序的是\n\n1\n9\n\n程序就要叼回\n\n9 里有 2 个 1 喵\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            // 对 x 数一数底片上有几个 1\n        }\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            int rest = x;\n            int bits = 0;\n            while (rest > 0) {\n                if ((rest & 1) == 1) {\n                    bits = bits + 1;\n                }\n                rest = rest >> 1;\n            }\n            System.out.println(x + \" 里有 \" + bits + \" 个 1 喵\");\n        }\n    }\n}\n",
+      "expectedOutput": "45 里有 4 个 1 喵",
+      "stdin": "1\n45\n",
+      "explanation": "这趟手艺的诀窍是：**从最右边一位开始，一位一位「看—挪—看—挪」**，直到整个数被挪空（变成 0）喵。\n\n```java\nint rest = x;\nint bits = 0;\nwhile (rest > 0) {\n    if ((rest & 1) == 1) {\n        bits = bits + 1;\n    }\n    rest = rest >> 1;\n}\n```\n\n拿 5（底片 101）逐步走一遍：\n\n- `rest = 5`（101）：`5 & 1` 是 1 → 数到一个；右挪一格 → 2（10）；\n- `rest = 2`（10）：`2 & 1` 是 0 → 不数；右挪 → 1（1）；\n- `rest = 1`（1）：`1 & 1` 是 1 → 再数一个；右挪 → 0；\n- `rest = 0`：圈停。总共 2 个 ✓。\n\n三个小地方别踩喵：\n\n1. **圈的条件是 `rest > 0`** —— 挪成 0 就是「底片看完了」，再看下去只会看到一串无穷的 0；\n2. `(rest & 1) == 1` 的**括号别省** —— `&` 的先后次序比 `==` 低，不裹住会先算 `1 == 1`（永远是「对」），意思就全变了；\n3. 每数一个数都要**重新起一份 `rest` 和一个 `bits`**，别把上一个数的结果带进下一个。\n\n一个留到以后的小尾巴：今天全是**正的正数**（1 到 63），右挪很乖；换成负数时右挪会拖着一串 1 不放，那是另一课的坑。",
+      "templateId": "java-s3-challenge-bit-count",
+      "params": {
+        "n": 1
+      },
+      "verified": {
+        "at": "2026-10-20T17:20:04.539Z",
+        "hash": "ed52b26b9f98dff7"
+      }
+    },
+    {
+      "id": "bank-java-s3-challenge-bit-count-001",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵要练一门「**数底片上的 1**」的手艺喵：每个数都有一张 0 和 1 的底片（比如 5 的底片是 101），这门手艺要数出里面藏着几个 1。\n\n两个小动作给你备好了：\n\n- `x & 1` —— **只看最右边那一位**（是 1 就得 1，是 0 就得 0）；\n- `x >> 1` —— 把整个数**往右挪一格**（把刚看过的那位挪掉）。\n\n干法就一句口诀：**反复「看一眼最右、把数往右挪」，直到整个数变成 0 为止。**\n\n投喂口先给一个数（今天几个数），再一个一个给数（1 到 63 的整数）。每数完一个，印一行：`X 里有 Y 个 1 喵`。\n\n比如投喂给程序的是\n\n2\n48\n2\n\n程序就要叼回\n\n48 里有 2 个 1 喵\n2 里有 1 个 1 喵\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            // 对 x 数一数底片上有几个 1\n        }\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            int rest = x;\n            int bits = 0;\n            while (rest > 0) {\n                if ((rest & 1) == 1) {\n                    bits = bits + 1;\n                }\n                rest = rest >> 1;\n            }\n            System.out.println(x + \" 里有 \" + bits + \" 个 1 喵\");\n        }\n    }\n}\n",
+      "expectedOutput": "21 里有 3 个 1 喵\n48 里有 2 个 1 喵",
+      "stdin": "2\n21\n48\n",
+      "explanation": "这趟手艺的诀窍是：**从最右边一位开始，一位一位「看—挪—看—挪」**，直到整个数被挪空（变成 0）喵。\n\n```java\nint rest = x;\nint bits = 0;\nwhile (rest > 0) {\n    if ((rest & 1) == 1) {\n        bits = bits + 1;\n    }\n    rest = rest >> 1;\n}\n```\n\n拿 5（底片 101）逐步走一遍：\n\n- `rest = 5`（101）：`5 & 1` 是 1 → 数到一个；右挪一格 → 2（10）；\n- `rest = 2`（10）：`2 & 1` 是 0 → 不数；右挪 → 1（1）；\n- `rest = 1`（1）：`1 & 1` 是 1 → 再数一个；右挪 → 0；\n- `rest = 0`：圈停。总共 2 个 ✓。\n\n三个小地方别踩喵：\n\n1. **圈的条件是 `rest > 0`** —— 挪成 0 就是「底片看完了」，再看下去只会看到一串无穷的 0；\n2. `(rest & 1) == 1` 的**括号别省** —— `&` 的先后次序比 `==` 低，不裹住会先算 `1 == 1`（永远是「对」），意思就全变了；\n3. 每数一个数都要**重新起一份 `rest` 和一个 `bits`**，别把上一个数的结果带进下一个。\n\n一个留到以后的小尾巴：今天全是**正的正数**（1 到 63），右挪很乖；换成负数时右挪会拖着一串 1 不放，那是另一课的坑。",
+      "templateId": "java-s3-challenge-bit-count",
+      "params": {
+        "n": 2
+      },
+      "verified": {
+        "at": "2026-10-20T17:20:07.676Z",
+        "hash": "7a6537e7b7d29851"
+      }
+    },
+    {
+      "id": "bank-java-s3-challenge-bit-count-002",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵要练一门「**数底片上的 1**」的手艺喵：每个数都有一张 0 和 1 的底片（比如 5 的底片是 101），这门手艺要数出里面藏着几个 1。\n\n两个小动作给你备好了：\n\n- `x & 1` —— **只看最右边那一位**（是 1 就得 1，是 0 就得 0）；\n- `x >> 1` —— 把整个数**往右挪一格**（把刚看过的那位挪掉）。\n\n干法就一句口诀：**反复「看一眼最右、把数往右挪」，直到整个数变成 0 为止。**\n\n投喂口先给一个数（今天几个数），再一个一个给数（1 到 63 的整数）。每数完一个，印一行：`X 里有 Y 个 1 喵`。\n\n比如投喂给程序的是\n\n3\n31\n19\n1\n\n程序就要叼回\n\n31 里有 5 个 1 喵\n19 里有 3 个 1 喵\n1 里有 1 个 1 喵\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            // 对 x 数一数底片上有几个 1\n        }\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            int rest = x;\n            int bits = 0;\n            while (rest > 0) {\n                if ((rest & 1) == 1) {\n                    bits = bits + 1;\n                }\n                rest = rest >> 1;\n            }\n            System.out.println(x + \" 里有 \" + bits + \" 个 1 喵\");\n        }\n    }\n}\n",
+      "expectedOutput": "42 里有 3 个 1 喵\n13 里有 3 个 1 喵\n55 里有 5 个 1 喵",
+      "stdin": "3\n42\n13\n55\n",
+      "explanation": "这趟手艺的诀窍是：**从最右边一位开始，一位一位「看—挪—看—挪」**，直到整个数被挪空（变成 0）喵。\n\n```java\nint rest = x;\nint bits = 0;\nwhile (rest > 0) {\n    if ((rest & 1) == 1) {\n        bits = bits + 1;\n    }\n    rest = rest >> 1;\n}\n```\n\n拿 5（底片 101）逐步走一遍：\n\n- `rest = 5`（101）：`5 & 1` 是 1 → 数到一个；右挪一格 → 2（10）；\n- `rest = 2`（10）：`2 & 1` 是 0 → 不数；右挪 → 1（1）；\n- `rest = 1`（1）：`1 & 1` 是 1 → 再数一个；右挪 → 0；\n- `rest = 0`：圈停。总共 2 个 ✓。\n\n三个小地方别踩喵：\n\n1. **圈的条件是 `rest > 0`** —— 挪成 0 就是「底片看完了」，再看下去只会看到一串无穷的 0；\n2. `(rest & 1) == 1` 的**括号别省** —— `&` 的先后次序比 `==` 低，不裹住会先算 `1 == 1`（永远是「对」），意思就全变了；\n3. 每数一个数都要**重新起一份 `rest` 和一个 `bits`**，别把上一个数的结果带进下一个。\n\n一个留到以后的小尾巴：今天全是**正的正数**（1 到 63），右挪很乖；换成负数时右挪会拖着一串 1 不放，那是另一课的坑。",
+      "templateId": "java-s3-challenge-bit-count",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-30T12:37:36.265Z",
+        "hash": "f0449decd4bb2a38"
+      }
+    },
+    {
+      "id": "bank-java-s3-challenge-bit-count-003",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵要练一门「**数底片上的 1**」的手艺喵：每个数都有一张 0 和 1 的底片（比如 5 的底片是 101），这门手艺要数出里面藏着几个 1。\n\n两个小动作给你备好了：\n\n- `x & 1` —— **只看最右边那一位**（是 1 就得 1，是 0 就得 0）；\n- `x >> 1` —— 把整个数**往右挪一格**（把刚看过的那位挪掉）。\n\n干法就一句口诀：**反复「看一眼最右、把数往右挪」，直到整个数变成 0 为止。**\n\n投喂口先给一个数（今天几个数），再一个一个给数（1 到 63 的整数）。每数完一个，印一行：`X 里有 Y 个 1 喵`。\n\n比如投喂给程序的是\n\n4\n32\n43\n50\n19\n\n程序就要叼回\n\n32 里有 1 个 1 喵\n43 里有 4 个 1 喵\n50 里有 3 个 1 喵\n19 里有 3 个 1 喵\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            // 对 x 数一数底片上有几个 1\n        }\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            int rest = x;\n            int bits = 0;\n            while (rest > 0) {\n                if ((rest & 1) == 1) {\n                    bits = bits + 1;\n                }\n                rest = rest >> 1;\n            }\n            System.out.println(x + \" 里有 \" + bits + \" 个 1 喵\");\n        }\n    }\n}\n",
+      "expectedOutput": "24 里有 2 个 1 喵\n5 里有 2 个 1 喵\n47 里有 5 个 1 喵\n43 里有 4 个 1 喵",
+      "stdin": "4\n24\n5\n47\n43\n",
+      "explanation": "这趟手艺的诀窍是：**从最右边一位开始，一位一位「看—挪—看—挪」**，直到整个数被挪空（变成 0）喵。\n\n```java\nint rest = x;\nint bits = 0;\nwhile (rest > 0) {\n    if ((rest & 1) == 1) {\n        bits = bits + 1;\n    }\n    rest = rest >> 1;\n}\n```\n\n拿 5（底片 101）逐步走一遍：\n\n- `rest = 5`（101）：`5 & 1` 是 1 → 数到一个；右挪一格 → 2（10）；\n- `rest = 2`（10）：`2 & 1` 是 0 → 不数；右挪 → 1（1）；\n- `rest = 1`（1）：`1 & 1` 是 1 → 再数一个；右挪 → 0；\n- `rest = 0`：圈停。总共 2 个 ✓。\n\n三个小地方别踩喵：\n\n1. **圈的条件是 `rest > 0`** —— 挪成 0 就是「底片看完了」，再看下去只会看到一串无穷的 0；\n2. `(rest & 1) == 1` 的**括号别省** —— `&` 的先后次序比 `==` 低，不裹住会先算 `1 == 1`（永远是「对」），意思就全变了；\n3. 每数一个数都要**重新起一份 `rest` 和一个 `bits`**，别把上一个数的结果带进下一个。\n\n一个留到以后的小尾巴：今天全是**正的正数**（1 到 63），右挪很乖；换成负数时右挪会拖着一串 1 不放，那是另一课的坑。",
+      "templateId": "java-s3-challenge-bit-count",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T17:20:10.768Z",
+        "hash": "ec5be58956467dab"
+      }
+    },
+    {
+      "id": "bank-java-s3-challenge-bit-count-004",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵要练一门「**数底片上的 1**」的手艺喵：每个数都有一张 0 和 1 的底片（比如 5 的底片是 101），这门手艺要数出里面藏着几个 1。\n\n两个小动作给你备好了：\n\n- `x & 1` —— **只看最右边那一位**（是 1 就得 1，是 0 就得 0）；\n- `x >> 1` —— 把整个数**往右挪一格**（把刚看过的那位挪掉）。\n\n干法就一句口诀：**反复「看一眼最右、把数往右挪」，直到整个数变成 0 为止。**\n\n投喂口先给一个数（今天几个数），再一个一个给数（1 到 63 的整数）。每数完一个，印一行：`X 里有 Y 个 1 喵`。\n\n比如投喂给程序的是\n\n5\n59\n30\n63\n43\n43\n\n程序就要叼回\n\n59 里有 5 个 1 喵\n30 里有 4 个 1 喵\n63 里有 6 个 1 喵\n43 里有 4 个 1 喵\n43 里有 4 个 1 喵\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            // 对 x 数一数底片上有几个 1\n        }\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            int rest = x;\n            int bits = 0;\n            while (rest > 0) {\n                if ((rest & 1) == 1) {\n                    bits = bits + 1;\n                }\n                rest = rest >> 1;\n            }\n            System.out.println(x + \" 里有 \" + bits + \" 个 1 喵\");\n        }\n    }\n}\n",
+      "expectedOutput": "43 里有 4 个 1 喵\n38 里有 3 个 1 喵\n51 里有 4 个 1 喵\n21 里有 3 个 1 喵\n41 里有 3 个 1 喵",
+      "stdin": "5\n43\n38\n51\n21\n41\n",
+      "explanation": "这趟手艺的诀窍是：**从最右边一位开始，一位一位「看—挪—看—挪」**，直到整个数被挪空（变成 0）喵。\n\n```java\nint rest = x;\nint bits = 0;\nwhile (rest > 0) {\n    if ((rest & 1) == 1) {\n        bits = bits + 1;\n    }\n    rest = rest >> 1;\n}\n```\n\n拿 5（底片 101）逐步走一遍：\n\n- `rest = 5`（101）：`5 & 1` 是 1 → 数到一个；右挪一格 → 2（10）；\n- `rest = 2`（10）：`2 & 1` 是 0 → 不数；右挪 → 1（1）；\n- `rest = 1`（1）：`1 & 1` 是 1 → 再数一个；右挪 → 0；\n- `rest = 0`：圈停。总共 2 个 ✓。\n\n三个小地方别踩喵：\n\n1. **圈的条件是 `rest > 0`** —— 挪成 0 就是「底片看完了」，再看下去只会看到一串无穷的 0；\n2. `(rest & 1) == 1` 的**括号别省** —— `&` 的先后次序比 `==` 低，不裹住会先算 `1 == 1`（永远是「对」），意思就全变了；\n3. 每数一个数都要**重新起一份 `rest` 和一个 `bits`**，别把上一个数的结果带进下一个。\n\n一个留到以后的小尾巴：今天全是**正的正数**（1 到 63），右挪很乖；换成负数时右挪会拖着一串 1 不放，那是另一课的坑。",
+      "templateId": "java-s3-challenge-bit-count",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-20T17:20:13.871Z",
+        "hash": "cc38f39c295415d7"
+      }
+    },
+    {
+      "id": "bank-java-s3-challenge-bit-count-005",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵要练一门「**数底片上的 1**」的手艺喵：每个数都有一张 0 和 1 的底片（比如 5 的底片是 101），这门手艺要数出里面藏着几个 1。\n\n两个小动作给你备好了：\n\n- `x & 1` —— **只看最右边那一位**（是 1 就得 1，是 0 就得 0）；\n- `x >> 1` —— 把整个数**往右挪一格**（把刚看过的那位挪掉）。\n\n干法就一句口诀：**反复「看一眼最右、把数往右挪」，直到整个数变成 0 为止。**\n\n投喂口先给一个数（今天几个数），再一个一个给数（1 到 63 的整数）。每数完一个，印一行：`X 里有 Y 个 1 喵`。\n\n比如投喂给程序的是\n\n6\n8\n48\n19\n7\n34\n27\n\n程序就要叼回\n\n8 里有 1 个 1 喵\n48 里有 2 个 1 喵\n19 里有 3 个 1 喵\n7 里有 3 个 1 喵\n34 里有 2 个 1 喵\n27 里有 4 个 1 喵\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            // 对 x 数一数底片上有几个 1\n        }\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            int rest = x;\n            int bits = 0;\n            while (rest > 0) {\n                if ((rest & 1) == 1) {\n                    bits = bits + 1;\n                }\n                rest = rest >> 1;\n            }\n            System.out.println(x + \" 里有 \" + bits + \" 个 1 喵\");\n        }\n    }\n}\n",
+      "expectedOutput": "20 里有 2 个 1 喵\n43 里有 4 个 1 喵\n16 里有 1 个 1 喵\n63 里有 6 个 1 喵\n62 里有 5 个 1 喵\n47 里有 5 个 1 喵",
+      "stdin": "6\n20\n43\n16\n63\n62\n47\n",
+      "explanation": "这趟手艺的诀窍是：**从最右边一位开始，一位一位「看—挪—看—挪」**，直到整个数被挪空（变成 0）喵。\n\n```java\nint rest = x;\nint bits = 0;\nwhile (rest > 0) {\n    if ((rest & 1) == 1) {\n        bits = bits + 1;\n    }\n    rest = rest >> 1;\n}\n```\n\n拿 5（底片 101）逐步走一遍：\n\n- `rest = 5`（101）：`5 & 1` 是 1 → 数到一个；右挪一格 → 2（10）；\n- `rest = 2`（10）：`2 & 1` 是 0 → 不数；右挪 → 1（1）；\n- `rest = 1`（1）：`1 & 1` 是 1 → 再数一个；右挪 → 0；\n- `rest = 0`：圈停。总共 2 个 ✓。\n\n三个小地方别踩喵：\n\n1. **圈的条件是 `rest > 0`** —— 挪成 0 就是「底片看完了」，再看下去只会看到一串无穷的 0；\n2. `(rest & 1) == 1` 的**括号别省** —— `&` 的先后次序比 `==` 低，不裹住会先算 `1 == 1`（永远是「对」），意思就全变了；\n3. 每数一个数都要**重新起一份 `rest` 和一个 `bits`**，别把上一个数的结果带进下一个。\n\n一个留到以后的小尾巴：今天全是**正的正数**（1 到 63），右挪很乖；换成负数时右挪会拖着一串 1 不放，那是另一课的坑。",
+      "templateId": "java-s3-challenge-bit-count",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:20:16.994Z",
+        "hash": "9c91dee200987001"
+      }
+    },
+    {
+      "id": "bank-java-s3-challenge-rank-order-001",
+      "type": "codefix",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵的成绩排行榜要按**分从高到低**站队喵：分最高的站第 1 名（这场小考满分 9 分）。\n\n可现在它**站反了** —— 分最低的反倒报第 1 名……你帮本喵把队伍的方向扭过来。\n\n程序读一个数（几个人），再一个一个给分，然后一行一行印 `第 X 名 Y 分喵`。\n\n比如投喂给程序的是\n\n5\n1\n6\n9\n7\n9\n\n修好之后就要叼回\n\n第 1 名 9 分喵\n第 2 名 9 分喵\n第 3 名 7 分喵\n第 4 名 6 分喵\n第 5 名 1 分喵\n\n（判分喂的是**另外一组数**喵。）",
+      "brokenCode": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        ArrayList<Integer> scores = new ArrayList<Integer>();\n        for (int i = 0; i < n; i++) {\n            scores.add(sc.nextInt());\n        }\n\n        Collections.sort(scores, (a, b) -> a - b);\n\n        for (int i = 0; i < n; i++) {\n            System.out.println(\"第 \" + (i + 1) + \" 名 \" + scores.get(i) + \" 分喵\");\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        ArrayList<Integer> scores = new ArrayList<Integer>();\n        for (int i = 0; i < n; i++) {\n            scores.add(sc.nextInt());\n        }\n\n        Collections.sort(scores, (a, b) -> b - a);\n\n        for (int i = 0; i < n; i++) {\n            System.out.println(\"第 \" + (i + 1) + \" 名 \" + scores.get(i) + \" 分喵\");\n        }\n    }\n}\n",
+      "expectedOutput": "第 1 名 9 分喵\n第 2 名 8 分喵\n第 3 名 5 分喵\n第 4 名 5 分喵\n第 5 名 4 分喵",
+      "stdin": "5\n4\n9\n8\n5\n5\n",
+      "explanation": "队伍反了，问题出在**比大小那张小字条**上喵。\n\n排队的那个现成招式自己不管谁大谁小，它只会把**两个两个**递到小字条面前问：「这两位要不要换位置？」字条上写的是 `(a, b) -> a - b`，规矩是：\n\n- 算出来是**正数** → 回一句「要换」；\n- 是**零或者负数** → 回一句「不换」。\n\n`a - b` 的含义是「**前面的比后面的大就换**」—— 换来换去，分数小的都被顶到了前面，排成了**从小到大**。可排行榜要的是反过来：大分站前面。把两个位置对调一下就好：\n\n```java\nCollections.sort(scores, (a, b) -> b - a);\n```\n\n`b - a` 的含义是「**后面的比前面的大就换**」—— 排完就是**从大到小**。\n\n记一句喵：**`a - b` 是从小到大，`b - a` 是从大到小 —— 减号左边放谁，谁就往后面站。**",
+      "templateId": "java-s3-challenge-rank-order",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-30T12:37:39.117Z",
+        "hash": "7f166a00a1853076"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-boundary-cases-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一招「平分小鱼干」：捞起一堆，按份数分下去，除不尽的先放着，写法就是 `总数 / 份数` 喵。它在正常值上一直没出过问题，可本喵想给它配一张**带边角料**的体检单。\n\n请你写个程序，照这个次序做：\n\n1. 先把这招写出来：`平分(int 总数, int 份数)`，里面就一句 `return 总数 / 份数;`；\n2. 再写一只小体检台：两只共用的小碗（记**查了几项**、**红了几项**，都从 0 开始）+ 一条判据招式 `查相等(String 名字, int 叼回来, int 该是)`（一样就印 `绿 ` 接名字；不一样就印 `红 ` 接名字，再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数）；\n3. 依次喂**四项**：\n   - `查相等(\"刚够分\", 平分(6, 2), 3);`\n   - `查相等(\"一条都没有的时候\", 平分(0, 3), 0);`\n   - `查相等(\"只有一份的时候\", 平分(7, 1), 7);`\n   - `查相等(\"特别大的数\", 平分(2147483647, 2), 1073741823);`\n4. 最后印一行总账：`体检了 ` 接查了几项、` 项，红了 ` 接红了几项、` 项`。\n\n跑完该看到五行：四行判据，一行总账。\n\n（这一题**不用投喂任何东西**，数字都写在上面了。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        查了几项++;\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    static int 平分(int 总数, int 份数) {\n        return 总数 / 份数;\n    }\n\n    public static void main(String[] args) {\n        查相等(\"刚够分\", 平分(6, 2), 3);\n        查相等(\"一条都没有的时候\", 平分(0, 3), 0);\n        查相等(\"只有一份的时候\", 平分(7, 1), 7);\n        查相等(\"特别大的数\", 平分(2147483647, 2), 1073741823);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 刚够分\n绿 一条都没有的时候\n绿 只有一份的时候\n绿 特别大的数\n体检了 4 项，红了 0 项",
+      "stdin": null,
+      "explanation": "**一、这张单子上为什么只有第一项是「正常值」。** 另外三项都是特意挑的：第二项是**空的**（一堆都没有），第三项是**只有一份**，第四项是**一个顶到上限的大数**喵。正常值跑得再顺，也替不了这三项 —— 毛病最爱躲在平时没猫去的地方。\n\n**二、整数除法在这里帮了忙。** `0 / 3` 是 0（除不尽的部分被丢掉），`7 / 1` 是 7（只有一份就全拿走）。本喵刻意选了能被它算对的数，好让这张单子先亮一遍全绿 —— 单子本身是对的，才有可能把别处的错咬出来。\n\n**三、最后那一项是防翻界的。** 本喵另一版写法在动手之前先加一笔（`总数 + 份数 - 1`），那个加法在大数上会翻过界，叼回来一个负数 —— 就是这一项把它揪出来的。你现在写的这一版没有那笔加法，所以它稳稳地绿着。\n\n**四、总账。** 四行判据全绿，最后一行就是 `体检了 4 项，红了 0 项`。往后给自己的招式配单子，照这个次序来：先写一条最普通的，再补**空**、补**一个**、补**极值**。",
+      "templateId": "java-s3-ut-boundary-cases",
+      "params": {
+        "n1": "一条都没有的时候",
+        "n2": "只有一份的时候"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:14.343Z",
+        "hash": "aa9ce12e519d2947"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-boundary-cases-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一招「平分小鱼干」：捞起一堆，按份数分下去，除不尽的先放着，写法就是 `总数 / 份数` 喵。它在正常值上一直没出过问题，可本喵想给它配一张**带边角料**的体检单。\n\n请你写个程序，照这个次序做：\n\n1. 先把这招写出来：`平分(int 总数, int 份数)`，里面就一句 `return 总数 / 份数;`；\n2. 再写一只小体检台：两只共用的小碗（记**查了几项**、**红了几项**，都从 0 开始）+ 一条判据招式 `查相等(String 名字, int 叼回来, int 该是)`（一样就印 `绿 ` 接名字；不一样就印 `红 ` 接名字，再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数）；\n3. 依次喂**四项**：\n   - `查相等(\"刚够分\", 平分(6, 2), 3);`\n   - `查相等(\"一条都没有的时候\", 平分(0, 3), 0);`\n   - `查相等(\"只有一只猫的时候\", 平分(7, 1), 7);`\n   - `查相等(\"特别大的数\", 平分(2147483647, 2), 1073741823);`\n4. 最后印一行总账：`体检了 ` 接查了几项、` 项，红了 ` 接红了几项、` 项`。\n\n跑完该看到五行：四行判据，一行总账。\n\n（这一题**不用投喂任何东西**，数字都写在上面了。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        查了几项++;\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    static int 平分(int 总数, int 份数) {\n        return 总数 / 份数;\n    }\n\n    public static void main(String[] args) {\n        查相等(\"刚够分\", 平分(6, 2), 3);\n        查相等(\"一条都没有的时候\", 平分(0, 3), 0);\n        查相等(\"只有一只猫的时候\", 平分(7, 1), 7);\n        查相等(\"特别大的数\", 平分(2147483647, 2), 1073741823);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 刚够分\n绿 一条都没有的时候\n绿 只有一只猫的时候\n绿 特别大的数\n体检了 4 项，红了 0 项",
+      "stdin": null,
+      "explanation": "**一、这张单子上为什么只有第一项是「正常值」。** 另外三项都是特意挑的：第二项是**空的**（一堆都没有），第三项是**只有一份**，第四项是**一个顶到上限的大数**喵。正常值跑得再顺，也替不了这三项 —— 毛病最爱躲在平时没猫去的地方。\n\n**二、整数除法在这里帮了忙。** `0 / 3` 是 0（除不尽的部分被丢掉），`7 / 1` 是 7（只有一份就全拿走）。本喵刻意选了能被它算对的数，好让这张单子先亮一遍全绿 —— 单子本身是对的，才有可能把别处的错咬出来。\n\n**三、最后那一项是防翻界的。** 本喵另一版写法在动手之前先加一笔（`总数 + 份数 - 1`），那个加法在大数上会翻过界，叼回来一个负数 —— 就是这一项把它揪出来的。你现在写的这一版没有那笔加法，所以它稳稳地绿着。\n\n**四、总账。** 四行判据全绿，最后一行就是 `体检了 4 项，红了 0 项`。往后给自己的招式配单子，照这个次序来：先写一条最普通的，再补**空**、补**一个**、补**极值**。",
+      "templateId": "java-s3-ut-boundary-cases",
+      "params": {
+        "n1": "一条都没有的时候",
+        "n2": "只有一只猫的时候"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:11.342Z",
+        "hash": "6fb12ac7d2837e66"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-boundary-cases-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一招「平分小鱼干」：捞起一堆，按份数分下去，除不尽的先放着，写法就是 `总数 / 份数` 喵。它在正常值上一直没出过问题，可本喵想给它配一张**带边角料**的体检单。\n\n请你写个程序，照这个次序做：\n\n1. 先把这招写出来：`平分(int 总数, int 份数)`，里面就一句 `return 总数 / 份数;`；\n2. 再写一只小体检台：两只共用的小碗（记**查了几项**、**红了几项**，都从 0 开始）+ 一条判据招式 `查相等(String 名字, int 叼回来, int 该是)`（一样就印 `绿 ` 接名字；不一样就印 `红 ` 接名字，再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数）；\n3. 依次喂**四项**：\n   - `查相等(\"刚够分\", 平分(6, 2), 3);`\n   - `查相等(\"空的时候\", 平分(0, 3), 0);`\n   - `查相等(\"只有一份的时候\", 平分(7, 1), 7);`\n   - `查相等(\"特别大的数\", 平分(2147483647, 2), 1073741823);`\n4. 最后印一行总账：`体检了 ` 接查了几项、` 项，红了 ` 接红了几项、` 项`。\n\n跑完该看到五行：四行判据，一行总账。\n\n（这一题**不用投喂任何东西**，数字都写在上面了。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        查了几项++;\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    static int 平分(int 总数, int 份数) {\n        return 总数 / 份数;\n    }\n\n    public static void main(String[] args) {\n        查相等(\"刚够分\", 平分(6, 2), 3);\n        查相等(\"空的时候\", 平分(0, 3), 0);\n        查相等(\"只有一份的时候\", 平分(7, 1), 7);\n        查相等(\"特别大的数\", 平分(2147483647, 2), 1073741823);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 刚够分\n绿 空的时候\n绿 只有一份的时候\n绿 特别大的数\n体检了 4 项，红了 0 项",
+      "stdin": null,
+      "explanation": "**一、这张单子上为什么只有第一项是「正常值」。** 另外三项都是特意挑的：第二项是**空的**（一堆都没有），第三项是**只有一份**，第四项是**一个顶到上限的大数**喵。正常值跑得再顺，也替不了这三项 —— 毛病最爱躲在平时没猫去的地方。\n\n**二、整数除法在这里帮了忙。** `0 / 3` 是 0（除不尽的部分被丢掉），`7 / 1` 是 7（只有一份就全拿走）。本喵刻意选了能被它算对的数，好让这张单子先亮一遍全绿 —— 单子本身是对的，才有可能把别处的错咬出来。\n\n**三、最后那一项是防翻界的。** 本喵另一版写法在动手之前先加一笔（`总数 + 份数 - 1`），那个加法在大数上会翻过界，叼回来一个负数 —— 就是这一项把它揪出来的。你现在写的这一版没有那笔加法，所以它稳稳地绿着。\n\n**四、总账。** 四行判据全绿，最后一行就是 `体检了 4 项，红了 0 项`。往后给自己的招式配单子，照这个次序来：先写一条最普通的，再补**空**、补**一个**、补**极值**。",
+      "templateId": "java-s3-ut-boundary-cases",
+      "params": {
+        "n1": "空的时候",
+        "n2": "只有一份的时候"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:13.387Z",
+        "hash": "f0d0de6982dd737e"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-boundary-cases-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一招「平分小鱼干」：捞起一堆，按份数分下去，除不尽的先放着，写法就是 `总数 / 份数` 喵。它在正常值上一直没出过问题，可本喵想给它配一张**带边角料**的体检单。\n\n请你写个程序，照这个次序做：\n\n1. 先把这招写出来：`平分(int 总数, int 份数)`，里面就一句 `return 总数 / 份数;`；\n2. 再写一只小体检台：两只共用的小碗（记**查了几项**、**红了几项**，都从 0 开始）+ 一条判据招式 `查相等(String 名字, int 叼回来, int 该是)`（一样就印 `绿 ` 接名字；不一样就印 `红 ` 接名字，再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数）；\n3. 依次喂**四项**：\n   - `查相等(\"刚够分\", 平分(6, 2), 3);`\n   - `查相等(\"空的时候\", 平分(0, 3), 0);`\n   - `查相等(\"只有一只猫的时候\", 平分(7, 1), 7);`\n   - `查相等(\"特别大的数\", 平分(2147483647, 2), 1073741823);`\n4. 最后印一行总账：`体检了 ` 接查了几项、` 项，红了 ` 接红了几项、` 项`。\n\n跑完该看到五行：四行判据，一行总账。\n\n（这一题**不用投喂任何东西**，数字都写在上面了。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        查了几项++;\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    static int 平分(int 总数, int 份数) {\n        return 总数 / 份数;\n    }\n\n    public static void main(String[] args) {\n        查相等(\"刚够分\", 平分(6, 2), 3);\n        查相等(\"空的时候\", 平分(0, 3), 0);\n        查相等(\"只有一只猫的时候\", 平分(7, 1), 7);\n        查相等(\"特别大的数\", 平分(2147483647, 2), 1073741823);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 刚够分\n绿 空的时候\n绿 只有一只猫的时候\n绿 特别大的数\n体检了 4 项，红了 0 项",
+      "stdin": null,
+      "explanation": "**一、这张单子上为什么只有第一项是「正常值」。** 另外三项都是特意挑的：第二项是**空的**（一堆都没有），第三项是**只有一份**，第四项是**一个顶到上限的大数**喵。正常值跑得再顺，也替不了这三项 —— 毛病最爱躲在平时没猫去的地方。\n\n**二、整数除法在这里帮了忙。** `0 / 3` 是 0（除不尽的部分被丢掉），`7 / 1` 是 7（只有一份就全拿走）。本喵刻意选了能被它算对的数，好让这张单子先亮一遍全绿 —— 单子本身是对的，才有可能把别处的错咬出来。\n\n**三、最后那一项是防翻界的。** 本喵另一版写法在动手之前先加一笔（`总数 + 份数 - 1`），那个加法在大数上会翻过界，叼回来一个负数 —— 就是这一项把它揪出来的。你现在写的这一版没有那笔加法，所以它稳稳地绿着。\n\n**四、总账。** 四行判据全绿，最后一行就是 `体检了 4 项，红了 0 项`。往后给自己的招式配单子，照这个次序来：先写一条最普通的，再补**空**、补**一个**、补**极值**。",
+      "templateId": "java-s3-ut-boundary-cases",
+      "params": {
+        "n1": "空的时候",
+        "n2": "只有一只猫的时候"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:15.249Z",
+        "hash": "b3aa45d8c8f84097"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-close-float-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这只体检台已经摆好了两只共用的小碗（记**查了几项**、**红了几项**），门口那三行调用也写好了，缺的只有一条**给小数用的判据**喵。\n\n请你把这条判据补出来：`查接近(String 名字, double 叼回来, double 该是)` ——\n\n1. 先给「查了几项」加 1；\n2. 再看两个数**差得够不够小**：「两边差的大小」小于 `1e-9` 就印一行 `绿 ` 接名字；不然就给「红了几项」加 1，印一行 `红 ` 接名字，再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数。\n\n两只小碗和门口那三行调用，一个都别动。跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**。）",
+      "starter": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    // 在这里写下那条给小数用的判据：\n    // 查接近(String 名字, double 叼回来, double 该是)\n\n    public static void main(String[] args) {\n        // 在这里依次喊三次：\n        //   查接近(\"两条加起来\", 0.1 + 0.2, 0.3);\n        //   查接近(\"差得多了\", 1.0, 2.0);\n        //   查接近(\"刚好能存下\", 0.25 + 0.25, 0.5);\n        // 最后印一行总账\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        查了几项++;\n        if (Math.abs(叼回来 - 该是) < 1e-9) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"两条加起来\", 0.1 + 0.2, 0.3);\n        查接近(\"差得多了\", 1.0, 2.0);\n        查接近(\"刚好能存下\", 0.25 + 0.25, 0.5);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 两条加起来\n红 差得多了：叼回来 1.0，该是 2.0\n绿 刚好能存下\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、为什么这条判据不能拿等号。** `0.1 + 0.2` 叼回来的是 `0.30000000000000004` —— 末尾多出一丁点，拿等号比就是「不」喵。等号问的是「一模一样吗」，而判据该问的是「近到可以当一样吗」。\n\n**二、那条式子怎么写。** `Math.abs(叼回来 - 该是) < 1e-9`：`Math.abs` 取的是差的大小（差有正负，判据只关心远近），`1e-9` 是本喵允许的那一点误差。\n\n**三、少了 `Math.abs` 会怎样。** 差是负的时候直接比，负数**永远小于** `1e-9` —— 差得再远也会亮绿灯。本喵真试过：拿 `0.2 - 0.4` 去比，差着 0.2 呢，照样印 `true`。所以取大小这一步不是装饰，它决定的正是这条判据还管不管用。\n\n**四、三行判据。** 第一项两个小数只差一丁点 → 绿；第二项 `1.0` 和 `2.0` 差得远了 → 红（印出「叼回来 1.0，该是 2.0」）；第三项 `0.25 + 0.25` 就是 `0.5`（这两个数在机器里存得下精确值）→ 绿。总账是 `体检了 3 项，红了 1 项`。\n\n一句话记住：**要比两个小数，先问一句本喵允许差多少，再把那条式子写出来。**",
+      "templateId": "java-s3-ut-close-float",
+      "params": {
+        "l1": "两条加起来",
+        "l2": "差得多了",
+        "l3": "刚好能存下"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:16.174Z",
+        "hash": "d0c1a3e841c1ab72"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-close-float-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这只体检台已经摆好了两只共用的小碗（记**查了几项**、**红了几项**），门口那三行调用也写好了，缺的只有一条**给小数用的判据**喵。\n\n请你把这条判据补出来：`查接近(String 名字, double 叼回来, double 该是)` ——\n\n1. 先给「查了几项」加 1；\n2. 再看两个数**差得够不够小**：「两边差的大小」小于 `1e-9` 就印一行 `绿 ` 接名字；不然就给「红了几项」加 1，印一行 `红 ` 接名字，再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数。\n\n两只小碗和门口那三行调用，一个都别动。跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**。）",
+      "starter": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    // 在这里写下那条给小数用的判据：\n    // 查接近(String 名字, double 叼回来, double 该是)\n\n    public static void main(String[] args) {\n        // 在这里依次喊三次：\n        //   查接近(\"两条加起来\", 0.1 + 0.2, 0.3);\n        //   查接近(\"差得多了\", 1.0, 2.0);\n        //   查接近(\"这两个存得下\", 0.25 + 0.25, 0.5);\n        // 最后印一行总账\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        查了几项++;\n        if (Math.abs(叼回来 - 该是) < 1e-9) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"两条加起来\", 0.1 + 0.2, 0.3);\n        查接近(\"差得多了\", 1.0, 2.0);\n        查接近(\"这两个存得下\", 0.25 + 0.25, 0.5);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 两条加起来\n红 差得多了：叼回来 1.0，该是 2.0\n绿 这两个存得下\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、为什么这条判据不能拿等号。** `0.1 + 0.2` 叼回来的是 `0.30000000000000004` —— 末尾多出一丁点，拿等号比就是「不」喵。等号问的是「一模一样吗」，而判据该问的是「近到可以当一样吗」。\n\n**二、那条式子怎么写。** `Math.abs(叼回来 - 该是) < 1e-9`：`Math.abs` 取的是差的大小（差有正负，判据只关心远近），`1e-9` 是本喵允许的那一点误差。\n\n**三、少了 `Math.abs` 会怎样。** 差是负的时候直接比，负数**永远小于** `1e-9` —— 差得再远也会亮绿灯。本喵真试过：拿 `0.2 - 0.4` 去比，差着 0.2 呢，照样印 `true`。所以取大小这一步不是装饰，它决定的正是这条判据还管不管用。\n\n**四、三行判据。** 第一项两个小数只差一丁点 → 绿；第二项 `1.0` 和 `2.0` 差得远了 → 红（印出「叼回来 1.0，该是 2.0」）；第三项 `0.25 + 0.25` 就是 `0.5`（这两个数在机器里存得下精确值）→ 绿。总账是 `体检了 3 项，红了 1 项`。\n\n一句话记住：**要比两个小数，先问一句本喵允许差多少，再把那条式子写出来。**",
+      "templateId": "java-s3-ut-close-float",
+      "params": {
+        "l1": "两条加起来",
+        "l2": "差得多了",
+        "l3": "这两个存得下"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:15.430Z",
+        "hash": "875bab9d53d398df"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-close-float-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这只体检台已经摆好了两只共用的小碗（记**查了几项**、**红了几项**），门口那三行调用也写好了，缺的只有一条**给小数用的判据**喵。\n\n请你把这条判据补出来：`查接近(String 名字, double 叼回来, double 该是)` ——\n\n1. 先给「查了几项」加 1；\n2. 再看两个数**差得够不够小**：「两边差的大小」小于 `1e-9` 就印一行 `绿 ` 接名字；不然就给「红了几项」加 1，印一行 `红 ` 接名字，再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数。\n\n两只小碗和门口那三行调用，一个都别动。跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**。）",
+      "starter": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    // 在这里写下那条给小数用的判据：\n    // 查接近(String 名字, double 叼回来, double 该是)\n\n    public static void main(String[] args) {\n        // 在这里依次喊三次：\n        //   查接近(\"两条加起来\", 0.1 + 0.2, 0.3);\n        //   查接近(\"差得远了\", 1.0, 2.0);\n        //   查接近(\"这两个存得下\", 0.25 + 0.25, 0.5);\n        // 最后印一行总账\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        查了几项++;\n        if (Math.abs(叼回来 - 该是) < 1e-9) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"两条加起来\", 0.1 + 0.2, 0.3);\n        查接近(\"差得远了\", 1.0, 2.0);\n        查接近(\"这两个存得下\", 0.25 + 0.25, 0.5);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 两条加起来\n红 差得远了：叼回来 1.0，该是 2.0\n绿 这两个存得下\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、为什么这条判据不能拿等号。** `0.1 + 0.2` 叼回来的是 `0.30000000000000004` —— 末尾多出一丁点，拿等号比就是「不」喵。等号问的是「一模一样吗」，而判据该问的是「近到可以当一样吗」。\n\n**二、那条式子怎么写。** `Math.abs(叼回来 - 该是) < 1e-9`：`Math.abs` 取的是差的大小（差有正负，判据只关心远近），`1e-9` 是本喵允许的那一点误差。\n\n**三、少了 `Math.abs` 会怎样。** 差是负的时候直接比，负数**永远小于** `1e-9` —— 差得再远也会亮绿灯。本喵真试过：拿 `0.2 - 0.4` 去比，差着 0.2 呢，照样印 `true`。所以取大小这一步不是装饰，它决定的正是这条判据还管不管用。\n\n**四、三行判据。** 第一项两个小数只差一丁点 → 绿；第二项 `1.0` 和 `2.0` 差得远了 → 红（印出「叼回来 1.0，该是 2.0」）；第三项 `0.25 + 0.25` 就是 `0.5`（这两个数在机器里存得下精确值）→ 绿。总账是 `体检了 3 项，红了 1 项`。\n\n一句话记住：**要比两个小数，先问一句本喵允许差多少，再把那条式子写出来。**",
+      "templateId": "java-s3-ut-close-float",
+      "params": {
+        "l1": "两条加起来",
+        "l2": "差得远了",
+        "l3": "这两个存得下"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:17.512Z",
+        "hash": "f749ff0c31e7e62b"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-close-float-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这只体检台已经摆好了两只共用的小碗（记**查了几项**、**红了几项**），门口那三行调用也写好了，缺的只有一条**给小数用的判据**喵。\n\n请你把这条判据补出来：`查接近(String 名字, double 叼回来, double 该是)` ——\n\n1. 先给「查了几项」加 1；\n2. 再看两个数**差得够不够小**：「两边差的大小」小于 `1e-9` 就印一行 `绿 ` 接名字；不然就给「红了几项」加 1，印一行 `红 ` 接名字，再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数。\n\n两只小碗和门口那三行调用，一个都别动。跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**。）",
+      "starter": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    // 在这里写下那条给小数用的判据：\n    // 查接近(String 名字, double 叼回来, double 该是)\n\n    public static void main(String[] args) {\n        // 在这里依次喊三次：\n        //   查接近(\"两笔加起来\", 0.1 + 0.2, 0.3);\n        //   查接近(\"差得多了\", 1.0, 2.0);\n        //   查接近(\"刚好能存下\", 0.25 + 0.25, 0.5);\n        // 最后印一行总账\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        查了几项++;\n        if (Math.abs(叼回来 - 该是) < 1e-9) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"两笔加起来\", 0.1 + 0.2, 0.3);\n        查接近(\"差得多了\", 1.0, 2.0);\n        查接近(\"刚好能存下\", 0.25 + 0.25, 0.5);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 两笔加起来\n红 差得多了：叼回来 1.0，该是 2.0\n绿 刚好能存下\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、为什么这条判据不能拿等号。** `0.1 + 0.2` 叼回来的是 `0.30000000000000004` —— 末尾多出一丁点，拿等号比就是「不」喵。等号问的是「一模一样吗」，而判据该问的是「近到可以当一样吗」。\n\n**二、那条式子怎么写。** `Math.abs(叼回来 - 该是) < 1e-9`：`Math.abs` 取的是差的大小（差有正负，判据只关心远近），`1e-9` 是本喵允许的那一点误差。\n\n**三、少了 `Math.abs` 会怎样。** 差是负的时候直接比，负数**永远小于** `1e-9` —— 差得再远也会亮绿灯。本喵真试过：拿 `0.2 - 0.4` 去比，差着 0.2 呢，照样印 `true`。所以取大小这一步不是装饰，它决定的正是这条判据还管不管用。\n\n**四、三行判据。** 第一项两个小数只差一丁点 → 绿；第二项 `1.0` 和 `2.0` 差得远了 → 红（印出「叼回来 1.0，该是 2.0」）；第三项 `0.25 + 0.25` 就是 `0.5`（这两个数在机器里存得下精确值）→ 绿。总账是 `体检了 3 项，红了 1 项`。\n\n一句话记住：**要比两个小数，先问一句本喵允许差多少，再把那条式子写出来。**",
+      "templateId": "java-s3-ut-close-float",
+      "params": {
+        "l1": "两笔加起来",
+        "l2": "差得多了",
+        "l3": "刚好能存下"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:19.605Z",
+        "hash": "1e047f836a694e76"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-close-float-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这只体检台已经摆好了两只共用的小碗（记**查了几项**、**红了几项**），门口那三行调用也写好了，缺的只有一条**给小数用的判据**喵。\n\n请你把这条判据补出来：`查接近(String 名字, double 叼回来, double 该是)` ——\n\n1. 先给「查了几项」加 1；\n2. 再看两个数**差得够不够小**：「两边差的大小」小于 `1e-9` 就印一行 `绿 ` 接名字；不然就给「红了几项」加 1，印一行 `红 ` 接名字，再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数。\n\n两只小碗和门口那三行调用，一个都别动。跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**。）",
+      "starter": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    // 在这里写下那条给小数用的判据：\n    // 查接近(String 名字, double 叼回来, double 该是)\n\n    public static void main(String[] args) {\n        // 在这里依次喊三次：\n        //   查接近(\"两笔加起来\", 0.1 + 0.2, 0.3);\n        //   查接近(\"差得远了\", 1.0, 2.0);\n        //   查接近(\"刚好能存下\", 0.25 + 0.25, 0.5);\n        // 最后印一行总账\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        查了几项++;\n        if (Math.abs(叼回来 - 该是) < 1e-9) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"两笔加起来\", 0.1 + 0.2, 0.3);\n        查接近(\"差得远了\", 1.0, 2.0);\n        查接近(\"刚好能存下\", 0.25 + 0.25, 0.5);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 两笔加起来\n红 差得远了：叼回来 1.0，该是 2.0\n绿 刚好能存下\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、为什么这条判据不能拿等号。** `0.1 + 0.2` 叼回来的是 `0.30000000000000004` —— 末尾多出一丁点，拿等号比就是「不」喵。等号问的是「一模一样吗」，而判据该问的是「近到可以当一样吗」。\n\n**二、那条式子怎么写。** `Math.abs(叼回来 - 该是) < 1e-9`：`Math.abs` 取的是差的大小（差有正负，判据只关心远近），`1e-9` 是本喵允许的那一点误差。\n\n**三、少了 `Math.abs` 会怎样。** 差是负的时候直接比，负数**永远小于** `1e-9` —— 差得再远也会亮绿灯。本喵真试过：拿 `0.2 - 0.4` 去比，差着 0.2 呢，照样印 `true`。所以取大小这一步不是装饰，它决定的正是这条判据还管不管用。\n\n**四、三行判据。** 第一项两个小数只差一丁点 → 绿；第二项 `1.0` 和 `2.0` 差得远了 → 红（印出「叼回来 1.0，该是 2.0」）；第三项 `0.25 + 0.25` 就是 `0.5`（这两个数在机器里存得下精确值）→ 绿。总账是 `体检了 3 项，红了 1 项`。\n\n一句话记住：**要比两个小数，先问一句本喵允许差多少，再把那条式子写出来。**",
+      "templateId": "java-s3-ut-close-float",
+      "params": {
+        "l1": "两笔加起来",
+        "l2": "差得远了",
+        "l3": "刚好能存下"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:21.664Z",
+        "hash": "c0ae0dce8b62badf"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-close-float-007",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这只体检台已经摆好了两只共用的小碗（记**查了几项**、**红了几项**），门口那三行调用也写好了，缺的只有一条**给小数用的判据**喵。\n\n请你把这条判据补出来：`查接近(String 名字, double 叼回来, double 该是)` ——\n\n1. 先给「查了几项」加 1；\n2. 再看两个数**差得够不够小**：「两边差的大小」小于 `1e-9` 就印一行 `绿 ` 接名字；不然就给「红了几项」加 1，印一行 `红 ` 接名字，再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数。\n\n两只小碗和门口那三行调用，一个都别动。跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**。）",
+      "starter": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    // 在这里写下那条给小数用的判据：\n    // 查接近(String 名字, double 叼回来, double 该是)\n\n    public static void main(String[] args) {\n        // 在这里依次喊三次：\n        //   查接近(\"两笔加起来\", 0.1 + 0.2, 0.3);\n        //   查接近(\"差得远了\", 1.0, 2.0);\n        //   查接近(\"这两个存得下\", 0.25 + 0.25, 0.5);\n        // 最后印一行总账\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        查了几项++;\n        if (Math.abs(叼回来 - 该是) < 1e-9) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"两笔加起来\", 0.1 + 0.2, 0.3);\n        查接近(\"差得远了\", 1.0, 2.0);\n        查接近(\"这两个存得下\", 0.25 + 0.25, 0.5);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 两笔加起来\n红 差得远了：叼回来 1.0，该是 2.0\n绿 这两个存得下\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、为什么这条判据不能拿等号。** `0.1 + 0.2` 叼回来的是 `0.30000000000000004` —— 末尾多出一丁点，拿等号比就是「不」喵。等号问的是「一模一样吗」，而判据该问的是「近到可以当一样吗」。\n\n**二、那条式子怎么写。** `Math.abs(叼回来 - 该是) < 1e-9`：`Math.abs` 取的是差的大小（差有正负，判据只关心远近），`1e-9` 是本喵允许的那一点误差。\n\n**三、少了 `Math.abs` 会怎样。** 差是负的时候直接比，负数**永远小于** `1e-9` —— 差得再远也会亮绿灯。本喵真试过：拿 `0.2 - 0.4` 去比，差着 0.2 呢，照样印 `true`。所以取大小这一步不是装饰，它决定的正是这条判据还管不管用。\n\n**四、三行判据。** 第一项两个小数只差一丁点 → 绿；第二项 `1.0` 和 `2.0` 差得远了 → 红（印出「叼回来 1.0，该是 2.0」）；第三项 `0.25 + 0.25` 就是 `0.5`（这两个数在机器里存得下精确值）→ 绿。总账是 `体检了 3 项，红了 1 项`。\n\n一句话记住：**要比两个小数，先问一句本喵允许差多少，再把那条式子写出来。**",
+      "templateId": "java-s3-ut-close-float",
+      "params": {
+        "l1": "两笔加起来",
+        "l2": "差得远了",
+        "l3": "这两个存得下"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:17.115Z",
+        "hash": "6a58f12340fb47ea"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-float-eq-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这只体检台给小数准备了一条判据，可它一跑就印了个「红」字 —— `0.1 + 0.2` 和 `0.3` 本该算相等，它偏说不等喵。\n\n毛病就在判据那一行的写法上：它拿**等号**去比两个小数了。请你把它改到印出**一行**：\n\n```text\n绿 两条加起来\n```\n\n- 那一行报的是**这一项的名字**（本喵写在门口那行调用里了）；\n- 判据收的三样东西（名字、叼回来的、该是的）一个都别动，门口那行调用也别动。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            System.out.println(\"红 \" + 名字);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"两条加起来\", 0.1 + 0.2, 0.3);\n    }\n}\n",
+      "referenceFix": "public class Main {\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        if (Math.abs(叼回来 - 该是) < 1e-9) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            System.out.println(\"红 \" + 名字);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"两条加起来\", 0.1 + 0.2, 0.3);\n    }\n}\n",
+      "expectedOutput": "绿 两条加起来",
+      "stdin": null,
+      "explanation": "**一、为什么拿等号比不成立。** `0.1 + 0.2` 叼回来的其实是 `0.30000000000000004` —— 小数在机器里存不成精确的比例，末尾会多出一丁点喵。等号问的是「**一模一样吗**」，差着那一丁点，答案就是「不」。\n\n**二、判据真正该问的。** 不是「一模一样吗」，是「**近到可以当一样吗**」。所以那一行不该写等号，该写「两边差得够不够小」：先拿 `Math.abs` 把差的大小取出来（差有正负，判据只关心远近），再和本喵允许的那一点误差 `1e-9` 比。\n\n**三、改完真跑过。** 屏幕上印的是「绿 」接这一项的名字 —— 那一丁点误差被放行了。\n\n一句话记住：**凡是两个小数，先问一句「本喵允许差多少」，把这句话写进那一行。**",
+      "templateId": "java-s3-ut-float-eq",
+      "params": {
+        "n": "两条加起来"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:18.022Z",
+        "hash": "31bb679611f3dbb2"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-float-eq-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这只体检台给小数准备了一条判据，可它一跑就印了个「红」字 —— `0.1 + 0.2` 和 `0.3` 本该算相等，它偏说不等喵。\n\n毛病就在判据那一行的写法上：它拿**等号**去比两个小数了。请你把它改到印出**一行**：\n\n```text\n绿 两笔加起来\n```\n\n- 那一行报的是**这一项的名字**（本喵写在门口那行调用里了）；\n- 判据收的三样东西（名字、叼回来的、该是的）一个都别动，门口那行调用也别动。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            System.out.println(\"红 \" + 名字);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"两笔加起来\", 0.1 + 0.2, 0.3);\n    }\n}\n",
+      "referenceFix": "public class Main {\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        if (Math.abs(叼回来 - 该是) < 1e-9) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            System.out.println(\"红 \" + 名字);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"两笔加起来\", 0.1 + 0.2, 0.3);\n    }\n}\n",
+      "expectedOutput": "绿 两笔加起来",
+      "stdin": null,
+      "explanation": "**一、为什么拿等号比不成立。** `0.1 + 0.2` 叼回来的其实是 `0.30000000000000004` —— 小数在机器里存不成精确的比例，末尾会多出一丁点喵。等号问的是「**一模一样吗**」，差着那一丁点，答案就是「不」。\n\n**二、判据真正该问的。** 不是「一模一样吗」，是「**近到可以当一样吗**」。所以那一行不该写等号，该写「两边差得够不够小」：先拿 `Math.abs` 把差的大小取出来（差有正负，判据只关心远近），再和本喵允许的那一点误差 `1e-9` 比。\n\n**三、改完真跑过。** 屏幕上印的是「绿 」接这一项的名字 —— 那一丁点误差被放行了。\n\n一句话记住：**凡是两个小数，先问一句「本喵允许差多少」，把这句话写进那一行。**",
+      "templateId": "java-s3-ut-float-eq",
+      "params": {
+        "n": "两笔加起来"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:19.314Z",
+        "hash": "3e269b9d6087d9ea"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-harness-count-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要一只小体检台，一次体检三件小事喵。请你写个程序，照这个次序做：\n\n1. 摆两只共用的小碗：一只记**查了几项**、一只记**红了几项**，都从 0 开始；\n2. 写一条判据招式 `查相等(String 名字, int 叼回来, int 该是)`：每喊一次先给「查了几项」加 1；两个数一样就印一行 `绿 ` 接名字；不一样就给「红了几项」加 1，印一行 `红 ` 接名字，后面再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数；\n3. 在门口依次喊三次：`查相等(\"整分\", 6 / 2, 3);`、`查相等(\"除不尽\", 8 / 2, 3);`、`查相等(\"空碗\", 0 / 3, 0);`\n4. 最后印一行总账：`体检了 ` 接查了几项、` 项，红了 ` 接红了几项、` 项`。\n\n跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**，本喵要的数字都写在上面了。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        查了几项++;\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"整分\", 6 / 2, 3);\n        查相等(\"除不尽\", 8 / 2, 3);\n        查相等(\"空碗\", 0 / 3, 0);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 整分\n红 除不尽：叼回来 4，该是 3\n绿 空碗\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、两只小碗为什么要共用。** 它们要一项一项跟到最后：每喊一次判据就往上加一笔。挂在某一趟里的话，出了那一趟就没人记得了，最后那行总账也就报不出数喵。\n\n**二、判据收的那三样。** 名字、叼回来的、该是的：`叼回来 == 该是` 为真就印绿，为假就印红。**红的那一行必须带数字** —— 只有名字的话，你还得翻回去自己算差了多少，那正是判据该替你干的活。\n\n**三、三行判据分别是什么。** `6 / 2` 是 3，和该是的 3 一样 → 绿；`8 / 2` 是 4，比该是的 3 多 → 红（所以那一行印的是「叼回来 4，该是 3」）；`0 / 3` 是 0，和该是的 0 一样 → 绿。\n\n**四、总账。** 三行跑完，两只小碗记着「3 项」和「1 项」，最后一行就是 `体检了 3 项，红了 1 项`。这一行是整只台子最值钱的字喵：只要它不是「红了 0 项」，就说明有东西坏了 —— 那你就翻回去看是哪几行红了。",
+      "templateId": "java-s3-ut-harness-count",
+      "params": {
+        "l1": "整分",
+        "l2": "除不尽",
+        "l3": "空碗"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:20.663Z",
+        "hash": "4fb691008ab9177e"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-harness-count-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要一只小体检台，一次体检三件小事喵。请你写个程序，照这个次序做：\n\n1. 摆两只共用的小碗：一只记**查了几项**、一只记**红了几项**，都从 0 开始；\n2. 写一条判据招式 `查相等(String 名字, int 叼回来, int 该是)`：每喊一次先给「查了几项」加 1；两个数一样就印一行 `绿 ` 接名字；不一样就给「红了几项」加 1，印一行 `红 ` 接名字，后面再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数；\n3. 在门口依次喊三次：`查相等(\"整分\", 6 / 2, 3);`、`查相等(\"除不尽\", 8 / 2, 3);`、`查相等(\"一条都没有\", 0 / 3, 0);`\n4. 最后印一行总账：`体检了 ` 接查了几项、` 项，红了 ` 接红了几项、` 项`。\n\n跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**，本喵要的数字都写在上面了。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        查了几项++;\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"整分\", 6 / 2, 3);\n        查相等(\"除不尽\", 8 / 2, 3);\n        查相等(\"一条都没有\", 0 / 3, 0);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 整分\n红 除不尽：叼回来 4，该是 3\n绿 一条都没有\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、两只小碗为什么要共用。** 它们要一项一项跟到最后：每喊一次判据就往上加一笔。挂在某一趟里的话，出了那一趟就没人记得了，最后那行总账也就报不出数喵。\n\n**二、判据收的那三样。** 名字、叼回来的、该是的：`叼回来 == 该是` 为真就印绿，为假就印红。**红的那一行必须带数字** —— 只有名字的话，你还得翻回去自己算差了多少，那正是判据该替你干的活。\n\n**三、三行判据分别是什么。** `6 / 2` 是 3，和该是的 3 一样 → 绿；`8 / 2` 是 4，比该是的 3 多 → 红（所以那一行印的是「叼回来 4，该是 3」）；`0 / 3` 是 0，和该是的 0 一样 → 绿。\n\n**四、总账。** 三行跑完，两只小碗记着「3 项」和「1 项」，最后一行就是 `体检了 3 项，红了 1 项`。这一行是整只台子最值钱的字喵：只要它不是「红了 0 项」，就说明有东西坏了 —— 那你就翻回去看是哪几行红了。",
+      "templateId": "java-s3-ut-harness-count",
+      "params": {
+        "l1": "整分",
+        "l2": "除不尽",
+        "l3": "一条都没有"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:23.759Z",
+        "hash": "74033e7a958e5426"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-harness-count-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要一只小体检台，一次体检三件小事喵。请你写个程序，照这个次序做：\n\n1. 摆两只共用的小碗：一只记**查了几项**、一只记**红了几项**，都从 0 开始；\n2. 写一条判据招式 `查相等(String 名字, int 叼回来, int 该是)`：每喊一次先给「查了几项」加 1；两个数一样就印一行 `绿 ` 接名字；不一样就给「红了几项」加 1，印一行 `红 ` 接名字，后面再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数；\n3. 在门口依次喊三次：`查相等(\"整分\", 6 / 2, 3);`、`查相等(\"有余数\", 8 / 2, 3);`、`查相等(\"一条都没有\", 0 / 3, 0);`\n4. 最后印一行总账：`体检了 ` 接查了几项、` 项，红了 ` 接红了几项、` 项`。\n\n跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**，本喵要的数字都写在上面了。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        查了几项++;\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"整分\", 6 / 2, 3);\n        查相等(\"有余数\", 8 / 2, 3);\n        查相等(\"一条都没有\", 0 / 3, 0);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 整分\n红 有余数：叼回来 4，该是 3\n绿 一条都没有\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、两只小碗为什么要共用。** 它们要一项一项跟到最后：每喊一次判据就往上加一笔。挂在某一趟里的话，出了那一趟就没人记得了，最后那行总账也就报不出数喵。\n\n**二、判据收的那三样。** 名字、叼回来的、该是的：`叼回来 == 该是` 为真就印绿，为假就印红。**红的那一行必须带数字** —— 只有名字的话，你还得翻回去自己算差了多少，那正是判据该替你干的活。\n\n**三、三行判据分别是什么。** `6 / 2` 是 3，和该是的 3 一样 → 绿；`8 / 2` 是 4，比该是的 3 多 → 红（所以那一行印的是「叼回来 4，该是 3」）；`0 / 3` 是 0，和该是的 0 一样 → 绿。\n\n**四、总账。** 三行跑完，两只小碗记着「3 项」和「1 项」，最后一行就是 `体检了 3 项，红了 1 项`。这一行是整只台子最值钱的字喵：只要它不是「红了 0 项」，就说明有东西坏了 —— 那你就翻回去看是哪几行红了。",
+      "templateId": "java-s3-ut-harness-count",
+      "params": {
+        "l1": "整分",
+        "l2": "有余数",
+        "l3": "一条都没有"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:25.809Z",
+        "hash": "8976c12697fae2e1"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-harness-count-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要一只小体检台，一次体检三件小事喵。请你写个程序，照这个次序做：\n\n1. 摆两只共用的小碗：一只记**查了几项**、一只记**红了几项**，都从 0 开始；\n2. 写一条判据招式 `查相等(String 名字, int 叼回来, int 该是)`：每喊一次先给「查了几项」加 1；两个数一样就印一行 `绿 ` 接名字；不一样就给「红了几项」加 1，印一行 `红 ` 接名字，后面再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数；\n3. 在门口依次喊三次：`查相等(\"刚够分\", 6 / 2, 3);`、`查相等(\"除不尽\", 8 / 2, 3);`、`查相等(\"空碗\", 0 / 3, 0);`\n4. 最后印一行总账：`体检了 ` 接查了几项、` 项，红了 ` 接红了几项、` 项`。\n\n跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**，本喵要的数字都写在上面了。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        查了几项++;\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"刚够分\", 6 / 2, 3);\n        查相等(\"除不尽\", 8 / 2, 3);\n        查相等(\"空碗\", 0 / 3, 0);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 刚够分\n红 除不尽：叼回来 4，该是 3\n绿 空碗\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、两只小碗为什么要共用。** 它们要一项一项跟到最后：每喊一次判据就往上加一笔。挂在某一趟里的话，出了那一趟就没人记得了，最后那行总账也就报不出数喵。\n\n**二、判据收的那三样。** 名字、叼回来的、该是的：`叼回来 == 该是` 为真就印绿，为假就印红。**红的那一行必须带数字** —— 只有名字的话，你还得翻回去自己算差了多少，那正是判据该替你干的活。\n\n**三、三行判据分别是什么。** `6 / 2` 是 3，和该是的 3 一样 → 绿；`8 / 2` 是 4，比该是的 3 多 → 红（所以那一行印的是「叼回来 4，该是 3」）；`0 / 3` 是 0，和该是的 0 一样 → 绿。\n\n**四、总账。** 三行跑完，两只小碗记着「3 项」和「1 项」，最后一行就是 `体检了 3 项，红了 1 项`。这一行是整只台子最值钱的字喵：只要它不是「红了 0 项」，就说明有东西坏了 —— 那你就翻回去看是哪几行红了。",
+      "templateId": "java-s3-ut-harness-count",
+      "params": {
+        "l1": "刚够分",
+        "l2": "除不尽",
+        "l3": "空碗"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:27.811Z",
+        "hash": "e32e5ae760e6ff82"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-harness-count-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要一只小体检台，一次体检三件小事喵。请你写个程序，照这个次序做：\n\n1. 摆两只共用的小碗：一只记**查了几项**、一只记**红了几项**，都从 0 开始；\n2. 写一条判据招式 `查相等(String 名字, int 叼回来, int 该是)`：每喊一次先给「查了几项」加 1；两个数一样就印一行 `绿 ` 接名字；不一样就给「红了几项」加 1，印一行 `红 ` 接名字，后面再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数；\n3. 在门口依次喊三次：`查相等(\"刚够分\", 6 / 2, 3);`、`查相等(\"有余数\", 8 / 2, 3);`、`查相等(\"空碗\", 0 / 3, 0);`\n4. 最后印一行总账：`体检了 ` 接查了几项、` 项，红了 ` 接红了几项、` 项`。\n\n跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**，本喵要的数字都写在上面了。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        查了几项++;\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"刚够分\", 6 / 2, 3);\n        查相等(\"有余数\", 8 / 2, 3);\n        查相等(\"空碗\", 0 / 3, 0);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 刚够分\n红 有余数：叼回来 4，该是 3\n绿 空碗\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、两只小碗为什么要共用。** 它们要一项一项跟到最后：每喊一次判据就往上加一笔。挂在某一趟里的话，出了那一趟就没人记得了，最后那行总账也就报不出数喵。\n\n**二、判据收的那三样。** 名字、叼回来的、该是的：`叼回来 == 该是` 为真就印绿，为假就印红。**红的那一行必须带数字** —— 只有名字的话，你还得翻回去自己算差了多少，那正是判据该替你干的活。\n\n**三、三行判据分别是什么。** `6 / 2` 是 3，和该是的 3 一样 → 绿；`8 / 2` 是 4，比该是的 3 多 → 红（所以那一行印的是「叼回来 4，该是 3」）；`0 / 3` 是 0，和该是的 0 一样 → 绿。\n\n**四、总账。** 三行跑完，两只小碗记着「3 项」和「1 项」，最后一行就是 `体检了 3 项，红了 1 项`。这一行是整只台子最值钱的字喵：只要它不是「红了 0 项」，就说明有东西坏了 —— 那你就翻回去看是哪几行红了。",
+      "templateId": "java-s3-ut-harness-count",
+      "params": {
+        "l1": "刚够分",
+        "l2": "有余数",
+        "l3": "空碗"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:29.867Z",
+        "hash": "da611a1c68ec411a"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-harness-count-007",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要一只小体检台，一次体检三件小事喵。请你写个程序，照这个次序做：\n\n1. 摆两只共用的小碗：一只记**查了几项**、一只记**红了几项**，都从 0 开始；\n2. 写一条判据招式 `查相等(String 名字, int 叼回来, int 该是)`：每喊一次先给「查了几项」加 1；两个数一样就印一行 `绿 ` 接名字；不一样就给「红了几项」加 1，印一行 `红 ` 接名字，后面再接 `：叼回来 ` 和叼回来的数、`，该是 ` 和该是的数；\n3. 在门口依次喊三次：`查相等(\"刚够分\", 6 / 2, 3);`、`查相等(\"有余数\", 8 / 2, 3);`、`查相等(\"一条都没有\", 0 / 3, 0);`\n4. 最后印一行总账：`体检了 ` 接查了几项、` 项，红了 ` 接红了几项、` 项`。\n\n跑完该看到四行：三行判据，一行总账。\n\n（这一题**不用投喂任何东西**，本喵要的数字都写在上面了。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    static int 查了几项 = 0;\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        查了几项++;\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"刚够分\", 6 / 2, 3);\n        查相等(\"有余数\", 8 / 2, 3);\n        查相等(\"一条都没有\", 0 / 3, 0);\n        System.out.println(\"体检了 \" + 查了几项 + \" 项，红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "绿 刚够分\n红 有余数：叼回来 4，该是 3\n绿 一条都没有\n体检了 3 项，红了 1 项",
+      "stdin": null,
+      "explanation": "**一、两只小碗为什么要共用。** 它们要一项一项跟到最后：每喊一次判据就往上加一笔。挂在某一趟里的话，出了那一趟就没人记得了，最后那行总账也就报不出数喵。\n\n**二、判据收的那三样。** 名字、叼回来的、该是的：`叼回来 == 该是` 为真就印绿，为假就印红。**红的那一行必须带数字** —— 只有名字的话，你还得翻回去自己算差了多少，那正是判据该替你干的活。\n\n**三、三行判据分别是什么。** `6 / 2` 是 3，和该是的 3 一样 → 绿；`8 / 2` 是 4，比该是的 3 多 → 红（所以那一行印的是「叼回来 4，该是 3」）；`0 / 3` 是 0，和该是的 0 一样 → 绿。\n\n**四、总账。** 三行跑完，两只小碗记着「3 项」和「1 项」，最后一行就是 `体检了 3 项，红了 1 项`。这一行是整只台子最值钱的字喵：只要它不是「红了 0 项」，就说明有东西坏了 —— 那你就翻回去看是哪几行红了。",
+      "templateId": "java-s3-ut-harness-count",
+      "params": {
+        "l1": "刚够分",
+        "l2": "有余数",
+        "l3": "一条都没有"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:21.572Z",
+        "hash": "c07f09d93ed02380"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-non-static-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一只小体检台：有一只小碗记「查了几项」，每查过一项就往上加一笔喵。可那条记数的招式**漏了一个词**，门口喊不到它 —— 翻译官喵把稿子退了回来，红字里写着 `non-static method 数一项(String) cannot be referenced from a static context`。\n\n请你把它改到能跑完、印出**三行**：\n\n```text\n这项查过：...\n这项查过：...\n一共查了 2 项\n```\n\n- 头两行报的是**这一项的名字**（本喵写在门口那两行调用里了）；\n- 最后那一行报的是**一共查了几项**；\n- 那只小碗、门口那两行调用、两个名字，一个都别动。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    static int 查了几项 = 0;\n\n    void 数一项(String 名字) {\n        查了几项++;\n        System.out.println(\"这项查过：\" + 名字);\n    }\n\n    public static void main(String[] args) {\n        数一项(\"小橘\");\n        数一项(\"狸花\");\n        System.out.println(\"一共查了 \" + 查了几项 + \" 项\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    static int 查了几项 = 0;\n\n    static void 数一项(String 名字) {\n        查了几项++;\n        System.out.println(\"这项查过：\" + 名字);\n    }\n\n    public static void main(String[] args) {\n        数一项(\"小橘\");\n        数一项(\"狸花\");\n        System.out.println(\"一共查了 \" + 查了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "这项查过：小橘\n这项查过：狸花\n一共查了 2 项",
+      "stdin": null,
+      "explanation": "**一、红字怎么念。** `non-static method 数一项(String) cannot be referenced from a static context` 说的是「**从门口喊，可这条招式是挂在某一只猫身上的**」喵。\n\n**二、门口和招式的区别在哪。** `main` 是**整张图纸共用的门口**，它喊出来的名字也得是整张图纸共用的那一份。那条招式前面少了 `static`，它就成了「挂在某一只猫身上」的那种 —— 门口手上根本没有那只猫，自然喊不出口。注意红字报的**不是**招式写错了，是**喊它的那一行**喊不到它。\n\n**三、改法：补一个词。** 在那条招式前面加上 `static`，它就从「某一只猫的」变成「整张图纸共用的」。本喵改完真跑过，屏幕上就是那三行：两行「这项查过：……」加一行「一共查了 2 项」。\n\n**四、为什么 `main` 自己也有那个词。** 因为 `main` 就是门口 —— 它被喊起来的时候，外面还没有任何一只猫。可以顺手记一句：**门口要喊得到的招式，前面都得有那个词。**",
+      "templateId": "java-s3-ut-non-static",
+      "params": {
+        "n1": "小橘",
+        "n2": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:22.445Z",
+        "hash": "b6a80c946ac13dd5"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-non-static-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一只小体检台：有一只小碗记「查了几项」，每查过一项就往上加一笔喵。可那条记数的招式**漏了一个词**，门口喊不到它 —— 翻译官喵把稿子退了回来，红字里写着 `non-static method 数一项(String) cannot be referenced from a static context`。\n\n请你把它改到能跑完、印出**三行**：\n\n```text\n这项查过：...\n这项查过：...\n一共查了 2 项\n```\n\n- 头两行报的是**这一项的名字**（本喵写在门口那两行调用里了）；\n- 最后那一行报的是**一共查了几项**；\n- 那只小碗、门口那两行调用、两个名字，一个都别动。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    static int 查了几项 = 0;\n\n    void 数一项(String 名字) {\n        查了几项++;\n        System.out.println(\"这项查过：\" + 名字);\n    }\n\n    public static void main(String[] args) {\n        数一项(\"煤球\");\n        数一项(\"三花\");\n        System.out.println(\"一共查了 \" + 查了几项 + \" 项\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    static int 查了几项 = 0;\n\n    static void 数一项(String 名字) {\n        查了几项++;\n        System.out.println(\"这项查过：\" + 名字);\n    }\n\n    public static void main(String[] args) {\n        数一项(\"煤球\");\n        数一项(\"三花\");\n        System.out.println(\"一共查了 \" + 查了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "这项查过：煤球\n这项查过：三花\n一共查了 2 项",
+      "stdin": null,
+      "explanation": "**一、红字怎么念。** `non-static method 数一项(String) cannot be referenced from a static context` 说的是「**从门口喊，可这条招式是挂在某一只猫身上的**」喵。\n\n**二、门口和招式的区别在哪。** `main` 是**整张图纸共用的门口**，它喊出来的名字也得是整张图纸共用的那一份。那条招式前面少了 `static`，它就成了「挂在某一只猫身上」的那种 —— 门口手上根本没有那只猫，自然喊不出口。注意红字报的**不是**招式写错了，是**喊它的那一行**喊不到它。\n\n**三、改法：补一个词。** 在那条招式前面加上 `static`，它就从「某一只猫的」变成「整张图纸共用的」。本喵改完真跑过，屏幕上就是那三行：两行「这项查过：……」加一行「一共查了 2 项」。\n\n**四、为什么 `main` 自己也有那个词。** 因为 `main` 就是门口 —— 它被喊起来的时候，外面还没有任何一只猫。可以顺手记一句：**门口要喊得到的招式，前面都得有那个词。**",
+      "templateId": "java-s3-ut-non-static",
+      "params": {
+        "n1": "煤球",
+        "n2": "三花"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:23.662Z",
+        "hash": "91baf875590848cb"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-red-note-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这只体检台红了以后只印了一个「红」字 —— 报名字和两个数的那一行被本喵弄丢了，翻回去也看不出是**哪一项**坏的、**差了多少**喵。\n\n请你把它补上，改到印出**两行**：\n\n```text\n红 除不尽这一项：叼回来 4，该是 3\n红了 1 项\n```\n\n- 第一行要报出**这一项的名字**、**叼回来的数**、**该是的数**，三样缺一不可；\n- 第二行是总账，本喵没写错，别动它；\n- 门口那行调用（名字和两个数本喵都写好了）也别动。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红\");\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"除不尽这一项\", 8 / 2, 3);\n        System.out.println(\"红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"除不尽这一项\", 8 / 2, 3);\n        System.out.println(\"红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "红 除不尽这一项：叼回来 4，该是 3\n红了 1 项",
+      "stdin": null,
+      "explanation": "**一、只印一个「红」字，等于没报。** 体检台最值钱的地方是红了以后能**定位**喵：哪一项、叼回来多少、该是多少。屏幕上只有一行「红」，你还得自己翻回单子去数它是第几项 —— 那正是判据该替你省掉的力气。\n\n**二、要补的那一行。** 名字和两个数本来就捏在判据手边（它们就是这一趟收进来的那三样），用加号一段一段接出来就行：`\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是`。三样缺一不可 —— 少了名字不知道是谁，少了两个数不知道差多少。\n\n**三、改完真跑过。** 屏幕上印的是 `红 除不尽这一项：叼回来 4，该是 3` 加一行 `红了 1 项` —— 一眼就看得出它跟该是的 3 差了 1。\n\n一句话记住：**红的那一行，要把「你要的」和「做出来的」并排摆出来。**",
+      "templateId": "java-s3-ut-red-note",
+      "params": {
+        "n": "除不尽这一项"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:24.895Z",
+        "hash": "07dde5f3281b82a7"
+      }
+    },
+    {
+      "id": "bank-java-s3-ut-red-note-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这只体检台红了以后只印了一个「红」字 —— 报名字和两个数的那一行被本喵弄丢了，翻回去也看不出是**哪一项**坏的、**差了多少**喵。\n\n请你把它补上，改到印出**两行**：\n\n```text\n红 余数这一项：叼回来 4，该是 3\n红了 1 项\n```\n\n- 第一行要报出**这一项的名字**、**叼回来的数**、**该是的数**，三样缺一不可；\n- 第二行是总账，本喵没写错，别动它；\n- 门口那行调用（名字和两个数本喵都写好了）也别动。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红\");\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"余数这一项\", 8 / 2, 3);\n        System.out.println(\"红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"余数这一项\", 8 / 2, 3);\n        System.out.println(\"红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+      "expectedOutput": "红 余数这一项：叼回来 4，该是 3\n红了 1 项",
+      "stdin": null,
+      "explanation": "**一、只印一个「红」字，等于没报。** 体检台最值钱的地方是红了以后能**定位**喵：哪一项、叼回来多少、该是多少。屏幕上只有一行「红」，你还得自己翻回单子去数它是第几项 —— 那正是判据该替你省掉的力气。\n\n**二、要补的那一行。** 名字和两个数本来就捏在判据手边（它们就是这一趟收进来的那三样），用加号一段一段接出来就行：`\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是`。三样缺一不可 —— 少了名字不知道是谁，少了两个数不知道差多少。\n\n**三、改完真跑过。** 屏幕上印的是 `红 除不尽这一项：叼回来 4，该是 3` 加一行 `红了 1 项` —— 一眼就看得出它跟该是的 3 差了 1。\n\n一句话记住：**红的那一行，要把「你要的」和「做出来的」并排摆出来。**",
+      "templateId": "java-s3-ut-red-note",
+      "params": {
+        "n": "余数这一项"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:26.210Z",
+        "hash": "2d9f6d5ca0c5cdff"
+      }
+    }
+  ]
+}

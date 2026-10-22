@@ -1,0 +1,81 @@
+{
+  "lessonId": "c-stage2-04",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "`sizeof` 在 C 里是什么身份喵？",
+      "options": [
+        "一个运算符，编译器在翻译阶段就把它算成一个小数字了",
+        "一个函数，必须声明函数名再传参",
+        "一个要另外请出场的档案管理员",
+        "一个只能拿来量猫粮碗的关键词"
+      ],
+      "answer": 0,
+      "explanation": "`sizeof` 是运算符喵，它和 `+`、`-` 一样在翻译阶段就被算好了，所以运行时一点力气都不花。写成 `sizeof(int)` 还是 `sizeof x` 都可以；要是它真是招式，就必须写成 `sizeof(x)` 这种带括号投喂的样子啦。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`sizeof(arr) / sizeof(arr[0])` 算出来的是什么喵？",
+      "options": [
+        "整排猫粮碗一共占多少格",
+        "这一排里猫粮碗的只数",
+        "一个指针自己的大小",
+        "第一个变量里装着的值"
+      ],
+      "answer": 1,
+      "explanation": "整排的总格数除以一只碗的格数，约掉「格」这个单位，剩下的就是碗的只数喵。要是只写 `sizeof(arr)`，拿到的是总格数（5 只 int 碗是 20），不是只数，这两个别搞混啦。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "写完 `free(rooms);` 之后，最该接着写哪一句喵？",
+      "options": [
+        "`rooms = NULL;`",
+        "`free(rooms);` 再写一遍更保险",
+        "`rooms` 放着不用管，它自己会变空",
+        "把 `rooms` 交给另一个函数，让别的代码帮忙 free"
+      ],
+      "answer": 0,
+      "explanation": "仓库还回去以后，牌子还在你手上，可它指的那间已经不属于你了喵。这时候把牌子擦成 `NULL`，下次谁不小心拿它取用，程序会立刻停下报错，而不是偷偷改坏别人的东西。还两遍会让管理员发火（这叫重复释放），扔给别人 free 更是会把账算乱喵。"
+    },
+    {
+      "id": "q4",
+      "type": "fill",
+      "stem": "租仓库的时候要是没租到，`malloc` 叼回来的是 ____。",
+      "answer": "NULL",
+      "accept": [],
+      "explanation": "租不到是常有的事——地方被占满了就会失败喵。所以 `malloc` 之后一定要先看一眼是不是 `NULL`，是的话就别硬用，赶紧打印一句提示或者退出来，不然程序会当场摔倒。C 里习惯写成大写的 `NULL`。"
+    },
+    {
+      "id": "q5",
+      "type": "fill",
+      "stem": "仓库用完了要还回去，用的招式名是 ____。",
+      "answer": "free",
+      "accept": ["free()"],
+      "explanation": "`malloc` 是租，`free` 是还，两招住在同一个档案管理员 `stdlib.h` 家里喵。少还一次就是借了不还，也就是内存泄漏；还多一次会让管理员把同一间仓库记成空的，同样出乱子，所以「租一次、还一次」要配对喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main() {\n    int arr[4] = {7, 7, 7, 7};\n    printf(\"%d\\n\", (int)(sizeof(arr) / sizeof(arr[0])));\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "4",
+      "accept": ["4\n"],
+      "explanation": "整排有 4 只碗，每只碗占 4 格，所以是 16 ÷ 4 = 4 喵。碗里装的是 7 还是别的小鱼干都无所谓，`sizeof` 只量地方、不看内容，所以答案是碗的只数而不是 7。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int n = 3;\n    int *p = (int *)malloc(sizeof(int) * n);\n    int sum = 0;\n\n    if (p == NULL) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        p[i] = (i + 1) * 5;\n        sum += p[i];\n    }\n\n    printf(\"%d\\n\", sum);\n\n    free(p);\n    p = NULL;\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "30",
+      "accept": ["30\n"],
+      "explanation": "租来 3 间仓库，按编号依次存进 5、10、15，加起来就是 30 喵。租来的仓库和猫粮碗一样能按编号取用，区别只是它的大小是跑起来才定下的；用完照例 `free` 还掉、把牌子擦成 `NULL`。"
+    }
+  ]
+}

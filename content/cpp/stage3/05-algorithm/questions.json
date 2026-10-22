@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage3-05",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想给整只柜子排排坐，写的是 `sort(v.begin(), v.end())`。第二个投喂口为什么写 `v.end()`、而不是写成最后一格？",
+      "options": [
+        "因为第二个投喂口问的是「**排到哪儿为止**」，而 `v.end()` 正好就是「到此为止」那个路标 —— 写它才是整个柜子",
+        "因为 `v.end()` 指着最后一格，写它就是把最后一格排进去",
+        "因为第二个投喂口写什么都不影响排出来的结果",
+        "因为 `v.end()` 会自己减掉一格，所以它和最后一格是一回事"
+      ],
+      "answer": 0,
+      "explanation": "第一个投喂口是「**从哪儿起**」，第二个是「**到哪儿为止**」喵。`v.end()` 指的位置是最后一格的**后面一格**，它本身就是「到此为止」那个路标 —— 所以这一句念作「从第一格起、到走完为止」，正好是整个柜子。要是写成 `v.end() - 1`，意思就变成「排到最后一格**为止**（不含它）」，最后一格会被排除在外。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵在柜子里翻一个数，用的是 `find(v.begin(), v.end(), 9)`。它交给本喵的到底是什么？",
+      "options": [
+        "一把**爪子** —— 指着翻到的那一格；翻遍了也没见着的时候，它给的是 `v.end()`",
+        "一句真 / 假 —— 翻到了给真，没翻到给假",
+        "一颗**编号** —— 告诉本喵在第几格",
+        "翻到的那个数本身"
+      ],
+      "answer": 0,
+      "explanation": "这一招交出来的是一把**爪子**（指着翻到的那一格）喵 —— 所以「有没有」得自己拿它跟 `v.end()` 比。要是直接把它塞进看眼色的那句里，翻译官喵当场拦下：原话里有 `could not convert`，后面跟着的那串拗口名字就是爪子的本名。**注意它和上一课一串字身上的 `find` 不是一回事**：那个交出来的是编号，找不到给 `string::npos`。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵给 `transform` 递了一个小招式，肚子里只写了 `x * 2;`，忘了写 `return`。会发生什么？",
+      "options": [
+        "编译器先嘀咕一句 `statement has no effect`，然后**当场编不过** —— 空着函数体的小 lambda，编译器不敢收",
+        "跑得起来，只是柜子里的货一点没变",
+        "跑得起来，每一格都被换成了 0",
+        "编译器拦下，说本喵少写了一句 `#include`"
+      ],
+      "answer": 0,
+      "explanation": "小招式的套路是**吃一口、`return` 一口**喵。只写 `x * 2;` 的话，这一招算完就把结果扔了、什么都没叼回来 —— 翻译官喵先在你写的那一行嘀咕 `statement has no effect`（「这句话写了跟没写一样」），然后当场编不过：`transform` 要的是有东西叼回来的那种小招式。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back(5);\n    v.push_back(1);\n    v.push_back(9);\n    v.push_back(5);\n    cout << ____(v.begin(), v.end(), 5) << endl;\n    ____(v.begin(), v.end());\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}",
+      "stem": "本喵塞了四个数进柜子，想**先数一数有几个 5**，**再把柜子整个排排坐**、走一圈印出来。这两个空位（用 `____` 标出）该填哪两个招式名？",
+      "blanks": [
+        { "answer": "count", "accept": [] },
+        { "answer": "sort", "accept": [] }
+      ],
+      "explanation": "第一个空位是**数个数**的 `count`：它吃三个投喂口 —— 从哪起、到哪止、数哪一件货喵。第二个空位是**排排坐**的 `sort`，两个投喂口就是「从第一格起、到走完为止」（**别减一**，减了最后一格就不参与了）。补完之后先印出有几个 `5`，再走一圈印出排好的一排数 —— 柜子里本来就有两个 `5`，排排坐不会把它们并成一个。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back(3);\n    v.push_back(8);\n    v.push_back(1);\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a > b;\n    });\n    cout << v[0] << endl;\n    cout << v[2] << endl;\n    return 0;\n}",
+      "stem": "本喵给排排坐递了一个小招式，然后报编号取了第一格和第三格。这段代码的输出是什么？（一行一行照抄）",
+      "answer": "8\n1",
+      "accept": ["8\n1\n"],
+      "explanation": "小招式里写的是 `a > b` —— 「谁大谁先站」，所以排出来是**从大到小**：`8`、`3`、`1` 喵。报编号从 0 数起（第一课就念过这条规矩）：`v[0]` 是第一格 `8`，`v[2]` 是第三格 `1`。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back(1);\n    v.push_back(2);\n    v.push_back(3);\n    transform(v.begin(), v.end(), v.begin(), [](int x) {\n        return x + 10;\n    });\n    cout << count(v.begin(), v.end(), 12) << endl;\n    cout << v[1] << endl;\n    return 0;\n}",
+      "stem": "本喵整柜换了一次货，然后数了一件货、又报编号取了一格。这段代码的输出是什么？（一行一行照抄）",
+      "answer": "1\n12",
+      "accept": ["1\n12\n"],
+      "explanation": "小招式 `return x + 10;` 把每一格都加了 10：`1` 变 `11`、`2` 变 `12`、`3` 变 `13` 喵。第三个投喂口写的是 `v.begin()`，所以是**原地换货** —— 换好的货放回柜子自己身上，原柜子就被覆盖了。接着数一数有几个 `12`：只有一个，所以印 `1`。最后 `v[1]` 是第二格，取到的是 `12`。"
+    }
+  ]
+}

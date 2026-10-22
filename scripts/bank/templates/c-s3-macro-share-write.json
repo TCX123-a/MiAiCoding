@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-macro-share-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-11",
+  "type": "codewrite",
+  "concept": ["自己写一张照抄的条子", "投喂那层括号", "整体那层括号", "被塞进更大的算式里也要站得住"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["6", "8"] },
+    "b": { "kind": "pick", "values": ["2", "4"] },
+    "c": { "kind": "pick", "values": ["4", "6"] }
+  },
+  "stemTemplate": "本喵有 `{a}` 条小鱼干，要按 `{b}` 只猫**平均分**；分完还想看看「100 条能装满几个这样的盆」。\n\n请写这么一张条子：名字叫 `SHARE`，喂进去**总数**和**只数**两项，叼回来**平均分到几条**（整数）。稿子里已经在用它了，用法长这样：\n\n```text\nSHARE(total + {c}, cats)\n```\n\n注意两件事喵：\n\n- 喂进去的第一项是个**加法式子**，条子照抄之后得先把它加起来；\n- 这张条子还被塞进了 `100 / ...` 这样的算式里，**整个结果也得是完整的一份**，不能被外面的除号吃掉一截。\n\n按课文里的规矩（**投喂穿一层、整体再穿一层**）把 `SHARE` 写在稿子上留的那一行，`main` 里那几行一个字都别动。该印两行：`每只猫分到 ` 加上均分的整数、再跟一个 ` 条`；`100 条能装满 ` 加上盆数、再跟一个 ` 个盆`。",
+  "starterTemplate": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) (total)\n\nint main(void) {\n    int total = {a};\n    int cats = {b};\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + {c}, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + {c}, cats));\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) ((total) / (cats))\n\nint main(void) {\n    int total = {a};\n    int cats = {b};\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + {c}, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + {c}, cats));\n    return 0;\n}\n",
+  "explanationTemplate": "条子的身子要写成 `((total) / (cats))` 喵 —— **两层括号都要**：\n\n- **投喂那层**：喂进来的是 `total + {c}` 这样的**式子**。少了它，照抄出来成了 `total + {c} / cats`，加号后面的东西被拆得只剩一半。\n- **整体那层**：这张条子被塞进了 `100 / SHARE(...)` 里。少了它，抄出来是 `100 / total / cats` —— 除号从左往右先算 `100 / total`，答案就全歪了。\n\n两层的分工记一句就够了：**里层护投喂、外层护自己**。\n\n本喵把两种写法都真跑过：少一层括号就少一截数，样例里两行全都不一样。这条规矩往后越写越长的稿子里最容易被忘掉，趁现在记牢喵。"
+}

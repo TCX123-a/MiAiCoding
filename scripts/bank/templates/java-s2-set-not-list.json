@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-set-not-list",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-09",
+  "type": "codefix",
+  "concept": ["只要名字的名单", "同样的塞两遍只留一件", "名分和实体", "不报错的错"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["小橘", "大橘"] },
+    "b": { "kind": "pick", "values": ["狸花", "花卷"] },
+    "c": { "kind": "pick", "values": ["大胖", "小黄"] }
+  },
+  "stemTemplate": "本喵要的是一份**只留一件**的名单：同一只猫来了几趟，名单上只算**一只**。\n\n可这份程序印出来的数**偏大** —— 它把 `{a}` 记了两次、`{b}` 也记了两次。本喵瞧出来了：它拿的是那种**按编号排队、来者不拒**的柜子，不是只要名字的那种名单。\n\n请你帮本喵改好，规矩是：\n\n1. 左边那份**名分**和右边**实给的柜子**都换成「**只要名字、同样的塞两遍只留一件**」的那种；\n2. 该带进来的东西记得带进来；\n3. **`add` 那几行一个字都不许动**（本喵就是要每只都塞一遍）。\n\n改好之后，程序该印出这一行：\n\n```text\n名单上有 3 只\n```\n\n只有名分、实柜子和该带的头有问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"{a}\");\n        names.add(\"{b}\");\n        names.add(\"{a}\");\n        names.add(\"{c}\");\n        names.add(\"{b}\");\n        System.out.println(\"名单上有 \" + names.size() + \" 只\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.HashSet;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Set<String> names = new HashSet<>();\n        names.add(\"{a}\");\n        names.add(\"{b}\");\n        names.add(\"{a}\");\n        names.add(\"{c}\");\n        names.add(\"{b}\");\n        System.out.println(\"名单上有 \" + names.size() + \" 只\");\n    }\n}\n",
+  "explanationTemplate": "这一题也是**翻译官喵一个字都没说**的那一类：程序跑得顺顺当当，印出来的数却是错的。**选错了装法**，它不会拦本喵。\n\n两个装法的分别在这儿：\n\n| 装法 | 塞进去重复的东西会怎样 |\n|---|---|\n| 按编号排队的柜子（`List`） | **照收**，来几趟记几趟 |\n| 只要名字的名单（`Set`） | **只留一件**，同样的再塞也不多记 |\n\n本喵这题要的是**名单**，所以那几行 `add` 塞了两遍 `{a}`、两遍 `{b}`，`size()` 就该回到 `3`（`{a}`、`{b}`、`{c}` 各一只）。用柜子装的话，五趟全记着，印出来就是 `5`。\n\n正路是把名分和实体两边一起换：\n\n```java\nSet<String> names = new HashSet<>();\n```\n\n- **左边**那份名分换成 `Set` —— 这份约定说的是「只要名字」；\n- **右边** `new` 后面换成账本那家的实体 `HashSet`（它是同一个道理的另一种装法：账本记「名字配东西」，名单只记**名字**）。\n- 两边该带的头也一起换掉，别留着上一份的头不用。\n\n那 `add` 那几行为什么一个字都不用动？因为**名单也会 `add`** —— 约定不一样，招式名字却对得上。这正是课上说的「名分和实体分开」的好处：**本喵要的东西没变，只换了底下装的那种**，用它的那几行照旧。\n\n顺手把两种问法摆一起：**账本**问名字在不在用 `containsKey`（一行里有两半，得说清问哪一半）；**名单**问在不在用 `contains`，拿掉一个用 `remove`（它会叼回 `true` / `false`，告诉本喵到底拿掉没拿掉）喵。"
+}

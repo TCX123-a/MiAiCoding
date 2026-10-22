@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-18-two-names",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-18",
+  "type": "codewrite",
+  "concept": ["岔路口上两份底座", "点路牌说清走哪条路", "改一份另一份不动"],
+  "instances": 6,
+  "params": {
+    "who": { "kind": "pick", "values": ["小灰", "小白"] }
+  },
+  "stemTemplate": "这一题的两张岔路图纸**都照着同一张底座画**，而且**都没有挂那一手** —— 所以照出来的猫肚子里有**两份**底座，各过各的喵。\n\n骨架里底座和两张岔路图纸都画好了（底座身上除了会喵，还有一手改名的手艺）。你要补两处：\n\n1. 一张**两样都会**的新图纸，照着这两张一起画下来（两张前面都写清楚是公开给外面的）；\n2. `main` 里照它生一只猫，名字叫 `小橘`；然后**只从左边那条路**把它改名成 `{who}`；最后**先喊左边、再喊右边**这两声「喵」。\n\n程序要叼回这两行：\n\n1. `{who}：喵～`\n2. `小橘：喵～`\n\n关键那一步是：得让翻译官喵知道你在喊**哪一条路**上那一手 —— 中间那一段路牌（`Purr::` 这种）就是干这个用的。写成不点路牌的样子，这段代码**编不过**。",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n    void rename(const string& n) { name = n; }\n};\n\nclass Purr : public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nint main() {\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n    void rename(const string& n) { name = n; }\n};\n\nclass Purr : public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.Purr::rename(\"{who}\");\n    b.Purr::meow();\n    b.Knead::meow();\n    return 0;\n}\n",
+  "explanationTemplate": "两行名字不一样，正是这一题要证明的事喵：**肚子里那两份底座是各过各的**。\n\n- `Baby b(\"小橘\");` —— 两条路各照着底座画了一次，于是各带一份底座进来，两份的名字一开始都是「小橘」。\n- `b.Purr::rename(\"{who}\");` —— 中间那段 `Purr::` 就是**路牌**：本喵说的是左边那条路上那一份。改完之后，**只有左边那份**叫 `{who}`。\n- `b.Purr::meow();` 印 `{who}：喵～`；`b.Knead::meow();` 印的还是 `小橘：喵～` —— 右边那份**一个字都没被动过**。\n\n⚠️ 少写路牌会怎样：`b.meow()` 一喊，两条路上都找得到它，翻译官喵只能说 `ambiguous`（说不清），这段代码**根本编不过**。路牌不是可写可不写的点缀，它是岔路口上唯一能说清楚「走哪条路」的东西。\n\n⚠️ 顺带记住：这一题两条路**都没挂那一手**，所以底座是两份。要是两边都挂上，两份就并回一份，那时候改一个名字三条路**一起变** —— 想看到两种写法的差别，就自己把这一题改一改跑一遍喵。"
+}

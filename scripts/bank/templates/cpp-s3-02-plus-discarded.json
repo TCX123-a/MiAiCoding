@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-02-plus-discarded",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-02",
+  "type": "codefix",
+  "concept": ["接字做出的是一串新的", "没人收下就没了", "要改动得交回去"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["小鱼干", "冻干块", "猫薄荷"] },
+    "w2": { "kind": "pick", "values": ["喵条", "大礼包"] }
+  },
+  "stemTemplate": "本喵想让 `s` 后面**接上** `t` 里的字，于是写了一句接字的。可跑完一看，`s` **一点没变**喵。\n\n你帮本喵把它改对：**让 `s` 自己变成「原来的 `s` 后面接上 `t`」**。起名字和印字那几句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s = \"{w1}\";\n    string t = \"{w2}\";\n\n    s + t;\n\n    cout << s << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string s = \"{w1}\";\n    string t = \"{w2}\";\n\n    s = s + t;\n\n    cout << s << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题翻译官喵**不拦你**：编得过、跑得完，只是白算了一场。不过「不拦」不等于「什么都没说」—— 本喵在命令行里编它的时候，它是**嘀咕了一句**的，原话是 `warning: ignoring return value of '... operator+(...)', declared with attribute 'nodiscard' [-Wunused-result]`（「这个 `+` 做出来的东西没人接，白做了」）。**念归念，它照样放行**喵。\n\n问题在这一句：`s + t;`。那个 `+` 的意思是「**另做一串新的**」：它把两串字接成**新的一串**，原来的 `s`、`t` 都没被动过。而这一句做出来的新字**谁也没接住**，转身就没了 —— 印出来的当然还是原来的 `s`。\n\n要改动 `s` 本身，就得**把做出来的那串交回去**：\n\n`s = s + t;`\n\n念作「把（`s` 后面接上 `t`）做出来的那串新的，交回给 `s`」。等号左边永远是**收下东西的那个名字**。\n\n⚠️ 谁在前谁在后是有讲究的：这一题要的是 `s` 在前、`t` 在后；写成 `s = t + s;` 印出来就换了个顺序。\n\n⚠️ 还有一个很常见的坑：起名字的时候直接写 `string s = s + t;` —— 那时候 `s` 还没生出来，翻译官喵不认这个名字。这一题的名字已经起好了，改中间那一句就行。"
+}

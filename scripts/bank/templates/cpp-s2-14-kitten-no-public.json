@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-14-kitten-no-public",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-14",
+  "type": "codefix",
+  "concept": ["图纸套图纸那一段 public 不能少", "少写了等于把老图纸整张扣上盖子", "老图纸的手外面够不着"],
+  "instances": 2,
+  "params": {
+    "d": { "kind": "pick", "values": [20, 35] }
+  },
+  "stemTemplate": "本喵给托儿所添一张**小猫图纸**，照着猫猫那张画下来，自己多记一格「出生多少天」。\n\n可 `main` 里那句 `k.greet()` 被翻译官喵拦下了 —— 本喵在「照着哪张图纸画」那一段上**少写了一个词**。你把它补上，让屏幕上印出 **我是棉花，今年 1 岁喵** 和 **棉花 出生 {d} 天啦** 这两行。别的几行都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, {d});\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, {d});\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机真跑过没补的版本，翻译官喵的原话是这三句：\n\n```text\nmain.cpp:28:12: error: 'void Cat::greet()' is inaccessible within this context\nmain.cpp:11:10: note: declared here\nmain.cpp:28:12: error: 'Cat' is not an accessible base of 'Kitten'\n```\n\n念作：「**老图纸这一手够不着；还有，老图纸这个底子对外也不通。**」\n\n`class Kitten : Cat` 少了那一小段 `public`，就是**悄悄把老图纸整张扣上了盖子**：图纸套是套上了，小猫自己写的 `showDays()` 照样能用（它站在小猫图纸里头），可**外面（还有 `main`）什么都够不着老图纸那几手**。修法就是把那个词补回去：\n\n```text\nclass Kitten : public Cat\n```\n\n补完之后本喵真跑过：屏幕上印 `我是棉花，今年 1 岁喵`，再印 `棉花 出生 {d} 天啦`。\n\n⚠️ 三条钉住：\n\n1. **两种写法只差一个词，后果差一整张图纸。** 抄写法的时候这一跤几乎必踩 —— 报错的两句都点在同一个地方，就是那句 `k.greet()`。\n2. **补不补，看外面要不要够老图纸的手。** 补上 `public`，老图纸的公开手艺在新图纸外面照旧公开。\n3. **小猫自己写的那一手不受影响。** `showDays()` 是在小猫图纸里头写的，本喵真跑过 —— 报错只冲着 `k.greet()` 那一句来。"
+}

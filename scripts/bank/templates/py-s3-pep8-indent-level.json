@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-pep8-indent-level",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-23",
+  "type": "codefix",
+  "concept": ["缩进即归属", "一级四格", "别把空格和 Tab 混用"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 5 },
+    "b": { "kind": "int", "min": 3, "max": 6 }
+  },
+  "stemTemplate": "本喵要清点的这四碗，装的是 **{a} 条、6 条、{b} 条、5 条**。要的报表长这样——**每数完一碗**报一行「这一碗 X 条」；**四碗全数完**，最后再报**一行**总账「总共 X 条」。\n\n可它现在报的是：每数完一碗，**紧接着就把总账也报一遍**——四碗报了四次「总共」，数字一次比一次大，本喵要的那句「最后的总账」就淹没在里头了。\n\n你帮本喵把那行挪到它该待的地方。挪好之后，输出就是**四行逐碗 + 一行总账**，一行不多、一行不少。\n\n（差别就在**开头那几个空格**的去向上——想清楚在 Python 里那几个空格到底是什么东西，再动手喵。）",
+  "brokenCodeTemplate": "bowls = [{a}, 6, {b}, 5]\ntotal = 0\nfor bowl in bowls:\n    total = total + bowl\n    print(\"这一碗\", bowl, \"条\")\n    print(\"总共\", total, \"条\")\n",
+  "referenceFixTemplate": "bowls = [{a}, 6, {b}, 5]\ntotal = 0\nfor bowl in bowls:\n    total = total + bowl\n    print(\"这一碗\", bowl, \"条\")\nprint(\"总共\", total, \"条\")\n",
+  "explanationTemplate": "本喵只挪了**一行前头那几个空格**——可在 Python 里，缩进不是排版，是**「这句话归谁管」的分界线**。\n\n`print(\"总共\", total, \"条\")` 现在缩在跑圈里，它就是**每转一圈都要执行一遍**的句子；把它收回到圈外，才是「四碗全数完、只执行一遍」的那句。程序现在两句都留在圈里，于是每数一碗就跟着报一次总账——数字当然一次比一次大。\n\n挪完那行之后，它就不再归跑圈管了（这里只截总账这半截，眼睛盯住最后一行：它跟 `for` 站在**同一级**，不在圈里了）：\n\n```python\nbowls = [{a}, 6, {b}, 5]\ntotal = 0\nfor bowl in bowls:\n    total = total + bowl\nprint(\"总共\", total, \"条\")\n```\n\n顺带把公约给缩进立的第一条记住：**一级四格空格，同一层的句子对齐**；而且**一个文件里别把空格和 Tab 混着用**——两种白字符混排之后，肉眼看着对齐、机器眼里没对齐，最冤的坑都在那里。\n\n别的语言可以靠一对大括号划范围，Python 只有缩进这一条线：**线画在哪，句子的家就在哪**——这也是公约把缩进放在第一条压阵的原因喵。"
+}

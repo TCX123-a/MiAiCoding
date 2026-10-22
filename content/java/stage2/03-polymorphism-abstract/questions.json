@@ -1,0 +1,77 @@
+{
+  "lessonId": "java-stage2-03",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵立起一排牌子 `Animal[] pets = { new Cat(\"小橘\"), new Dog(\"大黄\") };`，然后只写一句 `pet.speak();`。Java 是照着哪张图纸去找这一招的？",
+      "options": [
+        "照着牌子里装的那只真猫**自己**的图纸找",
+        "照着牌子上写着的 `Animal` 那张大图纸找",
+        "照着本喵写代码时脑子里想的那张图纸找",
+        "两张图纸都翻一遍，谁先找到算谁的"
+      ],
+      "answer": 0,
+      "explanation": "喊 `pet.speak()` 的时候，Java 是照着**牌子里装的那只真猫自己的图纸**去找这一招的喵 —— 是猫就喵、是狗就汪，同一句话各猫各样。这也正是那个 `for` 一个字都不用改的原因：写它的人压根不用知道院子里养了什么。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`Cat` 那张图纸上有一招 `sleep`，可本喵手里这块牌子上写的是 `Animal`。写一句 `a.sleep();` 会怎样？",
+      "options": [
+        "编译就被拦下来 —— 报 `cannot find symbol`，底下那行 `location:` 会点明是在 `Animal` 的牌子上找的",
+        "编译过，跑起来才断气",
+        "编译过也跑得起来，`sleep` 照喊不误",
+        "编译过，只不过跑起来什么也不发生"
+      ],
+      "answer": 0,
+      "explanation": "Java 是**认字**的：代码里喊得出哪些招式，是照着**牌子上写的图纸名**查的喵。牌子写 `Animal`，就只喊得动 `Animal` 上也画着的招式 —— 所以这一句在编译时就过不去，不用等到跑。想喊 `sleep`，先用 `instanceof` 问一句「你是不是猫」，确认了再换一块 `Cat` 的牌子。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵照着头上写了 `abstract` 的那张图纸，直接来一句 `new Animal(\"大肥鱼\")`，会怎样？",
+      "options": [
+        "编译就被拦下来 —— 报 `Animal is abstract; cannot be instantiated`",
+        "编译过，跑起来才断气",
+        "编译过也跑得起来，只是 `speak` 什么也不印",
+        "编译不过，报的是构造那一手写错了"
+      ],
+      "answer": 0,
+      "explanation": "头上写了 `abstract`，就是在明明白白告诉翻译官喵「这张图纸**不许直接拿来生真猫**」，报的原话是 `Animal is abstract; cannot be instantiated` 喵。别把它当成构造那一手写错了 —— 真正的原因是「出声」那一招**还没写**，这会儿生出来的猫，喊它出声该干什么？翻译官喵宁可不让你生。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "abstract class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    ____ void speak();\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void ____() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal a = new Cat(\"小橘\");\n        a.speak();\n    }\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出），补上之后它会印出「小橘：喵～」喵。",
+      "blanks": [
+        { "answer": "abstract", "accept": [] },
+        { "answer": "speak", "accept": [] }
+      ],
+      "explanation": "第一处：那一招只有个头、没写身子（后面直接拿分号收尾），所以前面得写上 `abstract` —— 意思是「这一招必须有，但怎么写，留给往下画的小图纸自己定」喵。第二处：小图纸必须把这一招补上，补的时候名字要和上面**一模一样** —— 底下那句喊的是 `speak`，所以这里填的也是 `speak`。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "abstract class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    abstract void speak();\n\n    void sleep() {\n        System.out.println(name + \"睡着了，呼噜呼噜\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal[] pets = { new Dog(\"大黄\") };\n        for (Animal pet : pets) {\n            pet.speak();\n            pet.sleep();\n        }\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "大黄：汪！\n大黄睡着了，呼噜呼噜",
+      "accept": ["大黄：汪！\n大黄睡着了，呼噜呼噜\n"],
+      "explanation": "喊的两招来路不一样，可**都走得通**喵：`speak` 是小图纸补上的那一版（狗就汪），`sleep` 是大图纸上早就画好了的、照旧能用。`abstract` 管的只是那些**没写完**的招式，家当、构造那一手、画完了的招式全都照常留在上面。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    void sleep() {\n        System.out.println(name + \"睡着了\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal a = new Cat(\"小橘\");\n        if (a instanceof Cat) {\n            Cat c = (Cat) a;\n            c.sleep();\n        }\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘睡着了",
+      "accept": ["小橘睡着了\n"],
+      "explanation": "第一句就是向上转型：牌子写 `Animal`、生的却是猫 —— 照 `Cat` 生的猫本来就是一只 `Animal`，装得下喵。可这块牌子上喊不动 `sleep`（那是小图纸才有的），所以先用 `instanceof` 问一句「你是不是猫」，问准了再换一块 `Cat` 的牌子，这才喊得动。这一只确实是猫，所以那句印了出来。"
+    }
+  ]
+}

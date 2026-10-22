@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-dp-observer-last-only",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-14",
+  "type": "codefix",
+  "concept": ["摇铃要挨个通知，不能只喊一位", "名单是个会自己长大的柜子", "摇铃的不知道每位听见了会做什么"],
+  "instances": 2,
+  "params": {
+    "c1": { "kind": "pick", "values": ["小橘", "橘子"] },
+    "c2": { "kind": "pick", "values": ["煤球", "黑豆"] },
+    "r1": { "kind": "pick", "values": ["小鱼干", "猫条"] }
+  },
+  "stemTemplate": "本喵摇了一次铃，结果**只有一只猫听见了**喵 —— 订上来的明明有两位。\n\n毛病在 `摇铃()` 里，你看一眼就明白了。别的都别动（那份约定、两只猫自己的图纸、`订上()` 都别碰）。改好之后，程序该印出**两行**：订上的两位各一行，**先后按订上来的顺序**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    interface 听众 {\n        void 听见了(String 菜名);\n    }\n\n    static class 开饭铃 {\n        List<听众> 名单 = new ArrayList<>();\n\n        void 订上(听众 一位) {\n            名单.add(一位);\n        }\n\n        void 摇铃(String 菜名) {\n            名单.get(0).听见了(菜名);\n        }\n    }\n\n    static class 猫 implements 听众 {\n        String 名字;\n\n        猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 冲向 \" + 菜名);\n        }\n    }\n\n    static class 懒猫 implements 听众 {\n        String 名字;\n\n        懒猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 翻了个身，继续睡\");\n        }\n    }\n\n    public static void main(String[] args) {\n        开饭铃 铃 = new 开饭铃();\n        铃.订上(new 猫(\"{c1}\"));\n        铃.订上(new 懒猫(\"{c2}\"));\n        铃.摇铃(\"{r1}\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    interface 听众 {\n        void 听见了(String 菜名);\n    }\n\n    static class 开饭铃 {\n        List<听众> 名单 = new ArrayList<>();\n\n        void 订上(听众 一位) {\n            名单.add(一位);\n        }\n\n        void 摇铃(String 菜名) {\n            for (听众 一位 : 名单) {\n                一位.听见了(菜名);\n            }\n        }\n    }\n\n    static class 猫 implements 听众 {\n        String 名字;\n\n        猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 冲向 \" + 菜名);\n        }\n    }\n\n    static class 懒猫 implements 听众 {\n        String 名字;\n\n        懒猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 翻了个身，继续睡\");\n        }\n    }\n\n    public static void main(String[] args) {\n        开饭铃 铃 = new 开饭铃();\n        铃.订上(new 猫(\"{c1}\"));\n        铃.订上(new 懒猫(\"{c2}\"));\n        铃.摇铃(\"{r1}\");\n    }\n}\n",
+  "explanationTemplate": "坏版本只印出来一行喵：\n\n```text\n{c1} 冲向 {r1}\n```\n\n毛病只有一处：`摇铃()` 里写的是 `名单.get(0)` —— 名单里**第一位**那一位听见了，第二位**根本没人喊**。所以第二行（`{c2}` 那一行）整个不见了。\n\n改法就是把「挨个通知」这一手补回来：\n\n```java\nfor (听众 一位 : 名单) {\n    一位.听见了(菜名);\n}\n```\n\n名单是个会自己长大的柜子，绕圈绕一遍就是名单上每一位都喊到；**先后就是订上来的顺序**，所以补上之后是 `{c1}` 那一行在前、`{c2}` 那一行在后。\n\n再回头看摇铃那位猫手里的东西：她只知道名单上坐着「会这一招的猫」，**不知道**每一位听见了会做什么 —— 猫冲过去、懒猫翻个身，全是它们自己图纸上的事喵。"
+}

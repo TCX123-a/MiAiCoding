@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-structptr-star-dot",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-06",
+  "type": "codefix",
+  "concept": ["箭头", "点号", "括号丢了", "编译错误"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "狸花", "大肥鱼"] },
+    "f1": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵给一只猫（名字 `{who}`、食量 {f1}）配了一块**指着它的牌子**，程序要用这块牌子把那两格东西报出来，印一行 `{who} 吃了 {f1} 条喵`。\n\n名字那格写得没错，可食量那格翻译官喵一瞧见就不干了，把整段代码退了回来 —— 它不光拦下，还在底下画了个小箭头把答案指给本喵看喵。你帮本喵看看它说的是什么意思，把程序改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"{who}\", {f1}};\n    struct Cat *p = &a;\n\n    printf(\"%s 吃了 %d 条喵\\n\", (*p).name, *p.fish);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"{who}\", {f1}};\n    struct Cat *p = &a;\n\n    printf(\"%s 吃了 %d 条喵\\n\", (*p).name, p->fish);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: 'p' is a pointer; did you mean to use '->'?` —— 它反问了本喵一句：「**`p` 是一块牌子呀，你是不是想用 `->`？**」底下还真画了一根小箭头指着 `->`，等于把答案写在卷子上了。\n\n为什么会这样？因为 C 的排队规矩里，**点号 `.` 排在星星 `*` 前面**。你写的 `*p.fish` 会被它读成「先算 `p.fish`，再给结果加颗星」—— 可 `p` 是块牌子，牌子哪来的 `fish` 格？于是它猜：你其实是想**顺着牌子进那一格**吧。\n\n顺着牌子进门有两种写法，**意思一模一样**：\n\n- `(*p).fish` —— 先把牌子指向的那只猫拿出来（那对括号不能省！），再进它的 `fish` 格；\n- `p->fish` —— 上面那种的省字版，一根小箭头，读作「顺着牌子过去，进那一格」。\n\n所以这句话钉死两件事：**牌子上进门用 `->`，真猫上进门用 `.`。** 同一个格子的两种写法之间，差的就是那对括号和那根箭头喵。"
+}

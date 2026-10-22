@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-13-pack-report",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-13",
+  "type": "codewrite",
+  "concept": ["一张图纸数样数", "一张图纸把包里每一样加起来", "一张图纸把包里每一样依次印出来"],
+  "instances": 6,
+  "params": {
+    "w": { "kind": "pick", "values": ["7", "8"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 2, "max": 9 },
+  "stemTemplate": "投喂口会给**一个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 写**三张**图纸：一张数一数一包里有几样、一张把包里每一样加起来（**空包也要给得出答案**）、一张把包里每一样**依次印出来**（印完另起一行）；\n3. 拿**同一包东西**（投喂口给的那个数、`{w}`、`3` 三样，按这个先后）去问前两张图纸，再把最后一张请出来收尾，印出三行：先是 `样数 3`，再是 `全部 X`，最后是 `连写 Y`。\n\n`X` 是三样加起来的结果；`Y` 是三样**连着**印出来的样子（中间不加空格、不加换行）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\n// 在这儿写三张图纸：countAll / addAll / printAll\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    // 在这儿写：拿同一包东西问三张图纸，印出三行\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename... Args>\nint countAll(Args... args) {\n    return sizeof...(args);\n}\n\ntemplate <typename... Args>\nint addAll(Args... args) {\n    return (args + ... + 0);\n}\n\ntemplate <typename... Args>\nvoid printAll(Args... args) {\n    (cout << ... << args);\n    cout << endl;\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    cout << \"样数 \" << countAll(n, {w}, 3) << endl;\n    cout << \"全部 \" << addAll(n, {w}, 3) << endl;\n    printAll(\"连写 \", n, {w}, 3);\n    return 0;\n}\n",
+  "explanationTemplate": "这一题把三张图纸凑在一起用喵，一张管一件事：\n\n- `countAll` 里是 `sizeof...(args)` —— 三个点**站在括号里面**，问的是「这包装了几样」。喂进去三样，它就给 `3`。\n- `addAll` 里是 `(args + ... + 0)`：把包里每一样挨个用 `+` 串起来，末尾再垫一个 `0`。垫底是为了**空手来的那次** —— 这一次主猫喂满了三样，垫的那个 `0` 一点不影响结果。\n- `printAll` 里是 `(cout << ... << args)`：把包里每一样**依次递给** `cout`。所以 `连写 573` 这一行是把 `\"连写 \"` 这个字和三个数混在**同一包**里递进去的 —— 包里装着字和数混着的东西，正是这套写法最省事的地方。\n\n⚠️ 第三行为什么印成 `573` 而不是 `5 7 3`？因为这一句只管「一样一样递过去」，**中间要不要空格、要不要换行，全看你包里装的是什么**。想要空格，就得自己往包里塞带空格的字（比如 `\" \"`）。\n\n⚠️ 「样数」那一行这次永远都是 `3`（主猫固定喂三样），它是拿来对照的：**同一包东西**递给三张图纸，各问各的，互不干扰。"
+}

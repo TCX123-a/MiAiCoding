@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-02-const-needs-list",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-02",
+  "type": "codefix",
+  "concept": ["带封印的格子", "只能靠出生清单装", "编译期报错现场"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stemTemplate": "本喵想养一只**出生以后再也不能改**条数的猫：那一格加了封印，写成 `const int fish;`，出生招式也写好了，想让它一出生就把条数装进去。\n\n可信封递进去，翻译官喵拦下来说这一格装不进去喵。\n\n你帮本喵改一处，让它跑起来、把那一行印对。**`main` 里那几句一个都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nclass Cat {\npublic:\n    const int fish;\n\n    Cat(int f) {\n        fish = f;\n    }\n\n    void show() const {\n        cout << \"本喵有 \" << fish << \" 条小鱼干\" << endl;\n    }\n};\n\nint main() {\n    Cat c1({fish});\n    c1.show();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nclass Cat {\npublic:\n    const int fish;\n\n    Cat(int f) : fish(f) {}\n\n    void show() const {\n        cout << \"本喵有 \" << fish << \" 条小鱼干\" << endl;\n    }\n};\n\nint main() {\n    Cat c1({fish});\n    c1.show();\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵一口气说了三句，本喵挑两句最要紧的抄在这儿：\n\n`main.cpp:8:5: error: uninitialized const member in 'const int' [-fpermissive]`\n\n`main.cpp:9:14: error: assignment of read-only member 'Cat::fish'`\n\n第一句说「这一格到出生为止还空着」，第二句说「这是只读的格子，不许赋值」。两句合起来就是本课那条规矩：**带封印的格子只能靠出生清单装**。\n\n肚子里那两行是「先接住料、再往格子里塞」—— 对普通格子没问题，对**带封印的格子**就晚了：它必须在大括号里那几行**之前**就装好。\n\n改法是把 `fish = f;` 从肚子里挪到脑袋后面的清单上，整招缩成一行：\n\n`Cat(int f) : fish(f) {}`\n\n以后看到 `read-only member` 或者 `uninitialized const member`，先看这一格是不是带了封印、再看出生清单里有没有它喵。"
+}

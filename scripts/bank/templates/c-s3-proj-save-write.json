@@ -1,0 +1,21 @@
+{
+  "templateId": "c-s3-proj-save-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-15",
+  "type": "codewrite",
+  "concept": ["自己写存档案：走链子 + fprintf 一行一位", "存和读是两边的约定", "开过的门要关"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "大黄"] },
+    "n2": { "kind": "pick", "values": ["小白", "小灰"] },
+    "n3": { "kind": "pick", "values": ["阿花", "咪咪"] },
+    "s1": { "kind": "pick", "values": ["90", "88"] },
+    "s2": { "kind": "pick", "values": ["85", "92"] },
+    "s3": { "kind": "pick", "values": ["95", "79"] }
+  },
+  "stemTemplate": "最后一招要你自己写喵：`save_to_file` —— 把链子上每位学员**按一行**写进档案。骨架里门是开了、也关了，可**一行都没写**，所以读回来是「一共 0 位」。\n\n按注释把绕圈那几步补上（别的都别动）。写好之后该印三行「第 1 位：{n1} {s1} 分」「第 2 位：{n2} {s2} 分」「第 3 位：{n3} {s3} 分」，最后一行「一共 3 位」。",
+  "starterTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    /* ↓ 在这儿写：走链子，把每一节写成一个「名字 分数」的行（行尾记得换行） */\n\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n    head = add_last(head, \"{n3}\", {s3});\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    for (Node *p = head; p != NULL; p = p->next) {\n        fprintf(fp, \"%s %d\\n\", p->name, p->score);\n    }\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n    head = add_last(head, \"{n3}\", {s3});\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+  "explanationTemplate": "绕圈那两句是熟脸喵：`for (Node *p = head; p != NULL; p = p->next)` —— 从第一节走到「下一步没有了」。每圈写在纸上的一行是 `fprintf(fp, \"%s %d\\n\", p->name, p->score)`：**名字、一个空格、分数、换行**。\n\n那一行里的空格和换行**不是排版好看**，是**存和读两边的约定** —— 读的那头 `fscanf(fp, \"%15s %d\", name, &score) == 2` 就按这个约定切：先叼一串项链、再叼一个整数，两样都到手才算读完一位。你把写的格式改了（比如分数在前、名字在后），读的那头就对不上了：它会拿着 `%15s` 去啃那串数字，`%d` 再啃名字，啃不动就停 —— 于是「一共 0 位」，档案里明明躺着三位。\n\n还有那两句守卫：`fopen` 叼回 `NULL` 就是「门打不开」，先拦住再动手；门外 `fclose` 是收摊，把门关好，别让写下去的东西还挂在半路上没落地。"
+}

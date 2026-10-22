@@ -1,0 +1,21 @@
+{
+  "templateId": "c-s3-proj-walk-stuck",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-15",
+  "type": "codefix",
+  "concept": ["走链子的标准写法", "忘了跳到下一节：同一节印了又印", "每节自己记着下一节在哪儿"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "大黄"] },
+    "n2": { "kind": "pick", "values": ["小白", "小灰"] },
+    "n3": { "kind": "pick", "values": ["阿花", "咪咪"] },
+    "s1": { "kind": "pick", "values": ["90", "88"] },
+    "s2": { "kind": "pick", "values": ["85", "92"] },
+    "s3": { "kind": "pick", "values": ["95", "79"] }
+  },
+  "stemTemplate": "本喵这份成绩册的印表这招**卡住了**喵：它把最前头那一节印了又印，后头两位一次都没露脸 —— 屏幕上倒是整整齐齐三行，可三行是同一个人。\n\n毛病在走链子那一步。请你把这招改成**走链子的标准写法**（别的都别动）。改好之后该印三行，按加进来的顺序一人一行：{n1} {s1} 分、{n2} {s2} 分、{n3} {s3} 分。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    Node *p = head;\n    for (int i = 0; i < 3; i++) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n    head = add_last(head, \"{n3}\", {s3});\n    print_all(head);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n    head = add_last(head, \"{n3}\", {s3});\n    print_all(head);\n    return 0;\n}\n",
+  "explanationTemplate": "走链子的标准写法是这一句喵：`for (Node *p = head; p != NULL; p = p->next)` —— **从第一节出发**、**走到「下一步没有了」为止**、**每一圈跳到这一节记着的下一节**。\n\n原来那版少了最后半句：`p` 一直杵在第一节上没动过，所以同一节被印了三回，后头两位永远轮不到。它比那种停不下来的跑圈温和一点（好歹有个圈数上限），可屏幕上照样是三行看不出毛病的东西 —— 这种「看着整齐、其实全错」最难抓。\n\n顺便记一句：它和走一排碗的跑圈是亲兄弟，区别只在往前走的那一步 —— 一排碗靠编号（`i++`），链子靠**每一节自己记着下一节在哪儿**（`p = p->next`）。"
+}

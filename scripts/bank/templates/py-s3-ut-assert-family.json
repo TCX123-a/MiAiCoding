@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-ut-assert-family",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-11",
+  "type": "codewrite",
+  "concept": ["断言家族", "assertTrue", "assertIn", "assertRaises"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 7, "max": 9 },
+    "b": { "kind": "int", "min": 2, "max": 3 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫罐头", "冻干块"] }
+  },
+  "stemTemplate": "判据不止 `assertEqual` 一条喵。本喵这次要你**四条判据各用一遍**。\n\n招式「平分」已经在文件里（不许改）：正常分整数商，猫数是 0 的时候抛 `ValueError`。\n\n请你写一张体检单，叫 `平分体检`，里面写**四个**项目（名字都要以 `test` 开头）：\n\n1. `test_相等` —— 用 `assertEqual` 查：`平分({a}, {b})` 等于 `{a} // {b}`\n2. `test_为真` —— 用 `assertTrue` 查：`平分({a}, {b})` 比 0 大\n3. `test_找得到` —— 用 `assertIn` 查：`{unit}` 出现在 `一筐{unit}` 里\n4. `test_该拒绝就拒绝` —— 用 `assertRaises` 查：拿 `{a}` 份和 **0 只猫**去喂，它该抛 `ValueError`\n\n跑的时候开一本体检本子（`unittest.TestResult()`），最后印**三行**：\n\n- 第一行：`体检了 ` 加项目数加 ` 项`\n- 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n- 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+  "starterTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 四个项目的体检单和跑它的那几行，交给你喵\n",
+  "referenceSolutionTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_相等(self):\n        self.assertEqual(平分({a}, {b}), {a} // {b})\n    def test_为真(self):\n        self.assertTrue(平分({a}, {b}) > 0)\n    def test_找得到(self):\n        self.assertIn(\"{unit}\", \"一筐{unit}\")\n    def test_该拒绝就拒绝(self):\n        self.assertRaises(ValueError, 平分, {a}, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+  "explanationTemplate": "四条判据，本喵按「什么时候该请谁出场」给你排一遍喵：\n\n- **`assertEqual(甲, 乙)`** —— 最常用的一条：要求两样相等。它红了会**把两个数并排摆给你看**（真跑出来的 `!=` 该是的），信息量最大。**能写它就写它**，别偷懒。\n- **`assertTrue(某句话)`** —— 要求这句话为真。它比 `assertEqual` 含糊：红了只说「不成立」，**不告诉你差多少**。适合「只要它比 0 大就行」这种没有精确标准答案的场合。\n- **`assertIn(小东西, 一大串)`** —— 要求小东西出现在那一大串里。查一串字里有没有某个部件时特别好用；红了会说「在某某里找不到某某」。\n- **`assertRaises(该炸的错, 招式, 喂进去的…)`** —— **要求它炸**。有些招式在特定投喂下本来就该拒绝干活，这条就是拿这种「该拒绝」当判据的。\n\n⚠️ 四条里最容易被写歪的是最后一条：它喂东西的姿势是**分开排队**的 —— 先写该炸的错、再写招式名，然后一样一样把要喂的东西排在后面。**千万别顺手给招式加上一对括号**，那等于当场把它喊起来，毛病就当场炸在判据外头了。\n\n还有一条本喵得念两遍：**红了的常常不是招式，是你自己把标准答案记错了。** 把「该是多少」写死，好处正是写错了当场露馅喵。"
+}

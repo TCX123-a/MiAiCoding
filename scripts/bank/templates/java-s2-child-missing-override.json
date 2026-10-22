@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-child-missing-override",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-03",
+  "type": "codefix",
+  "concept": ["只画了一半的图纸", "补上那一招", "abstract", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵的大图纸只画了一半，立了条规矩：**凡是往下画的，都得把 `speak` 补上**。小图纸套在大图纸上，出生那一手也写了 —— 可本喵**偏偏忘了补那一招**，翻译官喵当场翻脸，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这两行：\n\n```text\n{name}：喵～\n{name}睡着了，呼噜呼噜\n```\n\n（第二行那一招是大图纸上**本来就画完了的**，本喵已经写好了，别去动它喵。）",
+  "brokenCodeTemplate": "abstract class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    abstract void speak();\n\n    void sleep() {\n        System.out.println(name + \"睡着了，呼噜呼噜\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.speak();\n        c.sleep();\n    }\n}\n",
+  "referenceFixTemplate": "abstract class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    abstract void speak();\n\n    void sleep() {\n        System.out.println(name + \"睡着了，呼噜呼噜\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.speak();\n        c.sleep();\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 **`Cat is not abstract and does not override abstract method speak() in Animal`**，念起来是：**「`Cat` 自己没写 `speak`，又不肯当半张图纸 —— 那它到底会不会出声喵？」**\n\n注意它点了两个名：`class Cat` 和 `abstract method speak() in Animal`。这两个名字合起来就是它的推理：\n\n- 大图纸上立过规矩：`speak` **必须**有；\n- 小图纸上没写这一招；\n- 小图纸头上也没写 `abstract`（等于说「本喵这张是画完了的」）。\n\n画完了、却又少一招 —— 自相矛盾，所以翻译官不许它出生。\n\n它其实给了两条路，本喵必须二选一：\n\n1. **把那一招补上**（绝大多数时候选这条）—— 在小图纸里写一版 `speak`，头上照旧挂 `@Override`。\n2. **自己头上也写 `abstract`** —— 意思是「本喵这张也是半张，接着往下传」。可这样一来，本喵就生不出真猫了，总得有一张图纸把话说完。\n\n本题走第一条。补的时候有两点：`@Override` 别忘，**名字一个字母都不能错** —— 手滑写成 `speek`，翻译官只会说「本喵又画了一招新的」，而该补的那一招**还是空着**，这一趟就白改了喵。"
+}

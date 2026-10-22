@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-19-sign-first-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-19",
+  "type": "codewrite",
+  "concept": ["先挂招牌、后写身子", "招牌一行宣告收什么还什么", "招牌替身子先应一声", "翻译官喵从上往下一路读"],
+  "instances": 6,
+  "params": {
+    "per": { "kind": "pick", "values": ["2", "3"] },
+    "bowls": { "kind": "pick", "values": ["4", "5"] },
+    "eaten": { "kind": "pick", "values": ["3", "1"] }
+  },
+  "stemTemplate": "这个任务要你**一手挂招牌、一手写身子**喵：`main`（门口那几行）本喵已经写好了，它照着招牌使唤两招。要补的是两块：\n\n1. **招牌区**：挂两条宣告 —— 各自收什么、还什么，行尾别忘了分号；\n2. **身子区**：写两招真正干的活 —— `fish_pack` 把「每碗 {per} 条、一共 {bowls} 碗」拢成总条数；`fish_left` 从整袋里减掉吃掉的。\n\n`main` 一个字都别动。改好之后该印两行：第一行是 {per}×{bowls} 拢出来的总条数（`码好 X 条`），第二行是再减掉 {eaten} 条剩下的（`还剩 X 条`）。",
+  "starterTemplate": "#include <stdio.h>\n\n/* ===== 招牌区 =====\n   在这块空地上挂两块招牌（两条宣告，行尾分号）：\n   · fish_pack：收「每碗几条」和「几碗」，还总条数；\n   · fish_left：收「整袋多少条」和「吃掉多少条」，还剩下的数。 */\n\n\nint main(void) {\n    int bag = fish_pack({per}, {bowls});\n    printf(\"码好 %d 条\\n\", bag);\n    printf(\"还剩 %d 条\\n\", fish_left(bag, {eaten}));\n    return 0;\n}\n\n/* ===== 身子区 =====\n   在这块空地上写两招的身子：\n   · fish_pack：每碗 {per} 条、一共 {bowls} 碗，还总条数；\n   · fish_left：整袋减掉吃掉的，还剩下的数。 */\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* ===== 招牌区 ===== */\nint fish_pack(int per, int bowls);\nint fish_left(int total, int eaten);\n\nint main(void) {\n    int bag = fish_pack({per}, {bowls});\n    printf(\"码好 %d 条\\n\", bag);\n    printf(\"还剩 %d 条\\n\", fish_left(bag, {eaten}));\n    return 0;\n}\n\n/* ===== 身子区 ===== */\nint fish_pack(int per, int bowls) {\n    return per * bowls;\n}\n\nint fish_left(int total, int eaten) {\n    return total - eaten;\n}\n",
+  "explanationTemplate": "两块招牌，两条宣告，各自都把「收什么、还什么」先说清楚喵：\n\n```text\nint fish_pack(int per, int bowls);\nint fish_left(int total, int eaten);\n```\n\n身子照着招牌接手：`fish_pack` 用乘法把「每碗几条」乘上「几碗」；`fish_left` 从整袋里扣掉吃掉的。\n\n为什么招牌能救「身子写在后头」：翻译官喵读稿是**从上往下一行一行**的。读到 `main` 里使唤 `fish_pack` 的时候，它只看过上面的招牌，还没见过下面的身子 —— 招牌就是替身子先应一声：「这招存在，长这个样子。」没有这一声，稿子在半路就被拦下。\n\n等本子分了家，这一声就由 `#include` 从招牌本上拼过来：`main` 只带着招牌走，身子住在干活本里，**缝一起**（链接）的时候两边对账。今天你在这张纸上先挂一遍招牌 —— 手感就是往后招牌本上那两行的手感。\n\n顺一句分工：招牌是「宣告」（行尾分号），身子是「定义」（带一对花括号）—— 课文里那对本子说的就是这两件东西喵。"
+}

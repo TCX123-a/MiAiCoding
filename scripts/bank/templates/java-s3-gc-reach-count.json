@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-gc-reach-count",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-18",
+  "type": "codewrite",
+  "concept": ["同一只盒子可以立好几张牌", "放下的是牌子、盒子没动", "数牌子不等于数盒子"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "煤球"] },
+    "n2": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stemTemplate": "本喵在一排架子上摆几个格子，每个格子里放一张牌子（也有格子是空的）喵。请你写个程序，照这个次序做：\n\n1. 架子上开 **4** 个格子；\n2. 第 1 格放一只新生的猫，名字叫 `{n1}`；第 2 格和第 3 格放**和第一格同一只**的那张牌子（不是再生的猫）；第 4 格放一只新生的猫，名字叫 `{n2}`；\n3. 再把**第 1 格**里那张牌子放下（那一格清空）；\n4. 数两件事，各印一行：\n   - `还立着的牌子：` 后面接**架子上还有几张牌子没放下**（空格子不算）；\n   - `够得着的猫：` 后面接**架子上还有几只不同的猫**被指着（同一只被指好几回，只算一只）。\n\n（这一题**不用投喂任何东西**；两只叫什么名字本喵都写在上面了。）",
+  "starterTemplate": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n\nclass Cat {\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n}\n",
+  "referenceSolutionTemplate": "public class Main {\n    public static void main(String[] args) {\n        Cat[] 架子 = new Cat[4];\n        架子[0] = new Cat(\"{n1}\");\n        架子[1] = 架子[0];\n        架子[2] = 架子[0];\n        架子[3] = new Cat(\"{n2}\");\n        架子[0] = null;\n\n        int 立着的牌子 = 0;\n        int 够得着的猫 = 0;\n        for (int i = 0; i < 架子.length; i++) {\n            if (架子[i] == null) {\n                continue;\n            }\n            立着的牌子 = 立着的牌子 + 1;\n            boolean 数过了 = false;\n            for (int j = 0; j < i; j++) {\n                if (架子[j] == 架子[i]) {\n                    数过了 = true;\n                }\n            }\n            if (!数过了) {\n                够得着的猫 = 够得着的猫 + 1;\n            }\n        }\n        System.out.println(\"还立着的牌子：\" + 立着的牌子);\n        System.out.println(\"够得着的猫：\" + 够得着的猫);\n    }\n}\n\nclass Cat {\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n}\n",
+  "explanationTemplate": "**一、第 2、3 格那两下是「又拿一张牌」。** `架子[1] = 架子[0];` 抄的是**那张牌子**，不是又生了一只猫 —— 所以架子上看着热热闹闹，其实只有**两只**不同的猫。\n\n**二、第 1 格那一下只放下了牌子。** 盒子还在（另外两张牌照样够得着它），少掉的只是第 1 格里那一张。所以「还立着的牌子」是 **3** 张；要是把它当成「少了一只猫」，就会数错。\n\n**三、为什么要去重。** 数牌子会在第 2、3 格上把**同一只猫**数两回 —— 那本账记的是牌子，不是猫。题目要的是**够得着的猫**：一张一张走过去，遇见已经不认识的（前面没出现过）才加 1，所以那两只被指了好几次的猫只算一只，加起来是 **2**。\n\n**四、跟课文对上。** 自动铲屎官也是这么看的：它**从根上顺着一串牌子走**，走到哪些盒子就在意哪些盒子；同一个盒子被走到的次数再多，它也只是**一只盒子**。"
+}

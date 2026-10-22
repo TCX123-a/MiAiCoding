@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-dunder-str-print-not-return",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-08",
+  "type": "codefix",
+  "concept": ["__str__", "叼回来", "print"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 8 }
+  },
+  "stemTemplate": "本喵想在纸上写一句 `print(a)`，让屏幕上冒出「这只碗被说成什么样」的一句话喵 —— 具体就是：\n\n```text\n装了 {n} 条小鱼干\n```\n\n图纸上那一招本喵已经写好了，可它一跑就报错。你帮本喵改对。\n\n⚠️ 那句话**一个字都不许改**，`print(a)` 那一行也不许改成别的写法。",
+  "brokenCodeTemplate": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __str__(self):\n        print(\"装了 \" + str(self.n) + \" 条小鱼干\")\n\n\na = Bowl({n})\nprint(a)\n",
+  "referenceFixTemplate": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __str__(self):\n        return \"装了 \" + str(self.n) + \" 条小鱼干\"\n\n\na = Bowl({n})\nprint(a)\n",
+  "explanationTemplate": "毛病出在那一招的**最后一步**上：它把话**印出去了**，却没有**叼回来**喵。\n\n要看清这个坑，先记住 `__str__` 是干什么的：`print(a)` 的时候，Python 会先悄悄喊一遍 `a.__str__()`，**把它叼回来的那句话**拿去印。所以这一招的任务是**把话叼回来**（`return`），不是自己印。\n\n⚠️ 跑坏代码的时候你会看到一件很能说明问题的事：那句「装了 {n} 条小鱼干」**其实是印出来了的** —— 因为招式里的 `print` 真的执行了。可紧接着 Python 还是翻脸，说它叼回来的不是一句话。**印出来了 ≠ 叼回来了**，这就是这一课最要紧的分界。\n\n⚠️ 只印不叼的话，这一招实际叼回来的是个「空」（`None`）。Python 拿这个空去当一句话用，只能翻脸：`__str__ returned non-string`。\n\n⚠️ 顺带记一句：`__str__` 和 `__init__` 一样，**名字前后各是两条下划线**，一共四条。少一条它就只是个普通名字，Python 永远不会替你喊它 —— 而程序**不报错**，你只会百思不得其解「怎么没生效」。"
+}

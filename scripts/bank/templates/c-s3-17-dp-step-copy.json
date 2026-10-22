@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-17-dp-step-copy",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-17",
+  "type": "codefix",
+  "concept": ["挪的是哪张牌", "剥一层往里写", "复印件原地打转", "差一颗星屏幕上看不出来"],
+  "instances": 2,
+  "params": {
+    "row": { "kind": "pick", "values": ["2, 7, 5, 8, 3", "10, 4, 6, 9, 1"] },
+    "count": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stemTemplate": "本喵在架子上摆了 **5 只碗**，里面的数分别是 {row}。外面那张牌一开始指着**第一只碗**，本喵想让它往后挪 **{count} 只碗**，再印一行「牌子现在指着：几」。\n\n`step` 这一招里的绕鱼干跑圈一圈不少地跑了 {count} 圈，可印出来的还是**第一只碗**里的数 —— 外面那张牌一步没挪。翻译官喵一声没吭，跑起来也不摔。\n\n请你把这一招改对（`main` 里那几行别动）。改好之后，「牌子现在指着：」后面该是往后数 {count} 只碗落在的那只碗里的数。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n/* 把外面那张牌往后挪 count 只碗 */\nvoid step(int **pp, int count) {\n    for (int i = 0; i < count; i++) {\n        pp = pp + 1;\n    }\n}\n\nint main(void) {\n    int bowls[5] = {{row}};\n    int *p = &bowls[0];\n\n    step(&p, {count});\n    printf(\"牌子现在指着：%d\\n\", *p);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n/* 把外面那张牌往后挪 count 只碗 */\nvoid step(int **pp, int count) {\n    for (int i = 0; i < count; i++) {\n        *pp = *pp + 1;\n    }\n}\n\nint main(void) {\n    int bowls[5] = {{row}};\n    int *p = &bowls[0];\n\n    step(&p, {count});\n    printf(\"牌子现在指着：%d\\n\", *p);\n    return 0;\n}\n",
+  "explanationTemplate": "毛病在**挪的是哪张牌**喵：`pp = pp + 1;` 挪的是招式里那个接料格**自己** —— 它收下的本来是一张复印件，一圈一圈挪到最后，也只是复印件自己在打转。外面那张牌一步没挪，还牢牢指着第一只碗。\n\n要挪的是外面那张，就得**剥一层往里写**：\n\n```text\n*pp = *pp + 1;\n```\n\n读法就一句：`*pp` 是「外面那张牌」，`= *pp + 1` 是「让它往后跨一只碗」。改对之后，往后跨过 {count} 只碗，落在第 {count} 只碗上，{row} 里那个位置的数就会被印出来喵。\n\n⚠️ 这两个写法**翻译官喵都不拦**：一个挪复印件、一个挪真牌，屏幕上什么都没有报 —— 差的就是那颗星。以后每次写到 `**`，都回头问自己一句：**这一行要改的到底是哪张牌？**"
+}

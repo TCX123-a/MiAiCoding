@@ -1,0 +1,462 @@
+{
+  "lessonId": "java-stage1-16",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s1-ambiguous-date-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想拿一个时刻出来，看看它对应的那个数喵。两只外卖箱本喵都打了招呼：一只 `java.util`、一只 `java.sql`。可翻译官喵当场犯起了难，丢下一句 `ambiguous`（拿不准）就不吭声了……\n\n你帮本喵看看它为什么拿不准，把它改好。改好之后，程序应该把 `new Date(...)` 里放着的那个数原样印出来。",
+      "brokenCode": "import java.util.*;\nimport java.sql.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Date d = new Date(1);\n        System.out.println(d.getTime());\n    }\n}\n",
+      "referenceFix": "import java.util.*;\nimport java.sql.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        java.util.Date d = new java.util.Date(1);\n        System.out.println(d.getTime());\n    }\n}\n",
+      "expectedOutput": "1",
+      "stdin": null,
+      "explanation": "`ambiguous` 是「**拿不准**」喵：`java.util` 里有个 `Date`，`java.sql` 里也有个 `Date`。本喵一句 `import java.util.*;` 加一句 `import java.sql.*;`，把两只箱子都拉了过来 —— 现在写一个光秃秃的 `Date`，翻译官喵不知道本喵要的是**哪只箱子里的那一张图纸**，只好停下来问一句。\n\n规矩很简单：**简名一旦打架，就只能老老实实写全名。** 上面那两行 `import` 留着没关系，把用到的地方写成 `java.util.Date`（想用哪只箱子就写哪只），翻译官喵立刻就不啰嗦了。\n\n顺带记一句：`import` 只负责省字，**不搬任何东西** —— 「写全名」和「先 `import` 再写简名」是同一件事，后者只是让你少打一截喵。",
+      "templateId": "java-s1-ambiguous-date",
+      "params": {
+        "ms": 1
+      },
+      "verified": {
+        "at": "2026-09-16T00:49:41.540Z",
+        "hash": "70c205a94c8f1969"
+      }
+    },
+    {
+      "id": "bank-java-s1-ambiguous-date-004",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想拿一个时刻出来，看看它对应的那个数喵。两只外卖箱本喵都打了招呼：一只 `java.util`、一只 `java.sql`。可翻译官喵当场犯起了难，丢下一句 `ambiguous`（拿不准）就不吭声了……\n\n你帮本喵看看它为什么拿不准，把它改好。改好之后，程序应该把 `new Date(...)` 里放着的那个数原样印出来。",
+      "brokenCode": "import java.util.*;\nimport java.sql.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Date d = new Date(5);\n        System.out.println(d.getTime());\n    }\n}\n",
+      "referenceFix": "import java.util.*;\nimport java.sql.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        java.util.Date d = new java.util.Date(5);\n        System.out.println(d.getTime());\n    }\n}\n",
+      "expectedOutput": "5",
+      "stdin": null,
+      "explanation": "`ambiguous` 是「**拿不准**」喵：`java.util` 里有个 `Date`，`java.sql` 里也有个 `Date`。本喵一句 `import java.util.*;` 加一句 `import java.sql.*;`，把两只箱子都拉了过来 —— 现在写一个光秃秃的 `Date`，翻译官喵不知道本喵要的是**哪只箱子里的那一张图纸**，只好停下来问一句。\n\n规矩很简单：**简名一旦打架，就只能老老实实写全名。** 上面那两行 `import` 留着没关系，把用到的地方写成 `java.util.Date`（想用哪只箱子就写哪只），翻译官喵立刻就不啰嗦了。\n\n顺带记一句：`import` 只负责省字，**不搬任何东西** —— 「写全名」和「先 `import` 再写简名」是同一件事，后者只是让你少打一截喵。",
+      "templateId": "java-s1-ambiguous-date",
+      "params": {
+        "ms": 5
+      },
+      "verified": {
+        "at": "2026-09-16T00:49:42.804Z",
+        "hash": "c97a89390c700824"
+      }
+    },
+    {
+      "id": "bank-java-s1-fully-qualified-scanner-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给每只猫把今天的小鱼干**翻成两倍**再记进账本喵。\n\n投喂口会先递进来一个数（有几只猫：3），再一行一行递进来 3 个数（每只猫手里有几条）。\n\n请你写个程序：**一行 `import` 都不许写** —— 这回请用**全名**把读数字的家伙请出来；再把每个数变成它的两倍，**顺着读进来的顺序，一行报一个**。\n\n比如投喂给程序的是\n\n3\n2\n2\n5\n\n程序就要叼回\n\n4\n4\n10\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        java.util.Scanner sc = new java.util.Scanner(System.in);\n\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            System.out.println(v * 2);\n        }\n    }\n}\n",
+      "expectedOutput": "10\n6\n16",
+      "stdin": "3\n5\n3\n8\n",
+      "explanation": "`import` 只负责**省字**，不搬任何东西 —— 所以一行都不写它，程序照样跑得欢，只要你每次把**全名**写齐：\n\n```java\njava.util.Scanner sc = new java.util.Scanner(System.in);\n```\n\n全名的好处是**一眼看出它住在哪只箱子**；代价是每用一次都要多打一截。课文里那个小任务就是这两版对照着跑 —— 输出一模一样喵。\n\n有个地方别写漏：`new` 后面那个名字也要带上箱子。只写 `new Scanner(...)`，翻译官喵就又不认识它了。\n\n再看看这一行里另外几个名字：`System` 住在**贴身箱子** `java.lang` 里，所以只写 `System.in` 就好 —— 那只箱子里的东西，永远不用打招呼。",
+      "templateId": "java-s1-fully-qualified-scanner",
+      "params": {
+        "n": 3,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T11:45:24.963Z",
+        "hash": "0c5cc37fbb7c8982"
+      }
+    },
+    {
+      "id": "bank-java-s1-fully-qualified-scanner-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给每只猫把今天的冻干块**翻成两倍**再记进账本喵。\n\n投喂口会先递进来一个数（有几只猫：3），再一行一行递进来 3 个数（每只猫手里有几条）。\n\n请你写个程序：**一行 `import` 都不许写** —— 这回请用**全名**把读数字的家伙请出来；再把每个数变成它的两倍，**顺着读进来的顺序，一行报一个**。\n\n比如投喂给程序的是\n\n3\n4\n2\n6\n\n程序就要叼回\n\n8\n4\n12\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        java.util.Scanner sc = new java.util.Scanner(System.in);\n\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            System.out.println(v * 2);\n        }\n    }\n}\n",
+      "expectedOutput": "10\n16\n18",
+      "stdin": "3\n5\n8\n9\n",
+      "explanation": "`import` 只负责**省字**，不搬任何东西 —— 所以一行都不写它，程序照样跑得欢，只要你每次把**全名**写齐：\n\n```java\njava.util.Scanner sc = new java.util.Scanner(System.in);\n```\n\n全名的好处是**一眼看出它住在哪只箱子**；代价是每用一次都要多打一截。课文里那个小任务就是这两版对照着跑 —— 输出一模一样喵。\n\n有个地方别写漏：`new` 后面那个名字也要带上箱子。只写 `new Scanner(...)`，翻译官喵就又不认识它了。\n\n再看看这一行里另外几个名字：`System` 住在**贴身箱子** `java.lang` 里，所以只写 `System.in` 就好 —— 那只箱子里的东西，永远不用打招呼。",
+      "templateId": "java-s1-fully-qualified-scanner",
+      "params": {
+        "n": 3,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-10-20T17:06:29.336Z",
+        "hash": "a5ffccc69e2acd1e"
+      }
+    },
+    {
+      "id": "bank-java-s1-fully-qualified-scanner-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给每只猫把今天的小鱼干**翻成两倍**再记进账本喵。\n\n投喂口会先递进来一个数（有几只猫：4），再一行一行递进来 4 个数（每只猫手里有几条）。\n\n请你写个程序：**一行 `import` 都不许写** —— 这回请用**全名**把读数字的家伙请出来；再把每个数变成它的两倍，**顺着读进来的顺序，一行报一个**。\n\n比如投喂给程序的是\n\n4\n8\n5\n3\n8\n\n程序就要叼回\n\n16\n10\n6\n16\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        java.util.Scanner sc = new java.util.Scanner(System.in);\n\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            System.out.println(v * 2);\n        }\n    }\n}\n",
+      "expectedOutput": "16\n8\n18\n4",
+      "stdin": "4\n8\n4\n9\n2\n",
+      "explanation": "`import` 只负责**省字**，不搬任何东西 —— 所以一行都不写它，程序照样跑得欢，只要你每次把**全名**写齐：\n\n```java\njava.util.Scanner sc = new java.util.Scanner(System.in);\n```\n\n全名的好处是**一眼看出它住在哪只箱子**；代价是每用一次都要多打一截。课文里那个小任务就是这两版对照着跑 —— 输出一模一样喵。\n\n有个地方别写漏：`new` 后面那个名字也要带上箱子。只写 `new Scanner(...)`，翻译官喵就又不认识它了。\n\n再看看这一行里另外几个名字：`System` 住在**贴身箱子** `java.lang` 里，所以只写 `System.in` 就好 —— 那只箱子里的东西，永远不用打招呼。",
+      "templateId": "java-s1-fully-qualified-scanner",
+      "params": {
+        "n": 4,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:06:32.230Z",
+        "hash": "2cf3ea031c728679"
+      }
+    },
+    {
+      "id": "bank-java-s1-fully-qualified-scanner-005",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给每只猫把今天的冻干块**翻成两倍**再记进账本喵。\n\n投喂口会先递进来一个数（有几只猫：4），再一行一行递进来 4 个数（每只猫手里有几条）。\n\n请你写个程序：**一行 `import` 都不许写** —— 这回请用**全名**把读数字的家伙请出来；再把每个数变成它的两倍，**顺着读进来的顺序，一行报一个**。\n\n比如投喂给程序的是\n\n4\n5\n7\n6\n9\n\n程序就要叼回\n\n10\n14\n12\n18\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        java.util.Scanner sc = new java.util.Scanner(System.in);\n\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            System.out.println(v * 2);\n        }\n    }\n}\n",
+      "expectedOutput": "16\n12\n6\n14",
+      "stdin": "4\n8\n6\n3\n7\n",
+      "explanation": "`import` 只负责**省字**，不搬任何东西 —— 所以一行都不写它，程序照样跑得欢，只要你每次把**全名**写齐：\n\n```java\njava.util.Scanner sc = new java.util.Scanner(System.in);\n```\n\n全名的好处是**一眼看出它住在哪只箱子**；代价是每用一次都要多打一截。课文里那个小任务就是这两版对照着跑 —— 输出一模一样喵。\n\n有个地方别写漏：`new` 后面那个名字也要带上箱子。只写 `new Scanner(...)`，翻译官喵就又不认识它了。\n\n再看看这一行里另外几个名字：`System` 住在**贴身箱子** `java.lang` 里，所以只写 `System.in` 就好 —— 那只箱子里的东西，永远不用打招呼。",
+      "templateId": "java-s1-fully-qualified-scanner",
+      "params": {
+        "n": 4,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-10-20T17:06:35.105Z",
+        "hash": "1ab0f38aa45d09db"
+      }
+    },
+    {
+      "id": "bank-java-s1-fully-qualified-scanner-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给每只猫把今天的小鱼干**翻成两倍**再记进账本喵。\n\n投喂口会先递进来一个数（有几只猫：5），再一行一行递进来 5 个数（每只猫手里有几条）。\n\n请你写个程序：**一行 `import` 都不许写** —— 这回请用**全名**把读数字的家伙请出来；再把每个数变成它的两倍，**顺着读进来的顺序，一行报一个**。\n\n比如投喂给程序的是\n\n5\n4\n7\n5\n2\n2\n\n程序就要叼回\n\n8\n14\n10\n4\n4\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        java.util.Scanner sc = new java.util.Scanner(System.in);\n\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            System.out.println(v * 2);\n        }\n    }\n}\n",
+      "expectedOutput": "18\n8\n4\n12\n10",
+      "stdin": "5\n9\n4\n2\n6\n5\n",
+      "explanation": "`import` 只负责**省字**，不搬任何东西 —— 所以一行都不写它，程序照样跑得欢，只要你每次把**全名**写齐：\n\n```java\njava.util.Scanner sc = new java.util.Scanner(System.in);\n```\n\n全名的好处是**一眼看出它住在哪只箱子**；代价是每用一次都要多打一截。课文里那个小任务就是这两版对照着跑 —— 输出一模一样喵。\n\n有个地方别写漏：`new` 后面那个名字也要带上箱子。只写 `new Scanner(...)`，翻译官喵就又不认识它了。\n\n再看看这一行里另外几个名字：`System` 住在**贴身箱子** `java.lang` 里，所以只写 `System.in` 就好 —— 那只箱子里的东西，永远不用打招呼。",
+      "templateId": "java-s1-fully-qualified-scanner",
+      "params": {
+        "n": 5,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:06:37.975Z",
+        "hash": "3768c82f9a414e91"
+      }
+    },
+    {
+      "id": "bank-java-s1-fully-qualified-scanner-008",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给每只猫把今天的冻干块**翻成两倍**再记进账本喵。\n\n投喂口会先递进来一个数（有几只猫：5），再一行一行递进来 5 个数（每只猫手里有几条）。\n\n请你写个程序：**一行 `import` 都不许写** —— 这回请用**全名**把读数字的家伙请出来；再把每个数变成它的两倍，**顺着读进来的顺序，一行报一个**。\n\n比如投喂给程序的是\n\n5\n6\n2\n8\n8\n6\n\n程序就要叼回\n\n12\n4\n16\n16\n12\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        java.util.Scanner sc = new java.util.Scanner(System.in);\n\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            System.out.println(v * 2);\n        }\n    }\n}\n",
+      "expectedOutput": "12\n16\n14\n12\n10",
+      "stdin": "5\n6\n8\n7\n6\n5\n",
+      "explanation": "`import` 只负责**省字**，不搬任何东西 —— 所以一行都不写它，程序照样跑得欢，只要你每次把**全名**写齐：\n\n```java\njava.util.Scanner sc = new java.util.Scanner(System.in);\n```\n\n全名的好处是**一眼看出它住在哪只箱子**；代价是每用一次都要多打一截。课文里那个小任务就是这两版对照着跑 —— 输出一模一样喵。\n\n有个地方别写漏：`new` 后面那个名字也要带上箱子。只写 `new Scanner(...)`，翻译官喵就又不认识它了。\n\n再看看这一行里另外几个名字：`System` 住在**贴身箱子** `java.lang` 里，所以只写 `System.in` 就好 —— 那只箱子里的东西，永远不用打招呼。",
+      "templateId": "java-s1-fully-qualified-scanner",
+      "params": {
+        "n": 5,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T11:45:26.623Z",
+        "hash": "2bfbcc8a313f3b08"
+      }
+    },
+    {
+      "id": "bank-java-s1-import-comma-row-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵本来打算在账本上连日期一起印，后来想想算了 —— 可那两样东西**拿逗号挤成一句**的写法已经写在那儿了。\n\n翻译官喵读到那一行就不干了，把整段代码退了回来……\n\n你帮本喵看看它为什么不高兴，把它改好。改好之后，程序应该从投喂口读进来一个数，再叼回一行：`收到了 N 条小鱼干`（N 就是读进来的那个数）。\n\n比如投喂给程序的是\n\n7\n\n程序就要叼回\n\n收到了 7 条小鱼干\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "brokenCode": "import java.util.Scanner, java.util.Date;\n\npublic class FishLedger {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        System.out.println(\"收到了 \" + n + \" 条小鱼干\");\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\nimport java.util.Date;\n\npublic class FishLedger {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        System.out.println(\"收到了 \" + n + \" 条小鱼干\");\n    }\n}\n",
+      "expectedOutput": "收到了 9 条小鱼干",
+      "stdin": "9\n",
+      "explanation": "翻译官喵的原话是 `';' expected` —— 「这里该有一个分号」喵。\n\n它读到 `java.util.Scanner` 后面那个**逗号**就卡住了。外卖单上的规矩是：**一行只写一只箱子里的门牌** —— 拿逗号把两行挤成一行，它读不懂。\n\n想拿两样东西，那就老老实实写两行：\n\n```java\nimport java.util.Scanner;\nimport java.util.Date;\n```\n\n（这一版里日期那一行其实没派上用场，留着也不碍事 —— 翻译官喵不管这个。真正要紧的是**每行末尾的分号一个都不能少**，拿逗号在这儿是行不通的。）\n\n顺带把课文里那几句再记一遍：`import` 只负责**省字**、不搬东西；它要写在文件**最上面**、`public class` 之前；一行一个名字。",
+      "templateId": "java-s1-import-comma-row",
+      "params": {
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T11:45:20.314Z",
+        "hash": "ed11dc1e83ec64de"
+      }
+    },
+    {
+      "id": "bank-java-s1-import-comma-row-002",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵本来打算在账本上连日期一起印，后来想想算了 —— 可那两样东西**拿逗号挤成一句**的写法已经写在那儿了。\n\n翻译官喵读到那一行就不干了，把整段代码退了回来……\n\n你帮本喵看看它为什么不高兴，把它改好。改好之后，程序应该从投喂口读进来一个数，再叼回一行：`收到了 N 条冻干块`（N 就是读进来的那个数）。\n\n比如投喂给程序的是\n\n7\n\n程序就要叼回\n\n收到了 7 条冻干块\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "brokenCode": "import java.util.Scanner, java.util.Date;\n\npublic class FishLedger {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        System.out.println(\"收到了 \" + n + \" 条冻干块\");\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\nimport java.util.Date;\n\npublic class FishLedger {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        System.out.println(\"收到了 \" + n + \" 条冻干块\");\n    }\n}\n",
+      "expectedOutput": "收到了 2 条冻干块",
+      "stdin": "2\n",
+      "explanation": "翻译官喵的原话是 `';' expected` —— 「这里该有一个分号」喵。\n\n它读到 `java.util.Scanner` 后面那个**逗号**就卡住了。外卖单上的规矩是：**一行只写一只箱子里的门牌** —— 拿逗号把两行挤成一行，它读不懂。\n\n想拿两样东西，那就老老实实写两行：\n\n```java\nimport java.util.Scanner;\nimport java.util.Date;\n```\n\n（这一版里日期那一行其实没派上用场，留着也不碍事 —— 翻译官喵不管这个。真正要紧的是**每行末尾的分号一个都不能少**，拿逗号在这儿是行不通的。）\n\n顺带把课文里那几句再记一遍：`import` 只负责**省字**、不搬东西；它要写在文件**最上面**、`public class` 之前；一行一个名字。",
+      "templateId": "java-s1-import-comma-row",
+      "params": {
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T11:45:22.365Z",
+        "hash": "0d2c5768f5daebbb"
+      }
+    },
+    {
+      "id": "bank-java-s1-lang-length-report-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给两只猫的**名字量身高**喵：投喂口会递进来**两行字**，一行一只猫的名字。\n\n请你写个程序：一行一行读进来（`Scanner` 的 `nextLine()` 一次叼一整行），然后报三行 —— 前两行一只一行，形如「名字 有 N 个字喵」；最后一行报两只里**长的那一只**有几个字，形如「最长的有 N 个字喵」。\n\n比如投喂给程序的是\n\n花花\n小布丁\n\n程序就要叼回\n\n花花 有 2 个字喵\n小布丁 有 3 个字喵\n最长的有 3 个字喵\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String first = sc.nextLine();\n        String second = sc.nextLine();\n\n        System.out.println(first + \" 有 \" + first.length() + \" 个字喵\");\n        System.out.println(second + \" 有 \" + second.length() + \" 个字喵\");\n        System.out.println(\"最长的有 \" + Math.max(first.length(), second.length()) + \" 个字喵\");\n    }\n}\n",
+      "expectedOutput": "小橘 有 2 个字喵\n小队长 有 3 个字喵\n最长的有 3 个字喵",
+      "stdin": "小橘\n小队长\n",
+      "explanation": "这道题里藏着**两个不用打招呼的名字**喵：\n\n- 量身高用的 `length()` —— 它是 `String` 身上的本事；\n- 挑长的那只用的 `Math.max`。\n\n它俩都住在**贴身箱子** `java.lang` 里，翻译官喵默认就先翻它，所以一次 `import` 都不用写。整段程序里真正要打招呼的只有 `Scanner` —— 它住在 `java.util` 那只外卖箱，少了最上面那行 `import java.util.Scanner;` 它就不认识。\n\n（连 `System.out.println` 里的 `System` 也是贴身箱子里的，所以它从来不用谁替它说话。）\n\n另外两个小地方：\n\n**① 名字要一行一行叼。** 用 `nextLine()` 一次叼一整天，别用只认「一样东西」的那种写法 —— 两行字里要是带了空格，它就只能叼回前半截。\n\n**② `length()` 的小括号不能省。** 它是 `String` 身上的一招，喊它就得带上括号 —— 写成光秃秃的名字，翻译官喵会当作找不到它。",
+      "templateId": "java-s1-lang-length-report",
+      "params": {
+        "a": "小橘",
+        "b": "小队长"
+      },
+      "verified": {
+        "at": "2026-09-16T11:46:30.341Z",
+        "hash": "782334e6ba097353"
+      }
+    },
+    {
+      "id": "bank-java-s1-lang-length-report-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给两只猫的**名字量身高**喵：投喂口会递进来**两行字**，一行一只猫的名字。\n\n请你写个程序：一行一行读进来（`Scanner` 的 `nextLine()` 一次叼一整行），然后报三行 —— 前两行一只一行，形如「名字 有 N 个字喵」；最后一行报两只里**长的那一只**有几个字，形如「最长的有 N 个字喵」。\n\n比如投喂给程序的是\n\n花花\n小布丁\n\n程序就要叼回\n\n花花 有 2 个字喵\n小布丁 有 3 个字喵\n最长的有 3 个字喵\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String first = sc.nextLine();\n        String second = sc.nextLine();\n\n        System.out.println(first + \" 有 \" + first.length() + \" 个字喵\");\n        System.out.println(second + \" 有 \" + second.length() + \" 个字喵\");\n        System.out.println(\"最长的有 \" + Math.max(first.length(), second.length()) + \" 个字喵\");\n    }\n}\n",
+      "expectedOutput": "小橘 有 2 个字喵\n咪咪 有 2 个字喵\n最长的有 2 个字喵",
+      "stdin": "小橘\n咪咪\n",
+      "explanation": "这道题里藏着**两个不用打招呼的名字**喵：\n\n- 量身高用的 `length()` —— 它是 `String` 身上的本事；\n- 挑长的那只用的 `Math.max`。\n\n它俩都住在**贴身箱子** `java.lang` 里，翻译官喵默认就先翻它，所以一次 `import` 都不用写。整段程序里真正要打招呼的只有 `Scanner` —— 它住在 `java.util` 那只外卖箱，少了最上面那行 `import java.util.Scanner;` 它就不认识。\n\n（连 `System.out.println` 里的 `System` 也是贴身箱子里的，所以它从来不用谁替它说话。）\n\n另外两个小地方：\n\n**① 名字要一行一行叼。** 用 `nextLine()` 一次叼一整天，别用只认「一样东西」的那种写法 —— 两行字里要是带了空格，它就只能叼回前半截。\n\n**② `length()` 的小括号不能省。** 它是 `String` 身上的一招，喊它就得带上括号 —— 写成光秃秃的名字，翻译官喵会当作找不到它。",
+      "templateId": "java-s1-lang-length-report",
+      "params": {
+        "a": "小橘",
+        "b": "咪咪"
+      },
+      "verified": {
+        "at": "2026-10-20T17:07:03.348Z",
+        "hash": "8aa568b83707a38e"
+      }
+    },
+    {
+      "id": "bank-java-s1-lang-length-report-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给两只猫的**名字量身高**喵：投喂口会递进来**两行字**，一行一只猫的名字。\n\n请你写个程序：一行一行读进来（`Scanner` 的 `nextLine()` 一次叼一整行），然后报三行 —— 前两行一只一行，形如「名字 有 N 个字喵」；最后一行报两只里**长的那一只**有几个字，形如「最长的有 N 个字喵」。\n\n比如投喂给程序的是\n\n花花\n小布丁\n\n程序就要叼回\n\n花花 有 2 个字喵\n小布丁 有 3 个字喵\n最长的有 3 个字喵\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String first = sc.nextLine();\n        String second = sc.nextLine();\n\n        System.out.println(first + \" 有 \" + first.length() + \" 个字喵\");\n        System.out.println(second + \" 有 \" + second.length() + \" 个字喵\");\n        System.out.println(\"最长的有 \" + Math.max(first.length(), second.length()) + \" 个字喵\");\n    }\n}\n",
+      "expectedOutput": "大肥鱼 有 3 个字喵\n小队长 有 3 个字喵\n最长的有 3 个字喵",
+      "stdin": "大肥鱼\n小队长\n",
+      "explanation": "这道题里藏着**两个不用打招呼的名字**喵：\n\n- 量身高用的 `length()` —— 它是 `String` 身上的本事；\n- 挑长的那只用的 `Math.max`。\n\n它俩都住在**贴身箱子** `java.lang` 里，翻译官喵默认就先翻它，所以一次 `import` 都不用写。整段程序里真正要打招呼的只有 `Scanner` —— 它住在 `java.util` 那只外卖箱，少了最上面那行 `import java.util.Scanner;` 它就不认识。\n\n（连 `System.out.println` 里的 `System` 也是贴身箱子里的，所以它从来不用谁替它说话。）\n\n另外两个小地方：\n\n**① 名字要一行一行叼。** 用 `nextLine()` 一次叼一整天，别用只认「一样东西」的那种写法 —— 两行字里要是带了空格，它就只能叼回前半截。\n\n**② `length()` 的小括号不能省。** 它是 `String` 身上的一招，喊它就得带上括号 —— 写成光秃秃的名字，翻译官喵会当作找不到它。",
+      "templateId": "java-s1-lang-length-report",
+      "params": {
+        "a": "大肥鱼",
+        "b": "小队长"
+      },
+      "verified": {
+        "at": "2026-10-20T17:07:06.690Z",
+        "hash": "77572cd093eac8e2"
+      }
+    },
+    {
+      "id": "bank-java-s1-lang-length-report-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给两只猫的**名字量身高**喵：投喂口会递进来**两行字**，一行一只猫的名字。\n\n请你写个程序：一行一行读进来（`Scanner` 的 `nextLine()` 一次叼一整行），然后报三行 —— 前两行一只一行，形如「名字 有 N 个字喵」；最后一行报两只里**长的那一只**有几个字，形如「最长的有 N 个字喵」。\n\n比如投喂给程序的是\n\n花花\n小布丁\n\n程序就要叼回\n\n花花 有 2 个字喵\n小布丁 有 3 个字喵\n最长的有 3 个字喵\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String first = sc.nextLine();\n        String second = sc.nextLine();\n\n        System.out.println(first + \" 有 \" + first.length() + \" 个字喵\");\n        System.out.println(second + \" 有 \" + second.length() + \" 个字喵\");\n        System.out.println(\"最长的有 \" + Math.max(first.length(), second.length()) + \" 个字喵\");\n    }\n}\n",
+      "expectedOutput": "大肥鱼 有 3 个字喵\n咪咪 有 2 个字喵\n最长的有 3 个字喵",
+      "stdin": "大肥鱼\n咪咪\n",
+      "explanation": "这道题里藏着**两个不用打招呼的名字**喵：\n\n- 量身高用的 `length()` —— 它是 `String` 身上的本事；\n- 挑长的那只用的 `Math.max`。\n\n它俩都住在**贴身箱子** `java.lang` 里，翻译官喵默认就先翻它，所以一次 `import` 都不用写。整段程序里真正要打招呼的只有 `Scanner` —— 它住在 `java.util` 那只外卖箱，少了最上面那行 `import java.util.Scanner;` 它就不认识。\n\n（连 `System.out.println` 里的 `System` 也是贴身箱子里的，所以它从来不用谁替它说话。）\n\n另外两个小地方：\n\n**① 名字要一行一行叼。** 用 `nextLine()` 一次叼一整天，别用只认「一样东西」的那种写法 —— 两行字里要是带了空格，它就只能叼回前半截。\n\n**② `length()` 的小括号不能省。** 它是 `String` 身上的一招，喊它就得带上括号 —— 写成光秃秃的名字，翻译官喵会当作找不到它。",
+      "templateId": "java-s1-lang-length-report",
+      "params": {
+        "a": "大肥鱼",
+        "b": "咪咪"
+      },
+      "verified": {
+        "at": "2026-09-16T11:46:32.132Z",
+        "hash": "9275cc84c8539ce4"
+      }
+    },
+    {
+      "id": "bank-java-s1-missing-import-scanner-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了个小程序，想读一读外面投喂进来的数喵。可翻译官喵一脸茫然，丢下一句 `cannot find symbol`（找不到这个符号）就走开了……\n\n你帮本喵看看它为什么找不到，把它改好。改好之后，程序应该把读进来的那 3 个数加起来，印出一共多少条小鱼干。\n\n比如投喂给程序的是\n\n3\n1\n3\n7\n\n程序就要叼回\n\n一共 11 条小鱼干\n\n（判分用的是**另外一组数**喵～）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        for (int i = 0; i < n; i++) {\n            total += sc.nextInt();\n        }\n        System.out.println(\"一共 \" + total + \" 条小鱼干\");\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        for (int i = 0; i < n; i++) {\n            total += sc.nextInt();\n        }\n        System.out.println(\"一共 \" + total + \" 条小鱼干\");\n    }\n}\n",
+      "expectedOutput": "一共 17 条小鱼干",
+      "stdin": "3\n7\n6\n4\n",
+      "explanation": "`cannot find symbol` 翻过来就是「**本喵找不到这个符号**」喵。\n\n翻译官喵自带的图纸成千上万张，可它们是**按箱子分开放的**。它不会挨只箱子替你翻 —— 你得明确告诉它：去这只箱子拿。`Scanner` 住在 `java.util` 这只外卖箱里，所以要请它出场，就得在文件最上面写一行 `import java.util.Scanner;`。\n\n⚠️ 这里有个特别坑的地方：**报错指的那一行，是你「用」它的那一行，不是你漏写的那一行。** 看到「找不到这个符号」，眼光要往**文件最上面**跑，看看是不是压根没请。\n\n不写 `import` 也行喵 —— 每次都写全名 `java.util.Scanner` 照样跑得欢，`import` 只负责省字。（另外还有一只箱子叫 `java.lang`，那是贴身箱子，里面的东西永远不用打招呼。）",
+      "templateId": "java-s1-missing-import-scanner",
+      "params": {
+        "n": 3,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T00:49:34.969Z",
+        "hash": "6907145e67f6fff2"
+      }
+    },
+    {
+      "id": "bank-java-s1-missing-import-scanner-008",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了个小程序，想读一读外面投喂进来的数喵。可翻译官喵一脸茫然，丢下一句 `cannot find symbol`（找不到这个符号）就走开了……\n\n你帮本喵看看它为什么找不到，把它改好。改好之后，程序应该把读进来的那 5 个数加起来，印出一共多少条冻干块。\n\n比如投喂给程序的是\n\n5\n5\n4\n1\n6\n7\n\n程序就要叼回\n\n一共 23 条冻干块\n\n（判分用的是**另外一组数**喵～）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        for (int i = 0; i < n; i++) {\n            total += sc.nextInt();\n        }\n        System.out.println(\"一共 \" + total + \" 条冻干块\");\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        for (int i = 0; i < n; i++) {\n            total += sc.nextInt();\n        }\n        System.out.println(\"一共 \" + total + \" 条冻干块\");\n    }\n}\n",
+      "expectedOutput": "一共 19 条冻干块",
+      "stdin": "5\n4\n3\n1\n2\n9\n",
+      "explanation": "`cannot find symbol` 翻过来就是「**本喵找不到这个符号**」喵。\n\n翻译官喵自带的图纸成千上万张，可它们是**按箱子分开放的**。它不会挨只箱子替你翻 —— 你得明确告诉它：去这只箱子拿。`Scanner` 住在 `java.util` 这只外卖箱里，所以要请它出场，就得在文件最上面写一行 `import java.util.Scanner;`。\n\n⚠️ 这里有个特别坑的地方：**报错指的那一行，是你「用」它的那一行，不是你漏写的那一行。** 看到「找不到这个符号」，眼光要往**文件最上面**跑，看看是不是压根没请。\n\n不写 `import` 也行喵 —— 每次都写全名 `java.util.Scanner` 照样跑得欢，`import` 只负责省字。（另外还有一只箱子叫 `java.lang`，那是贴身箱子，里面的东西永远不用打招呼。）",
+      "templateId": "java-s1-missing-import-scanner",
+      "params": {
+        "n": 5,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T00:49:36.833Z",
+        "hash": "24d7df6945a227cf"
+      }
+    },
+    {
+      "id": "bank-java-s1-scanner-sum-and-max-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要统计今天发出去的小鱼干喵。\n\n请你写个程序：**先读进来一个数**（今天有几只猫），**再读进来 3 行数**（一行一个，是每只猫拿了几条）。把它们加起来，再找出**最多**的那一只，最后报两行：先报一共多少条，再报最多的那只拿了多少条。\n\n比如投喂给程序的是\n\n3\n3\n5\n2\n\n程序就要叼回\n\n一共 10 条小鱼干\n最多的那只拿了 5 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        int best = 0;\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            total += v;\n            best = Math.max(best, v);\n        }\n        System.out.println(\"一共 \" + total + \" 条小鱼干\");\n        System.out.println(\"最多的那只拿了 \" + best + \" 条\");\n    }\n}\n",
+      "expectedOutput": "一共 12 条小鱼干\n最多的那只拿了 8 条",
+      "stdin": "3\n8\n3\n1\n",
+      "explanation": "这一课的规矩在这道题里全用上了喵：\n\n**① 用 `Scanner` 之前，先请它出场。** 它住在 `java.util` 这只外卖箱里，所以最上面那一行 `import java.util.Scanner;` 不能少 —— 少了它，翻译官喵会说 `cannot find symbol`。（嫌麻烦也可以每次都写全名 `java.util.Scanner`，一个意思。）\n\n**② `Math.max` 不用请。** 它住在 `java.lang` —— 那只**贴身箱子**，翻译官喵默认就先翻它，所以直接用就好，一次 `import` 都不用写。这两件事摆在同一道题里，就是为了让你看清「哪些要打招呼、哪些不用」。\n\n**③ 两个小碗边走边记。** 读一个数就加进「一共」那个碗里，同时跟「最多」比一下、谁大留谁。转完这一圈，两个答案就都齐了。\n\n（`best` 从 0 起就行 —— 题目里的数都是正数，0 一定比不过它们。）",
+      "templateId": "java-s1-scanner-sum-and-max",
+      "params": {
+        "n": 3,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T00:49:48.029Z",
+        "hash": "63c1012932eeb1fe"
+      }
+    },
+    {
+      "id": "bank-java-s1-scanner-sum-and-max-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要统计今天发出去的冻干块喵。\n\n请你写个程序：**先读进来一个数**（今天有几只猫），**再读进来 3 行数**（一行一个，是每只猫拿了几条）。把它们加起来，再找出**最多**的那一只，最后报两行：先报一共多少条，再报最多的那只拿了多少条。\n\n比如投喂给程序的是\n\n3\n5\n4\n4\n\n程序就要叼回\n\n一共 13 条冻干块\n最多的那只拿了 5 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        int best = 0;\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            total += v;\n            best = Math.max(best, v);\n        }\n        System.out.println(\"一共 \" + total + \" 条冻干块\");\n        System.out.println(\"最多的那只拿了 \" + best + \" 条\");\n    }\n}\n",
+      "expectedOutput": "一共 16 条冻干块\n最多的那只拿了 7 条",
+      "stdin": "3\n7\n3\n6\n",
+      "explanation": "这一课的规矩在这道题里全用上了喵：\n\n**① 用 `Scanner` 之前，先请它出场。** 它住在 `java.util` 这只外卖箱里，所以最上面那一行 `import java.util.Scanner;` 不能少 —— 少了它，翻译官喵会说 `cannot find symbol`。（嫌麻烦也可以每次都写全名 `java.util.Scanner`，一个意思。）\n\n**② `Math.max` 不用请。** 它住在 `java.lang` —— 那只**贴身箱子**，翻译官喵默认就先翻它，所以直接用就好，一次 `import` 都不用写。这两件事摆在同一道题里，就是为了让你看清「哪些要打招呼、哪些不用」。\n\n**③ 两个小碗边走边记。** 读一个数就加进「一共」那个碗里，同时跟「最多」比一下、谁大留谁。转完这一圈，两个答案就都齐了。\n\n（`best` 从 0 起就行 —— 题目里的数都是正数，0 一定比不过它们。）",
+      "templateId": "java-s1-scanner-sum-and-max",
+      "params": {
+        "n": 3,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-10-20T17:08:15.208Z",
+        "hash": "e1d09d1637974c2e"
+      }
+    },
+    {
+      "id": "bank-java-s1-scanner-sum-and-max-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要统计今天发出去的小鱼干喵。\n\n请你写个程序：**先读进来一个数**（今天有几只猫），**再读进来 4 行数**（一行一个，是每只猫拿了几条）。把它们加起来，再找出**最多**的那一只，最后报两行：先报一共多少条，再报最多的那只拿了多少条。\n\n比如投喂给程序的是\n\n4\n3\n5\n2\n8\n\n程序就要叼回\n\n一共 18 条小鱼干\n最多的那只拿了 8 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        int best = 0;\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            total += v;\n            best = Math.max(best, v);\n        }\n        System.out.println(\"一共 \" + total + \" 条小鱼干\");\n        System.out.println(\"最多的那只拿了 \" + best + \" 条\");\n    }\n}\n",
+      "expectedOutput": "一共 13 条小鱼干\n最多的那只拿了 6 条",
+      "stdin": "4\n6\n3\n1\n3\n",
+      "explanation": "这一课的规矩在这道题里全用上了喵：\n\n**① 用 `Scanner` 之前，先请它出场。** 它住在 `java.util` 这只外卖箱里，所以最上面那一行 `import java.util.Scanner;` 不能少 —— 少了它，翻译官喵会说 `cannot find symbol`。（嫌麻烦也可以每次都写全名 `java.util.Scanner`，一个意思。）\n\n**② `Math.max` 不用请。** 它住在 `java.lang` —— 那只**贴身箱子**，翻译官喵默认就先翻它，所以直接用就好，一次 `import` 都不用写。这两件事摆在同一道题里，就是为了让你看清「哪些要打招呼、哪些不用」。\n\n**③ 两个小碗边走边记。** 读一个数就加进「一共」那个碗里，同时跟「最多」比一下、谁大留谁。转完这一圈，两个答案就都齐了。\n\n（`best` 从 0 起就行 —— 题目里的数都是正数，0 一定比不过它们。）",
+      "templateId": "java-s1-scanner-sum-and-max",
+      "params": {
+        "n": 4,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:08:18.281Z",
+        "hash": "3f66004673f6eb47"
+      }
+    },
+    {
+      "id": "bank-java-s1-scanner-sum-and-max-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要统计今天发出去的猫罐头喵。\n\n请你写个程序：**先读进来一个数**（今天有几只猫），**再读进来 4 行数**（一行一个，是每只猫拿了几条）。把它们加起来，再找出**最多**的那一只，最后报两行：先报一共多少条，再报最多的那只拿了多少条。\n\n比如投喂给程序的是\n\n4\n4\n1\n2\n5\n\n程序就要叼回\n\n一共 12 条猫罐头\n最多的那只拿了 5 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        int best = 0;\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            total += v;\n            best = Math.max(best, v);\n        }\n        System.out.println(\"一共 \" + total + \" 条猫罐头\");\n        System.out.println(\"最多的那只拿了 \" + best + \" 条\");\n    }\n}\n",
+      "expectedOutput": "一共 17 条猫罐头\n最多的那只拿了 8 条",
+      "stdin": "4\n2\n8\n6\n1\n",
+      "explanation": "这一课的规矩在这道题里全用上了喵：\n\n**① 用 `Scanner` 之前，先请它出场。** 它住在 `java.util` 这只外卖箱里，所以最上面那一行 `import java.util.Scanner;` 不能少 —— 少了它，翻译官喵会说 `cannot find symbol`。（嫌麻烦也可以每次都写全名 `java.util.Scanner`，一个意思。）\n\n**② `Math.max` 不用请。** 它住在 `java.lang` —— 那只**贴身箱子**，翻译官喵默认就先翻它，所以直接用就好，一次 `import` 都不用写。这两件事摆在同一道题里，就是为了让你看清「哪些要打招呼、哪些不用」。\n\n**③ 两个小碗边走边记。** 读一个数就加进「一共」那个碗里，同时跟「最多」比一下、谁大留谁。转完这一圈，两个答案就都齐了。\n\n（`best` 从 0 起就行 —— 题目里的数都是正数，0 一定比不过它们。）",
+      "templateId": "java-s1-scanner-sum-and-max",
+      "params": {
+        "n": 4,
+        "unit": "猫罐头"
+      },
+      "verified": {
+        "at": "2026-09-16T00:49:49.548Z",
+        "hash": "ba2a49a71e0d841c"
+      }
+    },
+    {
+      "id": "bank-java-s1-scanner-sum-and-max-005",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要统计今天发出去的冻干块喵。\n\n请你写个程序：**先读进来一个数**（今天有几只猫），**再读进来 4 行数**（一行一个，是每只猫拿了几条）。把它们加起来，再找出**最多**的那一只，最后报两行：先报一共多少条，再报最多的那只拿了多少条。\n\n比如投喂给程序的是\n\n4\n4\n2\n6\n8\n\n程序就要叼回\n\n一共 20 条冻干块\n最多的那只拿了 8 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        int best = 0;\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            total += v;\n            best = Math.max(best, v);\n        }\n        System.out.println(\"一共 \" + total + \" 条冻干块\");\n        System.out.println(\"最多的那只拿了 \" + best + \" 条\");\n    }\n}\n",
+      "expectedOutput": "一共 18 条冻干块\n最多的那只拿了 8 条",
+      "stdin": "4\n8\n2\n6\n2\n",
+      "explanation": "这一课的规矩在这道题里全用上了喵：\n\n**① 用 `Scanner` 之前，先请它出场。** 它住在 `java.util` 这只外卖箱里，所以最上面那一行 `import java.util.Scanner;` 不能少 —— 少了它，翻译官喵会说 `cannot find symbol`。（嫌麻烦也可以每次都写全名 `java.util.Scanner`，一个意思。）\n\n**② `Math.max` 不用请。** 它住在 `java.lang` —— 那只**贴身箱子**，翻译官喵默认就先翻它，所以直接用就好，一次 `import` 都不用写。这两件事摆在同一道题里，就是为了让你看清「哪些要打招呼、哪些不用」。\n\n**③ 两个小碗边走边记。** 读一个数就加进「一共」那个碗里，同时跟「最多」比一下、谁大留谁。转完这一圈，两个答案就都齐了。\n\n（`best` 从 0 起就行 —— 题目里的数都是正数，0 一定比不过它们。）",
+      "templateId": "java-s1-scanner-sum-and-max",
+      "params": {
+        "n": 4,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-10-20T17:08:21.437Z",
+        "hash": "ef5842074753f34a"
+      }
+    },
+    {
+      "id": "bank-java-s1-scanner-sum-and-max-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要统计今天发出去的小鱼干喵。\n\n请你写个程序：**先读进来一个数**（今天有几只猫），**再读进来 5 行数**（一行一个，是每只猫拿了几条）。把它们加起来，再找出**最多**的那一只，最后报两行：先报一共多少条，再报最多的那只拿了多少条。\n\n比如投喂给程序的是\n\n5\n5\n6\n2\n2\n3\n\n程序就要叼回\n\n一共 18 条小鱼干\n最多的那只拿了 6 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        int best = 0;\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            total += v;\n            best = Math.max(best, v);\n        }\n        System.out.println(\"一共 \" + total + \" 条小鱼干\");\n        System.out.println(\"最多的那只拿了 \" + best + \" 条\");\n    }\n}\n",
+      "expectedOutput": "一共 25 条小鱼干\n最多的那只拿了 8 条",
+      "stdin": "5\n2\n8\n5\n8\n2\n",
+      "explanation": "这一课的规矩在这道题里全用上了喵：\n\n**① 用 `Scanner` 之前，先请它出场。** 它住在 `java.util` 这只外卖箱里，所以最上面那一行 `import java.util.Scanner;` 不能少 —— 少了它，翻译官喵会说 `cannot find symbol`。（嫌麻烦也可以每次都写全名 `java.util.Scanner`，一个意思。）\n\n**② `Math.max` 不用请。** 它住在 `java.lang` —— 那只**贴身箱子**，翻译官喵默认就先翻它，所以直接用就好，一次 `import` 都不用写。这两件事摆在同一道题里，就是为了让你看清「哪些要打招呼、哪些不用」。\n\n**③ 两个小碗边走边记。** 读一个数就加进「一共」那个碗里，同时跟「最多」比一下、谁大留谁。转完这一圈，两个答案就都齐了。\n\n（`best` 从 0 起就行 —— 题目里的数都是正数，0 一定比不过它们。）",
+      "templateId": "java-s1-scanner-sum-and-max",
+      "params": {
+        "n": 5,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:08:24.618Z",
+        "hash": "cb92ef897e16e108"
+      }
+    },
+    {
+      "id": "bank-java-s1-scanner-sum-and-max-008",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要统计今天发出去的冻干块喵。\n\n请你写个程序：**先读进来一个数**（今天有几只猫），**再读进来 5 行数**（一行一个，是每只猫拿了几条）。把它们加起来，再找出**最多**的那一只，最后报两行：先报一共多少条，再报最多的那只拿了多少条。\n\n比如投喂给程序的是\n\n5\n4\n1\n6\n7\n2\n\n程序就要叼回\n\n一共 20 条冻干块\n最多的那只拿了 7 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        int best = 0;\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            total += v;\n            best = Math.max(best, v);\n        }\n        System.out.println(\"一共 \" + total + \" 条冻干块\");\n        System.out.println(\"最多的那只拿了 \" + best + \" 条\");\n    }\n}\n",
+      "expectedOutput": "一共 33 条冻干块\n最多的那只拿了 8 条",
+      "stdin": "5\n6\n8\n4\n8\n7\n",
+      "explanation": "这一课的规矩在这道题里全用上了喵：\n\n**① 用 `Scanner` 之前，先请它出场。** 它住在 `java.util` 这只外卖箱里，所以最上面那一行 `import java.util.Scanner;` 不能少 —— 少了它，翻译官喵会说 `cannot find symbol`。（嫌麻烦也可以每次都写全名 `java.util.Scanner`，一个意思。）\n\n**② `Math.max` 不用请。** 它住在 `java.lang` —— 那只**贴身箱子**，翻译官喵默认就先翻它，所以直接用就好，一次 `import` 都不用写。这两件事摆在同一道题里，就是为了让你看清「哪些要打招呼、哪些不用」。\n\n**③ 两个小碗边走边记。** 读一个数就加进「一共」那个碗里，同时跟「最多」比一下、谁大留谁。转完这一圈，两个答案就都齐了。\n\n（`best` 从 0 起就行 —— 题目里的数都是正数，0 一定比不过它们。）",
+      "templateId": "java-s1-scanner-sum-and-max",
+      "params": {
+        "n": 5,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T00:49:51.033Z",
+        "hash": "33bacb5c661740fc"
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-ptr-forgot-amp",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-14",
+  "type": "codefix",
+  "concept": ["&", "取地址", "指针参数", "编译错误"],
+  "instances": 2,
+  "params": {
+    "v": { "kind": "int", "min": 2, "max": 4 },
+    "k": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵写招式的功夫又长进了喵：这一招收的**不是数，是一只碗的门牌号** —— 它会顺着牌子走进来，把碗里的数乘一乘。\n\n可 `main` 里喊它的时候，翻译官喵当场拦下了，还补了一句「也许你是想这样做」……\n\n你帮本喵看看是哪儿漏了，把它改好。改好之后，程序应该印出 `{v}` 乘 `{k}` 的结果。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nvoid treat(int *p) {\n    *p = *p * {k};\n}\n\nint main(void) {\n    int fish = {v};\n\n    treat(fish);\n    printf(\"%d\\n\", fish);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nvoid treat(int *p) {\n    *p = *p * {k};\n}\n\nint main(void) {\n    int fish = {v};\n\n    treat(&fish);\n    printf(\"%d\\n\", fish);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: passing argument 1 of 'treat' makes pointer from integer without a cast [-Wint-conversion]`，底下那句 `note` 更贴心：**`possible fix: take the address with '&'`** —— 「也许你该用 `&` 把门牌号取出来」。\n\n它看得很清楚：这一招头上写的是 `int *p`，它要的是**一块牌子**；可你递进去的 `fish` 是**一个数字**。数字和牌子在 C 里是两个完全不同的形状，对不上就得拦。\n\n修法就是加一个字符：写成 `treat(&fish);`。`&` 是去问 `fish` 那只碗的门牌号。门牌号递进去，招式里那句 `*p = *p * {k};` 改的才**是你本人的那只碗**。\n\n对照着记这一对：\n\n- 头里写 `void feed(int n)`，喊的时候喂 `feed(fish)` → 招式拿到**抄件**，里面怎么改，外面纹丝不动；\n- 头里写 `void treat(int *p)`，喊的时候喂 `treat(&fish)` → 招式拿到**牌子**，里面改了，外面**真的会变**。"
+}

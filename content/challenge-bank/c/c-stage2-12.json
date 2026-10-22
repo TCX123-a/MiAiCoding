@@ -1,0 +1,358 @@
+{
+  "lessonId": "c-stage2-12",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s2-fptr-each-callback-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要写一套「**每一只碗都过一遍**」的框架，至于过的时候干什么，**由递进来的牌子说了算**。\n\n请你写四样东西：\n\n1. 一招 `show`：收一个整数，印一行 `碗里是 <那个数>`；\n2. 一招 `show_double`：收一个整数，印一行 `翻倍是 <那个数乘 2>`；\n3. 一招 `each`：头上收**一排碗**、**一共几只**、还有**一张牌子** —— 牌子上写的是「收一个整数、什么都不交回」。招式里用绕圈从排头走到排尾，**每走到一只碗前面，就回头喊一声牌子上写的那一招**，把碗里的数喂给它；\n4. `main`：准备好一排刚好 n 只的碗，把数读进来（一行一个），然后**先用 `show` 过一遍、再用 `show_double` 过一遍**。\n\n同一段框架、换一张牌子就换一套活 —— 一共印两趟，第一趟是 `碗里是`，第二趟是 `翻倍是`。\n\n比如投喂给程序的是\n\n9\n1\n4\n\n程序就要叼回\n\n碗里是 9\n碗里是 1\n碗里是 4\n翻倍是 18\n翻倍是 2\n翻倍是 8\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid show(int x) {\n    printf(\"碗里是 %d\\n\", x);\n}\n\nvoid show_double(int x) {\n    printf(\"翻倍是 %d\\n\", x * 2);\n}\n\nvoid each(int a[], int n, void (*visit)(int)) {\n    for (int i = 0; i < n; i++) {\n        visit(a[i]);\n    }\n}\n\nint main(void) {\n    int bowl[3];\n\n    for (int i = 0; i < 3; i++) {\n        if (scanf(\"%d\", &bowl[i]) != 1) {\n            return 1;\n        }\n    }\n\n    each(bowl, 3, show);\n    each(bowl, 3, show_double);\n    return 0;\n}\n",
+      "expectedOutput": "碗里是 4\n碗里是 4\n碗里是 6\n翻倍是 8\n翻倍是 8\n翻倍是 12",
+      "stdin": "4\n4\n6\n",
+      "explanation": "这道题练的是**回调**喵 —— 先递一张牌子过去，等合适的时机到了，它**回头喊你一声**。\n\n**① `each` 头上第三样投喂是牌子。**\n\n```c\nvoid (*visit)(int)\n```\n\n还是从里往外念：最右边 `(int)` 是「收一个整数」，最左边 `void` 是「什么都不交回」，中间 `(*visit)` 是那只碗。**注意最左边写的是 `void`** —— 因为 `show` 和 `show_double` 干完活什么都不交回来，只负责印。牌子上的长相得跟它们对得上。\n\n**② 框架里怎么用牌子？** `visit(a[i]);` —— 走到第 i 只碗前面，照着牌子喊一声，把碗里的数喂进去。`each` 自己**完全不知道**喊出来的是「印一遍」还是「印两遍」，那是牌子的事。\n\n**③ 喊的时候直接写招式名。** `each(bowl, 3, show);` —— 招式名单独写出来就等于那张牌子，不用写 `&show`。（写了也对，翻译官喵两种都认。）\n\n**④ 回调跟上一课的自己咬自己尾巴不一样在哪儿？** 长得像，劲头不同：上一课的 `countdown` 喊的是**自己**；今天的 `each` 喊的是**别人递进来的牌子**。前者是「同一道题小一圈」，后者是「同一套框架、换一种活法」。\n\n**为什么这个形状值钱？** 因为 `each` **只写一遍**。想怎么处理每只碗，就换一张牌子递进来 —— 不用把 `each` 抄成两份、三份。这在真实代码里到处都是：框架是别人写好的，你只负责递一小张「规矩」进去。\n\n（还有个小地方：`main` 里那两个绕圈是**分开的两趟** —— 先把所有碗按 `show` 报一遍，再按 `show_double` 报一遍。别把两张牌子混在同一趟里。）",
+      "templateId": "c-s2-fptr-each-callback",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:30.009Z",
+        "hash": "6c8be4040f8b3a4c"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-each-callback-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要写一套「**每一只碗都过一遍**」的框架，至于过的时候干什么，**由递进来的牌子说了算**。\n\n请你写四样东西：\n\n1. 一招 `show`：收一个整数，印一行 `碗里是 <那个数>`；\n2. 一招 `show_double`：收一个整数，印一行 `翻倍是 <那个数乘 2>`；\n3. 一招 `each`：头上收**一排碗**、**一共几只**、还有**一张牌子** —— 牌子上写的是「收一个整数、什么都不交回」。招式里用绕圈从排头走到排尾，**每走到一只碗前面，就回头喊一声牌子上写的那一招**，把碗里的数喂给它；\n4. `main`：准备好一排刚好 n 只的碗，把数读进来（一行一个），然后**先用 `show` 过一遍、再用 `show_double` 过一遍**。\n\n同一段框架、换一张牌子就换一套活 —— 一共印两趟，第一趟是 `碗里是`，第二趟是 `翻倍是`。\n\n比如投喂给程序的是\n\n7\n7\n5\n9\n\n程序就要叼回\n\n碗里是 7\n碗里是 7\n碗里是 5\n碗里是 9\n翻倍是 14\n翻倍是 14\n翻倍是 10\n翻倍是 18\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid show(int x) {\n    printf(\"碗里是 %d\\n\", x);\n}\n\nvoid show_double(int x) {\n    printf(\"翻倍是 %d\\n\", x * 2);\n}\n\nvoid each(int a[], int n, void (*visit)(int)) {\n    for (int i = 0; i < n; i++) {\n        visit(a[i]);\n    }\n}\n\nint main(void) {\n    int bowl[4];\n\n    for (int i = 0; i < 4; i++) {\n        if (scanf(\"%d\", &bowl[i]) != 1) {\n            return 1;\n        }\n    }\n\n    each(bowl, 4, show);\n    each(bowl, 4, show_double);\n    return 0;\n}\n",
+      "expectedOutput": "碗里是 6\n碗里是 9\n碗里是 7\n碗里是 1\n翻倍是 12\n翻倍是 18\n翻倍是 14\n翻倍是 2",
+      "stdin": "6\n9\n7\n1\n",
+      "explanation": "这道题练的是**回调**喵 —— 先递一张牌子过去，等合适的时机到了，它**回头喊你一声**。\n\n**① `each` 头上第三样投喂是牌子。**\n\n```c\nvoid (*visit)(int)\n```\n\n还是从里往外念：最右边 `(int)` 是「收一个整数」，最左边 `void` 是「什么都不交回」，中间 `(*visit)` 是那只碗。**注意最左边写的是 `void`** —— 因为 `show` 和 `show_double` 干完活什么都不交回来，只负责印。牌子上的长相得跟它们对得上。\n\n**② 框架里怎么用牌子？** `visit(a[i]);` —— 走到第 i 只碗前面，照着牌子喊一声，把碗里的数喂进去。`each` 自己**完全不知道**喊出来的是「印一遍」还是「印两遍」，那是牌子的事。\n\n**③ 喊的时候直接写招式名。** `each(bowl, 4, show);` —— 招式名单独写出来就等于那张牌子，不用写 `&show`。（写了也对，翻译官喵两种都认。）\n\n**④ 回调跟上一课的自己咬自己尾巴不一样在哪儿？** 长得像，劲头不同：上一课的 `countdown` 喊的是**自己**；今天的 `each` 喊的是**别人递进来的牌子**。前者是「同一道题小一圈」，后者是「同一套框架、换一种活法」。\n\n**为什么这个形状值钱？** 因为 `each` **只写一遍**。想怎么处理每只碗，就换一张牌子递进来 —— 不用把 `each` 抄成两份、三份。这在真实代码里到处都是：框架是别人写好的，你只负责递一小张「规矩」进去。\n\n（还有个小地方：`main` 里那两个绕圈是**分开的两趟** —— 先把所有碗按 `show` 报一遍，再按 `show_double` 报一遍。别把两张牌子混在同一趟里。）",
+      "templateId": "c-s2-fptr-each-callback",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:32:05.512Z",
+        "hash": "9747a6999bbdef2e"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-each-callback-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要写一套「**每一只碗都过一遍**」的框架，至于过的时候干什么，**由递进来的牌子说了算**。\n\n请你写四样东西：\n\n1. 一招 `show`：收一个整数，印一行 `碗里是 <那个数>`；\n2. 一招 `show_double`：收一个整数，印一行 `翻倍是 <那个数乘 2>`；\n3. 一招 `each`：头上收**一排碗**、**一共几只**、还有**一张牌子** —— 牌子上写的是「收一个整数、什么都不交回」。招式里用绕圈从排头走到排尾，**每走到一只碗前面，就回头喊一声牌子上写的那一招**，把碗里的数喂给它；\n4. `main`：准备好一排刚好 n 只的碗，把数读进来（一行一个），然后**先用 `show` 过一遍、再用 `show_double` 过一遍**。\n\n同一段框架、换一张牌子就换一套活 —— 一共印两趟，第一趟是 `碗里是`，第二趟是 `翻倍是`。\n\n比如投喂给程序的是\n\n6\n9\n6\n6\n5\n\n程序就要叼回\n\n碗里是 6\n碗里是 9\n碗里是 6\n碗里是 6\n碗里是 5\n翻倍是 12\n翻倍是 18\n翻倍是 12\n翻倍是 12\n翻倍是 10\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid show(int x) {\n    printf(\"碗里是 %d\\n\", x);\n}\n\nvoid show_double(int x) {\n    printf(\"翻倍是 %d\\n\", x * 2);\n}\n\nvoid each(int a[], int n, void (*visit)(int)) {\n    for (int i = 0; i < n; i++) {\n        visit(a[i]);\n    }\n}\n\nint main(void) {\n    int bowl[5];\n\n    for (int i = 0; i < 5; i++) {\n        if (scanf(\"%d\", &bowl[i]) != 1) {\n            return 1;\n        }\n    }\n\n    each(bowl, 5, show);\n    each(bowl, 5, show_double);\n    return 0;\n}\n",
+      "expectedOutput": "碗里是 3\n碗里是 5\n碗里是 3\n碗里是 7\n碗里是 9\n翻倍是 6\n翻倍是 10\n翻倍是 6\n翻倍是 14\n翻倍是 18",
+      "stdin": "3\n5\n3\n7\n9\n",
+      "explanation": "这道题练的是**回调**喵 —— 先递一张牌子过去，等合适的时机到了，它**回头喊你一声**。\n\n**① `each` 头上第三样投喂是牌子。**\n\n```c\nvoid (*visit)(int)\n```\n\n还是从里往外念：最右边 `(int)` 是「收一个整数」，最左边 `void` 是「什么都不交回」，中间 `(*visit)` 是那只碗。**注意最左边写的是 `void`** —— 因为 `show` 和 `show_double` 干完活什么都不交回来，只负责印。牌子上的长相得跟它们对得上。\n\n**② 框架里怎么用牌子？** `visit(a[i]);` —— 走到第 i 只碗前面，照着牌子喊一声，把碗里的数喂进去。`each` 自己**完全不知道**喊出来的是「印一遍」还是「印两遍」，那是牌子的事。\n\n**③ 喊的时候直接写招式名。** `each(bowl, 5, show);` —— 招式名单独写出来就等于那张牌子，不用写 `&show`。（写了也对，翻译官喵两种都认。）\n\n**④ 回调跟上一课的自己咬自己尾巴不一样在哪儿？** 长得像，劲头不同：上一课的 `countdown` 喊的是**自己**；今天的 `each` 喊的是**别人递进来的牌子**。前者是「同一道题小一圈」，后者是「同一套框架、换一种活法」。\n\n**为什么这个形状值钱？** 因为 `each` **只写一遍**。想怎么处理每只碗，就换一张牌子递进来 —— 不用把 `each` 抄成两份、三份。这在真实代码里到处都是：框架是别人写好的，你只负责递一小张「规矩」进去。\n\n（还有个小地方：`main` 里那两个绕圈是**分开的两趟** —— 先把所有碗按 `show` 报一遍，再按 `show_double` 报一遍。别把两张牌子混在同一趟里。）",
+      "templateId": "c-s2-fptr-each-callback",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:31.841Z",
+        "hash": "42c37b165989f8d6"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-missing-parens-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵有一招「加」（投喂两个整数、叼回一个整数）。现在想摆**一只碗**，里面装这张「加」的牌子，然后照牌子上写的把 1 和 5 加起来印出来。\n\n可翻译官喵把整段代码退了回来，第一句话就是「招式怎么可以像一只碗那样给初值」。你帮本喵看看是哪儿让它读岔了，把它改好。",
+      "brokenCode": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    int *p(int, int) = add;\n    printf(\"%d\\n\", p(1, 5));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    int (*p)(int, int) = add;\n    printf(\"%d\\n\", p(1, 5));\n    return 0;\n}\n",
+      "expectedOutput": "6",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: function 'p' is initialized like a variable` —— 翻过来就是「**招式 `p` 怎么可以像一只碗那样给初值**」（底下还会跟着一串抱怨，都是从这一句牵出来的）。\n\n少的就是**包着 `*p` 的那对小括号**喵。看一下它把这行字读成了什么：\n\n- 本喵想写的：`int (*p)(int, int)` —— 「**一只碗**叫 `p`，里面装一张牌子，牌子上写的是『收两个整数、叼回一个整数』」。\n- 少了括号以后：`int *p(int, int)` —— 「**一招**名叫 `p`，投喂两个整数、**叼回一张指向整数的牌子**」。\n\n看出来了吗？少了那对括号，翻译官喵认为本喵在**定义一招**（名字叫 `p`、身体待会儿再写）。可后面又跟了个等号加初值 —— **招式是不能这样赋值的**，于是它当场翻脸。\n\n补上括号就完事。**这对括号是「这是一只碗」和「这是一招」的分界线**，一个都不能省。\n\n念法也顺手收下，**从里往外念**：\n\n1. 最右边那两个 `(int, int)`：这招要投喂什么 —— 两个整数；\n2. 最左边那个 `int`：它叼回来什么 —— 一个整数；\n3. 中间那包 `(*p)`：这只碗叫 `p`，装的是牌子。\n\n补好之后再喊：`p(1, 5)` 照着牌子上写的走，得到 1 加 5 的和。",
+      "templateId": "c-s2-fptr-missing-parens",
+      "params": {
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:17.698Z",
+        "hash": "c96e342e9cf64211"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-missing-parens-019",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵有一招「加」（投喂两个整数、叼回一个整数）。现在想摆**一只碗**，里面装这张「加」的牌子，然后照牌子上写的把 4 和 9 加起来印出来。\n\n可翻译官喵把整段代码退了回来，第一句话就是「招式怎么可以像一只碗那样给初值」。你帮本喵看看是哪儿让它读岔了，把它改好。",
+      "brokenCode": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    int *p(int, int) = add;\n    printf(\"%d\\n\", p(4, 9));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    int (*p)(int, int) = add;\n    printf(\"%d\\n\", p(4, 9));\n    return 0;\n}\n",
+      "expectedOutput": "13",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: function 'p' is initialized like a variable` —— 翻过来就是「**招式 `p` 怎么可以像一只碗那样给初值**」（底下还会跟着一串抱怨，都是从这一句牵出来的）。\n\n少的就是**包着 `*p` 的那对小括号**喵。看一下它把这行字读成了什么：\n\n- 本喵想写的：`int (*p)(int, int)` —— 「**一只碗**叫 `p`，里面装一张牌子，牌子上写的是『收两个整数、叼回一个整数』」。\n- 少了括号以后：`int *p(int, int)` —— 「**一招**名叫 `p`，投喂两个整数、**叼回一张指向整数的牌子**」。\n\n看出来了吗？少了那对括号，翻译官喵认为本喵在**定义一招**（名字叫 `p`、身体待会儿再写）。可后面又跟了个等号加初值 —— **招式是不能这样赋值的**，于是它当场翻脸。\n\n补上括号就完事。**这对括号是「这是一只碗」和「这是一招」的分界线**，一个都不能省。\n\n念法也顺手收下，**从里往外念**：\n\n1. 最右边那两个 `(int, int)`：这招要投喂什么 —— 两个整数；\n2. 最左边那个 `int`：它叼回来什么 —— 一个整数；\n3. 中间那包 `(*p)`：这只碗叫 `p`，装的是牌子。\n\n补好之后再喊：`p(4, 9)` 照着牌子上写的走，得到 4 加 9 的和。",
+      "templateId": "c-s2-fptr-missing-parens",
+      "params": {
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:18.978Z",
+        "hash": "9d603a45fc816ec3"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-op-arg-mixup-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵写了两招：`add`（两个数相加）、`sub`（两个数相减）。另有一招 `apply`：头上收**一张牌子**加两个数，然后把两个数交给牌子上写的那一招去办。\n\n`main` 里请它办两次：递「加」的牌子一次，递「减」的牌子一次，各印一行。用本喵给的 1 和 5 试，应该是 `1 加 5` 和 `1 减 5` 两个结果。\n\n可跑出来两个数都不对。翻译官喵**一个字都没说**。你帮本喵在 `apply` 里找出那一处笔误。",
+      "brokenCode": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, a);\n}\n\nint main(void) {\n    printf(\"%d\\n\", apply(add, 1, 5));\n    printf(\"%d\\n\", apply(sub, 1, 5));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    printf(\"%d\\n\", apply(add, 1, 5));\n    printf(\"%d\\n\", apply(sub, 1, 5));\n    return 0;\n}\n",
+      "expectedOutput": "6\n-4",
+      "stdin": null,
+      "explanation": "笔误在 `apply` 的最后一句喵：写成了 `op(a, a)` —— **同一位投喂喂了两遍**。\n\n于是两次都只在跟 1 打交道：递「加」的牌子进去，算的是 1 加 1；递「减」的牌子进去，算的是 1 减 1，也就是 0。b 那一份从头到尾被晾在一边。\n\n改成 `op(a, b)` 就对了。**注意这一处错翻译官喵完全挑不出来**：`a` 和 `b` 都是同样长相的整数，一只碗装什么它不管 —— 它只管「字写没写规矩」。所以这类错得靠本喵自己**对着题面走一遍**：题面说「把两个数交给牌子上写的那一招」，那就得是两样都给过去。\n\n顺手把这一课真正的甜头再念一遍喵：`apply` 自己**完全不知道**进来的是加还是乘还是减。它只管照着牌子干活 —— 递「加」就加，递「减」就减。**这就是牌子最值钱的地方：把「怎么干」从「什么时候干」里拆了出来。**\n\n（顺带一提：`apply` 头上第一样投喂 `int (*op)(int, int)` 要的**不是数，是一张牌子**，而且牌子的长相写清楚了 —— 收两个整数、叼回一个整数。长相写对了，递进来的招式就必须对得上。）",
+      "templateId": "c-s2-fptr-op-arg-mixup",
+      "params": {
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:23.202Z",
+        "hash": "a2e296eee132e635"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-op-arg-mixup-019",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵写了两招：`add`（两个数相加）、`sub`（两个数相减）。另有一招 `apply`：头上收**一张牌子**加两个数，然后把两个数交给牌子上写的那一招去办。\n\n`main` 里请它办两次：递「加」的牌子一次，递「减」的牌子一次，各印一行。用本喵给的 4 和 9 试，应该是 `4 加 9` 和 `4 减 9` 两个结果。\n\n可跑出来两个数都不对。翻译官喵**一个字都没说**。你帮本喵在 `apply` 里找出那一处笔误。",
+      "brokenCode": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, a);\n}\n\nint main(void) {\n    printf(\"%d\\n\", apply(add, 4, 9));\n    printf(\"%d\\n\", apply(sub, 4, 9));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    printf(\"%d\\n\", apply(add, 4, 9));\n    printf(\"%d\\n\", apply(sub, 4, 9));\n    return 0;\n}\n",
+      "expectedOutput": "13\n-5",
+      "stdin": null,
+      "explanation": "笔误在 `apply` 的最后一句喵：写成了 `op(a, a)` —— **同一位投喂喂了两遍**。\n\n于是两次都只在跟 4 打交道：递「加」的牌子进去，算的是 4 加 4；递「减」的牌子进去，算的是 4 减 4，也就是 0。b 那一份从头到尾被晾在一边。\n\n改成 `op(a, b)` 就对了。**注意这一处错翻译官喵完全挑不出来**：`a` 和 `b` 都是同样长相的整数，一只碗装什么它不管 —— 它只管「字写没写规矩」。所以这类错得靠本喵自己**对着题面走一遍**：题面说「把两个数交给牌子上写的那一招」，那就得是两样都给过去。\n\n顺手把这一课真正的甜头再念一遍喵：`apply` 自己**完全不知道**进来的是加还是乘还是减。它只管照着牌子干活 —— 递「加」就加，递「减」就减。**这就是牌子最值钱的地方：把「怎么干」从「什么时候干」里拆了出来。**\n\n（顺带一提：`apply` 头上第一样投喂 `int (*op)(int, int)` 要的**不是数，是一张牌子**，而且牌子的长相写清楚了 —— 收两个整数、叼回一个整数。长相写对了，递进来的招式就必须对得上。）",
+      "templateId": "c-s2-fptr-op-arg-mixup",
+      "params": {
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:24.883Z",
+        "hash": "abef6803cb7489a8"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-qsort-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要给一排小鱼干**排排坐**，从小到大站好。\n\nC 里干这件事的招式叫 `qsort`，它住在 `stdlib.h` 家里。它有个脾气：**自己不知道怎么比大小** —— 所以规矩得本喵写成一张牌子递进去。\n\n请你写一件事：\n\n1. 一招 `cmp`：收两张「**不知道是什么的牌子**」（也就是 `const void *`），把它们**转回指向整数的牌子**，各取出一个数，用**前面的数减后面的数**当结果交回来（这个差值就是「谁该站前面」的规矩）；\n2. `main` 里准备好一排刚好 n 只的碗，把数读进来（一行一个）；\n3. 请 `qsort` 帮忙排排坐 —— 四样投喂是：那排碗、**一共几只**、**每只碗占多大**、还有 `cmp` 这张牌子；\n4. 排完之后**一行一个**印出来，最后再印一行 `最小的 <第一个>，最大的 <最后一个>`。\n\n比如投喂给程序的是\n\n9\n2\n7\n3\n\n程序就要叼回\n\n2\n3\n7\n9\n最小的 2，最大的 9\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint cmp(const void *a, const void *b) {\n    return (*(const int *)a) - (*(const int *)b);\n}\n\nint main(void) {\n    int nums[4];\n\n    for (int i = 0; i < 4; i++) {\n        if (scanf(\"%d\", &nums[i]) != 1) {\n            return 1;\n        }\n    }\n\n    qsort(nums, 4, sizeof(int), cmp);\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d\\n\", nums[i]);\n    }\n    printf(\"最小的 %d，最大的 %d\\n\", nums[0], nums[4 - 1]);\n    return 0;\n}\n",
+      "expectedOutput": "2\n6\n7\n8\n最小的 2，最大的 8",
+      "stdin": "8\n2\n6\n7\n",
+      "explanation": "这道题里**唯一一张由本喵提供的牌子**就是 `cmp` 喵 —— 其余全是 `qsort` 自己写好的框架。\n\n**① 为什么牌子上是「不知道是什么的牌子」？** `qsort` 要能排整数、排小数、排名字，它没法预先知道里面装的是什么，所以只好**假装不知道** —— 这就是 `void *` 的意思：一张写着「不知道是什么」的牌子。轮到本喵自己动手时，先把它**转回来**：\n\n```c\n(*(const int *)a)\n```\n\n从里往外念：`(const int *)a` 是「把这牌子按**指向整数的牌子**来读」，前面那个 `*` 是「顺着牌子把数取出来」，外面那对小括号只是为了让它跟后面的减法读得清楚。\n\n**② 牌子上交回来的那个差值是「谁该站前面」的规矩。** 本喵写的是**前面的减后面的**：结果是负数就说明前面那位更小、该站前面 —— 于是排出来是从小到大。要是把两句**倒过来**（后面的减前面的），规矩就反了，排出来会变成从大到小。（这是个小实验，你有空可以真跑一遍看看。）\n\n**③ `qsort` 收的四样投喂**，一样都不能少：\n\n| 投喂 | 是什么 |\n|---|---|\n| `nums` | 要排的那一排碗 |\n| `4` | 一共几只碗 |\n| `sizeof(int)` | **每只碗占多大** |\n| `cmp` | 比的规矩在哪张牌子上 |\n\n第三样最容易漏，也最容易写错：它说的是**每一只碗**多大，不是整排多大。写错了 `qsort` 会按错误的步子在里面走，结果一团糟 —— 而且它不会报错。用 `sizeof(int)` 让翻译官喵自己量，比手写数字稳。\n\n**④ 排完之后。** 从小到大站好以后，第一只碗就是最小的、第 4 只碗（也就是门牌号 `4 - 1` 那只）就是最大的 —— 这也是为什么最后那行能用 `nums[0]` 和 `nums[4 - 1]` 直接报出来。\n\n这一段**今天只要眼熟就行**，不用背。记住那句话：**框架是别人写好的，你只负责递一小张「规矩」进去。** 这正是上一节回调的形状，只不过这回递牌子的人是 C 自己喵。",
+      "templateId": "c-s2-fptr-qsort",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T08:49:58.621Z",
+        "hash": "2d8d007a914a2e8b"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-qsort-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要给一排小鱼干**排排坐**，从小到大站好。\n\nC 里干这件事的招式叫 `qsort`，它住在 `stdlib.h` 家里。它有个脾气：**自己不知道怎么比大小** —— 所以规矩得本喵写成一张牌子递进去。\n\n请你写一件事：\n\n1. 一招 `cmp`：收两张「**不知道是什么的牌子**」（也就是 `const void *`），把它们**转回指向整数的牌子**，各取出一个数，用**前面的数减后面的数**当结果交回来（这个差值就是「谁该站前面」的规矩）；\n2. `main` 里准备好一排刚好 n 只的碗，把数读进来（一行一个）；\n3. 请 `qsort` 帮忙排排坐 —— 四样投喂是：那排碗、**一共几只**、**每只碗占多大**、还有 `cmp` 这张牌子；\n4. 排完之后**一行一个**印出来，最后再印一行 `最小的 <第一个>，最大的 <最后一个>`。\n\n比如投喂给程序的是\n\n1\n2\n3\n8\n6\n\n程序就要叼回\n\n1\n2\n3\n6\n8\n最小的 1，最大的 8\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint cmp(const void *a, const void *b) {\n    return (*(const int *)a) - (*(const int *)b);\n}\n\nint main(void) {\n    int nums[5];\n\n    for (int i = 0; i < 5; i++) {\n        if (scanf(\"%d\", &nums[i]) != 1) {\n            return 1;\n        }\n    }\n\n    qsort(nums, 5, sizeof(int), cmp);\n\n    for (int i = 0; i < 5; i++) {\n        printf(\"%d\\n\", nums[i]);\n    }\n    printf(\"最小的 %d，最大的 %d\\n\", nums[0], nums[5 - 1]);\n    return 0;\n}\n",
+      "expectedOutput": "1\n1\n4\n5\n8\n最小的 1，最大的 8",
+      "stdin": "8\n5\n1\n1\n4\n",
+      "explanation": "这道题里**唯一一张由本喵提供的牌子**就是 `cmp` 喵 —— 其余全是 `qsort` 自己写好的框架。\n\n**① 为什么牌子上是「不知道是什么的牌子」？** `qsort` 要能排整数、排小数、排名字，它没法预先知道里面装的是什么，所以只好**假装不知道** —— 这就是 `void *` 的意思：一张写着「不知道是什么」的牌子。轮到本喵自己动手时，先把它**转回来**：\n\n```c\n(*(const int *)a)\n```\n\n从里往外念：`(const int *)a` 是「把这牌子按**指向整数的牌子**来读」，前面那个 `*` 是「顺着牌子把数取出来」，外面那对小括号只是为了让它跟后面的减法读得清楚。\n\n**② 牌子上交回来的那个差值是「谁该站前面」的规矩。** 本喵写的是**前面的减后面的**：结果是负数就说明前面那位更小、该站前面 —— 于是排出来是从小到大。要是把两句**倒过来**（后面的减前面的），规矩就反了，排出来会变成从大到小。（这是个小实验，你有空可以真跑一遍看看。）\n\n**③ `qsort` 收的四样投喂**，一样都不能少：\n\n| 投喂 | 是什么 |\n|---|---|\n| `nums` | 要排的那一排碗 |\n| `5` | 一共几只碗 |\n| `sizeof(int)` | **每只碗占多大** |\n| `cmp` | 比的规矩在哪张牌子上 |\n\n第三样最容易漏，也最容易写错：它说的是**每一只碗**多大，不是整排多大。写错了 `qsort` 会按错误的步子在里面走，结果一团糟 —— 而且它不会报错。用 `sizeof(int)` 让翻译官喵自己量，比手写数字稳。\n\n**④ 排完之后。** 从小到大站好以后，第一只碗就是最小的、第 5 只碗（也就是门牌号 `5 - 1` 那只）就是最大的 —— 这也是为什么最后那行能用 `nums[0]` 和 `nums[5 - 1]` 直接报出来。\n\n这一段**今天只要眼熟就行**，不用背。记住那句话：**框架是别人写好的，你只负责递一小张「规矩」进去。** 这正是上一节回调的形状，只不过这回递牌子的人是 C 自己喵。",
+      "templateId": "c-s2-fptr-qsort",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:32:08.491Z",
+        "hash": "f6fdcd7d99674a3a"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-qsort-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要给一排小鱼干**排排坐**，从小到大站好。\n\nC 里干这件事的招式叫 `qsort`，它住在 `stdlib.h` 家里。它有个脾气：**自己不知道怎么比大小** —— 所以规矩得本喵写成一张牌子递进去。\n\n请你写一件事：\n\n1. 一招 `cmp`：收两张「**不知道是什么的牌子**」（也就是 `const void *`），把它们**转回指向整数的牌子**，各取出一个数，用**前面的数减后面的数**当结果交回来（这个差值就是「谁该站前面」的规矩）；\n2. `main` 里准备好一排刚好 n 只的碗，把数读进来（一行一个）；\n3. 请 `qsort` 帮忙排排坐 —— 四样投喂是：那排碗、**一共几只**、**每只碗占多大**、还有 `cmp` 这张牌子；\n4. 排完之后**一行一个**印出来，最后再印一行 `最小的 <第一个>，最大的 <最后一个>`。\n\n比如投喂给程序的是\n\n9\n7\n6\n4\n7\n9\n\n程序就要叼回\n\n4\n6\n7\n7\n9\n9\n最小的 4，最大的 9\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint cmp(const void *a, const void *b) {\n    return (*(const int *)a) - (*(const int *)b);\n}\n\nint main(void) {\n    int nums[6];\n\n    for (int i = 0; i < 6; i++) {\n        if (scanf(\"%d\", &nums[i]) != 1) {\n            return 1;\n        }\n    }\n\n    qsort(nums, 6, sizeof(int), cmp);\n\n    for (int i = 0; i < 6; i++) {\n        printf(\"%d\\n\", nums[i]);\n    }\n    printf(\"最小的 %d，最大的 %d\\n\", nums[0], nums[6 - 1]);\n    return 0;\n}\n",
+      "expectedOutput": "2\n2\n5\n7\n9\n9\n最小的 2，最大的 9",
+      "stdin": "2\n2\n5\n9\n9\n7\n",
+      "explanation": "这道题里**唯一一张由本喵提供的牌子**就是 `cmp` 喵 —— 其余全是 `qsort` 自己写好的框架。\n\n**① 为什么牌子上是「不知道是什么的牌子」？** `qsort` 要能排整数、排小数、排名字，它没法预先知道里面装的是什么，所以只好**假装不知道** —— 这就是 `void *` 的意思：一张写着「不知道是什么」的牌子。轮到本喵自己动手时，先把它**转回来**：\n\n```c\n(*(const int *)a)\n```\n\n从里往外念：`(const int *)a` 是「把这牌子按**指向整数的牌子**来读」，前面那个 `*` 是「顺着牌子把数取出来」，外面那对小括号只是为了让它跟后面的减法读得清楚。\n\n**② 牌子上交回来的那个差值是「谁该站前面」的规矩。** 本喵写的是**前面的减后面的**：结果是负数就说明前面那位更小、该站前面 —— 于是排出来是从小到大。要是把两句**倒过来**（后面的减前面的），规矩就反了，排出来会变成从大到小。（这是个小实验，你有空可以真跑一遍看看。）\n\n**③ `qsort` 收的四样投喂**，一样都不能少：\n\n| 投喂 | 是什么 |\n|---|---|\n| `nums` | 要排的那一排碗 |\n| `6` | 一共几只碗 |\n| `sizeof(int)` | **每只碗占多大** |\n| `cmp` | 比的规矩在哪张牌子上 |\n\n第三样最容易漏，也最容易写错：它说的是**每一只碗**多大，不是整排多大。写错了 `qsort` 会按错误的步子在里面走，结果一团糟 —— 而且它不会报错。用 `sizeof(int)` 让翻译官喵自己量，比手写数字稳。\n\n**④ 排完之后。** 从小到大站好以后，第一只碗就是最小的、第 6 只碗（也就是门牌号 `6 - 1` 那只）就是最大的 —— 这也是为什么最后那行能用 `nums[0]` 和 `nums[6 - 1]` 直接报出来。\n\n这一段**今天只要眼熟就行**，不用背。记住那句话：**框架是别人写好的，你只负责递一小张「规矩」进去。** 这正是上一节回调的形状，只不过这回递牌子的人是 C 自己喵。",
+      "templateId": "c-s2-fptr-qsort",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-16T08:50:00.871Z",
+        "hash": "69df23e6894ec891"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-shape-mismatch-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵有一招 `hello`：**不投喂、也不叼回**，只是印一句 `你好喵`。\n\n现在想摆一只碗装它的牌子，然后喊一声。程序该印两行：先一句 `你好喵`，再一句 `牌子喊完了，小鱼干已经备好`。\n\n可翻译官喵把整段代码退了回来，说**长相对不上**。你帮本喵把这只碗和喊的那一声都改对（招式 `hello` 本身一个字都不用改）。",
+      "brokenCode": "#include <stdio.h>\n\nvoid hello(void) {\n    printf(\"你好喵\\n\");\n}\n\nint main(void) {\n    int (*p)(int) = hello;\n    printf(\"%d\\n\", p(1));\n    printf(\"牌子喊完了，小鱼干已经备好\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nvoid hello(void) {\n    printf(\"你好喵\\n\");\n}\n\nint main(void) {\n    void (*p)(void) = hello;\n    p();\n    printf(\"牌子喊完了，小鱼干已经备好\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "你好喵\n牌子喊完了，小鱼干已经备好",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: initialization of 'int (*)(int)' from incompatible pointer type 'void (*)(void)' [-Wincompatible-pointer-types]` —— 翻过来就一句：**长相对不上**。\n\n它把两边都念了一遍：\n\n- **左边这只碗（`int (*p)(int)`）**要装的是「**投喂一个整数、叼回一个整数**」的牌子；\n- **右边的 `hello`** 是「**不投喂、也不叼回**」的招式。\n\n两边的长相不一样，它就不许你把它们放进同一只碗里。所以要改的地方是**碗和喊法**，不是招式本身：\n\n```c\nvoid (*p)(void) = hello;\np();\n```\n\n`void (*p)(void)` 读起来还是从里往外：最右边 `(void)` 是「不投喂」，最左边 `void` 是「不叼回」，中间 `(*p)` 是那只碗。喊的时候也**不用给投喂**，所以写 `p();` 就完了。\n\n**为什么原来的写法连喊都是错的？** 因为碗按旧长相说好了「要投喂一个整数」，本喵就顺手写了 `p(1)`、还想用 `%d` 把「叼回来的整数」印出来 —— 可 `hello` 根本不叼东西。牵一发动全身：**牌子的长相说的是「这招长什么样」的承诺，承诺错了，后面每一处都跟着错。**\n\n最后收一句让人安心的：这类错**根本跑不起来**。翻译官喵在翻的阶段就把它拦下了，你不可能带着它上考场 —— 这正是 C 让人放心的地方。",
+      "templateId": "c-s2-fptr-shape-mismatch",
+      "params": {
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:20.500Z",
+        "hash": "7928b419c2c7b1cf"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-shape-mismatch-002",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵有一招 `hello`：**不投喂、也不叼回**，只是印一句 `你好喵`。\n\n现在想摆一只碗装它的牌子，然后喊一声。程序该印两行：先一句 `你好喵`，再一句 `牌子喊完了，冻干块已经备好`。\n\n可翻译官喵把整段代码退了回来，说**长相对不上**。你帮本喵把这只碗和喊的那一声都改对（招式 `hello` 本身一个字都不用改）。",
+      "brokenCode": "#include <stdio.h>\n\nvoid hello(void) {\n    printf(\"你好喵\\n\");\n}\n\nint main(void) {\n    int (*p)(int) = hello;\n    printf(\"%d\\n\", p(1));\n    printf(\"牌子喊完了，冻干块已经备好\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nvoid hello(void) {\n    printf(\"你好喵\\n\");\n}\n\nint main(void) {\n    void (*p)(void) = hello;\n    p();\n    printf(\"牌子喊完了，冻干块已经备好\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "你好喵\n牌子喊完了，冻干块已经备好",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: initialization of 'int (*)(int)' from incompatible pointer type 'void (*)(void)' [-Wincompatible-pointer-types]` —— 翻过来就一句：**长相对不上**。\n\n它把两边都念了一遍：\n\n- **左边这只碗（`int (*p)(int)`）**要装的是「**投喂一个整数、叼回一个整数**」的牌子；\n- **右边的 `hello`** 是「**不投喂、也不叼回**」的招式。\n\n两边的长相不一样，它就不许你把它们放进同一只碗里。所以要改的地方是**碗和喊法**，不是招式本身：\n\n```c\nvoid (*p)(void) = hello;\np();\n```\n\n`void (*p)(void)` 读起来还是从里往外：最右边 `(void)` 是「不投喂」，最左边 `void` 是「不叼回」，中间 `(*p)` 是那只碗。喊的时候也**不用给投喂**，所以写 `p();` 就完了。\n\n**为什么原来的写法连喊都是错的？** 因为碗按旧长相说好了「要投喂一个整数」，本喵就顺手写了 `p(1)`、还想用 `%d` 把「叼回来的整数」印出来 —— 可 `hello` 根本不叼东西。牵一发动全身：**牌子的长相说的是「这招长什么样」的承诺，承诺错了，后面每一处都跟着错。**\n\n最后收一句让人安心的：这类错**根本跑不起来**。翻译官喵在翻的阶段就把它拦下了，你不可能带着它上考场 —— 这正是 C 让人放心的地方。",
+      "templateId": "c-s2-fptr-shape-mismatch",
+      "params": {
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:21.697Z",
+        "hash": "edeb0fb9285b70aa"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-swappable-op-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想让「哪一招上」这件事**能改**：同一段 `main`，换一张牌子就换一套活。\n\n请你写三样东西：\n\n1. 一招 `add`：两个整数相加，把和交回来；\n2. 一招 `mul`：两个整数相乘，把积交回来；\n3. 一招 `apply`：头上第一样投喂是**一张牌子**（牌子上写的是「收两个整数、交回一个整数」），后面两样是两个整数 —— 招式里照着牌子把两个数办掉，把结果交回来。\n\n`main` 里：先摆一只碗装上 `add` 的牌子，请 `apply` 用 2 和 3 办一次，印一行 `先加：<结果>`；**然后把这只碗里的牌子换成 `mul`**（碗没换、牌子换了），再请 `apply` 办一次，印一行 `再乘：<结果>`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    int (*op)(int, int) = add;\n\n    printf(\"先加：%d\\n\", apply(op, 2, 3));\n    op = mul;\n    printf(\"再乘：%d\\n\", apply(op, 2, 3));\n    return 0;\n}\n",
+      "expectedOutput": "先加：5\n再乘：6",
+      "stdin": null,
+      "explanation": "这道题是这一课所有本事的种子喵，拆成三段看：\n\n**① 摆一只碗装牌子。**\n\n```c\nint (*op)(int, int) = add;\n```\n\n从里往外念：最右边 `(int, int)` 是「收两个整数」，最左边 `int` 是「交回一个整数」，中间 `(*op)` 是那只碗。包着 `*op` 的这对小括号**一个都不能省** —— 省了意思就从「一只碗」变成「一招」了。\n\n右边写 `add` 就行：**招式名单独写出来的时候，它自己就等于那张牌子**，所以写 `&add` 也是同一件事。\n\n**② 碗没换，牌子换了。** `op = mul;` 这一句是本课的甜头 —— 同一只碗，换张牌子就换了一套活。喊的时候照旧 `op(a, b)`，或者像本喵这样把牌子当小鱼干递进 `apply`。\n\n**③ 牌子当投喂递出去。** `apply` 头上第一样写的是 `int (*op)(int, int)` —— 它要的**不是数，是一张牌子**，而且把长相写清楚了。所以递「加」就加、递「乘」就乘，`apply` 自己完全不知道进来的是哪一招。\n\n**为什么这个形状值钱？** 因为它把「**怎么干**」从「**什么时候干**」里拆了出来。`apply` 只写一遍，想换活法就换牌子 —— 不用把它抄成两份、三份。往后你会见到很多这样的形状：别人写好一个框架，你只递进去一小张「规矩」。**这就是回调。**\n\n（两个小地方顺手记住：喊的时候写 `op(a, b)` 最干净 —— 写 `(*op)(a, b)` 也对，翻译官喵两种都认；但 `int *op(int, int)` 和 `int (*op)(int, int)` 是**两个完全不同的意思**，别手滑。）",
+      "templateId": "c-s2-fptr-swappable-op",
+      "params": {
+        "a": 2,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:26.857Z",
+        "hash": "f4ee3977e071a6ca"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-swappable-op-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想让「哪一招上」这件事**能改**：同一段 `main`，换一张牌子就换一套活。\n\n请你写三样东西：\n\n1. 一招 `add`：两个整数相加，把和交回来；\n2. 一招 `mul`：两个整数相乘，把积交回来；\n3. 一招 `apply`：头上第一样投喂是**一张牌子**（牌子上写的是「收两个整数、交回一个整数」），后面两样是两个整数 —— 招式里照着牌子把两个数办掉，把结果交回来。\n\n`main` 里：先摆一只碗装上 `add` 的牌子，请 `apply` 用 2 和 5 办一次，印一行 `先加：<结果>`；**然后把这只碗里的牌子换成 `mul`**（碗没换、牌子换了），再请 `apply` 办一次，印一行 `再乘：<结果>`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    int (*op)(int, int) = add;\n\n    printf(\"先加：%d\\n\", apply(op, 2, 5));\n    op = mul;\n    printf(\"再乘：%d\\n\", apply(op, 2, 5));\n    return 0;\n}\n",
+      "expectedOutput": "先加：7\n再乘：10",
+      "stdin": null,
+      "explanation": "这道题是这一课所有本事的种子喵，拆成三段看：\n\n**① 摆一只碗装牌子。**\n\n```c\nint (*op)(int, int) = add;\n```\n\n从里往外念：最右边 `(int, int)` 是「收两个整数」，最左边 `int` 是「交回一个整数」，中间 `(*op)` 是那只碗。包着 `*op` 的这对小括号**一个都不能省** —— 省了意思就从「一只碗」变成「一招」了。\n\n右边写 `add` 就行：**招式名单独写出来的时候，它自己就等于那张牌子**，所以写 `&add` 也是同一件事。\n\n**② 碗没换，牌子换了。** `op = mul;` 这一句是本课的甜头 —— 同一只碗，换张牌子就换了一套活。喊的时候照旧 `op(a, b)`，或者像本喵这样把牌子当小鱼干递进 `apply`。\n\n**③ 牌子当投喂递出去。** `apply` 头上第一样写的是 `int (*op)(int, int)` —— 它要的**不是数，是一张牌子**，而且把长相写清楚了。所以递「加」就加、递「乘」就乘，`apply` 自己完全不知道进来的是哪一招。\n\n**为什么这个形状值钱？** 因为它把「**怎么干**」从「**什么时候干**」里拆了出来。`apply` 只写一遍，想换活法就换牌子 —— 不用把它抄成两份、三份。往后你会见到很多这样的形状：别人写好一个框架，你只递进去一小张「规矩」。**这就是回调。**\n\n（两个小地方顺手记住：喊的时候写 `op(a, b)` 最干净 —— 写 `(*op)(a, b)` 也对，翻译官喵两种都认；但 `int *op(int, int)` 和 `int (*op)(int, int)` 是**两个完全不同的意思**，别手滑。）",
+      "templateId": "c-s2-fptr-swappable-op",
+      "params": {
+        "a": 2,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:32:10.688Z",
+        "hash": "391211a6e864197c"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-swappable-op-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想让「哪一招上」这件事**能改**：同一段 `main`，换一张牌子就换一套活。\n\n请你写三样东西：\n\n1. 一招 `add`：两个整数相加，把和交回来；\n2. 一招 `mul`：两个整数相乘，把积交回来；\n3. 一招 `apply`：头上第一样投喂是**一张牌子**（牌子上写的是「收两个整数、交回一个整数」），后面两样是两个整数 —— 招式里照着牌子把两个数办掉，把结果交回来。\n\n`main` 里：先摆一只碗装上 `add` 的牌子，请 `apply` 用 3 和 3 办一次，印一行 `先加：<结果>`；**然后把这只碗里的牌子换成 `mul`**（碗没换、牌子换了），再请 `apply` 办一次，印一行 `再乘：<结果>`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    int (*op)(int, int) = add;\n\n    printf(\"先加：%d\\n\", apply(op, 3, 3));\n    op = mul;\n    printf(\"再乘：%d\\n\", apply(op, 3, 3));\n    return 0;\n}\n",
+      "expectedOutput": "先加：6\n再乘：9",
+      "stdin": null,
+      "explanation": "这道题是这一课所有本事的种子喵，拆成三段看：\n\n**① 摆一只碗装牌子。**\n\n```c\nint (*op)(int, int) = add;\n```\n\n从里往外念：最右边 `(int, int)` 是「收两个整数」，最左边 `int` 是「交回一个整数」，中间 `(*op)` 是那只碗。包着 `*op` 的这对小括号**一个都不能省** —— 省了意思就从「一只碗」变成「一招」了。\n\n右边写 `add` 就行：**招式名单独写出来的时候，它自己就等于那张牌子**，所以写 `&add` 也是同一件事。\n\n**② 碗没换，牌子换了。** `op = mul;` 这一句是本课的甜头 —— 同一只碗，换张牌子就换了一套活。喊的时候照旧 `op(a, b)`，或者像本喵这样把牌子当小鱼干递进 `apply`。\n\n**③ 牌子当投喂递出去。** `apply` 头上第一样写的是 `int (*op)(int, int)` —— 它要的**不是数，是一张牌子**，而且把长相写清楚了。所以递「加」就加、递「乘」就乘，`apply` 自己完全不知道进来的是哪一招。\n\n**为什么这个形状值钱？** 因为它把「**怎么干**」从「**什么时候干**」里拆了出来。`apply` 只写一遍，想换活法就换牌子 —— 不用把它抄成两份、三份。往后你会见到很多这样的形状：别人写好一个框架，你只递进去一小张「规矩」。**这就是回调。**\n\n（两个小地方顺手记住：喊的时候写 `op(a, b)` 最干净 —— 写 `(*op)(a, b)` 也对，翻译官喵两种都认；但 `int *op(int, int)` 和 `int (*op)(int, int)` 是**两个完全不同的意思**，别手滑。）",
+      "templateId": "c-s2-fptr-swappable-op",
+      "params": {
+        "a": 3,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:32:13.003Z",
+        "hash": "b2ab7d491ccc0ce9"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-swappable-op-005",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想让「哪一招上」这件事**能改**：同一段 `main`，换一张牌子就换一套活。\n\n请你写三样东西：\n\n1. 一招 `add`：两个整数相加，把和交回来；\n2. 一招 `mul`：两个整数相乘，把积交回来；\n3. 一招 `apply`：头上第一样投喂是**一张牌子**（牌子上写的是「收两个整数、交回一个整数」），后面两样是两个整数 —— 招式里照着牌子把两个数办掉，把结果交回来。\n\n`main` 里：先摆一只碗装上 `add` 的牌子，请 `apply` 用 3 和 5 办一次，印一行 `先加：<结果>`；**然后把这只碗里的牌子换成 `mul`**（碗没换、牌子换了），再请 `apply` 办一次，印一行 `再乘：<结果>`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    int (*op)(int, int) = add;\n\n    printf(\"先加：%d\\n\", apply(op, 3, 5));\n    op = mul;\n    printf(\"再乘：%d\\n\", apply(op, 3, 5));\n    return 0;\n}\n",
+      "expectedOutput": "先加：8\n再乘：15",
+      "stdin": null,
+      "explanation": "这道题是这一课所有本事的种子喵，拆成三段看：\n\n**① 摆一只碗装牌子。**\n\n```c\nint (*op)(int, int) = add;\n```\n\n从里往外念：最右边 `(int, int)` 是「收两个整数」，最左边 `int` 是「交回一个整数」，中间 `(*op)` 是那只碗。包着 `*op` 的这对小括号**一个都不能省** —— 省了意思就从「一只碗」变成「一招」了。\n\n右边写 `add` 就行：**招式名单独写出来的时候，它自己就等于那张牌子**，所以写 `&add` 也是同一件事。\n\n**② 碗没换，牌子换了。** `op = mul;` 这一句是本课的甜头 —— 同一只碗，换张牌子就换了一套活。喊的时候照旧 `op(a, b)`，或者像本喵这样把牌子当小鱼干递进 `apply`。\n\n**③ 牌子当投喂递出去。** `apply` 头上第一样写的是 `int (*op)(int, int)` —— 它要的**不是数，是一张牌子**，而且把长相写清楚了。所以递「加」就加、递「乘」就乘，`apply` 自己完全不知道进来的是哪一招。\n\n**为什么这个形状值钱？** 因为它把「**怎么干**」从「**什么时候干**」里拆了出来。`apply` 只写一遍，想换活法就换牌子 —— 不用把它抄成两份、三份。往后你会见到很多这样的形状：别人写好一个框架，你只递进去一小张「规矩」。**这就是回调。**\n\n（两个小地方顺手记住：喊的时候写 `op(a, b)` 最干净 —— 写 `(*op)(a, b)` 也对，翻译官喵两种都认；但 `int *op(int, int)` 和 `int (*op)(int, int)` 是**两个完全不同的意思**，别手滑。）",
+      "templateId": "c-s2-fptr-swappable-op",
+      "params": {
+        "a": 3,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:32:15.223Z",
+        "hash": "f416da6feb977444"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-swappable-op-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想让「哪一招上」这件事**能改**：同一段 `main`，换一张牌子就换一套活。\n\n请你写三样东西：\n\n1. 一招 `add`：两个整数相加，把和交回来；\n2. 一招 `mul`：两个整数相乘，把积交回来；\n3. 一招 `apply`：头上第一样投喂是**一张牌子**（牌子上写的是「收两个整数、交回一个整数」），后面两样是两个整数 —— 招式里照着牌子把两个数办掉，把结果交回来。\n\n`main` 里：先摆一只碗装上 `add` 的牌子，请 `apply` 用 4 和 3 办一次，印一行 `先加：<结果>`；**然后把这只碗里的牌子换成 `mul`**（碗没换、牌子换了），再请 `apply` 办一次，印一行 `再乘：<结果>`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    int (*op)(int, int) = add;\n\n    printf(\"先加：%d\\n\", apply(op, 4, 3));\n    op = mul;\n    printf(\"再乘：%d\\n\", apply(op, 4, 3));\n    return 0;\n}\n",
+      "expectedOutput": "先加：7\n再乘：12",
+      "stdin": null,
+      "explanation": "这道题是这一课所有本事的种子喵，拆成三段看：\n\n**① 摆一只碗装牌子。**\n\n```c\nint (*op)(int, int) = add;\n```\n\n从里往外念：最右边 `(int, int)` 是「收两个整数」，最左边 `int` 是「交回一个整数」，中间 `(*op)` 是那只碗。包着 `*op` 的这对小括号**一个都不能省** —— 省了意思就从「一只碗」变成「一招」了。\n\n右边写 `add` 就行：**招式名单独写出来的时候，它自己就等于那张牌子**，所以写 `&add` 也是同一件事。\n\n**② 碗没换，牌子换了。** `op = mul;` 这一句是本课的甜头 —— 同一只碗，换张牌子就换了一套活。喊的时候照旧 `op(a, b)`，或者像本喵这样把牌子当小鱼干递进 `apply`。\n\n**③ 牌子当投喂递出去。** `apply` 头上第一样写的是 `int (*op)(int, int)` —— 它要的**不是数，是一张牌子**，而且把长相写清楚了。所以递「加」就加、递「乘」就乘，`apply` 自己完全不知道进来的是哪一招。\n\n**为什么这个形状值钱？** 因为它把「**怎么干**」从「**什么时候干**」里拆了出来。`apply` 只写一遍，想换活法就换牌子 —— 不用把它抄成两份、三份。往后你会见到很多这样的形状：别人写好一个框架，你只递进去一小张「规矩」。**这就是回调。**\n\n（两个小地方顺手记住：喊的时候写 `op(a, b)` 最干净 —— 写 `(*op)(a, b)` 也对，翻译官喵两种都认；但 `int *op(int, int)` 和 `int (*op)(int, int)` 是**两个完全不同的意思**，别手滑。）",
+      "templateId": "c-s2-fptr-swappable-op",
+      "params": {
+        "a": 4,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:32:17.409Z",
+        "hash": "d441ada4b297fe4a"
+      }
+    },
+    {
+      "id": "bank-c-s2-fptr-swappable-op-008",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想让「哪一招上」这件事**能改**：同一段 `main`，换一张牌子就换一套活。\n\n请你写三样东西：\n\n1. 一招 `add`：两个整数相加，把和交回来；\n2. 一招 `mul`：两个整数相乘，把积交回来；\n3. 一招 `apply`：头上第一样投喂是**一张牌子**（牌子上写的是「收两个整数、交回一个整数」），后面两样是两个整数 —— 招式里照着牌子把两个数办掉，把结果交回来。\n\n`main` 里：先摆一只碗装上 `add` 的牌子，请 `apply` 用 4 和 5 办一次，印一行 `先加：<结果>`；**然后把这只碗里的牌子换成 `mul`**（碗没换、牌子换了），再请 `apply` 办一次，印一行 `再乘：<结果>`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    int (*op)(int, int) = add;\n\n    printf(\"先加：%d\\n\", apply(op, 4, 5));\n    op = mul;\n    printf(\"再乘：%d\\n\", apply(op, 4, 5));\n    return 0;\n}\n",
+      "expectedOutput": "先加：9\n再乘：20",
+      "stdin": null,
+      "explanation": "这道题是这一课所有本事的种子喵，拆成三段看：\n\n**① 摆一只碗装牌子。**\n\n```c\nint (*op)(int, int) = add;\n```\n\n从里往外念：最右边 `(int, int)` 是「收两个整数」，最左边 `int` 是「交回一个整数」，中间 `(*op)` 是那只碗。包着 `*op` 的这对小括号**一个都不能省** —— 省了意思就从「一只碗」变成「一招」了。\n\n右边写 `add` 就行：**招式名单独写出来的时候，它自己就等于那张牌子**，所以写 `&add` 也是同一件事。\n\n**② 碗没换，牌子换了。** `op = mul;` 这一句是本课的甜头 —— 同一只碗，换张牌子就换了一套活。喊的时候照旧 `op(a, b)`，或者像本喵这样把牌子当小鱼干递进 `apply`。\n\n**③ 牌子当投喂递出去。** `apply` 头上第一样写的是 `int (*op)(int, int)` —— 它要的**不是数，是一张牌子**，而且把长相写清楚了。所以递「加」就加、递「乘」就乘，`apply` 自己完全不知道进来的是哪一招。\n\n**为什么这个形状值钱？** 因为它把「**怎么干**」从「**什么时候干**」里拆了出来。`apply` 只写一遍，想换活法就换牌子 —— 不用把它抄成两份、三份。往后你会见到很多这样的形状：别人写好一个框架，你只递进去一小张「规矩」。**这就是回调。**\n\n（两个小地方顺手记住：喊的时候写 `op(a, b)` 最干净 —— 写 `(*op)(a, b)` 也对，翻译官喵两种都认；但 `int *op(int, int)` 和 `int (*op)(int, int)` 是**两个完全不同的意思**，别手滑。）",
+      "templateId": "c-s2-fptr-swappable-op",
+      "params": {
+        "a": 4,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:28.067Z",
+        "hash": "e56438f0a4723e97"
+      }
+    }
+  ]
+}

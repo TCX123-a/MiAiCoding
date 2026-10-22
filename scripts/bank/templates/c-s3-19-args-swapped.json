@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-19-args-swapped",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-19",
+  "type": "codefix",
+  "concept": ["招牌按位置对号，不认名字", "递货顺序摆反：台面不报错、数变负", "编译全程无话可说，不代表递得对", "分家后只看招牌更看不出递反"],
+  "instances": 2,
+  "params": {
+    "bag": { "kind": "pick", "values": ["7", "9"] },
+    "eaten": { "kind": "pick", "values": ["2", "3"] }
+  },
+  "stemTemplate": "招牌上写得明明白白喵：**先整袋、后吃掉的**。可递货的时候，两只袋子拿反了 —— 它照样收、照样跑，台上一声不吭；就是印出来的条数是**负的**。\n\n招牌只管**位置和形状**，不认名字：谁站在第一位，身子就拿谁当「整袋」。名字对得上一点忙都帮不上，站错了位子，数就错了。这种错不红脸、不崩，就是安安静静说胡话。\n\n请你把递货的**顺序**摆正（招牌和身子一个字都别动）。改好之后该印一行：{bag} 条减掉 {eaten} 条剩下的那个数。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n/* 招牌上写好了交付顺序：先整袋，后吃掉的 */\nint fish_left(int total, int eaten) {\n    return total - eaten;\n}\n\nint main(void) {\n    /* 递货的时候两只袋子拿反了 */\n    printf(\"还剩 %d 条\\n\", fish_left({eaten}, {bag}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n/* 招牌上写好了交付顺序：先整袋，后吃掉的 */\nint fish_left(int total, int eaten) {\n    return total - eaten;\n}\n\nint main(void) {\n    /* 递货顺序摆正：先整袋，后吃掉的 */\n    printf(\"还剩 %d 条\\n\", fish_left({bag}, {eaten}));\n    return 0;\n}\n",
+  "explanationTemplate": "身子那行 `total - eaten` 没写错喵，错在**递货的顺序**：`total` 那个位子上站的是「吃掉的」，`eaten` 那个位子上站的是「整袋的」。规矩是**按位对号**的 —— 第一位认的是整袋，袋子上写什么名字都不算数。\n\n- 递正了：{bag} 减 {eaten}，印出来是正数；\n- 递反了：{eaten} 减 {bag}，印出来带负号 —— 程序不报错、不崩，就是数不对；\n- 这种「台面全对、里子全错」的坑，往后本子分家、`main` 手里只剩招牌的时候照样能踩：招牌只保证**收得下**，保证不了**递得对**。\n\n两个袋子为什么这么像：递进去的都是「几条」的数，形状一样，翻译官喵照单全收 —— 翻译的每一步都无话可说。真工程里同款错最贵：它不制造报错，只制造**看起来像真的**的假数。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-led-ensure-ascii",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-15",
+  "type": "codefix",
+  "concept": ["ensure_ascii", "写进纸里的中文变成记号", "读回来照样没错"],
+  "instances": 2,
+  "params": {
+    "item": { "kind": "pick", "values": ["小鱼干", "猫罐头"] },
+    "amt": { "kind": "pick", "values": ["12.5", "30.0"] }
+  },
+  "stemTemplate": "下面这段程序把一笔账写进一页纸，再把那页纸**原样读成字**，看上面到底写了什么。\n\n它跑出来是**假**：纸上有 `{item}` 这几个字吗？答「没有」。\n\n你改**写那一句**（别的都不动），让它答出「有」。改好以后只印**一行**：\n\n```text\n纸上写着「{item}」吗？ True\n```\n\n（读回来那一句和印出来那一句都不许动 —— 本喵要的是**纸上**真的写着那几个字，不是取巧绕过去。）",
+  "brokenCodeTemplate": "import json, os, tempfile\n\n账 = [{\"项目\": \"{item}\", \"金额\": {amt}}]\n路径 = os.path.join(tempfile.mkdtemp(), \"账本.json\")\nwith open(路径, \"w\", encoding=\"utf-8\") as f:\n    json.dump(账, f)\n\nwith open(路径, encoding=\"utf-8\") as f:\n    纸上的字 = f.read()\n\nprint(\"纸上写着「{item}」吗？\", \"{item}\" in 纸上的字)\n",
+  "referenceFixTemplate": "import json, os, tempfile\n\n账 = [{\"项目\": \"{item}\", \"金额\": {amt}}]\n路径 = os.path.join(tempfile.mkdtemp(), \"账本.json\")\nwith open(路径, \"w\", encoding=\"utf-8\") as f:\n    json.dump(账, f, ensure_ascii=False)\n\nwith open(路径, encoding=\"utf-8\") as f:\n    纸上的字 = f.read()\n\nprint(\"纸上写着「{item}」吗？\", \"{item}\" in 纸上的字)\n",
+  "explanationTemplate": "这个坑最阴的地方是：**程序一点没错**。写进去没错、读回来也没错 —— 你把账读回来，它还是那笔账，中文还是中文。\n\n错的只是**那页纸本人**：少了 `ensure_ascii=False`，写进去的中文会变成一串「反斜杠 u 后面跟四个数字」的记号。程序读它毫无障碍，可你用记事本打开那页纸，**一个字都认不出来**。\n\n```text\njson.dump(账, f)                        ← 中文在纸上变成记号\njson.dump(账, f, ensure_ascii=False)    ← 中文照原样写在纸上\n```\n\n这四个字的字面意思就是「别（一律）用英文那套记号」—— 本喵不用你背，你只要记住：**凡是要写给人看的纸，都把它带上**。\n\n⚠️ 顺一句：这一条**只影响纸上长什么样**，跟「读回来对不对」一点关系没有。所以你要是只在程序里读来读去，永远发现不了；**得真拿眼睛去看那页纸**才看得见。本喵这一题就是逼你去纸上找那三个字喵。"
+}

@@ -1,0 +1,79 @@
+{
+  "lessonId": "java-stage3-02",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵派了一位向导去走柜子。绕圈里那两句 `it.hasNext()` 和 `it.next()` 分别在干什么？",
+      "options": [
+        "`it.hasNext()` 问「**还有下一件吗**」，只答真或者假；`it.next()` 把**下一件叼出来**，同时自己往前挪一格",
+        "`it.hasNext()` 把下一件叼出来；`it.next()` 问还有没有下一件",
+        "两句都是「往前挪一格」，写哪句都一样",
+        "`it.hasNext()` 数一数柜子一共几件；`it.next()` 报出现在走到第几格"
+      ],
+      "answer": 0,
+      "explanation": "正是这一对喵：**问话**和**叼东西**是两件事。向导脑子里记着「我走到哪儿了」，但挪格是 `it.next()` 顺手干的 —— 本喵一次都没写过编号，也没数过一共几件。这也是它比「报编号拿东西」稳的地方：编号要自己数，数错一点就当场炸；向导不会数错喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵一边「挨个过一遍」一边用 `names.remove(name);` 拿走一件，结果它**有时候炸、有时候不炸**。这是怎么回事？",
+      "options": [
+        "拿走的位置不同，向导**有时候没机会再张嘴** —— 它没张嘴就不会去核对账本，于是侥幸跑完了；换一组数据照样炸",
+        "柜子里东西少的时候（不到四件）就不会炸，多了才会",
+        "因为 `names` 这个名字起得不好，换个名字就不炸了",
+        "编译器有时会打瞌睡，多跑几次总有一次是不炸的"
+      ],
+      "answer": 0,
+      "explanation": "是第二行的绕圈**没走完**喵：要是本喵拿走的那件正好让向导挪到柜子末尾，它下一句「还有下一件吗」直接答了「没有」，于是**再也没张嘴** —— 没张嘴就没核对账本，红字自然没机会出现。这种「看数据脸色」的错最坏：它给本喵一种「这么写也行」的错觉。稳的写法只有让向导自己动手（`it.remove()`），账本它自己顺手就改好了喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵想给一堆猫**换一种站法**，可又不想动它们自己身上那份承诺。该怎么办？",
+      "options": [
+        "**请个帮工** —— 写一张单独挂着 `Comparator<Fish>` 那张承诺的图纸，再用 `pond.sort(new HeavyFirst())` 交给它",
+        "把 `compareTo` 改掉，排完再改回来",
+        "一份承诺就只能有一种站法，没有别的办法",
+        "把柜子里的东西全倒出来，一只一只手写进一只新柜子"
+      ],
+      "answer": 0,
+      "explanation": "请帮工这条路正是为这件事开的喵：帮工那张图纸挂的承诺是「**本喵会替两只同类当裁判**」，它不挂在猫身上，所以同一堆猫可以有好几个帮工换着用 —— 按重量排一个、按名字长短排一个，**东西自己一个字都不用改**。这就是它和「东西自己会排」最大的分岔：改承诺是改东西本身，请帮工只是换一双眼睛喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"小橘\");\n        names.add(\"狸花\");\n        names.add(\"煤球\");\n\n        Iterator<String> it = names.iterator();\n        while (it.hasNext()) {\n            String name = it.next();\n            if (name.equals(\"煤球\")) {\n                ____;\n            }\n        }\n        System.out.println(names);\n    }\n}",
+      "stem": "这一招想在走的过程中，把名字正好是「煤球」的那一件拿走。空里该填什么？",
+      "blanks": [
+        {
+          "answer": "it.remove()",
+          "accept": []
+        }
+      ],
+      "explanation": "填 `it.remove()`：让**向导自己**把刚叼出来的那一件拿走喵。它是向导本人干的，所以向导脑子里那本账它自己顺手就改好了 —— 柜子里少一件，账目还照样对得上，下一回它再核对两边还是一致的。要是填 `names.remove(name);`，那就是**绕过向导直接动柜子**，它会当场翻脸扔出 `ConcurrentModificationException`。填好后印出来是 [小橘, 狸花]。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nclass Fish implements Comparable<Fish> {\n    String name;\n    int weight;\n\n    Fish(String name, int weight) {\n        this.name = name;\n        this.weight = weight;\n    }\n\n    public int compareTo(Fish other) {\n        return other.weight - this.weight;\n    }\n\n    public String toString() {\n        return name + \"(\" + weight + \")\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"小橘\", 5));\n        pond.add(new Fish(\"煤球\", 2));\n        pond.add(new Fish(\"狸花\", 8));\n\n        Collections.sort(pond);\n        System.out.println(pond);\n        System.out.println(\"打头的是 \" + pond.get(0));\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "[狸花(8), 小橘(5), 煤球(2)]\n打头的是 狸花(8)",
+      "accept": ["[狸花(8), 小橘(5), 煤球(2)]\n打头的是 狸花(8)\n"],
+      "explanation": "要害在 `compareTo` 里那一句写反了喵：第三节的例子里报的是 `this.weight - other.weight`（**轻的站前面**），这里写成了 `other.weight - this.weight` —— 报负数变成「本喵比它重，本喵站前面」，于是**重的排到了最前**。所以打头的是最重的 `狸花(8)`。这是「自己那份承诺改一个字，整堆东西的站法全翻过来」的活例子：承诺只有一份，改它等于改了所有猫喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\nclass ShortFirst implements Comparator<Fish> {\n    public int compare(Fish a, Fish b) {\n        return a.name.length() - b.name.length();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"狸花猫猫\"));\n        pond.add(new Fish(\"小橘\"));\n        pond.add(new Fish(\"煤球球\"));\n\n        pond.sort(new ShortFirst());\n        System.out.println(pond);\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "[小橘, 煤球球, 狸花猫猫]",
+      "accept": ["[小橘, 煤球球, 狸花猫猫]\n"],
+      "explanation": "这一回东西自己**没挂任何承诺**（图纸上只有名字），排排坐全靠请来的那个帮工喵。帮工报的是 `a.name.length() - b.name.length()` —— **名字短的站前面**：`小橘` 两个字、`煤球球` 三个字、`狸花猫猫` 四个字，于是排成 [小橘, 煤球球, 狸花猫猫]。注意柜子是 `pond.sort(new ShortFirst())` 排的，**不是** `Collections.sort(pond)` —— 后者只收挂过承诺的柜子，这一柜子一只都没挂，用它反而会红喵。"
+    }
+  ]
+}

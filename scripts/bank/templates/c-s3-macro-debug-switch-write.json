@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-macro-debug-switch-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-11",
+  "type": "codewrite",
+  "concept": ["抓虫开关", "翻译之前就扔掉", "if 判值", "岔路口要配收尾"],
+  "instances": 6,
+  "params": {
+    "d": { "kind": "pick", "values": ["0", "1"] },
+    "k": { "kind": "pick", "values": ["2", "5"] },
+    "n": { "kind": "pick", "values": ["3", "4"] }
+  },
+  "stemTemplate": "稿子开头贴着一张开关卡 `DEBUG`，写的是 `{d}`。本喵的规矩是：**`DEBUG` 是 `1` 的时候**，那行抓虫用的字跟着账目一起印出来；**是 `0` 的时候**，屏幕上一个字都不许多 —— 只留账目那一行。\n\n请你把抓虫那一行**包起来**，要用课文那张小表上**判值**的那个岔路口（`#if` 判值、`#ifdef` 判有没有）。改完之后：\n\n- `DEBUG` 是 `1` → 印**两行**：先 `[抓虫] 每只猫 {k} 条`，再账目那一行；\n- `DEBUG` 是 `0` → 只印**账目那一行**。\n\n抓虫那行的形状是 `[抓虫] 每只猫 %d 条`；稿子里现在是一句占位的 `[抓虫] 待补`，把它换成真正的那句，再包进岔路口里。别用 `if` 那种跑起来才判的做法喵 —— 本喵要的是**翻译之前**就把它扔掉。",
+  "starterTemplate": "#include <stdio.h>\n\n#define DEBUG {d}\n#define FISH_PER_CAT {k}\n\nint main(void) {\n    int cats = {n};\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来；先拿占位那句顶着 */\n    printf(\"[抓虫] 待补\\n\");\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n#define DEBUG {d}\n#define FISH_PER_CAT {k}\n\nint main(void) {\n    int cats = {n};\n#if DEBUG\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来 */\n    printf(\"[抓虫] 每只猫 %d 条\\n\", FISH_PER_CAT);\n#endif\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+  "explanationTemplate": "两处是一对喵：门上写 `#if DEBUG`，收尾写 `#endif`，夹在中间那一行归它们管。少了收尾那句，翻译官喵当场就翻不下去。\n\n关键是**挑哪个岔路口**：\n\n- `#if DEBUG` 看的是**值**。这张卡现在写的是 `{d}`：写 `1`，这一行留下来；写 `0`，它**在翻译之前就被扔掉**，屏幕上一个字都不多。\n- `#ifdef DEBUG` 看的是**有没有贴过这张卡**。这张卡**贴了**（不管写的是 0 还是 1），所以换成它，`DEBUG` 写成 `0` 那行**照样会印出来** —— 开关根本关不上。\n\n本喵把两种写法都真跑过一遍，差别就是上面这样。\n\n还有一条：稿子里的抓虫行现在是占位的 `[抓虫] 待补`，要换成照 `printf` 那句原本的形状（`[抓虫] 每只猫 %d 条`）**再包进门里** —— 只删不包，`DEBUG` 拨到 `1` 的稿子就印不出抓虫那行了喵。"
+}

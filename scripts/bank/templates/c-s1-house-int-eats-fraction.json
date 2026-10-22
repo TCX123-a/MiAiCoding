@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-house-int-eats-fraction",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-03",
+  "type": "codefix",
+  "concept": ["int 砍零头", "double", "%.1f"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "冻干块"] }
+  },
+  "stemTemplate": "本喵称了一筐{unit}，秤上写的是 **{a}.{b} 斤**。可这份稿子报出来的斤数，**小数点后面那截不见了** —— 它一个错都不报，安安静静地给了个错数。\n\n你帮本喵改对：屏幕上要照实出现 `这筐{unit} {a}.{b} 斤`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int weight = {a}.{b};\n    printf(\"这筐{unit} %d 斤\\n\", weight);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    double weight = {a}.{b};\n    printf(\"这筐{unit} %.1f 斤\\n\", weight);\n    return 0;\n}\n",
+  "explanationTemplate": "C 有一个**不吭声**的老实脾气喵：把带小数点的货装进 `int` 那间屋，它不拦你、不报错，直接**把小数点后面那截砍掉** —— {a}.{b} 进屋变成 {a}，而且它是**直接砍**，不是四舍五入。\n\n于是这份稿子跑得起来、屏幕上也有字，就是那个数**错了**。这类毛病最费眼睛：翻译官喵一个字都没说，屏幕上看起来一切正常。\n\n要留住小数，两处得一起改 —— 它们本来就是一件事：**这间屋收的是小数**。\n\n```c\ndouble weight = {a}.{b};\nprintf(\"这筐{unit} %.1f 斤\\n\", weight);\n```\n\n- **货牌换成 `double`** —— 这间屋从此收小数。\n- **钩子换成 `%.1f`** —— `%d` 是「按整数念」的钩子；`%.1f` 里的这个 `1` 是「小数点后留一位」。\n\n请把这句话记牢喵：**「能跑」不等于「对了」。** 从这一课起，你要开始习惯「屏幕上跑出东西来了」之后，再盯一眼那个东西**对不对**。"
+}

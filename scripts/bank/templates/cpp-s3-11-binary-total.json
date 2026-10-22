@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-11-binary-total",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-11",
+  "type": "codewrite",
+  "concept": ["ios::binary", "write 与 read 要配 sizeof", "原样倒进倒出"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["条", "颗"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "投喂口会**先给一个数**（表示接下来有几个数），**再一个一个给 {n} 个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 用**二进制**的方式把小本本翻开（翻开的时候多说一句话）；\n2. 把这 {n} 个数一个一个**原样倒进**本子里；\n3. **合上本子**；\n4. 再用**二进制**的方式翻开同一本本子，把数一个一个**原样倒回来**，一边倒一边加；\n5. 全都倒回来之后，印一行 `一共 X {unit}`，X 是加出来的总和。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <fstream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <fstream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    ofstream out(\"num.dat\", ios::binary);\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        out.write((char*)&x, sizeof(x));\n    }\n    out.close();\n\n    ifstream in(\"num.dat\", ios::binary);\n    int x = 0;\n    int total = 0;\n    while (in.read((char*)&x, sizeof(x))) {\n        total = total + x;\n    }\n    cout << \"一共 \" << total << \" {unit}\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题走的是**二进制**那条路喵：本子里躺着的不是数字的长相，而是它在机器里的那串字节。\n\n四件事记住：\n\n- 翻开本子的时候要多说一句 `ios::binary`，**写和读两边都要说** —— 少说一边，两边就对不上了。\n- `out.write((char*)&x, sizeof(x))` 吃两口：**货在哪儿**（`&x`）、**倒出几个字节**（`sizeof(x)`）。\n- `in.read((char*)&x, sizeof(x))` 是反向的那一下，字节数**必须和倒出去的时候一模一样**。\n- `while (in.read(...))` 念作「**还倒得动就接着倒**」：本子里有几份，就读几份，读到底它自己就停。\n\n⚠️ 二进制这条路只认**字节数**，不认字：倒出去用的是几个字节，读回来就得用几个字节 —— 这边改小一点、那边还用原来那个数，读出来的东西就全乱了，而程序**照样跑得完**（读不动的时候它自己会停），安安静静给你一个错的数。\n\n⚠️ 这条路上没有 `endl`，也没有空格：数是一个挨着一个躺着的，所以读的时候也一个一个来。"
+}

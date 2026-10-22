@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-lambda-effectively-final",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-03",
+  "type": "codefix",
+  "concept": ["递过去的那一招只认定好的小鱼干", "不许半路再改", "翻译稿子时就拦下"],
+  "instances": 2,
+  "params": {
+    "k": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵写了一张**只有一招**的约定，想让那只猫喊一声，喊声里带上它喊了几声喵。\n\n可它**连翻译那一关都没过**，红字说本喵半路改了一样不该改的东西。\n\n你帮本喵看看：那声喊里用到的那样东西，是什么时候定下来的、后来又有没有被改过。把这一处理顺。\n\n改好之后它该印出**一行**：`喵了 {k} 声` —— 那个数就是本喵本来想让它喊的声数，别改成别的数喵。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "interface Greeter {\n    void greet();\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        int said = 0;\n        Greeter g = () -> System.out.println(\"喵了 \" + said + \" 声\");\n        said = {k};\n        g.greet();\n    }\n}\n",
+  "referenceFixTemplate": "interface Greeter {\n    void greet();\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        int said = {k};\n        Greeter g = () -> System.out.println(\"喵了 \" + said + \" 声\");\n        g.greet();\n    }\n}\n",
+  "explanationTemplate": "红字说的那句话是：**「从这一招里用到的小鱼干，必须是定好的、或者后半辈子不再改的。」** 本喵踩的正是后半句。\n\n**一、这一招不是当场执行的。** 写 `() -> System.out.println(...)` 的时候，本喵只是把**要做的事**包成一份交出去，它**还没跑**。真跑是后面那句 `g.greet()`。\n\n**二、问题就出在这个时间差上。** 本喵先写 `int said = 0;`，接着把那一招包好交出去，然后又把 `said` 改成 {k}，最后才喊。那么问题来了：那一招真跑的时候，`said` 到底是 0 还是 {k}？交出去的那一刻它看到的是 0，可跑到的时候它拿到的是改完的 {k} —— **同一句话，两种读法都说得通**。\n\n**三、Java 不猜，直接不许你改。** 它的规矩是：这一招要用到外面的小鱼干，那样东西就得是**定死的**（写不写 `final` 都行，只要后面不再改）。本喵后面那句 `said = {k};` 一写下去，那样东西就**不算定死**了，翻译官喵当场拦下。\n\n**四、改法就是把「定下来」提到交出去之前。** 直接写 `int said = {k};`，后面那一句赋值删掉 —— 这样它从头到尾没被改过，这一招用起来完全合法。两处数字本来就是同一个数，所以结果一个字都不差。\n\n**五、这条规矩为什么值得有。** 因为它拦掉的是一种**看着没问题、结果全凭运气**的写法。真让它通过，同一份代码在不同机器上可能印出不一样的东西，而本喵盯着屏幕怎么都想不通。宁可翻译的时候红一次喵。\n\n往后再写这种「包好的一招」，先回头扫一眼：**它用到的小鱼干，后面还有没有人改？**"
+}

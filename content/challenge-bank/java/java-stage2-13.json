@@ -1,0 +1,526 @@
+{
+  "lessonId": "java-stage2-13",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s2-file-append-flag-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵往册子上添新记录 —— 可这稿子跑出来，**先前那条不见了**：\n\n```text\n档案里有：第二天：5 条\n```\n\n请你把它补好，让程序印出：\n\n```text\n档案里有：第一天：3 条\n档案里有：第二天：5 条\n```\n\n毛病在**第二回拉开抽屉**那一下。这稿子编得过、也跑得起来，翻译官喵一个字都不说，别的本喵都没写错喵。",
+      "brokenCode": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"第一天：3 条\\n\");\n        }\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"第二天：5 条\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n    }\n}\n",
+      "referenceFix": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"第一天：3 条\\n\");\n        }\n        try (FileWriter w = new FileWriter(\"dangan.txt\", true)) {\n            w.write(\"第二天：5 条\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "档案里有：第一天：3 条\n档案里有：第二天：5 条",
+      "stdin": null,
+      "explanation": "这题考的是课上那条分界线：**想留住原来的字，名字后面喂 `true`；想从白纸开始写，就别喂。**\n\n坏稿子的第二回是这么拉开的：\n\n```java\nnew FileWriter(\"dangan.txt\")\n```\n\n**拉开抽屉的那一刻，册子上原来的字就被全擦干净了** —— 所以念册子的时候只剩后来写的那一条。注意两件事喵：\n\n- **册子并没有被删掉，是被擦干净了**（名字还在、册子还在，就是一片空白）。本喵真跑过：先写 `第一天：3 条`、再用不喂 `true` 的写法写 `第二天：5 条`，念出来只剩 `档案里有：第二天：5 条`。\n- **这稿子编得过、也跑得起来，翻译官喵一个字都不说。** 屏幕上只是**平白少了一行** —— 这类「不冒红字的坏法」最难发现，所以判分那两道题里前一条记录的内容本喵是特意换过的，光把答案抄一遍过不了。\n\n补法只动第二回那两个字：\n\n```java\nnew FileWriter(\"dangan.txt\", true)\n```\n\n喂的 `true` 意思是「**接着往下写**」：保留原来的字，在本喵上次停笔的地方续上。\n\n顺带说一句：**第一回其实一直是对的。** 册子本来就该从 `第一天：3 条` 这一条开始，那一回用「擦干净重来」的写法完全合适 —— 分界线管的是**你想不想留住原来的字**，不是「哪种写法更正宗」喵。",
+      "templateId": "java-s2-file-append-flag",
+      "params": {
+        "name": "dangan.txt",
+        "old": "第一天：3 条",
+        "fresh": "第二天：5 条"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:04.085Z",
+        "hash": "626c04b8ecfee0f0"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-append-flag-007",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵往册子上添新记录 —— 可这稿子跑出来，**先前那条不见了**：\n\n```text\n档案里有：星期二：7 条\n```\n\n请你把它补好，让程序印出：\n\n```text\n档案里有：星期一：2 条\n档案里有：星期二：7 条\n```\n\n毛病在**第二回拉开抽屉**那一下。这稿子编得过、也跑得起来，翻译官喵一个字都不说，别的本喵都没写错喵。",
+      "brokenCode": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            w.write(\"星期一：2 条\\n\");\n        }\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            w.write(\"星期二：7 条\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n    }\n}\n",
+      "referenceFix": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            w.write(\"星期一：2 条\\n\");\n        }\n        try (FileWriter w = new FileWriter(\"zhangben.txt\", true)) {\n            w.write(\"星期二：7 条\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "档案里有：星期一：2 条\n档案里有：星期二：7 条",
+      "stdin": null,
+      "explanation": "这题考的是课上那条分界线：**想留住原来的字，名字后面喂 `true`；想从白纸开始写，就别喂。**\n\n坏稿子的第二回是这么拉开的：\n\n```java\nnew FileWriter(\"zhangben.txt\")\n```\n\n**拉开抽屉的那一刻，册子上原来的字就被全擦干净了** —— 所以念册子的时候只剩后来写的那一条。注意两件事喵：\n\n- **册子并没有被删掉，是被擦干净了**（名字还在、册子还在，就是一片空白）。本喵真跑过：先写 `星期一：2 条`、再用不喂 `true` 的写法写 `星期二：7 条`，念出来只剩 `档案里有：星期二：7 条`。\n- **这稿子编得过、也跑得起来，翻译官喵一个字都不说。** 屏幕上只是**平白少了一行** —— 这类「不冒红字的坏法」最难发现，所以判分那两道题里前一条记录的内容本喵是特意换过的，光把答案抄一遍过不了。\n\n补法只动第二回那两个字：\n\n```java\nnew FileWriter(\"zhangben.txt\", true)\n```\n\n喂的 `true` 意思是「**接着往下写**」：保留原来的字，在本喵上次停笔的地方续上。\n\n顺带说一句：**第一回其实一直是对的。** 册子本来就该从 `星期一：2 条` 这一条开始，那一回用「擦干净重来」的写法完全合适 —— 分界线管的是**你想不想留住原来的字**，不是「哪种写法更正宗」喵。",
+      "templateId": "java-s2-file-append-flag",
+      "params": {
+        "name": "zhangben.txt",
+        "old": "星期一：2 条",
+        "fresh": "星期二：7 条"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:05.823Z",
+        "hash": "0efbddd231a017a9"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-append-log-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵的账本是**天天往上添**的，可不能每添一笔就把前头的全撕掉。\n\n要写的东西（册子名字就叫 `dangan.txt`）：\n\n1. 先往册子上写下第一条记录 `第一天：3 条` —— 这一回用「撕掉重来」的写法，册子本来就该从这一条开始；\n2. 写一个招式，收到册子名字，**叼回册子上现在有几条**（打开、一条条读、数完交出来）；喊它一次，印一行 `今天之前：N 条`；\n3. 再往册子上**接着**添两条：`第二天：5 条` 和 `第三天：2 条`；\n4. 最后把册子从头读一遍，每读一条印一行 `档案里有：内容`；读完再印一行 `现在一共 N 条`。\n\n程序就要叼回：\n\n```text\n今天之前：1 条\n档案里有：第一天：3 条\n档案里有：第二天：5 条\n档案里有：第三天：2 条\n现在一共 3 条\n```\n\n（判分那一道的册子名字和几条记录跟这里不一样喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(name))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                hang = r.readLine();\n            }\n        }\n        return n;\n    }\n\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"第一天：3 条\\n\");\n        }\n        System.out.println(\"今天之前：\" + countLines(\"dangan.txt\") + \" 条\");\n        try (FileWriter w = new FileWriter(\"dangan.txt\", true)) {\n            w.write(\"第二天：5 条\\n\");\n            w.write(\"第三天：2 条\\n\");\n        }\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n        System.out.println(\"现在一共 \" + n + \" 条\");\n    }\n}\n",
+      "expectedOutput": "今天之前：1 条\n档案里有：第一天：3 条\n档案里有：第二天：5 条\n档案里有：第三天：2 条\n现在一共 3 条",
+      "stdin": null,
+      "explanation": "这题就一个考点：**第二回拉开抽屉，是「接着写」还是「擦干净重来」。**\n\n**一、两次拉开抽屉，喂的东西不一样。**\n\n```java\nnew FileWriter(\"dangan.txt\")\nnew FileWriter(\"dangan.txt\", true)\n```\n\n第一回**故意不喂** —— 账本第一天本来就该从零开始。第二回**必须喂 `true`**：不喂的话，拉开抽屉那一刻第一条就被擦干净了。本喵真跑过：把第二回的 `true` 拿掉，`今天之前：1 条` 那一行照样印（因为数的时候第一条还在），可后面读出来**只剩两条**，最后那句变成 `现在一共 2 条` —— 前面的字是**静悄悄没的**，翻译官喵一个字都不说。\n\n**二、数一数那个招式。** 它一整套就是课上那个骨架，只是在读的时候顺手数：\n\n```java\nwhile (hang != null) {\n    n++;\n    hang = r.readLine();\n}\nreturn n;\n```\n\n有两个地方容易漏喵：**数目那个仓库要在招式一开始就摆好**（写在绕圈外面，不然每转一圈又归零了）；**数完要把数交出来**（`return n;`），不然喊它的那一行拿到的还是开头那个 `0`。\n\n**三、招式头上要表态。** 册子这套本事是「要表态的」，`countLines` 里动了册子，所以它的头上也得写 `throws IOException`，`main` 那边也一样。少一处都编不过。",
+      "templateId": "java-s2-file-append-log",
+      "params": {
+        "name": "dangan.txt",
+        "old": "第一天：3 条",
+        "f1": "第二天：5 条",
+        "f2": "第三天：2 条"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:12.119Z",
+        "hash": "cef8958d505f1ad0"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-append-log-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵的账本是**天天往上添**的，可不能每添一笔就把前头的全撕掉。\n\n要写的东西（册子名字就叫 `dangan.txt`）：\n\n1. 先往册子上写下第一条记录 `第一天：3 条` —— 这一回用「撕掉重来」的写法，册子本来就该从这一条开始；\n2. 写一个招式，收到册子名字，**叼回册子上现在有几条**（打开、一条条读、数完交出来）；喊它一次，印一行 `今天之前：N 条`；\n3. 再往册子上**接着**添两条：`星期二：7 条` 和 `星期三：4 条`；\n4. 最后把册子从头读一遍，每读一条印一行 `档案里有：内容`；读完再印一行 `现在一共 N 条`。\n\n程序就要叼回：\n\n```text\n今天之前：1 条\n档案里有：第一天：3 条\n档案里有：星期二：7 条\n档案里有：星期三：4 条\n现在一共 3 条\n```\n\n（判分那一道的册子名字和几条记录跟这里不一样喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(name))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                hang = r.readLine();\n            }\n        }\n        return n;\n    }\n\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"第一天：3 条\\n\");\n        }\n        System.out.println(\"今天之前：\" + countLines(\"dangan.txt\") + \" 条\");\n        try (FileWriter w = new FileWriter(\"dangan.txt\", true)) {\n            w.write(\"星期二：7 条\\n\");\n            w.write(\"星期三：4 条\\n\");\n        }\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n        System.out.println(\"现在一共 \" + n + \" 条\");\n    }\n}\n",
+      "expectedOutput": "今天之前：1 条\n档案里有：第一天：3 条\n档案里有：星期二：7 条\n档案里有：星期三：4 条\n现在一共 3 条",
+      "stdin": null,
+      "explanation": "这题就一个考点：**第二回拉开抽屉，是「接着写」还是「擦干净重来」。**\n\n**一、两次拉开抽屉，喂的东西不一样。**\n\n```java\nnew FileWriter(\"dangan.txt\")\nnew FileWriter(\"dangan.txt\", true)\n```\n\n第一回**故意不喂** —— 账本第一天本来就该从零开始。第二回**必须喂 `true`**：不喂的话，拉开抽屉那一刻第一条就被擦干净了。本喵真跑过：把第二回的 `true` 拿掉，`今天之前：1 条` 那一行照样印（因为数的时候第一条还在），可后面读出来**只剩两条**，最后那句变成 `现在一共 2 条` —— 前面的字是**静悄悄没的**，翻译官喵一个字都不说。\n\n**二、数一数那个招式。** 它一整套就是课上那个骨架，只是在读的时候顺手数：\n\n```java\nwhile (hang != null) {\n    n++;\n    hang = r.readLine();\n}\nreturn n;\n```\n\n有两个地方容易漏喵：**数目那个仓库要在招式一开始就摆好**（写在绕圈外面，不然每转一圈又归零了）；**数完要把数交出来**（`return n;`），不然喊它的那一行拿到的还是开头那个 `0`。\n\n**三、招式头上要表态。** 册子这套本事是「要表态的」，`countLines` 里动了册子，所以它的头上也得写 `throws IOException`，`main` 那边也一样。少一处都编不过。",
+      "templateId": "java-s2-file-append-log",
+      "params": {
+        "name": "dangan.txt",
+        "old": "第一天：3 条",
+        "f1": "星期二：7 条",
+        "f2": "星期三：4 条"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:03.851Z",
+        "hash": "a6b002d4ca0c8ba9"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-append-log-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵的账本是**天天往上添**的，可不能每添一笔就把前头的全撕掉。\n\n要写的东西（册子名字就叫 `dangan.txt`）：\n\n1. 先往册子上写下第一条记录 `星期一：2 条` —— 这一回用「撕掉重来」的写法，册子本来就该从这一条开始；\n2. 写一个招式，收到册子名字，**叼回册子上现在有几条**（打开、一条条读、数完交出来）；喊它一次，印一行 `今天之前：N 条`；\n3. 再往册子上**接着**添两条：`星期二：7 条` 和 `第三天：2 条`；\n4. 最后把册子从头读一遍，每读一条印一行 `档案里有：内容`；读完再印一行 `现在一共 N 条`。\n\n程序就要叼回：\n\n```text\n今天之前：1 条\n档案里有：星期一：2 条\n档案里有：星期二：7 条\n档案里有：第三天：2 条\n现在一共 3 条\n```\n\n（判分那一道的册子名字和几条记录跟这里不一样喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(name))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                hang = r.readLine();\n            }\n        }\n        return n;\n    }\n\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"星期一：2 条\\n\");\n        }\n        System.out.println(\"今天之前：\" + countLines(\"dangan.txt\") + \" 条\");\n        try (FileWriter w = new FileWriter(\"dangan.txt\", true)) {\n            w.write(\"星期二：7 条\\n\");\n            w.write(\"第三天：2 条\\n\");\n        }\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n        System.out.println(\"现在一共 \" + n + \" 条\");\n    }\n}\n",
+      "expectedOutput": "今天之前：1 条\n档案里有：星期一：2 条\n档案里有：星期二：7 条\n档案里有：第三天：2 条\n现在一共 3 条",
+      "stdin": null,
+      "explanation": "这题就一个考点：**第二回拉开抽屉，是「接着写」还是「擦干净重来」。**\n\n**一、两次拉开抽屉，喂的东西不一样。**\n\n```java\nnew FileWriter(\"dangan.txt\")\nnew FileWriter(\"dangan.txt\", true)\n```\n\n第一回**故意不喂** —— 账本第一天本来就该从零开始。第二回**必须喂 `true`**：不喂的话，拉开抽屉那一刻第一条就被擦干净了。本喵真跑过：把第二回的 `true` 拿掉，`今天之前：1 条` 那一行照样印（因为数的时候第一条还在），可后面读出来**只剩两条**，最后那句变成 `现在一共 2 条` —— 前面的字是**静悄悄没的**，翻译官喵一个字都不说。\n\n**二、数一数那个招式。** 它一整套就是课上那个骨架，只是在读的时候顺手数：\n\n```java\nwhile (hang != null) {\n    n++;\n    hang = r.readLine();\n}\nreturn n;\n```\n\n有两个地方容易漏喵：**数目那个仓库要在招式一开始就摆好**（写在绕圈外面，不然每转一圈又归零了）；**数完要把数交出来**（`return n;`），不然喊它的那一行拿到的还是开头那个 `0`。\n\n**三、招式头上要表态。** 册子这套本事是「要表态的」，`countLines` 里动了册子，所以它的头上也得写 `throws IOException`，`main` 那边也一样。少一处都编不过。",
+      "templateId": "java-s2-file-append-log",
+      "params": {
+        "name": "dangan.txt",
+        "old": "星期一：2 条",
+        "f1": "星期二：7 条",
+        "f2": "第三天：2 条"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:06.020Z",
+        "hash": "7f9a23db63379ba5"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-append-log-009",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵的账本是**天天往上添**的，可不能每添一笔就把前头的全撕掉。\n\n要写的东西（册子名字就叫 `zhangben.txt`）：\n\n1. 先往册子上写下第一条记录 `第一天：3 条` —— 这一回用「撕掉重来」的写法，册子本来就该从这一条开始；\n2. 写一个招式，收到册子名字，**叼回册子上现在有几条**（打开、一条条读、数完交出来）；喊它一次，印一行 `今天之前：N 条`；\n3. 再往册子上**接着**添两条：`第二天：5 条` 和 `星期三：4 条`；\n4. 最后把册子从头读一遍，每读一条印一行 `档案里有：内容`；读完再印一行 `现在一共 N 条`。\n\n程序就要叼回：\n\n```text\n今天之前：1 条\n档案里有：第一天：3 条\n档案里有：第二天：5 条\n档案里有：星期三：4 条\n现在一共 3 条\n```\n\n（判分那一道的册子名字和几条记录跟这里不一样喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(name))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                hang = r.readLine();\n            }\n        }\n        return n;\n    }\n\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            w.write(\"第一天：3 条\\n\");\n        }\n        System.out.println(\"今天之前：\" + countLines(\"zhangben.txt\") + \" 条\");\n        try (FileWriter w = new FileWriter(\"zhangben.txt\", true)) {\n            w.write(\"第二天：5 条\\n\");\n            w.write(\"星期三：4 条\\n\");\n        }\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n        System.out.println(\"现在一共 \" + n + \" 条\");\n    }\n}\n",
+      "expectedOutput": "今天之前：1 条\n档案里有：第一天：3 条\n档案里有：第二天：5 条\n档案里有：星期三：4 条\n现在一共 3 条",
+      "stdin": null,
+      "explanation": "这题就一个考点：**第二回拉开抽屉，是「接着写」还是「擦干净重来」。**\n\n**一、两次拉开抽屉，喂的东西不一样。**\n\n```java\nnew FileWriter(\"zhangben.txt\")\nnew FileWriter(\"zhangben.txt\", true)\n```\n\n第一回**故意不喂** —— 账本第一天本来就该从零开始。第二回**必须喂 `true`**：不喂的话，拉开抽屉那一刻第一条就被擦干净了。本喵真跑过：把第二回的 `true` 拿掉，`今天之前：1 条` 那一行照样印（因为数的时候第一条还在），可后面读出来**只剩两条**，最后那句变成 `现在一共 2 条` —— 前面的字是**静悄悄没的**，翻译官喵一个字都不说。\n\n**二、数一数那个招式。** 它一整套就是课上那个骨架，只是在读的时候顺手数：\n\n```java\nwhile (hang != null) {\n    n++;\n    hang = r.readLine();\n}\nreturn n;\n```\n\n有两个地方容易漏喵：**数目那个仓库要在招式一开始就摆好**（写在绕圈外面，不然每转一圈又归零了）；**数完要把数交出来**（`return n;`），不然喊它的那一行拿到的还是开头那个 `0`。\n\n**三、招式头上要表态。** 册子这套本事是「要表态的」，`countLines` 里动了册子，所以它的头上也得写 `throws IOException`，`main` 那边也一样。少一处都编不过。",
+      "templateId": "java-s2-file-append-log",
+      "params": {
+        "name": "zhangben.txt",
+        "old": "第一天：3 条",
+        "f1": "第二天：5 条",
+        "f2": "星期三：4 条"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:08.228Z",
+        "hash": "279d5850de95bfc6"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-append-log-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵的账本是**天天往上添**的，可不能每添一笔就把前头的全撕掉。\n\n要写的东西（册子名字就叫 `zhangben.txt`）：\n\n1. 先往册子上写下第一条记录 `星期一：2 条` —— 这一回用「撕掉重来」的写法，册子本来就该从这一条开始；\n2. 写一个招式，收到册子名字，**叼回册子上现在有几条**（打开、一条条读、数完交出来）；喊它一次，印一行 `今天之前：N 条`；\n3. 再往册子上**接着**添两条：`第二天：5 条` 和 `第三天：2 条`；\n4. 最后把册子从头读一遍，每读一条印一行 `档案里有：内容`；读完再印一行 `现在一共 N 条`。\n\n程序就要叼回：\n\n```text\n今天之前：1 条\n档案里有：星期一：2 条\n档案里有：第二天：5 条\n档案里有：第三天：2 条\n现在一共 3 条\n```\n\n（判分那一道的册子名字和几条记录跟这里不一样喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(name))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                hang = r.readLine();\n            }\n        }\n        return n;\n    }\n\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            w.write(\"星期一：2 条\\n\");\n        }\n        System.out.println(\"今天之前：\" + countLines(\"zhangben.txt\") + \" 条\");\n        try (FileWriter w = new FileWriter(\"zhangben.txt\", true)) {\n            w.write(\"第二天：5 条\\n\");\n            w.write(\"第三天：2 条\\n\");\n        }\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n        System.out.println(\"现在一共 \" + n + \" 条\");\n    }\n}\n",
+      "expectedOutput": "今天之前：1 条\n档案里有：星期一：2 条\n档案里有：第二天：5 条\n档案里有：第三天：2 条\n现在一共 3 条",
+      "stdin": null,
+      "explanation": "这题就一个考点：**第二回拉开抽屉，是「接着写」还是「擦干净重来」。**\n\n**一、两次拉开抽屉，喂的东西不一样。**\n\n```java\nnew FileWriter(\"zhangben.txt\")\nnew FileWriter(\"zhangben.txt\", true)\n```\n\n第一回**故意不喂** —— 账本第一天本来就该从零开始。第二回**必须喂 `true`**：不喂的话，拉开抽屉那一刻第一条就被擦干净了。本喵真跑过：把第二回的 `true` 拿掉，`今天之前：1 条` 那一行照样印（因为数的时候第一条还在），可后面读出来**只剩两条**，最后那句变成 `现在一共 2 条` —— 前面的字是**静悄悄没的**，翻译官喵一个字都不说。\n\n**二、数一数那个招式。** 它一整套就是课上那个骨架，只是在读的时候顺手数：\n\n```java\nwhile (hang != null) {\n    n++;\n    hang = r.readLine();\n}\nreturn n;\n```\n\n有两个地方容易漏喵：**数目那个仓库要在招式一开始就摆好**（写在绕圈外面，不然每转一圈又归零了）；**数完要把数交出来**（`return n;`），不然喊它的那一行拿到的还是开头那个 `0`。\n\n**三、招式头上要表态。** 册子这套本事是「要表态的」，`countLines` 里动了册子，所以它的头上也得写 `throws IOException`，`main` 那边也一样。少一处都编不过。",
+      "templateId": "java-s2-file-append-log",
+      "params": {
+        "name": "zhangben.txt",
+        "old": "星期一：2 条",
+        "f1": "第二天：5 条",
+        "f2": "第三天：2 条"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:10.482Z",
+        "hash": "eb9cedac00efef42"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-append-log-015",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵的账本是**天天往上添**的，可不能每添一笔就把前头的全撕掉。\n\n要写的东西（册子名字就叫 `zhangben.txt`）：\n\n1. 先往册子上写下第一条记录 `星期一：2 条` —— 这一回用「撕掉重来」的写法，册子本来就该从这一条开始；\n2. 写一个招式，收到册子名字，**叼回册子上现在有几条**（打开、一条条读、数完交出来）；喊它一次，印一行 `今天之前：N 条`；\n3. 再往册子上**接着**添两条：`星期二：7 条` 和 `星期三：4 条`；\n4. 最后把册子从头读一遍，每读一条印一行 `档案里有：内容`；读完再印一行 `现在一共 N 条`。\n\n程序就要叼回：\n\n```text\n今天之前：1 条\n档案里有：星期一：2 条\n档案里有：星期二：7 条\n档案里有：星期三：4 条\n现在一共 3 条\n```\n\n（判分那一道的册子名字和几条记录跟这里不一样喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(name))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                hang = r.readLine();\n            }\n        }\n        return n;\n    }\n\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            w.write(\"星期一：2 条\\n\");\n        }\n        System.out.println(\"今天之前：\" + countLines(\"zhangben.txt\") + \" 条\");\n        try (FileWriter w = new FileWriter(\"zhangben.txt\", true)) {\n            w.write(\"星期二：7 条\\n\");\n            w.write(\"星期三：4 条\\n\");\n        }\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n        System.out.println(\"现在一共 \" + n + \" 条\");\n    }\n}\n",
+      "expectedOutput": "今天之前：1 条\n档案里有：星期一：2 条\n档案里有：星期二：7 条\n档案里有：星期三：4 条\n现在一共 3 条",
+      "stdin": null,
+      "explanation": "这题就一个考点：**第二回拉开抽屉，是「接着写」还是「擦干净重来」。**\n\n**一、两次拉开抽屉，喂的东西不一样。**\n\n```java\nnew FileWriter(\"zhangben.txt\")\nnew FileWriter(\"zhangben.txt\", true)\n```\n\n第一回**故意不喂** —— 账本第一天本来就该从零开始。第二回**必须喂 `true`**：不喂的话，拉开抽屉那一刻第一条就被擦干净了。本喵真跑过：把第二回的 `true` 拿掉，`今天之前：1 条` 那一行照样印（因为数的时候第一条还在），可后面读出来**只剩两条**，最后那句变成 `现在一共 2 条` —— 前面的字是**静悄悄没的**，翻译官喵一个字都不说。\n\n**二、数一数那个招式。** 它一整套就是课上那个骨架，只是在读的时候顺手数：\n\n```java\nwhile (hang != null) {\n    n++;\n    hang = r.readLine();\n}\nreturn n;\n```\n\n有两个地方容易漏喵：**数目那个仓库要在招式一开始就摆好**（写在绕圈外面，不然每转一圈又归零了）；**数完要把数交出来**（`return n;`），不然喊它的那一行拿到的还是开头那个 `0`。\n\n**三、招式头上要表态。** 册子这套本事是「要表态的」，`countLines` 里动了册子，所以它的头上也得写 `throws IOException`，`main` 那边也一样。少一处都编不过。",
+      "templateId": "java-s2-file-append-log",
+      "params": {
+        "name": "zhangben.txt",
+        "old": "星期一：2 条",
+        "f1": "星期二：7 条",
+        "f2": "星期三：4 条"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:13.292Z",
+        "hash": "af5a196176aad594"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-declare-throws-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "这稿子**连编都编不过**。翻译官喵指着 `main` 的头上说话，原话本喵抄一句在这儿：`Main.java:7: error: unreported exception IOException; must be caught or declared to be thrown`。\n\n请你把它补好，让程序印出：\n\n```text\n写进去的字：小鱼干 3 条\n```\n\n要补的地方**只在 `main` 的头上**（还有一句 `import` 别忘了），动册子那几句本喵都没写错喵。",
+      "brokenCode": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) {\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"小鱼干 3 条\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            System.out.println(\"写进去的字：\" + r.readLine());\n        }\n    }\n}\n",
+      "referenceFix": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"小鱼干 3 条\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            System.out.println(\"写进去的字：\" + r.readLine());\n        }\n    }\n}\n",
+      "expectedOutput": "写进去的字：小鱼干 3 条",
+      "stdin": null,
+      "explanation": "这题补的是一句话：**册子这一套本事全归「要表态的」那一档。**\n\n上一课学过这件事：出事的东西分两档，`Exception` 这一家是「你不写清怎么办，稿子就退回来」的那一档。**动册子的本事全在这一档里** —— 所以 `main` 的头上不表态，连编都编不过。\n\n补法就是给它一句话（外加那句 `import java.io.IOException;`）：\n\n```java\npublic static void main(String[] args) throws IOException {\n```\n\n`IOException` 是这一家**总的名字**。有了这一句，本喵的意思就是「出了事本喵不在这儿管，往上报」—— 和上一课那条「要表态的」是同一件事。\n\n还有一处值得看一眼：**翻译官喵一口气报了好几条**，报的是同一件事的不同位置 —— 拉开抽屉那一下、写字那一下、**关上抽屉那一下**。本喵真跑过，它连「抽屉是在这一段结束时自动关的」都替本喵数了出来：`exception thrown from implicit call to close() on resource variable 'w'`。所以别以为「我只写了一句 `w.write`，怎么报这么多」—— 那支笔的每一动都可能出事。\n\n还有一个新面孔：册子**不在**的时候，拉开读字那根管子报的名字是 `FileNotFoundException`（「册子没找到」）。本喵真跑过，它认 `IOException` 当师父 —— 所以头上那一句 `throws IOException` 一并把它盖住了，不用写两行。\n\n补好之后程序印的是那一行 `写进去的字：…` —— 先把字写进册子、再读回来，两件事都真的做了，把 `w.write` 那一句删掉就印不出东西了喵。",
+      "templateId": "java-s2-file-declare-throws",
+      "params": {
+        "name": "dangan.txt",
+        "msg": "小鱼干 3 条"
+      },
+      "verified": {
+        "at": "2026-09-16T11:38:21.070Z",
+        "hash": "6ee8ee93679cd321"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-declare-throws-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "这稿子**连编都编不过**。翻译官喵指着 `main` 的头上说话，原话本喵抄一句在这儿：`Main.java:7: error: unreported exception IOException; must be caught or declared to be thrown`。\n\n请你把它补好，让程序印出：\n\n```text\n写进去的字：猫粮 1 碗\n```\n\n要补的地方**只在 `main` 的头上**（还有一句 `import` 别忘了），动册子那几句本喵都没写错喵。",
+      "brokenCode": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) {\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            w.write(\"猫粮 1 碗\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            System.out.println(\"写进去的字：\" + r.readLine());\n        }\n    }\n}\n",
+      "referenceFix": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            w.write(\"猫粮 1 碗\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            System.out.println(\"写进去的字：\" + r.readLine());\n        }\n    }\n}\n",
+      "expectedOutput": "写进去的字：猫粮 1 碗",
+      "stdin": null,
+      "explanation": "这题补的是一句话：**册子这一套本事全归「要表态的」那一档。**\n\n上一课学过这件事：出事的东西分两档，`Exception` 这一家是「你不写清怎么办，稿子就退回来」的那一档。**动册子的本事全在这一档里** —— 所以 `main` 的头上不表态，连编都编不过。\n\n补法就是给它一句话（外加那句 `import java.io.IOException;`）：\n\n```java\npublic static void main(String[] args) throws IOException {\n```\n\n`IOException` 是这一家**总的名字**。有了这一句，本喵的意思就是「出了事本喵不在这儿管，往上报」—— 和上一课那条「要表态的」是同一件事。\n\n还有一处值得看一眼：**翻译官喵一口气报了好几条**，报的是同一件事的不同位置 —— 拉开抽屉那一下、写字那一下、**关上抽屉那一下**。本喵真跑过，它连「抽屉是在这一段结束时自动关的」都替本喵数了出来：`exception thrown from implicit call to close() on resource variable 'w'`。所以别以为「我只写了一句 `w.write`，怎么报这么多」—— 那支笔的每一动都可能出事。\n\n还有一个新面孔：册子**不在**的时候，拉开读字那根管子报的名字是 `FileNotFoundException`（「册子没找到」）。本喵真跑过，它认 `IOException` 当师父 —— 所以头上那一句 `throws IOException` 一并把它盖住了，不用写两行。\n\n补好之后程序印的是那一行 `写进去的字：…` —— 先把字写进册子、再读回来，两件事都真的做了，把 `w.write` 那一句删掉就印不出东西了喵。",
+      "templateId": "java-s2-file-declare-throws",
+      "params": {
+        "name": "zhangben.txt",
+        "msg": "猫粮 1 碗"
+      },
+      "verified": {
+        "at": "2026-09-16T11:38:22.476Z",
+        "hash": "83c3b1c2b02eb807"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-exists-check-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给册子做一次**例行查岗**。册子名字叫 `dangan.txt`，程序**从头到尾不用读任何投喂**，照着下面做就行：\n\n1. 照名字生一个**名牌**，问一句「此刻册子在不在」，印 `一开始在不在：` 接上问出来的答案；\n2. 不在就当场新建一本，印 `新建成功了没：` 接上它的答复；\n3. 再问一次在不在，印 `现在在不在：` 接上答案；\n4. 印 `册子叫什么：` 接上牌子上的名字；\n5. 往册子上写两行字：第一行 `小鱼干 3 条`、第二行 `猫粮 1 碗`（每行末尾自己补换行）；\n6. 最后印 `册子有 N 字节` —— 那个 `N` 要**拿名牌问出来**，别自己数。\n\n（判分那一道的册子名字和两行内容跟这里不一样喵，所以别把答案写死。）",
+      "starter": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"dangan.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"dangan.txt\");\n        System.out.println(\"一开始在不在：\" + f.exists());\n        System.out.println(\"新建成功了没：\" + f.createNewFile());\n        System.out.println(\"现在在不在：\" + f.exists());\n        System.out.println(\"册子叫什么：\" + f.getName());\n        try (FileWriter w = new FileWriter(f)) {\n            w.write(\"小鱼干 3 条\\n\");\n            w.write(\"猫粮 1 碗\\n\");\n        }\n        System.out.println(\"册子有 \" + f.length() + \" 字节\");\n    }\n}\n",
+      "expectedOutput": "一开始在不在：false\n新建成功了没：true\n现在在不在：true\n册子叫什么：dangan.txt\n册子有 29 字节",
+      "stdin": null,
+      "explanation": "这题的考点是课上第一节那句话：**`File` 是名牌，不是册子本身。**\n\n**一、第一行那个 `false`。** `new File(\"dangan.txt\")` 只是照图纸生了一个名牌，**它不碰硬盘** —— 册子到底在不在，得**拿着牌子去问**（`f.exists()`）。本喵这边每趟都是干干净净的机器，所以问出来的头一个答案永远是「不在」。\n\n**二、`f.createNewFile()` 的答复。** 它当场新建一本**空册子**，建成了叼回 `true`；要是本来就有，它叼回 `false` 而且**不会把原来那本撕掉**。本项目里还顺带看到了第三行：建完再问一次，`f.exists()` 就变 `true` 了 —— 同一张牌子，问的时机不一样，答案就不一样。\n\n**三、牌子能当名字用。** `new FileWriter(f)` 括号里喂的是**那张牌子**（喂名字那串字也一样，两种写法都收）。本喵真跑过：把参考解里那句 `f.createNewFile()` 连它印的那一行一起拆掉，「新建成功了没」那一行当场没了，而且第三行从 `true` 变回 `false` —— 说明新建这一步是真的在做事的。\n\n**四、最后那个数不是本喵数的。** `f.length()` 数的是**字节**，不是「几个字」：一个中文字在 UTF-8 里占 **3 个字节**，所以 `小鱼干 3 条` 加一个换行是 **16 字节**（九个字节的字 + 两个空格 + 一个数字 + 一个「条」 + 一个换行）。写的是两行，那个总数就是两行各自的字节加起来。判分那一道的内容跟这里不一样，**字节数也跟着变** —— 所以那个数只能问出来，抄不了喵。",
+      "templateId": "java-s2-file-exists-check",
+      "params": {
+        "name": "dangan.txt",
+        "a": "小鱼干 3 条",
+        "b": "猫粮 1 碗"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:14.895Z",
+        "hash": "c6d3d794822aa5e4"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-exists-check-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给册子做一次**例行查岗**。册子名字叫 `dangan.txt`，程序**从头到尾不用读任何投喂**，照着下面做就行：\n\n1. 照名字生一个**名牌**，问一句「此刻册子在不在」，印 `一开始在不在：` 接上问出来的答案；\n2. 不在就当场新建一本，印 `新建成功了没：` 接上它的答复；\n3. 再问一次在不在，印 `现在在不在：` 接上答案；\n4. 印 `册子叫什么：` 接上牌子上的名字；\n5. 往册子上写两行字：第一行 `小鱼干 3 条`、第二行 `猫粮 20 碗`（每行末尾自己补换行）；\n6. 最后印 `册子有 N 字节` —— 那个 `N` 要**拿名牌问出来**，别自己数。\n\n（判分那一道的册子名字和两行内容跟这里不一样喵，所以别把答案写死。）",
+      "starter": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"dangan.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"dangan.txt\");\n        System.out.println(\"一开始在不在：\" + f.exists());\n        System.out.println(\"新建成功了没：\" + f.createNewFile());\n        System.out.println(\"现在在不在：\" + f.exists());\n        System.out.println(\"册子叫什么：\" + f.getName());\n        try (FileWriter w = new FileWriter(f)) {\n            w.write(\"小鱼干 3 条\\n\");\n            w.write(\"猫粮 20 碗\\n\");\n        }\n        System.out.println(\"册子有 \" + f.length() + \" 字节\");\n    }\n}\n",
+      "expectedOutput": "一开始在不在：false\n新建成功了没：true\n现在在不在：true\n册子叫什么：dangan.txt\n册子有 30 字节",
+      "stdin": null,
+      "explanation": "这题的考点是课上第一节那句话：**`File` 是名牌，不是册子本身。**\n\n**一、第一行那个 `false`。** `new File(\"dangan.txt\")` 只是照图纸生了一个名牌，**它不碰硬盘** —— 册子到底在不在，得**拿着牌子去问**（`f.exists()`）。本喵这边每趟都是干干净净的机器，所以问出来的头一个答案永远是「不在」。\n\n**二、`f.createNewFile()` 的答复。** 它当场新建一本**空册子**，建成了叼回 `true`；要是本来就有，它叼回 `false` 而且**不会把原来那本撕掉**。本项目里还顺带看到了第三行：建完再问一次，`f.exists()` 就变 `true` 了 —— 同一张牌子，问的时机不一样，答案就不一样。\n\n**三、牌子能当名字用。** `new FileWriter(f)` 括号里喂的是**那张牌子**（喂名字那串字也一样，两种写法都收）。本喵真跑过：把参考解里那句 `f.createNewFile()` 连它印的那一行一起拆掉，「新建成功了没」那一行当场没了，而且第三行从 `true` 变回 `false` —— 说明新建这一步是真的在做事的。\n\n**四、最后那个数不是本喵数的。** `f.length()` 数的是**字节**，不是「几个字」：一个中文字在 UTF-8 里占 **3 个字节**，所以 `小鱼干 3 条` 加一个换行是 **16 字节**（九个字节的字 + 两个空格 + 一个数字 + 一个「条」 + 一个换行）。写的是两行，那个总数就是两行各自的字节加起来。判分那一道的内容跟这里不一样，**字节数也跟着变** —— 所以那个数只能问出来，抄不了喵。",
+      "templateId": "java-s2-file-exists-check",
+      "params": {
+        "name": "dangan.txt",
+        "a": "小鱼干 3 条",
+        "b": "猫粮 20 碗"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:12.747Z",
+        "hash": "ea63b2a71c4f3208"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-exists-check-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给册子做一次**例行查岗**。册子名字叫 `dangan.txt`，程序**从头到尾不用读任何投喂**，照着下面做就行：\n\n1. 照名字生一个**名牌**，问一句「此刻册子在不在」，印 `一开始在不在：` 接上问出来的答案；\n2. 不在就当场新建一本，印 `新建成功了没：` 接上它的答复；\n3. 再问一次在不在，印 `现在在不在：` 接上答案；\n4. 印 `册子叫什么：` 接上牌子上的名字；\n5. 往册子上写两行字：第一行 `小鱼干 12 条`、第二行 `猫粮 20 碗`（每行末尾自己补换行）；\n6. 最后印 `册子有 N 字节` —— 那个 `N` 要**拿名牌问出来**，别自己数。\n\n（判分那一道的册子名字和两行内容跟这里不一样喵，所以别把答案写死。）",
+      "starter": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"dangan.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"dangan.txt\");\n        System.out.println(\"一开始在不在：\" + f.exists());\n        System.out.println(\"新建成功了没：\" + f.createNewFile());\n        System.out.println(\"现在在不在：\" + f.exists());\n        System.out.println(\"册子叫什么：\" + f.getName());\n        try (FileWriter w = new FileWriter(f)) {\n            w.write(\"小鱼干 12 条\\n\");\n            w.write(\"猫粮 20 碗\\n\");\n        }\n        System.out.println(\"册子有 \" + f.length() + \" 字节\");\n    }\n}\n",
+      "expectedOutput": "一开始在不在：false\n新建成功了没：true\n现在在不在：true\n册子叫什么：dangan.txt\n册子有 31 字节",
+      "stdin": null,
+      "explanation": "这题的考点是课上第一节那句话：**`File` 是名牌，不是册子本身。**\n\n**一、第一行那个 `false`。** `new File(\"dangan.txt\")` 只是照图纸生了一个名牌，**它不碰硬盘** —— 册子到底在不在，得**拿着牌子去问**（`f.exists()`）。本喵这边每趟都是干干净净的机器，所以问出来的头一个答案永远是「不在」。\n\n**二、`f.createNewFile()` 的答复。** 它当场新建一本**空册子**，建成了叼回 `true`；要是本来就有，它叼回 `false` 而且**不会把原来那本撕掉**。本项目里还顺带看到了第三行：建完再问一次，`f.exists()` 就变 `true` 了 —— 同一张牌子，问的时机不一样，答案就不一样。\n\n**三、牌子能当名字用。** `new FileWriter(f)` 括号里喂的是**那张牌子**（喂名字那串字也一样，两种写法都收）。本喵真跑过：把参考解里那句 `f.createNewFile()` 连它印的那一行一起拆掉，「新建成功了没」那一行当场没了，而且第三行从 `true` 变回 `false` —— 说明新建这一步是真的在做事的。\n\n**四、最后那个数不是本喵数的。** `f.length()` 数的是**字节**，不是「几个字」：一个中文字在 UTF-8 里占 **3 个字节**，所以 `小鱼干 3 条` 加一个换行是 **16 字节**（九个字节的字 + 两个空格 + 一个数字 + 一个「条」 + 一个换行）。写的是两行，那个总数就是两行各自的字节加起来。判分那一道的内容跟这里不一样，**字节数也跟着变** —— 所以那个数只能问出来，抄不了喵。",
+      "templateId": "java-s2-file-exists-check",
+      "params": {
+        "name": "dangan.txt",
+        "a": "小鱼干 12 条",
+        "b": "猫粮 20 碗"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:15.048Z",
+        "hash": "b672a4606f6682dc"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-exists-check-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给册子做一次**例行查岗**。册子名字叫 `zhangben.txt`，程序**从头到尾不用读任何投喂**，照着下面做就行：\n\n1. 照名字生一个**名牌**，问一句「此刻册子在不在」，印 `一开始在不在：` 接上问出来的答案；\n2. 不在就当场新建一本，印 `新建成功了没：` 接上它的答复；\n3. 再问一次在不在，印 `现在在不在：` 接上答案；\n4. 印 `册子叫什么：` 接上牌子上的名字；\n5. 往册子上写两行字：第一行 `小鱼干 3 条`、第二行 `猫粮 1 碗`（每行末尾自己补换行）；\n6. 最后印 `册子有 N 字节` —— 那个 `N` 要**拿名牌问出来**，别自己数。\n\n（判分那一道的册子名字和两行内容跟这里不一样喵，所以别把答案写死。）",
+      "starter": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"zhangben.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"zhangben.txt\");\n        System.out.println(\"一开始在不在：\" + f.exists());\n        System.out.println(\"新建成功了没：\" + f.createNewFile());\n        System.out.println(\"现在在不在：\" + f.exists());\n        System.out.println(\"册子叫什么：\" + f.getName());\n        try (FileWriter w = new FileWriter(f)) {\n            w.write(\"小鱼干 3 条\\n\");\n            w.write(\"猫粮 1 碗\\n\");\n        }\n        System.out.println(\"册子有 \" + f.length() + \" 字节\");\n    }\n}\n",
+      "expectedOutput": "一开始在不在：false\n新建成功了没：true\n现在在不在：true\n册子叫什么：zhangben.txt\n册子有 29 字节",
+      "stdin": null,
+      "explanation": "这题的考点是课上第一节那句话：**`File` 是名牌，不是册子本身。**\n\n**一、第一行那个 `false`。** `new File(\"zhangben.txt\")` 只是照图纸生了一个名牌，**它不碰硬盘** —— 册子到底在不在，得**拿着牌子去问**（`f.exists()`）。本喵这边每趟都是干干净净的机器，所以问出来的头一个答案永远是「不在」。\n\n**二、`f.createNewFile()` 的答复。** 它当场新建一本**空册子**，建成了叼回 `true`；要是本来就有，它叼回 `false` 而且**不会把原来那本撕掉**。本项目里还顺带看到了第三行：建完再问一次，`f.exists()` 就变 `true` 了 —— 同一张牌子，问的时机不一样，答案就不一样。\n\n**三、牌子能当名字用。** `new FileWriter(f)` 括号里喂的是**那张牌子**（喂名字那串字也一样，两种写法都收）。本喵真跑过：把参考解里那句 `f.createNewFile()` 连它印的那一行一起拆掉，「新建成功了没」那一行当场没了，而且第三行从 `true` 变回 `false` —— 说明新建这一步是真的在做事的。\n\n**四、最后那个数不是本喵数的。** `f.length()` 数的是**字节**，不是「几个字」：一个中文字在 UTF-8 里占 **3 个字节**，所以 `小鱼干 3 条` 加一个换行是 **16 字节**（九个字节的字 + 两个空格 + 一个数字 + 一个「条」 + 一个换行）。写的是两行，那个总数就是两行各自的字节加起来。判分那一道的内容跟这里不一样，**字节数也跟着变** —— 所以那个数只能问出来，抄不了喵。",
+      "templateId": "java-s2-file-exists-check",
+      "params": {
+        "name": "zhangben.txt",
+        "a": "小鱼干 3 条",
+        "b": "猫粮 1 碗"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:17.385Z",
+        "hash": "3b7b959de89b1a11"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-exists-check-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给册子做一次**例行查岗**。册子名字叫 `zhangben.txt`，程序**从头到尾不用读任何投喂**，照着下面做就行：\n\n1. 照名字生一个**名牌**，问一句「此刻册子在不在」，印 `一开始在不在：` 接上问出来的答案；\n2. 不在就当场新建一本，印 `新建成功了没：` 接上它的答复；\n3. 再问一次在不在，印 `现在在不在：` 接上答案；\n4. 印 `册子叫什么：` 接上牌子上的名字；\n5. 往册子上写两行字：第一行 `小鱼干 12 条`、第二行 `猫粮 1 碗`（每行末尾自己补换行）；\n6. 最后印 `册子有 N 字节` —— 那个 `N` 要**拿名牌问出来**，别自己数。\n\n（判分那一道的册子名字和两行内容跟这里不一样喵，所以别把答案写死。）",
+      "starter": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"zhangben.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"zhangben.txt\");\n        System.out.println(\"一开始在不在：\" + f.exists());\n        System.out.println(\"新建成功了没：\" + f.createNewFile());\n        System.out.println(\"现在在不在：\" + f.exists());\n        System.out.println(\"册子叫什么：\" + f.getName());\n        try (FileWriter w = new FileWriter(f)) {\n            w.write(\"小鱼干 12 条\\n\");\n            w.write(\"猫粮 1 碗\\n\");\n        }\n        System.out.println(\"册子有 \" + f.length() + \" 字节\");\n    }\n}\n",
+      "expectedOutput": "一开始在不在：false\n新建成功了没：true\n现在在不在：true\n册子叫什么：zhangben.txt\n册子有 30 字节",
+      "stdin": null,
+      "explanation": "这题的考点是课上第一节那句话：**`File` 是名牌，不是册子本身。**\n\n**一、第一行那个 `false`。** `new File(\"zhangben.txt\")` 只是照图纸生了一个名牌，**它不碰硬盘** —— 册子到底在不在，得**拿着牌子去问**（`f.exists()`）。本喵这边每趟都是干干净净的机器，所以问出来的头一个答案永远是「不在」。\n\n**二、`f.createNewFile()` 的答复。** 它当场新建一本**空册子**，建成了叼回 `true`；要是本来就有，它叼回 `false` 而且**不会把原来那本撕掉**。本项目里还顺带看到了第三行：建完再问一次，`f.exists()` 就变 `true` 了 —— 同一张牌子，问的时机不一样，答案就不一样。\n\n**三、牌子能当名字用。** `new FileWriter(f)` 括号里喂的是**那张牌子**（喂名字那串字也一样，两种写法都收）。本喵真跑过：把参考解里那句 `f.createNewFile()` 连它印的那一行一起拆掉，「新建成功了没」那一行当场没了，而且第三行从 `true` 变回 `false` —— 说明新建这一步是真的在做事的。\n\n**四、最后那个数不是本喵数的。** `f.length()` 数的是**字节**，不是「几个字」：一个中文字在 UTF-8 里占 **3 个字节**，所以 `小鱼干 3 条` 加一个换行是 **16 字节**（九个字节的字 + 两个空格 + 一个数字 + 一个「条」 + 一个换行）。写的是两行，那个总数就是两行各自的字节加起来。判分那一道的内容跟这里不一样，**字节数也跟着变** —— 所以那个数只能问出来，抄不了喵。",
+      "templateId": "java-s2-file-exists-check",
+      "params": {
+        "name": "zhangben.txt",
+        "a": "小鱼干 12 条",
+        "b": "猫粮 1 碗"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:19.658Z",
+        "hash": "5e4120fee1462a8a"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-exists-check-007",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给册子做一次**例行查岗**。册子名字叫 `zhangben.txt`，程序**从头到尾不用读任何投喂**，照着下面做就行：\n\n1. 照名字生一个**名牌**，问一句「此刻册子在不在」，印 `一开始在不在：` 接上问出来的答案；\n2. 不在就当场新建一本，印 `新建成功了没：` 接上它的答复；\n3. 再问一次在不在，印 `现在在不在：` 接上答案；\n4. 印 `册子叫什么：` 接上牌子上的名字；\n5. 往册子上写两行字：第一行 `小鱼干 12 条`、第二行 `猫粮 20 碗`（每行末尾自己补换行）；\n6. 最后印 `册子有 N 字节` —— 那个 `N` 要**拿名牌问出来**，别自己数。\n\n（判分那一道的册子名字和两行内容跟这里不一样喵，所以别把答案写死。）",
+      "starter": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"zhangben.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"zhangben.txt\");\n        System.out.println(\"一开始在不在：\" + f.exists());\n        System.out.println(\"新建成功了没：\" + f.createNewFile());\n        System.out.println(\"现在在不在：\" + f.exists());\n        System.out.println(\"册子叫什么：\" + f.getName());\n        try (FileWriter w = new FileWriter(f)) {\n            w.write(\"小鱼干 12 条\\n\");\n            w.write(\"猫粮 20 碗\\n\");\n        }\n        System.out.println(\"册子有 \" + f.length() + \" 字节\");\n    }\n}\n",
+      "expectedOutput": "一开始在不在：false\n新建成功了没：true\n现在在不在：true\n册子叫什么：zhangben.txt\n册子有 31 字节",
+      "stdin": null,
+      "explanation": "这题的考点是课上第一节那句话：**`File` 是名牌，不是册子本身。**\n\n**一、第一行那个 `false`。** `new File(\"zhangben.txt\")` 只是照图纸生了一个名牌，**它不碰硬盘** —— 册子到底在不在，得**拿着牌子去问**（`f.exists()`）。本喵这边每趟都是干干净净的机器，所以问出来的头一个答案永远是「不在」。\n\n**二、`f.createNewFile()` 的答复。** 它当场新建一本**空册子**，建成了叼回 `true`；要是本来就有，它叼回 `false` 而且**不会把原来那本撕掉**。本项目里还顺带看到了第三行：建完再问一次，`f.exists()` 就变 `true` 了 —— 同一张牌子，问的时机不一样，答案就不一样。\n\n**三、牌子能当名字用。** `new FileWriter(f)` 括号里喂的是**那张牌子**（喂名字那串字也一样，两种写法都收）。本喵真跑过：把参考解里那句 `f.createNewFile()` 连它印的那一行一起拆掉，「新建成功了没」那一行当场没了，而且第三行从 `true` 变回 `false` —— 说明新建这一步是真的在做事的。\n\n**四、最后那个数不是本喵数的。** `f.length()` 数的是**字节**，不是「几个字」：一个中文字在 UTF-8 里占 **3 个字节**，所以 `小鱼干 3 条` 加一个换行是 **16 字节**（九个字节的字 + 两个空格 + 一个数字 + 一个「条」 + 一个换行）。写的是两行，那个总数就是两行各自的字节加起来。判分那一道的内容跟这里不一样，**字节数也跟着变** —— 所以那个数只能问出来，抄不了喵。",
+      "templateId": "java-s2-file-exists-check",
+      "params": {
+        "name": "zhangben.txt",
+        "a": "小鱼干 12 条",
+        "b": "猫粮 20 碗"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:16.033Z",
+        "hash": "3d6bbfe030788e84"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-save-and-load-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把投喂进来的东西一条条存进册子，再一条条取回来。\n\n投喂给程序的纸上：**第一个数是「后面还有几行字」**，接着正好那么多行，一行一条记录。要写的东西：\n\n1. 把这几个数**一条一条写进**册子 `dangan.txt`（写的时候，每一条自己补上换行）；\n2. 写完再把册子打开，**一条一条读回来**，每读一条印一行 `第 k 条：内容`（那个 `k` 从 `1` 起，一条加一）；\n3. 读到头了，最后印一行 `册子上现在有 N 条`。\n\n比如投喂给程序的是\n\n3\n小鱼干 9 条\n猫粮 3 碗\n猫条 1 根\n\n程序就要叼回\n\n第 1 条：小鱼干 9 条\n第 2 条：猫粮 3 碗\n第 3 条：猫条 1 根\n册子上现在有 3 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        sc.nextLine();\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            for (int i = 0; i < n; i++) {\n                w.write(sc.nextLine() + \"\\n\");\n            }\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            int cnt = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                cnt++;\n                System.out.println(\"第 \" + cnt + \" 条：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"册子上现在有 \" + cnt + \" 条\");\n        }\n    }\n}\n",
+      "expectedOutput": "第 1 条：小鱼干 3 条\n第 2 条：猫粮 1 碗\n册子上现在有 2 条",
+      "stdin": "2\n小鱼干 3 条\n猫粮 1 碗\n猫条 2 根\n",
+      "explanation": "这题把这一课的两头串起来了：**写进去**和**读回来**。\n\n**一、纸上第一个数读完之后，要多吃一行。** 本喵写的是：\n\n```java\nint n = sc.nextInt();\nsc.nextLine();\n```\n\n第二句看着像白写的，其实不是：`nextInt()` **只把那个数叼走**，那一行末尾的换行还留在纸上。后面本喵要用 `sc.nextLine()` 一行一行叼记录 —— 不先把这一截空尾巴吃掉，第一趟叼回来的就是**一个空行**（本喵自己踩过这个坑）。\n\n**二、写：一条条写，每条自己补 `\\n`。** 这里是 `w.write(sc.nextLine() + \"\\n\")` —— 注意那个 `+ \"\\n\"`：**`w.write` 不会自己换行**，你补它才有。少写了它，几条记录就会糊成一串，读回来时也只有 1 条。本喵把参考解里那个 `+ \"\\n\"` 真拆掉跑过一遍：屏幕上从 `第 1 条：…` 加 `册子上现在有 2 条` 那种一行一条的样子，变成**两条挤成一行、总数也跟着少**。\n\n**三、读：读到 `null` 为止。** 骨架就是课里那三句：先 `String hang = r.readLine();`，`while (hang != null)` 绕着走，**圈的最后一格再喊一次** `hang = r.readLine();`。最后那句漏了，程序就会把第一行印到天荒地老；条件写成 `hang != \"\"`，它又会在第一行就停住 —— 两边都是坑。\n\n**四、两个 `try ( … )` 各管一趟。** 写完那一段一结束，抽屉自动关（写下去的字这时候才真的落进册子）；读的那一段结束时也一样。`close()` 一个字都不用写。\n\n判分那组纸上给的行数跟样例不一样 —— 所以「只写死 2 条」的稿子过不了，老老实实按读到的那个数绕圈喵。",
+      "templateId": "java-s2-file-save-and-load",
+      "params": {
+        "name": "dangan.txt",
+        "n": "2",
+        "a": "小鱼干 3 条",
+        "b": "猫粮 1 碗",
+        "c": "猫条 2 根"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:08.629Z",
+        "hash": "d0e08fd14e20aa69"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-save-and-load-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把投喂进来的东西一条条存进册子，再一条条取回来。\n\n投喂给程序的纸上：**第一个数是「后面还有几行字」**，接着正好那么多行，一行一条记录。要写的东西：\n\n1. 把这几个数**一条一条写进**册子 `dangan.txt`（写的时候，每一条自己补上换行）；\n2. 写完再把册子打开，**一条一条读回来**，每读一条印一行 `第 k 条：内容`（那个 `k` 从 `1` 起，一条加一）；\n3. 读到头了，最后印一行 `册子上现在有 N 条`。\n\n比如投喂给程序的是\n\n3\n小鱼干 9 条\n猫粮 3 碗\n猫条 1 根\n\n程序就要叼回\n\n第 1 条：小鱼干 9 条\n第 2 条：猫粮 3 碗\n第 3 条：猫条 1 根\n册子上现在有 3 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        sc.nextLine();\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            for (int i = 0; i < n; i++) {\n                w.write(sc.nextLine() + \"\\n\");\n            }\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            int cnt = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                cnt++;\n                System.out.println(\"第 \" + cnt + \" 条：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"册子上现在有 \" + cnt + \" 条\");\n        }\n    }\n}\n",
+      "expectedOutput": "第 1 条：小鱼干 5 条\n第 2 条：猫粮 2 碗\n册子上现在有 2 条",
+      "stdin": "2\n小鱼干 5 条\n猫粮 2 碗\n猫条 2 根\n",
+      "explanation": "这题把这一课的两头串起来了：**写进去**和**读回来**。\n\n**一、纸上第一个数读完之后，要多吃一行。** 本喵写的是：\n\n```java\nint n = sc.nextInt();\nsc.nextLine();\n```\n\n第二句看着像白写的，其实不是：`nextInt()` **只把那个数叼走**，那一行末尾的换行还留在纸上。后面本喵要用 `sc.nextLine()` 一行一行叼记录 —— 不先把这一截空尾巴吃掉，第一趟叼回来的就是**一个空行**（本喵自己踩过这个坑）。\n\n**二、写：一条条写，每条自己补 `\\n`。** 这里是 `w.write(sc.nextLine() + \"\\n\")` —— 注意那个 `+ \"\\n\"`：**`w.write` 不会自己换行**，你补它才有。少写了它，几条记录就会糊成一串，读回来时也只有 1 条。本喵把参考解里那个 `+ \"\\n\"` 真拆掉跑过一遍：屏幕上从 `第 1 条：…` 加 `册子上现在有 2 条` 那种一行一条的样子，变成**两条挤成一行、总数也跟着少**。\n\n**三、读：读到 `null` 为止。** 骨架就是课里那三句：先 `String hang = r.readLine();`，`while (hang != null)` 绕着走，**圈的最后一格再喊一次** `hang = r.readLine();`。最后那句漏了，程序就会把第一行印到天荒地老；条件写成 `hang != \"\"`，它又会在第一行就停住 —— 两边都是坑。\n\n**四、两个 `try ( … )` 各管一趟。** 写完那一段一结束，抽屉自动关（写下去的字这时候才真的落进册子）；读的那一段结束时也一样。`close()` 一个字都不用写。\n\n判分那组纸上给的行数跟样例不一样 —— 所以「只写死 2 条」的稿子过不了，老老实实按读到的那个数绕圈喵。",
+      "templateId": "java-s2-file-save-and-load",
+      "params": {
+        "name": "dangan.txt",
+        "n": "2",
+        "a": "小鱼干 5 条",
+        "b": "猫粮 2 碗",
+        "c": "猫条 2 根"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:22.876Z",
+        "hash": "459a83efd8c2b9e5"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-save-and-load-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把投喂进来的东西一条条存进册子，再一条条取回来。\n\n投喂给程序的纸上：**第一个数是「后面还有几行字」**，接着正好那么多行，一行一条记录。要写的东西：\n\n1. 把这几个数**一条一条写进**册子 `dangan.txt`（写的时候，每一条自己补上换行）；\n2. 写完再把册子打开，**一条一条读回来**，每读一条印一行 `第 k 条：内容`（那个 `k` 从 `1` 起，一条加一）；\n3. 读到头了，最后印一行 `册子上现在有 N 条`。\n\n比如投喂给程序的是\n\n3\n小鱼干 9 条\n猫粮 3 碗\n猫条 1 根\n\n程序就要叼回\n\n第 1 条：小鱼干 9 条\n第 2 条：猫粮 3 碗\n第 3 条：猫条 1 根\n册子上现在有 3 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        sc.nextLine();\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            for (int i = 0; i < n; i++) {\n                w.write(sc.nextLine() + \"\\n\");\n            }\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            int cnt = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                cnt++;\n                System.out.println(\"第 \" + cnt + \" 条：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"册子上现在有 \" + cnt + \" 条\");\n        }\n    }\n}\n",
+      "expectedOutput": "第 1 条：小鱼干 5 条\n第 2 条：猫粮 1 碗\n第 3 条：猫条 2 根\n册子上现在有 3 条",
+      "stdin": "3\n小鱼干 5 条\n猫粮 1 碗\n猫条 2 根\n",
+      "explanation": "这题把这一课的两头串起来了：**写进去**和**读回来**。\n\n**一、纸上第一个数读完之后，要多吃一行。** 本喵写的是：\n\n```java\nint n = sc.nextInt();\nsc.nextLine();\n```\n\n第二句看着像白写的，其实不是：`nextInt()` **只把那个数叼走**，那一行末尾的换行还留在纸上。后面本喵要用 `sc.nextLine()` 一行一行叼记录 —— 不先把这一截空尾巴吃掉，第一趟叼回来的就是**一个空行**（本喵自己踩过这个坑）。\n\n**二、写：一条条写，每条自己补 `\\n`。** 这里是 `w.write(sc.nextLine() + \"\\n\")` —— 注意那个 `+ \"\\n\"`：**`w.write` 不会自己换行**，你补它才有。少写了它，几条记录就会糊成一串，读回来时也只有 1 条。本喵把参考解里那个 `+ \"\\n\"` 真拆掉跑过一遍：屏幕上从 `第 1 条：…` 加 `册子上现在有 3 条` 那种一行一条的样子，变成**两条挤成一行、总数也跟着少**。\n\n**三、读：读到 `null` 为止。** 骨架就是课里那三句：先 `String hang = r.readLine();`，`while (hang != null)` 绕着走，**圈的最后一格再喊一次** `hang = r.readLine();`。最后那句漏了，程序就会把第一行印到天荒地老；条件写成 `hang != \"\"`，它又会在第一行就停住 —— 两边都是坑。\n\n**四、两个 `try ( … )` 各管一趟。** 写完那一段一结束，抽屉自动关（写下去的字这时候才真的落进册子）；读的那一段结束时也一样。`close()` 一个字都不用写。\n\n判分那组纸上给的行数跟样例不一样 —— 所以「只写死 2 条」的稿子过不了，老老实实按读到的那个数绕圈喵。",
+      "templateId": "java-s2-file-save-and-load",
+      "params": {
+        "name": "dangan.txt",
+        "n": "3",
+        "a": "小鱼干 5 条",
+        "b": "猫粮 1 碗",
+        "c": "猫条 2 根"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:26.130Z",
+        "hash": "6b892e638d5addd6"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-save-and-load-019",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把投喂进来的东西一条条存进册子，再一条条取回来。\n\n投喂给程序的纸上：**第一个数是「后面还有几行字」**，接着正好那么多行，一行一条记录。要写的东西：\n\n1. 把这几个数**一条一条写进**册子 `zhangben.txt`（写的时候，每一条自己补上换行）；\n2. 写完再把册子打开，**一条一条读回来**，每读一条印一行 `第 k 条：内容`（那个 `k` 从 `1` 起，一条加一）；\n3. 读到头了，最后印一行 `册子上现在有 N 条`。\n\n比如投喂给程序的是\n\n3\n小鱼干 9 条\n猫粮 3 碗\n猫条 1 根\n\n程序就要叼回\n\n第 1 条：小鱼干 9 条\n第 2 条：猫粮 3 碗\n第 3 条：猫条 1 根\n册子上现在有 3 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        sc.nextLine();\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            for (int i = 0; i < n; i++) {\n                w.write(sc.nextLine() + \"\\n\");\n            }\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            int cnt = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                cnt++;\n                System.out.println(\"第 \" + cnt + \" 条：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"册子上现在有 \" + cnt + \" 条\");\n        }\n    }\n}\n",
+      "expectedOutput": "第 1 条：小鱼干 3 条\n第 2 条：猫粮 2 碗\n册子上现在有 2 条",
+      "stdin": "2\n小鱼干 3 条\n猫粮 2 碗\n猫条 4 根\n",
+      "explanation": "这题把这一课的两头串起来了：**写进去**和**读回来**。\n\n**一、纸上第一个数读完之后，要多吃一行。** 本喵写的是：\n\n```java\nint n = sc.nextInt();\nsc.nextLine();\n```\n\n第二句看着像白写的，其实不是：`nextInt()` **只把那个数叼走**，那一行末尾的换行还留在纸上。后面本喵要用 `sc.nextLine()` 一行一行叼记录 —— 不先把这一截空尾巴吃掉，第一趟叼回来的就是**一个空行**（本喵自己踩过这个坑）。\n\n**二、写：一条条写，每条自己补 `\\n`。** 这里是 `w.write(sc.nextLine() + \"\\n\")` —— 注意那个 `+ \"\\n\"`：**`w.write` 不会自己换行**，你补它才有。少写了它，几条记录就会糊成一串，读回来时也只有 1 条。本喵把参考解里那个 `+ \"\\n\"` 真拆掉跑过一遍：屏幕上从 `第 1 条：…` 加 `册子上现在有 2 条` 那种一行一条的样子，变成**两条挤成一行、总数也跟着少**。\n\n**三、读：读到 `null` 为止。** 骨架就是课里那三句：先 `String hang = r.readLine();`，`while (hang != null)` 绕着走，**圈的最后一格再喊一次** `hang = r.readLine();`。最后那句漏了，程序就会把第一行印到天荒地老；条件写成 `hang != \"\"`，它又会在第一行就停住 —— 两边都是坑。\n\n**四、两个 `try ( … )` 各管一趟。** 写完那一段一结束，抽屉自动关（写下去的字这时候才真的落进册子）；读的那一段结束时也一样。`close()` 一个字都不用写。\n\n判分那组纸上给的行数跟样例不一样 —— 所以「只写死 2 条」的稿子过不了，老老实实按读到的那个数绕圈喵。",
+      "templateId": "java-s2-file-save-and-load",
+      "params": {
+        "name": "zhangben.txt",
+        "n": "2",
+        "a": "小鱼干 3 条",
+        "b": "猫粮 2 碗",
+        "c": "猫条 4 根"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:29.402Z",
+        "hash": "4acd2f5959ae7be9"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-save-and-load-025",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把投喂进来的东西一条条存进册子，再一条条取回来。\n\n投喂给程序的纸上：**第一个数是「后面还有几行字」**，接着正好那么多行，一行一条记录。要写的东西：\n\n1. 把这几个数**一条一条写进**册子 `zhangben.txt`（写的时候，每一条自己补上换行）；\n2. 写完再把册子打开，**一条一条读回来**，每读一条印一行 `第 k 条：内容`（那个 `k` 从 `1` 起，一条加一）；\n3. 读到头了，最后印一行 `册子上现在有 N 条`。\n\n比如投喂给程序的是\n\n3\n小鱼干 9 条\n猫粮 3 碗\n猫条 1 根\n\n程序就要叼回\n\n第 1 条：小鱼干 9 条\n第 2 条：猫粮 3 碗\n第 3 条：猫条 1 根\n册子上现在有 3 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        sc.nextLine();\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            for (int i = 0; i < n; i++) {\n                w.write(sc.nextLine() + \"\\n\");\n            }\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            int cnt = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                cnt++;\n                System.out.println(\"第 \" + cnt + \" 条：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"册子上现在有 \" + cnt + \" 条\");\n        }\n    }\n}\n",
+      "expectedOutput": "第 1 条：小鱼干 3 条\n第 2 条：猫粮 1 碗\n第 3 条：猫条 4 根\n册子上现在有 3 条",
+      "stdin": "3\n小鱼干 3 条\n猫粮 1 碗\n猫条 4 根\n",
+      "explanation": "这题把这一课的两头串起来了：**写进去**和**读回来**。\n\n**一、纸上第一个数读完之后，要多吃一行。** 本喵写的是：\n\n```java\nint n = sc.nextInt();\nsc.nextLine();\n```\n\n第二句看着像白写的，其实不是：`nextInt()` **只把那个数叼走**，那一行末尾的换行还留在纸上。后面本喵要用 `sc.nextLine()` 一行一行叼记录 —— 不先把这一截空尾巴吃掉，第一趟叼回来的就是**一个空行**（本喵自己踩过这个坑）。\n\n**二、写：一条条写，每条自己补 `\\n`。** 这里是 `w.write(sc.nextLine() + \"\\n\")` —— 注意那个 `+ \"\\n\"`：**`w.write` 不会自己换行**，你补它才有。少写了它，几条记录就会糊成一串，读回来时也只有 1 条。本喵把参考解里那个 `+ \"\\n\"` 真拆掉跑过一遍：屏幕上从 `第 1 条：…` 加 `册子上现在有 3 条` 那种一行一条的样子，变成**两条挤成一行、总数也跟着少**。\n\n**三、读：读到 `null` 为止。** 骨架就是课里那三句：先 `String hang = r.readLine();`，`while (hang != null)` 绕着走，**圈的最后一格再喊一次** `hang = r.readLine();`。最后那句漏了，程序就会把第一行印到天荒地老；条件写成 `hang != \"\"`，它又会在第一行就停住 —— 两边都是坑。\n\n**四、两个 `try ( … )` 各管一趟。** 写完那一段一结束，抽屉自动关（写下去的字这时候才真的落进册子）；读的那一段结束时也一样。`close()` 一个字都不用写。\n\n判分那组纸上给的行数跟样例不一样 —— 所以「只写死 2 条」的稿子过不了，老老实实按读到的那个数绕圈喵。",
+      "templateId": "java-s2-file-save-and-load",
+      "params": {
+        "name": "zhangben.txt",
+        "n": "3",
+        "a": "小鱼干 3 条",
+        "b": "猫粮 1 碗",
+        "c": "猫条 4 根"
+      },
+      "verified": {
+        "at": "2026-10-20T17:13:32.684Z",
+        "hash": "3be8abf0d80e1b99"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-save-and-load-031",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把投喂进来的东西一条条存进册子，再一条条取回来。\n\n投喂给程序的纸上：**第一个数是「后面还有几行字」**，接着正好那么多行，一行一条记录。要写的东西：\n\n1. 把这几个数**一条一条写进**册子 `zhangben.txt`（写的时候，每一条自己补上换行）；\n2. 写完再把册子打开，**一条一条读回来**，每读一条印一行 `第 k 条：内容`（那个 `k` 从 `1` 起，一条加一）；\n3. 读到头了，最后印一行 `册子上现在有 N 条`。\n\n比如投喂给程序的是\n\n3\n小鱼干 9 条\n猫粮 3 碗\n猫条 1 根\n\n程序就要叼回\n\n第 1 条：小鱼干 9 条\n第 2 条：猫粮 3 碗\n第 3 条：猫条 1 根\n册子上现在有 3 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        sc.nextLine();\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            for (int i = 0; i < n; i++) {\n                w.write(sc.nextLine() + \"\\n\");\n            }\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            int cnt = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                cnt++;\n                System.out.println(\"第 \" + cnt + \" 条：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"册子上现在有 \" + cnt + \" 条\");\n        }\n    }\n}\n",
+      "expectedOutput": "第 1 条：小鱼干 5 条\n第 2 条：猫粮 2 碗\n第 3 条：猫条 4 根\n册子上现在有 3 条",
+      "stdin": "3\n小鱼干 5 条\n猫粮 2 碗\n猫条 4 根\n",
+      "explanation": "这题把这一课的两头串起来了：**写进去**和**读回来**。\n\n**一、纸上第一个数读完之后，要多吃一行。** 本喵写的是：\n\n```java\nint n = sc.nextInt();\nsc.nextLine();\n```\n\n第二句看着像白写的，其实不是：`nextInt()` **只把那个数叼走**，那一行末尾的换行还留在纸上。后面本喵要用 `sc.nextLine()` 一行一行叼记录 —— 不先把这一截空尾巴吃掉，第一趟叼回来的就是**一个空行**（本喵自己踩过这个坑）。\n\n**二、写：一条条写，每条自己补 `\\n`。** 这里是 `w.write(sc.nextLine() + \"\\n\")` —— 注意那个 `+ \"\\n\"`：**`w.write` 不会自己换行**，你补它才有。少写了它，几条记录就会糊成一串，读回来时也只有 1 条。本喵把参考解里那个 `+ \"\\n\"` 真拆掉跑过一遍：屏幕上从 `第 1 条：…` 加 `册子上现在有 3 条` 那种一行一条的样子，变成**两条挤成一行、总数也跟着少**。\n\n**三、读：读到 `null` 为止。** 骨架就是课里那三句：先 `String hang = r.readLine();`，`while (hang != null)` 绕着走，**圈的最后一格再喊一次** `hang = r.readLine();`。最后那句漏了，程序就会把第一行印到天荒地老；条件写成 `hang != \"\"`，它又会在第一行就停住 —— 两边都是坑。\n\n**四、两个 `try ( … )` 各管一趟。** 写完那一段一结束，抽屉自动关（写下去的字这时候才真的落进册子）；读的那一段结束时也一样。`close()` 一个字都不用写。\n\n判分那组纸上给的行数跟样例不一样 —— 所以「只写死 2 条」的稿子过不了，老老实实按读到的那个数绕圈喵。",
+      "templateId": "java-s2-file-save-and-load",
+      "params": {
+        "name": "zhangben.txt",
+        "n": "3",
+        "a": "小鱼干 5 条",
+        "b": "猫粮 2 碗",
+        "c": "猫条 4 根"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:10.404Z",
+        "hash": "836bb8d8ec9c6b91"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-write-needs-newline-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵要把两条记录写进册子，再一条条读回来数一数 —— 可这稿子跑出来是这样的：\n\n```text\n1 号格子：小鱼干 3 条猫粮 1 碗\n一共 1 行\n```\n\n两条记录**糊成了一条**，那个数也跟着错了。请你把它补好，让程序印出：\n\n```text\n1 号格子：小鱼干 3 条\n2 号格子：猫粮 1 碗\n一共 2 行\n```\n\n要补的地方就在**往册子上写字的那两句**上，别的本喵都没写错喵。",
+      "brokenCode": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"小鱼干 3 条\");\n            w.write(\"猫粮 1 碗\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            int n = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(n + \" 号格子：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"一共 \" + n + \" 行\");\n        }\n    }\n}\n",
+      "referenceFix": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"小鱼干 3 条\\n\");\n            w.write(\"猫粮 1 碗\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            int n = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(n + \" 号格子：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"一共 \" + n + \" 行\");\n        }\n    }\n}\n",
+      "expectedOutput": "1 号格子：小鱼干 3 条\n2 号格子：猫粮 1 碗\n一共 2 行",
+      "stdin": null,
+      "explanation": "毛病只有一处：**`w.write` 不会自己换行。**\n\n本喵写下去的是这么两句：\n\n```java\nw.write(\"小鱼干 3 条\");\nw.write(\"猫粮 1 碗\");\n```\n\n册子上收到的就成了**紧紧连着的一串字** —— 所以 `readLine()` 一趟就把两条一起叼了回来（题面第一行那个 `小鱼干 3 条猫粮 1 碗` 就是这么来的），行数也从 2 掉成了 1。**这稿子编得过、跑得起来，翻译官喵一个字都不说** —— 它不是「写错了」，是「少写了一样东西」。\n\n补法就是每一句末尾自己补上换行：\n\n```java\nw.write(\"小鱼干 3 条\\n\");\nw.write(\"猫粮 1 碗\\n\");\n```\n\n`\\n` 是**藏起来的一个换行**（不是「反斜杠加 n」两个字符），册子上哪一句自成一行，全看它。\n\n这里有个本喵自己也摔过的地方：**`System.out.println` 和 `w.write` 的脾气不一样。** `println` 印完**自己会换一行**，所以平时写代码从来不补 `\\n`；`w.write` 伸出去的是一支笔 —— **你写什么，册子上就是什么**，换行得你自己动手。\n\n顺带说一句判分：另外那一道的两条记录跟这里不一样，所以「只补一处」「或者干脆不补、把两条拼成一句印出来」都过不了喵。",
+      "templateId": "java-s2-file-write-needs-newline",
+      "params": {
+        "name": "dangan.txt",
+        "a": "小鱼干 3 条",
+        "b": "猫粮 1 碗"
+      },
+      "verified": {
+        "at": "2026-09-16T11:36:55.889Z",
+        "hash": "246d17aaba68bd2c"
+      }
+    },
+    {
+      "id": "bank-java-s2-file-write-needs-newline-007",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵要把两条记录写进册子，再一条条读回来数一数 —— 可这稿子跑出来是这样的：\n\n```text\n1 号格子：小鱼干 5 条猫粮 2 碗\n一共 1 行\n```\n\n两条记录**糊成了一条**，那个数也跟着错了。请你把它补好，让程序印出：\n\n```text\n1 号格子：小鱼干 5 条\n2 号格子：猫粮 2 碗\n一共 2 行\n```\n\n要补的地方就在**往册子上写字的那两句**上，别的本喵都没写错喵。",
+      "brokenCode": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            w.write(\"小鱼干 5 条\");\n            w.write(\"猫粮 2 碗\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            int n = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(n + \" 号格子：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"一共 \" + n + \" 行\");\n        }\n    }\n}\n",
+      "referenceFix": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"zhangben.txt\")) {\n            w.write(\"小鱼干 5 条\\n\");\n            w.write(\"猫粮 2 碗\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"zhangben.txt\"))) {\n            int n = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(n + \" 号格子：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"一共 \" + n + \" 行\");\n        }\n    }\n}\n",
+      "expectedOutput": "1 号格子：小鱼干 5 条\n2 号格子：猫粮 2 碗\n一共 2 行",
+      "stdin": null,
+      "explanation": "毛病只有一处：**`w.write` 不会自己换行。**\n\n本喵写下去的是这么两句：\n\n```java\nw.write(\"小鱼干 5 条\");\nw.write(\"猫粮 2 碗\");\n```\n\n册子上收到的就成了**紧紧连着的一串字** —— 所以 `readLine()` 一趟就把两条一起叼了回来（题面第一行那个 `小鱼干 5 条猫粮 2 碗` 就是这么来的），行数也从 2 掉成了 1。**这稿子编得过、跑得起来，翻译官喵一个字都不说** —— 它不是「写错了」，是「少写了一样东西」。\n\n补法就是每一句末尾自己补上换行：\n\n```java\nw.write(\"小鱼干 5 条\\n\");\nw.write(\"猫粮 2 碗\\n\");\n```\n\n`\\n` 是**藏起来的一个换行**（不是「反斜杠加 n」两个字符），册子上哪一句自成一行，全看它。\n\n这里有个本喵自己也摔过的地方：**`System.out.println` 和 `w.write` 的脾气不一样。** `println` 印完**自己会换一行**，所以平时写代码从来不补 `\\n`；`w.write` 伸出去的是一支笔 —— **你写什么，册子上就是什么**，换行得你自己动手。\n\n顺带说一句判分：另外那一道的两条记录跟这里不一样，所以「只补一处」「或者干脆不补、把两条拼成一句印出来」都过不了喵。",
+      "templateId": "java-s2-file-write-needs-newline",
+      "params": {
+        "name": "zhangben.txt",
+        "a": "小鱼干 5 条",
+        "b": "猫粮 2 碗"
+      },
+      "verified": {
+        "at": "2026-09-16T11:36:57.723Z",
+        "hash": "3553cc68bf3c4aff"
+      }
+    }
+  ]
+}

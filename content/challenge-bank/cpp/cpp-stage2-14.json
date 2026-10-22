@@ -1,0 +1,458 @@
+{
+  "lessonId": "cpp-stage2-14",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s2-14-kitten-no-base-ctor-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵给托儿所添一张**小猫图纸**：照着猫猫那张画下来，自己多记一格「出生多少天」。\n\n可这只小猫出生的时候，本喵**忘了先把名字和岁数递回给老图纸那一手**，翻译官喵当场拦下。你帮本喵把漏掉的那一处补上，让屏幕上印出 **我是棉花，今年 1 岁喵** 和 **棉花 出生 20 天啦** 这两行。图纸上别的几行、`main` 里那几句都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, 20);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, 20);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "expectedOutput": "我是棉花，今年 1 岁喵\n棉花 出生 20 天啦",
+      "stdin": null,
+      "explanation": "本喵在本机真跑过没补的版本，翻译官喵的原话是这一句：\n\n```text\nmain.cpp:20:44: error: no matching function for call to 'Cat::Cat()'\n```\n\n念作：「**你没给老图纸喂料，它不知道该拿什么出生。**」\n\n道理是：**名字和岁数这两格是老图纸的**，小猫图纸够得着、可它自己名下没有 —— 得由老图纸那一手去装。修法就是**把料递回去**：\n\n```text\nKitten(string n, int a, int d) : Cat(n, a), days(d)\n```\n\n补完之后本喵真跑过：屏幕上印 `我是棉花，今年 1 岁喵`，再印 `棉花 出生 20 天啦`。\n\n⚠️ 三条钉住：\n\n1. **次序是「妈妈先出生、小猫后出生」。** 递回老图纸那一手要写在**最前面**，自己多出来的那一格跟在它后面。\n2. **递料那一下写的是图纸名 + 一对圆括号**（`Cat(n, a)`）—— 不是 `name(n)`、也不是把老图纸那两格直接当自己的格子写。\n3. **老图纸那两格得让小猫够得着。** 本喵挂的是 `protected:`；挂成 `private:` 的话，小猫这一手 `showDays()` 里那句 `name` 会被拦下（原话是 `error: 'std::string Cat::name' is private within this context`，本喵在课文摔法一里真跑过）。",
+      "templateId": "cpp-s2-14-kitten-no-base-ctor",
+      "params": {
+        "d": 20
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:12.418Z",
+        "hash": "30ab5a338dc54aef"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-kitten-no-base-ctor-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵给托儿所添一张**小猫图纸**：照着猫猫那张画下来，自己多记一格「出生多少天」。\n\n可这只小猫出生的时候，本喵**忘了先把名字和岁数递回给老图纸那一手**，翻译官喵当场拦下。你帮本喵把漏掉的那一处补上，让屏幕上印出 **我是棉花，今年 1 岁喵** 和 **棉花 出生 35 天啦** 这两行。图纸上别的几行、`main` 里那几句都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, 35);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, 35);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "expectedOutput": "我是棉花，今年 1 岁喵\n棉花 出生 35 天啦",
+      "stdin": null,
+      "explanation": "本喵在本机真跑过没补的版本，翻译官喵的原话是这一句：\n\n```text\nmain.cpp:20:44: error: no matching function for call to 'Cat::Cat()'\n```\n\n念作：「**你没给老图纸喂料，它不知道该拿什么出生。**」\n\n道理是：**名字和岁数这两格是老图纸的**，小猫图纸够得着、可它自己名下没有 —— 得由老图纸那一手去装。修法就是**把料递回去**：\n\n```text\nKitten(string n, int a, int d) : Cat(n, a), days(d)\n```\n\n补完之后本喵真跑过：屏幕上印 `我是棉花，今年 1 岁喵`，再印 `棉花 出生 35 天啦`。\n\n⚠️ 三条钉住：\n\n1. **次序是「妈妈先出生、小猫后出生」。** 递回老图纸那一手要写在**最前面**，自己多出来的那一格跟在它后面。\n2. **递料那一下写的是图纸名 + 一对圆括号**（`Cat(n, a)`）—— 不是 `name(n)`、也不是把老图纸那两格直接当自己的格子写。\n3. **老图纸那两格得让小猫够得着。** 本喵挂的是 `protected:`；挂成 `private:` 的话，小猫这一手 `showDays()` 里那句 `name` 会被拦下（原话是 `error: 'std::string Cat::name' is private within this context`，本喵在课文摔法一里真跑过）。",
+      "templateId": "cpp-s2-14-kitten-no-base-ctor",
+      "params": {
+        "d": 35
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:16.803Z",
+        "hash": "1ecfe818cc6ee940"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-kitten-no-public-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵给托儿所添一张**小猫图纸**，照着猫猫那张画下来，自己多记一格「出生多少天」。\n\n可 `main` 里那句 `k.greet()` 被翻译官喵拦下了 —— 本喵在「照着哪张图纸画」那一段上**少写了一个词**。你把它补上，让屏幕上印出 **我是棉花，今年 1 岁喵** 和 **棉花 出生 20 天啦** 这两行。别的几行都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, 20);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, 20);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "expectedOutput": "我是棉花，今年 1 岁喵\n棉花 出生 20 天啦",
+      "stdin": null,
+      "explanation": "本喵在本机真跑过没补的版本，翻译官喵的原话是这三句：\n\n```text\nmain.cpp:28:12: error: 'void Cat::greet()' is inaccessible within this context\nmain.cpp:11:10: note: declared here\nmain.cpp:28:12: error: 'Cat' is not an accessible base of 'Kitten'\n```\n\n念作：「**老图纸这一手够不着；还有，老图纸这个底子对外也不通。**」\n\n`class Kitten : Cat` 少了那一小段 `public`，就是**悄悄把老图纸整张扣上了盖子**：图纸套是套上了，小猫自己写的 `showDays()` 照样能用（它站在小猫图纸里头），可**外面（还有 `main`）什么都够不着老图纸那几手**。修法就是把那个词补回去：\n\n```text\nclass Kitten : public Cat\n```\n\n补完之后本喵真跑过：屏幕上印 `我是棉花，今年 1 岁喵`，再印 `棉花 出生 20 天啦`。\n\n⚠️ 三条钉住：\n\n1. **两种写法只差一个词，后果差一整张图纸。** 抄写法的时候这一跤几乎必踩 —— 报错的两句都点在同一个地方，就是那句 `k.greet()`。\n2. **补不补，看外面要不要够老图纸的手。** 补上 `public`，老图纸的公开手艺在新图纸外面照旧公开。\n3. **小猫自己写的那一手不受影响。** `showDays()` 是在小猫图纸里头写的，本喵真跑过 —— 报错只冲着 `k.greet()` 那一句来。",
+      "templateId": "cpp-s2-14-kitten-no-public",
+      "params": {
+        "d": 20
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:20.200Z",
+        "hash": "f19e5249a14c1d3e"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-kitten-no-public-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵给托儿所添一张**小猫图纸**，照着猫猫那张画下来，自己多记一格「出生多少天」。\n\n可 `main` 里那句 `k.greet()` 被翻译官喵拦下了 —— 本喵在「照着哪张图纸画」那一段上**少写了一个词**。你把它补上，让屏幕上印出 **我是棉花，今年 1 岁喵** 和 **棉花 出生 35 天啦** 这两行。别的几行都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, 35);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, 35);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "expectedOutput": "我是棉花，今年 1 岁喵\n棉花 出生 35 天啦",
+      "stdin": null,
+      "explanation": "本喵在本机真跑过没补的版本，翻译官喵的原话是这三句：\n\n```text\nmain.cpp:28:12: error: 'void Cat::greet()' is inaccessible within this context\nmain.cpp:11:10: note: declared here\nmain.cpp:28:12: error: 'Cat' is not an accessible base of 'Kitten'\n```\n\n念作：「**老图纸这一手够不着；还有，老图纸这个底子对外也不通。**」\n\n`class Kitten : Cat` 少了那一小段 `public`，就是**悄悄把老图纸整张扣上了盖子**：图纸套是套上了，小猫自己写的 `showDays()` 照样能用（它站在小猫图纸里头），可**外面（还有 `main`）什么都够不着老图纸那几手**。修法就是把那个词补回去：\n\n```text\nclass Kitten : public Cat\n```\n\n补完之后本喵真跑过：屏幕上印 `我是棉花，今年 1 岁喵`，再印 `棉花 出生 35 天啦`。\n\n⚠️ 三条钉住：\n\n1. **两种写法只差一个词，后果差一整张图纸。** 抄写法的时候这一跤几乎必踩 —— 报错的两句都点在同一个地方，就是那句 `k.greet()`。\n2. **补不补，看外面要不要够老图纸的手。** 补上 `public`，老图纸的公开手艺在新图纸外面照旧公开。\n3. **小猫自己写的那一手不受影响。** `showDays()` 是在小猫图纸里头写的，本喵真跑过 —— 报错只冲着 `k.greet()` 那一句来。",
+      "templateId": "cpp-s2-14-kitten-no-public",
+      "params": {
+        "d": 35
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:23.470Z",
+        "hash": "abe0caee36665cfe"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-kitten-two-rows-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的托儿所里**成年猫和小猫分开记**。投喂口会**先给一个数**（要跟着几只成年猫的岁数），**再一只一只给 2 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. **再画一张小猫图纸**：**照着猫猫那张画下来**（那一小段 `public` 不能少），自己多记一格「出生多少天」、多留一手**报天数**（印 名字 + ` 出生 ` + 天数 + ` 天啦`）。小猫出生的时候，**先把名字和岁数递回给老图纸那一手**，再管自己那一格；\n3. 读进那个数，再一只一只读进后面那些数，**每一只都当成年猫的岁数**，名字都叫 **小橘**；每读一只就放进名册（会自己变长的碗）；\n4. 名册念完之后，**单独生一只小猫**：名字 **棉花**、岁数 `1`、出生 **20** 天；让它先喵一声，再报一次天数。\n\n比如投喂给程序的是\n\n2\n3\n2\n\n程序就要叼回\n\n我是小橘，今年 3 岁喵\n我是小橘，今年 2 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 20 天啦\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"小橘\", a));\n    }\n    for (Cat& c : roster) {\n        c.greet();\n    }\n\n    Kitten k(\"棉花\", 1, 20);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "expectedOutput": "我是小橘，今年 6 岁喵\n我是小橘，今年 8 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 20 天啦",
+      "stdin": "2\n6\n8\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n我是小橘，今年 3 岁喵\n我是小橘，今年 2 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 20 天啦\n```\n\n- **`class Kitten : public Cat`** —— 小猫那张图纸是**照着猫猫那张画下来**的：`name`、`age` 两格和 `greet()` 那一手它一个字都没重抄；\n- **`Kitten(string n, int a, int d) : Cat(n, a), days(d)`** —— 出生的时候**先把名字和岁数递回给老图纸那一手**，再管自己多出来的那一格。次序不能颠倒：妈妈先出生、小猫后出生；\n- **名册里只放成年猫**（`vector<Cat>`），小猫是**单独生出来的那一只**；\n- **`k.greet()` 印出来后跟着 `k.showDays()`** —— 前面那一行是小猫从老图纸接过来的手，后面那一行才是它自己多出来的手。\n\n⚠️ 三条钉住：\n\n1. **`public` 那一小段不能少。** 少了它等于把老图纸整张扣上盖子，外面连 `k.greet()` 都够不着（课文摔法二那一对）。\n2. **小猫那两格得让新图纸够得着。** 本喵把 `name`、`age` 挂在 `protected:` 上，所以 `showDays()` 里能直接喊 `name`。\n3. **名册里那几只都是成年猫。** 这一版的碗点名要的就是猫猫款，小猫没往里塞 —— 本喵真跑过，塞进去也会出事喵。",
+      "templateId": "cpp-s2-14-kitten-two-rows",
+      "params": {
+        "n": 2,
+        "name": "小橘",
+        "kname": "棉花",
+        "d": 20
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:43.220Z",
+        "hash": "2196929efcf68f22"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-kitten-two-rows-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的托儿所里**成年猫和小猫分开记**。投喂口会**先给一个数**（要跟着几只成年猫的岁数），**再一只一只给 2 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. **再画一张小猫图纸**：**照着猫猫那张画下来**（那一小段 `public` 不能少），自己多记一格「出生多少天」、多留一手**报天数**（印 名字 + ` 出生 ` + 天数 + ` 天啦`）。小猫出生的时候，**先把名字和岁数递回给老图纸那一手**，再管自己那一格；\n3. 读进那个数，再一只一只读进后面那些数，**每一只都当成年猫的岁数**，名字都叫 **小橘**；每读一只就放进名册（会自己变长的碗）；\n4. 名册念完之后，**单独生一只小猫**：名字 **芝麻**、岁数 `1`、出生 **35** 天；让它先喵一声，再报一次天数。\n\n比如投喂给程序的是\n\n2\n8\n9\n\n程序就要叼回\n\n我是小橘，今年 8 岁喵\n我是小橘，今年 9 岁喵\n我是芝麻，今年 1 岁喵\n芝麻 出生 35 天啦\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"小橘\", a));\n    }\n    for (Cat& c : roster) {\n        c.greet();\n    }\n\n    Kitten k(\"芝麻\", 1, 35);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "expectedOutput": "我是小橘，今年 7 岁喵\n我是小橘，今年 8 岁喵\n我是芝麻，今年 1 岁喵\n芝麻 出生 35 天啦",
+      "stdin": "2\n7\n8\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n我是小橘，今年 8 岁喵\n我是小橘，今年 9 岁喵\n我是芝麻，今年 1 岁喵\n芝麻 出生 35 天啦\n```\n\n- **`class Kitten : public Cat`** —— 小猫那张图纸是**照着猫猫那张画下来**的：`name`、`age` 两格和 `greet()` 那一手它一个字都没重抄；\n- **`Kitten(string n, int a, int d) : Cat(n, a), days(d)`** —— 出生的时候**先把名字和岁数递回给老图纸那一手**，再管自己多出来的那一格。次序不能颠倒：妈妈先出生、小猫后出生；\n- **名册里只放成年猫**（`vector<Cat>`），小猫是**单独生出来的那一只**；\n- **`k.greet()` 印出来后跟着 `k.showDays()`** —— 前面那一行是小猫从老图纸接过来的手，后面那一行才是它自己多出来的手。\n\n⚠️ 三条钉住：\n\n1. **`public` 那一小段不能少。** 少了它等于把老图纸整张扣上盖子，外面连 `k.greet()` 都够不着（课文摔法二那一对）。\n2. **小猫那两格得让新图纸够得着。** 本喵把 `name`、`age` 挂在 `protected:` 上，所以 `showDays()` 里能直接喊 `name`。\n3. **名册里那几只都是成年猫。** 这一版的碗点名要的就是猫猫款，小猫没往里塞 —— 本喵真跑过，塞进去也会出事喵。",
+      "templateId": "cpp-s2-14-kitten-two-rows",
+      "params": {
+        "n": 2,
+        "name": "小橘",
+        "kname": "芝麻",
+        "d": 35
+      },
+      "verified": {
+        "at": "2026-10-20T16:55:48.182Z",
+        "hash": "7da1e1b4ee09fefa"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-kitten-two-rows-006",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的托儿所里**成年猫和小猫分开记**。投喂口会**先给一个数**（要跟着几只成年猫的岁数），**再一只一只给 2 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. **再画一张小猫图纸**：**照着猫猫那张画下来**（那一小段 `public` 不能少），自己多记一格「出生多少天」、多留一手**报天数**（印 名字 + ` 出生 ` + 天数 + ` 天啦`）。小猫出生的时候，**先把名字和岁数递回给老图纸那一手**，再管自己那一格；\n3. 读进那个数，再一只一只读进后面那些数，**每一只都当成年猫的岁数**，名字都叫 **大胖**；每读一只就放进名册（会自己变长的碗）；\n4. 名册念完之后，**单独生一只小猫**：名字 **芝麻**、岁数 `1`、出生 **20** 天；让它先喵一声，再报一次天数。\n\n比如投喂给程序的是\n\n2\n1\n1\n\n程序就要叼回\n\n我是大胖，今年 1 岁喵\n我是大胖，今年 1 岁喵\n我是芝麻，今年 1 岁喵\n芝麻 出生 20 天啦\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"大胖\", a));\n    }\n    for (Cat& c : roster) {\n        c.greet();\n    }\n\n    Kitten k(\"芝麻\", 1, 20);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "expectedOutput": "我是大胖，今年 6 岁喵\n我是大胖，今年 5 岁喵\n我是芝麻，今年 1 岁喵\n芝麻 出生 20 天啦",
+      "stdin": "2\n6\n5\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n我是大胖，今年 1 岁喵\n我是大胖，今年 1 岁喵\n我是芝麻，今年 1 岁喵\n芝麻 出生 20 天啦\n```\n\n- **`class Kitten : public Cat`** —— 小猫那张图纸是**照着猫猫那张画下来**的：`name`、`age` 两格和 `greet()` 那一手它一个字都没重抄；\n- **`Kitten(string n, int a, int d) : Cat(n, a), days(d)`** —— 出生的时候**先把名字和岁数递回给老图纸那一手**，再管自己多出来的那一格。次序不能颠倒：妈妈先出生、小猫后出生；\n- **名册里只放成年猫**（`vector<Cat>`），小猫是**单独生出来的那一只**；\n- **`k.greet()` 印出来后跟着 `k.showDays()`** —— 前面那一行是小猫从老图纸接过来的手，后面那一行才是它自己多出来的手。\n\n⚠️ 三条钉住：\n\n1. **`public` 那一小段不能少。** 少了它等于把老图纸整张扣上盖子，外面连 `k.greet()` 都够不着（课文摔法二那一对）。\n2. **小猫那两格得让新图纸够得着。** 本喵把 `name`、`age` 挂在 `protected:` 上，所以 `showDays()` 里能直接喊 `name`。\n3. **名册里那几只都是成年猫。** 这一版的碗点名要的就是猫猫款，小猫没往里塞 —— 本喵真跑过，塞进去也会出事喵。",
+      "templateId": "cpp-s2-14-kitten-two-rows",
+      "params": {
+        "n": 2,
+        "name": "大胖",
+        "kname": "芝麻",
+        "d": 20
+      },
+      "verified": {
+        "at": "2026-10-20T16:55:52.995Z",
+        "hash": "3f65861908c12a86"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-kitten-two-rows-009",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的托儿所里**成年猫和小猫分开记**。投喂口会**先给一个数**（要跟着几只成年猫的岁数），**再一只一只给 3 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. **再画一张小猫图纸**：**照着猫猫那张画下来**（那一小段 `public` 不能少），自己多记一格「出生多少天」、多留一手**报天数**（印 名字 + ` 出生 ` + 天数 + ` 天啦`）。小猫出生的时候，**先把名字和岁数递回给老图纸那一手**，再管自己那一格；\n3. 读进那个数，再一只一只读进后面那些数，**每一只都当成年猫的岁数**，名字都叫 **小橘**；每读一只就放进名册（会自己变长的碗）；\n4. 名册念完之后，**单独生一只小猫**：名字 **棉花**、岁数 `1`、出生 **35** 天；让它先喵一声，再报一次天数。\n\n比如投喂给程序的是\n\n3\n7\n1\n2\n\n程序就要叼回\n\n我是小橘，今年 7 岁喵\n我是小橘，今年 1 岁喵\n我是小橘，今年 2 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 35 天啦\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"小橘\", a));\n    }\n    for (Cat& c : roster) {\n        c.greet();\n    }\n\n    Kitten k(\"棉花\", 1, 35);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "expectedOutput": "我是小橘，今年 2 岁喵\n我是小橘，今年 8 岁喵\n我是小橘，今年 9 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 35 天啦",
+      "stdin": "3\n2\n8\n9\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n我是小橘，今年 7 岁喵\n我是小橘，今年 1 岁喵\n我是小橘，今年 2 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 35 天啦\n```\n\n- **`class Kitten : public Cat`** —— 小猫那张图纸是**照着猫猫那张画下来**的：`name`、`age` 两格和 `greet()` 那一手它一个字都没重抄；\n- **`Kitten(string n, int a, int d) : Cat(n, a), days(d)`** —— 出生的时候**先把名字和岁数递回给老图纸那一手**，再管自己多出来的那一格。次序不能颠倒：妈妈先出生、小猫后出生；\n- **名册里只放成年猫**（`vector<Cat>`），小猫是**单独生出来的那一只**；\n- **`k.greet()` 印出来后跟着 `k.showDays()`** —— 前面那一行是小猫从老图纸接过来的手，后面那一行才是它自己多出来的手。\n\n⚠️ 三条钉住：\n\n1. **`public` 那一小段不能少。** 少了它等于把老图纸整张扣上盖子，外面连 `k.greet()` 都够不着（课文摔法二那一对）。\n2. **小猫那两格得让新图纸够得着。** 本喵把 `name`、`age` 挂在 `protected:` 上，所以 `showDays()` 里能直接喊 `name`。\n3. **名册里那几只都是成年猫。** 这一版的碗点名要的就是猫猫款，小猫没往里塞 —— 本喵真跑过，塞进去也会出事喵。",
+      "templateId": "cpp-s2-14-kitten-two-rows",
+      "params": {
+        "n": 3,
+        "name": "小橘",
+        "kname": "棉花",
+        "d": 35
+      },
+      "verified": {
+        "at": "2026-10-20T16:55:57.676Z",
+        "hash": "6bd4648702e45477"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-kitten-two-rows-012",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的托儿所里**成年猫和小猫分开记**。投喂口会**先给一个数**（要跟着几只成年猫的岁数），**再一只一只给 3 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. **再画一张小猫图纸**：**照着猫猫那张画下来**（那一小段 `public` 不能少），自己多记一格「出生多少天」、多留一手**报天数**（印 名字 + ` 出生 ` + 天数 + ` 天啦`）。小猫出生的时候，**先把名字和岁数递回给老图纸那一手**，再管自己那一格；\n3. 读进那个数，再一只一只读进后面那些数，**每一只都当成年猫的岁数**，名字都叫 **大胖**；每读一只就放进名册（会自己变长的碗）；\n4. 名册念完之后，**单独生一只小猫**：名字 **棉花**、岁数 `1`、出生 **20** 天；让它先喵一声，再报一次天数。\n\n比如投喂给程序的是\n\n3\n4\n6\n7\n\n程序就要叼回\n\n我是大胖，今年 4 岁喵\n我是大胖，今年 6 岁喵\n我是大胖，今年 7 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 20 天啦\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"大胖\", a));\n    }\n    for (Cat& c : roster) {\n        c.greet();\n    }\n\n    Kitten k(\"棉花\", 1, 20);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "expectedOutput": "我是大胖，今年 4 岁喵\n我是大胖，今年 8 岁喵\n我是大胖，今年 4 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 20 天啦",
+      "stdin": "3\n4\n8\n4\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n我是大胖，今年 4 岁喵\n我是大胖，今年 6 岁喵\n我是大胖，今年 7 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 20 天啦\n```\n\n- **`class Kitten : public Cat`** —— 小猫那张图纸是**照着猫猫那张画下来**的：`name`、`age` 两格和 `greet()` 那一手它一个字都没重抄；\n- **`Kitten(string n, int a, int d) : Cat(n, a), days(d)`** —— 出生的时候**先把名字和岁数递回给老图纸那一手**，再管自己多出来的那一格。次序不能颠倒：妈妈先出生、小猫后出生；\n- **名册里只放成年猫**（`vector<Cat>`），小猫是**单独生出来的那一只**；\n- **`k.greet()` 印出来后跟着 `k.showDays()`** —— 前面那一行是小猫从老图纸接过来的手，后面那一行才是它自己多出来的手。\n\n⚠️ 三条钉住：\n\n1. **`public` 那一小段不能少。** 少了它等于把老图纸整张扣上盖子，外面连 `k.greet()` 都够不着（课文摔法二那一对）。\n2. **小猫那两格得让新图纸够得着。** 本喵把 `name`、`age` 挂在 `protected:` 上，所以 `showDays()` 里能直接喊 `name`。\n3. **名册里那几只都是成年猫。** 这一版的碗点名要的就是猫猫款，小猫没往里塞 —— 本喵真跑过，塞进去也会出事喵。",
+      "templateId": "cpp-s2-14-kitten-two-rows",
+      "params": {
+        "n": 3,
+        "name": "大胖",
+        "kname": "棉花",
+        "d": 20
+      },
+      "verified": {
+        "at": "2026-10-20T16:56:02.430Z",
+        "hash": "ba7b73c25037d4da"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-kitten-two-rows-015",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的托儿所里**成年猫和小猫分开记**。投喂口会**先给一个数**（要跟着几只成年猫的岁数），**再一只一只给 3 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. **再画一张小猫图纸**：**照着猫猫那张画下来**（那一小段 `public` 不能少），自己多记一格「出生多少天」、多留一手**报天数**（印 名字 + ` 出生 ` + 天数 + ` 天啦`）。小猫出生的时候，**先把名字和岁数递回给老图纸那一手**，再管自己那一格；\n3. 读进那个数，再一只一只读进后面那些数，**每一只都当成年猫的岁数**，名字都叫 **大胖**；每读一只就放进名册（会自己变长的碗）；\n4. 名册念完之后，**单独生一只小猫**：名字 **芝麻**、岁数 `1`、出生 **35** 天；让它先喵一声，再报一次天数。\n\n比如投喂给程序的是\n\n3\n6\n6\n9\n\n程序就要叼回\n\n我是大胖，今年 6 岁喵\n我是大胖，今年 6 岁喵\n我是大胖，今年 9 岁喵\n我是芝麻，今年 1 岁喵\n芝麻 出生 35 天啦\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"大胖\", a));\n    }\n    for (Cat& c : roster) {\n        c.greet();\n    }\n\n    Kitten k(\"芝麻\", 1, 35);\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+      "expectedOutput": "我是大胖，今年 9 岁喵\n我是大胖，今年 9 岁喵\n我是大胖，今年 9 岁喵\n我是芝麻，今年 1 岁喵\n芝麻 出生 35 天啦",
+      "stdin": "3\n9\n9\n9\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n我是大胖，今年 6 岁喵\n我是大胖，今年 6 岁喵\n我是大胖，今年 9 岁喵\n我是芝麻，今年 1 岁喵\n芝麻 出生 35 天啦\n```\n\n- **`class Kitten : public Cat`** —— 小猫那张图纸是**照着猫猫那张画下来**的：`name`、`age` 两格和 `greet()` 那一手它一个字都没重抄；\n- **`Kitten(string n, int a, int d) : Cat(n, a), days(d)`** —— 出生的时候**先把名字和岁数递回给老图纸那一手**，再管自己多出来的那一格。次序不能颠倒：妈妈先出生、小猫后出生；\n- **名册里只放成年猫**（`vector<Cat>`），小猫是**单独生出来的那一只**；\n- **`k.greet()` 印出来后跟着 `k.showDays()`** —— 前面那一行是小猫从老图纸接过来的手，后面那一行才是它自己多出来的手。\n\n⚠️ 三条钉住：\n\n1. **`public` 那一小段不能少。** 少了它等于把老图纸整张扣上盖子，外面连 `k.greet()` 都够不着（课文摔法二那一对）。\n2. **小猫那两格得让新图纸够得着。** 本喵把 `name`、`age` 挂在 `protected:` 上，所以 `showDays()` 里能直接喊 `name`。\n3. **名册里那几只都是成年猫。** 这一版的碗点名要的就是猫猫款，小猫没往里塞 —— 本喵真跑过，塞进去也会出事喵。",
+      "templateId": "cpp-s2-14-kitten-two-rows",
+      "params": {
+        "n": 3,
+        "name": "大胖",
+        "kname": "芝麻",
+        "d": 35
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:46.303Z",
+        "hash": "d162cddd90fc5d7c"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-menu-no-break-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这台托儿所的菜单坏了：**本喵喊了收摊，它却接着登记。** 号码碗里是 `1, 0, 1` —— 中间那个 `0` 是收摊。\n\n你帮本喵补上收摊那一支**漏掉的那一句**，让收摊之后**一个号码都不再走**。屏幕上要印出这三行：**登记了一只，名册上现在 1 只**、**收摊喵，今天登记了 1 只**、**号码走完了，名册上 1 只**。别的几行都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    vector<Cat> roster;\n    vector<int> keys = {1, 0, 1};\n\n    for (int cmd : keys) {\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"小橘\", 3));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    vector<Cat> roster;\n    vector<int> keys = {1, 0, 1};\n\n    for (int cmd : keys) {\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"小橘\", 3));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只",
+      "stdin": null,
+      "explanation": "本喵在本机真跑过没补的那一版，屏幕上**四行**：\n\n```text\n登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n登记了一只，名册上现在 2 只\n号码走完了，名册上 2 只\n```\n\n第三行就是毛病：**收摊那一句印出来了，收摊却没收成** —— 后面那个 `1` 照走不误，最后名册上多出来一只。\n\n补的那一句是 `break;`，写在收摊那一句**后面**：\n\n```text\ncout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\nbreak;\n```\n\n补完之后本喵真跑过，屏幕上三行：\n\n```text\n登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只\n```\n\n⚠️ 三条钉住：\n\n1. **报错和它不一样，这一跤翻译官喵一个字都不提醒。** 本喵这一版**编得过、跑得完**，每一行都像模像样 —— 只有你盯着屏幕数一遍，才看得出收摊以后还在干活。\n2. **`break;` 跳出的是「走号码的那一圈」，不是那一个 `if`。** 本喵的号码碗是预先装好的，走完就完了；真坐在键盘前面、号码一直进来的时候，漏了它就得一直转下去。\n3. **`break;` 的位置在「印完收摊那一句」之后。** 写在 `if` 里面的第一句上，屏幕上就少印一行「收摊喵，今天登记了 …」——本喵真跑过，那是另一个毛病。",
+      "templateId": "cpp-s2-14-menu-no-break",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:26.354Z",
+        "hash": "7697c66dd6f00c96"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-menu-no-break-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这台托儿所的菜单坏了：**本喵喊了收摊，它却接着登记。** 号码碗里是 `1, 0, 1` —— 中间那个 `0` 是收摊。\n\n你帮本喵补上收摊那一支**漏掉的那一句**，让收摊之后**一个号码都不再走**。屏幕上要印出这三行：**登记了一只，名册上现在 1 只**、**收摊喵，今天登记了 1 只**、**号码走完了，名册上 1 只**。别的几行都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    vector<Cat> roster;\n    vector<int> keys = {1, 0, 1};\n\n    for (int cmd : keys) {\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"大胖\", 3));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    vector<Cat> roster;\n    vector<int> keys = {1, 0, 1};\n\n    for (int cmd : keys) {\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"大胖\", 3));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只",
+      "stdin": null,
+      "explanation": "本喵在本机真跑过没补的那一版，屏幕上**四行**：\n\n```text\n登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n登记了一只，名册上现在 2 只\n号码走完了，名册上 2 只\n```\n\n第三行就是毛病：**收摊那一句印出来了，收摊却没收成** —— 后面那个 `1` 照走不误，最后名册上多出来一只。\n\n补的那一句是 `break;`，写在收摊那一句**后面**：\n\n```text\ncout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\nbreak;\n```\n\n补完之后本喵真跑过，屏幕上三行：\n\n```text\n登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只\n```\n\n⚠️ 三条钉住：\n\n1. **报错和它不一样，这一跤翻译官喵一个字都不提醒。** 本喵这一版**编得过、跑得完**，每一行都像模像样 —— 只有你盯着屏幕数一遍，才看得出收摊以后还在干活。\n2. **`break;` 跳出的是「走号码的那一圈」，不是那一个 `if`。** 本喵的号码碗是预先装好的，走完就完了；真坐在键盘前面、号码一直进来的时候，漏了它就得一直转下去。\n3. **`break;` 的位置在「印完收摊那一句」之后。** 写在 `if` 里面的第一句上，屏幕上就少印一行「收摊喵，今天登记了 …」——本喵真跑过，那是另一个毛病。",
+      "templateId": "cpp-s2-14-menu-no-break",
+      "params": {
+        "name": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:29.536Z",
+        "hash": "3e6bcde25efdab38"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-menu-reads-commands-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把托儿所那台**菜单**装起来。投喂口会**先给一个数**（要跟着几个号码），**再一个一个给 3 个号码**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. 名册就用那只**会自己变长的碗**，一开始是空的；\n3. 读进那个数，再把后面那些数**一个一个当号码读进来**，每个号码挑一支走：\n   - 读到 `1`：登记一只（名字 **小橘**、岁数 **3**），放进名册，并且印 `登记了一只，名册上现在 ` + 几只 + ` 只`；\n   - 读到 `2`：把名册**挨着念一遍** —— 每一只印 `格号.` 加一个空格，再印喵一声（格号从 `1` 数起）；\n   - 读到 `0`：印 `收摊喵，今天登记了 ` + 几只 + ` 只`，**并且立刻跳出走号码的圈**（后面还剩多少个号码都不再走）；\n   - 读到别的号码：印 `本喵还不会这个号码喵`；\n4. 号码走完之后（不管是走完的还是跳出来的），**再印一行** `号码走完了，名册上 ` + 几只 + ` 只`。\n\n比如投喂给程序的是\n\n3\n1\n1\n2\n0\n\n程序就要叼回\n\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是小橘，今年 3 岁喵\n2. 我是小橘，今年 3 岁喵\n号码走完了，名册上 2 只\n\n（判分喂的是**另外一组号码**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int cmd = 0;\n        cin >> cmd;\n\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"小橘\", 3));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        } else if (cmd == 2) {\n            int k = 0;\n            for (Cat& c : roster) {\n                k = k + 1;\n                cout << k << \". \";\n                c.greet();\n            }\n        } else {\n            cout << \"本喵还不会这个号码喵\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只",
+      "stdin": "3\n1\n0\n2\n1\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是小橘，今年 3 岁喵\n2. 我是小橘，今年 3 岁喵\n号码走完了，名册上 2 只\n```\n\n这一段就是这一课的**菜单**：号码进来、活自己分派、走了几圈之后收工。\n\n- **`cin >> cmd;` 在圈里面** —— 号码是一个一个进来、一个一个办的，不是先全读进来再办；\n- **`if / else if / else` 那三支** —— 看号码挑一支走，最后那个 `else` 是兜底：本喵还没学会的号码也得回一句话，不能一声不吭；\n- **`break;` 写在收摊那一支的最后** —— 它跳出的是**走号码的那一圈**；那一行之后还剩多少号码，一个都不再走；\n- **最后那一行 `号码走完了…` 在圈外面** —— 所以不管是号码走完的、还是收摊跳出来的，走到那儿都会印一次。\n\n⚠️ 三条钉住：\n\n1. **`break;` 漏了是什么样子，本喵真跑过**：屏幕上一行都不少印，只是**收摊之后还在登记**，最后那一行数出来的只数比该有的多。报错和它不一样，这一跤翻译官喵一个字都不提醒。\n2. **`break;` 的位置在「印完收摊那一句」之后。** 写在 `if` 里面的第一句上，屏幕上会少印一行「收摊喵，今天登记了 …」；写在 `if` 外面（圈的最后）就更糟 —— 每一圈都会跳出去。\n3. **数只数用的是名册自己。** 印的是 `roster.size()`，不是本喵自己数着玩的格子 —— 碗自己知道有几只。",
+      "templateId": "cpp-s2-14-menu-reads-commands",
+      "params": {
+        "n": 3,
+        "name": "小橘",
+        "age": 3
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:06.808Z",
+        "hash": "6b2e0a3987fd0240"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-menu-reads-commands-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把托儿所那台**菜单**装起来。投喂口会**先给一个数**（要跟着几个号码），**再一个一个给 3 个号码**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. 名册就用那只**会自己变长的碗**，一开始是空的；\n3. 读进那个数，再把后面那些数**一个一个当号码读进来**，每个号码挑一支走：\n   - 读到 `1`：登记一只（名字 **小橘**、岁数 **5**），放进名册，并且印 `登记了一只，名册上现在 ` + 几只 + ` 只`；\n   - 读到 `2`：把名册**挨着念一遍** —— 每一只印 `格号.` 加一个空格，再印喵一声（格号从 `1` 数起）；\n   - 读到 `0`：印 `收摊喵，今天登记了 ` + 几只 + ` 只`，**并且立刻跳出走号码的圈**（后面还剩多少个号码都不再走）；\n   - 读到别的号码：印 `本喵还不会这个号码喵`；\n4. 号码走完之后（不管是走完的还是跳出来的），**再印一行** `号码走完了，名册上 ` + 几只 + ` 只`。\n\n比如投喂给程序的是\n\n3\n1\n1\n2\n0\n\n程序就要叼回\n\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是小橘，今年 5 岁喵\n2. 我是小橘，今年 5 岁喵\n号码走完了，名册上 2 只\n\n（判分喂的是**另外一组号码**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int cmd = 0;\n        cin >> cmd;\n\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"小橘\", 5));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        } else if (cmd == 2) {\n            int k = 0;\n            for (Cat& c : roster) {\n                k = k + 1;\n                cout << k << \". \";\n                c.greet();\n            }\n        } else {\n            cout << \"本喵还不会这个号码喵\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只",
+      "stdin": "3\n1\n0\n2\n1\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是小橘，今年 5 岁喵\n2. 我是小橘，今年 5 岁喵\n号码走完了，名册上 2 只\n```\n\n这一段就是这一课的**菜单**：号码进来、活自己分派、走了几圈之后收工。\n\n- **`cin >> cmd;` 在圈里面** —— 号码是一个一个进来、一个一个办的，不是先全读进来再办；\n- **`if / else if / else` 那三支** —— 看号码挑一支走，最后那个 `else` 是兜底：本喵还没学会的号码也得回一句话，不能一声不吭；\n- **`break;` 写在收摊那一支的最后** —— 它跳出的是**走号码的那一圈**；那一行之后还剩多少号码，一个都不再走；\n- **最后那一行 `号码走完了…` 在圈外面** —— 所以不管是号码走完的、还是收摊跳出来的，走到那儿都会印一次。\n\n⚠️ 三条钉住：\n\n1. **`break;` 漏了是什么样子，本喵真跑过**：屏幕上一行都不少印，只是**收摊之后还在登记**，最后那一行数出来的只数比该有的多。报错和它不一样，这一跤翻译官喵一个字都不提醒。\n2. **`break;` 的位置在「印完收摊那一句」之后。** 写在 `if` 里面的第一句上，屏幕上会少印一行「收摊喵，今天登记了 …」；写在 `if` 外面（圈的最后）就更糟 —— 每一圈都会跳出去。\n3. **数只数用的是名册自己。** 印的是 `roster.size()`，不是本喵自己数着玩的格子 —— 碗自己知道有几只。",
+      "templateId": "cpp-s2-14-menu-reads-commands",
+      "params": {
+        "n": 3,
+        "name": "小橘",
+        "age": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:56:07.255Z",
+        "hash": "bb0cfbd2c1227069"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-menu-reads-commands-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把托儿所那台**菜单**装起来。投喂口会**先给一个数**（要跟着几个号码），**再一个一个给 3 个号码**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. 名册就用那只**会自己变长的碗**，一开始是空的；\n3. 读进那个数，再把后面那些数**一个一个当号码读进来**，每个号码挑一支走：\n   - 读到 `1`：登记一只（名字 **大胖**、岁数 **5**），放进名册，并且印 `登记了一只，名册上现在 ` + 几只 + ` 只`；\n   - 读到 `2`：把名册**挨着念一遍** —— 每一只印 `格号.` 加一个空格，再印喵一声（格号从 `1` 数起）；\n   - 读到 `0`：印 `收摊喵，今天登记了 ` + 几只 + ` 只`，**并且立刻跳出走号码的圈**（后面还剩多少个号码都不再走）；\n   - 读到别的号码：印 `本喵还不会这个号码喵`；\n4. 号码走完之后（不管是走完的还是跳出来的），**再印一行** `号码走完了，名册上 ` + 几只 + ` 只`。\n\n比如投喂给程序的是\n\n3\n1\n1\n2\n0\n\n程序就要叼回\n\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是大胖，今年 5 岁喵\n2. 我是大胖，今年 5 岁喵\n号码走完了，名册上 2 只\n\n（判分喂的是**另外一组号码**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int cmd = 0;\n        cin >> cmd;\n\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"大胖\", 5));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        } else if (cmd == 2) {\n            int k = 0;\n            for (Cat& c : roster) {\n                k = k + 1;\n                cout << k << \". \";\n                c.greet();\n            }\n        } else {\n            cout << \"本喵还不会这个号码喵\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只",
+      "stdin": "3\n1\n0\n2\n1\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是大胖，今年 5 岁喵\n2. 我是大胖，今年 5 岁喵\n号码走完了，名册上 2 只\n```\n\n这一段就是这一课的**菜单**：号码进来、活自己分派、走了几圈之后收工。\n\n- **`cin >> cmd;` 在圈里面** —— 号码是一个一个进来、一个一个办的，不是先全读进来再办；\n- **`if / else if / else` 那三支** —— 看号码挑一支走，最后那个 `else` 是兜底：本喵还没学会的号码也得回一句话，不能一声不吭；\n- **`break;` 写在收摊那一支的最后** —— 它跳出的是**走号码的那一圈**；那一行之后还剩多少号码，一个都不再走；\n- **最后那一行 `号码走完了…` 在圈外面** —— 所以不管是号码走完的、还是收摊跳出来的，走到那儿都会印一次。\n\n⚠️ 三条钉住：\n\n1. **`break;` 漏了是什么样子，本喵真跑过**：屏幕上一行都不少印，只是**收摊之后还在登记**，最后那一行数出来的只数比该有的多。报错和它不一样，这一跤翻译官喵一个字都不提醒。\n2. **`break;` 的位置在「印完收摊那一句」之后。** 写在 `if` 里面的第一句上，屏幕上会少印一行「收摊喵，今天登记了 …」；写在 `if` 外面（圈的最后）就更糟 —— 每一圈都会跳出去。\n3. **数只数用的是名册自己。** 印的是 `roster.size()`，不是本喵自己数着玩的格子 —— 碗自己知道有几只。",
+      "templateId": "cpp-s2-14-menu-reads-commands",
+      "params": {
+        "n": 3,
+        "name": "大胖",
+        "age": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:56:12.061Z",
+        "hash": "394bb1e9a2a03177"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-menu-reads-commands-004",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把托儿所那台**菜单**装起来。投喂口会**先给一个数**（要跟着几个号码），**再一个一个给 4 个号码**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. 名册就用那只**会自己变长的碗**，一开始是空的；\n3. 读进那个数，再把后面那些数**一个一个当号码读进来**，每个号码挑一支走：\n   - 读到 `1`：登记一只（名字 **小橘**、岁数 **3**），放进名册，并且印 `登记了一只，名册上现在 ` + 几只 + ` 只`；\n   - 读到 `2`：把名册**挨着念一遍** —— 每一只印 `格号.` 加一个空格，再印喵一声（格号从 `1` 数起）；\n   - 读到 `0`：印 `收摊喵，今天登记了 ` + 几只 + ` 只`，**并且立刻跳出走号码的圈**（后面还剩多少个号码都不再走）；\n   - 读到别的号码：印 `本喵还不会这个号码喵`；\n4. 号码走完之后（不管是走完的还是跳出来的），**再印一行** `号码走完了，名册上 ` + 几只 + ` 只`。\n\n比如投喂给程序的是\n\n4\n1\n1\n2\n0\n\n程序就要叼回\n\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是小橘，今年 3 岁喵\n2. 我是小橘，今年 3 岁喵\n收摊喵，今天登记了 2 只\n号码走完了，名册上 2 只\n\n（判分喂的是**另外一组号码**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int cmd = 0;\n        cin >> cmd;\n\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"小橘\", 3));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        } else if (cmd == 2) {\n            int k = 0;\n            for (Cat& c : roster) {\n                k = k + 1;\n                cout << k << \". \";\n                c.greet();\n            }\n        } else {\n            cout << \"本喵还不会这个号码喵\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只",
+      "stdin": "4\n1\n0\n2\n1\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是小橘，今年 3 岁喵\n2. 我是小橘，今年 3 岁喵\n收摊喵，今天登记了 2 只\n号码走完了，名册上 2 只\n```\n\n这一段就是这一课的**菜单**：号码进来、活自己分派、走了几圈之后收工。\n\n- **`cin >> cmd;` 在圈里面** —— 号码是一个一个进来、一个一个办的，不是先全读进来再办；\n- **`if / else if / else` 那三支** —— 看号码挑一支走，最后那个 `else` 是兜底：本喵还没学会的号码也得回一句话，不能一声不吭；\n- **`break;` 写在收摊那一支的最后** —— 它跳出的是**走号码的那一圈**；那一行之后还剩多少号码，一个都不再走；\n- **最后那一行 `号码走完了…` 在圈外面** —— 所以不管是号码走完的、还是收摊跳出来的，走到那儿都会印一次。\n\n⚠️ 三条钉住：\n\n1. **`break;` 漏了是什么样子，本喵真跑过**：屏幕上一行都不少印，只是**收摊之后还在登记**，最后那一行数出来的只数比该有的多。报错和它不一样，这一跤翻译官喵一个字都不提醒。\n2. **`break;` 的位置在「印完收摊那一句」之后。** 写在 `if` 里面的第一句上，屏幕上会少印一行「收摊喵，今天登记了 …」；写在 `if` 外面（圈的最后）就更糟 —— 每一圈都会跳出去。\n3. **数只数用的是名册自己。** 印的是 `roster.size()`，不是本喵自己数着玩的格子 —— 碗自己知道有几只。",
+      "templateId": "cpp-s2-14-menu-reads-commands",
+      "params": {
+        "n": 4,
+        "name": "小橘",
+        "age": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:56:16.693Z",
+        "hash": "f0f01a981878bf5e"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-menu-reads-commands-006",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把托儿所那台**菜单**装起来。投喂口会**先给一个数**（要跟着几个号码），**再一个一个给 4 个号码**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. 名册就用那只**会自己变长的碗**，一开始是空的；\n3. 读进那个数，再把后面那些数**一个一个当号码读进来**，每个号码挑一支走：\n   - 读到 `1`：登记一只（名字 **大胖**、岁数 **3**），放进名册，并且印 `登记了一只，名册上现在 ` + 几只 + ` 只`；\n   - 读到 `2`：把名册**挨着念一遍** —— 每一只印 `格号.` 加一个空格，再印喵一声（格号从 `1` 数起）；\n   - 读到 `0`：印 `收摊喵，今天登记了 ` + 几只 + ` 只`，**并且立刻跳出走号码的圈**（后面还剩多少个号码都不再走）；\n   - 读到别的号码：印 `本喵还不会这个号码喵`；\n4. 号码走完之后（不管是走完的还是跳出来的），**再印一行** `号码走完了，名册上 ` + 几只 + ` 只`。\n\n比如投喂给程序的是\n\n4\n1\n1\n2\n0\n\n程序就要叼回\n\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是大胖，今年 3 岁喵\n2. 我是大胖，今年 3 岁喵\n收摊喵，今天登记了 2 只\n号码走完了，名册上 2 只\n\n（判分喂的是**另外一组号码**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int cmd = 0;\n        cin >> cmd;\n\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"大胖\", 3));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        } else if (cmd == 2) {\n            int k = 0;\n            for (Cat& c : roster) {\n                k = k + 1;\n                cout << k << \". \";\n                c.greet();\n            }\n        } else {\n            cout << \"本喵还不会这个号码喵\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只",
+      "stdin": "4\n1\n0\n2\n1\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是大胖，今年 3 岁喵\n2. 我是大胖，今年 3 岁喵\n收摊喵，今天登记了 2 只\n号码走完了，名册上 2 只\n```\n\n这一段就是这一课的**菜单**：号码进来、活自己分派、走了几圈之后收工。\n\n- **`cin >> cmd;` 在圈里面** —— 号码是一个一个进来、一个一个办的，不是先全读进来再办；\n- **`if / else if / else` 那三支** —— 看号码挑一支走，最后那个 `else` 是兜底：本喵还没学会的号码也得回一句话，不能一声不吭；\n- **`break;` 写在收摊那一支的最后** —— 它跳出的是**走号码的那一圈**；那一行之后还剩多少号码，一个都不再走；\n- **最后那一行 `号码走完了…` 在圈外面** —— 所以不管是号码走完的、还是收摊跳出来的，走到那儿都会印一次。\n\n⚠️ 三条钉住：\n\n1. **`break;` 漏了是什么样子，本喵真跑过**：屏幕上一行都不少印，只是**收摊之后还在登记**，最后那一行数出来的只数比该有的多。报错和它不一样，这一跤翻译官喵一个字都不提醒。\n2. **`break;` 的位置在「印完收摊那一句」之后。** 写在 `if` 里面的第一句上，屏幕上会少印一行「收摊喵，今天登记了 …」；写在 `if` 外面（圈的最后）就更糟 —— 每一圈都会跳出去。\n3. **数只数用的是名册自己。** 印的是 `roster.size()`，不是本喵自己数着玩的格子 —— 碗自己知道有几只。",
+      "templateId": "cpp-s2-14-menu-reads-commands",
+      "params": {
+        "n": 4,
+        "name": "大胖",
+        "age": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:56:21.369Z",
+        "hash": "768e4891bddae220"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-menu-reads-commands-007",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把托儿所那台**菜单**装起来。投喂口会**先给一个数**（要跟着几个号码），**再一个一个给 4 个号码**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. 名册就用那只**会自己变长的碗**，一开始是空的；\n3. 读进那个数，再把后面那些数**一个一个当号码读进来**，每个号码挑一支走：\n   - 读到 `1`：登记一只（名字 **大胖**、岁数 **5**），放进名册，并且印 `登记了一只，名册上现在 ` + 几只 + ` 只`；\n   - 读到 `2`：把名册**挨着念一遍** —— 每一只印 `格号.` 加一个空格，再印喵一声（格号从 `1` 数起）；\n   - 读到 `0`：印 `收摊喵，今天登记了 ` + 几只 + ` 只`，**并且立刻跳出走号码的圈**（后面还剩多少个号码都不再走）；\n   - 读到别的号码：印 `本喵还不会这个号码喵`；\n4. 号码走完之后（不管是走完的还是跳出来的），**再印一行** `号码走完了，名册上 ` + 几只 + ` 只`。\n\n比如投喂给程序的是\n\n4\n1\n1\n2\n0\n\n程序就要叼回\n\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是大胖，今年 5 岁喵\n2. 我是大胖，今年 5 岁喵\n收摊喵，今天登记了 2 只\n号码走完了，名册上 2 只\n\n（判分喂的是**另外一组号码**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int cmd = 0;\n        cin >> cmd;\n\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"大胖\", 5));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        } else if (cmd == 2) {\n            int k = 0;\n            for (Cat& c : roster) {\n                k = k + 1;\n                cout << k << \". \";\n                c.greet();\n            }\n        } else {\n            cout << \"本喵还不会这个号码喵\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只",
+      "stdin": "4\n1\n0\n2\n1\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n登记了一只，名册上现在 1 只\n登记了一只，名册上现在 2 只\n1. 我是大胖，今年 5 岁喵\n2. 我是大胖，今年 5 岁喵\n收摊喵，今天登记了 2 只\n号码走完了，名册上 2 只\n```\n\n这一段就是这一课的**菜单**：号码进来、活自己分派、走了几圈之后收工。\n\n- **`cin >> cmd;` 在圈里面** —— 号码是一个一个进来、一个一个办的，不是先全读进来再办；\n- **`if / else if / else` 那三支** —— 看号码挑一支走，最后那个 `else` 是兜底：本喵还没学会的号码也得回一句话，不能一声不吭；\n- **`break;` 写在收摊那一支的最后** —— 它跳出的是**走号码的那一圈**；那一行之后还剩多少号码，一个都不再走；\n- **最后那一行 `号码走完了…` 在圈外面** —— 所以不管是号码走完的、还是收摊跳出来的，走到那儿都会印一次。\n\n⚠️ 三条钉住：\n\n1. **`break;` 漏了是什么样子，本喵真跑过**：屏幕上一行都不少印，只是**收摊之后还在登记**，最后那一行数出来的只数比该有的多。报错和它不一样，这一跤翻译官喵一个字都不提醒。\n2. **`break;` 的位置在「印完收摊那一句」之后。** 写在 `if` 里面的第一句上，屏幕上会少印一行「收摊喵，今天登记了 …」；写在 `if` 外面（圈的最后）就更糟 —— 每一圈都会跳出去。\n3. **数只数用的是名册自己。** 印的是 `roster.size()`，不是本喵自己数着玩的格子 —— 碗自己知道有几只。",
+      "templateId": "cpp-s2-14-menu-reads-commands",
+      "params": {
+        "n": 4,
+        "name": "大胖",
+        "age": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:09.672Z",
+        "hash": "d82826e49a7c99dd"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-roster-of-cats-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要给托儿所装一本**名册**。投喂口会**先给一个数**（要跟着几只猫的岁数），**再一只一只给 2 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：里面记两格 —— 名字牌和岁数；名字从出生那一手的料里进来；再给外面留两手：**报名字**、**喵一声**（喵一声就把 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵` 这一行印出来）；\n2. 读进那个数，再一只一只读进后面那些数，**每一只都当成年岁**，名字都叫 **小橘**；每凑齐一只就放进名册（名册就是那只**会自己变长的碗**，本喵一个格数都没数）；\n3. 最后印两行：**名册上一共几只**、然后**挨着把名册念一遍**（一只一行，不要格号）。\n\n比如投喂给程序的是\n\n2\n2\n4\n\n程序就要叼回\n\n名册上一共 2 只\n我是小橘，今年 2 岁喵\n我是小橘，今年 4 岁喵\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"小橘\", a));\n    }\n\n    cout << \"名册上一共 \" << roster.size() << \" 只\" << endl;\n    for (Cat& c : roster) {\n        c.greet();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "名册上一共 2 只\n我是小橘，今年 8 岁喵\n我是小橘，今年 3 岁喵",
+      "stdin": "2\n8\n3\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n名册上一共 2 只\n我是小橘，今年 2 岁喵\n我是小橘，今年 4 岁喵\n```\n\n这道题就是这一课那条主线：**图纸 → 名册 → 挨着念**。\n\n- **`Cat` 那两格家底挂 `protected:`** —— 名字和岁数是它自己的，外面想看就走那一手 `getName()`；\n- **`roster.push_back(Cat(\"小橘\", a));`** —— 先照图纸生出一只猫，再放进碗里。碗自己会长，本喵一个格数都没数，来几只装几只；\n- **`roster.size()`** —— 名册上一共几只，是**碗自己数出来的**，不是本喵数的；\n- **`for (Cat& c : roster)`** —— 一只一只挨着过。**那个 `&` 是「别复印、指着真身」**：念名册不用给每只猫复印一份。\n\n⚠️ 三条钉住：\n\n1. **读一只、放一只。** 本喵没先摆格子：读进来的那个数只用来定圈数，碗该长多长它自己知道。\n2. **别自己数格号。** 本喵这一版一个格号都没写；自己数格号的话，翻译官喵会嘀咕一句（课文第三节那个警告框里说得清楚）。\n3. **数出来那一行印的是**一共**几只**，不是最后那只的岁数 —— 本喵真跑过，别把 `size()` 和岁数弄混了。",
+      "templateId": "cpp-s2-14-roster-of-cats",
+      "params": {
+        "n": 2,
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:36.414Z",
+        "hash": "568bda2e9b3221c0"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-roster-of-cats-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要给托儿所装一本**名册**。投喂口会**先给一个数**（要跟着几只猫的岁数），**再一只一只给 2 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：里面记两格 —— 名字牌和岁数；名字从出生那一手的料里进来；再给外面留两手：**报名字**、**喵一声**（喵一声就把 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵` 这一行印出来）；\n2. 读进那个数，再一只一只读进后面那些数，**每一只都当成年岁**，名字都叫 **大胖**；每凑齐一只就放进名册（名册就是那只**会自己变长的碗**，本喵一个格数都没数）；\n3. 最后印两行：**名册上一共几只**、然后**挨着把名册念一遍**（一只一行，不要格号）。\n\n比如投喂给程序的是\n\n2\n8\n9\n\n程序就要叼回\n\n名册上一共 2 只\n我是大胖，今年 8 岁喵\n我是大胖，今年 9 岁喵\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"大胖\", a));\n    }\n\n    cout << \"名册上一共 \" << roster.size() << \" 只\" << endl;\n    for (Cat& c : roster) {\n        c.greet();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "名册上一共 2 只\n我是大胖，今年 3 岁喵\n我是大胖，今年 5 岁喵",
+      "stdin": "2\n3\n5\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n名册上一共 2 只\n我是大胖，今年 8 岁喵\n我是大胖，今年 9 岁喵\n```\n\n这道题就是这一课那条主线：**图纸 → 名册 → 挨着念**。\n\n- **`Cat` 那两格家底挂 `protected:`** —— 名字和岁数是它自己的，外面想看就走那一手 `getName()`；\n- **`roster.push_back(Cat(\"大胖\", a));`** —— 先照图纸生出一只猫，再放进碗里。碗自己会长，本喵一个格数都没数，来几只装几只；\n- **`roster.size()`** —— 名册上一共几只，是**碗自己数出来的**，不是本喵数的；\n- **`for (Cat& c : roster)`** —— 一只一只挨着过。**那个 `&` 是「别复印、指着真身」**：念名册不用给每只猫复印一份。\n\n⚠️ 三条钉住：\n\n1. **读一只、放一只。** 本喵没先摆格子：读进来的那个数只用来定圈数，碗该长多长它自己知道。\n2. **别自己数格号。** 本喵这一版一个格号都没写；自己数格号的话，翻译官喵会嘀咕一句（课文第三节那个警告框里说得清楚）。\n3. **数出来那一行印的是**一共**几只**，不是最后那只的岁数 —— 本喵真跑过，别把 `size()` 和岁数弄混了。",
+      "templateId": "cpp-s2-14-roster-of-cats",
+      "params": {
+        "n": 2,
+        "name": "大胖"
+      },
+      "verified": {
+        "at": "2026-10-20T16:56:26.176Z",
+        "hash": "fecf66f847d52f38"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-roster-of-cats-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要给托儿所装一本**名册**。投喂口会**先给一个数**（要跟着几只猫的岁数），**再一只一只给 3 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：里面记两格 —— 名字牌和岁数；名字从出生那一手的料里进来；再给外面留两手：**报名字**、**喵一声**（喵一声就把 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵` 这一行印出来）；\n2. 读进那个数，再一只一只读进后面那些数，**每一只都当成年岁**，名字都叫 **小橘**；每凑齐一只就放进名册（名册就是那只**会自己变长的碗**，本喵一个格数都没数）；\n3. 最后印两行：**名册上一共几只**、然后**挨着把名册念一遍**（一只一行，不要格号）。\n\n比如投喂给程序的是\n\n3\n1\n4\n2\n\n程序就要叼回\n\n名册上一共 3 只\n我是小橘，今年 1 岁喵\n我是小橘，今年 4 岁喵\n我是小橘，今年 2 岁喵\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"小橘\", a));\n    }\n\n    cout << \"名册上一共 \" << roster.size() << \" 只\" << endl;\n    for (Cat& c : roster) {\n        c.greet();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "名册上一共 3 只\n我是小橘，今年 1 岁喵\n我是小橘，今年 8 岁喵\n我是小橘，今年 2 岁喵",
+      "stdin": "3\n1\n8\n2\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n名册上一共 3 只\n我是小橘，今年 1 岁喵\n我是小橘，今年 4 岁喵\n我是小橘，今年 2 岁喵\n```\n\n这道题就是这一课那条主线：**图纸 → 名册 → 挨着念**。\n\n- **`Cat` 那两格家底挂 `protected:`** —— 名字和岁数是它自己的，外面想看就走那一手 `getName()`；\n- **`roster.push_back(Cat(\"小橘\", a));`** —— 先照图纸生出一只猫，再放进碗里。碗自己会长，本喵一个格数都没数，来几只装几只；\n- **`roster.size()`** —— 名册上一共几只，是**碗自己数出来的**，不是本喵数的；\n- **`for (Cat& c : roster)`** —— 一只一只挨着过。**那个 `&` 是「别复印、指着真身」**：念名册不用给每只猫复印一份。\n\n⚠️ 三条钉住：\n\n1. **读一只、放一只。** 本喵没先摆格子：读进来的那个数只用来定圈数，碗该长多长它自己知道。\n2. **别自己数格号。** 本喵这一版一个格号都没写；自己数格号的话，翻译官喵会嘀咕一句（课文第三节那个警告框里说得清楚）。\n3. **数出来那一行印的是**一共**几只**，不是最后那只的岁数 —— 本喵真跑过，别把 `size()` 和岁数弄混了。",
+      "templateId": "cpp-s2-14-roster-of-cats",
+      "params": {
+        "n": 3,
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-10-20T16:56:30.933Z",
+        "hash": "6bdd42bb7dc55dd5"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-14-roster-of-cats-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要给托儿所装一本**名册**。投喂口会**先给一个数**（要跟着几只猫的岁数），**再一只一只给 3 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：里面记两格 —— 名字牌和岁数；名字从出生那一手的料里进来；再给外面留两手：**报名字**、**喵一声**（喵一声就把 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵` 这一行印出来）；\n2. 读进那个数，再一只一只读进后面那些数，**每一只都当成年岁**，名字都叫 **大胖**；每凑齐一只就放进名册（名册就是那只**会自己变长的碗**，本喵一个格数都没数）；\n3. 最后印两行：**名册上一共几只**、然后**挨着把名册念一遍**（一只一行，不要格号）。\n\n比如投喂给程序的是\n\n3\n3\n5\n4\n\n程序就要叼回\n\n名册上一共 3 只\n我是大胖，今年 3 岁喵\n我是大胖，今年 5 岁喵\n我是大胖，今年 4 岁喵\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"大胖\", a));\n    }\n\n    cout << \"名册上一共 \" << roster.size() << \" 只\" << endl;\n    for (Cat& c : roster) {\n        c.greet();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "名册上一共 3 只\n我是大胖，今年 5 岁喵\n我是大胖，今年 4 岁喵\n我是大胖，今年 8 岁喵",
+      "stdin": "3\n5\n4\n8\n",
+      "explanation": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n名册上一共 3 只\n我是大胖，今年 3 岁喵\n我是大胖，今年 5 岁喵\n我是大胖，今年 4 岁喵\n```\n\n这道题就是这一课那条主线：**图纸 → 名册 → 挨着念**。\n\n- **`Cat` 那两格家底挂 `protected:`** —— 名字和岁数是它自己的，外面想看就走那一手 `getName()`；\n- **`roster.push_back(Cat(\"大胖\", a));`** —— 先照图纸生出一只猫，再放进碗里。碗自己会长，本喵一个格数都没数，来几只装几只；\n- **`roster.size()`** —— 名册上一共几只，是**碗自己数出来的**，不是本喵数的；\n- **`for (Cat& c : roster)`** —— 一只一只挨着过。**那个 `&` 是「别复印、指着真身」**：念名册不用给每只猫复印一份。\n\n⚠️ 三条钉住：\n\n1. **读一只、放一只。** 本喵没先摆格子：读进来的那个数只用来定圈数，碗该长多长它自己知道。\n2. **别自己数格号。** 本喵这一版一个格号都没写；自己数格号的话，翻译官喵会嘀咕一句（课文第三节那个警告框里说得清楚）。\n3. **数出来那一行印的是**一共**几只**，不是最后那只的岁数 —— 本喵真跑过，别把 `size()` 和岁数弄混了。",
+      "templateId": "cpp-s2-14-roster-of-cats",
+      "params": {
+        "n": 3,
+        "name": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:39.769Z",
+        "hash": "71301cf8d53759c9"
+      }
+    }
+  ]
+}

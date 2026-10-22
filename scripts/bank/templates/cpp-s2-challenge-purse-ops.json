@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s2-challenge-purse-ops",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-15",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["图纸", "存钱罐", "取不动要说不", "只看不动的本事"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "pick", "values": ["4", "6"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 3 },
+  "stemTemplate": "本喵的猫猫银行开张了，第一件家当是**一只存钱罐**（画成一张图纸）喵。业务一对一对地来：每对的第一个数是**暗号**，第二个数是**几条**。\n\n- 暗号是 `1`：**存**。罐子收下，印 `存进 X 条，现在有 Y 条喵`（Y 是存完之后罐子里的数）；\n- 暗号是别的数：**取**。罐子里够，就印 `取出 X 条，还剩 Y 条喵`；不够，取不出来，印 `取不出来，只有 Y 条喵`（Y 是罐子里现有的数）。\n\n全办完，打烊时补最后一行：`打烊啦，罐子里有 Y 条喵`。\n\n图纸的要求：罐子**刚造出来时是 0 条**；罐子要有三个本事 —— **存**、**取**（取不动要如实说「不行」）、**报数**。投喂口先给一个数（这一串一共几个数），再一个一个给。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。本事不用偷懒，一步一步写清楚就好。）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nclass Purse {\npublic:\n    // 罐子：存、取、报数三个本事待补；刚造出来时是 0 条\n};\n\nint main() {\n    int n = 0;\n    if (!(cin >> n)) {\n        return 1;\n    }\n\n    for (int i = 0; i < n / 2; i++) {\n        int code = 0;\n        int amount = 0;\n        cin >> code >> amount;\n        // 按暗号办事：1 是存，其余是取\n    }\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nclass Purse {\npublic:\n    Purse() {\n        coins = 0;\n    }\n\n    void put(int k) {\n        coins = coins + k;\n    }\n\n    bool take(int k) {\n        if (k > coins) {\n            return false;\n        }\n        coins = coins - k;\n        return true;\n    }\n\n    int total() const {\n        return coins;\n    }\n\nprivate:\n    int coins;\n};\n\nint main() {\n    int n = 0;\n    if (!(cin >> n)) {\n        return 1;\n    }\n\n    Purse purse;\n    for (int i = 0; i < n / 2; i++) {\n        int code = 0;\n        int amount = 0;\n        cin >> code >> amount;\n        if (code == 1) {\n            purse.put(amount);\n            cout << \"存进 \" << amount << \" 条，现在有 \" << purse.total() << \" 条喵\" << endl;\n        } else {\n            if (purse.take(amount)) {\n                cout << \"取出 \" << amount << \" 条，还剩 \" << purse.total() << \" 条喵\" << endl;\n            } else {\n                cout << \"取不出来，只有 \" << purse.total() << \" 条喵\" << endl;\n            }\n        }\n    }\n\n    cout << \"打烊啦，罐子里有 \" << purse.total() << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题练的是**把罐子和罐子的本事画进同一张图纸**喵。三处关键：\n\n**一、刚造出来先清零。** 图纸上要有一个「**一造出来就自动跑一次**」的起手式（名字和图纸一模一样、什么都不报的那种），在里面把格子放成 0。少了它，罐子里一开始装的就是**上一场留下的旧货**，数字会离谱到看不懂。\n\n**二、取不动要如实说不行。** 「取」这个本事要有**两种结局**：成了、没成。所以它递回来的不是条数，而是一个「行 / 不行」的答案（`bool`）：够就减掉、答「行」；不够就**一条都别动**、答「不行」。喊它的那一头看这个答案，决定印哪句话。\n\n**三、只看不动的本事加 `const`。** 「报数」只读格子、不写格子，名字末尾标一个 `const`，是在跟翻译官喵打招呼：「**这一声保证不动罐子**。」打了这个招呼，遇到「不许改的罐子」也能喊它。\n\n顺带一句：本事的名字随你起，判分只看印出来的话 —— **行数、顺序、数字**一个都不能差。"
+}

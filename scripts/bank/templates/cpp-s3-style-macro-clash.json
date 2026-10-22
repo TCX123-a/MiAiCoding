@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-style-macro-clash",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-28",
+  "type": "codefix",
+  "concept": ["小字条", "开工前照抄替换", "全大写加前缀", "名字分家"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵翻出一份别猫塞来的老程序：门口点货，先报一个数（今天一共报了几回），再一回一回报数；**超过 4 条**的要记上一笔（4 就是上限，写在一张小字条上），最后印 `超标 X 只喵`。\n\n可这份程序现在**连门都进不去** —— 翻译官喵念到一半就当场翻脸：\n\n```text\nerror: expected unqualified-id before numeric constant\n```\n\n本喵凑近一看：问题出在**两个名字撞了车** —— 一张全大写的**小字条**（`#define` 那种开工前照抄的小抄），和一个全大写的名字，在程序里长得**一模一样**。你帮本喵把这份程序救回来：让翻译官喵念得下去，输出还是原来那行格式。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。）",
+  "brokenCodeTemplate": "#include <iostream>\n\n#define COUNT 4\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int COUNT = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > COUNT) {\n            COUNT = COUNT + 1;\n        }\n    }\n\n    std::cout << \"超标 \" << COUNT << \" 只喵\" << std::endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n\n#define FISH_LIMIT 4\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int over_count = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > FISH_LIMIT) {\n            over_count = over_count + 1;\n        }\n    }\n\n    std::cout << \"超标 \" << over_count << \" 只喵\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一趟过不去门，根因不在报错的那一行本身，而在**两个名字撞了车**喵。\n\n**一、小字条是开工前照抄的。** 翻译官喵真正动工之前，先把每张 `#define` 小字条挨个抄一遍：程序里**每一处**出现 `COUNT` 的地方，都被原样换成 `4`。所以这一行\n\n```text\nint COUNT = 0;\n```\n\n早就不是一句声明了，它被抄成了\n\n```text\nint 4 = 0;\n```\n\n—— 等号左边要跟一个可以放东西的名字，它却拿到一个数字，翻译官喵当场翻脸（`expected unqualified-id before numeric constant` 就是在说这件事）。\n\n**二、一处撞车，处处遭殃。** 就算把这一行绕过去，下面那句 `COUNT = COUNT + 1;` 同样会被抄成 `4 = 4 + 1;` —— 连「往哪儿加」都没了。撞车不是一行的伤，是同一个名字被两边同时占用的伤。\n\n**三、救法是让两个名字分家。** 它们本来就不是一个用途：一个是不动的**上限**，一个是往上加的**计数**。\n\n- 上限那张小字条，按 Google 的规矩起名：**全大写 + 下划线 + 项目前缀** —— `FISH_LIMIT`。前缀就是「这是本店的」记号，从此跟程序里的普通名字分家；\n- 数数的那个改成 `over_count`：小写 + 下划线，名字本身就把「在数超标的只数」说清楚了。\n\n**四、顺带记一条更高的规矩。** Google 的原话是「你不是真的想 define 宏吧」—— 宏能不用就不用。一个一辈子不动的数，写成 `constexpr int kFishLimit = 4;`：`k` 开头的常量名一眼可认，还能让翻译官喵顺手帮你把关，比小字条干净得多。\n\n一句话收好：**宏名要全大写加前缀，普通名字用不到它；两边各让一步，撞车就不会发生喵。**"
+}

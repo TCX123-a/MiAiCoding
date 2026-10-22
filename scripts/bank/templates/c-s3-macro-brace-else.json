@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-macro-brace-else",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-11",
+  "type": "codefix",
+  "concept": ["一次要干两下的条子", "照抄的花括号跟 if 打架", "跑一次的圈", "do-while(0)"],
+  "instances": 2,
+  "params": {
+    "v": { "kind": "pick", "values": ["7", "2"] },
+    "t": { "kind": "pick", "values": ["3", "9"] }
+  },
+  "stemTemplate": "墙上那张 `REPORT` 条子，一次要印**两句**字。本喵让它顶在 `if` 后面单占一行，稿子翻译到一半就停了 —— 翻译官喵指着那个 `else` 说它「**没有主**」喵。\n\n那条子的身子是**一对花括号**裹着两句话。请你把**条子本身**修好（`main` 里那几行的用法一个字都别动）：往后把它顶在谁后面，都不许再散架。\n\n改好之后，`fish` 比 {t} 大就印两行 —— 先 `收货：小鱼干`、再 `记账完毕`；不比它大就只印一行 `今天没收到`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define REPORT(msg) { printf(\"收货：%s\\n\", msg); printf(\"记账完毕\\n\"); }\n\nint main(void) {\n    int fish = {v};\n    if (fish > {t})\n        REPORT(\"小鱼干\");\n    else\n        printf(\"今天没收到\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define REPORT(msg) \\\n    do { \\\n        printf(\"收货：%s\\n\", msg); \\\n        printf(\"记账完毕\\n\"); \\\n    } while (0)\n\nint main(void) {\n    int fish = {v};\n    if (fish > {t})\n        REPORT(\"小鱼干\");\n    else\n        printf(\"今天没收到\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "那条条子的身子是**一对花括号**，里头两句。它被抄到 `if` 后面的时候，抄出来是这个形状：`if` 带上**一整块**，块后面还跟着本喵写的那个分号 —— 那个分号把 `if` 的话**收了尾**，下一行的 `else` 就成了没主的孤儿。翻译官喵当场停下：\n\n```text\nmain.c: In function 'main':\nmain.c:9:5: error: 'else' without a previous 'if'\n```\n\n（这两行报错是本喵照着上面那份稿子真跑出来的，行号数下来正落在 `else` 那行。）\n\n课文里给的解法是**跑一次的圈**：\n\n```text\n#define REPORT(msg) \\\n    do { \\\n        printf(\"收货：%s\\n\", msg); \\\n        printf(\"记账完毕\\n\"); \\\n    } while (0)\n```\n\n`do` 加上这一对花括号，整个人就**是一句话**了 —— 末尾那个分号落在它身上，跟 `if` 不打架，`else` 也就有了主；尾巴上的 `while (0)` 保证只印一次，绝不真绕圈。\n\n往后写这种「一次要干好几下」的条子，**只认这个形状**喵：光用一对花括号、或者把尾巴写成 `while (1)`，都会出岔子。"
+}

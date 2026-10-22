@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-varargs-wrong-type",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-12",
+  "type": "codefix",
+  "concept": ["叼的时候要说清类型", "类型对不上一声不吭", "va_arg 的第二个投喂", "清单不认字"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["2", "4"] },
+    "b": { "kind": "pick", "values": ["3", "5"] },
+    "c": { "kind": "pick", "values": ["4", "6"] }
+  },
+  "stemTemplate": "这一招看着哪哪都对：清单开了、名字挂了、绕鱼干跑圈也走了、收摊也收了。可它印出来的数跟喂进去的**毫无关系**喵 —— 本喵真跑过：翻译官喵一声没吭，程序照样跑完。\n\n请你把它改对（四步一步都别删，只动该动的那一处）。改好之后该印出 `{a}`、`{b}`、`{c}` 三份加起来的总和。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nint fish_total(int count, ...) {\n    va_list list;\n    va_start(list, count);\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum += va_arg(list, double);\n    }\n    va_end(list);\n    return sum;\n}\n\nint main(void) {\n    printf(\"%d\\n\", fish_total(3, {a}, {b}, {c}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nint fish_total(int count, ...) {\n    va_list list;\n    va_start(list, count);\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum += va_arg(list, int);\n    }\n    va_end(list);\n    return sum;\n}\n\nint main(void) {\n    printf(\"%d\\n\", fish_total(3, {a}, {b}, {c}));\n    return 0;\n}\n",
+  "explanationTemplate": "病根在**叼的那一句**：`va_arg` 的第二个投喂要说清「这一份是什么类型」，它写成了 `double` —— 可本喵喂进去的三份都是 `int`喵。\n\n清单不认字：你说按小数叼，它就从**放小数的地方**去抓一个；那儿压根没人放过东西，抓回来的是**谁也不知道从哪儿来的**数。于是总和跟喂进去的毫无关系。\n\n最阴的地方是：**它不报错、也不警告**，程序看着一切正常。（对照一下：`printf` 的格式串跟投喂对不上，翻译官喵会嘟囔一句 `-Wformat=` 警告；自己写的清单没这个福气。）\n\n规矩记牢：`va_arg` 的类型要和**喂进去的那一份**一份一份对上 —— 这一处替不了你喵。"
+}

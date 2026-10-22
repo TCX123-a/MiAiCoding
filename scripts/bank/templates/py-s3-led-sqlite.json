@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-led-sqlite",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-15",
+  "type": "codewrite",
+  "concept": ["sqlite3 小账柜", "立格子", "问号留空位", "COUNT 与 SUM"],
+  "instances": 6,
+  "params": {
+    "item": { "kind": "pick", "values": ["小鱼干", "冻干"] }
+  },
+  "stemTemplate": "第二块砖：把账塞进**小账柜**。这一题先不动磁盘，开一只**只在程序跑着时存在**的柜子（`sqlite3.connect(\":memory:\")`）练手。\n\n请你写：\n\n1. 开柜子，然后**先给柜子立好格子**：格子名就叫 `账本`，一格 `项目` 放字（`TEXT`），一格 `金额` 放小数（`REAL`）。\n2. 一次塞进**三笔**（用带**问号空位**的那句，别把值直接拼进句子里）：\n   - `{item}` 12.5\n   - `猫砂` 30.0\n   - `{item}` 7.5\n3. **拍板。**\n4. 问柜子要三样东西，印**三行**：\n\n```text\n一共记了 3 笔\n总共花了 50.0 元\n第一笔是 {item}\n```\n\n三样分别是「一共几笔」「金额加起来多少」「**头一笔**的项目叫什么」。\n\n（金额那行印出来的样子就是 `50.0`，不用特意补小数位喵。）",
+  "starterTemplate": "import sqlite3\n\n# ① 开柜子\n\n# ② 立格子：账本（项目 TEXT，金额 REAL）\n\n# ③ 一次塞三笔（问号留空位）\n\n# ④ 拍板\n\n# ⑤ 问三样，印三行\n",
+  "referenceSolutionTemplate": "import sqlite3\n\n连接 = sqlite3.connect(\":memory:\")\n连接.execute(\"CREATE TABLE 账本 (项目 TEXT, 金额 REAL)\")\n连接.executemany(\"INSERT INTO 账本 VALUES (?, ?)\", [(\"{item}\", 12.5), (\"猫砂\", 30.0), (\"{item}\", 7.5)])\n连接.commit()\n\n几笔 = 连接.execute(\"SELECT COUNT(*) FROM 账本\").fetchone()[0]\n总数 = 连接.execute(\"SELECT SUM(金额) FROM 账本\").fetchone()[0]\n第一笔 = 连接.execute(\"SELECT 项目 FROM 账本 LIMIT 1\").fetchone()[0]\nprint(\"一共记了\", 几笔, \"笔\")\nprint(\"总共花了\", 总数, \"元\")\nprint(\"第一笔是\", 第一笔)\n连接.close()\n",
+  "explanationTemplate": "三行输出对应三件本事，本喵一件一件说喵。\n\n**① 先立格子，才能往里放。** `CREATE TABLE 账本 (项目 TEXT, 金额 REAL)` 念作「立一只叫账本的柜子，两格：一格放字、一格放小数」。格子立好了，往里塞东西才有着落。\n\n**② 塞的时候用问号留空位。** \n\n```text\nINSERT INTO 账本 VALUES (?, ?)\n```\n\n那两个问号就是**空位**，后面那摞值按顺序填进去。为什么不用「把值直接拼进句子里」？因为拼句子的时候，值里的引号之类的记号会跟句子本身的记号搅在一起 —— **用空位就不用操这个心**，本喵一律这么写。一次塞好几笔用 `executemany`，把一摞值递给它就行。\n\n**③ 问柜子要东西用 `SELECT`。** `COUNT(*)` 问「一共几笔」，`SUM(金额)` 问「加起来多少」，`LIMIT 1` 是「只给头一笔」。`fetchone()` 是「把答复里那一行拿过来」，后面那个 `[0]` 是「就要那一格里装的东西」—— 因为答复是**一行一格**，得再往里抠一层。\n\n最后记住：这一题开的是**只在程序跑着时存在**的柜子，所以你塞完是看不见任何文件的。真用的时候把那句改成写一个真文件的名字，它就是一只**留在磁盘上**的柜子了喵。"
+}

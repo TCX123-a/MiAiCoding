@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-str-eqeq-compare",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-11",
+  "type": "codefix",
+  "concept": ["strcmp", "==", "比较内容", "string.h"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["cat", "fish", "小橘", "大肥鱼"] }
+  },
+  "stemTemplate": "本喵手上有两块牌子，上面写的字**一模一样**，都是 `{w}`喵。\n\n本喵想让程序比一比它俩一不一样：一样就印 `一样喵`，不一样就印 `不一样喵`。\n\n可它跑起来印的偏偏是 `不一样喵` …… 明明两块牌子上的字一模一样呀！\n\n你帮本喵看看是哪儿想岔了，把它改好。改好之后，两块牌子内容一样时程序应该印 `一样喵`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char left[] = \"{w}\";\n    char right[] = \"{w}\";\n\n    if (left == right) {\n        printf(\"一样喵\\n\");\n    } else {\n        printf(\"不一样喵\\n\");\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char left[] = \"{w}\";\n    char right[] = \"{w}\";\n\n    if (strcmp(left, right) == 0) {\n        printf(\"一样喵\\n\");\n    } else {\n        printf(\"不一样喵\\n\");\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "两块牌子上的字明明一样，那个眼色却答了「假」，于是走到了 `else` 那条岔路上喵。\n\n为什么？因为 `left` 和 `right` 不是「那串字」，而是**那排碗摆在哪儿** —— `left == right` 比的是**两张牌子**，而它俩摆在不同的地方，牌子当然不一样。它比的**根本不是碗里的珠子**。\n\n（别指望翻译官喵**拦住**你：本喵在命令行里真跑过一遍 —— 它念了一句 `comparison between two arrays`（「这是在拿两排碗比呀」），念完就把程序原样生出来了，屏幕上直接就是错的答案。**会念、不肯拦**，这种错最容易漏过去喵。）\n\n**比内容只有一条路**：`strcmp` 那一招。它一模一样时叼回 `0`，所以「一样」要写成 `strcmp(left, right) == 0`。\n\n它和数、抄、接那三招一样住在 `string.h` 家，用之前先请它出场。"
+}

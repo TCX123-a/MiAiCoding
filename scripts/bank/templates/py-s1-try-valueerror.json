@@ -1,0 +1,27 @@
+{
+  "templateId": "py-s1-try-valueerror",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-13",
+  "type": "codefix",
+  "concept": [
+    "try/except",
+    "ValueError",
+    "int 转换"
+  ],
+  "instances": 2,
+  "params": {
+    "text": {
+      "kind": "pick",
+      "values": [
+        "喵喵",
+        "三只猫",
+        "一打小鱼干"
+      ]
+    }
+  },
+  "stemTemplate": "本喵收到一张纸条，上面写着「{text}」喵。\n\n程序要做的是：把它转成整数，打印**加 1 之后**的结果。\n\n可纸条上写的**不是数字**的时候，它一转就翻脸了……你帮本喵改对：**能转就转并打印加 1 的结果；转不了就打印一行 `这不是数字喵`**。",
+  "brokenCodeTemplate": "text = \"{text}\"\nn = int(text)\nprint(n + 1)\n",
+  "referenceFixTemplate": "text = \"{text}\"\ntry:\n    n = int(text)\n    print(n + 1)\nexcept ValueError:\n    print(\"这不是数字喵\")\n",
+  "explanationTemplate": "`int()` 不是「尽力而为」的喵 —— 你给它一串不是数字的字，它**不会**还你 0、也不会把原来那串还给你，它直接停下来（`ValueError`）。\n\n所以要接住它，写法是把**可能出事的那几行一起**放进 `try` 里：\n\n- `n = int(text)` 会出事 → 放进去\n- `print(n + 1)` **用到了 n** → 也得放进去\n\n第二行是新手最容易漏的：`n` 要是没转成功，它压根就不存在，`print(n + 1)` 会再报一个 `NameError`，而你会以为是 `try` 没生效。**一个 `try` 里要装的是「从头到尾做完这件事」的完整几步**，不是只有开头那一句。"
+}

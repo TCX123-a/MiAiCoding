@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-22-ifdef-zero",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-22",
+  "type": "codefix",
+  "concept": ["卡上写着 0 也算贴过", "两道门判的不是一回事", "改门不改卡"],
+  "instances": 2,
+  "params": {
+    "cats": { "kind": "int", "min": 3, "max": 4 },
+    "per": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stemTemplate": "这一题的稿子顶上写着一行 `#define DEBUG 0` —— 本喵的意思是「抓虫那句话关掉」喵。可它一跑起来，**那句话照样印出来了**：本喵改的是卡上那个数，门口那道门压根没搭理。\n\n跑一遍就能看见：屏幕上现在**多**了一行 `[抓虫] {cats} 只猫，每只 {per} 条`，而本喵要的只有最后那一行总数（`一共要 ` 开头、` 条小鱼干` 收尾）。\n\n**只许改一处**（改门，不许改卡上那个 0）：改完之后，卡上写着 `0` 的时候抓虫那行一个字都不印；把那个 `0` 拧成 `1`，它又回来。\n\n⚠️ 别把 `#define DEBUG 0` 整行删掉 —— 本喵要的是「卡还贴着、只是这一回关着」，两种状态都得拧得回来喵。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\n#define DEBUG 0\n\nint main() {\n    int cats = {cats};\n    int per = {per};\n#ifdef DEBUG\n    cout << \"[抓虫] \" << cats << \" 只猫，每只 \" << per << \" 条\" << endl;\n#endif\n    cout << \"一共要 \" << cats * per << \" 条小鱼干\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\n#define DEBUG 0\n\nint main() {\n    int cats = {cats};\n    int per = {per};\n#if DEBUG\n    cout << \"[抓虫] \" << cats << \" 只猫，每只 \" << per << \" 条\" << endl;\n#endif\n    cout << \"一共要 \" << cats * per << \" 条小鱼干\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "{cats} 只猫、每只 {per} 条 —— 这几句本身一个字都没错，坏的是**门口那半句**喵。\n\n门上原来写的是 `#ifdef DEBUG`。这道门只会问一句「这张卡贴没贴」，**卡上写着什么它根本不看** —— 你贴了 `0`，在它眼里和贴了 `1`、贴了一张空卡一模一样，都是「有」。所以那句抓虫的话照样进门。\n\n改法是**换门**：把 `#ifdef DEBUG` 改成 `#if DEBUG`。第二道门看的是**值**：`0` 就是关、`1` 才是开。\n\n⚠️ 为什么不许把 `#define DEBUG 0` 删掉：删了以后门确实也会关上（卡没了，值就当 0 算），可那样卡也就没了 —— 以后想把抓虫那几行放出来，得重新写一行。留着卡、只拧值，才是这道门本来的用法。\n\n自己验一遍：把卡上那个 `0` 改成 `1` 再跑，抓虫那行**必须回来**，而总数那行一个字都不许变；再改回 `0`，它又得消失。两回都对，才算真的换对了门。"
+}

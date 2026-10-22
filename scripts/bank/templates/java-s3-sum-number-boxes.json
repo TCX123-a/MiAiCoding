@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-sum-number-boxes",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-01",
+  "type": "codewrite",
+  "concept": ["只管往里塞的问号", "只管往外叼的问号", "两种柜子都能收"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要写两招，配上本课的两种问号喵：一招**只管往里塞**，一招**只管往外叼**。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请先把它们一个不漏地放进柜子，再印两行：\n\n```text\n柜子里有 N 件\n加起来是 S\n```\n\n- `N` 是件数；\n- `S` 是柜子里所有数**加起来**。注意 `S` 印出来是**小数那种**（末尾带一个 `.0`，像 `24.0` 这个样子）—— 所以叼回来的那一手得让它吐小数。\n\n两招的名字随本喵挑，但**收的柜子都得写成问号那种**，而且方向要对：\n\n- 往里放的那招，收的是「**至少装得下整数**」的柜子；\n- 加起来的那招，收的是「**叼出来的保证是数字那一家**」的柜子。\n\n（柜子里那个「几件」永远让柜子自己报，别写死喵。）\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    static void put(/* 这里填收什么样的柜子 */, int x) {\n\n    }\n\n    static double total(/* 这里填收什么样的柜子 */) {\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    static void put(List<? super Integer> box, int x) {\n        box.add(x);\n    }\n\n    static double total(List<? extends Number> box) {\n        double sum = 0;\n        for (Number x : box) {\n            sum = sum + x.doubleValue();\n        }\n        return sum;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            put(nums, sc.nextInt());\n        }\n        System.out.println(\"柜子里有 \" + nums.size() + \" 件\");\n        System.out.println(\"加起来是 \" + total(nums));\n    }\n}\n",
+  "explanationTemplate": "这题把本课的两种问号各用了一遍，方向一个都不许反喵。\n\n**一、往里放的那招写 `? super Integer`。** 它读作「一只**至少装得下整数**的柜子」。本喵递进去的是尺码填 `Integer` 的那只柜子 —— 整数当然装得下整数，所以收得下。这招从头到尾只做 `box.add(x)`，是**只管往里塞**，所以问号后面跟的是 `super`。\n\n**二、加起来的那招写 `? extends Number`。** 它读作「里面装着数字那一家的某一种」。招式里要把东西**叼出来**加一加，所以得保证叼出来的那件带着数字那家都会的本事 —— `x.doubleValue()` 才叫得动。这是**只管往外叼**，所以问号后面跟的是 `extends`。\n\n**三、要是不写问号呢？** 两招都得写死一种尺码（比如 `List<Integer>`），那么本喵就递不进尺码填 `Number` 的柜子了 —— 明明它装得下，就是递不进去。问号买到的正是这份「好几种柜子都能收」。\n\n**四、为什么 `S` 末尾有个 `.0`。** 因为加起来的这招叼回来的是**小数那种**，不是整数。本喵一句转换都没写 —— 结果自然是小数。要是把它写成整数那一手，印出来就会是 `24` 而不是 `24.0`，跟判分对不上喵。\n\n**五、`double sum = 0;` 这个小篮子得立在绕圈外面。** 立在里面的话，每转一圈就重新归零，最后拿到的是最后一格，不是全部喵。\n\n往后只要看见「一招要收好几种柜子」，先问自己一句：**这招是往外叼，还是往里塞？** 答案就是那个问号后面该跟哪个词喵。"
+}

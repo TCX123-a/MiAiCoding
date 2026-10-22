@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-dunder-bowl-str-add",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-08",
+  "type": "codewrite",
+  "concept": ["__str__", "__add__", "新碗"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["条小鱼干", "颗猫粮", "块冻干"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 2, "max": 9 },
+  "stemTemplate": "本喵想要一只碗，还得给这只碗两种本事喵：\n\n1. `print(碗)` 的时候，印出来长这样：`装了 3 {unit}`（「装了」后面一个空格，数字和量词之间一个空格）。\n2. 两只碗用 `+` 加起来的时候，得到的是一只**新碗**，里面装着两只碗**合起来**的数。\n\n请你画好这张图纸，然后**读两行整数**（一行一个，先读到的是 `a`，后读到的是 `b`），分别拿来造两只碗，最后**印两行**：\n\n1. 第一只碗被 `print` 出来的样子\n2. 两只碗 `+` 起来并成的那只**新碗**被 `print` 出来的样子\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __str__(self):\n        return \"装了 \" + str(self.n) + \" {unit}\"\n\n    def __add__(self, other):\n        return Bowl(self.n + other.n)\n\n\na = Bowl(int(input()))\nb = Bowl(int(input()))\nprint(a)\nprint(a + b)\n",
+  "explanationTemplate": "这是**两只手同时开工**的一张图纸，两招各管一个时刻喵。\n\n- **`__str__` 的时刻**：`print(碗)` 的时候。Python 先悄悄喊一遍 `碗.__str__()`，**拿它叼回来的那句话**去印。所以这一招要 `return` 一句话，**不是自己 `print`** —— 只印不叼的话，Python 拿不到话，当场翻脸。\n- **`__add__` 的时刻**：`+` 的**左边**摆着这只碗的时候。本喵写 `a + b`，Python 背地里喊的是 `a.__add__(b)`：`self` 是左边那只，`other` 是右边那只。\n\n⚠️ **`__add__` 叼回来的是一只新碗** —— 所以最后 `return` 的那一句是 `Bowl(self.n + other.n)`，把两边的数加起来，**再造一只新的**。原来那两只一点没变，好好的。想让 `a` 自己也变，得自己写 `a = a + b` 重新接住。\n\n⚠️ **`print(a + b)` 能印出「装了…」，是本喵写的两招接力跑的结果**：`+` 先喊 `__add__` 拿到新碗，`print` 再喊新碗的 `__str__` 拿话去印。一句话没写对，最后印出来的就不是本喵要的样子。\n\n⚠️ 还有一件小事很扎眼：数字要接在话后面，必须自己用 `str(self.n)` 把它变成字，两段之间那个空格也得自己补 —— 少了它，印出来会挨在一起。"
+}

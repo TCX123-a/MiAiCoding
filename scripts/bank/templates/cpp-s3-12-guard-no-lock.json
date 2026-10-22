@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-12-guard-no-lock",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-12",
+  "type": "codefix",
+  "concept": ["守卫要指名守着哪把锁", "lock_guard 的圆括号里要递锁", "编不过"],
+  "instances": 2,
+  "params": {
+    "times": { "kind": "pick", "values": ["700", "1100"] },
+    "unit": { "kind": "pick", "values": ["次", "下"] }
+  },
+  "stemTemplate": "本喵喊了三只帮手往**同一个碗**里加数：每位加 {times} {unit}。三只都接回来之后，印出来的该是三倍。\n\n可这段代码**编不过**喵。翻译官喵的原话里点着那位**守卫**：它不知道自己该守着哪把锁。你帮本喵把它改对：**加的次数、印的那一行、碗和锁的摆法都不用动**。\n\n改好之后，程序要印出 `一共 ` 后面跟三倍的 {times}。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard;\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, {times});\n    thread t2(addMany, {times});\n    thread t3(addMany, {times});\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" {unit}\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, {times});\n    thread t2(addMany, {times});\n    thread t3(addMany, {times});\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" {unit}\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题漏的是**告诉守卫守着哪把锁**喵。\n\n那一位守卫（`lock_guard`）进门的样子只有一种：**圆括号里得把锁递给它** —— `guard(mtx)`。空着圆括号，它就不知道要守谁家的门，翻译官喵当场把它拦下：\n\n`error: no matching function for call to 'std::lock_guard<std::mutex>::lock_guard()'`\n\n念作「没有哪个用法是这么写的」。它后面还补了一句 `candidate expects 2 arguments, 0 provided` ——「我认得的那几种写法，都得给点儿东西，你一个都没给」。补上 `(mtx)`，它就老老实实站到碗前面去了。\n\n⚠️ 注意报错里点的是**守卫这个名字**，不是锁的名字：本喵一开始还以为是锁造错了。翻译官喵说的其实是「我认得的那几种用法，没有一种是空手的」——顺着这句去看圆括号，才是正路。\n\n⚠️ 守卫认的是**它出生那一行给你的那把锁**：写 `guard(mtx)` 守的就是 `mtx`。要是碗前面站着守卫、守的却是另一把锁，它照样不管这只碗。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-08-deep-copy",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-08",
+  "type": "codewrite",
+  "concept": ["会租仓库的盒子", "自己写照抄招式", "深拷贝另租一间搬内容"],
+  "instances": 6,
+  "params": {
+    "k": { "kind": "pick", "values": [88, 99] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 1, "max": 9 },
+  "stemTemplate": "本喵要一只**会租仓库的盒子**，还要它照抄出来之后**各过各的**。投喂口会递进来**一个数**（盒子里装几条）。\n\n请你这么办：\n\n1. **画图纸** `FishBox`：一栏**带盖的牌子** `int* p`。\n   - **出生招式**：接进来的那个数先**租一间屋**放进去（`new`），地址记在 `p` 那一格里；\n   - **收尾招式**：把自己租的那间屋**还掉**（`delete`）；\n   - 再画两个公开招式：`get` 把屋里的数叼回来，`set` 把屋里的数改掉。\n2. **自己写一份照抄招式**（名字和图纸同名，料是另一只同款盒子，前面带 `const`、中间那个「不必还的名字」的记号也不能省）：里面**另租一间屋、把对方屋里的东西搬进去**。\n3. 在 `main` 里：读进那个数 → 生一只盒子 → **照抄一只** → 把**抄出来那只**改成 {k} → 印**两行**：\n\n```text\nXX 那一格现在是 N 条\n```\n\n（第一行是原件、第二行是抄出来那只）\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    int v = 0;\n    cin >> v;\n\n    FishBox a(v);\n    FishBox b = a;\n    b.set({k});\n    cout << \"a 那一格现在是 \" << a.get() << \" 条\" << endl;\n    cout << \"b 那一格现在是 \" << b.get() << \" 条\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的重点全在照抄招式里那一句：\n\n```text\np = new int(*other.p);\n```\n\n把它拆成三截看，就再也不会写错喵：\n\n- `other.p` —— 对方那间屋的**地址**（一张牌子）；\n- `*other.p` —— **那间屋里装的东西**（一个整数）；\n- `new int( ... )` —— **本喵自己另租一间**，把取出来的东西放进去。\n\n租好之后，地址记进**本喵自己的** `p` 一格。于是两只盒子里装着两张**门牌号不同**的牌子，各有各的仓库：`b.set({k})` 只动 `b` 那间屋，`a` 那边一点都不变。收尾的时候也是各还各的，谁也不撞谁。\n\n⚠️ 三个最容易摔的地方，本喵都替你标出来：\n\n1. **`new` 一个都不能少。** 写成 `p = other.p;` 就变成「只抄牌子」，两只盒子共用一个仓库 —— 那一份本喵根本不用写，翻译官喵会偷偷替本喵补，补出来的正是这个。\n2. **料前面那个「不必还的名字」记号（`&`）不能省。** 省了的话，翻译官喵要先为这只料造一份复印件，而造复印件又要叫照抄招式，没完没了 —— 它会在翻译阶段直接拦下你，报 `invalid constructor`。\n3. **`*` 要写对地方。** `new int(other.p)` 是把「一张牌子」往屋里塞，类型对不上，翻译官喵会报 `invalid conversion from 'int*' to 'int'` 并且提示你补 `*`。要搬的是**屋里的东西**，不是牌子。\n\n一句话记牢：**深拷贝和浅拷贝的差别，就在那个 `new` 上。**"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-gc-null-then-use",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-18",
+  "type": "codefix",
+  "concept": ["空牌子上摸不到东西", "报名字要排在放下牌子之前", "放下牌子不是毁掉盒子"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "pick", "values": ["小橘", "煤球"] }
+  },
+  "stemTemplate": "本喵写了一段小代码：先照图纸生一只猫，把它的名字报出来，报完再把手上那张牌子放下喵。\n\n可它**一跑就当场断气** —— 一行都没印出来，屏幕上是一段红字，里头说 `NullPointerException`。\n\n你帮本喵改到它顺顺当当跑完、印出**一行**：\n\n```text\n招牌上写着：...\n```\n\n- 这一行报的是**那只猫的名字**；\n- 把牌子放下那一步**还得有**，只是得排在报名字**后面**。\n\n猫的名字、生猫那一步都别去改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "class Cat {\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat 招牌猫 = new Cat(\"{n}\");\n        招牌猫 = null;\n        System.out.println(\"招牌上写着：\" + 招牌猫.name);\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat 招牌猫 = new Cat(\"{n}\");\n        System.out.println(\"招牌上写着：\" + 招牌猫.name);\n        招牌猫 = null;\n    }\n}\n",
+  "explanationTemplate": "**一、红字怎么念。** `NullPointerException` 说的是「**本喵顺着一张空牌子去摸东西**」喵。这里先做的是「把牌子放下」（`招牌猫 = null;`），接着却顺着它去读 `.name` —— 这一摸当场断气。红字一出来，**那一行之前的字一个都没印**，所以你看到的是「一行都没有」。\n\n**二、错在哪一步，别认错。** 猫是生出来了的，图纸也没问题 —— 错的是**次序**：牌子空了，空牌子上没有「名字」这一格，顺着它摸一定断气。**不是盒子没造出来，是这条路已经断了。**\n\n**三、改法：把两件事掉个个儿。** 先报名字（那会儿牌子还立着、够得着），报完再放下。放下那一步照样留着 —— 课文里讲过：`= null` 是**放下牌子**，不是把盒子毁掉；盒子什么时候没，由自动铲屎官说了算。\n\n一句话记住：**牌子空了之后，不能再顺着它摸任何东西；想摸，就得赶在放下之前。**"
+}

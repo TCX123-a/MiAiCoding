@@ -1,0 +1,83 @@
+{
+  "lessonId": "java-stage2-09",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵在账本上已经写过一行名字叫 `小橘`，接着又 `put` 了一次同样叫 `小橘` 的东西。账本变成什么样？",
+      "options": [
+        "还是那一行，右边的**东西被改写**成新的 —— 名字的个数不变",
+        "多出一行，账本上出现两个 `小橘`",
+        "账本当场报错，说不许重名",
+        "两行都留着，取的时候随机给一个"
+      ],
+      "answer": 0,
+      "explanation": "账本是**按名字对号入座**的：名字已经在上面了，`put` 就是把那一行右边的东西**改写**喵。所以名字的个数（`size()`）不变，`get` 拿到的是后写进去的那个。它不会报错、也不会多留一行 —— 这正是账本用来「统计最新数目」时特别顺手的原因喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "账本上根本没有 `大肥鱼` 这个名字，本喵却问了一句 `book.get(\"大肥鱼\")`。会发生什么？",
+      "options": [
+        "叼回来 `null`（一只空口袋）—— 不报错；想稳一点就用 `getOrDefault` 兜底",
+        "叼回来 `0` —— 名字不在就当作零",
+        "当场报错，说找不到这个名字",
+        "自动帮本喵写一行新的，东西留空"
+      ],
+      "answer": 0,
+      "explanation": "`get` 遇到不在的名字**不报错、也不给 `0`**，它叼回来的是 `null` —— 一只空口袋喵。危险的地方在下一步：要是直接把这只空口袋拆箱给光溜溜的家当，当场就炸 `NullPointerException`。所以拿不准名字在不在时，要么先 `containsKey` 问一句，要么直接用 `getOrDefault` 带上兜底值喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵把账本上所有名字挨个过一遍，发现出来的顺序**跟写进去的先后完全不一样**。为什么？",
+      "options": [
+        "账本按**名字算出来的座位号**摆，不按写进去的先后摆 —— 顺序本来就不保证",
+        "因为本喵写错了，正常的账本会按先后顺序出来",
+        "因为账本坏了，得重新开一本",
+        "因为顺序是按东西的大小排的"
+      ],
+      "answer": 0,
+      "explanation": "账本要「一眼就找到」，就不能从头翻到尾 —— 它的办法是**把名字算成一个座位号**，按座位号直接翻过去喵。所以摆放顺序取决于名字算出来的那个数字，跟本喵写进去的先后毫无关系，挨个过一遍时看着乱是**正常的**。正因如此，本喵挨个过一遍时只做「跟顺序无关的事」（比如把数字加起来），绝不指望它按什么顺序出来喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"小橘\", 3);\n        book.put(\"狸花\", 5);\n        System.out.println(book.____(\"小橘\"));\n        System.out.println(book.____());\n    }\n}",
+      "stem": "本喵要按名字把东西取出来，再报一下账本上有几个名字 —— 两个空白处各填哪个招式名？",
+      "blanks": [
+        {
+          "answer": "get",
+          "accept": []
+        },
+        {
+          "answer": "size",
+          "accept": []
+        }
+      ],
+      "explanation": "第一处填 `get`：按名字取东西，`get(\"小橘\")` 拿到 `3`喵。第二处填 `size`：报账本上有几个名字，这里写了两行不同名字，所以是 `2`喵。两处都对上之后印出来就是 `3` 和 `2`。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"小橘\", 3);\n        book.put(\"小橘\", 7);\n        book.put(\"狸花\", 5);\n        System.out.println(book.get(\"小橘\"));\n        System.out.println(book.size());\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "7\n2",
+      "accept": ["7\n2\n"],
+      "explanation": "`小橘` 这个名字 `put` 了两遍 —— 第二遍不是加一行，而是**把那一行改写掉**，所以取出来是后写进去的 `7`喵。账本上从头到尾只有 `小橘` 和 `狸花` 两个名字，`size()` 是 `2`喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.HashSet;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Set<String> names = new HashSet<>();\n        names.add(\"小橘\");\n        names.add(\"小橘\");\n        names.add(\"狸花\");\n        System.out.println(names.size());\n        System.out.println(names.contains(\"小橘\"));\n        System.out.println(names.contains(\"大肥鱼\"));\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "2\ntrue\nfalse",
+      "accept": ["2\ntrue\nfalse\n"],
+      "explanation": "名单这种柜子**同样的东西塞两遍只留一件**，所以 `小橘` `add` 两次，名单上还是一只喵。加上 `狸花`，一共 `2` 件。`contains(\"小橘\")` 答 `true`，而 `大肥鱼` 根本没进过名单，答 `false`喵。"
+    }
+  ]
+}

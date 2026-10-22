@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-struct-unknown-type",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-03",
+  "type": "codefix",
+  "concept": ["struct", "typedef", "自引用", "编译错误"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵照着课文画了一张图纸（就是每只环长什么样的那张），想串一条两只环的链子喵。可翻译官喵一瞧见图纸就板起了脸，说它不认识一个名字……\n\n你帮本喵看看图纸里哪里写歪了，把它改好。改好之后，程序应该把这条链子从头报出来：每只环报一个数，用 ` -> ` 隔开，最后以 `NULL` 收尾。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nint main(void) {\n    Node *head = new_node({a});\n    Node *second = new_node({b});\n    if (head == NULL || second == NULL) {\n        return 1;\n    }\n    head->next = second;\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n\n    free(second);\n    free(head);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nint main(void) {\n    Node *head = new_node({a});\n    Node *second = new_node({b});\n    if (head == NULL || second == NULL) {\n        return 1;\n    }\n    head->next = second;\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n\n    free(second);\n    free(head);\n    return 0;\n}\n",
+  "explanationTemplate": "问题出在图纸**里面**那一行喵：`Node *next;` 用了一个**还没挂上去的外号**。\n\n画图纸的时候，`typedef` 那一行还没读完 —— 外号 `Node` 要**整张图纸画完之后**才生效。所以图纸**里面**只能老老实实写全名 `struct Node *next;`，图纸**外面**才能用外号 `Node *`。\n\n记住这条分界线：**里面写全名，外面写外号。** 翻译官喵说 `unknown type name 'Node'`，翻过来就是「本喵不认识这个名字」—— 它不是故意刁难，是真的还没轮到认识的时候喵。"
+}

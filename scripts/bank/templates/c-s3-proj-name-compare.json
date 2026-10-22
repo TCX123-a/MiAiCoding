@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-proj-name-compare",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-15",
+  "type": "codefix",
+  "concept": ["比名字要用 strcmp", "拿两张牌子比牌子等于没比", "工具房 string.h"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "大黄"] },
+    "n2": { "kind": "pick", "values": ["小白", "小灰"] },
+    "s1": { "kind": "pick", "values": ["90", "88"] },
+    "s2": { "kind": "pick", "values": ["85", "92"] }
+  },
+  "stemTemplate": "查找这招**怎么找都找不到人**喵：名单里明明有 {n1}，它却一直回「名单里没有这位喵」。名字是一串小鱼干的项链，比它不能用牌子比牌子 —— 那一步写错了。\n\n请你把「比名字」那一步改对（别的都别动）。改好之后该印一行：找到：{n1} {s1} 分。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *find_by_name(Node *head, char *name) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        if (p->name == name) {\n            return p;\n        }\n    }\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n\n    char want[16];\n    strcpy(want, \"{n1}\");\n    Node *it = find_by_name(head, want);\n    if (it != NULL) {\n        printf(\"找到：%s %d 分\\n\", it->name, it->score);\n    } else {\n        printf(\"名单里没有这位喵\\n\");\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *find_by_name(Node *head, char *name) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        if (strcmp(p->name, name) == 0) {\n            return p;\n        }\n    }\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n\n    char want[16];\n    strcpy(want, \"{n1}\");\n    Node *it = find_by_name(head, want);\n    if (it != NULL) {\n        printf(\"找到：%s %d 分\\n\", it->name, it->score);\n    } else {\n        printf(\"名单里没有这位喵\\n\");\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "名字是**一串小鱼干的项链**，编成稿子以后手里只有指向它的那张牌子喵。`p->name == name` 比的是「两张牌子指的是不是同一间仓库」—— 本喵这里 `want` 是自己那一排格子（`char want[16]`），跟档案盒里那张牌子压根不是同一处，所以它**永远不相等**，找谁都回「名单里没有这位喵」。\n\n要比**内容**就得喊 `strcmp`（住在 `string.h` 工具房里）：它把两串项链一件一件比过去，全一样才叼 `0` 回来，所以写法是 `strcmp(p->name, name) == 0`。\n\n还有一处顺带看清：找不到的时候叼回去的是 `NULL`（「没有这一节」），门口靠 `it != NULL` 分辨 —— 跟上一课拿 `-1` 当暗号是同一个道理：**选一个不可能跟真结果撞上的记号**。"
+}

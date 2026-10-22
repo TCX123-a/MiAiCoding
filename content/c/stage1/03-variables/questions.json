@@ -1,0 +1,67 @@
+{
+  "lessonId": "c-stage1-03",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "在 C 里想存住一样东西（比如小鱼干的条数 `fish`），下面哪一句写法是对的？",
+      "options": [
+        "`fish = 3;` —— 仓库自己会长出来",
+        "`int fish = 3;` —— 先挂货牌，再装货",
+        "`fish int = 3;` —— 名字写在前、货牌写在后",
+        "`int 3 = fish;` —— 把货摆在前面"
+      ],
+      "answer": 1,
+      "explanation": "C 的规矩是「**先申报装什么，它才肯给你盖子**」喵：货牌写在最前面（`int`），接着是屋子的名字（`fish`），再用 `=` 把货装进去。别处的语言也许写个 `fish = 3` 就够了，屋子会自己长出来；C 不行，不挂货牌它不知道要准备多大的筐。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "有这么两行：`char grade = 'A';` 和 `printf(\"%d\\n\", grade);`。屏幕上会念出什么？",
+      "options": ["`A`", "`65`", "`0`", "报错：`char` 装的东西不能用 `%d` 念"],
+      "answer": 1,
+      "explanation": "在 C 眼里，**一个字符就是一个小整数**喵：`'A'` 在电脑里就是 65。所以同一个 `grade`，用 `%c` 念出来是 `A`，用 `%d` 念出来就是 `65`——两个钩子念的是同一件货，只是念法不同，一点都不会报错。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "下面几个给仓库起的名字，哪一个 C 不认？",
+      "options": ["`fish_2`", "`_cat`", "`2fish`", "`Fish`"],
+      "answer": 2,
+      "explanation": "名字只能用字母、数字、下划线，而且**不能用数字开头**喵，所以 `2fish` 会被翻译官喵打回：它读到 `2` 就当数字收下了，后面跟的 `fish` 它不认识。想带数字就把数字放后头——`fish_2` 一点问题都没有。顺带记着，`Fish` 和 `fish` 是两间不同的屋，大小写在 C 眼里是算数的。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "stem": "下面这份稿子空了两块货牌，补齐之后它应该能念出「3 和 A」。两块空按顺序填。",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    ____ fish = 3;\n    ____ grade = 'A';\n    printf(\"%d 和 %c\\n\", fish, grade);\n    return 0;\n}\n",
+      "blanks": [
+        { "answer": "int", "accept": [] },
+        { "answer": "char", "accept": [] }
+      ],
+      "explanation": "第一块空是装整数的货牌 `int`，第二块空是装单个字符的货牌 `char`喵。挂对了牌子，念话那边的钩子才有货可念：`%d` 从 `fish` 那儿取到 3，`%c` 从 `grade` 那儿取到 `A`。要是第二块空填成 `double`，`'A'` 就装不进去了。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    char grade = 'C';\n    printf(\"%c\\n\", grade);\n    printf(\"%d\\n\", grade);\n    return 0;\n}\n",
+      "stem": "这段代码会念出什么？把它念出来的内容原样写下来（每句一行）。",
+      "answer": "C\n67",
+      "accept": ["C\n67\n"],
+      "explanation": "`grade` 里装的是字符 `'C'`喵。`%c` 按字符念，念出 `C`；`%d` 按数字念——`'A'` 是 65，往后数两位就是 `C`，所以念出 `67`。同一个屋子里的同一件货，换个钩子就换个样子，这就是 C 把字符当成小整数存的表现。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    printf(\"%f\\n\", 10.0 / 3.0);\n    printf(\"%.2f\\n\", 10.0 / 3.0);\n    printf(\"%.0f\\n\", 10.0 / 3.0);\n    return 0;\n}\n",
+      "stem": "这段代码会念出什么？把它念出来的内容原样写下来（每句一行）。",
+      "answer": "3.333333\n3.33\n3",
+      "accept": ["3.333333\n3.33\n3\n"],
+      "explanation": "`%f` 不写小数点后面几位的时候，C 默认留**六位**喵，所以第一行是 `3.333333`。`%.2f` 是「留两位」，念出 `3.33`；`%.0f` 是「一位都不留」，念出 `3`。三行念的是同一个数，只是留下的尾巴长短不同——印价钱、印重量的时候，记得自己写上 `.2` 这样的小尾巴。"
+    }
+  ]
+}

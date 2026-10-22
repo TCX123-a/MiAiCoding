@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-ut-two-cases",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-11",
+  "type": "codewrite",
+  "concept": ["unittest.TestCase", "assertEqual", "assertRaises", "TestResult"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 6, "max": 8 },
+    "b": { "kind": "int", "min": 2, "max": 3 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫罐头", "冻干块"] }
+  },
+  "stemTemplate": "本喵的「平分」招式已经在文件里了（**一个字都不许改**）：正常的分整数商，**猫数是 0 的时候它会抛 `ValueError`**。\n\n请你给它写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张前辈猫画好的图纸来画。\n2. 里面写**两个**项目，名字都以 `test` 开头：\n   - 一个查**正常值**：`平分({a}, {b})` 该等于 `{a} // {b}`；\n   - 一个查**边界**：拿 `{a}` 份{unit}和 **0 只猫**去喂它，它该拒绝干活（用 `assertRaises(ValueError, 平分, {a}, 0)`）。\n3. 跑的时候开一本体检本子（`unittest.TestResult()`），用它把 `平分体检` 跑一遍。\n4. 最后印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+  "starterTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 下面这张体检单和跑它的那几行，交给你喵\n",
+  "referenceSolutionTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_正常(self):\n        self.assertEqual(平分({a}, {b}), {a} // {b})\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分, {a}, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+  "explanationTemplate": "这张单子要的三件事，一件比一件值钱喵。\n\n**① 单子照图纸画。** 括号里那个 `unittest.TestCase` 不是投喂的东西，它的意思是「本喵照这张图纸画」。照它画出来的单子自带一整套家伙事：怎么跑项目、怎么记成绩、怎么印报告 —— 你只管写判据。\n\n**② 项目名以 `test` 开头，不然它压根不跑。** 这不是风格建议，是筛选的规矩：翻译官喵扫单子的时候只拎 `test` 开头的那种，别的它不认。\n\n**③ 正常值和边界值各一张。** 这是这次体检单的重点：只写「正常情况」的话，招式坏在边界上你永远发现不了。本喵这次就是被「没有猫」那一项救回来的 —— 它逼着你想清楚「猫数是 0 的时候，本喵到底要它怎么办」。你想的答案是「拒绝干活」，于是用 `assertRaises` 把这句话写成了可判的。\n\n最后那个体检本子（`TestResult()`）是报告底下的账房：跑完以后 `testsRun` 是跑了几个项目、`failures` 和 `errors` 是挂掉的清单、`wasSuccessful()` 一句话告诉你全不全绿。"
+}

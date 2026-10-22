@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s2-04-guarded-door",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-04",
+  "type": "codewrite",
+  "concept": ["盖上盖子的格子", "问数的门与改数的门", "规矩立在门里"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "三花"] },
+    "a": { "kind": "pick", "values": [6, 9] },
+    "neg": { "kind": "pick", "values": [-3, -5] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{a}\n{neg}\n", "sampleText": "3\n5\n" },
+  "stemTemplate": "本喵想给猫开一道**改数的门** —— 谁能改、改成多少，都得从这道门上过。投喂口会递进来**两个数**（一行一个）：这只猫一开始的条数、要投喂进来的那个数。\n\n门上的规矩是这样的喵：\n\n- 递进来的数是**负数** —— 一个格子都不许动，先印一行 `不许倒扣喵`，然后这道门就收工（后面的印字那一步照样要走）；\n- 别的情况 —— 把格子里的条数改成递进来的那个数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两格家常 —— `name` 装一串字、`fish` 装一个整数；**两格都要盖上盖子**，只在图上留门；写一个**出生招式**（两样都收）；\n2. 图上写**三道门**：`string getName() const`（问名字）、`int getFish() const`（问条数）、`void setFish(int f)`（改条数，规矩就立在这一道门里）；\n3. `main` 里生一只叫 `{name}` 的猫，条数用**第一个数**；喊一次 `setFish`（投喂**第二个数**）；\n4. 最后印**一行**：`XX 有 N 条`（`XX` 是名字，`N` 是走完上面那些之后的条数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprivate:\n    string name;\n    int fish;\n\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    string getName() const {\n        return name;\n    }\n\n    int getFish() const {\n        return fish;\n    }\n\n    void setFish(int f) {\n        if (f < 0) {\n            cout << \"不许倒扣喵\" << endl;\n            return;\n        }\n        fish = f;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1(\"{name}\", a);\n    c1.setFish(b);\n    cout << c1.getName() << \" 有 \" << c1.getFish() << \" 条\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的重点是**盖子配门**喵。\n\n- 两格家常都写上 `private:`，外面就一个格子都碰不着了 —— 想拿数、想改数，都得站到门前面。\n- 问数的门肚子里只有一句 `return`：它把格子里的东西**原样叼出来**。名字那道门前面写 `string`，因为它叼回来的是一串字；条数那道门前面写 `int`。\n- 改数的门前面写的是 `void` —— 它只干活、不叼东西回来，所以退出去的时候写一个光秃秃的 `return;` 就够了。\n\n**规矩必须立在门里**，这是这一课最值钱的一句话：盖子只管「谁能伸手」，管不了伸进来的手**递的是什么**。所以「负数不许」这条规矩只能写成门里那两句：\n\n`if (f < 0) {`\n`    cout << \"不许倒扣喵\" << endl;`\n`    return;`\n`}`\n\n⚠️ 被挡下来的那一次，条数**保持原样**（一格都没动），然后 `main` 里那一行照样要印 —— 所以判分喂负数的那一组，前面会多出一行「不许倒扣喵」。\n\n⚠️ 别忘了两件事：门里改的必须是 `fish` 那一格（不是投喂口）；盖上盖子以后，外面那些 `c1.fish` 的写法一个都不能用了。"
+}

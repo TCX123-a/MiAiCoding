@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-bound-total",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-01",
+  "type": "codewrite",
+  "concept": ["门槛只收数字那一家", "往外叼的那种问号", "一件一件叼出来加上去"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要写一招把柜子里的东西**一件件叼出来加上去**，把总和交回来喵。\n\n这一招的尖括号里要写**两种**东西：\n\n1. 一道**门槛** —— 本喵在招式里要用「把它当成数字看」那手本事，所以门槛只能收**数字那一家的**；\n2. 一个是**只管往外叼**的问号写法 —— 这一招只把东西叼出来用，从不往里塞。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请把它们收进柜子，然后印两行：\n\n```text\n柜子里有 N 件\n加起来是 S\n```\n\n- `N` 就是那个 n；\n- `S` 是柜子里所有数加起来，印出来会带小数点那个样子（因为相加的那只手上报的是小数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    static double total(List<? extends Number> box) {\n        double sum = 0;\n        return sum;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    static double total(List<? extends Number> box) {\n        double sum = 0;\n        for (Number x : box) {\n            sum = sum + x.doubleValue();\n        }\n        return sum;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n        System.out.println(\"柜子里有 \" + nums.size() + \" 件\");\n        System.out.println(\"加起来是 \" + total(nums));\n    }\n}\n",
+  "explanationTemplate": "这题把本课那两条写法凑成了一对：**门口立门槛，收东西的那一侧写问号**喵。\n\n**一、门槛写在招式名后面。** `T extends Number` 读作「这只空尺码**只收数字那一家的成员**」。立这道门槛**不是因为这样好看**，是因为招式里那句「当成数字看」的本事不是万物都会的 —— 门口不拦，招式里就叫不动。\n\n**二、问号写在收东西那一侧。** `? extends Number` 读作「里面装的是数字那一家**往下**的某一种，具体哪种我不问」。本喵递进去的是一只装整数的柜子，它照收 —— 因为整数本来就属于数字那一家。这一侧只管**往外叼**，所以用 `extends` 才对。\n\n**三、叼出来之后先当成数字接着。** `for (Number x : box)` 里那个 `x` 的尺码写的是数字那一家（不是整数）—— 因为本喵**只保证**叼出来的是数字那一家的，具体是哪种不知道。要用值的时候叫一声「当成小数看」，拿到手再相加。\n\n**四、攒数的小篮子要立在外面。** `sum` 要在绕圈**外面**先立好、给个 0。写进绕圈里面的话，每转一圈就重新归零，最后拿到的只有最后一格。\n\n**五、印出来为什么带小数点。** 因为那只手上报的是小数：一柜子整数加起来，印出来仍是 `15.0` 那个样子。想让它是光溜溜的整数，得另换一只手，那就是另一道题的事了喵。"
+}

@@ -1,0 +1,28 @@
+{
+  "templateId": "py-s2-gen-exhausted",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-02",
+  "type": "codefix",
+  "concept": [
+    "生成器",
+    "只能走一遍",
+    "推导式"
+  ],
+  "instances": 3,
+  "params": {
+    "k": {
+      "kind": "pick",
+      "values": [
+        3,
+        5,
+        6,
+        7
+      ]
+    }
+  },
+  "stemTemplate": "本喵有一串数字，想把它们都翻一倍再加起来，而且**同一个总数要打印两遍**喵。\n\n可这段代码一跑就露馅了：**两遍打印出来的数不一样** —— 第二遍莫名其妙变成了 `0`。\n\n你帮本喵改对，让两遍打印出**同一个总数**。\n\n⚠️ 代码里那串数字本身**不许改**，也不许把总数直接写死喵。",
+  "brokenCodeTemplate": "nums = [1, 2, {k}, 4]\ng = (x * 2 for x in nums)\nprint(sum(g))\nprint(sum(g))\n",
+  "referenceFixTemplate": "nums = [1, 2, {k}, 4]\ndoubled = [x * 2 for x in nums]\nprint(sum(doubled))\nprint(sum(doubled))\n",
+  "explanationTemplate": "毛病出在**圆括号**上喵。\n\n方括号 `[x * 2 for x in nums]` 会把结果**当场全部算出来**，装进一个储物柜 —— 这个柜子你想看几遍看几遍。\n\n圆括号 `(x * 2 for x in nums)` 得到的是另一种东西：它**一个数都不算**，只是记住「该从哪儿开始、该怎么算」。你每问它要一个，它才算一个。所以第一遍 `sum(g)` 从头问到尾，问完了 —— **它也到头了**。第二遍再问，它已经没有东西可给，于是给你一个 `0`。\n\n⚠️ **这种东西只能走一遍**，走完就空了，而且**不会报错**。这是个很阴的坑：程序看着完全正常，数字就是不对。\n\n想留着反复用，就换成方括号；确实只想走一遍（比如有几百万个数、不想全塞进内存），那就在走之前**把它存成一个柜子**，或者**重新造一个**。"
+}

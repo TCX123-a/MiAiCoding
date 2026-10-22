@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-14-bell-first-ear-only",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-14",
+  "type": "codefix",
+  "concept": ["喊一嗓子要喊遍名单", "登记了不等于喊到了", "从头到尾走一遍"],
+  "instances": 2,
+  "params": {
+    "food": { "kind": "pick", "values": ["开饭啦", "小鱼干", "猫粮"] }
+  },
+  "stemTemplate": "本喵的开饭喇叭登记了**两只耳朵**，喊的是 `{food}`。可跑起来只有**第一位**听见了 —— 第二位登记过，却从来没被喊到。\n\n请你帮本喵改对：**登记那两行不用动，喊的内容也不用动**，只把喇叭喊话那一步修好。改好之后，两行都要印出来（先是第一位听见的那行，再是第二位听见的那行）。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <functional>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass DinnerBell {\npublic:\n    void listen(function<void(const string&)> ear) { ears.push_back(ear); }\n    void ring(const string& what) const {\n        if (!ears.empty()) ears[0](what);\n    }\nprivate:\n    vector<function<void(const string&)>> ears;\n};\n\nint main() {\n    DinnerBell bell;\n    bell.listen([](const string& what) { cout << \"咪爱听见了：\" << what << endl; });\n    bell.listen([](const string& what) { cout << \"大肥鱼听见了：\" << what << endl; });\n    bell.ring(\"{food}\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <functional>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass DinnerBell {\npublic:\n    void listen(function<void(const string&)> ear) { ears.push_back(ear); }\n    void ring(const string& what) const {\n        for (auto& ear : ears) ear(what);\n    }\nprivate:\n    vector<function<void(const string&)>> ears;\n};\n\nint main() {\n    DinnerBell bell;\n    bell.listen([](const string& what) { cout << \"咪爱听见了：\" << what << endl; });\n    bell.listen([](const string& what) { cout << \"大肥鱼听见了：\" << what << endl; });\n    bell.ring(\"{food}\");\n    return 0;\n}\n",
+  "explanationTemplate": "毛病出在喊话那一步喵：`if (!ears.empty()) ears[0](what);` 里那个 `ears[0]` 是**只喊名单上第一位**。第二位明明登记过（`listen` 那一句没毛病），却从来没被喊到 —— 程序编得过、跑得也安静。\n\n改成照着名单**从头到尾**走一遍：`for (auto& ear : ears) ear(what);`。名单上有几只耳朵就喊到几只，先后就是**登记的先后**：先是咪爱那行，再是大肥鱼那行。\n\n⚠️ 这一类漏喊最麻烦的地方是它**看不出来**：要是耳朵们都不吭声，少喊一位跟喊全了在屏幕上完全一样。所以写这一类东西时，最好让每只耳朵都**自己印一行**（就像本喵这两只这样）—— 一眼就能看出谁没被喊到。「登记了」和「喊到了」是两件事，得分开检查。"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-challenge-calc-fallthrough",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-15",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "暗号表", "办完要亮收工牌", "多余的输出"],
+  "instances": 1,
+  "params": {},
+  "stdinSpec": { "kind": "raw", "text": "1\n9\n4\n", "sampleText": "1\n7\n4\n" },
+  "stemTemplate": "本喵的计算器只认两个暗号喵：`1` 是加法，`2` 是减法；别的暗号就报一句「这个暗号本喵不认识喵」。\n\n用法：投喂口先给暗号，再给两个数。可现在它**对加法太热情了** —— 报完加法，又顺手把减法也报了一遍……\n\n比如投喂 `1`、`7`、`4`，它印的是\n\n```\n7 + 4 = 11 喵\n7 - 4 = 3 喵\n```\n\n第二行是多余的：本喵只要加法那一行。你帮本喵把它改对。（判分用的暗号也是 `1`，只是数字换了一组。）",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int op = sc.nextInt();\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n\n        switch (op) {\n            case 1:\n                System.out.println(a + \" + \" + b + \" = \" + (a + b) + \" 喵\");\n            case 2:\n                System.out.println(a + \" - \" + b + \" = \" + (a - b) + \" 喵\");\n                break;\n            default:\n                System.out.println(\"这个暗号本喵不认识喵\");\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int op = sc.nextInt();\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n\n        switch (op) {\n            case 1:\n                System.out.println(a + \" + \" + b + \" = \" + (a + b) + \" 喵\");\n                break;\n            case 2:\n                System.out.println(a + \" - \" + b + \" = \" + (a - b) + \" 喵\");\n                break;\n            default:\n                System.out.println(\"这个暗号本喵不认识喵\");\n        }\n    }\n}\n",
+  "explanationTemplate": "这是「暗号表」最经典的一跤：**办完不亮收工牌**喵。\n\n`switch` 的规矩是：从对上的那一格**开始往下走，走一步看一步** —— 除非碰到一句 `break`，不然**下面那一格的活它也顺手干掉**。加法那一路干完自己的事没亮收工牌，于是脚一滑踩进减法那一格，把减法也报了；再往下碰到减法的 `break` 才停住。\n\n改法：在加法那一路的末尾补一句：\n\n```java\nbreak;\n```\n\n补上之后：暗号 `1` 报完加法就收工；暗号 `2` 照旧只报减法；别的暗号报那句不认识。\n\n记两句喵：\n\n1. `break` 是**收工牌** —— 它的意思不是「跳过剩下的」，而是「**这一格办完，从整张暗号表里退出**」；\n2. 这种「顺着往下滑」的错**不报错、不红脸**，只是多印了几行。写完暗号表，习惯性给每一路把收工牌都点上，最稳。"
+}

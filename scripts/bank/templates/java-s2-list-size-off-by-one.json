@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-list-size-off-by-one",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-08",
+  "type": "codefix",
+  "concept": ["柜子", "编号从 0 起", "size 减一", "运行期翻车"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "大橘", "狸花"] },
+    "n2": { "kind": "pick", "values": ["大胖", "小黄", "花卷"] }
+  },
+  "stemTemplate": "柜子里先放了两只，本喵想摸**最后一格** —— 程序跑起来了，可屏幕上冒出来的不是名字，是**一大段红字**。\n\n请你帮本喵改好，规矩是：**这一处不许把编号写死**，要让柜子自己算出来最后一格是第几号。\n\n改好之后，程序该印出这一行（就是本喵**最后放进去**的那一只）：\n\n```text\n最后一格是 {n2}\n```\n\n只有摸最后一格那一处的问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> bowls = new ArrayList<>();\n        bowls.add(\"{n1}\");\n        bowls.add(\"{n2}\");\n        System.out.println(\"最后一格是 \" + bowls.get(bowls.size()));\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> bowls = new ArrayList<>();\n        bowls.add(\"{n1}\");\n        bowls.add(\"{n2}\");\n        System.out.println(\"最后一格是 \" + bowls.get(bowls.size() - 1));\n    }\n}\n",
+  "explanationTemplate": "这一题是**跑起来才炸**的那一类喵 —— 稿子那一关它过得干干净净，红字是程序**跑到那一句**才冒出来的：\n\n```text\nException in thread \"main\" java.lang.IndexOutOfBoundsException: Index 2 out of bounds for length 2\n```\n\n念起来是：**「你要编号 2 那一格，可这柜子总共才 2 格喵。」** 底下还跟着几行 `at ...` 的痕，最后一行 `at Main.main(Main.java:9)` 指着翻车的那一处 —— 往后看到这种痕，先看最后一行，就知道是哪句话出的事。\n\n错在哪？**柜子里有 2 格，编号是 0 和 1。** `size()` 报的是**格数 2**，不是「最后一格的编号」。拿 2 去当编号用，正好越过最后一格一毫米 —— 所以柜子**当场炸**，它不会给本喵一个空值糊弄过去。\n\n正路是自己减一：\n\n```java\nbowls.get(bowls.size() - 1)\n```\n\n这条规矩和项链上的 `charAt` 是同一条：**能摸到的最大编号是「有几格」减一。** 题目特意不让写死数字，练的就是这一手 —— 因为柜子是会自己长大的，写死的编号过两天就不对了。\n\n顺手和项链那边对一下：项链上 `s.charAt(s.length() - 1)` 摸最后一颗，柜子上 `bowls.get(bowls.size() - 1)` 摸最后一格 —— 一模一样的写法，一模一样的道理喵。"
+}

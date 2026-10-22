@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-student-load-swaps-fields",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-15",
+  "type": "codefix",
+  "concept": ["第二刀切的是竖线右边", "两条竖线切两刀", "切反了拿名字当分数去算"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["mingdan.txt", "banji.txt"] },
+    "a": { "kind": "pick", "values": ["小橘", "小虎"] },
+    "s": { "kind": "pick", "values": ["92", "86"] },
+    "s1": { "kind": "pick", "values": ["93", "87"] }
+  },
+  "stemTemplate": "本喵从册子上读一条学员记录（册子上那一行长这样：`1|{a}|{s}`，两根竖线）。可这稿子**跑起来当场断气** —— 翻译官最后那句话里说：\n\n`Exception in thread \"main\" java.lang.NumberFormatException: For input string: \"{a}\"`\n\n请你把它补好，让程序印出：\n\n```text\n名字：{a}\n分数：{s}\n加一分就是：{s1}\n```\n\n毛病就在**第二刀那两行**上：本喵把切下来的两截**接反了**。这稿子编得过、也跑得起来，册子上的字一个都没写错喵。",
+  "brokenCodeTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"1|{a}|{s}\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            String hang = r.readLine();\n            int cut = hang.indexOf(\"|\");\n            String rest = hang.substring(cut + 1);\n            int cut2 = rest.indexOf(\"|\");\n            String fenshu = rest.substring(0, cut2);\n            String mingzi = rest.substring(cut2 + 1);\n            int score = Integer.parseInt(fenshu);\n            System.out.println(\"名字：\" + mingzi);\n            System.out.println(\"分数：\" + score);\n            System.out.println(\"加一分就是：\" + (score + 1));\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"1|{a}|{s}\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            String hang = r.readLine();\n            int cut = hang.indexOf(\"|\");\n            String rest = hang.substring(cut + 1);\n            int cut2 = rest.indexOf(\"|\");\n            String mingzi = rest.substring(0, cut2);\n            String fenshu = rest.substring(cut2 + 1);\n            int score = Integer.parseInt(fenshu);\n            System.out.println(\"名字：\" + mingzi);\n            System.out.println(\"分数：\" + score);\n            System.out.println(\"加一分就是：\" + (score + 1));\n        }\n    }\n}\n",
+  "explanationTemplate": "坏稿子里第二刀是这么切的：\n\n```java\nString fenshu = rest.substring(0, cut2);    // 以为是分数\nString mingzi = rest.substring(cut2 + 1);   // 以为是名字\n```\n\n`rest` 是 `{a}|{s}`（第一刀把开头那个 `1|` 切掉了）。**竖线右边那一截才是分数** —— 可坏稿子把**左边**那截（也就是名字 `{a}`）当成了分数，往下走 `Integer.parseInt(\"{a}\")` 当场断气。本喵真跑过，原话是 `Exception in thread \"main\" java.lang.NumberFormatException: For input string: \"{a}\"` —— 「本喵要的是个数字，你递过来的是 {a} 喵。」\n\n补法就是把两行**接回原来的位置**：\n\n```java\nString mingzi = rest.substring(0, cut2);\nString fenshu = rest.substring(cut2 + 1);\n```\n\n两条刀口的记法喵：**`substring(0, cut2)` 是从头切到竖线前面**（竖线左边那截），**`substring(cut2 + 1)` 是从竖线后面一格切到底**（竖线右边那截，`+ 1` 那一下是把竖线本身跳过去）。切错了不是「换一下顺序印」那么简单 —— 右边那截是要拿去**算**的，一算就露馅。\n\n两个容易想歪的地方喵：\n\n- **这稿子编得过。** 切错了、接反了，翻译官看稿子那一关一句都不说（`substring` 拿两个数字作伴，谁在前谁在后它不管）—— 要等 `Integer.parseInt` 真拿到一串不是数字的字才炸。\n- **册子上的格式没错。** 一行 `1|{a}|{s}`、两根竖线，是**读的那一头**切歪了。改档之前先分清楚是「写的错」还是「读的错」，能省一半时间喵。"
+}

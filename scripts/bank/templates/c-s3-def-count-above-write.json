@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s3-def-count-above-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-14",
+  "type": "codewrite",
+  "concept": ["数一数有几碗超过限额", "严格超过：等于不算", "起点从第一碗数起"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["4", "3"] },
+    "b": { "kind": "pick", "values": ["2", "6"] },
+    "c": { "kind": "pick", "values": ["5", "1"] },
+    "d": { "kind": "pick", "values": ["3", "2"] },
+    "lim": { "kind": "pick", "values": ["3", "1"] }
+  },
+  "stemTemplate": "请把这招写完喵：数一数这一排碗里有**几碗超过了限额** `limit`，把碗数叼回去。\n\n规矩有一条要特别留神：**「超过」是严格超过 —— 等于 `limit` 的不算**。比如限额 `{lim}` 的时候，碗里正好是 `{lim}` 条的那碗**不算**超。\n\n`main` 里那两行别动。改好之后该印两行：第一行是「`超过 {lim} 条的有` 几碗」，第二行是**只看第一碗**时的碗数（`count` 传 `1`）。",
+  "starterTemplate": "#include <stdio.h>\n\nint count_above(int fish[], int count, int limit) {\n    /* ↓ 在这儿写：数一数有几碗【超过】limit（等于不算），把碗数叼回去 */\n\n    return 0;\n}\n\nint main(void) {\n    int fish[4] = { {a}, {b}, {c}, {d} };\n    printf(\"超过 {lim} 条的有 %d 碗\\n\", count_above(fish, 4, {lim}));\n    printf(\"只有一碗时：%d 碗\\n\", count_above(fish, 1, {lim}));\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint count_above(int fish[], int count, int limit) {\n    int n = 0;\n    for (int i = 0; i < count; i++) {\n        if (fish[i] > limit) {\n            n++;\n        }\n    }\n    return n;\n}\n\nint main(void) {\n    int fish[4] = { {a}, {b}, {c}, {d} };\n    printf(\"超过 {lim} 条的有 %d 碗\\n\", count_above(fish, 4, {lim}));\n    printf(\"只有一碗时：%d 碗\\n\", count_above(fish, 1, {lim}));\n    return 0;\n}\n",
+  "explanationTemplate": "两处容易翻车的地方喵：\n\n1. **比较要用 `>`，不是 `>=`**。这一排里有一碗正好是 `{lim}` 条 —— 用 `>=` 会把它也算进去（「等于限额」不算超，这是题面说清的规矩）。\n2. **跑圈从第一碗（`i = 0`）数起**。第二行只传了 `1`（只有一碗），起点写成 `i = 1` 的话这一圈压根不进，会白白叼个 `0` 回去。\n\n计数器起手写 `0`：一碗都不超的时候，它本来就该是 `0` —— 这个初始值是「真实存在」的（不像上一题那个凭空写的王座），放心用。"
+}

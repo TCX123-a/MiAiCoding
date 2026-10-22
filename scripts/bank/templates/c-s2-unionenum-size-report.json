@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-unionenum-size-report",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-07",
+  "type": "codewrite",
+  "concept": ["共用体", "sizeof", "最胖的那位"],
+  "instances": 6,
+  "params": {
+    "L": { "kind": "pick", "values": [16, 24, 32] }
+  },
+  "stemTemplate": "本喵要亲手量一量「**几样东西共用一间仓库**」到底能省多少地方。\n\n请你画一张**共用体**的图纸：一间仓库，门上挂三个牌子 —— 一个整数、一个小数、一条 {L} 格的项链（名字随便起，比如 `Num`）。\n\n然后在 `main` 里印四行，一行一个：\n\n```\n整数 <量出来的格数> 格\n小数 <量出来的格数> 格\n项链 {L} 格\n仓库 <量出来的格数> 格\n```\n\n前三行是拿单个东西量的，最后一行是拿**整间仓库**量的。量格数用课里那个量尺寸的招式，前面记得把结果收成整数再交给 `%d`，免得翻译官喵嘀咕。",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nunion Num {\n    int i;\n    double d;\n    char s[{L}];\n};\n\nint main(void) {\n    printf(\"整数 %d 格\\n\", (int)sizeof(int));\n    printf(\"小数 %d 格\\n\", (int)sizeof(double));\n    printf(\"项链 %d 格\\n\", (int)sizeof(char[{L}]));\n    printf(\"仓库 %d 格\\n\", (int)sizeof(union Num));\n    return 0;\n}\n",
+  "explanationTemplate": "跑出来是这样四行喵：\n\n```\n整数 4 格\n小数 8 格\n项链 {L} 格\n仓库 {L} 格\n```\n\n最后一行是本课的重点：**仓库不是把三样加起来，而是取了最胖的那位。** 三样各占一份的话怎么也得二十几格，可仓库只要 {L} 格就够了 —— 理由是这三样**从来不同时住**：早上放整数、晚上放小数，谁住进去就用谁的名字，地方当然只需要按最大的那位预备。（顺便把上面第一、二行也记牢：`int` 是 4 格、`double` 是 8 格，这两个数在别的机器上多半也一样，可本喵教你的是**自己去量**，不是背数。）\n\n写的时候有三个小地方值得收下：\n\n- **量图纸上的一个成员**：`sizeof(int)`、`sizeof(double)`，直接把类型名丢进去就行，跟量一只碗、一条项链是一回事。\n- **量一整条项链**：`sizeof(char[{L}])` —— 把「{L} 格的字符项链」这个类型整个写出来。它和后面那个 `char s[{L}];` 是同一样东西，只是没起名字。\n- **量整间仓库**：`sizeof(union Num)` —— 这一句才需要把 `union` 带上，因为「`Num`」这个标签单独拿出来翻译官喵不认。`struct` 也是同样的规矩。\n\n把这段和上一课的图纸对着量一遍，你就摸到本课的骨头了：**图纸是各占各的、加起来；共用体是共用一间、取最大的。**"
+}

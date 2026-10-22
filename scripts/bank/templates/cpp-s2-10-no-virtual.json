@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-10-no-virtual",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-10",
+  "type": "codefix",
+  "concept": ["名字定终身", "顺着牌子喊却跑了老图纸那一版", "一个字都不报"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "本喵拿着一张写着「猫」的牌子指向橘猫 {name}，顺着牌子喊了一声，又用橘猫自己的名字喊了一声。\n\n**两行应该一样**（都是橘猫那一版），可现在第一行**平平无奇**。程序照样跑、翻译官喵一个字都没说。\n\n你帮本喵在**老图纸**上补一样东西，让两行都变成橘猫那一版。**`main` 里那几句、还有小猫图纸上的一字一句，都不用改。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n    void speak() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(string n) : Cat(n) {}\n    void speak() const {\n        cout << name << \"：本喵是橘猫，喵喵喵！\" << endl;\n    }\n};\n\nint main() {\n    OrangeCat o(\"{name}\");\n    Cat& r = o;\n    r.speak();\n    o.speak();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n    virtual void speak() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(string n) : Cat(n) {}\n    void speak() const {\n        cout << name << \"：本喵是橘猫，喵喵喵！\" << endl;\n    }\n};\n\nint main() {\n    OrangeCat o(\"{name}\");\n    Cat& r = o;\n    r.speak();\n    o.speak();\n    return 0;\n}\n",
+  "explanationTemplate": "这一题**一个报错都没有**。本喵在本机跑过没补的样子（名字用小橘时），屏幕上是：\n\n```text\n小橘：喵～\n小橘：本喵是橘猫，喵喵喵！\n```\n\n同一只猫、两个名字、两种结果，而且翻译官喵一声没吭。\n\n根子在**翻译阶段就把话说死了**：本喵手上那张牌子上写的是「猫」，它就直接把这一声指到老图纸的 `speak` 上去，**根本没打算在真跑起来的时候再看一眼手里到底是哪只猫**。这就是「**名字定终身**」的脾气。\n\n解法只有三个字母 —— 在**老图纸那一手的开头**挂上 `virtual`：\n\n```text\nvirtual void speak() const\n```\n\n它说的是「**这一手别急着定死，等真跑起来再看手里到底是哪只猫**」。挂上之后，第一行也变成 `{name}：本喵是橘猫，喵喵喵！` —— 因为牌子上写的是谁不重要，**喊下去的那一刻看的是屋里住的是谁**。\n\n⚠️ 两条容易摔的边界，这里一并钉住：\n\n- **只有老图纸那一手需要挂。** 小猫图纸改写出来的那份**自动也是「会看屋里住的是谁」的**，不用再挂。反过来（小猫挂、老图纸不挂）是**不管用的** —— 那三个字母挂在轮不到上场的地方。\n- **挂 `virtual` 的那一手不能是 `private`。** 小猫图纸得看得见它，才谈得上改写，所以这一格挂的是「照着画的图纸也够得着」的那一档。"
+}

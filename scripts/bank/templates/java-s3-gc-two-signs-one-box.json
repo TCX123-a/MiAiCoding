@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-gc-two-signs-one-box",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-18",
+  "type": "codefix",
+  "concept": ["又拿一张牌不等于又生一只猫", "两张牌指着同一只盒子", "改一格会两只一起改"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "煤球"] },
+    "n2": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stemTemplate": "本喵想要「**两只各改各的名字**」：把第二只的名字改掉，第一只的名字不许跟着动喵。\n\n可跑出来两行**都是新名字** —— 改一只，另一只跟着变了。\n\n你帮本喵改到它印出**两行**：\n\n```text\n原来那只：...\n另一只：...\n```\n\n- 第一行是**第一只一开始的名字**；\n- 第二行是**第二只改完之后的名字**；\n- 改名字那一句、还有印这两行的两句，都别动。\n\n改完的效果是：**第二只自己住一只盒子**，怎么改都牵不动第一只。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "class Cat {\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat 原来那只 = new Cat(\"{n1}\");\n        Cat 另一只 = 原来那只;\n        另一只.name = \"{n2}\";\n        System.out.println(\"原来那只：\" + 原来那只.name);\n        System.out.println(\"另一只：\" + 另一只.name);\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat 原来那只 = new Cat(\"{n1}\");\n        Cat 另一只 = new Cat(\"{n1}\");\n        另一只.name = \"{n2}\";\n        System.out.println(\"原来那只：\" + 原来那只.name);\n        System.out.println(\"另一只：\" + 另一只.name);\n    }\n}\n",
+  "explanationTemplate": "**一、看到的现象说明什么。** 两行都印了同一个名字 —— 而且印出来的正是**改完之后**那个。这只有一个解释：两只「猫」其实是**同一只盒子**，所以改一格，两边一起变。\n\n**二、错在哪一句。** `Cat 另一只 = 原来那只;` 这一步**没有生新猫**，它只是**又拿了一张牌**，两张牌指着堆里同一只盒子。往后 `另一只.name = ...` 改的是那只盒子上的一格 —— 原来那张牌看过去，当然是改过的值。\n\n**三、改法：让第二只自己搬一只新盒子。** 把那一句换成**再喊一次生猫那一招**，第二只就有自己的盒子了；两张牌从此各指一只，谁改都牵不动谁。\n\n**四、这一课的老规矩。** 「多了一张牌」和「多了一只盒子」是两件事：`new` 一次才多一只盒子，`=` 只是多立一张牌。分不清这两件事，就会出现「我明明只改了第二只」这种查半天的怪事。"
+}

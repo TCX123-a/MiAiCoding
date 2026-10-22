@@ -1,0 +1,21 @@
+{
+  "templateId": "cpp-s3-15-borrow-some",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-15",
+  "type": "codewrite",
+  "concept": ["按编号找一件", "借出去的东西不能再借", "架子上没这个编号"],
+  "instances": 6,
+  "params": {
+    "miss": { "kind": "pick", "values": ["4", "5"] }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "2\n2\n{miss}\n1\n",
+    "sampleText": "3\n1\n{miss}\n"
+  },
+  "stemTemplate": "投喂口会一行一个地给出**编号**（读到投喂口干为止，读到一个办一件）喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 照图纸 `Item` 摆三件东西在架子上：编号 `1` 的「鱼干小百科」、编号 `2` 的「猫粮月报」、编号 `3` 的「大肥鱼自传」。每件东西有三样：编号、名字、借出去没有（一开始都是没借出去）；\n2. 每读到一个编号就办一件借出去，并且印一行：办成了印 `办好了` 加一个空格加编号，办不成印 `办不了` 加编号。办不成有两种情形 —— **架子上没这个编号**，或者**这件已经借出去了**；\n3. 投喂口读干了以后，印一行 `借出去 X 件`（X 是架子上真借出去的件数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一串编号**喵，所以别把答复写死～。判分那一串里，**同一件被借到两次**和**架子上没这个编号**两种都碰得上，两种都得办成「办不了」。）",
+  "starterTemplate": "#include <algorithm>\n#include <iostream>\n#include <memory>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Item {\npublic:\n    Item(int id, const string& name) : id(id), name(name) {}\n    int id;\n    string name;\n    bool out = false;\n};\n\nint main() {\n    vector<unique_ptr<Item>> shelf;\n\n    // 在这儿写：把三件东西摆上架子\n\n    int id = 0;\n    while (cin >> id) {\n\n        // 在这儿写：按编号办一件借出去，印一行\n\n    }\n\n    // 在这儿写：印最后那行「借出去 X 件」\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <algorithm>\n#include <iostream>\n#include <memory>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Item {\npublic:\n    Item(int id, const string& name) : id(id), name(name) {}\n    int id;\n    string name;\n    bool out = false;\n};\n\nint main() {\n    vector<unique_ptr<Item>> shelf;\n    shelf.push_back(make_unique<Item>(1, \"鱼干小百科\"));\n    shelf.push_back(make_unique<Item>(2, \"猫粮月报\"));\n    shelf.push_back(make_unique<Item>(3, \"大肥鱼自传\"));\n\n    int id = 0;\n    while (cin >> id) {\n        bool ok = false;\n        for (auto& it : shelf) {\n            if (it->id != id) continue;\n            if (!it->out) { it->out = true; ok = true; }\n            break;\n        }\n        cout << (ok ? \"办好了\" : \"办不了\") << \" \" << id << endl;\n    }\n\n    int total = count_if(shelf.begin(), shelf.end(), [](const unique_ptr<Item>& p) { return p->out; });\n    cout << \"借出去 \" << total << \" 件\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题就两件事，少一件都会**安安静静地错**喵：\n\n① **按编号找**：挨个碗看过去，编号对上的那件才是我要的（`it->id == id` 就是「编号对上了」），编号对不上的一件都不用管。\n\n② **找着了还要看借出去没有**：找到了、而且没借出去 → 借走，这一行算办成；找到了、可它已经借出去了 → 算办不成。少看第二样，同一件东西就能被借出去无数次，而屏幕上照样一行一行印着「办好了」。\n\n⚠️ 「架子上没这个编号」那一路也得写对：判分喂的编号里有架子上根本没有的（找不到就该办成「办不了」）。要是图省事，拿一个**空坐标**就照着用，程序不是「办不了」，是当场收摊 —— 这一分丢得很冤枉。\n\n最后那行 `借出去 X 件` 用的是第五课那手 `count_if`：挨个问一句「这件借出去了吗」，算的就把手里的数加一。\n\n（顺带认一下 `while (cin >> id)`：意思是「投喂口还有编号就接着办」——读干了这一圈自己就停，所以**不用提前知道会给几个**。样例给了三个、判分给四个，同一个程序两边都办得下来。）"
+}

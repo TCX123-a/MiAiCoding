@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-anno-fields-report",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-10",
+  "type": "codewrite",
+  "concept": ["图纸上每件东西的木牌能读出来", "fields() 里每一样的 .name 与 .type", "@dataclass 的字段注解"],
+  "instances": 6,
+  "params": {
+    "f1": { "kind": "pick", "values": ["名字", "昵称", "大名"] },
+    "f2": { "kind": "pick", "values": ["年龄", "斤数"] },
+    "name": { "kind": "pick", "values": ["咪爱", "团子"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "本喵要给猫猫画一张**图纸**喵，图纸上就两样东西：\n\n- 第一件叫 `{f1}`，旁边钉一块木牌写着「一串字」\n- 第二件叫 `{f2}`，旁边钉一块木牌写着「整数」\n\n顺序就是这么排的（`{f1}` 在前）。\n\n**外面给一个整数**（就是 `{f2}` 那个数）。\n\n请你写个程序：\n\n① 用 `@dataclass` 画一张叫 `猫档案` 的图纸 —— 两样东西按上面的顺序，各自写成「名字 + 冒号 + 它该长成什么样」（记得先从 `dataclasses` 那本手册里把要用到的请进来）。\n② 照这张图纸造一份档案：第一格填 `{name}`，第二格填外面给的那个整数。把这份档案印出来（一行）。\n③ 把图纸上**每一件**东西**挨个**过一遍：每过一件印**一行** —— 先印它那块**名牌**上的名字，再印一个空格，再印它**木牌上写的那个类型**。\n\n印出来是**三行**：档案本身一行，图纸上两件东西各一行。\n\n⚠️ 最后两行要的是**木牌上写的那个类型本身**（印出来带着尖括号的那种），不是一串字。\n\n比如外面给的是\n\n```text\n{sampleInput}\n```\n\n就要输出\n\n```text\n{sampleOutput}\n```\n\n（判分时图纸上两件东西的名字、还有填进去的那个名字都会换一套喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "from dataclasses import dataclass, fields\n\n\n@dataclass\nclass 猫档案:\n    {f1}: str\n    {f2}: int\n\n\n档案 = 猫档案(\"{name}\", int(input()))\nprint(档案)\nfor f in fields(猫档案):\n    print(f.name, f.type)\n",
+  "explanationTemplate": "图纸上的木牌**不是死的** —— 这一课里讲过：`fields(图纸)` 把图纸上每一件东西**挨个**交出来，每一样身上都带着两样喵：\n\n- **`f.name`** —— 那块名牌上的名字。\n- **`f.type`** —— 名牌后面那张**木牌上写的类型**。\n\n所以第 ③ 步只要一次「挨个过一遍」就完了：每过一件，把这两样印在同一行、中间一个空格。\n\n⚠️ 交回来的 `f.type` 是**那个类型本身**（印出来带尖括号），不是一串字 —— 本喵这两块木牌都是直接写的（没拿引号包着），所以 `fields()` 交回来的就是真东西。要是木牌写成引号包着的一串字，那就又得请 `get_type_hints()` 出来认领了喵。\n\n（第 ② 步印出来那个样子，是图纸自带的那套印法：图纸名 + 括号，里面一格一格「名字 + 等号 + 值」。那是图纸的活，跟今天的木牌是两回事～）"
+}

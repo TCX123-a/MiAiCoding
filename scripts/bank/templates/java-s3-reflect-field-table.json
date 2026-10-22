@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-reflect-field-table",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-12",
+  "type": "codewrite",
+  "concept": ["一柜子骨头牌", "光片上的顺序说了不算，要自己排", "自己写的那几根才在表上"],
+  "instances": 6,
+  "params": {
+    "f1": { "kind": "pick", "values": ["名字", "绰号"] },
+    "f2": { "kind": "pick", "values": ["小鱼干", "猫粮数"] },
+    "f3": { "kind": "pick", "values": ["睡着", "饿着"] }
+  },
+  "stemTemplate": "本喵手上只有一张图纸（就是代码里那张 `小猫`），要列一张**骨头表**喵。\n\n要求是这样的：\n\n1. 把这张图纸上**自己写的**骨头一根不落列出来，每行写 `种类 名字`（中间一个空格，种类就是 `String` / `int` / `boolean` 那种短名字）；\n2. **顺序不能靠光片** —— 把这些行塞进一个柜子，整行交给 `Collections.sort` 排一遍再印；\n3. 最后再印一行 `一共 N 根骨头`（N 是表上骨头的根数）。\n\n填 `Main` 里空着的那一段就行，**图纸本身一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "starterTemplate": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String {f1};\n        int {f2};\n        boolean {f3};\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String {f1};\n        int {f2};\n        boolean {f3};\n    }\n\n    public static void main(String[] args) {\n        List<String> 骨头们 = new ArrayList<>();\n        for (Field 骨头 : 小猫.class.getDeclaredFields()) {\n            骨头们.add(骨头.getType().getSimpleName() + \" \" + 骨头.getName());\n        }\n        Collections.sort(骨头们);\n        for (String 一行 : 骨头们) {\n            System.out.println(一行);\n        }\n        System.out.println(\"一共 \" + 骨头们.size() + \" 根骨头\");\n    }\n}\n",
+  "explanationTemplate": "这一题把第三节那三个动作原样走了一遍喵。\n\n**一、光片从哪儿来。** 手上只有图纸，所以用 `小猫.class` 那张拿法（另一种 `橘.getClass()` 得先有真猫）。\n\n**二、一柜子骨头牌。** `getDeclaredFields()` 交回来的是一柜子 `Field`，一根骨头一张牌。牌上两样东西有用：`getType().getSimpleName()` 问「它是哪一种」，`getName()` 问「它叫什么」。拼成一行就是 `String 名字` 这个样子。\n\n**三、为什么要先排排坐。** 光片上的骨头顺序**说了不算**（第三节里提过），所以顺序得自己造：把这些行塞进柜子，整行交给 `Collections.sort` 排一遍。**排的是整行**，所以先按种类、同种类再按名字 —— 这一步不做，表上三行的先后就说不准，判分那边也对不上。\n\n**四、根数从柜子里数。** 最后那行 `一共 N 根骨头` 里的 N 用 `骨头们.size()` 拿，别写死：图纸上加一根骨头，这行数字自己就跟着变。\n\n**五、自己写的才在表上。** 这一条第三节讲过：`getDeclaredFields()` 只列这张图纸自己写的骨头，从上一代传下来的那些不在里面 —— 所以这道题里表上正好就是图纸上写着的那三根喵。"
+}

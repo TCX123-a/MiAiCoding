@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-todo-done-off-by-one",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-14",
+  "type": "codefix",
+  "concept": ["屏幕上的编号从 1 起", "柜子里的编号从 0 起", "差 1 的那一下自己补", "编号够不着会当场断气"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["喂鱼", "洗猫窝"] },
+    "b": { "kind": "pick", "values": ["铲屎", "晒鱼干"] },
+    "c": { "kind": "pick", "values": ["买猫粮", "修猫抓板"] }
+  },
+  "stemTemplate": "菜单上敲的是 `done 2` —— 本喵要办的是**第 2 条**。可这稿子**把勾打歪了**，它跑出来是这样：\n\n```text\n办完了：{c}\n三条现在这样：[ ] {a} / [ ] {b} / [x] {c}\n```\n\n请你把它补好，让程序印出：\n\n```text\n办完了：{b}\n三条现在这样：[ ] {a} / [x] {b} / [ ] {c}\n```\n\n毛病只有一处，就在**拿编号去喊柜子**那两句上。这稿子编得过、也跑得起来，翻译官喵一个字都不说喵。",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\nclass Todo {\n    private String what;\n    private boolean done;\n\n    Todo(String what, boolean done) {\n        this.what = what;\n        this.done = done;\n    }\n\n    String getWhat() { return what; }\n    void markDone() { done = true; }\n\n    @Override\n    public String toString() {\n        return (done ? \"[x] \" : \"[ ] \") + what;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Todo> zhi = new ArrayList<>();\n        zhi.add(new Todo(\"{a}\", false));\n        zhi.add(new Todo(\"{b}\", false));\n        zhi.add(new Todo(\"{c}\", false));\n        String line = \"done 2\";\n        int k = Integer.parseInt(line.substring(5));\n        zhi.get(k).markDone();\n        System.out.println(\"办完了：\" + zhi.get(k).getWhat());\n        System.out.println(\"三条现在这样：\" + zhi.get(0) + \" / \" + zhi.get(1) + \" / \" + zhi.get(2));\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\nclass Todo {\n    private String what;\n    private boolean done;\n\n    Todo(String what, boolean done) {\n        this.what = what;\n        this.done = done;\n    }\n\n    String getWhat() { return what; }\n    void markDone() { done = true; }\n\n    @Override\n    public String toString() {\n        return (done ? \"[x] \" : \"[ ] \") + what;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Todo> zhi = new ArrayList<>();\n        zhi.add(new Todo(\"{a}\", false));\n        zhi.add(new Todo(\"{b}\", false));\n        zhi.add(new Todo(\"{c}\", false));\n        String line = \"done 2\";\n        int k = Integer.parseInt(line.substring(5));\n        zhi.get(k - 1).markDone();\n        System.out.println(\"办完了：\" + zhi.get(k - 1).getWhat());\n        System.out.println(\"三条现在这样：\" + zhi.get(0) + \" / \" + zhi.get(1) + \" / \" + zhi.get(2));\n    }\n}\n",
+  "explanationTemplate": "这一处是这一课最爱摔的地方：**屏幕上写给本喵看的编号从 `1` 起，柜子里的编号从 `0` 起，中间差 1。**\n\n本喵敲 `done 2`，意思是「第 2 条 —— {b}」；可 `zhi.get(2)` 摸到的是**柜子里的第 3 件**，于是勾打在了 {c} 头上，而 {b} 还空着。连 `办完了：` 那一行也跟着念错了名（那句话也是拿 `k` 去问的）。本喵真跑过坏的那版：印出来正是 `办完了：{c}` 和 `[ ] {a} / [ ] {b} / [x] {c}`。\n\n补法就是那两处都减一：\n\n```java\nzhi.get(k - 1).markDone();\nSystem.out.println(\"办完了：\" + zhi.get(k - 1).getWhat());\n```\n\n**为什么是「两处」而不是一处**喵：这两句都在拿**屏幕上那个编号**去问柜子，所以差 1 的毛病两处都有；只改一句的话，勾的位置和念出来的名字会对不上（一个说办的是 {c}、另一个说办的是 {b}）。改完之后印出来才是 `办完了：{b}` 和 `[ ] {a} / [x] {b} / [ ] {c}`。\n\n还有一个更疼的下场要留个心眼：**这个毛病有时候不只是错位，是直接翻车。** 三条的时候 `get(2)` 还够得着，程序照跑；本喵想办最后一条（敲 `done 3`）的时候，`get(3)` 就**够不着**了，程序当场断气。所以别拿「这回跑出来了」当没事 —— 真正要记的是那句：**屏幕上的编号 ↔ 柜子里的编号，永远差 1。**"
+}

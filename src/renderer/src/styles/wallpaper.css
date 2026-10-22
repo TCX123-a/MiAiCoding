@@ -1,0 +1,299 @@
+/*
+ * 壁纸门控：壁纸只从两层后面透出来 —— 画布层与**容器面**；文字、代码块、
+ * 题目、大肥鱼一概实心（硬底线）。
+ *
+ * 结构（画序从底到顶）：
+ *   壁纸层（z:-1，含不透明渐变垫底 + 媒体 + dim 遮罩）
+ *   → .layout 背景（media 档 = 画布 veil；on 档透明。body/main.content 两档全透）
+ *   → 容器面（卡片/侧栏/右栏 —— 底为 glass 令牌，按 --mi-panel-alpha 稀释）
+ *   → 文字、代码块、题目、大肥鱼（从不吃上面那两个变量）
+ *
+ * 【2026-10-04 的主人口径修订】原先是「卡片/面板一概不动」——主人实测后指出
+ * 壁纸被 UI 完全遮死（veil × dim × 面板实色 三层乘下来 ≈ 7.8%，见 tokens.css
+ * 玻璃层那段），要求「UI 面板透明度可调 + 字/代码/题目/图标恒 alpha=1」。
+ * 所以门控扩了一档：容器面改用 glass 令牌（可调），硬底线那几类保持实色 ——
+ * 边界由静态闸门（wall-glass.test.ts：IN 精确计数 / OUT 零令牌 / opacity 快照）钉死。
+ *
+ * 【和 docs/23 §2.3 的两处有意偏差，实现时以大原则为准】
+ *   ① 文档写「壁纸层 z-index 恰为 0」——实现为 -1：z:0 的定位元素在绘制序上
+ *      画在 in-flow 静态内容（正文文字）**之上**，而那正是文档同段要防的事；
+ *      负 z 才真正落在画布与一切内容之下。
+ *   ② 文档写「画布层透明化」——实现为**可调 veil**：卡片之外的画布、栏底这些
+ *      区域如果全透，壁纸花纹会直接钻到文字行间；veil 把画布层的合成亮度拉回
+ *      可读区间（默认值在 shared/wall-ui.ts，探针 J 用真实画面复核）。
+ *      ⚠️ 顺手校正一条旧注释的过时前提：正文（.markdown-body）**不是**直接画在
+ *      画布上的，它包在 MiCard 里 —— veil 管的是卡片之外那圈画布与栏底；
+ *      对比度的最坏区在「面板 alpha 稀释后的卡片底」，不是画布本身。
+ *
+ * veil 与透明两档的口径由组件挂的 data-wallpaper 值决定（见 WallpaperLayer.vue）：
+ *   data-wallpaper 缺失 → 壁纸关，一切原样（这一条保证关闭/卸载/崩溃后零残留）
+ *   = 'on'（只垫渐变）→ body 与正文画布全透：垫底渐变本身就是按主题配过色的
+ *                       画布（不透明白底），全透 = 让用户完整看到它
+ *   = 'media'（有媒体）→ .layout 盖画布 veil、body 与正文画布透明：
+ *                       正文文字与媒体之间隔的就是这一道，最坏情况实测见报告
+ */
+
+:root {
+  /* 画布 veil 的**静态兜底**：正常启动时 main.ts 会按主题注入持久化值
+     （浅色 75 / 深色 75，见 shared/wall-ui.ts），这条只在脚本没跑起来时被读到
+     —— 而那时界面根本不会渲染，所以它永远不会真的被看见。
+     88% 是改造前写死的值，原样留作兜底。调大 = 文字更稳、壁纸更淡。 */
+  --mi-wall-veil: 88%;
+}
+
+/* 容器面玻璃层（2026-10-04 新增）：卡片的底按 --mi-panel-alpha 稀释成半透明。
+   选择器带 [data-wallpaper] 门控 ⇒ 壁纸关时整条不匹配、三个 glass 令牌保持
+   tokens.css 里的实色定义 ——「关了逐字节还原」靠的就是这一条。
+   谁吃它：卡片/侧栏/右栏等容器面（清单在 wall-glass.test.ts 里精确钉死）；
+   代码块、正文、题目、大肥鱼不吃（硬底线，同处有 OUT 反例守卫）。 */
+:root[data-wallpaper] {
+  --mi-card-glass: color-mix(in srgb, var(--mi-card) var(--mi-panel-alpha), transparent);
+  --mi-bg-glass: color-mix(in srgb, var(--mi-bg) var(--mi-panel-alpha), transparent);
+  --mi-blue-light-glass: color-mix(in srgb, var(--mi-blue-light) var(--mi-panel-alpha), transparent);
+  /* 材质色的稀释口（V2-30，2026-10-16）：棱与厚度的原色在 tokens.css
+     （-base 后缀），在这里按 --mi-material-fade 往 transparent 稀释 ——
+     面板 alpha ≥ 30 时系数 1（逐字节等于原色），30→0 线性淡出，
+     面板全透时材料一丝不剩（用户拖到 0 要的是"全隐藏"）。
+     系数由 main.ts 用 materialFadeOf 算好注入，这里只做 color-mix
+     （百分比位置塞 calc() 不稳，换算留在 TS）。
+     ⚠️ 这两条 color-mix 是 -base 令牌的**唯一**消费口：门控块之外
+     没有人直接引用 --mi-glass-rim / --mi-glass-depth-color。 */
+  --mi-glass-rim: color-mix(in srgb, var(--mi-glass-rim-base) var(--mi-material-fade), transparent);
+  --mi-glass-depth-color: color-mix(in srgb, var(--mi-glass-depth-color-base) var(--mi-material-fade), transparent);
+}
+
+/* ── 液态玻璃的**静态材质**：棱 + 厚度（2026-10-08）────────────────────────
+   为什么折射之外还要这一层 —— 这是本项最反直觉、也最要紧的一处取舍：
+
+   【折射在天花板之下】镜像画在壁纸层里（.wp-dim 之下），于是它和壁纸吃同一条
+   通道：面板上壁纸的可见度 = (1 − dim 0.35) × (1 − veil 0.75) ×
+   (1 − panelAlpha 0.65) ≈ **5.7%**（2026-10-08 实测；把整层镜像藏掉只改变屏幕
+   亮度 0.115/255，而位移在强档也只有 0.425/255）。这三个旋钮全在用户手里、
+   默认值又都是「保读性」那一侧 —— 也就是说**出厂设置下折射基本看不见**。
+   这是物理事实，不是渲染 bug；拿它当 bug 去调只会把对比度预算拆掉。
+
+   【所以「像不像玻璃」交给材质】棱与厚度画在**面板自己身上**（不透明元素的
+   前景层），不吃 veil/dim 的衰减：用户把面板调到多透，这一层就有多实。
+   参考图里一眼认得出的「一块玻璃」正是这两样：光打在边缘的一条亮棱
+   （--mi-glass-rim）+ 靠近边缘往里压深的厚度（--mi-glass-depth*）。
+   * 这是需求⑧点名的「阴影扩散」与「玻璃底部畸变」在材质侧的落点 ——
+     畸变那半边在 SVG 那侧（环带 bottomBoost，见 lib/glass/lens-map.ts）。
+
+   【V2-30 补丁（2026-10-16）：材质也不是无条件"实"】上面这条原先写的是
+   「完全不吃那三个旋钮」—— 对 veil/dim 仍然成立，但 alpha 那条在低端
+   出了 bug：拖到 0 时面板底没了、棱和厚度还在原地，读起来像"没生效"。
+   现在棱与厚度吃 --mi-material-fade（main.ts 按 alpha 算：≥30 系数 1、
+   30→0 线性淡出到无）—— alpha ≥ 30（含出厂 40/65）逐字节不变，
+   0 = 真·全隐藏（主人 2026-10-16 裁定「调到 0 就是为了全隐藏，这点不能变」）。
+
+   【为什么一律 inset、不写外阴影】侧栏/右栏挂在 `.splitpanes__pane` 里，那一层
+   是 overflow:hidden —— 外阴影会被父级直接裁掉（写了等于没写，还会让人以为
+   「阴影没生效是浏览器不支持」）。inset 不受影响，观感也更像「厚度」而不是
+   「浮起来」。卡片的外阴影（--mi-shadow）是原有的，保留在第一位。
+
+   【为什么每处都要显式带 var(--mi-shadow)】box-shadow 是**整条覆盖**不是叠加：
+   .mi-card 自己那条 box-shadow 会被这条选择器按特异性压过去，不显式写回来
+   就等于把卡片的浮起投影改没了（视觉上是「卡片糊在背景上」）。
+
+   【哪些面吃材质 —— 判据是「板材」，不是「谁在用 glass 令牌」】
+   吃：MiCard 的公共壳 + 各视图的**大卡**（`.page > .card`、`.welcome-card`、
+   `.module-card`）与三块面板（侧栏/右栏/顶条）。这些都是「一块板」。
+   不吃（都很靠近，但性质不同）：
+     · `.challenge-card` / `.lesson-actions` —— 自己已经有一圈 `1px solid
+       var(--mi-border)` 描边，再加一道 1px 棱就是双线；
+     · `.panel-card` / `.ref-item` —— 嵌在右栏**里面**的小块，外层已经有材质，
+       再套一层只会让右栏花掉；
+     · `.fav-toolbar` —— 主人点名的吸底覆盖层，2026-10-04 已裁定保持实色；
+     · `MiToast` —— 浮在最上面的一次性提示，不该有「面板」的重量感。
+   注意 `.page > .card` 用**子选择器**：三处 `.card` 都是 `.page` 的直接子元素，
+   收窄了才不会被将来某个浮层里的同名类蹭到。
+
+   【门控】规则全在 `:root[data-wallpaper]` 之下 ⇒ 壁纸关掉时整条不匹配、
+   box-shadow 回到各自组件里的原样 —— 和 glass 令牌同一条「零残留」纪律。 */
+
+:root[data-wallpaper] .mi-card,
+:root[data-wallpaper] .page > .card,
+:root[data-wallpaper] .learn-view .welcome-card,
+:root[data-wallpaper] .learn-view .module-card {
+  box-shadow:
+    var(--mi-shadow),
+    /** 一圈 1px 的棱（四边） */
+    inset 0 0 0 1px var(--mi-glass-rim),
+    /** 上缘再加一道：光从上面来 —— 顶边比底边亮，是「玻璃」这条直觉的一半 */
+    inset 0 1px 0 var(--mi-glass-rim),
+    /** 四边向内的厚度晕 */
+    inset 0 0 var(--mi-glass-depth) var(--mi-glass-depth-color),
+    /** 底缘单独加厚（负 offset 把晕压到底边） */
+    inset 0 calc(var(--mi-glass-depth) * -0.5) calc(var(--mi-glass-depth) * 0.8)
+      var(--mi-glass-depth-color);
+}
+
+/* 两栏：它们自己没有 box-shadow（原样式里就没有），所以只写材质这一组。
+   顶条另算 —— 它只有 --mi-topbar-h 那么高（33px 上下），照搬 14px 的上下厚度
+   会把整条淹掉，故竖向一律减半。 */
+:root[data-wallpaper] .sidebar,
+:root[data-wallpaper] .right-panel {
+  box-shadow:
+    inset 0 0 0 1px var(--mi-glass-rim),
+    inset 0 1px 0 var(--mi-glass-rim),
+    inset 0 0 var(--mi-glass-depth) var(--mi-glass-depth-color),
+    inset 0 calc(var(--mi-glass-depth) * -0.5) calc(var(--mi-glass-depth) * 0.8)
+      var(--mi-glass-depth-color);
+}
+
+:root[data-wallpaper] .topbar {
+  box-shadow:
+    inset 0 0 0 1px var(--mi-glass-rim),
+    inset 0 1px 0 var(--mi-glass-rim),
+    inset 0 0 calc(var(--mi-glass-depth) * 0.5) var(--mi-glass-depth-color),
+    inset 0 calc(var(--mi-glass-depth) * -0.5) calc(var(--mi-glass-depth) * 0.5)
+      var(--mi-glass-depth-color);
+}
+
+/* 关壁纸时以下选择器全部不匹配，tokens.css / App.vue 的原始背景一分不动 */
+:root[data-wallpaper] body,
+:root[data-wallpaper] main.content {
+  background: transparent;
+}
+
+/* media 档的 veil。⚠️ 为什么挂 `.layout` 不挂 body（绘制序问题，改前必读）：
+   html 自己没有背景 ⇒ body 的背景会**上提为画布背景**，画在整个根层叠上下文
+   的最底 —— 负 z 的壁纸层（z:-1）画在它上面，veil 会被不透明视频整个盖住，
+   等于不存在。`.layout` 是 position:relative + z-index:auto（不成层叠上下文）：
+   它自己的背景画在「上提后的负 z 层」之后、它的全部内容之前 —— 这里才是
+   真正的「视频与正文之间」。 */
+:root[data-wallpaper='media'] .layout {
+  background: color-mix(in srgb, var(--mi-canvas) var(--mi-wall-veil), transparent);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   壁纸层的内部结构（2026-10-04 P3 第二步：双槽过场 / 侧差 / 画面适配）
+   —— 这一段的类只属于 WallpaperLayer 自己搭的那棵子树（z:-1 的层内）。
+   画序（层内从底到顶）：underlay 渐变 → .wp-stage（含双 .wp-slot）→ .wp-dim。
+   ⚠️ 全部 pointer-events: none（父层已 none，这里是逐类写死的二次防护 ——
+   壁纸层绝不能吃掉任何一次点击）。
+   ════════════════════════════════════════════════════════════════════════ */
+
+.wallpaper-layer {
+  position: fixed;
+  inset: 0;
+  /* 负 z：绘制序上位于 body 与一切静态内容**之下**（正文/卡片天然盖住它）。
+     0 会被画在 in-flow 文字之上 —— 那正是 docs/23 §2.3 要防的事。 */
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.wp-underlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 18% 10%, color-mix(in srgb, var(--mi-blue-deep) 16%, transparent), transparent 70%),
+    radial-gradient(55% 45% at 85% 92%, color-mix(in srgb, var(--mi-blue) 30%, transparent), transparent 70%),
+    var(--mi-canvas);
+}
+
+/* 视差舞台：独立属性 translate/scale 的消费目标（见文件末尾的视差段）。
+   双槽都挂在它里面 ⇒ 过场的 transform 与视差的 translate/scale 分属两层，
+   互不覆盖（这正是原型坚持「独立属性、绝不用 transform」的原因）。 */
+.wp-stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* 双槽 A/B：交替出图，过场在槽间跑（见 WallpaperLayer.vue 文件头）。
+   槽位自身**不设背景**——垫底色在上面的 .wp-underlay 里，槽位透明才不会把它蒙死。 */
+.wp-slot {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 2;
+  pointer-events: none;
+}
+/* 切层内容闸门：新层还没有画面时先不参与绘制（屏上留给旧层的像素）。
+   画面到位后这条类被 startLayerTransition / 硬切路径摘掉。 */
+.wp-slot--pending {
+  opacity: 0;
+}
+/* 切换过场：初/终态全由内联样式写入（transitions.ts 的 switchFrames），
+   这里只提供一条通用 transition；时长由内联 --wp-switch-ms 决定。
+   只动 transform / opacity / clip-path（合成器友好属性；mask/filter 在 video
+   与 iframe 上会掉出合成层，故不用）。 */
+.wp-slot--switch {
+  transition:
+    transform var(--wp-switch-ms, 700ms) cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity var(--wp-switch-ms, 700ms) cubic-bezier(0.22, 0.61, 0.36, 1),
+    clip-path var(--wp-switch-ms, 700ms) cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform, opacity, clip-path;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wp-slot--switch {
+    transition: none !important;
+  }
+}
+
+/* 持久视觉层：过滤器/透明度/翻转/模糊补偿写在这里（一次写入，过场不碰它
+   —— resetSwitchStyles 清的是**槽位**的内联样式，两者分层才互不误伤）。 */
+.wp-fit {
+  position: absolute;
+  inset: 0;
+  transform-origin: center;
+  pointer-events: none;
+}
+
+/* 媒体元素只管"画面适配"（object-fit 由脚本按配置写内联；这里是兜底默认） */
+.wp-media-el {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* 压暗遮罩：画在双槽之上（过场期间也恒在最上，不参与视差与过场） */
+.wp-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ── 液态玻璃的镜像画布（2026-10-08）─────────────────────────────────────
+   层内画序必须是：.wp-stage（媒体）→ **.wp-refract** → .wp-dim（压暗）。
+   位置是硬要求，不是随手排的：
+     · 在 .wp-dim **之下** —— 压暗遮罩是「媒体与文字之间」那道保险，镜像既然
+       冒充的是媒体，就必须和媒体吃同一份压暗（不然面板底下会比四周亮一块，
+       越暗的壁纸越明显）；
+     · 在 .wp-stage **之上** —— .wp-stage 带 translate/scale（鼠标透视），
+       它自成层叠上下文，所以这里用 z-index:2 压过它（它的 z 是 auto）。
+   内部实际画什么、什么时候画，全在 lib/glass/refraction.ts；
+   这里只管它在画序里的位置和「绝不吃事件」这两件事。 */
+.wp-refract {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  /* 同层内所有兄弟：壁纸层永远不吃任何一次点击（点击穿透是最高红线 ——
+     这块是后来加的，同样必须显式写死，不能指望继承） */
+  pointer-events: none;
+}
+
+/* ── 鼠标透视（视差）的消费规则 ───────────────────────────────────────────
+   逐字移植自 P1 原型 index.html（那份又来自 DSH styles.js:2866-2904），
+   只改了选择器：原型的目标是 .wp-slot，本项目是 .wp-stage 整块舞台
+   （translate + scale 补边）。
+   位移、放大倍数全在 calc 里乘出来；只能用 CSS 独立属性 translate / scale ——
+   过场会内联写/清 transform，独立属性才与之叠加而不互相清掉。
+   关掉总开关时属性摘掉 ⇒ 屏上一点痕迹都没有。
+   （v12 曾有一条挂件跟随规则，v13 随 mascotFollow 一并删除 —— 大肥鱼恒静止。） */
+body[data-wp-parallax='on'] .wp-stage {
+  translate: calc(var(--wp-parallax-x, 0px) * var(--wp-parallax-bg, 0))
+    calc(var(--wp-parallax-y, 0px) * var(--wp-parallax-bg, 0));
+  scale: calc(1 + var(--wp-parallax-bg, 0) / 100);
+}
+body[data-wp-parallax='on'] .wp-parallax--moving {
+  will-change: translate;
+}

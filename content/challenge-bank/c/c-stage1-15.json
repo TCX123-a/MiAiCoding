@@ -1,0 +1,521 @@
+{
+  "lessonId": "c-stage1-15",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s1-calc-bad-choice-break-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的小鱼干计算器快完工了喵：菜单印得出来、数也收得进去、四项运算都写好了。\n\n本喵故意逗它一下，敲了个菜单上**没有的**数 —— 它印完那句 `没有这一项喵，再选一次～`，就**直接收摊了**，再也没把菜单摆出来……\n\n你帮本喵看看是哪儿写岔了，把它改好。改好之后，敲到菜单上没有的数时，它应该印一句 `没有这一项喵，再选一次～`，然后**把菜单重新摆出来**接着问，直到敲 `5` 才收工。\n\n（判分会先喂一个菜单上没有的数，再喂一项正常的运算和两条鱼干，最后敲 `5` 收工。）",
+      "brokenCode": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            break;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：1 + 5 = 6\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "9\n1\n1\n5\n5\n",
+      "explanation": "那句「没有这一项」后面跟的是 `break` 喵 —— `break` 的意思是「**跳出这一圈**」，所以它一印完就整圈收摊，直接走到圈外面去了。\n\n这里要的是 `continue`：它的意思是「**跳回这一圈的开头**」—— 也就是回到 `while` 那一行重新判断，菜单重新摆出来。\n\n两个词只差几个字母，干的事却正好相反：\n\n- `continue` → 这一圈剩下的活儿先不干了，**回到圈的开头**（菜单重摆、再问一次）；\n- `break` → **整圈都不干了**，直接跳到圈外面去（收摊走人）。\n\n所以「这个选项不对，让他重新挑一次」要写 `continue`；而「收工」「读不进去了」这种真要走人的地方才写 `break`。\n\n本喵这台计算器里两种都用到了，正好对照着看一眼：敲 `5` 收工那里要 `break`（真走人），选项不对那里要 `continue`（让他重挑）喵。",
+      "templateId": "c-s1-calc-bad-choice-break",
+      "params": {
+        "c": 1,
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:12.399Z",
+        "hash": "1bf7fa756466cb89"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-bad-choice-break-079",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的小鱼干计算器快完工了喵：菜单印得出来、数也收得进去、四项运算都写好了。\n\n本喵故意逗它一下，敲了个菜单上**没有的**数 —— 它印完那句 `没有这一项喵，再选一次～`，就**直接收摊了**，再也没把菜单摆出来……\n\n你帮本喵看看是哪儿写岔了，把它改好。改好之后，敲到菜单上没有的数时，它应该印一句 `没有这一项喵，再选一次～`，然后**把菜单重新摆出来**接着问，直到敲 `5` 才收工。\n\n（判分会先喂一个菜单上没有的数，再喂一项正常的运算和两条鱼干，最后敲 `5` 收工。）",
+      "brokenCode": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            break;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：4 / 9 = 0\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "9\n4\n4\n9\n5\n",
+      "explanation": "那句「没有这一项」后面跟的是 `break` 喵 —— `break` 的意思是「**跳出这一圈**」，所以它一印完就整圈收摊，直接走到圈外面去了。\n\n这里要的是 `continue`：它的意思是「**跳回这一圈的开头**」—— 也就是回到 `while` 那一行重新判断，菜单重新摆出来。\n\n两个词只差几个字母，干的事却正好相反：\n\n- `continue` → 这一圈剩下的活儿先不干了，**回到圈的开头**（菜单重摆、再问一次）；\n- `break` → **整圈都不干了**，直接跳到圈外面去（收摊走人）。\n\n所以「这个选项不对，让他重新挑一次」要写 `continue`；而「收工」「读不进去了」这种真要走人的地方才写 `break`。\n\n本喵这台计算器里两种都用到了，正好对照着看一眼：敲 `5` 收工那里要 `break`（真走人），选项不对那里要 `continue`（让他重挑）喵。",
+      "templateId": "c-s1-calc-bad-choice-break",
+      "params": {
+        "c": 4,
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:14.859Z",
+        "hash": "e95551eecbd11955"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-choice-guard-or-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的计算器门口有个**看门的**喵：菜单上只有 1 到 5，敲进来的数要是超出这个范围，就该印一句 `没有这一项喵，再选一次～`，把菜单重新摆出来。\n\n可本喵刚刚敲了个 `9`，它**压根没吭声**，反而当成一次运算接着往下跑了……\n\n你帮本喵看看那道看门的是哪儿没拦住，把它改好。改好之后，敲到菜单上没有的数时，程序应该印 `没有这一项喵，再选一次～`，然后把菜单重新摆出来。\n\n（判分会先喂一个菜单上没有的数，再喂一项正常的运算和两条鱼干，最后敲 `5` 收工。）",
+      "brokenCode": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 && choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：1 + 5 = 6\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "9\n1\n1\n5\n5\n",
+      "explanation": "看门那一行现在是 `if (choice < 1 && choice > 5)` 喵 —— `&&` 读作「**并且**」：它问的是「**既比 1 小，又比 5 大**」。\n\n这句话**永远不成立**：一个数不可能同时比 1 小、又比 5 大呀。所以这道门等于没关，敲什么它都放行 —— 敲 `9` 放行，敲 `999` 也放行。\n\n要拦「越界」，得问的是「**两头任意一头出去了**」，那就得用 `||`（「**或者**」）：`choice < 1 || choice > 5` —— 「比 1 小，**或者**比 5 大」。\n\n两个记号的分工记牢喵：\n\n- `&&` = 并且，**两条都得成立**才算数；\n- `||` = 或者，**有一条成立**就算数。\n\n⚠️ 这种错最阴的地方是：**翻译官喵一句话都不会说**。程序照跑、屏幕照印，只是看门的睡着了。所以以后遇到「本该拦住的没有拦住」，第一件事就是回头看那道判断上的记号。",
+      "templateId": "c-s1-calc-choice-guard-or",
+      "params": {
+        "c": 1,
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:17.748Z",
+        "hash": "fc0037b850f719db"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-choice-guard-or-079",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的计算器门口有个**看门的**喵：菜单上只有 1 到 5，敲进来的数要是超出这个范围，就该印一句 `没有这一项喵，再选一次～`，把菜单重新摆出来。\n\n可本喵刚刚敲了个 `9`，它**压根没吭声**，反而当成一次运算接着往下跑了……\n\n你帮本喵看看那道看门的是哪儿没拦住，把它改好。改好之后，敲到菜单上没有的数时，程序应该印 `没有这一项喵，再选一次～`，然后把菜单重新摆出来。\n\n（判分会先喂一个菜单上没有的数，再喂一项正常的运算和两条鱼干，最后敲 `5` 收工。）",
+      "brokenCode": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 && choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：4 / 9 = 0\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "9\n4\n4\n9\n5\n",
+      "explanation": "看门那一行现在是 `if (choice < 1 && choice > 5)` 喵 —— `&&` 读作「**并且**」：它问的是「**既比 1 小，又比 5 大**」。\n\n这句话**永远不成立**：一个数不可能同时比 1 小、又比 5 大呀。所以这道门等于没关，敲什么它都放行 —— 敲 `9` 放行，敲 `999` 也放行。\n\n要拦「越界」，得问的是「**两头任意一头出去了**」，那就得用 `||`（「**或者**」）：`choice < 1 || choice > 5` —— 「比 1 小，**或者**比 5 大」。\n\n两个记号的分工记牢喵：\n\n- `&&` = 并且，**两条都得成立**才算数；\n- `||` = 或者，**有一条成立**就算数。\n\n⚠️ 这种错最阴的地方是：**翻译官喵一句话都不会说**。程序照跑、屏幕照印，只是看门的睡着了。所以以后遇到「本该拦住的没有拦住」，第一件事就是回头看那道判断上的记号。",
+      "templateId": "c-s1-calc-choice-guard-or",
+      "params": {
+        "c": 4,
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:20.261Z",
+        "hash": "c35700ffcba3c900"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-divzero-guard-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的计算器别的都好了，就剩一道**拦路虎**没装喵：要是有人要做除法、却把第二条鱼干填成 `0`，那一步不能真去做 —— 得拦下来，印一句 `0 不能当除数喵！`。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，一直转到选项等于 `5` 为止。每一圈里：摆菜单、读选项；读到 `5` 就印 `收工啦喵～` 收工；否则印 `第一条小鱼干：` 读一个数、印 `第二条小鱼干：` 读一个数。\n\n4. 算的时候注意喵：**选项是 4、并且第二条鱼干等于 `0` 的时候，不要去做除法**，改成印 `0 不能当除数喵！`。其他情况照常印结果，样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。\n\n比如投喂给程序的是\n\n4\n7\n2\n5\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 / 2 = 3\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会喂一次「除数为 0」**，所以那道拦路虎必须装好。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：0 不能当除数喵！\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "4\n2\n0\n5\n",
+      "explanation": "这道拦路虎的意义，比它表面上看起来大得多喵：**它拦的不是一个「不合法输入」，而是一场真正的塌方。**\n\n除法的规矩是「把被除数分成那么多个份」。分成 **0** 份是什么意思？没人知道 —— 所以翻译官喵根本不会给你一个数，它是**当场炸掉**（程序直接崩，屏幕上冒出一句你从没见过的抱怨，后面该印的东西一个字都不会印）。\n\n所以这一道判断必须在**做除法之前**就问出来：\n\n- `b == 0` → 印 `0 不能当除数喵！`，**别去做那一步除法**；\n- 不然 → 照常算、照常印。\n\n也正因为这一条被拦住了，本喵这台计算器才敢说「随便敲，不会炸」。\n\n顺带把这一课的三个记号再对一遍：`=` 是放东西（`b = 0` 会把碗清空），`==` 是比较（`b == 0` 只是在问一句），判断里**永远用两个等号**。\n\n（还有一处小地方：这一道拦路虎只跟选项 `4` 有关。加法减法乘法里第二条鱼干是 `0` 完全没问题 —— `7 + 0`、`7 * 0` 都算得出来。）",
+      "templateId": "c-s1-calc-divzero-guard",
+      "params": {
+        "a": 2
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:41.439Z",
+        "hash": "5c5212e88cff241d"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-divzero-guard-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的计算器别的都好了，就剩一道**拦路虎**没装喵：要是有人要做除法、却把第二条鱼干填成 `0`，那一步不能真去做 —— 得拦下来，印一句 `0 不能当除数喵！`。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，一直转到选项等于 `5` 为止。每一圈里：摆菜单、读选项；读到 `5` 就印 `收工啦喵～` 收工；否则印 `第一条小鱼干：` 读一个数、印 `第二条小鱼干：` 读一个数。\n\n4. 算的时候注意喵：**选项是 4、并且第二条鱼干等于 `0` 的时候，不要去做除法**，改成印 `0 不能当除数喵！`。其他情况照常印结果，样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。\n\n比如投喂给程序的是\n\n4\n7\n2\n5\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 / 2 = 3\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会喂一次「除数为 0」**，所以那道拦路虎必须装好。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：0 不能当除数喵！\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "4\n3\n0\n5\n",
+      "explanation": "这道拦路虎的意义，比它表面上看起来大得多喵：**它拦的不是一个「不合法输入」，而是一场真正的塌方。**\n\n除法的规矩是「把被除数分成那么多个份」。分成 **0** 份是什么意思？没人知道 —— 所以翻译官喵根本不会给你一个数，它是**当场炸掉**（程序直接崩，屏幕上冒出一句你从没见过的抱怨，后面该印的东西一个字都不会印）。\n\n所以这一道判断必须在**做除法之前**就问出来：\n\n- `b == 0` → 印 `0 不能当除数喵！`，**别去做那一步除法**；\n- 不然 → 照常算、照常印。\n\n也正因为这一条被拦住了，本喵这台计算器才敢说「随便敲，不会炸」。\n\n顺带把这一课的三个记号再对一遍：`=` 是放东西（`b = 0` 会把碗清空），`==` 是比较（`b == 0` 只是在问一句），判断里**永远用两个等号**。\n\n（还有一处小地方：这一道拦路虎只跟选项 `4` 有关。加法减法乘法里第二条鱼干是 `0` 完全没问题 —— `7 + 0`、`7 * 0` 都算得出来。）",
+      "templateId": "c-s1-calc-divzero-guard",
+      "params": {
+        "a": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:05.782Z",
+        "hash": "3c3e258df93ba679"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-divzero-guard-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的计算器别的都好了，就剩一道**拦路虎**没装喵：要是有人要做除法、却把第二条鱼干填成 `0`，那一步不能真去做 —— 得拦下来，印一句 `0 不能当除数喵！`。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，一直转到选项等于 `5` 为止。每一圈里：摆菜单、读选项；读到 `5` 就印 `收工啦喵～` 收工；否则印 `第一条小鱼干：` 读一个数、印 `第二条小鱼干：` 读一个数。\n\n4. 算的时候注意喵：**选项是 4、并且第二条鱼干等于 `0` 的时候，不要去做除法**，改成印 `0 不能当除数喵！`。其他情况照常印结果，样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。\n\n比如投喂给程序的是\n\n4\n7\n2\n5\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 / 2 = 3\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会喂一次「除数为 0」**，所以那道拦路虎必须装好。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：0 不能当除数喵！\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "4\n4\n0\n5\n",
+      "explanation": "这道拦路虎的意义，比它表面上看起来大得多喵：**它拦的不是一个「不合法输入」，而是一场真正的塌方。**\n\n除法的规矩是「把被除数分成那么多个份」。分成 **0** 份是什么意思？没人知道 —— 所以翻译官喵根本不会给你一个数，它是**当场炸掉**（程序直接崩，屏幕上冒出一句你从没见过的抱怨，后面该印的东西一个字都不会印）。\n\n所以这一道判断必须在**做除法之前**就问出来：\n\n- `b == 0` → 印 `0 不能当除数喵！`，**别去做那一步除法**；\n- 不然 → 照常算、照常印。\n\n也正因为这一条被拦住了，本喵这台计算器才敢说「随便敲，不会炸」。\n\n顺带把这一课的三个记号再对一遍：`=` 是放东西（`b = 0` 会把碗清空），`==` 是比较（`b == 0` 只是在问一句），判断里**永远用两个等号**。\n\n（还有一处小地方：这一道拦路虎只跟选项 `4` 有关。加法减法乘法里第二条鱼干是 `0` 完全没问题 —— `7 + 0`、`7 * 0` 都算得出来。）",
+      "templateId": "c-s1-calc-divzero-guard",
+      "params": {
+        "a": 4
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:43.581Z",
+        "hash": "7515e8d433aff041"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-menu-newline-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的计算器菜单印出来了，可**格式跟本喵想的不一样**喵。\n\n本喵想要的是：菜单最后一行印 `选一个（1-5）：`，**冒号后面不要换行** —— 这样用户敲进去的数就会紧挨着冒号出现，看起来就像在回答它。\n\n可现在跑出来，冒号后面先空了一整行，下一个提示另起了一行，跟本喵想要的排版对不上……\n\n你帮本喵看看印菜单那一招里哪儿多写了东西，把它改好。\n\n（判分是拿屏幕上印出来的字**一个字符一个字符**比的，多一个换行、少一个空格，都算不一样喵。）",
+      "brokenCode": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\\n\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：1 + 5 = 6\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "1\n1\n5\n5\n",
+      "explanation": "菜单最后那一行的字尾多了一个 `\\n` 喵 —— `\\n` 是**换行**，写在那儿的意思是「印完冒号，把光标挪到下一行去」。\n\n菜单**前面五行**结尾都得有 `\\n`（不然六行会挤成一坨），**唯独最后那一行不要** —— 因为它不是一句话的结束，而是在**等人回答**。冒号后面光标留在原地，用户敲的数字才会紧挨着它出现，看起来就像在回答它。\n\n这也是本课一直在强调的输出格式问题：判分是拿屏幕上印出来的字**一个字符一个字符**比的。多一个换行、少一个空格、冒号写在别处，屏幕上的样子就不一样了 —— 机器一眼就能看出来。\n\n所以以后印完东西**回头看一眼自己印出来的样子**，跟想要的样子对一对，比盯着代码发呆管用多了喵。",
+      "templateId": "c-s1-calc-menu-newline",
+      "params": {
+        "c": 1,
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:22.827Z",
+        "hash": "396c69f1fc4e6ec3"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-menu-newline-079",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的计算器菜单印出来了，可**格式跟本喵想的不一样**喵。\n\n本喵想要的是：菜单最后一行印 `选一个（1-5）：`，**冒号后面不要换行** —— 这样用户敲进去的数就会紧挨着冒号出现，看起来就像在回答它。\n\n可现在跑出来，冒号后面先空了一整行，下一个提示另起了一行，跟本喵想要的排版对不上……\n\n你帮本喵看看印菜单那一招里哪儿多写了东西，把它改好。\n\n（判分是拿屏幕上印出来的字**一个字符一个字符**比的，多一个换行、少一个空格，都算不一样喵。）",
+      "brokenCode": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\\n\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：4 / 9 = 0\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "4\n4\n9\n5\n",
+      "explanation": "菜单最后那一行的字尾多了一个 `\\n` 喵 —— `\\n` 是**换行**，写在那儿的意思是「印完冒号，把光标挪到下一行去」。\n\n菜单**前面五行**结尾都得有 `\\n`（不然六行会挤成一坨），**唯独最后那一行不要** —— 因为它不是一句话的结束，而是在**等人回答**。冒号后面光标留在原地，用户敲的数字才会紧挨着它出现，看起来就像在回答它。\n\n这也是本课一直在强调的输出格式问题：判分是拿屏幕上印出来的字**一个字符一个字符**比的。多一个换行、少一个空格、冒号写在别处，屏幕上的样子就不一样了 —— 机器一眼就能看出来。\n\n所以以后印完东西**回头看一眼自己印出来的样子**，跟想要的样子对一对，比盯着代码发呆管用多了喵。",
+      "templateId": "c-s1-calc-menu-newline",
+      "params": {
+        "c": 4,
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:30.112Z",
+        "hash": "abac6a68468dc047"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-pick-one-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**只算一次**的小鱼干计算器喵：菜单摆出来、读一个选项、读两条鱼干的条数、算一次、印一行结果，然后收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把算出来的结果叼回来（除法就按整数的规矩除，除不尽的余数不要）。\n\n2. 再写一招 `showMenu`，专门摆菜单，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`。\n\n**注意最后那一行：冒号后面不要换行**，要让用户敲的数紧挨着冒号出现。\n\n3. `main` 里按顺序来：先摆菜单 → 读一个选项 → **要是读到 `5`，就印 `收工啦喵～` 收工**（这一趟不用再读鱼干）→ 否则印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数。\n\n4. 按选项算一次，印一行结果。样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选加法、喂 3 和 5，就印 `3 + 5 = 8`。\n\n比如投喂给程序的是\n\n3\n7\n2\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 另外提醒一句：判分喂的选项**可能是 1~5 里任意一个**，`5` 那一条路也得走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    // 先摆菜单\n\n    // 读一个选项\n\n    // 读到 5 就印「收工啦喵～」收工\n\n    // 否则读两条鱼干\n\n    // 算一次、印一行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    showMenu();\n    if (scanf(\"%d\", &choice) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 5) {\n        printf(\"收工啦喵～\\n\");\n        return 0;\n    }\n\n    printf(\"第一条小鱼干：\");\n    if (scanf(\"%d\", &a) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n    printf(\"第二条小鱼干：\");\n    if (scanf(\"%d\", &b) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 1) {\n        printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n    } else if (choice == 2) {\n        printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n    } else if (choice == 3) {\n        printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n    } else {\n        printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：1 + 5 = 6",
+      "stdin": "1\n1\n5\n",
+      "explanation": "这一题把前面五课的东西串成一串了喵：**招式**（四个运算各管一件事）、**投喂**（两个整数进、一个结果出）、**`return`**（把结果叼回来）、**`scanf` 的那个 `&`**（每条鱼干都要送进门牌号）、**菜单的排版**（冒号后面不换行）。\n\n几处最容易摔的地方：\n\n- **菜单最后一行别写 `\\n`**。前面五行都得有（不然六行会挤成一坨），唯独最后那一行是在**等人回答**，冒号后面得让光标停在原地。\n- **`5` 这一条路要单独处理，而且要在读鱼干之前处理**。判分可能会喂 `5`，那时候程序应该直接印 `收工啦喵～`，而不是跑去算除法。\n- **除法是整数除法**。整数装不下小数点，`7 / 2` 算出来是 `3` 不是 `3.5` —— 余数直接被丢掉。这不是 bug，是这一课的规矩。\n\n写完之后自己看一眼屏幕上印出来的样子：菜单六行整整齐齐、冒号后面紧跟着用户敲的数、结果那一行的空格一个不多一个不少。**判分就是这么比的。**",
+      "templateId": "c-s1-calc-pick-one",
+      "params": {
+        "c": 1,
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:32.972Z",
+        "hash": "4983591cdb76c469"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-pick-one-020",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**只算一次**的小鱼干计算器喵：菜单摆出来、读一个选项、读两条鱼干的条数、算一次、印一行结果，然后收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把算出来的结果叼回来（除法就按整数的规矩除，除不尽的余数不要）。\n\n2. 再写一招 `showMenu`，专门摆菜单，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`。\n\n**注意最后那一行：冒号后面不要换行**，要让用户敲的数紧挨着冒号出现。\n\n3. `main` 里按顺序来：先摆菜单 → 读一个选项 → **要是读到 `5`，就印 `收工啦喵～` 收工**（这一趟不用再读鱼干）→ 否则印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数。\n\n4. 按选项算一次，印一行结果。样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选加法、喂 3 和 5，就印 `3 + 5 = 8`。\n\n比如投喂给程序的是\n\n3\n7\n2\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 另外提醒一句：判分喂的选项**可能是 1~5 里任意一个**，`5` 那一条路也得走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    // 先摆菜单\n\n    // 读一个选项\n\n    // 读到 5 就印「收工啦喵～」收工\n\n    // 否则读两条鱼干\n\n    // 算一次、印一行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    showMenu();\n    if (scanf(\"%d\", &choice) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 5) {\n        printf(\"收工啦喵～\\n\");\n        return 0;\n    }\n\n    printf(\"第一条小鱼干：\");\n    if (scanf(\"%d\", &a) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n    printf(\"第二条小鱼干：\");\n    if (scanf(\"%d\", &b) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 1) {\n        printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n    } else if (choice == 2) {\n        printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n    } else if (choice == 3) {\n        printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n    } else {\n        printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：1 - 5 = -4",
+      "stdin": "2\n1\n5\n",
+      "explanation": "这一题把前面五课的东西串成一串了喵：**招式**（四个运算各管一件事）、**投喂**（两个整数进、一个结果出）、**`return`**（把结果叼回来）、**`scanf` 的那个 `&`**（每条鱼干都要送进门牌号）、**菜单的排版**（冒号后面不换行）。\n\n几处最容易摔的地方：\n\n- **菜单最后一行别写 `\\n`**。前面五行都得有（不然六行会挤成一坨），唯独最后那一行是在**等人回答**，冒号后面得让光标停在原地。\n- **`5` 这一条路要单独处理，而且要在读鱼干之前处理**。判分可能会喂 `5`，那时候程序应该直接印 `收工啦喵～`，而不是跑去算除法。\n- **除法是整数除法**。整数装不下小数点，`7 / 2` 算出来是 `3` 不是 `3.5` —— 余数直接被丢掉。这不是 bug，是这一课的规矩。\n\n写完之后自己看一眼屏幕上印出来的样子：菜单六行整整齐齐、冒号后面紧跟着用户敲的数、结果那一行的空格一个不多一个不少。**判分就是这么比的。**",
+      "templateId": "c-s1-calc-pick-one",
+      "params": {
+        "c": 2,
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:08.743Z",
+        "hash": "4f50de32bfb3d704"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-pick-one-040",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**只算一次**的小鱼干计算器喵：菜单摆出来、读一个选项、读两条鱼干的条数、算一次、印一行结果，然后收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把算出来的结果叼回来（除法就按整数的规矩除，除不尽的余数不要）。\n\n2. 再写一招 `showMenu`，专门摆菜单，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`。\n\n**注意最后那一行：冒号后面不要换行**，要让用户敲的数紧挨着冒号出现。\n\n3. `main` 里按顺序来：先摆菜单 → 读一个选项 → **要是读到 `5`，就印 `收工啦喵～` 收工**（这一趟不用再读鱼干）→ 否则印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数。\n\n4. 按选项算一次，印一行结果。样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选加法、喂 3 和 5，就印 `3 + 5 = 8`。\n\n比如投喂给程序的是\n\n3\n7\n2\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 另外提醒一句：判分喂的选项**可能是 1~5 里任意一个**，`5` 那一条路也得走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    // 先摆菜单\n\n    // 读一个选项\n\n    // 读到 5 就印「收工啦喵～」收工\n\n    // 否则读两条鱼干\n\n    // 算一次、印一行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    showMenu();\n    if (scanf(\"%d\", &choice) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 5) {\n        printf(\"收工啦喵～\\n\");\n        return 0;\n    }\n\n    printf(\"第一条小鱼干：\");\n    if (scanf(\"%d\", &a) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n    printf(\"第二条小鱼干：\");\n    if (scanf(\"%d\", &b) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 1) {\n        printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n    } else if (choice == 2) {\n        printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n    } else if (choice == 3) {\n        printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n    } else {\n        printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：1 * 5 = 5",
+      "stdin": "3\n1\n5\n",
+      "explanation": "这一题把前面五课的东西串成一串了喵：**招式**（四个运算各管一件事）、**投喂**（两个整数进、一个结果出）、**`return`**（把结果叼回来）、**`scanf` 的那个 `&`**（每条鱼干都要送进门牌号）、**菜单的排版**（冒号后面不换行）。\n\n几处最容易摔的地方：\n\n- **菜单最后一行别写 `\\n`**。前面五行都得有（不然六行会挤成一坨），唯独最后那一行是在**等人回答**，冒号后面得让光标停在原地。\n- **`5` 这一条路要单独处理，而且要在读鱼干之前处理**。判分可能会喂 `5`，那时候程序应该直接印 `收工啦喵～`，而不是跑去算除法。\n- **除法是整数除法**。整数装不下小数点，`7 / 2` 算出来是 `3` 不是 `3.5` —— 余数直接被丢掉。这不是 bug，是这一课的规矩。\n\n写完之后自己看一眼屏幕上印出来的样子：菜单六行整整齐齐、冒号后面紧跟着用户敲的数、结果那一行的空格一个不多一个不少。**判分就是这么比的。**",
+      "templateId": "c-s1-calc-pick-one",
+      "params": {
+        "c": 3,
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:11.761Z",
+        "hash": "d555b77cd4b5bbe4"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-pick-one-059",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**只算一次**的小鱼干计算器喵：菜单摆出来、读一个选项、读两条鱼干的条数、算一次、印一行结果，然后收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把算出来的结果叼回来（除法就按整数的规矩除，除不尽的余数不要）。\n\n2. 再写一招 `showMenu`，专门摆菜单，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`。\n\n**注意最后那一行：冒号后面不要换行**，要让用户敲的数紧挨着冒号出现。\n\n3. `main` 里按顺序来：先摆菜单 → 读一个选项 → **要是读到 `5`，就印 `收工啦喵～` 收工**（这一趟不用再读鱼干）→ 否则印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数。\n\n4. 按选项算一次，印一行结果。样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选加法、喂 3 和 5，就印 `3 + 5 = 8`。\n\n比如投喂给程序的是\n\n3\n7\n2\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 另外提醒一句：判分喂的选项**可能是 1~5 里任意一个**，`5` 那一条路也得走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    // 先摆菜单\n\n    // 读一个选项\n\n    // 读到 5 就印「收工啦喵～」收工\n\n    // 否则读两条鱼干\n\n    // 算一次、印一行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    showMenu();\n    if (scanf(\"%d\", &choice) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 5) {\n        printf(\"收工啦喵～\\n\");\n        return 0;\n    }\n\n    printf(\"第一条小鱼干：\");\n    if (scanf(\"%d\", &a) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n    printf(\"第二条小鱼干：\");\n    if (scanf(\"%d\", &b) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 1) {\n        printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n    } else if (choice == 2) {\n        printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n    } else if (choice == 3) {\n        printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n    } else {\n        printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：4 * 9 = 36",
+      "stdin": "3\n4\n9\n",
+      "explanation": "这一题把前面五课的东西串成一串了喵：**招式**（四个运算各管一件事）、**投喂**（两个整数进、一个结果出）、**`return`**（把结果叼回来）、**`scanf` 的那个 `&`**（每条鱼干都要送进门牌号）、**菜单的排版**（冒号后面不换行）。\n\n几处最容易摔的地方：\n\n- **菜单最后一行别写 `\\n`**。前面五行都得有（不然六行会挤成一坨），唯独最后那一行是在**等人回答**，冒号后面得让光标停在原地。\n- **`5` 这一条路要单独处理，而且要在读鱼干之前处理**。判分可能会喂 `5`，那时候程序应该直接印 `收工啦喵～`，而不是跑去算除法。\n- **除法是整数除法**。整数装不下小数点，`7 / 2` 算出来是 `3` 不是 `3.5` —— 余数直接被丢掉。这不是 bug，是这一课的规矩。\n\n写完之后自己看一眼屏幕上印出来的样子：菜单六行整整齐齐、冒号后面紧跟着用户敲的数、结果那一行的空格一个不多一个不少。**判分就是这么比的。**",
+      "templateId": "c-s1-calc-pick-one",
+      "params": {
+        "c": 3,
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:14.724Z",
+        "hash": "f366830c413df7c7"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-pick-one-079",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**只算一次**的小鱼干计算器喵：菜单摆出来、读一个选项、读两条鱼干的条数、算一次、印一行结果，然后收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把算出来的结果叼回来（除法就按整数的规矩除，除不尽的余数不要）。\n\n2. 再写一招 `showMenu`，专门摆菜单，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`。\n\n**注意最后那一行：冒号后面不要换行**，要让用户敲的数紧挨着冒号出现。\n\n3. `main` 里按顺序来：先摆菜单 → 读一个选项 → **要是读到 `5`，就印 `收工啦喵～` 收工**（这一趟不用再读鱼干）→ 否则印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数。\n\n4. 按选项算一次，印一行结果。样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选加法、喂 3 和 5，就印 `3 + 5 = 8`。\n\n比如投喂给程序的是\n\n3\n7\n2\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 另外提醒一句：判分喂的选项**可能是 1~5 里任意一个**，`5` 那一条路也得走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    // 先摆菜单\n\n    // 读一个选项\n\n    // 读到 5 就印「收工啦喵～」收工\n\n    // 否则读两条鱼干\n\n    // 算一次、印一行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    showMenu();\n    if (scanf(\"%d\", &choice) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 5) {\n        printf(\"收工啦喵～\\n\");\n        return 0;\n    }\n\n    printf(\"第一条小鱼干：\");\n    if (scanf(\"%d\", &a) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n    printf(\"第二条小鱼干：\");\n    if (scanf(\"%d\", &b) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 1) {\n        printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n    } else if (choice == 2) {\n        printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n    } else if (choice == 3) {\n        printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n    } else {\n        printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：4 / 9 = 0",
+      "stdin": "4\n4\n9\n",
+      "explanation": "这一题把前面五课的东西串成一串了喵：**招式**（四个运算各管一件事）、**投喂**（两个整数进、一个结果出）、**`return`**（把结果叼回来）、**`scanf` 的那个 `&`**（每条鱼干都要送进门牌号）、**菜单的排版**（冒号后面不换行）。\n\n几处最容易摔的地方：\n\n- **菜单最后一行别写 `\\n`**。前面五行都得有（不然六行会挤成一坨），唯独最后那一行是在**等人回答**，冒号后面得让光标停在原地。\n- **`5` 这一条路要单独处理，而且要在读鱼干之前处理**。判分可能会喂 `5`，那时候程序应该直接印 `收工啦喵～`，而不是跑去算除法。\n- **除法是整数除法**。整数装不下小数点，`7 / 2` 算出来是 `3` 不是 `3.5` —— 余数直接被丢掉。这不是 bug，是这一课的规矩。\n\n写完之后自己看一眼屏幕上印出来的样子：菜单六行整整齐齐、冒号后面紧跟着用户敲的数、结果那一行的空格一个不多一个不少。**判分就是这么比的。**",
+      "templateId": "c-s1-calc-pick-one",
+      "params": {
+        "c": 4,
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:17.725Z",
+        "hash": "bd081371d7667be2"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-pick-one-099",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**只算一次**的小鱼干计算器喵：菜单摆出来、读一个选项、读两条鱼干的条数、算一次、印一行结果，然后收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把算出来的结果叼回来（除法就按整数的规矩除，除不尽的余数不要）。\n\n2. 再写一招 `showMenu`，专门摆菜单，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`。\n\n**注意最后那一行：冒号后面不要换行**，要让用户敲的数紧挨着冒号出现。\n\n3. `main` 里按顺序来：先摆菜单 → 读一个选项 → **要是读到 `5`，就印 `收工啦喵～` 收工**（这一趟不用再读鱼干）→ 否则印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数。\n\n4. 按选项算一次，印一行结果。样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选加法、喂 3 和 5，就印 `3 + 5 = 8`。\n\n比如投喂给程序的是\n\n3\n7\n2\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 另外提醒一句：判分喂的选项**可能是 1~5 里任意一个**，`5` 那一条路也得走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    // 先摆菜单\n\n    // 读一个选项\n\n    // 读到 5 就印「收工啦喵～」收工\n\n    // 否则读两条鱼干\n\n    // 算一次、印一行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a = 0;\n    int b = 0;\n\n    showMenu();\n    if (scanf(\"%d\", &choice) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 5) {\n        printf(\"收工啦喵～\\n\");\n        return 0;\n    }\n\n    printf(\"第一条小鱼干：\");\n    if (scanf(\"%d\", &a) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n    printf(\"第二条小鱼干：\");\n    if (scanf(\"%d\", &b) != 1) {\n        printf(\"\\n下次再来喵～\\n\");\n        return 0;\n    }\n\n    if (choice == 1) {\n        printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n    } else if (choice == 2) {\n        printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n    } else if (choice == 3) {\n        printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n    } else {\n        printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "5\n4\n9\n",
+      "explanation": "这一题把前面五课的东西串成一串了喵：**招式**（四个运算各管一件事）、**投喂**（两个整数进、一个结果出）、**`return`**（把结果叼回来）、**`scanf` 的那个 `&`**（每条鱼干都要送进门牌号）、**菜单的排版**（冒号后面不换行）。\n\n几处最容易摔的地方：\n\n- **菜单最后一行别写 `\\n`**。前面五行都得有（不然六行会挤成一坨），唯独最后那一行是在**等人回答**，冒号后面得让光标停在原地。\n- **`5` 这一条路要单独处理，而且要在读鱼干之前处理**。判分可能会喂 `5`，那时候程序应该直接印 `收工啦喵～`，而不是跑去算除法。\n- **除法是整数除法**。整数装不下小数点，`7 / 2` 算出来是 `3` 不是 `3.5` —— 余数直接被丢掉。这不是 bug，是这一课的规矩。\n\n写完之后自己看一眼屏幕上印出来的样子：菜单六行整整齐齐、冒号后面紧跟着用户敲的数、结果那一行的空格一个不多一个不少。**判分就是这么比的。**",
+      "templateId": "c-s1-calc-pick-one",
+      "params": {
+        "c": 5,
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:35.008Z",
+        "hash": "7d09d7fc386c7f48"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-until-quit-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**能一直用下去**的小鱼干计算器喵：算完一次不算完，把菜单重新摆出来接着问，直到用户敲 `5` 才收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，**一直转到选项等于 `5` 为止**。每一圈里按这个顺序来：\n\n- 摆菜单，读一个选项；\n- 选项是 `5` → 印 `收工啦喵～`，收工走人；\n- 选项**不在 1~5 之间** → 印 `没有这一项喵，再选一次～`，然后**回到圈的开头重新摆菜单**（别收摊喵）；\n- 选项正常 → 印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数，算一次、印一行结果。\n\n4. 结果那一行的样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选乘法、喂 7 和 2，就印 `7 * 2 = 14`。\n\n比如投喂给程序的是\n\n6\n3\n7\n2\n5\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会先喂一个菜单上没有的数**，所以「重新摆菜单」这条路必须走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：1 + 5 = 6\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "9\n1\n1\n5\n5\n",
+      "explanation": "这一题的关键是**两个出口要分清楚**喵，也就是 `continue` 和 `break` 各自管什么：\n\n- **选项不对** → `continue`：这一圈剩下的活儿不干了，**回到圈的开头**。回到开头，`showMenu()` 就又摆一次菜单 —— 用户看到菜单重新出现，可以再挑。\n- **敲 `5` 收工** → `break`：**整圈都不干了**，直接跳到圈外，程序结束。\n\n写成 `break` 会怎么样？那句「没有这一项」印完之后**整圈收摊**，菜单再也不出现 —— 用户刚敲错一个数就被赶出门了，这显然不是本喵想要的。\n\n还有几处细节：\n\n- **`while (choice != 5)` 里的那只碗要先摆好、装上初值**（`int choice = 0;`）。要是装上 `5`，圈一次都不转；要是不装，那里面躺着的就是垃圾。\n- **菜单最后一行别写 `\\n`** —— 那是在等人回答，光标得停在冒号后面。\n- **结果那一行的空格一个都不能错**。判分是拿屏幕上的字一个字符一个字符比的。",
+      "templateId": "c-s1-calc-until-quit",
+      "params": {
+        "c": 1,
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:37.132Z",
+        "hash": "22ef866012174d68"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-until-quit-016",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**能一直用下去**的小鱼干计算器喵：算完一次不算完，把菜单重新摆出来接着问，直到用户敲 `5` 才收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，**一直转到选项等于 `5` 为止**。每一圈里按这个顺序来：\n\n- 摆菜单，读一个选项；\n- 选项是 `5` → 印 `收工啦喵～`，收工走人；\n- 选项**不在 1~5 之间** → 印 `没有这一项喵，再选一次～`，然后**回到圈的开头重新摆菜单**（别收摊喵）；\n- 选项正常 → 印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数，算一次、印一行结果。\n\n4. 结果那一行的样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选乘法、喂 7 和 2，就印 `7 * 2 = 14`。\n\n比如投喂给程序的是\n\n6\n3\n7\n2\n5\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会先喂一个菜单上没有的数**，所以「重新摆菜单」这条路必须走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：4 + 6 = 10\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "9\n1\n4\n6\n5\n",
+      "explanation": "这一题的关键是**两个出口要分清楚**喵，也就是 `continue` 和 `break` 各自管什么：\n\n- **选项不对** → `continue`：这一圈剩下的活儿不干了，**回到圈的开头**。回到开头，`showMenu()` 就又摆一次菜单 —— 用户看到菜单重新出现，可以再挑。\n- **敲 `5` 收工** → `break`：**整圈都不干了**，直接跳到圈外，程序结束。\n\n写成 `break` 会怎么样？那句「没有这一项」印完之后**整圈收摊**，菜单再也不出现 —— 用户刚敲错一个数就被赶出门了，这显然不是本喵想要的。\n\n还有几处细节：\n\n- **`while (choice != 5)` 里的那只碗要先摆好、装上初值**（`int choice = 0;`）。要是装上 `5`，圈一次都不转；要是不装，那里面躺着的就是垃圾。\n- **菜单最后一行别写 `\\n`** —— 那是在等人回答，光标得停在冒号后面。\n- **结果那一行的空格一个都不能错**。判分是拿屏幕上的字一个字符一个字符比的。",
+      "templateId": "c-s1-calc-until-quit",
+      "params": {
+        "c": 1,
+        "a": 4,
+        "b": 6
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:20.660Z",
+        "hash": "6a50173e53ffecb0"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-until-quit-032",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**能一直用下去**的小鱼干计算器喵：算完一次不算完，把菜单重新摆出来接着问，直到用户敲 `5` 才收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，**一直转到选项等于 `5` 为止**。每一圈里按这个顺序来：\n\n- 摆菜单，读一个选项；\n- 选项是 `5` → 印 `收工啦喵～`，收工走人；\n- 选项**不在 1~5 之间** → 印 `没有这一项喵，再选一次～`，然后**回到圈的开头重新摆菜单**（别收摊喵）；\n- 选项正常 → 印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数，算一次、印一行结果。\n\n4. 结果那一行的样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选乘法、喂 7 和 2，就印 `7 * 2 = 14`。\n\n比如投喂给程序的是\n\n6\n3\n7\n2\n5\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会先喂一个菜单上没有的数**，所以「重新摆菜单」这条路必须走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：3 - 7 = -4\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "9\n2\n3\n7\n5\n",
+      "explanation": "这一题的关键是**两个出口要分清楚**喵，也就是 `continue` 和 `break` 各自管什么：\n\n- **选项不对** → `continue`：这一圈剩下的活儿不干了，**回到圈的开头**。回到开头，`showMenu()` 就又摆一次菜单 —— 用户看到菜单重新出现，可以再挑。\n- **敲 `5` 收工** → `break`：**整圈都不干了**，直接跳到圈外，程序结束。\n\n写成 `break` 会怎么样？那句「没有这一项」印完之后**整圈收摊**，菜单再也不出现 —— 用户刚敲错一个数就被赶出门了，这显然不是本喵想要的。\n\n还有几处细节：\n\n- **`while (choice != 5)` 里的那只碗要先摆好、装上初值**（`int choice = 0;`）。要是装上 `5`，圈一次都不转；要是不装，那里面躺着的就是垃圾。\n- **菜单最后一行别写 `\\n`** —— 那是在等人回答，光标得停在冒号后面。\n- **结果那一行的空格一个都不能错**。判分是拿屏幕上的字一个字符一个字符比的。",
+      "templateId": "c-s1-calc-until-quit",
+      "params": {
+        "c": 2,
+        "a": 3,
+        "b": 7
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:23.660Z",
+        "hash": "c7e8438336e370b0"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-until-quit-047",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**能一直用下去**的小鱼干计算器喵：算完一次不算完，把菜单重新摆出来接着问，直到用户敲 `5` 才收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，**一直转到选项等于 `5` 为止**。每一圈里按这个顺序来：\n\n- 摆菜单，读一个选项；\n- 选项是 `5` → 印 `收工啦喵～`，收工走人；\n- 选项**不在 1~5 之间** → 印 `没有这一项喵，再选一次～`，然后**回到圈的开头重新摆菜单**（别收摊喵）；\n- 选项正常 → 印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数，算一次、印一行结果。\n\n4. 结果那一行的样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选乘法、喂 7 和 2，就印 `7 * 2 = 14`。\n\n比如投喂给程序的是\n\n6\n3\n7\n2\n5\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会先喂一个菜单上没有的数**，所以「重新摆菜单」这条路必须走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：2 * 7 = 14\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "9\n3\n2\n7\n5\n",
+      "explanation": "这一题的关键是**两个出口要分清楚**喵，也就是 `continue` 和 `break` 各自管什么：\n\n- **选项不对** → `continue`：这一圈剩下的活儿不干了，**回到圈的开头**。回到开头，`showMenu()` 就又摆一次菜单 —— 用户看到菜单重新出现，可以再挑。\n- **敲 `5` 收工** → `break`：**整圈都不干了**，直接跳到圈外，程序结束。\n\n写成 `break` 会怎么样？那句「没有这一项」印完之后**整圈收摊**，菜单再也不出现 —— 用户刚敲错一个数就被赶出门了，这显然不是本喵想要的。\n\n还有几处细节：\n\n- **`while (choice != 5)` 里的那只碗要先摆好、装上初值**（`int choice = 0;`）。要是装上 `5`，圈一次都不转；要是不装，那里面躺着的就是垃圾。\n- **菜单最后一行别写 `\\n`** —— 那是在等人回答，光标得停在冒号后面。\n- **结果那一行的空格一个都不能错**。判分是拿屏幕上的字一个字符一个字符比的。",
+      "templateId": "c-s1-calc-until-quit",
+      "params": {
+        "c": 3,
+        "a": 2,
+        "b": 7
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:26.656Z",
+        "hash": "8a053fdc06c2e835"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-until-quit-063",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**能一直用下去**的小鱼干计算器喵：算完一次不算完，把菜单重新摆出来接着问，直到用户敲 `5` 才收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，**一直转到选项等于 `5` 为止**。每一圈里按这个顺序来：\n\n- 摆菜单，读一个选项；\n- 选项是 `5` → 印 `收工啦喵～`，收工走人；\n- 选项**不在 1~5 之间** → 印 `没有这一项喵，再选一次～`，然后**回到圈的开头重新摆菜单**（别收摊喵）；\n- 选项正常 → 印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数，算一次、印一行结果。\n\n4. 结果那一行的样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选乘法、喂 7 和 2，就印 `7 * 2 = 14`。\n\n比如投喂给程序的是\n\n6\n3\n7\n2\n5\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会先喂一个菜单上没有的数**，所以「重新摆菜单」这条路必须走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：1 / 8 = 0\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "9\n4\n1\n8\n5\n",
+      "explanation": "这一题的关键是**两个出口要分清楚**喵，也就是 `continue` 和 `break` 各自管什么：\n\n- **选项不对** → `continue`：这一圈剩下的活儿不干了，**回到圈的开头**。回到开头，`showMenu()` 就又摆一次菜单 —— 用户看到菜单重新出现，可以再挑。\n- **敲 `5` 收工** → `break`：**整圈都不干了**，直接跳到圈外，程序结束。\n\n写成 `break` 会怎么样？那句「没有这一项」印完之后**整圈收摊**，菜单再也不出现 —— 用户刚敲错一个数就被赶出门了，这显然不是本喵想要的。\n\n还有几处细节：\n\n- **`while (choice != 5)` 里的那只碗要先摆好、装上初值**（`int choice = 0;`）。要是装上 `5`，圈一次都不转；要是不装，那里面躺着的就是垃圾。\n- **菜单最后一行别写 `\\n`** —— 那是在等人回答，光标得停在冒号后面。\n- **结果那一行的空格一个都不能错**。判分是拿屏幕上的字一个字符一个字符比的。",
+      "templateId": "c-s1-calc-until-quit",
+      "params": {
+        "c": 4,
+        "a": 1,
+        "b": 8
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:29.645Z",
+        "hash": "739993bc93a2ec3b"
+      }
+    },
+    {
+      "id": "bank-c-s1-calc-until-quit-079",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一台**能一直用下去**的小鱼干计算器喵：算完一次不算完，把菜单重新摆出来接着问，直到用户敲 `5` 才收工。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，**一直转到选项等于 `5` 为止**。每一圈里按这个顺序来：\n\n- 摆菜单，读一个选项；\n- 选项是 `5` → 印 `收工啦喵～`，收工走人；\n- 选项**不在 1~5 之间** → 印 `没有这一项喵，再选一次～`，然后**回到圈的开头重新摆菜单**（别收摊喵）；\n- 选项正常 → 印 `第一条小鱼干：`、读一个数，再印 `第二条小鱼干：`、读一个数，算一次、印一行结果。\n\n4. 结果那一行的样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。比如选乘法、喂 7 和 2，就印 `7 * 2 = 14`。\n\n比如投喂给程序的是\n\n6\n3\n7\n2\n5\n\n程序就要叼回\n\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：7 * 2 = 14\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会先喂一个菜单上没有的数**，所以「重新摆菜单」这条路必须走通。）",
+      "starter": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n        }\n    }\n    return 0;\n}\n",
+      "expectedOutput": "=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：没有这一项喵，再选一次～\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：第一条小鱼干：第二条小鱼干：4 / 9 = 0\n=== 小鱼干计算器 ===\n1. 加法\n2. 减法\n3. 乘法\n4. 除法\n5. 收工\n选一个（1-5）：收工啦喵～",
+      "stdin": "9\n4\n4\n9\n5\n",
+      "explanation": "这一题的关键是**两个出口要分清楚**喵，也就是 `continue` 和 `break` 各自管什么：\n\n- **选项不对** → `continue`：这一圈剩下的活儿不干了，**回到圈的开头**。回到开头，`showMenu()` 就又摆一次菜单 —— 用户看到菜单重新出现，可以再挑。\n- **敲 `5` 收工** → `break`：**整圈都不干了**，直接跳到圈外，程序结束。\n\n写成 `break` 会怎么样？那句「没有这一项」印完之后**整圈收摊**，菜单再也不出现 —— 用户刚敲错一个数就被赶出门了，这显然不是本喵想要的。\n\n还有几处细节：\n\n- **`while (choice != 5)` 里的那只碗要先摆好、装上初值**（`int choice = 0;`）。要是装上 `5`，圈一次都不转；要是不装，那里面躺着的就是垃圾。\n- **菜单最后一行别写 `\\n`** —— 那是在等人回答，光标得停在冒号后面。\n- **结果那一行的空格一个都不能错**。判分是拿屏幕上的字一个字符一个字符比的。",
+      "templateId": "c-s1-calc-until-quit",
+      "params": {
+        "c": 4,
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:39.084Z",
+        "hash": "c1b61d6f2641af1a"
+      }
+    },
+    {
+      "id": "bank-c-s1-challenge-calc-discount-001",
+      "type": "codefix",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵的小鱼干计算器装好了一个新花样：**今天攒的账够一百条就打八折**。\n\n它的用法是：投喂口先给一个数（今天记了几笔），再一笔一笔给数。程序先报今天一共攒了多少；然后看够不够一百 —— 够了就报打完折实际收多少（乘 8 再除以 10），不够就报原数照收。\n\n可是它现在**不管攒了多少都喊「够一百条啦」**，折扣还永远算成八十条喵……你帮本喵把它改对。\n\n比如投喂给程序的是\n\n5\n38\n36\n20\n42\n27\n\n修好之后就要叼回\n\n今天一共 163 条喵\n够一百条啦，打完折只收 130 条喵",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        total = total + x;\n    }\n\n    printf(\"今天一共 %d 条喵\\n\", total);\n\n    if (total = 100) {\n        printf(\"够一百条啦，打完折只收 %d 条喵\\n\", total * 8 / 10);\n    } else {\n        printf(\"还差一点，照旧收 %d 条喵\\n\", total);\n    }\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        total = total + x;\n    }\n\n    printf(\"今天一共 %d 条喵\\n\", total);\n\n    if (total >= 100) {\n        printf(\"够一百条啦，打完折只收 %d 条喵\\n\", total * 8 / 10);\n    } else {\n        printf(\"还差一点，照旧收 %d 条喵\\n\", total);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "今天一共 145 条喵\n够一百条啦，打完折只收 116 条喵",
+      "stdin": "5\n27\n42\n26\n17\n33\n",
+      "explanation": "病根就在 `if (total = 100)` 里那个**光秃秃的等号**喵。\n\n`=` 和 `==` 是两种完全不同的动作：`=` 是**往里放**（放完了整个式子「有了个结果」），`==` 才是**问一句**（问完得到一个「是」或「不是」）。这一行写的是 `total = 100`，意思是：**先把 100 放进 total**，再拿放完的这个 100 去当那句问候 —— 而在 C 眼里，**除了 0 以外的任何数都算「是」**，所以这一问永远点头。\n\n于是两件坏事一起来：\n\n1. 不管今天攒了多少，都走「够一百条啦」那一支；\n2. `total` 被原地改写成了 100 —— 折扣算出来永远是 `100 * 8 / 10`，也就是雷打不动的八十条。\n\n改法：把这一行写成 `if (total >= 100)` —— 那句问候是「有没有攒到一百」，不是往碗里放个 100。\n\n顺带记一句喵：这种错翻译官喵**不会拦**（顶多嘀咕一句 warning），程序照样跑、照样印，只有数字对不上。这种「不喊疼的错」最值得多看两眼。",
+      "templateId": "c-s1-challenge-calc-discount",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-30T12:36:47.901Z",
+        "hash": "0eb28fdcd0f1f00c"
+      }
+    },
+    {
+      "id": "bank-c-s1-challenge-calc-reverse-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵的记账本又厚了，今天想**倒着**念一遍喵：最新的一笔先念，最老的一笔最后念。\n\n投喂口先给一个数（今天记了几笔），再一笔一笔给数。请你写个程序：\n\n1. 先把这一天的账**一笔不漏地收进一排碗里**（第 0 只碗装第一笔，第 1 只碗装第二笔……）；\n2. 再从**最后一只碗**开始往前走，一边走一边念：`第 X 笔是 Y 条喵`（X 是这一笔是第几笔，从 1 数起；Y 是那一笔的数）；\n3. 念完最后一行报总账：`一共 %d 条喵`。\n\n比如投喂给程序的是\n\n4\n35\n33\n30\n3\n\n程序就要叼回\n\n第 4 笔是 3 条喵\n第 3 笔是 30 条喵\n第 2 笔是 33 条喵\n第 1 笔是 35 条喵\n一共 101 条喵\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～ 本喵最多只摆 8 只碗，今天用的是前面几只。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bills[8];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bills[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = n - 1; i >= 0; i--) {\n        printf(\"第 %d 笔是 %d 条喵\\n\", i + 1, bills[i]);\n        total = total + bills[i];\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n\n    return 0;\n}\n",
+      "expectedOutput": "第 4 笔是 13 条喵\n第 3 笔是 31 条喵\n第 2 笔是 9 条喵\n第 1 笔是 19 条喵\n一共 72 条喵",
+      "stdin": "4\n19\n9\n31\n13\n",
+      "explanation": "这一题最值得记的是：**收账和念账可以各走各的方向**。\n\n- **收账那一趟**：从第 0 只碗往右走，`i` 从 0 走到 n 减 1 —— 让「第几笔」和「第几只碗」一一对上，收的时候顺顺当当。\n- **念账那一趟**：`i` 从 `n - 1` 出发，每念一笔就 `i--`，一直念到 `i` 变成负数为止（所以圈的条件是 `i >= 0`，不是 `i > 0` —— 写成 `i > 0` 的话第 0 只碗会被漏掉，那可是最老的一笔喵）。\n\n碗的编号是从 0 数起的，可人念账是从「第 1 笔」数起的 —— 所以印的时候要 `i + 1`。这个「差一位」的地方，念一遍样例再对一遍就不容易错。\n\n总账也可以在念的那一趟里顺手加上：**每一趟都加一笔**，比最后再单独跑一趟省事，而且不会漏。",
+      "templateId": "c-s1-challenge-calc-reverse-report",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:32.559Z",
+        "hash": "12581274952629b7"
+      }
+    },
+    {
+      "id": "bank-c-s1-challenge-calc-reverse-report-001",
+      "type": "codewrite",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵的记账本又厚了，今天想**倒着**念一遍喵：最新的一笔先念，最老的一笔最后念。\n\n投喂口先给一个数（今天记了几笔），再一笔一笔给数。请你写个程序：\n\n1. 先把这一天的账**一笔不漏地收进一排碗里**（第 0 只碗装第一笔，第 1 只碗装第二笔……）；\n2. 再从**最后一只碗**开始往前走，一边走一边念：`第 X 笔是 Y 条喵`（X 是这一笔是第几笔，从 1 数起；Y 是那一笔的数）；\n3. 念完最后一行报总账：`一共 %d 条喵`。\n\n比如投喂给程序的是\n\n5\n26\n3\n35\n7\n26\n\n程序就要叼回\n\n第 5 笔是 26 条喵\n第 4 笔是 7 条喵\n第 3 笔是 35 条喵\n第 2 笔是 3 条喵\n第 1 笔是 26 条喵\n一共 97 条喵\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～ 本喵最多只摆 8 只碗，今天用的是前面几只。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bills[8];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bills[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = n - 1; i >= 0; i--) {\n        printf(\"第 %d 笔是 %d 条喵\\n\", i + 1, bills[i]);\n        total = total + bills[i];\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n\n    return 0;\n}\n",
+      "expectedOutput": "第 5 笔是 32 条喵\n第 4 笔是 26 条喵\n第 3 笔是 29 条喵\n第 2 笔是 30 条喵\n第 1 笔是 6 条喵\n一共 123 条喵",
+      "stdin": "5\n6\n30\n29\n26\n32\n",
+      "explanation": "这一题最值得记的是：**收账和念账可以各走各的方向**。\n\n- **收账那一趟**：从第 0 只碗往右走，`i` 从 0 走到 n 减 1 —— 让「第几笔」和「第几只碗」一一对上，收的时候顺顺当当。\n- **念账那一趟**：`i` 从 `n - 1` 出发，每念一笔就 `i--`，一直念到 `i` 变成负数为止（所以圈的条件是 `i >= 0`，不是 `i > 0` —— 写成 `i > 0` 的话第 0 只碗会被漏掉，那可是最老的一笔喵）。\n\n碗的编号是从 0 数起的，可人念账是从「第 1 笔」数起的 —— 所以印的时候要 `i + 1`。这个「差一位」的地方，念一遍样例再对一遍就不容易错。\n\n总账也可以在念的那一趟里顺手加上：**每一趟都加一笔**，比最后再单独跑一趟省事，而且不会漏。",
+      "templateId": "c-s1-challenge-calc-reverse-report",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-30T12:36:50.624Z",
+        "hash": "0173199705888214"
+      }
+    },
+    {
+      "id": "bank-c-s1-challenge-calc-reverse-report-002",
+      "type": "codewrite",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵的记账本又厚了，今天想**倒着**念一遍喵：最新的一笔先念，最老的一笔最后念。\n\n投喂口先给一个数（今天记了几笔），再一笔一笔给数。请你写个程序：\n\n1. 先把这一天的账**一笔不漏地收进一排碗里**（第 0 只碗装第一笔，第 1 只碗装第二笔……）；\n2. 再从**最后一只碗**开始往前走，一边走一边念：`第 X 笔是 Y 条喵`（X 是这一笔是第几笔，从 1 数起；Y 是那一笔的数）；\n3. 念完最后一行报总账：`一共 %d 条喵`。\n\n比如投喂给程序的是\n\n6\n4\n12\n4\n13\n40\n26\n\n程序就要叼回\n\n第 6 笔是 26 条喵\n第 5 笔是 40 条喵\n第 4 笔是 13 条喵\n第 3 笔是 4 条喵\n第 2 笔是 12 条喵\n第 1 笔是 4 条喵\n一共 99 条喵\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～ 本喵最多只摆 8 只碗，今天用的是前面几只。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bills[8];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bills[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = n - 1; i >= 0; i--) {\n        printf(\"第 %d 笔是 %d 条喵\\n\", i + 1, bills[i]);\n        total = total + bills[i];\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n\n    return 0;\n}\n",
+      "expectedOutput": "第 6 笔是 37 条喵\n第 5 笔是 37 条喵\n第 4 笔是 21 条喵\n第 3 笔是 4 条喵\n第 2 笔是 4 条喵\n第 1 笔是 8 条喵\n一共 111 条喵",
+      "stdin": "6\n8\n4\n4\n21\n37\n37\n",
+      "explanation": "这一题最值得记的是：**收账和念账可以各走各的方向**。\n\n- **收账那一趟**：从第 0 只碗往右走，`i` 从 0 走到 n 减 1 —— 让「第几笔」和「第几只碗」一一对上，收的时候顺顺当当。\n- **念账那一趟**：`i` 从 `n - 1` 出发，每念一笔就 `i--`，一直念到 `i` 变成负数为止（所以圈的条件是 `i >= 0`，不是 `i > 0` —— 写成 `i > 0` 的话第 0 只碗会被漏掉，那可是最老的一笔喵）。\n\n碗的编号是从 0 数起的，可人念账是从「第 1 笔」数起的 —— 所以印的时候要 `i + 1`。这个「差一位」的地方，念一遍样例再对一遍就不容易错。\n\n总账也可以在念的那一趟里顺手加上：**每一趟都加一笔**，比最后再单独跑一趟省事，而且不会漏。",
+      "templateId": "c-s1-challenge-calc-reverse-report",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-20T16:27:35.392Z",
+        "hash": "2a55d030456f3e9b"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-challenge-late-call",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-20",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["传声小纸条", "回头再去取", "当场塞进口袋", "全报同一位"],
+  "instances": 1,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵给每一位都做了一张**传声小纸条**喵：第 i 位的纸条上写着「开口时报出第 i 位自己的分」。做的时候都好好的，可**真去问的时候，每张纸条都报同一位的分** —— 全是最后那位的……\n\n程序印的是一行一行：`第 X 位报出 Y 分喵`。你帮本喵看看病根。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。）",
+  "brokenCodeTemplate": "n = int(input())\nscores = []\nfor i in range(n):\n    scores.append(int(input()))\n\ngetters = []\nfor i in range(n):\n    getters.append(lambda: scores[i])\n\nfor k in range(n):\n    print(\"第\", k + 1, \"位报出\", getters[k](), \"分喵\")\n",
+  "referenceFixTemplate": "n = int(input())\nscores = []\nfor i in range(n):\n    scores.append(int(input()))\n\ngetters = []\nfor i in range(n):\n    getters.append(lambda i=i: scores[i])\n\nfor k in range(n):\n    print(\"第\", k + 1, \"位报出\", getters[k](), \"分喵\")\n",
+  "explanationTemplate": "病根在纸条的写法上：`lambda: scores[i]` 里的 `i` **不是做纸条时抄下来的数，而是一个「回头再去取」的名字**喵。\n\n传声小纸条记的是**名字**，不是**当时的值**：纸条上写的是「去看 `i` 开口的那一刻是多少」—— 等真开口问的时候，做纸条的那个圈早就跑完了，`i` 停在最后一个值（n 减 1）上。所以每张纸条开口报的都是同一份 —— 最后一位的分。\n\n这叫「**晚一步取**」：纸条不看当时，只看开口的那一刻。\n\n改法是把那个数**在做纸条的时候就塞进纸条里**：\n\n```python\ngetters.append(lambda i=i: scores[i])\n```\n\n`i=i` 的意思是：做纸条时**当场取一份 `i` 的值，收进纸条自己的口袋里** —— 名字还叫 i，但之后开口报的时候用的是口袋里那份，跟外面那个圈跑到哪了没关系。\n\n记一句喵：**纸条里的名字是回头再去取的 —— 想留住当时的值，就当场把它塞进口袋（写成 `名字=名字`）。**"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-ptr-missing-amp",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-11",
+  "type": "codefix",
+  "concept": ["忘了问门牌号", "invalid conversion from 'int' to 'int*'", "补个 &"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "pick", "values": ["5", "7"] }
+  },
+  "stemTemplate": "本喵想把装着 {fish} 的那只碗的**门牌号**记到一块牌子上，再顺着牌子把碗里的数印出来。\n\n可翻译官喵当场就把稿子退回来了 —— 这一回它还格外贴心，把改法直接写在下面一行。\n\n你帮本喵把它改好：改完要能印出那只碗里的数。碗里装的数、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = {fish};\n    int* p = fish;\n    cout << *p << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = {fish};\n    int* p = &fish;\n    cout << *p << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵这一回给了两行，第二行就是答案喵：\n\n`error: invalid conversion from 'int' to 'int*' [-fpermissive]`\n\n`note: possible fix: take the address with '&'`\n\n翻成人话：**左手要的是门牌号，右手给的是一只碗里的数**（这里是 {fish}），两边对不上号 —— `invalid conversion from 'int' to 'int*'` 就是「从『一个整数』换不成『一块牌子』」。下面那行 `possible fix: take the address with '&'` 是它在说：「补个 `&` **取门牌号**试试。」\n\n改法只有一处：把 `int* p = fish;` 写成 `int* p = &fish;`。\n\n区分清楚这两样东西喵：`fish` 是**碗里的数**，`&fish` 才是**碗在哪儿**。招牌子（`int* p`）要的是后者。往后看见 `invalid conversion from 'int' to 'int*'`，先去那只碗前面补一个 `&`。"
+}

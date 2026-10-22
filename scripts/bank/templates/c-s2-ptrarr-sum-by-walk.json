@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-ptrarr-sum-by-walk",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-02",
+  "type": "codewrite",
+  "concept": ["指针传参", "指针遍历", "战利品", "长度要另喂"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫罐头", "冻干块"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵把 {n} 只碗一字排开，碗里各放着几条{unit}。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 {n} 个数（就是每只碗里的{unit}数）。\n\n本喵要你**写一招**，头上收两样东西：**一排碗的牌子**、还有**这排碗有多长**。招式里**拿牌子从第一只一路走到最后一只**，边走边把碗里的数加起来，最后把这笔总数**叼回来**。\n\n`main` 里只管读数和报数，加起来这件事整个交给那一招。最后报一行：`一共 v 条{unit}`（`v` 是那笔总数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint total(int *p, int n) {\n    int sum = 0;\n    for (int *q = p; q < p + n; q++) {\n        sum = sum + *q;\n    }\n    return sum;\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"一共 %d 条{unit}\\n\", total(bowls, n));\n    return 0;\n}\n",
+  "explanationTemplate": "这道题把本课最要紧的一句话摆在了明面上喵：\n\n**一排碗交给招式的时候，交出去的只是「从哪儿开始」—— 有多长，招式根本不知道。**\n\n所以招式头上必须写**两样**投喂：`int *p` 是一块牌子（从哪儿开始），`int n` 是长度（有几个）。哪一样漏了都算不出来 —— 少了长度，招式走到头也不知道该停。\n\n招式里那趟「拿牌子走一遍」：\n\n```c\nfor (int *q = p; q < p + n; q++) {\n    sum = sum + *q;\n}\n```\n\n- `q` 是照着 `p` 另起的一块牌子，从第一只碗开始；\n- `q < p + n` 的意思是「还没走到最后一只后面」—— `p + n` 正好是整排碗末尾再过去一格；\n- `q++` 一次跨一整只碗；\n- `*q` 就是当前这只碗里的数。\n\n同一件事写成 `p[i]` 或者 `*(p + i)` 也完全对，那两种是方括号派的写法。\n\n最后 `return sum;` 把这笔总数叼回 `main`，`main` 里接住它、直接塞进那句报数里。这就是「一招只干一件事、干完把战利品带回来」的样子喵。"
+}

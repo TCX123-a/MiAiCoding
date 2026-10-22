@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-pkg-outside-needs-house",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-12",
+  "type": "codefix",
+  "concept": ["屋", "门牌", "屋外喊名字要连屋名"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [6, 9] },
+    "b": { "kind": "pick", "values": [2, 3] }
+  },
+  "stemTemplate": "下面这段程序现场搭出一间屋：屋叫 `miaow`，屋门口挂着那块空的 `__init__.py`，屋里住着本子 `分鱼干.py`。搭完以后它**站到屋外**喊一声，想把 `平分` 请出来用。\n\n结果它当场躺下了，报的是「**没有叫这个名字的盒子**」。本喵查了半天：本子明明在屋里躺着，牌子也挂得好好的。\n\n你把这句喊话改对。改好以后程序该跑通，印出 {a} 条鱼干分给 {b} 只猫之后平分的结果。",
+  "brokenCodeTemplate": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom 分鱼干 import 平分\n\nprint(\"{a} 条鱼干分给 {b} 只猫，每只\", 平分({a}, {b}), \"条\")\n",
+  "referenceFixTemplate": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom miaow.分鱼干 import 平分\n\nprint(\"{a} 条鱼干分给 {b} 只猫，每只\", 平分({a}, {b}), \"条\")\n",
+  "explanationTemplate": "这是「站到屋外喊」最经典的一跤喵。\n\n翻译官喵找本子的时候，是**从仓库根上**一格一格找的。仓库根上有没有一个叫 `分鱼干` 的盒子？没有 —— 真正的本子在 `miaow` 这间屋里面。所以它老老实实回你一句：\n\n```text\nModuleNotFoundError: No module named '分鱼干'\n```\n\n念作「没有叫 `分鱼干` 的盒子」。注意它报的是**你喊的那个名字**，不是「屋里没这本子」—— 牌子挂着、本子躺着，都没问题，有问题的是**喊法**。\n\n改法是把屋名连上去：\n\n```text\nfrom miaow.分鱼干 import 平分\n```\n\n屋名在前、本子名在后，中间点一个点。这句话念作「从 `miaow` 这间屋里、把 `分鱼干` 这本子里的 `平分` 请进来」。\n\n有一条本喵建议你从现在起就照做：**哪怕在屋里，也从屋名喊起**。屋里的本子互相喊，写不写屋名其实都行；但将来屋改了名字、或者某个本子挪进了另一间屋，**写全的那种只要改一处**，省下的都是你自己的时间喵。"
+}

@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-gdb-observe-position",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-13",
+  "type": "codefix",
+  "concept": ["让稿子自己说话：报数摆在累加之前还是之后", "看到的线索晚一步", "别猜，但也得看对"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["3", "2"] },
+    "b": { "kind": "pick", "values": ["1", "5"] },
+    "c": { "kind": "pick", "values": ["4", "4"] },
+    "d": { "kind": "pick", "values": ["1", "3"] }
+  },
+  "stemTemplate": "这一句报数是本喵特意加的，想让稿子**自己说话**：每加完一碗，就报一声这会儿加起来是多少。可它**摆错了地方**喵 —— 印出来的数永远慢一步，本喵照着它去对账，把方向对歪了。\n\n请你把这一行挪个位置：让每一圈**先把这碗加进去，再报数**（报出来的才是「加完这碗之后」的合计）。别的一个字都别动。一排碗是 {a}、{b}、{c}、{d} —— 改好之后，第一行报的该是 {a}，最后一行报的该是四碗的总和。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        printf(\"第 %d 轮：sum = %d\\n\", i + 1, sum);\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { {a}, {b}, {c}, {d} };\n    printf(\"总数是 %d\\n\", sum_from(fish, 0, 4));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        sum += fish[i];\n        printf(\"第 %d 轮：sum = %d\\n\", i + 1, sum);\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { {a}, {b}, {c}, {d} };\n    printf(\"总数是 %d\\n\", sum_from(fish, 0, 4));\n    return 0;\n}\n",
+  "explanationTemplate": "报数摆在**哪一步**，看到的就是**哪一步**的数喵。摆在累加之前，报的是「还没加这碗」的合计 —— 每一圈都晚一步，最后一轮报的更是上一轮的数，照着它去对账只会越对越歪。\n\n挪到累加之后，报的就是「加完这碗」的合计：头一轮报 {a}，末一轮报的正好是四碗的总和。\n\n这就是「让稿子自己说话」的讲究：话要问对，更要**问在点子上**。看守（`gdb`）里那个一步一步走的办法也是同一个道理 —— 停在哪儿，才看得到哪儿的数。"
+}

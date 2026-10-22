@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-12-own-bowls",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-12",
+  "type": "codewrite",
+  "concept": ["各用各的碗就不用加锁", "把数分别喂给两只帮手", "都接回来之后按固定顺序印"],
+  "instances": 6,
+  "params": {
+    "w1": { "kind": "pick", "values": ["小鱼干", "毛线球"] },
+    "w2": { "kind": "pick", "values": ["猫粮", "大肥鱼"] }
+  },
+  "stdinSpec": { "kind": "ints-one-line", "count": "2", "min": 3, "max": 7 },
+  "stemTemplate": "投喂口会**在一行里给两个数**：第一个数给第一位帮手，第二个数给第二位帮手喵（两个数之间用空格隔开）。\n\n请你写个程序，按这个顺序干活：\n\n1. 把两个数都读进来；\n2. 喊**两位**帮手，各自干各自的活：一位把 `1` 一路加到第一个数，把结果放进**它自己的碗**；另一位把 `1` 一路加到第二个数，放进**它自己的碗**。两个碗各用各的，谁也不用等谁；\n3. 两位**都接回来之后**，才按顺序印三行：先 `{w1} X`、再 `{w2} Y`、最后 `一共 Z`（Z 是两个碗加起来的数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint bowl1 = 0;\nint bowl2 = 0;\n\nvoid countFirst(int n) {\n    // 在这儿写：把 1 加到 n，结果放进 bowl1\n\n}\n\nvoid countSecond(int m) {\n    // 在这儿写：把 1 加到 m，结果放进 bowl2\n\n}\n\nint main() {\n    int n = 0;\n    int m = 0;\n    cin >> n >> m;\n\n    // 在这儿写：喊两位帮手，都接回来之后按顺序印三行\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint bowl1 = 0;\nint bowl2 = 0;\n\nvoid countFirst(int n) {\n    int s = 0;\n    for (int i = 1; i <= n; i++) s = s + i;\n    bowl1 = s;\n}\n\nvoid countSecond(int m) {\n    int s = 0;\n    for (int i = 1; i <= m; i++) s = s + i;\n    bowl2 = s;\n}\n\nint main() {\n    int n = 0;\n    int m = 0;\n    cin >> n >> m;\n\n    thread t1(countFirst, n);\n    thread t2(countSecond, m);\n    t1.join();\n    t2.join();\n\n    cout << \"{w1} \" << bowl1 << endl;\n    cout << \"{w2} \" << bowl2 << endl;\n    cout << \"一共 \" << bowl1 + bowl2 << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题两位帮手**各用各的碗**喵：一位往 `bowl1` 里放，另一位往 `bowl2` 里放，谁也没碰对方的东西 —— 这种场面**不用排队、不用加锁**，加了也是白加。\n\n三件事值得记：\n\n- **喂给帮手的数写在名字后面**：`thread t1(countFirst, n);` 念作「喊一位帮手来干 `countFirst`，顺手把 `n` 递给它」。递给它的东西会**照抄一份**过去，所以两位帮手各拿各的数，互不干扰。\n- **两位都要接回来**：两句 `join`，一位一句。\n- **印在 `join` 后面**：这样三行的先后是钉死的。要是让两位帮手自己在肚子里印，谁先抢到屏幕谁先印，那两行每次都不一样。\n\n⚠️ 什么时候要加锁，看的是**有没有两只手同时伸进同一个碗**：这一题没有（一个 `bowl1` 一个 `bowl2`，一人一个），所以不用；课文第三节那种三只猫抢一个碗的场面才要。"
+}

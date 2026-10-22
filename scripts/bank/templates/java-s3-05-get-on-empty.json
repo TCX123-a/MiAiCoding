@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-05-get-on-empty",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-05",
+  "type": "codefix",
+  "concept": ["硬掏那一手撞上空盒子就炸", "当场把空了怎么办交代掉", "炸不炸取决于盒子里有没有东西"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["冻干", "毛线球"] },
+    "v": { "kind": "pick", "values": ["一包冻干", "两个毛线球"] }
+  },
+  "stemTemplate": "本喵写了一段小代码：先从柜子里找一个名字对应的东西，再把找到的报出来喵。\n\n可它**一跑就当场炸了** —— 第一行印出来了，第二行刚跑到就炸。\n\n红字里头说 `No value present`，意思是「**里头没东西**」。\n\n你帮本喵改到它顺顺当当跑完、印出**两行**：\n\n```text\n找到的：...\n兜底的：啥也没有\n```\n\n- 第一行报的是**找到的那样东西**；\n- 第二行报**兜底那句话** —— 因为第二个名字**不在柜子里**。\n\n名字、货、还有前面那两招都别去改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"{w}\")) {\n            return Optional.of(\"{v}\");\n        }\n        return Optional.empty();\n    }\n\n    static void show(Optional<String> box, String label) {\n        System.out.println(label + box.get());\n    }\n\n    public static void main(String[] args) {\n        show(find(\"{w}\"), \"找到的：\");\n        show(find(\"别的\"), \"兜底的：\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"{w}\")) {\n            return Optional.of(\"{v}\");\n        }\n        return Optional.empty();\n    }\n\n    static void show(Optional<String> box, String label) {\n        System.out.println(label + box.orElse(\"啥也没有\"));\n    }\n\n    public static void main(String[] args) {\n        show(find(\"{w}\"), \"找到的：\");\n        show(find(\"别的\"), \"兜底的：\");\n    }\n}\n",
+  "explanationTemplate": "**一、红字怎么念。** 头一个词 `NoSuchElementException` 说的是「**要掏的那一件不存在**」，后半句 `No value present` 直译是「**里头没东西**」。`.get()` 这一手读作「**不管怎么样，把里面的东西掏给我**」—— 盒子里真有东西时它当然掏得出来；空盒子它也照样硬掏，掏不着就当场炸。\n\n**二、为什么第一行没炸。** 第一个名字在柜子里，那只盒子里**真的有东西**，掏得着。第二个名字**不在柜子里**，`find` 交回来的是一只**空盒子** —— 同一句话，撞上空盒子就炸。**炸不炸，取决于盒子里有没有东西，不取决于本喵写得对不对** —— 这就是「跑起来才炸」那一类麻烦。\n\n**三、改法：把「空了怎么办」当场交代掉。** 把硬掏那一手换成 `.orElse(...)`（读作「有就用里面的，没有就用兜底那句」），空盒子这回有台阶下了。**这一改是把「可能没有」接回自己手里，不是把它再扔出去。**\n\n**四、为什么只改了这一处。** 改动越小越好：第一行那个盒子**当下确实有东西**，不碰它也跑得对。不过课文那句「**别用 `.get()`**」是认真的 —— **今天盒子里有东西，不等于明天也有**；真要稳，两处都该把兜底交代上。\n\n一句话记住：**硬掏那一手是把「可能没有」又扔回去；空盒子要用 `orElse`（或者别的那几手）接住。**"
+}

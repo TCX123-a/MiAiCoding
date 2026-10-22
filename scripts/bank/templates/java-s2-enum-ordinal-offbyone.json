@@ -1,0 +1,21 @@
+{
+  "templateId": "java-s2-enum-ordinal-offbyone",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-11",
+  "type": "codefix",
+  "concept": ["ordinal 从 0 起", "编得过、跑出来不对", "那一笔自己补", "括号别省"],
+  "instances": 2,
+  "params": {
+    "listName": { "kind": "pick", "values": ["Day", "Season"] },
+    "items": { "kind": "pick", "values": ["MON, TUE, WED, THU, FRI, SAT, SUN", "SPRING, SUMMER, AUTUMN, WINTER"] },
+    "unit": { "kind": "pick", "values": ["天", "季"] },
+    "first": { "kind": "pick", "values": ["MON", "SPRING"] },
+    "last": { "kind": "pick", "values": ["SUN", "WINTER"] },
+    "total": { "kind": "pick", "values": ["7", "4"] }
+  },
+  "stemTemplate": "本喵想让清单上的每一项都报出「它是第几项」，**而且要从 1 开始数**。\n\n可这稿子跑起来印的头一行是：\n\n```text\n{first} 是第 0 {unit}\n```\n\n—— 从 `0` 开始数了。请你改好，让它印成 `{first} 是第 1 {unit}`、下一项 `2`、一路数到 `{last} 是第 {total} {unit}`。\n\n要求：**那一处不许把数写死**，要让每一项自己报出本喵要的那个「第几」。清单上的次序本喵没动过，别的也都没写错喵。",
+  "brokenCodeTemplate": "public class Main {\n    enum {listName} { {items} }\n\n    public static void main(String[] args) {\n        for ({listName} d : {listName}.values()) {\n            System.out.println(d.name() + \" 是第 \" + d.ordinal() + \" {unit}\");\n        }\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    enum {listName} { {items} }\n\n    public static void main(String[] args) {\n        for ({listName} d : {listName}.values()) {\n            System.out.println(d.name() + \" 是第 \" + (d.ordinal() + 1) + \" {unit}\");\n        }\n    }\n}\n",
+  "explanationTemplate": "这一题是**跑起来不对**的那一类：稿子编得过，屏幕上没有红字，就是数不对。它印出来长这样：\n\n```text\n{first} 是第 0 {unit}\n（后面每一项依次是 1、2、3 ……）\n```\n\n错在 `ordinal()` 报的是**它排第几个**，而它是**从 0 开始数**的 —— 第一项报 `0`，最后一项报的是「项数减一」（这里的清单一共 {total} 项）。可本喵嘴上说的「第几项」是从 1 开始数的。**机器报的位次，和本喵要的「第几」，差着 1** —— 这一笔得自己补：\n\n```java\n(d.ordinal() + 1)\n```\n\n括号别省。旁边的 `+` 是拼字用的，翻译官喵按先后顺序算 —— 不括起来，它先把「 是第 」和 `d.ordinal()` 拼成一串字，再往后拼那个 `1`。本喵拿一张三项的小清单真跑过一遍：印出来是 `MON 是第 01 天`、`TUE 是第 11 天`、`WED 是第 21 天` —— **它一声不吭，就是数不对**，这种错最难查。\n\n顺手和项链那边对一下：项链上摸最后一颗要用 `length() - 1`，清单上最后一项的位次是「项数减一」—— 都是「编号从 0 起」惹出来的账。**从 0 起是机器的习惯，从 1 起是人的习惯，两个都要会看，转换的那一笔得自己补上**喵。"
+}

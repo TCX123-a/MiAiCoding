@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-local-shadows-bigjar",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-13",
+  "type": "codefix",
+  "concept": ["大缸", "撞名字", "影子", "近的赢"],
+  "instances": 2,
+  "params": {
+    "step": { "kind": "int", "min": 2, "max": 4 },
+    "unit": { "kind": "pick", "values": ["条小鱼干", "颗猫粮"] }
+  },
+  "stemTemplate": "本喵在门口摆了一口**大缸** `total`，专门装鱼干，招式都能往里放喵。\n\n本喵写了两招收工的招：`addOne` 该往缸里放 1 条，`addTwo` 该往缸里放 {step} 条。两个都喊完之后印一眼缸里。\n\n可印出来**少了** —— `addTwo` 那一招收的货进去了，`addOne` 那条却不见踪影…… 翻译官喵还一声都没吭。\n\n你帮本喵看看是哪儿出了岔子，把它改好。改好之后，两招放进去的货**都得算进缸里**。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint total = 0;\n\nvoid addOne(void) {\n    int total = 1;\n}\n\nvoid addTwo(void) {\n    total = total + {step};\n}\n\nint main(void) {\n    addOne();\n    addTwo();\n    printf(\"大缸里现在有 %d {unit}\\n\", total);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint total = 0;\n\nvoid addOne(void) {\n    total = total + 1;\n}\n\nvoid addTwo(void) {\n    total = total + {step};\n}\n\nint main(void) {\n    addOne();\n    addTwo();\n    printf(\"大缸里现在有 %d {unit}\\n\", total);\n    return 0;\n}\n",
+  "explanationTemplate": "这一跤摔在**「谁赢了」**上喵 —— 翻译官喵一句都没抱怨，程序也好好跑完了。\n\n课文里那条脾气：**大缸和招式里的碗撞名字时，招式里的那只赢。**\n\n`addOne` 里那句 `int total = 1;` 摆的是一只**招式自己的碗**（前面有个 `int`，就是在摆碗）。从这一行起，`addOne` 这条街上再说 `total`，指的都是自己那只小碗 —— **大缸被挡在后头了**。所以那一句改的是小碗、放的是小碗，招式一收工小碗就撤走，缸里**一条都没涨**。\n\n对照看 `addTwo` 就明白了：它那一招里**没有摆小碗**，伸手够到的就是大缸，所以它真的涨上去了。\n\n修法只有一个词的差别：**把那个 `int` 拿掉**，那一行就从「摆一只新碗」变成了「往大缸里放东西」。\n\n（顺带记住：挡住不等于改掉 —— 大缸里那个数还在原地，只是这一条街上暂时够不着它了。所以给碗起名字，能不起重名就别起。）"
+}

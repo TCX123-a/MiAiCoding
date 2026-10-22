@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-2d-two-brackets",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-10",
+  "type": "codefix",
+  "concept": ["碗排表", "两对方括号", "expected ']'"],
+  "instances": 2,
+  "params": {
+    "rows": { "kind": "int", "min": 2, "max": 3 },
+    "cols": { "kind": "int", "min": 3, "max": 4 },
+    "v": { "kind": "int", "min": 7, "max": 9 }
+  },
+  "stemTemplate": "本喵想摆一张 {rows} 行、每行 {cols} 格的碗排表，先在「第 0 行第 0 格」放一条鱼干，再把它念出来。\n\n可这段代码翻译官喵一瞧见就不干了 —— 它在摆表那一行卡住，把整段退了回来。你帮本喵看看它为什么不肯收，把它改好。改好之后，程序应该印出 {v}。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int grid[{rows}, {cols}];\n\n    grid[0][0] = {v};\n    printf(\"%d\\n\", grid[0][0]);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int grid[{rows}][{cols}];\n\n    grid[0][0] = {v};\n    printf(\"%d\\n\", grid[0][0]);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.c:4:15: error: expected ']' before ',' token`\n\n翻过来就是：**在本喵等着一个 `]` 的地方，冒出来一个逗号。**\n\n有些语言习惯把「几行几列」写在一对括号里、中间点个逗号，可 C 不认这个写法 —— C 要的是**两对方括号**：第一个写「几行」，第二个写「每行几格」，一行一格，各写各的。\n\n改对之后，报编号也要报**两次**：`grid[0][0]` 才是「第 0 行、这一行的第 0 格」。**两个编号都从 0 开始数**，规矩和上一课那排一维的碗一模一样喵。\n\n（翻译官喵报完这一句，后面还跟着一串 `'grid' undeclared (first use in this function)` 之类的话 —— 那些都是这一处错连累出来的。看报错有个习惯：**先把最前面那句改掉，后面的往往自己就没了。**）"
+}

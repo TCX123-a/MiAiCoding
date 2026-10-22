@@ -1,0 +1,548 @@
+{
+  "lessonId": "c-stage3-08",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-08-half-branches-swapped-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这七只碗里的编号是**从小到大**摆好的：**2、24、44、64、84、104、124**。本喵要用「**砍一半**」找出**最末尾那一只 124**，顺便数一数**比了几次**。\n\n可它答的是：\n\n```text\n找 124：没找到\n```\n\n124 明明就摆在最后一只碗里。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `half_find` 这一招改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n找 124：比了 3 次\n```",
+      "brokenCode": "#include <stdio.h>\n\nint bowl[7] = {2, 24, 44, 64, 84, 104, 124};\n\n/* 砍一半：每趟先看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = 6;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (bowl[mid] == target) {\n            return tries;\n        } else if (bowl[mid] < target) {\n            hi = mid - 1;\n        } else {\n            lo = mid + 1;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int want = 124;\n    int n = half_find(want);\n    if (n < 0) {\n        printf(\"找 %d：没找到\\n\", want);\n    } else {\n        printf(\"找 %d：比了 %d 次\\n\", want, n);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint bowl[7] = {2, 24, 44, 64, 84, 104, 124};\n\n/* 砍一半：每趟先看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = 6;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (bowl[mid] == target) {\n            return tries;\n        } else if (bowl[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int want = 124;\n    int n = half_find(want);\n    if (n < 0) {\n        printf(\"找 %d：没找到\\n\", want);\n    } else {\n        printf(\"找 %d：比了 %d 次\\n\", want, n);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找 124：比了 3 次",
+      "stdin": null,
+      "explanation": "毛病在这两边的**砍法**上喵：中间那一只**比要找的小**，说明**它和它左边那一整排全都白看**，要找的只可能在**右半边** —— 该把左边界抬到 `mid + 1`；写成 `hi = mid - 1`，正好把**有戏的那半边砍掉了**，留下的半边全是更小的。两边都砍反，一路砍到最后什么都不剩，就只能答「没找到」。\n\n```text\n} else if (bowl[mid] < target) {\n    lo = mid + 1;   /* 比要找的小 → 往右半边去 */\n} else {\n    hi = mid - 1;   /* 比要找的大 → 往左半边去 */\n}\n```\n\n念一遍就记住了：**小了往右、大了往左**。\n\n⚠️ 课文里那句提醒也别忘了：砍一半吃的前提是这一排**已经摆好**（从小到大）。这里本喵是摆好的，所以毛病不在盘子上，就在这两行上。",
+      "templateId": "c-s3-08-half-branches-swapped",
+      "params": {
+        "e1": "2",
+        "e2": "24",
+        "e3": "44",
+        "e4": "64",
+        "e5": "84",
+        "e6": "104",
+        "t": "124"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:26.817Z",
+        "hash": "f20deefda7a9e776"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-half-branches-swapped-127",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这七只碗里的编号是**从小到大**摆好的：**20、40、60、80、100、120、140**。本喵要用「**砍一半**」找出**最末尾那一只 140**，顺便数一数**比了几次**。\n\n可它答的是：\n\n```text\n找 140：没找到\n```\n\n140 明明就摆在最后一只碗里。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `half_find` 这一招改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n找 140：比了 3 次\n```",
+      "brokenCode": "#include <stdio.h>\n\nint bowl[7] = {20, 40, 60, 80, 100, 120, 140};\n\n/* 砍一半：每趟先看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = 6;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (bowl[mid] == target) {\n            return tries;\n        } else if (bowl[mid] < target) {\n            hi = mid - 1;\n        } else {\n            lo = mid + 1;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int want = 140;\n    int n = half_find(want);\n    if (n < 0) {\n        printf(\"找 %d：没找到\\n\", want);\n    } else {\n        printf(\"找 %d：比了 %d 次\\n\", want, n);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint bowl[7] = {20, 40, 60, 80, 100, 120, 140};\n\n/* 砍一半：每趟先看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = 6;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (bowl[mid] == target) {\n            return tries;\n        } else if (bowl[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int want = 140;\n    int n = half_find(want);\n    if (n < 0) {\n        printf(\"找 %d：没找到\\n\", want);\n    } else {\n        printf(\"找 %d：比了 %d 次\\n\", want, n);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找 140：比了 3 次",
+      "stdin": null,
+      "explanation": "毛病在这两边的**砍法**上喵：中间那一只**比要找的小**，说明**它和它左边那一整排全都白看**，要找的只可能在**右半边** —— 该把左边界抬到 `mid + 1`；写成 `hi = mid - 1`，正好把**有戏的那半边砍掉了**，留下的半边全是更小的。两边都砍反，一路砍到最后什么都不剩，就只能答「没找到」。\n\n```text\n} else if (bowl[mid] < target) {\n    lo = mid + 1;   /* 比要找的小 → 往右半边去 */\n} else {\n    hi = mid - 1;   /* 比要找的大 → 往左半边去 */\n}\n```\n\n念一遍就记住了：**小了往右、大了往左**。\n\n⚠️ 课文里那句提醒也别忘了：砍一半吃的前提是这一排**已经摆好**（从小到大）。这里本喵是摆好的，所以毛病不在盘子上，就在这两行上。",
+      "templateId": "c-s3-08-half-branches-swapped",
+      "params": {
+        "e1": "20",
+        "e2": "40",
+        "e3": "60",
+        "e4": "80",
+        "e5": "100",
+        "e6": "120",
+        "t": "140"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:28.509Z",
+        "hash": "1a6f31ea9e017301"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-half-find-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一排鱼干是**已经摆好的**（从小到大）—— 砍一半吃的就是这个前提，本喵保证不用你理它。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n3\n22\n2\n12\n22\n```\n\n你要把 `half_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 一开始两头夹住整排：`lo` 指着**第一只**，`hi` 指着**最后一只**；\n2. 每一趟先看**正中间**那一只（`mid` 取 `(lo + hi) / 2`），**看了就记一笔**；\n3. 正好是它 → 把次数答回去；比要找的**小** → 往**右**半边夹；比要找的**大** → 往**左**半边夹；\n4. 两头夹过了头（`lo > hi`）还没找着，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `砍一半：比了 N 次`；\n- 没找着 → 一行 `砍一半：没找到`。\n\n样例跑出来是这样：\n\n```text\n砍一半：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① lo 从 0 开始，hi 从 n - 1 开始\n       ② 两头没夹过头就接着夹：先看正中间那一只，看了就记一笔\n       ③ 正好是它 → 答次数；比要找的小 → 往右半边夹；比要找的大 → 往左半边夹\n       ④ 夹过头还没找着 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    int lo = 0;\n    int hi = n - 1;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (a[mid] == target) {\n            return tries;\n        } else if (a[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "砍一半：比了 3 次",
+      "stdin": "5\n42\n2\n12\n22\n32\n42\n",
+      "explanation": "砍一半每一趟只看**一只**：正中间那只。看完之后，**总有一半可以整片扔掉** —— 这就是它比挨着看省的地方喵。\n\n- 中间那只**比要找的小** → 它和它左边的全都白看，往**右**半边夹：`lo = mid + 1`；\n- 中间那只**比要找的大** → 它和它右边的全都白看，往**左**半边夹：`hi = mid - 1`；\n- 正好是它 → 收工。\n\n收手条件是 `while (lo <= hi)` 而不是 `while (lo < hi)`：**头尾撞上那一下（只剩一只），还得再看一眼**，不然那最后一只就永远没人看。\n\n还有一条前提别忘了：这一招只在**排好的盘子**上才成立。盘子是乱的，砍一半的答案就是**碰运气**了。",
+      "templateId": "c-s3-08-half-find-report",
+      "params": {
+        "e1": "2",
+        "e2": "12",
+        "e3": "22",
+        "e4": "32",
+        "t": "42"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:38.788Z",
+        "hash": "7580f2a18f6306e5"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-half-find-report-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一排鱼干是**已经摆好的**（从小到大）—— 砍一半吃的就是这个前提，本喵保证不用你理它。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n3\n29\n2\n12\n29\n```\n\n你要把 `half_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 一开始两头夹住整排：`lo` 指着**第一只**，`hi` 指着**最后一只**；\n2. 每一趟先看**正中间**那一只（`mid` 取 `(lo + hi) / 2`），**看了就记一笔**；\n3. 正好是它 → 把次数答回去；比要找的**小** → 往**右**半边夹；比要找的**大** → 往**左**半边夹；\n4. 两头夹过了头（`lo > hi`）还没找着，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `砍一半：比了 N 次`；\n- 没找着 → 一行 `砍一半：没找到`。\n\n样例跑出来是这样：\n\n```text\n砍一半：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① lo 从 0 开始，hi 从 n - 1 开始\n       ② 两头没夹过头就接着夹：先看正中间那一只，看了就记一笔\n       ③ 正好是它 → 答次数；比要找的小 → 往右半边夹；比要找的大 → 往左半边夹\n       ④ 夹过头还没找着 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    int lo = 0;\n    int hi = n - 1;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (a[mid] == target) {\n            return tries;\n        } else if (a[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "砍一半：比了 3 次",
+      "stdin": "5\n42\n2\n12\n29\n39\n42\n",
+      "explanation": "砍一半每一趟只看**一只**：正中间那只。看完之后，**总有一半可以整片扔掉** —— 这就是它比挨着看省的地方喵。\n\n- 中间那只**比要找的小** → 它和它左边的全都白看，往**右**半边夹：`lo = mid + 1`；\n- 中间那只**比要找的大** → 它和它右边的全都白看，往**左**半边夹：`hi = mid - 1`；\n- 正好是它 → 收工。\n\n收手条件是 `while (lo <= hi)` 而不是 `while (lo < hi)`：**头尾撞上那一下（只剩一只），还得再看一眼**，不然那最后一只就永远没人看。\n\n还有一条前提别忘了：这一招只在**排好的盘子**上才成立。盘子是乱的，砍一半的答案就是**碰运气**了。",
+      "templateId": "c-s3-08-half-find-report",
+      "params": {
+        "e1": "2",
+        "e2": "12",
+        "e3": "29",
+        "e4": "39",
+        "t": "42"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:21.006Z",
+        "hash": "c9b3d199e3a70726"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-half-find-report-012",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一排鱼干是**已经摆好的**（从小到大）—— 砍一半吃的就是这个前提，本喵保证不用你理它。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n3\n29\n2\n19\n29\n```\n\n你要把 `half_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 一开始两头夹住整排：`lo` 指着**第一只**，`hi` 指着**最后一只**；\n2. 每一趟先看**正中间**那一只（`mid` 取 `(lo + hi) / 2`），**看了就记一笔**；\n3. 正好是它 → 把次数答回去；比要找的**小** → 往**右**半边夹；比要找的**大** → 往**左**半边夹；\n4. 两头夹过了头（`lo > hi`）还没找着，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `砍一半：比了 N 次`；\n- 没找着 → 一行 `砍一半：没找到`。\n\n样例跑出来是这样：\n\n```text\n砍一半：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① lo 从 0 开始，hi 从 n - 1 开始\n       ② 两头没夹过头就接着夹：先看正中间那一只，看了就记一笔\n       ③ 正好是它 → 答次数；比要找的小 → 往右半边夹；比要找的大 → 往左半边夹\n       ④ 夹过头还没找着 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    int lo = 0;\n    int hi = n - 1;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (a[mid] == target) {\n            return tries;\n        } else if (a[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "砍一半：比了 3 次",
+      "stdin": "5\n42\n2\n19\n29\n32\n42\n",
+      "explanation": "砍一半每一趟只看**一只**：正中间那只。看完之后，**总有一半可以整片扔掉** —— 这就是它比挨着看省的地方喵。\n\n- 中间那只**比要找的小** → 它和它左边的全都白看，往**右**半边夹：`lo = mid + 1`；\n- 中间那只**比要找的大** → 它和它右边的全都白看，往**左**半边夹：`hi = mid - 1`；\n- 正好是它 → 收工。\n\n收手条件是 `while (lo <= hi)` 而不是 `while (lo < hi)`：**头尾撞上那一下（只剩一只），还得再看一眼**，不然那最后一只就永远没人看。\n\n还有一条前提别忘了：这一招只在**排好的盘子**上才成立。盘子是乱的，砍一半的答案就是**碰运气**了。",
+      "templateId": "c-s3-08-half-find-report",
+      "params": {
+        "e1": "2",
+        "e2": "19",
+        "e3": "29",
+        "e4": "32",
+        "t": "42"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:24.016Z",
+        "hash": "cad750bb3cf4eb17"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-half-find-report-019",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一排鱼干是**已经摆好的**（从小到大）—— 砍一半吃的就是这个前提，本喵保证不用你理它。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n3\n22\n9\n12\n22\n```\n\n你要把 `half_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 一开始两头夹住整排：`lo` 指着**第一只**，`hi` 指着**最后一只**；\n2. 每一趟先看**正中间**那一只（`mid` 取 `(lo + hi) / 2`），**看了就记一笔**；\n3. 正好是它 → 把次数答回去；比要找的**小** → 往**右**半边夹；比要找的**大** → 往**左**半边夹；\n4. 两头夹过了头（`lo > hi`）还没找着，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `砍一半：比了 N 次`；\n- 没找着 → 一行 `砍一半：没找到`。\n\n样例跑出来是这样：\n\n```text\n砍一半：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① lo 从 0 开始，hi 从 n - 1 开始\n       ② 两头没夹过头就接着夹：先看正中间那一只，看了就记一笔\n       ③ 正好是它 → 答次数；比要找的小 → 往右半边夹；比要找的大 → 往左半边夹\n       ④ 夹过头还没找着 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    int lo = 0;\n    int hi = n - 1;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (a[mid] == target) {\n            return tries;\n        } else if (a[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "砍一半：比了 3 次",
+      "stdin": "5\n49\n9\n12\n22\n39\n49\n",
+      "explanation": "砍一半每一趟只看**一只**：正中间那只。看完之后，**总有一半可以整片扔掉** —— 这就是它比挨着看省的地方喵。\n\n- 中间那只**比要找的小** → 它和它左边的全都白看，往**右**半边夹：`lo = mid + 1`；\n- 中间那只**比要找的大** → 它和它右边的全都白看，往**左**半边夹：`hi = mid - 1`；\n- 正好是它 → 收工。\n\n收手条件是 `while (lo <= hi)` 而不是 `while (lo < hi)`：**头尾撞上那一下（只剩一只），还得再看一眼**，不然那最后一只就永远没人看。\n\n还有一条前提别忘了：这一招只在**排好的盘子**上才成立。盘子是乱的，砍一半的答案就是**碰运气**了。",
+      "templateId": "c-s3-08-half-find-report",
+      "params": {
+        "e1": "9",
+        "e2": "12",
+        "e3": "22",
+        "e4": "39",
+        "t": "49"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:26.962Z",
+        "hash": "1feac409b41e6545"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-half-find-report-025",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一排鱼干是**已经摆好的**（从小到大）—— 砍一半吃的就是这个前提，本喵保证不用你理它。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n3\n22\n9\n19\n22\n```\n\n你要把 `half_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 一开始两头夹住整排：`lo` 指着**第一只**，`hi` 指着**最后一只**；\n2. 每一趟先看**正中间**那一只（`mid` 取 `(lo + hi) / 2`），**看了就记一笔**；\n3. 正好是它 → 把次数答回去；比要找的**小** → 往**右**半边夹；比要找的**大** → 往**左**半边夹；\n4. 两头夹过了头（`lo > hi`）还没找着，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `砍一半：比了 N 次`；\n- 没找着 → 一行 `砍一半：没找到`。\n\n样例跑出来是这样：\n\n```text\n砍一半：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① lo 从 0 开始，hi 从 n - 1 开始\n       ② 两头没夹过头就接着夹：先看正中间那一只，看了就记一笔\n       ③ 正好是它 → 答次数；比要找的小 → 往右半边夹；比要找的大 → 往左半边夹\n       ④ 夹过头还没找着 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    int lo = 0;\n    int hi = n - 1;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (a[mid] == target) {\n            return tries;\n        } else if (a[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "砍一半：比了 3 次",
+      "stdin": "5\n49\n9\n19\n22\n32\n49\n",
+      "explanation": "砍一半每一趟只看**一只**：正中间那只。看完之后，**总有一半可以整片扔掉** —— 这就是它比挨着看省的地方喵。\n\n- 中间那只**比要找的小** → 它和它左边的全都白看，往**右**半边夹：`lo = mid + 1`；\n- 中间那只**比要找的大** → 它和它右边的全都白看，往**左**半边夹：`hi = mid - 1`；\n- 正好是它 → 收工。\n\n收手条件是 `while (lo <= hi)` 而不是 `while (lo < hi)`：**头尾撞上那一下（只剩一只），还得再看一眼**，不然那最后一只就永远没人看。\n\n还有一条前提别忘了：这一招只在**排好的盘子**上才成立。盘子是乱的，砍一半的答案就是**碰运气**了。",
+      "templateId": "c-s3-08-half-find-report",
+      "params": {
+        "e1": "9",
+        "e2": "19",
+        "e3": "22",
+        "e4": "32",
+        "t": "49"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:29.913Z",
+        "hash": "4b3158fc6954d044"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-half-find-report-031",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一排鱼干是**已经摆好的**（从小到大）—— 砍一半吃的就是这个前提，本喵保证不用你理它。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n3\n29\n9\n19\n29\n```\n\n你要把 `half_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 一开始两头夹住整排：`lo` 指着**第一只**，`hi` 指着**最后一只**；\n2. 每一趟先看**正中间**那一只（`mid` 取 `(lo + hi) / 2`），**看了就记一笔**；\n3. 正好是它 → 把次数答回去；比要找的**小** → 往**右**半边夹；比要找的**大** → 往**左**半边夹；\n4. 两头夹过了头（`lo > hi`）还没找着，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `砍一半：比了 N 次`；\n- 没找着 → 一行 `砍一半：没找到`。\n\n样例跑出来是这样：\n\n```text\n砍一半：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① lo 从 0 开始，hi 从 n - 1 开始\n       ② 两头没夹过头就接着夹：先看正中间那一只，看了就记一笔\n       ③ 正好是它 → 答次数；比要找的小 → 往右半边夹；比要找的大 → 往左半边夹\n       ④ 夹过头还没找着 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int a[], int n, int target) {\n    int lo = 0;\n    int hi = n - 1;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (a[mid] == target) {\n            return tries;\n        } else if (a[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = half_find(a, n, target);\n    if (times < 0) {\n        printf(\"砍一半：没找到\\n\");\n    } else {\n        printf(\"砍一半：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "砍一半：比了 3 次",
+      "stdin": "5\n49\n9\n19\n29\n39\n49\n",
+      "explanation": "砍一半每一趟只看**一只**：正中间那只。看完之后，**总有一半可以整片扔掉** —— 这就是它比挨着看省的地方喵。\n\n- 中间那只**比要找的小** → 它和它左边的全都白看，往**右**半边夹：`lo = mid + 1`；\n- 中间那只**比要找的大** → 它和它右边的全都白看，往**左**半边夹：`hi = mid - 1`；\n- 正好是它 → 收工。\n\n收手条件是 `while (lo <= hi)` 而不是 `while (lo < hi)`：**头尾撞上那一下（只剩一只），还得再看一眼**，不然那最后一只就永远没人看。\n\n还有一条前提别忘了：这一招只在**排好的盘子**上才成立。盘子是乱的，砍一半的答案就是**碰运气**了。",
+      "templateId": "c-s3-08-half-find-report",
+      "params": {
+        "e1": "9",
+        "e2": "19",
+        "e3": "29",
+        "e4": "39",
+        "t": "49"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:40.490Z",
+        "hash": "59ddef5932c93b2c"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-hash-forgot-used-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把编号 **7** 和 **23** 存进鱼干仓库：编号自己算门牌号（**编号除以 10 的余数就是格子的号**），算出来的格子有人住了，就**往后挪一格**，还撞就再挪。存完了再按编号把它们找出来。\n\n可两只都答「没找到」：\n\n```text\n找 7：没找到\n找 23：没找到\n```\n\n它们明明刚存进去过。翻译官喵一声没吭，跑起来也不摔。\n\n请你把**存的那一招**改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n找 7：比了 1 次\n找 23：比了 1 次\n```",
+      "brokenCode": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\n/* 编号算门牌号：编号除以 10 的余数 */\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\n/* 存一只：从算出来的格子开始，有人住了就往后挪一格 */\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n}\n\n/* 找一只：从算出来的格子开始往后敲，答「比了几次」；一格都没住过就答 0 */\nint find(int id) {\n    int slot = slot_of(id);\n    int tries = 0;\n    while (used[slot]) {\n        tries++;\n        if (shelf[slot] == id) {\n            return tries;\n        }\n        slot = (slot + 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    put(7);\n    put(23);\n\n    int n1 = find(7);\n    if (n1 > 0) {\n        printf(\"找 %d：比了 %d 次\\n\", 7, n1);\n    } else {\n        printf(\"找 %d：没找到\\n\", 7);\n    }\n\n    int n2 = find(23);\n    if (n2 > 0) {\n        printf(\"找 %d：比了 %d 次\\n\", 23, n2);\n    } else {\n        printf(\"找 %d：没找到\\n\", 23);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\n/* 编号算门牌号：编号除以 10 的余数 */\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\n/* 存一只：从算出来的格子开始，有人住了就往后挪一格 */\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\n/* 找一只：从算出来的格子开始往后敲，答「比了几次」；一格都没住过就答 0 */\nint find(int id) {\n    int slot = slot_of(id);\n    int tries = 0;\n    while (used[slot]) {\n        tries++;\n        if (shelf[slot] == id) {\n            return tries;\n        }\n        slot = (slot + 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    put(7);\n    put(23);\n\n    int n1 = find(7);\n    if (n1 > 0) {\n        printf(\"找 %d：比了 %d 次\\n\", 7, n1);\n    } else {\n        printf(\"找 %d：没找到\\n\", 7);\n    }\n\n    int n2 = find(23);\n    if (n2 > 0) {\n        printf(\"找 %d：比了 %d 次\\n\", 23, n2);\n    } else {\n        printf(\"找 %d：没找到\\n\", 23);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找 7：比了 1 次\n找 23：比了 1 次",
+      "stdin": null,
+      "explanation": "仓库里「**这一格有没有住过东西**」，全靠 `used` 那一排小格子记着喵。`put` 里把编号放进 `shelf` 之后，**忘了在旁边那一格上记一笔**，于是 `find` 一敲门，看到的是「这一格从来没人住过」—— 当场收工，答「没有这一只」。\n\n这一条正是课文里那句话：**空格本身就是「这里没有」的证据**。既然空格是证据，那往一格放东西的时候，就必须顺手把那一格标成「有人住了」：\n\n```text\nshelf[slot] = id;\nused[slot] = 1;\n```\n\n少标这一笔，那一格在 `find` 眼里就永远是空的：不光刚存进去的这一只找不着，往后所有落在这儿的全都找不着 —— 而且翻译官喵一个字都不说。",
+      "templateId": "c-s3-08-hash-forgot-used",
+      "params": {
+        "a": "7",
+        "b": "23"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:30.548Z",
+        "hash": "c6f7c65892385275"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-hash-forgot-used-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把编号 **11** 和 **34** 存进鱼干仓库：编号自己算门牌号（**编号除以 10 的余数就是格子的号**），算出来的格子有人住了，就**往后挪一格**，还撞就再挪。存完了再按编号把它们找出来。\n\n可两只都答「没找到」：\n\n```text\n找 11：没找到\n找 34：没找到\n```\n\n它们明明刚存进去过。翻译官喵一声没吭，跑起来也不摔。\n\n请你把**存的那一招**改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n找 11：比了 1 次\n找 34：比了 1 次\n```",
+      "brokenCode": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\n/* 编号算门牌号：编号除以 10 的余数 */\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\n/* 存一只：从算出来的格子开始，有人住了就往后挪一格 */\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n}\n\n/* 找一只：从算出来的格子开始往后敲，答「比了几次」；一格都没住过就答 0 */\nint find(int id) {\n    int slot = slot_of(id);\n    int tries = 0;\n    while (used[slot]) {\n        tries++;\n        if (shelf[slot] == id) {\n            return tries;\n        }\n        slot = (slot + 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    put(11);\n    put(34);\n\n    int n1 = find(11);\n    if (n1 > 0) {\n        printf(\"找 %d：比了 %d 次\\n\", 11, n1);\n    } else {\n        printf(\"找 %d：没找到\\n\", 11);\n    }\n\n    int n2 = find(34);\n    if (n2 > 0) {\n        printf(\"找 %d：比了 %d 次\\n\", 34, n2);\n    } else {\n        printf(\"找 %d：没找到\\n\", 34);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\n/* 编号算门牌号：编号除以 10 的余数 */\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\n/* 存一只：从算出来的格子开始，有人住了就往后挪一格 */\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\n/* 找一只：从算出来的格子开始往后敲，答「比了几次」；一格都没住过就答 0 */\nint find(int id) {\n    int slot = slot_of(id);\n    int tries = 0;\n    while (used[slot]) {\n        tries++;\n        if (shelf[slot] == id) {\n            return tries;\n        }\n        slot = (slot + 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    put(11);\n    put(34);\n\n    int n1 = find(11);\n    if (n1 > 0) {\n        printf(\"找 %d：比了 %d 次\\n\", 11, n1);\n    } else {\n        printf(\"找 %d：没找到\\n\", 11);\n    }\n\n    int n2 = find(34);\n    if (n2 > 0) {\n        printf(\"找 %d：比了 %d 次\\n\", 34, n2);\n    } else {\n        printf(\"找 %d：没找到\\n\", 34);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找 11：比了 1 次\n找 34：比了 1 次",
+      "stdin": null,
+      "explanation": "仓库里「**这一格有没有住过东西**」，全靠 `used` 那一排小格子记着喵。`put` 里把编号放进 `shelf` 之后，**忘了在旁边那一格上记一笔**，于是 `find` 一敲门，看到的是「这一格从来没人住过」—— 当场收工，答「没有这一只」。\n\n这一条正是课文里那句话：**空格本身就是「这里没有」的证据**。既然空格是证据，那往一格放东西的时候，就必须顺手把那一格标成「有人住了」：\n\n```text\nshelf[slot] = id;\nused[slot] = 1;\n```\n\n少标这一笔，那一格在 `find` 眼里就永远是空的：不光刚存进去的这一只找不着，往后所有落在这儿的全都找不着 —— 而且翻译官喵一个字都不说。",
+      "templateId": "c-s3-08-hash-forgot-used",
+      "params": {
+        "a": "11",
+        "b": "34"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:32.304Z",
+        "hash": "0c95c16d418cdb19"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-hash-put-find-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要开一个**十格**的鱼干仓库，让每一只编号自己算门牌号：**编号除以 10 的余数**，就是它该住的格子号。算出来的格子有人住了（**撞车**），就**往后挪一格**，还撞就再挪，直到找到空位。\n\n投喂口里递进来的是：先**一共几只**、然后一只一行。样例输入：\n\n```text\n4\n4\n67\n36\n73\n```\n\n你要把三招补完（`main` 已经写在稿子里了，别改它）：\n\n1. `slot_of`：算门牌号；\n2. `put`：从算出来的格子开始往后挪，挪到**空格子**就住下，**顺手在 `used` 那一排上记一笔**；\n3. `find`：从**同一个**格子开始，一格一格往后敲（敲一下记一笔）：敲到**空格子**就说明这一只压根没存过，答 `0`；敲到编号对上了，就把**敲的次数**答回去。\n\n`main` 会先把递进来的都存进去，然后把**最后递进来的那一只**再找一遍，最后拿**从来没递进来过的编号 `0`** 试一次。印出来的格式是写死的：\n\n```text\n最后递进来的 43：比了 2 次\n编号 0：没找到\n```\n\n样例跑出来是这样：\n\n```text\n最后递进来的 73：比了 1 次\n编号 0：没找到\n```",
+      "starter": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\n/* 编号算门牌号：编号除以 10 的余数 */\nint slot_of(int id) {\n    /* ↓ 自己写 */\n    return 0;\n}\n\n/* 存一只：从算出来的格子开始，有人住了就往后挪一格，还撞就再挪；住下时记一笔 */\nvoid put(int id) {\n    /* ↓ 自己写 */\n}\n\n/* 找一只：从算出来的格子开始往后敲，答「敲了几次才找到」；敲到空格子就答 0 */\nint find(int id) {\n    /* ↓ 自己写 */\n    return 0;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        put(a[i]);\n    }\n\n    int last = a[n - 1];\n    int times = find(last);\n    if (times > 0) {\n        printf(\"最后递进来的 %d：比了 %d 次\\n\", last, times);\n    } else {\n        printf(\"最后递进来的 %d：没找到\\n\", last);\n    }\n\n    if (find(0) > 0) {\n        printf(\"编号 0：找着了\\n\");\n    } else {\n        printf(\"编号 0：没找到\\n\");\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\n/* 编号算门牌号：编号除以 10 的余数 */\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\n/* 存一只：从算出来的格子开始，有人住了就往后挪一格，还撞就再挪；住下时记一笔 */\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\n/* 找一只：从算出来的格子开始往后敲，答「敲了几次才找到」；敲到空格子就答 0 */\nint find(int id) {\n    int slot = slot_of(id);\n    int tries = 0;\n    while (used[slot]) {\n        tries++;\n        if (shelf[slot] == id) {\n            return tries;\n        }\n        slot = (slot + 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        put(a[i]);\n    }\n\n    int last = a[n - 1];\n    int times = find(last);\n    if (times > 0) {\n        printf(\"最后递进来的 %d：比了 %d 次\\n\", last, times);\n    } else {\n        printf(\"最后递进来的 %d：没找到\\n\", last);\n    }\n\n    if (find(0) > 0) {\n        printf(\"编号 0：找着了\\n\");\n    } else {\n        printf(\"编号 0：没找到\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "最后递进来的 86：比了 1 次\n编号 0：没找到",
+      "stdin": "4\n81\n21\n75\n86\n",
+      "explanation": "这一招的关键就一句话：**空格本身就是「这里没有」的证据**喵。\n\n- `put` 从算出来的格子开始，撞了就往**后**挪一格，挪到空格子才住下；住下的同时必须在 `used` 上**记一笔** —— 不记的话，往后谁来找它，看到的都还是「这一格从来没人住过」。\n- `find` 走的是**同一条路**：同一个起点、同一个方向、同样一格一格地挪。敲到空格子就收工答 `0`（证据齐了）；敲到编号对上就给次数。\n\n⚠️ `used` 那一排小格子必须**一开始全是 0**。稿子里把 `shelf` 和 `used` 摆在所有招式**外面**，这样它们天生就是 0；要是搬进 `main` 里又不给初值，里面是些谁也不知道是什么的脏数，第一只存进去就被带跑。\n\n⚠️ 还有一条：**住和找必须走同一条路**。住的时候往后挪、找的时候往前敲，就会出现「刚存进去却找不着」这种怪事喵。",
+      "templateId": "c-s3-08-hash-put-find",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:42.503Z",
+        "hash": "c5b74445051a56bd"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-hash-put-find-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要开一个**十格**的鱼干仓库，让每一只编号自己算门牌号：**编号除以 10 的余数**，就是它该住的格子号。算出来的格子有人住了（**撞车**），就**往后挪一格**，还撞就再挪，直到找到空位。\n\n投喂口里递进来的是：先**一共几只**、然后一只一行。样例输入：\n\n```text\n5\n75\n56\n86\n10\n17\n```\n\n你要把三招补完（`main` 已经写在稿子里了，别改它）：\n\n1. `slot_of`：算门牌号；\n2. `put`：从算出来的格子开始往后挪，挪到**空格子**就住下，**顺手在 `used` 那一排上记一笔**；\n3. `find`：从**同一个**格子开始，一格一格往后敲（敲一下记一笔）：敲到**空格子**就说明这一只压根没存过，答 `0`；敲到编号对上了，就把**敲的次数**答回去。\n\n`main` 会先把递进来的都存进去，然后把**最后递进来的那一只**再找一遍，最后拿**从来没递进来过的编号 `0`** 试一次。印出来的格式是写死的：\n\n```text\n最后递进来的 43：比了 2 次\n编号 0：没找到\n```\n\n样例跑出来是这样：\n\n```text\n最后递进来的 17：比了 2 次\n编号 0：没找到\n```",
+      "starter": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\n/* 编号算门牌号：编号除以 10 的余数 */\nint slot_of(int id) {\n    /* ↓ 自己写 */\n    return 0;\n}\n\n/* 存一只：从算出来的格子开始，有人住了就往后挪一格，还撞就再挪；住下时记一笔 */\nvoid put(int id) {\n    /* ↓ 自己写 */\n}\n\n/* 找一只：从算出来的格子开始往后敲，答「敲了几次才找到」；敲到空格子就答 0 */\nint find(int id) {\n    /* ↓ 自己写 */\n    return 0;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        put(a[i]);\n    }\n\n    int last = a[n - 1];\n    int times = find(last);\n    if (times > 0) {\n        printf(\"最后递进来的 %d：比了 %d 次\\n\", last, times);\n    } else {\n        printf(\"最后递进来的 %d：没找到\\n\", last);\n    }\n\n    if (find(0) > 0) {\n        printf(\"编号 0：找着了\\n\");\n    } else {\n        printf(\"编号 0：没找到\\n\");\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\n/* 编号算门牌号：编号除以 10 的余数 */\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\n/* 存一只：从算出来的格子开始，有人住了就往后挪一格，还撞就再挪；住下时记一笔 */\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\n/* 找一只：从算出来的格子开始往后敲，答「敲了几次才找到」；敲到空格子就答 0 */\nint find(int id) {\n    int slot = slot_of(id);\n    int tries = 0;\n    while (used[slot]) {\n        tries++;\n        if (shelf[slot] == id) {\n            return tries;\n        }\n        slot = (slot + 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        put(a[i]);\n    }\n\n    int last = a[n - 1];\n    int times = find(last);\n    if (times > 0) {\n        printf(\"最后递进来的 %d：比了 %d 次\\n\", last, times);\n    } else {\n        printf(\"最后递进来的 %d：没找到\\n\", last);\n    }\n\n    if (find(0) > 0) {\n        printf(\"编号 0：找着了\\n\");\n    } else {\n        printf(\"编号 0：没找到\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "最后递进来的 97：比了 1 次\n编号 0：没找到",
+      "stdin": "5\n11\n72\n62\n23\n97\n",
+      "explanation": "这一招的关键就一句话：**空格本身就是「这里没有」的证据**喵。\n\n- `put` 从算出来的格子开始，撞了就往**后**挪一格，挪到空格子才住下；住下的同时必须在 `used` 上**记一笔** —— 不记的话，往后谁来找它，看到的都还是「这一格从来没人住过」。\n- `find` 走的是**同一条路**：同一个起点、同一个方向、同样一格一格地挪。敲到空格子就收工答 `0`（证据齐了）；敲到编号对上就给次数。\n\n⚠️ `used` 那一排小格子必须**一开始全是 0**。稿子里把 `shelf` 和 `used` 摆在所有招式**外面**，这样它们天生就是 0；要是搬进 `main` 里又不给初值，里面是些谁也不知道是什么的脏数，第一只存进去就被带跑。\n\n⚠️ 还有一条：**住和找必须走同一条路**。住的时候往后挪、找的时候往前敲，就会出现「刚存进去却找不着」这种怪事喵。",
+      "templateId": "c-s3-08-hash-put-find",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:44.228Z",
+        "hash": "fc8ef65c1bd22c04"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-line-count-early-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这一排鱼干是这么摆的：**3、7、11、15、19**，要找的是编号 **11**。用「**挨着看**」那一招，从第一只开始一只一只比过去，顺便数一数**比了几次**。\n\n可它印出来的是：\n\n```text\n找 11：比了 2 次就找到了\n```\n\n11 明明躺在**第 3 只碗**里 —— 从第一只数过去，怎么也得比 3 次才对得上。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `line_find` 这一招改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n找 11：比了 3 次就找到了\n```",
+      "brokenCode": "#include <stdio.h>\n\nint bowl[5] = {3, 7, 11, 15, 19};\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int target) {\n    int tries = 0;\n    for (int i = 0; i < 5; i++) {\n        if (bowl[i] == target) {\n            return tries;\n        }\n        tries++;\n    }\n    return -tries;\n}\n\nint main(void) {\n    int want = 11;\n    int n = line_find(want);\n    if (n < 0) {\n        printf(\"找 %d：一只都没对上\\n\", want);\n    } else {\n        printf(\"找 %d：比了 %d 次就找到了\\n\", want, n);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint bowl[5] = {3, 7, 11, 15, 19};\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int target) {\n    int tries = 0;\n    for (int i = 0; i < 5; i++) {\n        tries++;\n        if (bowl[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int want = 11;\n    int n = line_find(want);\n    if (n < 0) {\n        printf(\"找 %d：一只都没对上\\n\", want);\n    } else {\n        printf(\"找 %d：比了 %d 次就找到了\\n\", want, n);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找 11：比了 3 次就找到了",
+      "stdin": null,
+      "explanation": "毛病出在**记账的时机**上喵：`tries++` 被放到了「比一下、对不上、接着走」那一步的**后头**，可它得放在**比之前**。\n\n```text\nfor (int i = 0; i < 5; i++) {\n    if (bowl[i] == target) {\n        return tries;\n    }\n    tries++;\n}\n```\n\n圈圈走到 11 那一只时，`if` 一看对上了，就**当场**把 `tries` 叼回去 —— 可这一下「比过了」还没记进账，于是答出来的是 2。把 `tries++` 挪到 `if` **前头**就好了：先记一笔，再判对没对上。\n\n课文里那两个找法数出来的次数，都是**一共比了几次** —— 中了的这一下也算一次喵：比一下、记一笔，对上了才算完。数漏了这一下，找得越靠后、答案差得越远。",
+      "templateId": "c-s3-08-line-count-early",
+      "params": {
+        "e1": "3",
+        "e2": "7",
+        "t": "11",
+        "e4": "15",
+        "e5": "19"
+      },
+      "verified": {
+        "at": "2026-09-16T11:32:54.784Z",
+        "hash": "f0be33fc56b35580"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-line-count-early-031",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这一排鱼干是这么摆的：**30、70、110、150、190**，要找的是编号 **110**。用「**挨着看**」那一招，从第一只开始一只一只比过去，顺便数一数**比了几次**。\n\n可它印出来的是：\n\n```text\n找 110：比了 2 次就找到了\n```\n\n110 明明躺在**第 3 只碗**里 —— 从第一只数过去，怎么也得比 3 次才对得上。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `line_find` 这一招改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n找 110：比了 3 次就找到了\n```",
+      "brokenCode": "#include <stdio.h>\n\nint bowl[5] = {30, 70, 110, 150, 190};\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int target) {\n    int tries = 0;\n    for (int i = 0; i < 5; i++) {\n        if (bowl[i] == target) {\n            return tries;\n        }\n        tries++;\n    }\n    return -tries;\n}\n\nint main(void) {\n    int want = 110;\n    int n = line_find(want);\n    if (n < 0) {\n        printf(\"找 %d：一只都没对上\\n\", want);\n    } else {\n        printf(\"找 %d：比了 %d 次就找到了\\n\", want, n);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint bowl[5] = {30, 70, 110, 150, 190};\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int target) {\n    int tries = 0;\n    for (int i = 0; i < 5; i++) {\n        tries++;\n        if (bowl[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int want = 110;\n    int n = line_find(want);\n    if (n < 0) {\n        printf(\"找 %d：一只都没对上\\n\", want);\n    } else {\n        printf(\"找 %d：比了 %d 次就找到了\\n\", want, n);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找 110：比了 3 次就找到了",
+      "stdin": null,
+      "explanation": "毛病出在**记账的时机**上喵：`tries++` 被放到了「比一下、对不上、接着走」那一步的**后头**，可它得放在**比之前**。\n\n```text\nfor (int i = 0; i < 5; i++) {\n    if (bowl[i] == target) {\n        return tries;\n    }\n    tries++;\n}\n```\n\n圈圈走到 110 那一只时，`if` 一看对上了，就**当场**把 `tries` 叼回去 —— 可这一下「比过了」还没记进账，于是答出来的是 2。把 `tries++` 挪到 `if` **前头**就好了：先记一笔，再判对没对上。\n\n课文里那两个找法数出来的次数，都是**一共比了几次** —— 中了的这一下也算一次喵：比一下、记一笔，对上了才算完。数漏了这一下，找得越靠后、答案差得越远。",
+      "templateId": "c-s3-08-line-count-early",
+      "params": {
+        "e1": "30",
+        "e2": "70",
+        "t": "110",
+        "e4": "150",
+        "e5": "190"
+      },
+      "verified": {
+        "at": "2026-09-16T11:32:56.459Z",
+        "hash": "dda5fbd152302698"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-line-find-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要把一排鱼干**一只一只挨着看过去**，数一数**比了几次**。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n4\n7\n3\n7\n15\n19\n```\n\n你要把 `line_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 从**第一只**开始，一只一只挨着比过去；\n2. **每比一次**，「比了几次」就加一；\n3. 对上了就把次数**答回去**；一整排都比完还没对上，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `挨着看：比了 N 次`（N 就是比了几次，**中了的这一下也算**）；\n- 没找着 → 一行 `挨着看：没找到`。\n\n样例跑出来是这样：\n\n```text\n挨着看：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① 从第一只开始，一只一只挨着比过去\n       ② 每比一次，「比了几次」就加一\n       ③ 对上了就把次数答回去；一整排都比完还没对上，就答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        tries++;\n        if (a[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "挨着看：比了 3 次",
+      "stdin": "5\n11\n3\n7\n11\n15\n19\n",
+      "explanation": "挨着看的规矩就三条：**从第一只开始**、**每比一次记一笔**、**对上就收工**喵。\n\n最容易写错的是记账的位置：`tries++` 得放在**比之前**。放到后头的话，中了的这一下就没记进账，答出来的次数会比真实的少一 —— 课文里「找最末尾那只要比一整排」那个数就是这么数出来的。\n\n找不着的时候本喵答的是 `-tries`，一个**负数**；`main` 一看是负的就印「没找到」。为什么不干脆答 `0` 呢？因为**「比了 0 次」也是一种次数**（比如一整排本来就是空的）—— 负数才是「压根没找着」的记号，两件事分得开。",
+      "templateId": "c-s3-08-line-find-report",
+      "params": {
+        "e1": "3",
+        "e2": "7",
+        "t": "11",
+        "e4": "15",
+        "e5": "19"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:34.886Z",
+        "hash": "1f4208ce7d3a508a"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-line-find-report-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要把一排鱼干**一只一只挨着看过去**，数一数**比了几次**。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n4\n7\n3\n7\n150\n19\n```\n\n你要把 `line_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 从**第一只**开始，一只一只挨着比过去；\n2. **每比一次**，「比了几次」就加一；\n3. 对上了就把次数**答回去**；一整排都比完还没对上，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `挨着看：比了 N 次`（N 就是比了几次，**中了的这一下也算**）；\n- 没找着 → 一行 `挨着看：没找到`。\n\n样例跑出来是这样：\n\n```text\n挨着看：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① 从第一只开始，一只一只挨着比过去\n       ② 每比一次，「比了几次」就加一\n       ③ 对上了就把次数答回去；一整排都比完还没对上，就答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        tries++;\n        if (a[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "挨着看：比了 3 次",
+      "stdin": "5\n110\n3\n7\n110\n150\n19\n",
+      "explanation": "挨着看的规矩就三条：**从第一只开始**、**每比一次记一笔**、**对上就收工**喵。\n\n最容易写错的是记账的位置：`tries++` 得放在**比之前**。放到后头的话，中了的这一下就没记进账，答出来的次数会比真实的少一 —— 课文里「找最末尾那只要比一整排」那个数就是这么数出来的。\n\n找不着的时候本喵答的是 `-tries`，一个**负数**；`main` 一看是负的就印「没找到」。为什么不干脆答 `0` 呢？因为**「比了 0 次」也是一种次数**（比如一整排本来就是空的）—— 负数才是「压根没找着」的记号，两件事分得开。",
+      "templateId": "c-s3-08-line-find-report",
+      "params": {
+        "e1": "3",
+        "e2": "7",
+        "t": "110",
+        "e4": "150",
+        "e5": "19"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:32.941Z",
+        "hash": "ad7e4ec6ac2b3c6a"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-line-find-report-012",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要把一排鱼干**一只一只挨着看过去**，数一数**比了几次**。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n4\n70\n3\n70\n15\n19\n```\n\n你要把 `line_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 从**第一只**开始，一只一只挨着比过去；\n2. **每比一次**，「比了几次」就加一；\n3. 对上了就把次数**答回去**；一整排都比完还没对上，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `挨着看：比了 N 次`（N 就是比了几次，**中了的这一下也算**）；\n- 没找着 → 一行 `挨着看：没找到`。\n\n样例跑出来是这样：\n\n```text\n挨着看：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① 从第一只开始，一只一只挨着比过去\n       ② 每比一次，「比了几次」就加一\n       ③ 对上了就把次数答回去；一整排都比完还没对上，就答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        tries++;\n        if (a[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "挨着看：比了 3 次",
+      "stdin": "5\n110\n3\n70\n110\n15\n19\n",
+      "explanation": "挨着看的规矩就三条：**从第一只开始**、**每比一次记一笔**、**对上就收工**喵。\n\n最容易写错的是记账的位置：`tries++` 得放在**比之前**。放到后头的话，中了的这一下就没记进账，答出来的次数会比真实的少一 —— 课文里「找最末尾那只要比一整排」那个数就是这么数出来的。\n\n找不着的时候本喵答的是 `-tries`，一个**负数**；`main` 一看是负的就印「没找到」。为什么不干脆答 `0` 呢？因为**「比了 0 次」也是一种次数**（比如一整排本来就是空的）—— 负数才是「压根没找着」的记号，两件事分得开。",
+      "templateId": "c-s3-08-line-find-report",
+      "params": {
+        "e1": "3",
+        "e2": "70",
+        "t": "110",
+        "e4": "15",
+        "e5": "19"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:36.013Z",
+        "hash": "d5575e69b77680fd"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-line-find-report-019",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要把一排鱼干**一只一只挨着看过去**，数一数**比了几次**。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n4\n7\n30\n7\n150\n190\n```\n\n你要把 `line_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 从**第一只**开始，一只一只挨着比过去；\n2. **每比一次**，「比了几次」就加一；\n3. 对上了就把次数**答回去**；一整排都比完还没对上，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `挨着看：比了 N 次`（N 就是比了几次，**中了的这一下也算**）；\n- 没找着 → 一行 `挨着看：没找到`。\n\n样例跑出来是这样：\n\n```text\n挨着看：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① 从第一只开始，一只一只挨着比过去\n       ② 每比一次，「比了几次」就加一\n       ③ 对上了就把次数答回去；一整排都比完还没对上，就答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        tries++;\n        if (a[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "挨着看：比了 3 次",
+      "stdin": "5\n11\n30\n7\n11\n150\n190\n",
+      "explanation": "挨着看的规矩就三条：**从第一只开始**、**每比一次记一笔**、**对上就收工**喵。\n\n最容易写错的是记账的位置：`tries++` 得放在**比之前**。放到后头的话，中了的这一下就没记进账，答出来的次数会比真实的少一 —— 课文里「找最末尾那只要比一整排」那个数就是这么数出来的。\n\n找不着的时候本喵答的是 `-tries`，一个**负数**；`main` 一看是负的就印「没找到」。为什么不干脆答 `0` 呢？因为**「比了 0 次」也是一种次数**（比如一整排本来就是空的）—— 负数才是「压根没找着」的记号，两件事分得开。",
+      "templateId": "c-s3-08-line-find-report",
+      "params": {
+        "e1": "30",
+        "e2": "7",
+        "t": "11",
+        "e4": "150",
+        "e5": "190"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:38.857Z",
+        "hash": "0e870448a8188f94"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-line-find-report-025",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要把一排鱼干**一只一只挨着看过去**，数一数**比了几次**。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n4\n70\n30\n70\n15\n190\n```\n\n你要把 `line_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 从**第一只**开始，一只一只挨着比过去；\n2. **每比一次**，「比了几次」就加一；\n3. 对上了就把次数**答回去**；一整排都比完还没对上，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `挨着看：比了 N 次`（N 就是比了几次，**中了的这一下也算**）；\n- 没找着 → 一行 `挨着看：没找到`。\n\n样例跑出来是这样：\n\n```text\n挨着看：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① 从第一只开始，一只一只挨着比过去\n       ② 每比一次，「比了几次」就加一\n       ③ 对上了就把次数答回去；一整排都比完还没对上，就答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        tries++;\n        if (a[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "挨着看：比了 3 次",
+      "stdin": "5\n11\n30\n70\n11\n15\n190\n",
+      "explanation": "挨着看的规矩就三条：**从第一只开始**、**每比一次记一笔**、**对上就收工**喵。\n\n最容易写错的是记账的位置：`tries++` 得放在**比之前**。放到后头的话，中了的这一下就没记进账，答出来的次数会比真实的少一 —— 课文里「找最末尾那只要比一整排」那个数就是这么数出来的。\n\n找不着的时候本喵答的是 `-tries`，一个**负数**；`main` 一看是负的就印「没找到」。为什么不干脆答 `0` 呢？因为**「比了 0 次」也是一种次数**（比如一整排本来就是空的）—— 负数才是「压根没找着」的记号，两件事分得开。",
+      "templateId": "c-s3-08-line-find-report",
+      "params": {
+        "e1": "30",
+        "e2": "70",
+        "t": "11",
+        "e4": "15",
+        "e5": "190"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:41.851Z",
+        "hash": "e02314fdd9e8d50d"
+      }
+    },
+    {
+      "id": "bank-c-s3-08-line-find-report-031",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要把一排鱼干**一只一只挨着看过去**，数一数**比了几次**。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n4\n70\n30\n70\n150\n190\n```\n\n你要把 `line_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 从**第一只**开始，一只一只挨着比过去；\n2. **每比一次**，「比了几次」就加一；\n3. 对上了就把次数**答回去**；一整排都比完还没对上，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `挨着看：比了 N 次`（N 就是比了几次，**中了的这一下也算**）；\n- 没找着 → 一行 `挨着看：没找到`。\n\n样例跑出来是这样：\n\n```text\n挨着看：比了 2 次\n```",
+      "starter": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    /* ↓ 自己写：\n       ① 从第一只开始，一只一只挨着比过去\n       ② 每比一次，「比了几次」就加一\n       ③ 对上了就把次数答回去；一整排都比完还没对上，就答负数 */\n    return -1;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(int a[], int n, int target) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        tries++;\n        if (a[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int target;\n    if (scanf(\"%d\", &target) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int times = line_find(a, n, target);\n    if (times < 0) {\n        printf(\"挨着看：没找到\\n\");\n    } else {\n        printf(\"挨着看：比了 %d 次\\n\", times);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "挨着看：比了 3 次",
+      "stdin": "5\n110\n30\n70\n110\n150\n190\n",
+      "explanation": "挨着看的规矩就三条：**从第一只开始**、**每比一次记一笔**、**对上就收工**喵。\n\n最容易写错的是记账的位置：`tries++` 得放在**比之前**。放到后头的话，中了的这一下就没记进账，答出来的次数会比真实的少一 —— 课文里「找最末尾那只要比一整排」那个数就是这么数出来的。\n\n找不着的时候本喵答的是 `-tries`，一个**负数**；`main` 一看是负的就印「没找到」。为什么不干脆答 `0` 呢？因为**「比了 0 次」也是一种次数**（比如一整排本来就是空的）—— 负数才是「压根没找着」的记号，两件事分得开。",
+      "templateId": "c-s3-08-line-find-report",
+      "params": {
+        "e1": "30",
+        "e2": "70",
+        "t": "110",
+        "e4": "150",
+        "e5": "190"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:36.621Z",
+        "hash": "7ffcecda1f4d8112"
+      }
+    },
+    {
+      "id": "bank-c-s3-half-find-strict-less-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这七只碗里的编号是**从小到大**摆好的：**2、4、6、8、10、12、14**。本喵要用「**砍一半**」找出编号 **2** 在第几只碗里（从 1 数起）。\n\n可它答的是「没找到」：\n\n```text\n找 2：没找到\n```\n\n编号 2 明明就在**第一只碗**里。翻译官喵一声没吭，编译跑得好好的。\n\n请你把那一招改对。改好之后该印：\n\n```text\n找 2：在第 1 只碗里\n```",
+      "brokenCode": "#include <stdio.h>\n\nint bowl[7] = {2, 4, 6, 8, 10, 12, 14};\n\n/* 砍一半：答「在第几只碗里」（从 1 数起），没找到答 0 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = 6;\n\n    while (lo < hi) {\n        int mid = (lo + hi) / 2;\n        if (bowl[mid] == target) {\n            return mid + 1;\n        } else if (bowl[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return 0;\n}\n\nint main(void) {\n    int pos = half_find(2);\n    if (pos == 0) {\n        printf(\"找 2：没找到\\n\");\n    } else {\n        printf(\"找 2：在第 %d 只碗里\\n\", pos);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint bowl[7] = {2, 4, 6, 8, 10, 12, 14};\n\n/* 砍一半：答「在第几只碗里」（从 1 数起），没找到答 0 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = 6;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        if (bowl[mid] == target) {\n            return mid + 1;\n        } else if (bowl[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return 0;\n}\n\nint main(void) {\n    int pos = half_find(2);\n    if (pos == 0) {\n        printf(\"找 2：没找到\\n\");\n    } else {\n        printf(\"找 2：在第 %d 只碗里\\n\", pos);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找 2：在第 1 只碗里",
+      "stdin": null,
+      "explanation": "毛病在**收手的条件**上：本喵写的是 `while (lo < hi)`，该写的是 `while (lo <= hi)` 喵。\n\n这两句话差在**「只剩最后一只」那一下**：\n\n- `lo < hi` 的意思是「这一段的头还没追上尾」，说得再直白点：**至少要两只**才接着找；\n- `lo == hi` 的时候，这一段里还剩**正好一只** —— 它到底是不是我们要找的那只，**还没看呢**。\n\n`lo < hi` 偏偏就在这时候收手了，所以「目标正好落在最后剩下的那一只上」的情形，永远轮不到看一眼。上面这个例子里，2 排在最前面，一路砍下来正好剩它一个，就被这一句提前收手放走了 —— 连第一只都能找不到，就是这么来的。\n\n⚠️ 翻译官喵一个字都不会说，跑起来也不摔：它只是**少看了最后那一眼**。想记住这条，就念一遍：**「头尾撞上那一下，还得再看一眼。」**",
+      "templateId": "c-s3-half-find-strict-less",
+      "params": {
+        "e1": "2",
+        "e2": "4",
+        "e3": "6",
+        "e4": "8",
+        "e5": "10",
+        "e6": "12",
+        "e7": "14",
+        "t": "2"
+      },
+      "verified": {
+        "at": "2026-09-16T11:43:20.141Z",
+        "hash": "459735e2b9186374"
+      }
+    },
+    {
+      "id": "bank-c-s3-half-find-strict-less-255",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这七只碗里的编号是**从小到大**摆好的：**20、40、60、80、100、120、140**。本喵要用「**砍一半**」找出编号 **20** 在第几只碗里（从 1 数起）。\n\n可它答的是「没找到」：\n\n```text\n找 20：没找到\n```\n\n编号 20 明明就在**第一只碗**里。翻译官喵一声没吭，编译跑得好好的。\n\n请你把那一招改对。改好之后该印：\n\n```text\n找 20：在第 1 只碗里\n```",
+      "brokenCode": "#include <stdio.h>\n\nint bowl[7] = {20, 40, 60, 80, 100, 120, 140};\n\n/* 砍一半：答「在第几只碗里」（从 1 数起），没找到答 0 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = 6;\n\n    while (lo < hi) {\n        int mid = (lo + hi) / 2;\n        if (bowl[mid] == target) {\n            return mid + 1;\n        } else if (bowl[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return 0;\n}\n\nint main(void) {\n    int pos = half_find(20);\n    if (pos == 0) {\n        printf(\"找 20：没找到\\n\");\n    } else {\n        printf(\"找 20：在第 %d 只碗里\\n\", pos);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint bowl[7] = {20, 40, 60, 80, 100, 120, 140};\n\n/* 砍一半：答「在第几只碗里」（从 1 数起），没找到答 0 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = 6;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        if (bowl[mid] == target) {\n            return mid + 1;\n        } else if (bowl[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return 0;\n}\n\nint main(void) {\n    int pos = half_find(20);\n    if (pos == 0) {\n        printf(\"找 20：没找到\\n\");\n    } else {\n        printf(\"找 20：在第 %d 只碗里\\n\", pos);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找 20：在第 1 只碗里",
+      "stdin": null,
+      "explanation": "毛病在**收手的条件**上：本喵写的是 `while (lo < hi)`，该写的是 `while (lo <= hi)` 喵。\n\n这两句话差在**「只剩最后一只」那一下**：\n\n- `lo < hi` 的意思是「这一段的头还没追上尾」，说得再直白点：**至少要两只**才接着找；\n- `lo == hi` 的时候，这一段里还剩**正好一只** —— 它到底是不是我们要找的那只，**还没看呢**。\n\n`lo < hi` 偏偏就在这时候收手了，所以「目标正好落在最后剩下的那一只上」的情形，永远轮不到看一眼。上面这个例子里，20 排在最前面，一路砍下来正好剩它一个，就被这一句提前收手放走了 —— 连第一只都能找不到，就是这么来的。\n\n⚠️ 翻译官喵一个字都不会说，跑起来也不摔：它只是**少看了最后那一眼**。想记住这条，就念一遍：**「头尾撞上那一下，还得再看一眼。」**",
+      "templateId": "c-s3-half-find-strict-less",
+      "params": {
+        "e1": "20",
+        "e2": "40",
+        "e3": "60",
+        "e4": "80",
+        "e5": "100",
+        "e6": "120",
+        "e7": "140",
+        "t": "20"
+      },
+      "verified": {
+        "at": "2026-09-16T11:43:22.015Z",
+        "hash": "b64e7dff232218ec"
+      }
+    },
+    {
+      "id": "bank-c-s3-hash-find-backwards-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把编号 **4** 和 **14** 存进鱼干仓库：编号自己算门牌号，算出来的格子有人住了，就**往后挪一格**，还撞就再挪。存完了再按编号把它们**找出来**。\n\n可它答的是「没找到」：\n\n```text\n找 14：没找到\n```\n\n编号 14 明明刚存进去过。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**找的那一招**改对。改好之后该印：\n\n```text\n找 14：找着了\n```",
+      "brokenCode": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\n/* 找：答 1 = 找着了，答 0 = 没找到 */\nint find(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        if (shelf[slot] == id) {\n            return 1;\n        }\n        slot = (slot + SLOTS - 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    put(4);\n    put(14);\n\n    if (find(14)) {\n        printf(\"找 14：找着了\\n\");\n    } else {\n        printf(\"找 14：没找到\\n\");\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\n/* 找：答 1 = 找着了，答 0 = 没找到 */\nint find(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        if (shelf[slot] == id) {\n            return 1;\n        }\n        slot = (slot + 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    put(4);\n    put(14);\n\n    if (find(14)) {\n        printf(\"找 14：找着了\\n\");\n    } else {\n        printf(\"找 14：没找到\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找 14：找着了",
+      "stdin": null,
+      "explanation": "毛病在**挪的方向**上喵：存的时候是「往后挪一格」（`slot + 1`），找的时候本喵写成了「往前挪一格」：\n\n```text\nslot = (slot + SLOTS - 1) % SLOTS;\n```\n\n`+ SLOTS - 1` 就是「减一、顺便别让它掉到负数去」—— 听着挺机灵，可方向反了：往后挪进来的东西，往前敲当然敲不着。\n\n这一找错得很憋屈：编号 14 算出来是第 4 格（从 0 数起），那一格住的是 **4**；本喵往前挪到第 3 格，那格**压根没住过东西** —— 空地就是「这里没有」的证据，于是它理直气壮地答「没找到」。\n\n要改的就是这一句（和存的那一句**一模一样**）：\n\n```text\nslot = (slot + 1) % SLOTS;\n```\n\n**住和找必须走同一条路**：住的时候往哪儿挪，找的时候就得往哪儿挪。挪的方向、挪的次数、撞多少次，两边差一点点，就会出现「刚存进去却找不着」这种怪事喵。",
+      "templateId": "c-s3-hash-find-backwards",
+      "params": {
+        "a": "4",
+        "b": "14"
+      },
+      "verified": {
+        "at": "2026-09-16T11:43:24.166Z",
+        "hash": "6ab611c3c258f4d8"
+      }
+    },
+    {
+      "id": "bank-c-s3-hash-find-backwards-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把编号 **14** 和 **24** 存进鱼干仓库：编号自己算门牌号，算出来的格子有人住了，就**往后挪一格**，还撞就再挪。存完了再按编号把它们**找出来**。\n\n可它答的是「没找到」：\n\n```text\n找 24：没找到\n```\n\n编号 24 明明刚存进去过。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**找的那一招**改对。改好之后该印：\n\n```text\n找 24：找着了\n```",
+      "brokenCode": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\n/* 找：答 1 = 找着了，答 0 = 没找到 */\nint find(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        if (shelf[slot] == id) {\n            return 1;\n        }\n        slot = (slot + SLOTS - 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    put(14);\n    put(24);\n\n    if (find(24)) {\n        printf(\"找 24：找着了\\n\");\n    } else {\n        printf(\"找 24：没找到\\n\");\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\n/* 找：答 1 = 找着了，答 0 = 没找到 */\nint find(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        if (shelf[slot] == id) {\n            return 1;\n        }\n        slot = (slot + 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    put(14);\n    put(24);\n\n    if (find(24)) {\n        printf(\"找 24：找着了\\n\");\n    } else {\n        printf(\"找 24：没找到\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找 24：找着了",
+      "stdin": null,
+      "explanation": "毛病在**挪的方向**上喵：存的时候是「往后挪一格」（`slot + 1`），找的时候本喵写成了「往前挪一格」：\n\n```text\nslot = (slot + SLOTS - 1) % SLOTS;\n```\n\n`+ SLOTS - 1` 就是「减一、顺便别让它掉到负数去」—— 听着挺机灵，可方向反了：往后挪进来的东西，往前敲当然敲不着。\n\n这一找错得很憋屈：编号 24 算出来是第 4 格（从 0 数起），那一格住的是 **14**；本喵往前挪到第 3 格，那格**压根没住过东西** —— 空地就是「这里没有」的证据，于是它理直气壮地答「没找到」。\n\n要改的就是这一句（和存的那一句**一模一样**）：\n\n```text\nslot = (slot + 1) % SLOTS;\n```\n\n**住和找必须走同一条路**：住的时候往哪儿挪，找的时候就得往哪儿挪。挪的方向、挪的次数、撞多少次，两边差一点点，就会出现「刚存进去却找不着」这种怪事喵。",
+      "templateId": "c-s3-hash-find-backwards",
+      "params": {
+        "a": "14",
+        "b": "24"
+      },
+      "verified": {
+        "at": "2026-09-16T11:43:25.941Z",
+        "hash": "bd65758e33a52fbc"
+      }
+    }
+  ]
+}

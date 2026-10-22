@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-style-macro-lowercase",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-21",
+  "type": "codefix",
+  "concept": ["宏是开工前的照抄替换", "小写宏名会跟变量撞衫", "宏名全大写当招牌", "计数器名字要说实话"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["6", "3"] },
+    "b": { "kind": "pick", "values": ["2", "5"] },
+    "c": { "kind": "pick", "values": ["7", "2"] },
+    "lim": { "kind": "pick", "values": ["4", "3"] }
+  },
+  "stemTemplate": "这份稿子**翻译官喵不肯翻**喵：它一上来就卡住了，指着其中一行问 ——「`int {lim} = 0;`」是个什么说法？\n\n病根在稿子顶上那张**小写条子**：`#define limit {lim}`。条子（宏）是**开工前照抄替换**的家伙：翻译官喵先把它看见的每一处 `limit` 都抄成 `{lim}`，抄完之后，本喵那个也叫 `limit` 的计数器就散了架。\n\n请你按课文规矩把这张条子的名字修好，让稿子翻得过去、数也数得对（三碗分别是 {a}、{b}、{c} 条）。改好之后该印一行：`超过 {lim} 条的碗数：X` —— **严格超过**才算，正好等于 {lim} 的不算。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define limit {lim}\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    int limit = 0;\n    for (int i = 0; i < 3; i++) {\n        if (fish[i] > limit) {\n            limit = limit + 1;\n        }\n    }\n    printf(\"超过 {lim} 条的碗数：%d\\n\", limit);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define LIMIT {lim}\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    int over = 0;\n    for (int i = 0; i < 3; i++) {\n        if (fish[i] > LIMIT) {\n            over = over + 1;\n        }\n    }\n    printf(\"超过 {lim} 条的碗数：%d\\n\", over);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵翻这份稿子的时候，**第一步不是翻译，是照抄替换**喵：凡是看见 `limit` 这个词，一律抄成 `{lim}`。于是 `int limit = 0;` 被抄成 `int {lim} = 0;` —— 报错当场就来：\n\n```text\nmain.c:3:15: error: expected identifier or '(' before numeric constant\nmain.c:7:9: note: in expansion of macro 'limit'\n```\n\n翻译官喵不认「拿数字当仓库名」这说法，稿子翻不动。下面还跟着一条 `error: lvalue required as left operand of assignment` —— 那行 `limit = limit + 1;` 抄完变成 `{lim} = {lim} + 1;`，连等号左边都成了数字，也废了。\n\n**病根一句话：宏名和仓库名撞衫了。** 条子是开工前**无脑照抄**的家伙，它不管那个 `limit` 是宏名还是仓库名 —— 名字一样，就统统换掉。\n\n**课文里的规矩：宏名全大写**（词儿之间用下划线），比如 `LIMIT`、`FISH_LIMIT`。全大写招牌挂在明面上，好处有两个：\n\n1. 一眼认出「这不是普通的仓库名，是开工前要照抄的条子」；\n2. 一辈子撞不上小写起头的仓库名 —— 这号事故从这里就绝根了。\n\n修法就一步：`#define limit {lim}` 改成 `#define LIMIT {lim}`，用到的地方一起改，冲突立刻消失。参考解顺手把那个计数器也换了个诚实的名字 —— 它装的是「超限的碗数」，叫 `over` 比叫 `limit` 清楚：**名字要老实**，这是课文里另一条规矩。\n\n另记一句：宏替换发生在**翻译之前**，报错行号指的是替换**之后**的样子 —— 读的时候在脑子里先把数字换回 `limit`，就全对上了。"
+}

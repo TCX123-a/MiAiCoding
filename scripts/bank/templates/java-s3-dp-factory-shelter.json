@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s3-dp-factory-shelter",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-14",
+  "type": "codewrite",
+  "concept": ["报一句花色就领到一只猫", "领养处里按名字挑、别的走兜底", "来领猫的地方不知道品种是怎么造的"],
+  "instances": 6,
+  "params": {
+    "v1": { "kind": "pick", "values": ["喵～", "咪～"] },
+    "v2": { "kind": "pick", "values": ["喵嗷", "嗷呜"] },
+    "v3": { "kind": "pick", "values": ["喵呜", "呜喵"] },
+    "f": { "kind": "pick", "values": ["花", "杂毛"] }
+  },
+  "stemTemplate": "本喵要开一间**领养处**喵。来领猫的只报一句花色，剩下的领养处自己掂量。\n\n三张品种图纸（橘猫、狸花猫、三花猫）和上一代那张都画好了，你只写两处：\n\n1. **`领养一只(花色)` 的身体**：报「橘」就递一只橘猫、报「狸花」就递一只狸花猫，**别的花色都走兜底**、递一只三花猫；\n2. **`main` 的身体**：按 `橘`、`狸花`、`{f}` 这个顺序各领一次，每领一次印一行 `花色 -> 叫声`（中间是空格、减号、大于号）。\n\n图纸和品种一个都别改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "starterTemplate": "public class Main {\n    static abstract class 小猫 {\n        abstract String 叫声();\n    }\n\n    static class 橘猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v1}\";\n        }\n    }\n\n    static class 狸花猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v2}\";\n        }\n    }\n\n    static class 三花猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v3}\";\n        }\n    }\n\n    static 小猫 领养一只(String 花色) {\n\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "public class Main {\n    static abstract class 小猫 {\n        abstract String 叫声();\n    }\n\n    static class 橘猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v1}\";\n        }\n    }\n\n    static class 狸花猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v2}\";\n        }\n    }\n\n    static class 三花猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v3}\";\n        }\n    }\n\n    static 小猫 领养一只(String 花色) {\n        if (花色.equals(\"橘\")) {\n            return new 橘猫();\n        }\n        if (花色.equals(\"狸花\")) {\n            return new 狸花猫();\n        }\n        return new 三花猫();\n    }\n\n    public static void main(String[] args) {\n        for (String 花色 : new String[]{\"橘\", \"狸花\", \"{f}\"}) {\n            System.out.println(花色 + \" -> \" + 领养一只(花色).叫声());\n        }\n    }\n}\n",
+  "explanationTemplate": "这一题把课文第二节那间领养处自己开了一遍喵。\n\n**一、领养处只干一件事：按报的名字挑。** 「橘」递橘猫、「狸花」递狸花猫，**别的都走最后那条兜底的路**（递三花猫）—— 所以报「{f}」的那位领到的是三花猫，叫声是 `{v3}`。兜底给谁是你说了算的：想让没报上号的都领橘猫，把最后那一句换成橘猫就行。\n\n**二、递回来的东西写在上一代那张图纸的名字上。** `static 小猫 领养一只(String 花色)` 这个写法，意思是「递出来的东西是照上一代那张图纸生的」—— 三个品种都是它的后辈，所以哪一个都装得下。\n\n**三、来领猫的地方不知道品种是怎么造的。** `main` 里只有「报花色」和「喊叫声」两件事，一个字都没提品种的名字。将来窝里添一个品种，改动只发生在**领养处这一处** —— 这就是这一课那个「改一处」的好处喵。\n\n**四、叫声是各品种自己图纸上的事。** 领养处递出去的猫，叫声由那张品种图纸说了算：橘猫 `{v1}`、狸花猫 `{v2}`、三花猫 `{v3}` —— 领养处自己不发声喵。"
+}

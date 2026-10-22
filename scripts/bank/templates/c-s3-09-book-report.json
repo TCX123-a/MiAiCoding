@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-09-book-report",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-09",
+  "type": "codewrite",
+  "concept": ["小本本", "头上那几颗和尾巴那几颗能对上", "自己不算得留一颗", "每一颗都回头看自己这一截"],
+  "instances": 6,
+  "params": {
+    "w": { "kind": "pick", "values": ["aaab", "aabaab"] }
+  },
+  "stemTemplate": "本喵要准备一个小本本，专门伺候这一小段：`{w}`。\n\n规矩是这样的（课文里那只前辈猫定的）：**每一颗珠子都回头看自己这一截**，记下「**这一截的头上那几颗和尾巴那几颗能对上，最长能对上几颗**」；注意**整截自己不算**，至少得留出一颗来。\n\n你要把 `build_book` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 头一颗珠子前面没有东西，记 `0`；\n2. 往后每一颗：**先看看前一颗记的那个长度**，从这个长度接着试；\n3. 试着试着对不上了 → **退回更短的那个长度再试**（短的那个长度在哪一格上记着，自己想想）；\n4. 总算对上了 → 长度加一，记下这一格。\n\n印出来的格式是写死的（`main` 里那两行 `printf` 就是）：第一行 `这一小段：` 后面跟这一小段本身；第二行 `小本本：` 后面把每一格印出来，**每格后面带一个空格**，最后才换行。拿课文里那一段 `aaab` 说，就是这两行：\n\n```text\n这一小段：aaab\n小本本：0 1 2 0\n```\n\n你这一小段是 `{w}`，那串数当然得**照规矩自己算**，别照抄上面这个例子喵。",
+  "starterTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 小本本：每一颗都回头看自己这一截，记下「头上那几颗和尾巴那几颗能对上、最长能对上几颗」 */\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n\n    /* ↓ 自己写：从第 1 颗开始一颗一颗往后记\n       ① 先看看前一颗记下的长度\n       ② 对不上就退到更短的那个长度（在哪一格记着？）\n       ③ 对上了就加一，记进这一格 */\n}\n\nint main(void) {\n    const char *pat = \"{w}\";\n    int book[64];\n\n    build_book(pat, book);\n\n    printf(\"这一小段：%s\\n\", pat);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 小本本：每一颗都回头看自己这一截，记下「头上那几颗和尾巴那几颗能对上、最长能对上几颗」 */\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n\n    for (int i = 1; i < m; i++) {\n        int k = book[i - 1];\n        while (k > 0 && pat[i] != pat[k]) {\n            k = book[k - 1];\n        }\n        if (pat[i] == pat[k]) {\n            k++;\n        }\n        book[i] = k;\n    }\n}\n\nint main(void) {\n    const char *pat = \"{w}\";\n    int book[64];\n\n    build_book(pat, book);\n\n    printf(\"这一小段：%s\\n\", pat);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "这一招的骨架是**借前一个格子的账**喵：\n\n```text\nint k = book[i - 1];\nwhile (k > 0 && pat[i] != pat[k]) {\n    k = book[k - 1];\n}\nif (pat[i] == pat[k]) {\n    k++;\n}\nbook[i] = k;\n```\n\n一句一句念：\n\n- `k` 取了前一颗记下的长度 —— 意思是「前头能对上的那一截，先整段接过来试试」；\n- 接过来之后拿这一颗继续往下试：`pat[i]` 是**这一颗**，`pat[k]` 是**头上那一截的下一位**；\n- 对不上就**退回更短的那个长度**：短的那个长度记在 `book[k - 1]` 那一格上（这就是为什么要回头翻小本本，而不是回到 0）；\n- 对上了就把长度加一，记进这一格。\n\n拿 `aaab` 走一遍：第 0 颗记 0；第 1 颗 `a` 和头上那颗 `a` 对上 → 记 1；第 2 颗 `a` 和前一颗那个长度接着比 → 记 2；第 3 颗 `b` 怎么退都退不到能对上的 → 记 0。出来的就是 `0 1 2 0` 喵。"
+}

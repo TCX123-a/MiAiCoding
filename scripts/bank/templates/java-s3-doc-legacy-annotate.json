@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-doc-legacy-annotate",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-27",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": [
+    "类、类属性、类方法的注释必须用 Javadoc（/** */），否则 IDE 与文档工具都读不到",
+    "与代码对不上的旧注释是毒注释：删陈旧、留真相；复述代码的注释也删",
+    "名字是注释的第一层：f、a、b、x、y 换成读得懂的词，注释才不用替名字打补丁"
+  ],
+  "instances": 6,
+  "params": {
+    "f": { "kind": "int", "min": 47, "max": 51 }
+  },
+  "stemTemplate": "本喵翻到一段**跑得动、但没人敢接**的老代码喵 —— 逻辑没错、输出正常，就是**注释全是敷衍、名字全是天书**：\n\n```java\npublic class Main {\n    // 本喵的旧账：算一箱鱼干该装几只袋（上个版本的说法）\n    static int f(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        int x = {f};\n        int y = 6;\n        // 输出结果\n        System.out.println(\"每只猫分到 \" + f(x, y) + \" 条\");\n        System.out.println(\"还剩 \" + (x % y) + \" 条\");\n    }\n}\n```\n\n请你照本课的尺子（Javadoc 规范）做一次彻底改写：\n\n- 图纸和方法补上 **Javadoc**：图纸的职责一句话；方法写清做什么，`@param`、`@return` 一个都不能少；\n- 名字全部换成人话（`f`、`a`、`b`、`x`、`y` 一个都别留）；\n- 那条和代码对不上的旧注释删掉；`// 输出结果` 这种**复述代码**的注释也删 —— 手册说：命名和结构自己能说清的事，注释别抢话；\n- 从**空白**起笔；**输出必须与原版逐字一致** —— 这是本题的硬要求。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "referenceSolutionTemplate": "/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = {f};\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}",
+  "explanationTemplate": "**一、这段老代码挨的骂，一条一条来。** 先记住手册的总纲：图纸、图纸上的属性、图纸里的招式的注释必须用 **Javadoc**（`/** ... */`），而不是 `//` —— 不然 IDE 的悬浮提示、补全、文档生成器全都读不到。\n\n**二、具体到每一处：**\n\n- **图纸注释缺失**：图纸头顶什么都没有。Javadoc 第一句要写**职责**：「鱼干平分小工具」—— 新人一眼知道该不该进来。\n- **方法 `f`**：名字是谜语（手册：望文不知义的名字一律不行），也没有 Javadoc。换成 `shareOf` 这类「读出来就是人话」的名字，并补上 `@param`、`@return`。\n- **投喂的小鱼干 `a`、`b` / 小鱼干仓库 `x`、`y`**：全是单字母。投喂的小鱼干的名字是**调用者看到的第一个提示** —— `fishTotal`、`catCount` 摆出来，传参时就不会传反。\n- **那条旧注释**（「算一箱鱼干该装几只袋」）：和代码做的事（平分给猫）**对不上**。手册【推荐】说得直白：代码改，注释一起改；不同步的注释比没有注释更毒，它会把读的人带沟里。\n- **`// 输出结果`**：纯**复述代码**的注释（手册：好的命名和结构自己会说话，注释别抢话）。删。\n\n**三、参考改写：**\n\n```java\n/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = {f};\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}\n```\n\n**四、验收。** 输出要**和原版逐字一样** —— 原版印两行，你的版本也印那两行，一个字符都不许漂。\n\n一句话记住：**老代码重整的第一刀，不是改逻辑，是让「名字」和「注释」说人话 —— 逻辑一句都没动，接手的人已经敢改了。**"
+}

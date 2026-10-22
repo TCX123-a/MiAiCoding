@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-04-result-dropped",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-04",
+  "type": "codefix",
+  "concept": ["收尾叼回来的东西必须伸手接住", "不接不红但数是错的", "让篮子直接去接收尾"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["3", "4"] },
+    "b": { "kind": "pick", "values": ["8", "9"] },
+    "c": { "kind": "pick", "values": ["1", "2"] },
+    "d": { "kind": "pick", "values": ["6", "7"] },
+    "t": { "kind": "pick", "values": ["5", "6"] }
+  },
+  "stemTemplate": "本喵拿一条线数了数：够大的有几件喵。程序倒是顺顺当当跑完了，**一个红字都没有** —— 可它报出来的件数**是错的**。\n\n你帮本喵看看：这道收尾**算出来的那个数，跑哪去了**。\n\n改好之后它该印出**一行**：`够大的有 N 件`，N 就是真件数。四件东西和那个门槛都写在稿子里，别去改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        nums.add({a});\n        nums.add({b});\n        nums.add({c});\n        nums.add({d});\n\n        long big = 0;\n        nums.stream().filter(n -> n >= {t}).count();\n        System.out.println(\"够大的有 \" + big + \" 件\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        nums.add({a});\n        nums.add({b});\n        nums.add({c});\n        nums.add({d});\n\n        long big = nums.stream().filter(n -> n >= {t}).count();\n        System.out.println(\"够大的有 \" + big + \" 件\");\n    }\n}\n",
+  "explanationTemplate": "**一、错在哪：算出来的那个数没接住。** 那行代码确实**开了工**（收尾那一道挂在线上，筛选真的跑了一遍），可它**算出来的那个数没人伸手接** —— 一算完就当场丢了。本喵最后印的，是旁边那只**从头到尾没动过的篮子**里那个 `0`。\n\n**二、为什么不红。** 丢掉东西这件事，翻译官喵不管：语法上一个毛病都挑不出来（课文那句「**一个字都不会红**」说的就是它）。它比红字更阴的地方在于：**它不拦你，它只是给你一个错的数**。红字至少还指个方向，这个连方向都不指。\n\n**三、改法：让那只篮子直接去接。** 把「先摆一只空篮子」和「算一遍」合成一句话：让篮子**直接去接收尾叼回来的东西**。接住了，印出来的才是真件数；这一步一改，那行白算的代码也就没了。\n\n**四、怎么一眼认出来。** 看见「**算了一句、结果没人要**」这种形状就要警觉 —— 收尾那几手（`collect`、`count`、`sum`）都是**给东西**的，给了就得伸手接住。不接不是「算完就散」，是**真的白算了**。\n\n一句话记住：**收尾叼回来的东西必须伸手接住 —— 不接，一个字都不会红，可数是错的。**"
+}

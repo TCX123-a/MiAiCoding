@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-27-main-glue-write",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-27",
+  "type": "codewrite",
+  "concept": ["门房空着", "先读条数再读一条条", "把收成印成一行"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "本喵这套工程里，两条干活的招式（`sumAll` 算总重、`biggest` 挑最重）**正文都齐了**，就差**门房** —— `main` 还空着喵。\n\n请你把门房写出来，就干三件事：**先读条数**、**再一条条读进来**、**最后把两条招式的收成印成一行**。\n\n比如投喂给程序的是：\n\n```text\n{sampleInput}\n```\n\n写好之后就要叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外一组数；两条干活的招式一个字都别动。）",
+  "starterTemplate": "#include <iostream>\n#include <vector>\n\nint sumAll(const std::vector<int>& ws) {\n    int s = 0;\n    for (int i = 0; i < static_cast<int>(ws.size()); i++) {\n        s += ws[i];\n    }\n    return s;\n}\n\nint biggest(const std::vector<int>& ws) {\n    int best = 0;\n    for (int i = 0; i < static_cast<int>(ws.size()); i++) {\n        if (ws[i] > best) {\n            best = ws[i];\n        }\n    }\n    return best;\n}\n\n/* 门房：读条数、读一条条，把两条招式的收成印成一行 */\nint main() {\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <vector>\n\nint sumAll(const std::vector<int>& ws) {\n    int s = 0;\n    for (int i = 0; i < static_cast<int>(ws.size()); i++) {\n        s += ws[i];\n    }\n    return s;\n}\n\nint biggest(const std::vector<int>& ws) {\n    int best = 0;\n    for (int i = 0; i < static_cast<int>(ws.size()); i++) {\n        if (ws[i] > best) {\n            best = ws[i];\n        }\n    }\n    return best;\n}\n\n/* 门房：读条数、读一条条，把两条招式的收成印成一行 */\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> ws(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> ws[i];\n    }\n    std::cout << \"合计 \" << sumAll(ws) << \" 克，最重 \" << biggest(ws) << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "门房这一段，就是本课「流水线末端拼装」的缩影：**它不干重活，只管把货接进来、把收成喊出去。**\n\n对着收成那行倒着推：要印「`合计 X 克，最重 Y 克`」，X 从 `sumAll(ws)` 来、Y 从 `biggest(ws)` 来；可这两条都要先有一排格子 `ws`，所以顺序只能是：\n\n```cpp\nint n = 0;\nstd::cin >> n;\nstd::vector<int> ws(n);\nfor (int i = 0; i < n; i++) {\n    std::cin >> ws[i];\n}\nstd::cout << \"合计 \" << sumAll(ws) << \" 克，最重 \" << biggest(ws) << \" 克\" << std::endl;\n```\n\n三处对照：\n\n1. **先读 n** —— 投喂的第一行是条数，格子要按它开；\n2. **一圈读满 n 个** —— 少读一个，合计就少一份；\n3. **印的顺序和文案**和题面要求逐字对齐（`合计` 在前、`最重` 在后，空格和「克」都在该在的地方）。\n\n⚠️ 门房这一段的验收标准特别硬：**印出来那行和题面要求差一个空格都过不了门。** 交之前对着样例逐个字符念一遍：数字对不对、顺序对不对、字对不对 —— 三样都对了再交喵。"
+}

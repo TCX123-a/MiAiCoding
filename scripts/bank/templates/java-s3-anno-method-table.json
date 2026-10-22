@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s3-anno-method-table",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-13",
+  "type": "codewrite",
+  "concept": ["自己画的纸条要留到跑的时候才读得到", "getAnnotation 交回来的是一张纸条或 null", "没贴纸条的招式也要有一行"],
+  "instances": 6,
+  "params": {
+    "m1": { "kind": "pick", "values": ["打招呼", "招手"] },
+    "m2": { "kind": "pick", "values": ["睡觉", "打盹"] },
+    "a1": { "kind": "pick", "values": ["开饭了", "该吃饭了"] },
+    "a2": { "kind": "pick", "values": ["别烦我", "困了"] }
+  },
+  "stemTemplate": "本喵手上有一张图纸（代码里那张 `小猫`），图纸上画了三招，其中两招头上贴了纸条喵。\n\n要列一张**纸条表**：\n\n1. 三招一招不落，每行写 `招式名：` 后面跟着纸条上写的那串字；**没贴纸条的那一招**写 `招式名：没贴纸条`；\n2. **顺序不能靠光片** —— 把这几行塞进一个柜子，整行交给 `Collections.sort` 排一遍再印；\n3. 三行印完就结束，不要再印别的东西。\n\n填 `main` 里空着的那一段就行，**图纸和纸条一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "starterTemplate": "import java.lang.annotation.ElementType;\nimport java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.annotation.Target;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    @Retention(RetentionPolicy.RUNTIME)\n    @Target(ElementType.METHOD)\n    @interface 纸条 {\n        String value();\n    }\n\n    static class 小猫 {\n        @纸条(\"{a1}\")\n        void {m1}() {\n        }\n\n        @纸条(\"{a2}\")\n        void {m2}() {\n        }\n\n        void 洗脸() {\n        }\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.lang.annotation.ElementType;\nimport java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.annotation.Target;\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    @Retention(RetentionPolicy.RUNTIME)\n    @Target(ElementType.METHOD)\n    @interface 纸条 {\n        String value();\n    }\n\n    static class 小猫 {\n        @纸条(\"{a1}\")\n        void {m1}() {\n        }\n\n        @纸条(\"{a2}\")\n        void {m2}() {\n        }\n\n        void 洗脸() {\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        List<String> 表 = new ArrayList<>();\n        for (Method 一招 : 小猫.class.getDeclaredMethods()) {\n            纸条 小纸条 = 一招.getAnnotation(纸条.class);\n            表.add(一招.getName() + \"：\" + (小纸条 == null ? \"没贴纸条\" : 小纸条.value()));\n        }\n        Collections.sort(表);\n        for (String 一行 : 表) {\n            System.out.println(一行);\n        }\n    }\n}\n",
+  "explanationTemplate": "这一题把课文第五节那张表原样走了一遍喵。\n\n**一、纸条是照着图纸自己画的。** `@Retention(RetentionPolicy.RUNTIME)` 是「留到跑的时候」—— 少了这一句（或者写成 `CLASS`），照 X 光读到的就是一片空白，三行全变成 `没贴纸条`。\n\n**二、读纸条两步走。** 先 `小猫.class.getDeclaredMethods()` 把招式一招一招拿出来，再 `一招.getAnnotation(纸条.class)` 把贴在这一招上的纸条拿回来。**它给的是纸条本身，不是 `true`/`false`** —— 没贴的时候给 `null`。\n\n**三、没贴的也得有一行。** 拿回来的东西可能是 `null`，所以得先判一下：是 `null` 就写 `没贴纸条`。漏了这一步，读没贴纸条的那一招时就会当场翻脸。\n\n**四、顺序自己造。** 光片上的招式顺序**说了不算**（跟第 12 课那张骨头表同一条规矩），所以要把整行塞进柜子、整行交给 `Collections.sort` 排一遍再印；不排就印，三行的先后说不准，判分那边也对不上喵。"
+}

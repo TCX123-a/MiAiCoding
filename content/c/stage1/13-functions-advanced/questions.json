@@ -1,0 +1,88 @@
+{
+  "lessonId": "c-stage1-13",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵喊了一招，把一条小鱼干喂了进去，招式里那只碗被改成了别的数。本喵自己那只碗会怎样？",
+      "options": [
+        "一点都不变，因为喂进去的是抄件",
+        "跟着一起变，因为两边其实是同一只碗",
+        "会变成 0",
+        "要等函数整个跑完才跟着变"
+      ],
+      "answer": 0,
+      "explanation": "单个的小东西喂进招式，翻译官喵是**抄一张纸条**投进去的喵：招式里那只碗装的是纸条，改纸条改不到你本人那只碗。所以招式里怎么折腾，你外面那只碗都稳稳当当。不过有一点要记牢 —— **整排的碗是例外**，那个交出去的是「碗架在哪儿」，改了你外面真的会变喵～"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵把一句 `int fishCount = 0;` 写在了**所有招式的外面**。这个摆在大门口的大缸，谁能动它？",
+      "options": [
+        "下面的每一个函数都能看见、都能改",
+        "只有 `main` 能看见、能动",
+        "只有写在它后面那一招能看见",
+        "谁都不能改，只能读一读"
+      ],
+      "answer": 0,
+      "explanation": "写在外面的大缸是**大家共用的**喵：下面每一只招式都能看见它、都能往里伸手。所以喊一招加一点，大缸就慢慢攒起来了。不过方便是有代价的 —— 谁改的、什么时候改的，你根本追不到，所以**能用招式里的碗就别放大缸**喵～"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵在一只招式里摆了一只碗，招式跑完了。这时候在 `main` 里喊这只碗的名字，会怎样？",
+      "options": [
+        "编译器会说这个名字没登记过，程序根本编不出来",
+        "能拿到碗里最后剩下的那个数",
+        "能拿到 0",
+        "会拿到一个碰巧剩下的数"
+      ],
+      "answer": 0,
+      "explanation": "招式里的碗，**只在招式里活着**喵：每喊一次招式就现摆一套崭新的碗，招式一收工，整套碗立刻撤走。跑到外面去喊它的名字，翻译官喵只会回你一句 `undeclared`（本喵没登记过这个名字）—— 这种错**在翻译阶段就被拦下了**，程序压根生不出来，跟跑到一半才炸完全是两回事喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint fishCount = 0;\n\nvoid addOne(void) {\n    ____ = ____ + 1;\n}\n\nint main(void) {\n    addOne();\n    addOne();\n    addOne();\n    printf(\"%d\\n\", fishCount);\n    return 0;\n}",
+      "stem": "这一招想往门口的大缸里放一条小鱼干。两个空该填什么喵？",
+      "blanks": [
+        { "answer": "fishCount" },
+        { "answer": "fishCount" }
+      ],
+      "explanation": "两只空填的都是大缸的名字 `fishCount`喵。大缸是写在所有招式外面的，招式里**不用重新交代它装的是什么** —— 直接喊名字就能用；后面那句 `+ 1` 是**读出大缸现在的数、加一、再放回去**。喊三次，大缸里就攒到 `3` 了喵～"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nvoid feed(int n) {\n    n = 100;\n}\n\nint main(void) {\n    int fish = 5;\n    ____;\n    printf(\"%d\\n\", fish);\n    return 0;\n}",
+      "stem": "本喵想喊 `feed` 这一招，把 `fish` 喂进去。空里该填什么喵？",
+      "blanks": [
+        { "answer": "feed(fish)" }
+      ],
+      "explanation": "填 `feed(fish)`喵 —— 呼声写法就是「招式名 + 一对小括号」，要把东西喂进去就写在小括号里，最后别忘了分号。填完跑一遍，屏幕上印的是 `5`：招式里把纸条改成了 `100`，你那只 `fish` 碗**一点没动**。这正是这一课最要紧的一条喵～"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint fish = 10;\n\nvoid take(int n) {\n    n = n - 1;\n    printf(\"招式里：%d\\n\", n);\n}\n\nint main(void) {\n    int fish = 3;\n    take(fish);\n    printf(\"main 里：%d\\n\", fish);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "招式里：2\nmain 里：3",
+      "accept": ["招式里：2\nmain 里：3\n"],
+      "explanation": "这一段里藏着两件事喵。第一件：喂进 `take` 的是 `3` 的**抄件**，招式里减成了 `2`，`main` 里那只还是 `3`。第二件：`main` 自己也摆了一只叫 `fish` 的碗，它**把外面大缸里那个 10 挡在后头**了 —— 从 `int fish = 3;` 那一行起，这条街上再说 `fish`，指的都是自己这只碗。名字一样，可不代表是同一只碗喵～"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint total = 100;\n\nvoid spend(int amount) {\n    total = total - amount;\n}\n\nint main(void) {\n    spend(30);\n    spend(20);\n    printf(\"%d\\n\", total);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "50",
+      "accept": ["50\n"],
+      "explanation": "这只招式里**一个 `return` 都没有**，可大缸真的被改到了喵 —— 因为 `total` 写在所有招式外面，是大家共用的大缸，招式里伸手就能改到它本身。喊两趟：`100 - 30 - 20`，屏幕上就是 `50`。这里和「喂进去的抄件」正好是一对：招式里那只碗改了不算数，大缸改了**算数**喵～"
+    }
+  ]
+}

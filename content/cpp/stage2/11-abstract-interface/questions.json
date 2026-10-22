@@ -1,0 +1,89 @@
+{
+  "lessonId": "cpp-stage2-11",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵在图纸 `Animal` 上写了 `virtual void speak() const = 0;`，然后想直接照它生一只（`Animal a(\"谁\");`）。会发生什么？",
+      "options": [
+        "编译器当场拦下：这种类生不出真身 —— 那个方法只有声明、没有动作，生出来本喵也不知道它该怎么叫",
+        "能生出来，只是叫的时候什么都不印",
+        "能生出来，编译器会随便挑一个动作给它",
+        "能生出来，但要本喵在生的时候顺便把动作喂进去"
+      ],
+      "answer": 0,
+      "explanation": "挂着「只挂招牌、不写动作」那一手的图纸，**压根不许被直接照出来**喵。翻译官喵的原话是 `error: cannot declare variable 'a' to be of abstract type 'Animal'` —— 它说的正是「`a` 这一格要的是一只真动物，可你这张是抽象图纸」。道理也简单：那一手没有动作，真要生出真身来，本喵喊一声它该叫成什么？**没有答案。** 所以本喵只能**指着**它用（`Animal& r = c;`），不能照它生。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "小猫图纸照 `Animal` 画了下来，可**漏掉了**招牌上那一手没补。翻译官喵会怎样？",
+      "options": [
+        "在翻译阶段就拦下，并且把本喵漏掉的那一手名字念出来",
+        "一声不吭地放过，跑起来叫的时候什么都不印",
+        "一声不吭地放过，跑起来会自动用老图纸那一版的动作",
+        "跑得起来，但每次叫都会慢一点"
+      ],
+      "answer": 0,
+      "explanation": "这正是约定最值钱的地方喵：本喵不用记得「我还欠着一手没写」——**翻译官喵替本喵记着**。它报的是 `error: cannot declare variable 'c' to be of abstract type 'Cat'`，后面还跟一句 `note`，把本喵漏掉的那一手名字原样念出来，本喵照着补上就好了喵。反过来说，要是老图纸那一手当初**忘了写 `= 0`**（给了一个动作），那漏写就**谁也不会提醒** —— 程序照样跑，只是叫出来的不是小猫自己的声音。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "「抽象图纸」和「与猫的约定」这两张图纸，最要紧的分别是什么？",
+      "options": [
+        "接口里**只有**那几个方法声明，一点数据和现成函数都没有；抽象类身上还有实打实的数据和函数",
+        "约定那张图纸不能被指着用，抽象图纸可以",
+        "约定那张图纸上不许挂 `virtual`，抽象图纸上必须挂",
+        "两者一模一样，只是本喵给它们起了两个名字"
+      ],
+      "answer": 0,
+      "explanation": "两张图纸都「不能被直接照出来」，这是它们一样的地方喵。分别在于**身上还有什么**：抽象图纸是「**约定 + 白送的数据和招式**」—— 照橘猫画一张，白得妈妈那一栏名字和出生招式；而约定图纸是**干干净净的一份约定**，没有一栏数据、没有出生招式，照它画下来**什么都白得不着，只有一份要还的约定**。所以抽象图纸问的是「你是谁家的孩子」，约定问的是「**你会不会这几手**」喵。第四节那张表就是把这件事钉住的。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Animal {\nprotected:\n    string name;\npublic:\n    Animal(string n) : name(n) {}\n    virtual void speak() const ____;\n};\n\nclass Cat : public Animal {\npublic:\n    Cat(string n) : Animal(n) {}\n    void speak() const ____ {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nint main() {\n    Cat c(\"小橘\");\n    Animal& r = c;\n    r.speak();\n    return 0;\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出）。补上之后，小猫就能出生、叫出自己的声音；只补一处都过不了翻译官喵那一关喵。",
+      "blanks": [
+        { "answer": "= 0", "accept": ["=0"] },
+        { "answer": "override", "accept": [] }
+      ],
+      "explanation": "第一处补 `= 0` —— 老图纸那一手上只立招牌、不写动作。**不写它，这个空就白挖了**：老图纸那一手就有动作了，小猫漏写也没人提醒，而本喵这一课要的正是「小猫必须补上」这句话喵。第二处补 `override` —— 小猫这一手是来补招牌上的活的，挂上它翻译官喵就替本喵核对名字、料、`const` 有没有一字不差。两处补全：小猫能出生（`= 0` 逼它把活干完），叫出来的是它自己的声音喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Speaker {\npublic:\n    ____ void speak() const = 0;\n    virtual ~Speaker() {}\n};\n\nclass Fish : ____ {\n    string name;\npublic:\n    Fish(string n) : name(n) {}\n    void speak() const override {\n        cout << name << \"：咕噜咕噜～\" << endl;\n    }\n};\n\nint main() {\n    Fish f(\"大肥鱼\");\n    Speaker& r = f;\n    r.speak();\n    return 0;\n}",
+      "stem": "这是「与猫的约定」那张图纸和照它画下来的一条鱼，两处被本喵挖空了。补上之后，这条鱼就算跟这份约定说定了喵。",
+      "blanks": [
+        { "answer": "virtual", "accept": [] },
+        { "answer": "public Speaker", "accept": ["public Speaker "] }
+      ],
+      "explanation": "第一处补 `virtual` —— 约定那一手要能被改写（照它画下来的都得按约定补上自己那一版），所以这一手得挂上那个三字母的招牌喵。⚠️ 两个记号缺一不可：本喵真跑过，只写 `= 0` 而漏掉 `virtual`，翻译官喵**当场拦下**，原话是 `error: initializer specified for non-virtual method 'void Speaker::speak() const'` —— 光有 `= 0`，它不认这一手是约定喵。第二处补 `public Speaker` —— 照约定画下来的那一段要写在图纸名后面、用 `:` 接上，那条鱼才算答应了这份约定喵；只写 `Speaker` 漏了那个 `public` 同样编不过，原话是 `error: 'Speaker' is an inaccessible base of 'Fish'` —— 那等于这条鱼压根没答应这份约定，牌子上写着 `Speaker` 也指不着它喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Speaker {\npublic:\n    virtual void speak() const = 0;\n    virtual ~Speaker() {}\n};\n\nclass Cat : public Speaker {\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n    void speak() const override {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Fish : public Speaker {\n    string name;\npublic:\n    Fish(string n) : name(n) {}\n    void speak() const override {\n        cout << name << \"：咕噜咕噜～\" << endl;\n    }\n};\n\nint main() {\n    Cat c(\"小橘\");\n    Fish f(\"大肥鱼\");\n    Speaker* roster[2] = { &c, &f };\n    for (int i = 0; i < 2; i++) {\n        roster[i]->speak();\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘：喵～\n大肥鱼：咕噜咕噜～",
+      "accept": ["小橘：喵～\n大肥鱼：咕噜咕噜～\n"],
+      "explanation": "本喵手上只有一排写着 `Speaker` 的牌子 —— **牌子上写的是「会叫的」，不是「猫」也不是「鱼」**喵。橘猫和大肥鱼没有半点血缘关系，可它们都照这份约定把该还的那一手补上了，所以两只都能站进这排牌子里喵。`roster[i]->speak()` 挨个喊下去，喊到谁就看一眼屋里住的是谁：第一格是橘猫，印它自己那一版；第二格是大肥鱼，印吐泡泡那一版喵。这就是这一课最值钱的效果：**同一句话喊下去，各猫各样**。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Animal {\nprotected:\n    string name;\npublic:\n    Animal(string n) : name(n) {}\n    virtual void speak() const = 0;\n    void showName() const {\n        cout << \"本喵叫 \" << name << endl;\n    }\n};\n\nclass Cat : public Animal {\npublic:\n    Cat(string n) : Animal(n) {}\n    void speak() const override {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nint main() {\n    Cat c(\"煤球\");\n    Animal& r = c;\n    r.showName();\n    r.speak();\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "本喵叫 煤球\n煤球：喵～",
+      "accept": ["本喵叫 煤球\n煤球：喵～\n"],
+      "explanation": "本喵手上那张牌子上写的是 `Animal`（抽象图纸），屋里住的是一只叫煤球的小猫喵。第一行喊 `showName()` —— 这一手是**动作写全了的正常招式**，不是只挂招牌那一手，所以它照牌子上写的那一版跑，印出「本喵叫 煤球」喵。第二行喊 `speak()` —— 这一手是**只挂招牌那一手**（挂着 `= 0`），牌子上写的是谁不重要，喊下去的那一刻会看屋里住的是谁，所以跑的是煤球自己那一版喵。**这两行的分别，正好就是「抽象图纸身上还能有正常东西」那句话的实测**。"
+    }
+  ]
+}

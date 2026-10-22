@@ -1,0 +1,37 @@
+{
+  "templateId": "py-s3-dataclass-list-default",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-01",
+  "type": "codefix",
+  "concept": ["field", "default_factory", "可变默认值"],
+  "instances": 2,
+  "params": {
+    "o1": {
+      "kind": "pick",
+      "values": [
+        "咪咪",
+        "花花"
+      ]
+    },
+    "o2": {
+      "kind": "pick",
+      "values": [
+        "团子",
+        "煤球"
+      ]
+    },
+    "f": {
+      "kind": "pick",
+      "values": [
+        "小鱼干",
+        "冻干块",
+        "毛线球"
+      ]
+    }
+  },
+  "stemTemplate": "本喵给每只猫都配一个**装小玩意儿的篮子**喵。篮子上就两样：`owner`（谁的篮子）和 `fish`（里面装的）。画图纸的时候本喵想的是：主人名要投喂，**篮子一开始是空的**。\n\n于是本喵在图纸上写了这么一样：\n\n```text\nfish: list = []\n```\n\n结果这张图纸**连画都画不出来** —— 翻译官喵刚读到那一样就翻脸了，底下造篮子、印篮子那几句**一句都没跑到**。\n\n你帮本喵改对，让它印出\n\n```\n{o1} 的篮子里有 1 样\n{o2} 的篮子里有 0 样\n```\n\n⚠️ 「篮子一开始是空的」这个意思**不许丢**：造篮子的时候照旧只投喂主人名；也不许在造篮子那几行里多塞一个空的袋子进去。\n\n⚠️ 图纸上 `owner` 那一样、还有印的那两行，都不许动。",
+  "brokenCodeTemplate": "from dataclasses import dataclass\n\n\n@dataclass\nclass 篮子:\n    owner: str\n    fish: list = []\n\n\na = 篮子(\"{o1}\")\nb = 篮子(\"{o2}\")\n\na.fish.append(\"{f}\")\n\nprint(a.owner + \" 的篮子里有 \" + str(len(a.fish)) + \" 样\")\nprint(b.owner + \" 的篮子里有 \" + str(len(b.fish)) + \" 样\")\n",
+  "referenceFixTemplate": "from dataclasses import dataclass, field\n\n\n@dataclass\nclass 篮子:\n    owner: str\n    fish: list = field(default_factory=list)\n\n\na = 篮子(\"{o1}\")\nb = 篮子(\"{o2}\")\n\na.fish.append(\"{f}\")\n\nprint(a.owner + \" 的篮子里有 \" + str(len(a.fish)) + \" 样\")\nprint(b.owner + \" 的篮子里有 \" + str(len(b.fish)) + \" 样\")\n",
+  "explanationTemplate": "这一处翻译官喵**当场就拦**，而且拦得很值 —— 它不许你在图纸上写一个「造好的空袋子」当默认值。\n\n为什么要拦？因为图纸上写的那一行，是在**画图纸那一刻**算一遍、然后就定死在那儿的。真要是写了个空袋子当默认值，**所有照这张图造出来的篮子拿到的是同一个袋子** —— 你往 `a` 的篮子里放一样东西，`b` 的篮子里也会冒出同一样来，而且**一声不吭**。\n\n所以它要的不是一个「空袋子」，而是一个「**会造新袋子**的招式」。这就是 `field` 里的 `default_factory`：\n\n```text\nfish: list = field(default_factory=list)\n```\n\n读法：每次要造篮子、而这回没投喂 `fish` 的时候，就**现喊一次** `list` 去造一个新的空袋子。喊一次造一个，所以每只猫拿到的是自己的那一个。\n\n⚠️ 注意括号：`default_factory=list` 后面**不带括号**。带括号的意思是「现在就造一个袋子搁这儿」，那 `default_factory` 拿到的是**一个袋子**，不是一个会造袋子的招式 —— 图纸那一步它不拦你，可等到真去造篮子的时候它想喊一声造新的，却发现手里那个死袋子喊不动，于是照样摔。所以这个括号省掉的不是两个字符，是「什么时候造」这件事。\n\n⚠️ 还得从 `dataclasses` 那本手册里把 `field` 一起请进来（`from dataclasses import dataclass, field`）。"
+}

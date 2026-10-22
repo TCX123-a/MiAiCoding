@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-global-bowl-add",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-13",
+  "type": "codewrite",
+  "concept": ["大缸", "global", "招式改大缸", "循环"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵想在门口摆一口**大缸**，让每一条小鱼干进来都被丢进去攒着喵。\n\n请你写个程序：**先读进来一个数**（这次有几条），**再读进来 {n} 行数**（一行一个，每条上刻的数字）。\n\n先在**所有招式的外面**摆一口大缸 `total`，缸上写 `int`（**不用写初值**，看看会发生什么）；再写一招 `putIn`，头上写 `void`，括号里摆一只整数碗专接新来的那条，身体里把它**加进大缸**。每读进来一条，就喊一次这一招。\n\n转完 {n} 圈，印一行 `大缸里现在有 N 条`（`N` 是缸里的总数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\n// 在这里摆一口大缸（不用写初值）\n\n// 在这里登记 putIn 这一招\n\nint main(void) {\n    int n;\n\n    // 先读「有几条」\n\n    // 转 {n} 圈：每圈读一条，喊一次 putIn\n\n    // 印「大缸里现在有 N 条」\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint total = 0;\n\nvoid putIn(int x) {\n    total = total + x;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int i;\n    for (i = 0; i < n; i++) {\n        int x;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        putIn(x);\n    }\n\n    printf(\"大缸里现在有 %d 条\\n\", total);\n    return 0;\n}\n",
+  "explanationTemplate": "大缸要摆在**所有招式外面**（写在最上面、`main` 之前）喵。摆在那儿，两只招式都能看见、都能伸手够到。\n\n它有两条和「招式里的碗」正好相反的脾气：\n\n- **不写初值，翻译官喵自动给你装上 0。** 这一条**只对门口的大缸成立** —— 招式里的碗要是不写初值，里面装的是上次谁用剩的垃圾，印出来是什么全看运气。所以招式里的碗，一律自己写清楚初值。\n- **谁都能改它。** 好处是所有招式共用一份；坏处是哪一招在什么时候改的，你根本追不到。\n\n招式里那句 `total = total + x;` 改的是**大缸本人**：转一圈涨一点，{n} 圈下来就是全部的和。\n\n（对照着记：要是招式头写成 `void putIn(int x)`、喊的时候喂 `putIn(x)`，那招式里改的就是**抄件**，缸里一条都不会涨 —— 下一课就讲这个分岔。）"
+}

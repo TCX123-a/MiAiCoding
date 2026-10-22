@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-sort-without-promise",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-02",
+  "type": "codefix",
+  "concept": ["图纸上没挂那份承诺", "排排坐的那只手只收挂过承诺的", "自己会跟同类比大小"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "大橘"] },
+    "n2": { "kind": "pick", "values": ["煤球", "墨点"] },
+    "n3": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stemTemplate": "本喵想让这三只按**轻重**排排坐，轻的站前面喵。\n\n写完之后翻稿子就红了，一行都没跑。翻译官喵的意思是：排排坐的那只手**只收挂过那份承诺的东西**，而本喵这张图纸上一份承诺都没挂。\n\n请你帮本喵把这张图纸补全：\n\n1. 在图纸名后面**挂上那份承诺**（「本喵会跟同类比大小」那份）；\n2. 把那一手**填进去** —— 按轻重比，**轻的站前面**。\n\n投喂的那三只和印出来的那一句**一个字都别动**。改好之后它该印一行，把排好队的三只印出来。\n\n（这一题**不用投喂任何东西**，那三只和它们的轻重都是固定死的。）",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nclass Fish {\n    String name;\n    int weight;\n\n    Fish(String name, int weight) {\n        this.name = name;\n        this.weight = weight;\n    }\n\n    public String toString() {\n        return name + \"(\" + weight + \")\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"{n1}\", 5));\n        pond.add(new Fish(\"{n2}\", 2));\n        pond.add(new Fish(\"{n3}\", 8));\n\n        Collections.sort(pond);\n        System.out.println(pond);\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nclass Fish implements Comparable<Fish> {\n    String name;\n    int weight;\n\n    Fish(String name, int weight) {\n        this.name = name;\n        this.weight = weight;\n    }\n\n    public int compareTo(Fish other) {\n        return this.weight - other.weight;\n    }\n\n    public String toString() {\n        return name + \"(\" + weight + \")\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"{n1}\", 5));\n        pond.add(new Fish(\"{n2}\", 2));\n        pond.add(new Fish(\"{n3}\", 8));\n\n        Collections.sort(pond);\n        System.out.println(pond);\n    }\n}\n",
+  "explanationTemplate": "这题演的是「排排坐的那只手**只收挂过承诺的东西**」喵。\n\n**一、红字里那两行是要害。** 头一行 `no suitable method found for sort(...)` 是「没找着一双能收下这只柜子的手」；再往下那句 `upper bounds: Comparable<? super T#1>` 才是理由 —— 那双手上写着「只收**挂过那份承诺**的东西」，而本喵这些东西一个都没挂。\n\n**二、注意这一回是翻稿子的时候就红。** 不是跑起来才炸。早红是好事：本喵还没跑，就知道自己漏了一件事。\n\n**三、补两处，一处都不能少。** 第一处在图纸名后面：挂上那份「本喵会跟同类比大小」的承诺；第二处是**把那一手填进去** —— 光挂承诺不填那一手，翻译官喵照样退稿（它会说本喵答应了要做的事没做）。\n\n**四、那一手报的数是什么意思。** 报负数就是「本喵轻，本喵站前面」，报正数就是「本喵重，本喵站后面」。本喵这题要的是**轻的站前面**，所以拿本喵的轻重去减对方的轻重。\n\n**五、换一种站法就得改这份承诺。** 想让重的站前面，就得改那一手 —— 可那样一改，**所有**这种猫的站法都跟着翻过来。想「换个站法又不动东西自己」，那是请帮工那一路的事喵。"
+}

@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage2-09",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下 `class Kitten : public Cat`，小猫图纸里只添了一手 `wag`。照 `Kitten` 生出来的小橘，喊不喊得动老图纸上那一手 `meow`？",
+      "options": [
+        "能调用 —— 老类上的格子和函数它自动全有，因为子类本来就有基类的类型",
+        "喊不动 —— 老图纸上的东西得一笔一画重抄到新图纸上",
+        "喊不动 —— 只有新图纸自己添的 `wag` 才归它",
+        "得先在新图纸里把 `meow` 再写一遍，才喊得动"
+      ],
+      "answer": 0,
+      "explanation": "`class Kitten : public Cat` 这一行的意思就是「`Kitten` 这张图纸**照着 `Cat` 画下来**」—— 老图纸上的格子（本喵一行都没在新图纸上写过的 `name`）和招式（`meow`）**自动全有**喵。所以只要把名字填进去，小橘就会喵喵叫；本喵要做的只是往上添自己那点不一样（`wag`）喵。反过来说也成立：小橘是一只 `Kitten`，**同时也是一只 `Cat`**，凡是能放猫的地方，放一只小猫同样成立喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "老图纸上装鱼干数的那一格挂着 `private:`，本喵想在小猫图纸的 `eat` 里直接写 `fish = fish + 1;`。会怎样？",
+      "options": [
+        "编译器会拦下来，说那一格私有、这个位置够不着 —— 想用就得把那一格改成 `protected:`，或者由基类提供一个 public 函数替它动手",
+        "能过 —— 小猫图纸是老图纸亲手画出来的，带盖的格子自然也够得着",
+        "能过 —— 但只读得动，写不动",
+        "能过 —— 只要小猫图纸那一手写成 `public:`"
+      ],
+      "answer": 0,
+      "explanation": "小猫图纸**不是**老图纸自己喵。老图纸扣上盖子的格子，连照着它画下来的新图纸都碰不得 —— 翻译官喵的原话是「私有，你现在站的这个地方够不着」喵。想在小猫图纸里直接用，只有两条路：**把那一格换成 `protected:`**（妈妈自己 + 照着画的图纸都够得着、外面够不着），或者**请老图纸给一手公开招式**替它动手（本喵在课文里让 `Kitten` 印名字，走的就是老图纸给的 `showName()`）喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵把那一行写成了 `class Kitten : Cat` —— 漏了那个 `public`。图纸里怎么写都看着挺对，可外面那句 `k.meow()` 忽然不认了。翻译官喵会说什么？",
+      "options": [
+        "「够不着」—— 老图纸给的公开东西全变成了小猫图纸自己的私事",
+        "「私有」—— 那一格在老图纸上本来就没开",
+        "「没有这个方法」—— 老类的函数没传下来",
+        "什么也不说，只是印出来是空的"
+      ],
+      "answer": 0,
+      "explanation": "这一跤的用词很讲究：翻译官喵说的是**「够不着」（inaccessible）**，而不是「私有」喵。区别在于 —— 那一格在老图纸上本来就是公开的，是**小猫图纸少写了那个 `public`，等于把老图纸给的东西全收进了自己兜里**，所以外面的 `main` 再也够不着了喵。它还很安静：图纸里面怎么写都没问题，是外面那句 `k.meow()` 突然不认了。看到「够不着」，第一件事就是回去看那一行有没有 `public` 喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n    void meow() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Kitten : ____ Cat {\npublic:\n    Kitten(string n) : ____(n) {}\n    void wag() const {\n        cout << name << \" 摇起了尾巴\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"小橘\");\n    k.meow();\n    k.wag();\n    return 0;\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出），补上之后它会印出「小橘：喵～」和「小橘 摇起了尾巴」喵。",
+      "blanks": [
+        { "answer": "public", "accept": [] },
+        { "answer": "Cat", "accept": [] }
+      ],
+      "explanation": "第一处：那一行要写成「新图纸照着老图纸画下来」，前面那个词不能省 —— 少了它，老图纸给的公开东西全变成小猫图纸自己的私事，外面喊 `k.meow()` 会说「够不着」喵。第二处：小猫图纸的出生招式后面要交代「先把料交给妈妈那一半」，照着妈妈那一半传下来的名字，就是老图纸的名字 `Cat`，料就是那个 `n` 喵。补好之后，小橘会喊出从妈妈那儿一并传下来的 `meow`（印「小橘：喵～」），再用自己添的 `wag` 摇尾巴喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {\n        cout << \"猫妈妈：\" << name << endl;\n    }\n    ~Cat() {\n        cout << \"猫妈妈走了\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {\n        cout << \"小猫：\" << name << \" \" << fish << \" 条\" << endl;\n    }\n    ~Kitten() {\n        cout << \"小猫走了\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"小橘\", 3);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "猫妈妈：小橘\n小猫：小橘 3 条\n小猫走了\n猫妈妈走了",
+      "accept": ["猫妈妈：小橘\n小猫：小橘 3 条\n小猫走了\n猫妈妈走了\n"],
+      "explanation": "照 `Kitten` 生出来的小橘，身上是**妈妈那一半 + 小猫那一半**拼起来的一只真猫喵。出生的时候先搭妈妈那一半：`Kitten(string n, int f) : Cat(n, f)` 里那一小段 `: Cat(n, f)` 就是把料交给妈妈的出生招式，所以妈妈的招式先跑，印出「猫妈妈：小橘」；妈妈那一半搭好了，本喵这一半才开始，印出「小猫：小橘 3 条」喵。收尾的时候顺序整个反过来：**小猫那一半先拆、猫妈妈那一半后拆** —— 所以 `~Kitten` 先印「小猫走了」，`~Cat` 最后印「猫妈妈走了」喵。一句话：搭的时候先妈妈后小猫，拆的时候先小猫后妈妈喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\nprotected:\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    void showName() const {\n        cout << \"本喵是\" << name << \"喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"小橘\", 3);\n    k.showName();\n    k.eat();\n    k.eat();\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "本喵是小橘喵\n吃了一条，现在 4 条\n吃了一条，现在 5 条",
+      "accept": ["本喵是小橘喵\n吃了一条，现在 4 条\n吃了一条，现在 5 条\n"],
+      "explanation": "先说 `k.showName()`：小橘的名字那一格在老图纸上是**扣着盖子的**（只有 `Cat` 自己的招式够得着），所以小猫图纸不能自己去碰它，但它**照样能喊老图纸给的这手公开招式** —— 小橘本来就是猫嘛，于是印出「本喵是小橘喵」喵。再说 `k.eat()`：装鱼干数的那一格挂的是 `protected:`，**妈妈自己 + 照着画的新图纸**都够得着，所以小猫图纸里那句 `fish = fish + 1;` 是合法的喵。第一次：3 变 4；第二次是在**同一只小橘**身上接着加，4 变 5 —— 所以两行分别是「吃了一条，现在 4 条」和「吃了一条，现在 5 条」喵。"
+    }
+  ]
+}

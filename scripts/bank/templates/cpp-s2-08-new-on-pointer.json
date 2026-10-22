@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-08-new-on-pointer",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-08",
+  "type": "codefix",
+  "concept": ["照抄抄的是屋里的东西不是牌子", "new 后面要放内容", "报错现场"],
+  "instances": 2,
+  "params": {
+    "v": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵照着上课的样子写了一份照抄招式，`new` 也写了，可翻译官喵说本喵 `new` 出来的东西**对不上号**。\n\n你帮本喵改到能跑起来（盒子装 {v} 条，照抄一只、把抄出来那只的条数印出来）。**照抄招式这一手留在原地，`main` 那一行也别动。**",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a({v});\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a({v});\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:10:27: error: invalid conversion from 'int*' to 'int' [-fpermissive]`\n\n后面还跟了一条提示：`main.cpp:10:27: note: possible fix: dereference with '*'` —— 翻译官喵连补法都告诉本喵了。\n\n翻成猫话：**「`new int(...)` 这个括号里要放的是『装进新屋里的东西』，你塞进来的却是一张『牌子』，对不上号喵。」**\n\n这里要把两样东西分清楚（整课的精华就在这一步）：\n\n- `other.p` 是**对方那间仓库的地址**（一张牌子，类型是 `int*`）；\n- `*other.p` 是**那间屋里装的东西**（一个整数，类型是 `int`）。\n\n本喵要搬的是**屋里的东西**，所以得先在牌子前面加上那个 `*` 把内容取出来：`new int(*other.p)`。\n\n⚠️ 特别记一句：`new` 这个字**一个都不能少**，写成 `p = other.p;` 就又变回只抄牌子的浅拷贝了 —— 那时候程序能编过、能跑、前几行输出还挺好看，坑藏在后面（改一只另一只跟着变，收尾时两只盒子归还同一间仓库）。所以本喵宁可在这里被翻译官喵拦一次：**它拦的是「类型对不上」，本喵要的是「内容搬过去」。**"
+}

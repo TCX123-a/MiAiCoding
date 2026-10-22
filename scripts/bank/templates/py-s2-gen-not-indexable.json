@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-gen-not-indexable",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-02",
+  "type": "codefix",
+  "concept": ["生成器", "不能报编号", "方括号还是圆括号"],
+  "instances": 2,
+  "params": {
+    "k": { "kind": "int", "min": 5, "max": 7 },
+    "i": { "kind": "int", "min": 0, "max": 2 }
+  },
+  "stemTemplate": "本喵把柜子里的数挨个翻倍，加工完之后想**按编号**取一颗出来看喵（要的是第 {i} 号那颗）。\n\n可这段代码一跑就翻脸，屏幕上蹦出一句 `TypeError`。你帮本喵找出毛病改对 —— 改完之后，打印出来的该是**翻倍之后**第 {i} 号那颗（一个整数，单独占一行；柜子里的数一个都不许改）。",
+  "brokenCodeTemplate": "nums = [1, 2, {k}, 4]\nbelt = (x * 2 for x in nums)\nprint(belt[{i}])\n",
+  "referenceFixTemplate": "nums = [1, 2, {k}, 4]\nbelt = [x * 2 for x in nums]\nprint(belt[{i}])\n",
+  "explanationTemplate": "圆括号造出来的是**传送带**（生成器）喵：它**不预先做**，你伸手要一条它才现做一条递给你 —— 东西从来没被摆出来过，所以**没有编号可报**。翻译官喵的原话是：\n\n```text\nTypeError: 'generator' object is not subscriptable\n```\n\n（「subscriptable」说的就是「能不能用方括号报编号拿」这一件事。）\n\n要按编号拿，就得老老实实造个**柜子**：把外面那对圆括号换成**方括号**，配方一模一样，可它这下是**一口气全做出来摆好**的，每一颗都贴着编号，第 {i} 号伸手就够到。\n\n（顺口记喵：传送带也不能用 `len` 量格数 —— 原话是 `TypeError: object of type 'generator' has no len()`，道理一样：没摆出来，哪儿来的格数。另外传送带**走一趟就空**，打算拿它算两遍的话，第二遍会给你一个空结果。）"
+}

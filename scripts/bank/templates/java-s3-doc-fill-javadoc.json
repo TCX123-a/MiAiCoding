@@ -1,0 +1,21 @@
+{
+  "templateId": "java-s3-doc-fill-javadoc",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-27",
+  "type": "codewrite",
+  "concept": [
+    "类与方法用 Javadoc 注释（/** */），方法体内部才用 // —— 前者是 IDE 和文档工具读的口",
+    "方法注释三件套：一句话说做什么 + @param 逐个交代参数 + @return 交代返回值",
+    "类注释第一句写职责，让新人一眼知道要不要进来"
+  ],
+  "instances": 6,
+  "params": {
+    "p": { "kind": "int", "min": 5, "max": 8 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{p}\n", "count": 1, "min": 20, "max": 90 },
+  "stemTemplate": "本喵这只装筐账本**缺了半只手**喵：骨架给你了，可那只算「能装满几筐」的方法还是个空壳（里面只有 `return 0;`），两处该写 Javadoc 的地方也全是光板。\n\n你补两件事：\n\n1. **把方法做对**：按每筐容量算能装满的**整筐数**（整数除法，零头另算 —— 骨架里已经替你留好了位置）；\n2. **把文档补上**：按本课（Javadoc 规范）给**图纸和这只方法**写注释 —— 图纸注释用一句话说清职责；方法注释里 `@param`、`@return` 一个都不能少。\n\n投喂口先叼**每筐容量**、再叼**鱼干总数**（一行一个数）。印**两行**：\n\n```text\n装满 X 筐\n筐外剩 Y 条\n```\n\n比如投喂给程序的是\n\n{sampleInput}\n\n就该叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        // TODO 1：把 fullBaskets 补对（整数除法，零头不用它管）\n        // TODO 2：给类和 fullBaskets 补 Javadoc（类一句话；方法 @param、@return 齐全）\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\n/**\n * 鱼干装筐小账本。\n */\npublic class Main {\n    /**\n     * 按每筐的容量算能装满几筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @param perBasket 每筐容量\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return fishTotal / perBasket;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}",
+  "explanationTemplate": "**一、这一节要练的动作只有一个：让方法在没人讲解的情况下也能被读懂。** 两处注释的分工：\n\n- **图纸注释**（`/** ... */` 顶在图纸头上）：一句话说清「这张图纸是干什么的」—— 比如「鱼干装筐小账本」；\n- **方法注释**：`@param` 逐只交代投喂的小鱼干的含义、`@return` 交代叼回来的战利品，再补一句话说「做什么」，缺一不可。\n\n本喵的参考样子：\n\n```java\nimport java.util.Scanner;\n\n/**\n * 鱼干装筐小账本。\n */\npublic class Main {\n    /**\n     * 按每筐的容量算能装满几筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @param perBasket 每筐容量\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return fishTotal / perBasket;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}\n```\n\n**二、`/** */` 和 `//` 的分工。** 图纸、图纸上的属性、图纸里的招式用 **Javadoc 注释**（`/** ... */`）—— 它是给 IDE 悬浮提示、自动补全、文档生成器读的；`//` 留给方法**内部**的短句说明。拿 `//` 给图纸里的招式写注释，IDE 里鼠标悬上去一片空白 —— 看的人还得跳进方法体里找线索。\n\n**三、方法体那行。** 整数除法天然舍零头：`37 / 5` 得 `7`，整筐数就是它；零头 `37 % 5` 得 `2`，骨架里已经替你摆好了。\n\n一句话记住：**注释写给「三个月后的自己」和「从没来过的新人」—— 目标是他们不用问人，就能安全地改你的代码。**"
+}

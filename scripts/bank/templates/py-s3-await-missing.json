@@ -1,0 +1,19 @@
+{
+  "templateId": "py-s3-await-missing",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-05",
+  "type": "codefix",
+  "concept": ["async def", "await", "协程没人喊就不跑"],
+  "instances": 2,
+  "params": {
+    "cat1": { "kind": "pick", "values": ["大橘", "小黑", "三花"] },
+    "cat2": { "kind": "pick", "values": ["奶牛", "狸花", "布偶"] },
+    "dish1": { "kind": "pick", "values": ["小鱼干", "鸡肉条"] },
+    "dish2": { "kind": "pick", "values": ["猫粮", "冻干"] }
+  },
+  "brokenCodeTemplate": "import asyncio\n\n\nasync def 备好(名字, 菜):\n    await asyncio.sleep(0.05)\n    print(名字 + \" 的\" + 菜 + \"好了\")\n\n\nasync def 主程序():\n    备好(\"{cat1}\", \"{dish1}\")\n    await 备好(\"{cat2}\", \"{dish2}\")\n    print(\"开饭啦\")\n\n\nasyncio.run(主程序())\n",
+  "referenceFixTemplate": "import asyncio\n\n\nasync def 备好(名字, 菜):\n    await asyncio.sleep(0.05)\n    print(名字 + \" 的\" + 菜 + \"好了\")\n\n\nasync def 主程序():\n    await 备好(\"{cat1}\", \"{dish1}\")\n    await 备好(\"{cat2}\", \"{dish2}\")\n    print(\"开饭啦\")\n\n\nasyncio.run(主程序())\n",
+  "stemTemplate": "本喵喊猫猫们开饭，结果有一碗**一直没能端上来**喵。\n\n这段代码的本意是：`{cat1}` 和 `{cat2}` 各有一碗要备（代码里那句 `asyncio.sleep` 就是「架上一口锅、等它一小会儿」），两碗**一碗接一碗**地备，备好一碗报一行，最后再印一句 `开饭啦`。\n\n现在它**跑得起来、退出码也是 `0`**，可是屏幕上**少了一行** —— 有一碗没端上来。屏幕也**不是全干净**的：收尾的时候角落里会冒出一句**警告**（是警告不是报错，所以最容易被看漏）。请你把它修好：让该有的**三行**一行不少、顺序也对。\n\n⚠️ 该动的地方只有**一处**喵，别大改。",
+  "explanationTemplate": "**喊一声不着急的招式，它不会马上跑**喵 —— `备好(\"{cat1}\", \"{dish1}\")` 喊下去，招式里**一行都不会跑**，它只给本喵叼回来一张「**待办小纸条**」，上头写着「想干这件事」。没人把这张纸条交到看锅猫爪子里的那天，这活儿就永远是张纸条。\n\n所以 `{cat1}` 那碗饭从头到尾没做过，屏幕上自然少了那一行；而程序还一声不吭地继续往下走，最后那句 `开饭啦` 照印不误 —— 看着一切正常，其实已经错了。\n\n`await` 就是那句「**把纸条交给看锅猫，等它做完再往下走**」。补回它，`{cat1}` 的饭才会真的备好、真的报出来，而且报在 `{cat2}` 前面 —— 两个 `await` 是**一个接一个**来的。\n\n⚠️ 翻译官喵其实会在角落里小声嘀咕一句「这条协程从没被等过」。那是**警告**，不是报错 —— 程序照样跑完，所以最容易被当成没事。以后看见警告别当装饰喵，它常常是这种「看着正常、其实错了」的唯一线索。"
+}

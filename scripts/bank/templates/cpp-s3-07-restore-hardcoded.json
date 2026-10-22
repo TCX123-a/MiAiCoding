@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-07-restore-hardcoded",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-07",
+  "type": "codefix",
+  "concept": ["领的是一份状态", "先记住旧值", "写死恢复值会错"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["鱼干", "鱼汤", "鱼丸"] }
+  },
+  "stemTemplate": "本喵做了块「小声说话」的牌子（`Quiet`）：出生时把 `loud` 换成 `false`，死去时**换回来**。\n\n可本喵换回来那一句写得太随意了 —— 它**写死成自己觉得对的那个值**，而不是真的回到进门前的样子。上面这层里又套了一层牌子，毛病就露出来了。\n\n你帮本喵改对（只动死的那一半，别的都不用动）。改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `{word}`\n2. `（小声）`\n3. `（小声）`\n4. `……`\n5. `（恢复）`\n6. `……`\n7. `（恢复）`\n8. `{word}`\n\n盯着第 6 行看喵：**里层那块牌子走了之后，外面那层还该是小声的** —— 因为本喵还在外面那层里。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n    bool old;\n    Quiet() : old(loud) {\n        loud = false;\n        cout << \"（小声）\" << endl;\n    }\n    ~Quiet() {\n        loud = true;\n        cout << \"（恢复）\" << endl;\n    }\n};\n\nint main() {\n    say(\"{word}\");\n    {\n        Quiet q1;\n        {\n            Quiet q2;\n            say(\"{word}\");\n        }\n        say(\"{word}\");\n    }\n    say(\"{word}\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n    bool old;\n    Quiet() : old(loud) {\n        loud = false;\n        cout << \"（小声）\" << endl;\n    }\n    ~Quiet() {\n        loud = old;\n        cout << \"（恢复）\" << endl;\n    }\n};\n\nint main() {\n    say(\"{word}\");\n    {\n        Quiet q1;\n        {\n            Quiet q2;\n            say(\"{word}\");\n        }\n        say(\"{word}\");\n    }\n    say(\"{word}\");\n    return 0;\n}\n",
+  "explanationTemplate": "坏在 `~Quiet()` 里那一句 `loud = true;` 上：本喵**写死了**自己觉得对的那个值，而不是「回到进门前的样子」喵。\n\n- 外层的 `q1` 出生时，进门前的样子是「正常说话」，它把 `old` 记成 `true`；\n- 里层的 `q2` 出生时，进门前的样子**已经是被按下去的了**，它把 `old` 记成 `false`；\n- `q2` 走的时候，写死的那句把它换回了「正常说话」—— 可它**还在 `q1` 的范围里**，本该继续小声的，于是第 6 行印出了 `{word}` 而不是 `……`。\n\n改法就是把那一句换成**还回自己手心里记着的那个旧值**：`loud = old;`。这也是这块牌子一开始就留着 `bool old` 的原因 —— 记住旧样子，出门才能原样还回去。\n\n⚠️ 看出来了吗：这一题里「写死」在**只套一层**的时候是对的（外面本来就是正常说话），所以单看一层根本发现不了。是里层那块牌子把本喵的偷懒照出来的。"
+}

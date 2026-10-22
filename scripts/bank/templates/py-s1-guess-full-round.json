@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s1-guess-full-round",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-15",
+  "type": "codewrite",
+  "concept": ["拆招式", "check_guess 只报信不印字", "while True + return 收圈", "一共猜了几次"],
+  "instances": 6,
+  "params": {
+    "secret": { "kind": "int", "min": 3, "max": 5 },
+    "g1": { "kind": "int", "min": 1, "max": 2 },
+    "g2": { "kind": "int", "min": 6, "max": 7 },
+    "g3": { "kind": "int", "min": 8, "max": 9 }
+  },
+  "stemTemplate": "本喵要把这一局猜数游戏**拆成两招**来写喵。答案是 `{secret}`，替身柜子里按顺序排好了这几条报数：`{g1}`、`{g2}`、`{g3}`、`{secret}`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 第一招 `check_guess(guess, target)`：把报数和答案比一比，**把该印的那句话叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），这一招里**一句都不许印**；\n2. 第二招 `play(target, picks)`：接着柜子和答案，一条一条取出来报。每取一条就往屏幕上印一行「（报的数） （第一招叼回来的那句话）」（中间一个空格），同时数着**已经猜了几次**；哪一条跟答案一样就**当场收工**，并把这局用的次数叼回来；\n3. 最后在主程序里喊上第二招（答案用 `{secret}`），接住它叼回来的次数，印一行「答案是 {secret} 一共猜了 （次数） 次喵」。\n\n（第二招的圈用 `while True:` 就行，收工靠「猜中那一圈」自己走人。）",
+  "referenceSolutionTemplate": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ndef play(target, picks):\n    step = 0\n    while True:\n        guess = picks.pop(0)\n        step = step + 1\n        print(guess, check_guess(guess, target))\n        if guess == target:\n            return step\n\nused = play({secret}, [{g1}, {g2}, {g3}, {secret}])\nprint(\"答案是\", {secret}, \"一共猜了\", used, \"次喵\")\n",
+  "explanationTemplate": "这一局拆成了两张嘴：`check_guess` 只管**比一比、报个信**（它一句都不印，只负责把话叼回来），`play` 只管**转圈、打印、数次数**喵。分工的好处是：哪一天想换一种说法（比如加句「再努努力」），只要动 `check_guess` 里那一句 `return`，别处一个字都不用碰。\n\n`play` 里那个圈用的是 `while True:` —— 「一直转，直到有人喊停」。喊停的就是那句 `return step`：**`return` 一执行，这一招当场就结束**，还顺手把次数交给了外面，圈自然也跟着停了。所以这里**不用另外写 `break`**，一句 `return` 顶两件事。\n\n数次数的那一格（`step`）要在**进圈之前**先备好，每转一圈加一 —— 不然每一次加出来的都还是零，最后叼回来的次数就不对了喵。\n\n（顺手记：这局里 {g1} 是「太小」、{g2} 和 {g3} 都是「太大」，所以前三条都不会停，第四条才猜中 —— 一共猜的次数就是把取出的条数数一数。）"
+}

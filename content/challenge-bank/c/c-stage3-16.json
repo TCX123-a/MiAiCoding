@@ -1,0 +1,234 @@
+{
+  "lessonId": "c-stage3-16",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-16-both-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵现在要把**两条路一起报**：同一个本子，碗「两两都比一遍」要多少下，「一路砍半」又要多少下。两条路都从**同一个本子大小**出发。\n\n投喂口里递进来的是**一个数**：本子上有几只碗。样例输入：\n\n```text\n12\n```\n\n你要把这一招补完（稿子里 `main` 已经把两行的印法写死了，别改它）：\n\n1. 先把这个数接住；\n2. 一条一条算：两两比一遍、一路砍半；\n3. 按稿子里写死的格式印两行。\n\n样例跑出来是这样：\n\n```text\n两两比过：66 下\n层层砍半：36 下\n```",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    /* ↓ 自己写：\n       ① 两两都比一遍，一共多少下\n       ② 一路砍半，每层过整本，一共多少下 */\n    long long pairs = 0;\n    long long layers = 0;\n\n    printf(\"两两比过：%lld 下\\n\", pairs);\n    printf(\"层层砍半：%lld 下\\n\", layers);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    long long pairs = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            pairs = pairs + 1;\n        }\n    }\n\n    long long layers = 0;\n    int size = n;\n    while (size > 1) {\n        layers = layers + n;\n        size = size / 2;\n    }\n\n    printf(\"两两比过：%lld 下\\n\", pairs);\n    printf(\"层层砍半：%lld 下\\n\", layers);\n    return 0;\n}\n",
+      "expectedOutput": "两两比过：36 下\n层层砍半：27 下",
+      "stdin": "9\n",
+      "explanation": "两条数圈数的路摆在一起，正好看出**量级**的差别喵。\n\n拿课文里 **1024 只碗**那个本子来说：两两都比一遍是 **523776** 下，一路砍半是 **10240** 下 —— 一个五十多万、一个一万出头，差了五十倍上下。本子再大一点，这个差距还会继续拉开：两两比是**平方**的脾气，砍半那一路的层数只跟着 `log n` 慢慢爬。\n\n```text\nfor (int i = 0; i < n; i++) {\n    for (int j = i + 1; j < n; j++) {\n        pairs = pairs + 1;\n    }\n}\n```\n\n```text\nwhile (size > 1) {\n    layers = layers + n;\n    size = size / 2;\n}\n```\n\n两条路各有一个坑：**两两比**的内层要从 `i + 1` 起步（写成 `i` 或 `0` 都会多算）；**砍半**那一路每层加的得是 `n` 而不是 `size`（砍小的是下一层的本子）。\n\n⚠️ 记数的小仓库两个都要开 `long long`：本子一大，两两比那个数会跑得飞快。",
+      "templateId": "c-s3-16-both-report",
+      "params": {
+        "unit": "下"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:18.445Z",
+        "hash": "58470c551a1bac44"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-both-report-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵现在要把**两条路一起报**：同一个本子，碗「两两都比一遍」要多少趟，「一路砍半」又要多少趟。两条路都从**同一个本子大小**出发。\n\n投喂口里递进来的是**一个数**：本子上有几只碗。样例输入：\n\n```text\n10\n```\n\n你要把这一招补完（稿子里 `main` 已经把两行的印法写死了，别改它）：\n\n1. 先把这个数接住；\n2. 一条一条算：两两比一遍、一路砍半；\n3. 按稿子里写死的格式印两行。\n\n样例跑出来是这样：\n\n```text\n两两比过：45 趟\n层层砍半：30 趟\n```",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    /* ↓ 自己写：\n       ① 两两都比一遍，一共多少趟\n       ② 一路砍半，每层过整本，一共多少趟 */\n    long long pairs = 0;\n    long long layers = 0;\n\n    printf(\"两两比过：%lld 趟\\n\", pairs);\n    printf(\"层层砍半：%lld 趟\\n\", layers);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    long long pairs = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            pairs = pairs + 1;\n        }\n    }\n\n    long long layers = 0;\n    int size = n;\n    while (size > 1) {\n        layers = layers + n;\n        size = size / 2;\n    }\n\n    printf(\"两两比过：%lld 趟\\n\", pairs);\n    printf(\"层层砍半：%lld 趟\\n\", layers);\n    return 0;\n}\n",
+      "expectedOutput": "两两比过：36 趟\n层层砍半：27 趟",
+      "stdin": "9\n",
+      "explanation": "两条数圈数的路摆在一起，正好看出**量级**的差别喵。\n\n拿课文里 **1024 只碗**那个本子来说：两两都比一遍是 **523776** 下，一路砍半是 **10240** 下 —— 一个五十多万、一个一万出头，差了五十倍上下。本子再大一点，这个差距还会继续拉开：两两比是**平方**的脾气，砍半那一路的层数只跟着 `log n` 慢慢爬。\n\n```text\nfor (int i = 0; i < n; i++) {\n    for (int j = i + 1; j < n; j++) {\n        pairs = pairs + 1;\n    }\n}\n```\n\n```text\nwhile (size > 1) {\n    layers = layers + n;\n    size = size / 2;\n}\n```\n\n两条路各有一个坑：**两两比**的内层要从 `i + 1` 起步（写成 `i` 或 `0` 都会多算）；**砍半**那一路每层加的得是 `n` 而不是 `size`（砍小的是下一层的本子）。\n\n⚠️ 记数的小仓库两个都要开 `long long`：本子一大，两两比那个数会跑得飞快。",
+      "templateId": "c-s3-16-both-report",
+      "params": {
+        "unit": "趟"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:19.803Z",
+        "hash": "01dd2f586f981f15"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-last-tries-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本子上摆着 **8 只碗**，编号 `1` 到 `8` 从小到大挨着摆好。本喵要从第一只开始**挨着看**，找编号 **6** —— 它正好坐在前 6 只碗里的**最后一只**上。\n\n可这一段报出来的「看了几下」**永远是 1**。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `seen` 这一招改对（`main` 里那几行别动）。改好之后该印一行，只有一个数：**看过的每一只碗都得记账** —— 中了的这一下也算。\n\n拿个小本子验一下：本子只有 **4 只碗**、要找的是最末尾那只的时候，该印\n\n```text\n4\n```",
+      "brokenCode": "#include <stdio.h>\n\nint bowl[8] = {1, 2, 3, 4, 5, 6, 7, 8};\n\n/* 挨着看：从第一只开始一只只比过去，答「一共看了几下」 */\nint seen(int n, int want) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        if (bowl[i] == want) {\n            tries = tries + 1;\n            return tries;\n        }\n    }\n    return tries;\n}\n\nint main(void) {\n    printf(\"%d\\n\", seen(6, 6));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint bowl[8] = {1, 2, 3, 4, 5, 6, 7, 8};\n\n/* 挨着看：从第一只开始一只只比过去，答「一共看了几下」 */\nint seen(int n, int want) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        tries = tries + 1;\n        if (bowl[i] == want) {\n            return tries;\n        }\n    }\n    return tries;\n}\n\nint main(void) {\n    printf(\"%d\\n\", seen(6, 6));\n    return 0;\n}\n",
+      "expectedOutput": "6",
+      "stdin": null,
+      "explanation": "毛病在**记账的位置**喵：`tries` 加一的动作被关在 `if` **里面**，只有「对上了」的那一只才记得上账。可**看过的每一只碗都出了力** —— 前面那些没对上的，本喵照样一只一只看过去了，这些圈数不能凭空消失。\n\n```text\nfor (int i = 0; i < n; i++) {\n    tries = tries + 1;      /* 先记账，再看这一只 */\n    if (bowl[i] == want) {\n        return tries;\n    }\n}\n```\n\n**每比一次就记一笔，中了的这一下也算**，所以看最末尾那一只要记满一整排。\n\n这就是课文第五节说的**最坏情况**：同一个本子、同一段代码，要找的摆在头一只就只记 1 下，摆在最末尾就得记满 6 下。本喵报大 O 的时候按**最满的那一头**报，就是不想被运气骗了。",
+      "templateId": "c-s3-16-last-tries",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:20.776Z",
+        "hash": "33b0ceb1f120c750"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-last-tries-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本子上摆着 **8 只碗**，编号 `1` 到 `8` 从小到大挨着摆好。本喵要从第一只开始**挨着看**，找编号 **7** —— 它正好坐在前 7 只碗里的**最后一只**上。\n\n可这一段报出来的「看了几下」**永远是 1**。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `seen` 这一招改对（`main` 里那几行别动）。改好之后该印一行，只有一个数：**看过的每一只碗都得记账** —— 中了的这一下也算。\n\n拿个小本子验一下：本子只有 **4 只碗**、要找的是最末尾那只的时候，该印\n\n```text\n4\n```",
+      "brokenCode": "#include <stdio.h>\n\nint bowl[8] = {1, 2, 3, 4, 5, 6, 7, 8};\n\n/* 挨着看：从第一只开始一只只比过去，答「一共看了几下」 */\nint seen(int n, int want) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        if (bowl[i] == want) {\n            tries = tries + 1;\n            return tries;\n        }\n    }\n    return tries;\n}\n\nint main(void) {\n    printf(\"%d\\n\", seen(7, 7));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint bowl[8] = {1, 2, 3, 4, 5, 6, 7, 8};\n\n/* 挨着看：从第一只开始一只只比过去，答「一共看了几下」 */\nint seen(int n, int want) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        tries = tries + 1;\n        if (bowl[i] == want) {\n            return tries;\n        }\n    }\n    return tries;\n}\n\nint main(void) {\n    printf(\"%d\\n\", seen(7, 7));\n    return 0;\n}\n",
+      "expectedOutput": "7",
+      "stdin": null,
+      "explanation": "毛病在**记账的位置**喵：`tries` 加一的动作被关在 `if` **里面**，只有「对上了」的那一只才记得上账。可**看过的每一只碗都出了力** —— 前面那些没对上的，本喵照样一只一只看过去了，这些圈数不能凭空消失。\n\n```text\nfor (int i = 0; i < n; i++) {\n    tries = tries + 1;      /* 先记账，再看这一只 */\n    if (bowl[i] == want) {\n        return tries;\n    }\n}\n```\n\n**每比一次就记一笔，中了的这一下也算**，所以看最末尾那一只要记满一整排。\n\n这就是课文第五节说的**最坏情况**：同一个本子、同一段代码，要找的摆在头一只就只记 1 下，摆在最末尾就得记满 7 下。本喵报大 O 的时候按**最满的那一头**报，就是不想被运气骗了。",
+      "templateId": "c-s3-16-last-tries",
+      "params": {
+        "n": 7
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:22.222Z",
+        "hash": "54dc04b2b0de3538"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-layers-per-layer-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本子上摆着 **1024 只碗**，本喵用「**一路砍半**」这一招数圈数：每一层都把整本的碗从头到尾过一遍，过完就把本子砍成一半，一直砍到只剩一只碗为止。\n\n可这一招报出来的数**小得离谱**：它每一层只把「还没砍掉的那几只」算了进去，越往后算得越少。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `layers` 这一招改对（`main` 里那几行别动）。改好之后该印一行，只有一个数：**每一层过的都是一整本**，一层一层过下来一共过了多少下。\n\n拿个小本子验一下：本子只有 **8 只碗**的时候该印\n\n```text\n24\n```",
+      "brokenCode": "#include <stdio.h>\n\n/* 一路砍半：每层把整本过一遍，数一共过了多少下 */\nlong long layers(int n) {\n    long long rounds = 0;\n    int size = n;\n    while (size > 1) {\n        rounds = rounds + size;\n        size = size / 2;\n    }\n    return rounds;\n}\n\nint main(void) {\n    printf(\"%lld\\n\", layers(1024));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n/* 一路砍半：每层把整本过一遍，数一共过了多少下 */\nlong long layers(int n) {\n    long long rounds = 0;\n    int size = n;\n    while (size > 1) {\n        rounds = rounds + n;\n        size = size / 2;\n    }\n    return rounds;\n}\n\nint main(void) {\n    printf(\"%lld\\n\", layers(1024));\n    return 0;\n}\n",
+      "expectedOutput": "10240",
+      "stdin": null,
+      "explanation": "毛病在**每一层加多少**喵：`rounds + size` 加的是「本子**剩下**的那几只」—— 第一层是 1024，第二层就只剩一半，越往后越少，一路加起来只有该有的两成上下。\n\n规矩是**每一层都把整本 1024 只碗从头过到尾**：砍小的是**下一层**的本子，这一层要过的还是整本。\n\n```text\nwhile (size > 1) {\n    rounds = rounds + n;    /* 每层过的都是整本，不是剩下的那几只 */\n    size = size / 2;\n}\n```\n\n改完之后是 `1024 × 层数` 下。这一招的脾气是：**层数只有 log n 那么多，可每一层都是实打实的一整排** —— 那就是大 O 记号里 `O(n log n)` 这一档的样子，也是课文里第二个锚点的来历。",
+      "templateId": "c-s3-16-layers-per-layer",
+      "params": {
+        "n": "1024"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:23.643Z",
+        "hash": "a4d1eaf980874e53"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-layers-per-layer-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本子上摆着 **2048 只碗**，本喵用「**一路砍半**」这一招数圈数：每一层都把整本的碗从头到尾过一遍，过完就把本子砍成一半，一直砍到只剩一只碗为止。\n\n可这一招报出来的数**小得离谱**：它每一层只把「还没砍掉的那几只」算了进去，越往后算得越少。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `layers` 这一招改对（`main` 里那几行别动）。改好之后该印一行，只有一个数：**每一层过的都是一整本**，一层一层过下来一共过了多少下。\n\n拿个小本子验一下：本子只有 **8 只碗**的时候该印\n\n```text\n24\n```",
+      "brokenCode": "#include <stdio.h>\n\n/* 一路砍半：每层把整本过一遍，数一共过了多少下 */\nlong long layers(int n) {\n    long long rounds = 0;\n    int size = n;\n    while (size > 1) {\n        rounds = rounds + size;\n        size = size / 2;\n    }\n    return rounds;\n}\n\nint main(void) {\n    printf(\"%lld\\n\", layers(2048));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n/* 一路砍半：每层把整本过一遍，数一共过了多少下 */\nlong long layers(int n) {\n    long long rounds = 0;\n    int size = n;\n    while (size > 1) {\n        rounds = rounds + n;\n        size = size / 2;\n    }\n    return rounds;\n}\n\nint main(void) {\n    printf(\"%lld\\n\", layers(2048));\n    return 0;\n}\n",
+      "expectedOutput": "22528",
+      "stdin": null,
+      "explanation": "毛病在**每一层加多少**喵：`rounds + size` 加的是「本子**剩下**的那几只」—— 第一层是 2048，第二层就只剩一半，越往后越少，一路加起来只有该有的两成上下。\n\n规矩是**每一层都把整本 2048 只碗从头过到尾**：砍小的是**下一层**的本子，这一层要过的还是整本。\n\n```text\nwhile (size > 1) {\n    rounds = rounds + n;    /* 每层过的都是整本，不是剩下的那几只 */\n    size = size / 2;\n}\n```\n\n改完之后是 `2048 × 层数` 下。这一招的脾气是：**层数只有 log n 那么多，可每一层都是实打实的一整排** —— 那就是大 O 记号里 `O(n log n)` 这一档的样子，也是课文里第二个锚点的来历。",
+      "templateId": "c-s3-16-layers-per-layer",
+      "params": {
+        "n": "2048"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:24.991Z",
+        "hash": "504870f0b24e4126"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-layers-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵换一条路：把本子**一路砍半**，每砍一刀之前都先把**整本碗过一遍**，一直砍到只剩一只碗为止。现在要数的是：这一路下来，碗一共被过了多少下。\n\n投喂口里递进来的是**一个数**：本子上有几只碗。样例输入：\n\n```text\n8\n```\n\n你要把这一招补完（稿子里 `main` 已经把印法写死了，别改它）：\n\n1. 先把这个数接住；\n2. 数出「一层一层过下来」一共过了多少下；\n3. 按稿子里写死的格式印一行。\n\n样例跑出来是这样：\n\n```text\n层层砍半：24 下\n```",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    /* ↓ 自己写：把本子一路砍半，每层先把整本过一遍，\n       数一数一共过了多少下\n       ① 一层过的永远是整本，不是剩下的那几只\n       ② 只剩一只碗的时候就收工，不用再砍 */\n    long long rounds = 0;\n\n    printf(\"层层砍半：%lld 下\\n\", rounds);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    long long rounds = 0;\n    int size = n;\n    while (size > 1) {\n        rounds = rounds + n;\n        size = size / 2;\n    }\n\n    printf(\"层层砍半：%lld 下\\n\", rounds);\n    return 0;\n}\n",
+      "expectedOutput": "层层砍半：27 下",
+      "stdin": "9\n",
+      "explanation": "这一招是**两层套着**的喵：外面那个绕圈管「本子砍了几刀」，里面那一趟管「这一层把整本过一遍」。\n\n```text\nwhile (size > 1) {\n    rounds = rounds + n;    /* 每一层过的是整本 n 只 */\n    size = size / 2;\n}\n```\n\n两个坑都得绕开：\n\n1. **每层加的是 `n`，不是 `size`** —— 砍小的是**下一层**的本子，这一层该过的还是整本。加成 `size` 的话越往后加得越少，数出来会明显偏小。\n2. **绕圈的口气是「还剩不止一只」** —— 只剩一只碗的时候这一层就没东西可比了，写成「还剩一只也接着砍」会白白多算一层。\n\n这一招的总数是 `n × 层数`。层数只跟着 `log n` 慢慢爬，可每一层都是实打实的一整排 —— 这就是大 O 记号里 `O(n log n)` 那一档，也是课文里 10240 那个锚点的来历。",
+      "templateId": "c-s3-16-layers-report",
+      "params": {
+        "unit": "下"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:26.812Z",
+        "hash": "53a8fe00cbfdc340"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-layers-report-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵换一条路：把本子**一路砍半**，每砍一刀之前都先把**整本碗过一遍**，一直砍到只剩一只碗为止。现在要数的是：这一路下来，碗一共被过了多少圈。\n\n投喂口里递进来的是**一个数**：本子上有几只碗。样例输入：\n\n```text\n10\n```\n\n你要把这一招补完（稿子里 `main` 已经把印法写死了，别改它）：\n\n1. 先把这个数接住；\n2. 数出「一层一层过下来」一共过了多少圈；\n3. 按稿子里写死的格式印一行。\n\n样例跑出来是这样：\n\n```text\n层层砍半：30 圈\n```",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    /* ↓ 自己写：把本子一路砍半，每层先把整本过一遍，\n       数一数一共过了多少圈\n       ① 一层过的永远是整本，不是剩下的那几只\n       ② 只剩一只碗的时候就收工，不用再砍 */\n    long long rounds = 0;\n\n    printf(\"层层砍半：%lld 圈\\n\", rounds);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    long long rounds = 0;\n    int size = n;\n    while (size > 1) {\n        rounds = rounds + n;\n        size = size / 2;\n    }\n\n    printf(\"层层砍半：%lld 圈\\n\", rounds);\n    return 0;\n}\n",
+      "expectedOutput": "层层砍半：33 圈",
+      "stdin": "11\n",
+      "explanation": "这一招是**两层套着**的喵：外面那个绕圈管「本子砍了几刀」，里面那一趟管「这一层把整本过一遍」。\n\n```text\nwhile (size > 1) {\n    rounds = rounds + n;    /* 每一层过的是整本 n 只 */\n    size = size / 2;\n}\n```\n\n两个坑都得绕开：\n\n1. **每层加的是 `n`，不是 `size`** —— 砍小的是**下一层**的本子，这一层该过的还是整本。加成 `size` 的话越往后加得越少，数出来会明显偏小。\n2. **绕圈的口气是「还剩不止一只」** —— 只剩一只碗的时候这一层就没东西可比了，写成「还剩一只也接着砍」会白白多算一层。\n\n这一招的总数是 `n × 层数`。层数只跟着 `log n` 慢慢爬，可每一层都是实打实的一整排 —— 这就是大 O 记号里 `O(n log n)` 那一档，也是课文里 10240 那个锚点的来历。",
+      "templateId": "c-s3-16-layers-report",
+      "params": {
+        "unit": "圈"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:28.240Z",
+        "hash": "fe0e8763900bece0"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-pairs-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要数一数：本子上的碗**两两都比一遍**，一共比了多少下。规矩是**每一只碗只跟它后面那些**比 —— 自己跟自己不算，同一对碗也只算一次。\n\n投喂口里递进来的是**一个数**：本子上有几只碗。样例输入：\n\n```text\n7\n```\n\n你要把这一招补完（稿子里 `main` 已经把印法写死了，别改它）：\n\n1. 先把这个数接住；\n2. 数出「两两比过」一共多少下；\n3. 按稿子里写死的格式印一行。\n\n样例跑出来是这样：\n\n```text\n两两比过：21 下\n```",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    /* ↓ 自己写：数出「两两都比一遍」一共比了多少下\n       ① 外面那层绕圈管「比的是哪一只」\n       ② 里面那层管「跟它后面的哪一只比」\n       ③ 每比一次，记账就加一 */\n    long long rounds = 0;\n\n    printf(\"两两比过：%lld 下\\n\", rounds);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    long long rounds = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            rounds = rounds + 1;\n        }\n    }\n\n    printf(\"两两比过：%lld 下\\n\", rounds);\n    return 0;\n}\n",
+      "expectedOutput": "两两比过：10 下",
+      "stdin": "5\n",
+      "explanation": "这一招的规矩就三条喵：**每一只碗只跟它后面那些比**、**每比一次记一笔**、**自己跟自己不算**。\n\n```text\nfor (int i = 0; i < n; i++) {\n    for (int j = i + 1; j < n; j++) {\n        rounds = rounds + 1;\n    }\n}\n```\n\n外面那层绕圈管「比的是**哪一只**」，里面那层管「跟**它后面的**哪一只比」。内层从 `i + 1` 起步是关键：写成 `i` 会每只碗都多算一次，写成 `0` 会把同一对碗数两遍。\n\n记账的小仓库得开**够宽**：这里用 `long long` 才装得下大本子的数 —— 课文里 1024 只碗是 523776，本子再大一点就上亿了。\n\n⚠️ 这一招的圈数是 `n × (n - 1) / 2`，长得最快的那一项属于 `n²` 那一档 —— 本子一大，它就会甩开「一路砍半」一大截。",
+      "templateId": "c-s3-16-pairs-report",
+      "params": {
+        "unit": "下"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:29.581Z",
+        "hash": "e4688a78b330d398"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-pairs-report-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要数一数：本子上的碗**两两都比一遍**，一共比了多少趟。规矩是**每一只碗只跟它后面那些**比 —— 自己跟自己不算，同一对碗也只算一次。\n\n投喂口里递进来的是**一个数**：本子上有几只碗。样例输入：\n\n```text\n8\n```\n\n你要把这一招补完（稿子里 `main` 已经把印法写死了，别改它）：\n\n1. 先把这个数接住；\n2. 数出「两两比过」一共多少趟；\n3. 按稿子里写死的格式印一行。\n\n样例跑出来是这样：\n\n```text\n两两比过：28 趟\n```",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    /* ↓ 自己写：数出「两两都比一遍」一共比了多少趟\n       ① 外面那层绕圈管「比的是哪一只」\n       ② 里面那层管「跟它后面的哪一只比」\n       ③ 每比一次，记账就加一 */\n    long long rounds = 0;\n\n    printf(\"两两比过：%lld 趟\\n\", rounds);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    long long rounds = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            rounds = rounds + 1;\n        }\n    }\n\n    printf(\"两两比过：%lld 趟\\n\", rounds);\n    return 0;\n}\n",
+      "expectedOutput": "两两比过：21 趟",
+      "stdin": "7\n",
+      "explanation": "这一招的规矩就三条喵：**每一只碗只跟它后面那些比**、**每比一次记一笔**、**自己跟自己不算**。\n\n```text\nfor (int i = 0; i < n; i++) {\n    for (int j = i + 1; j < n; j++) {\n        rounds = rounds + 1;\n    }\n}\n```\n\n外面那层绕圈管「比的是**哪一只**」，里面那层管「跟**它后面的**哪一只比」。内层从 `i + 1` 起步是关键：写成 `i` 会每只碗都多算一次，写成 `0` 会把同一对碗数两遍。\n\n记账的小仓库得开**够宽**：这里用 `long long` 才装得下大本子的数 —— 课文里 1024 只碗是 523776，本子再大一点就上亿了。\n\n⚠️ 这一招的圈数是 `n × (n - 1) / 2`，长得最快的那一项属于 `n²` 那一档 —— 本子一大，它就会甩开「一路砍半」一大截。",
+      "templateId": "c-s3-16-pairs-report",
+      "params": {
+        "unit": "趟"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:30.834Z",
+        "hash": "9ca85d68ff25ebe3"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-pairs-self-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要数「**每一只碗都跟它后面每一只比一次**」一共比了多少下。本子上摆着 **8 只碗**。\n\n可这一招报出来的数**老是偏大**：它把「一只碗跟它自己」也算成了一对，每一只碗都白白多比了一回。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `pairs` 这一招改对（`main` 里那几行别动）。改好之后该印一行，只有一个数：**每一对碗只算一次**，一只不多、一只不少。\n\n拿个小本子验一下：本子只有 **4 只碗**的时候，它该印\n\n```text\n6\n```",
+      "brokenCode": "#include <stdio.h>\n\n/* 数一数「两两都比一遍」一共比了多少下 */\nlong long pairs(int n) {\n    long long rounds = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = i; j < n; j++) {\n            rounds = rounds + 1;\n        }\n    }\n    return rounds;\n}\n\nint main(void) {\n    printf(\"%lld\\n\", pairs(8));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n/* 数一数「两两都比一遍」一共比了多少下 */\nlong long pairs(int n) {\n    long long rounds = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            rounds = rounds + 1;\n        }\n    }\n    return rounds;\n}\n\nint main(void) {\n    printf(\"%lld\\n\", pairs(8));\n    return 0;\n}\n",
+      "expectedOutput": "28",
+      "stdin": null,
+      "explanation": "毛病在**内层从哪一只起步**喵：`j = i` 的意思是「从第 i 只碗**自己**开始跟」，可自己跟自己本来就不算一对 —— 每只碗都白比了一回，8 只碗就白比了 8 回，答出来的数自然偏大。\n\n```text\nfor (int i = 0; i < n; i++) {\n    for (int j = i + 1; j < n; j++) {\n        rounds = rounds + 1;\n    }\n}\n```\n\n内层要从 **`i + 1`** 起步，才是「跟**后面**的每一只比一次」。\n\n⚠️ 顺带记牢一件事：`j = i` 只是**每只多算一次**，`j = 0` 才是**整个翻倍** —— 后者会让同一对碗被数两遍（你比它一次，它又比你一次）。这两个毛病只差一个字，数一数圈子就能分清。",
+      "templateId": "c-s3-16-pairs-self",
+      "params": {
+        "n": 8
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:31.752Z",
+        "hash": "755f0c0869f1d039"
+      }
+    },
+    {
+      "id": "bank-c-s3-16-pairs-self-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要数「**每一只碗都跟它后面每一只比一次**」一共比了多少下。本子上摆着 **9 只碗**。\n\n可这一招报出来的数**老是偏大**：它把「一只碗跟它自己」也算成了一对，每一只碗都白白多比了一回。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `pairs` 这一招改对（`main` 里那几行别动）。改好之后该印一行，只有一个数：**每一对碗只算一次**，一只不多、一只不少。\n\n拿个小本子验一下：本子只有 **4 只碗**的时候，它该印\n\n```text\n6\n```",
+      "brokenCode": "#include <stdio.h>\n\n/* 数一数「两两都比一遍」一共比了多少下 */\nlong long pairs(int n) {\n    long long rounds = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = i; j < n; j++) {\n            rounds = rounds + 1;\n        }\n    }\n    return rounds;\n}\n\nint main(void) {\n    printf(\"%lld\\n\", pairs(9));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n/* 数一数「两两都比一遍」一共比了多少下 */\nlong long pairs(int n) {\n    long long rounds = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            rounds = rounds + 1;\n        }\n    }\n    return rounds;\n}\n\nint main(void) {\n    printf(\"%lld\\n\", pairs(9));\n    return 0;\n}\n",
+      "expectedOutput": "36",
+      "stdin": null,
+      "explanation": "毛病在**内层从哪一只起步**喵：`j = i` 的意思是「从第 i 只碗**自己**开始跟」，可自己跟自己本来就不算一对 —— 每只碗都白比了一回，9 只碗就白比了 9 回，答出来的数自然偏大。\n\n```text\nfor (int i = 0; i < n; i++) {\n    for (int j = i + 1; j < n; j++) {\n        rounds = rounds + 1;\n    }\n}\n```\n\n内层要从 **`i + 1`** 起步，才是「跟**后面**的每一只比一次」。\n\n⚠️ 顺带记牢一件事：`j = i` 只是**每只多算一次**，`j = 0` 才是**整个翻倍** —— 后者会让同一对碗被数两遍（你比它一次，它又比你一次）。这两个毛病只差一个字，数一数圈子就能分清。",
+      "templateId": "c-s3-16-pairs-self",
+      "params": {
+        "n": 9
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:33.133Z",
+        "hash": "47720678f19bc500"
+      }
+    }
+  ]
+}

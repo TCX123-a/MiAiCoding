@@ -1,0 +1,316 @@
+{
+  "lessonId": "c-stage3-01",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-mem-extra-static-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵写了一个招式 `count_fish`：喊一声就从**头**数一遍，每次都要印 `第 1 条`。\n\n`main` 里连喊了 **2** 遍，每遍里喊两声。可印出来的号**一直往上爬**，没有一遍是从头数起的（下头是喊两遍时的样子）：\n\n```text\n第 1 遍：\n第 1 条\n第 2 条\n第 2 遍：\n第 3 条\n第 4 条\n```\n\n请你把它改好 —— **每一遍里的两行都该是 `第 1 条`**。",
+      "brokenCode": "#include <stdio.h>\n\nvoid count_fish(void) {\n    static int seen = 0;\n    seen++;\n    printf(\"第 %d 条\\n\", seen);\n}\n\nint main(void) {\n    for (int round = 1; round <= 2; round++) {\n        printf(\"第 %d 遍：\\n\", round);\n        count_fish();\n        count_fish();\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nvoid count_fish(void) {\n    int seen = 0;\n    seen++;\n    printf(\"第 %d 条\\n\", seen);\n}\n\nint main(void) {\n    for (int round = 1; round <= 2; round++) {\n        printf(\"第 %d 遍：\\n\", round);\n        count_fish();\n        count_fish();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 1 遍：\n第 1 条\n第 1 条\n第 2 遍：\n第 1 条\n第 1 条",
+      "stdin": null,
+      "explanation": "毛病是**多写了两个字**喵：\n\n```text\nstatic int seen = 0;\n```\n\n`static` 会把仓库从碗摞**搬进固定柜** —— 搬过去它就有了记性：只此一份，从头活到尾。可这一招恰恰**不需要**记性：每进一次门都该是**新的一摞碗**，「从头数一遍」这件事每次都得从 1 开始。把 `static` 去掉，仓库回到碗摞上，毛病当场就没了。\n\n本喵两边都真跑过：**去掉**之后，每一遍里那两行都是 `第 1 条`；**留着**它，就是「第 1 条、第 2 条」一路爬到第 4 条。\n\n⚠️ 这一处翻译官喵也**不会吭声** —— 多写这两个字既不报错也不警告，它只会**答错**。本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有。\n\n所以别看 `static` 只有两个字，它是**有代价的**：它买来「记性」的同时，也**丢掉了**「每次进门都是新的」这层保障。什么时候该有记性、什么时候该忘干净，得你自己说了算喵。",
+      "templateId": "c-s3-mem-extra-static",
+      "params": {
+        "rounds": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:35.480Z",
+        "hash": "0fa929937a5d1311"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-extra-static-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵写了一个招式 `count_fish`：喊一声就从**头**数一遍，每次都要印 `第 1 条`。\n\n`main` 里连喊了 **3** 遍，每遍里喊两声。可印出来的号**一直往上爬**，没有一遍是从头数起的（下头是喊两遍时的样子）：\n\n```text\n第 1 遍：\n第 1 条\n第 2 条\n第 2 遍：\n第 3 条\n第 4 条\n```\n\n请你把它改好 —— **每一遍里的两行都该是 `第 1 条`**。",
+      "brokenCode": "#include <stdio.h>\n\nvoid count_fish(void) {\n    static int seen = 0;\n    seen++;\n    printf(\"第 %d 条\\n\", seen);\n}\n\nint main(void) {\n    for (int round = 1; round <= 3; round++) {\n        printf(\"第 %d 遍：\\n\", round);\n        count_fish();\n        count_fish();\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nvoid count_fish(void) {\n    int seen = 0;\n    seen++;\n    printf(\"第 %d 条\\n\", seen);\n}\n\nint main(void) {\n    for (int round = 1; round <= 3; round++) {\n        printf(\"第 %d 遍：\\n\", round);\n        count_fish();\n        count_fish();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 1 遍：\n第 1 条\n第 1 条\n第 2 遍：\n第 1 条\n第 1 条\n第 3 遍：\n第 1 条\n第 1 条",
+      "stdin": null,
+      "explanation": "毛病是**多写了两个字**喵：\n\n```text\nstatic int seen = 0;\n```\n\n`static` 会把仓库从碗摞**搬进固定柜** —— 搬过去它就有了记性：只此一份，从头活到尾。可这一招恰恰**不需要**记性：每进一次门都该是**新的一摞碗**，「从头数一遍」这件事每次都得从 1 开始。把 `static` 去掉，仓库回到碗摞上，毛病当场就没了。\n\n本喵两边都真跑过：**去掉**之后，每一遍里那两行都是 `第 1 条`；**留着**它，就是「第 1 条、第 2 条」一路爬到第 4 条。\n\n⚠️ 这一处翻译官喵也**不会吭声** —— 多写这两个字既不报错也不警告，它只会**答错**。本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有。\n\n所以别看 `static` 只有两个字，它是**有代价的**：它买来「记性」的同时，也**丢掉了**「每次进门都是新的」这层保障。什么时候该有记性、什么时候该忘干净，得你自己说了算喵。",
+      "templateId": "c-s3-mem-extra-static",
+      "params": {
+        "rounds": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:37.267Z",
+        "hash": "5297b779dd14ee32"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-heap-box-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想写一个招式，把投喂进来的数装进一间**现要现租**的仓库，再把写着地址的牌子递回来给 `main` 用。\n\n请你写出来：\n\n1. 招式叫 `make_box`，投喂进来一个数。\n2. 在招式里**现租**一间能装一个整数的仓库；租完**先看一眼**牌子是不是空的 —— 是空的就把空牌子递回去。\n3. 把投喂进来的数装进去，然后把牌子递回来。\n4. `main` 里喊它，投喂 **42**；拿到牌子也**先看一眼**是不是空的。\n5. 印一行 `盒子里装着 42`。\n6. **还掉**这间仓库，再把牌子擦成空牌子。\n7. 再印一行 `还掉之后，牌子也收起来了`。\n\n该印出来是**两行**：\n\n```text\n盒子里装着 42\n还掉之后，牌子也收起来了\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint *make_box(int value) {\n    /* ① 现租一间仓库，租完先看一眼是不是空的 */\n    /* ② 把 value 装进去，把牌子递回来 */\n\n}\n\nint main(void) {\n    /* ③ 喊它，投喂 42；拿到牌子先看一眼 */\n    /* ④ 印「盒子里装着 42」 */\n    /* ⑤ 还掉，把牌子擦空 */\n    /* ⑥ 印「还掉之后，牌子也收起来了」 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint *make_box(int value) {\n    int *p = (int *)malloc(sizeof(int));\n    if (p == NULL) {\n        return NULL;\n    }\n    *p = value;\n    return p;\n}\n\nint main(void) {\n    int *box = make_box(42);\n    if (box == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 1;\n    }\n    printf(\"盒子里装着 %d\\n\", *box);\n    free(box);\n    box = NULL;\n    printf(\"还掉之后，牌子也收起来了\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "盒子里装着 42\n还掉之后，牌子也收起来了",
+      "stdin": null,
+      "explanation": "这一题挣来的是**租来的仓库**和**碗摞**之间那条界限喵。\n\n**① 为什么不能把仓库造在招式里。** 招式里现造的那间仓库住在碗摞上，招式一出门那层碗就收走了。可你要把牌子递出去给 `main` 接着用 —— 牌子递到手的工夫，那间仓库**已经不归你管**了。想让它活过招式这一趟，就得**现租**：租来的仓库不跟着招式出门。\n\n**② 租完先看一眼。** `malloc` 递回来的牌子有可能是**空牌子**（`NULL`），地方不是随时都有。空牌子上什么都没有，伸手去摸就会摔 —— 所以递回来之前看一眼，拿到手之后再看一眼。\n\n**③ 租来的仓库不会自己消失。** 这是它和碗摞最大的不同：碗摞上的东西**自动**来、**自动**走；租来的这间得你**自己**还。所以 `main` 里那句 `free(box)` 一个字都不能省，还完顺手把牌子擦成 `NULL` —— 还掉的牌子别再拿来用。\n\n一句话收尾：**要让牌子活着出门，就得把仓库租在活得更久的那间屋里**；代价是，这份租金得你自己记着还喵。",
+      "templateId": "c-s3-mem-heap-box",
+      "params": {
+        "v": "42"
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:39.332Z",
+        "hash": "20032ab4b6c33670"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-heap-box-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想写一个招式，把投喂进来的数装进一间**现要现租**的仓库，再把写着地址的牌子递回来给 `main` 用。\n\n请你写出来：\n\n1. 招式叫 `make_box`，投喂进来一个数。\n2. 在招式里**现租**一间能装一个整数的仓库；租完**先看一眼**牌子是不是空的 —— 是空的就把空牌子递回去。\n3. 把投喂进来的数装进去，然后把牌子递回来。\n4. `main` 里喊它，投喂 **7**；拿到牌子也**先看一眼**是不是空的。\n5. 印一行 `盒子里装着 7`。\n6. **还掉**这间仓库，再把牌子擦成空牌子。\n7. 再印一行 `还掉之后，牌子也收起来了`。\n\n该印出来是**两行**：\n\n```text\n盒子里装着 7\n还掉之后，牌子也收起来了\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint *make_box(int value) {\n    /* ① 现租一间仓库，租完先看一眼是不是空的 */\n    /* ② 把 value 装进去，把牌子递回来 */\n\n}\n\nint main(void) {\n    /* ③ 喊它，投喂 7；拿到牌子先看一眼 */\n    /* ④ 印「盒子里装着 7」 */\n    /* ⑤ 还掉，把牌子擦空 */\n    /* ⑥ 印「还掉之后，牌子也收起来了」 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint *make_box(int value) {\n    int *p = (int *)malloc(sizeof(int));\n    if (p == NULL) {\n        return NULL;\n    }\n    *p = value;\n    return p;\n}\n\nint main(void) {\n    int *box = make_box(7);\n    if (box == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 1;\n    }\n    printf(\"盒子里装着 %d\\n\", *box);\n    free(box);\n    box = NULL;\n    printf(\"还掉之后，牌子也收起来了\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "盒子里装着 7\n还掉之后，牌子也收起来了",
+      "stdin": null,
+      "explanation": "这一题挣来的是**租来的仓库**和**碗摞**之间那条界限喵。\n\n**① 为什么不能把仓库造在招式里。** 招式里现造的那间仓库住在碗摞上，招式一出门那层碗就收走了。可你要把牌子递出去给 `main` 接着用 —— 牌子递到手的工夫，那间仓库**已经不归你管**了。想让它活过招式这一趟，就得**现租**：租来的仓库不跟着招式出门。\n\n**② 租完先看一眼。** `malloc` 递回来的牌子有可能是**空牌子**（`NULL`），地方不是随时都有。空牌子上什么都没有，伸手去摸就会摔 —— 所以递回来之前看一眼，拿到手之后再看一眼。\n\n**③ 租来的仓库不会自己消失。** 这是它和碗摞最大的不同：碗摞上的东西**自动**来、**自动**走；租来的这间得你**自己**还。所以 `main` 里那句 `free(box)` 一个字都不能省，还完顺手把牌子擦成 `NULL` —— 还掉的牌子别再拿来用。\n\n一句话收尾：**要让牌子活着出门，就得把仓库租在活得更久的那间屋里**；代价是，这份租金得你自己记着还喵。",
+      "templateId": "c-s3-mem-heap-box",
+      "params": {
+        "v": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:40.527Z",
+        "hash": "6b1a2ca60a5f9bda"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-missing-static-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要一只**会记事**的发号器：喊它一次就发一个号，下一次得**接着往下发**。\n\n可现在它每次发的都是同一个号 —— 喊到第几次，报出来都是 1。\n\n请你把缺的东西补上。`main` 里那个圈会从 1 转到 **3**，每转一次喊它一声。改好之后要**第几次喊就报几**：第 1 次报 1、第 2 次报 2，一路报到第 3 次报 3。",
+      "brokenCode": "#include <stdio.h>\n\nint next_id(void) {\n    int counter = 0;\n    counter++;\n    return counter;\n}\n\nint main(void) {\n    for (int i = 1; i <= 3; i++) {\n        printf(\"第 %d 次：%d\\n\", i, next_id());\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint next_id(void) {\n    static int counter = 0;\n    counter++;\n    return counter;\n}\n\nint main(void) {\n    for (int i = 1; i <= 3; i++) {\n        printf(\"第 %d 次：%d\\n\", i, next_id());\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 1 次：1\n第 2 次：2\n第 3 次：3",
+      "stdin": null,
+      "explanation": "缺的就是 `static` 这两个字喵。\n\n`int counter = 0;` 这间仓库写在招式**里面**、又没被 `static` 点过名，它住在**一摞叠起来的猫粮碗**上。翻译官喵给每只进门干活的猫摆一层碗 —— **每喊一次招式，那层碗就重新摆过一遍**。所以那句 `counter = 0` 每次进门都重来，加了一之后当然永远是 1。\n\n`static` 这两个字的全部本事，就是把这间仓库从碗摞**搬进门口那排上了锁的固定储物柜**：固定柜在程序一开跑就摆好，**只此一份、从头活到尾**。搬过去之后，`counter = 0` 这辈子只做一次，往后每进一次门它就在上次的数上再往上加一。\n\n本喵两边都真跑过：**加上**这两个字，报出来是 `第 1 次：1`、`第 2 次：2`、`第 3 次：3`（转到几就报到几）；**不加**，转几次都报 1。\n\n⚠️ 最坑的一点：**不加它，翻译官喵一个字都不会说**。本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，跑起来也不摔 —— 它只是**答错了**。所以这种「记性」上的毛病，翻译官喵帮不了你，只能自己盯着喵。",
+      "templateId": "c-s3-mem-missing-static",
+      "params": {
+        "k": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:31.576Z",
+        "hash": "781c292f417def9e"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-missing-static-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要一只**会记事**的发号器：喊它一次就发一个号，下一次得**接着往下发**。\n\n可现在它每次发的都是同一个号 —— 喊到第几次，报出来都是 1。\n\n请你把缺的东西补上。`main` 里那个圈会从 1 转到 **4**，每转一次喊它一声。改好之后要**第几次喊就报几**：第 1 次报 1、第 2 次报 2，一路报到第 4 次报 4。",
+      "brokenCode": "#include <stdio.h>\n\nint next_id(void) {\n    int counter = 0;\n    counter++;\n    return counter;\n}\n\nint main(void) {\n    for (int i = 1; i <= 4; i++) {\n        printf(\"第 %d 次：%d\\n\", i, next_id());\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint next_id(void) {\n    static int counter = 0;\n    counter++;\n    return counter;\n}\n\nint main(void) {\n    for (int i = 1; i <= 4; i++) {\n        printf(\"第 %d 次：%d\\n\", i, next_id());\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 1 次：1\n第 2 次：2\n第 3 次：3\n第 4 次：4",
+      "stdin": null,
+      "explanation": "缺的就是 `static` 这两个字喵。\n\n`int counter = 0;` 这间仓库写在招式**里面**、又没被 `static` 点过名，它住在**一摞叠起来的猫粮碗**上。翻译官喵给每只进门干活的猫摆一层碗 —— **每喊一次招式，那层碗就重新摆过一遍**。所以那句 `counter = 0` 每次进门都重来，加了一之后当然永远是 1。\n\n`static` 这两个字的全部本事，就是把这间仓库从碗摞**搬进门口那排上了锁的固定储物柜**：固定柜在程序一开跑就摆好，**只此一份、从头活到尾**。搬过去之后，`counter = 0` 这辈子只做一次，往后每进一次门它就在上次的数上再往上加一。\n\n本喵两边都真跑过：**加上**这两个字，报出来是 `第 1 次：1`、`第 2 次：2`、`第 3 次：3`（转到几就报到几）；**不加**，转几次都报 1。\n\n⚠️ 最坑的一点：**不加它，翻译官喵一个字都不会说**。本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，跑起来也不摔 —— 它只是**答错了**。所以这种「记性」上的毛病，翻译官喵帮不了你，只能自己盯着喵。",
+      "templateId": "c-s3-mem-missing-static",
+      "params": {
+        "k": 4
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:33.403Z",
+        "hash": "d39ac211f2f5560a"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-ret-local-crash-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵写了一个招式，想在里头**现造一间仓库**把数装好，再把写着仓库地址的牌子递出来给 `main` 用。\n\n翻译官喵这次**没拦路** —— 它只在旁边嘀咕了一句 `warning:` 开头的字，编译照样过。可程序一跑就**当场摔了**，屏幕上一个字都没印出来。\n\n请你把这段改好。改好之后该印**两行**：\n\n```text\n盒子里装着 42\n还掉之后，牌子也收起来了\n```\n\n⚠️ 这一回不许再把住在那层碗摞上的仓库的牌子递出去 —— 要改成**现要现租**一间，并且用完了**自己还**。",
+      "brokenCode": "#include <stdio.h>\n\nint *give_me_a_number(void) {\n    int local = 42;\n    return &local;\n}\n\nint main(void) {\n    int *box = give_me_a_number();\n    printf(\"盒子里装着 %d\\n\", *box);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\nint *give_me_a_number(void) {\n    int *local = (int *)malloc(sizeof(int));\n    if (local == NULL) {\n        return NULL;\n    }\n    *local = 42;\n    return local;\n}\n\nint main(void) {\n    int *box = give_me_a_number();\n    if (box == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 1;\n    }\n    printf(\"盒子里装着 %d\\n\", *box);\n    free(box);\n    box = NULL;\n    printf(\"还掉之后，牌子也收起来了\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "盒子里装着 42\n还掉之后，牌子也收起来了",
+      "stdin": null,
+      "explanation": "问题出在**那间仓库住在哪**喵。\n\n`int local = 42;` 这间仓库写在招式**里面**，它住在**一摞叠起来的猫粮碗**上 —— 招式一出门，那层碗当场就被收走了。可这招偏偏把它的牌子（`&local`）递了出去：牌子看着好好的，牌子指的那间仓库**早就换主人了**。\n\n翻译官喵其实**看见了**。本喵真跑时它的原话是：\n\n```text\nwarning: function returns address of local variable [-Wreturn-local-addr]\n```\n\n翻过来就是「你把碗摞上那间仓库的地址递出去了」。但它**只是警告**：编译照样过、编译出来的程序照样能起。本喵这段代码真跑了一遍，退出码是 `3221225477`，意思是「踩到了不属于自己的地方」—— **一个字都没印出来就摔了**。\n\n⚠️ 换一位翻译官喵、换一个优化档，也可能先印出一个看着挺对的小数字再摔。**这两种结果都不能信**：那间仓库早就不归你管了。\n\n改法就是把仓库从碗摞搬到现要现租的那间屋：\n\n```text\nint *local = (int *)malloc(sizeof(int));\n```\n\n租来的仓库**不跟着招式出门**，所以牌子能放心递出去。可它也**不会自己消失** —— 所以 `main` 里那句 `free(box)` 一个字都不能省，这就是这一题最后那一行的来历。还完顺手把牌子擦成 `NULL`，还掉的牌子别再拿来用喵。",
+      "templateId": "c-s3-mem-ret-local-crash",
+      "params": {
+        "v": "42"
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:27.834Z",
+        "hash": "01e5b33281adba65"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-ret-local-crash-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵写了一个招式，想在里头**现造一间仓库**把数装好，再把写着仓库地址的牌子递出来给 `main` 用。\n\n翻译官喵这次**没拦路** —— 它只在旁边嘀咕了一句 `warning:` 开头的字，编译照样过。可程序一跑就**当场摔了**，屏幕上一个字都没印出来。\n\n请你把这段改好。改好之后该印**两行**：\n\n```text\n盒子里装着 7\n还掉之后，牌子也收起来了\n```\n\n⚠️ 这一回不许再把住在那层碗摞上的仓库的牌子递出去 —— 要改成**现要现租**一间，并且用完了**自己还**。",
+      "brokenCode": "#include <stdio.h>\n\nint *give_me_a_number(void) {\n    int local = 7;\n    return &local;\n}\n\nint main(void) {\n    int *box = give_me_a_number();\n    printf(\"盒子里装着 %d\\n\", *box);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\nint *give_me_a_number(void) {\n    int *local = (int *)malloc(sizeof(int));\n    if (local == NULL) {\n        return NULL;\n    }\n    *local = 7;\n    return local;\n}\n\nint main(void) {\n    int *box = give_me_a_number();\n    if (box == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 1;\n    }\n    printf(\"盒子里装着 %d\\n\", *box);\n    free(box);\n    box = NULL;\n    printf(\"还掉之后，牌子也收起来了\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "盒子里装着 7\n还掉之后，牌子也收起来了",
+      "stdin": null,
+      "explanation": "问题出在**那间仓库住在哪**喵。\n\n`int local = 7;` 这间仓库写在招式**里面**，它住在**一摞叠起来的猫粮碗**上 —— 招式一出门，那层碗当场就被收走了。可这招偏偏把它的牌子（`&local`）递了出去：牌子看着好好的，牌子指的那间仓库**早就换主人了**。\n\n翻译官喵其实**看见了**。本喵真跑时它的原话是：\n\n```text\nwarning: function returns address of local variable [-Wreturn-local-addr]\n```\n\n翻过来就是「你把碗摞上那间仓库的地址递出去了」。但它**只是警告**：编译照样过、编译出来的程序照样能起。本喵这段代码真跑了一遍，退出码是 `3221225477`，意思是「踩到了不属于自己的地方」—— **一个字都没印出来就摔了**。\n\n⚠️ 换一位翻译官喵、换一个优化档，也可能先印出一个看着挺对的小数字再摔。**这两种结果都不能信**：那间仓库早就不归你管了。\n\n改法就是把仓库从碗摞搬到现要现租的那间屋：\n\n```text\nint *local = (int *)malloc(sizeof(int));\n```\n\n租来的仓库**不跟着招式出门**，所以牌子能放心递出去。可它也**不会自己消失** —— 所以 `main` 里那句 `free(box)` 一个字都不能省，这就是这一题最后那一行的来历。还完顺手把牌子擦成 `NULL`，还掉的牌子别再拿来用喵。",
+      "templateId": "c-s3-mem-ret-local-crash",
+      "params": {
+        "v": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:29.605Z",
+        "hash": "22a551fb708c5f34"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-shared-bowl-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要三只**够得着同一间碗**的招式：一只往里放，一只往外拿，一只报数。\n\n请你写：\n\n1. 招式**外面**摆一间整数仓库 `bowl`，出场是 0。\n2. `put_in(int n)`：把 `n` 加到 `bowl` 上，别的什么都不做。\n3. `eat_one(void)`：把 `bowl` 减掉 1。\n4. `peek(void)`：把 `bowl` 现在的数答回来。\n5. `main` 里按这个次序做三件事，一件事印一行：\n   - 投喂 **5** 进 `put_in`，印 `放进 5 条，碗里 5 条`；\n   - 连喊 **2 次** `eat_one`，印一行 `吃掉 2 条，碗里 （吃剩的数） 条`；\n   - 投喂 **2** 进 `put_in`，印一行 `再放进 2 条，碗里 （最后的数） 条`。\n\n该印出来是**三行**：\n\n```text\n放进 5 条，碗里 5 条\n吃掉 2 条，碗里 ？条\n再放进 2 条，碗里 ？条\n```\n\n（两个问号是**一路加加减减算到那一步**的数，本喵故意不告诉你喵。）",
+      "starter": "#include <stdio.h>\n\n/* ① 招式外面摆一间碗 */\n\n/* ② 往里放 */\n\n/* ③ 往外拿 */\n\n/* ④ 报数 */\n\nint main(void) {\n    /* ⑤ 按次序做三件事，一件事印一行 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint bowl = 0;\n\nvoid put_in(int n) {\n    bowl = bowl + n;\n}\n\nvoid eat_one(void) {\n    bowl = bowl - 1;\n}\n\nint peek(void) {\n    return bowl;\n}\n\nint main(void) {\n    put_in(5);\n    printf(\"放进 5 条，碗里 %d 条\\n\", peek());\n    eat_one();\n    eat_one();\n    printf(\"吃掉 2 条，碗里 %d 条\\n\", peek());\n    put_in(2);\n    printf(\"再放进 2 条，碗里 %d 条\\n\", peek());\n    return 0;\n}\n",
+      "expectedOutput": "放进 5 条，碗里 5 条\n吃掉 2 条，碗里 3 条\n再放进 2 条，碗里 5 条",
+      "stdin": null,
+      "explanation": "这一题只有一句话：**要三只招式共用一样东西，那样东西就得摆在招式外面。**\n\n你把 `bowl` 写在招式外面，它住进**固定柜**：程序一开跑就摆好，一直摆到程序结束，而且**每一只招式都够得着它**。所以 `put_in` 加的、`eat_one` 减的、`peek` 报的，从头到尾都是**同一间碗** —— 三只招式之间就这样传上了话。\n\n本喵特意把「放」「拿」「报」拆成三招，就是想让你看清这件事：**拆成几招都行，只要那间碗在招式外面**，它们看到的就是同一间。\n\n⚠️ 反面本喵也真跑过一遍：要是把 `bowl` 写进每一招**里面**（三只招式各摆一间自己的碗），本喵拿 `-Wall` 编的时候翻译官喵**一声没吭**、跑起来也不摔 —— 可三行全印 `碗里 0 条`。因为那时候每一招都在跟自己那间碗说话，它们**从来没见过面**。\n\n一句话收尾：**招式之间要共享的东西，只能摆在招式外面。** 摆错了不报错，只是各自为政喵。",
+      "templateId": "c-s3-mem-shared-bowl",
+      "params": {
+        "a": 5,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:44.828Z",
+        "hash": "203805dcba29d4bf"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-shared-bowl-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要三只**够得着同一间碗**的招式：一只往里放，一只往外拿，一只报数。\n\n请你写：\n\n1. 招式**外面**摆一间整数仓库 `bowl`，出场是 0。\n2. `put_in(int n)`：把 `n` 加到 `bowl` 上，别的什么都不做。\n3. `eat_one(void)`：把 `bowl` 减掉 1。\n4. `peek(void)`：把 `bowl` 现在的数答回来。\n5. `main` 里按这个次序做三件事，一件事印一行：\n   - 投喂 **5** 进 `put_in`，印 `放进 5 条，碗里 5 条`；\n   - 连喊 **2 次** `eat_one`，印一行 `吃掉 2 条，碗里 （吃剩的数） 条`；\n   - 投喂 **4** 进 `put_in`，印一行 `再放进 4 条，碗里 （最后的数） 条`。\n\n该印出来是**三行**：\n\n```text\n放进 5 条，碗里 5 条\n吃掉 2 条，碗里 ？条\n再放进 4 条，碗里 ？条\n```\n\n（两个问号是**一路加加减减算到那一步**的数，本喵故意不告诉你喵。）",
+      "starter": "#include <stdio.h>\n\n/* ① 招式外面摆一间碗 */\n\n/* ② 往里放 */\n\n/* ③ 往外拿 */\n\n/* ④ 报数 */\n\nint main(void) {\n    /* ⑤ 按次序做三件事，一件事印一行 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint bowl = 0;\n\nvoid put_in(int n) {\n    bowl = bowl + n;\n}\n\nvoid eat_one(void) {\n    bowl = bowl - 1;\n}\n\nint peek(void) {\n    return bowl;\n}\n\nint main(void) {\n    put_in(5);\n    printf(\"放进 5 条，碗里 %d 条\\n\", peek());\n    eat_one();\n    eat_one();\n    printf(\"吃掉 2 条，碗里 %d 条\\n\", peek());\n    put_in(4);\n    printf(\"再放进 4 条，碗里 %d 条\\n\", peek());\n    return 0;\n}\n",
+      "expectedOutput": "放进 5 条，碗里 5 条\n吃掉 2 条，碗里 3 条\n再放进 4 条，碗里 7 条",
+      "stdin": null,
+      "explanation": "这一题只有一句话：**要三只招式共用一样东西，那样东西就得摆在招式外面。**\n\n你把 `bowl` 写在招式外面，它住进**固定柜**：程序一开跑就摆好，一直摆到程序结束，而且**每一只招式都够得着它**。所以 `put_in` 加的、`eat_one` 减的、`peek` 报的，从头到尾都是**同一间碗** —— 三只招式之间就这样传上了话。\n\n本喵特意把「放」「拿」「报」拆成三招，就是想让你看清这件事：**拆成几招都行，只要那间碗在招式外面**，它们看到的就是同一间。\n\n⚠️ 反面本喵也真跑过一遍：要是把 `bowl` 写进每一招**里面**（三只招式各摆一间自己的碗），本喵拿 `-Wall` 编的时候翻译官喵**一声没吭**、跑起来也不摔 —— 可三行全印 `碗里 0 条`。因为那时候每一招都在跟自己那间碗说话，它们**从来没见过面**。\n\n一句话收尾：**招式之间要共享的东西，只能摆在招式外面。** 摆错了不报错，只是各自为政喵。",
+      "templateId": "c-s3-mem-shared-bowl",
+      "params": {
+        "a": 5,
+        "b": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:05.437Z",
+        "hash": "f2494a1b274f839d"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-shared-bowl-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要三只**够得着同一间碗**的招式：一只往里放，一只往外拿，一只报数。\n\n请你写：\n\n1. 招式**外面**摆一间整数仓库 `bowl`，出场是 0。\n2. `put_in(int n)`：把 `n` 加到 `bowl` 上，别的什么都不做。\n3. `eat_one(void)`：把 `bowl` 减掉 1。\n4. `peek(void)`：把 `bowl` 现在的数答回来。\n5. `main` 里按这个次序做三件事，一件事印一行：\n   - 投喂 **6** 进 `put_in`，印 `放进 6 条，碗里 6 条`；\n   - 连喊 **2 次** `eat_one`，印一行 `吃掉 2 条，碗里 （吃剩的数） 条`；\n   - 投喂 **2** 进 `put_in`，印一行 `再放进 2 条，碗里 （最后的数） 条`。\n\n该印出来是**三行**：\n\n```text\n放进 6 条，碗里 6 条\n吃掉 2 条，碗里 ？条\n再放进 2 条，碗里 ？条\n```\n\n（两个问号是**一路加加减减算到那一步**的数，本喵故意不告诉你喵。）",
+      "starter": "#include <stdio.h>\n\n/* ① 招式外面摆一间碗 */\n\n/* ② 往里放 */\n\n/* ③ 往外拿 */\n\n/* ④ 报数 */\n\nint main(void) {\n    /* ⑤ 按次序做三件事，一件事印一行 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint bowl = 0;\n\nvoid put_in(int n) {\n    bowl = bowl + n;\n}\n\nvoid eat_one(void) {\n    bowl = bowl - 1;\n}\n\nint peek(void) {\n    return bowl;\n}\n\nint main(void) {\n    put_in(6);\n    printf(\"放进 6 条，碗里 %d 条\\n\", peek());\n    eat_one();\n    eat_one();\n    printf(\"吃掉 2 条，碗里 %d 条\\n\", peek());\n    put_in(2);\n    printf(\"再放进 2 条，碗里 %d 条\\n\", peek());\n    return 0;\n}\n",
+      "expectedOutput": "放进 6 条，碗里 6 条\n吃掉 2 条，碗里 4 条\n再放进 2 条，碗里 6 条",
+      "stdin": null,
+      "explanation": "这一题只有一句话：**要三只招式共用一样东西，那样东西就得摆在招式外面。**\n\n你把 `bowl` 写在招式外面，它住进**固定柜**：程序一开跑就摆好，一直摆到程序结束，而且**每一只招式都够得着它**。所以 `put_in` 加的、`eat_one` 减的、`peek` 报的，从头到尾都是**同一间碗** —— 三只招式之间就这样传上了话。\n\n本喵特意把「放」「拿」「报」拆成三招，就是想让你看清这件事：**拆成几招都行，只要那间碗在招式外面**，它们看到的就是同一间。\n\n⚠️ 反面本喵也真跑过一遍：要是把 `bowl` 写进每一招**里面**（三只招式各摆一间自己的碗），本喵拿 `-Wall` 编的时候翻译官喵**一声没吭**、跑起来也不摔 —— 可三行全印 `碗里 0 条`。因为那时候每一招都在跟自己那间碗说话，它们**从来没见过面**。\n\n一句话收尾：**招式之间要共享的东西，只能摆在招式外面。** 摆错了不报错，只是各自为政喵。",
+      "templateId": "c-s3-mem-shared-bowl",
+      "params": {
+        "a": 6,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:07.670Z",
+        "hash": "4949d9c0991e2ab9"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-shared-bowl-005",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要三只**够得着同一间碗**的招式：一只往里放，一只往外拿，一只报数。\n\n请你写：\n\n1. 招式**外面**摆一间整数仓库 `bowl`，出场是 0。\n2. `put_in(int n)`：把 `n` 加到 `bowl` 上，别的什么都不做。\n3. `eat_one(void)`：把 `bowl` 减掉 1。\n4. `peek(void)`：把 `bowl` 现在的数答回来。\n5. `main` 里按这个次序做三件事，一件事印一行：\n   - 投喂 **6** 进 `put_in`，印 `放进 6 条，碗里 6 条`；\n   - 连喊 **2 次** `eat_one`，印一行 `吃掉 2 条，碗里 （吃剩的数） 条`；\n   - 投喂 **4** 进 `put_in`，印一行 `再放进 4 条，碗里 （最后的数） 条`。\n\n该印出来是**三行**：\n\n```text\n放进 6 条，碗里 6 条\n吃掉 2 条，碗里 ？条\n再放进 4 条，碗里 ？条\n```\n\n（两个问号是**一路加加减减算到那一步**的数，本喵故意不告诉你喵。）",
+      "starter": "#include <stdio.h>\n\n/* ① 招式外面摆一间碗 */\n\n/* ② 往里放 */\n\n/* ③ 往外拿 */\n\n/* ④ 报数 */\n\nint main(void) {\n    /* ⑤ 按次序做三件事，一件事印一行 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint bowl = 0;\n\nvoid put_in(int n) {\n    bowl = bowl + n;\n}\n\nvoid eat_one(void) {\n    bowl = bowl - 1;\n}\n\nint peek(void) {\n    return bowl;\n}\n\nint main(void) {\n    put_in(6);\n    printf(\"放进 6 条，碗里 %d 条\\n\", peek());\n    eat_one();\n    eat_one();\n    printf(\"吃掉 2 条，碗里 %d 条\\n\", peek());\n    put_in(4);\n    printf(\"再放进 4 条，碗里 %d 条\\n\", peek());\n    return 0;\n}\n",
+      "expectedOutput": "放进 6 条，碗里 6 条\n吃掉 2 条，碗里 4 条\n再放进 4 条，碗里 8 条",
+      "stdin": null,
+      "explanation": "这一题只有一句话：**要三只招式共用一样东西，那样东西就得摆在招式外面。**\n\n你把 `bowl` 写在招式外面，它住进**固定柜**：程序一开跑就摆好，一直摆到程序结束，而且**每一只招式都够得着它**。所以 `put_in` 加的、`eat_one` 减的、`peek` 报的，从头到尾都是**同一间碗** —— 三只招式之间就这样传上了话。\n\n本喵特意把「放」「拿」「报」拆成三招，就是想让你看清这件事：**拆成几招都行，只要那间碗在招式外面**，它们看到的就是同一间。\n\n⚠️ 反面本喵也真跑过一遍：要是把 `bowl` 写进每一招**里面**（三只招式各摆一间自己的碗），本喵拿 `-Wall` 编的时候翻译官喵**一声没吭**、跑起来也不摔 —— 可三行全印 `碗里 0 条`。因为那时候每一招都在跟自己那间碗说话，它们**从来没见过面**。\n\n一句话收尾：**招式之间要共享的东西，只能摆在招式外面。** 摆错了不报错，只是各自为政喵。",
+      "templateId": "c-s3-mem-shared-bowl",
+      "params": {
+        "a": 6,
+        "b": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:09.933Z",
+        "hash": "eaaa160a8dfd46a1"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-shared-bowl-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要三只**够得着同一间碗**的招式：一只往里放，一只往外拿，一只报数。\n\n请你写：\n\n1. 招式**外面**摆一间整数仓库 `bowl`，出场是 0。\n2. `put_in(int n)`：把 `n` 加到 `bowl` 上，别的什么都不做。\n3. `eat_one(void)`：把 `bowl` 减掉 1。\n4. `peek(void)`：把 `bowl` 现在的数答回来。\n5. `main` 里按这个次序做三件事，一件事印一行：\n   - 投喂 **7** 进 `put_in`，印 `放进 7 条，碗里 7 条`；\n   - 连喊 **2 次** `eat_one`，印一行 `吃掉 2 条，碗里 （吃剩的数） 条`；\n   - 投喂 **2** 进 `put_in`，印一行 `再放进 2 条，碗里 （最后的数） 条`。\n\n该印出来是**三行**：\n\n```text\n放进 7 条，碗里 7 条\n吃掉 2 条，碗里 ？条\n再放进 2 条，碗里 ？条\n```\n\n（两个问号是**一路加加减减算到那一步**的数，本喵故意不告诉你喵。）",
+      "starter": "#include <stdio.h>\n\n/* ① 招式外面摆一间碗 */\n\n/* ② 往里放 */\n\n/* ③ 往外拿 */\n\n/* ④ 报数 */\n\nint main(void) {\n    /* ⑤ 按次序做三件事，一件事印一行 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint bowl = 0;\n\nvoid put_in(int n) {\n    bowl = bowl + n;\n}\n\nvoid eat_one(void) {\n    bowl = bowl - 1;\n}\n\nint peek(void) {\n    return bowl;\n}\n\nint main(void) {\n    put_in(7);\n    printf(\"放进 7 条，碗里 %d 条\\n\", peek());\n    eat_one();\n    eat_one();\n    printf(\"吃掉 2 条，碗里 %d 条\\n\", peek());\n    put_in(2);\n    printf(\"再放进 2 条，碗里 %d 条\\n\", peek());\n    return 0;\n}\n",
+      "expectedOutput": "放进 7 条，碗里 7 条\n吃掉 2 条，碗里 5 条\n再放进 2 条，碗里 7 条",
+      "stdin": null,
+      "explanation": "这一题只有一句话：**要三只招式共用一样东西，那样东西就得摆在招式外面。**\n\n你把 `bowl` 写在招式外面，它住进**固定柜**：程序一开跑就摆好，一直摆到程序结束，而且**每一只招式都够得着它**。所以 `put_in` 加的、`eat_one` 减的、`peek` 报的，从头到尾都是**同一间碗** —— 三只招式之间就这样传上了话。\n\n本喵特意把「放」「拿」「报」拆成三招，就是想让你看清这件事：**拆成几招都行，只要那间碗在招式外面**，它们看到的就是同一间。\n\n⚠️ 反面本喵也真跑过一遍：要是把 `bowl` 写进每一招**里面**（三只招式各摆一间自己的碗），本喵拿 `-Wall` 编的时候翻译官喵**一声没吭**、跑起来也不摔 —— 可三行全印 `碗里 0 条`。因为那时候每一招都在跟自己那间碗说话，它们**从来没见过面**。\n\n一句话收尾：**招式之间要共享的东西，只能摆在招式外面。** 摆错了不报错，只是各自为政喵。",
+      "templateId": "c-s3-mem-shared-bowl",
+      "params": {
+        "a": 7,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:12.165Z",
+        "hash": "a178cbde966e90b5"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-shared-bowl-008",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要三只**够得着同一间碗**的招式：一只往里放，一只往外拿，一只报数。\n\n请你写：\n\n1. 招式**外面**摆一间整数仓库 `bowl`，出场是 0。\n2. `put_in(int n)`：把 `n` 加到 `bowl` 上，别的什么都不做。\n3. `eat_one(void)`：把 `bowl` 减掉 1。\n4. `peek(void)`：把 `bowl` 现在的数答回来。\n5. `main` 里按这个次序做三件事，一件事印一行：\n   - 投喂 **7** 进 `put_in`，印 `放进 7 条，碗里 7 条`；\n   - 连喊 **2 次** `eat_one`，印一行 `吃掉 2 条，碗里 （吃剩的数） 条`；\n   - 投喂 **4** 进 `put_in`，印一行 `再放进 4 条，碗里 （最后的数） 条`。\n\n该印出来是**三行**：\n\n```text\n放进 7 条，碗里 7 条\n吃掉 2 条，碗里 ？条\n再放进 4 条，碗里 ？条\n```\n\n（两个问号是**一路加加减减算到那一步**的数，本喵故意不告诉你喵。）",
+      "starter": "#include <stdio.h>\n\n/* ① 招式外面摆一间碗 */\n\n/* ② 往里放 */\n\n/* ③ 往外拿 */\n\n/* ④ 报数 */\n\nint main(void) {\n    /* ⑤ 按次序做三件事，一件事印一行 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint bowl = 0;\n\nvoid put_in(int n) {\n    bowl = bowl + n;\n}\n\nvoid eat_one(void) {\n    bowl = bowl - 1;\n}\n\nint peek(void) {\n    return bowl;\n}\n\nint main(void) {\n    put_in(7);\n    printf(\"放进 7 条，碗里 %d 条\\n\", peek());\n    eat_one();\n    eat_one();\n    printf(\"吃掉 2 条，碗里 %d 条\\n\", peek());\n    put_in(4);\n    printf(\"再放进 4 条，碗里 %d 条\\n\", peek());\n    return 0;\n}\n",
+      "expectedOutput": "放进 7 条，碗里 7 条\n吃掉 2 条，碗里 5 条\n再放进 4 条，碗里 9 条",
+      "stdin": null,
+      "explanation": "这一题只有一句话：**要三只招式共用一样东西，那样东西就得摆在招式外面。**\n\n你把 `bowl` 写在招式外面，它住进**固定柜**：程序一开跑就摆好，一直摆到程序结束，而且**每一只招式都够得着它**。所以 `put_in` 加的、`eat_one` 减的、`peek` 报的，从头到尾都是**同一间碗** —— 三只招式之间就这样传上了话。\n\n本喵特意把「放」「拿」「报」拆成三招，就是想让你看清这件事：**拆成几招都行，只要那间碗在招式外面**，它们看到的就是同一间。\n\n⚠️ 反面本喵也真跑过一遍：要是把 `bowl` 写进每一招**里面**（三只招式各摆一间自己的碗），本喵拿 `-Wall` 编的时候翻译官喵**一声没吭**、跑起来也不摔 —— 可三行全印 `碗里 0 条`。因为那时候每一招都在跟自己那间碗说话，它们**从来没见过面**。\n\n一句话收尾：**招式之间要共享的东西，只能摆在招式外面。** 摆错了不报错，只是各自为政喵。",
+      "templateId": "c-s3-mem-shared-bowl",
+      "params": {
+        "a": 7,
+        "b": 4
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:46.066Z",
+        "hash": "29cdad9151b2ead8"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-three-rooms-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想亲眼看看三间屋子的脾气差在哪。请你写一个招式 `report`，要它**每次进门都印一行**，一行上报三个数：\n\n1. 一个**只摆一份、从头活到尾**的小记号 `visits` —— 进一次门往上加一，所以它报出来就是「本喵第几次进门」。\n2. 一个**每次进门都新摆一间**的小记号 `here` —— 进门加一，所以它报出来**永远都是 1**。\n3. 一个写在招式**外面**、出场是 0 的总数 `g_count` —— 进一次门往上加 **1**。\n\n`main` 里连喊 **3 次**，中间什么都不做。三行该长这个样子：\n\n```text\n第 1 次进门：固定柜里的 visits = 1，碗摞上的 here = 1，全局 g_count = 1\n```\n\n（这是头一行。后两行照这个样子往下走：`visits` 一次比一次多一，`here` 一直是 1，`g_count` 一次加一个 1。）\n\n三行里的三个数用**一个** `printf` 印在一行上就行。",
+      "starter": "#include <stdio.h>\n\nint g_count = 0;\n\nvoid report(void) {\n    /* ① 固定柜里的 visits：只摆一份，从头活到尾 */\n    /* ② 碗摞上的 here：每次进门都新摆一间 */\n    /* ③ 往 g_count 上加 1 */\n    /* ④ 三个数印在一行上 */\n\n}\n\nint main(void) {\n    report();\n    report();\n    report();\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint g_count = 0;\n\nvoid report(void) {\n    static int visits = 0;\n    int here = 0;\n    visits++;\n    here++;\n    g_count = g_count + 1;\n    printf(\"第 %d 次进门：固定柜里的 visits = %d，碗摞上的 here = %d，全局 g_count = %d\\n\",\n           visits, visits, here, g_count);\n}\n\nint main(void) {\n    report();\n    report();\n    report();\n    return 0;\n}\n",
+      "expectedOutput": "第 1 次进门：固定柜里的 visits = 1，碗摞上的 here = 1，全局 g_count = 1\n第 2 次进门：固定柜里的 visits = 2，碗摞上的 here = 1，全局 g_count = 2\n第 3 次进门：固定柜里的 visits = 3，碗摞上的 here = 1，全局 g_count = 3",
+      "stdin": null,
+      "explanation": "三个数就是三间屋子的身份证喵 —— 一行之内，脾气全露出来了。\n\n**① `static int visits` —— 住固定柜。** 这两个字把它从碗摞搬进了固定柜：**只此一份、从头活到尾**。所以它记着「进过几次门」，一次比一次多一。\n\n**② `int here` —— 住在碗摞上。** 每喊一次 `report`，翻译官喵就给它摆一层新碗；招式一出门那层碗就收走。所以那句 `here = 0` 每回都重来一遍，加一之后永远是 1 —— 它**根本没有记性**可言。\n\n**③ `int g_count` —— 写在招式外面，住固定柜，而且谁都够得着。** 它和 `visits` 住同一间屋，区别只有一条：写在招式外面，所以**每一招、每一次调用**看到的都是同一间仓库。进一次门加 1，于是 1、2、3 次进门报出来是 `1`、1 的两倍、1 的三倍。\n\n看出来了吗：**`visits` 和 `here` 的唯一差别是那两个字 `static`，`visits` 和 `g_count` 的唯一差别是写在招式里面还是外面。** 三间屋子怎么挑，就看你要的东西活多久、谁该看得见它。\n\n⚠️ 顺带记一笔：`here` 这种「每次进门重新摆」的仓库，翻译官喵也不觉得有什么问题 —— 它不报错、不警告，只是**没记性**而已。该不该有记性是你的事，不是它的事喵。",
+      "templateId": "c-s3-mem-three-rooms",
+      "params": {
+        "step": 1
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:42.106Z",
+        "hash": "911c81037b3f0faf"
+      }
+    },
+    {
+      "id": "bank-c-s3-mem-three-rooms-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想亲眼看看三间屋子的脾气差在哪。请你写一个招式 `report`，要它**每次进门都印一行**，一行上报三个数：\n\n1. 一个**只摆一份、从头活到尾**的小记号 `visits` —— 进一次门往上加一，所以它报出来就是「本喵第几次进门」。\n2. 一个**每次进门都新摆一间**的小记号 `here` —— 进门加一，所以它报出来**永远都是 1**。\n3. 一个写在招式**外面**、出场是 0 的总数 `g_count` —— 进一次门往上加 **2**。\n\n`main` 里连喊 **3 次**，中间什么都不做。三行该长这个样子：\n\n```text\n第 1 次进门：固定柜里的 visits = 1，碗摞上的 here = 1，全局 g_count = 2\n```\n\n（这是头一行。后两行照这个样子往下走：`visits` 一次比一次多一，`here` 一直是 1，`g_count` 一次加一个 2。）\n\n三行里的三个数用**一个** `printf` 印在一行上就行。",
+      "starter": "#include <stdio.h>\n\nint g_count = 0;\n\nvoid report(void) {\n    /* ① 固定柜里的 visits：只摆一份，从头活到尾 */\n    /* ② 碗摞上的 here：每次进门都新摆一间 */\n    /* ③ 往 g_count 上加 2 */\n    /* ④ 三个数印在一行上 */\n\n}\n\nint main(void) {\n    report();\n    report();\n    report();\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint g_count = 0;\n\nvoid report(void) {\n    static int visits = 0;\n    int here = 0;\n    visits++;\n    here++;\n    g_count = g_count + 2;\n    printf(\"第 %d 次进门：固定柜里的 visits = %d，碗摞上的 here = %d，全局 g_count = %d\\n\",\n           visits, visits, here, g_count);\n}\n\nint main(void) {\n    report();\n    report();\n    report();\n    return 0;\n}\n",
+      "expectedOutput": "第 1 次进门：固定柜里的 visits = 1，碗摞上的 here = 1，全局 g_count = 2\n第 2 次进门：固定柜里的 visits = 2，碗摞上的 here = 1，全局 g_count = 4\n第 3 次进门：固定柜里的 visits = 3，碗摞上的 here = 1，全局 g_count = 6",
+      "stdin": null,
+      "explanation": "三个数就是三间屋子的身份证喵 —— 一行之内，脾气全露出来了。\n\n**① `static int visits` —— 住固定柜。** 这两个字把它从碗摞搬进了固定柜：**只此一份、从头活到尾**。所以它记着「进过几次门」，一次比一次多一。\n\n**② `int here` —— 住在碗摞上。** 每喊一次 `report`，翻译官喵就给它摆一层新碗；招式一出门那层碗就收走。所以那句 `here = 0` 每回都重来一遍，加一之后永远是 1 —— 它**根本没有记性**可言。\n\n**③ `int g_count` —— 写在招式外面，住固定柜，而且谁都够得着。** 它和 `visits` 住同一间屋，区别只有一条：写在招式外面，所以**每一招、每一次调用**看到的都是同一间仓库。进一次门加 2，于是 1、2、3 次进门报出来是 `2`、2 的两倍、2 的三倍。\n\n看出来了吗：**`visits` 和 `here` 的唯一差别是那两个字 `static`，`visits` 和 `g_count` 的唯一差别是写在招式里面还是外面。** 三间屋子怎么挑，就看你要的东西活多久、谁该看得见它。\n\n⚠️ 顺带记一笔：`here` 这种「每次进门重新摆」的仓库，翻译官喵也不觉得有什么问题 —— 它不报错、不警告，只是**没记性**而已。该不该有记性是你的事，不是它的事喵。",
+      "templateId": "c-s3-mem-three-rooms",
+      "params": {
+        "step": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:36:43.386Z",
+        "hash": "16e272c6cc33a745"
+      }
+    }
+  ]
+}

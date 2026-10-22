@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-gdb-paddle-row-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-13",
+  "type": "codewrite",
+  "concept": ["一排猫爪指向牌：每间各留一张", "先租齐再还清", "牌子被顶掉就是漏"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "pick", "values": ["3", "4"] },
+    "s": { "kind": "pick", "values": ["2", "3"] }
+  },
+  "stemTemplate": "本喵要**一次开着好几间**仓库（每间各放一份小鱼干），全部用完，再一间一间还回去。这就得靠**一排猫爪指向牌**喵：每间一张，插在 `room` 这一排的格子里 —— 牌子要是只留一张，第二间租下来就把第一间的地址顶掉了，那第一间就再也找不回来。\n\n请你把 `main` 里那两段补完：\n\n1. **先租齐**：从第 `1` 间数到第 {n} 间，一间一间租（每间够放一个整数就成），把牌子插进这一排的格子里；第 `k` 间里放 `k × {s}`；租好一间就印一行「`[租] 第 k 间，放了 V`」；\n2. **再还清**：从头把每一间过一遍，印一行「`[还] 第 k 间，里头是 V`」，然后把那一间还回去。\n\n改好之后该印 {n} 行「租」、{n} 行「还」，最后再印一行 `收工`。",
+  "starterTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *room[{n}];\n\n    /* ↓ 在这儿写：先一间一间租下来、把牌子插进这一排的格子里；全部用完再一间一间还回去 */\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *room[{n}];\n\n    for (int i = 0; i < {n}; i++) {\n        room[i] = malloc(sizeof(int));\n        if (room[i] == NULL) {\n            return 1;\n        }\n        *room[i] = (i + 1) * {s};\n        printf(\"[租] 第 %d 间，放了 %d\\n\", i + 1, *room[i]);\n    }\n\n    for (int i = 0; i < {n}; i++) {\n        printf(\"[还] 第 %d 间，里头是 %d\\n\", i + 1, *room[i]);\n        free(room[i]);\n    }\n\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "`room` 这一排的每一格里，各插着**一张**牌子喵 —— 第 `i` 格那张写着「第 `i` 间仓库在哪儿」。所以「先租齐、再还清」的写法，必须把租来的每一张牌子都**留着**：留了，后头才找得到每一间。\n\n这也正是课文里那段漏水的病根：牌子只留了一张，租第二间的时候就把第一间的地址顶掉了。两种改法都成 —— ① 像本题这样**把牌子留成一排**；② 每圈**用完当场还**。挑一种，但一定要说得出「每一间都有人记得它在哪儿」这句话。\n\n还有一处要留神：还回去之后那间仓库就**不是你的**了，别再进去翻 —— 这一间里那个数要印出来，就得**还之前**先印（本题的次序就是这个道理）。"
+}

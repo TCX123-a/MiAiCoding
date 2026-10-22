@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-mp-missing-guard",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-04",
+  "type": "codefix",
+  "concept": ["multiprocessing", "Process", "if __name__ == '__main__'", "spawn 重新导入", "启动保护"],
+  "instances": 2,
+  "params": {
+    "nums": { "kind": "pick", "values": ["3, 5, 8", "2, 7, 4", "6, 1, 9"] }
+  },
+  "stemTemplate": "本喵手里有三个数：`{nums}`。想让它们**各平方一下**，派 3 只小猫**分头**去干 —— 一只猫管一个数，算完把结果放进**自己那个位子**里，最后本喵把三个位子**一行一个**念出来喵。\n\n可是这段代码在本喵这台 Windows 上一跑就**摔**，摔完还照印了三行 —— 那三行全是 `0`。你帮本喵修好它。\n\n改好之后要印出**三个平方数**，**一行一个**：第一行是第一个数的平方，第二行是第二个数的平方，第三行是第三个数的平方。（`0` 不算数喵，三个位子都得真填上。）",
+  "brokenCodeTemplate": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = [{nums}]\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\n主流程()\n",
+  "referenceFixTemplate": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = [{nums}]\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\nif __name__ == '__main__':\n    主流程()\n",
+  "explanationTemplate": "这段代码摔的根子不在算术上，而在**它被人从头念了两遍**喵。\n\n在 Windows 上，多进程是用一种「**另开一个新的 Python，把你的文件从头再念一遍**」的办法生孩子的。孩子的头一件事不是干活 —— 是**把你的文件整个再执行一次**。于是那几行 `mp.Process(...)` 又被念到了，孩子也想去生孙子……翻译官喵一看就急了，当场摔了一句 `RuntimeError`，三个位子于是从头到尾都是本喵填的初值 `0`。\n\n拦住它的只有一扇门：\n\n```python\nif __name__ == '__main__':\n    主流程()\n```\n\n这扇门的意思是「**只有这个文件被直接跑起来的时候，门才开**」。你亲手跑的那一次，门开着，活干了；孩子是被「念」出来的，门关着，所以它只把 `平方` 这个招式带走，一个字都不多干。\n\n⚠️ 有个细节千万别弄反：`平方` 这个招式**必须留在门外**。孩子干活时要用它，你把它也关进门里，孩子就找不到它了喵。"
+}

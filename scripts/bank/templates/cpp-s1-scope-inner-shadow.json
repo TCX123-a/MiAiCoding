@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s1-scope-inner-shadow",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-12",
+  "type": "codefix",
+  "concept": ["内层遮住外层", "多写的那个 int 就是另开一只新碗", "编得过但印错的题"],
+  "instances": 2,
+  "params": {
+    "outer": { "kind": "pick", "values": ["3", "6"] },
+    "inner": { "kind": "pick", "values": ["20", "40"] }
+  },
+  "stemTemplate": "本喵想把外面那只 `fish` 碗里的数**换成 {inner}**，再印出来。\n\n目前它里面装的是 {outer}。\n\n这一回翻译官喵**收下了稿子**，可跑出来印的是 {outer} —— 那不对喵。\n\n你帮本喵把出问题的那一处改好：改完印出来的要是 {inner}。碗的名字、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = {outer};\n    {\n        int fish = {inner};\n    }\n    cout << fish << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = {outer};\n    {\n        fish = {inner};\n    }\n    cout << fish << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题坏的地方**编得过**，所以屏幕上没有拦你的红字 —— 只有一句容易被划过去的黄字：\n\n`warning: unused variable 'fish' [-Wunused-variable]`\n\n「开的这只碗没人用」—— 这句话正是在提醒你：大括号里那句 `int fish = {inner};` **开的是一只新碗**，不是外面那只。\n\n同名的两只碗，规矩是**内层遮住外层**喵：大括号里写 `fish`，喊到的是**里面**那只；出了括号，里头那只就跟没开过一样 —— 所以最后印出来的还是外面的 {outer}。\n\n改法只有一处：把里层那个 `int` 去掉，写成 `fish = {inner};` —— 这一句改的是**外面**那只碗（里层喊得到外层），出了括号它还在，印出来就是 {inner}。\n\n⚠️ 记牢这一条喵：**在大括号里写名字，先看清楚是要用外面那只，还是要新开一只。**多写一个 `int`，就是另一只碗了。"
+}

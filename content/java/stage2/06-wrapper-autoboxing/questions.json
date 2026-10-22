@@ -1,0 +1,78 @@
+{
+  "lessonId": "java-stage2-06",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵要把光溜溜的数字塞进一个**只收真猫**的储物柜，`int` 配的那张装数字的图纸叫什么名字？",
+      "options": ["`Integer`", "`Int`", "`int`", "`Character`"],
+      "answer": 0,
+      "explanation": "`int` 那张图纸叫 `Integer`，名字**首字母大写了**，而且是个全名 —— 写成 `Int` 翻译官喵不认识喵。`int` 是光溜溜的家当本身，不是图纸；`Character` 配的是 `char`，只管单个字符不管数字喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写下一句 `Integer boxed = 3;`，翻译官喵在这句里干了什么？",
+      "options": [
+        "自动照图纸生一只真猫，把光溜溜的 `3` 装进它的口袋里",
+        "把 `3` 变成字符串",
+        "把图纸复印一份存起来，数字还是光溜溜的",
+        "什么都没干，这句根本通不过"
+      ],
+      "answer": 0,
+      "explanation": "右边是光溜溜的家当、左边要一只真猫，翻译官喵看见两边对不上，就自己照图纸生一只、把数字装进去 —— 这个动作叫**装箱**喵。它不会把数字变成项链（那是 `toString` 干的活），也不是复印图纸；这句完全合法，程序照跑不误喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵写下 `Integer a = 127;` 和 `Integer b = 127;`，再问一句 `System.out.println(a == b);`，会印出什么？",
+      "options": [
+        "`true` —— 两个都在那批提前备好的小真猫范围内，拿到的是**同一只**",
+        "`false` —— 两次装箱生出来的永远是两只不同的猫",
+        "`127` —— 这一问会把口袋里的数字印出来",
+        "编译就过不去，会当场报错"
+      ],
+      "answer": 0,
+      "explanation": "`==` 问的是「**是不是同一只猫**」，不是「口袋里的数字一不一样」喵。Java 把 -128 到 127 这些常用小数字提前画好了一批真猫放着，谁要装箱就发同一只给它用 —— 所以 `a` 和 `b` 是同一只，答 `true`。出了这个范围才会每次现画新的，那时同样的写法就会变 `false` 喵。这一问不会印数字，也不会报错。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        Integer boxed = 3;\n        int raw = ____;\n        System.out.println(raw + Integer.____(\"39\"));\n    }\n}",
+      "stem": "本喵要把真猫口袋里的数字掏出来给光溜溜的 `raw`，再把纸条上的 `\"39\"` 变成数字跟它相加 —— 两个空白处各填什么？",
+      "blanks": [
+        {
+          "answer": "boxed",
+          "accept": []
+        },
+        {
+          "answer": "parseInt",
+          "accept": []
+        }
+      ],
+      "explanation": "第一处填 `boxed`：光溜溜的家当接一只真猫，Java 会自动**拆箱**，把口袋里的 `3` 掏出来喵。第二处填 `parseInt`：`Integer.parseInt(\"39\")` 是把一串小鱼干项链变成数字的那一招，项链里面得是干干净净的数字才变得成功喵。两处都对上之后印出来是 `42`。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        Integer boxed = 5;\n        int raw = boxed;\n        System.out.println(raw * 2);\n        System.out.println(boxed.equals(5));\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "10\ntrue",
+      "accept": ["10\ntrue\n"],
+      "explanation": "`int raw = boxed;` 先自动拆箱，把 `5` 掏出来给 `raw`，所以 `raw * 2` 是 `10` 喵。第二行问的是 `boxed` 口袋里的数字**是不是等于** `5` —— 比数字一不一样要用 `equals`，答案是 `true` 喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        Integer x = Integer.valueOf(127);\n        Integer y = 127;\n        System.out.println(x == y);\n        System.out.println(x + y);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "true\n254",
+      "accept": ["true\n254\n"],
+      "explanation": "`Integer.valueOf(127)` 和自动装箱做的是同一件事，两个 `127` 都在那批提前备好的小真猫里，所以拿到的是**同一只**，`x == y` 是 `true` 喵。`x + y` 是算式，两边先各自拆箱再相加，`127 + 127` 得 `254` 喵。"
+    }
+  ]
+}

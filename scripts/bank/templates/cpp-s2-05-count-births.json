@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s2-05-count-births",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-05",
+  "type": "codewrite",
+  "concept": ["整张图纸共用的一本账", "出生招式里让它加一", "图纸外面那一行"],
+  "instances": 6,
+  "params": {
+    "nameA": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "nameB": { "kind": "pick", "values": ["狸花", "三花"] },
+    "nameC": { "kind": "pick", "values": ["小白", "煤球"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 3, "min": 1, "max": 9 },
+  "stemTemplate": "本喵想让每只猫**一出生**就在一本**共用的账**上记一笔，这样随时能问出「一共出生了几只」。投喂口会递进来**三个数**（一行一个）：三只猫各自的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，三样家常 —— 一本共用的账 `static int count`、`name` 装一串字、`fish` 装一个整数；\n2. 写一个**出生招式**（名字和条数两样都收）：用出生清单把两样装好，并让那本共用的账**加一**；\n3. 再写**两招**：`static int howMany()`（把那本账叼回来）和 `void show() const`（印一行 `XX 有 N 条`）；\n4. **图纸外面**记得给那本账落地、给个起步的数（这一步最容易漏喵）；\n5. `main` 里照图纸生**三只**猫，名字依次是 `{nameA}`、`{nameB}`、`{nameC}`，条数按顺序用递进来的那三个数；\n6. 最后印**两行**：先一行 `一共出生了 N 只`（N 用静态招式问出来），再让**第一只**猫喊一次 `show`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int count;\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {\n        count = count + 1;\n    }\n\n    static int howMany() {\n        return count;\n    }\n\n    void show() const {\n        cout << name << \" 有 \" << fish << \" 条\" << endl;\n    }\n};\n\nint Cat::count = 0;\n\nint main() {\n    int a = 0;\n    int b = 0;\n    int c = 0;\n    cin >> a >> b >> c;\n\n    Cat c1(\"{nameA}\", a);\n    Cat c2(\"{nameB}\", b);\n    Cat c3(\"{nameC}\", c);\n    cout << \"一共出生了 \" << Cat::howMany() << \" 只\" << endl;\n    c1.show();\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的重点是**那本账只有一份**喵。\n\n- `static int count` 写在图纸里，表示「这一本账**整张图纸共用**」——它不属于任何一只猫；\n- **图纸外面**那一行 `int Cat::count = 0;` 不能少：图纸里那句只是报个名字，得在外面亲手给它落地、给个起步的数。少了它，前面每一句都过得了，直到**把所有零件拼起来那一刻**才炸，原话末尾是 `collect2.exe: error: ld returned 1 exit status`；\n- 出生招式里那句 `count = count + 1;` 每生一只猫就加一 —— 三只猫加三次，所以问出来是 `3`；\n- 问它的招式写成 `static int howMany()`：这件事跟具体哪只猫无关，喊它写成 `Cat::howMany()` 最自然。它肚子里碰共用的那本账完全没问题。\n\n⚠️ 最后一行是**第一只**猫喊 `show` 印出来的，用的还是它自己那格条数。别把两件事写混：共用的那本账只数只数，每只猫的条数各是各的。"
+}

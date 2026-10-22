@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-06-friend-class-vet",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-06",
+  "type": "codewrite",
+  "concept": ["整张图纸开门", "后门不传递", "带盖的格子照样能读"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "这回要开门给**一整张图纸**。投喂口会递进来**一个数**（条数）。\n\n请你这么办：\n\n1. **画两张图纸**。第一张叫 `Cat`：两栏都扣着盖子 —— `name` 装一串字，`fish` 装一个整数，再画一个出生招式把两栏填上；在这个大括号里**加一行**，让**整张 `Vet` 图纸**都能进来。\n2. 第二张叫 `Vet`：里面画**一招** `checkup`，它接进来一只猫（`const Cat&`），直接读盒子里那两栏，印**一行**：\n\n```text\n猫大夫打开 XX 的盒子：N 条，吃得不错喵\n```\n\n3. 在 `main` 里生一只猫：名字叫 `{name}`，条数从投喂口读；再照 `Vet` 图纸生**一位**猫大夫，让这位给那只猫做检查。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    friend class Vet;\n};\n\nclass Vet {\npublic:\n    void checkup(const Cat& c) {\n        cout << \"猫大夫打开 \" << c.name << \" 的盒子：\" << c.fish << \" 条，吃得不错喵\" << endl;\n    }\n};\n\nint main() {\n    int fish = 0;\n    cin >> fish;\n\n    Cat c1(\"{name}\", fish);\n    Vet v;\n    v.checkup(c1);\n    return 0;\n}\n",
+  "explanationTemplate": "这一题练的是**给一整张图纸开门**。\n\n写法只有一处和上一次不同：那一行从「招式」换成了「图纸」——\n\n```text\nfriend class Vet;\n```\n\n意思是「**`Vet` 这张图纸画出来的每一手、画多少手都算数**」，不用一个一个招式写名字。猫大夫图纸里画的 `checkup` 于是够得到 `c.name` 和 `c.fish` 这两格带盖的。\n\n喊法上有个区别值得记一下喵：\n\n- `checkup` 是**画在 `Vet` 图纸上的招式**，所以喊它要「**哪位猫大夫 · 招式名**」——先照图纸生一位猫大夫（`Vet v;`），再 `v.checkup(c1);`。\n- 上一次那个开后门的招式**不是任何图纸上的招式**，所以喊它不写前面的东西，直接把猫递进去。\n\n顺带把本课那条边界再钉一遍：**后门不传递**。`Vet` 开了门，不代表 `Vet` 里面的朋友、或者别的图纸也跟着进来了；要给谁就写谁的名字。"
+}

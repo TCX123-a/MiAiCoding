@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-challenge-flip-word",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-15",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "温柔版指向牌", "改了没生效", "掉头"],
+  "instances": 1,
+  "params": {},
+  "stdinSpec": { "kind": "raw", "text": "dafeiyu", "sampleText": "miaomiao" },
+  "stemTemplate": "本喵有一招 `flip`，专管「**掉头**」：把一个词整个儿倒过来，头尾对调（`abc` 掉头是 `cba`）。\n\n可现在它**喊了跟没喊一样**：喊完 `flip(word)` 再印，印出来的还是原来那个词喵……程序不报错，翻译官喵也不吭声。你帮本喵看看病根在哪。\n\n投喂口给一个词，程序掉完头印一行：`掉头之后是 X 喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个词**喵，别把答案写死。）",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid flip(string word) {\n    int i = 0;\n    int j = (int)word.size() - 1;\n    while (i < j) {\n        char t = word[i];\n        word[i] = word[j];\n        word[j] = t;\n        i++;\n        j--;\n    }\n}\n\nint main() {\n    string word;\n    cin >> word;\n\n    flip(word);\n\n    cout << \"掉头之后是 \" << word << \" 喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid flip(string &word) {\n    int i = 0;\n    int j = (int)word.size() - 1;\n    while (i < j) {\n        char t = word[i];\n        word[i] = word[j];\n        word[j] = t;\n        i++;\n        j--;\n    }\n}\n\nint main() {\n    string word;\n    cin >> word;\n\n    flip(word);\n\n    cout << \"掉头之后是 \" << word << \" 喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "病根在那句喊招式的地方递出去的东西：`flip(word)` 递的是一份**复印件**喵。\n\n`void flip(string word)` 这条招式声明里，`word` 是个**现做的本地名字**：喊它的时候，原来那个词会被**照抄一份**放进去。招式里掉头的动作全都做在那份复印件上 —— 做得再卖力，本喵手里原来那只词**一个字母都没动**。所以「喊了跟没喊一样」，还不报错：它觉得自己干得好好的。\n\n改法只在名字前面加一个小符号：\n\n```cpp\nvoid flip(string &word)\n```\n\n这个 `&` 是**温柔版的指向牌**：它不复制，只给原来那个词**再起一个称呼**。有了它，招式里叫 `word` 的时候够到的就是本喵手里那一只，掉头掉的就是原件。\n\n判据记一句喵：**招式里要动原件，名字前就加 `&`；只看一眼不改，不加更省事。**"
+}

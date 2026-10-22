@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-lock-no-release",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-03",
+  "type": "codefix",
+  "concept": ["threading.Lock", "共享数据", "acquire 与 release 要成对"],
+  "instances": 2,
+  "params": {
+    "m1": { "kind": "pick", "values": [2, 6] },
+    "m2": { "kind": "pick", "values": [3, 5] }
+  },
+  "stemTemplate": "本喵让两只小猫**分别**把各自领到的数记进**同一只大碗**里（一只记 {m1} 条，另一只记 {m2} 条），记完再把碗里的总数报出来。\n\n规矩是**一次只准一只猫伸手**碰这只碗，所以代码里备了一把钥匙（`threading.Lock()`），本喵管它叫 `锁`。\n\n可是这回程序一跑就**卡住不动了** —— 屏幕上什么也不出来，等多久都不出，最后只能硬按停止。你帮本喵看看问题出在哪，把它改好。\n\n改好之后，程序应该把两只猫记的加起来印成一个数。",
+  "brokenCodeTemplate": "import threading\n\n锁 = threading.Lock()\n大碗 = [0]\n\n\ndef 记一笔(数):\n    锁.acquire()\n    大碗[0] = 大碗[0] + 数\n\n\n猫1 = threading.Thread(target=记一笔, args=({m1},))\n猫2 = threading.Thread(target=记一笔, args=({m2},))\n猫1.start()\n猫2.start()\n猫1.join()\n猫2.join()\n\nprint(大碗[0])\n",
+  "referenceFixTemplate": "import threading\n\n锁 = threading.Lock()\n大碗 = [0]\n\n\ndef 记一笔(数):\n    锁.acquire()\n    大碗[0] = 大碗[0] + 数\n    锁.release()\n\n\n猫1 = threading.Thread(target=记一笔, args=({m1},))\n猫2 = threading.Thread(target=记一笔, args=({m2},))\n猫1.start()\n猫2.start()\n猫1.join()\n猫2.join()\n\nprint(大碗[0])\n",
+  "explanationTemplate": "`acquire()` 是「**本喵把钥匙攥住了**」，`release()` 是「**松手，下一位**」—— 这两句**必须成对**喵。\n\n本喵这次只攥不松：第一只小猫攥着钥匙把活干完就走了。⚠️ 注意 **猫走了，钥匙可不会自动松** —— 钥匙还攥在它手里呢。第二只小猫伸手一摸，钥匙不在，只好在门口等着；它这一等就是永远（没人会来松手了）。\n\n而本喵这边在 `join()` 第二只小猫，`join()` 的意思是「等你干完」—— 它永远干不完，本喵就永远等下去。谁也没法往下走，程序就这么**僵住**了。\n\n这类僵局叫**死锁**：它**不是摔**，是「大家一起在等一件永远不会发生的事」。比摔难查得多 —— 摔了至少有红字告诉你哪一行，死锁连一个字都不吐，只在屏幕上留一片安静。\n\n补一句 `锁.release()` 就好。不过写新代码的时候，本喵推荐更省事的写法：**`with 锁:`** —— 进这块的时候自动攥住钥匙，出来的时候自动松开，**哪怕中途摔了也会松开**，不容易漏。"
+}

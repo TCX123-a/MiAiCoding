@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-03-vector-push-front-deque",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-03",
+  "type": "codefix",
+  "concept": ["vector 没有从前面塞的招式", "编不过要换柜子", "两头都能塞的那只"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [3, 6] },
+    "b": { "kind": "pick", "values": [8, 1] },
+    "c": { "kind": "pick", "values": [5, 9] }
+  },
+  "stemTemplate": "本喵想把最新的一条货摆到柜子**最前面**，就照老习惯写了一句「从前面塞」的招式。可这段代码**编不过** —— 翻译官喵拦在了那一句上。\n\n你帮本喵把它改对：柜子里**从前往后**要看到 {a}、{b}、{c}，一格印一行。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> box;\n    box.push_back({b});\n    box.push_back({c});\n    box.push_front({a});\n\n    for (int x : box) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <deque>\nusing namespace std;\n\nint main() {\n    deque<int> box;\n    box.push_back({b});\n    box.push_back({c});\n    box.push_front({a});\n\n    for (int x : box) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的柜子**请错了**喵。\n\n`vector` 的货是**挨着坐**的：想在头一个位置腾出空来，身后每一格都得往后挪一次 —— 所以 C++ 压根不给它「从前面塞」这一招。翻译官喵的原话是 `has no member named 'push_front'`，念作「这只柜子身上没有一位叫 `push_front` 的成员」—— 它拦的不是你手滑打错字，是**这只柜子真的没有这招**。\n\n改法就是把柜子换成**两头都能塞**的那一只：`deque`（或者那只链子柜）。代码里别的字一个都不用动 —— 因为从前面塞的招式，它们本来就有。\n\n⚠️ 别拿 `push_back` 硬凑：那是把货接到**最后面**，这一题要的是「最新的排最前」，位置接错了，印出来的顺序就不对。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s1-overload-same-signature",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-10",
+  "type": "codefix",
+  "concept": ["重载", "签名", "投喂口", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "name2": { "kind": "pick", "values": ["大胖", "雪球"] },
+    "n": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵要给「打招呼」备**三副面孔**喵 —— 三招同叫 `greet`，喂的料不一样：\n\n- 空手喊一声，印 `你好喵～`\n- 喂一个名字，印 `你好，{name1}喵～`\n- 喂一个名字再加一个鱼干数，印 `你好，{name2}，今天 {n} 条喵`\n\n`main` 里三声本喵都喊好了，可这张图纸**翻译官喵压根没收**：它说有一招「写重了」，还说 `main` 里有一句它挑不出该用哪一招。\n\n你帮本喵看看是哪一招跟哪一招撞上了，把撞上的那一招改成它本来该有的样子 —— 三副面孔一副都不许丢喵。改好之后，屏幕上该是这三行：\n\n```text\n你好喵～\n你好，{name1}喵～\n你好，{name2}，今天 {n} 条喵\n```\n\n（`main` 里那三句原本就是照三副面孔写的，一句都不用动～）",
+  "brokenCodeTemplate": "public class Main {\n    public static void greet() {\n        System.out.println(\"你好喵～\");\n    }\n\n    public static void greet(String name) {\n        System.out.println(\"你好，\" + name + \"喵～\");\n    }\n\n    public static void greet(String who) {\n        System.out.println(\"你好，\" + who + \"喵～\");\n    }\n\n    public static void main(String[] args) {\n        greet();\n        greet(\"{name1}\");\n        greet(\"{name2}\", {n});\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void greet() {\n        System.out.println(\"你好喵～\");\n    }\n\n    public static void greet(String name) {\n        System.out.println(\"你好，\" + name + \"喵～\");\n    }\n\n    public static void greet(String who, int fish) {\n        System.out.println(\"你好，\" + who + \"，今天 \" + fish + \" 条喵\");\n    }\n\n    public static void main(String[] args) {\n        greet();\n        greet(\"{name1}\");\n        greet(\"{name2}\", {n});\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `method greet(String) is already defined in class Main` —— 念起来就是「`greet(String)` 这一招在 `Main` 里已经写过了喵」。\n\n电脑认一招，靠的只有**两样**：招名 + 投喂口（几样料、每样什么料）。这两样合起来叫这一招的**签名**。本喵那两招都叫 `greet`、都收一样 `String` 的料，签名一模一样 —— 这时候：\n\n- **料叫什么名字不算数**：一个叫 `name`、一个叫 `who`，翻译官不管。\n- **身子里的干法不算数**：两招印的字不一样，它也不管。\n\n所以第二招想变成「收名字 + 鱼干数」那一副面孔，投喂口就得**真的多出一样料**：`greet(String who, int fish)`。多出这一样之后，三招的签名各不相同，翻译官一眼分得清谁是谁。\n\n下面那句 `no suitable method found for greet(String,int)` 是同一件事的另一面：签名里根本没有「收两样料」的 `greet`（翻译官还贴心地列了一遍 `method Main.greet() is not applicable`、`method Main.greet(String) is not applicable` —— 两招它都数过，个数对不上），而本喵在 `main` 里喂了两样。它不是新毛病，上面那一处改好，它自己就消了喵。"
+}

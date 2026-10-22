@@ -1,0 +1,320 @@
+{
+  "lessonId": "c-stage3-09",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-09-book-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要准备一个小本本，专门伺候这一小段：`aaab`。\n\n规矩是这样的（课文里那只前辈猫定的）：**每一颗珠子都回头看自己这一截**，记下「**这一截的头上那几颗和尾巴那几颗能对上，最长能对上几颗**」；注意**整截自己不算**，至少得留出一颗来。\n\n你要把 `build_book` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 头一颗珠子前面没有东西，记 `0`；\n2. 往后每一颗：**先看看前一颗记的那个长度**，从这个长度接着试；\n3. 试着试着对不上了 → **退回更短的那个长度再试**（短的那个长度在哪一格上记着，自己想想）；\n4. 总算对上了 → 长度加一，记下这一格。\n\n印出来的格式是写死的（`main` 里那两行 `printf` 就是）：第一行 `这一小段：` 后面跟这一小段本身；第二行 `小本本：` 后面把每一格印出来，**每格后面带一个空格**，最后才换行。拿课文里那一段 `aaab` 说，就是这两行：\n\n```text\n这一小段：aaab\n小本本：0 1 2 0\n```\n\n你这一小段是 `aaab`，那串数当然得**照规矩自己算**，别照抄上面这个例子喵。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* 小本本：每一颗都回头看自己这一截，记下「头上那几颗和尾巴那几颗能对上、最长能对上几颗」 */\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n\n    /* ↓ 自己写：从第 1 颗开始一颗一颗往后记\n       ① 先看看前一颗记下的长度\n       ② 对不上就退到更短的那个长度（在哪一格记着？）\n       ③ 对上了就加一，记进这一格 */\n}\n\nint main(void) {\n    const char *pat = \"aaab\";\n    int book[64];\n\n    build_book(pat, book);\n\n    printf(\"这一小段：%s\\n\", pat);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* 小本本：每一颗都回头看自己这一截，记下「头上那几颗和尾巴那几颗能对上、最长能对上几颗」 */\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n\n    for (int i = 1; i < m; i++) {\n        int k = book[i - 1];\n        while (k > 0 && pat[i] != pat[k]) {\n            k = book[k - 1];\n        }\n        if (pat[i] == pat[k]) {\n            k++;\n        }\n        book[i] = k;\n    }\n}\n\nint main(void) {\n    const char *pat = \"aaab\";\n    int book[64];\n\n    build_book(pat, book);\n\n    printf(\"这一小段：%s\\n\", pat);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "这一小段：aaab\n小本本：0 1 2 0",
+      "stdin": null,
+      "explanation": "这一招的骨架是**借前一个格子的账**喵：\n\n```text\nint k = book[i - 1];\nwhile (k > 0 && pat[i] != pat[k]) {\n    k = book[k - 1];\n}\nif (pat[i] == pat[k]) {\n    k++;\n}\nbook[i] = k;\n```\n\n一句一句念：\n\n- `k` 取了前一颗记下的长度 —— 意思是「前头能对上的那一截，先整段接过来试试」；\n- 接过来之后拿这一颗继续往下试：`pat[i]` 是**这一颗**，`pat[k]` 是**头上那一截的下一位**；\n- 对不上就**退回更短的那个长度**：短的那个长度记在 `book[k - 1]` 那一格上（这就是为什么要回头翻小本本，而不是回到 0）；\n- 对上了就把长度加一，记进这一格。\n\n拿 `aaab` 走一遍：第 0 颗记 0；第 1 颗 `a` 和头上那颗 `a` 对上 → 记 1；第 2 颗 `a` 和前一颗那个长度接着比 → 记 2；第 3 颗 `b` 怎么退都退不到能对上的 → 记 0。出来的就是 `0 1 2 0` 喵。",
+      "templateId": "c-s3-09-book-report",
+      "params": {
+        "w": "aaab"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:14.265Z",
+        "hash": "bdeb2c19549086c6"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-book-report-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要准备一个小本本，专门伺候这一小段：`aabaab`。\n\n规矩是这样的（课文里那只前辈猫定的）：**每一颗珠子都回头看自己这一截**，记下「**这一截的头上那几颗和尾巴那几颗能对上，最长能对上几颗**」；注意**整截自己不算**，至少得留出一颗来。\n\n你要把 `build_book` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 头一颗珠子前面没有东西，记 `0`；\n2. 往后每一颗：**先看看前一颗记的那个长度**，从这个长度接着试；\n3. 试着试着对不上了 → **退回更短的那个长度再试**（短的那个长度在哪一格上记着，自己想想）；\n4. 总算对上了 → 长度加一，记下这一格。\n\n印出来的格式是写死的（`main` 里那两行 `printf` 就是）：第一行 `这一小段：` 后面跟这一小段本身；第二行 `小本本：` 后面把每一格印出来，**每格后面带一个空格**，最后才换行。拿课文里那一段 `aaab` 说，就是这两行：\n\n```text\n这一小段：aaab\n小本本：0 1 2 0\n```\n\n你这一小段是 `aabaab`，那串数当然得**照规矩自己算**，别照抄上面这个例子喵。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* 小本本：每一颗都回头看自己这一截，记下「头上那几颗和尾巴那几颗能对上、最长能对上几颗」 */\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n\n    /* ↓ 自己写：从第 1 颗开始一颗一颗往后记\n       ① 先看看前一颗记下的长度\n       ② 对不上就退到更短的那个长度（在哪一格记着？）\n       ③ 对上了就加一，记进这一格 */\n}\n\nint main(void) {\n    const char *pat = \"aabaab\";\n    int book[64];\n\n    build_book(pat, book);\n\n    printf(\"这一小段：%s\\n\", pat);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* 小本本：每一颗都回头看自己这一截，记下「头上那几颗和尾巴那几颗能对上、最长能对上几颗」 */\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n\n    for (int i = 1; i < m; i++) {\n        int k = book[i - 1];\n        while (k > 0 && pat[i] != pat[k]) {\n            k = book[k - 1];\n        }\n        if (pat[i] == pat[k]) {\n            k++;\n        }\n        book[i] = k;\n    }\n}\n\nint main(void) {\n    const char *pat = \"aabaab\";\n    int book[64];\n\n    build_book(pat, book);\n\n    printf(\"这一小段：%s\\n\", pat);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "这一小段：aabaab\n小本本：0 1 0 1 2 3",
+      "stdin": null,
+      "explanation": "这一招的骨架是**借前一个格子的账**喵：\n\n```text\nint k = book[i - 1];\nwhile (k > 0 && pat[i] != pat[k]) {\n    k = book[k - 1];\n}\nif (pat[i] == pat[k]) {\n    k++;\n}\nbook[i] = k;\n```\n\n一句一句念：\n\n- `k` 取了前一颗记下的长度 —— 意思是「前头能对上的那一截，先整段接过来试试」；\n- 接过来之后拿这一颗继续往下试：`pat[i]` 是**这一颗**，`pat[k]` 是**头上那一截的下一位**；\n- 对不上就**退回更短的那个长度**：短的那个长度记在 `book[k - 1]` 那一格上（这就是为什么要回头翻小本本，而不是回到 0）；\n- 对上了就把长度加一，记进这一格。\n\n拿 `aaab` 走一遍：第 0 颗记 0；第 1 颗 `a` 和头上那颗 `a` 对上 → 记 1；第 2 颗 `a` 和前一颗那个长度接着比 → 记 2；第 3 颗 `b` 怎么退都退不到能对上的 → 记 0。出来的就是 `0 1 2 0` 喵。",
+      "templateId": "c-s3-09-book-report",
+      "params": {
+        "w": "aabaab"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:15.413Z",
+        "hash": "b5b0aa311a990998"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-kmp-fallback-zero-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "拿「**小本本**」在整串 `aaaaab` 里找那一小段 `aaab`，顺便数一数**比了几次**。\n\n它先把小本本印了出来（小本本本身没毛病），可接下来答的是：\n\n```text\n带着小本本也没找着\n```\n\n`aaab` 明明就在这一串的末尾。请你把 `kmp` 这一招里**崩了之后往回退**的那一句改对（`main` 里那几行别动）。改好之后该印：\n\n- 小本本那一行照旧是 `小本本：0 1 2 0`；\n- 结果换成一行 `带着小本本只比了 K 次`。",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n/* 小本本：记下「已经对上的这一段」里，头上能对上的最长一段有多长 */\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n    for (int i = 1; i < m; i++) {\n        int k = book[i - 1];\n        while (k > 0 && pat[i] != pat[k]) {\n            k = book[k - 1];          /* 这个长度也不行，退回更短的那个 */\n        }\n        if (pat[i] == pat[k]) {\n            k++;\n        }\n        book[i] = k;\n    }\n}\n\n/* 带着小本本对：崩了不回起点，退到小本本上记的那个长度接着对 */\nint kmp(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int book[64];\n    build_book(pat, book);\n\n    int tries = 0;\n    int k = 0;                        /* 已经对上了几颗 */\n    for (int i = 0; i < n; i++) {\n        while (k > 0 && text[i] != pat[k]) {\n            k = 0;                    /* 崩了：退回起点 */\n        }\n        tries++;\n        if (text[i] == pat[k]) {\n            k++;\n        }\n        if (k == m) {\n            return tries;             /* 整段都对上了 */\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    const char *text = \"aaaaab\";\n    const char *pat = \"aaab\";\n\n    int book[64];\n    build_book(pat, book);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n\n    int b = kmp(text, pat);\n    if (b < 0) {\n        printf(\"带着小本本也没找着\\n\");\n    } else {\n        printf(\"带着小本本只比了 %d 次\\n\", b);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n/* 小本本：记下「已经对上的这一段」里，头上能对上的最长一段有多长 */\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n    for (int i = 1; i < m; i++) {\n        int k = book[i - 1];\n        while (k > 0 && pat[i] != pat[k]) {\n            k = book[k - 1];          /* 这个长度也不行，退回更短的那个 */\n        }\n        if (pat[i] == pat[k]) {\n            k++;\n        }\n        book[i] = k;\n    }\n}\n\n/* 带着小本本对：崩了不回起点，退到小本本上记的那个长度接着对 */\nint kmp(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int book[64];\n    build_book(pat, book);\n\n    int tries = 0;\n    int k = 0;                        /* 已经对上了几颗 */\n    for (int i = 0; i < n; i++) {\n        while (k > 0 && text[i] != pat[k]) {\n            k = book[k - 1];          /* 崩了：退到小本本记的那个长度 */\n        }\n        tries++;\n        if (text[i] == pat[k]) {\n            k++;\n        }\n        if (k == m) {\n            return tries;             /* 整段都对上了 */\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    const char *text = \"aaaaab\";\n    const char *pat = \"aaab\";\n\n    int book[64];\n    build_book(pat, book);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n\n    int b = kmp(text, pat);\n    if (b < 0) {\n        printf(\"带着小本本也没找着\\n\");\n    } else {\n        printf(\"带着小本本只比了 %d 次\\n\", b);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "小本本：0 1 2 0\n带着小本本只比了 6 次",
+      "stdin": null,
+      "explanation": "小本本记得没错（`0 1 2 0`），错在**崩了之后退到哪儿**喵。\n\n课文里那句规矩是：**崩了，退到小本本上记的那个长度接着对** —— 也就是 `k = book[k - 1]`。本喵写成了 `k = 0`，等于是「退回起点、从头再来」：辛辛苦苦对上的那几颗，全丢了。\n\n丢进度的下场比「慢一点」更糟：起点的位置**也要跟着丢**。举本喵这一串 —— 前面一串 `a` 对得很顺，对到 `b` 那儿崩；退成 0 之后，本喵站在这颗 `b` 上想重新起头，可 `b` 根本不是这一小段的头（这一小段的头是 `a`），于是它就**永远接不上**了。所以 `aaab` 明明挂在末尾，它却答「没找着」。\n\n```text\nwhile (k > 0 && text[i] != pat[k]) {\n    k = book[k - 1];   /* 退回小本本记的那个长度，不是退成 0 */\n}\n```\n\n`k = 0` 和 `k = book[k - 1]` 差的就是**「已经对上的这一段里，还有哪一截真的能用」**：小本本存在的唯一理由，就是让这一截**别丢**。写成 0，小本本白记了。",
+      "templateId": "c-s3-09-kmp-fallback-zero",
+      "params": {
+        "text": "aaaaab"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:01.226Z",
+        "hash": "49f7667cb61fa309"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-kmp-fallback-zero-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "拿「**小本本**」在整串 `aaaaaaab` 里找那一小段 `aaab`，顺便数一数**比了几次**。\n\n它先把小本本印了出来（小本本本身没毛病），可接下来答的是：\n\n```text\n带着小本本也没找着\n```\n\n`aaab` 明明就在这一串的末尾。请你把 `kmp` 这一招里**崩了之后往回退**的那一句改对（`main` 里那几行别动）。改好之后该印：\n\n- 小本本那一行照旧是 `小本本：0 1 2 0`；\n- 结果换成一行 `带着小本本只比了 K 次`。",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n/* 小本本：记下「已经对上的这一段」里，头上能对上的最长一段有多长 */\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n    for (int i = 1; i < m; i++) {\n        int k = book[i - 1];\n        while (k > 0 && pat[i] != pat[k]) {\n            k = book[k - 1];          /* 这个长度也不行，退回更短的那个 */\n        }\n        if (pat[i] == pat[k]) {\n            k++;\n        }\n        book[i] = k;\n    }\n}\n\n/* 带着小本本对：崩了不回起点，退到小本本上记的那个长度接着对 */\nint kmp(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int book[64];\n    build_book(pat, book);\n\n    int tries = 0;\n    int k = 0;                        /* 已经对上了几颗 */\n    for (int i = 0; i < n; i++) {\n        while (k > 0 && text[i] != pat[k]) {\n            k = 0;                    /* 崩了：退回起点 */\n        }\n        tries++;\n        if (text[i] == pat[k]) {\n            k++;\n        }\n        if (k == m) {\n            return tries;             /* 整段都对上了 */\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    const char *text = \"aaaaaaab\";\n    const char *pat = \"aaab\";\n\n    int book[64];\n    build_book(pat, book);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n\n    int b = kmp(text, pat);\n    if (b < 0) {\n        printf(\"带着小本本也没找着\\n\");\n    } else {\n        printf(\"带着小本本只比了 %d 次\\n\", b);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n/* 小本本：记下「已经对上的这一段」里，头上能对上的最长一段有多长 */\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n    for (int i = 1; i < m; i++) {\n        int k = book[i - 1];\n        while (k > 0 && pat[i] != pat[k]) {\n            k = book[k - 1];          /* 这个长度也不行，退回更短的那个 */\n        }\n        if (pat[i] == pat[k]) {\n            k++;\n        }\n        book[i] = k;\n    }\n}\n\n/* 带着小本本对：崩了不回起点，退到小本本上记的那个长度接着对 */\nint kmp(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int book[64];\n    build_book(pat, book);\n\n    int tries = 0;\n    int k = 0;                        /* 已经对上了几颗 */\n    for (int i = 0; i < n; i++) {\n        while (k > 0 && text[i] != pat[k]) {\n            k = book[k - 1];          /* 崩了：退到小本本记的那个长度 */\n        }\n        tries++;\n        if (text[i] == pat[k]) {\n            k++;\n        }\n        if (k == m) {\n            return tries;             /* 整段都对上了 */\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    const char *text = \"aaaaaaab\";\n    const char *pat = \"aaab\";\n\n    int book[64];\n    build_book(pat, book);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n\n    int b = kmp(text, pat);\n    if (b < 0) {\n        printf(\"带着小本本也没找着\\n\");\n    } else {\n        printf(\"带着小本本只比了 %d 次\\n\", b);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "小本本：0 1 2 0\n带着小本本只比了 8 次",
+      "stdin": null,
+      "explanation": "小本本记得没错（`0 1 2 0`），错在**崩了之后退到哪儿**喵。\n\n课文里那句规矩是：**崩了，退到小本本上记的那个长度接着对** —— 也就是 `k = book[k - 1]`。本喵写成了 `k = 0`，等于是「退回起点、从头再来」：辛辛苦苦对上的那几颗，全丢了。\n\n丢进度的下场比「慢一点」更糟：起点的位置**也要跟着丢**。举本喵这一串 —— 前面一串 `a` 对得很顺，对到 `b` 那儿崩；退成 0 之后，本喵站在这颗 `b` 上想重新起头，可 `b` 根本不是这一小段的头（这一小段的头是 `a`），于是它就**永远接不上**了。所以 `aaab` 明明挂在末尾，它却答「没找着」。\n\n```text\nwhile (k > 0 && text[i] != pat[k]) {\n    k = book[k - 1];   /* 退回小本本记的那个长度，不是退成 0 */\n}\n```\n\n`k = 0` 和 `k = book[k - 1]` 差的就是**「已经对上的这一段里，还有哪一截真的能用」**：小本本存在的唯一理由，就是让这一截**别丢**。写成 0，小本本白记了。",
+      "templateId": "c-s3-09-kmp-fallback-zero",
+      "params": {
+        "text": "aaaaaaab"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:03.373Z",
+        "hash": "788125fc384ef21a"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-lib-join-count-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有两个碗：`bowl` 里装着 `fish`，`tail` 里装着 `cake`。要把 `tail` 这一串**接在 `bowl` 屁股后面**，接完再报一下：**整串现在有几颗珠子**。\n\n你要把 `join_and_count` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 把 `tail` 接上去（箱子里的招式里有一招专门干这个）；\n2. 答回去：接完之后整串有**几颗珠子**（不是碗有多大）。\n\n印出来的格式是写死的（`main` 里那行 `printf` 就是）：\n\n```text\n接起来：接好之后的那一整串，现在 N 颗\n```\n\n⚠️ `bowl` 这个碗能装 **64 颗**，这两个词加起来远远装得下，所以这回不用担心装不下的事喵。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* 把 tail 接在 bowl 屁股后面，答：接完之后整串有几颗珠子 */\nint join_and_count(char bowl[], const char tail[]) {\n    /* ↓ 自己写：\n       ① 把 tail 接在 bowl 屁股后面（箱子里的招式，接过之后 bowl 就变长了）\n       ② 答回去：接完之后整串有几颗珠子 */\n    return 0;\n}\n\nint main(void) {\n    char bowl[64] = \"fish\";\n    char tail[] = \"cake\";\n\n    int n = join_and_count(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, n);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* 把 tail 接在 bowl 屁股后面，答：接完之后整串有几颗珠子 */\nint join_and_count(char bowl[], const char tail[]) {\n    strcat(bowl, tail);\n    return (int)strlen(bowl);\n}\n\nint main(void) {\n    char bowl[64] = \"fish\";\n    char tail[] = \"cake\";\n\n    int n = join_and_count(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, n);\n    return 0;\n}\n",
+      "expectedOutput": "接起来：fishcake，现在 8 颗",
+      "stdin": null,
+      "explanation": "这一招就两句话喵：**接**用的是 `strcat(dst, src)` —— 把 `src` 那一串连尾巴上的收尾珠子一起抄到 `dst` 屁股后面，**接完 `dst` 自己就变长了**（不是新造一串）；**数**用的是 `strlen(s)` —— 数的是「实际装着几颗珠子」，不是碗有多大。\n\n```text\nstrcat(bowl, tail);\nreturn (int)strlen(bowl);\n```\n\n两个容易咬人的地方：\n\n- **`strlen` 数的是珠子，不是碗**。稿子里 `bowl` 是 `char bowl[64]`，能装 64 颗；接完是 8 颗，`strlen` 答的就该是 8。\n- **`strcat` 有前有后**：接到谁屁股后面，谁写在**前面**。写成 `strcat(tail, bowl)` 就是把整串接到那么小的一个碗后面去 —— 课文里那个坑就是这么掉进去的（翻译官喵一声不吭，跑起来当场摔）。",
+      "templateId": "c-s3-09-lib-join-count",
+      "params": {
+        "w1": "fish",
+        "w2": "cake"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:07.592Z",
+        "hash": "230d6dce1ad133a5"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-lib-join-count-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有两个碗：`bowl` 里装着 `fish`，`tail` 里装着 `bonefish`。要把 `tail` 这一串**接在 `bowl` 屁股后面**，接完再报一下：**整串现在有几颗珠子**。\n\n你要把 `join_and_count` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 把 `tail` 接上去（箱子里的招式里有一招专门干这个）；\n2. 答回去：接完之后整串有**几颗珠子**（不是碗有多大）。\n\n印出来的格式是写死的（`main` 里那行 `printf` 就是）：\n\n```text\n接起来：接好之后的那一整串，现在 N 颗\n```\n\n⚠️ `bowl` 这个碗能装 **64 颗**，这两个词加起来远远装得下，所以这回不用担心装不下的事喵。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* 把 tail 接在 bowl 屁股后面，答：接完之后整串有几颗珠子 */\nint join_and_count(char bowl[], const char tail[]) {\n    /* ↓ 自己写：\n       ① 把 tail 接在 bowl 屁股后面（箱子里的招式，接过之后 bowl 就变长了）\n       ② 答回去：接完之后整串有几颗珠子 */\n    return 0;\n}\n\nint main(void) {\n    char bowl[64] = \"fish\";\n    char tail[] = \"bonefish\";\n\n    int n = join_and_count(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, n);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* 把 tail 接在 bowl 屁股后面，答：接完之后整串有几颗珠子 */\nint join_and_count(char bowl[], const char tail[]) {\n    strcat(bowl, tail);\n    return (int)strlen(bowl);\n}\n\nint main(void) {\n    char bowl[64] = \"fish\";\n    char tail[] = \"bonefish\";\n\n    int n = join_and_count(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, n);\n    return 0;\n}\n",
+      "expectedOutput": "接起来：fishbonefish，现在 12 颗",
+      "stdin": null,
+      "explanation": "这一招就两句话喵：**接**用的是 `strcat(dst, src)` —— 把 `src` 那一串连尾巴上的收尾珠子一起抄到 `dst` 屁股后面，**接完 `dst` 自己就变长了**（不是新造一串）；**数**用的是 `strlen(s)` —— 数的是「实际装着几颗珠子」，不是碗有多大。\n\n```text\nstrcat(bowl, tail);\nreturn (int)strlen(bowl);\n```\n\n两个容易咬人的地方：\n\n- **`strlen` 数的是珠子，不是碗**。稿子里 `bowl` 是 `char bowl[64]`，能装 64 颗；接完是 8 颗，`strlen` 答的就该是 8。\n- **`strcat` 有前有后**：接到谁屁股后面，谁写在**前面**。写成 `strcat(tail, bowl)` 就是把整串接到那么小的一个碗后面去 —— 课文里那个坑就是这么掉进去的（翻译官喵一声不吭，跑起来当场摔）。",
+      "templateId": "c-s3-09-lib-join-count",
+      "params": {
+        "w1": "fish",
+        "w2": "bonefish"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:44.198Z",
+        "hash": "d56180ee389f5a75"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-lib-join-count-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有两个碗：`bowl` 里装着 `tuna`，`tail` 里装着 `cake`。要把 `tail` 这一串**接在 `bowl` 屁股后面**，接完再报一下：**整串现在有几颗珠子**。\n\n你要把 `join_and_count` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 把 `tail` 接上去（箱子里的招式里有一招专门干这个）；\n2. 答回去：接完之后整串有**几颗珠子**（不是碗有多大）。\n\n印出来的格式是写死的（`main` 里那行 `printf` 就是）：\n\n```text\n接起来：接好之后的那一整串，现在 N 颗\n```\n\n⚠️ `bowl` 这个碗能装 **64 颗**，这两个词加起来远远装得下，所以这回不用担心装不下的事喵。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* 把 tail 接在 bowl 屁股后面，答：接完之后整串有几颗珠子 */\nint join_and_count(char bowl[], const char tail[]) {\n    /* ↓ 自己写：\n       ① 把 tail 接在 bowl 屁股后面（箱子里的招式，接过之后 bowl 就变长了）\n       ② 答回去：接完之后整串有几颗珠子 */\n    return 0;\n}\n\nint main(void) {\n    char bowl[64] = \"tuna\";\n    char tail[] = \"cake\";\n\n    int n = join_and_count(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, n);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* 把 tail 接在 bowl 屁股后面，答：接完之后整串有几颗珠子 */\nint join_and_count(char bowl[], const char tail[]) {\n    strcat(bowl, tail);\n    return (int)strlen(bowl);\n}\n\nint main(void) {\n    char bowl[64] = \"tuna\";\n    char tail[] = \"cake\";\n\n    int n = join_and_count(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, n);\n    return 0;\n}\n",
+      "expectedOutput": "接起来：tunacake，现在 8 颗",
+      "stdin": null,
+      "explanation": "这一招就两句话喵：**接**用的是 `strcat(dst, src)` —— 把 `src` 那一串连尾巴上的收尾珠子一起抄到 `dst` 屁股后面，**接完 `dst` 自己就变长了**（不是新造一串）；**数**用的是 `strlen(s)` —— 数的是「实际装着几颗珠子」，不是碗有多大。\n\n```text\nstrcat(bowl, tail);\nreturn (int)strlen(bowl);\n```\n\n两个容易咬人的地方：\n\n- **`strlen` 数的是珠子，不是碗**。稿子里 `bowl` 是 `char bowl[64]`，能装 64 颗；接完是 8 颗，`strlen` 答的就该是 8。\n- **`strcat` 有前有后**：接到谁屁股后面，谁写在**前面**。写成 `strcat(tail, bowl)` 就是把整串接到那么小的一个碗后面去 —— 课文里那个坑就是这么掉进去的（翻译官喵一声不吭，跑起来当场摔）。",
+      "templateId": "c-s3-09-lib-join-count",
+      "params": {
+        "w1": "tuna",
+        "w2": "cake"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:46.515Z",
+        "hash": "f9f4dd49a4fa2876"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-lib-join-count-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有两个碗：`bowl` 里装着 `tuna`，`tail` 里装着 `bonefish`。要把 `tail` 这一串**接在 `bowl` 屁股后面**，接完再报一下：**整串现在有几颗珠子**。\n\n你要把 `join_and_count` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 把 `tail` 接上去（箱子里的招式里有一招专门干这个）；\n2. 答回去：接完之后整串有**几颗珠子**（不是碗有多大）。\n\n印出来的格式是写死的（`main` 里那行 `printf` 就是）：\n\n```text\n接起来：接好之后的那一整串，现在 N 颗\n```\n\n⚠️ `bowl` 这个碗能装 **64 颗**，这两个词加起来远远装得下，所以这回不用担心装不下的事喵。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* 把 tail 接在 bowl 屁股后面，答：接完之后整串有几颗珠子 */\nint join_and_count(char bowl[], const char tail[]) {\n    /* ↓ 自己写：\n       ① 把 tail 接在 bowl 屁股后面（箱子里的招式，接过之后 bowl 就变长了）\n       ② 答回去：接完之后整串有几颗珠子 */\n    return 0;\n}\n\nint main(void) {\n    char bowl[64] = \"tuna\";\n    char tail[] = \"bonefish\";\n\n    int n = join_and_count(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, n);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* 把 tail 接在 bowl 屁股后面，答：接完之后整串有几颗珠子 */\nint join_and_count(char bowl[], const char tail[]) {\n    strcat(bowl, tail);\n    return (int)strlen(bowl);\n}\n\nint main(void) {\n    char bowl[64] = \"tuna\";\n    char tail[] = \"bonefish\";\n\n    int n = join_and_count(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, n);\n    return 0;\n}\n",
+      "expectedOutput": "接起来：tunabonefish，现在 12 颗",
+      "stdin": null,
+      "explanation": "这一招就两句话喵：**接**用的是 `strcat(dst, src)` —— 把 `src` 那一串连尾巴上的收尾珠子一起抄到 `dst` 屁股后面，**接完 `dst` 自己就变长了**（不是新造一串）；**数**用的是 `strlen(s)` —— 数的是「实际装着几颗珠子」，不是碗有多大。\n\n```text\nstrcat(bowl, tail);\nreturn (int)strlen(bowl);\n```\n\n两个容易咬人的地方：\n\n- **`strlen` 数的是珠子，不是碗**。稿子里 `bowl` 是 `char bowl[64]`，能装 64 颗；接完是 8 颗，`strlen` 答的就该是 8。\n- **`strcat` 有前有后**：接到谁屁股后面，谁写在**前面**。写成 `strcat(tail, bowl)` 就是把整串接到那么小的一个碗后面去 —— 课文里那个坑就是这么掉进去的（翻译官喵一声不吭，跑起来当场摔）。",
+      "templateId": "c-s3-09-lib-join-count",
+      "params": {
+        "w1": "tuna",
+        "w2": "bonefish"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:08.773Z",
+        "hash": "c20b9cf9a8ccd443"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-naive-count-report-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "投喂口里递进来**两行**：第一行是整串，第二行是要找的那一小段。样例输入：\n\n```text\nmiaoab\nab\n```\n\n你要把 `naive` 这一招补完（`main` 已经写在稿子里了，别改它）—— 就是 `strstr` 拆开来看的那个**最直白的办法**：\n\n1. 从一个**起点**开始，一颗一颗往下对；\n2. **每比一颗就记一笔**（不管对上没对上，比了就算）；\n3. 对不上 → 这个起点作废，**整体挪一格起点，从头再来**；\n4. 一小段整段都对上了 → 把**比了几次**答回去；所有能站的起点都试遍了还没成，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `朴素对法比了 N 次`；\n- 没找着 → 一行 `朴素对法：没找着`。\n\n样例跑出来是这样：\n\n```text\n朴素对法比了 7 次\n```",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    /* ↓ 自己写：\n       ① 一句 strlen 量出整串多长、这一小段多长\n       ② 从第 0 个起点开始试：起点最多站到哪儿，想清楚再写条件\n       ③ 每个起点里一颗一颗对：每比一颗记一笔，对不上就 break\n       ④ 整段都对上了 → 答次数；所有起点试遍了 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    char text[128];\n    char pat[64];\n    if (scanf(\"%127s\", text) != 1) {\n        return 1;\n    }\n    if (scanf(\"%63s\", pat) != 1) {\n        return 1;\n    }\n\n    int a = naive(text, pat);\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m <= n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    char text[128];\n    char pat[64];\n    if (scanf(\"%127s\", text) != 1) {\n        return 1;\n    }\n    if (scanf(\"%63s\", pat) != 1) {\n        return 1;\n    }\n\n    int a = naive(text, pat);\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "朴素对法比了 4 次",
+      "stdin": "xyab\nab\n",
+      "explanation": "最直白的找法就一句话：**从一个起点开始，一颗一颗对；对不上就整体挪一格起点、从头再来**喵。\n\n两个最容易写歪的地方：\n\n- **起点最多能站到哪儿**。整串 `n` 颗、要对的这一小段 `m` 颗，最后一个能站下的起点是第 `n - m` 颗 —— 条件写成 `i + m <= n`。写成 `i + m < n` 就把最后一个起点漏掉了，而「那一小段只挂在最末尾」的时候正好会被漏掉。\n- **记账的位置**。课文里是**每比一颗就记一笔**（对不上也记，因为确实比过了）：`tries++` 放在比较之前最不容易错。\n\n这一招的毛病也跟着这个写法来了：崩了之后，**刚对上的那一段一点都不记得**，下一个起点又从头比 —— 同一颗珠子可能被白白重对好几遍。这就是后面小本本要救的事喵。",
+      "templateId": "c-s3-09-naive-count-report",
+      "params": {
+        "e1": "xy",
+        "w": "ab"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:10.883Z",
+        "hash": "01f192a9d6565248"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-naive-count-report-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "投喂口里递进来**两行**：第一行是整串，第二行是要找的那一小段。样例输入：\n\n```text\nmiaocd\ncd\n```\n\n你要把 `naive` 这一招补完（`main` 已经写在稿子里了，别改它）—— 就是 `strstr` 拆开来看的那个**最直白的办法**：\n\n1. 从一个**起点**开始，一颗一颗往下对；\n2. **每比一颗就记一笔**（不管对上没对上，比了就算）；\n3. 对不上 → 这个起点作废，**整体挪一格起点，从头再来**；\n4. 一小段整段都对上了 → 把**比了几次**答回去；所有能站的起点都试遍了还没成，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `朴素对法比了 N 次`；\n- 没找着 → 一行 `朴素对法：没找着`。\n\n样例跑出来是这样：\n\n```text\n朴素对法比了 6 次\n```",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    /* ↓ 自己写：\n       ① 一句 strlen 量出整串多长、这一小段多长\n       ② 从第 0 个起点开始试：起点最多站到哪儿，想清楚再写条件\n       ③ 每个起点里一颗一颗对：每比一颗记一笔，对不上就 break\n       ④ 整段都对上了 → 答次数；所有起点试遍了 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    char text[128];\n    char pat[64];\n    if (scanf(\"%127s\", text) != 1) {\n        return 1;\n    }\n    if (scanf(\"%63s\", pat) != 1) {\n        return 1;\n    }\n\n    int a = naive(text, pat);\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m <= n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    char text[128];\n    char pat[64];\n    if (scanf(\"%127s\", text) != 1) {\n        return 1;\n    }\n    if (scanf(\"%63s\", pat) != 1) {\n        return 1;\n    }\n\n    int a = naive(text, pat);\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "朴素对法比了 4 次",
+      "stdin": "xycd\ncd\n",
+      "explanation": "最直白的找法就一句话：**从一个起点开始，一颗一颗对；对不上就整体挪一格起点、从头再来**喵。\n\n两个最容易写歪的地方：\n\n- **起点最多能站到哪儿**。整串 `n` 颗、要对的这一小段 `m` 颗，最后一个能站下的起点是第 `n - m` 颗 —— 条件写成 `i + m <= n`。写成 `i + m < n` 就把最后一个起点漏掉了，而「那一小段只挂在最末尾」的时候正好会被漏掉。\n- **记账的位置**。课文里是**每比一颗就记一笔**（对不上也记，因为确实比过了）：`tries++` 放在比较之前最不容易错。\n\n这一招的毛病也跟着这个写法来了：崩了之后，**刚对上的那一段一点都不记得**，下一个起点又从头比 —— 同一颗珠子可能被白白重对好几遍。这就是后面小本本要救的事喵。",
+      "templateId": "c-s3-09-naive-count-report",
+      "params": {
+        "e1": "xy",
+        "w": "cd"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:49.454Z",
+        "hash": "dd794a7c61178b13"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-naive-count-report-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "投喂口里递进来**两行**：第一行是整串，第二行是要找的那一小段。样例输入：\n\n```text\nmiaoab\nab\n```\n\n你要把 `naive` 这一招补完（`main` 已经写在稿子里了，别改它）—— 就是 `strstr` 拆开来看的那个**最直白的办法**：\n\n1. 从一个**起点**开始，一颗一颗往下对；\n2. **每比一颗就记一笔**（不管对上没对上，比了就算）；\n3. 对不上 → 这个起点作废，**整体挪一格起点，从头再来**；\n4. 一小段整段都对上了 → 把**比了几次**答回去；所有能站的起点都试遍了还没成，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `朴素对法比了 N 次`；\n- 没找着 → 一行 `朴素对法：没找着`。\n\n样例跑出来是这样：\n\n```text\n朴素对法比了 7 次\n```",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    /* ↓ 自己写：\n       ① 一句 strlen 量出整串多长、这一小段多长\n       ② 从第 0 个起点开始试：起点最多站到哪儿，想清楚再写条件\n       ③ 每个起点里一颗一颗对：每比一颗记一笔，对不上就 break\n       ④ 整段都对上了 → 答次数；所有起点试遍了 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    char text[128];\n    char pat[64];\n    if (scanf(\"%127s\", text) != 1) {\n        return 1;\n    }\n    if (scanf(\"%63s\", pat) != 1) {\n        return 1;\n    }\n\n    int a = naive(text, pat);\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m <= n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    char text[128];\n    char pat[64];\n    if (scanf(\"%127s\", text) != 1) {\n        return 1;\n    }\n    if (scanf(\"%63s\", pat) != 1) {\n        return 1;\n    }\n\n    int a = naive(text, pat);\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "朴素对法比了 7 次",
+      "stdin": "pqrstab\nab\n",
+      "explanation": "最直白的找法就一句话：**从一个起点开始，一颗一颗对；对不上就整体挪一格起点、从头再来**喵。\n\n两个最容易写歪的地方：\n\n- **起点最多能站到哪儿**。整串 `n` 颗、要对的这一小段 `m` 颗，最后一个能站下的起点是第 `n - m` 颗 —— 条件写成 `i + m <= n`。写成 `i + m < n` 就把最后一个起点漏掉了，而「那一小段只挂在最末尾」的时候正好会被漏掉。\n- **记账的位置**。课文里是**每比一颗就记一笔**（对不上也记，因为确实比过了）：`tries++` 放在比较之前最不容易错。\n\n这一招的毛病也跟着这个写法来了：崩了之后，**刚对上的那一段一点都不记得**，下一个起点又从头比 —— 同一颗珠子可能被白白重对好几遍。这就是后面小本本要救的事喵。",
+      "templateId": "c-s3-09-naive-count-report",
+      "params": {
+        "e1": "pqrst",
+        "w": "ab"
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:51.942Z",
+        "hash": "dbf5cbebca0e69ea"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-naive-count-report-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "投喂口里递进来**两行**：第一行是整串，第二行是要找的那一小段。样例输入：\n\n```text\nmiaocd\ncd\n```\n\n你要把 `naive` 这一招补完（`main` 已经写在稿子里了，别改它）—— 就是 `strstr` 拆开来看的那个**最直白的办法**：\n\n1. 从一个**起点**开始，一颗一颗往下对；\n2. **每比一颗就记一笔**（不管对上没对上，比了就算）；\n3. 对不上 → 这个起点作废，**整体挪一格起点，从头再来**；\n4. 一小段整段都对上了 → 把**比了几次**答回去；所有能站的起点都试遍了还没成，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `朴素对法比了 N 次`；\n- 没找着 → 一行 `朴素对法：没找着`。\n\n样例跑出来是这样：\n\n```text\n朴素对法比了 6 次\n```",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    /* ↓ 自己写：\n       ① 一句 strlen 量出整串多长、这一小段多长\n       ② 从第 0 个起点开始试：起点最多站到哪儿，想清楚再写条件\n       ③ 每个起点里一颗一颗对：每比一颗记一笔，对不上就 break\n       ④ 整段都对上了 → 答次数；所有起点试遍了 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    char text[128];\n    char pat[64];\n    if (scanf(\"%127s\", text) != 1) {\n        return 1;\n    }\n    if (scanf(\"%63s\", pat) != 1) {\n        return 1;\n    }\n\n    int a = naive(text, pat);\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m <= n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    char text[128];\n    char pat[64];\n    if (scanf(\"%127s\", text) != 1) {\n        return 1;\n    }\n    if (scanf(\"%63s\", pat) != 1) {\n        return 1;\n    }\n\n    int a = naive(text, pat);\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "朴素对法比了 7 次",
+      "stdin": "pqrstcd\ncd\n",
+      "explanation": "最直白的找法就一句话：**从一个起点开始，一颗一颗对；对不上就整体挪一格起点、从头再来**喵。\n\n两个最容易写歪的地方：\n\n- **起点最多能站到哪儿**。整串 `n` 颗、要对的这一小段 `m` 颗，最后一个能站下的起点是第 `n - m` 颗 —— 条件写成 `i + m <= n`。写成 `i + m < n` 就把最后一个起点漏掉了，而「那一小段只挂在最末尾」的时候正好会被漏掉。\n- **记账的位置**。课文里是**每比一颗就记一笔**（对不上也记，因为确实比过了）：`tries++` 放在比较之前最不容易错。\n\n这一招的毛病也跟着这个写法来了：崩了之后，**刚对上的那一段一点都不记得**，下一个起点又从头比 —— 同一颗珠子可能被白白重对好几遍。这就是后面小本本要救的事喵。",
+      "templateId": "c-s3-09-naive-count-report",
+      "params": {
+        "e1": "pqrst",
+        "w": "cd"
+      },
+      "verified": {
+        "at": "2026-09-16T11:37:12.699Z",
+        "hash": "7f40503096313e8f"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-naive-miss-tail-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "用「**一个起点一个起点地试**」这一招，在整串 `xyab` 里找那一小段 `ab`，顺便数一数**比了几次**。\n\n可它答的是：\n\n```text\n朴素对法：没找着\n```\n\n`ab` 明明就挂在**最末尾**那两颗珠子上。请你把 `naive` 这一招改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n朴素对法比了 4 次\n```",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m < n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;                 /* 对不上，这个起点作废 */\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;              /* 整段都对上了 */\n        }\n    }\n    return -tries;                     /* 所有起点都试过了，没有 */\n}\n\nint main(void) {\n    int a = naive(\"xyab\", \"ab\");\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m <= n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;                 /* 对不上，这个起点作废 */\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;              /* 整段都对上了 */\n        }\n    }\n    return -tries;                     /* 所有起点都试过了，没有 */\n}\n\nint main(void) {\n    int a = naive(\"xyab\", \"ab\");\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "朴素对法比了 4 次",
+      "stdin": null,
+      "explanation": "毛病在**起点最多能站到哪儿**这个条件上喵。这一串一共 `n` 颗珠子，要对的这一小段有 `m` 颗 —— 那么最后一个能站下的起点是第 `n - m` 颗（站在它上面对到末尾，正好收到整串的最后一颗）。\n\n本喵写的是 `i + m < n`，意思是「站在 `i` 上还得空出一颗来」—— 这就把**最后一格起点**整个漏掉了：\n\n```text\ni + m < n     漏掉最后一个起点\n```\n\n写成 `i + m <= n`，「起点加上这一小段正好收到末尾」才算数，一个起点都不落下：\n\n```text\ni + m <= n    最后一个起点也试得到\n```\n\n为什么这个错特别阴？因为**大部分整串里那一小段在前面就出现了**，前头的起点照样能找着，看着一切正常；只有「那一小段只挂在最末尾」的时候才露馅。翻译官喵一个字都不会说，它只是**少试了最后一个起点**。",
+      "templateId": "c-s3-09-naive-miss-tail",
+      "params": {
+        "pre": "xy",
+        "w": "ab"
+      },
+      "verified": {
+        "at": "2026-09-16T11:36:56.622Z",
+        "hash": "c82fd091bc0373d7"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-naive-miss-tail-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "用「**一个起点一个起点地试**」这一招，在整串 `pqcd` 里找那一小段 `cd`，顺便数一数**比了几次**。\n\n可它答的是：\n\n```text\n朴素对法：没找着\n```\n\n`cd` 明明就挂在**最末尾**那两颗珠子上。请你把 `naive` 这一招改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n朴素对法比了 4 次\n```",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m < n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;                 /* 对不上，这个起点作废 */\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;              /* 整段都对上了 */\n        }\n    }\n    return -tries;                     /* 所有起点都试过了，没有 */\n}\n\nint main(void) {\n    int a = naive(\"pqcd\", \"cd\");\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m <= n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;                 /* 对不上，这个起点作废 */\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;              /* 整段都对上了 */\n        }\n    }\n    return -tries;                     /* 所有起点都试过了，没有 */\n}\n\nint main(void) {\n    int a = naive(\"pqcd\", \"cd\");\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "朴素对法比了 4 次",
+      "stdin": null,
+      "explanation": "毛病在**起点最多能站到哪儿**这个条件上喵。这一串一共 `n` 颗珠子，要对的这一小段有 `m` 颗 —— 那么最后一个能站下的起点是第 `n - m` 颗（站在它上面对到末尾，正好收到整串的最后一颗）。\n\n本喵写的是 `i + m < n`，意思是「站在 `i` 上还得空出一颗来」—— 这就把**最后一格起点**整个漏掉了：\n\n```text\ni + m < n     漏掉最后一个起点\n```\n\n写成 `i + m <= n`，「起点加上这一小段正好收到末尾」才算数，一个起点都不落下：\n\n```text\ni + m <= n    最后一个起点也试得到\n```\n\n为什么这个错特别阴？因为**大部分整串里那一小段在前面就出现了**，前头的起点照样能找着，看着一切正常；只有「那一小段只挂在最末尾」的时候才露馅。翻译官喵一个字都不会说，它只是**少试了最后一个起点**。",
+      "templateId": "c-s3-09-naive-miss-tail",
+      "params": {
+        "pre": "pq",
+        "w": "cd"
+      },
+      "verified": {
+        "at": "2026-09-16T11:36:58.758Z",
+        "hash": "b86dbd028c678c3c"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-strcmp-eq-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵想比一比**两碗珠子是不是一模一样**。它答的是：\n\n```text\n这两串一样吗？不一样\n```\n\n可两个碗里装的明明是同一串 `fishcake`。请你把**比的那一下**改对（`main` 里其余几行别动）。改好之后该印：\n\n```text\n这两串一样吗？一样\n```",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char bowl[32] = \"fishcake\";\n    char other[32] = \"fishcake\";\n\n    printf(\"这两串一样吗？%s\\n\", bowl == other ? \"一样\" : \"不一样\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char bowl[32] = \"fishcake\";\n    char other[32] = \"fishcake\";\n\n    printf(\"这两串一样吗？%s\\n\", strcmp(bowl, other) == 0 ? \"一样\" : \"不一样\");\n    return 0;\n}\n",
+      "expectedOutput": "这两串一样吗？一样",
+      "stdin": null,
+      "explanation": "两串珠子摆在**两个不同的碗**里。`==` 比的不是碗里的珠子，而是**两个碗的牌子**（各自在哪儿）—— 两个碗当然不在一块儿，所以它答「不一样」喵。\n\n要比**碗里的珠子**，得请 `strcmp` 出手，而且它答 `0` 才算一样：\n\n```text\nstrcmp(bowl, other) == 0 ? \"一样\" : \"不一样\"\n```\n\n`strcmp` 是一门**比大小**的招式：前面那串排在前面就答负数、排在后面就答正数、**一模一样才答 0**。所以判断「一样」写 `== 0`；判断「不一样」写 `!= 0`。\n\n记住这一条就不会再错：**牌子一样不代表珠子一样，珠子一样也不代表牌子一样** —— 想比珠子，永远写 `strcmp(...) == 0`。",
+      "templateId": "c-s3-09-strcmp-eq",
+      "params": {
+        "w": "fishcake"
+      },
+      "verified": {
+        "at": "2026-09-16T11:36:52.395Z",
+        "hash": "9f82f1ffb00c2d93"
+      }
+    },
+    {
+      "id": "bank-c-s3-09-strcmp-eq-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵想比一比**两碗珠子是不是一模一样**。它答的是：\n\n```text\n这两串一样吗？不一样\n```\n\n可两个碗里装的明明是同一串 `tunacake`。请你把**比的那一下**改对（`main` 里其余几行别动）。改好之后该印：\n\n```text\n这两串一样吗？一样\n```",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char bowl[32] = \"tunacake\";\n    char other[32] = \"tunacake\";\n\n    printf(\"这两串一样吗？%s\\n\", bowl == other ? \"一样\" : \"不一样\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char bowl[32] = \"tunacake\";\n    char other[32] = \"tunacake\";\n\n    printf(\"这两串一样吗？%s\\n\", strcmp(bowl, other) == 0 ? \"一样\" : \"不一样\");\n    return 0;\n}\n",
+      "expectedOutput": "这两串一样吗？一样",
+      "stdin": null,
+      "explanation": "两串珠子摆在**两个不同的碗**里。`==` 比的不是碗里的珠子，而是**两个碗的牌子**（各自在哪儿）—— 两个碗当然不在一块儿，所以它答「不一样」喵。\n\n要比**碗里的珠子**，得请 `strcmp` 出手，而且它答 `0` 才算一样：\n\n```text\nstrcmp(bowl, other) == 0 ? \"一样\" : \"不一样\"\n```\n\n`strcmp` 是一门**比大小**的招式：前面那串排在前面就答负数、排在后面就答正数、**一模一样才答 0**。所以判断「一样」写 `== 0`；判断「不一样」写 `!= 0`。\n\n记住这一条就不会再错：**牌子一样不代表珠子一样，珠子一样也不代表牌子一样** —— 想比珠子，永远写 `strcmp(...) == 0`。",
+      "templateId": "c-s3-09-strcmp-eq",
+      "params": {
+        "w": "tunacake"
+      },
+      "verified": {
+        "at": "2026-09-16T11:36:54.258Z",
+        "hash": "5ef9ab60d466b830"
+      }
+    }
+  ]
+}

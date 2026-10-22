@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-13-first-and-rest",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-13",
+  "type": "codewrite",
+  "concept": ["先点名一个、剩下的打包", "把剩下那包原样递给另一张图纸", "几张图纸各印一行"],
+  "instances": 6,
+  "params": {
+    "d1": { "kind": "pick", "values": ["2", "4"] },
+    "d2": { "kind": "pick", "values": ["5", "6"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 2, "max": 9 },
+  "stemTemplate": "投喂口会给**一个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 写**两张**图纸：\n   - 一张叫 `firstThenRest`：**先点名一个**（头一个），剩下的**打包**。它要把头一个印在 `头一个 X` 这一行里，把「后面还有几样」印在 `后面还有 Y 个` 这一行里，最后**把剩下那一包原样递给**另一张图纸、把它算出来的结果交回去；\n   - 另一张叫 `addAll`：把包里每一样加起来（空包也要给得出答案）。\n3. 主猫把投喂口给的那个数当**头一个**，后面跟上 `{d1}` 和 `{d2}` 两样，请第一张图纸出马，把交回来的结果印在 `后面的加起来 Z` 这一行里。\n\n也就是说，三行要按这个顺序印出来：先 `头一个 X`，再 `后面还有 Y 个`，最后 `后面的加起来 Z`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\n// 在这儿写两张图纸：firstThenRest / addAll\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    // 在这儿写：请第一张图纸出马，印出最后那一行\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename... Args>\nint addAll(Args... args) {\n    return (args + ... + 0);\n}\n\ntemplate <typename T, typename... Rest>\nint firstThenRest(T first, Rest... rest) {\n    cout << \"头一个 \" << first << endl;\n    cout << \"后面还有 \" << sizeof...(rest) << \" 个\" << endl;\n    return addAll(rest...);\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int total = firstThenRest(n, {d1}, {d2});\n    cout << \"后面的加起来 \" << total << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题考的是**先点名一个、剩下的打包**那张图纸喵：\n\n- 图纸上 `T first` 占住**头一个**，后面才是那一包 `Rest... rest`。喂进去的东西按顺序站好：投喂口给的那个数进了 `first`，`{d1}` 和 `{d2}` 进了包里。\n- 「后面还有几样」用的是 `sizeof...(rest)` —— 三个点在**括号里面**才问得出样数。\n- 最后那句 `addAll(rest...)` 是**把剩下那一包原样递出去**：名字后面那三个点是「摊开整包」的意思，少写它程序就编不过（翻译官喵会抱怨「这个包没被摊开」）。递进去两样，加起来正好是 `{d1}` 加 `{d2}`。\n\n⚠️ 主猫那两句要**分开写**：先把交回来的结果接住，再开口印最后那行。本喵第一版图省事，把「请图纸」直接塞进了印字那一句里 —— 结果字全挤在一块儿了，印出来是 `后面的加起来 头一个 9`，看着莫名其妙。**请图纸和印字分成两句**，三行的先后才清清爽爽。\n\n⚠️ 印出来的先后也值得记：前两行是**在第一张图纸肚子里**印的，第三行是主猫拿到交回来的结果之后才印的 —— 所以那两行一定在第三行前面，每次跑都一样。\n\n⚠️ 还有个小地方：`addAll` 后面垫的那个 `0`，这一次用不上（递进去的两样是满的），但万一哪天剩下一包是空的，它就顶上用了 —— 这就是「空包也要给得出答案」的意思。"
+}

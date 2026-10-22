@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-macro-mode-value-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-11",
+  "type": "codewrite",
+  "concept": ["开关卡判值还是判有没有贴", "值是 0 也算贴过", "翻译之前挑好档"],
+  "instances": 6,
+  "params": {
+    "m": { "kind": "pick", "values": ["#define MODE 0", "#define MODE 1"] }
+  },
+  "stemTemplate": "稿子开头贴着一张**档位卡**：要么是 `#define MODE 0`，要么是 `#define MODE 1`。本喵要按它的**值**挑一档印出来：\n\n- 值是 `1` → 印一行 `花哨版开饭`；\n- 值是 `0` → 印一行 `朴素版开饭`。\n\n**一行就够了，两行都印算错。**\n\n小心这两个词不一样：`#if MODE` 看的是**值**，`#ifdef MODE` 看的是**有没有贴过这张卡**。这张卡是**贴了的** —— 所以这回得用**看值**的那个，别让值是 `0` 的时候也走花哨那档。\n\n把挑档的几句写进 `main` 里。稿子现在印的是一句占位的 `待挑档`，把它换成按值挑档的两句 —— `花哨版开饭` 和 `朴素版开饭` 都你自己写。",
+  "starterTemplate": "#include <stdio.h>\n\n{m}\n\nint main(void) {\n    /* ↓ 按档位的值挑一句印出来，一行就够；先拿占位那句顶着 */\n    printf(\"待挑档\\n\");\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n{m}\n\nint main(void) {\n#if MODE\n    printf(\"花哨版开饭\\n\");\n#else\n    printf(\"朴素版开饭\\n\");\n#endif\n    return 0;\n}\n",
+  "explanationTemplate": "这张卡是**贴了的**，值可能是 `0` —— 所以只能用看值的 `#if MODE`，不能用看「有没有贴」的 `#ifdef MODE` 喵。\n\n- `#if MODE` 判下来是 `0` 就是假：走 `#else` 那一档，印 `朴素版开饭`；是 `1` 就是真：印 `花哨版开饭`。\n- `#ifdef MODE` 判的是「有没有贴过这张卡」：`#define MODE 0` 在它眼里照样算贴过，于是**值是 `0` 也会走花哨那档**，两档就白分了。\n\n本喵把这两种写法都真跑了一遍，差别就是上面这个。\n\n稿子里那句 `待挑档` 只是占位，最后要换成上面那两句之一（哪一句由档位的值决定）喵。\n\n顺带记一句：写成 `#if MODE == 1` 也是看值，一样能用；真正要躲开的是 `#ifdef` 和 `#if defined(...)` —— 那两种都是看有没有贴。"
+}

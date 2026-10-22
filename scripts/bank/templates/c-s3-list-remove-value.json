@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-list-remove-value",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-03",
+  "type": "codewrite",
+  "concept": ["链表", "删除节点", "prev", "边界", "free"],
+  "instances": 6,
+  "params": {
+    "x": { "kind": "int", "min": 1, "max": 2 },
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{x}\n{n}\n", "count": "{n}", "min": 1, "max": 3 },
+  "stemTemplate": "本喵想给链子做个小手术喵：先串一条链子，再把里面**第一只编号是这个数的环**摘掉。\n\n请你写个程序：**第一行读进来一个数**（要摘掉的那个编号），**第二行读进来一个数**（这次要串几只环），**再读 {n} 行数**（一行一个，是每只环上挂的编号）。一只一只挂到**后面**去；然后从第一环摸起，摸到编号对上的那一只就把它摘掉 —— **只摘第一只，摘完就停**；要是摸到尾都没找到，就原样叼回，一个字都别改。\n\n最后报一行，形如 `摘 2（摘到了）：1 -> 3 -> NULL` —— 括号里那两个词二选一：摘到了就写 `摘到了`，没找到就写 `没找到`；冒号后面把链子从头报出来（每只环报一个数、用 ` -> ` 隔开、以 `NULL` 收尾）。\n\n用完了记得把环一只一只还回去喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nNode *remove_value(Node *head, int x, int *found) {\n    Node *cur = head;\n    Node *prev = NULL;\n    *found = 0;\n    while (cur != NULL) {\n        if (cur->x == x) {\n            if (prev == NULL) {\n                head = cur->next;\n            } else {\n                prev->next = cur->next;\n            }\n            free(cur);\n            *found = 1;\n            return head;\n        }\n        prev = cur;\n        cur = cur->next;\n    }\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int x;\n    int n;\n    if (scanf(\"%d\", &x) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_back(head, v);\n    }\n\n    int found = 0;\n    head = remove_value(head, x, &found);\n\n    printf(\"摘 %d（%s）：\", x, found ? \"摘到了\" : \"没找到\");\n    print_list(head);\n\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+  "explanationTemplate": "摘环这一步的精髓是：**手里要同时捏着两只环** —— 当前这只（`cur`）和它前面那只（`prev`）喵。\n\n为什么要留着前面那只？因为「摘」这个动作其实是**让前面那只跨过去牵后面那只**：`prev->next = cur->next;`。要是只捏着当前这只，摘掉它之后，前面那只还牵着一段已经还给仓库的地方 —— 链子当场就断了。\n\n两个岔路必须分开处理：\n\n- **摘的正好是第一环**：前面没有环能跨过去，只能把捏在手里的牌子往下挪一格（`head = cur->next;`）。这一格最容易漏，因为「前面那只」这时候是空的。\n- **走到底都没找到**：原样叼回，一个字都别改 —— 这是最容易被当成出错的一种「正常结果」喵。\n\n还有两个细节：摘下来的环要 `free` 掉才算真的还回去；`found` 是把自己仓库的牌子递进去、让招式往里面写「摘到没有」，所以递的时候要带个 `&`（写 `&found`），招式里面用 `*found` 写进去。"
+}

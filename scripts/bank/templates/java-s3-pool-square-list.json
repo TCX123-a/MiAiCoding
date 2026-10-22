@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-pool-square-list",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-11",
+  "type": "codewrite",
+  "concept": ["凭条按投喂顺序收好", "取货那一步才会等", "只有本喵自己印才稳"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "c": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要写一招：把一串数交给 **{c} 只猫**去算**自己乘自己**，然后按投喂的先后把结果一个个印出来，末尾再报一个总和喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。程序该印出**n 行**，每行是一个数自己乘自己的结果，**顺序要跟投喂的一模一样**；最后再印一行 `总和 S`（S 是这些平方加起来）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）\n\n不许让猫自己印 —— 只有本喵自己印，印出来的顺序才稳。",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\nimport java.util.concurrent.ExecutorService;\nimport java.util.concurrent.Executors;\nimport java.util.concurrent.Future;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n        ExecutorService 池子 = Executors.newFixedThreadPool({c});\n        List<Future<Integer>> 凭条们 = new ArrayList<>();\n        for (int x : nums) {\n            凭条们.add(池子.submit(() -> x * x));\n        }\n\n        int 总和 = 0;\n        for (Future<Integer> 凭条 : 凭条们) {\n            int 平方 = 凭条.get();\n            System.out.println(平方);\n            总和 = 总和 + 平方;\n        }\n        System.out.println(\"总和 \" + 总和);\n        池子.shutdown();\n    }\n}\n",
+  "explanationTemplate": "这一题的关键**不是「派活」，是「取货的顺序」**喵。\n\n**一、派活那一下，手里多的是凭条。** `池子.submit(() -> x * x)` 把活交出去，马上交回一张**取货凭条**（`Future<Integer>`）。凭条**本身不是数**，它只是「这件活将来会吐一个数」的凭证。\n\n**二、凭条要按投喂的先后收进柜子。** `凭条们` 里塞的顺序，就是待会儿取货的顺序 —— 这是「印出来跟投喂一样」的**唯一来源**。\n\n**三、取货那一步才会等。** `凭条.get()` 站在柜子前等：猫没算完就等它算完，算完了就把数交给你。所以「等」不会把顺序搞乱，它正是顺序的来源。\n\n**四、为什么不让猫自己印。** 要是把 `System.out.println` 写进那件活里，{c} 只猫谁先算完谁先印，顺序就说不准了。这一课的规矩：**猫只管算，印是主路那只猫的事**（所以这一题里 `get()` 一个都不能少）。\n\n**五、总和要立在外面。** `总和` 在绕圈**外面**先立好、给个 0；写进绕圈里，每转一圈就重新归零，最后只会剩下最后一个平方。\n\n**六、池子只雇了 {c} 只猫，照收不误。** 数比猫多也没关系：猫干完一件接下一件，活会排队等着。**池子的大小不改变结果**，只决定谁先被派出去干活。\n\n**七、最后打烊。** `池子.shutdown()` 别忘了 —— 派过活的池子不打烊，程序就不走喵。"
+}

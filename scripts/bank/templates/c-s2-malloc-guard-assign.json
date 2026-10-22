@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-malloc-guard-assign",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-04",
+  "type": "codefix",
+  "concept": ["NULL", "守卫", "两个等号", "崩溃", "不报错的错"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "step": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵照着课文的样子租了几间仓库，也照着写了那句「先看一眼牌子是不是空的」。\n\n可这回程序**一跑到那儿就摔了** —— 屏幕上什么都没有，连第一间仓库都没报出来，一个字都没留下。\n\n你帮本喵看看是哪儿不对，把它改好。改好之后，程序应该从第 0 间开始一间一间报出来：`第 0 间：` 后面跟着那一间里放的数，一行一间，一共 {n} 行。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int n = {n};\n    int *rooms = (int *)malloc(sizeof(int) * n);\n\n    if (rooms = NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        rooms[i] = (i + 1) * {step};\n    }\n\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 间：%d\\n\", i, rooms[i]);\n    }\n\n    free(rooms);\n    rooms = NULL;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int n = {n};\n    int *rooms = (int *)malloc(sizeof(int) * n);\n\n    if (rooms == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        rooms[i] = (i + 1) * {step};\n    }\n\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 间：%d\\n\", i, rooms[i]);\n    }\n\n    free(rooms);\n    rooms = NULL;\n    return 0;\n}\n",
+  "explanationTemplate": "看两个等号的区别喵：\n\n- `rooms == NULL` 是**问一句**：「牌子上是空的吗？」—— 问完牌子一动没动。\n- `rooms = NULL` 是**动手**：「把牌子擦成空的。」—— 它不管原来写着什么，直接把空处塞了进去。\n\n所以那句本意是「先看一眼」的话，实际干的是**把刚租到的牌子当场擦掉**。牌子一擦，那排仓库就再也找不回来了；下一行还照着老地方伸手去摸，摸到的是空处 —— 程序当场摔掉，屏幕上一个字都来不及留。\n\n翻译官喵其实瞧出不对劲了，可它只是嘀咕了一句：\n\n```text\nwarning: suggest parentheses around assignment used as truth value [-Wparentheses]\n```\n\n（「这句是写成了赋值吧？建议加对括号说清楚」）—— **嘀咕归嘀咕，它没拦着**。程序照样被放行，一直到跑起来才摔。\n\n凡是「只看一眼」的地方，两个等号一个都不能少喵。另外记个小经验：**摔的位置常常写错的地方往后一两行** —— 从摔倒的地方往回找，就能找着那句真正写错的。"
+}

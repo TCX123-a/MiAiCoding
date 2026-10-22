@@ -1,0 +1,79 @@
+{
+  "lessonId": "java-stage3-05",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵要把一个**可能是空**的东西装进盒子。`Optional.of(...)` 和 `Optional.ofNullable(...)` 这一严一宽两手，哪一句说对了？",
+      "options": [
+        "`of` 是**严厉**那一手：拿命担保递过来的不是空的，**空的递进去当场炸**；`ofNullable` 是**宽容**那一手：是空的就装成一只空盒子",
+        "`of` 是宽容那一手，`ofNullable` 才是严厉那一手",
+        "两手一模一样，用哪个都行",
+        "`of` 只能装项链，`ofNullable` 只能装数字"
+      ],
+      "answer": 0,
+      "explanation": "两手的分岔就在**担保不担保**喵：`of` 是「本喵拿命担保这东西不是空的」—— 递进去一个真的是空的东西，它**在装箱那一步就翻脸**，红字里还指得出 `Objects.requireNonNull(...)` 那一行；`ofNullable` 是「不担保，是空的就给本喵一只空盒子」，所以它不炸。要记住的不是「哪一手更好」，而是**不是严厉那一手不能用，而是别拿空东西去撞它**喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵手里有一只空盒子，还想掏里面的东西，于是写了 `box.get()`。会发生什么？",
+      "options": [
+        "**当场炸**：红字说 `NoSuchElementException: No value present` —— 等于把「可能没有」又原封不动扔了回去",
+        "安安静静交回一个空东西，不炸",
+        "翻译稿子的时候就红，根本轮不到跑",
+        "交回一只更新的空盒子"
+      ],
+      "answer": 0,
+      "explanation": "`.get()` 读作「**不管怎么样，把里面的东西掏给我**」—— 盒子空着的时候它一样会当场炸，只不过红字换了一句：`NoSuchElementException: No value present`（「里头没东西」）喵。它坏就坏在：本喵辛辛苦苦把「可能没有」写在了名分上，用的人一句 `.get()` 就**把这件事又扔回给了下一个人** —— 这一课的功夫全白下了。宁可多写一句 `orElse`，也别用 `.get()` 喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵想干这件事：「**盒子里有东西的时候，才对它动一手加工**；空盒子就跳过」。该用盒子上哪一手？",
+      "options": [
+        "`.map(...)` —— 有东西就加工一下再装回盒子里；空盒子什么都不做，直接还一只空盒子回来",
+        "`.orElse(...)` —— 有东西就用里面的，没有就用兜底的",
+        "`.get()` —— 直接把里面的东西掏出来加工",
+        "`Optional.of(...)` —— 再装一次"
+      ],
+      "answer": 0,
+      "explanation": "`.map(...)` 正是为这件事准备的喵：盒子里有东西，就对它动这一手、再装回盒子里；盒子空着，它**什么都不做**，直接还一只空盒子。这么一路挂下去，空盒子会**自动一层层往下传**，本喵不用在每一层都手动问一句「空了没」。`.orElse(...)` 是**掏出来用**（有就用、没有就用兜底的），`.get()` 是硬掏（空盒子会炸）—— 想「加工一下再交出来」，只有 `.map(...)` 对得上喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.Optional;\n\npublic class Main {\n    public static void main(String[] args) {\n        String maybe = null;\n        System.out.println(____.orElse(\"兜里是空的\"));\n    }\n}",
+      "stem": "本喵手上这个位置**现在是空的**，还想把它装进盒子再用兜底那句。空里该写什么？",
+      "blanks": [
+        {
+          "answer": "Optional.ofNullable(maybe)",
+          "accept": []
+        }
+      ],
+      "explanation": "填 `Optional.ofNullable(maybe)` —— **宽容**那一手，是空的就装成一只空盒子喵。填好后印出来是「兜里是空的」：盒子是空的，`.orElse(...)` 就把兜底那句报了出来。要是填 `Optional.of(maybe)`，那就是**拿空东西去撞严厉那一手**，装箱那一步就炸（红字里会指到 `Objects.requireNonNull(...)`），连印都轮不到；`.orElse(...)` 写得再对也救不回来 —— 因为炸的地方在它前面喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"鱼干\")) {\n            return Optional.of(\"三袋鱼干\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        System.out.println(find(\"猫粮\").orElse(\"啥也没有\"));\n        System.out.println(find(\"鱼干\").map(s -> s.length()).orElse(0));\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "啥也没有\n4",
+      "accept": ["啥也没有\n4\n"],
+      "explanation": "两行分开看喵。第一行：本喵要找的是「猫粮」，可这一招只认得「鱼干」，所以它交回的是**一只空盒子**，`.orElse(\"啥也没有\")` 就把兜底那句报了出来。第二行：这次找的是「鱼干」，招式交回一只**装着「三袋鱼干」的盒子**；`.map(s -> s.length())` 一看里面有东西，就对它动了那一手，装回盒子里的是它的字数 **4**；`.orElse(0)` 发现盒子里有东西，兜底那个值根本用不上。**兜底值只在空盒子的时候才轮得到它**，这一点最容易被想岔喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"鱼干\")) {\n            return Optional.of(\"三袋鱼干\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        find(\"猫粮\").ifPresent(s -> System.out.println(\"找到 \" + s));\n        find(\"鱼干\").ifPresent(s -> System.out.println(\"找到 \" + s));\n        System.out.println(\"收工\");\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "找到 三袋鱼干\n收工",
+      "accept": ["找到 三袋鱼干\n收工\n"],
+      "explanation": "只有**两行**喵，第一句 `.ifPresent(...)` 那一整行**一个字都没印出来**。因为 `.ifPresent(...)` 的规矩是「**盒子里有东西才做这件事**」：第一句找的是「猫粮」，招式交回的是一只空盒子，那一小截**压根没跑**；第二句找的是「鱼干」，盒子里真的有三袋鱼干，那一小截才跑起来，印出「找到 三袋鱼干」。最后那句「收工」跟盒子无关，照印不误。注意这一整段**一次都没炸** —— 空盒子老老实实被跳过去了，这正是这一课想要的效果喵。"
+    }
+  ]
+}

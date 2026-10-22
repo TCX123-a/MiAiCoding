@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-sort-by-length",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-02",
+  "type": "codewrite",
+  "concept": ["请个帮工替它们排", "名字短的站前面", "东西自己一个字都不用改"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["大肥鱼", "小狸花"] },
+    "n2": { "kind": "pick", "values": ["橘", "煤"] },
+    "n3": { "kind": "pick", "values": ["煤球", "花卷"] }
+  },
+  "stemTemplate": "本喵要把柜子里这三只按**名字的长短**站好：**名字短的站前面**喵。\n\n麻烦在于：这些东西自己**一份承诺都没挂**，本喵也不想动它们。所以要**请一个帮工**来替它们排。\n\n请你写这么一张帮工的图纸（专门挂「本喵会替两只当裁判」那份承诺），并用柜子上那只手把它请过来排一次。\n\n三只东西的名字和柜子本身**别去改**，也**别在它们身上挂任何承诺**。排完之后把柜子直接印出来（方括号加逗号空格那个样子）。\n\n比如那三只叫 `大肥鱼`、`橘`、`煤球`，印出来就该是\n\n```text\n[橘, 煤球, 大肥鱼]\n```\n\n（这一题**不用投喂任何东西**，三只的名字都是固定死的。）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"{n1}\"));\n        pond.add(new Fish(\"{n2}\"));\n        pond.add(new Fish(\"{n3}\"));\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\nclass ShortFirst implements Comparator<Fish> {\n    public int compare(Fish a, Fish b) {\n        return a.name.length() - b.name.length();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"{n1}\"));\n        pond.add(new Fish(\"{n2}\"));\n        pond.add(new Fish(\"{n3}\"));\n\n        pond.sort(new ShortFirst());\n        System.out.println(pond);\n    }\n}\n",
+  "explanationTemplate": "这题练的是**请帮工**那一路喵。\n\n**一、帮工是一张单独的图纸。** 它跟东西自己那份承诺长得像，可意思完全不同：它挂的是「**本喵会替两只同类比一比**」—— 不挂在猫身上，是一张专门干「当裁判」这件事的图纸。\n\n**二、请它来的那只手写在柜子上。** `pond.sort(new ShortFirst())` 读作「这只柜子，请这个帮工来排」。注意本喵**没有**去动这些东西，也没有在它们身上挂任何承诺 —— 排完它们还是原来那些，只是站的位置换了。\n\n**三、帮工报的数是什么意思。** 它报负数就是「本喵该站前面」，报正数就是「本喵该站后面」。这题要名字短的站前面，所以拿本喵名字的长短去减对方的长短。\n\n**四、为什么这题不能用「东西自己会排」那一路。** 那一路要先在图纸上挂承诺、再填一手，**改的是东西自己**。本喵这题不打算动它们（同一个东西以后可能还要按别的规矩站），所以只能请帮工。这也是课文那句分岔：**改承诺是改东西本身，请帮工只是换一双眼睛。**\n\n**五、别忘了印。** 排完只是排好了，把柜子印出来才看得见 —— 柜子自己会按方括号那个样子印，本喵不用自己拼。"
+}

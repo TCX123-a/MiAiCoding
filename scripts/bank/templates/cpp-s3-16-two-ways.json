@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-16-two-ways",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-16",
+  "type": "codewrite",
+  "concept": ["两笔账一起算", "条数乘层数", "小条数看不出差别"],
+  "instances": 6,
+  "params": {
+    "greet": { "kind": "pick", "values": ["两种数法都数给你看：", "两笔账本喵都记："] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 4, "max": 16 },
+  "stemTemplate": "投喂口会给**一个数**：小鱼干的条数喵。\n\n请你写个程序，把那个数读进来，再印出**三行**：\n\n1. 第一行：`{greet}`（照抄）；\n2. 第二行：`每两条碰一次：A 圈`，`A` 是每一对碰一次的圈数（条数 乘（条数 减 1）再除以 2）；\n3. 第三行：`一层层合并：B 圈`，`B` 是「每层把所有条数砍一半、一层层合并到只剩一条」时各层加起来的圈数（条数 乘 层数）。层数是这么数的：条数一路砍半（除不尽往上取整），砍到只剩一条要砍几次。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    long long pairs = (long long)n * (n - 1) / 2;\n\n    int levels = 0;\n    for (int width = 1; width < n; width = width * 2) {\n        levels = levels + 1;\n    }\n    long long merged = (long long)n * levels;\n\n    cout << \"{greet}\" << endl;\n    cout << \"每两条碰一次：\" << pairs << \" 圈\" << endl;\n    cout << \"一层层合并：\" << merged << \" 圈\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "三行是三件事，别串成一套喵。\n\n- 第二行的 `A`：两两碰一次 —— `条数 乘（条数 减 1）再除以 2`。那个「减 1」别丢：丢了就等于每一对碰了两个来回。\n- 第三行的 `B`：先数**层数**，再拿 `条数 乘 层数`。数层数最省事的写法是**一路翻倍往上够**（`width = width * 2`），够到条数为止 —— 这跟「条数一路砍半」是同一件事的两面。\n\n⚠️ 条数小的时候，这两个数**差不多、甚至第二行还小一点**：4 条是 6 圈对 8 圈。这不奇怪 —— 「一层层合并」乘的是**层数**，条数小的时候层数只有两三层，它省下的那点还没显出来。条数一大就完全是另一回事：课文里那对数字正是它们，**523776 和 10240**，差了五十倍还多。\n\n⚠️ 判分喂的数跟样例不一样，别把样例里那两个数写死喵。"
+}

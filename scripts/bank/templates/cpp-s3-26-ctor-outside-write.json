@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-26-ctor-outside-write",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-26",
+  "type": "codewrite",
+  "concept": ["出生招式", "两截同名报家门", "把数记在身上"],
+  "instances": 6,
+  "params": {
+    "w": { "kind": "pick", "values": ["21", "42"] }
+  },
+  "stemTemplate": "本喵这条锦鲤（`Koi`）的图纸上写着两件事：**出生招式**（一落地，就把称出来的分量记在身上）和**称重招式**。两条都只在图纸里报了个名，正文留给你。\n\n请你把两条正文补完。补好之后跑起来该印一行 `这条锦鲤 {w} 克` —— 这条就是称出来 **{w} 克** 的那条喵。\n\n`main` 那一段一个字都别动；两条正文开头都要报家门。",
+  "starterTemplate": "#include <iostream>\n\nclass Koi {\npublic:\n    Koi(int w);\n\n    int weightOf() const;\n\nprivate:\n    int weight;\n};\n\nKoi::Koi(int w) {\n    /* ① 把称出来的数记到这条锦鲤身上 */\n}\n\nint Koi::weightOf() const {\n    /* ② 把记下的数叼回来 */\n    return 0;\n}\n\nint main() {\n    Koi k({w});\n    std::cout << \"这条锦鲤 \" << k.weightOf() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n\nclass Koi {\npublic:\n    Koi(int w);\n\n    int weightOf() const;\n\nprivate:\n    int weight;\n};\n\nKoi::Koi(int w) {\n    weight = w;\n}\n\nint Koi::weightOf() const {\n    return weight;\n}\n\nint main() {\n    Koi k({w});\n    std::cout << \"这条锦鲤 \" << k.weightOf() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "两条正文都短，各一个知识点喵。\n\n**① 出生招式**：别人把它称出来的分量塞给你（就是那个 `w`），要**记到这条锦鲤自己的格子**里。正文住在图纸外面，一样先报家门：\n\n```cpp\nKoi::Koi(int w) {\n    weight = w;\n}\n```\n\n`weight = w;` 念作「**把称出来的数存进这条锦鲤身上那一格**」。少了这一句，称重招式叼回来的就是格子里没人写过的值（不确定是多少，别指望是 0 —— 骨架里那声「0 克」是 ② 里占位的 `return 0;` 顶出来的），跟真分量对不上。\n\n**② 称重招式**：把存好的数原样叼回去：\n\n```cpp\nint Koi::weightOf() const {\n    return weight;\n}\n```\n\n⚠️ 出生招式报家门有个**独一份的写法**：`Koi::Koi(int w)` —— 两截名字一模一样（前截是宅子、后截是招式），看着怪，但这是它唯一被承认的报名格式，写成别的样子一律 `non-member`。\n\n最后对一眼：**存东西的格子留在图纸里（`int weight;`），写进去和叼出来都在图纸外面 —— 里外一配对，这条锦鲤就活了。**"
+}

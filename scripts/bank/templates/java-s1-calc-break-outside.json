@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s1-calc-break-outside",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-15",
+  "type": "codefix",
+  "concept": ["break", "菜单绕圈", "不报错只少干活"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 },
+    "a2": { "kind": "int", "min": 8, "max": 9 },
+    "b2": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "1 {a} {b}\n0\n", "sampleText": "1 {a2} {b2}\n0\n" },
+  "stemTemplate": "本喵这台计算器**只算一单就收工了**喵 —— 菜单问过一句、算完一单，圈子就停了，第二位客人再也等不到人问。\n\n翻译官一声没吭（这处**不报错**），是本喵自己看出来的。你帮本喵把圈子收拾好，让它**一直问下去**，直到客人报 `0` 才收工。\n\n规矩是这样：每单先印一遍菜单 `1 加法 0 收工`；报 `0` 就印 `收工啦喵～` 然后收工；不然读两个数、印 `结果是 X`，接着问下一单。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分给的是**另外几单**喵。）",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n            break;\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+  "explanationTemplate": "这一处坑的可怕之处是**一个错都不报**喵：圈子写得好好的，`break` 那一句也是真的，可它**站错了地方** —— 站在 `if` 的花括号**外面**，也就是**每一单算完都会走到它**。于是第一位客人算完，圈子当场收工，后面的客人再也等不到人问。\n\n改法就是把 `break;` 挪进 `if` 的花括号**里面**，让只有客人报了 `0` 才走得到它：\n\n```java\nif (choice == 0) {\n    System.out.println(\"收工啦喵～\");\n    break;\n}\n```\n\n这也是第二步那句死规矩：`while (true)` 是**永远答真**的眼色，圈子停不停全看那句 `break` —— 所以写完一定要回头问自己一句：**这句 `break` 真的走得到吗？**\n\n（顺说：还有一处同样安静的错法 —— 眼色写反。比如写成 `choice != 0`，第一位客人一报选项，圈子就收工了。两种都不报错，只能从屏幕上少印了什么看出来喵。）"
+}

@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s3-04-bracket-int-key",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-04",
+  "type": "codefix",
+  "concept": ["中括号里放的是钥匙", "名字柜的钥匙是名字不是编号", "编不过时看报错点名的那个符号"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "w2": { "kind": "pick", "values": ["狸花", "三花"] },
+    "a": { "kind": "pick", "values": [3, 6] },
+    "b": { "kind": "pick", "values": [5, 8] }
+  },
+  "stemTemplate": "本喵想把柜子里两格的货**加起来**印一行，于是写了个跑圈去加。可它**编不过**喵 —— 翻译官喵拦在了取货那一句上。\n\n你帮本喵把它改对：**把两格的货都加起来**（顺序无所谓，和是一样的）。开柜子和印那一句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n    map<string, int> fish;\n    fish[\"{w1}\"] = {a};\n    fish[\"{w2}\"] = {b};\n\n    int total = 0;\n    for (int i = 0; i < 2; i++) {\n        total += fish[i];\n    }\n    cout << total << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n    map<string, int> fish;\n    fish[\"{w1}\"] = {a};\n    fish[\"{w2}\"] = {b};\n\n    int total = 0;\n    for (auto p : fish) {\n        total += p.second;\n    }\n    cout << total << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题错在**拿编号去开一把名字锁**喵。\n\n这只柜子的钥匙是**名字** —— 中括号里该放的是名字（就像铺柜子那两句写的 `fish[\"小橘\"]`）。本喵放进去的是跑圈的编号 `i`，翻译官喵不认，它的原话里有 `no match for 'operator[]'`，念作「**没找着能这么用的招式**」。报错里点名的 `operator[]` 就是中括号那一招。\n\n改法这一题选「**走一圈挨个加**」最省事：\n\n- `for (auto p : fish)` 走一圈，每一步都停在**一格**上；\n- `p.first` 是这一格的**名字**（钥匙），`p.second` 是这一格的**货**。\n\n要加的当然是货，所以写 `total += p.second;`。\n\n⚠️ 两件事最容易弄反：**① `first` 和 `second`** —— `first` 是名字、`second` 是货；**② 中括号里的东西** —— 名字柜的钥匙是名字，编号柜（下一节那种）才是编号。"
+}

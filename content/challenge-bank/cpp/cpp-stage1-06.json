@@ -1,0 +1,454 @@
+{
+  "lessonId": "cpp-stage1-06",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s1-if-assign-vs-eq-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵跟大肥鱼说好了：碗里正好 6 条就交货，对不上数就照实报。碗里现在有 1 条。\n\n要印两行：\n\n- 第一行报数目对不对：对得上印 `正好 6 条，可以交货喵`，对不上印 `对不上数喵，碗里是 1 条`\n- 第二行照实报碗里还剩几条（本喵什么都没往里加、也没往外拿，所以它还是 1）\n\n可这段代码跑出来，两行都在说 6 —— 它一口咬定「对得上」，还把碗里的数改成了 6。翻译官喵没拦它（只在旁边轻轻提醒了一句，不影响它跑），可**印出来的东西不对**。\n\n你帮本喵把第一行的眼色改对：1 和 6 对不上，就该走「对不上」那条路。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int bowl = 1;\n    int need = 6;\n\n    if (bowl = need) {\n        cout << \"正好 \" << need << \" 条，可以交货喵\" << endl;\n    } else {\n        cout << \"对不上数喵，碗里是 \" << bowl << \" 条\" << endl;\n    }\n    cout << \"碗里现在还剩 \" << bowl << \" 条喵\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int bowl = 1;\n    int need = 6;\n\n    if (bowl == need) {\n        cout << \"正好 \" << need << \" 条，可以交货喵\" << endl;\n    } else {\n        cout << \"对不上数喵，碗里是 \" << bowl << \" 条\" << endl;\n    }\n    cout << \"碗里现在还剩 \" << bowl << \" 条喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "对不上数喵，碗里是 1 条\n碗里现在还剩 1 条喵",
+      "stdin": null,
+      "explanation": "毛病出在 `if` 那一行的**等号个数**上。\n\n`=` 是**「把右边那份东西装进左边这只碗」** —— 它是一件**动手做**的事，不是一句问话。`if (bowl = need)` 的读法是：先把 `need` 装进 `bowl`，装完**再看**这只碗里有什么。刚装进去的数当然不是 0，所以这个眼色**永远答真**，「对不上」那条路一次都走不到。\n\n而且它是真动了手：第二行印出来的数就是这么被改掉的 —— 碗里原本是 1，被装满了一次。\n\n问「两边一样吗」要用**两个等号** `==`。这一条是本课最容易栽的坑，因为 `=` 和 `==` 在翻译官喵眼里都是**认识**的写法，它不会拦你。\n\n它其实提醒过一句：`warning: suggest parentheses around assignment used as truth value` —— 意思是「哟，你在这儿装东西呢？真要是故意的就加一对括号说清楚」。可**加了括号也还是「装」，不是「问」**：想比较，只有换成 `==` 这一条路喵。\n\n顺带记一条：看见「明明对着代码念，眼色却永远走同一头」，第一件事就是**数等号**。",
+      "templateId": "cpp-s1-if-assign-vs-eq",
+      "params": {
+        "bowl": 1,
+        "need": 6
+      },
+      "verified": {
+        "at": "2026-09-16T07:24:05.759Z",
+        "hash": "a3e61a9b36269027"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-if-assign-vs-eq-015",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵跟大肥鱼说好了：碗里正好 9 条就交货，对不上数就照实报。碗里现在有 4 条。\n\n要印两行：\n\n- 第一行报数目对不对：对得上印 `正好 9 条，可以交货喵`，对不上印 `对不上数喵，碗里是 4 条`\n- 第二行照实报碗里还剩几条（本喵什么都没往里加、也没往外拿，所以它还是 4）\n\n可这段代码跑出来，两行都在说 9 —— 它一口咬定「对得上」，还把碗里的数改成了 9。翻译官喵没拦它（只在旁边轻轻提醒了一句，不影响它跑），可**印出来的东西不对**。\n\n你帮本喵把第一行的眼色改对：4 和 9 对不上，就该走「对不上」那条路。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int bowl = 4;\n    int need = 9;\n\n    if (bowl = need) {\n        cout << \"正好 \" << need << \" 条，可以交货喵\" << endl;\n    } else {\n        cout << \"对不上数喵，碗里是 \" << bowl << \" 条\" << endl;\n    }\n    cout << \"碗里现在还剩 \" << bowl << \" 条喵\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int bowl = 4;\n    int need = 9;\n\n    if (bowl == need) {\n        cout << \"正好 \" << need << \" 条，可以交货喵\" << endl;\n    } else {\n        cout << \"对不上数喵，碗里是 \" << bowl << \" 条\" << endl;\n    }\n    cout << \"碗里现在还剩 \" << bowl << \" 条喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "对不上数喵，碗里是 4 条\n碗里现在还剩 4 条喵",
+      "stdin": null,
+      "explanation": "毛病出在 `if` 那一行的**等号个数**上。\n\n`=` 是**「把右边那份东西装进左边这只碗」** —— 它是一件**动手做**的事，不是一句问话。`if (bowl = need)` 的读法是：先把 `need` 装进 `bowl`，装完**再看**这只碗里有什么。刚装进去的数当然不是 0，所以这个眼色**永远答真**，「对不上」那条路一次都走不到。\n\n而且它是真动了手：第二行印出来的数就是这么被改掉的 —— 碗里原本是 4，被装满了一次。\n\n问「两边一样吗」要用**两个等号** `==`。这一条是本课最容易栽的坑，因为 `=` 和 `==` 在翻译官喵眼里都是**认识**的写法，它不会拦你。\n\n它其实提醒过一句：`warning: suggest parentheses around assignment used as truth value` —— 意思是「哟，你在这儿装东西呢？真要是故意的就加一对括号说清楚」。可**加了括号也还是「装」，不是「问」**：想比较，只有换成 `==` 这一条路喵。\n\n顺带记一条：看见「明明对着代码念，眼色却永远走同一头」，第一件事就是**数等号**。",
+      "templateId": "cpp-s1-if-assign-vs-eq",
+      "params": {
+        "bowl": 4,
+        "need": 9
+      },
+      "verified": {
+        "at": "2026-09-16T07:24:09.373Z",
+        "hash": "ef47e38fa703a571"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-missing-using-namespace-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这段代码**翻不过去** —— 翻译官喵把它拦下来了，一句程序都没跑。\n\n它该干的事很简单：碗里有点鱼干就印 `碗里还有 0 条鱼干喵`，碗空了就印 `碗空了，去找大肥鱼喵`。\n\n你帮本喵补上**冒头那两行开机咒**里漏掉的那一行，让它翻得过去、跑得起来。（要是你更习惯另一种写法 —— 每次喊名字都带上它的姓 —— 那也行，判分只看印出来的东西对不对。）",
+      "brokenCode": "#include <iostream>\n\nint main() {\n    int fish = 0;\n    if (fish > 0) {\n        cout << \"碗里还有 \" << fish << \" 条鱼干喵\" << endl;\n    } else {\n        cout << \"碗空了，去找大肥鱼喵\" << endl;\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 0;\n    if (fish > 0) {\n        cout << \"碗里还有 \" << fish << \" 条鱼干喵\" << endl;\n    } else {\n        cout << \"碗空了，去找大肥鱼喵\" << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "碗空了，去找大肥鱼喵",
+      "stdin": null,
+      "explanation": "翻译官喵抱怨的原话是 `error: 'cout' was not declared in this scope; did you mean 'std::cout'?`，底下还跟着一句 `error: 'endl' was not declared in this scope; did you mean 'std::endl'?` 喵。\n\n翻成猫话：**「`cout` 和 `endl` 这两个名字，本喵在登记簿上没找着 —— 你是不是想说 `std::cout`？」**\n\n这两个名字住在 `std` 那只大缸里。想让它们**光溜溜地喊出口**（直接写 `cout`、`endl`），得先在文件头上把那句咒念完：`using namespace std;`。本喵只写了 `#include <iostream>`（把档案管理员请来），却漏了后面这一行（把大缸里的名字都摆到明面上）。\n\n两条路都行喵：\n\n- 头上补一行 `using namespace std;` —— 之后 `cout`、`endl`、`cin`、`string` 全都光溜溜地喊。\n- 或者一个都不补，把每处都写全：`std::cout << ... << std::endl;` —— 啰嗦一点，但一个名字都不会认错。\n\n本课开头那两行开机咒就是这个道理：**少一行，整段代码一句话都跑不出来** —— 而且是那种「看着明明没错」的错，值得多念两遍喵。",
+      "templateId": "cpp-s1-missing-using-namespace",
+      "params": {
+        "fish": 0,
+        "unit": "鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T07:24:13.411Z",
+        "hash": "379f9d7654858a08"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-missing-using-namespace-009",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这段代码**翻不过去** —— 翻译官喵把它拦下来了，一句程序都没跑。\n\n它该干的事很简单：碗里有点冻干块就印 `碗里还有 4 条冻干块喵`，碗空了就印 `碗空了，去找大肥鱼喵`。\n\n你帮本喵补上**冒头那两行开机咒**里漏掉的那一行，让它翻得过去、跑得起来。（要是你更习惯另一种写法 —— 每次喊名字都带上它的姓 —— 那也行，判分只看印出来的东西对不对。）",
+      "brokenCode": "#include <iostream>\n\nint main() {\n    int fish = 4;\n    if (fish > 0) {\n        cout << \"碗里还有 \" << fish << \" 条冻干块喵\" << endl;\n    } else {\n        cout << \"碗空了，去找大肥鱼喵\" << endl;\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 4;\n    if (fish > 0) {\n        cout << \"碗里还有 \" << fish << \" 条冻干块喵\" << endl;\n    } else {\n        cout << \"碗空了，去找大肥鱼喵\" << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "碗里还有 4 条冻干块喵",
+      "stdin": null,
+      "explanation": "翻译官喵抱怨的原话是 `error: 'cout' was not declared in this scope; did you mean 'std::cout'?`，底下还跟着一句 `error: 'endl' was not declared in this scope; did you mean 'std::endl'?` 喵。\n\n翻成猫话：**「`cout` 和 `endl` 这两个名字，本喵在登记簿上没找着 —— 你是不是想说 `std::cout`？」**\n\n这两个名字住在 `std` 那只大缸里。想让它们**光溜溜地喊出口**（直接写 `cout`、`endl`），得先在文件头上把那句咒念完：`using namespace std;`。本喵只写了 `#include <iostream>`（把档案管理员请来），却漏了后面这一行（把大缸里的名字都摆到明面上）。\n\n两条路都行喵：\n\n- 头上补一行 `using namespace std;` —— 之后 `cout`、`endl`、`cin`、`string` 全都光溜溜地喊。\n- 或者一个都不补，把每处都写全：`std::cout << ... << std::endl;` —— 啰嗦一点，但一个名字都不会认错。\n\n本课开头那两行开机咒就是这个道理：**少一行，整段代码一句话都跑不出来** —— 而且是那种「看着明明没错」的错，值得多念两遍喵。",
+      "templateId": "cpp-s1-missing-using-namespace",
+      "params": {
+        "fish": 4,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T07:24:16.684Z",
+        "hash": "3cb915a57d8517cb"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-switch-menu-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊上挂三块牌子，报编号点鱼：\n\n- 报 **1** → 印 `本喵要一条三文鱼喵`\n- 报 **2** → 印 `本喵要一条秋刀鱼喵`\n- 报 **3** → 印 `本喵要一条鳕鱼喵`\n- 报**别的编号** → 印 `这个编号本喵不认识喵`\n\n请你写个程序：**先从投喂口读进来一个编号**（1 到 4 都有可能），再印**一行**。这一题请用 `switch` 那套「挂牌子」的写法来写，别用一串并列的眼色。\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\n本喵要一条秋刀鱼喵\n\n（判分用的是**另外一组编号**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 0;\n    cin >> choice;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条三文鱼喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条秋刀鱼喵\" << endl;\n            break;\n        case 3:\n            cout << \"本喵要一条鳕鱼喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "本喵要一条鳕鱼喵",
+      "stdin": "3\n",
+      "explanation": "`switch` 的样子是：**先报一个编号，下面挂一排 `case` 牌子，最后留一个 `default` 兜底**。\n\n```\nswitch (choice) {\n    case 1:\n        ...\n        break;\n    ...\n    default:\n        ...\n        break;\n}\n```\n\n三条规矩记牢：\n\n1. **报的那个编号摆在括号里**，只报一次；下面每块牌子写的是「等于几」。\n2. **每块牌子末尾都要 `break;`** —— 它是「念到这儿打住」。漏了它，翻译官喵不会拦你，可它会**一路往下念**，把下面牌子的活也干了（本课另一道题就是这个坑）。\n3. **`default` 管所有对不上的编号** —— 它兜底，所以 4 号、9 号、什么号都归它。\n\n和一连串 `else if` 比，`switch` 更整齐的地方在于：**「报一次编号、挨个对牌子」，读的人一眼就看得出这是在按编号分流。** 什么时候用哪套？编号是**几个整数**、一块一块分得清清楚楚 —— 这种就适合挂牌子喵。",
+      "templateId": "cpp-s1-switch-menu",
+      "params": {
+        "f1": "三文鱼",
+        "f2": "秋刀鱼",
+        "f3": "鳕鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T07:24:34.035Z",
+        "hash": "3078638998729d0b"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-switch-menu-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊上挂三块牌子，报编号点鱼：\n\n- 报 **1** → 印 `本喵要一条三文鱼喵`\n- 报 **2** → 印 `本喵要一条秋刀鱼喵`\n- 报 **3** → 印 `本喵要一条鳗鱼喵`\n- 报**别的编号** → 印 `这个编号本喵不认识喵`\n\n请你写个程序：**先从投喂口读进来一个编号**（1 到 4 都有可能），再印**一行**。这一题请用 `switch` 那套「挂牌子」的写法来写，别用一串并列的眼色。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n本喵要一条鳗鱼喵\n\n（判分用的是**另外一组编号**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 0;\n    cin >> choice;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条三文鱼喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条秋刀鱼喵\" << endl;\n            break;\n        case 3:\n            cout << \"本喵要一条鳗鱼喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "本喵要一条三文鱼喵",
+      "stdin": "1\n",
+      "explanation": "`switch` 的样子是：**先报一个编号，下面挂一排 `case` 牌子，最后留一个 `default` 兜底**。\n\n```\nswitch (choice) {\n    case 1:\n        ...\n        break;\n    ...\n    default:\n        ...\n        break;\n}\n```\n\n三条规矩记牢：\n\n1. **报的那个编号摆在括号里**，只报一次；下面每块牌子写的是「等于几」。\n2. **每块牌子末尾都要 `break;`** —— 它是「念到这儿打住」。漏了它，翻译官喵不会拦你，可它会**一路往下念**，把下面牌子的活也干了（本课另一道题就是这个坑）。\n3. **`default` 管所有对不上的编号** —— 它兜底，所以 4 号、9 号、什么号都归它。\n\n和一连串 `else if` 比，`switch` 更整齐的地方在于：**「报一次编号、挨个对牌子」，读的人一眼就看得出这是在按编号分流。** 什么时候用哪套？编号是**几个整数**、一块一块分得清清楚楚 —— 这种就适合挂牌子喵。",
+      "templateId": "cpp-s1-switch-menu",
+      "params": {
+        "f1": "三文鱼",
+        "f2": "秋刀鱼",
+        "f3": "鳗鱼"
+      },
+      "verified": {
+        "at": "2026-10-20T16:48:31.306Z",
+        "hash": "835b648a6ceb317f"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-switch-menu-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊上挂三块牌子，报编号点鱼：\n\n- 报 **1** → 印 `本喵要一条三文鱼喵`\n- 报 **2** → 印 `本喵要一条鲷鱼喵`\n- 报 **3** → 印 `本喵要一条鳗鱼喵`\n- 报**别的编号** → 印 `这个编号本喵不认识喵`\n\n请你写个程序：**先从投喂口读进来一个编号**（1 到 4 都有可能），再印**一行**。这一题请用 `switch` 那套「挂牌子」的写法来写，别用一串并列的眼色。\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\n本喵要一条鲷鱼喵\n\n（判分用的是**另外一组编号**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 0;\n    cin >> choice;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条三文鱼喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条鲷鱼喵\" << endl;\n            break;\n        case 3:\n            cout << \"本喵要一条鳗鱼喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "这个编号本喵不认识喵",
+      "stdin": "4\n",
+      "explanation": "`switch` 的样子是：**先报一个编号，下面挂一排 `case` 牌子，最后留一个 `default` 兜底**。\n\n```\nswitch (choice) {\n    case 1:\n        ...\n        break;\n    ...\n    default:\n        ...\n        break;\n}\n```\n\n三条规矩记牢：\n\n1. **报的那个编号摆在括号里**，只报一次；下面每块牌子写的是「等于几」。\n2. **每块牌子末尾都要 `break;`** —— 它是「念到这儿打住」。漏了它，翻译官喵不会拦你，可它会**一路往下念**，把下面牌子的活也干了（本课另一道题就是这个坑）。\n3. **`default` 管所有对不上的编号** —— 它兜底，所以 4 号、9 号、什么号都归它。\n\n和一连串 `else if` 比，`switch` 更整齐的地方在于：**「报一次编号、挨个对牌子」，读的人一眼就看得出这是在按编号分流。** 什么时候用哪套？编号是**几个整数**、一块一块分得清清楚楚 —— 这种就适合挂牌子喵。",
+      "templateId": "cpp-s1-switch-menu",
+      "params": {
+        "f1": "三文鱼",
+        "f2": "鲷鱼",
+        "f3": "鳗鱼"
+      },
+      "verified": {
+        "at": "2026-10-20T16:48:35.473Z",
+        "hash": "784977f43f39f65a"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-switch-menu-004",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊上挂三块牌子，报编号点鱼：\n\n- 报 **1** → 印 `本喵要一条金枪鱼喵`\n- 报 **2** → 印 `本喵要一条秋刀鱼喵`\n- 报 **3** → 印 `本喵要一条鳕鱼喵`\n- 报**别的编号** → 印 `这个编号本喵不认识喵`\n\n请你写个程序：**先从投喂口读进来一个编号**（1 到 4 都有可能），再印**一行**。这一题请用 `switch` 那套「挂牌子」的写法来写，别用一串并列的眼色。\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\n本喵要一条秋刀鱼喵\n\n（判分用的是**另外一组编号**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 0;\n    cin >> choice;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条金枪鱼喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条秋刀鱼喵\" << endl;\n            break;\n        case 3:\n            cout << \"本喵要一条鳕鱼喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "本喵要一条鳕鱼喵",
+      "stdin": "3\n",
+      "explanation": "`switch` 的样子是：**先报一个编号，下面挂一排 `case` 牌子，最后留一个 `default` 兜底**。\n\n```\nswitch (choice) {\n    case 1:\n        ...\n        break;\n    ...\n    default:\n        ...\n        break;\n}\n```\n\n三条规矩记牢：\n\n1. **报的那个编号摆在括号里**，只报一次；下面每块牌子写的是「等于几」。\n2. **每块牌子末尾都要 `break;`** —— 它是「念到这儿打住」。漏了它，翻译官喵不会拦你，可它会**一路往下念**，把下面牌子的活也干了（本课另一道题就是这个坑）。\n3. **`default` 管所有对不上的编号** —— 它兜底，所以 4 号、9 号、什么号都归它。\n\n和一连串 `else if` 比，`switch` 更整齐的地方在于：**「报一次编号、挨个对牌子」，读的人一眼就看得出这是在按编号分流。** 什么时候用哪套？编号是**几个整数**、一块一块分得清清楚楚 —— 这种就适合挂牌子喵。",
+      "templateId": "cpp-s1-switch-menu",
+      "params": {
+        "f1": "金枪鱼",
+        "f2": "秋刀鱼",
+        "f3": "鳕鱼"
+      },
+      "verified": {
+        "at": "2026-10-20T16:48:39.920Z",
+        "hash": "89da546c14127256"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-switch-menu-006",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊上挂三块牌子，报编号点鱼：\n\n- 报 **1** → 印 `本喵要一条金枪鱼喵`\n- 报 **2** → 印 `本喵要一条鲷鱼喵`\n- 报 **3** → 印 `本喵要一条鳕鱼喵`\n- 报**别的编号** → 印 `这个编号本喵不认识喵`\n\n请你写个程序：**先从投喂口读进来一个编号**（1 到 4 都有可能），再印**一行**。这一题请用 `switch` 那套「挂牌子」的写法来写，别用一串并列的眼色。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n本喵要一条鳕鱼喵\n\n（判分用的是**另外一组编号**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 0;\n    cin >> choice;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条金枪鱼喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条鲷鱼喵\" << endl;\n            break;\n        case 3:\n            cout << \"本喵要一条鳕鱼喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "本喵要一条金枪鱼喵",
+      "stdin": "1\n",
+      "explanation": "`switch` 的样子是：**先报一个编号，下面挂一排 `case` 牌子，最后留一个 `default` 兜底**。\n\n```\nswitch (choice) {\n    case 1:\n        ...\n        break;\n    ...\n    default:\n        ...\n        break;\n}\n```\n\n三条规矩记牢：\n\n1. **报的那个编号摆在括号里**，只报一次；下面每块牌子写的是「等于几」。\n2. **每块牌子末尾都要 `break;`** —— 它是「念到这儿打住」。漏了它，翻译官喵不会拦你，可它会**一路往下念**，把下面牌子的活也干了（本课另一道题就是这个坑）。\n3. **`default` 管所有对不上的编号** —— 它兜底，所以 4 号、9 号、什么号都归它。\n\n和一连串 `else if` 比，`switch` 更整齐的地方在于：**「报一次编号、挨个对牌子」，读的人一眼就看得出这是在按编号分流。** 什么时候用哪套？编号是**几个整数**、一块一块分得清清楚楚 —— 这种就适合挂牌子喵。",
+      "templateId": "cpp-s1-switch-menu",
+      "params": {
+        "f1": "金枪鱼",
+        "f2": "鲷鱼",
+        "f3": "鳕鱼"
+      },
+      "verified": {
+        "at": "2026-10-20T16:48:44.338Z",
+        "hash": "1dfba581aab9482b"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-switch-menu-007",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊上挂三块牌子，报编号点鱼：\n\n- 报 **1** → 印 `本喵要一条金枪鱼喵`\n- 报 **2** → 印 `本喵要一条鲷鱼喵`\n- 报 **3** → 印 `本喵要一条鳗鱼喵`\n- 报**别的编号** → 印 `这个编号本喵不认识喵`\n\n请你写个程序：**先从投喂口读进来一个编号**（1 到 4 都有可能），再印**一行**。这一题请用 `switch` 那套「挂牌子」的写法来写，别用一串并列的眼色。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n本喵要一条金枪鱼喵\n\n（判分用的是**另外一组编号**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 0;\n    cin >> choice;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条金枪鱼喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条鲷鱼喵\" << endl;\n            break;\n        case 3:\n            cout << \"本喵要一条鳗鱼喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "这个编号本喵不认识喵",
+      "stdin": "4\n",
+      "explanation": "`switch` 的样子是：**先报一个编号，下面挂一排 `case` 牌子，最后留一个 `default` 兜底**。\n\n```\nswitch (choice) {\n    case 1:\n        ...\n        break;\n    ...\n    default:\n        ...\n        break;\n}\n```\n\n三条规矩记牢：\n\n1. **报的那个编号摆在括号里**，只报一次；下面每块牌子写的是「等于几」。\n2. **每块牌子末尾都要 `break;`** —— 它是「念到这儿打住」。漏了它，翻译官喵不会拦你，可它会**一路往下念**，把下面牌子的活也干了（本课另一道题就是这个坑）。\n3. **`default` 管所有对不上的编号** —— 它兜底，所以 4 号、9 号、什么号都归它。\n\n和一连串 `else if` 比，`switch` 更整齐的地方在于：**「报一次编号、挨个对牌子」，读的人一眼就看得出这是在按编号分流。** 什么时候用哪套？编号是**几个整数**、一块一块分得清清楚楚 —— 这种就适合挂牌子喵。",
+      "templateId": "cpp-s1-switch-menu",
+      "params": {
+        "f1": "金枪鱼",
+        "f2": "鲷鱼",
+        "f3": "鳗鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T07:24:37.801Z",
+        "hash": "7f499dba769d44d2"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-switch-missing-break-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵今天在鱼摊上挂三块牌子，报编号点鱼：1 号是三文鱼，2 号是秋刀鱼，3 号是鳕鱼。\n\n本喵报的是 **2 号**。可这段代码一嗓子喊出来**两条鱼** —— 先把 2 号那条念了，紧跟着又把 3 号那条也念了出来，多出来的那条根本不是本喵点的。\n\n它跑得起来，翻译官喵一句原话都没有，就是印出来的东西不对。你帮本喵改对：报 2 号只许印一行 `本喵要一条秋刀鱼喵`，别的鱼一条都不许多念；1 号、3 号和没挂过的编号，也得各报各的。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 2;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条三文鱼喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条秋刀鱼喵\" << endl;\n        case 3:\n            cout << \"本喵要一条鳕鱼喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 2;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条三文鱼喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条秋刀鱼喵\" << endl;\n            break;\n        case 3:\n            cout << \"本喵要一条鳕鱼喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "本喵要一条秋刀鱼喵",
+      "stdin": null,
+      "explanation": "`switch` 的念法是**从上往下找牌子，找到了就从那一句开始一路往下念** —— 念到撞上 `break` 才肯停。\n\n所以 `break` 不是「这块牌子的结尾」，它是**「念到这儿打住」的记号**。本喵的 2 号牌子后面漏了 `break`，它念完 2 号那句就顺着往下念，把 3 号那句也念了 —— 一直到撞上 3 号末尾那个 `break` 才刹车。\n\n修法就是补一个：在 `case 2:` 那句 `cout` 的后面加一行 `break;`。\n\n⚠️ 这题最值得记住的是**它一声不吭**：漏个 `break` 不违反任何一条规矩，翻译官喵照常把它翻过去、跑起来也有输出 —— 只是印出来的东西不对。这类毛病只能靠「**盯着印出来的东西**」发现。所以养成一个小习惯：每写完一块牌子，问自己一句「念到这儿该停了吗？该停就补 `break`。」\n\n顺带记牢另一头：`default` 是**所有牌子都对不上**时走的那条路，它平时摆在最下面，**末尾那个 `break` 可写可不写**（底下已经没东西可漏了）喵。",
+      "templateId": "cpp-s1-switch-missing-break",
+      "params": {
+        "f1": "三文鱼",
+        "f2": "秋刀鱼",
+        "f3": "鳕鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T07:23:57.783Z",
+        "hash": "ef16dbdb49379c1c"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-switch-missing-break-007",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵今天在鱼摊上挂三块牌子，报编号点鱼：1 号是金枪鱼，2 号是鲷鱼，3 号是鳗鱼。\n\n本喵报的是 **2 号**。可这段代码一嗓子喊出来**两条鱼** —— 先把 2 号那条念了，紧跟着又把 3 号那条也念了出来，多出来的那条根本不是本喵点的。\n\n它跑得起来，翻译官喵一句原话都没有，就是印出来的东西不对。你帮本喵改对：报 2 号只许印一行 `本喵要一条鲷鱼喵`，别的鱼一条都不许多念；1 号、3 号和没挂过的编号，也得各报各的。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 2;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条金枪鱼喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条鲷鱼喵\" << endl;\n        case 3:\n            cout << \"本喵要一条鳗鱼喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 2;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条金枪鱼喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条鲷鱼喵\" << endl;\n            break;\n        case 3:\n            cout << \"本喵要一条鳗鱼喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "本喵要一条鲷鱼喵",
+      "stdin": null,
+      "explanation": "`switch` 的念法是**从上往下找牌子，找到了就从那一句开始一路往下念** —— 念到撞上 `break` 才肯停。\n\n所以 `break` 不是「这块牌子的结尾」，它是**「念到这儿打住」的记号**。本喵的 2 号牌子后面漏了 `break`，它念完 2 号那句就顺着往下念，把 3 号那句也念了 —— 一直到撞上 3 号末尾那个 `break` 才刹车。\n\n修法就是补一个：在 `case 2:` 那句 `cout` 的后面加一行 `break;`。\n\n⚠️ 这题最值得记住的是**它一声不吭**：漏个 `break` 不违反任何一条规矩，翻译官喵照常把它翻过去、跑起来也有输出 —— 只是印出来的东西不对。这类毛病只能靠「**盯着印出来的东西**」发现。所以养成一个小习惯：每写完一块牌子，问自己一句「念到这儿该停了吗？该停就补 `break`。」\n\n顺带记牢另一头：`default` 是**所有牌子都对不上**时走的那条路，它平时摆在最下面，**末尾那个 `break` 可写可不写**（底下已经没东西可漏了）喵。",
+      "templateId": "cpp-s1-switch-missing-break",
+      "params": {
+        "f1": "金枪鱼",
+        "f2": "鲷鱼",
+        "f3": "鳗鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T07:24:01.683Z",
+        "hash": "d85a3093b5dbe2a9"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ternary-bigger-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会喂进来**两个数**（一行一个，可能谁大谁小都不一定，也可能一样大）。本喵要那个**更大的**。\n\n请你写个程序：把两个数读进来，比较一下，印**一行** `更大的是 X 喵`（X 是更大的那个数；两个一样大就印那个数本身）。\n\n这一题请用**三目那一套写法**（问号加冒号那套，本课刚学的）来挑，别用一堆 `if` 摊开写。\n\n比如投喂给程序的是\n\n9\n4\n\n程序就要叼回\n\n更大的是 9 喵\n\n（判分用的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    cout << \"更大的是 \" << (a > b ? a : b) << \" 喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "更大的是 5 喵",
+      "stdin": "5\n2\n",
+      "explanation": "三目那一套写出来长这样：**条件 ? 答真时给的东西 : 答假时给的东西**。\n\n它和 `if / else` 是一回事，只是**整句压成了一行** —— 本该「两条路各自走」，现在变成了「一个能把值交出来的小包裹」。什么时候值得用它？**两条路上只是各自丢一个东西出来**的时候。像这一题：答真就给 `a`，答假就给 `b`，一句话的事。\n\n读法：先看问号前面那个眼色（`a > b`），答真**只取问号后面、冒号前面**那一个；答假**只取冒号后面**那一个。两边只留一个，不会都算。\n\n⚠️ 一个小坑：**它和 `cout` 一起用的时候，外头要加一对圆括号** —— `cout << (a > b ? a : b) << endl;`。不加的话，`<<` 会和问号抢着算，翻译官喵就念不懂了。拿不准就先把它装进一只碗里（`int bigger = a > b ? a : b;`），再印那只碗，一样对喵。\n\n要是两条路上要干的活不止一件（印好几行、还要改别的碗），那就老老实实写 `if / else` —— **三目是给「一句话的事」用的**。",
+      "templateId": "cpp-s1-ternary-bigger",
+      "params": {
+        "a": 5,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-09-16T07:24:41.893Z",
+        "hash": "c32c05ef64d55af4"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ternary-bigger-006",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会喂进来**两个数**（一行一个，可能谁大谁小都不一定，也可能一样大）。本喵要那个**更大的**。\n\n请你写个程序：把两个数读进来，比较一下，印**一行** `更大的是 X 喵`（X 是更大的那个数；两个一样大就印那个数本身）。\n\n这一题请用**三目那一套写法**（问号加冒号那套，本课刚学的）来挑，别用一堆 `if` 摊开写。\n\n比如投喂给程序的是\n\n9\n4\n\n程序就要叼回\n\n更大的是 9 喵\n\n（判分用的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    cout << \"更大的是 \" << (a > b ? a : b) << \" 喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "更大的是 8 喵",
+      "stdin": "5\n8\n",
+      "explanation": "三目那一套写出来长这样：**条件 ? 答真时给的东西 : 答假时给的东西**。\n\n它和 `if / else` 是一回事，只是**整句压成了一行** —— 本该「两条路各自走」，现在变成了「一个能把值交出来的小包裹」。什么时候值得用它？**两条路上只是各自丢一个东西出来**的时候。像这一题：答真就给 `a`，答假就给 `b`，一句话的事。\n\n读法：先看问号前面那个眼色（`a > b`），答真**只取问号后面、冒号前面**那一个；答假**只取冒号后面**那一个。两边只留一个，不会都算。\n\n⚠️ 一个小坑：**它和 `cout` 一起用的时候，外头要加一对圆括号** —— `cout << (a > b ? a : b) << endl;`。不加的话，`<<` 会和问号抢着算，翻译官喵就念不懂了。拿不准就先把它装进一只碗里（`int bigger = a > b ? a : b;`），再印那只碗，一样对喵。\n\n要是两条路上要干的活不止一件（印好几行、还要改别的碗），那就老老实实写 `if / else` —— **三目是给「一句话的事」用的**。",
+      "templateId": "cpp-s1-ternary-bigger",
+      "params": {
+        "a": 5,
+        "b": 8
+      },
+      "verified": {
+        "at": "2026-10-20T16:48:48.939Z",
+        "hash": "165de4577073b397"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ternary-bigger-012",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会喂进来**两个数**（一行一个，可能谁大谁小都不一定，也可能一样大）。本喵要那个**更大的**。\n\n请你写个程序：把两个数读进来，比较一下，印**一行** `更大的是 X 喵`（X 是更大的那个数；两个一样大就印那个数本身）。\n\n这一题请用**三目那一套写法**（问号加冒号那套，本课刚学的）来挑，别用一堆 `if` 摊开写。\n\n比如投喂给程序的是\n\n9\n4\n\n程序就要叼回\n\n更大的是 9 喵\n\n（判分用的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    cout << \"更大的是 \" << (a > b ? a : b) << \" 喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "更大的是 6 喵",
+      "stdin": "6\n6\n",
+      "explanation": "三目那一套写出来长这样：**条件 ? 答真时给的东西 : 答假时给的东西**。\n\n它和 `if / else` 是一回事，只是**整句压成了一行** —— 本该「两条路各自走」，现在变成了「一个能把值交出来的小包裹」。什么时候值得用它？**两条路上只是各自丢一个东西出来**的时候。像这一题：答真就给 `a`，答假就给 `b`，一句话的事。\n\n读法：先看问号前面那个眼色（`a > b`），答真**只取问号后面、冒号前面**那一个；答假**只取冒号后面**那一个。两边只留一个，不会都算。\n\n⚠️ 一个小坑：**它和 `cout` 一起用的时候，外头要加一对圆括号** —— `cout << (a > b ? a : b) << endl;`。不加的话，`<<` 会和问号抢着算，翻译官喵就念不懂了。拿不准就先把它装进一只碗里（`int bigger = a > b ? a : b;`），再印那只碗，一样对喵。\n\n要是两条路上要干的活不止一件（印好几行、还要改别的碗），那就老老实实写 `if / else` —— **三目是给「一句话的事」用的**。",
+      "templateId": "cpp-s1-ternary-bigger",
+      "params": {
+        "a": 6,
+        "b": 6
+      },
+      "verified": {
+        "at": "2026-10-20T16:48:53.259Z",
+        "hash": "5c4d76286233d61f"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ternary-bigger-019",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会喂进来**两个数**（一行一个，可能谁大谁小都不一定，也可能一样大）。本喵要那个**更大的**。\n\n请你写个程序：把两个数读进来，比较一下，印**一行** `更大的是 X 喵`（X 是更大的那个数；两个一样大就印那个数本身）。\n\n这一题请用**三目那一套写法**（问号加冒号那套，本课刚学的）来挑，别用一堆 `if` 摊开写。\n\n比如投喂给程序的是\n\n9\n4\n\n程序就要叼回\n\n更大的是 9 喵\n\n（判分用的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    cout << \"更大的是 \" << (a > b ? a : b) << \" 喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "更大的是 7 喵",
+      "stdin": "7\n5\n",
+      "explanation": "三目那一套写出来长这样：**条件 ? 答真时给的东西 : 答假时给的东西**。\n\n它和 `if / else` 是一回事，只是**整句压成了一行** —— 本该「两条路各自走」，现在变成了「一个能把值交出来的小包裹」。什么时候值得用它？**两条路上只是各自丢一个东西出来**的时候。像这一题：答真就给 `a`，答假就给 `b`，一句话的事。\n\n读法：先看问号前面那个眼色（`a > b`），答真**只取问号后面、冒号前面**那一个；答假**只取冒号后面**那一个。两边只留一个，不会都算。\n\n⚠️ 一个小坑：**它和 `cout` 一起用的时候，外头要加一对圆括号** —— `cout << (a > b ? a : b) << endl;`。不加的话，`<<` 会和问号抢着算，翻译官喵就念不懂了。拿不准就先把它装进一只碗里（`int bigger = a > b ? a : b;`），再印那只碗，一样对喵。\n\n要是两条路上要干的活不止一件（印好几行、还要改别的碗），那就老老实实写 `if / else` —— **三目是给「一句话的事」用的**。",
+      "templateId": "cpp-s1-ternary-bigger",
+      "params": {
+        "a": 7,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:48:57.679Z",
+        "hash": "9235e669048962d3"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ternary-bigger-025",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会喂进来**两个数**（一行一个，可能谁大谁小都不一定，也可能一样大）。本喵要那个**更大的**。\n\n请你写个程序：把两个数读进来，比较一下，印**一行** `更大的是 X 喵`（X 是更大的那个数；两个一样大就印那个数本身）。\n\n这一题请用**三目那一套写法**（问号加冒号那套，本课刚学的）来挑，别用一堆 `if` 摊开写。\n\n比如投喂给程序的是\n\n9\n4\n\n程序就要叼回\n\n更大的是 9 喵\n\n（判分用的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    cout << \"更大的是 \" << (a > b ? a : b) << \" 喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "更大的是 8 喵",
+      "stdin": "8\n3\n",
+      "explanation": "三目那一套写出来长这样：**条件 ? 答真时给的东西 : 答假时给的东西**。\n\n它和 `if / else` 是一回事，只是**整句压成了一行** —— 本该「两条路各自走」，现在变成了「一个能把值交出来的小包裹」。什么时候值得用它？**两条路上只是各自丢一个东西出来**的时候。像这一题：答真就给 `a`，答假就给 `b`，一句话的事。\n\n读法：先看问号前面那个眼色（`a > b`），答真**只取问号后面、冒号前面**那一个；答假**只取冒号后面**那一个。两边只留一个，不会都算。\n\n⚠️ 一个小坑：**它和 `cout` 一起用的时候，外头要加一对圆括号** —— `cout << (a > b ? a : b) << endl;`。不加的话，`<<` 会和问号抢着算，翻译官喵就念不懂了。拿不准就先把它装进一只碗里（`int bigger = a > b ? a : b;`），再印那只碗，一样对喵。\n\n要是两条路上要干的活不止一件（印好几行、还要改别的碗），那就老老实实写 `if / else` —— **三目是给「一句话的事」用的**。",
+      "templateId": "cpp-s1-ternary-bigger",
+      "params": {
+        "a": 8,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:49:02.050Z",
+        "hash": "9aa999fbad7ebf39"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ternary-bigger-031",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会喂进来**两个数**（一行一个，可能谁大谁小都不一定，也可能一样大）。本喵要那个**更大的**。\n\n请你写个程序：把两个数读进来，比较一下，印**一行** `更大的是 X 喵`（X 是更大的那个数；两个一样大就印那个数本身）。\n\n这一题请用**三目那一套写法**（问号加冒号那套，本课刚学的）来挑，别用一堆 `if` 摊开写。\n\n比如投喂给程序的是\n\n9\n4\n\n程序就要叼回\n\n更大的是 9 喵\n\n（判分用的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    cout << \"更大的是 \" << (a > b ? a : b) << \" 喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "更大的是 9 喵",
+      "stdin": "8\n9\n",
+      "explanation": "三目那一套写出来长这样：**条件 ? 答真时给的东西 : 答假时给的东西**。\n\n它和 `if / else` 是一回事，只是**整句压成了一行** —— 本该「两条路各自走」，现在变成了「一个能把值交出来的小包裹」。什么时候值得用它？**两条路上只是各自丢一个东西出来**的时候。像这一题：答真就给 `a`，答假就给 `b`，一句话的事。\n\n读法：先看问号前面那个眼色（`a > b`），答真**只取问号后面、冒号前面**那一个；答假**只取冒号后面**那一个。两边只留一个，不会都算。\n\n⚠️ 一个小坑：**它和 `cout` 一起用的时候，外头要加一对圆括号** —— `cout << (a > b ? a : b) << endl;`。不加的话，`<<` 会和问号抢着算，翻译官喵就念不懂了。拿不准就先把它装进一只碗里（`int bigger = a > b ? a : b;`），再印那只碗，一样对喵。\n\n要是两条路上要干的活不止一件（印好几行、还要改别的碗），那就老老实实写 `if / else` —— **三目是给「一句话的事」用的**。",
+      "templateId": "cpp-s1-ternary-bigger",
+      "params": {
+        "a": 8,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T07:24:45.698Z",
+        "hash": "effb78f9a5ca7de0"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-three-branch-eye-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要一眼看出碗里的小鱼干够不够吃，**三段眼色**分开走（X 就是碗里那个数）：\n\n- 碗里 **4 条往上**（含 4）→ 印 `小鱼干满满，有 X 条喵`\n- 碗里有**一些**（不到 4，但不止 0）→ 印 `快见底啦，只剩 X 条喵`\n- 碗里**空的** → 印 `碗空了，去找大肥鱼要点喵`\n\n请你写个程序：**先从投喂口读进来一个数**（碗里有几条，可能是 0），再照上面的规矩印**一行**。\n\n比如投喂给程序的是\n\n9\n\n程序就要叼回\n\n小鱼干满满，有 9 条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 0;\n    cin >> fish;\n\n    if (fish >= 4) {\n        cout << \"小鱼干满满，有 \" << fish << \" 条喵\" << endl;\n    } else if (fish > 0) {\n        cout << \"快见底啦，只剩 \" << fish << \" 条喵\" << endl;\n    } else {\n        cout << \"碗空了，去找大肥鱼要点喵\" << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "快见底啦，只剩 2 条喵",
+      "stdin": "2\n",
+      "explanation": "三段眼色的读法就是**从上往下挨个问，谁先答真就归谁管**：\n\n1. 先问「够 4 条了吗」；答真，印第一句，后面两条路**连问都不问**。\n2. 答假，才轮到 `else if` 接着问「不止 0 吧」；答真，印第二句。\n3. 两条都答假 —— 剩下的可能只有「0 条」这一种 —— 就落到最后的 `else` 兜底。\n\n所以**顺序不能乱**：要是把「不止 0」放到前面，那么 8 条、9 条也会先被它截住，印成「快见底啦」—— 这正是三段眼色最容易出的错。写的时候给自己念一遍：**最严的那条摆最上面**。\n\n最后那个 `else` 是**兜底**：前面都没接住的，全归它管。它让这一眼不用漏 —— 碗里不管是 0 条还是别的什么数，总有一句话管得上喵。",
+      "templateId": "cpp-s1-three-branch-eye",
+      "params": {
+        "hi": 4,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T07:26:12.746Z",
+        "hash": "a3671446bc57bcf4"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-three-branch-eye-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要一眼看出碗里的冻干块够不够吃，**三段眼色**分开走（X 就是碗里那个数）：\n\n- 碗里 **4 条往上**（含 4）→ 印 `冻干块满满，有 X 条喵`\n- 碗里有**一些**（不到 4，但不止 0）→ 印 `快见底啦，只剩 X 条喵`\n- 碗里**空的** → 印 `碗空了，去找大肥鱼要点喵`\n\n请你写个程序：**先从投喂口读进来一个数**（碗里有几条，可能是 0），再照上面的规矩印**一行**。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n快见底啦，只剩 3 条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 0;\n    cin >> fish;\n\n    if (fish >= 4) {\n        cout << \"冻干块满满，有 \" << fish << \" 条喵\" << endl;\n    } else if (fish > 0) {\n        cout << \"快见底啦，只剩 \" << fish << \" 条喵\" << endl;\n    } else {\n        cout << \"碗空了，去找大肥鱼要点喵\" << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "冻干块满满，有 4 条喵",
+      "stdin": "4\n",
+      "explanation": "三段眼色的读法就是**从上往下挨个问，谁先答真就归谁管**：\n\n1. 先问「够 4 条了吗」；答真，印第一句，后面两条路**连问都不问**。\n2. 答假，才轮到 `else if` 接着问「不止 0 吧」；答真，印第二句。\n3. 两条都答假 —— 剩下的可能只有「0 条」这一种 —— 就落到最后的 `else` 兜底。\n\n所以**顺序不能乱**：要是把「不止 0」放到前面，那么 8 条、9 条也会先被它截住，印成「快见底啦」—— 这正是三段眼色最容易出的错。写的时候给自己念一遍：**最严的那条摆最上面**。\n\n最后那个 `else` 是**兜底**：前面都没接住的，全归它管。它让这一眼不用漏 —— 碗里不管是 0 条还是别的什么数，总有一句话管得上喵。",
+      "templateId": "cpp-s1-three-branch-eye",
+      "params": {
+        "hi": 4,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-10-20T16:49:15.239Z",
+        "hash": "a45ef47b081bb472"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-three-branch-eye-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要一眼看出碗里的小鱼干够不够吃，**三段眼色**分开走（X 就是碗里那个数）：\n\n- 碗里 **5 条往上**（含 5）→ 印 `小鱼干满满，有 X 条喵`\n- 碗里有**一些**（不到 5，但不止 0）→ 印 `快见底啦，只剩 X 条喵`\n- 碗里**空的** → 印 `碗空了，去找大肥鱼要点喵`\n\n请你写个程序：**先从投喂口读进来一个数**（碗里有几条，可能是 0），再照上面的规矩印**一行**。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n快见底啦，只剩 3 条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 0;\n    cin >> fish;\n\n    if (fish >= 5) {\n        cout << \"小鱼干满满，有 \" << fish << \" 条喵\" << endl;\n    } else if (fish > 0) {\n        cout << \"快见底啦，只剩 \" << fish << \" 条喵\" << endl;\n    } else {\n        cout << \"碗空了，去找大肥鱼要点喵\" << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "快见底啦，只剩 2 条喵",
+      "stdin": "2\n",
+      "explanation": "三段眼色的读法就是**从上往下挨个问，谁先答真就归谁管**：\n\n1. 先问「够 5 条了吗」；答真，印第一句，后面两条路**连问都不问**。\n2. 答假，才轮到 `else if` 接着问「不止 0 吧」；答真，印第二句。\n3. 两条都答假 —— 剩下的可能只有「0 条」这一种 —— 就落到最后的 `else` 兜底。\n\n所以**顺序不能乱**：要是把「不止 0」放到前面，那么 8 条、9 条也会先被它截住，印成「快见底啦」—— 这正是三段眼色最容易出的错。写的时候给自己念一遍：**最严的那条摆最上面**。\n\n最后那个 `else` 是**兜底**：前面都没接住的，全归它管。它让这一眼不用漏 —— 碗里不管是 0 条还是别的什么数，总有一句话管得上喵。",
+      "templateId": "cpp-s1-three-branch-eye",
+      "params": {
+        "hi": 5,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T16:49:19.584Z",
+        "hash": "ff8493caf68f9ba1"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-three-branch-eye-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要一眼看出碗里的冻干块够不够吃，**三段眼色**分开走（X 就是碗里那个数）：\n\n- 碗里 **5 条往上**（含 5）→ 印 `冻干块满满，有 X 条喵`\n- 碗里有**一些**（不到 5，但不止 0）→ 印 `快见底啦，只剩 X 条喵`\n- 碗里**空的** → 印 `碗空了，去找大肥鱼要点喵`\n\n请你写个程序：**先从投喂口读进来一个数**（碗里有几条，可能是 0），再照上面的规矩印**一行**。\n\n比如投喂给程序的是\n\n6\n\n程序就要叼回\n\n冻干块满满，有 6 条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 0;\n    cin >> fish;\n\n    if (fish >= 5) {\n        cout << \"冻干块满满，有 \" << fish << \" 条喵\" << endl;\n    } else if (fish > 0) {\n        cout << \"快见底啦，只剩 \" << fish << \" 条喵\" << endl;\n    } else {\n        cout << \"碗空了，去找大肥鱼要点喵\" << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "快见底啦，只剩 1 条喵",
+      "stdin": "1\n",
+      "explanation": "三段眼色的读法就是**从上往下挨个问，谁先答真就归谁管**：\n\n1. 先问「够 5 条了吗」；答真，印第一句，后面两条路**连问都不问**。\n2. 答假，才轮到 `else if` 接着问「不止 0 吧」；答真，印第二句。\n3. 两条都答假 —— 剩下的可能只有「0 条」这一种 —— 就落到最后的 `else` 兜底。\n\n所以**顺序不能乱**：要是把「不止 0」放到前面，那么 8 条、9 条也会先被它截住，印成「快见底啦」—— 这正是三段眼色最容易出的错。写的时候给自己念一遍：**最严的那条摆最上面**。\n\n最后那个 `else` 是**兜底**：前面都没接住的，全归它管。它让这一眼不用漏 —— 碗里不管是 0 条还是别的什么数，总有一句话管得上喵。",
+      "templateId": "cpp-s1-three-branch-eye",
+      "params": {
+        "hi": 5,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T07:26:15.800Z",
+        "hash": "b9e05dd8ce21e43a"
+      }
+    }
+  ]
+}

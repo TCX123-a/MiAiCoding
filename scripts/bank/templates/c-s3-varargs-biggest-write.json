@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-varargs-biggest-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-12",
+  "type": "codewrite",
+  "concept": ["清单四步：开挂叼收", "从前一串里挑最大的", "比大小再更新"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["3", "1"] },
+    "b": { "kind": "pick", "values": ["9", "7"] },
+    "c": { "kind": "pick", "values": ["2", "8"] },
+    "d": { "kind": "pick", "values": ["7", "2"] }
+  },
+  "stemTemplate": "请写一招 `biggest` 喵：投喂表第一位是**账本** `count`，后头那一串是主人递进来的四份数。\n\n它要从这一串里挑出**最大**的那份叼回来。`main` 里会喊它一回，该印出那一行数里**最大**的那个（一行一个数，别的字都别印）。\n\n四步照旧一步不能少（开、挂、叼、收）；挑的时候记住：**先有一个「目前最大的」，再一份一份比过去**，比它大就把王座让出来喵。",
+  "starterTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nint biggest(int count, ...) {\n    /* ↓ 在这儿写：从后头那一串里挑出最大的那份叼回去 */\n\n    return 0;\n}\n\nint main(void) {\n    printf(\"%d\\n\", biggest(4, {a}, {b}, {c}, {d}));\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nint biggest(int count, ...) {\n    va_list list;\n    va_start(list, count);\n    int best = va_arg(list, int);\n    for (int i = 1; i < count; i++) {\n        int v = va_arg(list, int);\n        if (v > best) {\n            best = v;\n        }\n    }\n    va_end(list);\n    return best;\n}\n\nint main(void) {\n    printf(\"%d\\n\", biggest(4, {a}, {b}, {c}, {d}));\n    return 0;\n}\n",
+  "explanationTemplate": "四步照旧喵：开清单 `va_list list;`、挂名字 `va_start(list, count);`、叼 `va_arg(list, int)`、收摊 `va_end(list);`。\n\n挑最大比求和多想一步：\n\n- 先**把第一份叼出来当王座**（`best = va_arg(list, int);`）—— 王座上总得先坐一个；\n- 绕鱼干跑圈从**第二份**开始（`i = 1`），每叼一份就跟王座比一比，比王座大就让位；\n- 绕完，王座上那位就是最大的，叼回去。\n\n要是王座一开始写 `0`，递进来的全是负数时就会出错啦 —— 所以「先叼第一份坐上去」才是稳妥的写法喵。"
+}

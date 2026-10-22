@@ -1,0 +1,72 @@
+{
+  "lessonId": "cpp-stage2-06",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "想让图纸外面的一个招式够得到盒子里带盖的格子，那一行通行证要写在哪儿？",
+      "options": [
+        "写在图纸的大括号里面，名字前面加 `friend`",
+        "写在类外面，函数定义的前一行",
+        "写在 `main` 里，喊它之前",
+        "把那一格改成 `public:` 就行，不用写通行证"
+      ],
+      "answer": 0,
+      "explanation": "通行证是图纸自己签的字，所以它必须写在图纸**里面** —— `friend void showAccount(const Cat& c);` 这一行。写在图纸外面，图纸根本不知道有这回事，盒子照样锁着喵。把格子改成 `public:` 是**对所有人掀盖子**，那是另一回事，不是开一道只给一只猫走的小缝喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "图纸上已经写好了 `friend void showAccount(const Cat& c);`，`c1` 是照这张图纸生出来的一只真猫。下面哪一句喊得对？",
+      "options": ["`c1.showAccount(c1)`", "`showAccount(c1)`", "`Cat::showAccount(c1)`", "`c1->showAccount()`"],
+      "answer": 1,
+      "explanation": "拿到通行证的招式**身份上还是外面的一只招式**，只是图纸多给了它一张证 —— 所以喊法是「招式名(哪只猫)」，写成 `showAccount(c1)` 喵。`c1.showAccount(c1)` 那种「哪只猫 · 招式名」的写法是留给**图纸里面**的招式的，这么喊翻译官喵会告诉你这张图纸上没长这一手；`Cat::` 是定义在图纸外面的招式在**写定义那一行**才用的前缀，喊的时候不写；`->` 是跟牌子一起用的写法，这里手里拿的是真猫，不是牌子喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵在 `Cat` 的图纸里写了 `friend class Vet;`。那么 `Vet` 那张图纸照出来的猫大夫，能不能替它的学徒也开一条路，让学徒直接读 `Cat` 盒子里带盖的格子？",
+      "options": [
+        "能，猫大夫信得过，学徒自然也信得过",
+        "不能，通行证不许转借，要用就得在 `Cat` 的图纸里再写一行",
+        "能，只要学徒的函数写在 `Vet` 里面",
+        "不能，因为 `friend class` 只对一只猫大夫有效"
+      ],
+      "answer": 1,
+      "explanation": "通行证**不传递**，也不许转借喵。`Vet` 有证是 `Cat` 单方面签的字，`Vet` 的学徒不在那张证上，照样被挡在门外 —— 报的错就是「私有，你够不着」。想放学徒进来，唯一的办法是回到 `Cat` 的图纸里，把学徒的名字**再写一行**喵。顺带说一句：`friend class` 是给**整张图纸**开的门，那张图纸照出来的每一只都带着证，不是只管一只喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Cat {\n    int fish;\npublic:\n    Cat(int f) : fish(f) {}\n    ____ class Vet;\n};\n\nclass Vet {\npublic:\n    void checkup(const Cat& c) {\n        cout << \"里面有 \" << c.____ << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Cat c1(3);\n    Vet v;\n    v.checkup(c1);\n    return 0;\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出），补上之后它会印出「里面有 3 条」喵。",
+      "blanks": [
+        { "answer": "friend", "accept": [] },
+        { "answer": "fish", "accept": [] }
+      ],
+      "explanation": "第一处是给整张图纸开门的通行证 —— 那个关键字是 `friend`，写在图纸**里面**，跟着 `class Vet` 就是「`Vet` 照出来的每一只猫大夫都够得着」喵。第二处：猫大夫要读到的是那个带盖的格子，也就是 `fish` —— 正因为图纸给它开了门，这个直接够上去的写法才不报「私有」喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Cat {\n    int fish;\npublic:\n    Cat(int f) : fish(f) {}\n    friend void doubleIt(Cat& c);\n};\n\nvoid doubleIt(Cat& c) {\n    c.fish = c.fish * 2;\n    cout << \"开门之后：\" << c.fish << \" 条\" << endl;\n}\n\nint main() {\n    Cat c1(3);\n    doubleIt(c1);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "开门之后：6 条",
+      "accept": ["开门之后：6 条\n"],
+      "explanation": "`doubleIt` 名字在图纸里那张通行证上，所以它里面那句 `c.fish = c.fish * 2;` 算「自己人」动手，能读也能写喵。小橘本来 3 条，翻一倍就是 6 条，然后再印出来 —— 印的时候读到的已经是改过之后的数啦。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Cat {\n    int fish;\npublic:\n    Cat(int f) : fish(f) {}\n    friend class Vet;\n};\n\nclass Vet {\npublic:\n    void feed(Cat& c) {\n        c.fish = c.fish + 1;\n        cout << \"喂完是 \" << c.fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Cat c1(3);\n    Vet v;\n    v.feed(c1);\n    v.feed(c1);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "喂完是 4 条\n喂完是 5 条",
+      "accept": ["喂完是 4 条\n喂完是 5 条\n"],
+      "explanation": "`friend class Vet;` 给的是**整张图纸**的门，所以 `Vet` 照出来的这只猫大夫天生带证，它里面那句 `c.fish = c.fish + 1;` 不报私有喵。喂第一次：3 变 4，印 4 条；喂第二次：4 变 5，印 5 条 —— 两次改的都是同一只小橘盒子里那一格，所以第二次数的是从上一次的结果往上加的喵。"
+    }
+  ]
+}

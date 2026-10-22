@@ -1,0 +1,89 @@
+{
+  "lessonId": "c-stage3-04",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵往碗摞上依次放了三只碗：先放 1、再放 2、最后放 3。现在一只只拿走，拿到的顺序是什么喵？",
+      "options": [
+        "3、2、1",
+        "1、2、3",
+        "2、1、3",
+        "1、3、2"
+      ],
+      "answer": 0,
+      "explanation": "碗摞的规矩是「最后放上去的最先被拿走」喵：3 在最上面，所以最先被拿走，接着是 2，最后才是压在底的 1。这也正是「一摞叠起来的猫粮碗」这个名字的来历 —— 想拿底下那只，得先把上面的都拿走。放进来的顺序和拿出去的顺序正好颠倒过来，就是它的全部脾气喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "开饭的队伍里，第 1、2、3 只猫依次排好。谁**最先**领到小鱼干喵？",
+      "options": [
+        "第 1 只 —— 最先来的最先领",
+        "第 3 只 —— 最后来的最先领",
+        "每次随机挑一只",
+        "三只一起领"
+      ],
+      "answer": 0,
+      "explanation": "队伍是「最先来的最先被伺候」喵：`head` 一直指着排在最前面的那位，送客就从它开始，所以第 1 只先领到。「第 3 只 —— 最后来的最先领」说的其实是碗摞的脾气（最后来的最先走），两样法宝正好互为反面，别记反了喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "从一只**空**碗摞上拿走一只碗，会发生什么喵？",
+      "options": [
+        "会越界读到不属于自己的地方 —— 所以动手前必须先问一句「空了吗」",
+        "会自动变出一只碗来补上",
+        "程序会友好地印出一句提示，然后正常继续",
+        "什么事都没有，`top` 变成负数也不要紧"
+      ],
+      "answer": 0,
+      "explanation": "空碗摞的 `top` 是 0，硬要拿的话 `top--` 会把它变成 -1，接着就去读一个根本不属于这只碗摞的位置喵 —— 读到的是一堆莫名其妙的数字，写进去还可能踩坏别人的地方。所以 `pop` 的第一件事永远是问边界：`if (is_empty()) return 0;`。这条规矩对「放」也一样，满了就别再往上摞喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define MAX_BOWLS 3\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint push(int value) {\n    if (top == MAX_BOWLS) {\n        return 0;\n    }\n    bowls[____] = value;\n    ____++;\n    return 1;\n}\n\nint main(void) {\n    push(5);\n    push(6);\n    printf(\"摞了 %d 只碗，最上面那只装着 %d\\n\", top, bowls[top - 1]);\n    return 0;\n}",
+      "stem": "放碗这一招要把新碗摞在**最上面**，然后记下「碗摞长高了一层」。把两个空补完整 —— 补完之后它会印出「摞了 2 只碗，最上面那只装着 6」喵～",
+      "blanks": [
+        { "answer": "top" },
+        { "answer": "top" }
+      ],
+      "explanation": "新碗要放在**最上面那个空位**上，而 `top` 正好既是「已经摞了几只」、也是「下一只该放哪儿」喵：`bowls[top] = value;` 放好之后 `top++`，碗摞长高一层，下一次就轮到新的位置。第二个空要是漏掉了，下次还会往同一只碗上盖，前面放进去的就被顶掉了喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define MAX_CATS 4\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint enqueue(int value) {\n    if (tail == MAX_CATS) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (head == tail) {\n        return 0;\n    }\n    *value = line[____];\n    ____++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(10);\n    enqueue(20);\n    int v = 0;\n    dequeue(&v);\n    printf(\"先领到 %d\\n\", v);\n    dequeue(&v);\n    printf(\"再领到 %d\\n\", v);\n    return 0;\n}",
+      "stem": "送客这一招要把**队头**那位先送走，然后让队头往后挪一格。把两个空补完整 —— 补完之后它会先印「先领到 10」、再印「再领到 20」喵～",
+      "blanks": [
+        { "answer": "head" },
+        { "answer": "head" }
+      ],
+      "explanation": "排在最前面的那位站在 `head` 那个位置上，所以先把 `line[head]` 叼出来给客人，再让 `head++` 指向队伍里新的第一位喵。`tail` 管接客、`head` 管送客，两件事分得清清楚楚；要是这两个空写成 `tail`，送走的就是刚排进来的那位，先来后到的规矩当场就乱了喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define MAX_BOWLS 4\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint push(int value) {\n    if (top == MAX_BOWLS) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (top == 0) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(7);\n    push(8);\n    push(9);\n    int v = 0;\n    pop(&v);\n    printf(\"%d\\n\", v);\n    pop(&v);\n    printf(\"%d\\n\", v);\n    printf(\"还剩 %d 只碗\\n\", top);\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "9\n8\n还剩 1 只碗",
+      "accept": ["9\n8\n还剩 1 只碗\n"],
+      "explanation": "三只碗按 7、8、9 的顺序摞上去，最后放上去的 9 压在最上面喵。第一次 `pop` 拿走的就是 9，第二次拿走 8 —— 最后进去的最先出来，所以前两行是 9、8。三次进、两次出之后碗摞里还剩 1 只（那只 7），所以最后一行说「还剩 1 只碗」喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint enqueue(int value) {\n    if (tail == MAX_CATS) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (head == tail) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(1);\n    enqueue(2);\n    enqueue(3);\n    int v = 0;\n    dequeue(&v);\n    printf(\"第一个领到 %d\\n\", v);\n    enqueue(4);\n    while (dequeue(&v)) {\n        printf(\"接着领到 %d\\n\", v);\n    }\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "第一个领到 1\n接着领到 2\n接着领到 3\n接着领到 4",
+      "accept": ["第一个领到 1\n接着领到 2\n接着领到 3\n接着领到 4\n"],
+      "explanation": "1、2、3 依次排进队伍，`head` 指着排最前面的那位，所以第一次送走的是 1 喵。送走 1 之后 `head` 往后挪了一格，这时 4 又排到了队尾；接下来的绕鱼干跑圈接着按顺序把 2、3、4 一个个送走 —— 先来的先领到，中途新补进来的老实排在最后，这就是队伍和碗摞最大的区别喵。"
+    }
+  ]
+}

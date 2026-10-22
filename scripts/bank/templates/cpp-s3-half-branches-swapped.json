@@ -1,0 +1,22 @@
+{
+  "templateId": "cpp-s3-half-branches-swapped",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-25",
+  "type": "codefix",
+  "concept": ["砍一半", "两头夹着找", "小了往右大了往左", "两边的砍法写反"],
+  "instances": 2,
+  "params": {
+    "e1": { "kind": "pick", "values": ["2", "20"] },
+    "e2": { "kind": "pick", "values": ["24", "40"] },
+    "e3": { "kind": "pick", "values": ["44", "60"] },
+    "e4": { "kind": "pick", "values": ["64", "80"] },
+    "e5": { "kind": "pick", "values": ["84", "100"] },
+    "e6": { "kind": "pick", "values": ["104", "120"] },
+    "t": { "kind": "pick", "values": ["124", "140"] }
+  },
+  "stemTemplate": "这七只碗里的编号是**从小到大**摆好的：**{e1}、{e2}、{e3}、{e4}、{e5}、{e6}、{t}**。本喵要用「**砍一半**」找出**最末尾那一只 {t}**，顺便数一数**比了几次**。\n\n可它答的是：\n\n```text\n找 {t}：没找到\n```\n\n{t} 明明就摆在最后一只碗里。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `half_find` 这一招改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n找 {t}：比了 3 次\n```",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n\nstd::vector<int> bowl = {{e1}, {e2}, {e3}, {e4}, {e5}, {e6}, {t}};\n\n/* 砍一半：每趟先看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = static_cast<int>(bowl.size()) - 1;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (bowl[mid] == target) {\n            return tries;\n        } else if (bowl[mid] < target) {\n            hi = mid - 1;\n        } else {\n            lo = mid + 1;\n        }\n    }\n    return -tries;\n}\n\nint main() {\n    int want = {t};\n    int n = half_find(want);\n    if (n < 0) {\n        std::cout << \"找 \" << want << \"：没找到\\n\";\n    } else {\n        std::cout << \"找 \" << want << \"：比了 \" << n << \" 次\\n\";\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n\nstd::vector<int> bowl = {{e1}, {e2}, {e3}, {e4}, {e5}, {e6}, {t}};\n\n/* 砍一半：每趟先看正中间那一只，答「比了几次」；没找到答负数 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = static_cast<int>(bowl.size()) - 1;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (bowl[mid] == target) {\n            return tries;\n        } else if (bowl[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main() {\n    int want = {t};\n    int n = half_find(want);\n    if (n < 0) {\n        std::cout << \"找 \" << want << \"：没找到\\n\";\n    } else {\n        std::cout << \"找 \" << want << \"：比了 \" << n << \" 次\\n\";\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "毛病在这两边的**砍法**上喵：中间那一只**比要找的小**，说明**它和它左边那一整排全都白看**，要找的只可能在**右半边** —— 该把左边界抬到 `mid + 1`；写成 `hi = mid - 1`，正好把**有戏的那半边砍掉了**，留下的半边全是更小的。两边都砍反，一路砍到最后什么都不剩，就只能答「没找到」。\n\n```text\n} else if (bowl[mid] < target) {\n    lo = mid + 1;   /* 比要找的小 → 往右半边去 */\n} else {\n    hi = mid - 1;   /* 比要找的大 → 往左半边去 */\n}\n```\n\n念一遍就记住了：**小了往右、大了往左**。\n\n⚠️ 课文里那句提醒也别忘了：砍一半吃的前提是这一排**已经摆好**（从小到大）。这里本喵是摆好的，所以毛病不在盘子上，就在这两行上。"
+}

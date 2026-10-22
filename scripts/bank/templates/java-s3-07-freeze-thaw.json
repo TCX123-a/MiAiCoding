@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-07-freeze-thaw",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-07",
+  "type": "codewrite",
+  "concept": ["图纸挂牌子", "冻进文件解冻回来", "transient 那一格"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "c1": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵要把**一整只猫**冻成字节存进文件，再解冻回来看看它还在不在。\n\n请你写个程序，照这个次序做：\n\n1. 画一张叫 `Fish` 的图纸，上面两格：一格叫 `名字`（装字），一格叫 `条数`（装整数）；图纸名字后面**挂上「可以冻」的牌子**；\n2. 图纸上再多一格 `备注`（装字），**戴 `transient` 牌子** —— 哪一格不想跟着冻走，就戴这个；\n3. 照这张图纸生一只猫：名字叫 `{n1}`，条数 {c1}；\n4. 把它**冻进**文件 `猫.bin`；\n5. 再从那个文件**解冻回来** —— 解冻那一手叼回来的东西，得自己交代一句它原来是哪种猫；\n6. 最后印三行，长这样：\n\n```text\n名字：这只猫的名字\n条数：一个整数\n备注：那一格解冻回来是什么样\n```\n\n（这一题**不用投喂任何东西**，画图纸、生猫、冻、解冻都在程序里一次做完。）",
+  "starterTemplate": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass Fish implements Serializable {\n    String 名字;\n    int 条数;\n    transient String 备注 = \"本喵的私房话\";\n\n    Fish(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Fish 猫 = new Fish(\"{n1}\", {c1});\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        ObjectInputStream 入口 = new ObjectInputStream(new FileInputStream(\"猫.bin\"));\n        Fish 回来的 = (Fish) 入口.readObject();\n        入口.close();\n\n        System.out.println(\"名字：\" + 回来的.名字);\n        System.out.println(\"条数：\" + 回来的.条数);\n        System.out.println(\"备注：\" + 回来的.备注);\n    }\n}\n",
+  "explanationTemplate": "**一、冻那一头。** `new ObjectOutputStream(new FileOutputStream(\"猫.bin\"))`：管子照旧是那份文件，外面再套一层「会冻东西」的家什。`出口.writeObject(猫)` 把整只猫（哪张图纸、每格装了什么）一股脑变成字节写进去，收尾照样是 `close()`。\n\n**二、解冻那一头。** `new ObjectInputStream(new FileInputStream(\"猫.bin\"))` 配 `入口.readObject()`。有一处跟念字不一样：`readObject()` 叼回来的东西**在它眼里只是一坨「东西」**，本喵得自己交代一句 `(Fish)`，读作「照 `Fish` 那张图纸把它填回来」—— 少了这一句 `javac` 就红。\n\n**三、`transient` 那一格回来是 `null`。** 冻的时候它**根本没被装上车**。所以解冻出来的猫，`备注` 那一格是**新图纸刚生出来时的样子** —— 本喵这里给的是 `null`。\n\n注意一个容易想歪的地方：解冻**不会**把这只猫重新「生」一遍，那张图纸上写的「新猫出生就有的东西」（比如 `备注` 一开始赋的那句话）**也不会再执行一次**。它做的就是照着字节把格子一个个填回去，没被冻上去的格子，只能是新的、空的。\n\n**四、`名字` 和 `条数` 为什么原样回来了。** 这两格没戴 `transient`，跟着字节走了一趟，解冻的时候被填回原来的值 —— 这正是「冻」想要的效果：**过了一趟文件还认得它**。\n\n**五、动手时的两个小坑。** ① 图纸和 `Main` 摆在**同一个文件**里时，只有 `Main` 前面写 `public`，图纸不写（一个文件里只许有一个 `public` 的那张）；② 出场顺序有讲究 —— **先写完整只猫、收工，再开解冻那一头**。要是先开了解冻的头、猫还没冻进去，文件还是空的，解冻当场翻脸。"
+}

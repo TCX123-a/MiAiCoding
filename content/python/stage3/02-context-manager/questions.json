@@ -1,0 +1,73 @@
+{
+  "lessonId": "python-stage3-02",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "`with` 的身体念完之后（不管是顺利念完，还是半路翻车），翻译官喵一定会回头喊哪一招？",
+      "options": ["`__init__`", "`__enter__`", "`__exit__`", "`print`"],
+      "answer": 2,
+      "explanation": "翻译官喵照着一张写死的流程单干活：进门先喊 `__enter__`，身体念完（或者半路翻车）之后回头喊 `__exit__` 喵。所以哪怕屋里炸了，最后那声喊也一定会响 —— 这正是「出门自动收拾」的全部来源。`__init__` 是画图纸时用来把名字收进自己仓库的那一招（第五节那张图纸里见过），它跟进出屋没有关系；`print` 只是印字，翻译官喵不会自己跑去喊它喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`with Jiezhang() as wan:` 里，`wan` 这个名字装的是谁叼回来的东西？",
+      "options": [
+        "进门那个函数 `__enter__` 返回值",
+        "出门那个函数 `__exit__` 返回值",
+        "图纸 `Jiezhang` 的那几行原文",
+        "什么都没装，`as` 后面只是个空名字"
+      ],
+      "answer": 0,
+      "explanation": "`as` 后面那个名字，装的是**进门那招**叼回来的东西 —— 也就是 `__enter__` 里 `return` 出来的战利品喵。正文那张图纸的进门那招叼回的是「猫粮碗」，所以 `wan` 就是那个「猫粮碗」，最后才印得出「手里拿着： 猫粮碗」。出门那招走的是另一个时间点（活干完、或者翻车之后），它叼回什么跟 `as` 一点关系都没有；`as` 更不是空名字 —— 没有它，进门那招叼回来的东西就没人接着了喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "出门那招会收到三样投喂（`exc_type`、`exc_value`、`tb`）。屋里**一切顺利**的时候，`exc_type` 是什么？",
+      "options": ["`None`", "`0`", "空的一串字", "`True`"],
+      "answer": 0,
+      "explanation": "一切顺利的时候，翻译官喵喂进来的三样**全是 `None`**，`exc_type` 也是 `None` —— 它的意思就是「什么事都没有」喵。只有屋里翻了车，`exc_type` 才会变成**翻的是哪种车**（比如 `ValueError`），`exc_value` 变成那辆车上的货物，`tb` 变成一路开过来的车辙。它不是 `0`、不是空的一串字：那两样都像「有东西」，而 `None` 说的是「什么都没有」。`True` 是出门那招自己 `return` 出去的东西，方向正好反过来喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "python",
+      "code": "class Wan:\n    def __init__(self, mingzi):\n        self.mingzi = mingzi\n\n    def __enter__(self):\n        print(self.mingzi + \"进门\")\n        return self\n\n    def __exit__(self, exc_type, exc_value, tb):\n        print(self.mingzi + \"出门\")\n\nwith Wan(\"一号\") as a, Wan(\"二号\") as b:\n    print(\"干活\")",
+      "stem": "这段代码跑起来会印出什么？请按屏幕上出现的先后，一行一行写下来。",
+      "answer": "一号进门\n二号进门\n干活\n二号出门\n一号出门",
+      "accept": ["一号进门\n二号进门\n干活\n二号出门\n一号出门\n"],
+      "explanation": "两样东西是逗号一列写在同一句 `with` 里的，进门**从左到右**：一号先进、二号后进喵。等身体里那句「干活」印完，出门是**从右到左倒着来**的 —— 后放上去的压在上面，就得先拿走，所以二号先出、一号后出。把「先进后出」这个形状记住，就不用死背答案了喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "class Yantun:\n    def __enter__(self):\n        print(\"进门\")\n        return \"碗\"\n\n    def __exit__(self, exc_type, exc_value, tb):\n        print(\"出门\")\n        return True\n\nwith Yantun():\n    print(\"干活\")\n    raise ValueError(\"掉了\")\nprint(\"外面接着跑\")",
+      "stem": "这段代码跑起来会印出什么？请按屏幕上出现的先后，一行一行写下来。",
+      "answer": "进门\n干活\n出门\n外面接着跑",
+      "accept": ["进门\n干活\n出门\n外面接着跑\n"],
+      "explanation": "身体里那句 `raise` 确实翻了车，可出门那招最后叼回的是 `True` —— 意思是「这儿的事本喵自己兜了」喵。翻译官喵收到 `True`，就把刚翻的车咽下去，不再往外交，所以程序**没有断气**，最后那句「外面接着跑」照常印了出来。顺序也别忘了：身体里的「干活」先印，接着才是出门那招的「出门」，最后才是外面那句。（要是出门那招没有叼回 `True`，车就会原样送到外面 —— 而这一句外面没人接，程序当场停下喵。）"
+    },
+    {
+      "id": "q6",
+      "type": "codefill",
+      "lang": "python",
+      "code": "class Shouhuo:\n    def ____(self):\n        print(\"进门：开灯\")\n        return \"猫粮碗\"\n\n    def ____(self, exc_type, exc_value, tb):\n        print(\"出门：关灯\")\n\nwith Shouhuo() as wan:\n    print(\"拿到：\", wan)",
+      "stem": "这张图纸缺了进门、出门两招的名字。请把它们补上 —— 两个空按**从上到下**的顺序填。",
+      "blanks": [
+        {
+          "answer": "__enter__",
+          "accept": []
+        },
+        {
+          "answer": "__exit__",
+          "accept": []
+        }
+      ],
+      "explanation": "第一个空是**进门那招**的名字 `__enter__`：`with` 一开始，翻译官喵冲图纸喊的就是它；它 `return` 的「猫粮碗」会被 `as wan` 接住，所以最后一行才印得出「拿到： 猫粮碗」喵。第二个空是**出门那招**的名字 `__exit__`：身体念完（或者半路翻车）之后回头喊它，它负责关灯。两招的名字都是**前后各两条下划线**的死规矩 —— 少一条，翻译官喵就找不到人，当场甩一个 `AttributeError` 给你，而那代码看起来「明明写了」喵。"
+    }
+  ]
+}

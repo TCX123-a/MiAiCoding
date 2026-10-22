@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-pool-missing-size",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-11",
+  "type": "codefix",
+  "concept": ["雇一队猫要报编制", "括号里空着不是「用默认的」", "翻译稿子的时候就拦下"],
+  "instances": 2,
+  "params": {
+    "k": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵想建一个池子，让 **{k}** 只猫常驻在院子里等着派活。可这段代码**连翻译那一关都没过**喵。\n\n你帮本喵看看它缺了什么，把它补好。\n\n改好之后，程序该印出**一行**：`雇了 {k} 只猫在院子里待命`。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.util.concurrent.ExecutorService;\nimport java.util.concurrent.Executors;\n\npublic class Main {\n    public static void main(String[] args) {\n        ExecutorService 池子 = Executors.newFixedThreadPool();\n\n        System.out.println(\"雇了 {k} 只猫在院子里待命\");\n        池子.shutdown();\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.concurrent.ExecutorService;\nimport java.util.concurrent.Executors;\n\npublic class Main {\n    public static void main(String[] args) {\n        ExecutorService 池子 = Executors.newFixedThreadPool({k});\n\n        System.out.println(\"雇了 {k} 只猫在院子里待命\");\n        池子.shutdown();\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的抱怨原话是这一句：\n\n```text\nerror: no suitable method found for newFixedThreadPool(no arguments)\n```\n\n念法是：「**本喵认得 `newFixedThreadPool` 这个招式，可你一个小鱼干都没喂，它没法用。**」\n\n这一手跟「雇一队猫」的规矩是连着的：**编制这件事必须由你报数**。写 2 就是常驻 2 只，写 {k} 就是常驻 {k} 只。翻译官喵**不会**替本喵猜一个「大概几只吧」——它宁可当场把这一句拦下来，也不肯让本喵带着一个不知道几只猫的池子往下跑。\n\n补法就在那一对小括号里：`Executors.newFixedThreadPool({k})`。填完再跑，它就乖乖印出 `雇了 {k} 只猫在院子里待命` 那一行。\n\n记住这条形状：**凡是「雇几队」「建几个」这种要报数的地方，括号里空着不等于「用默认的」，等于这一句根本不成立**喵。"
+}

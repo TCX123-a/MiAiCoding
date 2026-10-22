@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-19-missing-sign-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-19",
+  "type": "codewrite",
+  "concept": ["使唤在前、身子在后，前提是先挂招牌", "缺招牌半路就被拦下", "招牌从身子那本照抄，手打容易飘", "分家后招牌随 include 进门口手里"],
+  "instances": 6,
+  "params": {
+    "per": { "kind": "pick", "values": ["2", "3"] },
+    "times": { "kind": "pick", "values": ["4", "5"] }
+  },
+  "stemTemplate": "这两招的身子都写好了喵，就躺在 `main` 后面 —— **使唤在前、身子在后**，本来是允许的，前提是**得先挂招牌**。这段稿子一块招牌都没有：翻译官喵在半路就停下了 —— 使唤 `fish_scale` 的地方，它压根不知道这招长什么样。\n\n请你只在**招牌区**补两条宣告（收什么、还什么，行尾分号），别的一个字都别动。改好之后该印两行：第一行是 {per}×{times} 拢出来的条数（`先码 X 条`），第二行把它翻番（`翻番 X 条`）。",
+  "starterTemplate": "#include <stdio.h>\n\n/* ===== 招牌区 =====\n   身子都在下面，可一块招牌都没挂 —— 翻译官喵读到 main 里的使唤就停了。\n   在这块空地补两条宣告（收什么、还什么，行尾分号）：\n   · fish_scale：收「每碗几条」和「几碗」，还总条数；\n   · fish_double：收一只数，还它翻番的数。 */\n\n\nint main(void) {\n    int bag = fish_scale({per}, {times});\n    printf(\"先码 %d 条\\n\", bag);\n    printf(\"翻番 %d 条\\n\", fish_double(bag));\n    return 0;\n}\n\nint fish_scale(int per, int times) {\n    return per * times;\n}\n\nint fish_double(int n) {\n    return n * 2;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* ===== 招牌区 ===== */\nint fish_scale(int per, int times);\nint fish_double(int n);\n\nint main(void) {\n    int bag = fish_scale({per}, {times});\n    printf(\"先码 %d 条\\n\", bag);\n    printf(\"翻番 %d 条\\n\", fish_double(bag));\n    return 0;\n}\n\nint fish_scale(int per, int times) {\n    return per * times;\n}\n\nint fish_double(int n) {\n    return n * 2;\n}\n",
+  "explanationTemplate": "毛病只有一处喵：**身子在后、招牌全无**。翻译官喵读稿是一路向下的 —— 走到 `main` 里第一声使唤时，下面的身子它还没读到；没有招牌先应一声，它就不知道这招收几只、还什么。\n\n补法就是把「这招存在、长这个样子」提前告诉它：\n\n```text\nint fish_scale(int per, int times);\nint fish_double(int n);\n```\n\n两条宣告往招牌区一挂，稿子从头到尾就讲得通了：先见招牌、再见使唤、最后见身子 —— 顺序对了，谁在前谁在后都无所谓。\n\n等本子分了家，这两条招牌就住在**招牌本**上，由 `#include` 拼进门口那张纸：门口永远只看得到招牌，看不到干活本里的身子；缝一起（链接）的时候，链接器只按**名字**牵线 —— 名字对上就缝，形状它一个字都不看。\n\n顺一句：这次的招牌要是把 `(int per, int times)` 抄成了别的形状，稿子又会在半路被拦下 —— 收发货必须跟身子**一字不差**。这就是为什么招牌要么从身子那本上**照抄**，要么让工具替你生成，手打最容易飘喵。"
+}

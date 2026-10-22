@@ -1,0 +1,22 @@
+{
+  "templateId": "c-s3-16-both-report",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-16",
+  "type": "codewrite",
+  "concept": ["数圈数", "两条路一起报", "平方对 log n", "同一个本子两种量级"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["下", "趟"] }
+  },
+  "stdinSpec": {
+    "kind": "ints",
+    "count": 1,
+    "min": 8,
+    "max": 12
+  },
+  "stemTemplate": "本喵现在要把**两条路一起报**：同一个本子，碗「两两都比一遍」要多少{unit}，「一路砍半」又要多少{unit}。两条路都从**同一个本子大小**出发。\n\n投喂口里递进来的是**一个数**：本子上有几只碗。样例输入：\n\n```text\n{sampleInput}\n```\n\n你要把这一招补完（稿子里 `main` 已经把两行的印法写死了，别改它）：\n\n1. 先把这个数接住；\n2. 一条一条算：两两比一遍、一路砍半；\n3. 按稿子里写死的格式印两行。\n\n样例跑出来是这样：\n\n```text\n{sampleOutput}\n```",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    /* ↓ 自己写：\n       ① 两两都比一遍，一共多少{unit}\n       ② 一路砍半，每层过整本，一共多少{unit} */\n    long long pairs = 0;\n    long long layers = 0;\n\n    printf(\"两两比过：%lld {unit}\\n\", pairs);\n    printf(\"层层砍半：%lld {unit}\\n\", layers);\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    long long pairs = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = i + 1; j < n; j++) {\n            pairs = pairs + 1;\n        }\n    }\n\n    long long layers = 0;\n    int size = n;\n    while (size > 1) {\n        layers = layers + n;\n        size = size / 2;\n    }\n\n    printf(\"两两比过：%lld {unit}\\n\", pairs);\n    printf(\"层层砍半：%lld {unit}\\n\", layers);\n    return 0;\n}\n",
+  "explanationTemplate": "两条数圈数的路摆在一起，正好看出**量级**的差别喵。\n\n拿课文里 **1024 只碗**那个本子来说：两两都比一遍是 **523776** 下，一路砍半是 **10240** 下 —— 一个五十多万、一个一万出头，差了五十倍上下。本子再大一点，这个差距还会继续拉开：两两比是**平方**的脾气，砍半那一路的层数只跟着 `log n` 慢慢爬。\n\n```text\nfor (int i = 0; i < n; i++) {\n    for (int j = i + 1; j < n; j++) {\n        pairs = pairs + 1;\n    }\n}\n```\n\n```text\nwhile (size > 1) {\n    layers = layers + n;\n    size = size / 2;\n}\n```\n\n两条路各有一个坑：**两两比**的内层要从 `i + 1` 起步（写成 `i` 或 `0` 都会多算）；**砍半**那一路每层加的得是 `n` 而不是 `size`（砍小的是下一层的本子）。\n\n⚠️ 记数的小仓库两个都要开 `long long`：本子一大，两两比那个数会跑得飞快。"
+}

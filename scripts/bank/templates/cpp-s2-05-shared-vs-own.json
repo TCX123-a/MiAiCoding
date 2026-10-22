@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s2-05-shared-vs-own",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-05",
+  "type": "codewrite",
+  "concept": ["共用的总账", "每只猫自己那一格", "两样摆在一起看"],
+  "instances": 6,
+  "params": {
+    "nameA": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "nameB": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 1, "max": 8 },
+  "stemTemplate": "本喵想让每只猫一出生就把自己那份条数**记进一本共用的总账**，同时自己那一格也留着。投喂口会递进来**两个数**（一行一个）：第一只的条数、第二只的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，三样家常 —— 一本共用的总账 `static int total`、`name` 装一串字、`fish` 装一个整数；\n2. 写一个**出生招式**（名字和条数两样都收）：用出生清单把两样装好，并把这**条数加进那本共用的总账**；\n3. 再写**两招**：`int getFish() const`（取自己那一格）和 `static int getTotal()`（取共用那本）；\n4. **图纸外面**记得给总账落地、给个起步的数；\n5. `main` 里生**两只**猫（名字是 `{nameA}` 和 `{nameB}`，条数按顺序用递进来的两个数）；\n6. 最后印**两行**：先一行 `一共 N 条`（N 从共用那本账问出来），再一行 `XX 有 N 条`（第一只自己那一格，`XX` 是它的名字）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int total;\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {\n        total = total + f;\n    }\n\n    int getFish() const {\n        return fish;\n    }\n\n    static int getTotal() {\n        return total;\n    }\n};\n\nint Cat::total = 0;\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1(\"{nameA}\", a);\n    Cat c2(\"{nameB}\", b);\n    cout << \"一共 \" << Cat::getTotal() << \" 条\" << endl;\n    cout << c1.name << \" 有 \" << c1.getFish() << \" 条\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题把**共用的**和**自己的**摆在一起喵：\n\n- `static int total` 是**一本总账**，整张图纸共用一份 —— 两只猫出生时各往里记了一笔，所以它记的是**两只加起来**；\n- 每只猫的 `fish` 是**自己那一格**，各是各的，`c1.getFish()` 只拿得到第一只自己那份；\n- 图纸外面那一行 `int Cat::total = 0;` 是总账落地的地方，少了它程序在**拼装那一刻**就炸；\n- 取总账的招式写成 `static int getTotal()`（挂在图纸上，喊它不需要猫），取自己那份的是普通招式，尾巴上带 `const`（它只看看、不动格子）。\n\n⚠️ 别看混：`一共 N 条` 是**两只之和**，`XX 有 N 条` 是**第一只自己那一格**。两个数不一样才是对的。"
+}

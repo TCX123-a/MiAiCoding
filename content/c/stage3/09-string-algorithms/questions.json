@@ -1,0 +1,96 @@
+{
+  "lessonId": "c-stage3-09",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "`strcmp(a, b)` 这一招答出 `0`，是什么意思喵？",
+      "options": [
+        "两串一模一样",
+        "两串不一样",
+        "第一串比第二串短",
+        "这一招干活失败了"
+      ],
+      "answer": 0,
+      "explanation": "`strcmp` 是个「比大小」的招式：第一串排在第二串**前面**就答负数、排在**后面**就答正数、**一模一样才答 0** 喵。所以判断两串一样要写 `strcmp(a, b) == 0` —— 那个 `== 0` 一个字都不能少。要是拿 `==` 直接比两串，比的不是珠子内容，而是两个牌子的地址，那几乎永远答「不一样」。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "例子里的碗是 `char bowl[32]`，可 `strlen(bowl)` 答的是 4 —— 这两个数各是什么喵？",
+      "options": [
+        "4 是**实际装着**的颗数，32 是这个碗**能装多少**",
+        "4 是这个碗能装的颗数，32 是实际装着的",
+        "两个都是实际装着的颗数，只是写法不同",
+        "两个都是碗的大小，4 是调试时打印错了"
+      ],
+      "answer": 0,
+      "explanation": "碗的大小和串的长度是**两件事**喵：`char bowl[32]` 说的是「这个碗能装 32 颗」，而 `strlen` 数的是**实际装着**的颗数 —— 它从头上一颗颗数过去，数到那颗刻着「到此为止」的收尾珠子就停手。所以同一个碗里可以装着 4 颗、8 颗，碗还是那个 32 的碗。混了这两个数，就会写出「以为碗里装满了」那种错。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "「小本本」上记的是什么喵？",
+      "options": [
+        "已经对上的那一段里，头上那几颗和尾巴那几颗最多能对上几颗",
+        "那一小段总共有几颗珠子",
+        "这一路上总共比了几次",
+        "已经对上的那一段总共有几颗"
+      ],
+      "answer": 0,
+      "explanation": "小本本是为「崩了以后怎么办」准备的喵 —— 每往前多对一颗，就顺手记下：**这一截的头和尾巴最多能对上几颗**（整截自己不算，得留出至少一颗）。`aaab` 记出来就是 `0 1 2 0`：走到第 3 颗崩了的时候，本喵一看前一位记着 2，就知道「前面两颗还能接着用」，退到那个长度继续比 —— 不用回到起点重来。这正是它比「一个起点一个起点地试」省下那几次的原因。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char bowl[32] = \"fish\";\n    char tail[] = \"cake\";\n\n    ____(bowl, tail);\n    printf(\"接起来：%s\\n\", bowl);\n    printf(\"一样吗？%s\\n\", ____(bowl, \"fishcake\") == 0 ? \"一样\" : \"不一样\");\n    printf(\"找珠子 'k'：%s\\n\", strchr(bowl, 'k') == ____ ? \"没找着\" : \"找着了\");\n    return 0;\n}",
+      "stem": "这箱子里的三招，本喵各挖掉了一处。补完之后它会印出：接起来 `fishcake`、一样、找珠子找着了喵～",
+      "blanks": [
+        { "answer": "strcat" },
+        { "answer": "strcmp" },
+        { "answer": "NULL" }
+      ],
+      "explanation": "第一处是把 `tail` 接在 `bowl` **屁股后面**，那是 `strcat` 喵。第二处是「两串比一比」，而且后面跟着 `== 0`，正是 `strcmp` 的脾气：答 0 才算一模一样。第三处是「没找着」的样子 —— `strchr` 找不到那颗珠子的时候答的是 `NULL`（空牌子），所以判断写法是 `== NULL`。三个名字都对得上，这段才能跑出「接起来 fishcake / 一样 / 找着了」。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n    for (int i = 1; i < m; i++) {\n        int k = book[i - 1];\n        while (k > ____ && pat[i] != pat[k]) {\n            k = book[____];\n        }\n        if (pat[i] == pat[k]) {\n            k++;\n        }\n        book[i] = k;\n    }\n}\n\nint main(void) {\n    const char *pat = \"aaab\";\n    int book[64];\n    build_book(pat, book);\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}",
+      "stem": "记小本本这一招里有两个空位。补完之后它会印出 `aaab` 的小本本喵～",
+      "blanks": [
+        { "answer": "0" },
+        { "answer": "k - 1" }
+      ],
+      "explanation": "前面两空都在那一句「这个长度不行，退回更短的那个」里喵。`k > 0` 是**收手条件**：退到 0 就没得退啦，说明这截头尾一点都对不上。退到哪儿去呢？退到**上一个位置记下的那个数**，也就是 `book[k - 1]` —— 本喵手上这个长度不行，那就换它自己那一截记下的「头尾能对上几颗」，接着试。补好之后 `aaab` 印出来是 `0 1 2 0`。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char bowl[32] = \"cat\";\n    char tail[] = \"nap\";\n\n    printf(\"碗里这串有 %d 颗珠子\\n\", (int)strlen(bowl));\n    strcat(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, (int)strlen(bowl));\n    printf(\"这两串一样吗？%s\\n\", strcmp(bowl, \"catnap\") == 0 ? \"一样\" : \"不一样\");\n    printf(\"找珠子 'z'：%s\\n\", strchr(bowl, 'z') == NULL ? \"没找着\" : \"找着了\");\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "碗里这串有 3 颗珠子\n接起来：catnap，现在 6 颗\n这两串一样吗？一样\n找珠子 'z'：没找着",
+      "accept": [
+        "碗里这串有 3 颗珠子\n接起来：catnap，现在 6 颗\n这两串一样吗？一样\n找珠子 'z'：没找着\n"
+      ],
+      "explanation": "一行一行来喵：碗里本来装着 `cat`，**实际装着** 3 颗（碗本身是 32 的，`strlen` 不管那个）；接上 `nap` 变成 `catnap`，6 颗；拿它和 `catnap` 比，`strcmp` 答 0，所以印出「一样」；最后找珠子 `z` —— `catnap` 里压根没有 `z`，`strchr` 答 `NULL`，所以印「没找着」。注意接完之后碗里还是那一串，只是变长了。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n    for (int i = 0; i + m <= n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nvoid build_book(const char *pat, int *book) {\n    int m = (int)strlen(pat);\n    book[0] = 0;\n    for (int i = 1; i < m; i++) {\n        int k = book[i - 1];\n        while (k > 0 && pat[i] != pat[k]) {\n            k = book[k - 1];\n        }\n        if (pat[i] == pat[k]) {\n            k++;\n        }\n        book[i] = k;\n    }\n}\n\nint kmp(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int book[64];\n    build_book(pat, book);\n\n    int tries = 0;\n    int k = 0;\n    for (int i = 0; i < n; i++) {\n        while (k > 0 && text[i] != pat[k]) {\n            k = book[k - 1];\n        }\n        tries++;\n        if (text[i] == pat[k]) {\n            k++;\n        }\n        if (k == m) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    const char *text = \"ababababc\";\n    const char *pat = \"ababc\";\n\n    int book[64];\n    build_book(pat, book);\n    printf(\"小本本：\");\n    for (int i = 0; i < (int)strlen(pat); i++) {\n        printf(\"%d \", book[i]);\n    }\n    printf(\"\\n\");\n\n    int a = naive(text, pat);\n    int b = kmp(text, pat);\n    printf(\"朴素对法比了 %d 次\\n\", a < 0 ? -a : a);\n    printf(\"小本本只比了 %d 次\\n\", b < 0 ? -b : b);\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "小本本：0 0 1 2 0 \n朴素对法比了 17 次\n小本本只比了 9 次",
+      "accept": [
+        "小本本：0 0 1 2 0\n朴素对法比了 17 次\n小本本只比了 9 次",
+        "小本本：0 0 1 2 0 \n朴素对法比了 17 次\n小本本只比了 9 次\n",
+        "小本本：0 0 1 2 0\n朴素对法比了 17 次\n小本本只比了 9 次\n"
+      ],
+      "explanation": "小段是 `ababc`：第 0 颗 `a` 记 0；第 1 颗 `ab` 头上和尾巴对不上，记 0；第 2 颗 `aba` 头上的 `a` 就是尾巴的 `a`，记 1；第 3 颗 `abab` 头上的 `ab` 就是尾巴的 `ab`，记 2；第 4 颗 `ababc` 尾巴是 `c`，一颗都对不上，记 0 —— 所以印出来是 `0 0 1 2 0`（每颗后面跟一个空格）喵。前面那串 `ababababc` 里，一个起点一个起点地试要 17 次，带着小本本只用 9 次：差的那几次全是**刚对上又崩掉、却不肯走回头路**的那些珠子。"
+    }
+  ]
+}

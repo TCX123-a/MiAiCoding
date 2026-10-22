@@ -1,0 +1,80 @@
+{
+  "lessonId": "java-stage3-14",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "课文那段单例里，`private 猫粮碗()` 这一句是干什么的？",
+      "options": [
+        "把**产房锁上**——别人想自己创建一个对象，编译器那一关就过不去，只能走 `拿碗()` 那个口子",
+        "把碗里的存量藏起来，别人只能看不能改",
+        "让 `拿碗()` 每次都能造出一只**新**碗来",
+        "让图纸上那一格「唯一的一只」变成全窝共用的一格"
+      ],
+      "answer": 0,
+      "explanation": "课文里试过：把两张图纸**平着摆**的时候，`new 猫粮碗()` 会被翻译官喵当场拦下，原话是 `猫粮碗() has private access in 猫粮碗`。锁上产房的意思就是「不许别人自己造」，全窝想用碗只能走 `拿碗()` 这个口子。「让图纸上那一格「唯一的一只」变成全窝共用的一格」说的是 `static` 那一句管的事（那一格归图纸自己、不归哪只真猫），两件事别混起来喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "来领猫的地方**不知道**新品种是怎么造的 —— 这件好事落在哪儿？",
+      "options": [
+        "落在**改一处**上：将来窝里添品种，只改领养处那一处，来领猫的地方一个字都不用动",
+        "落在**跑得快**上：领养处把每一只都提前造好存在后面，来领的直接拿",
+        "落在**省地方**上：所有品种共用同一张图纸，只造一次",
+        "落在**更结实**上：领养处会拦住报错花色的猫，不让它们领走"
+      ],
+      "answer": 0,
+      "explanation": "课文第二节那句话是这么说的：好处落在**改一处**上 —— 窝里添一个品种，改动只发生在领养处这一处，所有来领猫的地方一个字都不用动。这也是这一课三个套路的共同点（第四节把三件事摆在一起讲了）。「落在**跑得快**上：领养处把每一只都提前造好存在后面，来领的直接拿」反过来还把「用到才造」的味道弄丢了：领养处是**来领的时候才挑一只**，不是提前全造好喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "摇铃那位猫，手里攥着的到底是什么？",
+      "options": [
+        "一份「会那一招的猫」的名单——她只知道这些人会 `听见了`，**不知道**每位听见了会做什么",
+        "一份写全了「小橘会冲向碗、煤球会翻身」的明细，摇之前得照着念",
+        "全窝所有猫的花名册——包括没订上来的那些，摇铃时挨个喊",
+        "每只猫的性格记录——她照着记录决定该喊谁、不该喊谁"
+      ],
+      "answer": 0,
+      "explanation": "课文第三节写的是：名单里收的是「会这一招的猫」（那张图纸上写的就是这份约定），所以铃**不知道**名单上坐着的到底是猫还是懒猫；它只负责挨个喊一句 `听见了`。「一份写全了「小橘会冲向碗、煤球会翻身」的明细，摇之前得照着念」正是摇铃那位**从前**攥着的那种明细 —— 每加一只猫都得改，这一课就是要把这件事甩掉。「全窝所有猫的花名册——包括没订上来的那些，摇铃时挨个喊」也不对：没订上来的猫不在名单里，铃不会去喊她喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        猫粮碗 甲 = 猫粮碗.拿碗();\n        猫粮碗 乙 = 猫粮碗.拿碗();\n        甲.存量 = 甲.存量 + 5;\n        System.out.println(乙.存量);\n    }\n}\n\nclass 猫粮碗 {\n    private ____ 猫粮碗 唯一的一只;\n\n    int 存量;\n\n    private 猫粮碗() {\n    }\n\n    ____ 猫粮碗 拿碗() {\n        ____ (唯一的一只 == ____) {\n            唯一的一只 = new 猫粮碗();\n        }\n        return ____;\n    }\n}",
+      "stem": "这段代码缺了五处，把它补完整，让它跑起来印出 `5`。",
+      "blanks": [
+        { "answer": "static", "accept": [] },
+        { "answer": "static", "accept": [] },
+        { "answer": "if", "accept": [] },
+        { "answer": "null", "accept": [] },
+        { "answer": "唯一的一只", "accept": [] }
+      ],
+      "explanation": "五处正好是单例那三样东西喵：**前两处** `static` —— 头一处是图纸上留的那一格（它归图纸自己、不归哪只真猫，所以全窝共用），第二处是门口那个口子（`拿碗()`），别人不造碗，只来这儿拿；**第三、四处**是那句心思：图纸那一格还**空着**（`== null`）才动手造一只，顺手记进去；**最后一处** `return 唯一的一只;` 递的就是记着的那一只。判空那一句不能少：少了它，每喊一次都会造一只新的，两处拿到的就不是同一只了喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    static abstract class 小猫 {\n        abstract String 叫声();\n    }\n\n    static class 橘猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"喵～\";\n        }\n    }\n\n    static class 狸花猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"喵嗷\";\n        }\n    }\n\n    static 小猫 领养一只(String 花色) {\n        if (花色.equals(\"狸花\")) {\n            return new 狸花猫();\n        }\n        if (花色.equals(\"橘\")) {\n            return new 橘猫();\n        }\n        return new 橘猫();\n    }\n\n    public static void main(String[] args) {\n        for (String 花色 : new String[]{\"花\", \"橘\", \"狸花\"}) {\n            System.out.println(花色 + \" -> \" + 领养一只(花色).叫声());\n        }\n    }\n}",
+      "stem": "这段代码的输出是什么？（三行）",
+      "answer": "花 -> 喵～\n橘 -> 喵～\n狸花 -> 喵嗷",
+      "accept": ["花 -> 喵～\n橘 -> 喵～\n狸花 -> 喵嗷\n"],
+      "explanation": "三行是这么来的喵：领养处只认「狸花」和「橘」这两个字，**别的都走最后那条兜底的路** —— 而现在兜底那句给的是橘猫（`return new 橘猫();`），所以「花」领到的是橘猫，叫声 `喵～`。「橘」走的是第二条路，也是橘猫。只有「狸花」领到的是狸花猫，叫声 `喵嗷`。**兜底给谁是你说了算的**：把最后那句改成 `new 狸花猫()`，「花」那一行就跟着变喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    interface 听众 {\n        void 听见了(String 菜名);\n    }\n\n    static class 开饭铃 {\n        List<听众> 名单 = new ArrayList<>();\n\n        void 订上(听众 一位) {\n            名单.add(一位);\n        }\n\n        void 摇铃(String 菜名) {\n            for (听众 一位 : 名单) {\n                一位.听见了(菜名);\n            }\n        }\n    }\n\n    static class 猫 implements 听众 {\n        String 名字;\n\n        猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 冲向 \" + 菜名);\n        }\n    }\n\n    static class 懒猫 implements 听众 {\n        String 名字;\n\n        懒猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 翻了个身，继续睡\");\n        }\n    }\n\n    static class 账房猫 implements 听众 {\n        String 名字;\n\n        账房猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 把\" + 菜名 + \"记了一笔\");\n        }\n    }\n\n    public static void main(String[] args) {\n        开饭铃 铃 = new 开饭铃();\n        铃.订上(new 猫(\"小橘\"));\n        铃.订上(new 懒猫(\"煤球\"));\n        铃.订上(new 账房猫(\"账房\"));\n        铃.摇铃(\"小鱼干\");\n    }\n}",
+      "stem": "这段代码的输出是什么？（三行）",
+      "answer": "小橘 冲向 小鱼干\n煤球 翻了个身，继续睡\n账房 把小鱼干记了一笔",
+      "accept": ["小橘 冲向 小鱼干\n煤球 翻了个身，继续睡\n账房 把小鱼干记了一笔\n"],
+      "explanation": "三行就是「**一声开饭，各猫各样**」喵：铃只管挨个喊一句 `听见了`，喊的这句话三位都听得一模一样，可各自接的方式是**写在自己那张图纸上**的 —— 猫冲过去、懒猫翻个身接着睡、账房猫拿笔记一笔。**顺序就是订上来的顺序**：名单是个会自己长大的柜子，谁先 `订上` 谁排在前面，摇铃就照着这个先后挨个喊。铃那边一个字都没提过这三位会做什么，这就是这一课要的那种摆法喵。"
+    }
+  ]
+}

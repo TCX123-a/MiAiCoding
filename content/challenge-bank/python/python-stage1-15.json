@@ -1,0 +1,630 @@
+{
+  "lessonId": "python-stage1-15",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-py-s1-challenge-cabinet-alias-001",
+      "type": "codefix",
+      "lang": "python",
+      "difficulty": "challenge",
+      "stem": "本喵想给一排碗做个**彩排**喵：把原来那排**复制一份**，在复制品上每只碗都加一条鱼干试试，而原排**一根鱼毛都不许动** —— 彩排完要两边对照给本喵看。\n\n程序印三行：\n\n- `原来的碗：` 后面跟着原来那排；\n- `试加一条后：` 后面跟着彩排过的那排；\n- `原来的总数：` 后面跟着原排的总数。\n\n可现在出了怪事：**原排也跟着变了** —— 彩排完一看，原排每只碗都多了一条，总数也对不上喵……你帮本喵看看病根。\n\n比如投喂给程序的是\n\n5\n2\n7\n4\n8\n7\n\n修好之后就要叼回\n\n原来的碗： [2, 7, 4, 8, 7]\n试加一条后： [3, 8, 5, 9, 8]\n原来的总数： 28",
+      "brokenCode": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\ntrial = bowls\nfor i in range(n):\n    trial[i] = trial[i] + 1\n\nprint(\"原来的碗：\", bowls)\nprint(\"试加一条后：\", trial)\nprint(\"原来的总数：\", sum(bowls))\n",
+      "referenceFix": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\ntrial = list(bowls)\nfor i in range(n):\n    trial[i] = trial[i] + 1\n\nprint(\"原来的碗：\", bowls)\nprint(\"试加一条后：\", trial)\nprint(\"原来的总数：\", sum(bowls))\n",
+      "expectedOutput": "原来的碗： [5, 4, 2, 5, 8]\n试加一条后： [6, 5, 3, 6, 9]\n原来的总数： 24",
+      "stdin": "5\n5\n4\n2\n5\n8\n",
+      "explanation": "病根在这一行：`trial = bowls` 喵。\n\n它**没有复制那排碗** —— 只是给同一排碗**又贴了一个名字**。Python 里一排碗是「一整只搬不走的东西」，名字只是牵住它的一根绳：`bowls` 是一根绳，`trial = bowls` 只是把**第二根绳也拴在同一个东西上**。之后不管拽哪根绳去动碗，动的都是同一排。\n\n所以彩排根本不存在：`trial[i] = trial[i] + 1` 动的是原排，「原排一根鱼毛都不许动」的约定当场作废 —— 这也是为什么「原排」和「彩排排」印出来一模一样。\n\n要真正复制一份，得**造一只新的**：\n\n```python\ntrial = list(bowls)\n```\n\n`list(bowls)` 是拿原排的内容**另造一只新排**，两根绳分别牵着两只碗 —— 之后从 `trial` 这边怎么动，`bowls` 那边都纹丝不动。等价的写法还有 `trial = bowls[:]` 和 `trial = bowls.copy()`，挑一个顺手的。\n\n记一句喵：**名字只是绳，拴着的才是碗 —— 想让两边各改各的，先造一只新的。**",
+      "templateId": "py-s1-challenge-cabinet-alias",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-30T12:37:40.726Z",
+        "hash": "0c4c2d9fd4029a4e"
+      }
+    },
+    {
+      "id": "bank-py-s1-challenge-daily-report-000",
+      "type": "codewrite",
+      "lang": "python",
+      "difficulty": "challenge",
+      "stem": "本喵每天的账要出一张日报喵：先把一天一天的账收进一排碗里，然后印三行 ——\n\n1. `一共攒了 X 条喵`；\n2. `最肥的一天 X 条喵`；\n3. `最瘦的一天 X 条喵`。\n\n本喵想看你**用圈一只一只比出来**（总数顺手在同一个圈里加，别跑三趟）。\n\n投喂口先给一个数（一共几天），再一天一天给数。\n\n比如投喂给程序的是\n\n4\n27\n3\n24\n24\n\n程序就要叼回\n\n一共攒了 78 条喵\n最肥的一天 27 条喵\n最瘦的一天 3 条喵\n\n（判分喂的是**另外一组数**喵；至少四天，不会给你空排。）",
+      "starter": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\n# 用圈清点：总数、最肥、最瘦\n",
+      "referenceSolution": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\ntotal = 0\nbest = bowls[0]\nworst = bowls[0]\nfor i in range(n):\n    x = bowls[i]\n    total = total + x\n    if x > best:\n        best = x\n    if x < worst:\n        worst = x\n\nprint(\"一共攒了\", total, \"条喵\")\nprint(\"最肥的一天\", best, \"条喵\")\nprint(\"最瘦的一天\", worst, \"条喵\")\n",
+      "expectedOutput": "一共攒了 71 条喵\n最肥的一天 28 条喵\n最瘦的一天 5 条喵",
+      "stdin": "4\n5\n28\n20\n18\n",
+      "explanation": "三个数只跑一趟就够喵：每拿到一只碗，就顺手干三件小事 —— 加进总数、跟「目前最肥」比一比、跟「目前最瘦」比一比。\n\n两个起步的小讲究：\n\n1. **`best` 和 `worst` 都从第一只碗起步**（`bowls[0]`），别从 0 起步 —— 尤其是「最瘦」：碗里全是正数，从 0 起步的话 0 会永远赢，报出来的最瘦永远是 0；\n2. 比的写法是「**比它更极端才换人**」：`if x > best:` 才让 best 换成 x；`if x < worst:` 才让 worst 换成 x。两个判断各管各的，都放在同一个圈里。\n\n顺序上有个小地方喵：`bowls[0]` 要**等收完账再取** —— 收账的圈在前、清点的圈在后。\n\n想把三件事拆成三个圈分别跑也行，但一趟更省事，也不容易漏 —— 顺手练成「一趟清点」的习惯，账一多就知道它好了。",
+      "templateId": "py-s1-challenge-daily-report",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:31.343Z",
+        "hash": "a096ab99b2747ac7"
+      }
+    },
+    {
+      "id": "bank-py-s1-challenge-daily-report-001",
+      "type": "codewrite",
+      "lang": "python",
+      "difficulty": "challenge",
+      "stem": "本喵每天的账要出一张日报喵：先把一天一天的账收进一排碗里，然后印三行 ——\n\n1. `一共攒了 X 条喵`；\n2. `最肥的一天 X 条喵`；\n3. `最瘦的一天 X 条喵`。\n\n本喵想看你**用圈一只一只比出来**（总数顺手在同一个圈里加，别跑三趟）。\n\n投喂口先给一个数（一共几天），再一天一天给数。\n\n比如投喂给程序的是\n\n5\n4\n16\n17\n2\n15\n\n程序就要叼回\n\n一共攒了 54 条喵\n最肥的一天 17 条喵\n最瘦的一天 2 条喵\n\n（判分喂的是**另外一组数**喵；至少四天，不会给你空排。）",
+      "starter": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\n# 用圈清点：总数、最肥、最瘦\n",
+      "referenceSolution": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\ntotal = 0\nbest = bowls[0]\nworst = bowls[0]\nfor i in range(n):\n    x = bowls[i]\n    total = total + x\n    if x > best:\n        best = x\n    if x < worst:\n        worst = x\n\nprint(\"一共攒了\", total, \"条喵\")\nprint(\"最肥的一天\", best, \"条喵\")\nprint(\"最瘦的一天\", worst, \"条喵\")\n",
+      "expectedOutput": "一共攒了 58 条喵\n最肥的一天 23 条喵\n最瘦的一天 2 条喵",
+      "stdin": "5\n23\n2\n15\n15\n3\n",
+      "explanation": "三个数只跑一趟就够喵：每拿到一只碗，就顺手干三件小事 —— 加进总数、跟「目前最肥」比一比、跟「目前最瘦」比一比。\n\n两个起步的小讲究：\n\n1. **`best` 和 `worst` 都从第一只碗起步**（`bowls[0]`），别从 0 起步 —— 尤其是「最瘦」：碗里全是正数，从 0 起步的话 0 会永远赢，报出来的最瘦永远是 0；\n2. 比的写法是「**比它更极端才换人**」：`if x > best:` 才让 best 换成 x；`if x < worst:` 才让 worst 换成 x。两个判断各管各的，都放在同一个圈里。\n\n顺序上有个小地方喵：`bowls[0]` 要**等收完账再取** —— 收账的圈在前、清点的圈在后。\n\n想把三件事拆成三个圈分别跑也行，但一趟更省事，也不容易漏 —— 顺手练成「一趟清点」的习惯，账一多就知道它好了。",
+      "templateId": "py-s1-challenge-daily-report",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-30T12:37:40.943Z",
+        "hash": "55524bd8e39c123a"
+      }
+    },
+    {
+      "id": "bank-py-s1-challenge-daily-report-002",
+      "type": "codewrite",
+      "lang": "python",
+      "difficulty": "challenge",
+      "stem": "本喵每天的账要出一张日报喵：先把一天一天的账收进一排碗里，然后印三行 ——\n\n1. `一共攒了 X 条喵`；\n2. `最肥的一天 X 条喵`；\n3. `最瘦的一天 X 条喵`。\n\n本喵想看你**用圈一只一只比出来**（总数顺手在同一个圈里加，别跑三趟）。\n\n投喂口先给一个数（一共几天），再一天一天给数。\n\n比如投喂给程序的是\n\n6\n29\n23\n7\n10\n16\n4\n\n程序就要叼回\n\n一共攒了 89 条喵\n最肥的一天 29 条喵\n最瘦的一天 4 条喵\n\n（判分喂的是**另外一组数**喵；至少四天，不会给你空排。）",
+      "starter": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\n# 用圈清点：总数、最肥、最瘦\n",
+      "referenceSolution": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\ntotal = 0\nbest = bowls[0]\nworst = bowls[0]\nfor i in range(n):\n    x = bowls[i]\n    total = total + x\n    if x > best:\n        best = x\n    if x < worst:\n        worst = x\n\nprint(\"一共攒了\", total, \"条喵\")\nprint(\"最肥的一天\", best, \"条喵\")\nprint(\"最瘦的一天\", worst, \"条喵\")\n",
+      "expectedOutput": "一共攒了 127 条喵\n最肥的一天 29 条喵\n最瘦的一天 4 条喵",
+      "stdin": "6\n24\n4\n28\n27\n29\n15\n",
+      "explanation": "三个数只跑一趟就够喵：每拿到一只碗，就顺手干三件小事 —— 加进总数、跟「目前最肥」比一比、跟「目前最瘦」比一比。\n\n两个起步的小讲究：\n\n1. **`best` 和 `worst` 都从第一只碗起步**（`bowls[0]`），别从 0 起步 —— 尤其是「最瘦」：碗里全是正数，从 0 起步的话 0 会永远赢，报出来的最瘦永远是 0；\n2. 比的写法是「**比它更极端才换人**」：`if x > best:` 才让 best 换成 x；`if x < worst:` 才让 worst 换成 x。两个判断各管各的，都放在同一个圈里。\n\n顺序上有个小地方喵：`bowls[0]` 要**等收完账再取** —— 收账的圈在前、清点的圈在后。\n\n想把三件事拆成三个圈分别跑也行，但一趟更省事，也不容易漏 —— 顺手练成「一趟清点」的习惯，账一多就知道它好了。",
+      "templateId": "py-s1-challenge-daily-report",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:31.598Z",
+        "hash": "a737df6e29f04654"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-break-place-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵在旁边当裁判，替身柜子里按顺序排好了四条报数喵：先报 1、再报 6 和 8，最后才是大肥鱼心里那个数。规矩是**报一条、回一句话，一直报到猜中才收工**。\n\n可程序**只报了头一条就收工了**，后面三条一条都没轮到……你帮本喵把收工机关挪到该去的地方，让它一条一条报下去，直到猜中为止。",
+      "brokenCode": "target = 3\nguesses = [1, 6, 8, 3]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n    break\n",
+      "referenceFix": "target = 3\nguesses = [1, 6, 8, 3]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        break\n",
+      "expectedOutput": "1 太小啦喵\n6 太大啦喵\n8 太大啦喵\n3 猜中啦喵！",
+      "stdin": null,
+      "explanation": "`break` 是「**提前收工**」，但它在哪一层缩进里，就在哪儿收工喵。\n\n现在这一句 `break` 顶格缩得和 `if` 齐平 —— 它是**每一圈都会撞上**的一步。于是第一圈刚报完头一条（1），圈就被收掉了，柜子里剩下的 6、8、3 全都没轮到。\n\n它该去的地方是 `else:` 底下：那样只有**猜中那一圈**才走得到它。报「太大」「太小」的那两圈只印一句话，圈照旧往下转 —— 这就是「只有猜中才收工」的写法喵。\n\n（写完 `while True:` 一定要回头问自己一句：**猜中真的会走到那句 `break` 吗？** 万一 `break` 缩错了位置或者干脆没写，这个圈就永远停不下来，只能硬关窗口。）",
+      "templateId": "py-s1-guess-break-place",
+      "params": {
+        "secret": 3,
+        "g1": 1,
+        "g2": 6,
+        "g3": 8
+      },
+      "verified": {
+        "at": "2026-09-16T12:02:18.805Z",
+        "hash": "54721e21a184914e"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-break-place-023",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵在旁边当裁判，替身柜子里按顺序排好了四条报数喵：先报 2、再报 7 和 9，最后才是大肥鱼心里那个数。规矩是**报一条、回一句话，一直报到猜中才收工**。\n\n可程序**只报了头一条就收工了**，后面三条一条都没轮到……你帮本喵把收工机关挪到该去的地方，让它一条一条报下去，直到猜中为止。",
+      "brokenCode": "target = 5\nguesses = [2, 7, 9, 5]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n    break\n",
+      "referenceFix": "target = 5\nguesses = [2, 7, 9, 5]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        break\n",
+      "expectedOutput": "2 太小啦喵\n7 太大啦喵\n9 太大啦喵\n5 猜中啦喵！",
+      "stdin": null,
+      "explanation": "`break` 是「**提前收工**」，但它在哪一层缩进里，就在哪儿收工喵。\n\n现在这一句 `break` 顶格缩得和 `if` 齐平 —— 它是**每一圈都会撞上**的一步。于是第一圈刚报完头一条（2），圈就被收掉了，柜子里剩下的 7、9、5 全都没轮到。\n\n它该去的地方是 `else:` 底下：那样只有**猜中那一圈**才走得到它。报「太大」「太小」的那两圈只印一句话，圈照旧往下转 —— 这就是「只有猜中才收工」的写法喵。\n\n（写完 `while True:` 一定要回头问自己一句：**猜中真的会走到那句 `break` 吗？** 万一 `break` 缩错了位置或者干脆没写，这个圈就永远停不下来，只能硬关窗口。）",
+      "templateId": "py-s1-guess-break-place",
+      "params": {
+        "secret": 5,
+        "g1": 2,
+        "g2": 7,
+        "g3": 9
+      },
+      "verified": {
+        "at": "2026-09-16T12:02:19.006Z",
+        "hash": "4bab5d0a421fdba7"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-full-round-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要把这一局猜数游戏**拆成两招**来写喵。答案是 `3`，替身柜子里按顺序排好了这几条报数：`1`、`6`、`8`、`3`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 第一招 `check_guess(guess, target)`：把报数和答案比一比，**把该印的那句话叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），这一招里**一句都不许印**；\n2. 第二招 `play(target, picks)`：接着柜子和答案，一条一条取出来报。每取一条就往屏幕上印一行「（报的数） （第一招叼回来的那句话）」（中间一个空格），同时数着**已经猜了几次**；哪一条跟答案一样就**当场收工**，并把这局用的次数叼回来；\n3. 最后在主程序里喊上第二招（答案用 `3`），接住它叼回来的次数，印一行「答案是 3 一共猜了 （次数） 次喵」。\n\n（第二招的圈用 `while True:` 就行，收工靠「猜中那一圈」自己走人。）",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ndef play(target, picks):\n    step = 0\n    while True:\n        guess = picks.pop(0)\n        step = step + 1\n        print(guess, check_guess(guess, target))\n        if guess == target:\n            return step\n\nused = play(3, [1, 6, 8, 3])\nprint(\"答案是\", 3, \"一共猜了\", used, \"次喵\")\n",
+      "expectedOutput": "1 太小啦喵\n6 太大啦喵\n8 太大啦喵\n3 猜中啦喵！\n答案是 3 一共猜了 4 次喵",
+      "stdin": null,
+      "explanation": "这一局拆成了两张嘴：`check_guess` 只管**比一比、报个信**（它一句都不印，只负责把话叼回来），`play` 只管**转圈、打印、数次数**喵。分工的好处是：哪一天想换一种说法（比如加句「再努努力」），只要动 `check_guess` 里那一句 `return`，别处一个字都不用碰。\n\n`play` 里那个圈用的是 `while True:` —— 「一直转，直到有人喊停」。喊停的就是那句 `return step`：**`return` 一执行，这一招当场就结束**，还顺手把次数交给了外面，圈自然也跟着停了。所以这里**不用另外写 `break`**，一句 `return` 顶两件事。\n\n数次数的那一格（`step`）要在**进圈之前**先备好，每转一圈加一 —— 不然每一次加出来的都还是零，最后叼回来的次数就不对了喵。\n\n（顺手记：这局里 1 是「太小」、6 和 8 都是「太大」，所以前三条都不会停，第四条才猜中 —— 一共猜的次数就是把取出的条数数一数。）",
+      "templateId": "py-s1-guess-full-round",
+      "params": {
+        "secret": 3,
+        "g1": 1,
+        "g2": 6,
+        "g3": 8
+      },
+      "verified": {
+        "at": "2026-09-16T12:02:20.302Z",
+        "hash": "cb481a497841914e"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-full-round-005",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要把这一局猜数游戏**拆成两招**来写喵。答案是 `3`，替身柜子里按顺序排好了这几条报数：`2`、`6`、`9`、`3`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 第一招 `check_guess(guess, target)`：把报数和答案比一比，**把该印的那句话叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），这一招里**一句都不许印**；\n2. 第二招 `play(target, picks)`：接着柜子和答案，一条一条取出来报。每取一条就往屏幕上印一行「（报的数） （第一招叼回来的那句话）」（中间一个空格），同时数着**已经猜了几次**；哪一条跟答案一样就**当场收工**，并把这局用的次数叼回来；\n3. 最后在主程序里喊上第二招（答案用 `3`），接住它叼回来的次数，印一行「答案是 3 一共猜了 （次数） 次喵」。\n\n（第二招的圈用 `while True:` 就行，收工靠「猜中那一圈」自己走人。）",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ndef play(target, picks):\n    step = 0\n    while True:\n        guess = picks.pop(0)\n        step = step + 1\n        print(guess, check_guess(guess, target))\n        if guess == target:\n            return step\n\nused = play(3, [2, 6, 9, 3])\nprint(\"答案是\", 3, \"一共猜了\", used, \"次喵\")\n",
+      "expectedOutput": "2 太小啦喵\n6 太大啦喵\n9 太大啦喵\n3 猜中啦喵！\n答案是 3 一共猜了 4 次喵",
+      "stdin": null,
+      "explanation": "这一局拆成了两张嘴：`check_guess` 只管**比一比、报个信**（它一句都不印，只负责把话叼回来），`play` 只管**转圈、打印、数次数**喵。分工的好处是：哪一天想换一种说法（比如加句「再努努力」），只要动 `check_guess` 里那一句 `return`，别处一个字都不用碰。\n\n`play` 里那个圈用的是 `while True:` —— 「一直转，直到有人喊停」。喊停的就是那句 `return step`：**`return` 一执行，这一招当场就结束**，还顺手把次数交给了外面，圈自然也跟着停了。所以这里**不用另外写 `break`**，一句 `return` 顶两件事。\n\n数次数的那一格（`step`）要在**进圈之前**先备好，每转一圈加一 —— 不然每一次加出来的都还是零，最后叼回来的次数就不对了喵。\n\n（顺手记：这局里 2 是「太小」、6 和 9 都是「太大」，所以前三条都不会停，第四条才猜中 —— 一共猜的次数就是把取出的条数数一数。）",
+      "templateId": "py-s1-guess-full-round",
+      "params": {
+        "secret": 3,
+        "g1": 2,
+        "g2": 6,
+        "g3": 9
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:38.147Z",
+        "hash": "a8e331b4e4ef2804"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-full-round-009",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要把这一局猜数游戏**拆成两招**来写喵。答案是 `4`，替身柜子里按顺序排好了这几条报数：`1`、`6`、`9`、`4`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 第一招 `check_guess(guess, target)`：把报数和答案比一比，**把该印的那句话叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），这一招里**一句都不许印**；\n2. 第二招 `play(target, picks)`：接着柜子和答案，一条一条取出来报。每取一条就往屏幕上印一行「（报的数） （第一招叼回来的那句话）」（中间一个空格），同时数着**已经猜了几次**；哪一条跟答案一样就**当场收工**，并把这局用的次数叼回来；\n3. 最后在主程序里喊上第二招（答案用 `4`），接住它叼回来的次数，印一行「答案是 4 一共猜了 （次数） 次喵」。\n\n（第二招的圈用 `while True:` 就行，收工靠「猜中那一圈」自己走人。）",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ndef play(target, picks):\n    step = 0\n    while True:\n        guess = picks.pop(0)\n        step = step + 1\n        print(guess, check_guess(guess, target))\n        if guess == target:\n            return step\n\nused = play(4, [1, 6, 9, 4])\nprint(\"答案是\", 4, \"一共猜了\", used, \"次喵\")\n",
+      "expectedOutput": "1 太小啦喵\n6 太大啦喵\n9 太大啦喵\n4 猜中啦喵！\n答案是 4 一共猜了 4 次喵",
+      "stdin": null,
+      "explanation": "这一局拆成了两张嘴：`check_guess` 只管**比一比、报个信**（它一句都不印，只负责把话叼回来），`play` 只管**转圈、打印、数次数**喵。分工的好处是：哪一天想换一种说法（比如加句「再努努力」），只要动 `check_guess` 里那一句 `return`，别处一个字都不用碰。\n\n`play` 里那个圈用的是 `while True:` —— 「一直转，直到有人喊停」。喊停的就是那句 `return step`：**`return` 一执行，这一招当场就结束**，还顺手把次数交给了外面，圈自然也跟着停了。所以这里**不用另外写 `break`**，一句 `return` 顶两件事。\n\n数次数的那一格（`step`）要在**进圈之前**先备好，每转一圈加一 —— 不然每一次加出来的都还是零，最后叼回来的次数就不对了喵。\n\n（顺手记：这局里 1 是「太小」、6 和 9 都是「太大」，所以前三条都不会停，第四条才猜中 —— 一共猜的次数就是把取出的条数数一数。）",
+      "templateId": "py-s1-guess-full-round",
+      "params": {
+        "secret": 4,
+        "g1": 1,
+        "g2": 6,
+        "g3": 9
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:38.274Z",
+        "hash": "275b5dfedc048323"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-full-round-014",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要把这一局猜数游戏**拆成两招**来写喵。答案是 `4`，替身柜子里按顺序排好了这几条报数：`2`、`7`、`8`、`4`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 第一招 `check_guess(guess, target)`：把报数和答案比一比，**把该印的那句话叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），这一招里**一句都不许印**；\n2. 第二招 `play(target, picks)`：接着柜子和答案，一条一条取出来报。每取一条就往屏幕上印一行「（报的数） （第一招叼回来的那句话）」（中间一个空格），同时数着**已经猜了几次**；哪一条跟答案一样就**当场收工**，并把这局用的次数叼回来；\n3. 最后在主程序里喊上第二招（答案用 `4`），接住它叼回来的次数，印一行「答案是 4 一共猜了 （次数） 次喵」。\n\n（第二招的圈用 `while True:` 就行，收工靠「猜中那一圈」自己走人。）",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ndef play(target, picks):\n    step = 0\n    while True:\n        guess = picks.pop(0)\n        step = step + 1\n        print(guess, check_guess(guess, target))\n        if guess == target:\n            return step\n\nused = play(4, [2, 7, 8, 4])\nprint(\"答案是\", 4, \"一共猜了\", used, \"次喵\")\n",
+      "expectedOutput": "2 太小啦喵\n7 太大啦喵\n8 太大啦喵\n4 猜中啦喵！\n答案是 4 一共猜了 4 次喵",
+      "stdin": null,
+      "explanation": "这一局拆成了两张嘴：`check_guess` 只管**比一比、报个信**（它一句都不印，只负责把话叼回来），`play` 只管**转圈、打印、数次数**喵。分工的好处是：哪一天想换一种说法（比如加句「再努努力」），只要动 `check_guess` 里那一句 `return`，别处一个字都不用碰。\n\n`play` 里那个圈用的是 `while True:` —— 「一直转，直到有人喊停」。喊停的就是那句 `return step`：**`return` 一执行，这一招当场就结束**，还顺手把次数交给了外面，圈自然也跟着停了。所以这里**不用另外写 `break`**，一句 `return` 顶两件事。\n\n数次数的那一格（`step`）要在**进圈之前**先备好，每转一圈加一 —— 不然每一次加出来的都还是零，最后叼回来的次数就不对了喵。\n\n（顺手记：这局里 2 是「太小」、7 和 8 都是「太大」，所以前三条都不会停，第四条才猜中 —— 一共猜的次数就是把取出的条数数一数。）",
+      "templateId": "py-s1-guess-full-round",
+      "params": {
+        "secret": 4,
+        "g1": 2,
+        "g2": 7,
+        "g3": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:38.408Z",
+        "hash": "2c83211db2d92753"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-full-round-018",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要把这一局猜数游戏**拆成两招**来写喵。答案是 `5`，替身柜子里按顺序排好了这几条报数：`1`、`7`、`8`、`5`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 第一招 `check_guess(guess, target)`：把报数和答案比一比，**把该印的那句话叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），这一招里**一句都不许印**；\n2. 第二招 `play(target, picks)`：接着柜子和答案，一条一条取出来报。每取一条就往屏幕上印一行「（报的数） （第一招叼回来的那句话）」（中间一个空格），同时数着**已经猜了几次**；哪一条跟答案一样就**当场收工**，并把这局用的次数叼回来；\n3. 最后在主程序里喊上第二招（答案用 `5`），接住它叼回来的次数，印一行「答案是 5 一共猜了 （次数） 次喵」。\n\n（第二招的圈用 `while True:` 就行，收工靠「猜中那一圈」自己走人。）",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ndef play(target, picks):\n    step = 0\n    while True:\n        guess = picks.pop(0)\n        step = step + 1\n        print(guess, check_guess(guess, target))\n        if guess == target:\n            return step\n\nused = play(5, [1, 7, 8, 5])\nprint(\"答案是\", 5, \"一共猜了\", used, \"次喵\")\n",
+      "expectedOutput": "1 太小啦喵\n7 太大啦喵\n8 太大啦喵\n5 猜中啦喵！\n答案是 5 一共猜了 4 次喵",
+      "stdin": null,
+      "explanation": "这一局拆成了两张嘴：`check_guess` 只管**比一比、报个信**（它一句都不印，只负责把话叼回来），`play` 只管**转圈、打印、数次数**喵。分工的好处是：哪一天想换一种说法（比如加句「再努努力」），只要动 `check_guess` 里那一句 `return`，别处一个字都不用碰。\n\n`play` 里那个圈用的是 `while True:` —— 「一直转，直到有人喊停」。喊停的就是那句 `return step`：**`return` 一执行，这一招当场就结束**，还顺手把次数交给了外面，圈自然也跟着停了。所以这里**不用另外写 `break`**，一句 `return` 顶两件事。\n\n数次数的那一格（`step`）要在**进圈之前**先备好，每转一圈加一 —— 不然每一次加出来的都还是零，最后叼回来的次数就不对了喵。\n\n（顺手记：这局里 1 是「太小」、7 和 8 都是「太大」，所以前三条都不会停，第四条才猜中 —— 一共猜的次数就是把取出的条数数一数。）",
+      "templateId": "py-s1-guess-full-round",
+      "params": {
+        "secret": 5,
+        "g1": 1,
+        "g2": 7,
+        "g3": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:38.538Z",
+        "hash": "4bd4ad36b2c95d3f"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-full-round-023",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要把这一局猜数游戏**拆成两招**来写喵。答案是 `5`，替身柜子里按顺序排好了这几条报数：`2`、`7`、`9`、`5`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 第一招 `check_guess(guess, target)`：把报数和答案比一比，**把该印的那句话叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），这一招里**一句都不许印**；\n2. 第二招 `play(target, picks)`：接着柜子和答案，一条一条取出来报。每取一条就往屏幕上印一行「（报的数） （第一招叼回来的那句话）」（中间一个空格），同时数着**已经猜了几次**；哪一条跟答案一样就**当场收工**，并把这局用的次数叼回来；\n3. 最后在主程序里喊上第二招（答案用 `5`），接住它叼回来的次数，印一行「答案是 5 一共猜了 （次数） 次喵」。\n\n（第二招的圈用 `while True:` 就行，收工靠「猜中那一圈」自己走人。）",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ndef play(target, picks):\n    step = 0\n    while True:\n        guess = picks.pop(0)\n        step = step + 1\n        print(guess, check_guess(guess, target))\n        if guess == target:\n            return step\n\nused = play(5, [2, 7, 9, 5])\nprint(\"答案是\", 5, \"一共猜了\", used, \"次喵\")\n",
+      "expectedOutput": "2 太小啦喵\n7 太大啦喵\n9 太大啦喵\n5 猜中啦喵！\n答案是 5 一共猜了 4 次喵",
+      "stdin": null,
+      "explanation": "这一局拆成了两张嘴：`check_guess` 只管**比一比、报个信**（它一句都不印，只负责把话叼回来），`play` 只管**转圈、打印、数次数**喵。分工的好处是：哪一天想换一种说法（比如加句「再努努力」），只要动 `check_guess` 里那一句 `return`，别处一个字都不用碰。\n\n`play` 里那个圈用的是 `while True:` —— 「一直转，直到有人喊停」。喊停的就是那句 `return step`：**`return` 一执行，这一招当场就结束**，还顺手把次数交给了外面，圈自然也跟着停了。所以这里**不用另外写 `break`**，一句 `return` 顶两件事。\n\n数次数的那一格（`step`）要在**进圈之前**先备好，每转一圈加一 —— 不然每一次加出来的都还是零，最后叼回来的次数就不对了喵。\n\n（顺手记：这局里 2 是「太小」、7 和 9 都是「太大」，所以前三条都不会停，第四条才猜中 —— 一共猜的次数就是把取出的条数数一数。）",
+      "templateId": "py-s1-guess-full-round",
+      "params": {
+        "secret": 5,
+        "g1": 2,
+        "g2": 7,
+        "g3": 9
+      },
+      "verified": {
+        "at": "2026-09-16T12:02:20.431Z",
+        "hash": "9f3aed91c3315f5a"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-limit-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵给这一局加了个规矩：**只准猜 2 次**喵。答案是 `3`，替身柜子里按顺序排好了这几条报数：`1`、`6`、`8`、`3`、`6`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 一招 `check_guess(guess, target)`：比一比，把该印的那句话**叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），招式里一句都不许印；\n2. 转圈**报一条、印一行**「（报的数） （那句话）」，每报一条就用掉一次机会；\n3. 哪一条猜中就**当场收工**，后面的话一句都不再印；\n4. 要是机会**先用完了**还没猜中，再补印一行「机会用完啦喵」。",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ntarget = 3\npicks = [1, 6, 8, 3, 6]\nleft = 2\nfound = False\nwhile left > 0:\n    guess = picks.pop(0)\n    left = left - 1\n    print(guess, check_guess(guess, target))\n    if guess == target:\n        found = True\n        break\nif not found:\n    print(\"机会用完啦喵\")\n",
+      "expectedOutput": "1 太小啦喵\n6 太大啦喵\n机会用完啦喵",
+      "stdin": null,
+      "explanation": "这一局的圈不能写成「一直转」了喵 —— 机会是有数的，**机会见底就得收圈**。所以圈上写的是 `while left > 0:`（还有一个数没用完，就继续转），每转一圈把那个数减一。这和 `while True:` 是两种收圈姿势：一种是「不知道要转几圈，转到有人喊停」，一种是「心里有数，转够就停」。\n\n猜中那一句 `break` 还得留着 —— 不然圈不会因为猜中而停：要是机会还剩着，柜子后面的报数（比如 6）会被接着报出来，屏幕上白白多出一行。\n\n最妙的那个坑在尾巴上：**机会用完了**和**猜中了**是两条不同的出路。程序怎么知道自己是哪一条？靠那只「猜中没猜中」的记号（`found`）—— 进圈前先把它按下去，只有猜中那一圈才把它立起来。出了圈再看一眼：记号没立起来，说明是机会先见底的，这才补上那句「机会用完啦喵」。\n\n（对照着看这一局两个实例喵：机会少的那一局，报数还没报完就用完了，尾巴上会多出那句话；机会多的那一局，第四条就猜中了，当场收工 —— 剩下的机会和 6 都不用管了。）",
+      "templateId": "py-s1-guess-limit",
+      "params": {
+        "secret": 3,
+        "g1": 1,
+        "g2": 6,
+        "g3": 8,
+        "g4": 6,
+        "limit": 2
+      },
+      "verified": {
+        "at": "2026-09-16T12:03:09.434Z",
+        "hash": "7522bd146898154a"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-limit-038",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵给这一局加了个规矩：**只准猜 4 次**喵。答案是 `3`，替身柜子里按顺序排好了这几条报数：`2`、`6`、`8`、`3`、`7`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 一招 `check_guess(guess, target)`：比一比，把该印的那句话**叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），招式里一句都不许印；\n2. 转圈**报一条、印一行**「（报的数） （那句话）」，每报一条就用掉一次机会；\n3. 哪一条猜中就**当场收工**，后面的话一句都不再印；\n4. 要是机会**先用完了**还没猜中，再补印一行「机会用完啦喵」。",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ntarget = 3\npicks = [2, 6, 8, 3, 7]\nleft = 4\nfound = False\nwhile left > 0:\n    guess = picks.pop(0)\n    left = left - 1\n    print(guess, check_guess(guess, target))\n    if guess == target:\n        found = True\n        break\nif not found:\n    print(\"机会用完啦喵\")\n",
+      "expectedOutput": "2 太小啦喵\n6 太大啦喵\n8 太大啦喵\n3 猜中啦喵！",
+      "stdin": null,
+      "explanation": "这一局的圈不能写成「一直转」了喵 —— 机会是有数的，**机会见底就得收圈**。所以圈上写的是 `while left > 0:`（还有一个数没用完，就继续转），每转一圈把那个数减一。这和 `while True:` 是两种收圈姿势：一种是「不知道要转几圈，转到有人喊停」，一种是「心里有数，转够就停」。\n\n猜中那一句 `break` 还得留着 —— 不然圈不会因为猜中而停：要是机会还剩着，柜子后面的报数（比如 7）会被接着报出来，屏幕上白白多出一行。\n\n最妙的那个坑在尾巴上：**机会用完了**和**猜中了**是两条不同的出路。程序怎么知道自己是哪一条？靠那只「猜中没猜中」的记号（`found`）—— 进圈前先把它按下去，只有猜中那一圈才把它立起来。出了圈再看一眼：记号没立起来，说明是机会先见底的，这才补上那句「机会用完啦喵」。\n\n（对照着看这一局两个实例喵：机会少的那一局，报数还没报完就用完了，尾巴上会多出那句话；机会多的那一局，第四条就猜中了，当场收工 —— 剩下的机会和 7 都不用管了。）",
+      "templateId": "py-s1-guess-limit",
+      "params": {
+        "secret": 3,
+        "g1": 2,
+        "g2": 6,
+        "g3": 8,
+        "g4": 7,
+        "limit": 4
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:38.664Z",
+        "hash": "7bcfd72f13a903b3"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-limit-076",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵给这一局加了个规矩：**只准猜 2 次**喵。答案是 `4`，替身柜子里按顺序排好了这几条报数：`1`、`6`、`9`、`4`、`7`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 一招 `check_guess(guess, target)`：比一比，把该印的那句话**叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），招式里一句都不许印；\n2. 转圈**报一条、印一行**「（报的数） （那句话）」，每报一条就用掉一次机会；\n3. 哪一条猜中就**当场收工**，后面的话一句都不再印；\n4. 要是机会**先用完了**还没猜中，再补印一行「机会用完啦喵」。",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ntarget = 4\npicks = [1, 6, 9, 4, 7]\nleft = 2\nfound = False\nwhile left > 0:\n    guess = picks.pop(0)\n    left = left - 1\n    print(guess, check_guess(guess, target))\n    if guess == target:\n        found = True\n        break\nif not found:\n    print(\"机会用完啦喵\")\n",
+      "expectedOutput": "1 太小啦喵\n6 太大啦喵\n机会用完啦喵",
+      "stdin": null,
+      "explanation": "这一局的圈不能写成「一直转」了喵 —— 机会是有数的，**机会见底就得收圈**。所以圈上写的是 `while left > 0:`（还有一个数没用完，就继续转），每转一圈把那个数减一。这和 `while True:` 是两种收圈姿势：一种是「不知道要转几圈，转到有人喊停」，一种是「心里有数，转够就停」。\n\n猜中那一句 `break` 还得留着 —— 不然圈不会因为猜中而停：要是机会还剩着，柜子后面的报数（比如 7）会被接着报出来，屏幕上白白多出一行。\n\n最妙的那个坑在尾巴上：**机会用完了**和**猜中了**是两条不同的出路。程序怎么知道自己是哪一条？靠那只「猜中没猜中」的记号（`found`）—— 进圈前先把它按下去，只有猜中那一圈才把它立起来。出了圈再看一眼：记号没立起来，说明是机会先见底的，这才补上那句「机会用完啦喵」。\n\n（对照着看这一局两个实例喵：机会少的那一局，报数还没报完就用完了，尾巴上会多出那句话；机会多的那一局，第四条就猜中了，当场收工 —— 剩下的机会和 7 都不用管了。）",
+      "templateId": "py-s1-guess-limit",
+      "params": {
+        "secret": 4,
+        "g1": 1,
+        "g2": 6,
+        "g3": 9,
+        "g4": 7,
+        "limit": 2
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:38.791Z",
+        "hash": "c9a931d45997143f"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-limit-115",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵给这一局加了个规矩：**只准猜 5 次**喵。答案是 `4`，替身柜子里按顺序排好了这几条报数：`2`、`7`、`8`、`4`、`6`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 一招 `check_guess(guess, target)`：比一比，把该印的那句话**叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），招式里一句都不许印；\n2. 转圈**报一条、印一行**「（报的数） （那句话）」，每报一条就用掉一次机会；\n3. 哪一条猜中就**当场收工**，后面的话一句都不再印；\n4. 要是机会**先用完了**还没猜中，再补印一行「机会用完啦喵」。",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ntarget = 4\npicks = [2, 7, 8, 4, 6]\nleft = 5\nfound = False\nwhile left > 0:\n    guess = picks.pop(0)\n    left = left - 1\n    print(guess, check_guess(guess, target))\n    if guess == target:\n        found = True\n        break\nif not found:\n    print(\"机会用完啦喵\")\n",
+      "expectedOutput": "2 太小啦喵\n7 太大啦喵\n8 太大啦喵\n4 猜中啦喵！",
+      "stdin": null,
+      "explanation": "这一局的圈不能写成「一直转」了喵 —— 机会是有数的，**机会见底就得收圈**。所以圈上写的是 `while left > 0:`（还有一个数没用完，就继续转），每转一圈把那个数减一。这和 `while True:` 是两种收圈姿势：一种是「不知道要转几圈，转到有人喊停」，一种是「心里有数，转够就停」。\n\n猜中那一句 `break` 还得留着 —— 不然圈不会因为猜中而停：要是机会还剩着，柜子后面的报数（比如 6）会被接着报出来，屏幕上白白多出一行。\n\n最妙的那个坑在尾巴上：**机会用完了**和**猜中了**是两条不同的出路。程序怎么知道自己是哪一条？靠那只「猜中没猜中」的记号（`found`）—— 进圈前先把它按下去，只有猜中那一圈才把它立起来。出了圈再看一眼：记号没立起来，说明是机会先见底的，这才补上那句「机会用完啦喵」。\n\n（对照着看这一局两个实例喵：机会少的那一局，报数还没报完就用完了，尾巴上会多出那句话；机会多的那一局，第四条就猜中了，当场收工 —— 剩下的机会和 6 都不用管了。）",
+      "templateId": "py-s1-guess-limit",
+      "params": {
+        "secret": 4,
+        "g1": 2,
+        "g2": 7,
+        "g3": 8,
+        "g4": 6,
+        "limit": 5
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:38.924Z",
+        "hash": "0bcca724310f3375"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-limit-153",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵给这一局加了个规矩：**只准猜 3 次**喵。答案是 `5`，替身柜子里按顺序排好了这几条报数：`1`、`7`、`9`、`5`、`6`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 一招 `check_guess(guess, target)`：比一比，把该印的那句话**叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），招式里一句都不许印；\n2. 转圈**报一条、印一行**「（报的数） （那句话）」，每报一条就用掉一次机会；\n3. 哪一条猜中就**当场收工**，后面的话一句都不再印；\n4. 要是机会**先用完了**还没猜中，再补印一行「机会用完啦喵」。",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ntarget = 5\npicks = [1, 7, 9, 5, 6]\nleft = 3\nfound = False\nwhile left > 0:\n    guess = picks.pop(0)\n    left = left - 1\n    print(guess, check_guess(guess, target))\n    if guess == target:\n        found = True\n        break\nif not found:\n    print(\"机会用完啦喵\")\n",
+      "expectedOutput": "1 太小啦喵\n7 太大啦喵\n9 太大啦喵\n机会用完啦喵",
+      "stdin": null,
+      "explanation": "这一局的圈不能写成「一直转」了喵 —— 机会是有数的，**机会见底就得收圈**。所以圈上写的是 `while left > 0:`（还有一个数没用完，就继续转），每转一圈把那个数减一。这和 `while True:` 是两种收圈姿势：一种是「不知道要转几圈，转到有人喊停」，一种是「心里有数，转够就停」。\n\n猜中那一句 `break` 还得留着 —— 不然圈不会因为猜中而停：要是机会还剩着，柜子后面的报数（比如 6）会被接着报出来，屏幕上白白多出一行。\n\n最妙的那个坑在尾巴上：**机会用完了**和**猜中了**是两条不同的出路。程序怎么知道自己是哪一条？靠那只「猜中没猜中」的记号（`found`）—— 进圈前先把它按下去，只有猜中那一圈才把它立起来。出了圈再看一眼：记号没立起来，说明是机会先见底的，这才补上那句「机会用完啦喵」。\n\n（对照着看这一局两个实例喵：机会少的那一局，报数还没报完就用完了，尾巴上会多出那句话；机会多的那一局，第四条就猜中了，当场收工 —— 剩下的机会和 6 都不用管了。）",
+      "templateId": "py-s1-guess-limit",
+      "params": {
+        "secret": 5,
+        "g1": 1,
+        "g2": 7,
+        "g3": 9,
+        "g4": 6,
+        "limit": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:39.051Z",
+        "hash": "9d5b58a515de03e6"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-limit-191",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵给这一局加了个规矩：**只准猜 5 次**喵。答案是 `5`，替身柜子里按顺序排好了这几条报数：`2`、`7`、`9`、`5`、`7`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 一招 `check_guess(guess, target)`：比一比，把该印的那句话**叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），招式里一句都不许印；\n2. 转圈**报一条、印一行**「（报的数） （那句话）」，每报一条就用掉一次机会；\n3. 哪一条猜中就**当场收工**，后面的话一句都不再印；\n4. 要是机会**先用完了**还没猜中，再补印一行「机会用完啦喵」。",
+      "starter": null,
+      "referenceSolution": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ntarget = 5\npicks = [2, 7, 9, 5, 7]\nleft = 5\nfound = False\nwhile left > 0:\n    guess = picks.pop(0)\n    left = left - 1\n    print(guess, check_guess(guess, target))\n    if guess == target:\n        found = True\n        break\nif not found:\n    print(\"机会用完啦喵\")\n",
+      "expectedOutput": "2 太小啦喵\n7 太大啦喵\n9 太大啦喵\n5 猜中啦喵！",
+      "stdin": null,
+      "explanation": "这一局的圈不能写成「一直转」了喵 —— 机会是有数的，**机会见底就得收圈**。所以圈上写的是 `while left > 0:`（还有一个数没用完，就继续转），每转一圈把那个数减一。这和 `while True:` 是两种收圈姿势：一种是「不知道要转几圈，转到有人喊停」，一种是「心里有数，转够就停」。\n\n猜中那一句 `break` 还得留着 —— 不然圈不会因为猜中而停：要是机会还剩着，柜子后面的报数（比如 7）会被接着报出来，屏幕上白白多出一行。\n\n最妙的那个坑在尾巴上：**机会用完了**和**猜中了**是两条不同的出路。程序怎么知道自己是哪一条？靠那只「猜中没猜中」的记号（`found`）—— 进圈前先把它按下去，只有猜中那一圈才把它立起来。出了圈再看一眼：记号没立起来，说明是机会先见底的，这才补上那句「机会用完啦喵」。\n\n（对照着看这一局两个实例喵：机会少的那一局，报数还没报完就用完了，尾巴上会多出那句话；机会多的那一局，第四条就猜中了，当场收工 —— 剩下的机会和 7 都不用管了。）",
+      "templateId": "py-s1-guess-limit",
+      "params": {
+        "secret": 5,
+        "g1": 2,
+        "g2": 7,
+        "g3": 9,
+        "g4": 7,
+        "limit": 5
+      },
+      "verified": {
+        "at": "2026-09-16T12:03:09.585Z",
+        "hash": "5d94596bf71dbc41"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-pop-head-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的替身柜子规矩是**先报的数放在头上**喵：排好的是 1、6、8，大肥鱼心里那个数（3）压在最底下，本该**最后**才轮到它。\n\n可程序一开跑，头一条报的就是柜子最底下那个数，直接喊了「猜中」，前面三条一条都没轮到……你帮本喵改对，让它**照着放进去的顺序**一条一条从上往下取出来报。",
+      "brokenCode": "target = 3\nguesses = [1, 6, 8, 3]\n\nwhile True:\n    guess = guesses.pop()\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        break\n",
+      "referenceFix": "target = 3\nguesses = [1, 6, 8, 3]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        break\n",
+      "expectedOutput": "1 太小啦喵\n6 太大啦喵\n8 太大啦喵\n3 猜中啦喵！",
+      "stdin": null,
+      "explanation": "替身柜子（列表）的两头都会取：`pop(0)` 是从**头上**取下一条，`pop()`（或者 `pop(-1)`）是从**尾巴上**取下一条喵 —— 带不带那个编号，取的就是两头不同的数。\n\n现在程序写的 `pop()` 是**从尾巴上**取。尾巴上压着的正是**最后放进去**的那个数（3），所以它头一下就把答案掏了出来，第一圈就喊中收工了。\n\n改法就是给 `pop` 喂一个 0：`guesses.pop(0)` —— 编号 0 说的就是**头上第一条**。这样每转一圈取走最前面的那一条，1、6、8 才会挨个轮上，压在最底下的答案留到最后才出现喵。\n\n（取一条就少一条：同一个 `pop` 取过的位置不会再有东西，所以这个圈不会卡在同一处来回取。）",
+      "templateId": "py-s1-guess-pop-head",
+      "params": {
+        "secret": 3,
+        "g1": 1,
+        "g2": 6,
+        "g3": 8
+      },
+      "verified": {
+        "at": "2026-09-16T12:02:19.546Z",
+        "hash": "b1fd5f9f0ae81749"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-pop-head-023",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的替身柜子规矩是**先报的数放在头上**喵：排好的是 2、7、9，大肥鱼心里那个数（5）压在最底下，本该**最后**才轮到它。\n\n可程序一开跑，头一条报的就是柜子最底下那个数，直接喊了「猜中」，前面三条一条都没轮到……你帮本喵改对，让它**照着放进去的顺序**一条一条从上往下取出来报。",
+      "brokenCode": "target = 5\nguesses = [2, 7, 9, 5]\n\nwhile True:\n    guess = guesses.pop()\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        break\n",
+      "referenceFix": "target = 5\nguesses = [2, 7, 9, 5]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        break\n",
+      "expectedOutput": "2 太小啦喵\n7 太大啦喵\n9 太大啦喵\n5 猜中啦喵！",
+      "stdin": null,
+      "explanation": "替身柜子（列表）的两头都会取：`pop(0)` 是从**头上**取下一条，`pop()`（或者 `pop(-1)`）是从**尾巴上**取下一条喵 —— 带不带那个编号，取的就是两头不同的数。\n\n现在程序写的 `pop()` 是**从尾巴上**取。尾巴上压着的正是**最后放进去**的那个数（5），所以它头一下就把答案掏了出来，第一圈就喊中收工了。\n\n改法就是给 `pop` 喂一个 0：`guesses.pop(0)` —— 编号 0 说的就是**头上第一条**。这样每转一圈取走最前面的那一条，2、7、9 才会挨个轮上，压在最底下的答案留到最后才出现喵。\n\n（取一条就少一条：同一个 `pop` 取过的位置不会再有东西，所以这个圈不会卡在同一处来回取。）",
+      "templateId": "py-s1-guess-pop-head",
+      "params": {
+        "secret": 5,
+        "g1": 2,
+        "g2": 7,
+        "g3": 9
+      },
+      "verified": {
+        "at": "2026-09-16T12:02:19.741Z",
+        "hash": "c5a8d61fc57bc90f"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-return-not-print-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵把「判断大小」这一步单独拆成了一个招式，主流程就清爽多了喵。\n\n可每跑一次都**多出一行 `None`**……你帮本喵改对，让它只打印判断结果那一行。",
+      "brokenCode": "def judge(secret, g):\n    if g > secret:\n        print(\"大了喵\")\n    elif g < secret:\n        print(\"小了喵\")\n    else:\n        print(\"猜对啦喵\")\n\nprint(judge(2, 1))\n",
+      "referenceFix": "def judge(secret, g):\n    if g > secret:\n        return \"大了喵\"\n    elif g < secret:\n        return \"小了喵\"\n    else:\n        return \"猜对啦喵\"\n\nprint(judge(2, 1))\n",
+      "expectedOutput": "小了喵",
+      "stdin": null,
+      "explanation": "这个错法很值得记住喵：**招式里面确实打印了，但它没有「交出」任何东西**。\n\n`print` 和 `return` 是两件事：\n\n- `print` = 喊出来给**人**看，喊完就没了\n- `return` = 递给**调用它的那行代码**\n\n所以外面那句 `print(judge(...))` 收到的是「什么都没有」（`None`），又把它打印了一遍 —— 屏幕上于是变成两行：招式自己喊的那句，加上一个 `None`。\n\n要拆成招式、又要让外面拿到结果，那一支支的 `print` 就得全换成 `return`。**一个招式要么负责算并交出来，要么负责打印；两件事混在一起，第一次想复用它就会绊倒自己。**",
+      "templateId": "py-s1-guess-return-not-print",
+      "params": {
+        "secret": 2,
+        "g": 1
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:26.620Z",
+        "hash": "859425307e69c354"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-return-not-print-010",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵把「判断大小」这一步单独拆成了一个招式，主流程就清爽多了喵。\n\n可每跑一次都**多出一行 `None`**……你帮本喵改对，让它只打印判断结果那一行。",
+      "brokenCode": "def judge(secret, g):\n    if g > secret:\n        print(\"大了喵\")\n    elif g < secret:\n        print(\"小了喵\")\n    else:\n        print(\"猜对啦喵\")\n\nprint(judge(3, 4))\n",
+      "referenceFix": "def judge(secret, g):\n    if g > secret:\n        return \"大了喵\"\n    elif g < secret:\n        return \"小了喵\"\n    else:\n        return \"猜对啦喵\"\n\nprint(judge(3, 4))\n",
+      "expectedOutput": "大了喵",
+      "stdin": null,
+      "explanation": "这个错法很值得记住喵：**招式里面确实打印了，但它没有「交出」任何东西**。\n\n`print` 和 `return` 是两件事：\n\n- `print` = 喊出来给**人**看，喊完就没了\n- `return` = 递给**调用它的那行代码**\n\n所以外面那句 `print(judge(...))` 收到的是「什么都没有」（`None`），又把它打印了一遍 —— 屏幕上于是变成两行：招式自己喊的那句，加上一个 `None`。\n\n要拆成招式、又要让外面拿到结果，那一支支的 `print` 就得全换成 `return`。**一个招式要么负责算并交出来，要么负责打印；两件事混在一起，第一次想复用它就会绊倒自己。**",
+      "templateId": "py-s1-guess-return-not-print",
+      "params": {
+        "secret": 3,
+        "g": 4
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:26.775Z",
+        "hash": "828e9ec05d8ecca6"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-return-not-print-020",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵把「判断大小」这一步单独拆成了一个招式，主流程就清爽多了喵。\n\n可每跑一次都**多出一行 `None`**……你帮本喵改对，让它只打印判断结果那一行。",
+      "brokenCode": "def judge(secret, g):\n    if g > secret:\n        print(\"大了喵\")\n    elif g < secret:\n        print(\"小了喵\")\n    else:\n        print(\"猜对啦喵\")\n\nprint(judge(4, 7))\n",
+      "referenceFix": "def judge(secret, g):\n    if g > secret:\n        return \"大了喵\"\n    elif g < secret:\n        return \"小了喵\"\n    else:\n        return \"猜对啦喵\"\n\nprint(judge(4, 7))\n",
+      "expectedOutput": "大了喵",
+      "stdin": null,
+      "explanation": "这个错法很值得记住喵：**招式里面确实打印了，但它没有「交出」任何东西**。\n\n`print` 和 `return` 是两件事：\n\n- `print` = 喊出来给**人**看，喊完就没了\n- `return` = 递给**调用它的那行代码**\n\n所以外面那句 `print(judge(...))` 收到的是「什么都没有」（`None`），又把它打印了一遍 —— 屏幕上于是变成两行：招式自己喊的那句，加上一个 `None`。\n\n要拆成招式、又要让外面拿到结果，那一支支的 `print` 就得全换成 `return`。**一个招式要么负责算并交出来，要么负责打印；两件事混在一起，第一次想复用它就会绊倒自己。**",
+      "templateId": "py-s1-guess-return-not-print",
+      "params": {
+        "secret": 4,
+        "g": 7
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:26.923Z",
+        "hash": "ec97b47f4205b2e2"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-rounds-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "猜数字游戏的核心那一段，请你来写喵。\n\n**答案已经定好了，是 `3`。** 接下来会读到若干个猜测：**第一行是个数 `n`**，后面跟着 `n` 个猜测，每个一行。\n\n请你写个程序，一个一个地判断，每次都打印一行 ——\n\n- 猜的比答案**大** → 打印 `大了喵`\n- 猜的比答案**小** → 打印 `小了喵`\n- 正好猜中 → 打印 `猜对啦喵`\n\n比如输入是\n\n3\n6\n2\n9\n\n就要输出\n\n大了喵\n小了喵\n大了喵\n\n（判分用的是另外一组猜测喵～）",
+      "starter": null,
+      "referenceSolution": "secret = 3\nn = int(input())\nfor _ in range(n):\n    g = int(input())\n    if g > secret:\n        print(\"大了喵\")\n    elif g < secret:\n        print(\"小了喵\")\n    else:\n        print(\"猜对啦喵\")\n",
+      "expectedOutput": "大了喵\n猜对啦喵\n小了喵",
+      "stdin": "3\n7\n3\n1\n",
+      "explanation": "这一段就是猜数字游戏的**心脏**喵 —— 把它写顺了，外面套一层「反复读入」就是完整的游戏。\n\n几个容易踩的地方：\n\n- **顺序**：先判「大了」，`elif` 再判「小了」，`else` 兜底「猜对啦」。\n- **`range(n)`** 转 n 圈，正好对应读 n 个猜测。\n- 「猜对」那一支放在 `else` 里，是因为**前两个都不成立，那就只剩相等了** —— 不用再写 `elif g == secret`。\n\n（真实游戏里答案会用 `random.randint` 现场摇一个。这里把它写死，是为了让本喵能把标准答案算出来喵～）",
+      "templateId": "py-s1-guess-rounds",
+      "params": {
+        "secret": 3,
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:27.122Z",
+        "hash": "c2dd21be5ee589dc"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-rounds-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "猜数字游戏的核心那一段，请你来写喵。\n\n**答案已经定好了，是 `3`。** 接下来会读到若干个猜测：**第一行是个数 `n`**，后面跟着 `n` 个猜测，每个一行。\n\n请你写个程序，一个一个地判断，每次都打印一行 ——\n\n- 猜的比答案**大** → 打印 `大了喵`\n- 猜的比答案**小** → 打印 `小了喵`\n- 正好猜中 → 打印 `猜对啦喵`\n\n比如输入是\n\n5\n4\n1\n3\n2\n4\n\n就要输出\n\n大了喵\n小了喵\n猜对啦喵\n小了喵\n大了喵\n\n（判分用的是另外一组猜测喵～）",
+      "starter": null,
+      "referenceSolution": "secret = 3\nn = int(input())\nfor _ in range(n):\n    g = int(input())\n    if g > secret:\n        print(\"大了喵\")\n    elif g < secret:\n        print(\"小了喵\")\n    else:\n        print(\"猜对啦喵\")\n",
+      "expectedOutput": "小了喵\n大了喵\n大了喵\n大了喵\n猜对啦喵",
+      "stdin": "5\n1\n4\n5\n9\n3\n",
+      "explanation": "这一段就是猜数字游戏的**心脏**喵 —— 把它写顺了，外面套一层「反复读入」就是完整的游戏。\n\n几个容易踩的地方：\n\n- **顺序**：先判「大了」，`elif` 再判「小了」，`else` 兜底「猜对啦」。\n- **`range(n)`** 转 n 圈，正好对应读 n 个猜测。\n- 「猜对」那一支放在 `else` 里，是因为**前两个都不成立，那就只剩相等了** —— 不用再写 `elif g == secret`。\n\n（真实游戏里答案会用 `random.randint` 现场摇一个。这里把它写死，是为了让本喵能把标准答案算出来喵～）",
+      "templateId": "py-s1-guess-rounds",
+      "params": {
+        "secret": 3,
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:39.249Z",
+        "hash": "71678c18e06984e1"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-rounds-004",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "猜数字游戏的核心那一段，请你来写喵。\n\n**答案已经定好了，是 `4`。** 接下来会读到若干个猜测：**第一行是个数 `n`**，后面跟着 `n` 个猜测，每个一行。\n\n请你写个程序，一个一个地判断，每次都打印一行 ——\n\n- 猜的比答案**大** → 打印 `大了喵`\n- 猜的比答案**小** → 打印 `小了喵`\n- 正好猜中 → 打印 `猜对啦喵`\n\n比如输入是\n\n4\n8\n5\n8\n2\n\n就要输出\n\n大了喵\n大了喵\n大了喵\n小了喵\n\n（判分用的是另外一组猜测喵～）",
+      "starter": null,
+      "referenceSolution": "secret = 4\nn = int(input())\nfor _ in range(n):\n    g = int(input())\n    if g > secret:\n        print(\"大了喵\")\n    elif g < secret:\n        print(\"小了喵\")\n    else:\n        print(\"猜对啦喵\")\n",
+      "expectedOutput": "小了喵\n大了喵\n大了喵\n大了喵",
+      "stdin": "4\n1\n5\n8\n5\n",
+      "explanation": "这一段就是猜数字游戏的**心脏**喵 —— 把它写顺了，外面套一层「反复读入」就是完整的游戏。\n\n几个容易踩的地方：\n\n- **顺序**：先判「大了」，`elif` 再判「小了」，`else` 兜底「猜对啦」。\n- **`range(n)`** 转 n 圈，正好对应读 n 个猜测。\n- 「猜对」那一支放在 `else` 里，是因为**前两个都不成立，那就只剩相等了** —— 不用再写 `elif g == secret`。\n\n（真实游戏里答案会用 `random.randint` 现场摇一个。这里把它写死，是为了让本喵能把标准答案算出来喵～）",
+      "templateId": "py-s1-guess-rounds",
+      "params": {
+        "secret": 4,
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:39.440Z",
+        "hash": "1d3acb814cc01500"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-rounds-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "猜数字游戏的核心那一段，请你来写喵。\n\n**答案已经定好了，是 `5`。** 接下来会读到若干个猜测：**第一行是个数 `n`**，后面跟着 `n` 个猜测，每个一行。\n\n请你写个程序，一个一个地判断，每次都打印一行 ——\n\n- 猜的比答案**大** → 打印 `大了喵`\n- 猜的比答案**小** → 打印 `小了喵`\n- 正好猜中 → 打印 `猜对啦喵`\n\n比如输入是\n\n4\n4\n9\n9\n2\n\n就要输出\n\n小了喵\n大了喵\n大了喵\n小了喵\n\n（判分用的是另外一组猜测喵～）",
+      "starter": null,
+      "referenceSolution": "secret = 5\nn = int(input())\nfor _ in range(n):\n    g = int(input())\n    if g > secret:\n        print(\"大了喵\")\n    elif g < secret:\n        print(\"小了喵\")\n    else:\n        print(\"猜对啦喵\")\n",
+      "expectedOutput": "小了喵\n猜对啦喵\n小了喵\n小了喵",
+      "stdin": "4\n2\n5\n4\n3\n",
+      "explanation": "这一段就是猜数字游戏的**心脏**喵 —— 把它写顺了，外面套一层「反复读入」就是完整的游戏。\n\n几个容易踩的地方：\n\n- **顺序**：先判「大了」，`elif` 再判「小了」，`else` 兜底「猜对啦」。\n- **`range(n)`** 转 n 圈，正好对应读 n 个猜测。\n- 「猜对」那一支放在 `else` 里，是因为**前两个都不成立，那就只剩相等了** —— 不用再写 `elif g == secret`。\n\n（真实游戏里答案会用 `random.randint` 现场摇一个。这里把它写死，是为了让本喵能把标准答案算出来喵～）",
+      "templateId": "py-s1-guess-rounds",
+      "params": {
+        "secret": 5,
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:39.632Z",
+        "hash": "7e86a9988bfa82de"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-rounds-009",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "猜数字游戏的核心那一段，请你来写喵。\n\n**答案已经定好了，是 `6`。** 接下来会读到若干个猜测：**第一行是个数 `n`**，后面跟着 `n` 个猜测，每个一行。\n\n请你写个程序，一个一个地判断，每次都打印一行 ——\n\n- 猜的比答案**大** → 打印 `大了喵`\n- 猜的比答案**小** → 打印 `小了喵`\n- 正好猜中 → 打印 `猜对啦喵`\n\n比如输入是\n\n3\n5\n9\n6\n\n就要输出\n\n小了喵\n大了喵\n猜对啦喵\n\n（判分用的是另外一组猜测喵～）",
+      "starter": null,
+      "referenceSolution": "secret = 6\nn = int(input())\nfor _ in range(n):\n    g = int(input())\n    if g > secret:\n        print(\"大了喵\")\n    elif g < secret:\n        print(\"小了喵\")\n    else:\n        print(\"猜对啦喵\")\n",
+      "expectedOutput": "大了喵\n小了喵\n大了喵",
+      "stdin": "3\n8\n5\n9\n",
+      "explanation": "这一段就是猜数字游戏的**心脏**喵 —— 把它写顺了，外面套一层「反复读入」就是完整的游戏。\n\n几个容易踩的地方：\n\n- **顺序**：先判「大了」，`elif` 再判「小了」，`else` 兜底「猜对啦」。\n- **`range(n)`** 转 n 圈，正好对应读 n 个猜测。\n- 「猜对」那一支放在 `else` 里，是因为**前两个都不成立，那就只剩相等了** —— 不用再写 `elif g == secret`。\n\n（真实游戏里答案会用 `random.randint` 现场摇一个。这里把它写死，是为了让本喵能把标准答案算出来喵～）",
+      "templateId": "py-s1-guess-rounds",
+      "params": {
+        "secret": 6,
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:39.818Z",
+        "hash": "61db3e5d2ad827f7"
+      }
+    },
+    {
+      "id": "bank-py-s1-guess-rounds-011",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "猜数字游戏的核心那一段，请你来写喵。\n\n**答案已经定好了，是 `6`。** 接下来会读到若干个猜测：**第一行是个数 `n`**，后面跟着 `n` 个猜测，每个一行。\n\n请你写个程序，一个一个地判断，每次都打印一行 ——\n\n- 猜的比答案**大** → 打印 `大了喵`\n- 猜的比答案**小** → 打印 `小了喵`\n- 正好猜中 → 打印 `猜对啦喵`\n\n比如输入是\n\n5\n3\n8\n5\n7\n6\n\n就要输出\n\n小了喵\n大了喵\n小了喵\n大了喵\n猜对啦喵\n\n（判分用的是另外一组猜测喵～）",
+      "starter": null,
+      "referenceSolution": "secret = 6\nn = int(input())\nfor _ in range(n):\n    g = int(input())\n    if g > secret:\n        print(\"大了喵\")\n    elif g < secret:\n        print(\"小了喵\")\n    else:\n        print(\"猜对啦喵\")\n",
+      "expectedOutput": "小了喵\n小了喵\n大了喵\n大了喵\n猜对啦喵",
+      "stdin": "5\n3\n2\n7\n9\n6\n",
+      "explanation": "这一段就是猜数字游戏的**心脏**喵 —— 把它写顺了，外面套一层「反复读入」就是完整的游戏。\n\n几个容易踩的地方：\n\n- **顺序**：先判「大了」，`elif` 再判「小了」，`else` 兜底「猜对啦」。\n- **`range(n)`** 转 n 圈，正好对应读 n 个猜测。\n- 「猜对」那一支放在 `else` 里，是因为**前两个都不成立，那就只剩相等了** —— 不用再写 `elif g == secret`。\n\n（真实游戏里答案会用 `random.randint` 现场摇一个。这里把它写死，是为了让本喵能把标准答案算出来喵～）",
+      "templateId": "py-s1-guess-rounds",
+      "params": {
+        "secret": 6,
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:27.275Z",
+        "hash": "4af7d8dcd235da0f"
+      }
+    }
+  ]
+}

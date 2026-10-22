@@ -1,0 +1,366 @@
+{
+  "lessonId": "java-stage1-18",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s1-jdk-case-bowl-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵在本本上随手记下一个「JDK 大版本号」：**17**。稿子印出来该是：\n\n```text\n本本上记的版本：17\n```\n\n可这段稿子跑起来，翻译官喵**一声都没吭**，账上却印着「本本上记的版本：0」—— 版本号压根没进来。你帮本喵把账接对。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int version = 0;\n        int Version = 17;\n        System.out.println(\"本本上记的版本：\" + version);\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int version = 17;\n        System.out.println(\"本本上记的版本：\" + version);\n    }\n}\n",
+      "expectedOutput": "本本上记的版本：17",
+      "stdin": null,
+      "explanation": "翻译官喵眼里，`version` 和 `Version` 是**两个完全不同的名字** —— 名字里的大小写，也是名字的一部分。稿子里先摆出来的 `version` 是一只碗；后头大写 `V` 开头的 `Version` 是**另一只新碗**：版本号 17 装进了新碗，印的却是旧碗，旧碗里躺着开局的 0。\n\n这类错最阴险的地方是：**翻译官喵不报错，程序照样跑完** —— 屏幕上印出来的只是错的。所以运行结果对不上时，别先怀疑翻译官喵，先眯起眼睛看清**名字里的大小写**。\n\n（顺手就能踩的坑：要是只把第二行的 `V` 改成小写、`int` 忘了删，立刻变成编译错误，原话是 `variable version is already defined in method main(String[])` —— 一块地盘里，同名的碗只能有一只。改的时候要么把版本号写进原来那只碗，要么把旧碗删掉，别留两只。）",
+      "templateId": "java-s1-jdk-case-bowl",
+      "params": {
+        "b": "17"
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:13.309Z",
+        "hash": "80ae5e4378373c74"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-case-bowl-002",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵在本本上随手记下一个「JDK 大版本号」：**23**。稿子印出来该是：\n\n```text\n本本上记的版本：23\n```\n\n可这段稿子跑起来，翻译官喵**一声都没吭**，账上却印着「本本上记的版本：0」—— 版本号压根没进来。你帮本喵把账接对。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int version = 0;\n        int Version = 23;\n        System.out.println(\"本本上记的版本：\" + version);\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int version = 23;\n        System.out.println(\"本本上记的版本：\" + version);\n    }\n}\n",
+      "expectedOutput": "本本上记的版本：23",
+      "stdin": null,
+      "explanation": "翻译官喵眼里，`version` 和 `Version` 是**两个完全不同的名字** —— 名字里的大小写，也是名字的一部分。稿子里先摆出来的 `version` 是一只碗；后头大写 `V` 开头的 `Version` 是**另一只新碗**：版本号 23 装进了新碗，印的却是旧碗，旧碗里躺着开局的 0。\n\n这类错最阴险的地方是：**翻译官喵不报错，程序照样跑完** —— 屏幕上印出来的只是错的。所以运行结果对不上时，别先怀疑翻译官喵，先眯起眼睛看清**名字里的大小写**。\n\n（顺手就能踩的坑：要是只把第二行的 `V` 改成小写、`int` 忘了删，立刻变成编译错误，原话是 `variable version is already defined in method main(String[])` —— 一块地盘里，同名的碗只能有一只。改的时候要么把版本号写进原来那只碗，要么把旧碗删掉，别留两只。）",
+      "templateId": "java-s1-jdk-case-bowl",
+      "params": {
+        "b": "23"
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:15.367Z",
+        "hash": "710800410c0f14c7"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-nested-count-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "三件套是**一层套一层**的：工具箱（JDK）装得下运行套装（JRE），运行套装里住着念稿员（JVM）—— 越往里的盒子越小，装的家伙什也越少喵。\n\n投喂口会递进来**一个数**：工具箱里家伙什的样数。请你写个程序，数出三层各自的样数，印**四行**：\n\n```text\n工具箱：X 样\n运行套装：Y 样\n念稿员：Z 样\n越往里越少喵\n```\n\n- X 就是投喂进来的那个数；\n- Y 比 X **少 1**（运行套装在工具箱里面一层）；\n- Z 比 X **少 2**（念稿员在最里面）。\n\n比如投喂给程序的是\n\n4\n\n程序就要叼回\n\n工具箱：4 样\n运行套装：3 样\n念稿员：2 样\n越往里越少喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int tools = sc.nextInt();\n        System.out.println(\"工具箱：\" + tools + \" 样\");\n        System.out.println(\"运行套装：\" + (tools - 1) + \" 样\");\n        System.out.println(\"念稿员：\" + (tools - 2) + \" 样\");\n        System.out.println(\"越往里越少喵\");\n    }\n}\n",
+      "expectedOutput": "工具箱：9 样\n运行套装：8 样\n念稿员：7 样\n越往里越少喵",
+      "stdin": "9\n",
+      "explanation": "这道题最容易栽的地方是**括号**喵。要是把中间那行写成 `\"运行套装：\" + tools - 1 + \" 样\"`，翻译官喵当场翻脸，原话是：\n\n```text\nbad operand types for binary operator '-'\n  first type:  String\n  second type: int\n```\n\n它的意思是：「你想让本喵拿一串字去减 1？本喵不会啊。」—— `+` 在这一串字上干的是**接东西**的活，可一碰到要减的 `-` 就乱了：左边接出来已经是一串字，字减数字，翻译官喵不知道你想干嘛。\n\n所以**先算数、再接字**：写成 `(tools - 1)`，让括号里的减法先出结果，再把这个结果接到项链上；念稿员那行同理，`(tools - 2)`。\n\n（记住这个手感：数字和字混在一行里的时候，**该先算的拿括号圈起来**，别让翻译官喵从左到右一路接下去喵。）",
+      "templateId": "java-s1-jdk-nested-count",
+      "params": {
+        "c": "越往里越少"
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:18.215Z",
+        "hash": "971fe454fc2f7328"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-nested-count-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "三件套是**一层套一层**的：工具箱（JDK）装得下运行套装（JRE），运行套装里住着念稿员（JVM）—— 越往里的盒子越小，装的家伙什也越少喵。\n\n投喂口会递进来**一个数**：工具箱里家伙什的样数。请你写个程序，数出三层各自的样数，印**四行**：\n\n```text\n工具箱：X 样\n运行套装：Y 样\n念稿员：Z 样\n一层比一层少喵\n```\n\n- X 就是投喂进来的那个数；\n- Y 比 X **少 1**（运行套装在工具箱里面一层）；\n- Z 比 X **少 2**（念稿员在最里面）。\n\n比如投喂给程序的是\n\n5\n\n程序就要叼回\n\n工具箱：5 样\n运行套装：4 样\n念稿员：3 样\n一层比一层少喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int tools = sc.nextInt();\n        System.out.println(\"工具箱：\" + tools + \" 样\");\n        System.out.println(\"运行套装：\" + (tools - 1) + \" 样\");\n        System.out.println(\"念稿员：\" + (tools - 2) + \" 样\");\n        System.out.println(\"一层比一层少喵\");\n    }\n}\n",
+      "expectedOutput": "工具箱：7 样\n运行套装：6 样\n念稿员：5 样\n一层比一层少喵",
+      "stdin": "7\n",
+      "explanation": "这道题最容易栽的地方是**括号**喵。要是把中间那行写成 `\"运行套装：\" + tools - 1 + \" 样\"`，翻译官喵当场翻脸，原话是：\n\n```text\nbad operand types for binary operator '-'\n  first type:  String\n  second type: int\n```\n\n它的意思是：「你想让本喵拿一串字去减 1？本喵不会啊。」—— `+` 在这一串字上干的是**接东西**的活，可一碰到要减的 `-` 就乱了：左边接出来已经是一串字，字减数字，翻译官喵不知道你想干嘛。\n\n所以**先算数、再接字**：写成 `(tools - 1)`，让括号里的减法先出结果，再把这个结果接到项链上；念稿员那行同理，`(tools - 2)`。\n\n（记住这个手感：数字和字混在一行里的时候，**该先算的拿括号圈起来**，别让翻译官喵从左到右一路接下去喵。）",
+      "templateId": "java-s1-jdk-nested-count",
+      "params": {
+        "c": "一层比一层少"
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:21.218Z",
+        "hash": "e60ee87d83048b9d"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-pinyin-sum-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这回给三件套的三只碗都起了**拼音名**：`gongJuXiang`、`yunXingTao`、`nianGaoYuan`，各自装 **3**、**2**、**1** 样家伙什。清单印出来该是：\n\n```text\n工具箱：3 样\n运行套装：2 样\n念稿员：1 样\n```\n\n拼音名字一长串，本喵噼里啪啦敲得太快 —— 翻译官喵又说不认识其中一个名字了。你帮本喵把打歪的名字改对。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int gongJuXiang = 3;\n        int yunXingTao = 2;\n        int nianGaoYuan = 1;\n        System.out.println(\"工具箱：\" + gongJuXiang + \" 样\");\n        System.out.println(\"运行套装：\" + yunXinTao + \" 样\");\n        System.out.println(\"念稿员：\" + nianGaoYuan + \" 样\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int gongJuXiang = 3;\n        int yunXingTao = 2;\n        int nianGaoYuan = 1;\n        System.out.println(\"工具箱：\" + gongJuXiang + \" 样\");\n        System.out.println(\"运行套装：\" + yunXingTao + \" 样\");\n        System.out.println(\"念稿员：\" + nianGaoYuan + \" 样\");\n    }\n}\n",
+      "expectedOutput": "工具箱：3 样\n运行套装：2 样\n念稿员：1 样",
+      "stdin": null,
+      "explanation": "翻译官喵这次的原话分两行：`symbol:   variable yunXinTao`（它不认识名叫 `yunXinTao` 的东西）和 `location: class Main`（它把 `Main` 这整张图纸从头翻到尾，也没找到）。\n\n可稿子里明明白白写着 `yunXingTao` 呀 —— 差在哪？差在中间那个 **`g` 不见了**：敲拼音串的时候漏了一个字母，`yunXingTao` 变成了 `yunXinTao`。名字是**一个字都不能差**的：少一个字母，翻译官喵眼里就是另一只完全不存在的碗。\n\n（名字对不上的歪法有好几种：把字母看错、把字母漏掉、把大小写搞混 —— 翻译官喵的报错却各说各的。自己自查的办法只有一个：把报错里那个名字和稿子里的名字**并排念一遍**。拼音名字越长越容易漏字母喵。）\n\n改法就是把漏掉的 `g` 补回去。",
+      "templateId": "java-s1-jdk-pinyin-sum",
+      "params": {
+        "a": 3,
+        "b": 2,
+        "c": 1
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:23.402Z",
+        "hash": "957970b2c0814f31"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-pinyin-sum-026",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这回给三件套的三只碗都起了**拼音名**：`gongJuXiang`、`yunXingTao`、`nianGaoYuan`，各自装 **5**、**4**、**3** 样家伙什。清单印出来该是：\n\n```text\n工具箱：5 样\n运行套装：4 样\n念稿员：3 样\n```\n\n拼音名字一长串，本喵噼里啪啦敲得太快 —— 翻译官喵又说不认识其中一个名字了。你帮本喵把打歪的名字改对。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int gongJuXiang = 5;\n        int yunXingTao = 4;\n        int nianGaoYuan = 3;\n        System.out.println(\"工具箱：\" + gongJuXiang + \" 样\");\n        System.out.println(\"运行套装：\" + yunXinTao + \" 样\");\n        System.out.println(\"念稿员：\" + nianGaoYuan + \" 样\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int gongJuXiang = 5;\n        int yunXingTao = 4;\n        int nianGaoYuan = 3;\n        System.out.println(\"工具箱：\" + gongJuXiang + \" 样\");\n        System.out.println(\"运行套装：\" + yunXingTao + \" 样\");\n        System.out.println(\"念稿员：\" + nianGaoYuan + \" 样\");\n    }\n}\n",
+      "expectedOutput": "工具箱：5 样\n运行套装：4 样\n念稿员：3 样",
+      "stdin": null,
+      "explanation": "翻译官喵这次的原话分两行：`symbol:   variable yunXinTao`（它不认识名叫 `yunXinTao` 的东西）和 `location: class Main`（它把 `Main` 这整张图纸从头翻到尾，也没找到）。\n\n可稿子里明明白白写着 `yunXingTao` 呀 —— 差在哪？差在中间那个 **`g` 不见了**：敲拼音串的时候漏了一个字母，`yunXingTao` 变成了 `yunXinTao`。名字是**一个字都不能差**的：少一个字母，翻译官喵眼里就是另一只完全不存在的碗。\n\n（名字对不上的歪法有好几种：把字母看错、把字母漏掉、把大小写搞混 —— 翻译官喵的报错却各说各的。自己自查的办法只有一个：把报错里那个名字和稿子里的名字**并排念一遍**。拼音名字越长越容易漏字母喵。）\n\n改法就是把漏掉的 `g` 补回去。",
+      "templateId": "java-s1-jdk-pinyin-sum",
+      "params": {
+        "a": 5,
+        "b": 4,
+        "c": 3
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:25.294Z",
+        "hash": "9fcef4c9d2fb6d0b"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-printin-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵要给三件套列个家底清单喵：**JDK（工具箱）**里有 **3** 样家伙什，**JRE（运行套装）**里有 **2** 样，**JVM（念稿员）**有 **1** 样。\n\n清单印出来该是下面四行：\n\n```text\n本喵的家底清单\n工具箱里有 3 样家伙什\n运行套装有 2 样家伙什\n念稿员有 1 样家伙什\n```\n\n稿子已经写好了，可翻译官喵对着其中一行直摇头，说有个名字它压根不认识。你帮本喵把这一行改对。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int jdk = 3;\n        int jre = 2;\n        int jvm = 1;\n        System.out.println(\"本喵的家底清单\");\n        System.out.printIn(\"工具箱里有 \" + jdk + \" 样家伙什\");\n        System.out.println(\"运行套装有 \" + jre + \" 样家伙什\");\n        System.out.println(\"念稿员有 \" + jvm + \" 样家伙什\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int jdk = 3;\n        int jre = 2;\n        int jvm = 1;\n        System.out.println(\"本喵的家底清单\");\n        System.out.println(\"工具箱里有 \" + jdk + \" 样家伙什\");\n        System.out.println(\"运行套装有 \" + jre + \" 样家伙什\");\n        System.out.println(\"念稿员有 \" + jvm + \" 样家伙什\");\n    }\n}\n",
+      "expectedOutput": "本喵的家底清单\n工具箱里有 3 样家伙什\n运行套装有 2 样家伙什\n念稿员有 1 样家伙什",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `cannot find symbol` ——「有个名字本喵翻遍全身也没找到喵。」它还把两行帮手账摆了出来：`symbol:   method printIn(String)`（它以为你要喊的是 `printIn` 这一招）和 `location: variable out of type PrintStream`（它翻遍了 `out` 这一层，也没有这么一号）。\n\n问题就出在那一行里的大写 `I`：`printIn` 和 `println` 里，`l`（小写 L）和 `I`（大写 i）是一对**孪生字母** —— 很多字体里几乎长得一模一样。名字差一个字母，翻译官喵眼里就是**两个完全不同的名字**，所以它说找不到。\n\n（顺带记一笔：报错里那句 `location: variable out of type PrintStream` 提到的 `out`，是 `System.out` 身上的名字 —— 它就是负责往屏幕上印字的那位，后面会慢慢认识它。）\n\n改法就是把这一个字母敲回小写 `l`。以后见到 `cannot find symbol`，第一件事就是眯起眼睛，把报错指的那行的名字**逐个字母**念一遍喵。",
+      "templateId": "java-s1-jdk-printin",
+      "params": {
+        "a": 3,
+        "b": 2,
+        "c": 1
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:27.135Z",
+        "hash": "276bbb9c86202fd8"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-printin-026",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵要给三件套列个家底清单喵：**JDK（工具箱）**里有 **5** 样家伙什，**JRE（运行套装）**里有 **4** 样，**JVM（念稿员）**有 **3** 样。\n\n清单印出来该是下面四行：\n\n```text\n本喵的家底清单\n工具箱里有 5 样家伙什\n运行套装有 4 样家伙什\n念稿员有 3 样家伙什\n```\n\n稿子已经写好了，可翻译官喵对着其中一行直摇头，说有个名字它压根不认识。你帮本喵把这一行改对。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int jdk = 5;\n        int jre = 4;\n        int jvm = 3;\n        System.out.println(\"本喵的家底清单\");\n        System.out.printIn(\"工具箱里有 \" + jdk + \" 样家伙什\");\n        System.out.println(\"运行套装有 \" + jre + \" 样家伙什\");\n        System.out.println(\"念稿员有 \" + jvm + \" 样家伙什\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int jdk = 5;\n        int jre = 4;\n        int jvm = 3;\n        System.out.println(\"本喵的家底清单\");\n        System.out.println(\"工具箱里有 \" + jdk + \" 样家伙什\");\n        System.out.println(\"运行套装有 \" + jre + \" 样家伙什\");\n        System.out.println(\"念稿员有 \" + jvm + \" 样家伙什\");\n    }\n}\n",
+      "expectedOutput": "本喵的家底清单\n工具箱里有 5 样家伙什\n运行套装有 4 样家伙什\n念稿员有 3 样家伙什",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `cannot find symbol` ——「有个名字本喵翻遍全身也没找到喵。」它还把两行帮手账摆了出来：`symbol:   method printIn(String)`（它以为你要喊的是 `printIn` 这一招）和 `location: variable out of type PrintStream`（它翻遍了 `out` 这一层，也没有这么一号）。\n\n问题就出在那一行里的大写 `I`：`printIn` 和 `println` 里，`l`（小写 L）和 `I`（大写 i）是一对**孪生字母** —— 很多字体里几乎长得一模一样。名字差一个字母，翻译官喵眼里就是**两个完全不同的名字**，所以它说找不到。\n\n（顺带记一笔：报错里那句 `location: variable out of type PrintStream` 提到的 `out`，是 `System.out` 身上的名字 —— 它就是负责往屏幕上印字的那位，后面会慢慢认识它。）\n\n改法就是把这一个字母敲回小写 `l`。以后见到 `cannot find symbol`，第一件事就是眯起眼睛，把报错指的那行的名字**逐个字母**念一遍喵。",
+      "templateId": "java-s1-jdk-printin",
+      "params": {
+        "a": 5,
+        "b": 4,
+        "c": 3
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:29.010Z",
+        "hash": "b54fdabd25645123"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-version-commands-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给自己写一张「两条版本命令」的小抄，念**四行**喵：\n\n```text\n本喵的两条版本命令\n敲 javac -version：看工具箱那一层\n敲 java -version：看运行套装那一层\n一条问工具箱，一条问运行套装，都对上才不打架喵\n```\n\n一个字都不能差喵 —— 尤其那两行命令名：一个带 `c`、一个不带，问的还是不同的层，正是这一课最容易喊混的地方。",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"本喵的两条版本命令\");\n        System.out.println(\"敲 javac -version：看工具箱那一层\");\n        System.out.println(\"敲 java -version：看运行套装那一层\");\n        System.out.println(\"一条问工具箱，一条问运行套装，都对上才不打架喵\");\n    }\n}\n",
+      "expectedOutput": "本喵的两条版本命令\n敲 javac -version：看工具箱那一层\n敲 java -version：看运行套装那一层\n一条问工具箱，一条问运行套装，都对上才不打架喵",
+      "stdin": null,
+      "explanation": "这两条命令本喵在本机真敲过，记一下它们各自的长相喵：\n\n- `javac -version` 只印**一行**：`javac 21.0.12.1` —— `javac` 是**工具箱（JDK）**里的造稿工具，它报的是自己这一套的版本。\n- `java -version` 印**一小段**，第一行是 `openjdk version \"21.0.12.1\" 2026-08-18 LTS`，后面还跟着运行时和虚拟机的名字 —— `java` 是把稿子跑起来的那个，报的是**运行套装（JRE）**这一层的版本。\n\n（你机器上印出来的数字可能和本喵的不一样 —— 版本号会随时间更新，**形状**才是要记的：一条一行、一条好几行，说的都是「这里装的是什么版本」。）\n\n为什么两条都要敲？因为**工具箱和运行套装要能对得上**：造稿的是一套版本、跑稿的又是另一套版本，最容易出「这边能编、那边跑不动」的怪事。小抄上记的是**该敲哪条、它问的是谁**；至于具体是哪个数字，得现场敲了才知道，别把数字写死进小抄喵。",
+      "templateId": "java-s1-jdk-version-commands",
+      "params": {
+        "t1": "看工具箱那一层",
+        "t2": "看运行套装那一层"
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:30.833Z",
+        "hash": "ef232d75d93863c1"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-version-commands-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给自己写一张「两条版本命令」的小抄，念**四行**喵：\n\n```text\n本喵的两条版本命令\n敲 javac -version：看工具箱那一层\n敲 java -version：问运行套装要版本\n一条问工具箱，一条问运行套装，都对上才不打架喵\n```\n\n一个字都不能差喵 —— 尤其那两行命令名：一个带 `c`、一个不带，问的还是不同的层，正是这一课最容易喊混的地方。",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"本喵的两条版本命令\");\n        System.out.println(\"敲 javac -version：看工具箱那一层\");\n        System.out.println(\"敲 java -version：问运行套装要版本\");\n        System.out.println(\"一条问工具箱，一条问运行套装，都对上才不打架喵\");\n    }\n}\n",
+      "expectedOutput": "本喵的两条版本命令\n敲 javac -version：看工具箱那一层\n敲 java -version：问运行套装要版本\n一条问工具箱，一条问运行套装，都对上才不打架喵",
+      "stdin": null,
+      "explanation": "这两条命令本喵在本机真敲过，记一下它们各自的长相喵：\n\n- `javac -version` 只印**一行**：`javac 21.0.12.1` —— `javac` 是**工具箱（JDK）**里的造稿工具，它报的是自己这一套的版本。\n- `java -version` 印**一小段**，第一行是 `openjdk version \"21.0.12.1\" 2026-08-18 LTS`，后面还跟着运行时和虚拟机的名字 —— `java` 是把稿子跑起来的那个，报的是**运行套装（JRE）**这一层的版本。\n\n（你机器上印出来的数字可能和本喵的不一样 —— 版本号会随时间更新，**形状**才是要记的：一条一行、一条好几行，说的都是「这里装的是什么版本」。）\n\n为什么两条都要敲？因为**工具箱和运行套装要能对得上**：造稿的是一套版本、跑稿的又是另一套版本，最容易出「这边能编、那边跑不动」的怪事。小抄上记的是**该敲哪条、它问的是谁**；至于具体是哪个数字，得现场敲了才知道，别把数字写死进小抄喵。",
+      "templateId": "java-s1-jdk-version-commands",
+      "params": {
+        "t1": "看工具箱那一层",
+        "t2": "问运行套装要版本"
+      },
+      "verified": {
+        "at": "2026-10-20T17:06:46.084Z",
+        "hash": "f4db035d2a0be27e"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-version-commands-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给自己写一张「两条版本命令」的小抄，念**四行**喵：\n\n```text\n本喵的两条版本命令\n敲 javac -version：问工具箱要版本\n敲 java -version：看运行套装那一层\n一条问工具箱，一条问运行套装，都对上才不打架喵\n```\n\n一个字都不能差喵 —— 尤其那两行命令名：一个带 `c`、一个不带，问的还是不同的层，正是这一课最容易喊混的地方。",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"本喵的两条版本命令\");\n        System.out.println(\"敲 javac -version：问工具箱要版本\");\n        System.out.println(\"敲 java -version：看运行套装那一层\");\n        System.out.println(\"一条问工具箱，一条问运行套装，都对上才不打架喵\");\n    }\n}\n",
+      "expectedOutput": "本喵的两条版本命令\n敲 javac -version：问工具箱要版本\n敲 java -version：看运行套装那一层\n一条问工具箱，一条问运行套装，都对上才不打架喵",
+      "stdin": null,
+      "explanation": "这两条命令本喵在本机真敲过，记一下它们各自的长相喵：\n\n- `javac -version` 只印**一行**：`javac 21.0.12.1` —— `javac` 是**工具箱（JDK）**里的造稿工具，它报的是自己这一套的版本。\n- `java -version` 印**一小段**，第一行是 `openjdk version \"21.0.12.1\" 2026-08-18 LTS`，后面还跟着运行时和虚拟机的名字 —— `java` 是把稿子跑起来的那个，报的是**运行套装（JRE）**这一层的版本。\n\n（你机器上印出来的数字可能和本喵的不一样 —— 版本号会随时间更新，**形状**才是要记的：一条一行、一条好几行，说的都是「这里装的是什么版本」。）\n\n为什么两条都要敲？因为**工具箱和运行套装要能对得上**：造稿的是一套版本、跑稿的又是另一套版本，最容易出「这边能编、那边跑不动」的怪事。小抄上记的是**该敲哪条、它问的是谁**；至于具体是哪个数字，得现场敲了才知道，别把数字写死进小抄喵。",
+      "templateId": "java-s1-jdk-version-commands",
+      "params": {
+        "t1": "问工具箱要版本",
+        "t2": "看运行套装那一层"
+      },
+      "verified": {
+        "at": "2026-10-20T17:06:47.986Z",
+        "hash": "de5fffd1343673bd"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-version-commands-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给自己写一张「两条版本命令」的小抄，念**四行**喵：\n\n```text\n本喵的两条版本命令\n敲 javac -version：问工具箱要版本\n敲 java -version：问运行套装要版本\n一条问工具箱，一条问运行套装，都对上才不打架喵\n```\n\n一个字都不能差喵 —— 尤其那两行命令名：一个带 `c`、一个不带，问的还是不同的层，正是这一课最容易喊混的地方。",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"本喵的两条版本命令\");\n        System.out.println(\"敲 javac -version：问工具箱要版本\");\n        System.out.println(\"敲 java -version：问运行套装要版本\");\n        System.out.println(\"一条问工具箱，一条问运行套装，都对上才不打架喵\");\n    }\n}\n",
+      "expectedOutput": "本喵的两条版本命令\n敲 javac -version：问工具箱要版本\n敲 java -version：问运行套装要版本\n一条问工具箱，一条问运行套装，都对上才不打架喵",
+      "stdin": null,
+      "explanation": "这两条命令本喵在本机真敲过，记一下它们各自的长相喵：\n\n- `javac -version` 只印**一行**：`javac 21.0.12.1` —— `javac` 是**工具箱（JDK）**里的造稿工具，它报的是自己这一套的版本。\n- `java -version` 印**一小段**，第一行是 `openjdk version \"21.0.12.1\" 2026-08-18 LTS`，后面还跟着运行时和虚拟机的名字 —— `java` 是把稿子跑起来的那个，报的是**运行套装（JRE）**这一层的版本。\n\n（你机器上印出来的数字可能和本喵的不一样 —— 版本号会随时间更新，**形状**才是要记的：一条一行、一条好几行，说的都是「这里装的是什么版本」。）\n\n为什么两条都要敲？因为**工具箱和运行套装要能对得上**：造稿的是一套版本、跑稿的又是另一套版本，最容易出「这边能编、那边跑不动」的怪事。小抄上记的是**该敲哪条、它问的是谁**；至于具体是哪个数字，得现场敲了才知道，别把数字写死进小抄喵。",
+      "templateId": "java-s1-jdk-version-commands",
+      "params": {
+        "t1": "问工具箱要版本",
+        "t2": "问运行套装要版本"
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:32.660Z",
+        "hash": "8f25ab8ed2a08e07"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-version-join-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "版本号长得像「大号.小号」喵 —— 像本喵见过的 `21.0.12.1` 就是这种形状。\n\n请你写个程序：投喂口会递进来**两行数** —— 第一行是版本的大号，第二行是小号（0~9 里的一个数）。程序要叼回两行：\n\n```text\n本喵拼出来的版本：大号.小号\n中间那个点，把两个数串成一条喵\n```\n\n第一行那个「大号」就是投喂的第一行数，「小号」就是第二行。比如投喂给程序的是\n\n17\n5\n\n程序就要叼回\n\n本喵拼出来的版本：17.5\n中间那个点，把两个数串成一条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int big = sc.nextInt();\n        int small = sc.nextInt();\n        System.out.println(\"本喵拼出来的版本：\" + big + \".\" + small);\n        System.out.println(\"中间那个点，把两个数串成一条喵\");\n    }\n}\n",
+      "expectedOutput": "本喵拼出来的版本：17.7\n中间那个点，把两个数串成一条喵",
+      "stdin": "17\n7\n",
+      "explanation": "两行数读完，剩下的就是**把它们串成一条版本号**喵。这里有个新手常见的坑：中间那个点要是忘了写，`\"本喵拼出来的版本：\" + big + small` 会把两段数**直接粘成一坨** —— `17` 和 `5` 粘成 `175`、`21` 和 `5` 粘成 `215`，那个点可不会自己从哪儿冒出来。\n\n`+` 是从左到右一件一件接的：先接上 `big` 这个数（数字接在项链上会变成字），再接下那一小段 `\".\"`，最后接 `small`。所以**点要自己用双引号包好、当成一小段字写进去** —— 它是版本号的一部分。\n\n（对照一下：真版本号 `21.0.12.1` 里的每一个点，也都是人一个个写上去的；少一个点，`21.0.12.1` 就成了 `210.12.1`，在电脑眼里完全是另一个版本喵。）",
+      "templateId": "java-s1-jdk-version-join",
+      "params": {
+        "m": "17",
+        "w": "拼出来"
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:35.409Z",
+        "hash": "a474f11e6833540f"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-version-join-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "版本号长得像「大号.小号」喵 —— 像本喵见过的 `21.0.12.1` 就是这种形状。\n\n请你写个程序：投喂口会递进来**两行数** —— 第一行是版本的大号，第二行是小号（0~9 里的一个数）。程序要叼回两行：\n\n```text\n本喵串出来的版本：大号.小号\n中间那个点，把两个数串成一条喵\n```\n\n第一行那个「大号」就是投喂的第一行数，「小号」就是第二行。比如投喂给程序的是\n\n17\n4\n\n程序就要叼回\n\n本喵串出来的版本：17.4\n中间那个点，把两个数串成一条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int big = sc.nextInt();\n        int small = sc.nextInt();\n        System.out.println(\"本喵串出来的版本：\" + big + \".\" + small);\n        System.out.println(\"中间那个点，把两个数串成一条喵\");\n    }\n}\n",
+      "expectedOutput": "本喵串出来的版本：17.3\n中间那个点，把两个数串成一条喵",
+      "stdin": "17\n3\n",
+      "explanation": "两行数读完，剩下的就是**把它们串成一条版本号**喵。这里有个新手常见的坑：中间那个点要是忘了写，`\"本喵串出来的版本：\" + big + small` 会把两段数**直接粘成一坨** —— `17` 和 `5` 粘成 `175`、`21` 和 `5` 粘成 `215`，那个点可不会自己从哪儿冒出来。\n\n`+` 是从左到右一件一件接的：先接上 `big` 这个数（数字接在项链上会变成字），再接下那一小段 `\".\"`，最后接 `small`。所以**点要自己用双引号包好、当成一小段字写进去** —— 它是版本号的一部分。\n\n（对照一下：真版本号 `21.0.12.1` 里的每一个点，也都是人一个个写上去的；少一个点，`21.0.12.1` 就成了 `210.12.1`，在电脑眼里完全是另一个版本喵。）",
+      "templateId": "java-s1-jdk-version-join",
+      "params": {
+        "m": "17",
+        "w": "串出来"
+      },
+      "verified": {
+        "at": "2026-10-20T17:06:50.856Z",
+        "hash": "120539e85370c2e5"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-version-join-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "版本号长得像「大号.小号」喵 —— 像本喵见过的 `21.0.12.1` 就是这种形状。\n\n请你写个程序：投喂口会递进来**两行数** —— 第一行是版本的大号，第二行是小号（0~9 里的一个数）。程序要叼回两行：\n\n```text\n本喵拼出来的版本：大号.小号\n中间那个点，把两个数串成一条喵\n```\n\n第一行那个「大号」就是投喂的第一行数，「小号」就是第二行。比如投喂给程序的是\n\n19\n2\n\n程序就要叼回\n\n本喵拼出来的版本：19.2\n中间那个点，把两个数串成一条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int big = sc.nextInt();\n        int small = sc.nextInt();\n        System.out.println(\"本喵拼出来的版本：\" + big + \".\" + small);\n        System.out.println(\"中间那个点，把两个数串成一条喵\");\n    }\n}\n",
+      "expectedOutput": "本喵拼出来的版本：19.0\n中间那个点，把两个数串成一条喵",
+      "stdin": "19\n0\n",
+      "explanation": "两行数读完，剩下的就是**把它们串成一条版本号**喵。这里有个新手常见的坑：中间那个点要是忘了写，`\"本喵拼出来的版本：\" + big + small` 会把两段数**直接粘成一坨** —— `17` 和 `5` 粘成 `175`、`21` 和 `5` 粘成 `215`，那个点可不会自己从哪儿冒出来。\n\n`+` 是从左到右一件一件接的：先接上 `big` 这个数（数字接在项链上会变成字），再接下那一小段 `\".\"`，最后接 `small`。所以**点要自己用双引号包好、当成一小段字写进去** —— 它是版本号的一部分。\n\n（对照一下：真版本号 `21.0.12.1` 里的每一个点，也都是人一个个写上去的；少一个点，`21.0.12.1` 就成了 `210.12.1`，在电脑眼里完全是另一个版本喵。）",
+      "templateId": "java-s1-jdk-version-join",
+      "params": {
+        "m": "19",
+        "w": "拼出来"
+      },
+      "verified": {
+        "at": "2026-10-20T17:06:53.918Z",
+        "hash": "77dbaa2d169d5f30"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-version-join-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "版本号长得像「大号.小号」喵 —— 像本喵见过的 `21.0.12.1` 就是这种形状。\n\n请你写个程序：投喂口会递进来**两行数** —— 第一行是版本的大号，第二行是小号（0~9 里的一个数）。程序要叼回两行：\n\n```text\n本喵串出来的版本：大号.小号\n中间那个点，把两个数串成一条喵\n```\n\n第一行那个「大号」就是投喂的第一行数，「小号」就是第二行。比如投喂给程序的是\n\n19\n3\n\n程序就要叼回\n\n本喵串出来的版本：19.3\n中间那个点，把两个数串成一条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int big = sc.nextInt();\n        int small = sc.nextInt();\n        System.out.println(\"本喵串出来的版本：\" + big + \".\" + small);\n        System.out.println(\"中间那个点，把两个数串成一条喵\");\n    }\n}\n",
+      "expectedOutput": "本喵串出来的版本：19.1\n中间那个点，把两个数串成一条喵",
+      "stdin": "19\n1\n",
+      "explanation": "两行数读完，剩下的就是**把它们串成一条版本号**喵。这里有个新手常见的坑：中间那个点要是忘了写，`\"本喵串出来的版本：\" + big + small` 会把两段数**直接粘成一坨** —— `17` 和 `5` 粘成 `175`、`21` 和 `5` 粘成 `215`，那个点可不会自己从哪儿冒出来。\n\n`+` 是从左到右一件一件接的：先接上 `big` 这个数（数字接在项链上会变成字），再接下那一小段 `\".\"`，最后接 `small`。所以**点要自己用双引号包好、当成一小段字写进去** —— 它是版本号的一部分。\n\n（对照一下：真版本号 `21.0.12.1` 里的每一个点，也都是人一个个写上去的；少一个点，`21.0.12.1` 就成了 `210.12.1`，在电脑眼里完全是另一个版本喵。）",
+      "templateId": "java-s1-jdk-version-join",
+      "params": {
+        "m": "19",
+        "w": "串出来"
+      },
+      "verified": {
+        "at": "2026-10-20T17:06:57.001Z",
+        "hash": "7d28a23d9548e8c1"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-version-join-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "版本号长得像「大号.小号」喵 —— 像本喵见过的 `21.0.12.1` 就是这种形状。\n\n请你写个程序：投喂口会递进来**两行数** —— 第一行是版本的大号，第二行是小号（0~9 里的一个数）。程序要叼回两行：\n\n```text\n本喵拼出来的版本：大号.小号\n中间那个点，把两个数串成一条喵\n```\n\n第一行那个「大号」就是投喂的第一行数，「小号」就是第二行。比如投喂给程序的是\n\n21\n3\n\n程序就要叼回\n\n本喵拼出来的版本：21.3\n中间那个点，把两个数串成一条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int big = sc.nextInt();\n        int small = sc.nextInt();\n        System.out.println(\"本喵拼出来的版本：\" + big + \".\" + small);\n        System.out.println(\"中间那个点，把两个数串成一条喵\");\n    }\n}\n",
+      "expectedOutput": "本喵拼出来的版本：21.8\n中间那个点，把两个数串成一条喵",
+      "stdin": "21\n8\n",
+      "explanation": "两行数读完，剩下的就是**把它们串成一条版本号**喵。这里有个新手常见的坑：中间那个点要是忘了写，`\"本喵拼出来的版本：\" + big + small` 会把两段数**直接粘成一坨** —— `17` 和 `5` 粘成 `175`、`21` 和 `5` 粘成 `215`，那个点可不会自己从哪儿冒出来。\n\n`+` 是从左到右一件一件接的：先接上 `big` 这个数（数字接在项链上会变成字），再接下那一小段 `\".\"`，最后接 `small`。所以**点要自己用双引号包好、当成一小段字写进去** —— 它是版本号的一部分。\n\n（对照一下：真版本号 `21.0.12.1` 里的每一个点，也都是人一个个写上去的；少一个点，`21.0.12.1` 就成了 `210.12.1`，在电脑眼里完全是另一个版本喵。）",
+      "templateId": "java-s1-jdk-version-join",
+      "params": {
+        "m": "21",
+        "w": "拼出来"
+      },
+      "verified": {
+        "at": "2026-10-20T17:07:00.148Z",
+        "hash": "2f9278544e27dc4f"
+      }
+    },
+    {
+      "id": "bank-java-s1-jdk-version-join-005",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "版本号长得像「大号.小号」喵 —— 像本喵见过的 `21.0.12.1` 就是这种形状。\n\n请你写个程序：投喂口会递进来**两行数** —— 第一行是版本的大号，第二行是小号（0~9 里的一个数）。程序要叼回两行：\n\n```text\n本喵串出来的版本：大号.小号\n中间那个点，把两个数串成一条喵\n```\n\n第一行那个「大号」就是投喂的第一行数，「小号」就是第二行。比如投喂给程序的是\n\n21\n7\n\n程序就要叼回\n\n本喵串出来的版本：21.7\n中间那个点，把两个数串成一条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int big = sc.nextInt();\n        int small = sc.nextInt();\n        System.out.println(\"本喵串出来的版本：\" + big + \".\" + small);\n        System.out.println(\"中间那个点，把两个数串成一条喵\");\n    }\n}\n",
+      "expectedOutput": "本喵串出来的版本：21.3\n中间那个点，把两个数串成一条喵",
+      "stdin": "21\n3\n",
+      "explanation": "两行数读完，剩下的就是**把它们串成一条版本号**喵。这里有个新手常见的坑：中间那个点要是忘了写，`\"本喵串出来的版本：\" + big + small` 会把两段数**直接粘成一坨** —— `17` 和 `5` 粘成 `175`、`21` 和 `5` 粘成 `215`，那个点可不会自己从哪儿冒出来。\n\n`+` 是从左到右一件一件接的：先接上 `big` 这个数（数字接在项链上会变成字），再接下那一小段 `\".\"`，最后接 `small`。所以**点要自己用双引号包好、当成一小段字写进去** —— 它是版本号的一部分。\n\n（对照一下：真版本号 `21.0.12.1` 里的每一个点，也都是人一个个写上去的；少一个点，`21.0.12.1` 就成了 `210.12.1`，在电脑眼里完全是另一个版本喵。）",
+      "templateId": "java-s1-jdk-version-join",
+      "params": {
+        "m": "21",
+        "w": "串出来"
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:38.457Z",
+        "hash": "42d4c3fc00f6df82"
+      }
+    }
+  ]
+}

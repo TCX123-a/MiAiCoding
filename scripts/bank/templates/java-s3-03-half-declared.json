@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-03-half-declared",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-03",
+  "type": "codefix",
+  "concept": ["左边那一栏要么都写牌子要么都不写", "写一半翻译官喵不知道按哪条规矩认人", "把牌子补全就挂上了"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵想写一小截，把交进来的两个数加起来（那份约定上写着：收两个整数、交回一个整数，那一手叫 `sum`）。\n\n可翻译稿子的时候就红了，一行都没跑 —— 红字说本喵这一小截**左边那一栏**里，牌子的写法前后对不上，它不认。\n\n你帮本喵把这一小截改到能挂上去为止。要加起来的那两个数、和印出来的那句话，**一个字都别改**。\n\n改好之后它该印出**一行**：加起来的结果（两个数就写在稿子里）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "interface Adder {\n    int sum(int a, int b);\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Adder d = (int a, b) -> a + b;\n        System.out.println(\"加起来是 \" + d.sum({a}, {b}));\n    }\n}\n",
+  "referenceFixTemplate": "interface Adder {\n    int sum(int a, int b);\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Adder d = (int a, int b) -> a + b;\n        System.out.println(\"加起来是 \" + d.sum({a}, {b}));\n    }\n}\n",
+  "explanationTemplate": "红字那两句是 `invalid lambda parameter declaration` 和 `(cannot mix implicitly-typed and explicitly-typed parameters)` —— 翻过来就是「这一小截左边那一栏的写法不合规：**有牌子的和没牌子的混在一栏里了**」。\n\n**一、本喵写的到底是什么。** `(int a, b) -> a + b` 左边那一栏里，第一个写了牌子 `int`，第二个光溜溜地只写了个名字。翻译官喵看一眼就卡住了：**你到底要我按牌子认，还是按站位认？** 两条规矩混在同一栏里，它不知道该听谁的。\n\n**二、规矩很简单：一栏里要么都写、要么都不写。** 都写是 `(int a, int b) -> a + b`；都不写是 `(a, b) -> a + b`。两条路翻译官喵都认 —— 本喵偏挑了个中间的写法，它自然不认。\n\n**三、为什么「不写牌子」这一路也灵。** 因为那份约定上早就写清楚了：收的是两个整数。这一小截是来填那个坑的，**坑的形状它看得见** —— 本喵偷懒不写牌子，它就从约定上把牌子抄下来。\n\n**四、这一类错也是翻稿子的时候就红。** 跟「跑起来才炸」那种不同：本喵还没跑，翻译官喵就把它指出来了，改起来也就一行。\n\n一句话记住：**那一栏里要么都写、要么都不写** —— 写一半，翻译官喵不知道按哪条规矩认人。"
+}

@@ -1,0 +1,20 @@
+{
+  "templateId": "py-s1-guess-limit",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-15",
+  "type": "codewrite",
+  "concept": ["机会上限", "while 看眼色收圈", "猜中当场收工", "没猜中的那条尾巴"],
+  "instances": 6,
+  "params": {
+    "secret": { "kind": "int", "min": 3, "max": 5 },
+    "g1": { "kind": "int", "min": 1, "max": 2 },
+    "g2": { "kind": "int", "min": 6, "max": 7 },
+    "g3": { "kind": "int", "min": 8, "max": 9 },
+    "g4": { "kind": "int", "min": 6, "max": 7 },
+    "limit": { "kind": "int", "min": 2, "max": 5 }
+  },
+  "stemTemplate": "本喵给这一局加了个规矩：**只准猜 {limit} 次**喵。答案是 `{secret}`，替身柜子里按顺序排好了这几条报数：`{g1}`、`{g2}`、`{g3}`、`{secret}`、`{g4}`（**从头上取**，取一条少一条）。\n\n请你写：\n\n1. 一招 `check_guess(guess, target)`：比一比，把该印的那句话**叼回来**（`太小啦喵` / `太大啦喵` / `猜中啦喵！`），招式里一句都不许印；\n2. 转圈**报一条、印一行**「（报的数） （那句话）」，每报一条就用掉一次机会；\n3. 哪一条猜中就**当场收工**，后面的话一句都不再印；\n4. 要是机会**先用完了**还没猜中，再补印一行「机会用完啦喵」。",
+  "referenceSolutionTemplate": "def check_guess(guess, target):\n    if guess < target:\n        return \"太小啦喵\"\n    elif guess > target:\n        return \"太大啦喵\"\n    else:\n        return \"猜中啦喵！\"\n\ntarget = {secret}\npicks = [{g1}, {g2}, {g3}, {secret}, {g4}]\nleft = {limit}\nfound = False\nwhile left > 0:\n    guess = picks.pop(0)\n    left = left - 1\n    print(guess, check_guess(guess, target))\n    if guess == target:\n        found = True\n        break\nif not found:\n    print(\"机会用完啦喵\")\n",
+  "explanationTemplate": "这一局的圈不能写成「一直转」了喵 —— 机会是有数的，**机会见底就得收圈**。所以圈上写的是 `while left > 0:`（还有一个数没用完，就继续转），每转一圈把那个数减一。这和 `while True:` 是两种收圈姿势：一种是「不知道要转几圈，转到有人喊停」，一种是「心里有数，转够就停」。\n\n猜中那一句 `break` 还得留着 —— 不然圈不会因为猜中而停：要是机会还剩着，柜子后面的报数（比如 {g4}）会被接着报出来，屏幕上白白多出一行。\n\n最妙的那个坑在尾巴上：**机会用完了**和**猜中了**是两条不同的出路。程序怎么知道自己是哪一条？靠那只「猜中没猜中」的记号（`found`）—— 进圈前先把它按下去，只有猜中那一圈才把它立起来。出了圈再看一眼：记号没立起来，说明是机会先见底的，这才补上那句「机会用完啦喵」。\n\n（对照着看这一局两个实例喵：机会少的那一局，报数还没报完就用完了，尾巴上会多出那句话；机会多的那一局，第四条就猜中了，当场收工 —— 剩下的机会和 {g4} 都不用管了。）"
+}

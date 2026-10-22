@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s1-continue-instead-of-break",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-07",
+  "type": "codefix",
+  "concept": ["continue", "break", "跳过这一圈", "收工"],
+  "instances": 2,
+  "params": {
+    "stop": { "kind": "int", "min": 3, "max": 4 },
+    "last": { "kind": "int", "min": 6, "max": 7 }
+  },
+  "stemTemplate": "本喵数数：从 1 数到 {last}，数到 {stop} 就**收工** —— `{stop}` 不用印了，比 {stop} 大的数一个都不用管，剩下的圈连跑都不用跑。\n\n可这段代码只做到了「**跳过 {stop} 这一圈**」：它不印 {stop} 了，可后面的圈一圈没落，照样数到底了才收工。它跑得起来，翻译官喵一句原话都没有，就是印出来的东西不对。\n\n你帮本喵改对：数到 {stop} 就收工，`1`、`2` 印完直接跳到 `收工喵`；后面那些数一个都不许出现。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    for (int i = 1; i <= {last}; i++) {\n        if (i == {stop}) {\n            continue;\n        }\n        cout << i << endl;\n    }\n    cout << \"收工喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    for (int i = 1; i <= {last}; i++) {\n        if (i == {stop}) {\n            break;\n        }\n        cout << i << endl;\n    }\n    cout << \"收工喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一对兄弟长得像，脾气完全不同喵：\n\n- `continue` 是「**这一圈不干了**」—— 圈里剩下的活跳过，**回去跑下一圈**。跑圈本身没停。\n- `break` 是「**活儿到这儿为止**」—— 整个跑圈**当场收工**，后面还剩多少圈都不跑了。\n\n本喵想让数到 {stop} 就收工，那就得用 `break`；写成 `continue`，只是把 {stop} 这一圈空过去了，{stop} 后面的 {stop} 加 1、{stop} 加 2 …… 一圈不落地全跑完了。\n\n两个记号都写在圈里、都可以配着 `if` 用，认它们的办法是问一句：**「这一圈不要了，还是后面全不要了？」**\n\n⚠️ 这题翻译官喵**一声不吭**：`continue` 和 `break` 都是它认识的写法，编译照过，跑起来也有输出 —— 露馅的地方只有印出来的数。这类毛病只能靠「**数一数屏幕上该有几行**」发现喵。"
+}

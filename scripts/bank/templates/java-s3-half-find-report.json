@@ -1,0 +1,25 @@
+{
+  "templateId": "java-s3-half-find-report",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-23",
+  "type": "codewrite",
+  "concept": ["砍一半", "两头夹着找", "每趟看正中间", "小了往右大了往左"],
+  "instances": 6,
+  "params": {
+    "e1": { "kind": "pick", "values": ["2", "9"] },
+    "e2": { "kind": "pick", "values": ["12", "19"] },
+    "e3": { "kind": "pick", "values": ["22", "29"] },
+    "e4": { "kind": "pick", "values": ["32", "39"] },
+    "t": { "kind": "pick", "values": ["42", "49"] }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "5\n{t}\n{e1}\n{e2}\n{e3}\n{e4}\n{t}\n",
+    "sampleText": "3\n{e3}\n{e1}\n{e2}\n{e3}\n"
+  },
+  "stemTemplate": "这一排鱼干是**已经摆好的**（从小到大）—— 砍一半吃的就是这个前提，本喵保证不用你理它。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n{sampleInput}\n```\n\n你要把 `halfFind` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 一开始两头夹住整排：`lo` 指着**第一只**，`hi` 指着**最后一只**；\n2. 每一趟先看**正中间**那一只（`mid` 取 `(lo + hi) / 2`），**看了就记一笔**；\n3. 正好是它 → 把次数答回去；比要找的**小** → 往**右**半边夹；比要找的**大** → 往**左**半边夹；\n4. 两头夹过了头（`lo > hi`）还没找着，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `砍一半：比了 N 次`；\n- 没找着 → 一行 `砍一半：没找到`。\n\n样例跑出来是这样：\n\n```text\n{sampleOutput}\n```",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    // 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数\n    static int halfFind(int[] a, int n, int target) {\n        // ↓ 自己写：\n        // ① lo 从 0 开始，hi 从 n - 1 开始\n        // ② 两头没夹过头就接着夹：先看正中间那一只，看了就记一笔\n        // ③ 正好是它 → 答次数；比要找的小 → 往右半边夹；比要找的大 → 往左半边夹\n        // ④ 夹过头还没找着 → 答负数\n        return -1;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int target = sc.nextInt();\n        int[] a = new int[64];\n        for (int i = 0; i < n; i++) {\n            a[i] = sc.nextInt();\n        }\n\n        int times = halfFind(a, n, target);\n        if (times < 0) {\n            System.out.println(\"砍一半：没找到\");\n        } else {\n            System.out.println(\"砍一半：比了 \" + times + \" 次\");\n        }\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    // 砍一半：两头夹着找，每趟看正中间那一只，答「比了几次」；没找到答负数\n    static int halfFind(int[] a, int n, int target) {\n        int lo = 0;\n        int hi = n - 1;\n        int tries = 0;\n\n        while (lo <= hi) {\n            int mid = (lo + hi) / 2;\n            tries++;\n            if (a[mid] == target) {\n                return tries;\n            } else if (a[mid] < target) {\n                lo = mid + 1;\n            } else {\n                hi = mid - 1;\n            }\n        }\n        return -tries;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int target = sc.nextInt();\n        int[] a = new int[64];\n        for (int i = 0; i < n; i++) {\n            a[i] = sc.nextInt();\n        }\n\n        int times = halfFind(a, n, target);\n        if (times < 0) {\n            System.out.println(\"砍一半：没找到\");\n        } else {\n            System.out.println(\"砍一半：比了 \" + times + \" 次\");\n        }\n    }\n}\n",
+  "explanationTemplate": "砍一半每一趟只看**一只**：正中间那只。看完之后，**总有一半可以整片扔掉** —— 这就是它比挨着看省的地方喵。\n\n- 中间那只**比要找的小** → 它和它左边的全都白看，往**右**半边夹：`lo = mid + 1`；\n- 中间那只**比要找的大** → 它和它右边的全都白看，往**左**半边夹：`hi = mid - 1`；\n- 正好是它 → 收工。\n\n收手条件是 `while (lo <= hi)` 而不是 `while (lo < hi)`：**头尾撞上那一下（只剩一只），还得再看一眼**，不然那最后一只就永远没人看。\n\n还有一条前提别忘了：这一招只在**排好的盘子**上才成立。盘子是乱的，砍一半的答案就是**碰运气**了。"
+}

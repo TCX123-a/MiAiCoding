@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-stack-push-no-top",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-04",
+  "type": "codefix",
+  "concept": ["一摞碗", "top", "摞上去要往上抬", "编译不吭声"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["1", "4"] },
+    "b": { "kind": "pick", "values": ["2", "6"] },
+    "c": { "kind": "pick", "values": ["3", "7"] }
+  },
+  "stemTemplate": "本喵往碗摞上摞了三只碗，然后一只一只往下拿。可程序只印了一行：\n\n```text\n摞了 0 只碗\n```\n\n三只碗**一只都没摞上去**，后头那几行「取到」全没了。翻译官喵一声没吭，编译跑得好好的。\n\n请你把缺的那一句补上。改好之后该印**四行**：先报摞了几只，再把三只碗**从最上面那只开始**一只一只叼出来：\n\n```text\n摞了 3 只碗\n取到 {c}\n取到 {b}\n取到 {a}\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push({a});\n    push({b});\n    push({c});\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push({a});\n    push({b});\n    push({c});\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "缺的是**放完那只碗之后把 `top` 往上抬一格**：\n\n```text\ntop++;\n```\n\n`top` 在这只碗摞里是**一个数管两件事**喵：它既是「已经摞了几只」，也正好是「下一只碗该放在哪儿」。\n\n- 放一只碗：先放在 `bowls[top]` 这个位子上，放好之后 `top++` —— 碗摞长高一层，`top` 也顺势指向了下一个空位。\n- 拿一只碗：先 `top--` 退到「最上面那只」的位子上，再把它叼出来。\n\n本喵这一版**只做了前半步**：碗放到第 0 格了，可 `top` 还停在 0，所以它以为碗摞是空的 —— 报「摞了 0 只碗」，`pop` 一进门就问「空了吗」，答「空了」，于是碗一只也拿不出来。\n\n⚠️ 更坑的是：**这个错翻译官喵一个字都不会说**。本喵拿 `-Wall` 真编了一遍，不报错、不警告，跑起来也不摔 —— 它只是**答错**。因为从翻译官喵眼里看，`bowls[top] = value;` 写得完全合法，它不知道你心里那句「这只碗摞上去了」还没落地喵。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s1-ns-two-doors-ambiguous",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-12",
+  "type": "codefix",
+  "concept": ["两间门一起打开", "reference to 'fish' is ambiguous", "写全名就不打架"],
+  "instances": 2,
+  "params": {
+    "k": { "kind": "pick", "values": ["3", "8"] },
+    "p": { "kind": "pick", "values": ["5", "9"] }
+  },
+  "stemTemplate": "本喵开了两间分区：`kitchen` 那间里放一只碗装着 {k}，`pond` 那间里也放一只碗装着 {p} —— 两只碗**同名**，都叫 `fish`。\n\n本喵想把 **`kitchen` 那一间**里的那只印出来，所以把两间的门都打开了。\n\n可翻译官喵当场就把稿子退回来了，屏幕上连一个字都没有。\n\n你帮本喵把它改好：改完要能印出 `kitchen` 那一间里的那个数。两间里装的数、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nnamespace kitchen {\n    int fish = {k};\n}\n\nnamespace pond {\n    int fish = {p};\n}\n\nint main() {\n    using namespace kitchen;\n    using namespace pond;\n    cout << fish << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nnamespace kitchen {\n    int fish = {k};\n}\n\nnamespace pond {\n    int fish = {p};\n}\n\nint main() {\n    using namespace kitchen;\n    using namespace pond;\n    cout << kitchen::fish << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵这一回的原话是：\n\n`error: reference to 'fish' is ambiguous`\n\n`ambiguous` 念作「含糊、说不清」—— **两间的门都打开了，里头又各有一只同名的碗，你喊一声 `fish`，它真的不知道该拿哪一只。**\n\n它下面还跟着两行 `candidate`（候选人）：`int kitchen::fish` 和 `int pond::fish` —— 就是本课第四节说的那句话：两只碗的真名其实是带分区名的全名，重名一点不可怕，**写清楚是哪一间里的哪一只**就行。\n\n改法很干脆，两条路随便挑一条喵：\n\n- **写全名**：把 `cout << fish << endl;` 写成 `cout << kitchen::fish << endl;` —— 说得清清楚楚，门开不开都不打架。\n- **只开一间**：把 `using namespace pond;` 删掉，这样喊 `fish` 就只有一间里头有。\n\n（这也是为什么「**只搬一件出来**」那种写法更稳妥：搬出来的那件不重名，就撞不上这一条。）"
+}

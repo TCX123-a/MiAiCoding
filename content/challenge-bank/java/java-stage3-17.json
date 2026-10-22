@@ -1,0 +1,400 @@
+{
+  "lessonId": "java-stage3-17",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-bit-and-mask-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵手上有一排 8 个格子，这个数是 `0b00001110`。本喵想**把第 1 位关掉** —— 那一格不管是 1 还是 0，动完手都该是 0，别的格子一格都不许动。\n\n可这段稿子跑出来的结果不对：最后一行印的那排格子跟上一次一模一样，第 1 位压根没被关掉。\n\n你帮本喵把该动的那一处改到能跑对为止，让它印出**三行**：\n\n- 第一行 `原来这排：` 后面接原来那排格子；\n- 第二行 `第 1 位是 ` 后面接那一格现在是几；\n- 第三行 `关掉第 1 位：` 后面接**动完手之后**那排格子。\n\n除了那一处，稿子里别的字一个都别改喵。\n\n（这一题**不用投喂任何东西**，数都写在稿子里。）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b00001110;\n        int k = 1;\n\n        System.out.println(\"原来这排：\" + bits(n));\n        System.out.println(\"第 \" + k + \" 位是 \" + (n >> k & 1));\n        System.out.println(\"关掉第 \" + k + \" 位：\" + bits(n | (1 << k)));\n    }\n\n    static String bits(int n) {\n        String s = Integer.toBinaryString(n & 0xFF);\n        while (s.length() < 8) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b00001110;\n        int k = 1;\n\n        System.out.println(\"原来这排：\" + bits(n));\n        System.out.println(\"第 \" + k + \" 位是 \" + (n >> k & 1));\n        System.out.println(\"关掉第 \" + k + \" 位：\" + bits(n & ~(1 << k)));\n    }\n\n    static String bits(int n) {\n        String s = Integer.toBinaryString(n & 0xFF);\n        while (s.length() < 8) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+      "expectedOutput": "原来这排：00001110\n第 1 位是 1\n关掉第 1 位：00001100",
+      "stdin": null,
+      "explanation": "本喵这一处栽在**「关掉」和「点亮」是两只不同的手**上。\n\n**一、`|` 是点亮、不是关掉。** 它对着两排格子逐位看：**只要有一位是 1，结果那一位就是 1**。所以拿它配一张「只有第 1 位是 1」的格子纸（`1 << 1`）盖上去，本来就是 1 的那一格**还是 1**，一格都没被关掉 —— 最后一行印得跟原来一字不差，正是这个原因。\n\n**二、关掉一格要两只手配合。** 先用 `1 << 1` 做出「只有第 1 位是 1」的格子纸，再把它每一位反过来（`~`），得到「只有第 1 位是 0、别处全是 1」的纸；然后拿 `&` 盖上去 —— `&` 的规矩是**两位都是 1 才留 1**，于是别处照抄原样，只有第 1 位被按成 0。一句话：`n & ~(1 << 1)`。\n\n**三、四只手各管什么，背下来就不容易错。** `&` 关灯、`|` 开灯、`^` 翻灯、`~` 整排反过来。本喵这次想关灯，却伸了开灯那只手。\n\n**四、最阴的地方在于它不报错。** 稿子照样跑得起来、一个字都不红，印出来的东西还「像那么回事」—— 只是白干一趟。所以这一类毛病要**盯着结果对不对**，而不是盯着有没有报错。",
+      "templateId": "java-s3-bit-and-mask",
+      "params": {
+        "nb": "00001110",
+        "k": 1
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:16.663Z",
+        "hash": "7d7e3ffd89e04a33"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-and-mask-005",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵手上有一排 8 个格子，这个数是 `0b00011110`。本喵想**把第 3 位关掉** —— 那一格不管是 1 还是 0，动完手都该是 0，别的格子一格都不许动。\n\n可这段稿子跑出来的结果不对：最后一行印的那排格子跟上一次一模一样，第 3 位压根没被关掉。\n\n你帮本喵把该动的那一处改到能跑对为止，让它印出**三行**：\n\n- 第一行 `原来这排：` 后面接原来那排格子；\n- 第二行 `第 3 位是 ` 后面接那一格现在是几；\n- 第三行 `关掉第 3 位：` 后面接**动完手之后**那排格子。\n\n除了那一处，稿子里别的字一个都别改喵。\n\n（这一题**不用投喂任何东西**，数都写在稿子里。）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b00011110;\n        int k = 3;\n\n        System.out.println(\"原来这排：\" + bits(n));\n        System.out.println(\"第 \" + k + \" 位是 \" + (n >> k & 1));\n        System.out.println(\"关掉第 \" + k + \" 位：\" + bits(n | (1 << k)));\n    }\n\n    static String bits(int n) {\n        String s = Integer.toBinaryString(n & 0xFF);\n        while (s.length() < 8) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b00011110;\n        int k = 3;\n\n        System.out.println(\"原来这排：\" + bits(n));\n        System.out.println(\"第 \" + k + \" 位是 \" + (n >> k & 1));\n        System.out.println(\"关掉第 \" + k + \" 位：\" + bits(n & ~(1 << k)));\n    }\n\n    static String bits(int n) {\n        String s = Integer.toBinaryString(n & 0xFF);\n        while (s.length() < 8) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+      "expectedOutput": "原来这排：00011110\n第 3 位是 1\n关掉第 3 位：00010110",
+      "stdin": null,
+      "explanation": "本喵这一处栽在**「关掉」和「点亮」是两只不同的手**上。\n\n**一、`|` 是点亮、不是关掉。** 它对着两排格子逐位看：**只要有一位是 1，结果那一位就是 1**。所以拿它配一张「只有第 3 位是 1」的格子纸（`1 << 3`）盖上去，本来就是 1 的那一格**还是 1**，一格都没被关掉 —— 最后一行印得跟原来一字不差，正是这个原因。\n\n**二、关掉一格要两只手配合。** 先用 `1 << 3` 做出「只有第 3 位是 1」的格子纸，再把它每一位反过来（`~`），得到「只有第 3 位是 0、别处全是 1」的纸；然后拿 `&` 盖上去 —— `&` 的规矩是**两位都是 1 才留 1**，于是别处照抄原样，只有第 3 位被按成 0。一句话：`n & ~(1 << 3)`。\n\n**三、四只手各管什么，背下来就不容易错。** `&` 关灯、`|` 开灯、`^` 翻灯、`~` 整排反过来。本喵这次想关灯，却伸了开灯那只手。\n\n**四、最阴的地方在于它不报错。** 稿子照样跑得起来、一个字都不红，印出来的东西还「像那么回事」—— 只是白干一趟。所以这一类毛病要**盯着结果对不对**，而不是盯着有没有报错。",
+      "templateId": "java-s3-bit-and-mask",
+      "params": {
+        "nb": "00011110",
+        "k": 3
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:18.011Z",
+        "hash": "9c6db45d569f4e89"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-count-ones-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上这排格子是 `0b00001011`，想知道**里面有几个 1**。\n\n请你写个程序，把这一排从头到尾看一遍，数出有几个格子是 1，印**一行**：`这排格子里有几个 1：` 后面接数出来的个数。\n\n提示：一格一格看 —— 先把最右边那一格掰下来看看它是几（`n & 1`），再把整排往右挪一格（`>> 1`），接着看下一格；挪到整排都不剩东西为止。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b00001011;\n\n        // 一格一格看过去，数出有几个 1\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b00001011;\n\n        int count = 0;\n        int rest = n;\n        while (rest > 0) {\n            count = count + (rest & 1);\n            rest = rest >> 1;\n        }\n\n        System.out.println(\"这排格子里有几个 1：\" + count);\n    }\n}\n",
+      "expectedOutput": "这排格子里有几个 1：3",
+      "stdin": null,
+      "explanation": "**一、`n & 1` 是「只看最右边那一格」。** 1 的格子形状是「最右边一格是 1、别处全是 0」，拿它去盖，别处的格子全被按成 0，只剩最右边那一格原样留着 —— 于是这个式子给你的就是那一格的**值**（0 或 1）。把它加进小碗里，就数掉一格。\n\n**二、数完右边那格，把整排往右挪一格。** `n >> 1` 让原来的第 1 位挪到最右边，下一趟 `n & 1` 问的就是它。一趟一格，直到整排都不剩东西（`n` 变成 0）就收工 —— 这就是那个「绕圈」的停法。\n\n**三、停的条件写成「不剩东西」更稳。** 写成「挪到第 31 格」也行，但那样就把 31 这个数写死在稿子里了；写 `rest > 0` 不用数格子，换了更长的装法也照样对。\n\n**四、用一只另外的碗接着数，别把原数改没。** 一边挪一边数，挪到最后原数就没了 —— 往后要是还想用这个数，就得从头再拼回来。所以另起一只碗 `rest` 去挪，原数留着。\n\n**五、量级只有几趟。** 一格一趟，一共就那么几格，所以这件事跑起来**永远不贵**。\n\n**六、还有一行就数完的现成招式。** `Integer.bitCount(n)` 是前辈猫写好的，拿来直接用。自己数一遍的价值在于：**你知道它为什么只需要那么几趟**。",
+      "templateId": "java-s3-bit-count-ones",
+      "params": {
+        "nb": "00001011"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:19.314Z",
+        "hash": "60a0ffd908866949"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-count-ones-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上这排格子是 `0b10101010`，想知道**里面有几个 1**。\n\n请你写个程序，把这一排从头到尾看一遍，数出有几个格子是 1，印**一行**：`这排格子里有几个 1：` 后面接数出来的个数。\n\n提示：一格一格看 —— 先把最右边那一格掰下来看看它是几（`n & 1`），再把整排往右挪一格（`>> 1`），接着看下一格；挪到整排都不剩东西为止。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b10101010;\n\n        // 一格一格看过去，数出有几个 1\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b10101010;\n\n        int count = 0;\n        int rest = n;\n        while (rest > 0) {\n            count = count + (rest & 1);\n            rest = rest >> 1;\n        }\n\n        System.out.println(\"这排格子里有几个 1：\" + count);\n    }\n}\n",
+      "expectedOutput": "这排格子里有几个 1：4",
+      "stdin": null,
+      "explanation": "**一、`n & 1` 是「只看最右边那一格」。** 1 的格子形状是「最右边一格是 1、别处全是 0」，拿它去盖，别处的格子全被按成 0，只剩最右边那一格原样留着 —— 于是这个式子给你的就是那一格的**值**（0 或 1）。把它加进小碗里，就数掉一格。\n\n**二、数完右边那格，把整排往右挪一格。** `n >> 1` 让原来的第 1 位挪到最右边，下一趟 `n & 1` 问的就是它。一趟一格，直到整排都不剩东西（`n` 变成 0）就收工 —— 这就是那个「绕圈」的停法。\n\n**三、停的条件写成「不剩东西」更稳。** 写成「挪到第 31 格」也行，但那样就把 31 这个数写死在稿子里了；写 `rest > 0` 不用数格子，换了更长的装法也照样对。\n\n**四、用一只另外的碗接着数，别把原数改没。** 一边挪一边数，挪到最后原数就没了 —— 往后要是还想用这个数，就得从头再拼回来。所以另起一只碗 `rest` 去挪，原数留着。\n\n**五、量级只有几趟。** 一格一趟，一共就那么几格，所以这件事跑起来**永远不贵**。\n\n**六、还有一行就数完的现成招式。** `Integer.bitCount(n)` 是前辈猫写好的，拿来直接用。自己数一遍的价值在于：**你知道它为什么只需要那么几趟**。",
+      "templateId": "java-s3-bit-count-ones",
+      "params": {
+        "nb": "10101010"
+      },
+      "verified": {
+        "at": "2026-10-20T17:19:47.704Z",
+        "hash": "e9fcf8166b885e9e"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-count-ones-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上这排格子是 `0b11110000`，想知道**里面有几个 1**。\n\n请你写个程序，把这一排从头到尾看一遍，数出有几个格子是 1，印**一行**：`这排格子里有几个 1：` 后面接数出来的个数。\n\n提示：一格一格看 —— 先把最右边那一格掰下来看看它是几（`n & 1`），再把整排往右挪一格（`>> 1`），接着看下一格；挪到整排都不剩东西为止。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b11110000;\n\n        // 一格一格看过去，数出有几个 1\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b11110000;\n\n        int count = 0;\n        int rest = n;\n        while (rest > 0) {\n            count = count + (rest & 1);\n            rest = rest >> 1;\n        }\n\n        System.out.println(\"这排格子里有几个 1：\" + count);\n    }\n}\n",
+      "expectedOutput": "这排格子里有几个 1：4",
+      "stdin": null,
+      "explanation": "**一、`n & 1` 是「只看最右边那一格」。** 1 的格子形状是「最右边一格是 1、别处全是 0」，拿它去盖，别处的格子全被按成 0，只剩最右边那一格原样留着 —— 于是这个式子给你的就是那一格的**值**（0 或 1）。把它加进小碗里，就数掉一格。\n\n**二、数完右边那格，把整排往右挪一格。** `n >> 1` 让原来的第 1 位挪到最右边，下一趟 `n & 1` 问的就是它。一趟一格，直到整排都不剩东西（`n` 变成 0）就收工 —— 这就是那个「绕圈」的停法。\n\n**三、停的条件写成「不剩东西」更稳。** 写成「挪到第 31 格」也行，但那样就把 31 这个数写死在稿子里了；写 `rest > 0` 不用数格子，换了更长的装法也照样对。\n\n**四、用一只另外的碗接着数，别把原数改没。** 一边挪一边数，挪到最后原数就没了 —— 往后要是还想用这个数，就得从头再拼回来。所以另起一只碗 `rest` 去挪，原数留着。\n\n**五、量级只有几趟。** 一格一趟，一共就那么几格，所以这件事跑起来**永远不贵**。\n\n**六、还有一行就数完的现成招式。** `Integer.bitCount(n)` 是前辈猫写好的，拿来直接用。自己数一遍的价值在于：**你知道它为什么只需要那么几趟**。",
+      "templateId": "java-s3-bit-count-ones",
+      "params": {
+        "nb": "11110000"
+      },
+      "verified": {
+        "at": "2026-10-20T17:19:49.680Z",
+        "hash": "35598498895c4071"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-count-ones-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上这排格子是 `0b01111111`，想知道**里面有几个 1**。\n\n请你写个程序，把这一排从头到尾看一遍，数出有几个格子是 1，印**一行**：`这排格子里有几个 1：` 后面接数出来的个数。\n\n提示：一格一格看 —— 先把最右边那一格掰下来看看它是几（`n & 1`），再把整排往右挪一格（`>> 1`），接着看下一格；挪到整排都不剩东西为止。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b01111111;\n\n        // 一格一格看过去，数出有几个 1\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b01111111;\n\n        int count = 0;\n        int rest = n;\n        while (rest > 0) {\n            count = count + (rest & 1);\n            rest = rest >> 1;\n        }\n\n        System.out.println(\"这排格子里有几个 1：\" + count);\n    }\n}\n",
+      "expectedOutput": "这排格子里有几个 1：7",
+      "stdin": null,
+      "explanation": "**一、`n & 1` 是「只看最右边那一格」。** 1 的格子形状是「最右边一格是 1、别处全是 0」，拿它去盖，别处的格子全被按成 0，只剩最右边那一格原样留着 —— 于是这个式子给你的就是那一格的**值**（0 或 1）。把它加进小碗里，就数掉一格。\n\n**二、数完右边那格，把整排往右挪一格。** `n >> 1` 让原来的第 1 位挪到最右边，下一趟 `n & 1` 问的就是它。一趟一格，直到整排都不剩东西（`n` 变成 0）就收工 —— 这就是那个「绕圈」的停法。\n\n**三、停的条件写成「不剩东西」更稳。** 写成「挪到第 31 格」也行，但那样就把 31 这个数写死在稿子里了；写 `rest > 0` 不用数格子，换了更长的装法也照样对。\n\n**四、用一只另外的碗接着数，别把原数改没。** 一边挪一边数，挪到最后原数就没了 —— 往后要是还想用这个数，就得从头再拼回来。所以另起一只碗 `rest` 去挪，原数留着。\n\n**五、量级只有几趟。** 一格一趟，一共就那么几格，所以这件事跑起来**永远不贵**。\n\n**六、还有一行就数完的现成招式。** `Integer.bitCount(n)` 是前辈猫写好的，拿来直接用。自己数一遍的价值在于：**你知道它为什么只需要那么几趟**。",
+      "templateId": "java-s3-bit-count-ones",
+      "params": {
+        "nb": "01111111"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:20.150Z",
+        "hash": "d535ae8c30b3e17f"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-mask-slice-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上这排格子是 `0b10110110`，想从**第 1 位**起，往左连着取**三格**，把这三格原样取出来（别的格子一格都不要）。\n\n请你写个程序印**两行**：\n\n- `取出来的三位：` 后面接取出来那三格的样子 —— **三位都要写全**，是 `011` 就不能印成 `11`；\n- `它是多少：` 后面接这三格当数字读是多少。\n\n提示：先**往右挪 1 格**，把那三格挪到最右边；再用一张「只有最右边三格是 1」的格子纸盖上去（`0b111`）。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b10110110;\n        int k = 1;\n\n        // 先往右挪 k 格，再用 0b111 盖上去\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b10110110;\n        int k = 1;\n\n        int part = (n >> k) & 0b111;\n\n        System.out.println(\"取出来的三位：\" + bits3(part));\n        System.out.println(\"它是多少：\" + part);\n    }\n\n    static String bits3(int v) {\n        String s = Integer.toBinaryString(v & 0b111);\n        while (s.length() < 3) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+      "expectedOutput": "取出来的三位：011\n它是多少：3",
+      "stdin": null,
+      "explanation": "**一、先挪再盖 —— 取一段格子的固定两步。** 往右挪 1 格，是想让**第 1 位挪到最右边**；挪完之后，右边那三格正是本喵要的那三格。\n\n**二、格子纸 `0b111` 是「最右边三格是 1」。** 拿它去 `&`：右边三格原样留下，其余全被按成 0 —— 取出来的数必然落在 0 到 7 之间。\n\n**三、两步的顺序不能反。** 反过来的话，盖住的是**原来**最右边那三格，想取的位置全错了。\n\n**四、印的时候记得补 0。** 取出来的东西当数字读是分不出前头的 0 的（`011` 和 `11` 是同一个数），所以要求印三位就得自己把 0 补到前面 —— `Integer.toBinaryString` 只给「有意义的那几位」。\n\n**五、宽度和位置要分开盯。** 想取四格，就把 `0b111` 换成 `0b1111`；要从第 4 格起，就把挪的格数改成 4。**挪多少格决定从哪开始，纸多宽决定取几格** —— 这两件事各管一段，改的时候别互相带错。\n\n**六、这就是「一格装好几件事」的做法。** 一格本来只装 0 和 1；把连着几格当一段来读，一段就能装下好几样状态（比如权限的「可读／可写／可执行」）。要读某一段，永远是这个动作：**先挪到最右边，再拿对应宽度的格子纸盖上去**。",
+      "templateId": "java-s3-bit-mask-slice",
+      "params": {
+        "nb": "10110110",
+        "k": 1
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:21.031Z",
+        "hash": "bb279920671b6d30"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-mask-slice-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上这排格子是 `0b10110110`，想从**第 2 位**起，往左连着取**三格**，把这三格原样取出来（别的格子一格都不要）。\n\n请你写个程序印**两行**：\n\n- `取出来的三位：` 后面接取出来那三格的样子 —— **三位都要写全**，是 `011` 就不能印成 `11`；\n- `它是多少：` 后面接这三格当数字读是多少。\n\n提示：先**往右挪 2 格**，把那三格挪到最右边；再用一张「只有最右边三格是 1」的格子纸盖上去（`0b111`）。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b10110110;\n        int k = 2;\n\n        // 先往右挪 k 格，再用 0b111 盖上去\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b10110110;\n        int k = 2;\n\n        int part = (n >> k) & 0b111;\n\n        System.out.println(\"取出来的三位：\" + bits3(part));\n        System.out.println(\"它是多少：\" + part);\n    }\n\n    static String bits3(int v) {\n        String s = Integer.toBinaryString(v & 0b111);\n        while (s.length() < 3) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+      "expectedOutput": "取出来的三位：101\n它是多少：5",
+      "stdin": null,
+      "explanation": "**一、先挪再盖 —— 取一段格子的固定两步。** 往右挪 2 格，是想让**第 2 位挪到最右边**；挪完之后，右边那三格正是本喵要的那三格。\n\n**二、格子纸 `0b111` 是「最右边三格是 1」。** 拿它去 `&`：右边三格原样留下，其余全被按成 0 —— 取出来的数必然落在 0 到 7 之间。\n\n**三、两步的顺序不能反。** 反过来的话，盖住的是**原来**最右边那三格，想取的位置全错了。\n\n**四、印的时候记得补 0。** 取出来的东西当数字读是分不出前头的 0 的（`011` 和 `11` 是同一个数），所以要求印三位就得自己把 0 补到前面 —— `Integer.toBinaryString` 只给「有意义的那几位」。\n\n**五、宽度和位置要分开盯。** 想取四格，就把 `0b111` 换成 `0b1111`；要从第 4 格起，就把挪的格数改成 4。**挪多少格决定从哪开始，纸多宽决定取几格** —— 这两件事各管一段，改的时候别互相带错。\n\n**六、这就是「一格装好几件事」的做法。** 一格本来只装 0 和 1；把连着几格当一段来读，一段就能装下好几样状态（比如权限的「可读／可写／可执行」）。要读某一段，永远是这个动作：**先挪到最右边，再拿对应宽度的格子纸盖上去**。",
+      "templateId": "java-s3-bit-mask-slice",
+      "params": {
+        "nb": "10110110",
+        "k": 2
+      },
+      "verified": {
+        "at": "2026-10-20T17:19:51.663Z",
+        "hash": "80970785b3d7639e"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-mask-slice-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上这排格子是 `0b10110110`，想从**第 3 位**起，往左连着取**三格**，把这三格原样取出来（别的格子一格都不要）。\n\n请你写个程序印**两行**：\n\n- `取出来的三位：` 后面接取出来那三格的样子 —— **三位都要写全**，是 `011` 就不能印成 `11`；\n- `它是多少：` 后面接这三格当数字读是多少。\n\n提示：先**往右挪 3 格**，把那三格挪到最右边；再用一张「只有最右边三格是 1」的格子纸盖上去（`0b111`）。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b10110110;\n        int k = 3;\n\n        // 先往右挪 k 格，再用 0b111 盖上去\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b10110110;\n        int k = 3;\n\n        int part = (n >> k) & 0b111;\n\n        System.out.println(\"取出来的三位：\" + bits3(part));\n        System.out.println(\"它是多少：\" + part);\n    }\n\n    static String bits3(int v) {\n        String s = Integer.toBinaryString(v & 0b111);\n        while (s.length() < 3) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+      "expectedOutput": "取出来的三位：110\n它是多少：6",
+      "stdin": null,
+      "explanation": "**一、先挪再盖 —— 取一段格子的固定两步。** 往右挪 3 格，是想让**第 3 位挪到最右边**；挪完之后，右边那三格正是本喵要的那三格。\n\n**二、格子纸 `0b111` 是「最右边三格是 1」。** 拿它去 `&`：右边三格原样留下，其余全被按成 0 —— 取出来的数必然落在 0 到 7 之间。\n\n**三、两步的顺序不能反。** 反过来的话，盖住的是**原来**最右边那三格，想取的位置全错了。\n\n**四、印的时候记得补 0。** 取出来的东西当数字读是分不出前头的 0 的（`011` 和 `11` 是同一个数），所以要求印三位就得自己把 0 补到前面 —— `Integer.toBinaryString` 只给「有意义的那几位」。\n\n**五、宽度和位置要分开盯。** 想取四格，就把 `0b111` 换成 `0b1111`；要从第 4 格起，就把挪的格数改成 4。**挪多少格决定从哪开始，纸多宽决定取几格** —— 这两件事各管一段，改的时候别互相带错。\n\n**六、这就是「一格装好几件事」的做法。** 一格本来只装 0 和 1；把连着几格当一段来读，一段就能装下好几样状态（比如权限的「可读／可写／可执行」）。要读某一段，永远是这个动作：**先挪到最右边，再拿对应宽度的格子纸盖上去**。",
+      "templateId": "java-s3-bit-mask-slice",
+      "params": {
+        "nb": "10110110",
+        "k": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:19:53.629Z",
+        "hash": "34b4eed2c18efa8b"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-mask-slice-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上这排格子是 `0b01101101`，想从**第 1 位**起，往左连着取**三格**，把这三格原样取出来（别的格子一格都不要）。\n\n请你写个程序印**两行**：\n\n- `取出来的三位：` 后面接取出来那三格的样子 —— **三位都要写全**，是 `011` 就不能印成 `11`；\n- `它是多少：` 后面接这三格当数字读是多少。\n\n提示：先**往右挪 1 格**，把那三格挪到最右边；再用一张「只有最右边三格是 1」的格子纸盖上去（`0b111`）。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b01101101;\n        int k = 1;\n\n        // 先往右挪 k 格，再用 0b111 盖上去\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b01101101;\n        int k = 1;\n\n        int part = (n >> k) & 0b111;\n\n        System.out.println(\"取出来的三位：\" + bits3(part));\n        System.out.println(\"它是多少：\" + part);\n    }\n\n    static String bits3(int v) {\n        String s = Integer.toBinaryString(v & 0b111);\n        while (s.length() < 3) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+      "expectedOutput": "取出来的三位：110\n它是多少：6",
+      "stdin": null,
+      "explanation": "**一、先挪再盖 —— 取一段格子的固定两步。** 往右挪 1 格，是想让**第 1 位挪到最右边**；挪完之后，右边那三格正是本喵要的那三格。\n\n**二、格子纸 `0b111` 是「最右边三格是 1」。** 拿它去 `&`：右边三格原样留下，其余全被按成 0 —— 取出来的数必然落在 0 到 7 之间。\n\n**三、两步的顺序不能反。** 反过来的话，盖住的是**原来**最右边那三格，想取的位置全错了。\n\n**四、印的时候记得补 0。** 取出来的东西当数字读是分不出前头的 0 的（`011` 和 `11` 是同一个数），所以要求印三位就得自己把 0 补到前面 —— `Integer.toBinaryString` 只给「有意义的那几位」。\n\n**五、宽度和位置要分开盯。** 想取四格，就把 `0b111` 换成 `0b1111`；要从第 4 格起，就把挪的格数改成 4。**挪多少格决定从哪开始，纸多宽决定取几格** —— 这两件事各管一段，改的时候别互相带错。\n\n**六、这就是「一格装好几件事」的做法。** 一格本来只装 0 和 1；把连着几格当一段来读，一段就能装下好几样状态（比如权限的「可读／可写／可执行」）。要读某一段，永远是这个动作：**先挪到最右边，再拿对应宽度的格子纸盖上去**。",
+      "templateId": "java-s3-bit-mask-slice",
+      "params": {
+        "nb": "01101101",
+        "k": 1
+      },
+      "verified": {
+        "at": "2026-10-20T17:19:55.599Z",
+        "hash": "c45a79d7eac5fd88"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-mask-slice-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上这排格子是 `0b01101101`，想从**第 2 位**起，往左连着取**三格**，把这三格原样取出来（别的格子一格都不要）。\n\n请你写个程序印**两行**：\n\n- `取出来的三位：` 后面接取出来那三格的样子 —— **三位都要写全**，是 `011` 就不能印成 `11`；\n- `它是多少：` 后面接这三格当数字读是多少。\n\n提示：先**往右挪 2 格**，把那三格挪到最右边；再用一张「只有最右边三格是 1」的格子纸盖上去（`0b111`）。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b01101101;\n        int k = 2;\n\n        // 先往右挪 k 格，再用 0b111 盖上去\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b01101101;\n        int k = 2;\n\n        int part = (n >> k) & 0b111;\n\n        System.out.println(\"取出来的三位：\" + bits3(part));\n        System.out.println(\"它是多少：\" + part);\n    }\n\n    static String bits3(int v) {\n        String s = Integer.toBinaryString(v & 0b111);\n        while (s.length() < 3) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+      "expectedOutput": "取出来的三位：011\n它是多少：3",
+      "stdin": null,
+      "explanation": "**一、先挪再盖 —— 取一段格子的固定两步。** 往右挪 2 格，是想让**第 2 位挪到最右边**；挪完之后，右边那三格正是本喵要的那三格。\n\n**二、格子纸 `0b111` 是「最右边三格是 1」。** 拿它去 `&`：右边三格原样留下，其余全被按成 0 —— 取出来的数必然落在 0 到 7 之间。\n\n**三、两步的顺序不能反。** 反过来的话，盖住的是**原来**最右边那三格，想取的位置全错了。\n\n**四、印的时候记得补 0。** 取出来的东西当数字读是分不出前头的 0 的（`011` 和 `11` 是同一个数），所以要求印三位就得自己把 0 补到前面 —— `Integer.toBinaryString` 只给「有意义的那几位」。\n\n**五、宽度和位置要分开盯。** 想取四格，就把 `0b111` 换成 `0b1111`；要从第 4 格起，就把挪的格数改成 4。**挪多少格决定从哪开始，纸多宽决定取几格** —— 这两件事各管一段，改的时候别互相带错。\n\n**六、这就是「一格装好几件事」的做法。** 一格本来只装 0 和 1；把连着几格当一段来读，一段就能装下好几样状态（比如权限的「可读／可写／可执行」）。要读某一段，永远是这个动作：**先挪到最右边，再拿对应宽度的格子纸盖上去**。",
+      "templateId": "java-s3-bit-mask-slice",
+      "params": {
+        "nb": "01101101",
+        "k": 2
+      },
+      "verified": {
+        "at": "2026-10-20T17:19:57.580Z",
+        "hash": "28b0744487d3b9a3"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-mask-slice-005",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上这排格子是 `0b01101101`，想从**第 3 位**起，往左连着取**三格**，把这三格原样取出来（别的格子一格都不要）。\n\n请你写个程序印**两行**：\n\n- `取出来的三位：` 后面接取出来那三格的样子 —— **三位都要写全**，是 `011` 就不能印成 `11`；\n- `它是多少：` 后面接这三格当数字读是多少。\n\n提示：先**往右挪 3 格**，把那三格挪到最右边；再用一张「只有最右边三格是 1」的格子纸盖上去（`0b111`）。\n\n（这一题**不用投喂任何东西**，数就写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b01101101;\n        int k = 3;\n\n        // 先往右挪 k 格，再用 0b111 盖上去\n\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b01101101;\n        int k = 3;\n\n        int part = (n >> k) & 0b111;\n\n        System.out.println(\"取出来的三位：\" + bits3(part));\n        System.out.println(\"它是多少：\" + part);\n    }\n\n    static String bits3(int v) {\n        String s = Integer.toBinaryString(v & 0b111);\n        while (s.length() < 3) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+      "expectedOutput": "取出来的三位：101\n它是多少：5",
+      "stdin": null,
+      "explanation": "**一、先挪再盖 —— 取一段格子的固定两步。** 往右挪 3 格，是想让**第 3 位挪到最右边**；挪完之后，右边那三格正是本喵要的那三格。\n\n**二、格子纸 `0b111` 是「最右边三格是 1」。** 拿它去 `&`：右边三格原样留下，其余全被按成 0 —— 取出来的数必然落在 0 到 7 之间。\n\n**三、两步的顺序不能反。** 反过来的话，盖住的是**原来**最右边那三格，想取的位置全错了。\n\n**四、印的时候记得补 0。** 取出来的东西当数字读是分不出前头的 0 的（`011` 和 `11` 是同一个数），所以要求印三位就得自己把 0 补到前面 —— `Integer.toBinaryString` 只给「有意义的那几位」。\n\n**五、宽度和位置要分开盯。** 想取四格，就把 `0b111` 换成 `0b1111`；要从第 4 格起，就把挪的格数改成 4。**挪多少格决定从哪开始，纸多宽决定取几格** —— 这两件事各管一段，改的时候别互相带错。\n\n**六、这就是「一格装好几件事」的做法。** 一格本来只装 0 和 1；把连着几格当一段来读，一段就能装下好几样状态（比如权限的「可读／可写／可执行」）。要读某一段，永远是这个动作：**先挪到最右边，再拿对应宽度的格子纸盖上去**。",
+      "templateId": "java-s3-bit-mask-slice",
+      "params": {
+        "nb": "01101101",
+        "k": 3
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:21.883Z",
+        "hash": "3dc1067f5f305dc1"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-swap-xor-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上两格里装着两个数：`x` 里是 5、`y` 里是 6。本喵想把这两格里装的东西**换个个儿**，可手边一只多余的碗都没有 —— **不许再添第三个地方来中转**。\n\n请你写个程序，只用**异或**（`^`）这一手把两格里的东西对调，印**两行**：\n\n- `x 现在是 ` 后面接换完之后 `x` 里装的东西；\n- `y 现在是 ` 后面接换完之后 `y` 里装的东西。\n\n（这一题**不用投喂任何东西**，两个数都写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int x = 5;\n        int y = 6;\n\n        // 只用 ^ 把两格换个位置（不许添第三个地方中转）\n\n        System.out.println(\"x 现在是 \" + x);\n        System.out.println(\"y 现在是 \" + y);\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int x = 5;\n        int y = 6;\n\n        x = x ^ y;\n        y = x ^ y;\n        x = x ^ y;\n\n        System.out.println(\"x 现在是 \" + x);\n        System.out.println(\"y 现在是 \" + y);\n    }\n}\n",
+      "expectedOutput": "x 现在是 6\ny 现在是 5",
+      "stdin": null,
+      "explanation": "**一、异或最要紧的一条脾气：同一个东西连着异或两遍，就回到原样。** `a ^ b ^ b` 等于 `a`。三句话就踩在这一条上。\n\n**二、三句话各自在干什么。** 头一句把两格的东西**搅**在一起，倒进第一格；第二句拿第二格原来那份去搅，把第一格原来那份**捞**出来放进第二格；第三句再搅一遍，第一格里剩下的恰好是第二格原来那份。\n\n**三、为什么不用第三只碗也行。** 因为这一手**不丢东西**：两份搅在一起之后，拿着其中一份就能把另一份原样还原出来。它和「先加、再减」是同一类把戏，只是异或**不进位**，所以不会溢出。\n\n**四、省的是地方，不是速度。** 这三句比借一只碗中转要多按几个键，读起来也绕。真要省那一格地方的时候再拿出来；平时借一只碗，别人一眼就懂。\n\n**五、看懂它就懂了异或。** 「两位不一样才留下 1」这条规矩，用在这里就是**把两份信息叠在一起还能拆开** —— 往后学纠错、学加密，用的都是这一手。",
+      "templateId": "java-s3-bit-swap-xor",
+      "params": {
+        "x": "5",
+        "y": "6"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:22.737Z",
+        "hash": "a2f619317c43ba69"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-swap-xor-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上两格里装着两个数：`x` 里是 5、`y` 里是 7。本喵想把这两格里装的东西**换个个儿**，可手边一只多余的碗都没有 —— **不许再添第三个地方来中转**。\n\n请你写个程序，只用**异或**（`^`）这一手把两格里的东西对调，印**两行**：\n\n- `x 现在是 ` 后面接换完之后 `x` 里装的东西；\n- `y 现在是 ` 后面接换完之后 `y` 里装的东西。\n\n（这一题**不用投喂任何东西**，两个数都写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int x = 5;\n        int y = 7;\n\n        // 只用 ^ 把两格换个位置（不许添第三个地方中转）\n\n        System.out.println(\"x 现在是 \" + x);\n        System.out.println(\"y 现在是 \" + y);\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int x = 5;\n        int y = 7;\n\n        x = x ^ y;\n        y = x ^ y;\n        x = x ^ y;\n\n        System.out.println(\"x 现在是 \" + x);\n        System.out.println(\"y 现在是 \" + y);\n    }\n}\n",
+      "expectedOutput": "x 现在是 7\ny 现在是 5",
+      "stdin": null,
+      "explanation": "**一、异或最要紧的一条脾气：同一个东西连着异或两遍，就回到原样。** `a ^ b ^ b` 等于 `a`。三句话就踩在这一条上。\n\n**二、三句话各自在干什么。** 头一句把两格的东西**搅**在一起，倒进第一格；第二句拿第二格原来那份去搅，把第一格原来那份**捞**出来放进第二格；第三句再搅一遍，第一格里剩下的恰好是第二格原来那份。\n\n**三、为什么不用第三只碗也行。** 因为这一手**不丢东西**：两份搅在一起之后，拿着其中一份就能把另一份原样还原出来。它和「先加、再减」是同一类把戏，只是异或**不进位**，所以不会溢出。\n\n**四、省的是地方，不是速度。** 这三句比借一只碗中转要多按几个键，读起来也绕。真要省那一格地方的时候再拿出来；平时借一只碗，别人一眼就懂。\n\n**五、看懂它就懂了异或。** 「两位不一样才留下 1」这条规矩，用在这里就是**把两份信息叠在一起还能拆开** —— 往后学纠错、学加密，用的都是这一手。",
+      "templateId": "java-s3-bit-swap-xor",
+      "params": {
+        "x": "5",
+        "y": "7"
+      },
+      "verified": {
+        "at": "2026-10-20T17:19:59.546Z",
+        "hash": "52442d9eb63f1f6f"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-swap-xor-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上两格里装着两个数：`x` 里是 9、`y` 里是 6。本喵想把这两格里装的东西**换个个儿**，可手边一只多余的碗都没有 —— **不许再添第三个地方来中转**。\n\n请你写个程序，只用**异或**（`^`）这一手把两格里的东西对调，印**两行**：\n\n- `x 现在是 ` 后面接换完之后 `x` 里装的东西；\n- `y 现在是 ` 后面接换完之后 `y` 里装的东西。\n\n（这一题**不用投喂任何东西**，两个数都写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int x = 9;\n        int y = 6;\n\n        // 只用 ^ 把两格换个位置（不许添第三个地方中转）\n\n        System.out.println(\"x 现在是 \" + x);\n        System.out.println(\"y 现在是 \" + y);\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int x = 9;\n        int y = 6;\n\n        x = x ^ y;\n        y = x ^ y;\n        x = x ^ y;\n\n        System.out.println(\"x 现在是 \" + x);\n        System.out.println(\"y 现在是 \" + y);\n    }\n}\n",
+      "expectedOutput": "x 现在是 6\ny 现在是 9",
+      "stdin": null,
+      "explanation": "**一、异或最要紧的一条脾气：同一个东西连着异或两遍，就回到原样。** `a ^ b ^ b` 等于 `a`。三句话就踩在这一条上。\n\n**二、三句话各自在干什么。** 头一句把两格的东西**搅**在一起，倒进第一格；第二句拿第二格原来那份去搅，把第一格原来那份**捞**出来放进第二格；第三句再搅一遍，第一格里剩下的恰好是第二格原来那份。\n\n**三、为什么不用第三只碗也行。** 因为这一手**不丢东西**：两份搅在一起之后，拿着其中一份就能把另一份原样还原出来。它和「先加、再减」是同一类把戏，只是异或**不进位**，所以不会溢出。\n\n**四、省的是地方，不是速度。** 这三句比借一只碗中转要多按几个键，读起来也绕。真要省那一格地方的时候再拿出来；平时借一只碗，别人一眼就懂。\n\n**五、看懂它就懂了异或。** 「两位不一样才留下 1」这条规矩，用在这里就是**把两份信息叠在一起还能拆开** —— 往后学纠错、学加密，用的都是这一手。",
+      "templateId": "java-s3-bit-swap-xor",
+      "params": {
+        "x": "9",
+        "y": "6"
+      },
+      "verified": {
+        "at": "2026-10-20T17:20:01.592Z",
+        "hash": "bf4393097d0f5260"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-swap-xor-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上两格里装着两个数：`x` 里是 9、`y` 里是 7。本喵想把这两格里装的东西**换个个儿**，可手边一只多余的碗都没有 —— **不许再添第三个地方来中转**。\n\n请你写个程序，只用**异或**（`^`）这一手把两格里的东西对调，印**两行**：\n\n- `x 现在是 ` 后面接换完之后 `x` 里装的东西；\n- `y 现在是 ` 后面接换完之后 `y` 里装的东西。\n\n（这一题**不用投喂任何东西**，两个数都写在稿子里。）",
+      "starter": "public class Main {\n    public static void main(String[] args) {\n        int x = 9;\n        int y = 7;\n\n        // 只用 ^ 把两格换个位置（不许添第三个地方中转）\n\n        System.out.println(\"x 现在是 \" + x);\n        System.out.println(\"y 现在是 \" + y);\n    }\n}\n",
+      "referenceSolution": "public class Main {\n    public static void main(String[] args) {\n        int x = 9;\n        int y = 7;\n\n        x = x ^ y;\n        y = x ^ y;\n        x = x ^ y;\n\n        System.out.println(\"x 现在是 \" + x);\n        System.out.println(\"y 现在是 \" + y);\n    }\n}\n",
+      "expectedOutput": "x 现在是 7\ny 现在是 9",
+      "stdin": null,
+      "explanation": "**一、异或最要紧的一条脾气：同一个东西连着异或两遍，就回到原样。** `a ^ b ^ b` 等于 `a`。三句话就踩在这一条上。\n\n**二、三句话各自在干什么。** 头一句把两格的东西**搅**在一起，倒进第一格；第二句拿第二格原来那份去搅，把第一格原来那份**捞**出来放进第二格；第三句再搅一遍，第一格里剩下的恰好是第二格原来那份。\n\n**三、为什么不用第三只碗也行。** 因为这一手**不丢东西**：两份搅在一起之后，拿着其中一份就能把另一份原样还原出来。它和「先加、再减」是同一类把戏，只是异或**不进位**，所以不会溢出。\n\n**四、省的是地方，不是速度。** 这三句比借一只碗中转要多按几个键，读起来也绕。真要省那一格地方的时候再拿出来；平时借一只碗，别人一眼就懂。\n\n**五、看懂它就懂了异或。** 「两位不一样才留下 1」这条规矩，用在这里就是**把两份信息叠在一起还能拆开** —— 往后学纠错、学加密，用的都是这一手。",
+      "templateId": "java-s3-bit-swap-xor",
+      "params": {
+        "x": "9",
+        "y": "7"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:23.593Z",
+        "hash": "56ccc5a9502bc30d"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-test-one-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵手上这排是 `0b00001011`，想一位一位问过去：**这一格是 1 吗？** 问第 0、1、2、3 位。\n\n可这段稿子印出来的答案不对：**明明是 1 的那几格，它偏偏报说不是**。\n\n你帮本喵把问话那一处改到能跑对为止，让它印出**四行**：第 N 行是 `第 N 位是 1 吗：` 后面接 `true` 或者 `false`。四行都要对 —— 那一格里是 1 就得印 `true`，是 0 就得印 `false`。\n\n除了那一处，稿子里别的字一个都别改喵。\n\n（这一题**不用投喂任何东西**，数都写在稿子里。）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b00001011;\n\n        System.out.println(\"第 0 位是 1 吗：\" + ((n & (1 << 0)) == 1));\n        System.out.println(\"第 1 位是 1 吗：\" + ((n & (1 << 1)) == 1));\n        System.out.println(\"第 2 位是 1 吗：\" + ((n & (1 << 2)) == 1));\n        System.out.println(\"第 3 位是 1 吗：\" + ((n & (1 << 3)) == 1));\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b00001011;\n\n        System.out.println(\"第 0 位是 1 吗：\" + ((n & (1 << 0)) != 0));\n        System.out.println(\"第 1 位是 1 吗：\" + ((n & (1 << 1)) != 0));\n        System.out.println(\"第 2 位是 1 吗：\" + ((n & (1 << 2)) != 0));\n        System.out.println(\"第 3 位是 1 吗：\" + ((n & (1 << 3)) != 0));\n    }\n}\n",
+      "expectedOutput": "第 0 位是 1 吗：true\n第 1 位是 1 吗：true\n第 2 位是 1 吗：false\n第 3 位是 1 吗：true",
+      "stdin": null,
+      "explanation": "本喵这一处栽在**「那一格的分量」和「那一格开不开」是两回事**上。\n\n**一、拿格子纸盖出来的是那一格的分量，不是一个「是／不是」。** 用 `1 << 1` 去盖，第 1 位原来是 1，盖出来是 2；原来是 0，盖出来是 0。它给出的是「那一格值多少」，不是「那一格开不开」。\n\n**二、拿它去等于 1，只有第 0 位碰巧说对。** 第 0 位盖出来要么 1、要么 0，所以 `== 1` 在这一格上**恰好**是对的 —— 这正是这个错最阴的地方：第一行对了，很容易以为整段都没问题。从第 1 位起，盖出来是 2、4、8，没有一个等于 1，于是**明明开着的格子全被报成没开**。\n\n**三、问「开不开」要问「是不是不等于 0」。** 写成 `(n & (1 << k)) != 0`：盖出来不是 0，就说明那一格开着。\n\n**四、换个姿势问也行：把那一格挪出来。** `(n >> k & 1) == 1` —— 先把它挪到最右边，这时候它只可能是 0 或 1，再和 1 比就说得通了。\n\n**五、两种问法问的是同一件事。** 一种把那一格**挪出来**看（值一定是 0 或 1），一种拿格子纸**盖上去**看（值是它的分量 1、2、4、8……）。盖上去那一版更容易写错，就因为**分量不是 1**。",
+      "templateId": "java-s3-bit-test-one",
+      "params": {
+        "nb": "00001011"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:24.478Z",
+        "hash": "cd2aa4b953d150f2"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-test-one-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵手上这排是 `0b00001101`，想一位一位问过去：**这一格是 1 吗？** 问第 0、1、2、3 位。\n\n可这段稿子印出来的答案不对：**明明是 1 的那几格，它偏偏报说不是**。\n\n你帮本喵把问话那一处改到能跑对为止，让它印出**四行**：第 N 行是 `第 N 位是 1 吗：` 后面接 `true` 或者 `false`。四行都要对 —— 那一格里是 1 就得印 `true`，是 0 就得印 `false`。\n\n除了那一处，稿子里别的字一个都别改喵。\n\n（这一题**不用投喂任何东西**，数都写在稿子里。）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b00001101;\n\n        System.out.println(\"第 0 位是 1 吗：\" + ((n & (1 << 0)) == 1));\n        System.out.println(\"第 1 位是 1 吗：\" + ((n & (1 << 1)) == 1));\n        System.out.println(\"第 2 位是 1 吗：\" + ((n & (1 << 2)) == 1));\n        System.out.println(\"第 3 位是 1 吗：\" + ((n & (1 << 3)) == 1));\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b00001101;\n\n        System.out.println(\"第 0 位是 1 吗：\" + ((n & (1 << 0)) != 0));\n        System.out.println(\"第 1 位是 1 吗：\" + ((n & (1 << 1)) != 0));\n        System.out.println(\"第 2 位是 1 吗：\" + ((n & (1 << 2)) != 0));\n        System.out.println(\"第 3 位是 1 吗：\" + ((n & (1 << 3)) != 0));\n    }\n}\n",
+      "expectedOutput": "第 0 位是 1 吗：true\n第 1 位是 1 吗：false\n第 2 位是 1 吗：true\n第 3 位是 1 吗：true",
+      "stdin": null,
+      "explanation": "本喵这一处栽在**「那一格的分量」和「那一格开不开」是两回事**上。\n\n**一、拿格子纸盖出来的是那一格的分量，不是一个「是／不是」。** 用 `1 << 1` 去盖，第 1 位原来是 1，盖出来是 2；原来是 0，盖出来是 0。它给出的是「那一格值多少」，不是「那一格开不开」。\n\n**二、拿它去等于 1，只有第 0 位碰巧说对。** 第 0 位盖出来要么 1、要么 0，所以 `== 1` 在这一格上**恰好**是对的 —— 这正是这个错最阴的地方：第一行对了，很容易以为整段都没问题。从第 1 位起，盖出来是 2、4、8，没有一个等于 1，于是**明明开着的格子全被报成没开**。\n\n**三、问「开不开」要问「是不是不等于 0」。** 写成 `(n & (1 << k)) != 0`：盖出来不是 0，就说明那一格开着。\n\n**四、换个姿势问也行：把那一格挪出来。** `(n >> k & 1) == 1` —— 先把它挪到最右边，这时候它只可能是 0 或 1，再和 1 比就说得通了。\n\n**五、两种问法问的是同一件事。** 一种把那一格**挪出来**看（值一定是 0 或 1），一种拿格子纸**盖上去**看（值是它的分量 1、2、4、8……）。盖上去那一版更容易写错，就因为**分量不是 1**。",
+      "templateId": "java-s3-bit-test-one",
+      "params": {
+        "nb": "00001101"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:25.756Z",
+        "hash": "cfbc7b37c5fa178d"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-unsigned-shift-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵手上有个负数 -8，想把它那排格子**整体往右挪 1 格**：右边挤出去的格子不要了，**左边空出来的格子一律补 0**。\n\n可这段稿子跑出来的结果不对：左边补进来的不是 0，是 1 —— 挪完还是负数，前头那排 1 一格没少。\n\n你帮本喵把该动的那一处改到能跑对为止，让它印出**三行**：\n\n- 第一行 `原来的格子：` 后面接原来那排格子；\n- 第二行 `往右挪 1 格之后：` 后面接挪完那排格子；\n- 第三行 `挪完是多少：` 后面接挪完这个数当数字读是多少。\n\n除了那一处，稿子里别的字一个都别改喵。\n\n（这一题**不用投喂任何东西**，数都写在稿子里。）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = -8;\n        int k = 1;\n\n        System.out.println(\"原来的格子：\" + Integer.toBinaryString(n));\n        System.out.println(\"往右挪 \" + k + \" 格之后：\" + Integer.toBinaryString(n >> k));\n        System.out.println(\"挪完是多少：\" + (n >> k));\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = -8;\n        int k = 1;\n\n        System.out.println(\"原来的格子：\" + Integer.toBinaryString(n));\n        System.out.println(\"往右挪 \" + k + \" 格之后：\" + Integer.toBinaryString(n >>> k));\n        System.out.println(\"挪完是多少：\" + (n >>> k));\n    }\n}\n",
+      "expectedOutput": "原来的格子：11111111111111111111111111111000\n往右挪 1 格之后：1111111111111111111111111111100\n挪完是多少：2147483644",
+      "stdin": null,
+      "explanation": "本喵伸错了手：**往右挪有两只手，左边补什么由你写的那只说了算。**\n\n**一、`>>` 往左边补的是「最左边那一格原来的样子」。** 正数最左边是 0，补 0，看着和普通挪位置没两样；可 -8 是负数，最左边那一格是 1，于是每挪一格就往左边补一个 1 —— 挪完还是负数，前头那排 1 一格没少。\n\n**二、`>>>` 才是不管三七二十一，一律补 0。** 它比 `>>` 多出来的那个小尖角读作「往右挪，左边空出来的一律填 0」。于是 -8 挪完变成一个很大的正数 —— 原来顶在最左边的那些 1 全被挤出去了，腾出来的位置填的是 0。\n\n**三、这个差别只有负数才看得见。** 正数用哪只手结果都一样，所以两只手混着用的人，在正数上跑一百遍也发现不了。\n\n**四、要数字意义就用 `>>`，要格子形状就用 `>>>`。** 往右挪一格，正数上是「除以 2 扔掉余数」；`>>>` 的结果当数字读已经没有这个意思了 —— 它只是把那排格子搬了个位置。\n\n**五、其他语言不一定有这只手。** C 那边的 `>>` 对负数补什么，标准里没写死，留给各家的翻译官喵自己挑；想「一律补 0」得先把那个数当成不带正负号的那一路。Java 把两只手都摆出来了，用哪只全写在你眼皮底下。\n\n**六、印出来的时候，前头的 0 会不见。** `Integer.toBinaryString` 只给「有意义的那几位」—— -8 挪完变成正数之后，最左边那几个 0 就不印了，所以第二行看着比第一行短。**这不是算错了**，是印的时候自己省略了。",
+      "templateId": "java-s3-bit-unsigned-shift",
+      "params": {
+        "n": "-8",
+        "k": 1
+      },
+      "verified": {
+        "at": "2026-10-15T22:44:22.372Z",
+        "hash": "6119817089cf6fa6"
+      }
+    },
+    {
+      "id": "bank-java-s3-bit-unsigned-shift-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵手上有个负数 -16，想把它那排格子**整体往右挪 2 格**：右边挤出去的格子不要了，**左边空出来的格子一律补 0**。\n\n可这段稿子跑出来的结果不对：左边补进来的不是 0，是 1 —— 挪完还是负数，前头那排 1 一格没少。\n\n你帮本喵把该动的那一处改到能跑对为止，让它印出**三行**：\n\n- 第一行 `原来的格子：` 后面接原来那排格子；\n- 第二行 `往右挪 2 格之后：` 后面接挪完那排格子；\n- 第三行 `挪完是多少：` 后面接挪完这个数当数字读是多少。\n\n除了那一处，稿子里别的字一个都别改喵。\n\n（这一题**不用投喂任何东西**，数都写在稿子里。）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = -16;\n        int k = 2;\n\n        System.out.println(\"原来的格子：\" + Integer.toBinaryString(n));\n        System.out.println(\"往右挪 \" + k + \" 格之后：\" + Integer.toBinaryString(n >> k));\n        System.out.println(\"挪完是多少：\" + (n >> k));\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = -16;\n        int k = 2;\n\n        System.out.println(\"原来的格子：\" + Integer.toBinaryString(n));\n        System.out.println(\"往右挪 \" + k + \" 格之后：\" + Integer.toBinaryString(n >>> k));\n        System.out.println(\"挪完是多少：\" + (n >>> k));\n    }\n}\n",
+      "expectedOutput": "原来的格子：11111111111111111111111111110000\n往右挪 2 格之后：111111111111111111111111111100\n挪完是多少：1073741820",
+      "stdin": null,
+      "explanation": "本喵伸错了手：**往右挪有两只手，左边补什么由你写的那只说了算。**\n\n**一、`>>` 往左边补的是「最左边那一格原来的样子」。** 正数最左边是 0，补 0，看着和普通挪位置没两样；可 -16 是负数，最左边那一格是 1，于是每挪一格就往左边补一个 1 —— 挪完还是负数，前头那排 1 一格没少。\n\n**二、`>>>` 才是不管三七二十一，一律补 0。** 它比 `>>` 多出来的那个小尖角读作「往右挪，左边空出来的一律填 0」。于是 -16 挪完变成一个很大的正数 —— 原来顶在最左边的那些 1 全被挤出去了，腾出来的位置填的是 0。\n\n**三、这个差别只有负数才看得见。** 正数用哪只手结果都一样，所以两只手混着用的人，在正数上跑一百遍也发现不了。\n\n**四、要数字意义就用 `>>`，要格子形状就用 `>>>`。** 往右挪一格，正数上是「除以 2 扔掉余数」；`>>>` 的结果当数字读已经没有这个意思了 —— 它只是把那排格子搬了个位置。\n\n**五、其他语言不一定有这只手。** C 那边的 `>>` 对负数补什么，标准里没写死，留给各家的翻译官喵自己挑；想「一律补 0」得先把那个数当成不带正负号的那一路。Java 把两只手都摆出来了，用哪只全写在你眼皮底下。\n\n**六、印出来的时候，前头的 0 会不见。** `Integer.toBinaryString` 只给「有意义的那几位」—— -16 挪完变成正数之后，最左边那几个 0 就不印了，所以第二行看着比第一行短。**这不是算错了**，是印的时候自己省略了。",
+      "templateId": "java-s3-bit-unsigned-shift",
+      "params": {
+        "n": "-16",
+        "k": 2
+      },
+      "verified": {
+        "at": "2026-10-15T22:44:24.660Z",
+        "hash": "52efc95568be0369"
+      }
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage3-09",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵就地写了一段小招式：`[limit](int x) { return x > limit; }`。那对方括号里为什么要写上 `limit`？",
+      "options": [
+        "把外面那个 `limit` **按值捕获**带进来 —— 不写进方括号，lambda里就看不见它，编译器会当场拦下来",
+        "声明这段lambda归 `limit` 这个包管，别的包不许用它",
+        "让排排坐的活儿把 `limit` 也当成一个实参，一起排进去",
+        "没什么用 —— 方括号里写什么都一样，纯粹是为了好看"
+      ],
+      "answer": 0,
+      "explanation": "方括号是 lambda 独有的一截，本喵在课文第三、四节真跑过它喵：写 `[limit]`，这段小招式里才看得见外面那个 `limit`；写成空的 `[]`，翻译官喵直接不开门。带进来的方式有两种：`[limit]` 是**揣一份**（小招式里改不动外面那个），`[&limit]` 是**共用同一个**（小招式里改了，外面跟着变）。「让排排坐的活儿把 `limit` 也当成一个实参，一起排进去」把带进来和喂进去搞混了：`limit` 是**外面**的东西，喂进小招式的还是 `count_if` / `for_each` 挨个递过来的那些。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "课文第四节里本喵写的是 `[&count, limit](int x) { ... }`。这一栏里两个名字的带法有什么不一样？",
+      "options": [
+        "`&count` 是**共用同一个**（lambda里 `count++`，外面那个跟着涨）；`limit` 是**揣一份**（lambda只读它）",
+        "`&count` 是揣一份，`limit` 才是共用同一个 —— 顺序反了而已",
+        "两个都是共用同一个：`&` 只写给头一个是因为后面的可以省略",
+        "两个都是按值捕获：`&` 只是提醒编译器这个 `count` 比较要紧"
+      ],
+      "answer": 0,
+      "explanation": "那一栏两个名字、两种带法喵：`&count` 前面那个 `&` 就是「**共用同一个**」的记号 —— 小招式里 `count++`，外面那个数当场从 0 涨到 2，最后一行的 2 就是这么来的；`limit` 没加 `&`，是**揣一份**，小招式只管读它。挑哪种的判据只有一句话：**「我要改它吗？」** 要改就加 `&`，只读就不加。（课文第四节那段的输出和第三节一样，可第三节那个数是 `count_if` 自己数完叼回来的，第四节这个是本喵在方括号里共用着一个个加上去的 —— 两条路都通向同一个 2。）"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "什么时候值得给一段小招式**起名字**写成具名招式，而不是就地写 lambda？",
+      "options": [
+        "这段lambda要用好几次、或者写长了得想半天才读得懂 —— 那就起个名字写在外头",
+        "只要方括号里带了东西，就必须起名字",
+        "身子超过一行就得起名字，只有一行以内的才能就地写",
+        "永远不用起名字 —— lambda 放到哪个场合都比具名函数好"
+      ],
+      "answer": 0,
+      "explanation": "本喵在课文第五节的判据是看两件事喵：**用几次**、**跟谁搭伙**。只用一次又很短的（「谁该站前面」这种判断只有排排坐那一处用得上），就地写最省事；要用好几次、或者得琢磨半天才读得懂的，起个名字写在外头，读的人一眼就知道那是什么。「身子超过一行就得起名字，只有一行以内的才能就地写」把「一行」当成了尺子 —— 课文第四节那段 lambda 的身子就有三行，它照样是就地写的，因为只在那一处用。「永远不用起名字 —— lambda 放到哪个场合都比具名函数好」说反了：具名招式仍然是绝大多数场合的默认写法，lambda 只是**一次性小招式**的顺手法子。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 3;\n\n    int n = count_if(v.begin(), v.end(), ____(int x) {\n        return x > ____;\n    });\n\n    cout << n << endl;\n    return 0;\n}",
+      "stem": "本喵要让这段小招式看得见外面的 `limit`（用 `____` 标出两个空位）。第一个空位是方括号那一截，第二个空位是小招式里要拿 `limit` 去比的那个地方。两个空位该填什么？",
+      "blanks": [
+        { "answer": "[limit]", "accept": [] },
+        { "answer": "limit", "accept": [] }
+      ],
+      "explanation": "第一个空位填 `[limit]` 喵 —— 那一对方括号就是 lambda 独有的一截，外面的东西想进去就得写在这儿；写成空的 `[]`，翻译官喵会报「这里看不见 `limit`」，整段编不过。第二个空位填 `limit`：小招式里真正用它的地方跟平时写东西**一模一样**，`x > limit` 就是「比 limit 大才算数」。补完这两处，程序印的是 `2` —— 挨个问过去，比 3 大的有 4 和 5 两个。这里最容易漏的是第一个空位：第二个空位写对了、第一个空位空着，程序连编都编不过，因为小招式里那个 `limit` **根本没被带进来**。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a < b;\n    });\n\n    for (int x : v) {\n        cout << x << \" \";\n    }\n    cout << endl;\n    return 0;\n}",
+      "stem": "本喵就地写了一段小招式喂给排排坐那件活儿，身子里的判断是 `a < b`。这段程序印出来的那一行是什么？（照抄那一行，注意数之间的空格）",
+      "answer": "1 1 3 4 5",
+      "accept": ["1 1 3 4 5\n"],
+      "explanation": "印出来是 `1 1 3 4 5` 喵 —— 小招式里写的是 `a < b`，意思是「小的站前面」，所以排完之后是从小到大。每个数后面都跟着一个空格，**最后一个数后面也有**，所以整行读起来是 `1 1 3 4 5 `（尾随的空格在判分时会被去掉，不算数）。要是把小招式里那行改成 `return a > b;`，排出来的就是反过来的 `5 4 3 1 1` —— 那正是课文第一节和第二节那两段真跑出来的结果，两段输出一模一样，因为排的是同一批货、用的也是同一个判断。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 2;\n    int count = 0;\n\n    for_each(v.begin(), v.end(), [&count, limit](int x) {\n        if (x > limit) {\n            count++;\n        }\n    });\n\n    cout << count << endl;\n    return 0;\n}",
+      "stem": "本喵让一段小招式挨个过一遍，合格的就在外面那个 `count` 上加一（注意 `limit` 这次是 2）。这段程序印出来的那一行是什么？",
+      "answer": "3",
+      "accept": ["3\n"],
+      "explanation": "印出来是 `3` 喵：这批货是 3、1、4、1、5，比 2 大的有 **3、4、5** 三个。那一栏 `[&count, limit]` 两个名字两种带法：`&count` 是**共用同一个** —— 小招式里每 `count++` 一次，外面那个数就跟着涨一次，所以小招式跑完它才不是 0；`limit` 是**揣一份**，小招式只管读它。最容易错的是把 `&` 丢掉、写成 `[count, limit]`：那样小招式里改的是**自己揣着的那一份副本**，外面那个 `count` 一动不动，最后会印 `0`。"
+    }
+  ]
+}

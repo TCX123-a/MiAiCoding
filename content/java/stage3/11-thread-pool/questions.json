@@ -1,0 +1,78 @@
+{
+  "lessonId": "java-stage3-11",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下 `Executors.newFixedThreadPool(2)`，这一句在干什么？",
+      "options": [
+        "雇一队**固定 2 只**的猫，常驻在院子里等着派活",
+        "马上叫 2 只猫把活干完，干完就辞退",
+        "把派进来的活平均切成 2 份，分给 2 只猫",
+        "全程序最多只允许有 2 只猫，多了就报错"
+      ],
+      "answer": 0,
+      "explanation": "这一句的意思是「**雇一队猫，编制固定 2 只，待在院子里**」——它只是把人雇好，还没派活。池子派第一件活的时候才动手雇猫，所以你光写这一句、一件活都不派，院子里其实一只猫都没有。它管的不是「只许 2 只猫存在」，而是「**这队猫的编制是 2 只**」：活再多也是这 2 只在轮着干喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵喊 `池子.submit(() -> 6 * 7)` 的时候，手里先接到的是什么？",
+      "options": [
+        "一张**领货凭条**，活干完了拿它去取货",
+        "算好的结果 42",
+        "那只领了活干活的猫的工号",
+        "什么都接不到，这一句要把活干完才返回"
+      ],
+      "answer": 0,
+      "explanation": "`submit` 派活是**不等**的：活一交出去，它**立刻**把一张领货凭条（`Future`）塞回本喵手里，然后那件活在院子里慢慢干。所以这一句拿到的**永远不是 42**，而是一张写着「干完可以来取」的凭条 `凭条.get()` 才是取货——取的时候活还没干完，它就在那儿等着，取回来的一定是 42喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵自己拿 `ThreadPoolExecutor` 建池子，把「常驻」写成 4、把「上限」写成 2，池子会怎么样？",
+      "options": [
+        "它当场不干，甩一个错误出来，程序从那儿断掉",
+        "它默默把上限调到 3，继续跑",
+        "它把常驻数也一起降到 2，继续跑",
+        "上限那一格会被当成废话，池子照常按 4 只跑"
+      ],
+      "answer": 0,
+      "explanation": "池子上的三个数是有规矩的：**上限不能比常驻小**，两边也不能是负数。写反了，池子**不当场帮你调过来，也不默默认下来**，而是直接甩一个错误、程序从那一句断掉。本喵第一次写的时候就是常驻写了 4、上限写了 2，红字看半天才明白过来喵。它这么硬气是有道理的：一个「最多只能有 2 只、可常驻就要 4 只」的池子，自己都不知道该听哪一句。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.concurrent.ExecutorService;\nimport java.util.concurrent.Executors;\nimport java.util.concurrent.Future;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ExecutorService 池子 = Executors.____(2);\n        Future<Integer> 凭条 = 池子.____(() -> 6 * 7);\n        System.out.println(\"第一件：\" + 凭条.____());\n        池子.shutdown();\n    }\n}",
+      "stem": "这段代码缺了三处，把它补完整，让它跑起来印出 `第一件：42`。",
+      "blanks": [
+        { "answer": "newFixedThreadPool", "accept": [] },
+        { "answer": "submit", "accept": [] },
+        { "answer": "get", "accept": [] }
+      ],
+      "explanation": "三处正好是今天的三个动作喵：**第一处** `Executors.newFixedThreadPool(2)` 是「雇一队编制 2 只的猫」；**第二处** `池子.submit(...)` 是「派一件活出去」，括号里那件活是「算 6 乘 7」；**第三处** `凭条.get()` 是「拿凭条去取货」。少了哪一处都跑不起来——只 submit 不 get，就永远拿不到那个 42喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.concurrent.ExecutorService;\nimport java.util.concurrent.Executors;\nimport java.util.concurrent.Future;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ExecutorService 池子 = Executors.newFixedThreadPool(2);\n        Future<Integer> 甲 = 池子.submit(() -> 10 - 3);\n        Future<Integer> 乙 = 池子.submit(() -> 4 * 4);\n        System.out.println(甲.get());\n        System.out.println(乙.get());\n        池子.shutdown();\n    }\n}",
+      "stem": "这段代码的输出是什么？（两行，一行一个数）",
+      "answer": "7\n16",
+      "accept": ["7\n16\n"],
+      "explanation": "派了两件活出去，猫是**同时**在干这两件的——谁先干完说不定。可本喵取货的顺序是定死的：**先取甲那张凭条、再取乙那张凭条**。所以输出也定死：甲那件活算的是 `10 - 3`，印 `7`；乙那件活算的是 `4 * 4`，印 `16`。这就是「按提交顺序逐个取货」这个法子的用处：**猫那边再乱，屏幕上的顺序也乱不了**喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.concurrent.LinkedBlockingQueue;\nimport java.util.concurrent.ThreadPoolExecutor;\nimport java.util.concurrent.TimeUnit;\n\npublic class Main {\n    public static void main(String[] args) {\n        ThreadPoolExecutor 池子 = new ThreadPoolExecutor(\n                1, 3, 10L, TimeUnit.SECONDS,\n                new LinkedBlockingQueue<>());\n        System.out.println(\"常驻 \" + 池子.getCorePoolSize());\n        System.out.println(\"上限 \" + 池子.getMaximumPoolSize());\n        池子.shutdown();\n    }\n}",
+      "stem": "这段代码的输出是什么？（两行）",
+      "answer": "常驻 1\n上限 3",
+      "accept": ["常驻 1\n上限 3\n"],
+      "explanation": "池子上的三个旋钮，前两个就是投喂进去的头两个数：**常驻**写在最前面那个 `1`（院子里常年养着 1 只），**上限**写在第二个 `3`（最多的时候能雇到 3 只）。所以两行分别印 `常驻 1` 和 `上限 3`。`getCorePoolSize()` 和 `getMaximumPoolSize()` 这一对招式就是「问池子这两个数分别是多少」喵。"
+    }
+  ]
+}

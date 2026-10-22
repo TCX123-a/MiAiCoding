@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-while1-break-feed",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-08",
+  "type": "codewrite",
+  "concept": ["while (1)", "自己决定什么时候停", "圈里的 break"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["小鱼干", "冻干块"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 4 },
+  "stemTemplate": "本喵要发{unit}，可今天不知道要发到第几条 —— **只知道发到第几条就该收工**。\n\n请你写个程序：**先从投喂口读进来一个数**（就是发到第几条收工）。用 `while (1)` 把圈先转起来，圈里每转一圈就发一条、印一行 `喂第 %d 条{unit}喵`，发到那个数就跳出圈，最后印一行 `喂饱啦`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int want = 0;\n    if (scanf(\"%d\", &want) != 1) {\n        return 1;\n    }\n\n    int fish = 0;\n    while (1) {\n        fish = fish + 1;\n        printf(\"喂第 %d 条{unit}喵\\n\", fish);\n        if (fish == want) {\n            break;\n        }\n    }\n    printf(\"喂饱啦\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "`while (1)` 是「一句话就能写出来的、永远转下去的圈」—— 括号里那个 1 永远不是 0，按 C 的规矩就是永远为真喵。可它配上 `break`，立刻变成一件**很好用的家当**：**先把圈转起来，跑到该停的地方自己停。**\n\n这份写法在真实的 C 程序里到处都是：`while (1)` 负责「一直跑」，`break` 负责「跑到什么条件就出来」。圈里那个数每转一圈加一，撞上读进来的那个数就收工 —— 所以**圈能不能停下来，全押在圈里那个 `break` 上**：只要它有一条路能走到，圈就一定会停。\n\n⚠️ 反过来说：要是 `break` 那条路根本走不到（比如那个数永远变不到它，或者眼色的写法反了），这个圈就真的停不下来了 —— 程序会一路跑到你硬把窗口按掉。写完 `while (1)`，回头把 `break` 的条件读一遍，这是本喵的固定动作喵。"
+}

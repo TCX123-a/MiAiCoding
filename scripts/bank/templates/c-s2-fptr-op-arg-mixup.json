@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-fptr-op-arg-mixup",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-12",
+  "type": "codefix",
+  "concept": ["把牌子递进招式", "投喂给错了", "跑得成功但数不对"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵写了两招：`add`（两个数相加）、`sub`（两个数相减）。另有一招 `apply`：头上收**一张牌子**加两个数，然后把两个数交给牌子上写的那一招去办。\n\n`main` 里请它办两次：递「加」的牌子一次，递「减」的牌子一次，各印一行。用本喵给的 {a} 和 {b} 试，应该是 `{a} 加 {b}` 和 `{a} 减 {b}` 两个结果。\n\n可跑出来两个数都不对。翻译官喵**一个字都没说**。你帮本喵在 `apply` 里找出那一处笔误。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, a);\n}\n\nint main(void) {\n    printf(\"%d\\n\", apply(add, {a}, {b}));\n    printf(\"%d\\n\", apply(sub, {a}, {b}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    printf(\"%d\\n\", apply(add, {a}, {b}));\n    printf(\"%d\\n\", apply(sub, {a}, {b}));\n    return 0;\n}\n",
+  "explanationTemplate": "笔误在 `apply` 的最后一句喵：写成了 `op(a, a)` —— **同一位投喂喂了两遍**。\n\n于是两次都只在跟 {a} 打交道：递「加」的牌子进去，算的是 {a} 加 {a}；递「减」的牌子进去，算的是 {a} 减 {a}，也就是 0。b 那一份从头到尾被晾在一边。\n\n改成 `op(a, b)` 就对了。**注意这一处错翻译官喵完全挑不出来**：`a` 和 `b` 都是同样长相的整数，一只碗装什么它不管 —— 它只管「字写没写规矩」。所以这类错得靠本喵自己**对着题面走一遍**：题面说「把两个数交给牌子上写的那一招」，那就得是两样都给过去。\n\n顺手把这一课真正的甜头再念一遍喵：`apply` 自己**完全不知道**进来的是加还是乘还是减。它只管照着牌子干活 —— 递「加」就加，递「减」就减。**这就是牌子最值钱的地方：把「怎么干」从「什么时候干」里拆了出来。**\n\n（顺带一提：`apply` 头上第一样投喂 `int (*op)(int, int)` 要的**不是数，是一张牌子**，而且牌子的长相写清楚了 —— 收两个整数、叼回一个整数。长相写对了，递进来的招式就必须对得上。）"
+}

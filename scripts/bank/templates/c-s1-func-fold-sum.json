@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-func-fold-sum",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-12",
+  "type": "codewrite",
+  "concept": ["带战利品的招式", "return", "recall", "循环累积"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵想一边读一边把鱼干攒起来喵。\n\n请你写个程序：**先读进来一个数**（这次有几颗），**再读进来 {n} 行数**（一行一个）。\n\n写一招专门干加法：喂进去两个整数，它把加起来的结果**叼回来**。然后转 {n} 圈，每圈读进来一颗新的数，就喊一次这一招 —— 一次喂「**到目前为止攒的总数**」，一次喂「**刚读进来的那颗**」，把叼回来的结果放回总数那只碗里。\n\n转完 {n} 圈，印一行 `一共 N 条小鱼干`（`N` 是攒到最后的总数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\n// 在这里登记那一招加法（它会叼一个整数回来）\n\nint main(void) {\n    int n;\n\n    // 先读「有几颗」\n\n    // 摆一只碗装总数，先放 0\n\n    // 转 {n} 圈：每圈读一颗新的，喊一次那一招，把结果放回总数碗里\n\n    // 印「一共 N 条小鱼干」\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int total = 0;\n    int i;\n    for (i = 0; i < n; i++) {\n        int x;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        total = add(total, x);\n    }\n\n    printf(\"一共 %d 条小鱼干\\n\", total);\n    return 0;\n}\n",
+  "explanationTemplate": "招式**要叼东西回来**的时候，头一个词就是**战利品的种类**（这里是 `int`），身体里用 `return` 把它交出去喵。喊它的时候就能伸手接住了。\n\n这一题最值钱的是这一行：`total = add(total, x);`\n\n它干了三件事，从右往左看：\n\n1. 把「**旧的总数**」和「**刚读进来的那颗**」一起喂进去；\n2. `add` 把两个加起来，**叼回来**一个新数；\n3. 这个新数落回 `total` 那只碗里，旧的就被顶掉了。\n\n转一圈涨一点，{n} 圈下来就是全部的和。\n\n本喵这儿摔过一跤，你千万别跟着摔：别写成光喊一声不接的 `add(total, x);` —— 那样每圈确实也加了一遍，可结果**叼回来就扔了**，`total` 那只碗从头到尾都还是 0，最后印出来就是 `一共 0 条小鱼干`。\n\n（还有个顺序上的小事：`total` 那只碗要在转圈**之前**就摆好、装上 0，不然转圈里第一次用到它的时候它还不存在。）"
+}

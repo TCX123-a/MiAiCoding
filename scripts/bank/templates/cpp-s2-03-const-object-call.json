@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-03-const-object-call",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-03",
+  "type": "codefix",
+  "concept": ["带封印的猫", "只读招式尾巴上的 const", "编译期报错现场"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "三花"] }
+  },
+  "stemTemplate": "本喵画了一张叫 `Cat` 的图纸，上面那一招只是印一行字，一个格子都没碰。`main` 里本喵生了一只**带封印的猫**，喊它印那行字 —— 可信封递进去，翻译官喵当场拦下喵。\n\n你帮本喵改一处，让它跑起来、把那行字印出来。**`main` 里那两句一个都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void show() {\n        cout << name << \" 蹲在这儿喵\" << endl;\n    }\n};\n\nint main() {\n    const Cat c1(\"{name}\");\n    c1.show();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void show() const {\n        cout << name << \" 蹲在这儿喵\" << endl;\n    }\n};\n\nint main() {\n    const Cat c1(\"{name}\");\n    c1.show();\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:18:12: error: passing 'const Cat' as 'this' argument discards qualifiers [-fpermissive]`\n\n翻成猫话：**「你递进来的是一只带封印的猫，可这一招没说自己只看看 —— 封印不能丢，所以这活它接不了。」**\n\n这句话里有个熟面孔：`this`。每喊一次招式，翻译官喵都会悄悄把**喊它的那只猫**递进去；可带封印的猫递不出一个「随便你改」的自己，而这一招（尾巴上没写 `const`）又没承诺过不动手，两边谈不拢，它就当场拦下。\n\n改法是在这一招的尾巴上补一颗 `const`：`void show() const`。\n\n⚠️ 补之前先想清楚：**这一招真的只是看看吗？** 要是它本来就要往格子里写东西，那该拿掉的就不是这颗 `const`，而是那只猫身上的封印喵。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-header-missing-body",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-09",
+  "type": "codewrite",
+  "concept": ["招牌只放宣告", "身子只留一份", "没有身子就没人干活", "链接期报错"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵把同一行宣告抄了**两遍**（两处都是只写着「有这么一招」的那一行），可**身子一份都没抄进来** —— 翻译官喵翻到收尾那一步才发现：「本喵只看到招牌，干活的那一份呢？」\n\n请把**身子**补上，让它能跑起来，并且印出一行 `结果 <两数相加的数>`。\n\n（真实工程里身子在干活本里，本课的跑台一次只翻一张纸，所以把它抄在同一张纸上就行。）",
+  "starterTemplate": "#include <stdio.h>\n\n/* ── 两处都抄了同一行宣告 ── */\nint add(int a, int b);\nint add(int a, int b);\n\nint main(void) {\n    printf(\"结果 %d\\n\", add({a}, {b}));\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* ── 两处都抄了同一行宣告 ── */\nint add(int a, int b);\nint add(int a, int b);\n\nint main(void) {\n    printf(\"结果 %d\\n\", add({a}, {b}));\n    return 0;\n}\n\n/* ── 身子：只留一份，别人抄不走它 ── */\nint add(int a, int b) {\n    return a + b;\n}\n",
+  "explanationTemplate": "这一题要补的，是**干活的那一份**喵。\n\n宣告（`int add(int a, int b);`）只说了「有这么一招、长这样」；**真正把两个数加起来的是身子**（带花括号那一份）。只有招牌、没有身子，翻译官喵在收尾的时候就会问「本喵只看到招牌，缸呢」—— 收尾那一步说的原话是本喵跑过的那一句：`collect2.exe: error: ld returned 1 exit status`，往前翻一行还能看到它念叨的名字（`undefined reference to`，后面跟着 `add`）。\n\n身子该放哪儿？**一处就够**，放在 `main` 前面或后面都行（宣告在前面，它已经认得这一招了）。本喵用的是放在后面。\n\n看起来最容易写岔的两处：\n\n- **把身子补进那两行宣告里**（两处都带上花括号）—— 那就变成两份身子，翻译官喵会改口念 `error: redefinition of 'add'`；\n- **只把宣告改成身子、另一行宣告留着** —— 那也行（一行宣告 + 一份身子，本来就是你上一课见过的正常形状）。\n\n顺便记一条对照：**同一行宣告抄几遍都不算重复**（本喵真跑过，翻译官喵一个字都没说），**身子抄两遍才是重复**。所以招牌本里只放宣告这条规矩，是省不掉的。"
+}

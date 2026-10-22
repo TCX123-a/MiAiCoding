@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-two-children-speak",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-02",
+  "type": "codewrite",
+  "concept": ["图纸套图纸", "重写", "@Override", "Scanner"],
+  "instances": 6,
+  "params": {
+    "dog": { "kind": "pick", "values": ["大黄", "旺财"] },
+    "fishName": { "kind": "pick", "values": ["泡泡", "金金"] },
+    "animalName": { "kind": "pick", "values": ["大肥鱼", "河豚"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要画**一大两小三张图纸**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Dog` 和 `Fish` 都套在这张大图纸上，各自把 `speak()` **盖掉、换上自己那版**：\n\n- `Dog` 印 **名字 + `：汪！`**\n- `Fish` 印 **名字 + `：咕噜咕噜`**\n\n投喂给程序的只有**一个数**。程序该这么走：读那个数 → 照三张图纸各生一只（名字都用题目给的）→ **喊那么多声** `Dog` 那一招 → 再喊一声 `Fish` 的 → 最后喊一声大图纸**直接生出来**那只动物的。\n\n最后那一声是故意留的：**大图纸本身一个字都没被改过**，照它直接生出来的动物，喊起来还是老样子喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Dog extends Animal {\n\n}\n\nclass Fish extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\nclass Fish extends Animal {\n    Fish(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：咕噜咕噜\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Dog d = new Dog(\"{dog}\");\n        Fish f = new Fish(\"{fishName}\");\n        Animal a = new Animal(\"{animalName}\");\n        for (int i = 0; i < n; i++) {\n            d.speak();\n        }\n        f.speak();\n        a.speak();\n    }\n}\n",
+  "explanationTemplate": "这题练的是**「大图纸只画一遍，小图纸各改各的」**喵。\n\n三张图纸的关系：`Dog` 和 `Fish` 的图纸名后面都写着 `extends Animal`，所以「有名字、会出一声」这套设定**一个字都不用重抄**。两张小图纸只做了两件事：\n\n1. **出生那一手各写一遍**，头一句都是 `super(name);` —— 把名字交给大图纸去装。要是有哪张小图纸漏了这一句，翻译官喵就会拦下来说那一长串 `constructor ... cannot be applied to given types`。\n2. **把 `speak()` 盖掉、换上自己那版**，各自换成自己那种叫声，头上都挂着 `@Override`。\n\n本喵特意让 `main` 最后再喊一声**照大图纸直接生出来**的那只动物：它印的还是「发出了一声叫」。这说明**盖掉只盖住小图纸这条往下的路**，大图纸本身一根毛都没动。\n\n`main` 那边就是：读一个数当喊几声，生三只，然后照题目要求的顺序喊 —— `Dog` 喊够那么多声、`Fish` 一声、大图纸那只一声。**顺序和声数都得对**，少喊一声输出就对不上喵。"
+}

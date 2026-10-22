@@ -1,0 +1,498 @@
+{
+  "lessonId": "c-stage2-03",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s2-ptrstr-bead-bowl-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵有一条项链，是 `cat` 这几个字母串起来的。\n\n程序要把整条项链**原样印出来**（一行）。可翻译官喵一瞧见就不干了，把整段代码退了回来。你帮本喵看看它为什么不高兴，把它改好。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char s = \"cat\";\n    printf(\"%s\\n\", s);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"cat\";\n    printf(\"%s\\n\", s);\n    return 0;\n}\n",
+      "expectedOutput": "cat",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: initialization of 'char' from 'char *' makes integer from pointer without a cast [-Wint-conversion]` —— 翻过来是「**你想把一条项链塞进一只只装一颗珠子的碗，本喵不认**」。\n\n看那行 `char s = \"cat\";`：左边是 `char`，那是**一只碗，一次只装一颗珠子**；右边是 `\"cat\"`，那是**一整条项链**。项链在 C 里不是珠子，它是一种**门牌号** —— 说的是「这几颗珠子从哪儿开始排」。想把门牌号当成一颗珠子塞进碗里，翻译官喵当场拦下。\n\n装项链要用**牌子**：`char *s = \"cat\";` —— 「那条项链住在哪儿」。\n\n紧跟着还有一句 `warning: format '%s' expects argument of type 'char *', but argument 2 has type 'int' [-Wformat=]`，它说的是同一件事的另一面：`%s` 要的是**一条项链**（也就是牌子），不是一颗珠子。\n\n收下这条对照喵：**一只碗装一颗珠子（`char`），一块牌子指一整条项链（`char *`）。** 差的就是那颗星。",
+      "templateId": "c-s2-ptrstr-bead-bowl",
+      "params": {
+        "word": "cat"
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:23.022Z",
+        "hash": "db3fb455f0a16644"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-bead-bowl-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵有一条项链，是 `moon` 这几个字母串起来的。\n\n程序要把整条项链**原样印出来**（一行）。可翻译官喵一瞧见就不干了，把整段代码退了回来。你帮本喵看看它为什么不高兴，把它改好。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char s = \"moon\";\n    printf(\"%s\\n\", s);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"moon\";\n    printf(\"%s\\n\", s);\n    return 0;\n}\n",
+      "expectedOutput": "moon",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: initialization of 'char' from 'char *' makes integer from pointer without a cast [-Wint-conversion]` —— 翻过来是「**你想把一条项链塞进一只只装一颗珠子的碗，本喵不认**」。\n\n看那行 `char s = \"moon\";`：左边是 `char`，那是**一只碗，一次只装一颗珠子**；右边是 `\"moon\"`，那是**一整条项链**。项链在 C 里不是珠子，它是一种**门牌号** —— 说的是「这几颗珠子从哪儿开始排」。想把门牌号当成一颗珠子塞进碗里，翻译官喵当场拦下。\n\n装项链要用**牌子**：`char *s = \"moon\";` —— 「那条项链住在哪儿」。\n\n紧跟着还有一句 `warning: format '%s' expects argument of type 'char *', but argument 2 has type 'int' [-Wformat=]`，它说的是同一件事的另一面：`%s` 要的是**一条项链**（也就是牌子），不是一颗珠子。\n\n收下这条对照喵：**一只碗装一颗珠子（`char`），一块牌子指一整条项链（`char *`）。** 差的就是那颗星。",
+      "templateId": "c-s2-ptrstr-bead-bowl",
+      "params": {
+        "word": "moon"
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:24.217Z",
+        "hash": "2af9b12b54c67517"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-own-bowl-edit-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报两个数。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行，就是**要换第几颗珠子**，编号从 0 数起）。\n\n然后**把第 k 颗珠子换成 `X`**，报两行：\n\n1. 第一行照写 `改之前：`，后面紧跟原来那条项链；\n2. 第二行照写 `改之后：`，后面紧跟换过珠子以后的那条项链。\n\n比如投喂给程序的是\n\nmoon\n0\n\n程序就要叼回\n\n改之前：moon\n改之后：Xoon\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"改之前：%s\\n\", word);\n    word[k] = 'X';\n    printf(\"改之后：%s\\n\", word);\n    return 0;\n}\n",
+      "expectedOutput": "改之前：cat\n改之后：Xat",
+      "stdin": "cat\n0\n",
+      "explanation": "这道题练的是「**要动字，就得自己摆碗**」喵。\n\n**① 先摆一排自己的碗。** `char word[64];` 是本喵自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去。**这排碗是本喵自己的** —— 这一点决定了能不能往下刻。\n\n**② 方括号挑碗、放珠子。** `word[k] = 'X';` 读作「先挑出第 k 只碗，再把 `X` 那颗珠子放进去」。写成 `*(word + k) = 'X';` 一模一样，一个方括号正好换一颗星加一对括号。\n\n**③ 为什么这条项链能刻？** 因为 `word` 指的是**本喵自己摆的那排碗**。对照着想一想上一题的坑：`char *s = \"cat\";` 那种牌子指的是**写死在程序里的字**，往那儿刻字会当场断气。所以判断标准不是「用牌子还是用碗名」，而是「**那块地方是不是本喵自己的**」。\n\n顺带一个容易绊人的地方：`word` 这个名字本身**挪不动**（`word++` 翻译官喵会拦），想往后走要另起一块牌子。不过这道题不需要挪 —— **刻字只靠编号就行**，`word[k]` 直接够到第 k 只碗，名字不动也没什么关系喵。",
+      "templateId": "c-s2-ptrstr-own-bowl-edit",
+      "params": {
+        "word": "cat",
+        "word2": "moon",
+        "k": 0,
+        "up": "X"
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:39.596Z",
+        "hash": "93e6a3ad35fe8db4"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-own-bowl-edit-016",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报两个数。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行，就是**要换第几颗珠子**，编号从 0 数起）。\n\n然后**把第 k 颗珠子换成 `Z`**，报两行：\n\n1. 第一行照写 `改之前：`，后面紧跟原来那条项链；\n2. 第二行照写 `改之后：`，后面紧跟换过珠子以后的那条项链。\n\n比如投喂给程序的是\n\nstar\n2\n\n程序就要叼回\n\n改之前：star\n改之后：stZr\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"改之前：%s\\n\", word);\n    word[k] = 'Z';\n    printf(\"改之后：%s\\n\", word);\n    return 0;\n}\n",
+      "expectedOutput": "改之前：cat\n改之后：caZ",
+      "stdin": "cat\n2\n",
+      "explanation": "这道题练的是「**要动字，就得自己摆碗**」喵。\n\n**① 先摆一排自己的碗。** `char word[64];` 是本喵自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去。**这排碗是本喵自己的** —— 这一点决定了能不能往下刻。\n\n**② 方括号挑碗、放珠子。** `word[k] = 'Z';` 读作「先挑出第 k 只碗，再把 `Z` 那颗珠子放进去」。写成 `*(word + k) = 'Z';` 一模一样，一个方括号正好换一颗星加一对括号。\n\n**③ 为什么这条项链能刻？** 因为 `word` 指的是**本喵自己摆的那排碗**。对照着想一想上一题的坑：`char *s = \"cat\";` 那种牌子指的是**写死在程序里的字**，往那儿刻字会当场断气。所以判断标准不是「用牌子还是用碗名」，而是「**那块地方是不是本喵自己的**」。\n\n顺带一个容易绊人的地方：`word` 这个名字本身**挪不动**（`word++` 翻译官喵会拦），想往后走要另起一块牌子。不过这道题不需要挪 —— **刻字只靠编号就行**，`word[k]` 直接够到第 k 只碗，名字不动也没什么关系喵。",
+      "templateId": "c-s2-ptrstr-own-bowl-edit",
+      "params": {
+        "word": "cat",
+        "word2": "star",
+        "k": 2,
+        "up": "Z"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:14.605Z",
+        "hash": "b3e2179b9bda5a62"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-own-bowl-edit-032",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报两个数。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行，就是**要换第几颗珠子**，编号从 0 数起）。\n\n然后**把第 k 颗珠子换成 `Q`**，报两行：\n\n1. 第一行照写 `改之前：`，后面紧跟原来那条项链；\n2. 第二行照写 `改之后：`，后面紧跟换过珠子以后的那条项链。\n\n比如投喂给程序的是\n\nmoon\n1\n\n程序就要叼回\n\n改之前：moon\n改之后：mQon\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"改之前：%s\\n\", word);\n    word[k] = 'Q';\n    printf(\"改之后：%s\\n\", word);\n    return 0;\n}\n",
+      "expectedOutput": "改之前：fish\n改之后：fQsh",
+      "stdin": "fish\n1\n",
+      "explanation": "这道题练的是「**要动字，就得自己摆碗**」喵。\n\n**① 先摆一排自己的碗。** `char word[64];` 是本喵自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去。**这排碗是本喵自己的** —— 这一点决定了能不能往下刻。\n\n**② 方括号挑碗、放珠子。** `word[k] = 'Q';` 读作「先挑出第 k 只碗，再把 `Q` 那颗珠子放进去」。写成 `*(word + k) = 'Q';` 一模一样，一个方括号正好换一颗星加一对括号。\n\n**③ 为什么这条项链能刻？** 因为 `word` 指的是**本喵自己摆的那排碗**。对照着想一想上一题的坑：`char *s = \"cat\";` 那种牌子指的是**写死在程序里的字**，往那儿刻字会当场断气。所以判断标准不是「用牌子还是用碗名」，而是「**那块地方是不是本喵自己的**」。\n\n顺带一个容易绊人的地方：`word` 这个名字本身**挪不动**（`word++` 翻译官喵会拦），想往后走要另起一块牌子。不过这道题不需要挪 —— **刻字只靠编号就行**，`word[k]` 直接够到第 k 只碗，名字不动也没什么关系喵。",
+      "templateId": "c-s2-ptrstr-own-bowl-edit",
+      "params": {
+        "word": "fish",
+        "word2": "moon",
+        "k": 1,
+        "up": "Q"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:17.579Z",
+        "hash": "2b582ed87bf0f1c4"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-own-bowl-edit-048",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报两个数。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行，就是**要换第几颗珠子**，编号从 0 数起）。\n\n然后**把第 k 颗珠子换成 `X`**，报两行：\n\n1. 第一行照写 `改之前：`，后面紧跟原来那条项链；\n2. 第二行照写 `改之后：`，后面紧跟换过珠子以后的那条项链。\n\n比如投喂给程序的是\n\nleaf\n1\n\n程序就要叼回\n\n改之前：leaf\n改之后：lXaf\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"改之前：%s\\n\", word);\n    word[k] = 'X';\n    printf(\"改之后：%s\\n\", word);\n    return 0;\n}\n",
+      "expectedOutput": "改之前：fish\n改之后：fXsh",
+      "stdin": "fish\n1\n",
+      "explanation": "这道题练的是「**要动字，就得自己摆碗**」喵。\n\n**① 先摆一排自己的碗。** `char word[64];` 是本喵自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去。**这排碗是本喵自己的** —— 这一点决定了能不能往下刻。\n\n**② 方括号挑碗、放珠子。** `word[k] = 'X';` 读作「先挑出第 k 只碗，再把 `X` 那颗珠子放进去」。写成 `*(word + k) = 'X';` 一模一样，一个方括号正好换一颗星加一对括号。\n\n**③ 为什么这条项链能刻？** 因为 `word` 指的是**本喵自己摆的那排碗**。对照着想一想上一题的坑：`char *s = \"cat\";` 那种牌子指的是**写死在程序里的字**，往那儿刻字会当场断气。所以判断标准不是「用牌子还是用碗名」，而是「**那块地方是不是本喵自己的**」。\n\n顺带一个容易绊人的地方：`word` 这个名字本身**挪不动**（`word++` 翻译官喵会拦），想往后走要另起一块牌子。不过这道题不需要挪 —— **刻字只靠编号就行**，`word[k]` 直接够到第 k 只碗，名字不动也没什么关系喵。",
+      "templateId": "c-s2-ptrstr-own-bowl-edit",
+      "params": {
+        "word": "fish",
+        "word2": "leaf",
+        "k": 1,
+        "up": "X"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:20.573Z",
+        "hash": "09d1d49d12ca3679"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-own-bowl-edit-064",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报两个数。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行，就是**要换第几颗珠子**，编号从 0 数起）。\n\n然后**把第 k 颗珠子换成 `Z`**，报两行：\n\n1. 第一行照写 `改之前：`，后面紧跟原来那条项链；\n2. 第二行照写 `改之后：`，后面紧跟换过珠子以后的那条项链。\n\n比如投喂给程序的是\n\nstar\n0\n\n程序就要叼回\n\n改之前：star\n改之后：Ztar\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"改之前：%s\\n\", word);\n    word[k] = 'Z';\n    printf(\"改之后：%s\\n\", word);\n    return 0;\n}\n",
+      "expectedOutput": "改之前：bird\n改之后：Zird",
+      "stdin": "bird\n0\n",
+      "explanation": "这道题练的是「**要动字，就得自己摆碗**」喵。\n\n**① 先摆一排自己的碗。** `char word[64];` 是本喵自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去。**这排碗是本喵自己的** —— 这一点决定了能不能往下刻。\n\n**② 方括号挑碗、放珠子。** `word[k] = 'Z';` 读作「先挑出第 k 只碗，再把 `Z` 那颗珠子放进去」。写成 `*(word + k) = 'Z';` 一模一样，一个方括号正好换一颗星加一对括号。\n\n**③ 为什么这条项链能刻？** 因为 `word` 指的是**本喵自己摆的那排碗**。对照着想一想上一题的坑：`char *s = \"cat\";` 那种牌子指的是**写死在程序里的字**，往那儿刻字会当场断气。所以判断标准不是「用牌子还是用碗名」，而是「**那块地方是不是本喵自己的**」。\n\n顺带一个容易绊人的地方：`word` 这个名字本身**挪不动**（`word++` 翻译官喵会拦），想往后走要另起一块牌子。不过这道题不需要挪 —— **刻字只靠编号就行**，`word[k]` 直接够到第 k 只碗，名字不动也没什么关系喵。",
+      "templateId": "c-s2-ptrstr-own-bowl-edit",
+      "params": {
+        "word": "bird",
+        "word2": "star",
+        "k": 0,
+        "up": "Z"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:23.541Z",
+        "hash": "ad040d2dbd01b0ea"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-own-bowl-edit-080",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报两个数。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行，就是**要换第几颗珠子**，编号从 0 数起）。\n\n然后**把第 k 颗珠子换成 `Q`**，报两行：\n\n1. 第一行照写 `改之前：`，后面紧跟原来那条项链；\n2. 第二行照写 `改之后：`，后面紧跟换过珠子以后的那条项链。\n\n比如投喂给程序的是\n\nleaf\n2\n\n程序就要叼回\n\n改之前：leaf\n改之后：leQf\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"改之前：%s\\n\", word);\n    word[k] = 'Q';\n    printf(\"改之后：%s\\n\", word);\n    return 0;\n}\n",
+      "expectedOutput": "改之前：bird\n改之后：biQd",
+      "stdin": "bird\n2\n",
+      "explanation": "这道题练的是「**要动字，就得自己摆碗**」喵。\n\n**① 先摆一排自己的碗。** `char word[64];` 是本喵自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去。**这排碗是本喵自己的** —— 这一点决定了能不能往下刻。\n\n**② 方括号挑碗、放珠子。** `word[k] = 'Q';` 读作「先挑出第 k 只碗，再把 `Q` 那颗珠子放进去」。写成 `*(word + k) = 'Q';` 一模一样，一个方括号正好换一颗星加一对括号。\n\n**③ 为什么这条项链能刻？** 因为 `word` 指的是**本喵自己摆的那排碗**。对照着想一想上一题的坑：`char *s = \"cat\";` 那种牌子指的是**写死在程序里的字**，往那儿刻字会当场断气。所以判断标准不是「用牌子还是用碗名」，而是「**那块地方是不是本喵自己的**」。\n\n顺带一个容易绊人的地方：`word` 这个名字本身**挪不动**（`word++` 翻译官喵会拦），想往后走要另起一块牌子。不过这道题不需要挪 —— **刻字只靠编号就行**，`word[k]` 直接够到第 k 只碗，名字不动也没什么关系喵。",
+      "templateId": "c-s2-ptrstr-own-bowl-edit",
+      "params": {
+        "word": "bird",
+        "word2": "leaf",
+        "k": 2,
+        "up": "Q"
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:41.160Z",
+        "hash": "7ed760302df822eb"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-star-in-walk-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵有一条项链，是 `cat` 这几个字母串起来的。\n\n程序想用一块牌子从第一颗珠子走起，**一颗一颗**地把整条项链念出来，最后再换一行收尾。\n\n可它跑起来什么都没印就断气了喵 —— 翻译官喵这回**出了声**，但没把本喵拦下，代码照样编了出来。你帮本喵看看它说的是什么意思，把程序改好。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"cat\";\n\n    for (char *p = s; *p != '\\0'; p++) {\n        printf(\"%s\", *p);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"cat\";\n\n    for (char *p = s; *p != '\\0'; p++) {\n        printf(\"%c\", *p);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "cat",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `warning: format '%s' expects argument of type 'char *', but argument 2 has type 'int' [-Wformat=]` —— 翻过来就是「**`%s` 要的是一整条项链（牌子），你喂进来的是一颗珠子**」。\n\n毛病在那颗星上。走这一趟的 `p` 是**一块牌子**，`*p` 是**当前这颗珠子** —— 一个字符。`%s` 的脾气是「把从这块牌子开始的一整条项链印出来」，而走一颗印一颗要的是 `%c`。\n\n⚠️ 这里最贵的一点是：**它只出声，不拦人。** 本喵真跑过这一版 —— 警告归警告，程序照样被编了出来、交到了本喵手里。然后一跑起来，`%s` 拿着「一颗珠子的字码」当门牌号，顺着这个奇怪的地址去找项链，当场断气：**一个字都没印出来。**\n\n把这一对收进兜里：**`%c` 印一颗珠子，`%s` 印一整条项链；一个收字符，一个收牌子。** 走一圈一颗一颗印的场合，永远配 `%c` 喵。",
+      "templateId": "c-s2-ptrstr-star-in-walk",
+      "params": {
+        "word": "cat"
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:28.994Z",
+        "hash": "e7010df0915d106d"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-star-in-walk-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵有一条项链，是 `moon` 这几个字母串起来的。\n\n程序想用一块牌子从第一颗珠子走起，**一颗一颗**地把整条项链念出来，最后再换一行收尾。\n\n可它跑起来什么都没印就断气了喵 —— 翻译官喵这回**出了声**，但没把本喵拦下，代码照样编了出来。你帮本喵看看它说的是什么意思，把程序改好。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"moon\";\n\n    for (char *p = s; *p != '\\0'; p++) {\n        printf(\"%s\", *p);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"moon\";\n\n    for (char *p = s; *p != '\\0'; p++) {\n        printf(\"%c\", *p);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "moon",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `warning: format '%s' expects argument of type 'char *', but argument 2 has type 'int' [-Wformat=]` —— 翻过来就是「**`%s` 要的是一整条项链（牌子），你喂进来的是一颗珠子**」。\n\n毛病在那颗星上。走这一趟的 `p` 是**一块牌子**，`*p` 是**当前这颗珠子** —— 一个字符。`%s` 的脾气是「把从这块牌子开始的一整条项链印出来」，而走一颗印一颗要的是 `%c`。\n\n⚠️ 这里最贵的一点是：**它只出声，不拦人。** 本喵真跑过这一版 —— 警告归警告，程序照样被编了出来、交到了本喵手里。然后一跑起来，`%s` 拿着「一颗珠子的字码」当门牌号，顺着这个奇怪的地址去找项链，当场断气：**一个字都没印出来。**\n\n把这一对收进兜里：**`%c` 印一颗珠子，`%s` 印一整条项链；一个收字符，一个收牌子。** 走一圈一颗一颗印的场合，永远配 `%c` 喵。",
+      "templateId": "c-s2-ptrstr-star-in-walk",
+      "params": {
+        "word": "moon"
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:30.648Z",
+        "hash": "3577948c99b2cd70"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-tail-from-k-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报一个数，那是「**从第几颗珠子起**」。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行）。然后报两行：\n\n1. `整条：` 后面紧跟着整条项链**原样**；\n2. 第二行开头照写 `从第 k 颗起：`（把 `k` 换成你读进来的那个数），后面紧跟**从第 k 颗起一直到最后**的那一截尾巴（含第 k 颗自己）。\n\n珠子的编号从 0 数起。\n\n比如投喂给程序的是\n\nmoon\n1\n\n程序就要叼回\n\n整条：moon\n从第 1 颗起：oon\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"整条：%s\\n\", word);\n    printf(\"从第 %d 颗起：%s\\n\", k, word + k);\n    return 0;\n}\n",
+      "expectedOutput": "整条：cat\n从第 1 颗起：at",
+      "stdin": "cat\n1\n",
+      "explanation": "这道题只有一个「啊哈」的地方喵：**一截尾巴，照样是一整条项链。**\n\n- 「一整条项链」在 C 里不是「那一串珠子全都在这儿」，而是「**从哪一颗开始**」这个门牌号。所以把门牌号往后挪 k 颗，剩下的那一截**自己就是一条完整的项链** —— 末尾那颗看不见的收尾珠子还在，`%s` 照样认。\n- 门牌号怎么往后挪？第一课就学过了：一排碗的名字加 k，就是第 k 颗的门牌号。这里写成 `word + k` 一行就够了。\n\n不用另摆一排碗，也不用绕圈，一行就印出尾巴 —— 这就是「牌子加一加，项链往后挪」的省事之处。\n\n两条对照顺手收下喵：\n\n- 想印**一截尾巴**：`word + k`，配 `%s`；\n- 想印**第 k 颗那一颗珠子**：`word[k]`（和 `*(word + k)` 是一回事），配 `%c`。\n\n⚠️ 还有一件小事值得想一想：`k` **是从键盘读进来的**，写程序的时候本喵压根不知道它会是几，所以**不能**把它写死在代码里 —— 这也是为什么参考解要先读一遍、再拿读到的那个数去用。往后凡是从外面进来的东西，都得先接住、再使用，跟项链多长是一个道理。",
+      "templateId": "c-s2-ptrstr-tail-from-k",
+      "params": {
+        "word": "cat",
+        "word2": "moon",
+        "k": 1
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:36.299Z",
+        "hash": "5fb53ea3a39da295"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-tail-from-k-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报一个数，那是「**从第几颗珠子起**」。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行）。然后报两行：\n\n1. `整条：` 后面紧跟着整条项链**原样**；\n2. 第二行开头照写 `从第 k 颗起：`（把 `k` 换成你读进来的那个数），后面紧跟**从第 k 颗起一直到最后**的那一截尾巴（含第 k 颗自己）。\n\n珠子的编号从 0 数起。\n\n比如投喂给程序的是\n\nstar\n2\n\n程序就要叼回\n\n整条：star\n从第 2 颗起：ar\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"整条：%s\\n\", word);\n    printf(\"从第 %d 颗起：%s\\n\", k, word + k);\n    return 0;\n}\n",
+      "expectedOutput": "整条：cat\n从第 2 颗起：t",
+      "stdin": "cat\n2\n",
+      "explanation": "这道题只有一个「啊哈」的地方喵：**一截尾巴，照样是一整条项链。**\n\n- 「一整条项链」在 C 里不是「那一串珠子全都在这儿」，而是「**从哪一颗开始**」这个门牌号。所以把门牌号往后挪 k 颗，剩下的那一截**自己就是一条完整的项链** —— 末尾那颗看不见的收尾珠子还在，`%s` 照样认。\n- 门牌号怎么往后挪？第一课就学过了：一排碗的名字加 k，就是第 k 颗的门牌号。这里写成 `word + k` 一行就够了。\n\n不用另摆一排碗，也不用绕圈，一行就印出尾巴 —— 这就是「牌子加一加，项链往后挪」的省事之处。\n\n两条对照顺手收下喵：\n\n- 想印**一截尾巴**：`word + k`，配 `%s`；\n- 想印**第 k 颗那一颗珠子**：`word[k]`（和 `*(word + k)` 是一回事），配 `%c`。\n\n⚠️ 还有一件小事值得想一想：`k` **是从键盘读进来的**，写程序的时候本喵压根不知道它会是几，所以**不能**把它写死在代码里 —— 这也是为什么参考解要先读一遍、再拿读到的那个数去用。往后凡是从外面进来的东西，都得先接住、再使用，跟项链多长是一个道理。",
+      "templateId": "c-s2-ptrstr-tail-from-k",
+      "params": {
+        "word": "cat",
+        "word2": "star",
+        "k": 2
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:26.410Z",
+        "hash": "2c4dfb8903e41bfa"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-tail-from-k-007",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报一个数，那是「**从第几颗珠子起**」。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行）。然后报两行：\n\n1. `整条：` 后面紧跟着整条项链**原样**；\n2. 第二行开头照写 `从第 k 颗起：`（把 `k` 换成你读进来的那个数），后面紧跟**从第 k 颗起一直到最后**的那一截尾巴（含第 k 颗自己）。\n\n珠子的编号从 0 数起。\n\n比如投喂给程序的是\n\nmoon\n2\n\n程序就要叼回\n\n整条：moon\n从第 2 颗起：on\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"整条：%s\\n\", word);\n    printf(\"从第 %d 颗起：%s\\n\", k, word + k);\n    return 0;\n}\n",
+      "expectedOutput": "整条：fish\n从第 2 颗起：sh",
+      "stdin": "fish\n2\n",
+      "explanation": "这道题只有一个「啊哈」的地方喵：**一截尾巴，照样是一整条项链。**\n\n- 「一整条项链」在 C 里不是「那一串珠子全都在这儿」，而是「**从哪一颗开始**」这个门牌号。所以把门牌号往后挪 k 颗，剩下的那一截**自己就是一条完整的项链** —— 末尾那颗看不见的收尾珠子还在，`%s` 照样认。\n- 门牌号怎么往后挪？第一课就学过了：一排碗的名字加 k，就是第 k 颗的门牌号。这里写成 `word + k` 一行就够了。\n\n不用另摆一排碗，也不用绕圈，一行就印出尾巴 —— 这就是「牌子加一加，项链往后挪」的省事之处。\n\n两条对照顺手收下喵：\n\n- 想印**一截尾巴**：`word + k`，配 `%s`；\n- 想印**第 k 颗那一颗珠子**：`word[k]`（和 `*(word + k)` 是一回事），配 `%c`。\n\n⚠️ 还有一件小事值得想一想：`k` **是从键盘读进来的**，写程序的时候本喵压根不知道它会是几，所以**不能**把它写死在代码里 —— 这也是为什么参考解要先读一遍、再拿读到的那个数去用。往后凡是从外面进来的东西，都得先接住、再使用，跟项链多长是一个道理。",
+      "templateId": "c-s2-ptrstr-tail-from-k",
+      "params": {
+        "word": "fish",
+        "word2": "moon",
+        "k": 2
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:29.150Z",
+        "hash": "907f0b99c4eeec43"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-tail-from-k-010",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报一个数，那是「**从第几颗珠子起**」。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行）。然后报两行：\n\n1. `整条：` 后面紧跟着整条项链**原样**；\n2. 第二行开头照写 `从第 k 颗起：`（把 `k` 换成你读进来的那个数），后面紧跟**从第 k 颗起一直到最后**的那一截尾巴（含第 k 颗自己）。\n\n珠子的编号从 0 数起。\n\n比如投喂给程序的是\n\nleaf\n1\n\n程序就要叼回\n\n整条：leaf\n从第 1 颗起：eaf\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"整条：%s\\n\", word);\n    printf(\"从第 %d 颗起：%s\\n\", k, word + k);\n    return 0;\n}\n",
+      "expectedOutput": "整条：fish\n从第 1 颗起：ish",
+      "stdin": "fish\n1\n",
+      "explanation": "这道题只有一个「啊哈」的地方喵：**一截尾巴，照样是一整条项链。**\n\n- 「一整条项链」在 C 里不是「那一串珠子全都在这儿」，而是「**从哪一颗开始**」这个门牌号。所以把门牌号往后挪 k 颗，剩下的那一截**自己就是一条完整的项链** —— 末尾那颗看不见的收尾珠子还在，`%s` 照样认。\n- 门牌号怎么往后挪？第一课就学过了：一排碗的名字加 k，就是第 k 颗的门牌号。这里写成 `word + k` 一行就够了。\n\n不用另摆一排碗，也不用绕圈，一行就印出尾巴 —— 这就是「牌子加一加，项链往后挪」的省事之处。\n\n两条对照顺手收下喵：\n\n- 想印**一截尾巴**：`word + k`，配 `%s`；\n- 想印**第 k 颗那一颗珠子**：`word[k]`（和 `*(word + k)` 是一回事），配 `%c`。\n\n⚠️ 还有一件小事值得想一想：`k` **是从键盘读进来的**，写程序的时候本喵压根不知道它会是几，所以**不能**把它写死在代码里 —— 这也是为什么参考解要先读一遍、再拿读到的那个数去用。往后凡是从外面进来的东西，都得先接住、再使用，跟项链多长是一个道理。",
+      "templateId": "c-s2-ptrstr-tail-from-k",
+      "params": {
+        "word": "fish",
+        "word2": "leaf",
+        "k": 1
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:32.063Z",
+        "hash": "a6fb4aa57e2d8d58"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-tail-from-k-014",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报一个数，那是「**从第几颗珠子起**」。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行）。然后报两行：\n\n1. `整条：` 后面紧跟着整条项链**原样**；\n2. 第二行开头照写 `从第 k 颗起：`（把 `k` 换成你读进来的那个数），后面紧跟**从第 k 颗起一直到最后**的那一截尾巴（含第 k 颗自己）。\n\n珠子的编号从 0 数起。\n\n比如投喂给程序的是\n\nstar\n1\n\n程序就要叼回\n\n整条：star\n从第 1 颗起：tar\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"整条：%s\\n\", word);\n    printf(\"从第 %d 颗起：%s\\n\", k, word + k);\n    return 0;\n}\n",
+      "expectedOutput": "整条：bird\n从第 1 颗起：ird",
+      "stdin": "bird\n1\n",
+      "explanation": "这道题只有一个「啊哈」的地方喵：**一截尾巴，照样是一整条项链。**\n\n- 「一整条项链」在 C 里不是「那一串珠子全都在这儿」，而是「**从哪一颗开始**」这个门牌号。所以把门牌号往后挪 k 颗，剩下的那一截**自己就是一条完整的项链** —— 末尾那颗看不见的收尾珠子还在，`%s` 照样认。\n- 门牌号怎么往后挪？第一课就学过了：一排碗的名字加 k，就是第 k 颗的门牌号。这里写成 `word + k` 一行就够了。\n\n不用另摆一排碗，也不用绕圈，一行就印出尾巴 —— 这就是「牌子加一加，项链往后挪」的省事之处。\n\n两条对照顺手收下喵：\n\n- 想印**一截尾巴**：`word + k`，配 `%s`；\n- 想印**第 k 颗那一颗珠子**：`word[k]`（和 `*(word + k)` 是一回事），配 `%c`。\n\n⚠️ 还有一件小事值得想一想：`k` **是从键盘读进来的**，写程序的时候本喵压根不知道它会是几，所以**不能**把它写死在代码里 —— 这也是为什么参考解要先读一遍、再拿读到的那个数去用。往后凡是从外面进来的东西，都得先接住、再使用，跟项链多长是一个道理。",
+      "templateId": "c-s2-ptrstr-tail-from-k",
+      "params": {
+        "word": "bird",
+        "word2": "star",
+        "k": 1
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:34.972Z",
+        "hash": "632c59a57663e5c7"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-tail-from-k-017",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报一个数，那是「**从第几颗珠子起**」。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行）。然后报两行：\n\n1. `整条：` 后面紧跟着整条项链**原样**；\n2. 第二行开头照写 `从第 k 颗起：`（把 `k` 换成你读进来的那个数），后面紧跟**从第 k 颗起一直到最后**的那一截尾巴（含第 k 颗自己）。\n\n珠子的编号从 0 数起。\n\n比如投喂给程序的是\n\nleaf\n2\n\n程序就要叼回\n\n整条：leaf\n从第 2 颗起：af\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"整条：%s\\n\", word);\n    printf(\"从第 %d 颗起：%s\\n\", k, word + k);\n    return 0;\n}\n",
+      "expectedOutput": "整条：bird\n从第 2 颗起：rd",
+      "stdin": "bird\n2\n",
+      "explanation": "这道题只有一个「啊哈」的地方喵：**一截尾巴，照样是一整条项链。**\n\n- 「一整条项链」在 C 里不是「那一串珠子全都在这儿」，而是「**从哪一颗开始**」这个门牌号。所以把门牌号往后挪 k 颗，剩下的那一截**自己就是一条完整的项链** —— 末尾那颗看不见的收尾珠子还在，`%s` 照样认。\n- 门牌号怎么往后挪？第一课就学过了：一排碗的名字加 k，就是第 k 颗的门牌号。这里写成 `word + k` 一行就够了。\n\n不用另摆一排碗，也不用绕圈，一行就印出尾巴 —— 这就是「牌子加一加，项链往后挪」的省事之处。\n\n两条对照顺手收下喵：\n\n- 想印**一截尾巴**：`word + k`，配 `%s`；\n- 想印**第 k 颗那一颗珠子**：`word[k]`（和 `*(word + k)` 是一回事），配 `%c`。\n\n⚠️ 还有一件小事值得想一想：`k` **是从键盘读进来的**，写程序的时候本喵压根不知道它会是几，所以**不能**把它写死在代码里 —— 这也是为什么参考解要先读一遍、再拿读到的那个数去用。往后凡是从外面进来的东西，都得先接住、再使用，跟项链多长是一个道理。",
+      "templateId": "c-s2-ptrstr-tail-from-k",
+      "params": {
+        "word": "bird",
+        "word2": "leaf",
+        "k": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:37.748Z",
+        "hash": "e2159710641151ba"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-walk-beads-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的，程序要从键盘上把它读进来。\n\n请你写个程序：先把这条项链读进来，然后**拿一块牌子从第一颗珠子走起，一颗一颗往下走**，每走一颗就把那颗珠子单独印一行；走完以后，再报一行：`一共 n 颗珠子`（`n` 是这条项链真正有几颗珠子，末尾那颗看不见的收尾珠子**不算**）。\n\n比如投喂给程序的是\n\nmoon\n\n程序就要叼回\n\nm\no\no\nn\n一共 4 颗珠子\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n\n    int n = 0;\n    for (char *p = word; *p != '\\0'; p++) {\n        printf(\"%c\\n\", *p);\n        n = n + 1;\n    }\n    printf(\"一共 %d 颗珠子\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "c\na\nt\n一共 3 颗珠子",
+      "stdin": "cat\n",
+      "explanation": "这道题是「走项链」的标准样子喵，四件事一件件来：\n\n**① 接住项链。** `char word[64];` 是自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去 —— 末尾系统会自动补上一颗看不见的**收尾珠子**（写出来是 `'\\0'`）。\n\n**② 牌子从第一颗走起。** `char *p = word;` —— 一排碗的名字交出来，就是第 0 颗的门牌号。\n\n**③ 走到收尾珠子就停。** 条件写 `*p != '\\0'`：意思是「当前这颗**不是**那颗看不见的收尾珠子」。这句话比「走固定那么多趟」稳得多 —— 项链有多长，本喵压根不用先知道。\n\n**④ 每走一颗印一颗。** 牌子上是**一颗珠子**，所以要用 `%c`，不是 `%s`。（上一题那个坑就是这么来的：`%s` 要的是牌子，`*p` 是一颗珠子。）\n\n数珠子那件事顺路就做了：每走一步 `n` 加一，走完就是真珠子的颗数。**末尾那颗收尾珠子不算** —— 因为绕圈一碰见它就停了，它压根没被数进去，这正是它该有的样子喵。",
+      "templateId": "c-s2-ptrstr-walk-beads",
+      "params": {
+        "word": "cat",
+        "word2": "moon"
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:32.962Z",
+        "hash": "31b199d94c135862"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-walk-beads-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的，程序要从键盘上把它读进来。\n\n请你写个程序：先把这条项链读进来，然后**拿一块牌子从第一颗珠子走起，一颗一颗往下走**，每走一颗就把那颗珠子单独印一行；走完以后，再报一行：`一共 n 颗珠子`（`n` 是这条项链真正有几颗珠子，末尾那颗看不见的收尾珠子**不算**）。\n\n比如投喂给程序的是\n\nleaf\n\n程序就要叼回\n\nl\ne\na\nf\n一共 4 颗珠子\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n\n    int n = 0;\n    for (char *p = word; *p != '\\0'; p++) {\n        printf(\"%c\\n\", *p);\n        n = n + 1;\n    }\n    printf(\"一共 %d 颗珠子\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "c\na\nt\n一共 3 颗珠子",
+      "stdin": "cat\n",
+      "explanation": "这道题是「走项链」的标准样子喵，四件事一件件来：\n\n**① 接住项链。** `char word[64];` 是自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去 —— 末尾系统会自动补上一颗看不见的**收尾珠子**（写出来是 `'\\0'`）。\n\n**② 牌子从第一颗走起。** `char *p = word;` —— 一排碗的名字交出来，就是第 0 颗的门牌号。\n\n**③ 走到收尾珠子就停。** 条件写 `*p != '\\0'`：意思是「当前这颗**不是**那颗看不见的收尾珠子」。这句话比「走固定那么多趟」稳得多 —— 项链有多长，本喵压根不用先知道。\n\n**④ 每走一颗印一颗。** 牌子上是**一颗珠子**，所以要用 `%c`，不是 `%s`。（上一题那个坑就是这么来的：`%s` 要的是牌子，`*p` 是一颗珠子。）\n\n数珠子那件事顺路就做了：每走一步 `n` 加一，走完就是真珠子的颗数。**末尾那颗收尾珠子不算** —— 因为绕圈一碰见它就停了，它压根没被数进去，这正是它该有的样子喵。",
+      "templateId": "c-s2-ptrstr-walk-beads",
+      "params": {
+        "word": "cat",
+        "word2": "leaf"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:37.977Z",
+        "hash": "452f29267b59bd46"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-walk-beads-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的，程序要从键盘上把它读进来。\n\n请你写个程序：先把这条项链读进来，然后**拿一块牌子从第一颗珠子走起，一颗一颗往下走**，每走一颗就把那颗珠子单独印一行；走完以后，再报一行：`一共 n 颗珠子`（`n` 是这条项链真正有几颗珠子，末尾那颗看不见的收尾珠子**不算**）。\n\n比如投喂给程序的是\n\nmoon\n\n程序就要叼回\n\nm\no\no\nn\n一共 4 颗珠子\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n\n    int n = 0;\n    for (char *p = word; *p != '\\0'; p++) {\n        printf(\"%c\\n\", *p);\n        n = n + 1;\n    }\n    printf(\"一共 %d 颗珠子\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "f\ni\ns\nh\n一共 4 颗珠子",
+      "stdin": "fish\n",
+      "explanation": "这道题是「走项链」的标准样子喵，四件事一件件来：\n\n**① 接住项链。** `char word[64];` 是自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去 —— 末尾系统会自动补上一颗看不见的**收尾珠子**（写出来是 `'\\0'`）。\n\n**② 牌子从第一颗走起。** `char *p = word;` —— 一排碗的名字交出来，就是第 0 颗的门牌号。\n\n**③ 走到收尾珠子就停。** 条件写 `*p != '\\0'`：意思是「当前这颗**不是**那颗看不见的收尾珠子」。这句话比「走固定那么多趟」稳得多 —— 项链有多长，本喵压根不用先知道。\n\n**④ 每走一颗印一颗。** 牌子上是**一颗珠子**，所以要用 `%c`，不是 `%s`。（上一题那个坑就是这么来的：`%s` 要的是牌子，`*p` 是一颗珠子。）\n\n数珠子那件事顺路就做了：每走一步 `n` 加一，走完就是真珠子的颗数。**末尾那颗收尾珠子不算** —— 因为绕圈一碰见它就停了，它压根没被数进去，这正是它该有的样子喵。",
+      "templateId": "c-s2-ptrstr-walk-beads",
+      "params": {
+        "word": "fish",
+        "word2": "moon"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:40.905Z",
+        "hash": "f8d6b6c7424e62ac"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-walk-beads-005",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的，程序要从键盘上把它读进来。\n\n请你写个程序：先把这条项链读进来，然后**拿一块牌子从第一颗珠子走起，一颗一颗往下走**，每走一颗就把那颗珠子单独印一行；走完以后，再报一行：`一共 n 颗珠子`（`n` 是这条项链真正有几颗珠子，末尾那颗看不见的收尾珠子**不算**）。\n\n比如投喂给程序的是\n\nleaf\n\n程序就要叼回\n\nl\ne\na\nf\n一共 4 颗珠子\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n\n    int n = 0;\n    for (char *p = word; *p != '\\0'; p++) {\n        printf(\"%c\\n\", *p);\n        n = n + 1;\n    }\n    printf(\"一共 %d 颗珠子\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "f\ni\ns\nh\n一共 4 颗珠子",
+      "stdin": "fish\n",
+      "explanation": "这道题是「走项链」的标准样子喵，四件事一件件来：\n\n**① 接住项链。** `char word[64];` 是自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去 —— 末尾系统会自动补上一颗看不见的**收尾珠子**（写出来是 `'\\0'`）。\n\n**② 牌子从第一颗走起。** `char *p = word;` —— 一排碗的名字交出来，就是第 0 颗的门牌号。\n\n**③ 走到收尾珠子就停。** 条件写 `*p != '\\0'`：意思是「当前这颗**不是**那颗看不见的收尾珠子」。这句话比「走固定那么多趟」稳得多 —— 项链有多长，本喵压根不用先知道。\n\n**④ 每走一颗印一颗。** 牌子上是**一颗珠子**，所以要用 `%c`，不是 `%s`。（上一题那个坑就是这么来的：`%s` 要的是牌子，`*p` 是一颗珠子。）\n\n数珠子那件事顺路就做了：每走一步 `n` 加一，走完就是真珠子的颗数。**末尾那颗收尾珠子不算** —— 因为绕圈一碰见它就停了，它压根没被数进去，这正是它该有的样子喵。",
+      "templateId": "c-s2-ptrstr-walk-beads",
+      "params": {
+        "word": "fish",
+        "word2": "leaf"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:43.866Z",
+        "hash": "1a7e699919197f43"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-walk-beads-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的，程序要从键盘上把它读进来。\n\n请你写个程序：先把这条项链读进来，然后**拿一块牌子从第一颗珠子走起，一颗一颗往下走**，每走一颗就把那颗珠子单独印一行；走完以后，再报一行：`一共 n 颗珠子`（`n` 是这条项链真正有几颗珠子，末尾那颗看不见的收尾珠子**不算**）。\n\n比如投喂给程序的是\n\nmoon\n\n程序就要叼回\n\nm\no\no\nn\n一共 4 颗珠子\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n\n    int n = 0;\n    for (char *p = word; *p != '\\0'; p++) {\n        printf(\"%c\\n\", *p);\n        n = n + 1;\n    }\n    printf(\"一共 %d 颗珠子\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "b\ni\nr\nd\n一共 4 颗珠子",
+      "stdin": "bird\n",
+      "explanation": "这道题是「走项链」的标准样子喵，四件事一件件来：\n\n**① 接住项链。** `char word[64];` 是自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去 —— 末尾系统会自动补上一颗看不见的**收尾珠子**（写出来是 `'\\0'`）。\n\n**② 牌子从第一颗走起。** `char *p = word;` —— 一排碗的名字交出来，就是第 0 颗的门牌号。\n\n**③ 走到收尾珠子就停。** 条件写 `*p != '\\0'`：意思是「当前这颗**不是**那颗看不见的收尾珠子」。这句话比「走固定那么多趟」稳得多 —— 项链有多长，本喵压根不用先知道。\n\n**④ 每走一颗印一颗。** 牌子上是**一颗珠子**，所以要用 `%c`，不是 `%s`。（上一题那个坑就是这么来的：`%s` 要的是牌子，`*p` 是一颗珠子。）\n\n数珠子那件事顺路就做了：每走一步 `n` 加一，走完就是真珠子的颗数。**末尾那颗收尾珠子不算** —— 因为绕圈一碰见它就停了，它压根没被数进去，这正是它该有的样子喵。",
+      "templateId": "c-s2-ptrstr-walk-beads",
+      "params": {
+        "word": "bird",
+        "word2": "moon"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:46.796Z",
+        "hash": "8b94a2de7e6ae1cb"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-walk-beads-008",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵递给你一条项链：是几个**不带空格**的字母串起来的，程序要从键盘上把它读进来。\n\n请你写个程序：先把这条项链读进来，然后**拿一块牌子从第一颗珠子走起，一颗一颗往下走**，每走一颗就把那颗珠子单独印一行；走完以后，再报一行：`一共 n 颗珠子`（`n` 是这条项链真正有几颗珠子，末尾那颗看不见的收尾珠子**不算**）。\n\n比如投喂给程序的是\n\nleaf\n\n程序就要叼回\n\nl\ne\na\nf\n一共 4 颗珠子\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n\n    int n = 0;\n    for (char *p = word; *p != '\\0'; p++) {\n        printf(\"%c\\n\", *p);\n        n = n + 1;\n    }\n    printf(\"一共 %d 颗珠子\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "b\ni\nr\nd\n一共 4 颗珠子",
+      "stdin": "bird\n",
+      "explanation": "这道题是「走项链」的标准样子喵，四件事一件件来：\n\n**① 接住项链。** `char word[64];` 是自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去 —— 末尾系统会自动补上一颗看不见的**收尾珠子**（写出来是 `'\\0'`）。\n\n**② 牌子从第一颗走起。** `char *p = word;` —— 一排碗的名字交出来，就是第 0 颗的门牌号。\n\n**③ 走到收尾珠子就停。** 条件写 `*p != '\\0'`：意思是「当前这颗**不是**那颗看不见的收尾珠子」。这句话比「走固定那么多趟」稳得多 —— 项链有多长，本喵压根不用先知道。\n\n**④ 每走一颗印一颗。** 牌子上是**一颗珠子**，所以要用 `%c`，不是 `%s`。（上一题那个坑就是这么来的：`%s` 要的是牌子，`*p` 是一颗珠子。）\n\n数珠子那件事顺路就做了：每走一步 `n` 加一，走完就是真珠子的颗数。**末尾那颗收尾珠子不算** —— 因为绕圈一碰见它就停了，它压根没被数进去，这正是它该有的样子喵。",
+      "templateId": "c-s2-ptrstr-walk-beads",
+      "params": {
+        "word": "bird",
+        "word2": "leaf"
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:34.486Z",
+        "hash": "d669c63364ceef97"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-write-literal-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵有一条项链，是 `cat` 这几个字母串起来的。\n\n程序想把**第 0 颗珠子**换成 `X`，然后把改过的项链印出来（一行）。\n\n可它跑起来什么都没印就断气了喵 —— 翻译官喵**一声都没吭**，代码照样编了出来。你帮本喵看看是哪儿写歪了。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"cat\";\n    s[0] = 'X';\n    printf(\"%s\\n\", s);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char word[] = \"cat\";\n    word[0] = 'X';\n    printf(\"%s\\n\", word);\n    return 0;\n}\n",
+      "expectedOutput": "Xat",
+      "stdin": null,
+      "explanation": "这一题的坑就藏在上一题那个「正确写法」里喵。\n\n`char *s = \"cat\";` 里的 `\"cat\"` 是一串**写死在程序里的字**。它住在程序一个**只给念、不给刻**的地方 —— C 里管这个叫字面量。你拿 `s[0] = 'X';` 去刻它，等于往一块「不许刻字」的木牌上下刀。\n\n⚠️ 最难看的是它的报错方式：**翻译官喵一个字都没说。** 本喵真跑过这一版，`-Wall` 开着，它安安静静地把程序编了出来 —— 因为这一行**语法上完全合法**，它管不了「那块地方能不能刻」。真正拦你的是跑起来之后那一下：屏幕上一片空白，一个字都没印出来，程序当场断气。\n\n想改，就得**自己摆一排碗把项链接住**：\n\n- `char word[] = \"cat\";` —— 这句的意思是「照着那几个字母，本喵自己摆一排碗，一颗一颗接住」。摆出来的这排碗是**本喵自己的**，想刻第几颗刻第几颗。\n\n一句话收下：**念的用牌子，改的用自己摆的碗。** 下一题（还有往后每一课）只要看见「要往项链里写字」，先想想这一排碗是不是自己的喵。",
+      "templateId": "c-s2-ptrstr-write-literal",
+      "params": {
+        "word": "cat"
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:25.617Z",
+        "hash": "9f2bad442d5aadc7"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrstr-write-literal-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵有一条项链，是 `moon` 这几个字母串起来的。\n\n程序想把**第 0 颗珠子**换成 `X`，然后把改过的项链印出来（一行）。\n\n可它跑起来什么都没印就断气了喵 —— 翻译官喵**一声都没吭**，代码照样编了出来。你帮本喵看看是哪儿写歪了。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"moon\";\n    s[0] = 'X';\n    printf(\"%s\\n\", s);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char word[] = \"moon\";\n    word[0] = 'X';\n    printf(\"%s\\n\", word);\n    return 0;\n}\n",
+      "expectedOutput": "Xoon",
+      "stdin": null,
+      "explanation": "这一题的坑就藏在上一题那个「正确写法」里喵。\n\n`char *s = \"moon\";` 里的 `\"moon\"` 是一串**写死在程序里的字**。它住在程序一个**只给念、不给刻**的地方 —— C 里管这个叫字面量。你拿 `s[0] = 'X';` 去刻它，等于往一块「不许刻字」的木牌上下刀。\n\n⚠️ 最难看的是它的报错方式：**翻译官喵一个字都没说。** 本喵真跑过这一版，`-Wall` 开着，它安安静静地把程序编了出来 —— 因为这一行**语法上完全合法**，它管不了「那块地方能不能刻」。真正拦你的是跑起来之后那一下：屏幕上一片空白，一个字都没印出来，程序当场断气。\n\n想改，就得**自己摆一排碗把项链接住**：\n\n- `char word[] = \"moon\";` —— 这句的意思是「照着那几个字母，本喵自己摆一排碗，一颗一颗接住」。摆出来的这排碗是**本喵自己的**，想刻第几颗刻第几颗。\n\n一句话收下：**念的用牌子，改的用自己摆的碗。** 下一题（还有往后每一课）只要看见「要往项链里写字」，先想想这一排碗是不是自己的喵。",
+      "templateId": "c-s2-ptrstr-write-literal",
+      "params": {
+        "word": "moon"
+      },
+      "verified": {
+        "at": "2026-09-16T08:22:27.157Z",
+        "hash": "3ba0aa25606e70d5"
+      }
+    }
+  ]
+}

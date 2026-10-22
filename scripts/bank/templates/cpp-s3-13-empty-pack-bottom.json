@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-13-empty-pack-bottom",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-13",
+  "type": "codefix",
+  "concept": ["空包串不起来", "末尾垫一个底", "fold of empty expansion over operator+"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["1", "2"] },
+    "w2": { "kind": "pick", "values": ["4", "5"] }
+  },
+  "stemTemplate": "这段代码**编不过**喵 —— 翻译官喵说，有一串东西是空的，它没法把它们串起来。\n\n本喵已经看出来毛病在图纸里那句串起来的话上，可该怎么补，还没想明白。你帮本喵改对：**主猫那两行一个字都不许动** —— 它就是要空手来一次，而且空手那次也得有个答案。\n\n改好之后，程序要印出两行：先是 `{w1}`、`{w2}`、`3` 三个数加起来的结果，再是 `0`。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename... Args>\nint addAll(Args... args) {\n    return (args + ...);\n}\n\nint main() {\n    cout << addAll({w1}, {w2}, 3) << endl;\n    cout << addAll() << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename... Args>\nint addAll(Args... args) {\n    return (args + ... + 0);\n}\n\nint main() {\n    cout << addAll({w1}, {w2}, 3) << endl;\n    cout << addAll() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题缺的是**末尾垫的那个底**喵。\n\n原来那句 `(args + ...)` 念作「把包里每一样挨个用 `+` 串起来」。包里满满的时候它很好使，可主猫最后偏偏要**空手来一次** —— 一样东西都没有的时候，`+` 不知道该拿谁跟谁加，翻译官喵当场拦下：\n\n`error: fold of empty expansion over operator+`\n\n念作「**这一串是空的，我没法把它们串起来**」。补法是在末尾垫一个 `+ 0`：`(args + ... + 0)`。包里满满的时候它一点不影响结果（加 0 嘛），包是空的时候，它就当了那个「一样东西都没有」的答案，所以第二行才会印出 `0`。\n\n⚠️ 垫的底要挑这件事的**空答案**：加法垫 `0`；换成把包里每一样乘起来，垫的就该是 `1` —— 垫 `0` 的话，再多的数乘下来也全变成 `0` 了。\n\n⚠️ 顺带说一句：本喵第一反应是把主猫那句 `addAll()` 删掉，那样确实就能编过了 —— 可那是**把要考的场面躲过去**，不是修好。题目要的是「空手来也得有个答案」，所以主猫那两行一个字都不许动。"
+}

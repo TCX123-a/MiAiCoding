@@ -1,0 +1,87 @@
+{
+  "lessonId": "java-stage3-09",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵画好一张「会干活的猫」的图纸，生了一只（本喵管它叫 `小橘`），然后**直接喊了** `一只.run();`（不是 `start()`）。这一句会怎样？",
+      "options": [
+        "活真的干了，但**没有多出一路** —— 是母猫自己动手干的",
+        "当场红，说 `run()` 不许直接喊",
+        "会派出一只猫，但那只猫没有名字",
+        "什么都不会发生，那一句被悄悄跳过"
+      ],
+      "answer": 0,
+      "explanation": "答案是「活干了，但没多出一路」喵。\n\n`run()` 是**图纸上那段活本身**，`start()` 才是「**派一只猫去干这段活**」。直接喊 `run()`，等于母猫自己照着图纸把这段活干了：印也印了、算也算，**一个字都不红** —— 只是全程只有本喵这一路在动。\n\n课文里那个真跑的例子最能说明问题：两行都印着 `main`（本喵自己这一路叫 `main`）。要是换成 `start()`，第一行就变成 `Thread-0` —— 机器给派出去的第一只猫起的名。所以往后想同时干活却发现「怎么还是串着的」，先回头看一眼自己喊的是哪个。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵派出去一只猫，`join()` 等它干完，转头又对**同一只**喊了一次 `start()`。会出什么事？",
+      "options": [
+        "当场红：`IllegalThreadStateException` —— 一只干完结束了的猫不能重新开跑",
+        "它又干了一趟，跟第一次一样",
+        "它干了一趟，但这一次没有名字",
+        "不红不响，只是第二趟活被跳过"
+      ],
+      "answer": 0,
+      "explanation": "答案是当场红喵：`Exception in thread \"main\" java.lang.IllegalThreadStateException`，读作「**这只猫的状态不对，不许再派**」。\n\n一只猫只有一辈子：`new` 出来是「还没动」，`start()` 之后「出去干活」，那段 `run()` 跑完它就**结束了**。结束了的猫不能再开跑 —— 想再干一趟，得**另派一只**（另 `new` 一只、另 `start()` 一次），别指望叫醒同一只。\n\n这一脚跟本课别处那些「不红不响」的坑正好相反：它**当场把话说清楚**。第一次 `start()` 该干的活照干不误，翻脸的是第二次那一句。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵派了两只猫去数鱼，两只都 `start()` 了，可**一句 `join()` 都没写**，紧接着就印汇总「一共几条」。印出来的数会是什么样？",
+      "options": [
+        "说不准 —— 可能刚好把两只都算上，也可能**少算一只**；要稳，就得先 `join()` 把它们等回来",
+        "总是把两只都算上 —— 派出去就已经在干了",
+        "总是少算一只 —— 没 `join()` 的那一只一定还没开始",
+        "当场红 —— 不写 `join()` 不许汇总"
+      ],
+      "answer": 0,
+      "explanation": "答案是「说不准」喵，而这正是它的坑：`start()` 只负责把猫**派出去**，派出去之后两只**各自**往下走；母猫这边没等它们，就直接跑到印汇总那一句去了。那两只数完了没有、数到哪一步了，全看机器当时先轮到谁 —— **可能刚好赶上，也可能少算一只**。\n\n所以这种「跟着时间走」的毛病最烦人：它今天对、明天不对，同一份代码跑十趟能给你两三种结果。本课第二节讲的那两只猫「谁先说话说不准」，是同一件事的两副面孔。\n\n要稳，只有一条路：**印汇总、下结论、收工之前，先 `甲.join(); 乙.join();` 把它们都等回来。** 等回来了，每只猫干完的活才算数。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"小橘\");\n\n        一只.____();\n        一只.____();\n\n        System.out.println(\"本喵这边接着干活\");\n    }\n}\n\nclass Cat extends Thread {\n    String 名字;\n\n    Cat(String 名字) {\n        this.名字 = 名字;\n    }\n\n    public void run() {\n        System.out.println(名字 + \"捞到一条\");\n    }\n}",
+      "stem": "本喵想让猫先捞完、母猫再接着干活。两个空按顺序各该填什么？",
+      "blanks": [
+        {
+          "answer": "start",
+          "accept": []
+        },
+        {
+          "answer": "join",
+          "accept": []
+        }
+      ],
+      "explanation": "第一个空填 `start` 喵：`start()` 是「**派这只猫出去开跑**」。少了它，这只猫一辈子都待在原地 —— 活没人干，而且一个字都不红。\n\n第二个空填 `join`：`join()` 是「**站在这儿等它干完再往下走**」。本喵这两句摆的顺序就是「先派出去、再等它回来」，所以下面那句「本喵这边接着干活」一定在猫捞完之后才印。\n\n两个空不能颠倒喵：先 `join()` 再 `start()`，等的时候那只猫还没出去，白等一场（它压根没开始，等也等不出东西来）。另一种写法是把两个空都填 `start` —— 那母猫就没等，两行的先后说不准，课文第二节讲的就是这个「说不准」。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 甲 = new Cat(\"小橘\");\n        Cat 乙 = new Cat(\"狸花\");\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(甲.名字 + \"数到：\" + 甲.数到 + \" 条\");\n        System.out.println(乙.名字 + \"数到：\" + 乙.数到 + \" 条\");\n        System.out.println(\"一共：\" + (甲.数到 + 乙.数到) + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    String 名字;\n    int 数到 = 0;\n\n    Cat(String 名字) {\n        this.名字 = 名字;\n    }\n\n    public void run() {\n        for (int i = 0; i < 2; i++) {\n            数到 = 数到 + 1;\n        }\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "小橘数到：2 条\n狸花数到：2 条\n一共：4 条",
+      "accept": [
+        "小橘数到：2 条\n狸花数到：2 条\n一共：4 条\n"
+      ],
+      "explanation": "三行是 `小橘数到：2 条`、`狸花数到：2 条`、`一共：4 条` 喵，秩序是稳的。\n\n先说为什么稳：两只猫都在 `run()` 里**转两圈**、各自把自己的 `数到` 加二；母猫两句 `join()` 一喊，就得等它俩都干完才往下走 —— 所以汇总那一句读到的两个数，都已经加完了。\n\n再说为什么每一只各是 2：`数到` 是**图纸上的一格**，所以每只猫各有一份自己的 —— 小橘那只数它的两下，狸花那只数它的两下，互不干扰。要是这一格不放在图纸上（放在母猫那一路共用的地方），两只猫就会去加**同一个数**，那时候结果可就不一定了，下一课要讲的正是这件事。\n\n顺一句：两只谁先跑完，说不准；但这里不问先后 —— 母猫是等**两只都回来**才印的，谁先回来都不影响这三行的内容。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        Cat 一只 = new Cat(\"小橘\");\n\n        一只.run();\n        System.out.println(Thread.currentThread().getName() + \"：本喵这边也在干活\");\n    }\n}\n\nclass Cat extends Thread {\n    String 名字;\n\n    Cat(String 名字) {\n        this.名字 = 名字;\n    }\n\n    public void run() {\n        System.out.println(Thread.currentThread().getName() + \"：在捞鱼\");\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "main：在捞鱼\nmain：本喵这边也在干活",
+      "accept": [
+        "main：在捞鱼\nmain：本喵这边也在干活\n"
+      ],
+      "explanation": "两行都是 `main` 喵：先是 `main：在捞鱼`，再是 `main：本喵这边也在干活`。\n\n关键就在 `Thread.currentThread().getName()` —— 它问的是「**现在这一句是谁在干**」，本喵自己这一路的名字是 `main`。两行都报 `main`，说明**根本没有猫被派出去**：那句 `一只.run()` 只是母猫照着图纸**自己动手**把这段活干了。\n\n换成 `start()` 就不一样了：那时第一行会报 `Thread-0`（机器给派出去的第一只猫起的名），第二行还是 `main` —— 一行一路，各干各的。\n\n所以这一题的价值不只是「答对两行」：认出 `main` 这两个字，就等于认出「这里没有同时干活」这件事 —— 往后碰上「明明写了两路怎么还是串着」，先看这里。"
+    }
+  ]
+}

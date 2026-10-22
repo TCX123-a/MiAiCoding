@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-22-ndebug-order",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-22",
+  "type": "codefix",
+  "concept": ["正式版要把关卡关掉", "那句话写晚了", "招式照着当时的开关定形状"],
+  "instances": 2,
+  "params": {
+    "cats": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stemTemplate": "这一份是**正式版**：本喵在稿子里关掉了那道会拦人的关卡（就是 `#define NDEBUG` 那一行），可它一跑起来**当场断气** —— 翻译官喵一个字都没说（它只管翻得对不对），是跑起来才倒的喵。\n\n倒下的是这一句：`assert(fish > 0);`。本喵本来就是想让它**不拦人**：仓库里剩 0 条也无所谓，程序照样把结果印出来。\n\n坏在**关关卡的那句话写晚了**。你把它挪个位置（内容一个字都不用改），让程序一路跑到终点，屏幕上正好是 `仓库里还剩 0 条小鱼干，{cats} 只猫都跑到终点了` 喵。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <cassert>\n#define NDEBUG\nusing namespace std;\n\nint main() {\n    int fish = 0;\n    assert(fish > 0);\n    cout << \"仓库里还剩 \" << fish << \" 条小鱼干，\" << {cats} << \" 只猫都跑到终点了\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#define NDEBUG\n#include <iostream>\n#include <cassert>\nusing namespace std;\n\nint main() {\n    int fish = 0;\n    assert(fish > 0);\n    cout << \"仓库里还剩 \" << fish << \" 条小鱼干，\" << {cats} << \" 只猫都跑到终点了\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "关键就在**那一行的位置**喵：`#define NDEBUG` 是关掉所有关卡的开关，可它**必须写在 `#include <cassert>` 上面**。\n\n道理不难：那道关卡是那张卡进门的时候**照着当时的开关定的形状**。原稿里 `#include <cassert>` 先来（那会儿开关还没写，关卡照常立起来），`#define NDEBUG` 后到 —— 卡已经进过门、形状已经定好了，再补一句开关也变不回去。所以程序跑到那一句照样断气。\n\n改法就是把 `#define NDEBUG` 挪到**头一行**（摆在哪一行都行，只要在所有 `#include` 上面）。内容一个字都不用动，跑起来一路到终点，印出 `仓库里还剩 0 条小鱼干，{cats} 只猫都跑到终点了`。\n\n⚠️ 自己验一遍：把 `NDEBUG` 那行再挪到 `#include <cassert>` 下面，程序立刻又断气 —— 位置一改、结果就翻，这就说明你找对地方了。\n\n⚠️ 正式发布的时候根本不用动稿子：在翻译命令后面加一句 `-DNDEBUG` 就行，那等于从外面把这张卡贴上，效果和写在头一行一样。"
+}

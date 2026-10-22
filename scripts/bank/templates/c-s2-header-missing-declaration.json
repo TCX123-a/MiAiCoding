@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-header-missing-declaration",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-09",
+  "type": "codefix",
+  "concept": ["招牌先行", "宣告与身子", "implicit declaration", "编译报错"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵这段代码翻译不过去：翻译官喵说它**没见过 `add` 这一招**。可这一招本喵明明写了呀 —— 只是写在了下面。\n\n你帮本喵把它改好：让程序能翻译过去，并且印出一行 `结果 <两数相加的数>`。\n\n（改法不止一种：把那一行宣告补到前面来、或者把身子整个挪上来，都行 —— 本喵只要它跑得起来、印得对。）",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    printf(\"结果 %d\\n\", add({a}, {b}));\n    return 0;\n}\n\nint add(int a, int b) {\n    return a + b;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint add(int a, int b);\n\nint main(void) {\n    printf(\"结果 %d\\n\", add({a}, {b}));\n    return 0;\n}\n\nint add(int a, int b) {\n    return a + b;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: implicit declaration of function 'add' [-Wimplicit-function-declaration]`，翻成猫话就是「这一招本喵没听说过」喵。\n\n它这么说是**讲道理的**：C 是从上往下读的，读到 `main` 里那一句的时候，它还没翻到下面那段身子，所以它真的不知道 `add` 长什么样 —— 要投喂几条、叼回什么，一概不知道。\n\n补法就是把**招牌那一行**补到用它的地方前面：\n\n```c\nint add(int a, int b);\n```\n\n结尾一个分号、没有花括号 —— 这是**宣告**：「有这么一招、长这样」。身子留在后面就行，翻译官喵见到过宣告，后面再翻到身子就认得上了。\n\n顺带记住这一条的形状：**身子在前面就不需要宣告，身子在后面就必须先有宣告**。真实工程里那么多招牌本（`.h`）存在的头一个理由，就是这一条 —— 别人的身子在别的本子里，你手上只有那一行宣告。"
+}

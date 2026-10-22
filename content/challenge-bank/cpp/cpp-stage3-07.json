@@ -1,0 +1,291 @@
+{
+  "lessonId": "cpp-stage3-07",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-07-close-forgotten-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这段小活儿是**手写开关**的写法：进门喊一句 `openDoor`，出门喊一句 `closeDoor`，全靠本喵自己记着。\n\n它有个老毛病：**只要半路提前出门，门就忘了关**（程序不报错，就是少印一行）。你帮本喵改对。\n\n改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `推开 库房门`\n2. `取了鱼干`\n3. `关上 库房门`\n4. `--- 提前出门那一趟 ---`\n5. `推开 库房门`\n6. `关上 库房门`\n7. `收工`\n\n**本喵不想再手写关门的活儿了** —— 那扇门要自己关上，不管这趟活儿是从哪条路上出门的。几句印字的不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid openDoor(string who) { cout << \"推开 \" << who << endl; }\nvoid closeDoor(string who) { cout << \"关上 \" << who << endl; }\n\nvoid work(bool early) {\n    openDoor(\"库房门\");\n    if (early) {\n        return;\n    }\n    cout << \"取了鱼干\" << endl;\n    closeDoor(\"库房门\");\n}\n\nint main() {\n    work(false);\n    cout << \"--- 提前出门那一趟 ---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"推开 \" << who << endl; }\n    ~Door() { cout << \"关上 \" << who << endl; }\n};\n\nvoid work(bool early) {\n    Door d(\"库房门\");\n    if (early) {\n        return;\n    }\n    cout << \"取了鱼干\" << endl;\n}\n\nint main() {\n    work(false);\n    cout << \"--- 提前出门那一趟 ---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "推开 库房门\n取了鱼干\n关上 库房门\n--- 提前出门那一趟 ---\n推开 库房门\n关上 库房门\n收工",
+      "stdin": null,
+      "explanation": "漏的原因一眼就能找到：「关门」这件事在这段代码里**就写在 `closeDoor(\"库房门\");` 那一句上** —— `return` 把后面全跳过去了，那一句自然也没执行。翻译官喵不会为这件事报警，本喵上一次就是这么安静地漏了一扇门。\n\n改法是**换谁来记这件事**：别再用两个招式手动开关，把「推开」写进**出生招式（构造函数）**、「关上」写进**收尾招式（析构函数）**（`~Door()`）。这样一来，门什么时候关就跟本喵从哪条路出门没关系了 —— 牌子走出它出生的那片花括号，`~Door()` 自己会被喊一声。\n\n⚠️ 改完之后 `closeDoor` 那一句**不用再写了**：留着它反而会跟牌子抢着关（上一课讲过，`delete` 和牌子抢着还就是这个下场）。",
+      "templateId": "cpp-s3-07-close-forgotten",
+      "params": {
+        "who": "库房门"
+      },
+      "verified": {
+        "at": "2026-09-16T11:08:09.397Z",
+        "hash": "da84f9ea207bd35b"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-close-forgotten-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这段小活儿是**手写开关**的写法：进门喊一句 `openDoor`，出门喊一句 `closeDoor`，全靠本喵自己记着。\n\n它有个老毛病：**只要半路提前出门，门就忘了关**（程序不报错，就是少印一行）。你帮本喵改对。\n\n改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `推开 后门`\n2. `取了鱼干`\n3. `关上 后门`\n4. `--- 提前出门那一趟 ---`\n5. `推开 后门`\n6. `关上 后门`\n7. `收工`\n\n**本喵不想再手写关门的活儿了** —— 那扇门要自己关上，不管这趟活儿是从哪条路上出门的。几句印字的不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid openDoor(string who) { cout << \"推开 \" << who << endl; }\nvoid closeDoor(string who) { cout << \"关上 \" << who << endl; }\n\nvoid work(bool early) {\n    openDoor(\"后门\");\n    if (early) {\n        return;\n    }\n    cout << \"取了鱼干\" << endl;\n    closeDoor(\"后门\");\n}\n\nint main() {\n    work(false);\n    cout << \"--- 提前出门那一趟 ---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"推开 \" << who << endl; }\n    ~Door() { cout << \"关上 \" << who << endl; }\n};\n\nvoid work(bool early) {\n    Door d(\"后门\");\n    if (early) {\n        return;\n    }\n    cout << \"取了鱼干\" << endl;\n}\n\nint main() {\n    work(false);\n    cout << \"--- 提前出门那一趟 ---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "推开 后门\n取了鱼干\n关上 后门\n--- 提前出门那一趟 ---\n推开 后门\n关上 后门\n收工",
+      "stdin": null,
+      "explanation": "漏的原因一眼就能找到：「关门」这件事在这段代码里**就写在 `closeDoor(\"后门\");` 那一句上** —— `return` 把后面全跳过去了，那一句自然也没执行。翻译官喵不会为这件事报警，本喵上一次就是这么安静地漏了一扇门。\n\n改法是**换谁来记这件事**：别再用两个招式手动开关，把「推开」写进**出生招式（构造函数）**、「关上」写进**收尾招式（析构函数）**（`~Door()`）。这样一来，门什么时候关就跟本喵从哪条路出门没关系了 —— 牌子走出它出生的那片花括号，`~Door()` 自己会被喊一声。\n\n⚠️ 改完之后 `closeDoor` 那一句**不用再写了**：留着它反而会跟牌子抢着关（上一课讲过，`delete` 和牌子抢着还就是这个下场）。",
+      "templateId": "cpp-s3-07-close-forgotten",
+      "params": {
+        "who": "后门"
+      },
+      "verified": {
+        "at": "2026-09-16T11:08:12.108Z",
+        "hash": "ce8c69b3dd0c0d7d"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-door-nest-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "骨架里那块「门」的牌子已经替你写好了喵：它**一被请出来**印 `开 ` 加名字，**死去时**印 `关 ` 加名字。你只要在 `main` 里摆出两个圈来。\n\n请你写 `main`：\n\n1. 先请一块牌子，名字是 `大门`；\n2. 再开一层**花括号**，在里面请一块牌子，名字是 `里屋`；\n3. 花括号**里头**印一行：`在里屋翻鱼干`；\n4. 出了那层花括号，印一行：`回到大门`。\n\n别的都不用写（那两句印字的照抄，别改字）。程序要叼回这 6 行：\n\n1. `开 大门`\n2. `开 里屋`\n3. `在里屋翻鱼干`\n4. `关 里屋`\n5. `回到大门`\n6. `关 大门`\n\n盯住第 4 行和第 6 行喵：**谁后出生谁先走** —— 本喵一个字都没写「关」，它们自己就关了。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"开 \" << who << endl; }\n    ~Door() { cout << \"关 \" << who << endl; }\n};\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"开 \" << who << endl; }\n    ~Door() { cout << \"关 \" << who << endl; }\n};\n\nint main() {\n    Door a(\"大门\");\n    {\n        Door b(\"里屋\");\n        cout << \"在里屋翻鱼干\" << endl;\n    }\n    cout << \"回到大门\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "开 大门\n开 里屋\n在里屋翻鱼干\n关 里屋\n回到大门\n关 大门",
+      "stdin": null,
+      "explanation": "关键全在那层**花括号**上喵 —— 它就是这条的**作用域**，也就是牌子的生命线：\n\n- 进了花括号，`b` 出生 → `开 里屋`；\n- 花括号走到头，`b` **死在里面** → `关 里屋` 印在 `回到大门` **前面**；\n- 最后 `main` 的花括号走到头，`a` 才死 → `关 大门` 收尾。\n\n⚠️ 两处最容易写错：\n\n① 那层花括号没写对（比如把 `b` 请到外面）→ 那两块牌子就一起活到 `main` 结束，`关 里屋` 会跑到 `回到大门` **后面**去；\n② 把 `Door b(...)` 写在**印字的前面**却忘了那层花括号 → 顺序就散了。\n\n还有一处与本喵无关、但要记住：本喵**一个字都没写过「关」**。还这件事写在 `~Door()` 里，走不走得到出口由花括号说了算 —— 这就是「出门就还」省下来的那点心。",
+      "templateId": "cpp-s3-07-door-nest",
+      "params": {
+        "inner": "里屋"
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:12.803Z",
+        "hash": "ba30c1abbd1550be"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-door-nest-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "骨架里那块「门」的牌子已经替你写好了喵：它**一被请出来**印 `开 ` 加名字，**死去时**印 `关 ` 加名字。你只要在 `main` 里摆出两个圈来。\n\n请你写 `main`：\n\n1. 先请一块牌子，名字是 `大门`；\n2. 再开一层**花括号**，在里面请一块牌子，名字是 `库房`；\n3. 花括号**里头**印一行：`在库房翻鱼干`；\n4. 出了那层花括号，印一行：`回到大门`。\n\n别的都不用写（那两句印字的照抄，别改字）。程序要叼回这 6 行：\n\n1. `开 大门`\n2. `开 库房`\n3. `在库房翻鱼干`\n4. `关 库房`\n5. `回到大门`\n6. `关 大门`\n\n盯住第 4 行和第 6 行喵：**谁后出生谁先走** —— 本喵一个字都没写「关」，它们自己就关了。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"开 \" << who << endl; }\n    ~Door() { cout << \"关 \" << who << endl; }\n};\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"开 \" << who << endl; }\n    ~Door() { cout << \"关 \" << who << endl; }\n};\n\nint main() {\n    Door a(\"大门\");\n    {\n        Door b(\"库房\");\n        cout << \"在库房翻鱼干\" << endl;\n    }\n    cout << \"回到大门\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "开 大门\n开 库房\n在库房翻鱼干\n关 库房\n回到大门\n关 大门",
+      "stdin": null,
+      "explanation": "关键全在那层**花括号**上喵 —— 它就是这条的**作用域**，也就是牌子的生命线：\n\n- 进了花括号，`b` 出生 → `开 库房`；\n- 花括号走到头，`b` **死在里面** → `关 库房` 印在 `回到大门` **前面**；\n- 最后 `main` 的花括号走到头，`a` 才死 → `关 大门` 收尾。\n\n⚠️ 两处最容易写错：\n\n① 那层花括号没写对（比如把 `b` 请到外面）→ 那两块牌子就一起活到 `main` 结束，`关 库房` 会跑到 `回到大门` **后面**去；\n② 把 `Door b(...)` 写在**印字的前面**却忘了那层花括号 → 顺序就散了。\n\n还有一处与本喵无关、但要记住：本喵**一个字都没写过「关」**。还这件事写在 `~Door()` 里，走不走得到出口由花括号说了算 —— 这就是「出门就还」省下来的那点心。",
+      "templateId": "cpp-s3-07-door-nest",
+      "params": {
+        "inner": "库房"
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:23.431Z",
+        "hash": "50dc8e93b183b07c"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-door-nest-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "骨架里那块「门」的牌子已经替你写好了喵：它**一被请出来**印 `开 ` 加名字，**死去时**印 `关 ` 加名字。你只要在 `main` 里摆出两个圈来。\n\n请你写 `main`：\n\n1. 先请一块牌子，名字是 `大门`；\n2. 再开一层**花括号**，在里面请一块牌子，名字是 `地窖`；\n3. 花括号**里头**印一行：`在地窖翻鱼干`；\n4. 出了那层花括号，印一行：`回到大门`。\n\n别的都不用写（那两句印字的照抄，别改字）。程序要叼回这 6 行：\n\n1. `开 大门`\n2. `开 地窖`\n3. `在地窖翻鱼干`\n4. `关 地窖`\n5. `回到大门`\n6. `关 大门`\n\n盯住第 4 行和第 6 行喵：**谁后出生谁先走** —— 本喵一个字都没写「关」，它们自己就关了。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"开 \" << who << endl; }\n    ~Door() { cout << \"关 \" << who << endl; }\n};\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"开 \" << who << endl; }\n    ~Door() { cout << \"关 \" << who << endl; }\n};\n\nint main() {\n    Door a(\"大门\");\n    {\n        Door b(\"地窖\");\n        cout << \"在地窖翻鱼干\" << endl;\n    }\n    cout << \"回到大门\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "开 大门\n开 地窖\n在地窖翻鱼干\n关 地窖\n回到大门\n关 大门",
+      "stdin": null,
+      "explanation": "关键全在那层**花括号**上喵 —— 它就是这条的**作用域**，也就是牌子的生命线：\n\n- 进了花括号，`b` 出生 → `开 地窖`；\n- 花括号走到头，`b` **死在里面** → `关 地窖` 印在 `回到大门` **前面**；\n- 最后 `main` 的花括号走到头，`a` 才死 → `关 大门` 收尾。\n\n⚠️ 两处最容易写错：\n\n① 那层花括号没写对（比如把 `b` 请到外面）→ 那两块牌子就一起活到 `main` 结束，`关 地窖` 会跑到 `回到大门` **后面**去；\n② 把 `Door b(...)` 写在**印字的前面**却忘了那层花括号 → 顺序就散了。\n\n还有一处与本喵无关、但要记住：本喵**一个字都没写过「关」**。还这件事写在 `~Door()` 里，走不走得到出口由花括号说了算 —— 这就是「出门就还」省下来的那点心。",
+      "templateId": "cpp-s3-07-door-nest",
+      "params": {
+        "inner": "地窖"
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:14.740Z",
+        "hash": "23a1af14dbe585cc"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-dtor-not-written-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵把「库房门」做成了牌子，可**只写了一半**：出生时推门那半写了，死去时关门那半忘了写。\n\n结果就是门再也不会关上了 —— 程序不报错，翻译官喵一个字都不说，只是 `关上 库房门` 那一行**永远不出现**。\n\n你帮本喵把缺的那半补上。改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `推开 库房门`\n2. `在屋里翻了半天鱼干`\n3. `关上 库房门`\n4. `收工`\n\n出生活儿（构造函数）不用动，`main` 也不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"推开 \" << who << endl; }\n};\n\nint main() {\n    {\n        Door d(\"库房门\");\n        cout << \"在屋里翻了半天鱼干\" << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"推开 \" << who << endl; }\n    ~Door() { cout << \"关上 \" << who << endl; }\n};\n\nint main() {\n    {\n        Door d(\"库房门\");\n        cout << \"在屋里翻了半天鱼干\" << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "推开 库房门\n在屋里翻了半天鱼干\n关上 库房门\n收工",
+      "stdin": null,
+      "explanation": "黄金法则有两半：**领**写进出生招式，**还**写进收尾招式。这段代码只写了前一半，所以牌子出生时会推门，死去时**什么都不做** —— C++ 会给没写收尾招式的图纸补一个「什么都不做」的默认版本，程序照样编得过、跑得完，只是 `关上 库房门` 再也不会出现。\n\n补上那块「死去时要做什么」就对了：给图纸接一个 `~Door()`，花括号里写一句印 `关上 ` 加名字。`~` 念作「析构」，是这块牌子**死去时**要做的事 —— 牌子走出它出生的那片花括号（这里是 `main` 里那层花括号）就会被喊一声，所以 `关上 库房门` 会印在 `收工` **前面**。\n\n⚠️ 这一题最该记住的是它的**安静**：忘了写「还」的那一半，翻译官喵不会提醒、运行也不会崩，只是那件事**没发生**。所以本喵写牌子的习惯是 —— 写完出生招式，立刻回头看有没有配一个 `~`。",
+      "templateId": "cpp-s3-07-dtor-not-written",
+      "params": {
+        "who": "库房门"
+      },
+      "verified": {
+        "at": "2026-09-16T11:08:15.305Z",
+        "hash": "901b87fdb5abafd8"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-dtor-not-written-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵把「后门」做成了牌子，可**只写了一半**：出生时推门那半写了，死去时关门那半忘了写。\n\n结果就是门再也不会关上了 —— 程序不报错，翻译官喵一个字都不说，只是 `关上 后门` 那一行**永远不出现**。\n\n你帮本喵把缺的那半补上。改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `推开 后门`\n2. `在屋里翻了半天鱼干`\n3. `关上 后门`\n4. `收工`\n\n出生活儿（构造函数）不用动，`main` 也不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"推开 \" << who << endl; }\n};\n\nint main() {\n    {\n        Door d(\"后门\");\n        cout << \"在屋里翻了半天鱼干\" << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"推开 \" << who << endl; }\n    ~Door() { cout << \"关上 \" << who << endl; }\n};\n\nint main() {\n    {\n        Door d(\"后门\");\n        cout << \"在屋里翻了半天鱼干\" << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "推开 后门\n在屋里翻了半天鱼干\n关上 后门\n收工",
+      "stdin": null,
+      "explanation": "黄金法则有两半：**领**写进出生招式，**还**写进收尾招式。这段代码只写了前一半，所以牌子出生时会推门，死去时**什么都不做** —— C++ 会给没写收尾招式的图纸补一个「什么都不做」的默认版本，程序照样编得过、跑得完，只是 `关上 后门` 再也不会出现。\n\n补上那块「死去时要做什么」就对了：给图纸接一个 `~Door()`，花括号里写一句印 `关上 ` 加名字。`~` 念作「析构」，是这块牌子**死去时**要做的事 —— 牌子走出它出生的那片花括号（这里是 `main` 里那层花括号）就会被喊一声，所以 `关上 后门` 会印在 `收工` **前面**。\n\n⚠️ 这一题最该记住的是它的**安静**：忘了写「还」的那一半，翻译官喵不会提醒、运行也不会崩，只是那件事**没发生**。所以本喵写牌子的习惯是 —— 写完出生招式，立刻回头看有没有配一个 `~`。",
+      "templateId": "cpp-s3-07-dtor-not-written",
+      "params": {
+        "who": "后门"
+      },
+      "verified": {
+        "at": "2026-09-16T11:08:17.899Z",
+        "hash": "6a7758b91e0158ce"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-lock-guard-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "库房门上挂着锁，本喵有两个老招式：`lock()` 印一行 `锁上`，`unlock()` 印一行 `开锁`。骨架里那个空着的 `Locker` 牌子是留给你的。\n\n请你写这块牌子和招式 `work`：\n\n1. 写一块 `Locker` 牌子 —— **它一出生就上锁**，**死去时开锁**（本喵不想再手写 `unlock()` 了）；\n2. 招式 `work(bool early)` 里：先请出这块牌子，然后印一行 `在屋里翻鱼干`；\n3. 要是 `early` 为真，`work` 就**提前出门**（后面的印字跳过）。\n\n`main` 那边已经写好了，你不用动：它先喊一次 `work(false)`、印一行 `---`、再喊一次 `work(true)`、最后印一行 `收工`。\n\n跑起来要叼回这 7 行：\n\n1. `锁上`\n2. `在屋里翻鱼干`\n3. `开锁`\n4. `---`\n5. `锁上`\n6. `开锁`\n7. `收工`\n\n盯住第 5、6 行喵：第二趟**什么都没翻就提前出门了**，可锁照样开了 —— 因为「开锁」这件事本喵是写在牌子的**生死**里的。",
+      "starter": "#include <iostream>\nusing namespace std;\n\nvoid lock() { cout << \"锁上\" << endl; }\nvoid unlock() { cout << \"开锁\" << endl; }\n\nstruct Locker {\n\n};\n\nvoid work(bool early) {\n\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nvoid lock() { cout << \"锁上\" << endl; }\nvoid unlock() { cout << \"开锁\" << endl; }\n\nstruct Locker {\n    Locker() { lock(); }\n    ~Locker() { unlock(); }\n};\n\nvoid work(bool early) {\n    Locker l;\n    if (early) {\n        return;\n    }\n    cout << \"在屋里翻鱼干\" << endl;\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "锁上\n在屋里翻鱼干\n开锁\n---\n锁上\n开锁\n收工",
+      "stdin": null,
+      "explanation": "这一题是黄金法则最典型的一张脸喵 —— 上锁和开锁**天生是一对**，配对的活儿最适合交给牌子的生死：\n\n- `Locker` 的出生招式里喊 `lock()`（进门就领）；\n- 收尾招式里喊 `unlock()`（出门就还）。\n\n于是 `work` 里只剩一件事要记：**在还锁着的时候把活儿干了**（印 `在屋里翻鱼干`）。提前出门那一趟，`return` 把印字跳过去了，可牌子早就在它出生的那片花括号里活着 —— `work` 走到头它就得死，死了就开锁。所以第 5、6 行整整齐齐。\n\n⚠️ 两处容易写歪：\n\n① 忘了写 `~Locker()` 那一半 → 锁只上不开（本喵这门就再也推不开了，而且程序不报错）；\n② 把 `unlock()` 也手写一遍 → 开锁会被喊两次，跟本喵抢着还（牌子会跟手写的那句打架）。",
+      "templateId": "cpp-s3-07-lock-guard",
+      "params": {
+        "what": "鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T11:08:20.806Z",
+        "hash": "db6e9a885e1246cf"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-lock-guard-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "库房门上挂着锁，本喵有两个老招式：`lock()` 印一行 `锁上`，`unlock()` 印一行 `开锁`。骨架里那个空着的 `Locker` 牌子是留给你的。\n\n请你写这块牌子和招式 `work`：\n\n1. 写一块 `Locker` 牌子 —— **它一出生就上锁**，**死去时开锁**（本喵不想再手写 `unlock()` 了）；\n2. 招式 `work(bool early)` 里：先请出这块牌子，然后印一行 `在屋里翻鱼汤`；\n3. 要是 `early` 为真，`work` 就**提前出门**（后面的印字跳过）。\n\n`main` 那边已经写好了，你不用动：它先喊一次 `work(false)`、印一行 `---`、再喊一次 `work(true)`、最后印一行 `收工`。\n\n跑起来要叼回这 7 行：\n\n1. `锁上`\n2. `在屋里翻鱼汤`\n3. `开锁`\n4. `---`\n5. `锁上`\n6. `开锁`\n7. `收工`\n\n盯住第 5、6 行喵：第二趟**什么都没翻就提前出门了**，可锁照样开了 —— 因为「开锁」这件事本喵是写在牌子的**生死**里的。",
+      "starter": "#include <iostream>\nusing namespace std;\n\nvoid lock() { cout << \"锁上\" << endl; }\nvoid unlock() { cout << \"开锁\" << endl; }\n\nstruct Locker {\n\n};\n\nvoid work(bool early) {\n\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nvoid lock() { cout << \"锁上\" << endl; }\nvoid unlock() { cout << \"开锁\" << endl; }\n\nstruct Locker {\n    Locker() { lock(); }\n    ~Locker() { unlock(); }\n};\n\nvoid work(bool early) {\n    Locker l;\n    if (early) {\n        return;\n    }\n    cout << \"在屋里翻鱼汤\" << endl;\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "锁上\n在屋里翻鱼汤\n开锁\n---\n锁上\n开锁\n收工",
+      "stdin": null,
+      "explanation": "这一题是黄金法则最典型的一张脸喵 —— 上锁和开锁**天生是一对**，配对的活儿最适合交给牌子的生死：\n\n- `Locker` 的出生招式里喊 `lock()`（进门就领）；\n- 收尾招式里喊 `unlock()`（出门就还）。\n\n于是 `work` 里只剩一件事要记：**在还锁着的时候把活儿干了**（印 `在屋里翻鱼汤`）。提前出门那一趟，`return` 把印字跳过去了，可牌子早就在它出生的那片花括号里活着 —— `work` 走到头它就得死，死了就开锁。所以第 5、6 行整整齐齐。\n\n⚠️ 两处容易写歪：\n\n① 忘了写 `~Locker()` 那一半 → 锁只上不开（本喵这门就再也推不开了，而且程序不报错）；\n② 把 `unlock()` 也手写一遍 → 开锁会被喊两次，跟本喵抢着还（牌子会跟手写的那句打架）。",
+      "templateId": "cpp-s3-07-lock-guard",
+      "params": {
+        "what": "鱼汤"
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:27.002Z",
+        "hash": "0df3c4232f9eeb79"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-lock-guard-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "库房门上挂着锁，本喵有两个老招式：`lock()` 印一行 `锁上`，`unlock()` 印一行 `开锁`。骨架里那个空着的 `Locker` 牌子是留给你的。\n\n请你写这块牌子和招式 `work`：\n\n1. 写一块 `Locker` 牌子 —— **它一出生就上锁**，**死去时开锁**（本喵不想再手写 `unlock()` 了）；\n2. 招式 `work(bool early)` 里：先请出这块牌子，然后印一行 `在屋里翻鱼罐头`；\n3. 要是 `early` 为真，`work` 就**提前出门**（后面的印字跳过）。\n\n`main` 那边已经写好了，你不用动：它先喊一次 `work(false)`、印一行 `---`、再喊一次 `work(true)`、最后印一行 `收工`。\n\n跑起来要叼回这 7 行：\n\n1. `锁上`\n2. `在屋里翻鱼罐头`\n3. `开锁`\n4. `---`\n5. `锁上`\n6. `开锁`\n7. `收工`\n\n盯住第 5、6 行喵：第二趟**什么都没翻就提前出门了**，可锁照样开了 —— 因为「开锁」这件事本喵是写在牌子的**生死**里的。",
+      "starter": "#include <iostream>\nusing namespace std;\n\nvoid lock() { cout << \"锁上\" << endl; }\nvoid unlock() { cout << \"开锁\" << endl; }\n\nstruct Locker {\n\n};\n\nvoid work(bool early) {\n\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nvoid lock() { cout << \"锁上\" << endl; }\nvoid unlock() { cout << \"开锁\" << endl; }\n\nstruct Locker {\n    Locker() { lock(); }\n    ~Locker() { unlock(); }\n};\n\nvoid work(bool early) {\n    Locker l;\n    if (early) {\n        return;\n    }\n    cout << \"在屋里翻鱼罐头\" << endl;\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "锁上\n在屋里翻鱼罐头\n开锁\n---\n锁上\n开锁\n收工",
+      "stdin": null,
+      "explanation": "这一题是黄金法则最典型的一张脸喵 —— 上锁和开锁**天生是一对**，配对的活儿最适合交给牌子的生死：\n\n- `Locker` 的出生招式里喊 `lock()`（进门就领）；\n- 收尾招式里喊 `unlock()`（出门就还）。\n\n于是 `work` 里只剩一件事要记：**在还锁着的时候把活儿干了**（印 `在屋里翻鱼罐头`）。提前出门那一趟，`return` 把印字跳过去了，可牌子早就在它出生的那片花括号里活着 —— `work` 走到头它就得死，死了就开锁。所以第 5、6 行整整齐齐。\n\n⚠️ 两处容易写歪：\n\n① 忘了写 `~Locker()` 那一半 → 锁只上不开（本喵这门就再也推不开了，而且程序不报错）；\n② 把 `unlock()` 也手写一遍 → 开锁会被喊两次，跟本喵抢着还（牌子会跟手写的那句打架）。",
+      "templateId": "cpp-s3-07-lock-guard",
+      "params": {
+        "what": "鱼罐头"
+      },
+      "verified": {
+        "at": "2026-09-16T11:08:22.628Z",
+        "hash": "634fe104d12c25bf"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-quiet-guard-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "骨架里已经有一句全局的 `bool loud = true;` 和一个 `say(const char* s)` 招式喵：`loud` 为真时它照说不误，为假时只印一个 `……`。另外那块空着的 `Quiet` 牌子是留给你的。\n\n请你把这 3 行印出来：\n\n1. `大肥鱼早`\n2. `……`\n3. `大肥鱼早`\n\n守着两条规矩：\n\n- 中间那行必须是在**一层花括号**里说的，靠一块 `Quiet` 牌子把 `loud` 按成 `false` 才印出 `……`；\n- 出了那层花括号要**恢复成原来的样子** —— 所以第三行又是 `大肥鱼早`。\n\n而且这块牌子得**自己记着进门前的样子**：本喵不告诉它原来是什么，它自己进门时看一眼、出门时还回去。",
+      "starter": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n\n};\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n    bool old;\n    Quiet() : old(loud) {\n        loud = false;\n    }\n    ~Quiet() {\n        loud = old;\n    }\n};\n\nint main() {\n    say(\"大肥鱼早\");\n    {\n        Quiet q;\n        say(\"大肥鱼早\");\n    }\n    say(\"大肥鱼早\");\n    return 0;\n}\n",
+      "expectedOutput": "大肥鱼早\n……\n大肥鱼早",
+      "stdin": null,
+      "explanation": "这块牌子领的不是仓库、也不是鱼干，而是一份**状态**（`loud` 这会儿是什么）喵 —— 生意的做法一模一样：\n\n- **出生时**（出生招式）：先把进门前的样子记在手心里 `old = loud;`，再把自己要的样子换上 `loud = false;`；\n- **死去时**（收尾招式）：把记着的那个旧样子还回去 `loud = old;`。\n\n两处顺序都是要紧的：出生招式里必须**先记后换**（换完再记就把新值当成旧值了），收尾那一趟必须**还旧值**而不是写死一个「正常说话」（写死的话，套两层牌子就会露馅 —— 那正是另一道题里的坑）。\n\n⚠️ 出门那一下是花括号说了算：本喵的 `main` 里那层花括号走到头，牌子死去，`loud` 自己就回来了。所以第三行又是 `大肥鱼早`，本喵一个字都没写「恢复」。",
+      "templateId": "cpp-s3-07-quiet-guard",
+      "params": {
+        "word": "大肥鱼早"
+      },
+      "verified": {
+        "at": "2026-09-16T11:08:24.643Z",
+        "hash": "e726c5eda94fe3bd"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-quiet-guard-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "骨架里已经有一句全局的 `bool loud = true;` 和一个 `say(const char* s)` 招式喵：`loud` 为真时它照说不误，为假时只印一个 `……`。另外那块空着的 `Quiet` 牌子是留给你的。\n\n请你把这 3 行印出来：\n\n1. `大肥鱼晚`\n2. `……`\n3. `大肥鱼晚`\n\n守着两条规矩：\n\n- 中间那行必须是在**一层花括号**里说的，靠一块 `Quiet` 牌子把 `loud` 按成 `false` 才印出 `……`；\n- 出了那层花括号要**恢复成原来的样子** —— 所以第三行又是 `大肥鱼晚`。\n\n而且这块牌子得**自己记着进门前的样子**：本喵不告诉它原来是什么，它自己进门时看一眼、出门时还回去。",
+      "starter": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n\n};\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n    bool old;\n    Quiet() : old(loud) {\n        loud = false;\n    }\n    ~Quiet() {\n        loud = old;\n    }\n};\n\nint main() {\n    say(\"大肥鱼晚\");\n    {\n        Quiet q;\n        say(\"大肥鱼晚\");\n    }\n    say(\"大肥鱼晚\");\n    return 0;\n}\n",
+      "expectedOutput": "大肥鱼晚\n……\n大肥鱼晚",
+      "stdin": null,
+      "explanation": "这块牌子领的不是仓库、也不是鱼干，而是一份**状态**（`loud` 这会儿是什么）喵 —— 生意的做法一模一样：\n\n- **出生时**（出生招式）：先把进门前的样子记在手心里 `old = loud;`，再把自己要的样子换上 `loud = false;`；\n- **死去时**（收尾招式）：把记着的那个旧样子还回去 `loud = old;`。\n\n两处顺序都是要紧的：出生招式里必须**先记后换**（换完再记就把新值当成旧值了），收尾那一趟必须**还旧值**而不是写死一个「正常说话」（写死的话，套两层牌子就会露馅 —— 那正是另一道题里的坑）。\n\n⚠️ 出门那一下是花括号说了算：本喵的 `main` 里那层花括号走到头，牌子死去，`loud` 自己就回来了。所以第三行又是 `大肥鱼晚`，本喵一个字都没写「恢复」。",
+      "templateId": "cpp-s3-07-quiet-guard",
+      "params": {
+        "word": "大肥鱼晚"
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:30.458Z",
+        "hash": "f4a226ae17f7168f"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-quiet-guard-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "骨架里已经有一句全局的 `bool loud = true;` 和一个 `say(const char* s)` 招式喵：`loud` 为真时它照说不误，为假时只印一个 `……`。另外那块空着的 `Quiet` 牌子是留给你的。\n\n请你把这 3 行印出来：\n\n1. `大肥鱼好`\n2. `……`\n3. `大肥鱼好`\n\n守着两条规矩：\n\n- 中间那行必须是在**一层花括号**里说的，靠一块 `Quiet` 牌子把 `loud` 按成 `false` 才印出 `……`；\n- 出了那层花括号要**恢复成原来的样子** —— 所以第三行又是 `大肥鱼好`。\n\n而且这块牌子得**自己记着进门前的样子**：本喵不告诉它原来是什么，它自己进门时看一眼、出门时还回去。",
+      "starter": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n\n};\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n    bool old;\n    Quiet() : old(loud) {\n        loud = false;\n    }\n    ~Quiet() {\n        loud = old;\n    }\n};\n\nint main() {\n    say(\"大肥鱼好\");\n    {\n        Quiet q;\n        say(\"大肥鱼好\");\n    }\n    say(\"大肥鱼好\");\n    return 0;\n}\n",
+      "expectedOutput": "大肥鱼好\n……\n大肥鱼好",
+      "stdin": null,
+      "explanation": "这块牌子领的不是仓库、也不是鱼干，而是一份**状态**（`loud` 这会儿是什么）喵 —— 生意的做法一模一样：\n\n- **出生时**（出生招式）：先把进门前的样子记在手心里 `old = loud;`，再把自己要的样子换上 `loud = false;`；\n- **死去时**（收尾招式）：把记着的那个旧样子还回去 `loud = old;`。\n\n两处顺序都是要紧的：出生招式里必须**先记后换**（换完再记就把新值当成旧值了），收尾那一趟必须**还旧值**而不是写死一个「正常说话」（写死的话，套两层牌子就会露馅 —— 那正是另一道题里的坑）。\n\n⚠️ 出门那一下是花括号说了算：本喵的 `main` 里那层花括号走到头，牌子死去，`loud` 自己就回来了。所以第三行又是 `大肥鱼好`，本喵一个字都没写「恢复」。",
+      "templateId": "cpp-s3-07-quiet-guard",
+      "params": {
+        "word": "大肥鱼好"
+      },
+      "verified": {
+        "at": "2026-09-16T11:08:26.389Z",
+        "hash": "47a4b2d3e77a3b81"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-restore-hardcoded-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵做了块「小声说话」的牌子（`Quiet`）：出生时把 `loud` 换成 `false`，死去时**换回来**。\n\n可本喵换回来那一句写得太随意了 —— 它**写死成自己觉得对的那个值**，而不是真的回到进门前的样子。上面这层里又套了一层牌子，毛病就露出来了。\n\n你帮本喵改对（只动死的那一半，别的都不用动）。改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `鱼干`\n2. `（小声）`\n3. `（小声）`\n4. `……`\n5. `（恢复）`\n6. `……`\n7. `（恢复）`\n8. `鱼干`\n\n盯着第 6 行看喵：**里层那块牌子走了之后，外面那层还该是小声的** —— 因为本喵还在外面那层里。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n    bool old;\n    Quiet() : old(loud) {\n        loud = false;\n        cout << \"（小声）\" << endl;\n    }\n    ~Quiet() {\n        loud = true;\n        cout << \"（恢复）\" << endl;\n    }\n};\n\nint main() {\n    say(\"鱼干\");\n    {\n        Quiet q1;\n        {\n            Quiet q2;\n            say(\"鱼干\");\n        }\n        say(\"鱼干\");\n    }\n    say(\"鱼干\");\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n    bool old;\n    Quiet() : old(loud) {\n        loud = false;\n        cout << \"（小声）\" << endl;\n    }\n    ~Quiet() {\n        loud = old;\n        cout << \"（恢复）\" << endl;\n    }\n};\n\nint main() {\n    say(\"鱼干\");\n    {\n        Quiet q1;\n        {\n            Quiet q2;\n            say(\"鱼干\");\n        }\n        say(\"鱼干\");\n    }\n    say(\"鱼干\");\n    return 0;\n}\n",
+      "expectedOutput": "鱼干\n（小声）\n（小声）\n……\n（恢复）\n……\n（恢复）\n鱼干",
+      "stdin": null,
+      "explanation": "坏在 `~Quiet()` 里那一句 `loud = true;` 上：本喵**写死了**自己觉得对的那个值，而不是「回到进门前的样子」喵。\n\n- 外层的 `q1` 出生时，进门前的样子是「正常说话」，它把 `old` 记成 `true`；\n- 里层的 `q2` 出生时，进门前的样子**已经是被按下去的了**，它把 `old` 记成 `false`；\n- `q2` 走的时候，写死的那句把它换回了「正常说话」—— 可它**还在 `q1` 的范围里**，本该继续小声的，于是第 6 行印出了 `鱼干` 而不是 `……`。\n\n改法就是把那一句换成**还回自己手心里记着的那个旧值**：`loud = old;`。这也是这块牌子一开始就留着 `bool old` 的原因 —— 记住旧样子，出门才能原样还回去。\n\n⚠️ 看出来了吗：这一题里「写死」在**只套一层**的时候是对的（外面本来就是正常说话），所以单看一层根本发现不了。是里层那块牌子把本喵的偷懒照出来的。",
+      "templateId": "cpp-s3-07-restore-hardcoded",
+      "params": {
+        "word": "鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T11:05:49.852Z",
+        "hash": "e39d0b3918f4088b"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-07-restore-hardcoded-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵做了块「小声说话」的牌子（`Quiet`）：出生时把 `loud` 换成 `false`，死去时**换回来**。\n\n可本喵换回来那一句写得太随意了 —— 它**写死成自己觉得对的那个值**，而不是真的回到进门前的样子。上面这层里又套了一层牌子，毛病就露出来了。\n\n你帮本喵改对（只动死的那一半，别的都不用动）。改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `鱼丸`\n2. `（小声）`\n3. `（小声）`\n4. `……`\n5. `（恢复）`\n6. `……`\n7. `（恢复）`\n8. `鱼丸`\n\n盯着第 6 行看喵：**里层那块牌子走了之后，外面那层还该是小声的** —— 因为本喵还在外面那层里。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n    bool old;\n    Quiet() : old(loud) {\n        loud = false;\n        cout << \"（小声）\" << endl;\n    }\n    ~Quiet() {\n        loud = true;\n        cout << \"（恢复）\" << endl;\n    }\n};\n\nint main() {\n    say(\"鱼丸\");\n    {\n        Quiet q1;\n        {\n            Quiet q2;\n            say(\"鱼丸\");\n        }\n        say(\"鱼丸\");\n    }\n    say(\"鱼丸\");\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n    bool old;\n    Quiet() : old(loud) {\n        loud = false;\n        cout << \"（小声）\" << endl;\n    }\n    ~Quiet() {\n        loud = old;\n        cout << \"（恢复）\" << endl;\n    }\n};\n\nint main() {\n    say(\"鱼丸\");\n    {\n        Quiet q1;\n        {\n            Quiet q2;\n            say(\"鱼丸\");\n        }\n        say(\"鱼丸\");\n    }\n    say(\"鱼丸\");\n    return 0;\n}\n",
+      "expectedOutput": "鱼丸\n（小声）\n（小声）\n……\n（恢复）\n……\n（恢复）\n鱼丸",
+      "stdin": null,
+      "explanation": "坏在 `~Quiet()` 里那一句 `loud = true;` 上：本喵**写死了**自己觉得对的那个值，而不是「回到进门前的样子」喵。\n\n- 外层的 `q1` 出生时，进门前的样子是「正常说话」，它把 `old` 记成 `true`；\n- 里层的 `q2` 出生时，进门前的样子**已经是被按下去的了**，它把 `old` 记成 `false`；\n- `q2` 走的时候，写死的那句把它换回了「正常说话」—— 可它**还在 `q1` 的范围里**，本该继续小声的，于是第 6 行印出了 `鱼丸` 而不是 `……`。\n\n改法就是把那一句换成**还回自己手心里记着的那个旧值**：`loud = old;`。这也是这块牌子一开始就留着 `bool old` 的原因 —— 记住旧样子，出门才能原样还回去。\n\n⚠️ 看出来了吗：这一题里「写死」在**只套一层**的时候是对的（外面本来就是正常说话），所以单看一层根本发现不了。是里层那块牌子把本喵的偷懒照出来的。",
+      "templateId": "cpp-s3-07-restore-hardcoded",
+      "params": {
+        "word": "鱼丸"
+      },
+      "verified": {
+        "at": "2026-09-16T11:05:52.714Z",
+        "hash": "fa8c30743cb7196a"
+      }
+    }
+  ]
+}

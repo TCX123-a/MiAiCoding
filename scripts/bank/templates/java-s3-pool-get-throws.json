@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-pool-get-throws",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-11",
+  "type": "codefix",
+  "concept": ["取货凭条可能会出事", "出事要事先交代", "throws Exception 是交代条"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵派了一件活出去：让猫算 **{a} 乘 {b}**，然后把战利品取回来印出来。可这段代码**根本过不了翻译那一关**喵里啪啦。\n\n你帮本喵把它理顺 —— 别改印出来的形状，也别改这件活干的事，只补上缺的那一块。\n\n改好之后，程序该印出**一行**：`第一件：` 后面跟着 {a} 乘 {b} 的结果。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.util.concurrent.ExecutorService;\nimport java.util.concurrent.Executors;\nimport java.util.concurrent.Future;\n\npublic class Main {\n    public static void main(String[] args) {\n        ExecutorService 池子 = Executors.newFixedThreadPool(2);\n        Future<Integer> 凭条 = 池子.submit(() -> {a} * {b});\n        System.out.println(\"第一件：\" + 凭条.get());\n        池子.shutdown();\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.concurrent.ExecutorService;\nimport java.util.concurrent.Executors;\nimport java.util.concurrent.Future;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ExecutorService 池子 = Executors.newFixedThreadPool(2);\n        Future<Integer> 凭条 = 池子.submit(() -> {a} * {b});\n        System.out.println(\"第一件：\" + 凭条.get());\n        池子.shutdown();\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是这一句：\n\n```text\nerror: unreported exception InterruptedException; must be caught or declared to be thrown\n```\n\n念法是：「**`凭条.get()` 这一手是有可能出事的，你出门之前没跟本喵交代。**」\n\n取货凭条为什么可能出事？因为它要**等**——等那件活算完。等着等着万一被打断了，这一手就会当场翻脸。Java 的规矩是：**任何「可能出事」的一手，要么当场接住，要么在门口提前交代一声**。本喵这一课的所有例子都用的是「提前交代」这条省事的路子，形状就是在 `main` 那一行的结尾加一句 `throws Exception`。\n\n补上之后形状是：\n\n```java\npublic static void main(String[] args) throws Exception {\n```\n\n再跑，它就印出 `第一件：` 后面跟着 {a} 乘 {b} 的结果那一行。\n\n顺带记牢一件事：**`get()` 的「可能出事」不是「算错了」**。那件活自己算炸了，是另一回事（会包在取货凭条里一起丢回给你）；这一句管的是「等货」这件事本身可能被打断喵。"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-sqlite-bind-comma",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-08",
+  "type": "codefix",
+  "concept": ["投喂口 ?", "递货要递成一份", "ProgrammingError: bindings"],
+  "instances": 2,
+  "params": {
+    "thing": { "kind": "pick", "values": ["海苔味", "麻辣味", "原味"] }
+  },
+  "stemTemplate": "本喵的仓库里记着三格货，本喵只想知道 `{thing}` 那一格还剩几条喵。\n\n口令是这么递的：`SELECT 条数 FROM 库存 WHERE 名字 = ?` —— 投喂口留好了，货也备在手边了。可本喵一跑，**当场就摔**，报的是 `sqlite3.ProgrammingError`，说本喵只留了一个投喂口，却递上去好几份。\n\n本喵明明只准备了一件货啊！\n\n请你把它修好。修好之后它应该印**一行**：`{thing} 还剩 N 条`（N 就是那一格的条数）。\n\n⚠️ 开表、记货、盖章那几段都是好的，别动它们；要改的只有**递货的那一处**，别把整段推倒重来喵。",
+  "brokenCodeTemplate": "import sqlite3\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncon.commit()\n\ncur.execute(\"SELECT 条数 FROM 库存 WHERE 名字 = ?\", (\"{thing}\"))\nprint(\"{thing} 还剩 \" + str(cur.fetchone()[0]) + \" 条\")\ncon.close()\n",
+  "referenceFixTemplate": "import sqlite3\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncon.commit()\n\ncur.execute(\"SELECT 条数 FROM 库存 WHERE 名字 = ?\", (\"{thing}\",))\nprint(\"{thing} 还剩 \" + str(cur.fetchone()[0]) + \" 条\")\ncon.close()\n",
+  "explanationTemplate": "这道题摔的不是口令，是**递货的姿势**喵。\n\n`(\"{thing}\")` 看着像「一件货装在一个小括号里」，可在 Python 眼里，它只是**一串字外面套了个括号** —— 括号不等于装货的盒子。`sqlite3` 拿到它之后会老老实实**一个字一个字**地数：「{thing}」几个字，就算几份货。投喂口只要一份，你递上去好几份，它当然要摔，而且报的话还挺冤枉人 —— 它说的是「你递多了」，你觉得自己只递了一件。\n\n补上一个**逗号**就对了：`(\"{thing}\",)`。逗号才是「这括号里装的是一份货」的记号，括号只是把这一份货包起来好递出去。本喵把这条记成一句话：**只有一个货的时候，括号里的逗号不能少。**\n\n两件顺带要知道的事：\n\n- 要是名字碰巧只有**一个**字，那一个字正好算一份货，投喂口对得上 —— **它就不摔了，还会印出结果**。同一个毛病，看名字长短决定摔不摔，这种最不好查。\n- 口令里有两个投喂口的时候，括号里就是两件货，中间拿逗号隔开，逗号照样一个都不能少。\n\n⚠️ 还有：递货的东西写成 `[...]` 那种形状也管用。关键在**逗号**，包着它的那对括号长什么样倒是无所谓喵。"
+}

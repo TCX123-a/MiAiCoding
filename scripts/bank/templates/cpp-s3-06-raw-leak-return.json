@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-06-raw-leak-return",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-06",
+  "type": "codefix",
+  "concept": ["提前出门那一趟漏了还仓库", "牌子跟你怎么出门没关系", "都是提前出门，一个漏一个不漏"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["大肥鱼", "小橘"] }
+  },
+  "stemTemplate": "本喵写了个小活儿 `work`：进去先租一间仓库（货是一间叫 `Fish` 的仓库，它一被租下印 `领到`、被还回去时印 `还回`），然后看情况 —— 要是 `early` 为真，就**提前出门**。\n\n结果**提前出门那一趟漏了还仓库**：程序跑起来不报错，就是少印了一行。你帮本喵改对。\n\n改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `领到 {name}`\n2. `用完 {name}`\n3. `还回 {name}`\n4. `---`\n5. `领到 {name}`\n6. `还回 {name}`\n7. `收工`\n\n**本喵不想再手写还仓库的活儿了** —— 那间仓库要自己回到它该回的地方去，不管 `work` 是从哪条路上出门的。几句印字的不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nvoid work(bool early) {\n    Fish* p = new Fish(\"{name}\");\n    if (early) {\n        return;\n    }\n    cout << \"用完 \" << p->name << endl;\n    delete p;\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nvoid work(bool early) {\n    unique_ptr<Fish> p = make_unique<Fish>(\"{name}\");\n    if (early) {\n        return;\n    }\n    cout << \"用完 \" << p->name << endl;\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题就是课文第三节那段的重演喵：**都是提前出门，手写的那版漏、牌子那版不漏**。\n\n漏的原因很好找：`return` 那一句把后面全跳过去了，而「还仓库」这件事在这段代码里**就写在 `delete p;` 那一句上** —— 跳过它，仓库就挂在本喵名下了（课文第一节那段真跑过，`还回` 一行都没印）。\n\n改法是**换谁来记这件事**：请一块会自己叼回仓库的牌子（`unique_ptr<Fish> p = make_unique<Fish>(...)`），然后 `delete p;` 那一句就**不用写了** —— 留着它反而会跟牌子抢着还，翻译官喵也会认不出来。\n\n牌子记着这件事之后，`early` 为真提前出门、还是走到底，**两条路它都会还**：还仓库的时刻是「牌子走出它出生的那片花括号」，跟本喵从哪条路出门没有关系。"
+}

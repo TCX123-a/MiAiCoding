@@ -1,0 +1,234 @@
+{
+  "lessonId": "cpp-stage3-18",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-18-diamond-merge-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：次数喵。\n\n骨架里三张图纸都画好了：一张**底座**（会喵），另外两张各照着底座画过一次（一张会打呼噜、一张会踩奶）—— 而且这两张**照着底座画的那一行都挂上了那一手**。\n\n你要补两处：\n\n1. 一张**两样都会**的新图纸，照着这两张一起画下来（两张前面都写清楚是公开给外面的）；\n2. `main` 里照它生一只猫（次数就是读进来那个数），然后**三样本事各喊一次**：先喵、再呼噜、再踩奶。\n\n关键的一步在那张新图纸的出生招式里：**那份共用的底座由谁喂料**，想清楚写在哪儿 —— 写对了，`搭那份共用的底座：` 这一行只会出现**一次**。\n\n比如投喂给程序的是\n\n9\n\n程序就要叼回\n\n搭那份共用的底座：9\n搭会打呼噜的那一半\n搭会踩奶的那一半\n喵 9 下\n呼噜 9 下\n踩奶 9 下\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    int times;\npublic:\n    MeowCat(int k) : times(k) { cout << \"搭那份共用的底座：\" << times << endl; }\n    void meow() const { cout << \"喵 \" << times << \" 下\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(int k) : MeowCat(k) { cout << \"搭会打呼噜的那一半\" << endl; }\n    void purr() const { cout << \"呼噜 \" << times << \" 下\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(int k) : MeowCat(k) { cout << \"搭会踩奶的那一半\" << endl; }\n    void knead() const { cout << \"踩奶 \" << times << \" 下\" << endl; }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    int times;\npublic:\n    MeowCat(int k) : times(k) { cout << \"搭那份共用的底座：\" << times << endl; }\n    void meow() const { cout << \"喵 \" << times << \" 下\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(int k) : MeowCat(k) { cout << \"搭会打呼噜的那一半\" << endl; }\n    void purr() const { cout << \"呼噜 \" << times << \" 下\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(int k) : MeowCat(k) { cout << \"搭会踩奶的那一半\" << endl; }\n    void knead() const { cout << \"踩奶 \" << times << \" 下\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(int k) : MeowCat(k), Purr(k), Knead(k) {}\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    Baby b(n);\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "expectedOutput": "搭那份共用的底座：3\n搭会打呼噜的那一半\n搭会踩奶的那一半\n喵 3 下\n呼噜 3 下\n踩奶 3 下",
+      "stdin": "3\n",
+      "explanation": "这一题的正主是那张新图纸的出生招式：\n\n```text\nBaby(int k) : MeowCat(k), Purr(k), Knead(k)\n```\n\n三块料，缺一不可喵。\n\n- **`MeowCat(k)`** —— 挂上那一手之后，那份共用的底座归**最外面那张图纸**搭，也归它喂料。**漏了它，这段代码根本编不过**：`Purr`、`Knead` 里那两句喂料站在这个位子上**不算数**，可底座那张图纸又要求喂一个名字（它没有「什么都不用喂」的搭法）。翻译官喵的原话是 `no matching function for call to 'MeowCat::MeowCat()'`。\n- **`Purr(k), Knead(k)`** —— 中间那两块料照样要写（图纸上写着要喂），只是它们喂给底座的**那一半**会被无视。\n\n然后是**顺序**：共用的底座**最先**搭，接着左边、右边，最后才是自己那一半。所以头三行是「底座 → 左 → 右」，一眼就能看出底座**只搭了一次** —— 要是它印了两遍，那就说明有一条路**没挂上那一手**。\n\n⚠️ 最后三行的次数**全是同一个数**：只有一份底座，三条路喊的都是它。要是三行里冒出来一个别的数，那说明底座又被拆成两份了喵。",
+      "templateId": "cpp-s3-18-diamond-merge",
+      "params": {
+        "unit": "下"
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:58.670Z",
+        "hash": "2ccafd9499985092"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-diamond-merge-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：次数喵。\n\n骨架里三张图纸都画好了：一张**底座**（会喵），另外两张各照着底座画过一次（一张会打呼噜、一张会踩奶）—— 而且这两张**照着底座画的那一行都挂上了那一手**。\n\n你要补两处：\n\n1. 一张**两样都会**的新图纸，照着这两张一起画下来（两张前面都写清楚是公开给外面的）；\n2. `main` 里照它生一只猫（次数就是读进来那个数），然后**三样本事各喊一次**：先喵、再呼噜、再踩奶。\n\n关键的一步在那张新图纸的出生招式里：**那份共用的底座由谁喂料**，想清楚写在哪儿 —— 写对了，`搭那份共用的底座：` 这一行只会出现**一次**。\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\n搭那份共用的底座：2\n搭会打呼噜的那一半\n搭会踩奶的那一半\n喵 2 回\n呼噜 2 回\n踩奶 2 回\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    int times;\npublic:\n    MeowCat(int k) : times(k) { cout << \"搭那份共用的底座：\" << times << endl; }\n    void meow() const { cout << \"喵 \" << times << \" 回\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(int k) : MeowCat(k) { cout << \"搭会打呼噜的那一半\" << endl; }\n    void purr() const { cout << \"呼噜 \" << times << \" 回\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(int k) : MeowCat(k) { cout << \"搭会踩奶的那一半\" << endl; }\n    void knead() const { cout << \"踩奶 \" << times << \" 回\" << endl; }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    int times;\npublic:\n    MeowCat(int k) : times(k) { cout << \"搭那份共用的底座：\" << times << endl; }\n    void meow() const { cout << \"喵 \" << times << \" 回\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(int k) : MeowCat(k) { cout << \"搭会打呼噜的那一半\" << endl; }\n    void purr() const { cout << \"呼噜 \" << times << \" 回\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(int k) : MeowCat(k) { cout << \"搭会踩奶的那一半\" << endl; }\n    void knead() const { cout << \"踩奶 \" << times << \" 回\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(int k) : MeowCat(k), Purr(k), Knead(k) {}\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    Baby b(n);\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "expectedOutput": "搭那份共用的底座：8\n搭会打呼噜的那一半\n搭会踩奶的那一半\n喵 8 回\n呼噜 8 回\n踩奶 8 回",
+      "stdin": "8\n",
+      "explanation": "这一题的正主是那张新图纸的出生招式：\n\n```text\nBaby(int k) : MeowCat(k), Purr(k), Knead(k)\n```\n\n三块料，缺一不可喵。\n\n- **`MeowCat(k)`** —— 挂上那一手之后，那份共用的底座归**最外面那张图纸**搭，也归它喂料。**漏了它，这段代码根本编不过**：`Purr`、`Knead` 里那两句喂料站在这个位子上**不算数**，可底座那张图纸又要求喂一个名字（它没有「什么都不用喂」的搭法）。翻译官喵的原话是 `no matching function for call to 'MeowCat::MeowCat()'`。\n- **`Purr(k), Knead(k)`** —— 中间那两块料照样要写（图纸上写着要喂），只是它们喂给底座的**那一半**会被无视。\n\n然后是**顺序**：共用的底座**最先**搭，接着左边、右边，最后才是自己那一半。所以头三行是「底座 → 左 → 右」，一眼就能看出底座**只搭了一次** —— 要是它印了两遍，那就说明有一条路**没挂上那一手**。\n\n⚠️ 最后三行的次数**全是同一个数**：只有一份底座，三条路喊的都是它。要是三行里冒出来一个别的数，那说明底座又被拆成两份了喵。",
+      "templateId": "cpp-s3-18-diamond-merge",
+      "params": {
+        "unit": "回"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:00.905Z",
+        "hash": "49182bdb7eebf4ca"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-diamond-one-base-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵手里有三张图纸喵：一张**底座**（会喵的猫），另外两张各照着它画过一次 —— 一张会打呼噜、一张会踩奶。最后那张「两样都会」照着**这两张一起**画下来。\n\n画出来看着挺像回事，可它**编不过**：翻译官喵指着 `b.meow()` 那一行，说这一手**说不清**（`ambiguous`）—— 两条路上都找得到它，它挑不出该用哪一份。\n\n你帮本喵改好：让照出来的那只猫**肚子里只留一份底座**。改完跑起来要正好印出这三行：\n\n1. `小橘：喵～`\n2. `小橘：呼噜呼噜～`\n3. `小橘：踩踩踩～`\n\n提示：要挂的那一手写在「**照着底座画**」的那一行上（不在身体里），而且**两条路都要挂**。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : MeowCat(n), Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "expectedOutput": "小橘：喵～\n小橘：呼噜呼噜～\n小橘：踩踩踩～",
+      "stdin": null,
+      "explanation": "坏在哪儿喵：`class Baby : public Purr, public Knead` 这两条路**各自照着底座画过一次** —— 于是照出来的猫肚子里有**两份**底座。`b.meow()` 一喊，两条路上都找得到它，翻译官喵只能说 `ambiguous`（说不清）。\n\n改法是**两条路都挂上那一手**：`class Purr : virtual public MeowCat`、`class Knead : virtual public MeowCat` —— 意思是「照着底座画，但这份底座整只猫里**只留一份**」。\n\n⚠️ **只挂一边不管用**：另一条路上还带着自己那份，肚子里照样是两份，`b.meow()` 还是说不清。\n\n⚠️ 还有一步很容易漏：挂上那一手之后，那份**共用的**底座由**最外面那张图纸**喂料 —— 也就是把 `MeowCat(n)` 写进 `Baby` 的出生招式里（写在最前面，它**最先**搭）。中间那两句写给底座的（`Purr`、`Knead` 出生招式里各自的 `MeowCat(n)`）从此**一律不算数**。漏了这一步，翻译官喵会改口报 `no matching function for call to 'MeowCat::MeowCat()'` —— 底座那张图纸要求喂一个名字，没有「什么都不用喂」的搭法。\n\n自己验一遍：印出来的三行名字**一模一样**，说明三条路喊的都是同一份底座喵。",
+      "templateId": "cpp-s3-18-diamond-one-base",
+      "params": {
+        "who": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:02.451Z",
+        "hash": "8b190c89b92a40e0"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-diamond-one-base-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵手里有三张图纸喵：一张**底座**（会喵的猫），另外两张各照着它画过一次 —— 一张会打呼噜、一张会踩奶。最后那张「两样都会」照着**这两张一起**画下来。\n\n画出来看着挺像回事，可它**编不过**：翻译官喵指着 `b.meow()` 那一行，说这一手**说不清**（`ambiguous`）—— 两条路上都找得到它，它挑不出该用哪一份。\n\n你帮本喵改好：让照出来的那只猫**肚子里只留一份底座**。改完跑起来要正好印出这三行：\n\n1. `小灰：喵～`\n2. `小灰：呼噜呼噜～`\n3. `小灰：踩踩踩～`\n\n提示：要挂的那一手写在「**照着底座画**」的那一行上（不在身体里），而且**两条路都要挂**。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小灰\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : MeowCat(n), Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小灰\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "expectedOutput": "小灰：喵～\n小灰：呼噜呼噜～\n小灰：踩踩踩～",
+      "stdin": null,
+      "explanation": "坏在哪儿喵：`class Baby : public Purr, public Knead` 这两条路**各自照着底座画过一次** —— 于是照出来的猫肚子里有**两份**底座。`b.meow()` 一喊，两条路上都找得到它，翻译官喵只能说 `ambiguous`（说不清）。\n\n改法是**两条路都挂上那一手**：`class Purr : virtual public MeowCat`、`class Knead : virtual public MeowCat` —— 意思是「照着底座画，但这份底座整只猫里**只留一份**」。\n\n⚠️ **只挂一边不管用**：另一条路上还带着自己那份，肚子里照样是两份，`b.meow()` 还是说不清。\n\n⚠️ 还有一步很容易漏：挂上那一手之后，那份**共用的**底座由**最外面那张图纸**喂料 —— 也就是把 `MeowCat(n)` 写进 `Baby` 的出生招式里（写在最前面，它**最先**搭）。中间那两句写给底座的（`Purr`、`Knead` 出生招式里各自的 `MeowCat(n)`）从此**一律不算数**。漏了这一步，翻译官喵会改口报 `no matching function for call to 'MeowCat::MeowCat()'` —— 底座那张图纸要求喂一个名字，没有「什么都不用喂」的搭法。\n\n自己验一遍：印出来的三行名字**一模一样**，说明三条路喊的都是同一份底座喵。",
+      "templateId": "cpp-s3-18-diamond-one-base",
+      "params": {
+        "who": "小灰"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:04.426Z",
+        "hash": "cfe95f6bdd8a8efe"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-half-virtual-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这一段只改了一半喵：左边那条路挂上了那一手，右边那条**忘了**；最外面那张图纸也**没给共用的那份喂料**。\n\n翻译官喵现在报的是**后一个错** —— 它说找不到一个「什么都不用喂」的搭法。你先把眼前这个改掉，然后会发现一件事：**后面还等着一个错**。两个都改好，让它印出这三行：\n\n1. `小橘：喵～`\n2. `小橘：呼噜呼噜～`\n3. `小橘：踩踩踩～`\n\n提示：这一题的两个毛病，正好是这一课那条新规矩的两半 —— 「**两条路都要挂**」和「**共用的那份由最外面那张图纸喂料**」。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : MeowCat(n), Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "expectedOutput": "小橘：喵～\n小橘：呼噜呼噜～\n小橘：踩踩踩～",
+      "stdin": null,
+      "explanation": "这一题**两层毛病叠着**，先看到的那层把后面那层盖住了喵：\n\n**第一层（翻译官喵现在报的）**：左边那条路挂了那一手，共用的底座就归**最外面那张图纸**搭了 —— 而 `Baby` 的出生招式里一句话都没喂。它只好去找一个不用喂料的搭法，可底座那张图纸**只有**「喂一个名字」的那种，于是报 `no matching function for call to 'MeowCat::MeowCat()'`。改法是把 `MeowCat(n)` 写进 `Baby` 的出生招式。\n\n**第二层（改完第一层才会露出来）**：右边那条路**没挂**那一手，它自己还带着一份底座。于是肚子里又是两份，`b.meow()` 一喊 —— `ambiguous`（说不清）。改法是把 `virtual` 也挂到 `Knead` 照着底座画的那一行上。\n\n两处都改好，印出来的三行名字才会**一模一样**。\n\n⚠️ 这一题最值钱的地方不是那两个写法，是**报错的先后**：第一层不解决，第二层连露脸的机会都没有。这就跟看病一样 —— 翻译官喵一次只说它最先卡住的那一句，**它不是全说完了**。所以「改完编过了」永远不等于「改完了」，得再跑一遍看输出对不对喵。",
+      "templateId": "cpp-s3-18-half-virtual",
+      "params": {
+        "who": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:06.387Z",
+        "hash": "10594e6805ee9905"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-half-virtual-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这一段只改了一半喵：左边那条路挂上了那一手，右边那条**忘了**；最外面那张图纸也**没给共用的那份喂料**。\n\n翻译官喵现在报的是**后一个错** —— 它说找不到一个「什么都不用喂」的搭法。你先把眼前这个改掉，然后会发现一件事：**后面还等着一个错**。两个都改好，让它印出这三行：\n\n1. `小灰：喵～`\n2. `小灰：呼噜呼噜～`\n3. `小灰：踩踩踩～`\n\n提示：这一题的两个毛病，正好是这一课那条新规矩的两半 —— 「**两条路都要挂**」和「**共用的那份由最外面那张图纸喂料**」。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小灰\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : MeowCat(n), Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小灰\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "expectedOutput": "小灰：喵～\n小灰：呼噜呼噜～\n小灰：踩踩踩～",
+      "stdin": null,
+      "explanation": "这一题**两层毛病叠着**，先看到的那层把后面那层盖住了喵：\n\n**第一层（翻译官喵现在报的）**：左边那条路挂了那一手，共用的底座就归**最外面那张图纸**搭了 —— 而 `Baby` 的出生招式里一句话都没喂。它只好去找一个不用喂料的搭法，可底座那张图纸**只有**「喂一个名字」的那种，于是报 `no matching function for call to 'MeowCat::MeowCat()'`。改法是把 `MeowCat(n)` 写进 `Baby` 的出生招式。\n\n**第二层（改完第一层才会露出来）**：右边那条路**没挂**那一手，它自己还带着一份底座。于是肚子里又是两份，`b.meow()` 一喊 —— `ambiguous`（说不清）。改法是把 `virtual` 也挂到 `Knead` 照着底座画的那一行上。\n\n两处都改好，印出来的三行名字才会**一模一样**。\n\n⚠️ 这一题最值钱的地方不是那两个写法，是**报错的先后**：第一层不解决，第二层连露脸的机会都没有。这就跟看病一样 —— 翻译官喵一次只说它最先卡住的那一句，**它不是全说完了**。所以「改完编过了」永远不等于「改完了」，得再跑一遍看输出对不对喵。",
+      "templateId": "cpp-s3-18-half-virtual",
+      "params": {
+        "who": "小灰"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:08.295Z",
+        "hash": "d6a49a074d0fc996"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-shared-base-default-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这一段的底座图纸上**有两个出生招式**：一个要喂名字，还有一个**什么都不用喂**（不喂就用它自带的那个名字）。\n\n两张岔路图纸都挂上了那一手，出生招式里也各自写了一句话给底座喂料。可外面拼起来之后，印出来的名字却是 `(还没起名字)` —— 而且**翻译官喵一句原话都没有**：这段代码编得过、跑得起来，屏幕上就是名字不对。\n\n你帮本喵改好，让它喂上 `小橘`，正好印出这六行：\n\n1. `搭一份会喵的底座：小橘`\n2. `搭会打呼噜的那一半`\n3. `搭会踩奶的那一半`\n4. `小橘：喵～`\n5. `小橘：呼噜呼噜～`\n6. `小橘：踩踩踩～`\n\n提示：先想清楚一件事 —— 照出 `b` 的这一段代码里，谁才是「**最外面那张图纸**」喵？",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat() : name(\"(还没起名字)\") {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    MeowCat(const string& n) : name(n) {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr() : MeowCat(\"打呼噜的底座\") {\n        cout << \"搭会打呼噜的那一半\" << endl;\n    }\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead() : MeowCat(\"踩奶的底座\") {\n        cout << \"搭会踩奶的那一半\" << endl;\n    }\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(), Knead() {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat() : name(\"(还没起名字)\") {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    MeowCat(const string& n) : name(n) {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr() : MeowCat(\"打呼噜的底座\") {\n        cout << \"搭会打呼噜的那一半\" << endl;\n    }\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead() : MeowCat(\"踩奶的底座\") {\n        cout << \"搭会踩奶的那一半\" << endl;\n    }\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : MeowCat(n), Purr(), Knead() {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "expectedOutput": "搭一份会喵的底座：小橘\n搭会打呼噜的那一半\n搭会踩奶的那一半\n小橘：喵～\n小橘：呼噜呼噜～\n小橘：踩踩踩～",
+      "stdin": null,
+      "explanation": "这一题坏的**不是写法，是位子**喵。\n\n挂上那一手之后，那份共用的底座由**最外面那张图纸**搭、也由它喂料 —— 中间那两句（`Purr` 里的「打呼噜的底座」、`Knead` 里的「踩奶的底座」）**站在这个位子上不算数**，它们只在「自己单独当最外面那张」时才作数。\n\n改法就是把料喂在最外面那张图纸的出生招式里：`Baby(const string& n) : MeowCat(n), Purr(), Knead()` —— 写在最前面，因为**共用的底座最先搭**。\n\n⚠️ 这一题最该记住的是：**它为什么不报错**。底座图纸上那个「什么都不用喂」的搭法一直在那儿，`Baby` 不喂，翻译官喵就安安静静地用了它 —— 于是名字从头到尾都是「(还没起名字)」，程序照跑不误，一行红字都没有。\n\n⚠️ 对照着记：要是底座图纸上**只有**「要喂名字」的那一个搭法，同样的漏法就会当场编不过（`no matching function for call to 'MeowCat::MeowCat()'`）。**同样一个漏法，报不报错全看底座那张图纸上有没有那个不缺料的搭法** —— 所以「编过了」这句话，在挂过那一手之后就不太靠得住了喵。",
+      "templateId": "cpp-s3-18-shared-base-default",
+      "params": {
+        "who": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:10.193Z",
+        "hash": "fa91bb734eeb8572"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-shared-base-default-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这一段的底座图纸上**有两个出生招式**：一个要喂名字，还有一个**什么都不用喂**（不喂就用它自带的那个名字）。\n\n两张岔路图纸都挂上了那一手，出生招式里也各自写了一句话给底座喂料。可外面拼起来之后，印出来的名字却是 `(还没起名字)` —— 而且**翻译官喵一句原话都没有**：这段代码编得过、跑得起来，屏幕上就是名字不对。\n\n你帮本喵改好，让它喂上 `小灰`，正好印出这六行：\n\n1. `搭一份会喵的底座：小灰`\n2. `搭会打呼噜的那一半`\n3. `搭会踩奶的那一半`\n4. `小灰：喵～`\n5. `小灰：呼噜呼噜～`\n6. `小灰：踩踩踩～`\n\n提示：先想清楚一件事 —— 照出 `b` 的这一段代码里，谁才是「**最外面那张图纸**」喵？",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat() : name(\"(还没起名字)\") {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    MeowCat(const string& n) : name(n) {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr() : MeowCat(\"打呼噜的底座\") {\n        cout << \"搭会打呼噜的那一半\" << endl;\n    }\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead() : MeowCat(\"踩奶的底座\") {\n        cout << \"搭会踩奶的那一半\" << endl;\n    }\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(), Knead() {}\n};\n\nint main() {\n    Baby b(\"小灰\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat() : name(\"(还没起名字)\") {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    MeowCat(const string& n) : name(n) {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr() : MeowCat(\"打呼噜的底座\") {\n        cout << \"搭会打呼噜的那一半\" << endl;\n    }\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead() : MeowCat(\"踩奶的底座\") {\n        cout << \"搭会踩奶的那一半\" << endl;\n    }\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : MeowCat(n), Purr(), Knead() {}\n};\n\nint main() {\n    Baby b(\"小灰\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "expectedOutput": "搭一份会喵的底座：小灰\n搭会打呼噜的那一半\n搭会踩奶的那一半\n小灰：喵～\n小灰：呼噜呼噜～\n小灰：踩踩踩～",
+      "stdin": null,
+      "explanation": "这一题坏的**不是写法，是位子**喵。\n\n挂上那一手之后，那份共用的底座由**最外面那张图纸**搭、也由它喂料 —— 中间那两句（`Purr` 里的「打呼噜的底座」、`Knead` 里的「踩奶的底座」）**站在这个位子上不算数**，它们只在「自己单独当最外面那张」时才作数。\n\n改法就是把料喂在最外面那张图纸的出生招式里：`Baby(const string& n) : MeowCat(n), Purr(), Knead()` —— 写在最前面，因为**共用的底座最先搭**。\n\n⚠️ 这一题最该记住的是：**它为什么不报错**。底座图纸上那个「什么都不用喂」的搭法一直在那儿，`Baby` 不喂，翻译官喵就安安静静地用了它 —— 于是名字从头到尾都是「(还没起名字)」，程序照跑不误，一行红字都没有。\n\n⚠️ 对照着记：要是底座图纸上**只有**「要喂名字」的那一个搭法，同样的漏法就会当场编不过（`no matching function for call to 'MeowCat::MeowCat()'`）。**同样一个漏法，报不报错全看底座那张图纸上有没有那个不缺料的搭法** —— 所以「编过了」这句话，在挂过那一手之后就不太靠得住了喵。",
+      "templateId": "cpp-s3-18-shared-base-default",
+      "params": {
+        "who": "小灰"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:12.464Z",
+        "hash": "746623f717d4752f"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-two-names-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题的两张岔路图纸**都照着同一张底座画**，而且**都没有挂那一手** —— 所以照出来的猫肚子里有**两份**底座，各过各的喵。\n\n骨架里底座和两张岔路图纸都画好了（底座身上除了会喵，还有一手改名的手艺）。你要补两处：\n\n1. 一张**两样都会**的新图纸，照着这两张一起画下来（两张前面都写清楚是公开给外面的）；\n2. `main` 里照它生一只猫，名字叫 `小橘`；然后**只从左边那条路**把它改名成 `小灰`；最后**先喊左边、再喊右边**这两声「喵」。\n\n程序要叼回这两行：\n\n1. `小灰：喵～`\n2. `小橘：喵～`\n\n关键那一步是：得让翻译官喵知道你在喊**哪一条路**上那一手 —— 中间那一段路牌（`Purr::` 这种）就是干这个用的。写成不点路牌的样子，这段代码**编不过**。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n    void rename(const string& n) { name = n; }\n};\n\nclass Purr : public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nint main() {\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n    void rename(const string& n) { name = n; }\n};\n\nclass Purr : public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.Purr::rename(\"小灰\");\n    b.Purr::meow();\n    b.Knead::meow();\n    return 0;\n}\n",
+      "expectedOutput": "小灰：喵～\n小橘：喵～",
+      "stdin": null,
+      "explanation": "两行名字不一样，正是这一题要证明的事喵：**肚子里那两份底座是各过各的**。\n\n- `Baby b(\"小橘\");` —— 两条路各照着底座画了一次，于是各带一份底座进来，两份的名字一开始都是「小橘」。\n- `b.Purr::rename(\"小灰\");` —— 中间那段 `Purr::` 就是**路牌**：本喵说的是左边那条路上那一份。改完之后，**只有左边那份**叫 `小灰`。\n- `b.Purr::meow();` 印 `小灰：喵～`；`b.Knead::meow();` 印的还是 `小橘：喵～` —— 右边那份**一个字都没被动过**。\n\n⚠️ 少写路牌会怎样：`b.meow()` 一喊，两条路上都找得到它，翻译官喵只能说 `ambiguous`（说不清），这段代码**根本编不过**。路牌不是可写可不写的点缀，它是岔路口上唯一能说清楚「走哪条路」的东西。\n\n⚠️ 顺带记住：这一题两条路**都没挂那一手**，所以底座是两份。要是两边都挂上，两份就并回一份，那时候改一个名字三条路**一起变** —— 想看到两种写法的差别，就自己把这一题改一改跑一遍喵。",
+      "templateId": "cpp-s3-18-two-names",
+      "params": {
+        "who": "小灰"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:14.843Z",
+        "hash": "70ffdeffc041cbfd"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-two-names-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题的两张岔路图纸**都照着同一张底座画**，而且**都没有挂那一手** —— 所以照出来的猫肚子里有**两份**底座，各过各的喵。\n\n骨架里底座和两张岔路图纸都画好了（底座身上除了会喵，还有一手改名的手艺）。你要补两处：\n\n1. 一张**两样都会**的新图纸，照着这两张一起画下来（两张前面都写清楚是公开给外面的）；\n2. `main` 里照它生一只猫，名字叫 `小橘`；然后**只从左边那条路**把它改名成 `小白`；最后**先喊左边、再喊右边**这两声「喵」。\n\n程序要叼回这两行：\n\n1. `小白：喵～`\n2. `小橘：喵～`\n\n关键那一步是：得让翻译官喵知道你在喊**哪一条路**上那一手 —— 中间那一段路牌（`Purr::` 这种）就是干这个用的。写成不点路牌的样子，这段代码**编不过**。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n    void rename(const string& n) { name = n; }\n};\n\nclass Purr : public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nint main() {\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n    void rename(const string& n) { name = n; }\n};\n\nclass Purr : public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.Purr::rename(\"小白\");\n    b.Purr::meow();\n    b.Knead::meow();\n    return 0;\n}\n",
+      "expectedOutput": "小白：喵～\n小橘：喵～",
+      "stdin": null,
+      "explanation": "两行名字不一样，正是这一题要证明的事喵：**肚子里那两份底座是各过各的**。\n\n- `Baby b(\"小橘\");` —— 两条路各照着底座画了一次，于是各带一份底座进来，两份的名字一开始都是「小橘」。\n- `b.Purr::rename(\"小白\");` —— 中间那段 `Purr::` 就是**路牌**：本喵说的是左边那条路上那一份。改完之后，**只有左边那份**叫 `小白`。\n- `b.Purr::meow();` 印 `小白：喵～`；`b.Knead::meow();` 印的还是 `小橘：喵～` —— 右边那份**一个字都没被动过**。\n\n⚠️ 少写路牌会怎样：`b.meow()` 一喊，两条路上都找得到它，翻译官喵只能说 `ambiguous`（说不清），这段代码**根本编不过**。路牌不是可写可不写的点缀，它是岔路口上唯一能说清楚「走哪条路」的东西。\n\n⚠️ 顺带记住：这一题两条路**都没挂那一手**，所以底座是两份。要是两边都挂上，两份就并回一份，那时候改一个名字三条路**一起变** —— 想看到两种写法的差别，就自己把这一题改一改跑一遍喵。",
+      "templateId": "cpp-s3-18-two-names",
+      "params": {
+        "who": "小白"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:16.452Z",
+        "hash": "7d11bbe55df5e1cc"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-two-way-cat-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：次数喵。\n\n骨架里两张图纸都画好了：一张会打呼噜、一张会踩奶，各自都有一个出生招式（照它做猫的时候会印一行「搭会打呼噜的那一半：次数」这种），也各有一手本事。你要补两处：\n\n1. 一张**两样都会**的新图纸，照着**这两张一起**画下来 —— 两张前面都得写清楚这是**公开给外面的**；它的出生招式除了喂给两边，还要印一行 `最后搭它自己那一半`；\n2. `main` 里照它生一只猫（次数就是读进来那个数），然后**两样本事各喊一次**。\n\n比如投喂给程序的是\n\n7\n\n程序就要叼回\n\n搭会打呼噜的那一半：7\n搭会踩奶的那一半：7\n最后搭它自己那一半\n呼噜 7 下\n踩奶 7 下\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nclass Purr {\nprotected:\n    int times;\npublic:\n    Purr(int k) : times(k) { cout << \"搭会打呼噜的那一半：\" << times << endl; }\n    void purr() const { cout << \"呼噜 \" << times << \" 下\" << endl; }\n};\n\nclass Knead {\nprotected:\n    int times;\npublic:\n    Knead(int k) : times(k) { cout << \"搭会踩奶的那一半：\" << times << endl; }\n    void knead() const { cout << \"踩奶 \" << times << \" 下\" << endl; }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass Purr {\nprotected:\n    int times;\npublic:\n    Purr(int k) : times(k) { cout << \"搭会打呼噜的那一半：\" << times << endl; }\n    void purr() const { cout << \"呼噜 \" << times << \" 下\" << endl; }\n};\n\nclass Knead {\nprotected:\n    int times;\npublic:\n    Knead(int k) : times(k) { cout << \"搭会踩奶的那一半：\" << times << endl; }\n    void knead() const { cout << \"踩奶 \" << times << \" 下\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(int k) : Purr(k), Knead(k) { cout << \"最后搭它自己那一半\" << endl; }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    Baby b(n);\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "expectedOutput": "搭会打呼噜的那一半：8\n搭会踩奶的那一半：8\n最后搭它自己那一半\n呼噜 8 下\n踩奶 8 下",
+      "stdin": "8\n",
+      "explanation": "这一题练的是**照着一张以上的图纸画**喵，要点只有三个：\n\n- 那张新图纸的头一行是 `class Baby : public Purr, public Knead` —— 两张之间用**逗号**隔开，两张前面那个 `public` **一个都不能少**。少写了，老图纸给的公开东西全变成它自己的私事，外面就会说「够不着」。（这是上一阶段的坑，照着两张画的时候要犯就犯两次。）\n- 出生招式里两边都要喂上次数：`Baby(int k) : Purr(k), Knead(k)`；印自己那一行写在身体里。\n- **搭的顺序就按名单的先后**：先 `Purr` 那一半、再 `Knead` 那一半，最后才是自己那一半 —— 前三行正是这个顺序，换一个顺序就对不上了。\n\n⚠️ 这一题里两张图纸**谁也不认识谁**（没有共同的底座），所以拼起来干干净净：两样本事一喊就到，不用点路牌。等这两张图纸**认识同一张底座**的时候，才是这一课后面那些坑喵。",
+      "templateId": "cpp-s3-18-two-way-cat",
+      "params": {
+        "unit": "下"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:18.806Z",
+        "hash": "de642158bdb7be6f"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-18-two-way-cat-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：次数喵。\n\n骨架里两张图纸都画好了：一张会打呼噜、一张会踩奶，各自都有一个出生招式（照它做猫的时候会印一行「搭会打呼噜的那一半：次数」这种），也各有一手本事。你要补两处：\n\n1. 一张**两样都会**的新图纸，照着**这两张一起**画下来 —— 两张前面都得写清楚这是**公开给外面的**；它的出生招式除了喂给两边，还要印一行 `最后搭它自己那一半`；\n2. `main` 里照它生一只猫（次数就是读进来那个数），然后**两样本事各喊一次**。\n\n比如投喂给程序的是\n\n9\n\n程序就要叼回\n\n搭会打呼噜的那一半：9\n搭会踩奶的那一半：9\n最后搭它自己那一半\n呼噜 9 回\n踩奶 9 回\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nclass Purr {\nprotected:\n    int times;\npublic:\n    Purr(int k) : times(k) { cout << \"搭会打呼噜的那一半：\" << times << endl; }\n    void purr() const { cout << \"呼噜 \" << times << \" 回\" << endl; }\n};\n\nclass Knead {\nprotected:\n    int times;\npublic:\n    Knead(int k) : times(k) { cout << \"搭会踩奶的那一半：\" << times << endl; }\n    void knead() const { cout << \"踩奶 \" << times << \" 回\" << endl; }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass Purr {\nprotected:\n    int times;\npublic:\n    Purr(int k) : times(k) { cout << \"搭会打呼噜的那一半：\" << times << endl; }\n    void purr() const { cout << \"呼噜 \" << times << \" 回\" << endl; }\n};\n\nclass Knead {\nprotected:\n    int times;\npublic:\n    Knead(int k) : times(k) { cout << \"搭会踩奶的那一半：\" << times << endl; }\n    void knead() const { cout << \"踩奶 \" << times << \" 回\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(int k) : Purr(k), Knead(k) { cout << \"最后搭它自己那一半\" << endl; }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    Baby b(n);\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+      "expectedOutput": "搭会打呼噜的那一半：2\n搭会踩奶的那一半：2\n最后搭它自己那一半\n呼噜 2 回\n踩奶 2 回",
+      "stdin": "2\n",
+      "explanation": "这一题练的是**照着一张以上的图纸画**喵，要点只有三个：\n\n- 那张新图纸的头一行是 `class Baby : public Purr, public Knead` —— 两张之间用**逗号**隔开，两张前面那个 `public` **一个都不能少**。少写了，老图纸给的公开东西全变成它自己的私事，外面就会说「够不着」。（这是上一阶段的坑，照着两张画的时候要犯就犯两次。）\n- 出生招式里两边都要喂上次数：`Baby(int k) : Purr(k), Knead(k)`；印自己那一行写在身体里。\n- **搭的顺序就按名单的先后**：先 `Purr` 那一半、再 `Knead` 那一半，最后才是自己那一半 —— 前三行正是这个顺序，换一个顺序就对不上了。\n\n⚠️ 这一题里两张图纸**谁也不认识谁**（没有共同的底座），所以拼起来干干净净：两样本事一喊就到，不用点路牌。等这两张图纸**认识同一张底座**的时候，才是这一课后面那些坑喵。",
+      "templateId": "cpp-s3-18-two-way-cat",
+      "params": {
+        "unit": "回"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:21.041Z",
+        "hash": "b0d59be3952b1f10"
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-14-bell-listeners",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-14",
+  "type": "codewrite",
+  "concept": ["喇叭登记耳朵、喊遍名单", "小招式共用一个外面的碗", "喊完之后才印总数"],
+  "instances": 6,
+  "params": {
+    "w": { "kind": "pick", "values": ["10", "20"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 2, "max": 9 },
+  "stemTemplate": "投喂口会给**一个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 写一只**开饭喇叭** `DinnerBell`：\n   - 登记耳朵的那一句叫 `listen`，登记的是「听见之后要干什么」那一小段；\n   - 喊一嗓子的那一句叫 `ring`，喊的是**一个数**，而且要把名单上每一位**从头到尾**都喊到；\n3. 主猫登记**三只耳朵**（用随身小招式那副方括号的样子）：\n   - 第一只：印一行 `咪爱收到 X`；\n   - 第二只：印一行 `大肥鱼收到 X`；\n   - 第三只：把 X 加进**外面**的一口碗里（那口碗在方括号里要用 `&` **共用同一个**）；\n4. 然后喊**两嗓子**：先喊投喂口给的那个数，再喊 `{w}`；\n5. 最后印一行 `一共 Y` —— `Y` 是那口碗里最后的数。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <functional>\nusing namespace std;\n\n// 在这儿写开饭喇叭 DinnerBell：listen / ring，喊的时候要把名单走一遍\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    // 在这儿写：登记三只耳朵，喊两嗓子，最后印出总数\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <functional>\n#include <vector>\nusing namespace std;\n\nclass DinnerBell {\npublic:\n    void listen(function<void(int)> ear) { ears.push_back(ear); }\n    void ring(int what) const {\n        for (auto& ear : ears) ear(what);\n    }\nprivate:\n    vector<function<void(int)>> ears;\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int total = 0;\n    DinnerBell bell;\n    bell.listen([](int x) { cout << \"咪爱收到 \" << x << endl; });\n    bell.listen([](int x) { cout << \"大肥鱼收到 \" << x << endl; });\n    bell.listen([&total](int x) { total += x; });\n\n    bell.ring(n);\n    bell.ring({w});\n    cout << \"一共 \" << total << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题把**开饭喇叭**组装了一遍喵：\n\n- `listen` 登记的是「听见之后要干什么」那一小段 —— 就是随身小招式（方括号那副样子写出来的）；\n- `ring` 里那句 `for (auto& ear : ears) ear(what);` 照着名单**从头到尾**喊一遍，先后就是登记的先后；\n- 第三只耳朵要把数加进**外面**那口碗，所以方括号里得写 `[&total]` —— `&` 是「**共用同一个**」的意思。要是写成 `[total]`（揣一份带走），小招式里加的数**留在它自己肚子里**，外面那口碗一点没变，最后印出来就是 `一共 0`。\n\n喊一嗓子走一圈名单，所以顺序是：咪爱一行、大肥鱼一行；喊两嗓子就各印两行。两嗓子喊完，碗里的数才是最终那个 —— `一共` 那一行要印在**喊完之后**。\n\n⚠️ 这里也有个不报错的坑：`ring` 里要是漏写了走名单那一步（比如只喊了第一位），程序编得过、跑得也安静，后两只耳朵就是一直没动静。凡是「登记了却没人吭声」的场面，先回头检查喊话那一步。"
+}

@@ -1,0 +1,79 @@
+{
+  "lessonId": "cpp-stage3-12",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵喊了一只猫来干活，现在想**站在那儿等它回来**再往下走。该写哪一句？",
+      "options": [
+        "`t.join();` —— 站在那儿等它回来",
+        "`t.close();` —— 把它合上",
+        "`t.start();` —— 让它开始跑",
+        "`t.wait();` —— 等它一会儿"
+      ],
+      "answer": 0,
+      "explanation": "`join` 念作「**合流**」喵 —— 主猫走到这一句就停下来，等那只猫把活儿干完、回到身边，才接着往下走。它是**一直等**，不是「等一会儿」；另外几个名字在这一课里都不是能写的东西：`close` 是上一课用来合上小本本的，喊来的猫没有这一句，`start` 和 `wait` 也不是 C++ 打招呼的说法。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "三只猫都要往**同一个碗**里加数。动手之前，本喵该做点什么？",
+      "options": [
+        "大家共用**同一把**锁，动手前先 `lock_guard<mutex> guard(mtx);` 把碗锁上",
+        "每只猫自己造一把锁，各锁各的",
+        "什么也不用做 —— 机器会自己替它们排好队",
+        "把三只猫换成一只猫，一只一只来"
+      ],
+      "answer": 0,
+      "explanation": "三只手同时伸进同一个碗，就可能都读到同一个旧数、各自加一写回去 —— 有一只手白加了，这就是抢碗喵。要在动手前先锁上，而且**必须只有一把锁**：锁造在大家都看得见的地方，三只猫认的是同一把。每只猫自己造一把锁，就是三把锁各守各的门，谁也不用等谁，跟没锁一样；机器也不会替你排队，它只按你写下的字跑；把帮手减到一只倒是不抢了，可那等于把活重新堆回自己身上，白喊了帮手。\n\n⚠️ 本喵在课文里老实交代过：不加锁**不是每一遍都出错**，可能跑十遍都碰巧全对。所以别拿「我跑了一遍是对的」当理由 —— 加锁是为了让「对不对」由你说了算，而不是碰运气。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵喊了一只猫来干活，却**忘了写 `join` 那一句**。程序跑起来会怎样？",
+      "options": [
+        "当场摔下来，编译器留下 `terminate called without an active exception`",
+        "什么也不会发生，那只猫干完活会自己悄悄回来",
+        "主猫会一直等到那只猫干完",
+        "那只猫会把活重干一遍"
+      ],
+      "answer": 0,
+      "explanation": "喊来的猫，走之前必须有个交代喵。少写 `t.join()`，主猫就自己收工走了，而那只猫还挂着没收尾 —— C++ 的规矩是当场了结，程序于是摔下来，翻译官喵留下 `terminate called without an active exception` 这句原话（本喵在课文里真跑出来过，一字不差）。它不会耐心等你，也不会让那只猫重来一遍。记法很简单：**喊来一只，就得接回一只。**"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany() {\n    for (int i = 0; i < 5; i++) {\n        ____ guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    ____ t1(addMany);\n    ____ t2(addMany);\n    t1.____();\n    t2.join();\n    cout << \"一共 \" << total << endl;\n    return 0;\n}",
+      "stem": "这段代码喊了两只猫来干同一个活儿：各自往共用的碗里加 5 次。四个空位（用 `____` 标出）该填什么？",
+      "blanks": [
+        { "answer": "lock_guard<mutex>", "accept": [] },
+        { "answer": "thread", "accept": [] },
+        { "answer": "thread", "accept": [] },
+        { "answer": "join", "accept": [] }
+      ],
+      "explanation": "第一个空位是**进门先锁上**的那一句 `lock_guard<mutex>` 喵：它站在加数前面，一出生就把 `mtx` 这把锁锁上，一出花括号就自动开锁 —— 两只猫认的是同一把锁（就是外面那句 `mutex mtx;` 造的），所以它们得轮流伸手。\n\n第二、第三个空位都是 `thread`：喊一只猫来干 `addMany` 这件活，喊几只就写几句。\n\n第四个空位是 `join`：`t1.join();` 念作「在这儿等它回来」—— 主猫站在这一句上，等第一只回来了才去看第二只。两只都接回来了，最后那行才会印出 `一共 10`。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint a = 0;\nint b = 0;\n\nvoid first() {\n    int s = 0;\n    for (int i = 1; i <= 4; i++) s = s + i;\n    a = s;\n}\n\nvoid second() {\n    int s = 0;\n    for (int i = 1; i <= 3; i++) s = s + i;\n    b = s;\n}\n\nint main() {\n    thread t1(first);\n    thread t2(second);\n    t1.join();\n    t2.join();\n    cout << \"第一只 \" << a << endl;\n    cout << \"第二只 \" << b << endl;\n    cout << \"一共 \" << a + b << endl;\n    return 0;\n}",
+      "stem": "两只猫各干各的：一只把 1 到 4 加起来放进自己的碗，另一只把 1 到 3 加起来放进自己的碗。两只都接回来之后主猫才印。这段代码的输出是什么？（一行一行照抄）",
+      "answer": "第一只 10\n第二只 6\n一共 16",
+      "accept": ["第一只 10\n第二只 6\n一共 16\n"],
+      "explanation": "两只猫各数各的，谁也不碰对方的碗，所以不用排队加锁喵。第一只把 `1+2+3+4` 数成 `10` 放进 `a`；第二只把 `1+2+3` 数成 `6` 放进 `b`。主猫先 `t1.join();` 再 `t2.join();` —— 两只都回来了才开口，所以印出来的三行顺序是钉死的：先是 `第一只 10`，再是 `第二只 6`，最后把两个数加起来印 `一共 16`。要是让两只猫自己在肚子里印，那两行的先后就每次都不一样了。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany() {\n    for (int i = 0; i < 200; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany);\n    thread t2(addMany);\n    thread t3(addMany);\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << endl;\n    return 0;\n}",
+      "stem": "三只猫抢同一个碗，每只往里面加 200 次；共用一把锁，而且三只都接回来之后才印。这段代码的输出是什么？（照抄那一行）",
+      "answer": "一共 600",
+      "accept": ["一共 600\n"],
+      "explanation": "三只猫加起来一共动了 `3 × 200 = 600` 次手，而每一次伸手之前都先用 `lock_guard<mutex> guard(mtx);` 把碗锁上，所以**一次都不会白加**：印出来是 `一共 600` 喵。\n\n`lock_guard` 的好处是它会自己收尾：这一圈结束、出了花括号，锁就自动开了，不用本喵惦记着开锁这件事。\n\n⚠️ 顺便说一句本喵在课文里交代过的话：把 `lock_guard` 那一句删掉，这个程序**不一定**就印错 —— 抢碗这件事跟三只猫的步子凑不凑巧有关。所以别拿「删掉也印对了」当证据，那只是运气好。"
+    }
+  ]
+}

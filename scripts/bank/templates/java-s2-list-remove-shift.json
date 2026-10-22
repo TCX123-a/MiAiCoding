@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-list-remove-shift",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-08",
+  "type": "codefix",
+  "concept": ["拿掉一格后面往前挪", "编号会变", "不报错的错"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "大橘"] },
+    "n2": { "kind": "pick", "values": ["狸花", "花卷"] },
+    "n3": { "kind": "pick", "values": ["大胖", "小黄"] }
+  },
+  "stemTemplate": "柜子里先按顺序放了三只。本喵想**把头一格拿掉**，再念出**原来紧跟在它后面的那一只**。\n\n程序**跑起来了**，屏幕上连一行红字都没有，可念出来的不是本喵要的那只 —— 它念的是**本来排第三**的那一只。\n\n请你帮本喵改好，规矩是：**`remove` 那一句不许动**（本喵就是要拿掉头一格），只把念名字那一处改对。\n\n改好之后，程序该印出这一行（就是本喵**本来排在第二**的那一只）：\n\n```text\n原来排在第二的那只是 {n2}\n```\n\n只有念名字那一处的问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> bowls = new ArrayList<>();\n        bowls.add(\"{n1}\");\n        bowls.add(\"{n2}\");\n        bowls.add(\"{n3}\");\n        bowls.remove(0);\n        System.out.println(\"原来排在第二的那只是 \" + bowls.get(1));\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> bowls = new ArrayList<>();\n        bowls.add(\"{n1}\");\n        bowls.add(\"{n2}\");\n        bowls.add(\"{n3}\");\n        bowls.remove(0);\n        System.out.println(\"原来排在第二的那只是 \" + bowls.get(0));\n    }\n}\n",
+  "explanationTemplate": "这一题是本课**最阴**的那一类：**翻译官喵一个字都没说。** 程序跑得好好的，名字也念出来了 —— 只不过念的是错的那个。\n\n错在哪？**柜子拿掉中间一格之后，后面所有碗都会往前挪一格。**\n\n三只在柜子里的时候是这样的：\n\n```text\n编号    0      1      2\n        {n1}   {n2}   {n3}\n```\n\n`bowls.remove(0)` 把 `{n1}` 那一格拿走之后，`{n2}` 和 `{n3}` **各自往前挪了一格**，原来排在第二的那只**已经不是编号 1 了**：\n\n```text\n编号    0      1\n        {n2}   {n3}\n```\n\n所以念**编号 1** 摸到的是 `{n3}` —— 本来排第三的那只。要摸本喵真正想要的那只，编号得跟着往前挪一格，写成 `bowls.get(0)`。\n\n这条规矩在课上的「小心喵」里专门提过：**拿掉一格之后，后面所有编号都会往前挪。** 所以千万别「一边按编号摸、一边删」—— 摸到的东西会跟本喵想的两样。真要删，要么**倒着数着删**，要么先攒起来回头一起删。\n\n顺便把这道题和上一道对起来看：上一道是**编号数过了**，柜子当场炸、红字指给你看；这一道是**编号没数错、但它指的是别人的格子**，一点动静都没有。往后哪种更难查，本喵心里有数了吧喵。"
+}

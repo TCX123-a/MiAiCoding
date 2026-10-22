@@ -1,0 +1,52 @@
+node_modules/
+out/
+dist/
+release/
+# 2026-10-21 批：旧 release/ 被内核态句柄钉住，产物改到带日期的目录（1.6G）。
+# 同样是构建产物，不入库。
+release-*/
+src/renderer/src/generated/
+*.local
+.DS_Store
+Thumbs.db
+
+# 出图候选池：一次 100+ 张、还在反复重出，进 git 只会把仓库撑爆。
+# 定稿的图不走这里 —— 它们直接放在 assets/mascot/ 下，那个目录是要提交的。
+src/renderer/src/assets/mascot/raw/
+
+# scripts/ 下的 Python 工具都是直接双击/命令行跑的，不用打包，pycache 纯属垃圾。
+__pycache__/
+*.pyc
+
+# scripts/ 根下 `_` 开头的一次性探针。
+#
+# 「`_` 开头 = 不进仓库」是这套工具早就写在文件头里的规矩
+# （见 `scripts/_check-template-stale.mjs`：「探针（`_` 开头，**不进仓库**）」），
+# 只是**一直没落到 .gitignore 上** —— 于是 scripts/ 下攒了 100 多个
+# 永远不该提交的文件，每次 `git status` 都把它们列一遍。
+# 状态不明和状态明确是两码事：这行写下去之后，「没被跟踪」就变成
+# **故意的**，而不是「忘了处理」。
+#
+# 只盖一层（`scripts/_*`），不递归 —— `scripts/审计/` 里有几个 `_` 开头的
+# 文件是**要**提交的（`_fix_round*.py` 记着「为什么改成这样」，triggers.py 会引用）。
+# 那个目录有自己的 .gitignore，规矩由它自己管。
+scripts/_*
+
+# 审计清单是**跑出来的**（一句一跑，内容会变），答案在账本里，不在这个快照里。
+scripts/审计/_silence-list.json
+
+# prototype/ 是 P1 壁纸可行性实验区（docs/23 的证据链）：源码、笔记、依赖清单入库；
+# 跑出来的东西不入库——.userdata 是 Electron 用户目录，app/cache 是从主人自己的
+# .pkg 解出来的素材缓存（19M），*.jsonl 是各次实验的运行日志（重跑探测即得）。
+prototype/.userdata/
+prototype/app/cache/
+prototype/**/*.jsonl
+
+# tsc --composite 的增量产物（tsconfig.node.json 生成）：本机编译缓存，不该入库。
+tsconfig.node.tsbuildinfo
+
+# 同上，vue-tsc（tsconfig.web.json）的 composite 增量产物。
+tsconfig.web.tsbuildinfo
+
+# gen-bank 的一次性输出日志（跑题库生成时重定向到仓库根产生）。
+_genbank-*.log

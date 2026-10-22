@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-11-two-calls-on-abstract",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-11",
+  "type": "codewrite",
+  "concept": ["抽象图纸身上还有实打实的东西", "不是每一手都会回头看屋里住的是谁", "指着抽象图纸喊两声"],
+  "instances": 6,
+  "params": {
+    "catName": { "kind": "pick", "values": ["小橘", "大胖"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 1, "max": 9 },
+  "stemTemplate": "本喵要看清一件事：**抽象图纸身上不是每一手都「只挂招牌」** —— 它还有实打实的数据、和一整手写全了的普通招式。投喂口会递进来**一个数**（这只猫吃了几条小鱼干）。\n\n请你这么办：\n\n1. **画老图纸** `Animal`：够得着的那一档的 `name`（一串字），出生招式把名字填上；再写两手：\n   - 一手 `speak()`：**只挂招牌、不写动作**（照它画下来的必须自己会这一手）；\n   - 一手 `showName()`：**动作写全了的普通招式**，印一行 `本喵叫 X`。\n2. **让小猫图纸照它画下来**：叫 `Kitten`，自己添一栏 `fish`（一个整数，出生招式里一并填上）；把 `speak` 补成自己的版本（挂 `override`），印一行 `X：喵～本喵吃了 N 条`。\n3. 在 `main` 里：读进那个数 → 生一只小猫 → **拿一张写着 `Animal` 的牌子指着它**（「不必还的名字」那种写法）→ **顺着牌子喊两声**：先喊 `showName()`、再喊 `speak()`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n**两行的来路完全不一样** —— 那正是本喵要你看清的事。\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Animal {\nprotected:\n    string name;\npublic:\n    Animal(string n) : name(n) {}\n    virtual void speak() const = 0;\n    void showName() const {\n        cout << \"本喵叫 \" << name << endl;\n    }\n};\n\nclass Kitten : public Animal {\n    int fish;\npublic:\n    Kitten(string n, int f) : Animal(n), fish(f) {}\n    void speak() const override {\n        cout << name << \"：喵～本喵吃了 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    int f = 0;\n    cin >> f;\n\n    Kitten k(\"{catName}\", f);\n    Animal& r = k;\n    r.showName();\n    r.speak();\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题，屏幕上两行是：\n\n```text\n{sampleOutput}\n```\n\n**两行的来路完全不一样**，这正是这一课要钉住的那件事：\n\n- **第一行 `r.showName()`** —— 这一手是**动作写全了的普通招式**，不是只挂招牌那一手。所以牌子上写的是 `Animal`，跑的就是老图纸那一版。本喵连小猫图纸里要不要盖它一版都没提 —— 因为「只挂招牌」这件事**只属于挂了 `= 0` 的那几手**，别的招式一概是普通的。\n- **第二行 `r.speak()`** —— 这一手挂着 `= 0`，是那份约定。牌子上写的是谁不重要，喊下去的那一刻低头看屋里住的是谁，于是跑的是小猫自己那一版，连它自己添的那一栏 `fish` 都印了出来。\n\n⚠️ 三件事本喵替你钉住：\n\n1. **`= 0` 是逐手的，不是整张图纸的。** 一张图纸上有一手挂了招牌，它就成了生不出真身的那一张；可**身上其余的东西一点没变** —— 数据还是数据，普通招式还是普通招式。\n2. **抽象图纸上照样可以有实打实的数据。** 本喵这一题的 `name` 就是实打实的一栏，小猫图纸一个字都不用盖，白得一份。**这正是它和「一份干干净净的约定」的分别**：约定那张图纸上什么都不许有。\n3. **`Animal& r = k;` 的那个 `&` 不能漏。** 漏了就变成「照抽象图纸造一具真身」，翻译官喵当场拦下。\n\n一句话收住：**挂着 `= 0` 的那一手才是约定，其余的都是白送的。**"
+}

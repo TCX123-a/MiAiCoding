@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-16-narrow-store",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-16",
+  "type": "codefix",
+  "concept": ["装不下的格子", "平方涨得快", "一格之差就是负数"],
+  "instances": 2,
+  "stdinSpec": { "kind": "raw", "text": "{n}\n", "sampleText": "12345\n" },
+  "params": {
+    "n": { "kind": "pick", "values": ["52000", "58000"] }
+  },
+  "stemTemplate": "本喵要估一估**最费事的那种写法**要跑多少圈：每一对都来回各碰一次，圈数就是**条数的平方**喵。\n\n投喂口会给**一个条数**（这一次是 {n}），程序要把它读进来，然后把这个条数的平方印出来。\n\n可这段代码印出来的数是**一个负数**（喂 {n} 进去，屏幕上出来的是负的）。它跑得起来，翻译官喵一句原话都没有：算的那一句没写错，坏的是**装结果的那个格子太小**，装不下。\n\n你帮本喵改好：改完跑起来，屏幕上要正好是 {n} 的平方（十位数，别让它再绕成负数喵）。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int total = n * n;\n    cout << total << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    long long total = (long long)n * n;\n    cout << total << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "坏的那一格是 `int total = n * n;` —— **装结果的那个格子太小**喵。\n\n{n} 的平方是个**十位数**，而 `int` 这种格子最多装到 2147483647。装不下的那部分不是「报错」，是**默默地绕回去**：多出来的部分从另一头转回来，于是屏幕上出现一个负数。\n\n改法是**把装结果的那一格换成装得下十位数的**：`long long total = (long long)n * n;`。前面那个括起来的写法，是**让这一次相乘从一开始就拿大格子算** —— 少了它，先拿小格子算完再往大格子里放，一样白搭。\n\n自己验一遍：这个条数乘它自己，算出来该是十位数；屏幕上要是带着负号，就说明还有哪一步在拿小格子算。\n\n⚠️ 这一题最该记住的是：**「装不下」从不喊疼**。小格子装满之后不会停下来等你，它会绕回去 —— 绕出来的那个数看起来完全像个正常的数，最容易被人当成「算错了」而不是「装不下」。\n\n⚠️ 而且它**越大越容易踩**：条数只要涨到四万六千多，平方就过线了。五万的平方是 2500000000、六万的平方是 3600000000 —— 都在这条线外面。平方级的写法配上小格子，是这个量级上最经典的一对坑。"
+}

@@ -1,0 +1,301 @@
+{
+  "lessonId": "cpp-stage3-12",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-12-bowl-shadowed-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵喊了三只帮手一起往**同一个碗**里加数：每位加 600 次，动手前还都规规矩矩地上了锁。\n\n可跑出来是 `一共 0 次` 喵 —— 三只帮手全白干了。你帮本喵找出错在哪儿：**加的次数、那把锁、最后印的那一行都不用动**，让这个碗真的是大家共用的那一个。\n\n改好之后，程序要印出 `一共 ` 后面跟**三倍的 600**（也就是三只帮手加起来一共加了多少次）。",
+      "brokenCode": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    int total = 0;\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, 600);\n    thread t2(addMany, 600);\n    thread t3(addMany, 600);\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" 次\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, 600);\n    thread t2(addMany, 600);\n    thread t3(addMany, 600);\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" 次\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "一共 1800 次",
+      "stdin": null,
+      "explanation": "这一题的毛病是**每只帮手肚里又摆了一个也叫 `total` 的小碗**喵。\n\n外面确实有一个大家共用的大碗，可帮手一进门就自己造了一个同名的 —— 后面的 `total = total + 1` 认的都是**离它最近的那个**，也就是它自己肚里的小碗。三只帮忙活了一场，各自把小碗加到 600，然后连人带碗一起走了；外面那个大碗从头到尾没人碰过，所以印出来是 `一共 0 次`。\n\n修法就是把肚里那一句挪掉 —— 让 `total = total + 1` 看见的是外面那个大家共用的大碗。锁和次数都不用动。\n\n⚠️ 这一类错**不会报错**：同名的小碗和大碗都是正经东西，代码从头到尾跑得顺顺当当，只有一个数字不对。所以看到「帮手们明明干了活、账上却是 0」，第一件事就是数一数**这个碗到底是在哪儿摆的**。\n\n⚠️ 顺带说一句：这一题里那把锁是**本来就有**的。可帮手们被小碗挡住的时候，锁根本拦不住这件事 —— 每个帮手加的都是自己肚里的东西，谁也碍不着谁，锁一点用场都派不上。碗没共用，锁就是白上的。",
+      "templateId": "cpp-s3-12-bowl-shadowed",
+      "params": {
+        "times": "600",
+        "unit": "次"
+      },
+      "verified": {
+        "at": "2026-09-16T11:09:41.381Z",
+        "hash": "a293ff1917241bc6"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-bowl-shadowed-003",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵喊了三只帮手一起往**同一个碗**里加数：每位加 900 下，动手前还都规规矩矩地上了锁。\n\n可跑出来是 `一共 0 下` 喵 —— 三只帮手全白干了。你帮本喵找出错在哪儿：**加的次数、那把锁、最后印的那一行都不用动**，让这个碗真的是大家共用的那一个。\n\n改好之后，程序要印出 `一共 ` 后面跟**三倍的 900**（也就是三只帮手加起来一共加了多少下）。",
+      "brokenCode": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    int total = 0;\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, 900);\n    thread t2(addMany, 900);\n    thread t3(addMany, 900);\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" 下\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, 900);\n    thread t2(addMany, 900);\n    thread t3(addMany, 900);\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" 下\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "一共 2700 下",
+      "stdin": null,
+      "explanation": "这一题的毛病是**每只帮手肚里又摆了一个也叫 `total` 的小碗**喵。\n\n外面确实有一个大家共用的大碗，可帮手一进门就自己造了一个同名的 —— 后面的 `total = total + 1` 认的都是**离它最近的那个**，也就是它自己肚里的小碗。三只帮忙活了一场，各自把小碗加到 900，然后连人带碗一起走了；外面那个大碗从头到尾没人碰过，所以印出来是 `一共 0 下`。\n\n修法就是把肚里那一句挪掉 —— 让 `total = total + 1` 看见的是外面那个大家共用的大碗。锁和次数都不用动。\n\n⚠️ 这一类错**不会报错**：同名的小碗和大碗都是正经东西，代码从头到尾跑得顺顺当当，只有一个数字不对。所以看到「帮手们明明干了活、账上却是 0」，第一件事就是数一数**这个碗到底是在哪儿摆的**。\n\n⚠️ 顺带说一句：这一题里那把锁是**本来就有**的。可帮手们被小碗挡住的时候，锁根本拦不住这件事 —— 每个帮手加的都是自己肚里的东西，谁也碍不着谁，锁一点用场都派不上。碗没共用，锁就是白上的。",
+      "templateId": "cpp-s3-12-bowl-shadowed",
+      "params": {
+        "times": "900",
+        "unit": "下"
+      },
+      "verified": {
+        "at": "2026-09-16T11:09:44.332Z",
+        "hash": "ce0628ad4cfe5d29"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-forgot-join-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵喊了两只帮手干活：一位把 `小鱼干` 记进自己的碗，另一位把 `大肥鱼` 记进自己的碗。两只碗都是**各用各的**，一点也不用排队。\n\n可这段代码一跑就**当场摔**喵 —— 翻译官喵丢下一句「有件事还没收尾，我就被丢下了」。你帮本喵看看漏了哪一步：**两只碗里记的东西一个字都不用动**，让程序顺顺当当跑完就行。\n\n改好之后，程序要印出三行：先是 `小鱼干`，再是 `大肥鱼`，最后是 `两只都回来了喵`。",
+      "brokenCode": "#include <iostream>\n#include <thread>\n#include <string>\nusing namespace std;\n\nstring bowl1;\nstring bowl2;\n\nvoid cleanBowl() {\n    bowl1 = \"小鱼干\";\n}\n\nvoid dryFish() {\n    bowl2 = \"大肥鱼\";\n}\n\nint main() {\n    thread t1(cleanBowl);\n    thread t2(dryFish);\n    t1.join();\n    cout << bowl1 << endl;\n    cout << bowl2 << endl;\n    cout << \"两只都回来了喵\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <thread>\n#include <string>\nusing namespace std;\n\nstring bowl1;\nstring bowl2;\n\nvoid cleanBowl() {\n    bowl1 = \"小鱼干\";\n}\n\nvoid dryFish() {\n    bowl2 = \"大肥鱼\";\n}\n\nint main() {\n    thread t1(cleanBowl);\n    thread t2(dryFish);\n    t1.join();\n    t2.join();\n    cout << bowl1 << endl;\n    cout << bowl2 << endl;\n    cout << \"两只都回来了喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干\n大肥鱼\n两只都回来了喵",
+      "stdin": null,
+      "explanation": "这一题漏的是**接第二位帮手回家**的那一句喵。\n\n代码里喊了两位（`thread t1(...)` 和 `thread t2(...)`），却只写了 `t1.join();` —— 主猫等回了第一位就自己收工走了，第二位还挂着没人管。C++ 的规矩是：喊来的帮手，**走之前必须有个交代**。没有交代，程序当场了结，翻译官喵的原话是\n\n`terminate called without an active exception`\n\n念作「有件事还没收尾，我就被丢下了」。补上 `t2.join();`，主猫就站住等它回来，三行才会按写好的顺序印出来。\n\n⚠️ 注意这句摔下来的话**不点名**是哪一位没说清楚 —— 它不说「t2 漏了」，只告诉你「有件事没收尾」。所以看到它，就回去**一位一位数**：喊了几句 `thread`，就该有几句 `join`。\n\n⚠️ 还有一处容易看走眼：第二位帮手要记的东西（`大肥鱼`）在它摔下来之前**可能已经记好了**，也可能没记好 —— 这两件事谁先谁后本来说不准。所以别拿「我那次印出来是对的」当修好的证据：程序摔了就是没对。",
+      "templateId": "cpp-s3-12-forgot-join",
+      "params": {
+        "w1": "小鱼干",
+        "w2": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T11:09:35.014Z",
+        "hash": "aafd139944c24162"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-forgot-join-008",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵喊了两只帮手干活：一位把 `毛线球` 记进自己的碗，另一位把 `橘猫` 记进自己的碗。两只碗都是**各用各的**，一点也不用排队。\n\n可这段代码一跑就**当场摔**喵 —— 翻译官喵丢下一句「有件事还没收尾，我就被丢下了」。你帮本喵看看漏了哪一步：**两只碗里记的东西一个字都不用动**，让程序顺顺当当跑完就行。\n\n改好之后，程序要印出三行：先是 `毛线球`，再是 `橘猫`，最后是 `两只都回来了喵`。",
+      "brokenCode": "#include <iostream>\n#include <thread>\n#include <string>\nusing namespace std;\n\nstring bowl1;\nstring bowl2;\n\nvoid cleanBowl() {\n    bowl1 = \"毛线球\";\n}\n\nvoid dryFish() {\n    bowl2 = \"橘猫\";\n}\n\nint main() {\n    thread t1(cleanBowl);\n    thread t2(dryFish);\n    t1.join();\n    cout << bowl1 << endl;\n    cout << bowl2 << endl;\n    cout << \"两只都回来了喵\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <thread>\n#include <string>\nusing namespace std;\n\nstring bowl1;\nstring bowl2;\n\nvoid cleanBowl() {\n    bowl1 = \"毛线球\";\n}\n\nvoid dryFish() {\n    bowl2 = \"橘猫\";\n}\n\nint main() {\n    thread t1(cleanBowl);\n    thread t2(dryFish);\n    t1.join();\n    t2.join();\n    cout << bowl1 << endl;\n    cout << bowl2 << endl;\n    cout << \"两只都回来了喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "毛线球\n橘猫\n两只都回来了喵",
+      "stdin": null,
+      "explanation": "这一题漏的是**接第二位帮手回家**的那一句喵。\n\n代码里喊了两位（`thread t1(...)` 和 `thread t2(...)`），却只写了 `t1.join();` —— 主猫等回了第一位就自己收工走了，第二位还挂着没人管。C++ 的规矩是：喊来的帮手，**走之前必须有个交代**。没有交代，程序当场了结，翻译官喵的原话是\n\n`terminate called without an active exception`\n\n念作「有件事还没收尾，我就被丢下了」。补上 `t2.join();`，主猫就站住等它回来，三行才会按写好的顺序印出来。\n\n⚠️ 注意这句摔下来的话**不点名**是哪一位没说清楚 —— 它不说「t2 漏了」，只告诉你「有件事没收尾」。所以看到它，就回去**一位一位数**：喊了几句 `thread`，就该有几句 `join`。\n\n⚠️ 还有一处容易看走眼：第二位帮手要记的东西（`橘猫`）在它摔下来之前**可能已经记好了**，也可能没记好 —— 这两件事谁先谁后本来说不准。所以别拿「我那次印出来是对的」当修好的证据：程序摔了就是没对。",
+      "templateId": "cpp-s3-12-forgot-join",
+      "params": {
+        "w1": "毛线球",
+        "w2": "橘猫"
+      },
+      "verified": {
+        "at": "2026-09-16T11:09:38.068Z",
+        "hash": "74e5dc67bdebb67d"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-guard-no-lock-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵喊了三只帮手往**同一个碗**里加数：每位加 700 次。三只都接回来之后，印出来的该是三倍。\n\n可这段代码**编不过**喵。翻译官喵的原话里点着那位**守卫**：它不知道自己该守着哪把锁。你帮本喵把它改对：**加的次数、印的那一行、碗和锁的摆法都不用动**。\n\n改好之后，程序要印出 `一共 ` 后面跟三倍的 700。",
+      "brokenCode": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard;\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, 700);\n    thread t2(addMany, 700);\n    thread t3(addMany, 700);\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" 次\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, 700);\n    thread t2(addMany, 700);\n    thread t3(addMany, 700);\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" 次\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "一共 2100 次",
+      "stdin": null,
+      "explanation": "这一题漏的是**告诉守卫守着哪把锁**喵。\n\n那一位守卫（`lock_guard`）进门的样子只有一种：**圆括号里得把锁递给它** —— `guard(mtx)`。空着圆括号，它就不知道要守谁家的门，翻译官喵当场把它拦下：\n\n`error: no matching function for call to 'std::lock_guard<std::mutex>::lock_guard()'`\n\n念作「没有哪个用法是这么写的」。它后面还补了一句 `candidate expects 2 arguments, 0 provided` ——「我认得的那几种写法，都得给点儿东西，你一个都没给」。补上 `(mtx)`，它就老老实实站到碗前面去了。\n\n⚠️ 注意报错里点的是**守卫这个名字**，不是锁的名字：本喵一开始还以为是锁造错了。翻译官喵说的其实是「我认得的那几种用法，没有一种是空手的」——顺着这句去看圆括号，才是正路。\n\n⚠️ 守卫认的是**它出生那一行给你的那把锁**：写 `guard(mtx)` 守的就是 `mtx`。要是碗前面站着守卫、守的却是另一把锁，它照样不管这只碗。",
+      "templateId": "cpp-s3-12-guard-no-lock",
+      "params": {
+        "times": "700",
+        "unit": "次"
+      },
+      "verified": {
+        "at": "2026-09-16T11:09:47.652Z",
+        "hash": "e70417635d9ea1fe"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-guard-no-lock-003",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵喊了三只帮手往**同一个碗**里加数：每位加 1100 下。三只都接回来之后，印出来的该是三倍。\n\n可这段代码**编不过**喵。翻译官喵的原话里点着那位**守卫**：它不知道自己该守着哪把锁。你帮本喵把它改对：**加的次数、印的那一行、碗和锁的摆法都不用动**。\n\n改好之后，程序要印出 `一共 ` 后面跟三倍的 1100。",
+      "brokenCode": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard;\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, 1100);\n    thread t2(addMany, 1100);\n    thread t3(addMany, 1100);\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" 下\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, 1100);\n    thread t2(addMany, 1100);\n    thread t3(addMany, 1100);\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" 下\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "一共 3300 下",
+      "stdin": null,
+      "explanation": "这一题漏的是**告诉守卫守着哪把锁**喵。\n\n那一位守卫（`lock_guard`）进门的样子只有一种：**圆括号里得把锁递给它** —— `guard(mtx)`。空着圆括号，它就不知道要守谁家的门，翻译官喵当场把它拦下：\n\n`error: no matching function for call to 'std::lock_guard<std::mutex>::lock_guard()'`\n\n念作「没有哪个用法是这么写的」。它后面还补了一句 `candidate expects 2 arguments, 0 provided` ——「我认得的那几种写法，都得给点儿东西，你一个都没给」。补上 `(mtx)`，它就老老实实站到碗前面去了。\n\n⚠️ 注意报错里点的是**守卫这个名字**，不是锁的名字：本喵一开始还以为是锁造错了。翻译官喵说的其实是「我认得的那几种用法，没有一种是空手的」——顺着这句去看圆括号，才是正路。\n\n⚠️ 守卫认的是**它出生那一行给你的那把锁**：写 `guard(mtx)` 守的就是 `mtx`。要是碗前面站着守卫、守的却是另一把锁，它照样不管这只碗。",
+      "templateId": "cpp-s3-12-guard-no-lock",
+      "params": {
+        "times": "1100",
+        "unit": "下"
+      },
+      "verified": {
+        "at": "2026-09-16T11:09:50.405Z",
+        "hash": "bcb89c7fb7e733a3"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-locked-cats-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：那是**每一位帮手**要往碗里加的次数喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 把**大家共用的那个碗**和**一把大家共用的锁**摆在外面（都在最外头，只摆一份）；\n3. 喊 **3 位**帮手来干同一个活儿，每位把碗加那么多次 —— **动手之前先锁上**；\n4. 三只**都接回来之后**，才印一行 `一共 X 次`，X 是三只加起来的总数。\n\n比如投喂给程序的是\n\n513\n\n程序就要叼回\n\n一共 1539 次\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    // 在这儿写：往碗里加 times 次，动手之前先锁上\n\n}\n\nint main() {\n    int times = 0;\n    cin >> times;\n\n    // 在这儿写：喊 3 位帮手来干 addMany，都接回来之后再印那一行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    int times = 0;\n    cin >> times;\n\n    thread t1(addMany, times);\n    thread t2(addMany, times);\n    thread t3(addMany, times);\n    t1.join();\n    t2.join();\n    t3.join();\n\n    cout << \"一共 \" << total << \" 次\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "一共 2694 次",
+      "stdin": "898\n",
+      "explanation": "这一题是三只猫抢**同一个碗**的场面喵，四件事一件都不能少：\n\n- **碗和锁都摆在外面**：`int total = 0;` 和 `mutex mtx;` 写在所有活儿的外头，三只帮手认的才是同一个碗、同一把锁。\n- **动手前先锁上**：`lock_guard<mutex> guard(mtx);` 站在加数前面。它一出生就把锁锁上，出了花括号自动开锁，不用你自己惦记着开。\n- **三只都要接回来**：喊了三位就得写三句 `join`，一位都不能漏 —— 漏掉程序当场摔。\n- **都回来了再印**：印那一行写在三句 `join` 的**后面**，所以印出来是稳稳当当的一个数。\n\n⚠️ 关于那把锁，本喵得说句实话：**不加锁也不一定每次都出错**。三只手同时伸进碗里只是**可能**丢一两下，跟三只猫的步子凑不凑巧有关，跑十遍说不定十遍都对。所以加锁不是为了「碰运气碰对」，而是为了**让这个数由你说了算**：加了锁，`一共 3 × times` 就是板上钉钉。判分这一题时用的也是那个稳的数。",
+      "templateId": "cpp-s3-12-locked-cats",
+      "params": {
+        "unit": "次"
+      },
+      "verified": {
+        "at": "2026-09-16T11:09:59.434Z",
+        "hash": "700e94daf08f1386"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-locked-cats-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：那是**每一位帮手**要往碗里加的次数喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 把**大家共用的那个碗**和**一把大家共用的锁**摆在外面（都在最外头，只摆一份）；\n3. 喊 **3 位**帮手来干同一个活儿，每位把碗加那么多次 —— **动手之前先锁上**；\n4. 三只**都接回来之后**，才印一行 `一共 X 下`，X 是三只加起来的总数。\n\n比如投喂给程序的是\n\n530\n\n程序就要叼回\n\n一共 1590 下\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    // 在这儿写：往碗里加 times 次，动手之前先锁上\n\n}\n\nint main() {\n    int times = 0;\n    cin >> times;\n\n    // 在这儿写：喊 3 位帮手来干 addMany，都接回来之后再印那一行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    int times = 0;\n    cin >> times;\n\n    thread t1(addMany, times);\n    thread t2(addMany, times);\n    thread t3(addMany, times);\n    t1.join();\n    t2.join();\n    t3.join();\n\n    cout << \"一共 \" << total << \" 下\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "一共 2076 下",
+      "stdin": "692\n",
+      "explanation": "这一题是三只猫抢**同一个碗**的场面喵，四件事一件都不能少：\n\n- **碗和锁都摆在外面**：`int total = 0;` 和 `mutex mtx;` 写在所有活儿的外头，三只帮手认的才是同一个碗、同一把锁。\n- **动手前先锁上**：`lock_guard<mutex> guard(mtx);` 站在加数前面。它一出生就把锁锁上，出了花括号自动开锁，不用你自己惦记着开。\n- **三只都要接回来**：喊了三位就得写三句 `join`，一位都不能漏 —— 漏掉程序当场摔。\n- **都回来了再印**：印那一行写在三句 `join` 的**后面**，所以印出来是稳稳当当的一个数。\n\n⚠️ 关于那把锁，本喵得说句实话：**不加锁也不一定每次都出错**。三只手同时伸进碗里只是**可能**丢一两下，跟三只猫的步子凑不凑巧有关，跑十遍说不定十遍都对。所以加锁不是为了「碰运气碰对」，而是为了**让这个数由你说了算**：加了锁，`一共 3 × times` 就是板上钉钉。判分这一题时用的也是那个稳的数。",
+      "templateId": "cpp-s3-12-locked-cats",
+      "params": {
+        "unit": "下"
+      },
+      "verified": {
+        "at": "2026-09-16T11:10:02.422Z",
+        "hash": "af032ff95eda7032"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-own-bowls-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会**在一行里给两个数**：第一个数给第一位帮手，第二个数给第二位帮手喵（两个数之间用空格隔开）。\n\n请你写个程序，按这个顺序干活：\n\n1. 把两个数都读进来；\n2. 喊**两位**帮手，各自干各自的活：一位把 `1` 一路加到第一个数，把结果放进**它自己的碗**；另一位把 `1` 一路加到第二个数，放进**它自己的碗**。两个碗各用各的，谁也不用等谁；\n3. 两位**都接回来之后**，才按顺序印三行：先 `小鱼干 X`、再 `猫粮 Y`、最后 `一共 Z`（Z 是两个碗加起来的数）。\n\n比如投喂给程序的是\n\n4 4\n\n程序就要叼回\n\n小鱼干 10\n猫粮 10\n一共 20\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint bowl1 = 0;\nint bowl2 = 0;\n\nvoid countFirst(int n) {\n    // 在这儿写：把 1 加到 n，结果放进 bowl1\n\n}\n\nvoid countSecond(int m) {\n    // 在这儿写：把 1 加到 m，结果放进 bowl2\n\n}\n\nint main() {\n    int n = 0;\n    int m = 0;\n    cin >> n >> m;\n\n    // 在这儿写：喊两位帮手，都接回来之后按顺序印三行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint bowl1 = 0;\nint bowl2 = 0;\n\nvoid countFirst(int n) {\n    int s = 0;\n    for (int i = 1; i <= n; i++) s = s + i;\n    bowl1 = s;\n}\n\nvoid countSecond(int m) {\n    int s = 0;\n    for (int i = 1; i <= m; i++) s = s + i;\n    bowl2 = s;\n}\n\nint main() {\n    int n = 0;\n    int m = 0;\n    cin >> n >> m;\n\n    thread t1(countFirst, n);\n    thread t2(countSecond, m);\n    t1.join();\n    t2.join();\n\n    cout << \"小鱼干 \" << bowl1 << endl;\n    cout << \"猫粮 \" << bowl2 << endl;\n    cout << \"一共 \" << bowl1 + bowl2 << endl;\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 6\n猫粮 6\n一共 12",
+      "stdin": "3 3\n",
+      "explanation": "这一题两位帮手**各用各的碗**喵：一位往 `bowl1` 里放，另一位往 `bowl2` 里放，谁也没碰对方的东西 —— 这种场面**不用排队、不用加锁**，加了也是白加。\n\n三件事值得记：\n\n- **喂给帮手的数写在名字后面**：`thread t1(countFirst, n);` 念作「喊一位帮手来干 `countFirst`，顺手把 `n` 递给它」。递给它的东西会**照抄一份**过去，所以两位帮手各拿各的数，互不干扰。\n- **两位都要接回来**：两句 `join`，一位一句。\n- **印在 `join` 后面**：这样三行的先后是钉死的。要是让两位帮手自己在肚子里印，谁先抢到屏幕谁先印，那两行每次都不一样。\n\n⚠️ 什么时候要加锁，看的是**有没有两只手同时伸进同一个碗**：这一题没有（一个 `bowl1` 一个 `bowl2`，一人一个），所以不用；课文第三节那种三只猫抢一个碗的场面才要。",
+      "templateId": "cpp-s3-12-own-bowls",
+      "params": {
+        "w1": "小鱼干",
+        "w2": "猫粮"
+      },
+      "verified": {
+        "at": "2026-09-16T11:10:05.655Z",
+        "hash": "a886a26484a09056"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-own-bowls-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会**在一行里给两个数**：第一个数给第一位帮手，第二个数给第二位帮手喵（两个数之间用空格隔开）。\n\n请你写个程序，按这个顺序干活：\n\n1. 把两个数都读进来；\n2. 喊**两位**帮手，各自干各自的活：一位把 `1` 一路加到第一个数，把结果放进**它自己的碗**；另一位把 `1` 一路加到第二个数，放进**它自己的碗**。两个碗各用各的，谁也不用等谁；\n3. 两位**都接回来之后**，才按顺序印三行：先 `小鱼干 X`、再 `大肥鱼 Y`、最后 `一共 Z`（Z 是两个碗加起来的数）。\n\n比如投喂给程序的是\n\n3 7\n\n程序就要叼回\n\n小鱼干 6\n大肥鱼 28\n一共 34\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint bowl1 = 0;\nint bowl2 = 0;\n\nvoid countFirst(int n) {\n    // 在这儿写：把 1 加到 n，结果放进 bowl1\n\n}\n\nvoid countSecond(int m) {\n    // 在这儿写：把 1 加到 m，结果放进 bowl2\n\n}\n\nint main() {\n    int n = 0;\n    int m = 0;\n    cin >> n >> m;\n\n    // 在这儿写：喊两位帮手，都接回来之后按顺序印三行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint bowl1 = 0;\nint bowl2 = 0;\n\nvoid countFirst(int n) {\n    int s = 0;\n    for (int i = 1; i <= n; i++) s = s + i;\n    bowl1 = s;\n}\n\nvoid countSecond(int m) {\n    int s = 0;\n    for (int i = 1; i <= m; i++) s = s + i;\n    bowl2 = s;\n}\n\nint main() {\n    int n = 0;\n    int m = 0;\n    cin >> n >> m;\n\n    thread t1(countFirst, n);\n    thread t2(countSecond, m);\n    t1.join();\n    t2.join();\n\n    cout << \"小鱼干 \" << bowl1 << endl;\n    cout << \"大肥鱼 \" << bowl2 << endl;\n    cout << \"一共 \" << bowl1 + bowl2 << endl;\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 21\n大肥鱼 10\n一共 31",
+      "stdin": "6 4\n",
+      "explanation": "这一题两位帮手**各用各的碗**喵：一位往 `bowl1` 里放，另一位往 `bowl2` 里放，谁也没碰对方的东西 —— 这种场面**不用排队、不用加锁**，加了也是白加。\n\n三件事值得记：\n\n- **喂给帮手的数写在名字后面**：`thread t1(countFirst, n);` 念作「喊一位帮手来干 `countFirst`，顺手把 `n` 递给它」。递给它的东西会**照抄一份**过去，所以两位帮手各拿各的数，互不干扰。\n- **两位都要接回来**：两句 `join`，一位一句。\n- **印在 `join` 后面**：这样三行的先后是钉死的。要是让两位帮手自己在肚子里印，谁先抢到屏幕谁先印，那两行每次都不一样。\n\n⚠️ 什么时候要加锁，看的是**有没有两只手同时伸进同一个碗**：这一题没有（一个 `bowl1` 一个 `bowl2`，一人一个），所以不用；课文第三节那种三只猫抢一个碗的场面才要。",
+      "templateId": "cpp-s3-12-own-bowls",
+      "params": {
+        "w1": "小鱼干",
+        "w2": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-10-20T17:01:11.399Z",
+        "hash": "a60e2521cecd2499"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-own-bowls-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会**在一行里给两个数**：第一个数给第一位帮手，第二个数给第二位帮手喵（两个数之间用空格隔开）。\n\n请你写个程序，按这个顺序干活：\n\n1. 把两个数都读进来；\n2. 喊**两位**帮手，各自干各自的活：一位把 `1` 一路加到第一个数，把结果放进**它自己的碗**；另一位把 `1` 一路加到第二个数，放进**它自己的碗**。两个碗各用各的，谁也不用等谁；\n3. 两位**都接回来之后**，才按顺序印三行：先 `毛线球 X`、再 `猫粮 Y`、最后 `一共 Z`（Z 是两个碗加起来的数）。\n\n比如投喂给程序的是\n\n6 6\n\n程序就要叼回\n\n毛线球 21\n猫粮 21\n一共 42\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint bowl1 = 0;\nint bowl2 = 0;\n\nvoid countFirst(int n) {\n    // 在这儿写：把 1 加到 n，结果放进 bowl1\n\n}\n\nvoid countSecond(int m) {\n    // 在这儿写：把 1 加到 m，结果放进 bowl2\n\n}\n\nint main() {\n    int n = 0;\n    int m = 0;\n    cin >> n >> m;\n\n    // 在这儿写：喊两位帮手，都接回来之后按顺序印三行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint bowl1 = 0;\nint bowl2 = 0;\n\nvoid countFirst(int n) {\n    int s = 0;\n    for (int i = 1; i <= n; i++) s = s + i;\n    bowl1 = s;\n}\n\nvoid countSecond(int m) {\n    int s = 0;\n    for (int i = 1; i <= m; i++) s = s + i;\n    bowl2 = s;\n}\n\nint main() {\n    int n = 0;\n    int m = 0;\n    cin >> n >> m;\n\n    thread t1(countFirst, n);\n    thread t2(countSecond, m);\n    t1.join();\n    t2.join();\n\n    cout << \"毛线球 \" << bowl1 << endl;\n    cout << \"猫粮 \" << bowl2 << endl;\n    cout << \"一共 \" << bowl1 + bowl2 << endl;\n    return 0;\n}\n",
+      "expectedOutput": "毛线球 15\n猫粮 6\n一共 21",
+      "stdin": "5 3\n",
+      "explanation": "这一题两位帮手**各用各的碗**喵：一位往 `bowl1` 里放，另一位往 `bowl2` 里放，谁也没碰对方的东西 —— 这种场面**不用排队、不用加锁**，加了也是白加。\n\n三件事值得记：\n\n- **喂给帮手的数写在名字后面**：`thread t1(countFirst, n);` 念作「喊一位帮手来干 `countFirst`，顺手把 `n` 递给它」。递给它的东西会**照抄一份**过去，所以两位帮手各拿各的数，互不干扰。\n- **两位都要接回来**：两句 `join`，一位一句。\n- **印在 `join` 后面**：这样三行的先后是钉死的。要是让两位帮手自己在肚子里印，谁先抢到屏幕谁先印，那两行每次都不一样。\n\n⚠️ 什么时候要加锁，看的是**有没有两只手同时伸进同一个碗**：这一题没有（一个 `bowl1` 一个 `bowl2`，一人一个），所以不用；课文第三节那种三只猫抢一个碗的场面才要。",
+      "templateId": "cpp-s3-12-own-bowls",
+      "params": {
+        "w1": "毛线球",
+        "w2": "猫粮"
+      },
+      "verified": {
+        "at": "2026-10-20T17:01:16.243Z",
+        "hash": "5659376833b06790"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-own-bowls-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会**在一行里给两个数**：第一个数给第一位帮手，第二个数给第二位帮手喵（两个数之间用空格隔开）。\n\n请你写个程序，按这个顺序干活：\n\n1. 把两个数都读进来；\n2. 喊**两位**帮手，各自干各自的活：一位把 `1` 一路加到第一个数，把结果放进**它自己的碗**；另一位把 `1` 一路加到第二个数，放进**它自己的碗**。两个碗各用各的，谁也不用等谁；\n3. 两位**都接回来之后**，才按顺序印三行：先 `毛线球 X`、再 `大肥鱼 Y`、最后 `一共 Z`（Z 是两个碗加起来的数）。\n\n比如投喂给程序的是\n\n3 7\n\n程序就要叼回\n\n毛线球 6\n大肥鱼 28\n一共 34\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint bowl1 = 0;\nint bowl2 = 0;\n\nvoid countFirst(int n) {\n    // 在这儿写：把 1 加到 n，结果放进 bowl1\n\n}\n\nvoid countSecond(int m) {\n    // 在这儿写：把 1 加到 m，结果放进 bowl2\n\n}\n\nint main() {\n    int n = 0;\n    int m = 0;\n    cin >> n >> m;\n\n    // 在这儿写：喊两位帮手，都接回来之后按顺序印三行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint bowl1 = 0;\nint bowl2 = 0;\n\nvoid countFirst(int n) {\n    int s = 0;\n    for (int i = 1; i <= n; i++) s = s + i;\n    bowl1 = s;\n}\n\nvoid countSecond(int m) {\n    int s = 0;\n    for (int i = 1; i <= m; i++) s = s + i;\n    bowl2 = s;\n}\n\nint main() {\n    int n = 0;\n    int m = 0;\n    cin >> n >> m;\n\n    thread t1(countFirst, n);\n    thread t2(countSecond, m);\n    t1.join();\n    t2.join();\n\n    cout << \"毛线球 \" << bowl1 << endl;\n    cout << \"大肥鱼 \" << bowl2 << endl;\n    cout << \"一共 \" << bowl1 + bowl2 << endl;\n    return 0;\n}\n",
+      "expectedOutput": "毛线球 21\n大肥鱼 6\n一共 27",
+      "stdin": "6 3\n",
+      "explanation": "这一题两位帮手**各用各的碗**喵：一位往 `bowl1` 里放，另一位往 `bowl2` 里放，谁也没碰对方的东西 —— 这种场面**不用排队、不用加锁**，加了也是白加。\n\n三件事值得记：\n\n- **喂给帮手的数写在名字后面**：`thread t1(countFirst, n);` 念作「喊一位帮手来干 `countFirst`，顺手把 `n` 递给它」。递给它的东西会**照抄一份**过去，所以两位帮手各拿各的数，互不干扰。\n- **两位都要接回来**：两句 `join`，一位一句。\n- **印在 `join` 后面**：这样三行的先后是钉死的。要是让两位帮手自己在肚子里印，谁先抢到屏幕谁先印，那两行每次都不一样。\n\n⚠️ 什么时候要加锁，看的是**有没有两只手同时伸进同一个碗**：这一题没有（一个 `bowl1` 一个 `bowl2`，一人一个），所以不用；课文第三节那种三只猫抢一个碗的场面才要。",
+      "templateId": "cpp-s3-12-own-bowls",
+      "params": {
+        "w1": "毛线球",
+        "w2": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T11:10:08.737Z",
+        "hash": "bea5b20030f39df9"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-split-halves-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会**先给一个数**（表示接下来还有几个数，给的正好是偶数个），**再一个一个给 4 个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来，再把这 4 个数一个一个先收好、别急着加；\n2. 把这一串数**对半分**：前一半交给第一位帮手，后一半交给第二位帮手 —— 每位把自己那一半加起来，放进**它自己的碗**（各用各的碗，谁也不用等谁）；\n3. 两位**都接回来之后**，才按顺序印三行：先 `前半 X`、再 `后半 Y`、最后 `一共 Z`（Z 是两半加起来）。\n\n比如投喂给程序的是\n\n4\n1\n6\n7\n1\n\n程序就要叼回\n\n前半 7\n后半 8\n一共 15\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint nums[20];\nint n = 0;\nint front = 0;\nint back = 0;\n\nvoid addFront() {\n    // 在这儿写：把前一半加起来，放进 front\n\n}\n\nvoid addBack() {\n    // 在这儿写：把后一半加起来，放进 back\n\n}\n\nint main() {\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> nums[i];\n\n    // 在这儿写：喊两位帮手，都接回来之后按顺序印三行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint nums[20];\nint n = 0;\nint front = 0;\nint back = 0;\n\nvoid addFront() {\n    int s = 0;\n    for (int i = 0; i < n / 2; i++) s = s + nums[i];\n    front = s;\n}\n\nvoid addBack() {\n    int s = 0;\n    for (int i = n / 2; i < n; i++) s = s + nums[i];\n    back = s;\n}\n\nint main() {\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> nums[i];\n\n    thread t1(addFront);\n    thread t2(addBack);\n    t1.join();\n    t2.join();\n\n    cout << \"前半 \" << front << endl;\n    cout << \"后半 \" << back << endl;\n    cout << \"一共 \" << front + back << endl;\n    return 0;\n}\n",
+      "expectedOutput": "前半 7\n后半 12\n一共 19",
+      "stdin": "4\n1\n6\n6\n6\n",
+      "explanation": "这一题是**把一份活对半分**喵，几件事各有各的道理：\n\n- **数先收好再分**：那一串数得先进到一个大家都看得见的地方（`nums`），两位帮手才找得着。要是边读边加，读的那只手只有一只，帮手就没活干了。\n- **对半分**：前半是头 `n / 2` 个，后半是剩下的 `n / 2` 个（给的是偶数个，正好分得匀）。两位帮手各认自己那一段。\n- **各放各的碗**：一位往 `front` 里放，一位往 `back` 里放，谁也不碰谁的东西 —— 所以这一题**不用加锁**。\n- **都接回来再汇总**：三行印在两句 `join` 后面，主猫把两个碗加起来才是 `一共`。顺序也就钉死了，每次跑都是这三行。\n\n⚠️ 印出来的是**分片的结果**（前半、后半各是多少），所以两个碗**必须真的分头算过**才算数 —— 不过说句实话：判分只看印出来的字，你要是偷懒让主猫一个人从头加到尾、照着分片印三行，机器也看不出来。可那样就白喊帮手了喵。\n\n⚠️ 两位帮手都是「伸手拿、不放下」：它们只从 `nums` 里读，从来不往里面写 —— 所以两个人一起读同一串数，谁也碍不着谁。",
+      "templateId": "cpp-s3-12-split-halves",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:10:12.219Z",
+        "hash": "ff2d4dd37021f873"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-split-halves-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会**先给一个数**（表示接下来还有几个数，给的正好是偶数个），**再一个一个给 5 个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来，再把这 5 个数一个一个先收好、别急着加；\n2. 把这一串数**对半分**：前一半交给第一位帮手，后一半交给第二位帮手 —— 每位把自己那一半加起来，放进**它自己的碗**（各用各的碗，谁也不用等谁）；\n3. 两位**都接回来之后**，才按顺序印三行：先 `前半 X`、再 `后半 Y`、最后 `一共 Z`（Z 是两半加起来）。\n\n比如投喂给程序的是\n\n5\n7\n9\n3\n3\n6\n\n程序就要叼回\n\n前半 16\n后半 12\n一共 28\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint nums[20];\nint n = 0;\nint front = 0;\nint back = 0;\n\nvoid addFront() {\n    // 在这儿写：把前一半加起来，放进 front\n\n}\n\nvoid addBack() {\n    // 在这儿写：把后一半加起来，放进 back\n\n}\n\nint main() {\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> nums[i];\n\n    // 在这儿写：喊两位帮手，都接回来之后按顺序印三行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint nums[20];\nint n = 0;\nint front = 0;\nint back = 0;\n\nvoid addFront() {\n    int s = 0;\n    for (int i = 0; i < n / 2; i++) s = s + nums[i];\n    front = s;\n}\n\nvoid addBack() {\n    int s = 0;\n    for (int i = n / 2; i < n; i++) s = s + nums[i];\n    back = s;\n}\n\nint main() {\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> nums[i];\n\n    thread t1(addFront);\n    thread t2(addBack);\n    t1.join();\n    t2.join();\n\n    cout << \"前半 \" << front << endl;\n    cout << \"后半 \" << back << endl;\n    cout << \"一共 \" << front + back << endl;\n    return 0;\n}\n",
+      "expectedOutput": "前半 6\n后半 15\n一共 21",
+      "stdin": "5\n4\n2\n7\n2\n6\n",
+      "explanation": "这一题是**把一份活对半分**喵，几件事各有各的道理：\n\n- **数先收好再分**：那一串数得先进到一个大家都看得见的地方（`nums`），两位帮手才找得着。要是边读边加，读的那只手只有一只，帮手就没活干了。\n- **对半分**：前半是头 `n / 2` 个，后半是剩下的 `n / 2` 个（给的是偶数个，正好分得匀）。两位帮手各认自己那一段。\n- **各放各的碗**：一位往 `front` 里放，一位往 `back` 里放，谁也不碰谁的东西 —— 所以这一题**不用加锁**。\n- **都接回来再汇总**：三行印在两句 `join` 后面，主猫把两个碗加起来才是 `一共`。顺序也就钉死了，每次跑都是这三行。\n\n⚠️ 印出来的是**分片的结果**（前半、后半各是多少），所以两个碗**必须真的分头算过**才算数 —— 不过说句实话：判分只看印出来的字，你要是偷懒让主猫一个人从头加到尾、照着分片印三行，机器也看不出来。可那样就白喊帮手了喵。\n\n⚠️ 两位帮手都是「伸手拿、不放下」：它们只从 `nums` 里读，从来不往里面写 —— 所以两个人一起读同一串数，谁也碍不着谁。",
+      "templateId": "cpp-s3-12-split-halves",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-20T17:01:21.387Z",
+        "hash": "6c84d55f977a0a41"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-12-split-halves-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会**先给一个数**（表示接下来还有几个数，给的正好是偶数个），**再一个一个给 6 个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来，再把这 6 个数一个一个先收好、别急着加；\n2. 把这一串数**对半分**：前一半交给第一位帮手，后一半交给第二位帮手 —— 每位把自己那一半加起来，放进**它自己的碗**（各用各的碗，谁也不用等谁）；\n3. 两位**都接回来之后**，才按顺序印三行：先 `前半 X`、再 `后半 Y`、最后 `一共 Z`（Z 是两半加起来）。\n\n比如投喂给程序的是\n\n6\n4\n2\n5\n4\n4\n1\n\n程序就要叼回\n\n前半 11\n后半 9\n一共 20\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint nums[20];\nint n = 0;\nint front = 0;\nint back = 0;\n\nvoid addFront() {\n    // 在这儿写：把前一半加起来，放进 front\n\n}\n\nvoid addBack() {\n    // 在这儿写：把后一半加起来，放进 back\n\n}\n\nint main() {\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> nums[i];\n\n    // 在这儿写：喊两位帮手，都接回来之后按顺序印三行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint nums[20];\nint n = 0;\nint front = 0;\nint back = 0;\n\nvoid addFront() {\n    int s = 0;\n    for (int i = 0; i < n / 2; i++) s = s + nums[i];\n    front = s;\n}\n\nvoid addBack() {\n    int s = 0;\n    for (int i = n / 2; i < n; i++) s = s + nums[i];\n    back = s;\n}\n\nint main() {\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> nums[i];\n\n    thread t1(addFront);\n    thread t2(addBack);\n    t1.join();\n    t2.join();\n\n    cout << \"前半 \" << front << endl;\n    cout << \"后半 \" << back << endl;\n    cout << \"一共 \" << front + back << endl;\n    return 0;\n}\n",
+      "expectedOutput": "前半 12\n后半 17\n一共 29",
+      "stdin": "6\n8\n1\n3\n8\n4\n5\n",
+      "explanation": "这一题是**把一份活对半分**喵，几件事各有各的道理：\n\n- **数先收好再分**：那一串数得先进到一个大家都看得见的地方（`nums`），两位帮手才找得着。要是边读边加，读的那只手只有一只，帮手就没活干了。\n- **对半分**：前半是头 `n / 2` 个，后半是剩下的 `n / 2` 个（给的是偶数个，正好分得匀）。两位帮手各认自己那一段。\n- **各放各的碗**：一位往 `front` 里放，一位往 `back` 里放，谁也不碰谁的东西 —— 所以这一题**不用加锁**。\n- **都接回来再汇总**：三行印在两句 `join` 后面，主猫把两个碗加起来才是 `一共`。顺序也就钉死了，每次跑都是这三行。\n\n⚠️ 印出来的是**分片的结果**（前半、后半各是多少），所以两个碗**必须真的分头算过**才算数 —— 不过说句实话：判分只看印出来的字，你要是偷懒让主猫一个人从头加到尾、照着分片印三行，机器也看不出来。可那样就白喊帮手了喵。\n\n⚠️ 两位帮手都是「伸手拿、不放下」：它们只从 `nums` 里读，从来不往里面写 —— 所以两个人一起读同一串数，谁也碍不着谁。",
+      "templateId": "cpp-s3-12-split-halves",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-16T11:10:15.271Z",
+        "hash": "d78d3496751bfef7"
+      }
+    }
+  ]
+}

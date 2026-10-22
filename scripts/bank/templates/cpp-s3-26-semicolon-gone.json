@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-26-semicolon-gone",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-26",
+  "type": "codefix",
+  "concept": ["小鱼的图纸", "图纸收尾要盖戳", "差一个字符"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["21", "42"] }
+  },
+  "stemTemplate": "本喵给这条小鱼（`Fish`）画了一张图纸：里头有出生招式、有称重招式，还有一格自留地存它的体重。\n\n可这一版的图纸**收尾没盖戳** —— 翻译官喵一开工就把它拦下了，原话是 `expected ';' after class definition`，念作「**这张图纸的内容我看完了，可结尾的记号呢**」。\n\n你帮本喵把那一处改对。改好之后跑起来该印一行 `这条小鱼 {w} 克` —— 这条小鱼称出来就是 {w} 克喵。",
+  "brokenCodeTemplate": "#include <iostream>\n\nclass Fish {\npublic:\n    Fish(int w) {\n        weight = w;\n    }\n\n    int weightOf() const {\n        return weight;\n    }\n\nprivate:\n    int weight;\n}\n\nint main() {\n    Fish f({w});\n    std::cout << \"这条小鱼 \" << f.weightOf() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n\nclass Fish {\npublic:\n    Fish(int w) {\n        weight = w;\n    }\n\n    int weightOf() const {\n        return weight;\n    }\n\nprivate:\n    int weight;\n};\n\nint main() {\n    Fish f({w});\n    std::cout << \"这条小鱼 \" << f.weightOf() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一处就差**一个字符**：图纸收尾的那个 `}` 后面，要再补一个分号戳 `;`，把整张单子封好。\n\n为什么非要有它：从 `class Fish` 开头、一直包到收尾那个 `}` 为止的这一大块，在翻译官喵眼里是**一句**话（「这家宅子的图纸如下」），而这位翻译官的规矩是**每句末尾都得有戳**。少了它，下一句 `int main()` 就接不进来 —— 它的原话 `expected ';' after class definition`，念作「**图纸讲完了，收尾的记号呢**」，还指着上一行的 `}` 提醒你。\n\n```cpp\nclass Fish {\n    ...\n};\n```\n\n对着这张单子记一句：**图纸收尾要一个戳，图纸外面的招式正文一个戳都不要。** 多一个少一个，翻译官喵都会当场翻脸 —— 而这一处，是「差一个字符」里最常见的那款。"
+}

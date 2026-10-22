@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-01-needs-public",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-01",
+  "type": "codefix",
+  "concept": ["public 那一行", "图纸外面够不着", "报错现场"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 2, "max": 3 },
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "本喵照课文画好了一张图纸，两栏家常都写在上面了；照它生猫、往格子里放东西的那几句也写好了。\n\n可信封递进去翻译官喵就是不收，说**图纸外面够不着里面的格子**喵。\n\n你帮本喵补上一行，让它跑起来、把那行账念出来。**图纸上已有的那两栏和那几句账，一个字都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\n};\n\nint main() {\n    Cat c1;\n    c1.name = \"{name}\";\n    c1.fish = {fish};\n    cout << c1.name << \" 今天吃了 \" << c1.fish << \" 条小鱼干喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n};\n\nint main() {\n    Cat c1;\n    c1.name = \"{name}\";\n    c1.fish = {fish};\n    cout << c1.name << \" 今天吃了 \" << c1.fish << \" 条小鱼干喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:12:8: error: 'std::string Cat::name' is private within this context`\n\n（下面还会跟着一条 `note: declared private here`，指回图纸上画着那一栏的地方。）\n\n翻成猫话：**「`Cat` 这张图纸上的 `name` 那一格现在是私有的，你站的这个地方够不着喵。」** 它也是翻译阶段就拦下的，程序根本没跑。\n\n为什么会「私有」？因为图纸里那些格子**得站在某一行标签底下才算数**。本喵一行标签都没写，翻译官喵就按最严的那一档算：图纸自己关起门来用，外面谁也别碰。\n\n补法就是那一行 `public:` —— 意思是「下面这几样，图纸外面也够得着」。它像一个分水岭：**写在它下面的格子，外面才够得到。**\n\n记住这个手感喵：图纸里面**没有标签 = 外面够不着**。以后写图纸，第一件事就是先摆上那一行。"
+}

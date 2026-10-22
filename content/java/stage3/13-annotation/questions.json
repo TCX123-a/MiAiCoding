@@ -1,0 +1,79 @@
+{
+  "lessonId": "java-stage3-13",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "纸条贴上去之后，本喵这一课里到底是谁在干活？",
+      "options": [
+        "贴上去的那行字自己不执行任何操作——干活的是**读它的人**：编译器在编译那一步读，本喵用反射是在跑起来之后读",
+        "纸条会在翻译那一步自己跑一遍，顺手把写错的地方拦下来",
+        "纸条会把被贴的那一招换掉，换成一版加强的",
+        "纸条平时躺着不动，一跑到被贴的那一招就自动执行一次"
+      ],
+      "answer": 0,
+      "explanation": "课文第一节就把这句写死了：**纸条不是招式，贴上去它不会执行任何东西、不会印一个字**。第二节能拦住「打招乎」，是**翻译官喵**读了纸条在干活；第五节那张三行的小表能印出来，是本喵自己写的绕圈一招一招问过去、再自己排排坐印的 —— 纸条一个字都没替本喵印过。所以它的位置是「留给别的猫看的话」：想让它起点作用，得有人读它喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`@Override` 为什么能拦住本喵写错的「打招乎」？",
+      "options": [
+        "纸条上写着「这个函数是照父类里的函数重写的」，编译器拿这句去父类里对，发现没有「打招乎」，就把本喵拦下",
+        "编译器看得出「打招乎」是错别字，所以拦下",
+        "纸条把上一代那一招复制过来贴在旁边，两边名字对不上就报错",
+        "纸条要跑到那一句才检查，所以是跑起来之后才炸的"
+      ],
+      "answer": 0,
+      "explanation": "名字不一样**本身不是错** —— 那就是本喵新添的一招，翻译官喵本来根本不管。是纸条给了它一句话「这招是照上一代那一招重写的」，它才有得对、才对得上号。报错也发生在**翻译那一步**，不是跑到那儿才炸的：课文里印出来的原话是 `method does not override or implement a method from a supertype`，翻稿子的时候就给拦下来了喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "自己画的纸条也贴上去了一支，照 X 光为什么还是看不见？",
+      "options": [
+        "纸条默认只留到「翻译那一步」（`CLASS` 那一档），翻完就不跟着上路了；照 X 光是跑起来之后才读的",
+        "因为纸条上没写 `@Target`，编译器不知道该往哪儿贴，干脆扔了",
+        "因为 `getAnnotation(...)` 只认编译器本来就认得的那几种纸条，自己画的一律读不出来",
+        "因为纸条是贴给编译器看的，用反射那条路根本读不到任何纸条"
+      ],
+      "answer": 0,
+      "explanation": "课文第四节那个「看不见」和第五节那句 `@Retention(RetentionPolicy.RUNTIME)` 是一对：**不写这一句，纸条就停在 `CLASS` 那一档**，翻完就不带了；写了 `RUNTIME` 才留到跑的时候。「因为纸条是贴给编译器看的，用反射那条路根本读不到任何纸条」也不对 —— 第三节那张 `@Deprecated` 就是照亮 X 光读出来的（印的是 `true`），可见这条路读得到纸条，前提是纸条得先留到那时候喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.reflect.Method;\n\npublic class Main {\n    @Retention(RetentionPolicy.____)\n    @____ 记录 {\n        String 谁();\n        int 根数() ____ 1;\n    }\n\n    static class 小猫 {\n        @记录(谁 = \"煤球\")\n        void 点心() {\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Method 一招 = 小猫.class.getDeclaredMethod(\"点心\");\n        记录 小纸条 = 一招.____(记录.class);\n        System.out.println(小纸条.谁() + \" 给了 \" + 小纸条.根数() + \" 根\");\n    }\n}",
+      "stem": "这段代码缺了四处，把它补完整，让它跑起来印出这样一行：`煤球 给了 1 根` —— 就是课文第七节演示过的那种「只写 `谁`、不填 `根数`」的贴法。",
+      "blanks": [
+        { "answer": "RUNTIME", "accept": [] },
+        { "answer": "interface", "accept": [] },
+        { "answer": "default", "accept": [] },
+        { "answer": "getAnnotation", "accept": [] }
+      ],
+      "explanation": "四处正好是这一课的四手喵：**第一处** `RUNTIME` 是「留到跑的时候」—— 换成 `CLASS`（或者干脆不写这一句），纸条翻完就不带了，照 X 光读回来是空的；**第二处** `@interface` 是画纸条的写法，比画图纸的写法多一个 `@`；**第三处** `default 1` 是「这一栏不写就按 1 算」，所以贴的时候只写 `谁 = \"煤球\"`、不填 `根数` 也立得住，读出来就是那根默认的 `1`；**第四处** `getAnnotation(...)` 是把纸条读出来，交回来的是一张纸条本身（没贴纸条的时候给 `null`）。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.lang.annotation.ElementType;\nimport java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.annotation.Target;\nimport java.lang.reflect.Field;\n\npublic class Main {\n    @Retention(RetentionPolicy.RUNTIME)\n    @Target(ElementType.FIELD)\n    @interface 纸条 {\n        String value();\n    }\n\n    static class 小猫 {\n        @纸条(\"私房\")\n        private String 名字 = \"小橘\";\n        int 小鱼干 = 3;\n    }\n\n    public static void main(String[] args) throws Exception {\n        for (String 名字 : new String[]{\"名字\", \"小鱼干\"}) {\n            Field 骨头 = 小猫.class.getDeclaredField(名字);\n            纸条 小纸条 = 骨头.getAnnotation(纸条.class);\n            System.out.println(名字 + \"：\" + (小纸条 == null ? \"没贴\" : 小纸条.value()));\n        }\n    }\n}",
+      "stem": "这段代码的输出是什么？（两行）",
+      "answer": "名字：私房\n小鱼干：没贴",
+      "accept": ["名字：私房\n小鱼干：没贴\n"],
+      "explanation": "纸条上那张说明书是 `@Target(ElementType.FIELD)`，管的是**只许贴骨头**。读的时候一步没多：`getDeclaredField(\"名字\")` 把那根骨头找出来，`getAnnotation(纸条.class)` 把贴在上面的纸条拿回来。`名字` 那根贴了，读出来是 `私房`；`小鱼干` 那根什么都没贴，拿回来的是 `null`，所以印 `没贴`。两行的先后是本喵自己摆的（先问哪一根，是写在那对小括号里定死的），不是光片说了算喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.lang.reflect.Field;\nimport java.lang.reflect.Method;\n\npublic class Main {\n    @interface 纸条 {\n        String value();\n    }\n\n    static class 小猫 {\n        @纸条(\"开饭了\")\n        void 打招呼() {\n        }\n\n        @纸条(\"私房\")\n        String 名字 = \"小橘\";\n    }\n\n    public static void main(String[] args) throws Exception {\n        Method 一招 = 小猫.class.getDeclaredMethod(\"打招呼\");\n        Field 骨头 = 小猫.class.getDeclaredField(\"名字\");\n        System.out.println(\"招式上贴了吗：\" + 一招.isAnnotationPresent(纸条.class));\n        System.out.println(\"光片上读到：\" + 骨头.getAnnotation(纸条.class));\n    }\n}",
+      "stem": "这段代码的输出是什么？（两行）",
+      "answer": "招式上贴了吗：false\n光片上读到：null",
+      "accept": ["招式上贴了吗：false\n光片上读到：null\n"],
+      "explanation": "纸条上**没写** `@Retention(RetentionPolicy.RUNTIME)` —— 它就停在 `CLASS` 那一档，翻完不跟着上路。所以跑起来之后：问「贴了没」的 `isAnnotationPresent(...)` 给 `false`；要纸条本身的 `getAnnotation(...)` 给 `null`（拼到那行字里印出来就是 `null` 这四个字母）。注意两处纸条**是真贴了**的（贴的写法翻译官喵也没拦），只是没留到跑的时候，读回来才是空的喵。"
+    }
+  ]
+}

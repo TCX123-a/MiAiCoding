@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-field-never-set",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-12",
+  "type": "codefix",
+  "concept": ["随身家当", "默认值", "null", "Scanner"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 3, "max": 9 },
+  "stemTemplate": "本喵这只猫**生出来的时候没来得及挂名字** —— `new Cat()` 之后，直接就去挂纸条上那个鱼干数了。结果报账那一声喊出来，名字那一格空空的，屏幕上印着 `null`，本喵看着怪别扭的。\n\n本喵的名字该是 `{name}`，请你帮本喵把它挂上。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一个数**喵。）",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\nclass Cat {\n    String name;\n    int fish;\n\n    void report() {\n        System.out.println(name + \" 有 \" + fish + \" 条小鱼干喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        Cat c = new Cat();\n        c.fish = sc.nextInt();\n        c.report();\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\nclass Cat {\n    String name;\n    int fish;\n\n    void report() {\n        System.out.println(name + \" 有 \" + fish + \" 条小鱼干喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        Cat c = new Cat();\n        c.name = \"{name}\";\n        c.fish = sc.nextInt();\n        c.report();\n    }\n}\n",
+  "explanationTemplate": "`null` 念「呐儿」，意思是**「里面什么都没有」**喵。它是**一串字的家常默认值**：一只刚生出来、什么都没挂的猫，装一串字的那格默认就是 `null`（装数码的那格默认是 `0`）。\n\n本喵这次只挂了一半：`c.fish` 挂上了纸条上的数，`c.name` 从头到尾没人碰过 —— 所以 `report()` 里那句 `name` 拿出来就是 `null`，屏幕上结结实实印了四个字母。\n\n**它不是「空着不印」**：没挂名字的猫，印出来就是 `null` 这四个字母；本喵要是不管它、后面还拿它去接别的东西，它还会一路传下去（下一课翻车那一课就见）。\n\n补的那一句就是 `c.name = \"{name}\";` —— 挂家当的写法是 `牌子.家当 = 值;`，跟挂鱼干数那一行一模一样喵。"
+}

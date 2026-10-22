@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-05-length-report",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-05",
+  "type": "codewrite",
+  "concept": ["有东西就加工成一句话再装回盒子", "空盒子一路自动空到底", "兜底那句也顺着盒子挂"],
+  "instances": 6,
+  "params": {
+    "k1": { "kind": "pick", "values": ["鱼干", "冻干"] },
+    "v1": { "kind": "pick", "values": ["三袋鱼干", "一包冻干"] },
+    "k2": { "kind": "pick", "values": ["猫粮", "毛线球"] },
+    "v2": { "kind": "pick", "values": ["两袋猫粮", "两个毛线球"] },
+    "k3": { "kind": "pick", "values": ["雨伞", "拖鞋"] }
+  },
+  "stemTemplate": "柜子里放着两样东西：`{k1}`（货是 `{v1}`）、`{k2}`（货是 `{v2}`）；`{k3}` **不在这里**喵。\n\n请你写两招：\n\n1. **`find`** —— 交给它一个名字，对得上就把那样东西**装盒**交回，对不上交回**空盒子**；\n2. **`report`** —— 名分上写着**盒子里装的是一句话**：先拿 `find` 找到，再**要是盒子里有东西，就把那样东西加工成一句话**装回盒子交回（用盒子上自带的那一手加工）。那句话的样子是\n\n```text\n那样东西 有 N 个字\n```\n\n- `N` 是**那样东西自己的**字数（不是名字的字数）；\n- 空盒子就一路空着回来。\n\n然后在 `main` 里对 `{k1}` 和 `{k3}` 各喊一次，印**两行** —— 印的时候**顺着盒子挂**（有东西就用盒子里那一句话，空盒子就用兜底那句：那个名字 + ` 不在柜子里`），**别自己另起一个分岔**去问空没空。\n\n比如柜子里放着 `鱼干`（货是 `三袋鱼干`）和 `猫粮`，另一样 `雨伞` 不在柜子里，印出来就该是\n\n```text\n三袋鱼干 有 4 个字\n雨伞 不在柜子里\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+  "starterTemplate": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"{k1}\")) {\n            return Optional.of(\"{v1}\");\n        }\n        if (key.equals(\"{k2}\")) {\n            return Optional.of(\"{v2}\");\n        }\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return find(key).map(s -> s + \" 有 \" + s.length() + \" 个字\");\n    }\n\n    public static void main(String[] args) {\n        System.out.println(report(\"{k1}\").orElse(\"{k1} 不在柜子里\"));\n        System.out.println(report(\"{k3}\").orElse(\"{k3} 不在柜子里\"));\n    }\n}\n",
+  "explanationTemplate": "**一、`report` 这一招的名分是「盒子里装的是一句话」。** 它交回来的不是那样东西、也不是个数，而是**一句话**；找不到的时候交回的是一只**空盒子** —— 「没有」这件事照样写在名分上，用的人一眼看得见，就得当场交代。\n\n**二、加工那一手：`map`。** 它读作「**要是盒子里有东西，就对它动这一手**」—— 这里动的一手是把**那样东西**换成一句话。**字数数的是那样东西自己，不是名字**：货是 `三袋鱼干`，报出来就是 4 个字。盒子空着的时候它什么都不做，直接还一只空盒子回来 —— **空盒子一路自动空到底**。\n\n**三、最后一步顺着盒子挂。** `report` 后面接上 `.orElse(...)`，读作「盒子里有就用盒子里那句话；空盒子就用兜底这句」。**这两手一前一后，正好把两种情形都盖住了**，全程没自己另起分岔去问空没空。\n\n**四、要是自己另起分岔会怎样。** 最省事的写法（掏出来再说）撞上空盒子会当场炸；拿个数去顶空盒子，又会印成一句跟本来想说的一点都不像的话 —— 两样都跟该有的样子对不上。**盒子这一套的好处，就是逼着本喵把「没有」也一起想清楚。**\n\n一句话记住：**有东西就加工（`map`），没有就用兜底（`orElse`）—— 两句话都挂在盒子上说。**"
+}

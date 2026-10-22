@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-for-off-by-one",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-07",
+  "type": "codefix",
+  "concept": ["for", "起点", "眼色", "收尾", "少跑一圈"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "pick", "values": ["4", "6"] }
+  },
+  "stemTemplate": "本喵想把 **1 号到 {n} 号**小鱼干身上的号数全加起来喵 —— 从 1 号一直数到 {n} 号，一条都不能漏。\n\n可这台机器算出来的数**每次都少一截** —— 少掉的正好是号数最大的那一条。\n\n你帮本喵看看这一圈是怎么绕的，把它改好：改好之后，印出来的得是 1 加到 {n} 的那个和。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int total = 0;\n\n        for (int i = 1; i < {n}; i++) {\n            total = total + i;\n        }\n\n        System.out.println(\"一共 \" + total + \" 条喵\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int total = 0;\n\n        for (int i = 1; i <= {n}; i++) {\n            total = total + i;\n        }\n\n        System.out.println(\"一共 \" + total + \" 条喵\");\n    }\n}\n",
+  "explanationTemplate": "`for` 小括号里那三段是**起点、眼色、收尾**喵：牌子 `i` 从 **1** 摆起，眼色是**每一圈开跑前问的那句话**，答真才跑。\n\n本喵这里眼色写的是 `i < {n}` —— 牌子走到 {n} 的时候，它问的是「{n} 比 {n} 小吗」，当场答**假**，于是那一圈**没跑**，最后那一条就这么被漏掉了。\n\n治法就是把这个眼色改成 `i <= {n}`：牌子走到 {n} 时问「{n} 比 {n} 大吗」，不成立，答真，最后一圈跑完才收工。\n\n**牌子从 1 摆起，想跑到 {n} 就得用 `<= {n}`**；要是牌子从 0 摆起，才轮到 `< {n}` 出场 —— 差一个 `<` 还是 `<=`，差的正是最后那一条。\n\n这毛病最费眼神：程序**一个错都不报**，只是安安静静少加了一条，屏幕上那个和看着也挺像回事喵。"
+}

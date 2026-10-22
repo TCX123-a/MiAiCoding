@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-21-area-parens",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-21",
+  "type": "codefix",
+  "concept": ["宏只是照着字换", "每个投喂口各套一层括号", "换完不算、也不替你补括号"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 3 },
+    "b": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stemTemplate": "本喵给翻译官喵递了张条子（宏）：`#define AREA(w, h) w * h` —— 意思是「以后见到 `AREA(长, 宽)`，就把那两个数换成相乘」。\n\n第一行本喵喂的是两个干干净净的数，印出来是对的。可第二行喂进去的是**两个加过数的式子**（`{a} + 1` 和 `{b} + 2`），它印出来的数就**不是本喵心里那个**了。\n\n它跑得起来，翻译官喵一句抱怨都没有 —— 条子上写 `w * h`，语法上一点没错；坏就坏在它**只照着字换，不替你套括号**。\n\n你帮本喵把条子改好：改完跑起来，第一行要正好是 {a} 乘 {b}，第二行要正好是（{a} + 1）乘（{b} + 2），一个不对都不行喵。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\n#define AREA(w, h) w * h\n\nint main() {\n    cout << AREA({a}, {b}) << endl;\n    cout << AREA({a} + 1, {b} + 2) << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\n#define AREA(w, h) ((w) * (h))\n\nint main() {\n    cout << AREA({a}, {b}) << endl;\n    cout << AREA({a} + 1, {b} + 2) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "条子上写的是 `w * h`，本喵喂进去的是 `{a} + 1` 和 `{b} + 2` —— 翻译官喵照着字换，把两坨**原样塞进** `w` 和 `h` 的位置，换完长这样：\n\n```\n{a} + 1 * {b} + 2\n```\n\n先乘后加，出来的就是第二行那个错的数；本喵心里那个数是 `({a} + 1) * ({b} + 2)`。**它换的时候不算、也不替你补括号**。\n\n改法就一句话：**每个投喂口各套一层，整个身子再套一层。**\n\n```\n#define AREA(w, h) ((w) * (h))\n```\n\n两层管的是两件事：`w` 和 `h` 那两层管「塞进来的是一整坨式子」，最外面那层管「整张条子换完之后别被旁边的运算抢走」。少一层，早晚有一天被它咬。\n\n⚠️ 这一题最该记住的是**它一声不吭**：条子写成 `w * h` 完全合规矩，翻译官喵看不出任何毛病 —— 它只认「写法对不对」，不认「你心里那串数对不对」。"
+}

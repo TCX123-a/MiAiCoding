@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-lib-getpixel-parens",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-13",
+  "type": "codefix",
+  "concept": ["getpixel 要一对坐标", "少一层括号", "TypeError"],
+  "instances": 2,
+  "params": {
+    "pt": { "kind": "pick", "values": ["15, 15", "80, 40"] }
+  },
+  "stemTemplate": "画布已经造好了：120 宽、60 高，底色天空蓝，中间画了一块金色的方块（左上角在 `10, 10`，右下角在 `110, 50`）。\n\n本喵想读**金色块里某一格**的颜色，结果程序印完尺寸就当场躺下了，报的是「**这个招式收两个，你给了三个**」。\n\n你把读格子那一行改对。改好以后该印**两行**：\n\n```text\n尺寸： (120, 60)\n那一格的颜色： (255, 215, 0)\n```\n\n（要读的那一格是 `{pt}`，写死在程序里了，别动。）",
+  "brokenCodeTemplate": "from PIL import Image, ImageDraw\n\n画布 = Image.new(\"RGB\", (120, 60), \"skyblue\")\n笔 = ImageDraw.Draw(画布)\n笔.rectangle([10, 10, 110, 50], fill=\"gold\")\n\nprint(\"尺寸：\", 画布.size)\nprint(\"那一格的颜色：\", 画布.getpixel({pt}))\n",
+  "referenceFixTemplate": "from PIL import Image, ImageDraw\n\n画布 = Image.new(\"RGB\", (120, 60), \"skyblue\")\n笔 = ImageDraw.Draw(画布)\n笔.rectangle([10, 10, 110, 50], fill=\"gold\")\n\nprint(\"尺寸：\", 画布.size)\nprint(\"那一格的颜色：\", 画布.getpixel(({pt})))\n",
+  "explanationTemplate": "报错那句念作「`Image.getpixel()` 收两个投喂，你给了三个」—— 数一数就知道了：本喵写的是「横一个、竖一个」，加起来它收到两个数，**再加上画布自己**，三份。而它只肯收画布和**一样东西**。\n\n那一样东西就是**一对坐标**：横竖两个数包成一对，整体算一份。所以要多包一层括号：\n\n```text\n画布.getpixel(({pt}))\n```\n\n念作「把 `{pt}` 这两个数**包成一对**，再拿这一对去喂它」。\n\n这一处特别容易绊人，因为画方块那行 `笔.rectangle([10, 10, 110, 50], ...)` 里的写法是**方括号里平铺四个数**，跟这里不一样。本喵给你两句好记的：\n\n- **`getpixel` 要「一对坐标」** —— 一层圆括号里包一对。\n- **`rectangle` 要「左上角一对、右下角一对」** —— 方括号里平铺四个数。\n\n下次遇到「收两个你给了三个」这种话，先数投喂的份数，八成就是少包了一层喵。"
+}

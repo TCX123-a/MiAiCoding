@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-02-substr-swapped",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-02",
+  "type": "codefix",
+  "concept": ["取一小段的两个投喂口有固定顺序", "第二个是要几个不是到第几个", "两段字接起来后半段的起点"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["cat", "dog"] },
+    "b": { "kind": "pick", "values": ["fish", "bird"] }
+  },
+  "stemTemplate": "本喵把**两段小字**接成了一串：`a` 在前、`b` 在后，中间没有空格喵。本喵想印出**后面那一半**（就是 `b` 那几个字），可印出来的却是中间夹着的一小段。\n\n你帮本喵把它改对：**印出后半段**。接字那一句和印字那两句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string a = \"{a}\";\n    string b = \"{b}\";\n    string s = a + b;\n\n    cout << s.substr(b.size(), a.size()) << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string a = \"{a}\";\n    string b = \"{b}\";\n    string s = a + b;\n\n    cout << s.substr(a.size(), b.size()) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题错在取一小段的**两个投喂口写反了**喵。\n\n取一小段那一句吃两个数，**顺序是死的**：第一个是**起点**（从第几个格后面开始，编号从 0 数起），第二个是**要几个格**。念作「从哪儿起、要几个」。\n\n本喵写成了 `s.substr(b.size(), a.size())`：起点错成了 `b` 的长度、要几个错成了 `a` 的长度，于是印出来的是夹在中间的一小段。\n\n要印**后面那一半**：\n\n- 起点是**前半段那几个字的长度** —— 后半段正是从那儿开始的；\n- 要几个，是**后半段自己的长度**。\n\n两个投喂口**换回来**就对了。\n\n⚠️ 第二个投喂口是「**要几个**」，不是「**到第几个为止**」—— 这是这一课最容易记反的一处。写成「到第几个为止」的那种数，有时候碰巧看着也对（要多了它会自动停在那串字的末尾），于是错误被藏住了。\n\n⚠️ 两段字接起来之后，后半段的起点**不是 0** —— 0 永远是最开头那一格。"
+}

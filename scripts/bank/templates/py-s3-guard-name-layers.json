@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-guard-name-layers",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-12",
+  "type": "codewrite",
+  "concept": ["__name__ 三层", "被请进来会当场走一遍", "帮手也会请帮手"],
+  "instances": 6,
+  "params": {
+    "mod": { "kind": "pick", "values": ["bell", "chime"] },
+    "ledger": { "kind": "pick", "values": ["ledger", "tally"] },
+    "ring": { "kind": "pick", "values": ["开饭啦喵", "集合啦喵"] }
+  },
+  "stemTemplate": "这次要你看清楚那块牌子 `__name__` 在**三个位置**上分别写着什么。\n\n程序开头照样造好仓库。你要把**两本本子**写进仓库，内容一字不差照抄：\n\n本子 `{mod}.py`：\n\n```text\ndef 摇铃():\n    print(\"{ring}\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n```\n\n本子 `{ledger}.py`（注意它头上先请了铃铛本子）：\n\n```text\nimport {mod}\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + {mod}.__name__)\n```\n\n然后正门这边按这个顺序做四件事：\n\n1. 告诉翻译官喵去仓库里找；\n2. 先请铃铛本子，再请账本本子；\n3. 印正门自己那块牌子；\n4. 伸手喊一次 `{mod}.摇铃()`。\n\n要印出这**四行**（帮手被请进来的时候自己会吭声，所以顺序你得自己想清楚）：\n\n```text\n帮手铃铛的牌子：{mod}\n帮手账本的牌子：{ledger}，它请来的帮手叫：{mod}\n正门本子的牌子：__main__\n{ring}\n```",
+  "starterTemplate": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n# ① 把 {mod}.py 写进仓库（内容照上面那份抄）\n\n# ② 把 {ledger}.py 写进仓库（内容照上面那份抄）\n\n# ③ 告诉翻译官喵去仓库里找\n\n# ④ 先请铃铛本子，再请账本本子\n\n# ⑤ 印正门自己那块牌子\n\n# ⑥ 伸手喊一次 {mod}.摇铃()\n",
+  "referenceSolutionTemplate": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n铃铛内容 = '''def 摇铃():\n    print(\"{ring}\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n'''\nwith open(os.path.join(仓库, \"{mod}.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(铃铛内容)\n\n账本内容 = '''import {mod}\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + {mod}.__name__)\n'''\nwith open(os.path.join(仓库, \"{ledger}.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(账本内容)\n\nsys.path.insert(0, 仓库)\nimport {mod}\nimport {ledger}\n\nprint(\"正门本子的牌子：\" + __name__)\n{mod}.摇铃()\n",
+  "explanationTemplate": "四行对着三块牌子看喵。\n\n**第一行 `帮手铃铛的牌子：{mod}`** —— 它被正门请进来，所以它的牌子写的是它**自己的名字**。请的行为一发生，它就被从头到尾走了一遍，头上那句 `print` 当场就响了。\n\n**第二行 `帮手账本的牌子：{ledger}`，后面还跟着「它请来的帮手叫：{mod}」** —— 账本本子被请进来，走它自己的时候头上那句 `import {mod}` 又要请人。可铃铛本子**已经在屋里了**，翻译官喵认得，不会再请一遍 —— 所以第一行没有重复出现。这就是为什么牌子上写的是那本本子自己的名字：**换谁看它，它都是 `{mod}`**。\n\n**第三行 `正门本子的牌子：__main__`** —— 正门是你敲 `python 某某.py` 直接推开的，它不发工资给谁，它就是主事的那位。\n\n**第四行**才是本喵自己伸手喊的铃。前三行都是「被请进来」时自动响的，只有这一行是**主动**响的喵。\n\n把握住这两句话，这一课就通了：\n\n- **牌子 `__name__` 写的是「现在是什么身份」** —— 被请去的写自己的名字，走正门的写 `__main__`。\n- **门卫 `if __name__ == \"__main__\":` 就是拿这个身份做判断** —— 只有走正门的那位才往下做。\n\n所以那个铃铛本子要是尾巴上**敞着**写一句 `摇铃()`，正门一请它就要响一次，你再伸手它又响一次 —— 这正是上一题埋给你的那个坑。"
+}

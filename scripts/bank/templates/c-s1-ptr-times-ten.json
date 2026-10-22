@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-ptr-times-ten",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-14",
+  "type": "codewrite",
+  "concept": ["指针参数", "&", "解引用赋值", "循环"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 5 },
+  "stemTemplate": "本喵想让一招顺着牌子把碗里的数**翻成十倍**喵。\n\n请你写个程序：**先读进来一个数**（这次有几颗），**再读进来 {n} 行数**（一行一个，每颗上刻的数字，都在 1~5 之间）。\n\n先写一招 `treat`：头上摆一块**指整数碗的牌子**（写成 `int *p`），身体里顺着牌子把碗里的数乘 10、再顺着牌子放回去。\n\n然后转 {n} 圈：每圈读进来一颗数，**把它的门牌号喂给这一招**，再把改完之后的数印成一行。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\n// 在这里登记 treat 这一招（头里要摆一块指整数碗的牌子）\n\nint main(void) {\n    int n;\n\n    // 先读「有几颗」\n\n    // 转 {n} 圈：每圈读一颗，把它的门牌号喂给 treat，再把结果印出来\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nvoid treat(int *p) {\n    *p = *p * 10;\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int i;\n    for (i = 0; i < n; i++) {\n        int x;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        treat(&x);\n        printf(\"%d\\n\", x);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "招式头里那块 `int *p` 收的是**门牌号**，所以喊它的时候必须写 `treat(&x);` 喵 —— `&` 就是去问 `x` 那只碗的门牌号。少写这个 `&`，翻译官喵当场就拦（它会说「数字和牌子不是一个形状」）。\n\n招式里那句 `*p = *p * 10;` 分两半看：\n\n1. 右边的 `*p` —— 顺着牌子走到碗前，把里面的数**拿出来**；\n2. 左边的 `*p =` —— 算完再顺着**同一块牌子**把新数**放回去**。\n\n拿和放走的是同一块牌子，所以改的**就是你本人的那只碗** —— 回到 `main` 一印，真的是十倍的数。\n\n对照一下就更清楚了：要是招式头写成 `void treat(int p)`（没有那颗星），喊的时候写 `treat(x)`，那招式拿到的就是**抄件**，它在里面怎么折腾，你那只碗都纹丝不动。"
+}

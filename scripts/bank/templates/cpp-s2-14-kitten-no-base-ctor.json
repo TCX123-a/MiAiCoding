@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-14-kitten-no-base-ctor",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-14",
+  "type": "codefix",
+  "concept": ["小猫出生时先把料递回老图纸那一手", "次序不能颠倒", "漏了那一手翻译官喵拦下"],
+  "instances": 2,
+  "params": {
+    "d": { "kind": "pick", "values": [20, 35] }
+  },
+  "stemTemplate": "本喵给托儿所添一张**小猫图纸**：照着猫猫那张画下来，自己多记一格「出生多少天」。\n\n可这只小猫出生的时候，本喵**忘了先把名字和岁数递回给老图纸那一手**，翻译官喵当场拦下。你帮本喵把漏掉的那一处补上，让屏幕上印出 **我是棉花，今年 1 岁喵** 和 **棉花 出生 {d} 天啦** 这两行。图纸上别的几行、`main` 里那几句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, {d});\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, {d});\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机真跑过没补的版本，翻译官喵的原话是这一句：\n\n```text\nmain.cpp:20:44: error: no matching function for call to 'Cat::Cat()'\n```\n\n念作：「**你没给老图纸喂料，它不知道该拿什么出生。**」\n\n道理是：**名字和岁数这两格是老图纸的**，小猫图纸够得着、可它自己名下没有 —— 得由老图纸那一手去装。修法就是**把料递回去**：\n\n```text\nKitten(string n, int a, int d) : Cat(n, a), days(d)\n```\n\n补完之后本喵真跑过：屏幕上印 `我是棉花，今年 1 岁喵`，再印 `棉花 出生 {d} 天啦`。\n\n⚠️ 三条钉住：\n\n1. **次序是「妈妈先出生、小猫后出生」。** 递回老图纸那一手要写在**最前面**，自己多出来的那一格跟在它后面。\n2. **递料那一下写的是图纸名 + 一对圆括号**（`Cat(n, a)`）—— 不是 `name(n)`、也不是把老图纸那两格直接当自己的格子写。\n3. **老图纸那两格得让小猫够得着。** 本喵挂的是 `protected:`；挂成 `private:` 的话，小猫这一手 `showDays()` 里那句 `name` 会被拦下（原话是 `error: 'std::string Cat::name' is private within this context`，本喵在课文摔法一里真跑过）。"
+}

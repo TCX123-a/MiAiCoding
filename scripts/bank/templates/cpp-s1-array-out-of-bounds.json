@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-array-out-of-bounds",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-08",
+  "type": "codefix",
+  "concept": ["越界", "报编号报到格子外面", "i < 格数"],
+  "instances": 2,
+  "params": {
+    "vals": { "kind": "pick", "values": ["3, 5, 2", "4, 6, 1"] }
+  },
+  "stemTemplate": "本喵这一排摆了**三只碗**：第 0 格、第 1 格、第 2 格。要让跑圈从第 0 格开始，一格一格报到**第 2 格为止**。\n\n可这段代码**多报了一行** —— 报到第 2 格之后，它又去报了个第 3 格，印出来一个本喵没装过的数。它跑得起来，翻译官喵一句原话都没有，就是印出来的东西不对。\n\n你帮本喵改对：只报第 0、第 1、第 2 三格，一行都不许多。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish[3] = {{vals}};\n\n    for (int i = 0; i <= 3; i++) {\n        cout << \"第 \" << i << \" 格有 \" << fish[i] << \" 条喵\" << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish[3] = {{vals}};\n\n    for (int i = 0; i < 3; i++) {\n        cout << \"第 \" << i << \" 格有 \" << fish[i] << \" 条喵\" << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一排只有三只碗：编号是 **0、1、2**。跑到 `i` 等于 3 的时候，本喵报的是一个**根本不属于这一排的编号** —— 那已经跑到格子外面去了。\n\n⚠️ 最要紧的是：**它一声不吭**。翻译官喵不报错，连提醒都没有；跑起来照样有输出，只是第 3 格印出来的是「隔壁那段地方刚好摆着的东西」——**每次都可能不一样**，所以这种数没有准头，绝不能当答案。\n\n读编号的规矩记牢喵：**有 n 只碗，编号就是从 0 到 n 减 1**。跑圈要走完这一排，眼色就得写 `i < 3`（走 0、1、2），**不是** `i <= 3`（那会走 0、1、2、3 四圈）。\n\n一个小口诀：**看见 `<=` 先数一遍格子。** `i <= 3` 是「小于等于 3」—— 它把 3 也算进去了，而 3 号格子是不存在的喵。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-enum-ctor-missing-label",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-11",
+  "type": "codefix",
+  "concept": ["清单也是图纸", "出生那一手", "每一项都要带自己的家当", "constructor cannot be applied"],
+  "instances": 2,
+  "params": {
+    "l1": { "kind": "pick", "values": ["小橘", "大橘"] },
+    "l2": { "kind": "pick", "values": ["狸花", "花卷"] }
+  },
+  "stemTemplate": "本喵给清单上的每一项配了一只当班的猫，配好之后就绕清单走一圈，把项名和当班的那只一起印出来。\n\n可这稿子**编都编不过** —— 翻译官喵说，有一项的写法跟出生那一手对不上。请你补好，让程序印出：\n\n```text\nMON 是 {l1}\nTUE 是 {l2}\n```\n\n清单上就两项，每一行都是「项名 + ` 是 ` + 那一项自己带的猫」。除了那一处对不上，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "public class Main {\n    enum Day {\n        MON, TUE(\"{l2}\");\n        private final String cat;\n\n        Day(String cat) {\n            this.cat = cat;\n        }\n\n        String cat() {\n            return cat;\n        }\n    }\n\n    public static void main(String[] args) {\n        for (Day d : Day.values()) {\n            System.out.println(d + \" 是 \" + d.cat());\n        }\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    enum Day {\n        MON(\"{l1}\"), TUE(\"{l2}\");\n        private final String cat;\n\n        Day(String cat) {\n            this.cat = cat;\n        }\n\n        String cat() {\n            return cat;\n        }\n    }\n\n    public static void main(String[] args) {\n        for (Day d : Day.values()) {\n            System.out.println(d + \" 是 \" + d.cat());\n        }\n    }\n}\n",
+  "explanationTemplate": "翻译官喵拦下这一处的原话是：\n\n```text\nerror: constructor Day in enum Day cannot be applied to given types;\n  required: String\n  found:    no arguments\n```\n\n念起来是：**「夹在 `Day` 这张清单里的出生那一手，要一样 `String`；可这一项递过去的时候，手里是空的喵。」** `required: String` 说的是出生那一手要什么，`found: no arguments` 说的是这一项给了什么 —— 一边要、一边没给，翻译官喵不放行。\n\n为什么清单上的一项还能「递东西」？因为**清单也是图纸**：写几项，生出来的就是几只真猫。既然是真猫，它就能带上自己的家当（这里是 `cat` 那一格），而**家当要在出生那一刻就装好** —— `MON(\"{l1}\")` 那对小括号里装的正是它自己的那一份。\n\n另外两处顺手记牢：\n\n- **最后一项后面跟的是分号，不是逗号。**「哪几项」这句话到那儿就说完了，后面接的是家当、出生那一手、还有那个本事。本喵真把分号改成逗号跑过一遍，翻译官喵说 `error: enum constant expected here` —— 「这儿该写一项的名字，你怎么写起家当来了」，它一直读到 `private` 才发觉不对。\n- **这张清单的出生那一手只给清单自己用。** 在外面写 `new Day(\"{l1}\")` 是写不出来的：翻译官喵会说 `error: enum classes may not be instantiated` —— 「清单上的项不能在外面另生」。清单上写几项就是几只，一只不多一只不少喵。\n\n一句话收尾：**清单上加一样家当，就得给每一项都递一份**；少递一项，编稿子那一关就过不去 —— 又是「本喵的约定变成了机器的规矩」那一件事喵。"
+}

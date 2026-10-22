@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-finally-in-method",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-12",
+  "type": "codewrite",
+  "concept": ["finally 不管出没出事都要跑", "连提前 return 都拦不住它", "接住之后也要叼回一个数"],
+  "instances": 6,
+  "params": {
+    "num": { "kind": "pick", "values": ["100", "80"] },
+    "ok1": { "kind": "pick", "values": ["4", "2"] },
+    "ok2": { "kind": "pick", "values": ["5", "10"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "3\n{ok1}\n0\n{ok2}\n", "sampleText": "3\n5\n0\n4\n" },
+  "stemTemplate": "本喵有个招式 `share`，收到一个数，就报「{num} 条平摊下去，每只猫分到几条」。可它**可能收到一个 `0`** —— 那就算不下去了。\n\n要求：\n\n1. 招式里用 `try` 把 `return {num} / v;` 包起来（**能算就直接把结果叼回去**）。\n2. 算不下去的时候接住它，印一行 `接住了：` 接上它自己的口信，然后**叼回 `0`**。\n3. 不管出没出事，每一趟都要印一行 `收摊` —— 这一句要放在 `finally` 里。招式里是提前 `return` 的，`finally` 是唯一能保证它一定跑完的位置。\n4. `main` 里绕圈读：先读笔数，然后一笔一个数，每笔印一行 `每只猫分到 … 条`（那个 `…` 是 `share` 叼回来的数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）\n\n这组数是本喵特意挑的：判分那组里**一定**有一笔是 `0`，而且它**前后都还有数** —— 所以「出事那笔收了摊没」「没事那几笔也收了摊没」，两件事都会被抓到喵。",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    static int share(int v) {\n\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    static int share(int v) {\n        try {\n            return {num} / v;\n        } catch (ArithmeticException e) {\n            System.out.println(\"接住了：\" + e.getMessage());\n            return 0;\n        } finally {\n            System.out.println(\"收摊\");\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int v = sc.nextInt();\n            System.out.println(\"每只猫分到 \" + share(v) + \" 条\");\n        }\n    }\n}\n",
+  "explanationTemplate": "这题要盯的是**顺序**。本喵真跑过一遍，输出长这样：\n\n```text\n收摊\n每只猫分到 25 条\n接住了：/ by zero\n收摊\n每只猫分到 0 条\n收摊\n每只猫分到 20 条\n```\n\n三件事：\n\n**一、`收摊` 印在 `每只猫分到 …` 的前面。** 因为外面那一行是 `\"每只猫分到 \" + share(v) + \" 条\"`：翻译官喵得**先**喊 `share(v)` 把数拿到手，才能拼出整句话。而 `share` 在把数交出来之前，先把 `finally` 里的活干完了 —— 所以 `收摊` 先冒出来。\n\n**二、出事那一笔，`收摊` 照样印。** 这就是 `finally` 的本事：**不管出没出事都要跑**。接住的括号先把口信印了（`接住了：/ by zero`），紧接着 `finally` 印 `收摊`。\n\n**三、`每只猫分到 0 条` 里的 `0` 是接住的地方叼回去的。** 出事的那一笔本来没有数可交，是 `catch` 里那句 `return 0;` 把 `0` 交了出去。少了它，这条路上就什么都没叼回去 —— 而招式头上写着要叼回一个数，翻译官喵在编稿子那一关就会说 `error: missing return statement`（本喵真跑过，它说的就是这一句）。\n\n还有一处最值钱的地方：**招式里是提前 `return` 的，`finally` 照样要跑完才准走。** 本喵把参考解里 `finally` 那一段真拆掉跑过一遍 —— 三行 `收摊` 当场全没了，别的都还在。所以「用完的管子要在 `finally` 里关掉」这件事靠得住：**连提前 `return` 都拦不住它**喵。"
+}

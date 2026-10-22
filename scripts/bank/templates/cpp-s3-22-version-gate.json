@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-22-version-gate",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-22",
+  "type": "codewrite",
+  "concept": ["按卡片的值分岔", "贴过而且值够大", "两件事拼在一条门里"],
+  "instances": 6,
+  "params": {
+    "c": { "kind": "int", "min": 3, "max": 4 },
+    "v": { "kind": "pick", "values": [1, 2] }
+  },
+  "stemTemplate": "本喵这份稿子要按**版本**分岔：卡片 `VERSION` 的值**不小于 2** 就走新版（每只猫一趟搬 `3` 条），否则走老版（一趟只搬 `1` 条）喵。\n\n骨架里卡片、总数那行都写好了，缺的是**中间那个分岔**。你要补的是一道门，它得把**两件事**一起判：\n\n1. 「`VERSION` 这张卡**贴过**」；\n2. 「它的值**不小于 2**」。\n\n两件都成立，`per` 就是 `3`；但凡有一件不成立（卡没贴，或者贴着的值不够大），`per` 就是 `1`。\n\n现在这套数是：卡片 `VERSION` 的值 `{v}`、`CATS` 的值 `{c}`。屏幕上要正好一行：`{c} 只猫，一共要 ` 接上总数、再写 ` 条小鱼干` 收尾喵。",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\n#define VERSION {v}\n#define CATS {c}\n\nint main() {\n    int per = 0;\n\n    cout << CATS << \" 只猫，一共要 \" << CATS * per << \" 条小鱼干\" << endl;\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\n#define VERSION {v}\n#define CATS {c}\n\nint main() {\n    int per = 0;\n#if defined(VERSION) && VERSION >= 2\n    per = 3;\n#else\n    per = 1;\n#endif\n    cout << CATS << \" 只猫，一共要 \" << CATS * per << \" 条小鱼干\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这道门要同时问两件事，写成一条式子就是：\n\n```text\n#if defined(VERSION) && VERSION >= 2\n```\n\n`defined(VERSION)` 问的是「这张卡**贴过没有**」（跟只问贴没贴的那种门判的是同一件事，好处是**能跟别的条件拼在一起**）；`VERSION >= 2` 是拿**值**去比。中间那个 `&&` 说「两件都得成立」。这套数里值 `{v}` 不比 `2` 小，所以 `per` 走 `3`，{c} 只猫一共 `{c}` 乘 `3` 条。\n\n⚠️ 只写 `VERSION >= 2` 行不行？**在这个骨架里行**（卡片一定贴过），可这不是本喵要的写法：真实稿子里卡**可能没贴**，那会儿 `VERSION` 会被当成 0 来比，门照样判假 —— 看着没事，其实「卡没贴」和「值太小」被混成了一种情况。要分清这两件事，就得显式写上 `defined`。\n\n⚠️ 反过来，只问「贴没贴」的那道门在这里是**错的**：卡片明明贴着（`{v}` 也算贴过），它一律放行，老版那一支永远轮不到 —— 值小于 2 的那套数就印错了。\n\n自己验一遍：把卡片的值从 `{v}` 改成另一个数再跑，值不到 2 的时候总数该变成 `{c}` 条（一趟只搬 1 条），到了 2 及以上又变回三倍。"
+}

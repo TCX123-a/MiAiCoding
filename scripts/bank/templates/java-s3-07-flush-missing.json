@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-07-flush-missing",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-07",
+  "type": "codefix",
+  "concept": ["缓冲流要先倒再收工", "close 与 flush 的分工", "不红不响的丢字"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "c1": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵写了一段小代码：把一个名字和条数记进账本文件，紧接着立刻念回来看看。\n\n可它念回来的不是那笔账，而是一行 `念到：null` —— 而且**一个字都不红**。\n\n你帮本喵看看：那些字到底跑哪儿去了？把它改好，让它念回来的是本喵刚写进去的那一笔（像 `念到：{n1} {c1} 条` 这样）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"账本.txt\"));\n        笔.write(\"{n1} {c1} 条\");\n        笔.newLine();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"账本.txt\"));\n        System.out.println(\"念到：\" + 眼.readLine());\n        眼.close();\n    }\n}\n",
+  "referenceFixTemplate": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"账本.txt\"));\n        笔.write(\"{n1} {c1} 条\");\n        笔.newLine();\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"账本.txt\"));\n        System.out.println(\"念到：\" + 眼.readLine());\n        眼.close();\n    }\n}\n",
+  "explanationTemplate": "那些字没丢，它们还**躺在篮子里**喵。\n\n**一、套了篮子之后，塞字塞的是篮子，不是文件。** `笔.write(...)` 把字扔进那只大篮子，篮子要等**满了**、或者本喵喊一声倒，才会整趟搬进文件。这段代码写完就跑了，一声都没喊。\n\n**二、`close()` 就是「先把篮子倒干净、再收工」那一声。** 收工之前它一定会把篮子倒空，所以补上 `笔.close();`，文件里才会真的有那一笔。\n\n**三、为什么念回来是 `null` 而不是报错。** 文件在开管子的时候就建好了（只是空的），所以念它一点都不算错 —— `readLine()` 念一个空文件，规规矩矩地回一句「没有了」，也就是 `null`。本喵那句「念到：」拼上一个 `null`，印出来就是 `念到：null`。\n\n**四、这一脚最坑的地方：一个字都不红。** 程序跑完了、文件也在、什么报错都没有 —— 只有本喵去念的时候才发现账是空的。这种错只能靠习惯挡：**写了就收工**。\n\n**五、`flush()` 和 `close()` 的分工。** `flush()` 是「把篮子里的**现在**就倒出去」，倒完篮子还在手上，可以接着写；`close()` 是「倒干净、收工」。这道题只要念一遍就完事，直接 `close()` 最省事；要是本喵还想接着往这份文件里添东西、又想让别人现在就能念到，那就先 `flush()` 一趟。"
+}

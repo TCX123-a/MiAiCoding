@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-readonly-window",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-01",
+  "type": "codewrite",
+  "concept": ["带盖的小鱼干盒", "只读的小窗", "一笔一印", "Scanner"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵这只猫的鱼干盒，**盖子扣得死死的**：账上那个数，外面**只能读、不能直接改**。外面想添鱼干，只有一招 —— 喊一声「添这么多」，让盒子里自己动手。\n\n要给外面开的东西：\n\n- 两扇**只读**的小窗：一扇读名字，一扇读账上的数\n- 一招 `feed(int more)`：把递进来的这一笔**添到账上**\n\n投喂给程序的纸上：**第一个数是「后面还要喂几笔」**，接着正好那么多行，一行一个数。**每喂完一笔**，程序就印一行当下的账，念作：**名字**、` 账上 `、**账上的数**、` 条小鱼干喵`。\n\n这一课的新东西是：账上那个数外头**一次都没被直接碰过**，全靠招式和两扇小窗喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\nclass Cat {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Cat {\n    private String name;\n    private int fish;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n\n    public int getFish() {\n        return fish;\n    }\n\n    public void feed(int more) {\n        fish = fish + more;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        Cat c = new Cat(\"{name}\");\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            c.feed(sc.nextInt());\n            System.out.println(c.getName() + \" 账上 \" + c.getFish() + \" 条小鱼干喵\");\n        }\n    }\n}\n",
+  "explanationTemplate": "这题的重点是**「只读」和「可写」分开摆在门口**喵。\n\n- `getName` / `getFish` 是两扇**只读**的小窗：它们只把里面的数**递出来**给外面看一眼，外面拿到的是个副本，改不动盒子里那个真的。\n- `feed(int more)` 是唯一的写入口，而且它**不把盒子里那个数交出去**：外面只能递一个数进来，改多少、怎么改，全是盒子里自己说了算。\n\n记账那行 `fish = fish + more;` 是「先读、再加、再写回」：右边先算出新值，再写回左边。**每喂一笔就印一行**，印的是当下的账，所以印出来的数是一趟一趟往上涨的。\n\n`main` 那边三件事：读第一个数当笔数，圈子里一趟递一笔、递完就印一行。\n\n顺手记一句本课的老话：**让别人能读，不等于让别人能改** —— 这两件事在门口是两扇不同的窗户喵。"
+}

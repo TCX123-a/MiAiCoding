@@ -1,0 +1,19 @@
+{
+  "templateId": "py-s2-stdlib-random-seed",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-06",
+  "type": "codewrite",
+  "concept": ["random.seed", "randint", "可重现"],
+  "instances": 6,
+  "params": {
+    "hi": {
+      "kind": "pick",
+      "values": [20, 50, 100]
+    }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 1, "max": 99 },
+  "stemTemplate": "本喵想亲眼看看「**起点一样，摇出来的数就一样**」这件事喵。\n\n请你写个程序：**读一行一个整数 `s`**（这就是起点），然后**印四行**：\n\n1. 先 `random.seed(s)` 定起点，再印出 `random.randint(1, {hi})` 摇到的那个数\n2. 接着再摇一次 `random.randint(1, {hi})`，印出来\n3. **把起点重新定成 `s`**，再摇一次 `random.randint(1, {hi})`，印出来\n4. 再摇一次 `random.randint(1, {hi})`，印出来\n\n第 3、4 行应当和第 1、2 行**一模一样**喵。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一个起点**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "import random\n\ns = int(input())\n\nrandom.seed(s)\nprint(random.randint(1, {hi}))\nprint(random.randint(1, {hi}))\n\nrandom.seed(s)\nprint(random.randint(1, {hi}))\nprint(random.randint(1, {hi}))\n",
+  "explanationTemplate": "`random.seed(s)` 读作「**给随机定个起点**」喵。骰子本身是照着一串定死的花纹往下走的，**起点一定，往后摇出来的那一串就每次都一样**。\n\n所以第 3 步把起点重新定回 `s` 之后，后面摇出来的数会**从头重演一遍**，跟最开始那两行分毫不差。\n\n⚠️ 想让「后一对和前一对一样」，两次摇的**步骤顺序必须完全一致**：先 `seed`、再 `randint`、再 `randint`，一步都不能多也不能少。中间多摇一次别的、或者少印一行，位置就全错开了 —— 这是这类题最容易崩的地方。\n\n⚠️ 反过来也要记住：**正式的程序里别写 `seed`**。定起点是为了让输出能重现（本喵写课文、出题都靠它），你自己写正经程序时写上这一句，摇一百次全是同一串数，一点都不随机了。\n\n⚠️ 数是从 1 到 {hi}（两头都算得上）里挑的，所以每次都在这个范围里 —— 这正是 `randint` 的脾气：闭着眼睛挑一个整数。"
+}

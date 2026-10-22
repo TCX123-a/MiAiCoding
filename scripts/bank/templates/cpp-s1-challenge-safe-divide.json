@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-challenge-safe-divide",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-15",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "主动喊停", "接住", "分鱼干"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "pick", "values": ["4", "6"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 0, "max": 9 },
+  "stemTemplate": "本喵要一对一对地分鱼干：每对里，第一个数是**要分的条数**，第二个数是**分给几只猫**。\n\n麻烦在第二个数 —— 它**可能是 0**。分给 0 只猫这件事本喵不想让它当场翻脸；希望用前几课学的**主动喊停 + 接住**那一招来办：分不了的那对，喊一嗓子跳过它，报一句照样接着往下分。\n\n要干的事：\n\n1. 先读一个数（这一串一共几个数），再一个一个读；每两个算一对；\n2. 能分的，印 `A 分给 B 份，每份 C 条喵`（C 是 A 除以 B 的整数结果）；\n3. 分不了的（第二个数是 0），印 `0 份分不了喵`，接着处理下一对；\n4. 全部处理完，最后补一行 `分完啦喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵 —— 样例里不一定有分不了的对，程序得照规矩自己判。）",
+  "starterTemplate": "#include <iostream>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    if (!(cin >> n)) {\n        return 1;\n    }\n\n    for (int i = 0; i < n / 2; i++) {\n        int a = 0;\n        int b = 0;\n        // 一对一对地读进来，试着分一次\n    }\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    if (!(cin >> n)) {\n        return 1;\n    }\n\n    for (int i = 0; i < n / 2; i++) {\n        int a = 0;\n        int b = 0;\n        cin >> a >> b;\n        try {\n            if (b == 0) {\n                throw runtime_error(\"zero\");\n            }\n            cout << a << \" 分给 \" << b << \" 份，每份 \" << a / b << \" 条喵\" << endl;\n        } catch (const runtime_error &e) {\n            cout << \"0 份分不了喵\" << endl;\n        }\n    }\n\n    cout << \"分完啦喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的主角是**主动喊停**和**接住**这对搭档喵。\n\n先说为什么需要它：**除以 0** 是没有定义的事，真算下去程序当场塌方（不是好好报错退出，是崩掉）。可「第二个数是 0」这件事本喵**能提前看出来**，所以别急着算，先问一句：\n\n```cpp\nif (b == 0) {\n    throw runtime_error(\"zero\");\n}\n```\n\n`throw` 就是**主动喊停**：喊出去的瞬间，这一段剩下的话全都不执行 —— 下面那行 `cout` 连碰都不会碰。喊出来的东西会被**最近的那只手接住**：\n\n```cpp\ncatch (const runtime_error &e) {\n    cout << \"0 份分不了喵\" << endl;\n}\n```\n\n接住、报一句、接着处理下一对 —— 这就是「不翻脸」的意思。\n\n两个必须记的细节：\n\n1. `runtime_error` 这类名字住在 `<stdexcept>` 这个抽屉里，**要用就得先 `#include <stdexcept>`**，不然翻译官喵翻脸说不认识；\n2. 会出事的那句除法必须待在 `try` 那对花括号**里面** —— 放在外面，喊停就没人接得住。"
+}

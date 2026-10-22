@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-09-private-blocks-kitten",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-09",
+  "type": "codefix",
+  "concept": ["老图纸扣盖子的格子", "照着画的图纸也够不着", "报错现场"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 2, "max": 4 },
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "本喵的老图纸上有一格鱼干数，扣着盖子；小猫图纸照着它画下来，自己添了一手「吃一条」，里面直接去动那一格。\n\n翻译官喵说小猫够不着。\n\n你帮本喵改到能跑起来（{name} 一开始有 {fish} 条，吃完一条印出现在几条）。**小猫那一段的写法是对的，别在那里绕圈子 —— 要动的是老图纸上那一格的身份。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"{name}\", {fish});\n    k.eat();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\nprotected:\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"{name}\", {fish});\n    k.eat();\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:16:9: error: 'int Cat::fish' is private within this context`\n\n翻成猫话：**「私有，你现在站的这个地方够不着喵。」** 这里要说清一件反直觉的事：**小猫图纸不是老图纸自己。** 老图纸扣上盖子的格子，**连亲生孩子都碰不得**。\n\n三种盖子的老规矩摆出来对一下：\n\n| 标签 | 谁够得着 |\n|---|---|\n| `private:` | **只有图纸自己的招式**够得着 |\n| `protected:` | 图纸自己的招式 + **照着它画下来的新图纸**够得着 |\n| `public:` | 谁都够得着 |\n\n所以改法就是**把那一格从 `private:` 挪到 `protected:`** —— 这正是 `protected` 存在的理由：它管的正是「**妈妈自己 + 照着画的图纸**」这一对，而外面的 `main` 仍然够不着（这一点很重要，盖子没白扣）。\n\n另一条同样能跑的改法：**老图纸提供一个公开招式替小猫动手**（比如老图纸里添一招 `feedOne`，里面那句就是 `fish = fish + 1;`），小猫那一手去喊它。这条路保住了「谁都不能直接碰那一格」，只是在老图纸里多写一手。两条路都对，本喵这里挑了最省的 `protected`。\n\n⚠️ 顺手记一条边界：**别把老图纸的格子一股脑全改成 `protected:`。** 老图纸扣盖子的用意还在 —— 只有「照着画的图纸确实要用」的那几格才该挪。"
+}

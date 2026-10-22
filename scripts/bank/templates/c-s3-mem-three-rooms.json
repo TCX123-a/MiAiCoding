@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-mem-three-rooms",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-01",
+  "type": "codewrite",
+  "concept": ["固定柜", "碗摞", "全局仓库", "记性对照"],
+  "instances": 6,
+  "params": {
+    "step": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stemTemplate": "本喵想亲眼看看三间屋子的脾气差在哪。请你写一个招式 `report`，要它**每次进门都印一行**，一行上报三个数：\n\n1. 一个**只摆一份、从头活到尾**的小记号 `visits` —— 进一次门往上加一，所以它报出来就是「本喵第几次进门」。\n2. 一个**每次进门都新摆一间**的小记号 `here` —— 进门加一，所以它报出来**永远都是 1**。\n3. 一个写在招式**外面**、出场是 0 的总数 `g_count` —— 进一次门往上加 **{step}**。\n\n`main` 里连喊 **3 次**，中间什么都不做。三行该长这个样子：\n\n```text\n第 1 次进门：固定柜里的 visits = 1，碗摞上的 here = 1，全局 g_count = {step}\n```\n\n（这是头一行。后两行照这个样子往下走：`visits` 一次比一次多一，`here` 一直是 1，`g_count` 一次加一个 {step}。）\n\n三行里的三个数用**一个** `printf` 印在一行上就行。",
+  "starterTemplate": "#include <stdio.h>\n\nint g_count = 0;\n\nvoid report(void) {\n    /* ① 固定柜里的 visits：只摆一份，从头活到尾 */\n    /* ② 碗摞上的 here：每次进门都新摆一间 */\n    /* ③ 往 g_count 上加 {step} */\n    /* ④ 三个数印在一行上 */\n\n}\n\nint main(void) {\n    report();\n    report();\n    report();\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint g_count = 0;\n\nvoid report(void) {\n    static int visits = 0;\n    int here = 0;\n    visits++;\n    here++;\n    g_count = g_count + {step};\n    printf(\"第 %d 次进门：固定柜里的 visits = %d，碗摞上的 here = %d，全局 g_count = %d\\n\",\n           visits, visits, here, g_count);\n}\n\nint main(void) {\n    report();\n    report();\n    report();\n    return 0;\n}\n",
+  "explanationTemplate": "三个数就是三间屋子的身份证喵 —— 一行之内，脾气全露出来了。\n\n**① `static int visits` —— 住固定柜。** 这两个字把它从碗摞搬进了固定柜：**只此一份、从头活到尾**。所以它记着「进过几次门」，一次比一次多一。\n\n**② `int here` —— 住在碗摞上。** 每喊一次 `report`，翻译官喵就给它摆一层新碗；招式一出门那层碗就收走。所以那句 `here = 0` 每回都重来一遍，加一之后永远是 1 —— 它**根本没有记性**可言。\n\n**③ `int g_count` —— 写在招式外面，住固定柜，而且谁都够得着。** 它和 `visits` 住同一间屋，区别只有一条：写在招式外面，所以**每一招、每一次调用**看到的都是同一间仓库。进一次门加 {step}，于是 1、2、3 次进门报出来是 `{step}`、{step} 的两倍、{step} 的三倍。\n\n看出来了吗：**`visits` 和 `here` 的唯一差别是那两个字 `static`，`visits` 和 `g_count` 的唯一差别是写在招式里面还是外面。** 三间屋子怎么挑，就看你要的东西活多久、谁该看得见它。\n\n⚠️ 顺带记一笔：`here` 这种「每次进门重新摆」的仓库，翻译官喵也不觉得有什么问题 —— 它不报错、不警告，只是**没记性**而已。该不该有记性是你的事，不是它的事喵。"
+}

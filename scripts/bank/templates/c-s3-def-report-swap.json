@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s3-def-report-swap",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-14",
+  "type": "codefix",
+  "concept": ["递参的时候站错位置", "名字像的两个仓库最容易递反", "读得下去才能查出岔子"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["3", "5"] },
+    "b": { "kind": "pick", "values": ["1", "2"] },
+    "c": { "kind": "pick", "values": ["4", "6"] },
+    "tot": { "kind": "pick", "values": ["8", "13"] },
+    "big": { "kind": "pick", "values": ["4", "6"] }
+  },
+  "stemTemplate": "本喵要的那句话是「**一共多少条、最多的一碗多少条**」喵 —— 现在这一行里两个数**站错了位置**，读起来像在胡说：前头的数比后头的还小，一看就知道不对劲。\n\n请你把这一行里两个数递的顺序摆正，别的都别动。前面那个数字该是三碗**加起来**的合计，后头那个该是三碗里**最多**的那碗。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    int total = 0;\n    int biggest = fish[0];\n    for (int i = 0; i < 3; i++) {\n        total += fish[i];\n        if (fish[i] > biggest) {\n            biggest = fish[i];\n        }\n    }\n    printf(\"一共 %d 条，最多的一碗 %d 条\\n\", biggest, total);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    int total = 0;\n    int biggest = fish[0];\n    for (int i = 0; i < 3; i++) {\n        total += fish[i];\n        if (fish[i] > biggest) {\n            biggest = fish[i];\n        }\n    }\n    printf(\"一共 %d 条，最多的一碗 %d 条\\n\", total, biggest);\n    return 0;\n}\n",
+  "explanationTemplate": "两个仓库的名字都是「数」的意思（一个管合计、一个管最多的那碗），稍微一走神就会**递反**喵 —— 这正是课文里那句话：名字起得像、缩进又乱的地方，最容易出这种「看着对、其实错」。\n\n怎么查出来：**读一遍这句话**。改之前印出来的是「一共 {big} 条，最多的一碗 {tot} 条」—— 前头的数比后头的还小，可「一共」怎么可能比「最多的一碗」少呢？一句话就露馅了。改好之后印的是「一共 {tot} 条，最多的一碗 {big} 条」：合计 {tot} 比最大的那碗 {big} 大，读起来才通顺。\n\n（老手还会多做一件事：把两个名字改得**一眼能分辨**，比如一个叫合计、一个叫最多 —— 名字帮上忙，才不会老递反。）"
+}

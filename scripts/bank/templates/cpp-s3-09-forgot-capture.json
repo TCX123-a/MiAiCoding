@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-09-forgot-capture",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-09",
+  "type": "codefix",
+  "concept": ["方括号那一截是干什么的", "不写就看不见外面的名字", "带进来才用得上"],
+  "instances": 2,
+  "params": {
+    "k": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "这段程序想数一数**比门槛大的有几个**喵，可它连编都编不过 —— 翻译官喵指着小招式里那一行骂了一句：那个名字**没被带进来**。\n\n你帮本喵改对（只动**方括号那一截**，别的地方一个字都别碰）。\n\n改好之后印一行：`比 {k} 大的有 N 个`（那个 N 由程序自己数出来）。要数的这一排是 `3, 1, 4, 1, 5`。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = {k};\n\n    int n = count_if(v.begin(), v.end(), [](int x) {\n        return x > limit;\n    });\n\n    cout << \"比 \" << limit << \" 大的有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = {k};\n\n    int n = count_if(v.begin(), v.end(), [limit](int x) {\n        return x > limit;\n    });\n\n    cout << \"比 \" << limit << \" 大的有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "小招式里那一行写的是 `x > limit`，可它的方括号是**空的** —— 空方括号的意思正是「本喵不碰外面任何东西」。于是那句里的 `limit` 成了小招式**从没见过的名字**，翻译官喵只好拦住，报的错就是「这个名字没被带进来」。\n\n改法只有一处：把要用的那个名字写进方括号 —— `[limit]`。它干的正是课文第三节那件事：**把外面的 `limit` 揣一份带进来**，小招式里这才看得见它。\n\n⚠️ 方括号里**写谁才带谁**：只带 `limit`，小招式里就只认得 `limit`，别的外面那些名字照样看不见。这一题最容易走的岔路是不写方括号里的名字、把小招式里的 `limit` 换成一个写死的数 —— 那样这一次确实能跑，可门槛以后一改，小招式里用的还是老的那个数 —— 这一课的另一道题就专门等在那儿。"
+}

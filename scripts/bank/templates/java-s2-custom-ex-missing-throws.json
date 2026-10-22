@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-custom-ex-missing-throws",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-12",
+  "type": "codefix",
+  "concept": ["自己画的出事图纸", "要表态的那一档", "招式头上少一句交代", "unreported exception"],
+  "instances": 2,
+  "params": {
+    "exName": { "kind": "pick", "values": ["FishEmptyException", "BowlEmptyException"] },
+    "msg": { "kind": "pick", "values": ["仓库空了喵", "碗底朝天了喵"] }
+  },
+  "stemTemplate": "本喵画了一张专门报「仓库空了」的出事图纸，接住它的地方也写好了。可这稿子**编都编不过** —— 翻译官喵连着退回来两条，都在说这张图纸的事。\n\n缺的是一句**交代**：得交代这招出事的时候怎么办。请你把它补上，让程序印出：\n\n```text\n拿到 3 条\n接住了：{msg}\n```\n\n只有那一句交代没写，别处本喵都没写错喵。",
+  "brokenCodeTemplate": "class {exName} extends Exception {\n    {exName}(String msg) {\n        super(msg);\n    }\n}\n\npublic class Main {\n    static void takeFish(int n) {\n        if (n <= 0) {\n            throw new {exName}(\"{msg}\");\n        }\n        System.out.println(\"拿到 \" + n + \" 条\");\n    }\n\n    public static void main(String[] args) {\n        try {\n            takeFish(3);\n            takeFish(0);\n        } catch ({exName} e) {\n            System.out.println(\"接住了：\" + e.getMessage());\n        }\n    }\n}\n",
+  "referenceFixTemplate": "class {exName} extends Exception {\n    {exName}(String msg) {\n        super(msg);\n    }\n}\n\npublic class Main {\n    static void takeFish(int n) throws {exName} {\n        if (n <= 0) {\n            throw new {exName}(\"{msg}\");\n        }\n        System.out.println(\"拿到 \" + n + \" 条\");\n    }\n\n    public static void main(String[] args) {\n        try {\n            takeFish(3);\n            takeFish(0);\n        } catch ({exName} e) {\n            System.out.println(\"接住了：\" + e.getMessage());\n        }\n    }\n}\n",
+  "explanationTemplate": "翻译官喵退回来的原话是这样两条：\n\n```text\nerror: unreported exception {exName}; must be caught or declared to be thrown\nerror: exception {exName} is never thrown in body of corresponding try statement\n```\n\n第一条念起来是：**「这一只会出事，可你没说清出了事怎么办喵。」** `unreported` 是「没有交代」，后面那句 `must be caught or declared to be thrown` 是翻译官喵给的**两条出路**：要么当场接住，要么在招式头上声明「本喵不接，往上扔」。\n\n第二条要绕一下：下面那个 `catch` 里明明等着接它，怎么反过来说「这个 `try` 里压根没有会扔它的地方」？—— 因为 `{exName}` 是**「要表态的」那一档**。这类出事的东西，只要一个招式用了它、又没在头上声明，翻译官喵就**当这一招压根不会扔它**；上面那处既然不成立，下面那个 `catch` 就成了白等一场。所以才要说：**这两条会一起消失**（本喵真跑过，补上那一句，两条全没了）。\n\n补的就是招式头上那句：\n\n```java\nstatic void takeFish(int n) throws {exName} {\n```\n\n`throws` 写在**招式头上**，是**本喵自己先声明**：这招可能出事，出了事本喵不在这儿处理，谁喊本喵谁接着。这里的 `main` 确实接着了（那个 `catch` 就等着它），两边说法对得上，稿子就过。\n\n顺手把两个容易看混的词摆在一起：**`throws` 在招式头上是声明，`throw` 在招式的身子里才是真扔** —— 多一个 `s`，差着一整件事喵。"
+}

@@ -1,0 +1,22 @@
+{
+  "templateId": "java-s1-this-eat-report",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-13",
+  "type": "codewrite",
+  "concept": ["this", "构造方法", "招式动这一只", "Scanner"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "name2": { "kind": "pick", "values": ["大胖", "雪球"] },
+    "n": { "kind": "int", "min": 2, "max": 5 },
+    "m": { "kind": "int", "min": 1, "max": 4 },
+    "a": { "kind": "int", "min": 5, "max": 6 },
+    "b": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{name} {n} {m}\n", "sampleText": "{name2} {a} {b}\n" },
+  "stemTemplate": "本喵要给图纸 `Cat` 画三样东西喵：\n\n- 两样家当：`String name`、`int fish`\n- 一手出生法：收名字和**一开始的**鱼干数，用 `this.` 收进这一只的家当里\n- 两招：`void eat(int n)`（把 `n` 条**加进这一只的账上**）、`void report()`（印一行「名字 吃了 N 条喵」）\n\n纸条上是**用空格隔开的一整行**：名字、一开始的条数、后来一顿的条数。\n\n`main` 里生**一只**猫（两样料一起喂），先 `report()` 一次；再 `eat()` 一顿；最后再 `report()` 一次 —— 两次印出来的数应该不一样。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一个名字、另外几组条数**喵。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String who = sc.next();\n        int first = sc.nextInt();\n        int more = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Cat {\n    String name;\n    int fish;\n\n    Cat(String name, int fish) {\n        this.name = name;\n        this.fish = fish;\n    }\n\n    void eat(int n) {\n        this.fish = this.fish + n;\n    }\n\n    void report() {\n        System.out.println(this.name + \" 吃了 \" + this.fish + \" 条喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String who = sc.next();\n        int first = sc.nextInt();\n        int more = sc.nextInt();\n\n        Cat c = new Cat(who, first);\n        c.report();\n        c.eat(more);\n        c.report();\n    }\n}\n",
+  "explanationTemplate": "这一题把出生那一手和 `this` 连起来用了一遍喵，三处盯紧：\n\n- **出生那一手收料**：`Cat(String name, int fish)` 里两句 `this.name = name;`、`this.fish = fish;` —— 左边是这一只的家当，右边是喂进来的料，同名全靠 `this.` 分家。\n- **`eat` 动的是这一只的账**：`this.fish = this.fish + n;` 读的是「这一只原来记的」，加上新喂的 `n`，再写回**同一只**。`eat` 前面没有 `static`，所以谁喊它就动谁。\n- **两次 `report()` 印的不一样**：第一次是出生时收好的数，第二次是加过一顿的数 —— 本喵没重新生猫，账是**同一只猫自己**的账在变。\n\n写 `this.` 是个好习惯：料和家当**万一同名**的时候它救命（少写就是 `name = name;` 那个不报错的坑）；不同名的时候写上也一眼看得清「这句动的是哪一只」喵。"
+}

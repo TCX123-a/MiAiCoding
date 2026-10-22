@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-ctor-forgot-this",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-13",
+  "type": "codefix",
+  "concept": ["this", "料与家当同名", "不报错只出错结果"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵这一手出生法，身子里写的是 `name = name;` 喵 —— 喂进去的是 `{name}`，可印出来是 `null`，翻译官一声都没吭。\n\n你帮本喵把这一句写对，让它把喂进来的名字**真的收进这只猫的家当**里。\n\n改好之后屏幕上该是：\n\n```text\n{name}\n```\n\n（出生那一手本身没写错，就这一句要改喵。）",
+  "brokenCodeTemplate": "class Cat {\n    String name;\n\n    Cat(String name) {\n        name = name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        System.out.println(c.name);\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        System.out.println(c.name);\n    }\n}\n",
+  "explanationTemplate": "这一处**不报错、不提醒**，只给一个错结果 —— 本课最阴的坑就是它喵。\n\n原因在这儿：**招式里面的料，和图纸上的家当，摆在两层不同的地方**。喂进来的料也叫 `name`，它就在本喵眼前那一层，把图纸上那件家当**整个挡住了**。所以：\n\n- `name = name;` 里那两个 `name`，**指的都是喂进来的那块料** —— 把「{name}」写进「{name}」自己，原地转了一圈，什么也没发生。\n- 图纸上那件家当从头到尾**没人碰过**，还是刚出生时的默认值 `null`（装一串字的那格，默认就是它）。\n- 最后印 `c.name`，印的是图纸上那件家当 —— 当然还是空的。\n\n**规矩一句话：只要喂进来的料和图纸上的家当同名，就老老实实写 `this.`** —— `this.name = name;` 才是「**这一只**的名字，等于喂进来的名字」。\n\n顺一句老账：上一课说过「同一个地盘里两块牌子不能重名」，那说的是**同一层**里的牌子；图纸上的家当和招式里的料**不是同一层**，所以同名不报错，只悄悄地挡住。**不报错，才更吓人**喵。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-challenge-score-report",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-15",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "成绩单", "平均分切小数", "及格人数"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 30, "max": 100 },
+  "stemTemplate": "本喵的成绩单要印三行喵：平均分、最高分、及格人数（60 分及以上算及格）。\n\n投喂口先给一个数（几个人），再一个一个给分（30 到 100 的整数）。三个数都从**同一趟清点**里出来（就是要用口袋把分先收好，再一起算）。\n\n印法：\n\n- `平均 X.Y 分喵` —— **保留一位小数，多出来的直接切掉，不四舍五入**。教本喵一个稳的算法：**先把总分放大十倍再除以人数**，得到的数最后一位就是小数位；\n- `最高 X 分喵`；\n- `及格 X 人喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。别用会四舍五入的印法 —— 「切掉」和「四舍五入」会印出不一样的小数。）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        ArrayList<Integer> scores = new ArrayList<Integer>();\n        for (int i = 0; i < n; i++) {\n            scores.add(sc.nextInt());\n        }\n\n        // 清点出总分、最高分、及格人数，再按三行的印法印出来\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        ArrayList<Integer> scores = new ArrayList<Integer>();\n        for (int i = 0; i < n; i++) {\n            scores.add(sc.nextInt());\n        }\n\n        int total = 0;\n        int best = scores.get(0);\n        int passCount = 0;\n        for (int i = 0; i < n; i++) {\n            int s = scores.get(i);\n            total = total + s;\n            if (s > best) {\n                best = s;\n            }\n            if (s >= 60) {\n                passCount = passCount + 1;\n            }\n        }\n\n        int avg10 = total * 10 / n;\n        System.out.println(\"平均 \" + (avg10 / 10) + \".\" + (avg10 % 10) + \" 分喵\");\n        System.out.println(\"最高 \" + best + \" 分喵\");\n        System.out.println(\"及格 \" + passCount + \" 人喵\");\n    }\n}\n",
+  "explanationTemplate": "三个数字，一趟清点就够喵 —— 关键在**别把分算散**：先把每个人的分都过一遍，顺手攒三本账。\n\n**一、一箭三雕的那一趟。** 每拿一个分：加进总分、顺手比一比最高、再看一眼够不够 60（够就给人头加一）。三个账本互不打扰，一趟走完全齐了。\n\n**最高分起步的小讲究**：`best` 一开始就放**第一个人的分**（口袋至少有一格，拿得到），别放 0 —— 放 0 的话「所有人都考得比 0 低」不会发生（分数是 30 到 100），碰巧也对，但要是哪天分数允许负数，放 0 就假了，习惯要立好。\n\n**二、平均分切小数。** 「保留一位、切掉多余」用整数算最稳：把总分**先放大十倍**再除以人数：\n\n```java\nint avg10 = total * 10 / n;\n```\n\n得到的 `avg10` 是个「**放大了十倍的平均分**」：末位就是小数位，前面是整数位 —— 切开印就行：\n\n```java\n(avg10 / 10) + \".\" + (avg10 % 10)\n```\n\n`avg10 / 10` 是整数部分，`avg10 % 10` 是那一位小数。全程整数算，没有小数运算那些抖来抖去的毛病，也**天然是「切掉」而不是「进一位」**。\n\n**三、一行里的小数点是自己拼的。** 注意印出来是 `76.5` 这样的字样 —— 小数点是个普通字符，拼在中间即可，别指望翻译官喵替你放。"
+}

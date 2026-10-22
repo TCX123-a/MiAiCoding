@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s2-04-door-no-guard",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-04",
+  "type": "codefix",
+  "concept": ["改数的门", "门里忘了立规矩", "跑得成功但结果全错"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "n": { "kind": "int", "min": 1, "max": 4 },
+    "neg": { "kind": "int", "min": -4, "max": -2 }
+  },
+  "stemTemplate": "本喵给图纸开了一道**改数的门** `void setFish(int f)`：把猫的条数改成投喂进来的那个数。可这道门上本喵**忘了立规矩** —— 有人递进来一个荒唐的数，它就照单全收。\n\n你帮本喵把规矩立到门上：**递进来的数要是负数，就一个格子都不许动、也一个字都不许印**，条数保持原来的。**`main` 里那几句不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprivate:\n    string name;\n    int fish;\n\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    string getName() const {\n        return name;\n    }\n\n    int getFish() const {\n        return fish;\n    }\n\n    void setFish(int f) {\n        fish = f;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\", {n});\n    c1.setFish({neg});\n    cout << c1.getName() << \" 有 \" << c1.getFish() << \" 条\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprivate:\n    string name;\n    int fish;\n\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    string getName() const {\n        return name;\n    }\n\n    int getFish() const {\n        return fish;\n    }\n\n    void setFish(int f) {\n        if (f < 0) {\n            return;\n        }\n        fish = f;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\", {n});\n    c1.setFish({neg});\n    cout << c1.getName() << \" 有 \" << c1.getFish() << \" 条\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题**没有任何报错**喵 —— 它编得过、跑得动，翻译官喵最啰嗦的那一档念叨（`-Wall`）也一个字没说（本喵拿它真跑过一遍，才敢这么写）。\n\n问题出在门里那句 `fish = f;`：它把递进来的数**原样**装进格子。盖子只管「**谁能伸手**」，不管伸进来的手**递的是什么** —— 所以盖上盖子挡不住这个荒唐的数，它安安静静地住进了格子里，印出来的条数就成了负数。\n\n规矩得**本喵亲手写进门里**：\n\n`if (f < 0) {`\n`    return;`\n`}`\n\n念作「递进来的数是个负数？那本喵就不改了，空手退出去。」招式前面写的是 `void`（只干活、不叼东西回来），所以退出去的时候一个光秃秃的 `return;` 就够了。\n\n⚠️ 这一题要求被挡下来的那一次**什么都不印** —— 别在门上顺手加一句「不许倒扣喵」，那会把印出来的行数弄多一行。规矩立好了，格子里还是原来那个数。"
+}

@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s1-try-divide-guard",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-14",
+  "type": "codewrite",
+  "concept": ["try", "catch", "ArithmeticException", "Scanner"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 5, "max": 8 },
+    "b": { "kind": "pick", "values": ["0", "3"] },
+    "a2": { "kind": "int", "min": 12, "max": 13 },
+    "b2": { "kind": "pick", "values": ["4", "5"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{a} {b}\n", "sampleText": "{a2} {b2}\n" },
+  "stemTemplate": "纸条上给两个数：鱼干数、猫数喵。本喵要把鱼干**平均分给这些猫**，规矩三条：\n\n- 分得了：印 `每只猫分到 X 条喵`（`X` 是整条算的除法结果）\n- 一只猫都没有（猫数就是 `0`）：**不许断气**，印 `没有猫来分，这条算不了喵`\n- 不管哪种情况，最后都要印 `分账结束喵`\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵 —— 纸条上那两个数里**可能是 0**，别让程序断气。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fish = sc.nextInt();\n        int cats = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fish = sc.nextInt();\n        int cats = sc.nextInt();\n        try {\n            System.out.println(\"每只猫分到 \" + fish / cats + \" 条喵\");\n        } catch (ArithmeticException e) {\n            System.out.println(\"没有猫来分，这条算不了喵\");\n        }\n        System.out.println(\"分账结束喵\");\n    }\n}\n",
+  "explanationTemplate": "这一路车的名字是 `ArithmeticException`（「算数算不成」）喵：`fish / cats` 里 `cats` 是 `0` 的时候，Java 不会印 `0`、也不会印别的 —— 它当场翻车，没人接住就断气。\n\n写法就是三块：\n\n- **没底的活儿进 `try`**：除法那一句（连着它那句打印）放进去；\n- **接住哪一路写清楚**：`catch (ArithmeticException e)` 里印「没有猫来分，这条算不了喵」；\n- **收尾那句摆外面**：`分账结束喵` 放在 `try` / `catch` **外面**，翻没翻车都照跑。\n\n顺一句：这一课学的四种常见翻车，「除以 0」只有这一路（`ArithmeticException`）。本喵要是把括号里写成 `NumberFormatException`，程序该断气还是断气 —— **牌子认错了车，等于没接**喵。"
+}

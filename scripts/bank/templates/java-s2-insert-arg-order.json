@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-insert-arg-order",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-07",
+  "type": "codefix",
+  "concept": ["会自己长大的抽屉", "insert", "两样料有先后", "过不了稿子"],
+  "instances": 2,
+  "params": {
+    "head": { "kind": "pick", "values": ["今天吃", "明天吃"] },
+    "pos": { "kind": "int", "min": 0, "max": 1 }
+  },
+  "stemTemplate": "本喵想往抽屉里那串字的**中间**塞一段，可翻译官喵又把稿子退回来了。\n\n抽屉里先攒好的是 `小鱼干喵`。本喵想做的事只有一件：**把 `{head}` 塞到编号 {pos} 那个位置上去**，原来的字一个都不许少、顺序也不许变。\n\n（塞进去之后长什么样？比如往 `abcd` 的编号 1 塞一段 `XY`，得到的就是 `aXYbcd` 喵 —— 记住是**先掰开、再塞进去、再合上**。）\n\n只有塞那一段的问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        StringBuilder sb = new StringBuilder();\n        sb.append(\"小鱼干喵\");\n        sb.insert(\"{head}\", {pos});\n        System.out.println(sb);\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        StringBuilder sb = new StringBuilder();\n        sb.append(\"小鱼干喵\");\n        sb.insert({pos}, \"{head}\");\n        System.out.println(sb);\n    }\n}\n",
+  "explanationTemplate": "这一题也是**过不了稿子那一关**，而且这次翻译官喵的话特别长。头一句是：\n\n```text\nno suitable method found for insert(String,int)\n```\n\n念起来是：**「`insert` 这两个料，本喵不知道该怎么摆喵。」**\n\n后面还一字排开**十个**候选，每个都长这样两行：\n\n```text\n    method StringBuilder.insert(int,String) is not applicable\n      (argument mismatch; String cannot be converted to int)\n```\n\n念起来是：抽屉上的 `insert` 确实有好多兄弟 —— `insert(int,String)`、`insert(int,Object)`、`insert(int,char)`、`insert(int,char[])`…… 可它们**全都排的是「先编号、后东西」**，而本喵递过去的**第一个料偏偏是一段字**。翻译官喵拿着那段字去当编号使，怎么都对不上，所以十个兄弟一个也接不住。稿子末尾还留了一行提示：\n\n```text\nNote: Some messages have been simplified; recompile with -Xdiags:verbose to get full output\n```\n\n意思就是「上面这些还是简写过的，想看全套再喊我」。**这一行不是本喵的错**，是翻译官喵觉得候选太多、怕刷屏，省着说的。\n\n正路就是把两个料**换个先后**：\n\n```java\nsb.insert({pos}, \"{head}\");\n```\n\n读法是「**插到编号 {pos} 那儿，塞进去的是 `{head}`**」。\n\n这条经验往后天天用得上：抽屉上凡是**指位置**的招式（`insert` / `deleteCharAt` 之类），**编号都排在最前面**，要处理的东西排在后面。项链上的 `substring(0, 2)` 也是这个规矩 —— 先头后尾，都是编号在前。\n\n（顺带说一句：这个错**翻译官喵会在稿子那一关就拦住**，一个字的输出都不会有 —— 属于好抓的那类；真正阴的是那种「跑得好好的、答案悄悄错掉」的。）"
+}

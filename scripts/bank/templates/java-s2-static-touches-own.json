@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-static-touches-own",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-05",
+  "type": "codefix",
+  "concept": ["static 招式", "static 招式里碰不到每只猫自己的格子", "编译错误"],
+  "instances": 2,
+  "params": {
+    "cat": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "cry": { "kind": "pick", "values": ["嘀嘀", "哔啵"] }
+  },
+  "stemTemplate": "本喵想让 `Cat` 这张图纸也会报自己的名号 —— 就把那一手挂到了图纸上。可翻译官喵把爪子拍下来了。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n我是 {cat}，叫声是 {cry}\n```\n\n猫的家当那两行本喵一个字都不想动，问题出在**挂到图纸上那一手**喵。",
+  "brokenCodeTemplate": "class Cat {\n    String name;\n    String cry;\n\n    Cat(String name, String cry) {\n        this.name = name;\n        this.cry = cry;\n    }\n\n    static String whoAmI() {\n        return \"我是 \" + name + \"，叫声是 \" + cry;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat a = new Cat(\"{cat}\", \"{cry}\");\n        System.out.println(Cat.whoAmI());\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    String name;\n    String cry;\n\n    Cat(String name, String cry) {\n        this.name = name;\n        this.cry = cry;\n    }\n\n    static String whoAmI(String name, String cry) {\n        return \"我是 \" + name + \"，叫声是 \" + cry;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat a = new Cat(\"{cat}\", \"{cry}\");\n        System.out.println(Cat.whoAmI(a.name, a.cry));\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 **`non-static variable name cannot be referenced from a static context`** —— 「`name` 是每只猫自己的一份，可你现在站的是 `static` 招式，喊它的时候压根没有猫站在旁边，你要用的是哪只猫的 `name`喵？」\n\n这句话要念两遍才够味：**问题不是名字写错了，是位置站错了。** `whoAmI` 前面的 `static` 把它挂到图纸上；挂在图纸上的招式，喊它的时候**没有哪只猫**在场 —— 那它嘴里那些「每只猫自己才有一份」的格子（`name`、`cry`）就全成了没着落的话。改完 `name` 还会轮到 `cry`，两个都得安排。\n\n两条路都走得通：\n\n1. **把要用的东西递进去**（本喵这版）：`whoAmI(String name, String cry)` —— 招式里不碰任何人的格子，谁喊谁把值交到手上。喊的时候写 `Cat.whoAmI(a.name, a.cry);`：猫照样生，只是它的格子**被递了过去**。\n2. **干脆别挂到图纸上**：把 `static` 去掉，它就成了每只猫自己的一手，拿猫去喊 `a.whoAmI()`。\n\n头一条路是本课的重点：**`static` 招式里，共用的格子随便碰，每只猫自己的格子一个都碰不得** —— 真要用，只能等别人递进来。"
+}

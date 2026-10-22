@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-11-forgot-pure-zero",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-11",
+  "type": "codefix",
+  "concept": ["忘了写 = 0", "漏写也没人提醒", "把招牌清成约定"],
+  "instances": 2,
+  "params": {
+    "catName": { "kind": "pick", "values": ["小橘", "大胖"] }
+  },
+  "stemTemplate": "本喵想让老图纸上那一手成为**一份约定**（照它画下来的都得自己会这一手），可本喵把这一手**写成了一个有动作的普通招式**，而小猫图纸那一手又忘了补。\n\n结果：程序**照样跑完**，翻译官喵**一个字都没说**，屏幕上印出来的是 `{catName}：……`，而不是 {catName} 自己那一版。\n\n你帮本喵把印出来的话改成 {catName} 自己那一版（`X：喵～`），并且**以后本喵再画一张图纸漏了这手，翻译官喵能当场拦住本喵**。**`main` 里那几句不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Animal {\nprotected:\n    string name;\npublic:\n    Animal(string n) : name(n) {}\n    virtual void speak() const {\n        cout << name << \"：……\" << endl;\n    }\n};\n\nclass Cat : public Animal {\npublic:\n    Cat(string n) : Animal(n) {}\n};\n\nint main() {\n    Cat c(\"{catName}\");\n    Animal& r = c;\n    r.speak();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Animal {\nprotected:\n    string name;\npublic:\n    Animal(string n) : name(n) {}\n    virtual void speak() const = 0;\n};\n\nclass Cat : public Animal {\npublic:\n    Cat(string n) : Animal(n) {}\n    void speak() const override {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nint main() {\n    Cat c(\"{catName}\");\n    Animal& r = c;\n    r.speak();\n    return 0;\n}\n",
+  "explanationTemplate": "这一题**一个报错都没有**。本喵在本机跑过没修的版本，屏幕上是这一行：\n\n```text\n{catName}：……\n```\n\n程序跑得完完整整，翻译官喵一声没吭。\n\n**根子不在小猫那一手，在老图纸那一手漏写了两个符号。** 老图纸上那一手写成了\n\n```text\nvirtual void speak() const {\n    cout << name << \"：……\" << endl;\n}\n```\n\n有动作、有身体 —— 那它就只是**一手普通的招式**，不是约定。而小猫图纸照着画下来，**想补就补、不补也行**：本喵这一题正好忘了补，于是喊下去的时候，程序老老实实跑了老图纸那一版占位的「……」。\n\n**这就是「清成约定」那一步值钱的地方。** 修法是两处，缺一不可：\n\n1. **老图纸那一手清成约定**：把那一对大括号里的动作整个删掉，换成两个字符 ——\n\n```text\nvirtual void speak() const = 0;\n```\n\n2. **小猫那一手补上**：\n\n```text\nvoid speak() const override {\n    cout << name << \"：喵～\" << endl;\n}\n```\n\n补完第一处，本喵要是还漏着第二处，翻译官喵当场就报 `cannot declare variable 'c' to be of abstract type 'Cat'` —— **它替本喵记着这笔账**。这正是一句话的分别：\n\n> **老图纸给了动作，漏写是「看不出来」；老图纸只留招牌，漏写是「编不过」。**\n\n往后写图纸时请记牢：这一手**打算让照它画下来的都得自己会**，就一定要写 `= 0`；**不打算**这样（只是给个默认动作、谁想改就改），才可以留身体。两个都合法，但**意思完全不同** —— 本喵这一课栽的就是把它们弄混了。"
+}

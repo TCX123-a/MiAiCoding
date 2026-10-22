@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-06-pattern-DD",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-06",
+  "type": "codefix",
+  "concept": ["念法清单里大小写是两件事", "DD 是一年里的第几天", "不红不响的错印法"],
+  "instances": 2,
+  "params": {
+    "m1": { "kind": "int", "min": 8, "max": 10 },
+    "d1": { "kind": "int", "min": 5, "max": 20 }
+  },
+  "stemTemplate": "餐券上本喵想印成 `2026-08-05` 这个样子：四位年、两位月、两位日，中间短横。\n\n可印出来的日那一截**不是两位数**，而是一串别的数；跑起来一个字都不红。\n\n你帮本喵看看念法清单哪儿写错了，把它改对 —— 改好之后该印成 `2026-{m1}-{d1}` 这个样子（月和日都是两位）。\n\n（这一题**不用投喂任何东西**。）",
+  "brokenCodeTemplate": "import java.time.LocalDate;\nimport java.time.format.DateTimeFormatter;\n\npublic class Main {\n    public static void main(String[] args) {\n        LocalDate d = LocalDate.of(2026, {m1}, {d1});\n\n        System.out.println(d.format(DateTimeFormatter.ofPattern(\"yyyy-MM-DD\")));\n    }\n}\n",
+  "referenceFixTemplate": "import java.time.LocalDate;\nimport java.time.format.DateTimeFormatter;\n\npublic class Main {\n    public static void main(String[] args) {\n        LocalDate d = LocalDate.of(2026, {m1}, {d1});\n\n        System.out.println(d.format(DateTimeFormatter.ofPattern(\"yyyy-MM-dd\")));\n    }\n}\n",
+  "explanationTemplate": "**一、念法清单里，字母的大小写是两件完全不同的事。** `MM` 是「两位月」，`mm` 又是别的东西；日也一样：**小写 `dd` 才是「两位日」**，大写 `DD` 是「**这一年里的第几天**」。\n\n**二、所以 `DD` 给出的不是两位数。** 本喵这张纸条是 2026 年的第几天，它就报第几天 —— 可能是个三位数，看着就像日期后面多粘了一截。不红不响，只是印出来的不是本喵要的。\n\n**三、修法：把清单末尾那两个大写改成小写 `dd`。** 清单里别的字母原样不动，中间那些短横、汉字、斜杠都是**原样印出来**的，不属于要改的。\n\n**四、为什么这一脚必须自己盯。** 它**不报错** —— 清单写错只是「念法不对」，纸条本身一点毛病没有。所以本喵给自己定的规矩是：**念法写完，先把结果印出来看一眼**，再拿它去跑一整批餐券。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-structptr-walk-no-advance",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-06",
+  "type": "codefix",
+  "concept": ["牌子走一圈", "忘了挪", "逻辑错", "跑得成功但数不对"],
+  "instances": 2,
+  "params": {
+    "f1": { "kind": "int", "min": 1, "max": 3 },
+    "f2": { "kind": "int", "min": 4, "max": 6 },
+    "f3": { "kind": "int", "min": 7, "max": 9 }
+  },
+  "stemTemplate": "本喵摆了**一排三只猫**：小橘吃 {f1} 条、狸花吃 {f2} 条、大肥鱼吃 {f3} 条。现在拿一块牌子从排头出发，走一圈把三只猫连同总账一起报出来：\n\n```\n小橘 吃了 {f1} 条喵\n狸花 吃了 {f2} 条喵\n大肥鱼 吃了 {f3} 条喵\n一共 {f1} + {f2} + {f3} 条喵\n```\n\n（最后那一行里的加号当然要自己算出来喵，写成 `一共 {} 条喵` 那样。）\n\n这段代码翻译官喵**一个字都没说**，程序也跑起来了 —— 可叼回来的东西不对。你帮本喵看看是哪一步出了岔子，把它改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[3] = {\n        {\"小橘\", {f1}},\n        {\"狸花\", {f2}},\n        {\"大肥鱼\", {f3}}\n    };\n    struct Cat *p = cats;\n    int total = 0;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"%s 吃了 %d 条喵\\n\", p->name, p->fish);\n        total = total + p->fish;\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[3] = {\n        {\"小橘\", {f1}},\n        {\"狸花\", {f2}},\n        {\"大肥鱼\", {f3}}\n    };\n    struct Cat *p = cats;\n    int total = 0;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"%s 吃了 %d 条喵\\n\", p->name, p->fish);\n        total = total + p->fish;\n        p++;\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n    return 0;\n}\n",
+  "explanationTemplate": "这是本课最阴的一个坑喵：**编译安然无事、跑起来也不崩，只是答案不对。**\n\n`for (int i = 0; i < 3; i++)` 这句看着很齐整 —— `i` 从 0 数到 2，转三圈，圈数一点没错。可是圈数对，**牌子不动也没用**：`p` 一直指着排头那只小橘，所以转三圈就印了三遍小橘，总账也变成 `3 × {f1}`。\n\n对照上一课的写法就清楚了：**绕圈的是 `i`，可本喵真正在读的是 `p` 指的那只猫。** 每转一圈，除了把 `i` 加一，还得让牌子自己往前挪一只：\n\n```c\np++;\n```\n\n一句就够。挪完这一圈，下一圈进来时 `p` 才指着狸花，再下一圈才是大肥鱼。\n\n顺便认一下这种坑的脸：**翻译官喵不管「意思对不对」，它只管「字写没写规矩」。** 牌子不动它挑不出毛病，得靠本喵自己走一遍例子 —— 你在纸上把三圈里 `p` 指谁写下来，一眼就看见那只小橘重复了三次喵。"
+}

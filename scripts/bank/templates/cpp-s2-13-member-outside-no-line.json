@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-13-member-outside-no-line",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-13",
+  "type": "codefix",
+  "concept": ["招式画在图纸外面", "立空位那一行没跟着走", "T 是什么东西"],
+  "instances": 2,
+  "params": {
+    "x": { "kind": "pick", "values": [7, 9] }
+  },
+  "stemTemplate": "本喵把 `get` 这一手画到了**图纸外面**（图纸里面只留了个名号），结果翻译官喵说它不认识 `T` 这个名号。\n\n你帮本喵补上漏掉的那一行，让程序跑起来 —— 屏幕上要印出 **{x}**。图纸里面那几行、`main` 里那几句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nclass Box {\npublic:\n    Box(T x) : v(x) {}\n    T get();\nprivate:\n    T v;\n};\n\nT Box<T>::get() {\n    return v;\n}\n\nint main() {\n    Box<int> a({x});\n    cout << a.get() << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nclass Box {\npublic:\n    Box(T x) : v(x) {}\n    T get();\nprivate:\n    T v;\n};\n\ntemplate <typename T>\nT Box<T>::get() {\n    return v;\n}\n\nint main() {\n    Box<int> a({x});\n    cout << a.get() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机真跑过没补的版本，翻译官喵的原话就一行：\n\n```text\nmain.cpp:13:1: error: 'T' does not name a type\n```\n\n念作：「**`T` 是什么东西？本喵没见过这个名号喵。**」\n\n道理是：**空位是 `template <typename T>` 那一行立出来的。** 在图纸里面写招式的时候，本喵站在图纸上，`T` 看得见；可本喵跑到图纸外面来写，**空位就不在手边了** —— 得在它上面重新立一次：\n\n```text\ntemplate <typename T>\nT Box<T>::get() {\n    return v;\n}\n```\n\n补完之后本喵真跑过：屏幕上印 `{x}`。\n\n⚠️ 三条钉住：\n\n1. **图纸里面画招式，本喵站在图纸上；图纸外面画，立空位那一行要再写一遍。** 忘了它，报的就是 `error: 'T' does not name a type`。\n2. **图纸名后面那个 `<T>` 也省不得。** 真省了写成 `T Box::get()`，本喵在本机跑出来的是另一句原话：`error: 'template<class T> class Box' used without template arguments` —— 念作「**你要说的是哪张图纸上的 `get`？没给空位代号，本喵认不出喵。**」\n3. **报错的行号就是漏行的地方。** 它指的是 `T Box<T>::get()` 那一行的开头 —— 本喵照着一看就知道该在哪补。"
+}

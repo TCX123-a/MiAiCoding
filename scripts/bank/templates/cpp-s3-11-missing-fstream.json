@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-11-missing-fstream",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-11",
+  "type": "codefix",
+  "concept": ["请本子进门要带那个头文件", "两件工具来自同一个头", "编不过"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["小鱼干", "猫粮", "毛线球"] },
+    "w2": { "kind": "pick", "values": ["大肥鱼", "小奶猫", "橘猫"] }
+  },
+  "stemTemplate": "本喵想把两样东西记进小本本，再翻开本子把它们读回来印一遍。可这段代码**编不过**喵 —— 翻译官喵说，管本子那两件工具它根本不认识。\n\n你帮本喵把它改对：**要记的东西、要印的东西，一个字都不用动**，让翻译官喵认得那两件工具就行。\n\n改好之后，程序要印出两行：先是 `{w1}`，再是 `{w2}`。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    ofstream out(\"fish.txt\");\n    out << \"{w1}\" << endl;\n    out << \"{w2}\" << endl;\n    out.close();\n\n    ifstream in(\"fish.txt\");\n    string line;\n    while (getline(in, line)) {\n        cout << line << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <fstream>\n#include <string>\nusing namespace std;\n\nint main() {\n    ofstream out(\"fish.txt\");\n    out << \"{w1}\" << endl;\n    out << \"{w2}\" << endl;\n    out.close();\n\n    ifstream in(\"fish.txt\");\n    string line;\n    while (getline(in, line)) {\n        cout << line << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题少的是**请本子进门的那一句话**喵。\n\n`ofstream` 和 `ifstream` 这两件工具住在同一个头文件里，写代码的时候得在开头把它们请进门 —— 就是紧挨着 `#include <iostream>` 那一行的位置。少了它，翻译官喵只听过这两个名字、没见过它们的**身子**，于是当场拦下。它的原话里有：\n\n`error: variable 'std::ofstream out' has initializer but incomplete type`\n\n念作「这个叫 `out` 的东西只报了个名字，身子还没见着」。它后面还跟了一句提醒，点出这两件工具到底住在哪个头文件里 —— 补上那一行 `#include` 就好了。\n\n⚠️ 注意报错里点的是 `out` 这个**名字**，不是头文件的名字：本喵一开始还以为是名字写错了。翻译官喵报的是「我用不了这个东西」，顺着它去看「这个东西是从哪儿来的」才是正路。\n\n⚠️ 补的时候别把两件工具只请一件：本子里既要写、又要读，两件都得认得。"
+}

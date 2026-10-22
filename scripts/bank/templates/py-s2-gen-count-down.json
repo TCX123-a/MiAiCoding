@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-gen-count-down",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-10",
+  "type": "codewrite",
+  "concept": ["yield", "接着往下跑", "仓库留着"],
+  "instances": 6,
+  "params": {
+    "thing": { "kind": "pick", "values": ["小鱼干", "猫粮", "冻干"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 3, "max": 8 },
+  "stemTemplate": "本喵要把{thing}**倒着数回去**喵。\n\n请你写一招 `倒数(n)`：从 `n` 开始，一样一样递出 `n`、`n - 1`、……、一直到 `1`（每样东西一个 `yield` 写在圈圈里，递到 1 就收工）。\n\n然后**读一行整数** `k`，请出一只手，用 `for` 把这只手上的东西**一行一个**印出来。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一个数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "def 倒数(n):\n    while n >= 1:\n        yield n\n        n = n - 1\n\n\nk = int(input())\nfor x in 倒数(k):\n    print(x)\n",
+  "explanationTemplate": "这一题的重点是「**它停得住、也走得下去**」喵。\n\n- 招式里一出现 `yield`，这一招就变了性质：喊它的时候**不马上跑**，而是叼回来一只「**会下一条的手**」。\n- **每喊一次 `next`，它才从上次停下的地方接着往下跑**，跑到下一个 `yield` 就停住，把 `yield` 后面那一样递出来。\n- 停住的时候，招式里那些**仓库原样留着**（这里就是「数到几了」这个 `n`）—— 所以 `n = n - 1` 那一步的成果不会丢，下次接着用。三次、四次 `next` 能依次拿到 `k`、`k - 1`、…… 就是靠这一点。\n\n⚠️ **圈圈要有收工的时候**：条件写成 `while n >= 1`，递到 1 就停；用 `for` 倒着走也行。要是条件写成永远成立，它就会没完没了地递下去 —— 好在有惰性，你喊一条它才递一条，不会当场卡住，但也永远收不了工。\n\n⚠️ `for x in 倒数(k):` 这一行**背后就是这一课那些步骤**：先 `iter` 请出手，再一遍遍 `next`，接住 `StopIteration` 当作「走完了」收工。所以本喵自己一行都不用写，`for` 全替本喵干了。\n\n⚠️ 顺序别搞反：递出来的是 `k`（先从 `n` 本身开始），最后一样才是 `1`。"
+}

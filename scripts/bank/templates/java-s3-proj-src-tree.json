@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-proj-src-tree",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-24",
+  "type": "codewrite",
+  "concept": ["包就是一层文件夹", "画目录要按顺序印名字", "收尾那条用弯钩"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "工程里 `src` 底下每一层就是一个包，每个包里躺着几个文件。本喵要写一页纸的小程序，把这样的工程目录「画」出来：\n\n1. 先读第一行的 `n`——一共有几个包；\n2. 再一行一个、接着读进来 `n` 个数——第 k 个数是第 k 个包里文件的个数（第 1 个包叫 `p1`，第 2 个叫 `p2`，以此类推）；\n3. 画出来：第一行印 `src/`；接着每个包一行，形如 `├─ p1（8 个文件）`；**只有最后一个包**那一行换成用 `└─` 开头——收尾的连接符长着尾巴；\n4. 最后再印一行：`共 n 个包，S 个文件`——S 是全部文件个数加起来。\n\n比如投喂这几行：\n\n```text\n{sampleInput}\n```\n\n程序就叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分的时候喂的是另一组数喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 文件数 = new int[n];\n        for (int i = 0; i < n; i++) {\n            文件数[i] = sc.nextInt();\n        }\n        System.out.println(\"src/\");\n        int 合计 = 0;\n        for (int i = 0; i < n; i++) {\n            合计 = 合计 + 文件数[i];\n            String 头 = \"├─ \";\n            if (i == n - 1) {\n                头 = \"└─ \";\n            }\n            System.out.println(头 + \"p\" + (i + 1) + \"（\" + 文件数[i] + \" 个文件）\");\n        }\n        System.out.println(\"共 \" + n + \" 个包，\" + 合计 + \" 个文件\");\n    }\n}\n",
+  "explanationTemplate": "**一、包就是文件夹**\n\n工程里 `src` 是放稿子的地盘，每往下建一层包，就是往里再套一层文件夹；文件就躺在对应那层的文件夹里。所以「画目录」这件事，本质上是把一层层文件夹的名字按顺序印出来。\n\n**二、最后一行的弯钩**\n\n目录里每个条目前头有个连接符：中间的用 `├─`，**最后一个**用 `└─`——因为它是本层的收尾，后面没有兄弟了。所以画的时候要记住「我是不是最后一个」，这正是那一步看眼色行事的用处。\n\n**三、两笔账一起记**\n\n本喵一遍翻包、一边把文件数个挨个加起来（`合计 = 合计 + 文件数[i]`），翻完正好给最后那行用。这跟跑腿领东西是一个套路：顺路把总数带上，不用回头再数一遍。\n\n**四、一句话记住**\n\n画目录 = 按顺序印名字；最后一个条目记得换弯钩。"
+}

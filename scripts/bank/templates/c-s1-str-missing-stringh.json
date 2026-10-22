@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-str-missing-stringh",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-11",
+  "type": "codefix",
+  "concept": ["char", "strcat", "strlen", "string.h", "头文件", "编译错误"],
+  "instances": 2,
+  "params": {
+    "x": { "kind": "pick", "values": ["小橘", "狸花", "三花"] },
+    "y": { "kind": "pick", "values": ["喵", "和小鱼干"] }
+  },
+  "stemTemplate": "本喵拿两块牌子接了一下喵：一块上写着 `{x}`，另一块上写着 `{y}`。本喵想把后一块接到前一块的尾巴上，再印一遍、顺手数一数真珠子有几颗。\n\n可翻译官喵一瞧见就把整段代码退了回来，一个字都不肯收……\n\n你帮本喵看看它为什么不高兴，把它改好。改好之后，程序应该印两行：第一行是接好之后整串的字，第二行是它**真珠子**的颗数。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    char name[30] = \"{x}\";\n\n    strcat(name, \"{y}\");\n    printf(\"%s\\n\", name);\n    printf(\"%d\\n\", (int)strlen(name));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char name[30] = \"{x}\";\n\n    strcat(name, \"{y}\");\n    printf(\"%s\\n\", name);\n    printf(\"%d\\n\", (int)strlen(name));\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵抱怨的原话是 `error: implicit declaration of function 'strcat' [-Wimplicit-function-declaration]`，底下还跟了一句 `note`，把该补哪一份档案管理员直接念了出来喵。\n\n翻成猫话：**「`strcat` 这个名字本喵没听谁提起过 —— 你是不是忘了请哪家档案管理员出场？」**\n\n问题不在接那一行，而在**最上面请谁出场的那几行**：本喵只把 `stdio.h` 请来了，`string.h` 这位档案管理员压根没到场。数、抄、比、接这四招（`strlen` / `strcpy` / `strcmp` / `strcat`）全都住在它家里 —— 门都没开，翻译官喵当然不认识这些名字。\n\n在最上面补一行，把 `string.h` 请出来就好啦。\n\n顺带记住这条：**报错里点名的那个名字，先去文件开头找一找。**"
+}

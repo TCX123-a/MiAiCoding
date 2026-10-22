@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-anno-wrong-target",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-13",
+  "type": "codefix",
+  "concept": ["纸条上那张说明书管的是「只许贴哪儿」", "贴的地方和说明书对不上，翻译那一关就拦", "ElementType 报的是贴的地方"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["开饭了", "该吃饭了"] },
+    "m": { "kind": "pick", "values": ["招手", "打招呼"] }
+  },
+  "stemTemplate": "本喵画了一张纸条想贴在招式上，翻译官喵却把本喵拦在了翻译那一关喵。\n\n纸条上那张说明书和本喵想贴的地方对不上。你帮本喵把**说明书那一行**改对 —— 贴纸条的那一行和 `main` 里都别动。改好之后，程序该印出**一行**：`读到的备注：` 后面跟着纸条上写的那串字。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.lang.annotation.ElementType;\nimport java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.annotation.Target;\nimport java.lang.reflect.Method;\n\npublic class Main {\n    @Retention(RetentionPolicy.RUNTIME)\n    @Target(ElementType.FIELD)\n    @interface 纸条 {\n        String value();\n    }\n\n    static class 小猫 {\n        @纸条(\"{a}\")\n        void {m}() {\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Method 一招 = 小猫.class.getDeclaredMethod(\"{m}\");\n        纸条 小纸条 = 一招.getAnnotation(纸条.class);\n        System.out.println(\"读到的备注：\" + (小纸条 == null ? \"空的\" : 小纸条.value()));\n    }\n}\n",
+  "referenceFixTemplate": "import java.lang.annotation.ElementType;\nimport java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.annotation.Target;\nimport java.lang.reflect.Method;\n\npublic class Main {\n    @Retention(RetentionPolicy.RUNTIME)\n    @Target(ElementType.METHOD)\n    @interface 纸条 {\n        String value();\n    }\n\n    static class 小猫 {\n        @纸条(\"{a}\")\n        void {m}() {\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Method 一招 = 小猫.class.getDeclaredMethod(\"{m}\");\n        纸条 小纸条 = 一招.getAnnotation(纸条.class);\n        System.out.println(\"读到的备注：\" + (小纸条 == null ? \"空的\" : 小纸条.value()));\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是这一句喵：\n\n```text\nMain.java:15: error: annotation interface not applicable to this kind of declaration\n```\n\n念法是：「**这张纸条不适用于这种声明。**」\n\n纸条上那张说明书 `@Target(ElementType.FIELD)` 定的是「**只许贴骨头**」，本喵却把它贴到了招式上 —— 贴的地方和说明书对不上，它在翻译那一关就拦下了。\n\n想贴的地方不一样，说明书上写的名字就不一样：招式上是 `ElementType.METHOD`，骨头上是 `ElementType.FIELD`，图纸本身是 `ElementType.TYPE`，产房是 `ElementType.CONSTRUCTOR`，投喂的那样东西是 `ElementType.PARAMETER`。这一题要贴的是招式，所以把 `FIELD` 改成 `METHOD` 就对上了。\n\n改完再跑，就印出 `读到的备注：` 后面跟着纸条上写的那串字喵。"
+}

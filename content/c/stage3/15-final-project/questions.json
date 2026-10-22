@@ -1,0 +1,83 @@
+{
+  "lessonId": "c-stage3-15",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "成绩册里比名字，该用哪一种喵？（`p->name` 和 `name` 都是**一串小鱼干的项链**）",
+      "options": [
+        "`strcmp(p->name, name) == 0` —— 一件一件比内容，全一样才叼 `0` 回来",
+        "`p->name == name` —— 两个写法一样，随便挑一个",
+        "`p->name = name` —— 把要查的名字抄进去再比",
+        "`p->name != NULL` —— 名字不是空的就算找到"
+      ],
+      "answer": 0,
+      "explanation": "名字是一串项链，编成稿子以后手里只有**指向它的那张牌子**喵。`p->name == name` 比的是「两张牌子指的是不是同一间仓库」，跟项链里装了什么一个字都不相干 —— 本喵试过，这么写永远进不了那个分支，找谁都回「名单里没有这位喵」。要比内容就得喊 `strcmp` 这件工具（住在 `string.h` 工具房里），它全一样才叼 `0` 回来，所以是 `== 0`。至于 `p->name = name`，那是**把名字改掉**，不是比 —— 一按下去名单就被你涂花了。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`add_last` 里有一段是专门处理「链子还空着」的喵：新租来的那一节该当什么？",
+      "options": [
+        "它**就是链子的头** —— 把 `head` 交回去，门口那句 `head = add_last(head, ...)` 才接得上",
+        "它挂在最前头那一节的后头",
+        "空链子的时候什么都不用做，等下一节来了再说",
+        "先把 `head` 指向的那一节删掉，再把新的接上"
+      ],
+      "answer": 0,
+      "explanation": "链子还空着的时候（`head == NULL`），压根没有「上一节」可以接，所以这一节**自己就是头**喵：把 `fresh` 交回去（`return fresh`），门口那句 `head = add_last(head, ...)` 才能把新头接上。\n\n要是这段漏了（直接走到「从头找到尾，把新节挂在最后一节后头」），空链子上压根没有可以出发的节 —— 轻则新加的这位**丢了**，重则伸手去碰一个没有的节，稿子当场崩掉。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "按分数排座的时候，本喵要交换两节里的内容。档案盒里装着**名字和分数**两样 —— 交换时该怎么换喵？",
+      "options": [
+        "**两样一起换**：先把分数和名字各抄进临时的小本本，再互相覆盖",
+        "只换分数就行，名字跟着分数一起动",
+        "只换名字就行，分数不用动",
+        "两样都不用换，把整节搬到前头去更省事"
+      ],
+      "answer": 0,
+      "explanation": "名字和分数是**分开**躺在盒子里的两件东西喵，谁也不会「跟着」谁动。只换分数的话，排完之后名字还停在原来的位置 —— 分数是排好了，可「小橘 95 分」这种**张冠李戴**就出来了，而且屏幕上看着还挺整齐，一不留神就交稿了。\n\n两样一起换的写法是四句：先把这一节的分数和名字各抄进临时的小本本（`ts`、`tn`），再把另一节的抄过来，最后把小本本里的还回去。为什么非要那个小本本？因为**一覆盖，原来那个数就没了** —— 跟上次交换两碗小鱼干是同一个道理。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\ntypedef struct Node {\n    int score;\n    struct Node *next;\n} Node;\n\nint main(void) {\n    Node a = {90, NULL};\n    Node b = {85, NULL};\n    Node c = {95, NULL};\n    a.next = &b;\n    b.next = &c;\n\n    for (Node *p = &a; p != ____; p = ____) {\n        printf(\"%d\\n\", p->score);\n    }\n    return 0;\n}",
+      "stem": "这是**走链子**的标准写法喵，两处空补完 —— 它该把三节的分数按顺序印出来（`90`、`85`、`95`）。",
+      "blanks": [{ "answer": "NULL" }, { "answer": "p->next" }],
+      "explanation": "两处空是一对喵：**走到哪儿停**（`p != NULL`，也就是「下一步没有了」），**怎么往前走**（`p = p->next`，「跳到这一节记着的下一节」）。这两句和走一排碗的跑圈是亲兄弟：一排碗靠编号往前走，链子靠**每一节自己记着下一节在哪儿**。要是后头那处忘了写（或者写成别的），`p` 就永远杵在第一节上 —— 于是同一节的分数被印了又印，停不下来。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    FILE *w = fopen(\"scores.txt\", \"w\");\n    if (w == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return 0;\n    }\n    fprintf(w, \"小橘 90\\n小白 85\\n阿花 95\\n\");\n    fclose(w);\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) ____ 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    ____(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}",
+      "stem": "这段稿子要把三位学员存取一遍喵：先自己把三位写进 `scores.txt`，再一位一位读回来。两处空补完 —— 一处是**怎么知道读够了**，一处是**读完把门关上**。它该印出三行「第 N 位 …」和一行「一共 3 位」。",
+      "blanks": [{ "answer": "==" }, { "answer": "fclose" }],
+      "explanation": "两处空是一对喵：`fscanf` 每读一次会**数给你听读到了几样** —— 名字和分数都读到了就是 `2`，所以用 `== 2` 当「这回读到了」，读到档案尽头它就不是 `2` 了，绕圈自然停下。门开过就得关：`fclose(fp)` 把档案收好，不然写进去的东西可能还挂在半路上没落地。\n\n还有一处守卫别忘（稿子里已经写了）：`fopen` 叼回来 `NULL` 就是「档案开不了」，得先拦住 —— 它和 `malloc` 是同一个脾气，都会叼个「干不了」的记号回来。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\ntypedef struct Node {\n    int score;\n    struct Node *next;\n} Node;\n\nint main(void) {\n    Node a = {90, NULL};\n    Node b = {85, NULL};\n    Node c = {95, NULL};\n    a.next = &b;\n    b.next = &c;\n\n    for (Node *p = &a; p != NULL; p = p->next) {\n        printf(\"%d\\n\", p->score);\n    }\n    return 0;\n}",
+      "stem": "这条链子有三节喵，`a`、`b`、`c` 依次串着。这段稿子输出什么？",
+      "answer": "90\n85\n95",
+      "accept": ["90\n85\n95\n"],
+      "explanation": "走链子的顺序就是**串链子的顺序**喵：从 `a` 出发（`p = &a`），印 `90`；跳到 `a` 记着的下一节（`b`），印 `85`；再跳到 `c`，印 `95`；`c` 记的是 `NULL`（「后头没有了」），于是绕圈停下。\n\n从后往前串（比如 `a.next = &c`、`c.next = &b`）印出来就会是另一个顺序 —— 链子的顺序**是串出来的**，不是盒子上贴的编号。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\ntypedef struct Node {\n    int score;\n    struct Node *next;\n} Node;\n\nint main(void) {\n    Node a = {90, NULL};\n    Node b = {85, NULL};\n    Node c = {95, NULL};\n    a.next = &b;\n    b.next = &c;\n\n    int best = a.score;\n    for (Node *p = a.next; p != NULL; p = p->next) {\n        if (p->score > best) {\n            best = p->score;\n        }\n    }\n    printf(\"最高分：%d\\n\", best);\n    return 0;\n}",
+      "stem": "本喵在链子上找最高分喵。这段稿子输出什么？（顺便想想：王座上的初始值是从哪儿请来的？）",
+      "answer": "最高分：95",
+      "accept": ["最高分：95\n"],
+      "explanation": "两句口诀喵：**王座上的初始值请第一节**（`int best = a.score;`，它是链子上真实存在的一位），**从第二节开始比**（`p = a.next`）—— 第一节已经坐上去了，不用再比自己一次。于是 `90` 先坐下，遇到 `85` 不换，遇到 `95` 换上去，最后印 `最高分：95`。\n\n这就是上一课那条规矩的链子版：初始值要从**真实存在的数**里挑。要是写成 `int best = 0;`，「一个空链子」或者「全是欠账（负分）」这两种边上情形就会印出一个凭空冒出来的 `0` 来。"
+    }
+  ]
+}

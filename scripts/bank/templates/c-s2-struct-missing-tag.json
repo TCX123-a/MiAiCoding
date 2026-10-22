@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-struct-missing-tag",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-05",
+  "type": "codefix",
+  "concept": ["struct关键字", "图纸", "编译错误"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "狸花", "大肥鱼"] },
+    "f1": { "kind": "int", "min": 1, "max": 4 }
+  },
+  "stemTemplate": "本喵照着课文的样子画好了一张**图纸**，上面写着「一只猫有什么」：一个名字、一个食量。\n\n程序要用这张图纸生一只猫，名字取 `{who}`、食量填 {f1}，然后印一行 `{who} 今天吃了 {f1} 条喵`。\n\n可翻译官喵一瞧见就不干了，把整段代码退了回来。你帮本喵看看它为什么不高兴，把它改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    Cat a = {\"{who}\", {f1}};\n    printf(\"%s 今天吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"{who}\", {f1}};\n    printf(\"%s 今天吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: unknown type name 'Cat'; use 'struct' keyword to refer to the type` —— 它不光拦下，还顺手把答案写在卷子上了：「**`Cat` 这个名字本喵没见过 —— 你是不是想用 `struct` 那个记号？**」\n\n为什么会这样？因为本喵画图纸的时候，写的是 `struct Cat` 后面跟一对花括号 —— `Cat` 只是**贴在图纸上的标签**，真有名字的整体是 `struct Cat` 这一串。翻译官喵从上往下读，只认得「`struct` 后面跟着哪个标签」这种形状；单独一个光秃秃的 `Cat`，它没见过。\n\n所以用这张图纸的时候，记号得写全：`struct Cat a`，后面再用花括号把内容填进去 —— 头上那个 `struct` 一个字母都不能少喵。\n\n⚠️ 报错底下还会跟着一串别的（比如「初始化的时候把一串字当成了整数」），那些都是**这一句牵出来的**，不用一条条去看，把最上面那句修好，底下的一串会自己消失。"
+}

@@ -1,0 +1,85 @@
+{
+  "lessonId": "cpp-stage3-18",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵照着两张图纸一起画一只猫，而这两张图纸**又都照着同一张底座**画。照出来的那只猫肚子里，底座有几份喵？",
+      "options": [
+        "两份：两张图纸各自照着底座画过一次，各带一份进来",
+        "一份：底座只有一张图纸，所以只搭一次",
+        "零份：底座要先在 main 里单独建一只，猫身上不带",
+        "看哪张图纸写在前面：只有前面那张带底座进来"
+      ],
+      "answer": 0,
+      "explanation": "两份喵。左边那张照着底座画过一次，右边那张**又照着同一张底座画了一次** —— 它不是「接着左边画」，是各自照着底座画。于是左右各带一份底座挤进最下面那只猫的肚子里。**这两份各过各的**：从左边那条路改名字，右边那份纹丝不动。形状画出来正是那个菱形：底座在最上面，往左岔一张、往右岔一张，最后又被一张图纸拼回一只猫。记住这个岔路口 —— 这一课下面全是在收拾它喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "岔路口上，两条路都找得到 `meow` 这一手。本喵不点路牌，直接喊 `b.meow()`，翻译官喵会怎么办喵？",
+      "options": [
+        "报 ambiguous：两条路上各有一份，它挑不出该用哪一份，当场不编",
+        "报「找不到 meow」：两条路互相抵消，等于哪条都没有这一手",
+        "编得过：它会自动用左边那条路上的那一份",
+        "编得过：它会自动用右边那条路上的那一份"
+      ],
+      "answer": 0,
+      "explanation": "翻译官喵的原话是 `request for member 'meow' is ambiguous` —— 「说不清」喵。注意它说的**不是「没有」**：两条路上都找得到 `meow`，左边那份底座有、右边那份底座也有。正因为**都找得到**，它才挑不出来 —— 哪一份都不比另一份更该被选中。这一跤的好处是当场拦人：程序根本编不出来，不会带着两个「不知道是哪一个」往下跑。想说清楚只有两条路：点路牌 `b.Purr::meow()`（每喊一次都得点），或者让底座只留一份（下一题那种写法）。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "左右两张图纸都挂上了 `virtual`，底座合并成一份。这份**共用的**底座，由谁喂料（谁在出生招式里给它那个名字）喵？",
+      "options": [
+        "由最外面那张图纸喂：只有它出生招式里那句喂料算数",
+        "由写在前面那张图纸喂：先轮到的那个说了算",
+        "由左右两张图纸各喂一次：后喂到的覆盖前面那个",
+        "不用喂：挂上 virtual 之后底座自己知道该叫什么名字"
+      ],
+      "answer": 0,
+      "explanation": "由**最外面那张图纸**喂喵。这是挂上 `virtual` 之后多出来的一条新规矩：那份共用的底座整只猫只有一份，它的料也只能由最外面那位来配 —— 中间那两张图纸出生招式里写给底座的句子，**一字不改，但一律不算数**。课文里那个例子能直接看出来：`Purr` 喂「打呼噜的底座」、`Knead` 喂「踩奶的底座」，可拼成 `Baby` 之后印出来的第一行是「小橘」—— 那是 `Baby` 自己那句 `MeowCat(n)` 喂进去的。等本喵**单独**照 `Purr` 画一只（它就成了最外面那张），它那句「打呼噜的底座」立刻生效。同一个出生招式，站在不同的位子上，说的话一个算数一个不算数喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {\n        cout << \"搭那份共用的底座：\" << name << endl;\n    }\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : ____ public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) { cout << \"搭会打呼噜的那一半\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) { cout << \"搭会踩奶的那一半\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : ____(n), Purr(n), Knead(n) {\n        cout << \"搭两样都会的那一半\" << endl;\n    }\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.meow();\n    return 0;\n}",
+      "stem": "本喵照着底座画了两条岔路，可拼起来之后直接喊 `meow` 编不过。两个空补上，让底座只留一份、而且由最外面那张图纸喂料喵。",
+      "blanks": [
+        {
+          "answer": "virtual"
+        },
+        {
+          "answer": "MeowCat"
+        }
+      ],
+      "explanation": "第一个空是那一手：`class Purr : virtual public MeowCat` —— 挂在**照着底座画的那一行**上，意思是「这份底座整只猫里只留一份」。注意 `Knead` 那一行本来就挂着，本喵只补了 `Purr` 这边 —— **两条路都得挂**，只挂一条的话肚子里还是两份，`b.meow()` 照样说不清。第二个空是那口料：`Baby(const string& n) : MeowCat(n), Purr(n), Knead(n)`。挂上 `virtual` 之后，共用的底座由**最外面那张图纸**喂，`Purr`、`Knead` 里那两句会被无视 —— 所以这一口要是漏了，翻译官喵就会报 `no matching function for call to 'MeowCat::MeowCat()'`（底座那张图纸本来就要求喂一个名字，没有「什么都不用喂」的搭法）。顺序也顺带记住：共用的底座**最先**搭，然后左边、右边，最后才是自己那一半喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {\n        cout << \"搭底座：\" << name << endl;\n    }\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void rename(const string& n) { name = n; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void rename(const string& n) { name = n; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.Knead::rename(\"小灰\");\n    b.Purr::meow();\n    b.Knead::meow();\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？一行一行看，别漏了中间那两行。",
+      "answer": "搭底座：小橘\n搭底座：小橘\n小橘：喵～\n小灰：喵～",
+      "accept": [
+        "搭底座：小橘\n搭底座：小橘\n小橘：喵～\n小灰：喵～\n"
+      ],
+      "explanation": "先数底座：**两行「搭底座」**喵。这就是岔路口 —— 两条路各照着底座画了一次，各带一份进来，所以左边搭一份、右边又搭一份（`Purr` 那份先搭，因为写在前面）。再看那两句 `meow`：`b.Knead::rename(\"小灰\")` 改的是**右边那条路**上那一份的名字，所以 `b.Purr::meow()` 喊的还是左边那份的「小橘」，`b.Knead::meow()` 喊出来的才是「小灰」。**两份各过各的**：改一份，另一份一个字都不动。哪句喊的是哪一份，全看中间那块路牌 `Purr::` / `Knead::`。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {\n        cout << \"搭那份共用的底座：\" << name << endl;\n    }\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr() : MeowCat(\"打呼噜的底座\") {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead() : MeowCat(\"踩奶的底座\") {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : MeowCat(n) {}\n};\n\nint main() {\n    Baby b(\"小橘\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？`Purr` 和 `Knead` 写的名字都挺像回事的，看仔细。",
+      "answer": "搭那份共用的底座：小橘\n小橘：喵～\n小橘：呼噜呼噜～\n小橘：踩踩踩～",
+      "accept": [
+        "搭那份共用的底座：小橘\n小橘：喵～\n小橘：呼噜呼噜～\n小橘：踩踩踩～\n"
+      ],
+      "explanation": "第一行是「小橘」，**不是**「打呼噜的底座」也不是「踩奶的底座」喵 —— 那两句写在 `Purr`、`Knead` 的出生招式里，看着挺像回事，可它们**一字不改、一律不算数**：底座是共用的那一份，由**最外面那张图纸**（`Baby`）喂料。而且只有**一行**「搭那份共用的底座」，因为两条路都挂了 `virtual`，底座整只猫只留一份。后面三行全喊「小橘」—— 只有一份底座，三条路喊的都是它，不存在「点路牌才喊得对」的问题喵。要是 `Baby` 那句 `MeowCat(n)` 忘了写，那这句就会换成底座自己的默认名字（或者干脆编不过），这正是下一节小任务要你去试的。"
+    }
+  ]
+}

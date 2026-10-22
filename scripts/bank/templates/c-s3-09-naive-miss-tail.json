@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-09-naive-miss-tail",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-09",
+  "type": "codefix",
+  "concept": ["一个起点一个起点地试", "起点最多站到哪儿", "收尾条件写窄了", "末尾那一截漏掉"],
+  "instances": 2,
+  "params": {
+    "pre": { "kind": "pick", "values": ["xy", "pq"] },
+    "w": { "kind": "pick", "values": ["ab", "cd"] }
+  },
+  "stemTemplate": "用「**一个起点一个起点地试**」这一招，在整串 `{pre}{w}` 里找那一小段 `{w}`，顺便数一数**比了几次**。\n\n可它答的是：\n\n```text\n朴素对法：没找着\n```\n\n`{w}` 明明就挂在**最末尾**那两颗珠子上。请你把 `naive` 这一招改对（`main` 里那几行别动）。改好之后该印：\n\n```text\n朴素对法比了 4 次\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m < n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;                 /* 对不上，这个起点作废 */\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;              /* 整段都对上了 */\n        }\n    }\n    return -tries;                     /* 所有起点都试过了，没有 */\n}\n\nint main(void) {\n    int a = naive(\"{pre}{w}\", \"{w}\");\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m <= n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;                 /* 对不上，这个起点作废 */\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;              /* 整段都对上了 */\n        }\n    }\n    return -tries;                     /* 所有起点都试过了，没有 */\n}\n\nint main(void) {\n    int a = naive(\"{pre}{w}\", \"{w}\");\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "毛病在**起点最多能站到哪儿**这个条件上喵。这一串一共 `n` 颗珠子，要对的这一小段有 `m` 颗 —— 那么最后一个能站下的起点是第 `n - m` 颗（站在它上面对到末尾，正好收到整串的最后一颗）。\n\n本喵写的是 `i + m < n`，意思是「站在 `i` 上还得空出一颗来」—— 这就把**最后一格起点**整个漏掉了：\n\n```text\ni + m < n     漏掉最后一个起点\n```\n\n写成 `i + m <= n`，「起点加上这一小段正好收到末尾」才算数，一个起点都不落下：\n\n```text\ni + m <= n    最后一个起点也试得到\n```\n\n为什么这个错特别阴？因为**大部分整串里那一小段在前面就出现了**，前头的起点照样能找着，看着一切正常；只有「那一小段只挂在最末尾」的时候才露馅。翻译官喵一个字都不会说，它只是**少试了最后一个起点**。"
+}

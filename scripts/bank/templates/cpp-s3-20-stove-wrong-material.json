@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-20-stove-wrong-material",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-20",
+  "type": "codefix",
+  "concept": ["小灶认的那款料和递进去的料不是同一款", "能改的名字与不能改的名字", "小灶不生效时一句话都不说"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["大肥鱼", "小鱼干"] }
+  },
+  "stemTemplate": "本喵给「一条名字」这款料开了个小灶，可它**压根没上班** —— 屏幕上印出来的还是通用那份的名字，翻译官喵一个字都没说。\n\n本喵是这么递料的：直接写了一条 `{w}` 这样**印在纸上**的名字进去。\n\n你帮本喵把小灶改对。改完跑起来，屏幕上要正好是「小灶那一份：{w}」这一行，多一个字都不行喵。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nvoid label(T x) {\n    cout << \"通用那一份\" << endl;\n}\n\ntemplate <>\nvoid label<char*>(char* x) {\n    cout << \"小灶那一份：\" << x << endl;\n}\n\nint main() {\n    label(\"{w}\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nvoid label(T x) {\n    cout << \"通用那一份\" << endl;\n}\n\ntemplate <>\nvoid label<const char*>(const char* x) {\n    cout << \"小灶那一份：\" << x << endl;\n}\n\nint main() {\n    label(\"{w}\");\n    return 0;\n}\n",
+  "explanationTemplate": "小灶的动作一个字都没错，坏的是**它认的那一款料**：本喵写的是 `char*`。\n\n念出来是这么回事：`char*` 是「**能改**的一条名字」，而递进去的 `{w}` 是**印在纸上**的一条名字 —— 它的款式是 `const char*`，「**不能改**的一条名字」。两款料只差一个 `const`，翻译官喵就认为这个小灶管不着，**安安静静**地退回通用那份。\n\n改法就一个字符：把小灶认的料换成 `const char*`。顺手记一条 —— 小灶头上认的料、和它括号里收的料，**必须是同一款**，只改一处翻译官喵当场就拦你。\n\n⚠️ 这一题最该记住的是**它一声不吭**：两段代码都编得过、都跑得完，屏幕上也没有半点异样，只是小灶白开了。小灶不生效的时候就是这个形状 —— 不会报错、不会提醒，只有对着答案一行行核对才发现。"
+}

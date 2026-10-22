@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-ut-catch-bad-floor",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-11",
+  "type": "codewrite",
+  "concept": ["体检抓 bug", "assertEqual 的原话", "边界"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": [5, 7, 9] },
+    "b": { "kind": "pick", "values": [2, 4] }
+  },
+  "stemTemplate": "本喵的「平分」招式里藏着一个毛病，**那两行一个字都不许改**喵 —— 本喵要看的不是你能不能修它，是**你的体检单能不能把它抓出来**。\n\n请你写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张图纸画。\n2. 里面写**一个**项目，叫 `test_除不尽`（名字必须以 `test` 开头，不然它压根不跑）。\n3. 判据用 `assertEqual`：**{a} 份平分给 {b} 只猫，结果该是 `{a} // {b}`**。\n4. 跑完印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：**挂掉的原因那一句** —— 本子把整段说明记在 `本子.failures[0][1]` 里，取它的最后一行，就是那句 `AssertionError: ...`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）\n\n⚠️ 这一项**该红**。要是它绿了，说明你的判据没咬住这个毛病喵。",
+  "starterTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\n# 体检单和跑它的那几行，交给你喵\n",
+  "referenceSolutionTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分({a}, {b}), {a} // {b})\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(本子.failures[0][1].strip().splitlines()[-1])\n",
+  "explanationTemplate": "这一项**本来就该红** —— 体检单的活不是把毛病藏起来，是把它拽到明面上喵。\n\n招式里那条算式算出的是带小数的商，判据要的是整数商，两个一摆，`assertEqual` 当场就炸。它炸的时候会留下一句最值钱的话：**真跑出来的**和**该是的**并排摆着，中间一个 `!=`。本喵把这句话印出来，就是想让你养成一个习惯 —— 红了先读这一行，别急着改代码。\n\n⚠️ 还得挑对喂进去的数。要是换一组除得尽的（比如 6 份给 2 只猫），带小数的商算出来是 `3.0`，而 `3.0` 和 `3` 在 Python 里是**相等**的 —— 这一项会绿过去，毛病就从你眼皮底下溜走了。**咬得住毛病的那一组数，往往是除不尽的那一组。**\n\n这也是本喵写体检单的意义：它跟人眼不一样，它**不会**觉得「看着差不多」就放过。"
+}

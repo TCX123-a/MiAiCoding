@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-ptr-no-advance",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-01",
+  "type": "codefix",
+  "concept": ["指针算术", "指针自增", "赋值", "unused-value"],
+  "instances": 2,
+  "params": {
+    "base": { "kind": "int", "min": 1, "max": 4 },
+    "step": { "kind": "int", "min": 2, "max": 5 }
+  },
+  "stemTemplate": "本喵在架子上摆了 3 只碗：第 0 只碗里放着 {base} 条小鱼干，往后每只碗都比前一只多 {step} 条。\n\n程序想用**一块牌子**从第 0 只碗开始，一只一只往后挪，把三只碗全报出来，格式是 `第 i 只：v`（`i` 是碗的编号，从 0 数起）。\n\n可它跑出来三行一模一样喵 —— 报来报去都是第 0 只碗里的数。你帮本喵看看牌子为什么没挪窝。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n    int *p = bowls;\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = {base} + i * {step};\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *p);\n        p + 1;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n    int *p = bowls;\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = {base} + i * {step};\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *p);\n        p = p + 1;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "看那句 `p + 1;`：它**确实算出了下一只碗的门牌号** —— 可算完以后，那个新门牌号没人接住，当场就被丢掉了。牌子 `p` 上写的还是第 0 只，下一趟再读 `*p`，读到的自然还是同一只碗。\n\n想让牌子真挪窝，得把新门牌号**写回牌子里**：`p = p + 1;`（写成 `p++;` 也一样）。这一步的意思不是「算一下」，而是「算完，然后把它存回去」。\n\n翻译官喵这回其实**出声了**，原话是 `warning: statement with no effect [-Wunused-value]` —— 翻过来就是「这一句白写了，算了等于没算」。本喵真跑过：它**只是出声，没把本喵拦下** —— 程序照样编出来、照样跑完，三行报的全是第 0 只碗里的数。\n\n所以这一课的最贵的一条规矩是：**`warning:` 不是背景音。** 错误是拦下你的那只手，警告只是顺口的一句提醒；手一抖划过去了，程序安安静静地错给你看。看到「白写了」「没效果」这类字眼，先停下来想想自己是不是漏了一个等号喵。"
+}

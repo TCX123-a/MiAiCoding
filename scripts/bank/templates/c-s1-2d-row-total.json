@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-2d-row-total",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-10",
+  "type": "codefix",
+  "concept": ["碗排表", "小碗摆在哪一层", "每一行换一只干净的小碗"],
+  "instances": 2,
+  "params": {
+    "vals": { "kind": "pick", "values": ["{1, 2, 3}, {4, 5, 6}", "{2, 4, 6}, {1, 3, 5}", "{5, 1, 4}, {2, 6, 3}"] }
+  },
+  "stemTemplate": "本喵要**一行一行**给这张碗排表攒小碗：第几行一共多少条，一行报一个数。\n\n可这段代码报出来的数**越往后越大** —— 它报的不是「这一行的和」，而是「从第一行一路加到这一行」的数。你帮本喵改对：每一行报的必须是**这一行自己**的和，格式是 `第 %d 行一共 %d 条喵`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int grid[2][3] = {{vals}};\n    int total = 0;\n\n    for (int i = 0; i < 2; i++) {\n        for (int j = 0; j < 3; j++) {\n            total = total + grid[i][j];\n        }\n        printf(\"第 %d 行一共 %d 条喵\\n\", i, total);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int grid[2][3] = {{vals}};\n\n    for (int i = 0; i < 2; i++) {\n        int total = 0;\n        for (int j = 0; j < 3; j++) {\n            total = total + grid[i][j];\n        }\n        printf(\"第 %d 行一共 %d 条喵\\n\", i, total);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "最要紧的是那行小碗 `int total = 0;` **摆在哪一层**喵。\n\n- 摆在**内层圈外、外层圈里**：它归外层管，所以**每换一行就换一只干净的小碗** —— 报出来的才是这一行自己的和。\n- 摆到**两个圈外面**去（就是这段代码的样子）：那只碗就变成「整张表一路加下去」了 —— 第一行报的是第一行的和，第二行报的是第一行加第二行，越往后越大。\n\n所以这道题只需要把小碗那一行**往下挪一层**，挪进外层圈里、内层圈外，就对了。\n\n顺带认一下两层圈的规矩：**外层走行、内层走格**，报编号要报两次（`grid[行][格]`，两个编号都从 0 起）；而那句换行的活儿站在内层圈外 —— 它归外层管，所以每**一行**走完才换一次行，不是每格都换喵。"
+}

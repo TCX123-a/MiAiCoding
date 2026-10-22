@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-challenge-rank-order",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-20",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["排行榜", "大分站前面", "比大小的小字条", "方向扭一扭"],
+  "instances": 1,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵的成绩排行榜要按**分从高到低**站队喵：分最高的站第 1 名（这场小考满分 9 分）。\n\n可现在它**站反了** —— 分最低的反倒报第 1 名……你帮本喵把队伍的方向扭过来。\n\n程序读一个数（几个人），再一个一个给分，然后一行一行印 `第 X 名 Y 分喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。）",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        ArrayList<Integer> scores = new ArrayList<Integer>();\n        for (int i = 0; i < n; i++) {\n            scores.add(sc.nextInt());\n        }\n\n        Collections.sort(scores, (a, b) -> a - b);\n\n        for (int i = 0; i < n; i++) {\n            System.out.println(\"第 \" + (i + 1) + \" 名 \" + scores.get(i) + \" 分喵\");\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        ArrayList<Integer> scores = new ArrayList<Integer>();\n        for (int i = 0; i < n; i++) {\n            scores.add(sc.nextInt());\n        }\n\n        Collections.sort(scores, (a, b) -> b - a);\n\n        for (int i = 0; i < n; i++) {\n            System.out.println(\"第 \" + (i + 1) + \" 名 \" + scores.get(i) + \" 分喵\");\n        }\n    }\n}\n",
+  "explanationTemplate": "队伍反了，问题出在**比大小那张小字条**上喵。\n\n排队的那个现成招式自己不管谁大谁小，它只会把**两个两个**递到小字条面前问：「这两位要不要换位置？」字条上写的是 `(a, b) -> a - b`，规矩是：\n\n- 算出来是**正数** → 回一句「要换」；\n- 是**零或者负数** → 回一句「不换」。\n\n`a - b` 的含义是「**前面的比后面的大就换**」—— 换来换去，分数小的都被顶到了前面，排成了**从小到大**。可排行榜要的是反过来：大分站前面。把两个位置对调一下就好：\n\n```java\nCollections.sort(scores, (a, b) -> b - a);\n```\n\n`b - a` 的含义是「**后面的比前面的大就换**」—— 排完就是**从大到小**。\n\n记一句喵：**`a - b` 是从小到大，`b - a` 是从大到小 —— 减号左边放谁，谁就往后面站。**"
+}

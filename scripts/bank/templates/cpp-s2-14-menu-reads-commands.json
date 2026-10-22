@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s2-14-menu-reads-commands",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-14",
+  "type": "codewrite",
+  "concept": ["号码进来活自己分派", "收摊那一支要跳出圈", "名册用会自己变长的碗来装"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "name": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "age": { "kind": "pick", "values": [3, 5] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{n}\n1\n0\n2\n1\n", "sampleText": "{n}\n1\n1\n2\n0\n" },
+  "stemTemplate": "本喵要把托儿所那台**菜单**装起来。投喂口会**先给一个数**（要跟着几个号码），**再一个一个给 {n} 个号码**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. 名册就用那只**会自己变长的碗**，一开始是空的；\n3. 读进那个数，再把后面那些数**一个一个当号码读进来**，每个号码挑一支走：\n   - 读到 `1`：登记一只（名字 **{name}**、岁数 **{age}**），放进名册，并且印 `登记了一只，名册上现在 ` + 几只 + ` 只`；\n   - 读到 `2`：把名册**挨着念一遍** —— 每一只印 `格号.` 加一个空格，再印喵一声（格号从 `1` 数起）；\n   - 读到 `0`：印 `收摊喵，今天登记了 ` + 几只 + ` 只`，**并且立刻跳出走号码的圈**（后面还剩多少个号码都不再走）；\n   - 读到别的号码：印 `本喵还不会这个号码喵`；\n4. 号码走完之后（不管是走完的还是跳出来的），**再印一行** `号码走完了，名册上 ` + 几只 + ` 只`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组号码**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int cmd = 0;\n        cin >> cmd;\n\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"{name}\", {age}));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        } else if (cmd == 2) {\n            int k = 0;\n            for (Cat& c : roster) {\n                k = k + 1;\n                cout << k << \". \";\n                c.greet();\n            }\n        } else {\n            cout << \"本喵还不会这个号码喵\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n{sampleOutput}\n```\n\n这一段就是这一课的**菜单**：号码进来、活自己分派、走了几圈之后收工。\n\n- **`cin >> cmd;` 在圈里面** —— 号码是一个一个进来、一个一个办的，不是先全读进来再办；\n- **`if / else if / else` 那三支** —— 看号码挑一支走，最后那个 `else` 是兜底：本喵还没学会的号码也得回一句话，不能一声不吭；\n- **`break;` 写在收摊那一支的最后** —— 它跳出的是**走号码的那一圈**；那一行之后还剩多少号码，一个都不再走；\n- **最后那一行 `号码走完了…` 在圈外面** —— 所以不管是号码走完的、还是收摊跳出来的，走到那儿都会印一次。\n\n⚠️ 三条钉住：\n\n1. **`break;` 漏了是什么样子，本喵真跑过**：屏幕上一行都不少印，只是**收摊之后还在登记**，最后那一行数出来的只数比该有的多。报错和它不一样，这一跤翻译官喵一个字都不提醒。\n2. **`break;` 的位置在「印完收摊那一句」之后。** 写在 `if` 里面的第一句上，屏幕上会少印一行「收摊喵，今天登记了 …」；写在 `if` 外面（圈的最后）就更糟 —— 每一圈都会跳出去。\n3. **数只数用的是名册自己。** 印的是 `roster.size()`，不是本喵自己数着玩的格子 —— 碗自己知道有几只。"
+}

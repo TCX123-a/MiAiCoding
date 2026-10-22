@@ -1,0 +1,21 @@
+{
+  "templateId": "c-s3-proj-append-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-15",
+  "type": "codewrite",
+  "concept": ["自己写尾插 add_last", "空链子守卫 + 走到尾再挂", "把新节接到最后一节后头"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "大黄"] },
+    "n2": { "kind": "pick", "values": ["小白", "小灰"] },
+    "n3": { "kind": "pick", "values": ["阿花", "咪咪"] },
+    "s1": { "kind": "pick", "values": ["90", "88"] },
+    "s2": { "kind": "pick", "values": ["85", "92"] },
+    "s3": { "kind": "pick", "values": ["95", "79"] }
+  },
+  "stemTemplate": "这一课的第一招要你自己写喵：`add_last` —— **往后接**一位学员。骨架里这一招是空的（只有一句 `return head;`），所以链子从头到尾一位都没接上，印表**什么都不印**。\n\n按注释把那几步写完（别的都别动）。写好之后该印三行，按加进来的顺序一人一行：{n1} {s1} 分、{n2} {s2} 分、{n3} {s3} 分。",
+  "starterTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    /* ↓ 在这儿写：租一节、把名字和分数放进去、把这一节记着的下一节写成 NULL；\n       链子还空着就把它交回去当新的头，否则从头走到最后一节，把新节挂在它后头。 */\n\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n    head = add_last(head, \"{n3}\", {s3});\n    print_all(head);\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n    head = add_last(head, \"{n3}\", {s3});\n    print_all(head);\n    return 0;\n}\n",
+  "explanationTemplate": "尾插一共就五步喵：**①** `malloc` 租一节（顺手验货，租不到就把链子原样交回去）；**②③** 把名字和分数放进盒子；**④** 把「下一节」写成 `NULL` —— 它现在站在最后，后头什么都没有；**⑤** 如果链子还空着（`head == NULL`），这一节**就是**新的头，直接交回去；否则从头走到最后一节（`while (p->next != NULL)`），把新节挂上去（`p->next = fresh`）。\n\n为什么走的是「走到**下一步没有了**」而不是「走到 `p == NULL`」喵？因为你要的是**最后一节本身**（好把新节挂在它后头），不是它后头那片空地。要是走成了 `while (p != NULL)`，你会一脚踏出链子，手里那节早就错过了。\n\n最后那两行 `return head;` 要看清：链子的头**只在空链子那一次**会变成新节；之后每一回接的都是尾巴，头还是原来那位 —— 所以门口那句 `head = add_last(head, ...)` 接回去的，多半还是原来那个头。"
+}

@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage2-07",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想给加号定制一手，下面哪一种写法是这一课教的口令？",
+      "options": [
+        "`FishBag operator+(const FishBag& other) const`",
+        "`FishBag plus(const FishBag& other) const`",
+        "`FishBag operator**(const FishBag& other) const`",
+        "`int operator+(int a, int b)`"
+      ],
+      "answer": 0,
+      "explanation": "定制符号的口令是 `operator` 后面**紧跟那个符号**，写在一起念作「加号这个符号」，所以是 `operator+` 喵。写 `plus` 只是起了个新名字，翻译官喵不会把它跟 `+` 联系起来；`operator**` 想造一个这门语言里根本没有的符号，造不出来；`int operator+(int a, int b)` 虽然口令写对了，但**两边都不是本喵图纸生出来的真猫** —— 两个内建数字之间的加号是老规矩，轮不到本喵改喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵想写 `cout << a`（`a` 是照本喵图纸生出来的一只真猫）。为什么这一手要让 `cout` 那头也挂上 `&`、最后还要 `return os;`？",
+      "options": [
+        "因为 `cout` 抄一份会出乱子，而且要把同一只 `cout` 原样传下去，后面的 `<<` 才接得上",
+        "因为 `&` 能让程序跑得更快，加上去没坏处",
+        "因为不写 `return os;` 编译器会报「找不到这个符号」",
+        "因为 `&` 是把 `cout` 复制一份的意思，复制了才安全"
+      ],
+      "answer": 0,
+      "explanation": "左边那只 `cout` 要**原样传下去**、不能抄一份，所以两头都写着那个 `&`；而 `return os;` 是把接力棒交还给下一段 —— `cout << \"本喵手里有：\" << a << \"喵\"` 这种一长串写法，每一段都得把同一只 `cout` 再递出去，掉了棒后面就没人接了喵。`&` 不是「复制一份」，正好相反，它是「不必还的那个名字」；`return os;` 漏了报的也不是「找不到符号」—— 翻译官喵会当场在那一手的收尾嘀咕一句 `warning: no return statement in function returning non-void`（本喵拿 `-Wall` 真跑过），可跑起来更凶 —— 一个字都不会印出来，程序当场就摔了喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵给袋子定制了 `+`，又给袋子定制了 `*`。那么 `a + b * c` 会先算哪一个？",
+      "options": [
+        "先算 `b * c`，和用数字时一模一样 —— 定制改不了先算后算",
+        "先算 `a + b`，因为 `+` 是本喵自己定制的，优先级更高",
+        "从左往右，先算 `a + b`",
+        "编译器会报错，因为两个都定制了就分不清"
+      ],
+      "answer": 0,
+      "explanation": "本喵能定制的是**「这个符号做什么」**，改不了**「它先算还是后算」** —— 优先级和结合性是这门语言原本就钉死的，定制多少手都不动它喵。所以 `a + b * c` 永远先算乘法，跟左边那两只是袋子还是数字没有半点关系。想把先算后算改掉，唯一的办法是**加小括号**：`(a + b) * c` 喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass FishBag {\n    int count;\npublic:\n    FishBag(int c) : count(c) {}\n    FishBag ____(const FishBag& other) const {\n        return FishBag(count + other.count);\n    }\n    int howMany() const { return count; }\n};\n\nint main() {\n    FishBag a(3);\n    FishBag b(5);\n    cout << (a + b).____() << endl;\n    return 0;\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出），补上之后它会印出 `8` 喵。",
+      "blanks": [
+        { "answer": "operator+", "accept": [] },
+        { "answer": "howMany", "accept": [] }
+      ],
+      "explanation": "第一处是定制符号的口令：`operator` 后面紧跟要定制的那个符号，所以是 `operator+` —— 补上它，`a + b` 才找得到这一手喵。第二处要读的是「一共几条」，图纸上那个公开招式叫 `howMany`；`a + b` 算出来的是一只**新袋子**，所以要在它后面接着喊 `howMany()`，括号和分号都得写全，最后才会印出 3 加 5 得 8 喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass FishBag {\n    int count;\npublic:\n    FishBag(int c) : count(c) {}\n    FishBag operator-(const FishBag& other) const {\n        return FishBag(count - other.count);\n    }\n    int howMany() const { return count; }\n};\n\nint main() {\n    FishBag a(9);\n    FishBag b(4);\n    cout << (a - b).howMany() << \" 条\" << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "5 条",
+      "accept": ["5 条\n"],
+      "explanation": "图纸定制的这一手管的是减号：本喵自己这只袋子里的数（`count`，也就是 9），减去对方那只袋子里的数（`other.count`，也就是 4），算出 9 减 4 得 5 的一条新袋子喵。`a - b` 给的就是那条新袋子，紧跟着喊它的 `howMany()` 拿到 5，再拼上两个字「 条」一起印出来，所以整行是 `5 条` 喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass FishBag {\n    int count;\npublic:\n    FishBag(int c) : count(c) {}\n    int howMany() const { return count; }\n};\n\nFishBag operator+(const FishBag& a, const FishBag& b) {\n    return FishBag(a.howMany() + b.howMany());\n}\n\nint main() {\n    FishBag a(3);\n    FishBag b(5);\n    cout << (a + b).howMany() << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "8",
+      "accept": ["8\n"],
+      "explanation": "这一手加号是写在**图纸外面**的，所以左右两边都是塞进来的料：坐左边的 3 条进了第一份料 `a`，坐右边的 5 条进了第二份料 `b` 喵。里面拿两只袋子的公开招式 `howMany()` 各自读出数目再加起来（3 加 5 得 8），包成一条新袋子叼回来；`main` 里紧接着喊这条新袋子的 `howMany()`，印出 8 喵。注意它**没有用开门那一手** —— 读的是公开招式，谁都能喊喵。"
+    }
+  ]
+}

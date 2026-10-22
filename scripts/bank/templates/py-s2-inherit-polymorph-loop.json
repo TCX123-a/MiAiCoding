@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-inherit-polymorph-loop",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-07",
+  "type": "codewrite",
+  "concept": ["一声开饭各猫各样", "重写", "图纸套图纸"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["Cat", "Dog"] },
+    "b": { "kind": "pick", "values": ["Dog", "Cat"] }
+  },
+  "stemTemplate": "本喵要一声开饭、各猫各样喵。\n\n请你画三张图纸：\n\n1. 一张 `Animal` 大图纸，只有一招 `speak(self)`，印一行 `……`（就是两个省略号）\n2. 一张 `Cat` 小图纸，照着 `Animal` 画，把 `speak` **盖成自己那版**，印 `喵～`\n3. 一张 `Dog` 小图纸，照着 `Animal` 画，把 `speak` **盖成自己那版**，印 `汪！`\n\n然后照这个顺序造三只：**先一只 `{a}`、再一只 `{b}`、最后再一只 `{a}`**，把它们排成一排。\n\n最后**用一个 `for` 挨个喊 `speak`** —— 喊的那一行里**不许看出它是猫还是狗**，就写「对着一只喊一声」。\n\n跑完印出来的三行，正好是这三只各自的那一声。",
+  "referenceSolutionTemplate": "class Animal:\n    def speak(self):\n        print(\"……\")\n\n\nclass Cat(Animal):\n    def speak(self):\n        print(\"喵～\")\n\n\nclass Dog(Animal):\n    def speak(self):\n        print(\"汪！\")\n\n\npets = [{a}(), {b}(), {a}()]\nfor pet in pets:\n    pet.speak()\n",
+  "explanationTemplate": "这一题考的是那个最省心的地方喵：**写 `for` 的时候，本喵压根不知道下一只是谁**。\n\n`for pet in pets:` 里那个 `pet` 每一轮抓到的都是**一只真猫**（照哪张图纸生的，它自己知道）。喊 `pet.speak()` 的时候，Python 是**照着那只真猫自己的图纸**去找这一招的 —— 不是照着 `Animal` 大图纸找，也不是照着写代码时脑子里想的那张找。\n\n于是同一句 `pet.speak()`：是猫就喵、是狗就汪，**各猫各样**。\n\n⚠️ 关键在于**每张小图纸都自己把 `speak` 盖了一遍**。要是小图纸里没写，那三只喊出来的都会是大图纸那一版（三行 `……`）—— 一样能跑，就是没了「各样」。\n\n⚠️ 还有一个容易写错的地方：`pets` 那一排装的是**三只已经生出来的**（`Cat()`、`Dog()` 后面都带着小括号）。写成 `pets = [Cat, Dog, Cat]` 装的就是**三张图纸本身**，`for` 里喊 `pet.speak()` 会当场报错说这招用不了。"
+}

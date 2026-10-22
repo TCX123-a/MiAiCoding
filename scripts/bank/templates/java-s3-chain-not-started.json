@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-chain-not-started",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-16",
+  "type": "codefix",
+  "concept": ["先备好空的一串", "拼接要整个搬家", "省下来的圈数"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 8, "max": 9 },
+    "word": { "kind": "pick", "values": ["本喵记好啦", "本喵算好啦"] }
+  },
+  "stemTemplate": "本喵要在绕圈里一条一条往小鱼干项链上接新鱼，一边接一边把**搬家的字符数**记下来。\n\n稿子写好了，可**翻译官**扫了一眼就把它打回来 —— 屏幕上红着一行字，说有一格**还没热身就被拿去用了**。这跟跑起来以后才炸不一样：翻译官压根不放它上跑道，一个数都不会印。\n\n你帮本喵把那一格补上：只加几个字符，别动别的。改好之后跑起来该印一行 —— {word}，再加上搬了多少个字符、最后串上有多少条。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = {n};\n        long moved = 0;\n        String chain;\n        for (int i = 0; i < n; i++) {\n            moved += chain.length();\n            chain = chain + \"鱼\";\n        }\n        System.out.println(\"{word}：搬了 \" + moved + \" 个字符，接成 \" + chain.length() + \" 条\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = {n};\n        long moved = 0;\n        String chain = \"\";\n        for (int i = 0; i < n; i++) {\n            moved += chain.length();\n            chain = chain + \"鱼\";\n        }\n        System.out.println(\"{word}：搬了 \" + moved + \" 个字符，接成 \" + chain.length() + \" 条\");\n    }\n}\n",
+  "explanationTemplate": "坏的那一处是 `String chain;` 那一行：本喵只**留了一个位置**，却没往里放东西，下一行就要问它「你现在多长」—— 问一个还没热身的位置，翻译官当场把它打回来：\n\n```text\nMain.java:7: error: variable chain might not have been initialized\n```\n\n那句英文念出来就是「**这个位置可能还没热身就被拿去用了**」。翻译官不许这种事发生：**读一个还没热身的位置，读出来的东西不是 0，而是「说不准」** —— 与其让它带着说不准的东西往下跑，不如现在就不放行。\n\n治法就是把位置和东西一起给：`String chain = \"\";` —— 空的一串也是**一串**，长度是 0，能问、能接。这一处改完，账就顺着跑出来了。\n\n借这道题记两件事，都跟**圈数**有关喵：\n\n1. **每一趟的活儿是「整串搬一次家」。** 第 1 趟搬 0 个字符（手上是空的）、第 2 趟搬 1 个、第 3 趟搬 2 个……第 n 趟搬 n - 1 个。加起来是 `0 + 1 + … + (n - 1)`，这个形状就是课文第二节那本「两两试」的账：n 一大，它长起来是**平方**的。\n2. **同一件事有一档更省的做法**：另一只容器手上有一块**预留的空地**，新的一条直接塞进空位，旧的一条不用抄。它一共只干 n 件事。所以「接一串」这件事，两种写法差着整整一档量级 —— 这是往后写代码最容易踩、也最容易省下来的一个坑。"
+}

@@ -1,0 +1,82 @@
+{
+  "lessonId": "java-stage3-19",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "课文第二节里，门口那只猫走到 `门.accept()` 这一行就再也不往下走了。它到底堵在那儿等什么喵？",
+      "options": [
+        "等一位客人连上这扇门；有客人来了，它才交回一支管子、往下走",
+        "等门牌号被系统挑出来，挑完才往下走",
+        "等对面先送一句话过来，收到那句话才往下走",
+        "等本喵敲一下键盘 —— 没人敲，它就一直堵在那儿"
+      ],
+      "answer": 0,
+      "explanation": "对的是「等一位客人连上这扇门；有客人来了，它才交回一支管子、往下走」喵。`门.accept()` 是「**站住，等**」：没客人来，它就卡在那一行不动 —— 这种「卡在等」的脾气叫阻塞，是堵住，不是坏了。等来一位，它交回来的是**一支管子**（`Socket 客`），往后跟这位说话全走这支管子。\n\n课文第二节真跑过这一条：母猫先去看了那个记号，印出来是 `敲门之前，有人来了吗：false` —— 因为那会儿**根本还没人敲门**；等母猫自己照着门牌号连上去，记号才变成 `true`。\n\n另外三条各错在哪：\n\n- 说「等门牌号被挑出来」的，把**开门那一句**和**等人这一句**混了。号是开门当场就问得到的（`门.getLocalPort()`），跟有没有人来一点关系都没有。\n- 说「等对面先送一句话」的，把**等人**和**等人说话**混了 —— 「等一句话」是管子到手之后 `读.readLine()` 的脾气（第 15 课那只猫卡住的地方），不是 `accept()` 的。\n- 说「等本喵敲键盘」的错得最离谱：敲门的只能是**另一位客人** —— 这份稿子里就是母猫自己照着门牌号连上来那一下。\n\n还有一条要连着记：堵在门口的**只有那一只猫**。母猫该等的等、该敲门的敲门，一点没被拖住 —— 这正是「另派一只猫去站门口」的全部意义喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵造写手的时候把末尾那个 `true` 漏掉了，接着 `println(\"小鱼干\")`，然后 `自己.close()`。门房那头会收到什么喵？",
+      "options": [
+        "什么都没收到 —— 那句话攒在写手手里，管子一关就跟着没了",
+        "收到完整的一句「小鱼干」",
+        "收到「小鱼干」，只是少了行尾那个换行",
+        "门房当场报错，说写手那一格没填"
+      ],
+      "answer": 0,
+      "explanation": "「收到完整的一句」是错的，对的正是「什么都没收到」喵：**门房什么都没收到**。课文第四节（4.1）真跑过这一段，门房印出来的是「门房收到：(空的 —— 什么都没收到)」—— 母猫那头跑得好好的，门房那头读到的是个空。\n\n道理是写手那支笔**自带一个桶**：`println(\"小鱼干\")` 只是把字倒进桶里攒着，要等桶满、或者明确说一句「赶紧送」才真送进管子。末尾那一格填 `true`，才是「**每说一行就赶紧送出去**」。\n\n另外三条各错在哪：\n\n- 说「收到完整的一句」的，是以为 `println` 自带「送」的意思 —— 它只管写，不管送。\n- 说「只少了行尾那个换行」的，把「送没送出去」和「行尾有没有换行」当成了两件挨着的事 —— 这一段的毛病是**一个字都没出门**，跟行尾没关系。\n- 说「门房当场报错」的，把**静默**的毛病当成了会喊的毛病 —— 这一段最阴的地方恰恰是**不报错、不红字、跑得通**，只是对面收不到。\n\n补法两条，代价一样：造写手时写 `true`，或者关管子之前自己喊一声「送」（`自己写.flush();`）。要记牢的是**关管子不等于送字**：`自己.close()` 关的是管子，桶里攒的字是本喵亲手丢的。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "两头走同一支管子：本喵这头按 `UTF-8` 写出去，客人那头偏偏按 `GBK` 读回来。屏幕上会印出什么喵？（课文 4.2 真跑过这一段）",
+      "options": [
+        "一串看着像别的字的怪字 —— 同一串字节换一张字表读，读出来就是另外几个字",
+        "什么都印不出来，程序安安静静就收工了",
+        "照样印出「收到：小鱼干」—— 字表对不上不影响内容",
+        "会印出一串数，那是每个字占几个字节"
+      ],
+      "answer": 0,
+      "explanation": "对的是「一串看着像别的字的怪字 —— 同一串字节换一张字表读，读出来就是另外几个字」喵。课文 4.2 真跑出来的是 `客人听到：鏀跺埌锛氬皬楸煎共` —— 门房写出去的明明是「收到：小鱼干」，到了客人那头成了这五个怪字。**字一个没丢、一个没错**，只是被按另一张字表读了出来。\n\n要记住的是这条链子：管子里走的**从来不是「字」，是一串字节**。本喵说的话先按一张字表翻成字节（编码），对面收到字节再按一张字表翻回话（解码）。两张字表不一样，同一串字节读出来当然是别的字 —— 这不是管子坏了，是两头没对好。\n\n另外三条各错在哪：\n\n- 说「什么都印不出来」的，把「乱码」和「收不到」混了 —— 收不到是上一题那个攒字的毛病（`null`），这里的字**结结实实送到了**，只是读歪了。\n- 说「照样印出『收到：小鱼干』」的，等于说字表怎么写都不影响 —— 那这一课这一节就白写了。\n- 说「印出一串数」的，把「按字表读」当成了「把字节的数值报出来」—— 按字表读永远是读成**字**，只是可能读成不相干的字。\n\n所以本喵在两头都写死 `StandardCharsets.UTF_8`：写手那边一次、读者那边一次。写死的意思不是「这台机器碰巧用哪张就用哪张」，而是「**本喵说好就用这张**」—— 换台机器、换版工具链，这份稿子照样不乱。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.IOException;\nimport java.io.InputStreamReader;\nimport java.io.OutputStreamWriter;\nimport java.io.PrintWriter;\nimport java.net.InetAddress;\nimport java.net.ServerSocket;\nimport java.net.Socket;\nimport java.nio.charset.StandardCharsets;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ServerSocket 门 = new ServerSocket(0, 50, InetAddress.getByName(\"127.0.0.1\"));\n        int 端口 = 门.getLocalPort();\n\n        Thread 守门的 = new Thread(() -> {\n            try {\n                Socket 客 = 门.accept();\n                PrintWriter 写 = new PrintWriter(new OutputStreamWriter(客.getOutputStream(), StandardCharsets.UTF_8), ____);\n                BufferedReader 读 = new BufferedReader(new InputStreamReader(客.getInputStream(), ____));\n                写.println(\"收到：\" + 读.readLine());\n                客.close();\n            } catch (IOException e) {\n            }\n        });\n        守门的.setDaemon(true);\n        守门的.start();\n\n        Socket 自己 = new Socket(\"127.0.0.1\", 端口);\n        写手(自己).println(\"小鱼干\");\n        System.out.println(\"客人听到：\" + 读者(自己).readLine());\n        自己.close();\n        守门的.join();\n        门.close();\n    }\n\n    static PrintWriter 写手(Socket 客) throws IOException {\n        return new PrintWriter(new OutputStreamWriter(客.getOutputStream(), StandardCharsets.UTF_8), true);\n    }\n\n    static BufferedReader 读者(Socket 客) throws IOException {\n        return new BufferedReader(new InputStreamReader(客.getInputStream(), StandardCharsets.UTF_8));\n    }\n}",
+      "stem": "这一段就是课文第三节那个「一次来回」，本喵在里面留了两个空喵。\n\n- **头一个空**在门房那只猫造写手的地方（末尾那一格）—— 要填的是「每说一行就赶紧送出去」的那个值；\n- **第二个空**在门房这头造读者的地方 —— 要填的是两头说好的那张字表。\n\n两个空都填对，程序该印出「客人听到：收到：小鱼干」这一行，而且印完就收工。**空里不用写分号**，一格写一个词就行。",
+      "blanks": [
+        {
+          "answer": "true"
+        },
+        {
+          "answer": "StandardCharsets.UTF_8",
+          "accept": ["java.nio.charset.StandardCharsets.UTF_8"]
+        }
+      ],
+      "explanation": "两个空是 `true` 和 `StandardCharsets.UTF_8` 喵。\n\n**头一个空：`true`。** 写手那支笔自带一个桶，末尾那一格写 `true` 才是「每说一行就赶紧送出去」。这个空要是留成空、或者填个 `false`，门房那头就一个字节都收不到（课文 4.1 那个坑）—— 母猫还在门口等着 `readLine()`，等到管子关掉，读回来的是个空。\n\n**第二个空：`StandardCharsets.UTF_8`。** 门房这头读客人送来的字，得和客人那头写出去的那张字表**是同一张**。底下两个招式（`写手`、`读者`）里也都是 `StandardCharsets.UTF_8` —— 这不是巧合，是这份稿子的规矩：**两头都写死**。少写一处，就变成「这台机器碰巧的字表」说了算（课文 4.2 那串怪字）。\n\n顺着一句话记牢这一课的两处静默：**送没送出去看末尾那一格，读没读歪看两边写没写同一张字表。** 这两处错了都不报错、不红字，只是对面收不到、或者屏幕上是一串怪字。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.IOException;\nimport java.io.InputStreamReader;\nimport java.io.OutputStreamWriter;\nimport java.io.PrintWriter;\nimport java.net.InetAddress;\nimport java.net.ServerSocket;\nimport java.net.Socket;\nimport java.nio.charset.StandardCharsets;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ServerSocket 门 = new ServerSocket(0, 50, InetAddress.getByName(\"127.0.0.1\"));\n        int 端口 = 门.getLocalPort();\n\n        Thread 守门的 = new Thread(() -> {\n            try {\n                Socket 客 = 门.accept();\n                BufferedReader 读 = 读者(客);\n                PrintWriter 写 = 写手(客);\n                写.println(\"收到：\" + 读.readLine());\n                写.println(\"收到：\" + 读.readLine());\n                客.close();\n            } catch (IOException e) {\n            }\n        });\n        守门的.setDaemon(true);\n        守门的.start();\n\n        Socket 自己 = new Socket(\"127.0.0.1\", 端口);\n        PrintWriter 自己写 = 写手(自己);\n        BufferedReader 自己读 = 读者(自己);\n        自己写.println(\"开门\");\n        自己写.println(\"要鱼干\");\n        System.out.println(\"客人听到：\" + 自己读.readLine());\n        System.out.println(\"客人听到：\" + 自己读.readLine());\n        自己.close();\n        守门的.join();\n        门.close();\n    }\n\n    static PrintWriter 写手(Socket 客) throws IOException {\n        return new PrintWriter(new OutputStreamWriter(客.getOutputStream(), StandardCharsets.UTF_8), true);\n    }\n\n    static BufferedReader 读者(Socket 客) throws IOException {\n        return new BufferedReader(new InputStreamReader(客.getInputStream(), StandardCharsets.UTF_8));\n    }\n}",
+      "stem": "门房那只猫守在门口，客人这头一口气送两句过去（先「开门」、再「要鱼干」），门房收一句回一句。这段程序会印出哪两行喵？",
+      "answer": "客人听到：收到：开门\n客人听到：收到：要鱼干",
+      "accept": ["客人听到：收到：开门\n客人听到：收到：要鱼干\n"],
+      "explanation": "两行是 **客人听到：收到：开门** 和 **客人听到：收到：要鱼干** 喵。\n\n这一段演示的是「**一行一句、收了就回**」的节奏：\n\n- 客人这头连送两句，两句都带着行尾（`println`）—— 管子里躺着的就是**两行**。\n- 门房这头的 `读.readLine()` 一次只叼回**一整行**：头一次叼回「开门」，`写.println(\"收到：开门\")` 就回一句；第二次叼回「要鱼干」，再回一句。\n- 客人这头读两次，收的正是这两句，**先后就是送出去的先后**。\n\n要是不小心把某一头的 `println` 换成 `print`（不带行尾），那管子里的两句话会粘成一整行 —— 门房头一次 `readLine()` 就把两句一起叼走，第二句再也等不来了。所以**两头都得按「一行一句」来**：一边 `println`、一边 `readLine`，配着用。\n\n还有一处值得看一眼：门房读第一行的时候是**堵着等**的（课文第二节那件事）。客人送得慢、门房就等得久 —— 它不着急，也不会自己去猜。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.IOException;\nimport java.io.InputStreamReader;\nimport java.io.OutputStreamWriter;\nimport java.io.PrintWriter;\nimport java.net.InetAddress;\nimport java.net.ServerSocket;\nimport java.net.Socket;\nimport java.nio.charset.StandardCharsets;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ServerSocket 门 = new ServerSocket(0, 50, InetAddress.getByName(\"127.0.0.1\"));\n        int 端口 = 门.getLocalPort();\n\n        Thread 守门的 = new Thread(() -> {\n            try {\n                while (true) {\n                    Socket 客 = 门.accept();\n                    new Thread(() -> 陪着一位(客)).start();\n                }\n            } catch (IOException e) {\n            }\n        });\n        守门的.setDaemon(true);\n        守门的.start();\n\n        Socket 甲 = new Socket(\"127.0.0.1\", 端口);\n        Socket 乙 = new Socket(\"127.0.0.1\", 端口);\n        PrintWriter 甲写 = 写手(甲);\n        PrintWriter 乙写 = 写手(乙);\n        BufferedReader 甲读 = 读者(甲);\n        BufferedReader 乙读 = 读者(乙);\n\n        甲写.println(\"小鱼干\");\n        乙写.println(\"猫条\");\n        System.out.println(\"甲 听到：\" + 甲读.readLine());\n        System.out.println(\"乙 听到：\" + 乙读.readLine());\n\n        甲.close();\n        乙.close();\n    }\n\n    static void 陪着一位(Socket 客) {\n        try {\n            写手(客).println(\"收到：\" + 读者(客).readLine());\n            客.close();\n        } catch (IOException e) {\n        }\n    }\n\n    static PrintWriter 写手(Socket 客) throws IOException {\n        return new PrintWriter(new OutputStreamWriter(客.getOutputStream(), StandardCharsets.UTF_8), true);\n    }\n\n    static BufferedReader 读者(Socket 客) throws IOException {\n        return new BufferedReader(new InputStreamReader(客.getInputStream(), StandardCharsets.UTF_8));\n    }\n}",
+      "stem": "门房那只猫绕着一个圈站在门口：每来一位客人，就**另派一只新猫**去陪这位，自己马上回到门口接着等（就是第 15 课那位门房的摆法）。这一回门口来了两位，一位送「小鱼干」，一位送「猫条」。这段程序会印出哪两行喵？",
+      "answer": "甲 听到：收到：小鱼干\n乙 听到：收到：猫条",
+      "accept": ["甲 听到：收到：小鱼干\n乙 听到：收到：猫条\n"],
+      "explanation": "两行是 **甲 听到：收到：小鱼干** 和 **乙 听到：收到：猫条** 喵。\n\n这一段最要紧的是**谁的话回给了谁**：\n\n- 门房那只猫绕着一个圈，每敲开一位就 `new Thread(() -> 陪着一位(客)).start()` —— **一位客人配一只猫**，开完门它自己马上回门口接着等（所以乙在门外一秒都没多等）。\n- `甲` 和 `乙` 是**两支互不相干的管子**，各自带着自己那只陪聊的猫。甲送的字走在甲那条管子里，回话也从甲那条管子出来；乙那边一样。\n- 所以两行不会串：甲那行永远是「收到：小鱼干」，乙那行永远是「收到：猫条」—— **甲读的是甲的管子，不是「先到的回话」**。\n\n要是不派新猫、让门房自己陪着第一位聊，第二位就得在门口干等到天荒地老（第 15 课那个坑：甲进门不说话，门房就卡在「等甲说话」上，乙连门都进不来）。\n\n最后看一眼**为什么它印完两行就利索退出**：门房自己是**后台的猫**（`守门的.setDaemon(true)`），母猫的活干完它就跟着走 —— 那个绕不完的圈不会把程序拖在门口。这一句要是漏了，那只猫就永远堵在 `accept()` 上下不了班：两行照样印，可程序一直等下一位客人、不肯收工喵。"
+    }
+  ]
+}

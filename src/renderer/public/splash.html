@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<!--
+  开屏页的内容安全策略（docs/24 的「去网络化」底线，机械保障）：
+  default-src 'none' 把一切网络面关死；媒体只认 miai-wall:（本机素材的
+  自定义协议，白名单在 main/wallpaper/protocol.ts + 素材目录由
+  addProtocolRootProvider 登记）；脚本/样式都是本文件内联的。
+  【为什么内联也要写进 CSP】不写 script-src 的话 default-src 'none'
+  会把内联脚本一起毙掉，页面直接全黑 —— 这两条是配套的，别拆。
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; media-src miai-wall:; script-src 'unsafe-inline'; style-src 'unsafe-inline'" />
+<title>MIAI</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; }
+  /*
+    三层结构：不透明品牌底（立即出画，绝无白/黑闪）→ 视频（首帧就绪前
+    opacity:0，就绪后淡入）→ 提示文字。整体渐隐由 #stage 一个 opacity
+    过渡完成 —— 250ms 与 shared/splash.ts 的 FADE_MS 是同一个数，
+    由 splash-static 静态测试钉住，改一边不改另一边会红。
+  */
+  #stage {
+    position: fixed; inset: 0;
+    background: radial-gradient(120% 130% at 50% 38%, #0d1b2e 0%, #070d18 62%, #04070d 100%);
+    opacity: 1;
+    transition: opacity 250ms ease;
+  }
+  body.fade-out #stage { opacity: 0; }
+  #v {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background: transparent;
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+  body.has-frame #v { opacity: 1; }
+  #hint, #hold {
+    position: absolute; left: 0; right: 0; bottom: 26px;
+    text-align: center;
+    color: rgba(214, 226, 245, 0.72);
+    font: 13px/1.6 "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.08em;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+    user-select: none;
+  }
+  #hold { display: none; }
+  body.holding #hint { display: none; }
+  body.holding #hold { display: block; }
+  /*
+    烤录文字覆盖层：盖住素材视频里烤录的 DSH 专属字样，换上自家品牌文案
+    （窗口数据在 shared/splash-covers.ts，文案在 shared/copy.ts）。
+    框的位置由 layoutCovers() 按**视频画面**百分比 + object-fit 缩放数学算 ——
+    contain 留黑边时框必须跟着画面走，按窗口算会整体偏移。
+    底色近实（0.94+）——必须真的盖住原字样，半透明会透出"影子"。
+  */
+  #cover-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .cover {
+    position: absolute; left: 0; top: 0;
+    display: flex; align-items: center; justify-content: center;
+    box-sizing: border-box; padding: 0 0.5em;
+    background: linear-gradient(165deg, rgba(16, 32, 55, 0.94), rgba(6, 12, 22, 0.96));
+    border: 1px solid rgba(110, 160, 255, 0.3);
+    border-radius: 0.55em;
+    box-shadow: 0 3px 18px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(70, 130, 255, 0.1);
+    color: #dbe7ff;
+    font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    font-weight: 500; letter-spacing: 0.12em; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+    opacity: 0; transition: opacity 240ms ease;
+  }
+  .cover.on { opacity: 1; }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <video id="v" playsinline preload="auto"></video>
+    <!--
+      烤录文字覆盖层：内容由 boot() 按主进程给的 cfg.covers 现建
+      （文案来自 copy.ts、几何来自 splash-covers.ts 的窗口表）。
+      没有覆盖窗口的素材这一层就是空的，不可见也不吃事件。
+    -->
+    <div id="cover-layer" aria-hidden="true"></div>
+    <!--
+      这两句文案和渲染层 copy.ts 的 SETTINGS.SPLASH_PAGE_HINT / SPLASH_PAGE_HOLD
+      逐字相同（静态测试钉住）—— 这个页面是 public 下的静态文件，import 不到
+      copy.ts，只能靠测试防漂移。
+    -->
+    <div id="hint">按任意键跳过</div>
+    <div id="hold">界面还在准备，马上就来喵…</div>
+  </div>
+<script>
+(function () {
+  'use strict'
+  var api = window.miaiSplash
+  var v = document.getElementById('v')
+  var firstReported = false
+  var stalledReported = false
+
+  function report(type, code) {
+    try {
+      api.report(code === undefined ? { type: type } : { type: type, code: code })
+    } catch (e) { /* 桥不可用：主进程有 MEDIA_DEADLINE/HARD_CAP 兜底 */ }
+  }
+
+  // 首帧的「五路判定」：任何一路先到都算（不同驱动/不同素材先到的那路不一样，
+  // 只认其中一路会出「画面已经播了但主进程还在等」的假阴性）
+  function markFrame() {
+    if (firstReported) return
+    // 坏源 fatal error 之后 Chromium 还会补发一发 timeupdate（实测 readyState
+    // 已是 0）——那只是失败重置，不是帧；error 已置位就拒绝记首帧
+    if (v.error) return
+    firstReported = true
+    document.body.classList.add('has-frame')
+    report('first-frame')
+  }
+
+  api.onFade(function () {
+    // 先停声音再渐隐 —— 渐隐的 250ms 里不该还有尾音
+    try { v.pause() } catch (e) {}
+    document.body.classList.add('fade-out')
+  })
+  api.onHold(function () {
+    document.body.classList.add('holding')
+  })
+
+  // ---------------------------------------------------------------- 烤录文字覆盖层
+  // 窗口数据来自主进程（cfg.covers，真源 shared/splash-covers.ts）；这里只做
+  // 两件事：把「相对视频画面的百分比」映射成像素（layoutCovers），按视频
+  // 时间轴亮灭（tickCovers）。
+  var coverLayer = document.getElementById('cover-layer')
+  var coverList = []
+  var coverEls = []
+  var coverOn = []
+
+  function buildCovers(list) {
+    coverList = list
+    for (var i = 0; i < list.length; i++) {
+      var el = document.createElement('div')
+      el.className = 'cover'
+      el.textContent = list[i].text
+      coverLayer.appendChild(el)
+      coverEls.push(el)
+      coverOn.push(false)
+    }
+  }
+
+  // 视频画面在窗口里的实际矩形 = object-fit 的缩放数学，和浏览器渲染同一套：
+  // 缩放比 s，contain 取 min（完整画面、上下/左右留黑边）、cover 取 max
+  // （裁掉溢出边铺满）。比例不匹配时画面是**居中**的，所以左上角有偏移
+  // (cw-dw)/2, (ch-dh)/2 —— 覆盖框必须映射到这个矩形，按窗口算会整体偏。
+  function layoutCovers() {
+    if (!coverEls.length) return
+    var vw = v.videoWidth, vh = v.videoHeight
+    if (!vw || !vh) return // 元数据还没到：等第二次 loadedmetadata 再排
+    var cw = window.innerWidth, ch = window.innerHeight
+    var s = v.style.objectFit === 'cover' ? Math.max(cw / vw, ch / vh) : Math.min(cw / vw, ch / vh)
+    var dw = vw * s, dh = vh * s
+    var ox = (cw - dw) / 2, oy = (ch - dh) / 2
+    for (var i = 0; i < coverEls.length; i++) {
+      var c = coverList[i], el = coverEls[i]
+      var w = (c.w / 100) * dw, h = (c.h / 100) * dh
+      el.style.left = (ox + (c.x / 100) * dw) + 'px'
+      el.style.top = (oy + (c.y / 100) * dh) + 'px'
+      el.style.width = w + 'px'
+      el.style.height = h + 'px'
+      // 字号随框高与文字长度收缩：写死 px 的话小窗里溢出、大屏上贴不满框
+      var byLen = c.text.length ? w / (c.text.length * 1.15) : 30
+      el.style.fontSize = Math.max(11, Math.min(30, h * 0.4, byLen)) + 'px'
+    }
+  }
+
+  // 亮灭以**视频时间轴**为准（currentTime）。rAF 逐帧查（timeupdate 只有
+  // ~4Hz，靠它切窗口会有肉眼可见的滞后）；状态没变不碰 DOM（每帧都
+  // classList.toggle 会在播放全程持续触发样式重算）。
+  function tickCovers() {
+    if (!coverEls.length || v.paused) return
+    var t = v.currentTime * 1000
+    for (var i = 0; i < coverEls.length; i++) {
+      var on = t >= coverList[i].startMs && t < coverList[i].endMs
+      if (on !== coverOn[i]) {
+        coverOn[i] = on
+        if (on) coverEls[i].classList.add('on')
+        else coverEls[i].classList.remove('on')
+      }
+    }
+  }
+  function coverLoop() {
+    tickCovers()
+    window.requestAnimationFrame(coverLoop)
+  }
+
+  // 跳过：页面级 pointerdown/keydown（主进程 before-input-event /
+  // before-mouse-event 是另一路兜底，两边都幂等 —— 重复报无害）
+  window.addEventListener('pointerdown', function () { report('skip') }, { once: true })
+  window.addEventListener('keydown', function () { report('skip') }, { once: true })
+
+  function boot() {
+    api.getConfig().then(function (cfg) {
+      if (!cfg) { report('error', 0); return }
+      v.muted = !cfg.sound
+      if (typeof cfg.volume === 'number') {
+        try { v.volume = Math.min(1, Math.max(0, cfg.volume / 100)) } catch (e) {}
+      }
+      v.style.objectFit = cfg.fit === 'cover' ? 'cover' : 'contain'
+      if (cfg.covers && cfg.covers.length) buildCovers(cfg.covers)
+
+      v.addEventListener('loadeddata', markFrame)
+      v.addEventListener('canplay', markFrame)
+      v.addEventListener('timeupdate', markFrame)
+      if (typeof v.requestVideoFrameCallback === 'function') {
+        v.requestVideoFrameCallback(function () { markFrame() })
+      }
+      var poll = setInterval(function () {
+        if (v.readyState >= 2) { markFrame(); clearInterval(poll) }
+      }, 120)
+
+      v.addEventListener('loadedmetadata', function () {
+        report('meta')
+        layoutCovers() // 此时 videoWidth/Height 才有值
+      })
+      window.addEventListener('resize', layoutCovers)
+      if (coverEls.length) window.requestAnimationFrame(coverLoop)
+      v.addEventListener('ended', function () { report('ended') })
+      v.addEventListener('error', function () {
+        var code = 0
+        try { code = v.error ? v.error.code : 0 } catch (e) {}
+        report('error', code)
+      })
+
+      // 卡死检测（诊断用，主进程不据此收场）：播放中 currentTime 持续
+      // 2 秒不前进 → 报一次 stalled，P2 排障时对得上「画面停了」
+      var lastT = -1
+      var stuckMs = 0
+      setInterval(function () {
+        if (v.paused || v.ended || v.readyState < 2) {
+          lastT = v.currentTime
+          stuckMs = 0
+          return
+        }
+        if (v.currentTime === lastT) {
+          stuckMs += 500
+          if (stuckMs >= 2000 && !stalledReported) {
+            stalledReported = true
+            report('stalled')
+          }
+        } else {
+          stuckMs = 0
+          lastT = v.currentTime
+        }
+      }, 500)
+
+      v.src = cfg.url
+      var p = v.play()
+      if (p && typeof p.catch === 'function') p.catch(function () { /* 交给 MEDIA_DEADLINE */ })
+    }).catch(function () { report('error', 0) })
+  }
+  boot()
+})()
+</script>
+</body>
+</html>

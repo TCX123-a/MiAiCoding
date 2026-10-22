@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-ptr-row-missing-plate",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-18",
+  "type": "codefix",
+  "concept": ["一排猫爪指向牌：一格一张，先插满再照着走", "有一格从头到尾没人写过：牌面上留着的是垃圾", "照着没写过的牌子走，结果不保证响"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["阿花", "小橘"] },
+    "b": { "kind": "pick", "values": ["大肥鱼", "煤球"] },
+    "c": { "kind": "pick", "values": ["豆豆", "团子"] },
+    "d": { "kind": "pick", "values": ["芝麻", "雪球"] }
+  },
+  "stemTemplate": "本喵这排牌子一共四格，要把 `names` 里那四排猫粮碗一个一个指过去，最后按格子顺序印出来。跑起来**不崩、也没报错**，可最后那一行印出来的是一串莫名其妙的字喵 —— 四排碗里的名字明明都在。\n\n病在**插牌子那一段**：有一格从头到尾没人写过，牌面上留着的是上一只猫用过的垃圾。请你把这一处治好，让四行老老实实印出 {a}、{b}、{c}、{d}。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"{a}\", \"{b}\", \"{c}\", \"{d}\"};\n    char *row[4];\n\n    for (int i = 0; i < 3; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"{a}\", \"{b}\", \"{c}\", \"{d}\"};\n    char *row[4];\n\n    for (int i = 0; i < 4; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+  "explanationTemplate": "插牌子那一段只转了 **3 圈**（`i < 3`）：第 0、1、2 格各插好一张，第 3 格**从头到尾没人写过** —— 牌面上留着的是上一只猫用完这一格没擦干净的东西。\n\n印的时候是四圈，第四圈照着这张没写过的牌子走过去，拿回来的就是一段谁都不认识的东西。本喵在这台机器上连跑五次，五次都印出同一串乱码（进程没崩、退出码 0）；可**别把它当成承诺** —— 那串字是碰巧落在那儿的，换台机器、换一次编译，同样的写法也可能当场断气。\n\n改法很小喵：把插牌子那一段也走满四圈（`i < 4`）。记一句：**要照着一排牌子走，就得保证每一格都先写过 —— 没得指的那格，也要插一张空牌子。**"
+}

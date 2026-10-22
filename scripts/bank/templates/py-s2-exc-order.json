@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-exc-order",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-13",
+  "type": "codefix",
+  "concept": ["except 顺序", "先对上的先接住"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 3 },
+    "b": { "kind": "pick", "values": [2, 3] }
+  },
+  "stemTemplate": "本喵写了一段：份数太多就**主动翻脸**甩一张 `ValueError` 出去，外面分工接住 —— 这一种印一句专用的话，别的毛病印另一句笼统的。\n\n它**跑得顺顺的，一句错都不报**，可印出来的偏偏是**笼统那一句**，本喵辛辛苦苦给这一种写的那句话，一个字都没露脸。\n\n你帮本喵改对喵。要求：\n\n1. **只印一行**，就是分工之后该轮到的那句话。\n2. 纸条上那句话、还有 `raise` 前面那个比对，**一个字都不许改**。\n3. 两条接住的**名字也不许换**，本喵要的还是这两条。",
+  "brokenCodeTemplate": "def 分鱼干(份数):\n    if 份数 > {a}:\n        raise ValueError(f\"最多 {a} 份喵\")\n    return 份数 * {b}\n\ntry:\n    print(分鱼干({a} + 1))\nexcept Exception:\n    print(\"别的毛病\")\nexcept ValueError as e:\n    print(\"份数不对喵：\", e)\n",
+  "referenceFixTemplate": "def 分鱼干(份数):\n    if 份数 > {a}:\n        raise ValueError(f\"最多 {a} 份喵\")\n    return 份数 * {b}\n\ntry:\n    print(分鱼干({a} + 1))\nexcept ValueError as e:\n    print(\"份数不对喵：\", e)\nexcept Exception:\n    print(\"别的毛病\")\n",
+  "explanationTemplate": "这一段**一个字都不报错**，它只是接手接错了人 —— 这种坏法比断气难找得多喵。\n\n写了好几条接住的，翻译官喵是**从上往下一条条比**的，**先对上的那条先接住**，后面的连看都不看。本喵那张纸条上写的是 `ValueError`，而摆在最前面的那条是**笼统的** `Exception` —— 它是按「是不是大图纸的后代」来认的，`ValueError` 正是它的后代之一，于是**抢先接住了**。后面那条专门写 `ValueError` 的，一辈子轮不到。\n\n一句话的规矩：**具体的写前面，笼统的写最后。** 摆好之后，纸条先撞上专门认它的那条，笼统那条留给别的后代去兜底。\n\n⚠️ 这种坏法最阴的地方在于「看着能跑」：程序照常印字、照常跑完，本喵要是只看「有没有断气」，就会以为这一段是对的。**分工写了几条，就得每条都试出一张纸条喂进去**，看它到底轮到哪一条 —— 光看「跑没跑起来」是查不出来的喵。"
+}

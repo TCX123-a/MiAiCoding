@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-ctor-has-void",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-13",
+  "type": "codefix",
+  "concept": ["构造方法", "void 那一截", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵给图纸画出生那一手的时候，打头**多写了一截 `void`** 喵。翻译官的原话是 `constructor Cat in class Cat cannot be applied to given types`，底下还跟着两行：`required: no arguments`、`found: String` —— 本喵明明喂了一个名字进去，它却说「出生这一手一样东西都不收」。\n\n你帮本喵把这一手改回**真正的出生那一手**。改好之后屏幕上该是：\n\n```text\n{name}\n```",
+  "brokenCodeTemplate": "class Cat {\n    String name;\n\n    void Cat(String name) {\n        this.name = name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        System.out.println(c.name);\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        System.out.println(c.name);\n    }\n}\n",
+  "explanationTemplate": "这一处特别值得看喵：本喵头一句明明写的是 `Cat`，可**多了一截 `void`**，它就从「出生那一手」变成了**一个碰巧叫 `Cat` 的普通招式** —— 身子里的活儿再也不会在出生那一刻跑了。\n\n于是出生的时候，还是 Java 送的那个**空手招式**在管事（不收料、也不干活）：所以 `required: no arguments` 是「出生这一手一样东西都不收」，`found: String` 是「你却喂了一样东西」。\n\n出生那一手的三条规矩再念一遍：\n\n- **名字和图纸一模一样**（图纸叫 `Cat`，它就叫 `Cat`）；\n- **前面光秃秃的**，既没有 `void`，也没有别的类型；\n- **`new Cat(...)` 那一刻它自动跑一遍**，本喵一声都不用喊。\n\n把那个 `void` 拿掉，它才又站回出生的位置上 —— `new Cat(\"{name}\")` 喂进来的名字这才进得去，身子里的 `this.name = name;` 也才有着落喵。"
+}

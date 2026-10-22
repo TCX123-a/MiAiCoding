@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-rec-fib-print",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-11",
+  "type": "codewrite",
+  "concept": ["一次喊两个自己", "斐波那契", "头两位是刹车"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "pick", "values": [5, 8] },
+    "n2": { "kind": "pick", "values": [6, 7] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{n}\n", "sampleText": "{n2}\n" },
+  "stemTemplate": "本喵要一串数，规矩是这样的：**头两个数是 0 和 1，后面每一个数都是前面两个相加** —— 0、1、1、2、3、5、8、13……\n\n请从键盘上读进来一个数 n，然后印出这串数的**前 n 个**，**一行一个**。\n\n请你写一招 `fib`：给它一个「第几个」（从 0 数起），它把那一位上的数算出来交给你。自己咬自己尾巴的写法几乎是照抄上面那句规矩：**头两个直接交出去**（那就是刹车），**后面的交给「前一位」和「前两位」两位自己**。\n\n所以这一招是**一次喊两个自己**的。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一个 n** 喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint fib(int n) {\n    if (n <= 1) {\n        return n;\n    }\n    return fib(n - 1) + fib(n - 2);\n}\n\nint main(void) {\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        printf(\"%d\\n\", fib(i));\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一招的写法几乎是**照抄题目那句话**喵：\n\n```c\nif (n <= 1) {\n    return n;\n}\nreturn fib(n - 1) + fib(n - 2);\n```\n\n**① 刹车为什么能写成 `n <= 1`？** 因为头两位本来就是定死的：第 0 位是 0、第 1 位是 1 —— 而这两个数**恰好就等于 n 自己**。所以「第 0 位交 0、第 1 位交 1」这两条能合并成一句 `return n;`，一个 `<=` 就全盖住了。这种「两条刹车合成一句」的巧合看着聪明，但你要能一眼看穿它管的是哪两位。\n\n**② 一次喊两个自己。** `fib(n - 1) + fib(n - 2)` —— 一位喊两位、两位各喊四位，像树一样岔开。这是允许的，也是这一招好看的地方：题目怎么念，代码就怎么写。\n\n**③ 好看是有代价的。** 第 4 位会被算好几遍、第 3 位更多遍 —— 同一道小题反反复复重算，n 越大越夸张。课文里那个计数器量过：算到第 6 位，招式被喊了 **25 次**。这不是写法错了，是这套写法的**脾气**：省了代码，费了功夫。\n\n**④ `main` 里那个绕圈别搞混。** 从 0 数到 n 减 1 的那个圈只负责「一位一位地问」，问的每一句都是独立的小题；它跟这一招里面的往返是两码事，别把两者搅在一起。\n\n（还有个老规矩别忘了：招式要写在 `main` **前面** —— 翻译官喵从上往下读，没见过这个名字就先用了，它会当场拦下来。）"
+}

@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-style-pinyin-twin",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-21",
+  "type": "codefix",
+  "concept": ["拼音名字认不出谁是谁", "ue 和 ve 一笔之差", "算进一本、印另一本", "起个能读出来的名字"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["4", "3"] },
+    "b": { "kind": "pick", "values": ["6", "2"] },
+    "c": { "kind": "pick", "values": ["5", "7"] },
+    "m": { "kind": "pick", "values": ["2", "3"] }
+  },
+  "stemTemplate": "这份**祖传稿子**的名字全是拼音喵，里头最要命的是这对双胞胎：`yue_fen`（月分）和 `yve_fen` —— 一个 `ue`、一个 `ve`，在屏幕上就差一笔。\n\n算账的时候本喵算得没错，数全进了 `yue_fen` 那本；可印的时候领的是 `yve_fen` —— 屏幕上蹦出来一个 `月分 0 条`。没人拦着，因为它俩在翻译官喵眼里是**两个完全合法的名字**，一个错都不算。\n\n请你把月分印对，顺手把这对一笔之差的拼音名字收拾收拾（本喵看着头晕）。三碗分别是 {a}、{b}、{c} 条，月分就是三碗的合计乘 {m} —— 那行算法是现成的，别动。改好之后该印一行：`月分 X 条`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    int yue_fen = 0;\n    int yve_fen = 0;\n    yue_fen = (fish[0] + fish[1] + fish[2]) * {m};\n    printf(\"月分 %d 条\\n\", yve_fen);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    int month_share = 0;\n    month_share = (fish[0] + fish[1] + fish[2]) * {m};\n    printf(\"月分 %d 条\\n\", month_share);\n    return 0;\n}\n",
+  "explanationTemplate": "拼音名字的病不只是「洋气不洋气」喵，是**认不出来**：`yue_fen` 和 `yve_fen` 隔着一笔，谁是谁得盯半天。翻译官喵更是把它们当**两个完全合法的名字** —— 算进一本、印另一本，零拦截（只有角落里一句小声的 `warning: variable 'yue_fen' set but not used` —— 算出来的数没人领，翻译官喵嘟囔了一句，见没人理就接着干活了），屏幕上安安静静出来一个 `0`。\n\n**课文里的规矩：名字要一眼读懂。** 拼音缩写是重灾区：\n\n- `yue_fen`、`yve_fen` 这种一笔之差 + 拼音的组合，属于「不换掉就永远挨坑」的一类；\n- 正经的起名：**小写字母加下划线**拼出来的**英文词** —— `month_share`、`total`、`fish_count`，词与词下划线分家，读的人张嘴就念得出它管什么。\n\n修法两步：\n\n1. **领对账本**：`printf` 里换成 `yue_fen`，数是在那儿算出来的；\n2. **换名字**：按课文规矩给它一个能读的名字 `month_share`，顺手把那本影子账 `yve_fen` 整个删掉 —— 留着它，下次还会领错。\n\n参考解走的就是这两步；算法那行（合计乘份数）一个字都没改 —— 病在名字，不在算账。"
+}

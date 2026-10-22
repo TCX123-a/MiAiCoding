@@ -1,0 +1,79 @@
+{
+  "lessonId": "cpp-stage1-04",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想把「你好」和「小橘」两截字念出来，中间空出一格。该怎么办？",
+      "options": [
+        "在两截字中间多塞一件货：一对引号里夹一个空格",
+        "两截字并排写就行，管子自己会垫空格",
+        "把两截字合成一行写，管子就会垫空格",
+        "办不到，管子只会紧贴着念"
+      ],
+      "answer": 0,
+      "explanation": "管子很老实：**塞什么念什么，缝要留多宽得自己写进引号里**喵。所以本喵多塞了一件 `\" \"`——一对引号里夹着一个空格，中间就空出一格。这也是为什么两句 `cout` 里那些看着不起眼的空格，都是本喵自己写上去的。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵往投喂口里填了 `小橘 喵` 这一行。两处 `cin >>` 分别叼到了什么？",
+      "options": [
+        "第一口整行，第二口什么都叼不到",
+        "第一口 `小橘`，第二口 `喵`",
+        "第一口 `小橘 喵`，第二口也是 `小橘 喵`",
+        "两口都是空的，因为中间有空格"
+      ],
+      "answer": 1,
+      "explanation": "`cin >>` 读的是「**一样东西**」，不是「一整行」喵。中间那个空格就是它的停止线：第一口叼到空格前头的 `小橘`，第二口从停止线后头接着叼 `喵`。要想连空格一起叼走，得换 `getline`。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵先读了一个整数，紧接着用 `getline` 读一整行，结果那行叼到的是空的。中间该垫上哪一句？",
+      "options": ["`cin.ignore();`", "`cin.clear();`", "`cout << endl;`", "`cin >> name;`"],
+      "answer": 0,
+      "explanation": "读整数时只认「一样东西」，读完 `7` 就把那个**换行**留在了管子里；`getline` 一开口先叼到的正是它，于是叼到一行空的喵。垫一句 `cin.ignore();` 把管子里剩的那个字符丢掉，`getline` 才能叼到真正的下一行。这个坑最坏的地方是——**它不报错**。"
+    },
+    {
+      "id": "q4",
+      "type": "fill",
+      "stem": "想把一整行（连空格一起）叼进来，除了 `cin >>` 还有一件工具，它叫 ____。",
+      "answer": "getline",
+      "explanation": "`getline(cin, 那间屋)` 一直叼到换行为止，中间的空格原样保留喵。它和 `cin >>` 的分工：一个只认「一样东西」、遇空格就停；一个专吃「一整行」。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "stem": "下面这份稿子缺了两个词，补齐之后它应该能跟人打个招呼。横线上的空按顺序填。",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name;\n    cin ____ name;\n    cout << \"你好，\" << name << ____;\n    return 0;\n}\n",
+      "blanks": [
+        { "answer": ">>", "accept": [] },
+        { "answer": "endl", "accept": [] }
+      ],
+      "explanation": "第一个空是两个**往回流**的箭头：`cin` 是把东西叼进屋的那根进水管，箭头朝着名字这边指喵。第二个空是换行暗号 `endl`，让光标跳到下一行——少了它，下次念的东西会紧贴在这句后面。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name = \"小橘\";\n    int fish = 3;\n    cout << name << \" 今天吃了 \" << fish << \" 条小鱼干\" << endl;\n    cout << \"你好\" << \"，\" << name << endl;\n    return 0;\n}\n",
+      "stem": "这段代码会念出什么？把它念出来的内容原样写下来（每句一行）。",
+      "answer": "小橘 今天吃了 3 条小鱼干\n你好，小橘",
+      "accept": ["小橘 今天吃了 3 条小鱼干\n你好，小橘\n"],
+      "explanation": "两行都是往同一根管子里一件件塞货喵：第一行塞了一串字、一个整数、又一串字，按顺序念出来；那些空格全在本喵自己写的引号里。第二行末尾的 `endl` 让光标跳到下一行，所以两句各占一行。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"第一口\" << \"叼到\" << endl;\n    cout << \"第二口\" << \" \" << \"叼到\" << endl;\n    return 0;\n}\n",
+      "stem": "这段代码会念出什么？把它念出来的内容原样写下来（每句一行）。",
+      "answer": "第一口叼到\n第二口 叼到",
+      "accept": ["第一口叼到\n第二口 叼到\n"],
+      "explanation": "第一行两截字紧贴着出来了，中间一点缝都没有；第二行本喵多塞了一件夹着空格的货，于是中间空出一格喵。这一对引号里的空格，就是管子「不会自己垫空格」的证据。"
+    }
+  ]
+}

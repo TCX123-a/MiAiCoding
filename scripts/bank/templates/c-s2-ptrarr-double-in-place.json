@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-ptrarr-double-in-place",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-02",
+  "type": "codewrite",
+  "concept": ["指针传参", "改原件", "指针遍历"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵把 {n} 只碗一字排开，碗里各放着几条小鱼干。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 {n} 个数（就是每只碗里的数）。\n\n然后：\n\n1. 先报一行 `翻倍前`，接着把 {n} 只碗从第 0 只起一只一只报一遍，一只一行，格式 `第 i 只：v`；\n2. 喊**一招**，把这排碗里**每一只**的数都翻一倍。这一招头上收两样：一排碗的牌子、这排碗有多长。它**不叼回任何东西**，活干在**原来那排碗上**；\n3. 再报一行 `翻倍后`，同样把 {n} 只碗从第 0 只起报一遍，格式一样。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nvoid twice(int *p, int n) {\n    for (int i = 0; i < n; i++) {\n        p[i] = p[i] * 2;\n    }\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"翻倍前\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n\n    twice(bowls, n);\n\n    printf(\"翻倍后\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这道题专门练「**递牌子 = 改本人**」喵。\n\n那一招头上写的是 `void twice(int *p, int n)` —— 收的是**牌子**，不是一整排碗。牌子上写着那排碗住在哪儿，所以招式里 `p[i] = p[i] * 2;` 摸到的就是 `main` 里那几只**真碗**，不是副本。招式收工时什么也不用往回带（头上的 `void` 就是「这一招不叼战利品」），因为变化已经落在原来那排碗上了。\n\n三个地方值得多看一眼：\n\n- **`p[i] = p[i] * 2;` 是既读又写**：等号右边先把当前这只碗里的数读出来、翻一倍，等号左边再把这笔新数**写回同一只碗**。写成 `p[i] * 2;` 就白算了 —— 翻译官喵会嘀咕一句 `warning:`，但不会拦你。\n- **长度还是得另喂**。招式只知道「从哪只碗开始」，不知道有几只，所以 `main` 里得把 `n` 一起递进去。\n- **`twice(bowls, n)` 里的 `bowls`** 就是一排碗交出去的样子 —— 交出去的是第 0 只的门牌号，正好配得上牌子的长相。\n\n对照着记：招式要是收「一整只东西」（比如上一课那种一只猫），那改的是搬进来的**副本**，外面一动不动。想改到本人，就把牌子递进去喵。"
+}

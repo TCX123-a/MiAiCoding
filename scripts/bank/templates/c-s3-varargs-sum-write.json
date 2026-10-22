@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-varargs-sum-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-12",
+  "type": "codewrite",
+  "concept": ["清单四步：开挂叼收", "份数跟着账本走", "把一串投喂加成一坨"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["2", "1"] },
+    "b": { "kind": "pick", "values": ["3", "5"] },
+    "c": { "kind": "pick", "values": ["4", "6"] }
+  },
+  "stemTemplate": "请把这招补完喵：投喂表第一位是**账本** `count`，后头那一串就是主人递进来的份（几个不好说）。\n\n它该把后头那一串**一份一份叼出来加起来**，把总和叼回去。四步一步都不能少（开、挂、叼、收），`main` 里那两行别动。\n\n该印两行：第一行 `三只猫的：` 跟着**三份**的总和，第二行 `五只猫的：` 跟着**五份**的总和。",
+  "starterTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nint fish_total(int count, ...) {\n    /* ↓ 在这儿写：把后头那一串一份一份叼出来加起来，把总和叼回去 */\n\n    return 0;\n}\n\nint main(void) {\n    printf(\"三只猫的：%d\\n\", fish_total(3, {a}, {b}, {c}));\n    printf(\"五只猫的：%d\\n\", fish_total(5, {a}, {b}, {c}, {b}, {a}));\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nint fish_total(int count, ...) {\n    va_list list;\n    va_start(list, count);\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum += va_arg(list, int);\n    }\n    va_end(list);\n    return sum;\n}\n\nint main(void) {\n    printf(\"三只猫的：%d\\n\", fish_total(3, {a}, {b}, {c}));\n    printf(\"五只猫的：%d\\n\", fish_total(5, {a}, {b}, {c}, {b}, {a}));\n    return 0;\n}\n",
+  "explanationTemplate": "四步照着课文走一遍就成喵：\n\n1. **开**：`va_list list;` —— 后头那一串记在它名下；\n2. **挂**：`va_start(list, count);` —— 从最后那个有名字的投喂（就是账本 `count`）后面开始记；\n3. **叼**：绕鱼干跑圈里一份一份 `va_arg(list, int)`，叼过的往后挪一位；圈数**跟着账本走**（`i < count`），不能写死；\n4. **收**：`va_end(list);` 收摊，再把总和叼回去。\n\n看那两行喊话：第一回账本写 `3`，就绕三圈；第二回写 `5`，就绕五圈 —— **同一招，来几份收几份**，这就是不限量投喂的窍门喵。\n\n（注意类型：喂进去的都是整数，叼的时候就得说 `int`。说错了它不报错，只是叼回来一个跟原来毫无关系的数。）"
+}

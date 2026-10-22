@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-malloc-missing-include",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-04",
+  "type": "codefix",
+  "concept": ["malloc", "free", "stdlib.h", "头文件", "编译错误"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "step": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵照着课文的样子租了几间仓库，想看看每间里放的是多少喵。可翻译官喵一瞧见就不干了，把整段代码退了回来……\n\n你帮本喵看看它为什么不高兴，把它改好。改好之后，程序应该从第 0 间开始一间一间报出来：`第 0 间：` 后面跟着那一间里放的数，一行一间。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n = {n};\n    int *rooms = (int *)malloc(sizeof(int) * n);\n\n    if (rooms == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        rooms[i] = (i + 1) * {step};\n    }\n\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 间：%d\\n\", i, rooms[i]);\n    }\n\n    free(rooms);\n    rooms = NULL;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int n = {n};\n    int *rooms = (int *)malloc(sizeof(int) * n);\n\n    if (rooms == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        rooms[i] = (i + 1) * {step};\n    }\n\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 间：%d\\n\", i, rooms[i]);\n    }\n\n    free(rooms);\n    rooms = NULL;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵抱怨的原话是 `implicit declaration of function 'malloc'`，翻过来就是「`malloc` 这个名字，本喵没听谁提起过」喵。\n\n问题不在租仓库那一行，而在**最上面请谁出场的那两行**：本喵只把 `stdio.h` 请来了，`stdlib.h` 这位档案管理员压根没到场。可 `malloc` 和 `free` 正是住在它家里的 —— 门都没开，翻译官喵当然不认识这两个名字。\n\n在最上面补一行，把 `stdlib.h` 请出来就好啦。\n\n顺带记住这一条：**报错里点名的那个名字，先去文件开头找一找。** 这回翻译官喵其实把答案写在脸上了 —— 它下面那句 `note` 里，直接把该请谁的名字念了出来喵。"
+}

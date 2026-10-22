@@ -1,0 +1,76 @@
+{
+  "lessonId": "c-stage2-05",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下一段 `struct Cat` 图纸：花括号里两行，一行放名字、一行放食量，末尾还有一个分号。写完这一段，本喵手里有什么喵？",
+      "options": [
+        "一张图纸 —— 它说明「照它生出来的猫该有哪几样」，自己不是一只猫",
+        "一只名叫 `Cat` 的猫，已经可以往里记名字和食量了",
+        "一排能装 20 只猫的碗",
+        "两只碗，一只叫 `name`、一只叫 `fish`"
+      ],
+      "answer": 0,
+      "explanation": "图纸只管说明「一只猫有什么」，它自己不占猫的位置喵 —— 你不能往图纸上写「小橘今天吃了三条」。要真有一只猫，得再写一句 `struct Cat a;` 照着它生。至于名字那一格：`char name[20]` 是**一排**字符碗（一条项链的家），不是一只碗，所以它是一条项链住进了图纸里，不是「20 只猫」喵～"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "图纸的名字叫 `Cat`。本喵想照它生一只名叫 `a` 的猫，下面哪种写法对喵？",
+      "options": [
+        "`struct Cat a;`",
+        "`Cat a;`",
+        "`struct a Cat;`",
+        "`a = struct Cat;`"
+      ],
+      "answer": 0,
+      "explanation": "在 C 里，图纸的名字前面**永远要带上 `struct` 这个记号**喵。写成 `Cat a;` 的话，翻译官喵会报 `unknown type name 'Cat'; use 'struct' keyword to refer to the type` —— 它不光说「不认识这个名字」，还会顺手提醒你把 `struct` 补上。生猫、摆一排猫、写在招式头上，处处都要带着它喵～"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵生了一只猫 `a`，想给它起名字叫「小橘」。下面哪一句能成喵？",
+      "options": [
+        "`strcpy(a.name, \"小橘\");`",
+        "`a.name = \"小橘\";`",
+        "`a.name = '小橘';`",
+        "`a = \"小橘\";`"
+      ],
+      "answer": 0,
+      "explanation": "名字那一格是**一排字符碗**（一条项链的家），不是一只普通的碗喵。上一课讲过：一排碗不能整个换掉，只能一颗一颗搬进去 —— 而 `strcpy` 正是会干这件事的那位档案管理员，它住在 `string.h` 家，所以文件头上要请它出场。`a.name = \"小橘\";` 会被拦下；`'小橘'` 那种单引号写法只能夹**一颗**珠子，也装不下一个名字。出生的时候用花括号 `{\"小橘\", 3}` 一次填好倒是允许的，那是另一种写法喵～"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[2] = {\n        {\"小橘\", 3},\n        {\"狸花\", 5}\n    };\n    int total = 0;\n\n    for (int i = 0; i < 2; i++) {\n        total = total + cats[i].____;\n    }\n    printf(\"%d\\n\", total);\n    return 0;\n}",
+      "stem": "本喵摆了一排两只猫，想把两只猫的食量加起来。空里该填哪一样成员喵？",
+      "blanks": [
+        { "answer": "fish" }
+      ],
+      "explanation": "填 `fish`喵 —— 那只小碗装的是「今天吃了几条」，正是要加的东西。`cats[i].fish` 读作「第 `i` 只猫的食量」：先报编号拿到猫，再用点号进它那一格。加起来是 3 + 5 = 8，所以印出 `8`。要是填了 `name`，那加的就是一排碗的位置了，跟小鱼干没关系，而且也会被翻译官喵拦下喵～"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"小橘\", 3};\n    struct Cat b;\n\n    b = a;\n    b.fish = 99;\n    printf(\"%d\\n\", a.fish);\n    printf(\"%d\\n\", b.fish);\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？",
+      "answer": "3\n99",
+      "accept": ["3\n99\n"],
+      "explanation": "`b = a;` 把 `a` 这只猫身上**每一格**都抄进了 `b` —— 名字也一颗一颗珠子搬了过去喵。所以 `b` 是独立的一只猫，改它的食量只改它自己：`b.fish` 印出 `99`，而 `a.fish` 一动不动，还是 `3`。这正是本课说的「整只猫可以整个搬」，也是它比一排碗方便的地方 —— 换成两排碗写 `a = b;`，翻译官喵当场就拦下了喵～"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[3] = {\n        {\"小橘\", 2},\n        {\"狸花\", 4},\n        {\"大肥鱼\", 6}\n    };\n\n    printf(\"%s\\n\", cats[2].name);\n    printf(\"%d\\n\", cats[0].fish + cats[1].fish);\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？",
+      "answer": "大肥鱼\n6",
+      "accept": ["大肥鱼\n6\n"],
+      "explanation": "编号从 0 开始，所以 `cats[2]` 是**第三只猫**，它的名字是 `大肥鱼`，用 `%s` 印一整条项链喵。第二行把第一只猫的 `2` 和第二只猫的 `4` 加起来，印出 `6` —— 取用的时候是「先报编号拿到猫，再用点号进那一格」，两层一叠就是 `cats[i].fish` 喵～"
+    }
+  ]
+}

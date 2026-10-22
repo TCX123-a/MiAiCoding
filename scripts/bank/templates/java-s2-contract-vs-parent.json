@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-contract-vs-parent",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-04",
+  "type": "codefix",
+  "concept": ["与猫的约定", "implements 与 extends 的分工", "约定不是长辈", "编译错误"],
+  "instances": 2,
+  "params": {
+    "robot": { "kind": "pick", "values": ["铁喵", "阿铁"] },
+    "cry": { "kind": "pick", "values": ["嘀嘀", "哔啵"] }
+  },
+  "stemTemplate": "这次本喵写了张新图纸，想让院子里的{robot}照着约定补一手 —— 结果翻译官喵连第一道门都没让它过，报错里提到「这儿不该有这个东西」。\n\n修好之后，程序该印出这一行：\n\n```text\n{robot}：{cry}\n```\n\n那份约定本喵一个字都不想动，问题只出在**图纸自己开头那一句**喵。",
+  "brokenCodeTemplate": "interface Speaker {\n    void speak();\n}\n\nclass Robot extends Speaker {\n    String name;\n\n    Robot(String name) {\n        this.name = name;\n    }\n\n    public void speak() {\n        System.out.println(name + \"：{cry}\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Speaker s = new Robot(\"{robot}\");\n        s.speak();\n    }\n}\n",
+  "referenceFixTemplate": "interface Speaker {\n    void speak();\n}\n\nclass Robot implements Speaker {\n    String name;\n\n    Robot(String name) {\n        this.name = name;\n    }\n\n    public void speak() {\n        System.out.println(name + \"：{cry}\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Speaker s = new Robot(\"{robot}\");\n        s.speak();\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 **`no interface expected here`**，直译过来是「这儿不该出现一份约定」。\n\n这句话的位置很值钱：它指的不是约定那半边，也不是补的那一手，而是**图纸开头那一句**。一读就明白 —— 本喵在那句里写的是 `extends`，而 `extends` 这个词是要用来接**长辈**的（上一课那张只画了一半的图纸，或者更早那些图纸）。约定不是长辈：它不在家谱上，也不给谁传家当，它只是一份**写满了名头的清单**。拿着 `extends` 去接一份清单，翻译官喵当然要问一句「这儿怎么冒出个约定来喵？」\n\n记住这个分工：`extends` 后面跟**长辈**，`implements` 后面跟**约定**（可以跟好几份，用逗号隔开）；两边都有的时候，先 `extends` 后 `implements`，前后不能颠倒。\n\n改法就一个词：把 `extends` 换成 `implements`。补的那一手一个字都不用动 —— 它本来就没写错喵。"
+}

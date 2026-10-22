@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-sqlite-no-commit",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-08",
+  "type": "codefix",
+  "concept": ["sqlite3.connect", "commit", "另开一次连接就读不到"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "thing": { "kind": "pick", "values": ["小鱼干", "猫粮", "毛线球"] }
+  },
+  "stemTemplate": "本喵的摊子每天要干两件事喵：先把今天进的货**记进账本**，再把账**念一遍**。记账和念账是**各开各的账本** —— 记账那一段写完就把账本合上，念账那一段再另开一次。\n\n下面这段程序**跑得起来、一个字都不报错**，可它念出来的是一本**空账本** —— 本喵明明刚记完啊！\n\n请你把它修好。修好之后，它应该先念一行 `账本里有 N 笔喵`（N 是账本里**真正**的笔数），再**按条数从小到大**一笔一行念成 `名字 N 条`。\n\n⚠️ 念账那一段的读法是好的，不用动它。记账那一段里**只差一件事**，别把整段推倒重来喵。",
+  "brokenCodeTemplate": "import sqlite3\n\n\ndef 记账():\n    conn = sqlite3.connect(\"账本.db\")\n    conn.execute(\"CREATE TABLE 账本 (名字 TEXT, 条数 INTEGER)\")\n    for i in range(1, {n} + 1):\n        conn.execute(\"INSERT INTO 账本 (名字, 条数) VALUES (?, ?)\", (\"{thing}\", i))\n    conn.close()\n\n\ndef 念账():\n    conn = sqlite3.connect(\"账本.db\")\n    条条 = conn.execute(\"SELECT 条数 FROM 账本 ORDER BY 条数\").fetchall()\n    print(\"账本里有 \" + str(len(条条)) + \" 笔喵\")\n    for 一条 in 条条:\n        print(\"{thing} \" + str(一条[0]) + \" 条\")\n    conn.close()\n\n\n记账()\n念账()\n",
+  "referenceFixTemplate": "import sqlite3\n\n\ndef 记账():\n    conn = sqlite3.connect(\"账本.db\")\n    conn.execute(\"CREATE TABLE 账本 (名字 TEXT, 条数 INTEGER)\")\n    for i in range(1, {n} + 1):\n        conn.execute(\"INSERT INTO 账本 (名字, 条数) VALUES (?, ?)\", (\"{thing}\", i))\n    conn.commit()\n    conn.close()\n\n\ndef 念账():\n    conn = sqlite3.connect(\"账本.db\")\n    条条 = conn.execute(\"SELECT 条数 FROM 账本 ORDER BY 条数\").fetchall()\n    print(\"账本里有 \" + str(len(条条)) + \" 笔喵\")\n    for 一条 in 条条:\n        print(\"{thing} \" + str(一条[0]) + \" 条\")\n    conn.close()\n\n\n记账()\n念账()\n",
+  "explanationTemplate": "**`conn.commit()` 就是那个「盖上戳、这就算数了」的动作喵。**\n\nsqlite3 收下你的 `INSERT` 之后，**并不马上**写进账本 —— 它先把这几笔**揣在自己兜里**，等你点头。点头就是 `conn.commit()`。你点头之前，这几笔只有**经手的那一次连接**自己看得见：本喵试过，同一个连接里马上 `SELECT`，是查得到的；可你一旦把账本合上（`conn.close()`）再另开一次，那几笔就**没了** —— 不是报错，是**安安静静地没写进去**。\n\n这段程序里记账和念账**各开各的账本**，所以记账那一段不点头，念账那一段看到的就是空账本。程序不摔、不响，只是念出来的数目不对 —— 这正是最难查的那一种毛病。\n\n⚠️ 不止 `close()`：就算程序跑到头自己结束，没点头的账一样会丢。所以**记完账、合上账本之前，先点个头**。\n\n⚠️ 反过来也要知道：`SELECT` 不用点头，它本来就没动过账本。只有 `INSERT` / `UPDATE` / `DELETE` 这些**改了账本**的才要点。"
+}

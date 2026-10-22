@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage1-13",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想从一串只有 4 颗小鱼干的东西里拿第 10 颗。这件事是什么时候翻的车？",
+      "options": [
+        "运行之前 —— 编译器一看就知道不对，根本不让它运行",
+        "开演之后 —— 写的时候一点错都没有，真跑到那一句才翻",
+        "永远不翻，拿到了一个空碗",
+        "编译器会先警告一句，然后才翻"
+      ],
+      "answer": 1,
+      "explanation": "取第 10 颗这种写法**开演的时候完全合法** —— 翻译官喵一个字都不会说。只有真跑到那一句、发现这一串根本没有第 10 颗，才会当场扔一辆车出来。前面十二课那些「分号忘了、名字写错了」是开演前就拦下的，这一课讲的是**开演之后**才翻的那种喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵铺了一层 `catch (int e)`，可扔出来的是一串字 `\"猫粮碗打翻了\"`。会怎样？",
+      "options": [
+        "还是会被接住，一串字会被硬塞进 `e` 里变成数字",
+        "会被接住，但 `e` 是空的",
+        "接不住 —— 牌子对不上，车就从手边过去了",
+        "编译器会把车改成数字再交给 `e`"
+      ],
+      "answer": 2,
+      "explanation": "`catch` 括号里写的是「**本喵接什么牌子的车**」—— 来的是数字就接数字，来的是一串字就接一串字，**牌子对不上就是接不住**。接不住的车会从手边过去，要是后面还铺了兜底的 `catch (...)`，它就落到兜底那儿；要是外面也没猫接，机器就地停下喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "「什么都接」的那层软垫 `catch (...)`，本喵把它**写在别的 `catch` 前面**，会怎样？",
+      "options": [
+        "一样管用，谁先写谁先挑",
+        "一样管用，兜底的优先接",
+        "写在前面会把后面那些全抢光 —— 它是最后一道，规矩是排在最后",
+        "编译器会报错，不让这么写"
+      ],
+      "answer": 2,
+      "explanation": "`catch` 是**从上往下挑第一个对得上的**，一个车只被一层接走。`catch (...)` 什么牌子都认，写在前面就会把所有车都抢到自己手里，后面那些写得再仔细也永远轮不到。所以它的位置是固定的：**最后一道软垫**喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "stem": "下面这段要铺一张软垫、扔一辆车、再把它接住。把缺的两处补上：",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    ____ {\n        throw 42;\n    } ____ (int e) {\n        cout << \"接住了 \" << e << endl;\n    }\n    return 0;\n}",
+      "blanks": [
+        { "answer": "try" },
+        { "answer": "catch" }
+      ],
+      "explanation": "第一个空填 `try` —— 铺软垫：这一对大括号里的话要盯着跑。第二个空填 `catch` —— 接车：括号里写着「接什么样的车」（这里是 `int`，也就是接数字那种）。填好之后跑起来，`throw` 扔出 `42`，第二处正好接住它，印出来是 `接住了 42` 喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    try {\n        int n = stoi(\"喵\");\n        cout << n << endl;\n    } catch (const invalid_argument& e) {\n        cout << \"这不是数字喵：\" << e.what() << endl;\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "这不是数字喵：stoi",
+      "accept": [],
+      "explanation": "`stoi` 要干的是把一串小鱼干读成一个整数，可 `\"喵\"` 根本不是数字，于是它自己扔出一辆挂着 `invalid_argument` 牌子的车（意思是「给的料不对」）。软垫正好接这一种，`e.what()` 是车上贴的那句说明。所以 `cout << n` 那一句一个字都没印出来，屏幕上是这一行喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <stdexcept>\nusing namespace std;\n\nint countFish(int n) {\n    if (n < 0) {\n        throw runtime_error(\"鱼干数不能是负数喵\");\n    }\n    return n * 2;\n}\n\nint main() {\n    try {\n        cout << countFish(3) << endl;\n        cout << countFish(-1) << endl;\n        cout << \"这一句不会印出来\" << endl;\n    } catch (const runtime_error& e) {\n        cout << \"接住了：\" << e.what() << endl;\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "6\n接住了：鱼干数不能是负数喵",
+      "accept": [],
+      "explanation": "第一次喊 `countFish(3)`，`3` 不是负数，招式照常把 `6` 叼回来印出第一行。第二次给了 `-1`，招式里当场 `throw` 一辆挂着 `runtime_error` 牌子、贴着说明的车 —— `try` 里剩下的话（也就是那第三句 `cout`）**全部作废**，直接跳到接车的软垫，印出车上那句话。注意招式里一个 `try` 都没有：**扔车的在招式里，接车的在喊它的那一层**喵。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-overload-wrong-arg-type",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-10",
+  "type": "codefix",
+  "concept": ["重载", "投喂口", "类型对不上", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "n": { "kind": "int", "min": 2, "max": 6 }
+  },
+  "stemTemplate": "本喵画了一手报账的活儿喵，投喂口是这样：\n\n```java\npublic static void report(String name, int fish)\n```\n\n**先喂名字、再喂鱼干数**，顺序是定死的。可 `main` 里那一声本喵喂反了，翻译官喵压根没收这张图纸，红字大意是「有一格料，本喵塞进去的东西跟它要的对不上」。\n\n你帮本喵把喊那一句改对 —— 那一手活儿本身没毛病，别去动它。改好之后，屏幕上该印出这一行：\n\n```text\n{name} 今天吃了 {n} 条小鱼干喵\n```",
+  "brokenCodeTemplate": "public class Main {\n    public static void report(String name, int fish) {\n        System.out.println(name + \" 今天吃了 \" + fish + \" 条小鱼干喵\");\n    }\n\n    public static void main(String[] args) {\n        report({n}, \"{name}\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void report(String name, int fish) {\n        System.out.println(name + \" 今天吃了 \" + fish + \" 条小鱼干喵\");\n    }\n\n    public static void main(String[] args) {\n        report(\"{name}\", {n});\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `incompatible types: int cannot be converted to String` —— 「这一格要一串字，本喵塞了个数进去，这两样换不了喵。」\n\n电脑挑招的时候，**个数和类型**两把尺子是一起量的。这一招的投喂口是 `(String name, int fish)`：第一格要**一串字**、第二格要**一个数**。本喵喂的是 `report({n}, \"{name}\")` —— 第一格给了个数、第二格给了一串字，**两格全对不上**，所以它第一格就拦下了。\n\n这一处的红字跟上一节那个 `already defined` 长得不一样，值得比一比：这一招只有**一份**，没有同名的兄弟可选，所以翻译官不说「挑不出招」，它直接指着那一格说「这一格类型不对」。改法就是把两样料换回原来的位置：`report(\"{name}\", {n});`\n\n（它还跟了一句 `Note: Some messages have been simplified` —— 那是说「想听长篇大论就加 `-Xdiags:verbose` 再编译一次」，不管它也行喵。）"
+}

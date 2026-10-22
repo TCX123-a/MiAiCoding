@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-proj-two-baskets",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-24",
+  "type": "codewrite",
+  "concept": ["要分几路记就开几个筐", "按奇偶往两边丢", "入口只管喊、筐只管记"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要写一页纸的小程序，把投喂进来的数分进两只小筐：\n\n1. 一张图纸 `Main`（顶着 `public`、跟文件同名），入口写在里面；\n2. 一张图纸 `小筐`（同一页，不带 `public`）：里面有一格从 0 开始的数，一招 `收一件()` 把它加一，一招 `报件数()` 把格里的数交出来；\n3. 入口里：先读第一行的 `n`，再一行一个、接着读进来 `n` 个数；**每读到一个**：是偶数就丢进左筐，是奇数就丢进右筐；\n4. 最后印两行：先 `左筐 X 件`，再 `右筐 Y 件`。\n\n比如投喂这几行：\n\n```text\n{sampleInput}\n```\n\n程序就叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分的时候喂的是另一组数喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n\nclass 小筐 {\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        小筐 左筐 = new 小筐();\n        小筐 右筐 = new 小筐();\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            if (x % 2 == 0) {\n                左筐.收一件();\n            } else {\n                右筐.收一件();\n            }\n        }\n        System.out.println(\"左筐 \" + 左筐.报件数() + \" 件\");\n        System.out.println(\"右筐 \" + 右筐.报件数() + \" 件\");\n    }\n}\n\nclass 小筐 {\n    int 件数 = 0;\n\n    void 收一件() {\n        件数 = 件数 + 1;\n    }\n\n    int 报件数() {\n        return 件数;\n    }\n}\n",
+  "explanationTemplate": "**一、开了两本、各记各的**\n\n`new 小筐()` 生一只新筐，就配一格全新的数——左筐右筐互不打扰，最后各报各的件数。这是「图纸一张、筐可以很多只」的用法：要同时维护几路互不相干的数，就给每路开一只自己的筐，别挤在同一格里。\n\n**二、偶数奇数怎么分**\n\n`x % 2 == 0` 就是「除以 2 余 0」的意思：每读到一个数，先看它对 2 除完余几——余 0 往左、否则往右。看眼色行事本来就两种结果，正好两筐承接。\n\n**三、入口只当调度**\n\n入口里本喵没有亲手记任何数：读、分、报，全交给两只筐自己的招式，入口只负责「读到谁、丢给谁」。工程大起来以后这会是常态：入口短、分工清；哪一步算错了，顺着喊的那一句就能找到负责的图纸。\n\n**四、一句话记住**\n\n要几路各算各的，就开几只筐；入口负责喊，筐负责记。"
+}

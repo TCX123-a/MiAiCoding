@@ -1,0 +1,414 @@
+{
+  "lessonId": "java-stage3-12",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-reflect-ctor-signature-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想照图纸接生一只真猫出来。图纸上那间产房收的是**一串字**，可本喵报错了它收的是哪种，**一跑就挨了一句『找不到』**喵。\n\n你帮本喵把这处报错的地方改好 —— 别的都别动。改好之后，程序该印出**一行**：`接生出来这只叫：` 后面跟着本喵投喂进去的那串字。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        String name;\n\n        Cat(String name) {\n            this.name = name;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor(int.class);\n        Cat 猫 = (Cat) 产房.newInstance(\"Kitty\");\n        System.out.println(\"接生出来这只叫：\" + 猫.name);\n    }\n}\n",
+      "referenceFix": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        String name;\n\n        Cat(String name) {\n            this.name = name;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor(String.class);\n        Cat 猫 = (Cat) 产房.newInstance(\"Kitty\");\n        System.out.println(\"接生出来这只叫：\" + 猫.name);\n    }\n}\n",
+      "expectedOutput": "接生出来这只叫：Kitty",
+      "stdin": null,
+      "explanation": "这一摔的原话是：\n\n```text\nException in thread \"main\" java.lang.NoSuchMethodException: Main$Cat.<init>(int)\n```\n\n念法是：「**本喵照着名字在图纸上找一圈，没找到你说的那间。**」后半句 `Main$Cat.<init>(int)` 是它在把本喵报的名字念一遍 —— 图纸上那间产房明明收的是 `String`，本喵报的却是 `int`。\n\n找产房时括号里报的**不是值，是样子的名字**：收一串字就报 `String.class`，收整数就报 `int.class`。报几样、报什么，都得跟图纸上那间**一模一样**；**它不会替本喵猜「大概想说的是另一间吧」**，找不到就当场翻脸。\n\n改好之后跑出来是：\n\n```text\n接生出来这只叫：Kitty\n```\n\n顺带记一句：这一摔是**跑到那一句**才发生的 —— 报的名字写在括号里，翻译官喵在翻译那一步看不见它，所以这段代码能顺利翻译过去，只在真跑到那一步时挨骂喵。",
+      "templateId": "java-s3-reflect-ctor-signature",
+      "params": {
+        "f": "name",
+        "v": "Kitty"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:39.323Z",
+        "hash": "bd9b3239211e0890"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-ctor-signature-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想照图纸接生一只真猫出来。图纸上那间产房收的是**一串字**，可本喵报错了它收的是哪种，**一跑就挨了一句『找不到』**喵。\n\n你帮本喵把这处报错的地方改好 —— 别的都别动。改好之后，程序该印出**一行**：`接生出来这只叫：` 后面跟着本喵投喂进去的那串字。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        String nickname;\n\n        Cat(String nickname) {\n            this.nickname = nickname;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor(int.class);\n        Cat 猫 = (Cat) 产房.newInstance(\"Mimi\");\n        System.out.println(\"接生出来这只叫：\" + 猫.nickname);\n    }\n}\n",
+      "referenceFix": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        String nickname;\n\n        Cat(String nickname) {\n            this.nickname = nickname;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor(String.class);\n        Cat 猫 = (Cat) 产房.newInstance(\"Mimi\");\n        System.out.println(\"接生出来这只叫：\" + 猫.nickname);\n    }\n}\n",
+      "expectedOutput": "接生出来这只叫：Mimi",
+      "stdin": null,
+      "explanation": "这一摔的原话是：\n\n```text\nException in thread \"main\" java.lang.NoSuchMethodException: Main$Cat.<init>(int)\n```\n\n念法是：「**本喵照着名字在图纸上找一圈，没找到你说的那间。**」后半句 `Main$Cat.<init>(int)` 是它在把本喵报的名字念一遍 —— 图纸上那间产房明明收的是 `String`，本喵报的却是 `int`。\n\n找产房时括号里报的**不是值，是样子的名字**：收一串字就报 `String.class`，收整数就报 `int.class`。报几样、报什么，都得跟图纸上那间**一模一样**；**它不会替本喵猜「大概想说的是另一间吧」**，找不到就当场翻脸。\n\n改好之后跑出来是：\n\n```text\n接生出来这只叫：Mimi\n```\n\n顺带记一句：这一摔是**跑到那一句**才发生的 —— 报的名字写在括号里，翻译官喵在翻译那一步看不见它，所以这段代码能顺利翻译过去，只在真跑到那一步时挨骂喵。",
+      "templateId": "java-s3-reflect-ctor-signature",
+      "params": {
+        "f": "nickname",
+        "v": "Mimi"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:40.917Z",
+        "hash": "147edb004ef3bd63"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-field-table-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上只有一张图纸（就是代码里那张 `小猫`），要列一张**骨头表**喵。\n\n要求是这样的：\n\n1. 把这张图纸上**自己写的**骨头一根不落列出来，每行写 `种类 名字`（中间一个空格，种类就是 `String` / `int` / `boolean` 那种短名字）；\n2. **顺序不能靠光片** —— 把这些行塞进一个柜子，整行交给 `Collections.sort` 排一遍再印；\n3. 最后再印一行 `一共 N 根骨头`（N 是表上骨头的根数）。\n\n填 `Main` 里空着的那一段就行，**图纸本身一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 名字;\n        int 小鱼干;\n        boolean 睡着;\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 名字;\n        int 小鱼干;\n        boolean 睡着;\n    }\n\n    public static void main(String[] args) {\n        List<String> 骨头们 = new ArrayList<>();\n        for (Field 骨头 : 小猫.class.getDeclaredFields()) {\n            骨头们.add(骨头.getType().getSimpleName() + \" \" + 骨头.getName());\n        }\n        Collections.sort(骨头们);\n        for (String 一行 : 骨头们) {\n            System.out.println(一行);\n        }\n        System.out.println(\"一共 \" + 骨头们.size() + \" 根骨头\");\n    }\n}\n",
+      "expectedOutput": "String 名字\nboolean 睡着\nint 小鱼干\n一共 3 根骨头",
+      "stdin": null,
+      "explanation": "这一题把第三节那三个动作原样走了一遍喵。\n\n**一、光片从哪儿来。** 手上只有图纸，所以用 `小猫.class` 那张拿法（另一种 `橘.getClass()` 得先有真猫）。\n\n**二、一柜子骨头牌。** `getDeclaredFields()` 交回来的是一柜子 `Field`，一根骨头一张牌。牌上两样东西有用：`getType().getSimpleName()` 问「它是哪一种」，`getName()` 问「它叫什么」。拼成一行就是 `String 名字` 这个样子。\n\n**三、为什么要先排排坐。** 光片上的骨头顺序**说了不算**（第三节里提过），所以顺序得自己造：把这些行塞进柜子，整行交给 `Collections.sort` 排一遍。**排的是整行**，所以先按种类、同种类再按名字 —— 这一步不做，表上三行的先后就说不准，判分那边也对不上。\n\n**四、根数从柜子里数。** 最后那行 `一共 N 根骨头` 里的 N 用 `骨头们.size()` 拿，别写死：图纸上加一根骨头，这行数字自己就跟着变。\n\n**五、自己写的才在表上。** 这一条第三节讲过：`getDeclaredFields()` 只列这张图纸自己写的骨头，从上一代传下来的那些不在里面 —— 所以这道题里表上正好就是图纸上写着的那三根喵。",
+      "templateId": "java-s3-reflect-field-table",
+      "params": {
+        "f1": "名字",
+        "f2": "小鱼干",
+        "f3": "睡着"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:49.113Z",
+        "hash": "7a7c28579d3efd94"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-field-table-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上只有一张图纸（就是代码里那张 `小猫`），要列一张**骨头表**喵。\n\n要求是这样的：\n\n1. 把这张图纸上**自己写的**骨头一根不落列出来，每行写 `种类 名字`（中间一个空格，种类就是 `String` / `int` / `boolean` 那种短名字）；\n2. **顺序不能靠光片** —— 把这些行塞进一个柜子，整行交给 `Collections.sort` 排一遍再印；\n3. 最后再印一行 `一共 N 根骨头`（N 是表上骨头的根数）。\n\n填 `Main` 里空着的那一段就行，**图纸本身一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 名字;\n        int 小鱼干;\n        boolean 饿着;\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 名字;\n        int 小鱼干;\n        boolean 饿着;\n    }\n\n    public static void main(String[] args) {\n        List<String> 骨头们 = new ArrayList<>();\n        for (Field 骨头 : 小猫.class.getDeclaredFields()) {\n            骨头们.add(骨头.getType().getSimpleName() + \" \" + 骨头.getName());\n        }\n        Collections.sort(骨头们);\n        for (String 一行 : 骨头们) {\n            System.out.println(一行);\n        }\n        System.out.println(\"一共 \" + 骨头们.size() + \" 根骨头\");\n    }\n}\n",
+      "expectedOutput": "String 名字\nboolean 饿着\nint 小鱼干\n一共 3 根骨头",
+      "stdin": null,
+      "explanation": "这一题把第三节那三个动作原样走了一遍喵。\n\n**一、光片从哪儿来。** 手上只有图纸，所以用 `小猫.class` 那张拿法（另一种 `橘.getClass()` 得先有真猫）。\n\n**二、一柜子骨头牌。** `getDeclaredFields()` 交回来的是一柜子 `Field`，一根骨头一张牌。牌上两样东西有用：`getType().getSimpleName()` 问「它是哪一种」，`getName()` 问「它叫什么」。拼成一行就是 `String 名字` 这个样子。\n\n**三、为什么要先排排坐。** 光片上的骨头顺序**说了不算**（第三节里提过），所以顺序得自己造：把这些行塞进柜子，整行交给 `Collections.sort` 排一遍。**排的是整行**，所以先按种类、同种类再按名字 —— 这一步不做，表上三行的先后就说不准，判分那边也对不上。\n\n**四、根数从柜子里数。** 最后那行 `一共 N 根骨头` 里的 N 用 `骨头们.size()` 拿，别写死：图纸上加一根骨头，这行数字自己就跟着变。\n\n**五、自己写的才在表上。** 这一条第三节讲过：`getDeclaredFields()` 只列这张图纸自己写的骨头，从上一代传下来的那些不在里面 —— 所以这道题里表上正好就是图纸上写着的那三根喵。",
+      "templateId": "java-s3-reflect-field-table",
+      "params": {
+        "f1": "名字",
+        "f2": "小鱼干",
+        "f3": "饿着"
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:38.238Z",
+        "hash": "5b61ada3cc4be07c"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-field-table-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上只有一张图纸（就是代码里那张 `小猫`），要列一张**骨头表**喵。\n\n要求是这样的：\n\n1. 把这张图纸上**自己写的**骨头一根不落列出来，每行写 `种类 名字`（中间一个空格，种类就是 `String` / `int` / `boolean` 那种短名字）；\n2. **顺序不能靠光片** —— 把这些行塞进一个柜子，整行交给 `Collections.sort` 排一遍再印；\n3. 最后再印一行 `一共 N 根骨头`（N 是表上骨头的根数）。\n\n填 `Main` 里空着的那一段就行，**图纸本身一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 名字;\n        int 猫粮数;\n        boolean 饿着;\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 名字;\n        int 猫粮数;\n        boolean 饿着;\n    }\n\n    public static void main(String[] args) {\n        List<String> 骨头们 = new ArrayList<>();\n        for (Field 骨头 : 小猫.class.getDeclaredFields()) {\n            骨头们.add(骨头.getType().getSimpleName() + \" \" + 骨头.getName());\n        }\n        Collections.sort(骨头们);\n        for (String 一行 : 骨头们) {\n            System.out.println(一行);\n        }\n        System.out.println(\"一共 \" + 骨头们.size() + \" 根骨头\");\n    }\n}\n",
+      "expectedOutput": "String 名字\nboolean 饿着\nint 猫粮数\n一共 3 根骨头",
+      "stdin": null,
+      "explanation": "这一题把第三节那三个动作原样走了一遍喵。\n\n**一、光片从哪儿来。** 手上只有图纸，所以用 `小猫.class` 那张拿法（另一种 `橘.getClass()` 得先有真猫）。\n\n**二、一柜子骨头牌。** `getDeclaredFields()` 交回来的是一柜子 `Field`，一根骨头一张牌。牌上两样东西有用：`getType().getSimpleName()` 问「它是哪一种」，`getName()` 问「它叫什么」。拼成一行就是 `String 名字` 这个样子。\n\n**三、为什么要先排排坐。** 光片上的骨头顺序**说了不算**（第三节里提过），所以顺序得自己造：把这些行塞进柜子，整行交给 `Collections.sort` 排一遍。**排的是整行**，所以先按种类、同种类再按名字 —— 这一步不做，表上三行的先后就说不准，判分那边也对不上。\n\n**四、根数从柜子里数。** 最后那行 `一共 N 根骨头` 里的 N 用 `骨头们.size()` 拿，别写死：图纸上加一根骨头，这行数字自己就跟着变。\n\n**五、自己写的才在表上。** 这一条第三节讲过：`getDeclaredFields()` 只列这张图纸自己写的骨头，从上一代传下来的那些不在里面 —— 所以这道题里表上正好就是图纸上写着的那三根喵。",
+      "templateId": "java-s3-reflect-field-table",
+      "params": {
+        "f1": "名字",
+        "f2": "猫粮数",
+        "f3": "饿着"
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:40.569Z",
+        "hash": "481064bcfd8dfe8b"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-field-table-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上只有一张图纸（就是代码里那张 `小猫`），要列一张**骨头表**喵。\n\n要求是这样的：\n\n1. 把这张图纸上**自己写的**骨头一根不落列出来，每行写 `种类 名字`（中间一个空格，种类就是 `String` / `int` / `boolean` 那种短名字）；\n2. **顺序不能靠光片** —— 把这些行塞进一个柜子，整行交给 `Collections.sort` 排一遍再印；\n3. 最后再印一行 `一共 N 根骨头`（N 是表上骨头的根数）。\n\n填 `Main` 里空着的那一段就行，**图纸本身一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 绰号;\n        int 小鱼干;\n        boolean 睡着;\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 绰号;\n        int 小鱼干;\n        boolean 睡着;\n    }\n\n    public static void main(String[] args) {\n        List<String> 骨头们 = new ArrayList<>();\n        for (Field 骨头 : 小猫.class.getDeclaredFields()) {\n            骨头们.add(骨头.getType().getSimpleName() + \" \" + 骨头.getName());\n        }\n        Collections.sort(骨头们);\n        for (String 一行 : 骨头们) {\n            System.out.println(一行);\n        }\n        System.out.println(\"一共 \" + 骨头们.size() + \" 根骨头\");\n    }\n}\n",
+      "expectedOutput": "String 绰号\nboolean 睡着\nint 小鱼干\n一共 3 根骨头",
+      "stdin": null,
+      "explanation": "这一题把第三节那三个动作原样走了一遍喵。\n\n**一、光片从哪儿来。** 手上只有图纸，所以用 `小猫.class` 那张拿法（另一种 `橘.getClass()` 得先有真猫）。\n\n**二、一柜子骨头牌。** `getDeclaredFields()` 交回来的是一柜子 `Field`，一根骨头一张牌。牌上两样东西有用：`getType().getSimpleName()` 问「它是哪一种」，`getName()` 问「它叫什么」。拼成一行就是 `String 名字` 这个样子。\n\n**三、为什么要先排排坐。** 光片上的骨头顺序**说了不算**（第三节里提过），所以顺序得自己造：把这些行塞进柜子，整行交给 `Collections.sort` 排一遍。**排的是整行**，所以先按种类、同种类再按名字 —— 这一步不做，表上三行的先后就说不准，判分那边也对不上。\n\n**四、根数从柜子里数。** 最后那行 `一共 N 根骨头` 里的 N 用 `骨头们.size()` 拿，别写死：图纸上加一根骨头，这行数字自己就跟着变。\n\n**五、自己写的才在表上。** 这一条第三节讲过：`getDeclaredFields()` 只列这张图纸自己写的骨头，从上一代传下来的那些不在里面 —— 所以这道题里表上正好就是图纸上写着的那三根喵。",
+      "templateId": "java-s3-reflect-field-table",
+      "params": {
+        "f1": "绰号",
+        "f2": "小鱼干",
+        "f3": "睡着"
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:42.851Z",
+        "hash": "c632e4dfd13f2a8d"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-field-table-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上只有一张图纸（就是代码里那张 `小猫`），要列一张**骨头表**喵。\n\n要求是这样的：\n\n1. 把这张图纸上**自己写的**骨头一根不落列出来，每行写 `种类 名字`（中间一个空格，种类就是 `String` / `int` / `boolean` 那种短名字）；\n2. **顺序不能靠光片** —— 把这些行塞进一个柜子，整行交给 `Collections.sort` 排一遍再印；\n3. 最后再印一行 `一共 N 根骨头`（N 是表上骨头的根数）。\n\n填 `Main` 里空着的那一段就行，**图纸本身一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 绰号;\n        int 猫粮数;\n        boolean 睡着;\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 绰号;\n        int 猫粮数;\n        boolean 睡着;\n    }\n\n    public static void main(String[] args) {\n        List<String> 骨头们 = new ArrayList<>();\n        for (Field 骨头 : 小猫.class.getDeclaredFields()) {\n            骨头们.add(骨头.getType().getSimpleName() + \" \" + 骨头.getName());\n        }\n        Collections.sort(骨头们);\n        for (String 一行 : 骨头们) {\n            System.out.println(一行);\n        }\n        System.out.println(\"一共 \" + 骨头们.size() + \" 根骨头\");\n    }\n}\n",
+      "expectedOutput": "String 绰号\nboolean 睡着\nint 猫粮数\n一共 3 根骨头",
+      "stdin": null,
+      "explanation": "这一题把第三节那三个动作原样走了一遍喵。\n\n**一、光片从哪儿来。** 手上只有图纸，所以用 `小猫.class` 那张拿法（另一种 `橘.getClass()` 得先有真猫）。\n\n**二、一柜子骨头牌。** `getDeclaredFields()` 交回来的是一柜子 `Field`，一根骨头一张牌。牌上两样东西有用：`getType().getSimpleName()` 问「它是哪一种」，`getName()` 问「它叫什么」。拼成一行就是 `String 名字` 这个样子。\n\n**三、为什么要先排排坐。** 光片上的骨头顺序**说了不算**（第三节里提过），所以顺序得自己造：把这些行塞进柜子，整行交给 `Collections.sort` 排一遍。**排的是整行**，所以先按种类、同种类再按名字 —— 这一步不做，表上三行的先后就说不准，判分那边也对不上。\n\n**四、根数从柜子里数。** 最后那行 `一共 N 根骨头` 里的 N 用 `骨头们.size()` 拿，别写死：图纸上加一根骨头，这行数字自己就跟着变。\n\n**五、自己写的才在表上。** 这一条第三节讲过：`getDeclaredFields()` 只列这张图纸自己写的骨头，从上一代传下来的那些不在里面 —— 所以这道题里表上正好就是图纸上写着的那三根喵。",
+      "templateId": "java-s3-reflect-field-table",
+      "params": {
+        "f1": "绰号",
+        "f2": "猫粮数",
+        "f3": "睡着"
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:45.085Z",
+        "hash": "3762f0aa5d491f94"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-field-table-007",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手上只有一张图纸（就是代码里那张 `小猫`），要列一张**骨头表**喵。\n\n要求是这样的：\n\n1. 把这张图纸上**自己写的**骨头一根不落列出来，每行写 `种类 名字`（中间一个空格，种类就是 `String` / `int` / `boolean` 那种短名字）；\n2. **顺序不能靠光片** —— 把这些行塞进一个柜子，整行交给 `Collections.sort` 排一遍再印；\n3. 最后再印一行 `一共 N 根骨头`（N 是表上骨头的根数）。\n\n填 `Main` 里空着的那一段就行，**图纸本身一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 绰号;\n        int 猫粮数;\n        boolean 饿着;\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 小猫 {\n        String 绰号;\n        int 猫粮数;\n        boolean 饿着;\n    }\n\n    public static void main(String[] args) {\n        List<String> 骨头们 = new ArrayList<>();\n        for (Field 骨头 : 小猫.class.getDeclaredFields()) {\n            骨头们.add(骨头.getType().getSimpleName() + \" \" + 骨头.getName());\n        }\n        Collections.sort(骨头们);\n        for (String 一行 : 骨头们) {\n            System.out.println(一行);\n        }\n        System.out.println(\"一共 \" + 骨头们.size() + \" 根骨头\");\n    }\n}\n",
+      "expectedOutput": "String 绰号\nboolean 饿着\nint 猫粮数\n一共 3 根骨头",
+      "stdin": null,
+      "explanation": "这一题把第三节那三个动作原样走了一遍喵。\n\n**一、光片从哪儿来。** 手上只有图纸，所以用 `小猫.class` 那张拿法（另一种 `橘.getClass()` 得先有真猫）。\n\n**二、一柜子骨头牌。** `getDeclaredFields()` 交回来的是一柜子 `Field`，一根骨头一张牌。牌上两样东西有用：`getType().getSimpleName()` 问「它是哪一种」，`getName()` 问「它叫什么」。拼成一行就是 `String 名字` 这个样子。\n\n**三、为什么要先排排坐。** 光片上的骨头顺序**说了不算**（第三节里提过），所以顺序得自己造：把这些行塞进柜子，整行交给 `Collections.sort` 排一遍。**排的是整行**，所以先按种类、同种类再按名字 —— 这一步不做，表上三行的先后就说不准，判分那边也对不上。\n\n**四、根数从柜子里数。** 最后那行 `一共 N 根骨头` 里的 N 用 `骨头们.size()` 拿，别写死：图纸上加一根骨头，这行数字自己就跟着变。\n\n**五、自己写的才在表上。** 这一条第三节讲过：`getDeclaredFields()` 只列这张图纸自己写的骨头，从上一代传下来的那些不在里面 —— 所以这道题里表上正好就是图纸上写着的那三根喵。",
+      "templateId": "java-s3-reflect-field-table",
+      "params": {
+        "f1": "绰号",
+        "f2": "猫粮数",
+        "f3": "饿着"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:50.414Z",
+        "hash": "32c6e973bf21734c"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-missing-throws-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想照图纸找那间产房，再问一句「它收的是哪种东西」。可这一段**连翻译那一关都没过**喵。\n\n你帮本喵把缺的那一块补上 —— 别的都别动，也别改印出来的形状。改好之后，程序该印出**一行**：`产房收的是：` 后面跟着那种东西的名字。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        String value;\n\n        Cat(String value) {\n            this.value = value;\n        }\n    }\n\n    public static void main(String[] args) {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor(String.class);\n        System.out.println(\"产房收的是：\" + 产房.getParameterTypes()[0].getSimpleName());\n    }\n}\n",
+      "referenceFix": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        String value;\n\n        Cat(String value) {\n            this.value = value;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor(String.class);\n        System.out.println(\"产房收的是：\" + 产房.getParameterTypes()[0].getSimpleName());\n    }\n}\n",
+      "expectedOutput": "产房收的是：String",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是这一句：\n\n```text\nerror: unreported exception NoSuchMethodException; must be caught or declared to be thrown\n```\n\n念法是：「**找产房这一手是可能出事的，你出门之前没跟本喵交代。**」\n\n为什么可能出事？因为找产房是**照着名字找**的：图纸上要是没有那间，这一手就会当场翻脸（上面那一段 `NoSuchMethodException` 就是它翻脸的样子）。Java 的规矩跟前面学的取货凭条一个脾气：**任何「可能出事」的一手，要么当场接住，要么在门口提前交代一声**。这一课的稿子都用的是「提前交代」这条省事的路子，形状就是在 `main` 那一行的结尾加一句 `throws Exception`。\n\n补上之后形状是：\n\n```java\npublic static void main(String[] args) throws Exception {\n```\n\n再跑，它就印出 `产房收的是：` 后面跟着那种东西的名字。\n\n**注意这一摔跟上一题那一摔不一样**：这一摔发生在**翻译那一关**（因为「可能出事」这句交代是翻译官喵管的事），所以程序一个字都还没跑就被拦下了喵。",
+      "templateId": "java-s3-reflect-missing-throws",
+      "params": {
+        "t": "String"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:42.665Z",
+        "hash": "e04aa54ec3a8f858"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-missing-throws-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想照图纸找那间产房，再问一句「它收的是哪种东西」。可这一段**连翻译那一关都没过**喵。\n\n你帮本喵把缺的那一块补上 —— 别的都别动，也别改印出来的形状。改好之后，程序该印出**一行**：`产房收的是：` 后面跟着那种东西的名字。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        int value;\n\n        Cat(int value) {\n            this.value = value;\n        }\n    }\n\n    public static void main(String[] args) {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor(int.class);\n        System.out.println(\"产房收的是：\" + 产房.getParameterTypes()[0].getSimpleName());\n    }\n}\n",
+      "referenceFix": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        int value;\n\n        Cat(int value) {\n            this.value = value;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor(int.class);\n        System.out.println(\"产房收的是：\" + 产房.getParameterTypes()[0].getSimpleName());\n    }\n}\n",
+      "expectedOutput": "产房收的是：int",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是这一句：\n\n```text\nerror: unreported exception NoSuchMethodException; must be caught or declared to be thrown\n```\n\n念法是：「**找产房这一手是可能出事的，你出门之前没跟本喵交代。**」\n\n为什么可能出事？因为找产房是**照着名字找**的：图纸上要是没有那间，这一手就会当场翻脸（上面那一段 `NoSuchMethodException` 就是它翻脸的样子）。Java 的规矩跟前面学的取货凭条一个脾气：**任何「可能出事」的一手，要么当场接住，要么在门口提前交代一声**。这一课的稿子都用的是「提前交代」这条省事的路子，形状就是在 `main` 那一行的结尾加一句 `throws Exception`。\n\n补上之后形状是：\n\n```java\npublic static void main(String[] args) throws Exception {\n```\n\n再跑，它就印出 `产房收的是：` 后面跟着那种东西的名字。\n\n**注意这一摔跟上一题那一摔不一样**：这一摔发生在**翻译那一关**（因为「可能出事」这句交代是翻译官喵管的事），所以程序一个字都还没跑就被拦下了喵。",
+      "templateId": "java-s3-reflect-missing-throws",
+      "params": {
+        "t": "int"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:44.100Z",
+        "hash": "f5de6bd50e4798c0"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-new-instance-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要照图纸**动态接生**一只真猫出来（第五节那个路子）喵。\n\n投喂给程序的是**两行**，一行一个数：第一行当这只猫的**编号**，第二行当它怀里的**根数**。程序该印出**一行**：\n\n```text\n第 X 号有 Y 根小鱼干\n```\n\n- `X` 就是第一行那个数，`Y` 就是第二行那个数。\n\n比如投喂给程序的是\n\n6\n9\n\n程序就要叼回\n\n第 6 号有 9 根小鱼干\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）\n\n图纸、还有读投喂的那几句都已经写好了，**只填 `Main` 里空着的那一段**，别的都别动。",
+      "starter": "import java.lang.reflect.Constructor;\nimport java.util.Scanner;\n\npublic class Main {\n    static class 小猫 {\n        int 编号;\n        int 小鱼干;\n\n        小猫(int 编号, int 根数) {\n            this.编号 = 编号;\n            this.小鱼干 = 根数;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 编号 = sc.nextInt();\n        int 根数 = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.lang.reflect.Constructor;\nimport java.util.Scanner;\n\npublic class Main {\n    static class 小猫 {\n        int 编号;\n        int 小鱼干;\n\n        小猫(int 编号, int 根数) {\n            this.编号 = 编号;\n            this.小鱼干 = 根数;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 编号 = sc.nextInt();\n        int 根数 = sc.nextInt();\n\n        Constructor<?> 产房 = 小猫.class.getDeclaredConstructor(int.class, int.class);\n        小猫 新的 = (小猫) 产房.newInstance(编号, 根数);\n        System.out.println(\"第 \" + 新的.编号 + \" 号有 \" + 新的.小鱼干 + \" 根小鱼干\");\n    }\n}\n",
+      "expectedOutput": "第 6 号有 5 根小鱼干",
+      "stdin": "6\n5\n",
+      "explanation": "这一题就是第五节那个两步路子喵，走一遍就记住。\n\n**一、先找产房。** `小猫.class.getDeclaredConstructor(int.class, int.class)` —— 括号里报的**不是值，是样子的名字**：图纸上那间产房收两样，两样都是整数，所以报两个 `int.class`。报错了就是课文里那一摔（`NoSuchMethodException`）。\n\n**二、再投喂着接生。** `产房.newInstance(编号, 根数)` 才是真接生，这里放的才是**真东西**，而且要跟报的那样数对得上：报了两样就投两样、顺序也别倒。要是把两个数倒过来投喂，接生出来的猫编号就变成原来那个根数了 —— 印出来的那一行也就全反了，判分一眼就看得出来。\n\n**三、接回来的是谁，得自己写明白。** `newInstance(...)` 叼回来的是一只「不知道哪张图纸生出来的猫」，所以要自己写清楚接的是哪一种：前面那个 `(小猫)` 就是干这个的，写完才能直接读 `新的.编号`。\n\n**四、找产房那一手会出事。** 所以 `main` 后面带着 `throws Exception`（图纸和读投喂那几句已经写好了，本喵不用动它）喵。",
+      "templateId": "java-s3-reflect-new-instance",
+      "params": {
+        "t": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:52.610Z",
+        "hash": "907a1ba0cb0f7a96"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-new-instance-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要照图纸**动态接生**一只真猫出来（第五节那个路子）喵。\n\n投喂给程序的是**两行**，一行一个数：第一行当这只猫的**编号**，第二行当它怀里的**根数**。程序该印出**一行**：\n\n```text\n第 X 号有 Y 根小黄鱼\n```\n\n- `X` 就是第一行那个数，`Y` 就是第二行那个数。\n\n比如投喂给程序的是\n\n1\n2\n\n程序就要叼回\n\n第 1 号有 2 根小黄鱼\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）\n\n图纸、还有读投喂的那几句都已经写好了，**只填 `Main` 里空着的那一段**，别的都别动。",
+      "starter": "import java.lang.reflect.Constructor;\nimport java.util.Scanner;\n\npublic class Main {\n    static class 小猫 {\n        int 编号;\n        int 小黄鱼;\n\n        小猫(int 编号, int 根数) {\n            this.编号 = 编号;\n            this.小黄鱼 = 根数;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 编号 = sc.nextInt();\n        int 根数 = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.lang.reflect.Constructor;\nimport java.util.Scanner;\n\npublic class Main {\n    static class 小猫 {\n        int 编号;\n        int 小黄鱼;\n\n        小猫(int 编号, int 根数) {\n            this.编号 = 编号;\n            this.小黄鱼 = 根数;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 编号 = sc.nextInt();\n        int 根数 = sc.nextInt();\n\n        Constructor<?> 产房 = 小猫.class.getDeclaredConstructor(int.class, int.class);\n        小猫 新的 = (小猫) 产房.newInstance(编号, 根数);\n        System.out.println(\"第 \" + 新的.编号 + \" 号有 \" + 新的.小黄鱼 + \" 根小黄鱼\");\n    }\n}\n",
+      "expectedOutput": "第 8 号有 5 根小黄鱼",
+      "stdin": "8\n5\n",
+      "explanation": "这一题就是第五节那个两步路子喵，走一遍就记住。\n\n**一、先找产房。** `小猫.class.getDeclaredConstructor(int.class, int.class)` —— 括号里报的**不是值，是样子的名字**：图纸上那间产房收两样，两样都是整数，所以报两个 `int.class`。报错了就是课文里那一摔（`NoSuchMethodException`）。\n\n**二、再投喂着接生。** `产房.newInstance(编号, 根数)` 才是真接生，这里放的才是**真东西**，而且要跟报的那样数对得上：报了两样就投两样、顺序也别倒。要是把两个数倒过来投喂，接生出来的猫编号就变成原来那个根数了 —— 印出来的那一行也就全反了，判分一眼就看得出来。\n\n**三、接回来的是谁，得自己写明白。** `newInstance(...)` 叼回来的是一只「不知道哪张图纸生出来的猫」，所以要自己写清楚接的是哪一种：前面那个 `(小猫)` 就是干这个的，写完才能直接读 `新的.编号`。\n\n**四、找产房那一手会出事。** 所以 `main` 后面带着 `throws Exception`（图纸和读投喂那几句已经写好了，本喵不用动它）喵。",
+      "templateId": "java-s3-reflect-new-instance",
+      "params": {
+        "t": "小黄鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:54.548Z",
+        "hash": "ef403da1e629c4ca"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-open-private-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手里有一张**别人家**的图纸 `Kitty`（就写在下面），那根 `名字` 骨头上贴着「只给本喵看」的标签。本喵要在**一个字都不碰图纸**的前提下，把这根骨头**读出来、改掉、再读一遍**喵。\n\n程序该印出**两行**：\n\n- 第一行 `照之前：` 后面跟着它**原来**那串字（图纸上写着的那个）；\n- 第二行 `照之后：` 后面跟着**改完**那串字 —— 改成 `大橘`。\n\n只填 `Main` 里空着的那一段，**图纸一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n    }\n}\n\nclass Kitty {\n    private String 名字 = \"小橘\";\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n        Field 骨头 = Kitty.class.getDeclaredField(\"名字\");\n        骨头.setAccessible(true);\n        System.out.println(\"照之前：\" + 骨头.get(橘));\n        骨头.set(橘, \"大橘\");\n        System.out.println(\"照之后：\" + 骨头.get(橘));\n    }\n}\n\nclass Kitty {\n    private String 名字 = \"小橘\";\n}\n",
+      "expectedOutput": "照之前：小橘\n照之后：大橘",
+      "stdin": null,
+      "explanation": "这一题最关键的一句是 `骨头.setAccessible(true)` —— **少了它，这题根本做不出来**喵。\n\n**一、从外面够不着。** `Kitty` 是**别人家**的图纸（它和 `Main` 是两张平着摆的图纸），骨头上贴着「只给本喵看」的标签。所以直写 `橘.名字` 这一手**连翻译那一关都过不了** —— 外面的人根本没资格念这根骨头的名字。想够着它，只剩照 X 光这一条路。\n\n**二、光有光片还不够，得掀盖子。** 就算拿到了骨头牌，不掀盖子去读，跑起来就是这一句：\n\n```text\nException in thread \"main\" java.lang.IllegalAccessException: class Main cannot access a member of class Kitty with modifiers \"private\"\n```\n\n念法是：「**本喵站在 `Main` 这张图上，伸手去摸 `Kitty` 那张图上的私房骨头的，摸不着。**」`setAccessible(true)` 这一句就是掀盖子 —— 掀完，本喵**自己**担这个责任，后面的 `get` / `set` 才伸得进去。\n\n**三、读、改、再读。** `骨头.get(橘)` 是读，`骨头.set(橘, \"大橘\")` 是改（改的是**这只真猫身上**的那根骨头，不是图纸），最后再 `get` 一次，两行就凑齐了。\n\n**四、名字得一模一样。** `getDeclaredField(\"名字\")` 括号里那串字是照着名字找的，差一个字就是 `NoSuchFieldException` 喵。",
+      "templateId": "java-s3-reflect-open-private",
+      "params": {
+        "f": "名字",
+        "v1": "小橘",
+        "v2": "大橘"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:56.028Z",
+        "hash": "03df8d67dcdcd1f8"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-open-private-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手里有一张**别人家**的图纸 `Kitty`（就写在下面），那根 `名字` 骨头上贴着「只给本喵看」的标签。本喵要在**一个字都不碰图纸**的前提下，把这根骨头**读出来、改掉、再读一遍**喵。\n\n程序该印出**两行**：\n\n- 第一行 `照之前：` 后面跟着它**原来**那串字（图纸上写着的那个）；\n- 第二行 `照之后：` 后面跟着**改完**那串字 —— 改成 `墨点`。\n\n只填 `Main` 里空着的那一段，**图纸一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n    }\n}\n\nclass Kitty {\n    private String 名字 = \"小橘\";\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n        Field 骨头 = Kitty.class.getDeclaredField(\"名字\");\n        骨头.setAccessible(true);\n        System.out.println(\"照之前：\" + 骨头.get(橘));\n        骨头.set(橘, \"墨点\");\n        System.out.println(\"照之后：\" + 骨头.get(橘));\n    }\n}\n\nclass Kitty {\n    private String 名字 = \"小橘\";\n}\n",
+      "expectedOutput": "照之前：小橘\n照之后：墨点",
+      "stdin": null,
+      "explanation": "这一题最关键的一句是 `骨头.setAccessible(true)` —— **少了它，这题根本做不出来**喵。\n\n**一、从外面够不着。** `Kitty` 是**别人家**的图纸（它和 `Main` 是两张平着摆的图纸），骨头上贴着「只给本喵看」的标签。所以直写 `橘.名字` 这一手**连翻译那一关都过不了** —— 外面的人根本没资格念这根骨头的名字。想够着它，只剩照 X 光这一条路。\n\n**二、光有光片还不够，得掀盖子。** 就算拿到了骨头牌，不掀盖子去读，跑起来就是这一句：\n\n```text\nException in thread \"main\" java.lang.IllegalAccessException: class Main cannot access a member of class Kitty with modifiers \"private\"\n```\n\n念法是：「**本喵站在 `Main` 这张图上，伸手去摸 `Kitty` 那张图上的私房骨头的，摸不着。**」`setAccessible(true)` 这一句就是掀盖子 —— 掀完，本喵**自己**担这个责任，后面的 `get` / `set` 才伸得进去。\n\n**三、读、改、再读。** `骨头.get(橘)` 是读，`骨头.set(橘, \"墨点\")` 是改（改的是**这只真猫身上**的那根骨头，不是图纸），最后再 `get` 一次，两行就凑齐了。\n\n**四、名字得一模一样。** `getDeclaredField(\"名字\")` 括号里那串字是照着名字找的，差一个字就是 `NoSuchFieldException` 喵。",
+      "templateId": "java-s3-reflect-open-private",
+      "params": {
+        "f": "名字",
+        "v1": "小橘",
+        "v2": "墨点"
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:47.340Z",
+        "hash": "b1916d098fd2fe8f"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-open-private-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手里有一张**别人家**的图纸 `Kitty`（就写在下面），那根 `名字` 骨头上贴着「只给本喵看」的标签。本喵要在**一个字都不碰图纸**的前提下，把这根骨头**读出来、改掉、再读一遍**喵。\n\n程序该印出**两行**：\n\n- 第一行 `照之前：` 后面跟着它**原来**那串字（图纸上写着的那个）；\n- 第二行 `照之后：` 后面跟着**改完**那串字 —— 改成 `墨点`。\n\n只填 `Main` 里空着的那一段，**图纸一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n    }\n}\n\nclass Kitty {\n    private String 名字 = \"煤球\";\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n        Field 骨头 = Kitty.class.getDeclaredField(\"名字\");\n        骨头.setAccessible(true);\n        System.out.println(\"照之前：\" + 骨头.get(橘));\n        骨头.set(橘, \"墨点\");\n        System.out.println(\"照之后：\" + 骨头.get(橘));\n    }\n}\n\nclass Kitty {\n    private String 名字 = \"煤球\";\n}\n",
+      "expectedOutput": "照之前：煤球\n照之后：墨点",
+      "stdin": null,
+      "explanation": "这一题最关键的一句是 `骨头.setAccessible(true)` —— **少了它，这题根本做不出来**喵。\n\n**一、从外面够不着。** `Kitty` 是**别人家**的图纸（它和 `Main` 是两张平着摆的图纸），骨头上贴着「只给本喵看」的标签。所以直写 `橘.名字` 这一手**连翻译那一关都过不了** —— 外面的人根本没资格念这根骨头的名字。想够着它，只剩照 X 光这一条路。\n\n**二、光有光片还不够，得掀盖子。** 就算拿到了骨头牌，不掀盖子去读，跑起来就是这一句：\n\n```text\nException in thread \"main\" java.lang.IllegalAccessException: class Main cannot access a member of class Kitty with modifiers \"private\"\n```\n\n念法是：「**本喵站在 `Main` 这张图上，伸手去摸 `Kitty` 那张图上的私房骨头的，摸不着。**」`setAccessible(true)` 这一句就是掀盖子 —— 掀完，本喵**自己**担这个责任，后面的 `get` / `set` 才伸得进去。\n\n**三、读、改、再读。** `骨头.get(橘)` 是读，`骨头.set(橘, \"墨点\")` 是改（改的是**这只真猫身上**的那根骨头，不是图纸），最后再 `get` 一次，两行就凑齐了。\n\n**四、名字得一模一样。** `getDeclaredField(\"名字\")` 括号里那串字是照着名字找的，差一个字就是 `NoSuchFieldException` 喵。",
+      "templateId": "java-s3-reflect-open-private",
+      "params": {
+        "f": "名字",
+        "v1": "煤球",
+        "v2": "墨点"
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:49.425Z",
+        "hash": "bc896a894cf09db3"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-open-private-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手里有一张**别人家**的图纸 `Kitty`（就写在下面），那根 `绰号` 骨头上贴着「只给本喵看」的标签。本喵要在**一个字都不碰图纸**的前提下，把这根骨头**读出来、改掉、再读一遍**喵。\n\n程序该印出**两行**：\n\n- 第一行 `照之前：` 后面跟着它**原来**那串字（图纸上写着的那个）；\n- 第二行 `照之后：` 后面跟着**改完**那串字 —— 改成 `大橘`。\n\n只填 `Main` 里空着的那一段，**图纸一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n    }\n}\n\nclass Kitty {\n    private String 绰号 = \"小橘\";\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n        Field 骨头 = Kitty.class.getDeclaredField(\"绰号\");\n        骨头.setAccessible(true);\n        System.out.println(\"照之前：\" + 骨头.get(橘));\n        骨头.set(橘, \"大橘\");\n        System.out.println(\"照之后：\" + 骨头.get(橘));\n    }\n}\n\nclass Kitty {\n    private String 绰号 = \"小橘\";\n}\n",
+      "expectedOutput": "照之前：小橘\n照之后：大橘",
+      "stdin": null,
+      "explanation": "这一题最关键的一句是 `骨头.setAccessible(true)` —— **少了它，这题根本做不出来**喵。\n\n**一、从外面够不着。** `Kitty` 是**别人家**的图纸（它和 `Main` 是两张平着摆的图纸），骨头上贴着「只给本喵看」的标签。所以直写 `橘.绰号` 这一手**连翻译那一关都过不了** —— 外面的人根本没资格念这根骨头的名字。想够着它，只剩照 X 光这一条路。\n\n**二、光有光片还不够，得掀盖子。** 就算拿到了骨头牌，不掀盖子去读，跑起来就是这一句：\n\n```text\nException in thread \"main\" java.lang.IllegalAccessException: class Main cannot access a member of class Kitty with modifiers \"private\"\n```\n\n念法是：「**本喵站在 `Main` 这张图上，伸手去摸 `Kitty` 那张图上的私房骨头的，摸不着。**」`setAccessible(true)` 这一句就是掀盖子 —— 掀完，本喵**自己**担这个责任，后面的 `get` / `set` 才伸得进去。\n\n**三、读、改、再读。** `骨头.get(橘)` 是读，`骨头.set(橘, \"大橘\")` 是改（改的是**这只真猫身上**的那根骨头，不是图纸），最后再 `get` 一次，两行就凑齐了。\n\n**四、名字得一模一样。** `getDeclaredField(\"绰号\")` 括号里那串字是照着名字找的，差一个字就是 `NoSuchFieldException` 喵。",
+      "templateId": "java-s3-reflect-open-private",
+      "params": {
+        "f": "绰号",
+        "v1": "小橘",
+        "v2": "大橘"
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:51.555Z",
+        "hash": "e8b904c82d71132d"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-open-private-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手里有一张**别人家**的图纸 `Kitty`（就写在下面），那根 `绰号` 骨头上贴着「只给本喵看」的标签。本喵要在**一个字都不碰图纸**的前提下，把这根骨头**读出来、改掉、再读一遍**喵。\n\n程序该印出**两行**：\n\n- 第一行 `照之前：` 后面跟着它**原来**那串字（图纸上写着的那个）；\n- 第二行 `照之后：` 后面跟着**改完**那串字 —— 改成 `大橘`。\n\n只填 `Main` 里空着的那一段，**图纸一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n    }\n}\n\nclass Kitty {\n    private String 绰号 = \"煤球\";\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n        Field 骨头 = Kitty.class.getDeclaredField(\"绰号\");\n        骨头.setAccessible(true);\n        System.out.println(\"照之前：\" + 骨头.get(橘));\n        骨头.set(橘, \"大橘\");\n        System.out.println(\"照之后：\" + 骨头.get(橘));\n    }\n}\n\nclass Kitty {\n    private String 绰号 = \"煤球\";\n}\n",
+      "expectedOutput": "照之前：煤球\n照之后：大橘",
+      "stdin": null,
+      "explanation": "这一题最关键的一句是 `骨头.setAccessible(true)` —— **少了它，这题根本做不出来**喵。\n\n**一、从外面够不着。** `Kitty` 是**别人家**的图纸（它和 `Main` 是两张平着摆的图纸），骨头上贴着「只给本喵看」的标签。所以直写 `橘.绰号` 这一手**连翻译那一关都过不了** —— 外面的人根本没资格念这根骨头的名字。想够着它，只剩照 X 光这一条路。\n\n**二、光有光片还不够，得掀盖子。** 就算拿到了骨头牌，不掀盖子去读，跑起来就是这一句：\n\n```text\nException in thread \"main\" java.lang.IllegalAccessException: class Main cannot access a member of class Kitty with modifiers \"private\"\n```\n\n念法是：「**本喵站在 `Main` 这张图上，伸手去摸 `Kitty` 那张图上的私房骨头的，摸不着。**」`setAccessible(true)` 这一句就是掀盖子 —— 掀完，本喵**自己**担这个责任，后面的 `get` / `set` 才伸得进去。\n\n**三、读、改、再读。** `骨头.get(橘)` 是读，`骨头.set(橘, \"大橘\")` 是改（改的是**这只真猫身上**的那根骨头，不是图纸），最后再 `get` 一次，两行就凑齐了。\n\n**四、名字得一模一样。** `getDeclaredField(\"绰号\")` 括号里那串字是照着名字找的，差一个字就是 `NoSuchFieldException` 喵。",
+      "templateId": "java-s3-reflect-open-private",
+      "params": {
+        "f": "绰号",
+        "v1": "煤球",
+        "v2": "大橘"
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:53.662Z",
+        "hash": "87f14cda53815b79"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-open-private-007",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵手里有一张**别人家**的图纸 `Kitty`（就写在下面），那根 `绰号` 骨头上贴着「只给本喵看」的标签。本喵要在**一个字都不碰图纸**的前提下，把这根骨头**读出来、改掉、再读一遍**喵。\n\n程序该印出**两行**：\n\n- 第一行 `照之前：` 后面跟着它**原来**那串字（图纸上写着的那个）；\n- 第二行 `照之后：` 后面跟着**改完**那串字 —— 改成 `墨点`。\n\n只填 `Main` 里空着的那一段，**图纸一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n    }\n}\n\nclass Kitty {\n    private String 绰号 = \"煤球\";\n}\n",
+      "referenceSolution": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n        Field 骨头 = Kitty.class.getDeclaredField(\"绰号\");\n        骨头.setAccessible(true);\n        System.out.println(\"照之前：\" + 骨头.get(橘));\n        骨头.set(橘, \"墨点\");\n        System.out.println(\"照之后：\" + 骨头.get(橘));\n    }\n}\n\nclass Kitty {\n    private String 绰号 = \"煤球\";\n}\n",
+      "expectedOutput": "照之前：煤球\n照之后：墨点",
+      "stdin": null,
+      "explanation": "这一题最关键的一句是 `骨头.setAccessible(true)` —— **少了它，这题根本做不出来**喵。\n\n**一、从外面够不着。** `Kitty` 是**别人家**的图纸（它和 `Main` 是两张平着摆的图纸），骨头上贴着「只给本喵看」的标签。所以直写 `橘.绰号` 这一手**连翻译那一关都过不了** —— 外面的人根本没资格念这根骨头的名字。想够着它，只剩照 X 光这一条路。\n\n**二、光有光片还不够，得掀盖子。** 就算拿到了骨头牌，不掀盖子去读，跑起来就是这一句：\n\n```text\nException in thread \"main\" java.lang.IllegalAccessException: class Main cannot access a member of class Kitty with modifiers \"private\"\n```\n\n念法是：「**本喵站在 `Main` 这张图上，伸手去摸 `Kitty` 那张图上的私房骨头的，摸不着。**」`setAccessible(true)` 这一句就是掀盖子 —— 掀完，本喵**自己**担这个责任，后面的 `get` / `set` 才伸得进去。\n\n**三、读、改、再读。** `骨头.get(橘)` 是读，`骨头.set(橘, \"墨点\")` 是改（改的是**这只真猫身上**的那根骨头，不是图纸），最后再 `get` 一次，两行就凑齐了。\n\n**四、名字得一模一样。** `getDeclaredField(\"绰号\")` 括号里那串字是照着名字找的，差一个字就是 `NoSuchFieldException` 喵。",
+      "templateId": "java-s3-reflect-open-private",
+      "params": {
+        "f": "绰号",
+        "v1": "煤球",
+        "v2": "墨点"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:57.184Z",
+        "hash": "b1713e9801a68cce"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-static-getclass-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想照一张骨架图，然后把它身上自己写的那几根骨头念出来喵。可这一段**连翻译那一关都没过**。\n\n你帮本喵把出错的那一处改好 —— 别的都别动。改好之后，程序该印出**两行**：第一行 `小猫`，第二行是 `这根骨头叫 ` 后面跟着那根骨头的名字（这段代码里图纸上就写了一根骨头）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.lang.reflect.Field;\n\npublic class Main {\n    static class 小猫 {\n        String 名字 = \"小橘\";\n    }\n\n    public static void main(String[] args) throws Exception {\n        Class<?> 骨架图 = 小猫.getClass();\n        System.out.println(骨架图.getSimpleName());\n        for (Field 骨头 : 骨架图.getDeclaredFields()) {\n            System.out.println(\"这根骨头叫 \" + 骨头.getName());\n        }\n    }\n}\n",
+      "referenceFix": "import java.lang.reflect.Field;\n\npublic class Main {\n    static class 小猫 {\n        String 名字 = \"小橘\";\n    }\n\n    public static void main(String[] args) throws Exception {\n        Class<?> 骨架图 = 小猫.class;\n        System.out.println(骨架图.getSimpleName());\n        for (Field 骨头 : 骨架图.getDeclaredFields()) {\n            System.out.println(\"这根骨头叫 \" + 骨头.getName());\n        }\n    }\n}\n",
+      "expectedOutput": "小猫\n这根骨头叫 名字",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是这一句：\n\n```text\nerror: non-static method getClass() cannot be referenced from a static context\n```\n\n念法是：「**`getClass()` 是喊在真猫身上的招式，你对着图纸本身喊，本喵没法应。**」\n\n这一手跟第一节那条规矩是连着的：`橘.getClass()` 里的点儿前面**必须站着一只真猫** —— 先有真猫，才有它身上那张骨架图。而 `小猫` 这三个字在稿子里指的是**图纸本身**，图纸不是真猫，喊它 `getClass()` 就是喊错了猫。\n\n治法有两条路，本喵这条稿子选了省事的那条：**手上只有图纸，就直接写 `小猫.class`** —— 这也是第一节那张表里的第二种拿法。另一条路是现接生一只真猫再照（`new 小猫().getClass()`），印出来的东西一模一样，就是白接生了一只。\n\n改好之后跑出来是：\n\n```text\n小猫\n这根骨头叫 名字\n```\n\n顺带记牢：**`.` 前面站着的是真猫，才谈得上「照它」**喵。",
+      "templateId": "java-s3-reflect-static-getclass",
+      "params": {
+        "f": "名字",
+        "v": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:35.801Z",
+        "hash": "ee35217f0e07a027"
+      }
+    },
+    {
+      "id": "bank-java-s3-reflect-static-getclass-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想照一张骨架图，然后把它身上自己写的那几根骨头念出来喵。可这一段**连翻译那一关都没过**。\n\n你帮本喵把出错的那一处改好 —— 别的都别动。改好之后，程序该印出**两行**：第一行 `小猫`，第二行是 `这根骨头叫 ` 后面跟着那根骨头的名字（这段代码里图纸上就写了一根骨头）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.lang.reflect.Field;\n\npublic class Main {\n    static class 小猫 {\n        String 绰号 = \"煤球\";\n    }\n\n    public static void main(String[] args) throws Exception {\n        Class<?> 骨架图 = 小猫.getClass();\n        System.out.println(骨架图.getSimpleName());\n        for (Field 骨头 : 骨架图.getDeclaredFields()) {\n            System.out.println(\"这根骨头叫 \" + 骨头.getName());\n        }\n    }\n}\n",
+      "referenceFix": "import java.lang.reflect.Field;\n\npublic class Main {\n    static class 小猫 {\n        String 绰号 = \"煤球\";\n    }\n\n    public static void main(String[] args) throws Exception {\n        Class<?> 骨架图 = 小猫.class;\n        System.out.println(骨架图.getSimpleName());\n        for (Field 骨头 : 骨架图.getDeclaredFields()) {\n            System.out.println(\"这根骨头叫 \" + 骨头.getName());\n        }\n    }\n}\n",
+      "expectedOutput": "小猫\n这根骨头叫 绰号",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是这一句：\n\n```text\nerror: non-static method getClass() cannot be referenced from a static context\n```\n\n念法是：「**`getClass()` 是喊在真猫身上的招式，你对着图纸本身喊，本喵没法应。**」\n\n这一手跟第一节那条规矩是连着的：`橘.getClass()` 里的点儿前面**必须站着一只真猫** —— 先有真猫，才有它身上那张骨架图。而 `小猫` 这三个字在稿子里指的是**图纸本身**，图纸不是真猫，喊它 `getClass()` 就是喊错了猫。\n\n治法有两条路，本喵这条稿子选了省事的那条：**手上只有图纸，就直接写 `小猫.class`** —— 这也是第一节那张表里的第二种拿法。另一条路是现接生一只真猫再照（`new 小猫().getClass()`），印出来的东西一模一样，就是白接生了一只。\n\n改好之后跑出来是：\n\n```text\n小猫\n这根骨头叫 绰号\n```\n\n顺带记牢：**`.` 前面站着的是真猫，才谈得上「照它」**喵。",
+      "templateId": "java-s3-reflect-static-getclass",
+      "params": {
+        "f": "绰号",
+        "v": "煤球"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:37.379Z",
+        "hash": "5567747e8a030988"
+      }
+    }
+  ]
+}

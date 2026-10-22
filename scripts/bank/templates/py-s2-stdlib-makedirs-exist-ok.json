@@ -1,0 +1,19 @@
+{
+  "templateId": "py-s2-stdlib-makedirs-exist-ok",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-06",
+  "type": "codefix",
+  "concept": ["os.makedirs", "exist_ok", "已存在"],
+  "instances": 2,
+  "params": {
+    "dir": {
+      "kind": "pick",
+      "values": ["鱼塘", "阁楼", "仓库"]
+    }
+  },
+  "stemTemplate": "本喵想建一个叫 `{dir}` 的文件夹，建完还要确认一下它是不是真在那儿喵。\n\n可这段代码一跑就报错。你帮本喵改对，让它跑完之后印出 `True`。\n\n⚠️ 文件夹的名字 `{dir}` 不许改；那两句「建文件夹」也**一句都不许删** —— 本喵就是想让它**连着建两遍**都平平安安喵。",
+  "brokenCodeTemplate": "import os\n\nos.makedirs(\"{dir}\")\nos.makedirs(\"{dir}\")\nprint(os.path.exists(\"{dir}\"))\n",
+  "referenceFixTemplate": "import os\n\nos.makedirs(\"{dir}\", exist_ok=True)\nos.makedirs(\"{dir}\", exist_ok=True)\nprint(os.path.exists(\"{dir}\"))\n",
+  "explanationTemplate": "`os.makedirs(...)` 是「**把这条路上缺的文件夹都建出来**」喵。它有个脾气：**那个文件夹已经在那儿了，它会当场翻脸**，报一个「已经存在」的错。\n\n坏就坏在这一课要「连着建两遍」：第一遍顺顺当当建好了，第二遍就被它翻脸拦下 —— 而第二遍其实什么坏事都没干。\n\n修法是在尾巴上补一句保险话 `exist_ok=True`，读作「**要是它已经在了，别翻脸，安安静静过去**」。有了它，建第一遍、第二遍、第一百遍都平平安安。\n\n⚠️ 这句保险话是**带名字**的（写出来要带上 `exist_ok=` 和后面的 `True`）。光在括号里塞一个 `True`，翻译官喵不认，它不知道你想保的是哪一份险。\n\n⚠️ 建好之后 `os.path.exists(...)` 叼回来 `True`，意思是「**这个地方确实有东西**」。它只回答「在不在」，不区分那是文件夹还是档案。\n\n⚠️ 这两句建出来的是**真文件夹**，不是一个名字。建完想看看里面有什么，`os.listdir` 会把里面的东西一样一样报出来（刚建好的当然是空的，它报的是个空排）。"
+}

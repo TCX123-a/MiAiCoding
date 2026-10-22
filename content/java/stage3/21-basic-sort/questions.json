@@ -1,0 +1,94 @@
+{
+  "lessonId": "java-stage3-21",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "招式签名上写着 `static <T extends Comparable<T>> void bubble_sort(T[] fish)`，这一串尖括号里的东西是干什么的喵？",
+      "options": [
+        "它是「什么碗都能接」的通行证：`T` 是还没定下来的那种装法，`extends Comparable<T>` 要求这种装法能自己比大小",
+        "它规定这招只能接 `Integer` 这一种碗，换个装法就编译不过",
+        "它只是写给本喵看的记号，删掉之后程序一个字都不会变",
+        "它的意思是这一招要跑两遍：第一遍排、第二遍检查"
+      ],
+      "answer": 0,
+      "explanation": "这一串是招式**当场答应下来的条件**喵：`T` 代表「还没定下来的装法」，`extends Comparable<T>` 是一道门槛 —— 递进来的那排碗里装的必须**能自己跟自己比大小**（`Integer` 会 `compareTo`，一串项链也会）。递进来 `Integer[]`，`T` 就当场变成 `Integer`；哪天递进来一串项链，同一个招式照样能用，一个字都不用改。要是把这一串去掉、写成 `void bubble_sort(Integer[] fish)`，程序照样跑、照样排得整整齐齐 —— 只是这个招式**只认整数这一种碗**了，换个装法只能整个再抄一遍。它不是记号（删了会编译不过），也不是「跑两遍」的意思。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "「挑最短法」一轮里，扫完剩下的这些鱼干之后要做什么喵？",
+      "options": [
+        "请最短的那一只和最前面的那一只换个位子",
+        "把比它长的都挨个往后挪一格",
+        "把最短的那只抱走放到一边，剩下的继续扫",
+        "再从头扫一遍确认一下"
+      ],
+      "answer": 0,
+      "explanation": "挑最短法一轮只干一件事：先记住最短的那一只在**哪个位子**（`shortest`），扫完之后请它和第 `i` 只换个位子。换完之后，从 `i` 往前的那些都已经站好了，下一轮从 `i + 1` 接着挑。它和理牌法的区别就在这儿：理牌法是「往后挪」，挑最短法是「一次换到位」——所以它换位子的次数特别少，一轮最多换一次喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "理牌法里那句 `while (j >= 0 && fish[j].compareTo(hold) > 0)`，前半截 `j >= 0` 是干什么用的喵？",
+      "options": [
+        "收手条件：一路比到最前面就停下",
+        "检查这一只鱼干是不是本来就最短",
+        "保证每只鱼干都比两遍",
+        "用来数已经挪了多少只"
+      ],
+      "answer": 0,
+      "explanation": "手里捧着的那一只要一直往前比，比到哪儿停呢？比到**摊子最前面**就得停，`j` 退到 -1 时前半截就不成立了。少了它，爪子会伸到摊子外面去（Java 会当场抛 `ArrayIndexOutOfBoundsException`）喵。后半截 `fish[j].compareTo(hold) > 0` 管的是「还没找到该停的位子」——两半合起来才是完整的收手条件。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    static <T extends Comparable<T>> void bubble_sort(T[] fish) {\n        int n = fish.length;\n        for (int i = 0; i < n - 1; i++) {\n            for (int j = 0; j < n - 1 - i; j++) {\n                if (fish[j].compareTo(fish[j + 1]) > 0) {\n                    T t = fish[____];\n                    fish[____] = fish[j + 1];\n                    fish[j + 1] = ____;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Integer[] fish = {5, 2, 9, 1, 8, 6};\n        bubble_sort(fish);\n        for (int i = 0; i < fish.length; i++) {\n            System.out.print(fish[i] + \" \");\n        }\n        System.out.println();\n    }\n}",
+      "stem": "冒泡法换位子的那三句，本喵把三处挖空了。补完之后这段程序该把 `1 2 5 6 8 9` 印出来喵～",
+      "blanks": [
+        { "answer": "j" },
+        { "answer": "j" },
+        { "answer": "t" }
+      ],
+      "explanation": "换位子要用一只手喵：`T t = fish[j];` 先把左边那只**捧在手上**，再把右边那只挪到左边那个位子上，最后把手上这只放回右边。这两只为什么能换过来？全靠 `t` 记住了原来左边那只的值 —— 所以第三空填 `t`。要是三句里省了捧在手上这一句，一执行完两只就变成同一个值了，原来的那只找不回来。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    static <T extends Comparable<T>> void insertion_sort(T[] fish) {\n        int n = fish.length;\n        for (int i = 1; i < n; i++) {\n            T hold = fish[i];\n            int j = i - 1;\n            while (j >= 0 && fish[j].compareTo(hold) > 0) {\n                fish[____] = fish[j];\n                j--;\n            }\n            fish[j + 1] = ____;\n        }\n    }\n\n    public static void main(String[] args) {\n        Integer[] fish = {6, 1, 8, 2, 5};\n        insertion_sort(fish);\n        for (int i = 0; i < fish.length; i++) {\n            System.out.print(fish[i] + \" \");\n        }\n        System.out.println();\n    }\n}",
+      "stem": "理牌法里「往后挪一格」和「放下手上这只」各有半句被本喵挖掉了。补完之后它会印出 `1 2 5 6 8` 喵～",
+      "blanks": [
+        { "answer": "j + 1" },
+        { "answer": "hold" }
+      ],
+      "explanation": "前半截：比手上这只长的那一位（第 `j` 位）**往后挪一格**，挪到 `j + 1` 去，空出来的第 `j` 位留给更前面那些接着比。后半截：一圈比完，`j` 停在「比手上这只短」的位子上，那它该站的地方就是 `j + 1` —— 把手上的 `hold` 放在那儿喵。两处都是 `j + 1` 打头，但意思完全相反：一个是**搬走**，一个是**安置**。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    static <T extends Comparable<T>> void bubble_sort(T[] fish) {\n        int n = fish.length;\n        for (int i = 0; i < n - 1; i++) {\n            for (int j = 0; j < n - 1 - i; j++) {\n                if (fish[j].compareTo(fish[j + 1]) > 0) {\n                    T t = fish[j];\n                    fish[j] = fish[j + 1];\n                    fish[j + 1] = t;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        Integer[] fish = {7, 3, 8, 1, 5};\n        bubble_sort(fish);\n        System.out.print(\"排排坐：\");\n        for (int i = 0; i < fish.length; i++) {\n            System.out.print(fish[i] + \" \");\n        }\n        System.out.println();\n    }\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "排排坐：1 3 5 7 8",
+      "accept": [
+        "排排坐：1 3 5 7 8\n"
+      ],
+      "explanation": "把 `7 3 8 1 5` 交给冒泡法，结果是从短到长：`1 3 5 7 8` 喵。前面那句 `排排坐：` 是原样印出来的，后面每只鱼干印一个数加一个空格，最后补一个换行。冒泡法不会「猜」，它就是一趟一趟挨着比、该换就换 —— 所以你按这个规矩从头推一遍，得到的一定是这一串。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    static <T extends Comparable<T>> void insertion_sort(T[] fish) {\n        int n = fish.length;\n        for (int i = 1; i < n; i++) {\n            T hold = fish[i];\n            int j = i - 1;\n            while (j >= 0 && fish[j].compareTo(hold) > 0) {\n                fish[j + 1] = fish[j];\n                j--;\n            }\n            fish[j + 1] = hold;\n        }\n    }\n\n    public static void main(String[] args) {\n        Integer[] fish = {4, 8, 1, 6, 3};\n        insertion_sort(fish);\n        System.out.print(\"理牌式：\");\n        for (int i = 0; i < fish.length; i++) {\n            System.out.print(fish[i] + \" \");\n        }\n        System.out.println();\n    }\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "理牌式：1 3 4 6 8",
+      "accept": [
+        "理牌式：1 3 4 6 8\n"
+      ],
+      "explanation": "理牌法的结果也是从短到长：`1 3 4 6 8` 喵。它的过程和冒泡完全不一样 —— 摸起一张就往前面已经理好的那一小段里插：摸到 1 时插到 4 前面，摸到 6 时插到 8 前面、4 后面……一圈一圈插完，整摊就齐了。前面那句 `理牌式：` 原样印出，后面每只印一个数加一个空格。"
+    }
+  ]
+}

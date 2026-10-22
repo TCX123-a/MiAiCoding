@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-17-flip-bit",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-17",
+  "type": "codewrite",
+  "concept": ["翻一格", "不一样才留", "印满 8 格"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "pick", "values": [3, 6] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "1", "min": 0, "max": 255 },
+  "stemTemplate": "投喂口先报一个数：要翻的是**第几格**（格号从最右边那格数起，最右边那格是第 0 格）；紧接着一行一个数（0 到 255 之间），就是要翻的那个数。\n\n请你写个程序，印**一行**，形状是\n\n`182 的格子是 10110110，翻第 3 格之后是 10111110`\n\n也就是：那个数 + ` 的格子是 ` + 原来那 8 格 + `，翻第 ` + 格号 + ` 格之后是 ` + 翻完的那 8 格喵。\n\n「翻一格」的意思是：那一格原来是亮的就按灭，原来是灭的就点亮，**别的格子一个都不许动**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一批数**，别把答案写死喵～）",
+  "starterTemplate": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n    cin >> n;\n    cin >> x;\n    unsigned int flipped = x ^ (1u << n);\n    cout << x << \" 的格子是 \" << bitset<8>(x)\n         << \"，翻第 \" << n << \" 格之后是 \" << bitset<8>(flipped) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "「翻一格」这件事，正好是**两边不一样才留**那一招的看家本事喵（那个记号是 `^`）。\n\n拿一串「只有第 `n` 格亮着」的格子（`1u << n`）去和原来的数比：第 `n` 格上，原来亮、这串也亮 → 一样 → 灭；原来灭、这串亮 → 不一样 → 亮。**正好翻了个面**。别的格子上这串全是灭的，两边一样 → 原样不动。\n\n一格不多、一格不少，这就是「翻」：`x ^ (1u << n)`。\n\n⚠️ 顺带把那个老坑钉死：`^` **不是**「几次方」，`2 ^ 3` 不是 8 而是 1 —— 它读的是两边每一格一不一样。\n\n⚠️ 括号还是那一句：`1u << n` 外面括起来，省了它就先算别的去了。\n\n⚠️ 印格子用 `bitset<8>` 最省事：它**一格不落地印满 8 格**（高处的格子灭着也照样印成 0），拿它跟原来那串对着看，翻的是哪一格一眼就到喵。"
+}

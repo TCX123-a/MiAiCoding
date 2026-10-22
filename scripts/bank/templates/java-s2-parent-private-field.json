@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-parent-private-field",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-02",
+  "type": "codefix",
+  "concept": ["图纸套图纸", "private", "小窗", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "n": { "kind": "int", "min": 3, "max": 7 }
+  },
+  "stemTemplate": "大图纸把名字这盒家当**扣上了盖子**，另外留了一扇读它的小窗。小图纸套在它上面：出生那一手里老老实实请了大图纸、也把鱼干数装好了 —— 可小图纸里那句印账的话过不了翻译官喵这一关，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n{name} 有 {n} 条小鱼干喵\n```\n\n只改小图纸里伸手的那一处就好，大图纸本喵一个字都不想动喵。",
+  "brokenCodeTemplate": "class Animal {\n    private String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n}\n\nclass Cat extends Animal {\n    private int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    void report() {\n        System.out.println(this.name + \" 有 \" + fish + \" 条小鱼干喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\", {n});\n        c.report();\n    }\n}\n",
+  "referenceFixTemplate": "class Animal {\n    private String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n}\n\nclass Cat extends Animal {\n    private int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    void report() {\n        System.out.println(getName() + \" 有 \" + fish + \" 条小鱼干喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\", {n});\n        c.report();\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 **`name has private access in Animal`**。\n\n这句最容易被误会成「小图纸明明跟大图纸认了亲，怎么还碰不到」。答案就一句话：**认亲不等于拿到钥匙。** 盖子认的是「**哪张图纸写的招式**」，不是「谁跟谁认了亲」—— `name` 是 `Animal` 扣上的，`Cat` 里写的招式**照样在门外**。\n\n正路是走大图纸留的那扇小窗，把 `this.name` 换成 `getName()`：小窗的身子写在 `Animal` 里面，所以它拿得到那个名字；小图纸只管把接到的项链用起来。\n\n顺手记一句本课的老话：**套图纸套来的是「会用」，不是「能改」**。大图纸盖上盖子，小图纸**同样**伸不进手 —— 上一课学的那套盖子，套了图纸也一样管用喵。"
+}

@@ -1,0 +1,117 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "anima-preview.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "qwen_3_06b_base.safetensors",
+      "type": "stable_diffusion",
+      "device": "default"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "qwen_image_vae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "LoraLoader",
+    "inputs": {
+      "model": ["1", 0],
+      "clip": ["2", 0],
+      "lora_name": "ds_whalemaid.safetensors",
+      "strength_model": 0.9,
+      "strength_clip": 0.9
+    }
+  },
+  "5": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "ds_whalemaid, chibi, super deformed, cute, 1girl, solo, blue hair, long hair, gradient hair, blue eyes, fin ears, whale tail, dark blue maid outfit, white apron, frills, white headdress, blue bowtie, smug, open mouth, fang, sparkling eyes, blush, looking at viewer, masterpiece, best quality, highres, official art, extremely detailed, simple background, white background",
+      "clip": ["4", 1]
+    }
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "realistic, photorealistic, 3D, mature, tall, bad anatomy, bad hands, missing fingers, extra limbs, ugly, worst quality, low quality, text, watermark, complex background, extra tail, two tails, multiple tails, extra flukes, twin tails, two tail fins, double tail, extra ears",
+      "clip": ["4", 1]
+    }
+  },
+  "7": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    }
+  },
+  "8": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": ["4", 0],
+      "seed": 123456789,
+      "steps": 20,
+      "cfg": 4.0,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "positive": ["5", 0],
+      "negative": ["6", 0],
+      "latent_image": ["7", 0],
+      "denoise": 1.0
+    }
+  },
+  "9": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["8", 0],
+      "vae": ["3", 0]
+    }
+  },
+  "10": {
+    "class_type": "LoadBackgroundRemovalModel",
+    "inputs": {
+      "bg_removal_name": "birefnet.safetensors"
+    }
+  },
+  "11": {
+    "class_type": "RemoveBackground",
+    "inputs": {
+      "bg_removal_model": ["10", 0],
+      "image": ["9", 0]
+    }
+  },
+  "12": {
+    "class_type": "InvertMask",
+    "inputs": {
+      "mask": ["11", 0]
+    }
+  },
+  "13": {
+    "class_type": "JoinImageWithAlpha",
+    "inputs": {
+      "image": ["9", 0],
+      "alpha": ["12", 0]
+    }
+  },
+  "14": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": ["13", 0],
+      "filename_prefix": "miai/mascot_alpha"
+    }
+  },
+  "16": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": ["9", 0],
+      "filename_prefix": "miai/reward_whitebg"
+    }
+  }
+}

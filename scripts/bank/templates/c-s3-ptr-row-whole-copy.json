@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-ptr-row-whole-copy",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-18",
+  "type": "codefix",
+  "concept": ["一整排牌子换不掉，只能一格一格抄", "整排那个名字认得的是整排本身，不是一格", "报错原话里有 assignment to expression with array type"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["阿花", "小橘"] },
+    "b": { "kind": "pick", "values": ["大肥鱼", "煤球"] },
+    "c": { "kind": "pick", "values": ["豆豆", "团子"] },
+    "d": { "kind": "pick", "values": ["芝麻", "雪球"] }
+  },
+  "stemTemplate": "本喵手上摆着两排牌子：`row` 这排先插着甲、乙、丙、丁，`other` 那排插着 {a}、{b}、{c}、{d}。本喵想偷个懒，一句话把 `other` 那四张**整排搬**到 `row` 里，再走一圈印出来 —— 结果翻译官喵当场停手，一个字都不肯翻。\n\n请你换个**一格一格来**的写法，让它能编出来，并且印出 `0: {a}`、`1: {b}`、`2: {c}`、`3: {d}` 这四行。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    char *row[4] = {\"甲\", \"乙\", \"丙\", \"丁\"};\n    char *other[4] = {\"{a}\", \"{b}\", \"{c}\", \"{d}\"};\n\n    row = other;\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    char *row[4] = {\"甲\", \"乙\", \"丙\", \"丁\"};\n    char *other[4] = {\"{a}\", \"{b}\", \"{c}\", \"{d}\"};\n\n    for (int i = 0; i < 4; i++) {\n        row[i] = other[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+  "explanationTemplate": "`row = other;` 这一句，翻译官喵的原话里有这几个字：`assignment to expression with array type` —— 意思是「一排东西不能整个换掉」。\n\n为什么不能？因为在它眼里，`row` 这个名字压根**不是一格**，而是**整排的门牌号**：它认的是那一排本身，不是「装着这一排的那张牌」。所以整排要换内容，只能**一格一格抄** —— 本题就是一圈 `row[i] = other[i];`。\n\n记一句喵：**一整排换不掉，单张的牌子随时能换。** 以后看到那串原话，先想一件事：我是不是把一整排当成一格在用了？"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-05-lambda-no-return",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-05",
+  "type": "codefix",
+  "concept": ["小招式要吃一口叼一口", "少了 return 编不过", "报错拦在递进去的招式上"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [3, 7] },
+    "b": { "kind": "pick", "values": [5, 2] },
+    "c": { "kind": "pick", "values": [8, 4] }
+  },
+  "stemTemplate": "本喵想把柜子里的每一格都**翻一倍**，于是用了那一招「**整柜换货**」。可它**编不过**喵 —— 翻译官喵拦在了递进去的那一小段招式上。\n\n你帮本喵把它改对：**每一格都换成原来的两倍**。塞货和印货那几句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back({a});\n    v.push_back({b});\n    v.push_back({c});\n\n    transform(v.begin(), v.end(), v.begin(), [](int x) {\n        x * 2;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back({a});\n    v.push_back({b});\n    v.push_back({c});\n\n    transform(v.begin(), v.end(), v.begin(), [](int x) {\n        return x * 2;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题错在递进去的那一小段招式**少了一句把结果叼回来的话**喵。\n\n整柜换货那一招吃**四个投喂口**：从哪儿起、到哪儿为止、换好的货放哪儿、**怎么换**。第四个小招式是「**吃一口、叼一口**」：圆括号里是吃进来的那一格货，肚子里算完之后必须用 `return` 把结果**叼回来** —— 那一招才知道每一格该换成什么。\n\n本喵肚子里只写了 `x * 2;`：算完就**扔掉了**，什么也没叼回来。于是翻译官喵当场拦下 —— 它的原话里有 `void value not ignored as it ought to be`，念作「**这儿本该叼回来一样东西，你却没叼**」；它还顺带唠叨了一句 `warning: statement has no effect`（「这句话算完等于没算」），说的正是扔掉的那一下。\n\n⚠️ 它这次报的位置在**它自己家里带的那份文件**里（每台机器的路径都不一样），不是你的错处 —— 所以别照着路径去找。记住这条更管用：**报错拦在递进去的招式上，先低头看那一小段肚子里有没有 `return`。**\n\n⚠️ 改对之后每一格都要乘 2：`return x * 2;` 才是「换一口、叼一口」。"
+}

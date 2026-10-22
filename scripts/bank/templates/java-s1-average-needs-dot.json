@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-average-needs-dot",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-05",
+  "type": "codewrite",
+  "concept": ["整数除法", "小数点", "平均值", "printf"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["条", "颗"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 3, "min": 3, "max": 20 },
+  "stemTemplate": "今天三只猫各领了一份{unit}，纸条上写的就是它们各领了几{unit}喵。\n\n请你写个程序：先把三个整数读进来（一个一行），算出它们的**平均值**，印成**一行** —— 先写`平均`两个字，空一格，再写那个数，最后写`{unit}喵`：\n\n```text\n平均 X.XX {unit}喵\n```\n\n那个数要**保留两位小数**（`printf` 的 `%.2f` 正好干这个活，`X.XX` 就是它的样子）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        int c = sc.nextInt();\n\n        double avg = (a + b + c) / 3.0;\n        System.out.printf(\"平均 %.2f {unit}喵%n\", avg);\n    }\n}\n",
+  "explanationTemplate": "这道题里藏着这一课最值钱的那个坑喵：**`(a + b + c) / 3` 两边都是整数料，算出来是整数** —— 零头被当场扔掉，再交给 `%.2f` 去印，屏幕上就是齐齐整整的 `.00`，看着挺像回事，其实早就少了一块。\n\n治法就是本课那句老话：**想让 `/` 保留零头，两边至少有一边写成带小数点的样子** —— 把 `3` 写成 `3.0`，这一锅就整锅按小数算。\n\n另外两处也别忘：\n\n- 求和要用**一对括号把三个数圈起来**，不然 `/` 会先扒走 `c` 一个数（乘除排在加减前面），算出来的就不是三个数的平均了。\n- `%.2f` 里的那个 `.2` 管「小数只留两位」，它自己会把后面四舍五入好。\n\n（末尾那个 `%n` 是 `printf` 的换行记号 —— 它念完不会自己换行，得自己写喵。）"
+}

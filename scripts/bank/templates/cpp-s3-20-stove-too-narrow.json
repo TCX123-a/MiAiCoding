@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-20-stove-too-narrow",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-20",
+  "type": "codefix",
+  "concept": ["空尖括号只管一款料", "留一个空位就管一整种形状", "全特化与偏特化只差头上一行"],
+  "instances": 2,
+  "params": {
+    "t": { "kind": "pick", "values": ["double", "char"] }
+  },
+  "stemTemplate": "本喵想给**所有「指向牌」**都开一个小灶，结果只开给了「照着整数做的指向牌」那一款 —— 换成 `{t}*` 这款指向牌，屏幕上印出来的就是「普通料」了。\n\n请你把小灶改成「**凡是**指向牌都管」的那种写法。改完跑起来，屏幕上要正好是两行「指向牌」喵。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nstruct Tag {\n    static const char* name() { return \"普通料\"; }\n};\n\ntemplate <>\nstruct Tag<int*> {\n    static const char* name() { return \"指向牌\"; }\n};\n\nint main() {\n    cout << Tag<int*>::name() << endl;\n    cout << Tag<{t}*>::name() << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nstruct Tag {\n    static const char* name() { return \"普通料\"; }\n};\n\ntemplate <typename T>\nstruct Tag<T*> {\n    static const char* name() { return \"指向牌\"; }\n};\n\nint main() {\n    cout << Tag<int*>::name() << endl;\n    cout << Tag<{t}*>::name() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵写的是空的尖括号加上 `struct Tag<int*>` —— 那是**全特化**：头上那对空尖括号说「一个空位都不留」，于是它只认「照着整数做的指向牌」这一款，别的指向牌一律不认，第二行就掉回通用那份了。\n\n要管住**一整种形状**，得换成**偏特化**：头上写成 `template <typename T>`（留一个空位），名字后面写成 `Tag<T*>`（只把形状说清楚，「指向的是什么料」这个空位继续留给别人填）。\n\n⚠️ 这两行**必须一起改**：只把 `int*` 改成 `T*` 而头上还是空的尖括号，翻译官喵会当场拦你 —— 名字后面冒出来的那个空位，头上根本没立过；只把头上换成留空位、名字后面还是 `int*`，那又变成另一张通用图纸了，谁都不认得。\n\n改的地方只有两行，管的范围从「一款料」变成「一整种形状」 —— 这正是偏特化最值钱的地方。"
+}

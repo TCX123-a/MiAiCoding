@@ -1,0 +1,291 @@
+{
+  "lessonId": "cpp-stage3-06",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-06-auto-return-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要的是：**提前出门那一趟，也不许漏事**喵。\n\n投喂口会给**一个数**。图纸本喵已经替你写进骨架里了：`Fish` 里装着一个整数 `n`；它**一被租下**就印 `领到 ` 加那个数，**被还回去时**印 `还回 ` 加那个数。你不用改它。\n\n请你写招式 `work(int v, bool early)`：\n\n1. **用牌子**（`unique_ptr<Fish>`）租一间仓库装着 `v`；\n2. 要是 `early` 为真，就**提前出门**（直接 `return`，别的什么都不印）；\n3. 否则印**一行**：`用 ` 加那个数。\n\n`main` 那边已经写好了，你不用动：读一个数，然后 `work(x, false)`、印一行 `---`、`work(x, true)`、最后印一行 `收工`。\n\n比如投喂给程序的是\n\n93\n\n程序就要叼回\n\n领到 93\n用 93\n还回 93\n---\n领到 93\n还回 93\n收工\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nstruct Fish {\n    int n;\n    Fish(int v) : n(v) { cout << \"领到 \" << n << endl; }\n    ~Fish() { cout << \"还回 \" << n << endl; }\n};\n\nvoid work(int v, bool early) {\n\n}\n\nint main() {\n    int x = 0;\n    cin >> x;\n\n    work(x, false);\n    cout << \"---\" << endl;\n    work(x, true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nstruct Fish {\n    int n;\n    Fish(int v) : n(v) { cout << \"领到 \" << n << endl; }\n    ~Fish() { cout << \"还回 \" << n << endl; }\n};\n\nvoid work(int v, bool early) {\n    unique_ptr<Fish> p = make_unique<Fish>(v);\n    if (early) {\n        return;\n    }\n    cout << \"用 \" << p->n << endl;\n}\n\nint main() {\n    int x = 0;\n    cin >> x;\n\n    work(x, false);\n    cout << \"---\" << endl;\n    work(x, true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领到 4\n用 4\n还回 4\n---\n领到 4\n还回 4\n收工",
+      "stdin": "4\n",
+      "explanation": "这一题是课文第三节那段的重演喵，一眼就能看出牌子比手写 `delete` 强在哪儿：\n\n- `work(x, false)` 那一趟正常走到底 → 印 `领到`、印 `用`，走出花括号时牌子把仓库叼回去 → 印 `还回`；\n- `work(x, true)` 那一趟**中途 `return`** → 后面的印字全跳过，可牌子**照样**把仓库还了。\n\n原因是那句本喵一直念叨的话：**「还仓库」是写在牌子的出生证里的**，它只认一件事 —— 牌子走出它出生的那片花括号。至于本喵是从哪条路出门的（走到底、还是半路 `return`），牌子不管。\n\n⚠️ 所以这一题里**一个 `delete` 都不用写**：手写还仓库的活儿，牌子替你记着了。反过来，要是你请了牌子又自己伸手 `delete`，那是跟它抢着还，翻译官喵会认不出来。\n\n⚠️ 判分喂的数跟样例不一样，别写死。",
+      "templateId": "cpp-s3-06-auto-return",
+      "params": {
+        "x": 4
+      },
+      "verified": {
+        "at": "2026-09-16T10:10:00.436Z",
+        "hash": "3c746f8d129e96e9"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-auto-return-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要的是：**提前出门那一趟，也不许漏事**喵。\n\n投喂口会给**一个数**。图纸本喵已经替你写进骨架里了：`Fish` 里装着一个整数 `n`；它**一被租下**就印 `领到 ` 加那个数，**被还回去时**印 `还回 ` 加那个数。你不用改它。\n\n请你写招式 `work(int v, bool early)`：\n\n1. **用牌子**（`unique_ptr<Fish>`）租一间仓库装着 `v`；\n2. 要是 `early` 为真，就**提前出门**（直接 `return`，别的什么都不印）；\n3. 否则印**一行**：`用 ` 加那个数。\n\n`main` 那边已经写好了，你不用动：读一个数，然后 `work(x, false)`、印一行 `---`、`work(x, true)`、最后印一行 `收工`。\n\n比如投喂给程序的是\n\n93\n\n程序就要叼回\n\n领到 93\n用 93\n还回 93\n---\n领到 93\n还回 93\n收工\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nstruct Fish {\n    int n;\n    Fish(int v) : n(v) { cout << \"领到 \" << n << endl; }\n    ~Fish() { cout << \"还回 \" << n << endl; }\n};\n\nvoid work(int v, bool early) {\n\n}\n\nint main() {\n    int x = 0;\n    cin >> x;\n\n    work(x, false);\n    cout << \"---\" << endl;\n    work(x, true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nstruct Fish {\n    int n;\n    Fish(int v) : n(v) { cout << \"领到 \" << n << endl; }\n    ~Fish() { cout << \"还回 \" << n << endl; }\n};\n\nvoid work(int v, bool early) {\n    unique_ptr<Fish> p = make_unique<Fish>(v);\n    if (early) {\n        return;\n    }\n    cout << \"用 \" << p->n << endl;\n}\n\nint main() {\n    int x = 0;\n    cin >> x;\n\n    work(x, false);\n    cout << \"---\" << endl;\n    work(x, true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领到 6\n用 6\n还回 6\n---\n领到 6\n还回 6\n收工",
+      "stdin": "6\n",
+      "explanation": "这一题是课文第三节那段的重演喵，一眼就能看出牌子比手写 `delete` 强在哪儿：\n\n- `work(x, false)` 那一趟正常走到底 → 印 `领到`、印 `用`，走出花括号时牌子把仓库叼回去 → 印 `还回`；\n- `work(x, true)` 那一趟**中途 `return`** → 后面的印字全跳过，可牌子**照样**把仓库还了。\n\n原因是那句本喵一直念叨的话：**「还仓库」是写在牌子的出生证里的**，它只认一件事 —— 牌子走出它出生的那片花括号。至于本喵是从哪条路出门的（走到底、还是半路 `return`），牌子不管。\n\n⚠️ 所以这一题里**一个 `delete` 都不用写**：手写还仓库的活儿，牌子替你记着了。反过来，要是你请了牌子又自己伸手 `delete`，那是跟它抢着还，翻译官喵会认不出来。\n\n⚠️ 判分喂的数跟样例不一样，别写死。",
+      "templateId": "cpp-s3-06-auto-return",
+      "params": {
+        "x": 6
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:10.085Z",
+        "hash": "f364b7604e5d04f7"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-auto-return-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要的是：**提前出门那一趟，也不许漏事**喵。\n\n投喂口会给**一个数**。图纸本喵已经替你写进骨架里了：`Fish` 里装着一个整数 `n`；它**一被租下**就印 `领到 ` 加那个数，**被还回去时**印 `还回 ` 加那个数。你不用改它。\n\n请你写招式 `work(int v, bool early)`：\n\n1. **用牌子**（`unique_ptr<Fish>`）租一间仓库装着 `v`；\n2. 要是 `early` 为真，就**提前出门**（直接 `return`，别的什么都不印）；\n3. 否则印**一行**：`用 ` 加那个数。\n\n`main` 那边已经写好了，你不用动：读一个数，然后 `work(x, false)`、印一行 `---`、`work(x, true)`、最后印一行 `收工`。\n\n比如投喂给程序的是\n\n93\n\n程序就要叼回\n\n领到 93\n用 93\n还回 93\n---\n领到 93\n还回 93\n收工\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nstruct Fish {\n    int n;\n    Fish(int v) : n(v) { cout << \"领到 \" << n << endl; }\n    ~Fish() { cout << \"还回 \" << n << endl; }\n};\n\nvoid work(int v, bool early) {\n\n}\n\nint main() {\n    int x = 0;\n    cin >> x;\n\n    work(x, false);\n    cout << \"---\" << endl;\n    work(x, true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nstruct Fish {\n    int n;\n    Fish(int v) : n(v) { cout << \"领到 \" << n << endl; }\n    ~Fish() { cout << \"还回 \" << n << endl; }\n};\n\nvoid work(int v, bool early) {\n    unique_ptr<Fish> p = make_unique<Fish>(v);\n    if (early) {\n        return;\n    }\n    cout << \"用 \" << p->n << endl;\n}\n\nint main() {\n    int x = 0;\n    cin >> x;\n\n    work(x, false);\n    cout << \"---\" << endl;\n    work(x, true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领到 8\n用 8\n还回 8\n---\n领到 8\n还回 8\n收工",
+      "stdin": "8\n",
+      "explanation": "这一题是课文第三节那段的重演喵，一眼就能看出牌子比手写 `delete` 强在哪儿：\n\n- `work(x, false)` 那一趟正常走到底 → 印 `领到`、印 `用`，走出花括号时牌子把仓库叼回去 → 印 `还回`；\n- `work(x, true)` 那一趟**中途 `return`** → 后面的印字全跳过，可牌子**照样**把仓库还了。\n\n原因是那句本喵一直念叨的话：**「还仓库」是写在牌子的出生证里的**，它只认一件事 —— 牌子走出它出生的那片花括号。至于本喵是从哪条路出门的（走到底、还是半路 `return`），牌子不管。\n\n⚠️ 所以这一题里**一个 `delete` 都不用写**：手写还仓库的活儿，牌子替你记着了。反过来，要是你请了牌子又自己伸手 `delete`，那是跟它抢着还，翻译官喵会认不出来。\n\n⚠️ 判分喂的数跟样例不一样，别写死。",
+      "templateId": "cpp-s3-06-auto-return",
+      "params": {
+        "x": 8
+      },
+      "verified": {
+        "at": "2026-09-16T10:10:03.475Z",
+        "hash": "21f23db7ca7ba395"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-copy-refused-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵写了个小活儿：投喂口**先给一个数**（要跟着几个数），**再一只一只把数递进来**喵。本喵把它们一格一格塞进一个会自己长大的储物柜，而这个柜子是用牌子拿的（`unique_ptr<vector<int>>`，`p->push_back(x)` 就是「隔着牌子往柜子里塞一格」）。\n\n最后本喵想把手里这块牌子**交给另一块**，写的是 `unique_ptr<vector<int>> q = p;` —— 翻译官喵当场拦下，原话里有 `use of deleted function`。\n\n你帮本喵改对：让这段代码**能编过、能跑完**，并且印出**一行**：柜子里**有几格**。除了把牌子交出去那一句，别的都不用动。",
+      "brokenCode": "#include <iostream>\n#include <memory>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n    unique_ptr<vector<int>> p = make_unique<vector<int>>();\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        p->push_back(x);\n    }\n    unique_ptr<vector<int>> q = p;\n    cout << q->size() << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <memory>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n    unique_ptr<vector<int>> p = make_unique<vector<int>>();\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        p->push_back(x);\n    }\n    unique_ptr<vector<int>> q = move(p);\n    cout << q->size() << endl;\n    return 0;\n}\n",
+      "expectedOutput": "3",
+      "stdin": "3\n5\n1\n3\n",
+      "explanation": "一句 `use of deleted function` 念作「**这个本事已经被划掉了**」—— 它不是在说名字写错了，是在说「复制这条路**压根不给你走**」喵。\n\n为什么不让走：牌子**走出花括号就会自己把仓库还回去**，要是两块牌子指着同一间仓库，那就是还两次 —— 所以 C++ 干脆不许复制。\n\n换主人得**打招呼**：`move(p)`，念作「`p` 这一份本喵不要了，你搬过去」。搬完之后旧的那块牌子只剩个空壳（课文第五节真跑过 `a 已经空手了` 那一行），所以后面取货只能拿新牌子 `q` 去取。\n\n⚠️ 判分喂的数跟样例不一样，但这一题要的数不用你算 —— 就是投喂口**最先给的那一个**（柜子里塞了几格）。所以别把样例的数写死。",
+      "templateId": "cpp-s3-06-copy-refused",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T10:09:25.491Z",
+        "hash": "5fd41ce3a087e98f"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-copy-refused-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵写了个小活儿：投喂口**先给一个数**（要跟着几个数），**再一只一只把数递进来**喵。本喵把它们一格一格塞进一个会自己长大的储物柜，而这个柜子是用牌子拿的（`unique_ptr<vector<int>>`，`p->push_back(x)` 就是「隔着牌子往柜子里塞一格」）。\n\n最后本喵想把手里这块牌子**交给另一块**，写的是 `unique_ptr<vector<int>> q = p;` —— 翻译官喵当场拦下，原话里有 `use of deleted function`。\n\n你帮本喵改对：让这段代码**能编过、能跑完**，并且印出**一行**：柜子里**有几格**。除了把牌子交出去那一句，别的都不用动。",
+      "brokenCode": "#include <iostream>\n#include <memory>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n    unique_ptr<vector<int>> p = make_unique<vector<int>>();\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        p->push_back(x);\n    }\n    unique_ptr<vector<int>> q = p;\n    cout << q->size() << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <memory>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n    unique_ptr<vector<int>> p = make_unique<vector<int>>();\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        p->push_back(x);\n    }\n    unique_ptr<vector<int>> q = move(p);\n    cout << q->size() << endl;\n    return 0;\n}\n",
+      "expectedOutput": "5",
+      "stdin": "5\n7\n2\n3\n1\n7\n",
+      "explanation": "一句 `use of deleted function` 念作「**这个本事已经被划掉了**」—— 它不是在说名字写错了，是在说「复制这条路**压根不给你走**」喵。\n\n为什么不让走：牌子**走出花括号就会自己把仓库还回去**，要是两块牌子指着同一间仓库，那就是还两次 —— 所以 C++ 干脆不许复制。\n\n换主人得**打招呼**：`move(p)`，念作「`p` 这一份本喵不要了，你搬过去」。搬完之后旧的那块牌子只剩个空壳（课文第五节真跑过 `a 已经空手了` 那一行），所以后面取货只能拿新牌子 `q` 去取。\n\n⚠️ 判分喂的数跟样例不一样，但这一题要的数不用你算 —— 就是投喂口**最先给的那一个**（柜子里塞了几格）。所以别把样例的数写死。",
+      "templateId": "cpp-s3-06-copy-refused",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T10:09:29.082Z",
+        "hash": "fa1cbc39dfbe9900"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-delete-on-smart-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵请了一块牌子拿着一件货（货是一间叫 `Fish` 的仓库，它一生下来印 `领到`、被还回去时印 `还回`）。\n\n递货的时候本喵顺手（老习惯）又补了一句 `delete p;`，翻译官喵当场不干了。\n\n你帮本喵改对：让这段代码**能编过、能跑完**，并且印出**三行**，顺序就是事情发生的顺序：\n\n1. `领到 大肥鱼`\n2. `用 大肥鱼`\n3. `还回 大肥鱼`\n\n除了多余的那一句，别的都不用动。",
+      "brokenCode": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    unique_ptr<Fish> p = make_unique<Fish>(\"大肥鱼\");\n    cout << \"用 \" << p->name << endl;\n    delete p;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    unique_ptr<Fish> p = make_unique<Fish>(\"大肥鱼\");\n    cout << \"用 \" << p->name << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领到 大肥鱼\n用 大肥鱼\n还回 大肥鱼",
+      "stdin": null,
+      "explanation": "牌子最讨喜的地方就是：**「还仓库」这件事写在它的出生证里**，你一个字都不用写 —— 花括号一结束，它自己就把仓库叼回去了喵。\n\n所以 `delete p;` 那一句是在**跟牌子抢着还**。翻译官喵的原话里有 `argument given to 'delete', expected pointer`，念作「`delete` 要的是一块**裸**牌子，可你递过去的是一块**会自己还**的牌子 —— 这个形状我不认」。\n\n把那句删掉就对了：牌子自己会还，`还回 大肥鱼` 照样印得出来（而且是印在 `用` 的后面 —— 因为它在 `main` 的花括号走出去时才还）。\n\n⚠️ 「手写 `delete`」和「牌子自己还」是**两条路**，一条代码里只能走一条：走了牌子那条，就别再伸手去还了。",
+      "templateId": "cpp-s3-06-delete-on-smart",
+      "params": {
+        "name": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T10:09:31.877Z",
+        "hash": "285645f4bff61f3a"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-delete-on-smart-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵请了一块牌子拿着一件货（货是一间叫 `Fish` 的仓库，它一生下来印 `领到`、被还回去时印 `还回`）。\n\n递货的时候本喵顺手（老习惯）又补了一句 `delete p;`，翻译官喵当场不干了。\n\n你帮本喵改对：让这段代码**能编过、能跑完**，并且印出**三行**，顺序就是事情发生的顺序：\n\n1. `领到 小橘`\n2. `用 小橘`\n3. `还回 小橘`\n\n除了多余的那一句，别的都不用动。",
+      "brokenCode": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    unique_ptr<Fish> p = make_unique<Fish>(\"小橘\");\n    cout << \"用 \" << p->name << endl;\n    delete p;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    unique_ptr<Fish> p = make_unique<Fish>(\"小橘\");\n    cout << \"用 \" << p->name << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领到 小橘\n用 小橘\n还回 小橘",
+      "stdin": null,
+      "explanation": "牌子最讨喜的地方就是：**「还仓库」这件事写在它的出生证里**，你一个字都不用写 —— 花括号一结束，它自己就把仓库叼回去了喵。\n\n所以 `delete p;` 那一句是在**跟牌子抢着还**。翻译官喵的原话里有 `argument given to 'delete', expected pointer`，念作「`delete` 要的是一块**裸**牌子，可你递过去的是一块**会自己还**的牌子 —— 这个形状我不认」。\n\n把那句删掉就对了：牌子自己会还，`还回 小橘` 照样印得出来（而且是印在 `用` 的后面 —— 因为它在 `main` 的花括号走出去时才还）。\n\n⚠️ 「手写 `delete`」和「牌子自己还」是**两条路**，一条代码里只能走一条：走了牌子那条，就别再伸手去还了。",
+      "templateId": "cpp-s3-06-delete-on-smart",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T10:09:34.332Z",
+        "hash": "9df7e25228d2aecc"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-move-sum-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会**先给一个数**（要跟着几个数），**再一只一只给 3 个数**喵。\n\n请你写个程序：\n\n1. 把这 3 个数**加起来**（用那只从 0 开始的小碗），总和放进一个 `int` 里；\n2. 请一块牌子装着这个和（`make_unique<int>(...)`）；\n3. 把这块牌子**换主人**交给另一块牌子 —— 牌子不许复制，要用「打招呼搬家」那一招；\n4. 最后印**两行**：\n   - 第一行：从**新牌子**上取下来的那个和；\n   - 第二行：**旧牌子**现在的样子 —— 已经**空手**了就印 `空手`，还拿着就印 `还拿着`（就是拿它去和「什么都没有」比一比）。\n\n比如投喂给程序的是\n\n3\n1\n3\n9\n\n程序就要叼回\n\n13\n空手\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        total += x;\n    }\n\n    unique_ptr<int> a = make_unique<int>(total);\n    unique_ptr<int> b = move(a);\n\n    cout << *b << endl;\n    cout << (a == nullptr ? \"空手\" : \"还拿着\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "21\n空手",
+      "stdin": "3\n6\n8\n7\n",
+      "explanation": "这一题串了三件本喵今天刚学的事喵：\n\n**① 装满一个数**：`total` 从 0 起，绕 3 圈，每圈把一个数加进去 —— 和就攒好了。\n**② 请牌子装货**：`make_unique<int>(total)` 一趟把两件事都做了（仓库租下来、货放进去），不用自己写 `new`。\n**③ 换主人**：写成 `unique_ptr<int> b = a;` 是不行的 —— 复制那条路被划掉了，翻译官喵的原话里有 `use of deleted function`。得**打招呼**：`move(a)`，念作「`a` 这一份本喵不要了，你搬过去」。\n\n最后那两行就是这一步的证据：搬完家之后**旧的那块牌子只剩个空壳**，拿它去和「什么都没有」（`nullptr`）比一比，会印出 `空手` —— 课文第五节真跑过一模一样的一行。所以取货只能拿 `b` 去取：`*b`。\n\n⚠️ 要是本喵没打招呼、另外请了一块牌子装着同样的数，那第二行会印成 `还拿着` —— 和判分要的不一样，这一题就是靠这一行盯住「你到底有没有真的搬家」。\n\n⚠️ 判分喂的数跟样例不一样，别把样例的答案写死。",
+      "templateId": "cpp-s3-06-move-sum",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T11:00:59.600Z",
+        "hash": "de6810907a88f956"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-move-sum-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会**先给一个数**（要跟着几个数），**再一只一只给 4 个数**喵。\n\n请你写个程序：\n\n1. 把这 4 个数**加起来**（用那只从 0 开始的小碗），总和放进一个 `int` 里；\n2. 请一块牌子装着这个和（`make_unique<int>(...)`）；\n3. 把这块牌子**换主人**交给另一块牌子 —— 牌子不许复制，要用「打招呼搬家」那一招；\n4. 最后印**两行**：\n   - 第一行：从**新牌子**上取下来的那个和；\n   - 第二行：**旧牌子**现在的样子 —— 已经**空手**了就印 `空手`，还拿着就印 `还拿着`（就是拿它去和「什么都没有」比一比）。\n\n比如投喂给程序的是\n\n4\n1\n5\n1\n2\n\n程序就要叼回\n\n9\n空手\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        total += x;\n    }\n\n    unique_ptr<int> a = make_unique<int>(total);\n    unique_ptr<int> b = move(a);\n\n    cout << *b << endl;\n    cout << (a == nullptr ? \"空手\" : \"还拿着\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "29\n空手",
+      "stdin": "4\n8\n5\n8\n8\n",
+      "explanation": "这一题串了三件本喵今天刚学的事喵：\n\n**① 装满一个数**：`total` 从 0 起，绕 4 圈，每圈把一个数加进去 —— 和就攒好了。\n**② 请牌子装货**：`make_unique<int>(total)` 一趟把两件事都做了（仓库租下来、货放进去），不用自己写 `new`。\n**③ 换主人**：写成 `unique_ptr<int> b = a;` 是不行的 —— 复制那条路被划掉了，翻译官喵的原话里有 `use of deleted function`。得**打招呼**：`move(a)`，念作「`a` 这一份本喵不要了，你搬过去」。\n\n最后那两行就是这一步的证据：搬完家之后**旧的那块牌子只剩个空壳**，拿它去和「什么都没有」（`nullptr`）比一比，会印出 `空手` —— 课文第五节真跑过一模一样的一行。所以取货只能拿 `b` 去取：`*b`。\n\n⚠️ 要是本喵没打招呼、另外请了一块牌子装着同样的数，那第二行会印成 `还拿着` —— 和判分要的不一样，这一题就是靠这一行盯住「你到底有没有真的搬家」。\n\n⚠️ 判分喂的数跟样例不一样，别把样例的答案写死。",
+      "templateId": "cpp-s3-06-move-sum",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:14.836Z",
+        "hash": "7d5128770314e987"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-move-sum-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会**先给一个数**（要跟着几个数），**再一只一只给 5 个数**喵。\n\n请你写个程序：\n\n1. 把这 5 个数**加起来**（用那只从 0 开始的小碗），总和放进一个 `int` 里；\n2. 请一块牌子装着这个和（`make_unique<int>(...)`）；\n3. 把这块牌子**换主人**交给另一块牌子 —— 牌子不许复制，要用「打招呼搬家」那一招；\n4. 最后印**两行**：\n   - 第一行：从**新牌子**上取下来的那个和；\n   - 第二行：**旧牌子**现在的样子 —— 已经**空手**了就印 `空手`，还拿着就印 `还拿着`（就是拿它去和「什么都没有」比一比）。\n\n比如投喂给程序的是\n\n5\n9\n7\n6\n8\n9\n\n程序就要叼回\n\n39\n空手\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        total += x;\n    }\n\n    unique_ptr<int> a = make_unique<int>(total);\n    unique_ptr<int> b = move(a);\n\n    cout << *b << endl;\n    cout << (a == nullptr ? \"空手\" : \"还拿着\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "35\n空手",
+      "stdin": "5\n8\n6\n5\n9\n7\n",
+      "explanation": "这一题串了三件本喵今天刚学的事喵：\n\n**① 装满一个数**：`total` 从 0 起，绕 5 圈，每圈把一个数加进去 —— 和就攒好了。\n**② 请牌子装货**：`make_unique<int>(total)` 一趟把两件事都做了（仓库租下来、货放进去），不用自己写 `new`。\n**③ 换主人**：写成 `unique_ptr<int> b = a;` 是不行的 —— 复制那条路被划掉了，翻译官喵的原话里有 `use of deleted function`。得**打招呼**：`move(a)`，念作「`a` 这一份本喵不要了，你搬过去」。\n\n最后那两行就是这一步的证据：搬完家之后**旧的那块牌子只剩个空壳**，拿它去和「什么都没有」（`nullptr`）比一比，会印出 `空手` —— 课文第五节真跑过一模一样的一行。所以取货只能拿 `b` 去取：`*b`。\n\n⚠️ 要是本喵没打招呼、另外请了一块牌子装着同样的数，那第二行会印成 `还拿着` —— 和判分要的不一样，这一题就是靠这一行盯住「你到底有没有真的搬家」。\n\n⚠️ 判分喂的数跟样例不一样，别把样例的答案写死。",
+      "templateId": "cpp-s3-06-move-sum",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:01:03.588Z",
+        "hash": "dbcae7ff5fb0b17f"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-raw-leak-return-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵写了个小活儿 `work`：进去先租一间仓库（货是一间叫 `Fish` 的仓库，它一被租下印 `领到`、被还回去时印 `还回`），然后看情况 —— 要是 `early` 为真，就**提前出门**。\n\n结果**提前出门那一趟漏了还仓库**：程序跑起来不报错，就是少印了一行。你帮本喵改对。\n\n改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `领到 大肥鱼`\n2. `用完 大肥鱼`\n3. `还回 大肥鱼`\n4. `---`\n5. `领到 大肥鱼`\n6. `还回 大肥鱼`\n7. `收工`\n\n**本喵不想再手写还仓库的活儿了** —— 那间仓库要自己回到它该回的地方去，不管 `work` 是从哪条路上出门的。几句印字的不用动。",
+      "brokenCode": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nvoid work(bool early) {\n    Fish* p = new Fish(\"大肥鱼\");\n    if (early) {\n        return;\n    }\n    cout << \"用完 \" << p->name << endl;\n    delete p;\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nvoid work(bool early) {\n    unique_ptr<Fish> p = make_unique<Fish>(\"大肥鱼\");\n    if (early) {\n        return;\n    }\n    cout << \"用完 \" << p->name << endl;\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领到 大肥鱼\n用完 大肥鱼\n还回 大肥鱼\n---\n领到 大肥鱼\n还回 大肥鱼\n收工",
+      "stdin": null,
+      "explanation": "这一题就是课文第三节那段的重演喵：**都是提前出门，手写的那版漏、牌子那版不漏**。\n\n漏的原因很好找：`return` 那一句把后面全跳过去了，而「还仓库」这件事在这段代码里**就写在 `delete p;` 那一句上** —— 跳过它，仓库就挂在本喵名下了（课文第一节那段真跑过，`还回` 一行都没印）。\n\n改法是**换谁来记这件事**：请一块会自己叼回仓库的牌子（`unique_ptr<Fish> p = make_unique<Fish>(...)`），然后 `delete p;` 那一句就**不用写了** —— 留着它反而会跟牌子抢着还，翻译官喵也会认不出来。\n\n牌子记着这件事之后，`early` 为真提前出门、还是走到底，**两条路它都会还**：还仓库的时刻是「牌子走出它出生的那片花括号」，跟本喵从哪条路出门没有关系。",
+      "templateId": "cpp-s3-06-raw-leak-return",
+      "params": {
+        "name": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T10:09:36.996Z",
+        "hash": "181a7408dfba4148"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-raw-leak-return-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵写了个小活儿 `work`：进去先租一间仓库（货是一间叫 `Fish` 的仓库，它一被租下印 `领到`、被还回去时印 `还回`），然后看情况 —— 要是 `early` 为真，就**提前出门**。\n\n结果**提前出门那一趟漏了还仓库**：程序跑起来不报错，就是少印了一行。你帮本喵改对。\n\n改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `领到 小橘`\n2. `用完 小橘`\n3. `还回 小橘`\n4. `---`\n5. `领到 小橘`\n6. `还回 小橘`\n7. `收工`\n\n**本喵不想再手写还仓库的活儿了** —— 那间仓库要自己回到它该回的地方去，不管 `work` 是从哪条路上出门的。几句印字的不用动。",
+      "brokenCode": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nvoid work(bool early) {\n    Fish* p = new Fish(\"小橘\");\n    if (early) {\n        return;\n    }\n    cout << \"用完 \" << p->name << endl;\n    delete p;\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nvoid work(bool early) {\n    unique_ptr<Fish> p = make_unique<Fish>(\"小橘\");\n    if (early) {\n        return;\n    }\n    cout << \"用完 \" << p->name << endl;\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领到 小橘\n用完 小橘\n还回 小橘\n---\n领到 小橘\n还回 小橘\n收工",
+      "stdin": null,
+      "explanation": "这一题就是课文第三节那段的重演喵：**都是提前出门，手写的那版漏、牌子那版不漏**。\n\n漏的原因很好找：`return` 那一句把后面全跳过去了，而「还仓库」这件事在这段代码里**就写在 `delete p;` 那一句上** —— 跳过它，仓库就挂在本喵名下了（课文第一节那段真跑过，`还回` 一行都没印）。\n\n改法是**换谁来记这件事**：请一块会自己叼回仓库的牌子（`unique_ptr<Fish> p = make_unique<Fish>(...)`），然后 `delete p;` 那一句就**不用写了** —— 留着它反而会跟牌子抢着还，翻译官喵也会认不出来。\n\n牌子记着这件事之后，`early` 为真提前出门、还是走到底，**两条路它都会还**：还仓库的时刻是「牌子走出它出生的那片花括号」，跟本喵从哪条路出门没有关系。",
+      "templateId": "cpp-s3-06-raw-leak-return",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T10:09:39.899Z",
+        "hash": "c66782c97160920f"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-shared-count-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**喵（就一个）。\n\n请你写个程序：\n\n1. 请一块 `shared_ptr` 装着这个数（用那个「一趟把两件事都做了」的招式）；\n2. 印**一行**：现在有几只手拿着它（用那个**数人头**的招式）；\n3. 开一层**花括号**，里头请**另一块牌子指着同一份**，再印**一行**有几只手；\n4. 出了花括号再印**一行**有几只手；\n5. 最后印**一行**那个数本身。\n\n比如投喂给程序的是\n\n28\n\n程序就要叼回\n\n1\n2\n1\n28\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n    int v = 0;\n    cin >> v;\n\n    shared_ptr<int> a = make_shared<int>(v);\n    cout << a.use_count() << endl;\n    {\n        shared_ptr<int> b = a;\n        cout << a.use_count() << endl;\n    }\n    cout << a.use_count() << endl;\n    cout << *a << endl;\n    return 0;\n}\n",
+      "expectedOutput": "1\n2\n1\n3",
+      "stdin": "3\n",
+      "explanation": "数人头那一招是 `use_count()`，念作「**现在有几只手指着这间仓库**」喵。\n\n- 刚请来只有一只手 → 印 `1`；\n- 花括号里多了一块牌子指着**同一份**（`shared_ptr` 是可以复制的，这是它和 `unique_ptr` 最大的不同）→ 两只手 → 印 `2`；\n- 那只手一放下（走出花括号）→ 回到一只手 → 印 `1`。\n\n⚠️ 第三个 `1` **不等于仓库还了**：仓库要等**最后一根手指**也松开（也就是 `main` 走完）才被叼回去。所以最后一行照样能拿 `a` 取货，印出投喂进来的那个数（`*a`）。\n\n⚠️ 判分喂的数跟样例不一样，别写死。",
+      "templateId": "cpp-s3-06-shared-count",
+      "params": {
+        "x": 3
+      },
+      "verified": {
+        "at": "2026-09-16T10:09:54.214Z",
+        "hash": "2a3e891b58dc5b80"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-shared-count-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**喵（就一个）。\n\n请你写个程序：\n\n1. 请一块 `shared_ptr` 装着这个数（用那个「一趟把两件事都做了」的招式）；\n2. 印**一行**：现在有几只手拿着它（用那个**数人头**的招式）；\n3. 开一层**花括号**，里头请**另一块牌子指着同一份**，再印**一行**有几只手；\n4. 出了花括号再印**一行**有几只手；\n5. 最后印**一行**那个数本身。\n\n比如投喂给程序的是\n\n28\n\n程序就要叼回\n\n1\n2\n1\n28\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n    int v = 0;\n    cin >> v;\n\n    shared_ptr<int> a = make_shared<int>(v);\n    cout << a.use_count() << endl;\n    {\n        shared_ptr<int> b = a;\n        cout << a.use_count() << endl;\n    }\n    cout << a.use_count() << endl;\n    cout << *a << endl;\n    return 0;\n}\n",
+      "expectedOutput": "1\n2\n1\n5",
+      "stdin": "5\n",
+      "explanation": "数人头那一招是 `use_count()`，念作「**现在有几只手指着这间仓库**」喵。\n\n- 刚请来只有一只手 → 印 `1`；\n- 花括号里多了一块牌子指着**同一份**（`shared_ptr` 是可以复制的，这是它和 `unique_ptr` 最大的不同）→ 两只手 → 印 `2`；\n- 那只手一放下（走出花括号）→ 回到一只手 → 印 `1`。\n\n⚠️ 第三个 `1` **不等于仓库还了**：仓库要等**最后一根手指**也松开（也就是 `main` 走完）才被叼回去。所以最后一行照样能拿 `a` 取货，印出投喂进来的那个数（`*a`）。\n\n⚠️ 判分喂的数跟样例不一样，别写死。",
+      "templateId": "cpp-s3-06-shared-count",
+      "params": {
+        "x": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:19.747Z",
+        "hash": "10b1635f58bca4cb"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-06-shared-count-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**喵（就一个）。\n\n请你写个程序：\n\n1. 请一块 `shared_ptr` 装着这个数（用那个「一趟把两件事都做了」的招式）；\n2. 印**一行**：现在有几只手拿着它（用那个**数人头**的招式）；\n3. 开一层**花括号**，里头请**另一块牌子指着同一份**，再印**一行**有几只手；\n4. 出了花括号再印**一行**有几只手；\n5. 最后印**一行**那个数本身。\n\n比如投喂给程序的是\n\n28\n\n程序就要叼回\n\n1\n2\n1\n28\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n    int v = 0;\n    cin >> v;\n\n    shared_ptr<int> a = make_shared<int>(v);\n    cout << a.use_count() << endl;\n    {\n        shared_ptr<int> b = a;\n        cout << a.use_count() << endl;\n    }\n    cout << a.use_count() << endl;\n    cout << *a << endl;\n    return 0;\n}\n",
+      "expectedOutput": "1\n2\n1\n7",
+      "stdin": "7\n",
+      "explanation": "数人头那一招是 `use_count()`，念作「**现在有几只手指着这间仓库**」喵。\n\n- 刚请来只有一只手 → 印 `1`；\n- 花括号里多了一块牌子指着**同一份**（`shared_ptr` 是可以复制的，这是它和 `unique_ptr` 最大的不同）→ 两只手 → 印 `2`；\n- 那只手一放下（走出花括号）→ 回到一只手 → 印 `1`。\n\n⚠️ 第三个 `1` **不等于仓库还了**：仓库要等**最后一根手指**也松开（也就是 `main` 走完）才被叼回去。所以最后一行照样能拿 `a` 取货，印出投喂进来的那个数（`*a`）。\n\n⚠️ 判分喂的数跟样例不一样，别写死。",
+      "templateId": "cpp-s3-06-shared-count",
+      "params": {
+        "x": 7
+      },
+      "verified": {
+        "at": "2026-09-16T10:09:57.235Z",
+        "hash": "60c1d824c9b2bfa0"
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-03-missing-class-scope",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-03",
+  "type": "codefix",
+  "concept": ["肚子写在图纸外面", "名字前挂上图纸名", "编译期报错现场"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] },
+    "fish": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stemTemplate": "本喵想把招式 `show` 的肚子写在图纸外面，省得图纸太长 —— 图纸里也留好了只报名字的那一行。\n\n可信封递进去，翻译官喵当场拦下，一行都不让跑喵。\n\n你帮本喵改一处，让它跑起来、把那一行印对。**肚子里那几行和 `main` 里那几句一个都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void show() const;\n};\n\nvoid show() const {\n    cout << name << \" 有 \" << fish << \" 条\" << endl;\n}\n\nint main() {\n    Cat c1(\"{name}\", {fish});\n    c1.show();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void show() const;\n};\n\nvoid Cat::show() const {\n    cout << name << \" 有 \" << fish << \" 条\" << endl;\n}\n\nint main() {\n    Cat c1(\"{name}\", {fish});\n    c1.show();\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:14:13: error: non-member function 'void show()' cannot have cv-qualifier`\n\n翻成猫话：**「这不是哪张图纸上的招式，它凭什么叫自己只读？」** 底下还会跟着两句，说 `name`、`fish` 这两个名字「没见过」—— 因为离开图纸之后，翻译官喵压根不知道进哪张图纸去找那几格。\n\n根子在这儿：**肚子写在图纸外面时，招式名前面必须挂上「这是哪张图纸上的」那一小段** —— 在本课里就是 `Cat::`。挂上它，翻译官喵才把外面这一招认回图纸里去；没挂，它就只当门口来了个谁也不认识的野招式。\n\n改法就是那一小段：`void Cat::show() const`。\n\n以后看到 `non-member function`，第一件事就是检查招式名前面是不是漏了它喵。"
+}

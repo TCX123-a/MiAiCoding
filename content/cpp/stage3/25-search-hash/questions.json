@@ -1,0 +1,94 @@
+{
+  "lessonId": "cpp-stage3-25",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "「砍一半」这种找法，有个铁打的前提是什么喵？",
+      "options": [
+        "那些碗必须已经按编号排好（从小到大的次序）",
+        "碗的个数必须是双数",
+        "要找的那只必须不在最后面",
+        "每条鱼干都得先称过重量"
+      ],
+      "answer": 0,
+      "explanation": "砍一半的全部底气都来自一句：**碗是按次序摆好的**喵。正因为左半边全都比中间那只小、右半边全都比中间那只大，本喵才敢看一眼中间就整半砍掉。碗要是乱摆的，中间那只比目标大，左边完全可能藏着要找的那一只 —— 这一砍就把它砍没了，程序还会认真地跟你说「没有」。碗的个数是单是双不打紧：单数时中间那只照样能把两边分开，第 11 到 13 步那个「段里只剩一只」的回合就是单数收的尾。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "在鱼干仓库里找编号 99，程序答「比了 0 次」—— 它凭什么敢下「没有这一只」的结论喵？",
+      "options": [
+        "算出来的那一格**压根没住过东西**，空格本身就是「这里没有」的证据",
+        "它把整个仓库挨着看了一遍，发现确实没有",
+        "它问了本喵，本喵告诉它的",
+        "它猜的"
+      ],
+      "answer": 0,
+      "explanation": "这是「算门牌号」这一手最妙的地方喵：编号 99 算出来住第 9 格，而第 9 格是**空的** —— 没住过东西。按规矩，一只编号只会住在「算出来的那一格，或者它往后第一串被撞车占掉之后剩下的某个格」，所以算出来的格子一空，就可以拍板：**没有这一只**，一次都不用比。对比一下「挨着看」：它必须把整排碗看完才敢说没有 —— 这就是两种找法最根本的差别。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "编号 17 算出来的格子已经被编号 7 住了（撞车了），本喵的规矩怎么办喵？",
+      "options": [
+        "往后挪一格找空位，一直挪到一个空格住下",
+        "把编号 7 挪走，让 17 住进它算出来的那一格",
+        "把 17 算成另外一格，换个规矩重算",
+        "这格满了就不收了，把 17 丢在外面"
+      ],
+      "answer": 0,
+      "explanation": "规矩只有一条：**撞了车就往后挪一格**，还撞就再挪喵。17 算出来是第 7 格，被 7 占了就挪到第 8 格住下。往后找 17 的时候也照**同一个规矩**走一遍：先敲第 7 格（住了 7，不是它），再往后挪到第 8 格，这才找到 —— 所以它比「找 5」（一敲门就是）多花那一次。挪的方向和次数必须是**住和找两边一模一样**的规矩，不然就会找不着。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n\nstd::vector<int> fish = {1, 3, 5, 7, 9, 11, 13};\n\n/* 砍一半：每次先看正中间那只，答「比了几次」；没找到就答负数 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = ____;\n    int tries = 0;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / ____;\n        tries++;\n        if (fish[mid] == target) {\n            return tries;\n        } else if (fish[mid] < target) {\n            lo = mid + ____;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main() {\n    int a = half_find(13);\n    int b = half_find(6);\n    std::cout << \"找 13：比了 \" << (a < 0 ? -a : a) << \" 次\" << (a < 0 ? \"没找到\" : \"\") << \"\\n\";\n    std::cout << \"找 6：比了 \" << (b < 0 ? -b : b) << \" 次\" << (b < 0 ? \"没找到\" : \"\") << \"\\n\";\n    return 0;\n}",
+      "stem": "「砍一半」这一招里有三个空位被本喵挖掉了。补完之后它会印出：找 13 比了几次、找 6 比了几次喵～",
+      "blanks": [
+        { "answer": "fish.size() - 1" },
+        { "answer": "2" },
+        { "answer": "1" }
+      ],
+      "explanation": "一开始还有戏的那一段是**整条**：从第 0 只到最后一只喵。最后一只的位子不用自己数 —— 问柜子要 `fish.size() - 1` 就行：柜子里有 7 只，最后一只站在 6 号位子上。正中间那只的位子用「两头加起来除以 `2`」算 —— 这个除以 `2` 就是「正中间」的意思。中间那只比目标**小**，说明目标在右边，于是左边连同中间这只一起砍掉：`lo = mid + 1`。那个 `+ 1` 千万别省：省了的话中间这只又留在段里，段一直不缩小，比到天荒地老也出不来。补好之后找 13 比 3 次就中；找 6 时那排碗里压根没有 6，比到段里一只不剩，同样比了 3 次、最后加上「没找到」三个字。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n\nconst int SLOTS = 10;\n\nstd::vector<int> shelf(SLOTS, 0);\nstd::vector<int> used(SLOTS, 0);\n\n/* 按编号算门牌号 */\nint slot_of(int id) {\n    return id ____ SLOTS;\n}\n\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + ____) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\nint main() {\n    put(7);\n    put(17);\n    std::cout << \"17 住在第 \" << slot_of(17) + 1 << \" 格\\n\";\n    return 0;\n}",
+      "stem": "算门牌号和「撞车往后挪」各有半个空位。补完之后这段程序该把 17 算出来的格子印出来喵～",
+      "blanks": [
+        { "answer": "%" },
+        { "answer": "1" }
+      ],
+      "explanation": "第一空是那个「取余数」的记号 `%`：编号除以 10 的**余数**就是它的门牌号 —— 17 除 10 余 7，所以它算出来的**格子号**是 7 号（格子号是从 0 数起的）喵。末尾印出来的是 `slot_of(17) + 1`，也就是 8，因为人报数习惯从第 1 格数起 —— 所以这行输出是 `17 住在第 8 格`。第二空是 `1`：撞了车就**往后挪一格**，往后是 + 1。这两个数一个管「住哪儿」、一个管「撞了怎么办」，缺一个都会让住进去的编号和找出来的编号对不上。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n\nstd::vector<int> fish = {2, 4, 6, 8, 10};\n\nint line_find(int target) {\n    int tries = 0;\n    for (int i = 0; i < fish.size(); i++) {\n        tries++;\n        if (fish[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint half_find(int target) {\n    int lo = 0;\n    int hi = fish.size() - 1;\n    int tries = 0;\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        tries++;\n        if (fish[mid] == target) {\n            return tries;\n        } else if (fish[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return -tries;\n}\n\nint main() {\n    std::vector<int> targets = {10, 2};\n    for (int i = 0; i < targets.size(); i++) {\n        int t = targets[i];\n        int a = line_find(t);\n        int b = half_find(t);\n        std::cout << \"找 \" << t << \"：挨着看 \" << (a < 0 ? -a : a) << \" 次\" << (a < 0 ? \"没找到\" : \"\")\n                  << \"，砍一半 \" << (b < 0 ? -b : b) << \" 次\" << (b < 0 ? \"没找到\" : \"\") << \"\\n\";\n    }\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "找 10：挨着看 5 次，砍一半 3 次\n找 2：挨着看 1 次，砍一半 2 次",
+      "accept": [
+        "找 10：挨着看 5 次，砍一半 3 次\n找 2：挨着看 1 次，砍一半 2 次\n"
+      ],
+      "explanation": "碗是 `2 4 6 8 10`，两头都找到了，所以没有「没找到」那三个字喵。找 10：挨着看要走到最后一只，5 次；砍一半先看中间那只（第 2 只，值是 6），小了就往右半边去，再看第 3 只（8）、又小，再看第 4 只（10）—— 3 次就中。找 2：挨着看第一只就中，只要 1 次；砍一半还是从中间那只看起，6 比 2 大就往左半边去，再看第 0 只（2），2 次。所以同一排碗里，**谁快还真不一定** —— 要找的在最前面时，挨着看反而赢喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\n\nconst int SLOTS = 10;\n\nstd::vector<int> shelf(SLOTS, 0);\nstd::vector<int> used(SLOTS, 0);\n\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\nint find(int id) {\n    int slot = slot_of(id);\n    int tries = 0;\n    while (used[slot]) {\n        tries++;\n        if (shelf[slot] == id) {\n            return tries;\n        }\n        slot = (slot + 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main() {\n    put(4);\n    put(14);\n    put(6);\n\n    std::cout << \"找 14：比了 \" << find(14) << \" 次\\n\";\n    std::cout << \"找 6：比了 \" << find(6) << \" 次\\n\";\n    std::cout << \"找 9：比了 \" << find(9) << \" 次\\n\";\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "找 14：比了 2 次\n找 6：比了 1 次\n找 9：比了 0 次",
+      "accept": [
+        "找 14：比了 2 次\n找 6：比了 1 次\n找 9：比了 0 次\n"
+      ],
+      "explanation": "编号 4 住第 4 格；编号 14 算出来也是第 4 格，撞上了，往后挪一格住第 5 格；编号 6 住第 6 格，一路顺风喵。于是：找 14 先敲第 4 格（住的是 4，不是它），往后挪一格才在第 5 格找到 —— 2 次；找 6 算出来第 6 格，一敲门就是它 —— 1 次；找 9 算出来第 9 格，那格**压根没住过东西**，连门都不用敲就答「没有这一只」—— 0 次。三行合起来正好是这一手的三张脸：撞车要多花一次、顺利的一次就中、空地零次收工。"
+    }
+  ]
+}

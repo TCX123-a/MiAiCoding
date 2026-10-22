@@ -1,0 +1,498 @@
+{
+  "lessonId": "python-stage3-08",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-py-s3-sqlite-bind-comma-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的仓库里记着三格货，本喵只想知道 `海苔味` 那一格还剩几条喵。\n\n口令是这么递的：`SELECT 条数 FROM 库存 WHERE 名字 = ?` —— 投喂口留好了，货也备在手边了。可本喵一跑，**当场就摔**，报的是 `sqlite3.ProgrammingError`，说本喵只留了一个投喂口，却递上去好几份。\n\n本喵明明只准备了一件货啊！\n\n请你把它修好。修好之后它应该印**一行**：`海苔味 还剩 N 条`（N 就是那一格的条数）。\n\n⚠️ 开表、记货、盖章那几段都是好的，别动它们；要改的只有**递货的那一处**，别把整段推倒重来喵。",
+      "brokenCode": "import sqlite3\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncon.commit()\n\ncur.execute(\"SELECT 条数 FROM 库存 WHERE 名字 = ?\", (\"海苔味\"))\nprint(\"海苔味 还剩 \" + str(cur.fetchone()[0]) + \" 条\")\ncon.close()\n",
+      "referenceFix": "import sqlite3\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncon.commit()\n\ncur.execute(\"SELECT 条数 FROM 库存 WHERE 名字 = ?\", (\"海苔味\",))\nprint(\"海苔味 还剩 \" + str(cur.fetchone()[0]) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "海苔味 还剩 7 条",
+      "stdin": null,
+      "explanation": "这道题摔的不是口令，是**递货的姿势**喵。\n\n`(\"海苔味\")` 看着像「一件货装在一个小括号里」，可在 Python 眼里，它只是**一串字外面套了个括号** —— 括号不等于装货的盒子。`sqlite3` 拿到它之后会老老实实**一个字一个字**地数：「海苔味」几个字，就算几份货。投喂口只要一份，你递上去好几份，它当然要摔，而且报的话还挺冤枉人 —— 它说的是「你递多了」，你觉得自己只递了一件。\n\n补上一个**逗号**就对了：`(\"海苔味\",)`。逗号才是「这括号里装的是一份货」的记号，括号只是把这一份货包起来好递出去。本喵把这条记成一句话：**只有一个货的时候，括号里的逗号不能少。**\n\n两件顺带要知道的事：\n\n- 要是名字碰巧只有**一个**字，那一个字正好算一份货，投喂口对得上 —— **它就不摔了，还会印出结果**。同一个毛病，看名字长短决定摔不摔，这种最不好查。\n- 口令里有两个投喂口的时候，括号里就是两件货，中间拿逗号隔开，逗号照样一个都不能少。\n\n⚠️ 还有：递货的东西写成 `[...]` 那种形状也管用。关键在**逗号**，包着它的那对括号长什么样倒是无所谓喵。",
+      "templateId": "py-s3-sqlite-bind-comma",
+      "params": {
+        "thing": "海苔味"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:38.561Z",
+        "hash": "cbbe2c16664ad5df"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-bind-comma-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的仓库里记着三格货，本喵只想知道 `原味` 那一格还剩几条喵。\n\n口令是这么递的：`SELECT 条数 FROM 库存 WHERE 名字 = ?` —— 投喂口留好了，货也备在手边了。可本喵一跑，**当场就摔**，报的是 `sqlite3.ProgrammingError`，说本喵只留了一个投喂口，却递上去好几份。\n\n本喵明明只准备了一件货啊！\n\n请你把它修好。修好之后它应该印**一行**：`原味 还剩 N 条`（N 就是那一格的条数）。\n\n⚠️ 开表、记货、盖章那几段都是好的，别动它们；要改的只有**递货的那一处**，别把整段推倒重来喵。",
+      "brokenCode": "import sqlite3\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncon.commit()\n\ncur.execute(\"SELECT 条数 FROM 库存 WHERE 名字 = ?\", (\"原味\"))\nprint(\"原味 还剩 \" + str(cur.fetchone()[0]) + \" 条\")\ncon.close()\n",
+      "referenceFix": "import sqlite3\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncon.commit()\n\ncur.execute(\"SELECT 条数 FROM 库存 WHERE 名字 = ?\", (\"原味\",))\nprint(\"原味 还剩 \" + str(cur.fetchone()[0]) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "原味 还剩 3 条",
+      "stdin": null,
+      "explanation": "这道题摔的不是口令，是**递货的姿势**喵。\n\n`(\"原味\")` 看着像「一件货装在一个小括号里」，可在 Python 眼里，它只是**一串字外面套了个括号** —— 括号不等于装货的盒子。`sqlite3` 拿到它之后会老老实实**一个字一个字**地数：「原味」几个字，就算几份货。投喂口只要一份，你递上去好几份，它当然要摔，而且报的话还挺冤枉人 —— 它说的是「你递多了」，你觉得自己只递了一件。\n\n补上一个**逗号**就对了：`(\"原味\",)`。逗号才是「这括号里装的是一份货」的记号，括号只是把这一份货包起来好递出去。本喵把这条记成一句话：**只有一个货的时候，括号里的逗号不能少。**\n\n两件顺带要知道的事：\n\n- 要是名字碰巧只有**一个**字，那一个字正好算一份货，投喂口对得上 —— **它就不摔了，还会印出结果**。同一个毛病，看名字长短决定摔不摔，这种最不好查。\n- 口令里有两个投喂口的时候，括号里就是两件货，中间拿逗号隔开，逗号照样一个都不能少。\n\n⚠️ 还有：递货的东西写成 `[...]` 那种形状也管用。关键在**逗号**，包着它的那对括号长什么样倒是无所谓喵。",
+      "templateId": "py-s3-sqlite-bind-comma",
+      "params": {
+        "thing": "原味"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:38.800Z",
+        "hash": "298bfe7112d8d694"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-new-row-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天新收了一件货，要把它**记进仓库**，记完再把整张表端出来看看喵。\n\n外面给**两行**：第一行是这件货的**名字**（一串字），第二行是一个数，是它的**条数**。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表。两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 仓库里**本来就有的三格货**先记进去：原味 3 条、海苔味 7 条、麻辣味 5 条。\n3. 再把外面给的那一件**也记进去**。名字和条数**都要从投喂口递进去**（口令里留两个 `?`）—— 不许把名字缝进口令里。\n4. **盖章**。\n5. 把整张表端出来，**从多到少**印，一行一格，格式是 `名字 N 条`（名字和 N 中间隔一个空格）。\n\n比如外面给的是\n\n冻干块\n8\n\n就要输出\n\n冻干块 8 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条\n\n（判分用的是**另外一件货**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n名字 = input()\n条数 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (名字, 条数))\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\nfor 货名, 条数 in cur:\n    print(货名 + \" \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "小鱼干 8 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条",
+      "stdin": "小鱼干\n8\n",
+      "explanation": "这道题的重点是**「添货也要走投喂口」**喵 —— 前面查东西时用投喂口，添东西时同样要用。\n\n`INSERT INTO 库存 VALUES (?, ?)` 里两个 `?` 就是两个投喂口，货从第二个逗号后面递进去：`(名字, 条数)`，一份对一格，**顺序不能反**（表头是先 `名字` 后 `条数`，递货也照这个先后）。\n\n⚠️ **为什么死活不能缝？** 本喵拿真事说话：名字里只要带一个撇号（英文名 `O'Brien` 这种满地都是），缝出来的那句话管家就读不懂了 —— 本喵试过，屏幕上摔出来的是 `sqlite3.OperationalError: near \"Brien\": syntax error`。换成投喂口，同一个名字一点事都没有。\n\n⚠️ 还有两处容易漏的：\n\n- **递货那对括号，一个货时逗号也不能少**：`(名字,)` 对，`(名字)` 错。两个货时就是 `(名字, 条数)`，中间那个逗号照着写。\n- **盖章别忘**：`con.commit()`。这道题特别要看这一句 —— 你把程序跑完再打开别的连接看，没盖章的那一行**根本不在仓库里**。\n\n最后那一步是把整张表端出来：`ORDER BY 条数 DESC` 让它从多到少摆。本喵新加的那一件正好条数最多，它就排在最前头喵。",
+      "templateId": "py-s3-sqlite-new-row",
+      "params": {
+        "name": "小鱼干",
+        "sampleName": "冻干块",
+        "n": 8
+      },
+      "verified": {
+        "at": "2026-09-16T03:42:46.779Z",
+        "hash": "c9602938544f4f9a"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-new-row-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天新收了一件货，要把它**记进仓库**，记完再把整张表端出来看看喵。\n\n外面给**两行**：第一行是这件货的**名字**（一串字），第二行是一个数，是它的**条数**。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表。两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 仓库里**本来就有的三格货**先记进去：原味 3 条、海苔味 7 条、麻辣味 5 条。\n3. 再把外面给的那一件**也记进去**。名字和条数**都要从投喂口递进去**（口令里留两个 `?`）—— 不许把名字缝进口令里。\n4. **盖章**。\n5. 把整张表端出来，**从多到少**印，一行一格，格式是 `名字 N 条`（名字和 N 中间隔一个空格）。\n\n比如外面给的是\n\n冻干块\n9\n\n就要输出\n\n冻干块 9 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条\n\n（判分用的是**另外一件货**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n名字 = input()\n条数 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (名字, 条数))\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\nfor 货名, 条数 in cur:\n    print(货名 + \" \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "小鱼干 9 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条",
+      "stdin": "小鱼干\n9\n",
+      "explanation": "这道题的重点是**「添货也要走投喂口」**喵 —— 前面查东西时用投喂口，添东西时同样要用。\n\n`INSERT INTO 库存 VALUES (?, ?)` 里两个 `?` 就是两个投喂口，货从第二个逗号后面递进去：`(名字, 条数)`，一份对一格，**顺序不能反**（表头是先 `名字` 后 `条数`，递货也照这个先后）。\n\n⚠️ **为什么死活不能缝？** 本喵拿真事说话：名字里只要带一个撇号（英文名 `O'Brien` 这种满地都是），缝出来的那句话管家就读不懂了 —— 本喵试过，屏幕上摔出来的是 `sqlite3.OperationalError: near \"Brien\": syntax error`。换成投喂口，同一个名字一点事都没有。\n\n⚠️ 还有两处容易漏的：\n\n- **递货那对括号，一个货时逗号也不能少**：`(名字,)` 对，`(名字)` 错。两个货时就是 `(名字, 条数)`，中间那个逗号照着写。\n- **盖章别忘**：`con.commit()`。这道题特别要看这一句 —— 你把程序跑完再打开别的连接看，没盖章的那一行**根本不在仓库里**。\n\n最后那一步是把整张表端出来：`ORDER BY 条数 DESC` 让它从多到少摆。本喵新加的那一件正好条数最多，它就排在最前头喵。",
+      "templateId": "py-s3-sqlite-new-row",
+      "params": {
+        "name": "小鱼干",
+        "sampleName": "冻干块",
+        "n": 9
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:51.056Z",
+        "hash": "381f011d570459c6"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-new-row-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天新收了一件货，要把它**记进仓库**，记完再把整张表端出来看看喵。\n\n外面给**两行**：第一行是这件货的**名字**（一串字），第二行是一个数，是它的**条数**。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表。两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 仓库里**本来就有的三格货**先记进去：原味 3 条、海苔味 7 条、麻辣味 5 条。\n3. 再把外面给的那一件**也记进去**。名字和条数**都要从投喂口递进去**（口令里留两个 `?`）—— 不许把名字缝进口令里。\n4. **盖章**。\n5. 把整张表端出来，**从多到少**印，一行一格，格式是 `名字 N 条`（名字和 N 中间隔一个空格）。\n\n比如外面给的是\n\n毛线球\n9\n\n就要输出\n\n毛线球 9 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条\n\n（判分用的是**另外一件货**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n名字 = input()\n条数 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (名字, 条数))\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\nfor 货名, 条数 in cur:\n    print(货名 + \" \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "小鱼干 9 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条",
+      "stdin": "小鱼干\n9\n",
+      "explanation": "这道题的重点是**「添货也要走投喂口」**喵 —— 前面查东西时用投喂口，添东西时同样要用。\n\n`INSERT INTO 库存 VALUES (?, ?)` 里两个 `?` 就是两个投喂口，货从第二个逗号后面递进去：`(名字, 条数)`，一份对一格，**顺序不能反**（表头是先 `名字` 后 `条数`，递货也照这个先后）。\n\n⚠️ **为什么死活不能缝？** 本喵拿真事说话：名字里只要带一个撇号（英文名 `O'Brien` 这种满地都是），缝出来的那句话管家就读不懂了 —— 本喵试过，屏幕上摔出来的是 `sqlite3.OperationalError: near \"Brien\": syntax error`。换成投喂口，同一个名字一点事都没有。\n\n⚠️ 还有两处容易漏的：\n\n- **递货那对括号，一个货时逗号也不能少**：`(名字,)` 对，`(名字)` 错。两个货时就是 `(名字, 条数)`，中间那个逗号照着写。\n- **盖章别忘**：`con.commit()`。这道题特别要看这一句 —— 你把程序跑完再打开别的连接看，没盖章的那一行**根本不在仓库里**。\n\n最后那一步是把整张表端出来：`ORDER BY 条数 DESC` 让它从多到少摆。本喵新加的那一件正好条数最多，它就排在最前头喵。",
+      "templateId": "py-s3-sqlite-new-row",
+      "params": {
+        "name": "小鱼干",
+        "sampleName": "毛线球",
+        "n": 9
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:51.421Z",
+        "hash": "5559c174c6b2da3e"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-new-row-004",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天新收了一件货，要把它**记进仓库**，记完再把整张表端出来看看喵。\n\n外面给**两行**：第一行是这件货的**名字**（一串字），第二行是一个数，是它的**条数**。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表。两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 仓库里**本来就有的三格货**先记进去：原味 3 条、海苔味 7 条、麻辣味 5 条。\n3. 再把外面给的那一件**也记进去**。名字和条数**都要从投喂口递进去**（口令里留两个 `?`）—— 不许把名字缝进口令里。\n4. **盖章**。\n5. 把整张表端出来，**从多到少**印，一行一格，格式是 `名字 N 条`（名字和 N 中间隔一个空格）。\n\n比如外面给的是\n\n冻干块\n8\n\n就要输出\n\n冻干块 8 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条\n\n（判分用的是**另外一件货**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n名字 = input()\n条数 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (名字, 条数))\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\nfor 货名, 条数 in cur:\n    print(货名 + \" \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "猫粮 8 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条",
+      "stdin": "猫粮\n8\n",
+      "explanation": "这道题的重点是**「添货也要走投喂口」**喵 —— 前面查东西时用投喂口，添东西时同样要用。\n\n`INSERT INTO 库存 VALUES (?, ?)` 里两个 `?` 就是两个投喂口，货从第二个逗号后面递进去：`(名字, 条数)`，一份对一格，**顺序不能反**（表头是先 `名字` 后 `条数`，递货也照这个先后）。\n\n⚠️ **为什么死活不能缝？** 本喵拿真事说话：名字里只要带一个撇号（英文名 `O'Brien` 这种满地都是），缝出来的那句话管家就读不懂了 —— 本喵试过，屏幕上摔出来的是 `sqlite3.OperationalError: near \"Brien\": syntax error`。换成投喂口，同一个名字一点事都没有。\n\n⚠️ 还有两处容易漏的：\n\n- **递货那对括号，一个货时逗号也不能少**：`(名字,)` 对，`(名字)` 错。两个货时就是 `(名字, 条数)`，中间那个逗号照着写。\n- **盖章别忘**：`con.commit()`。这道题特别要看这一句 —— 你把程序跑完再打开别的连接看，没盖章的那一行**根本不在仓库里**。\n\n最后那一步是把整张表端出来：`ORDER BY 条数 DESC` 让它从多到少摆。本喵新加的那一件正好条数最多，它就排在最前头喵。",
+      "templateId": "py-s3-sqlite-new-row",
+      "params": {
+        "name": "猫粮",
+        "sampleName": "冻干块",
+        "n": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:51.792Z",
+        "hash": "56e35b4fe648d5f9"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-new-row-006",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天新收了一件货，要把它**记进仓库**，记完再把整张表端出来看看喵。\n\n外面给**两行**：第一行是这件货的**名字**（一串字），第二行是一个数，是它的**条数**。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表。两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 仓库里**本来就有的三格货**先记进去：原味 3 条、海苔味 7 条、麻辣味 5 条。\n3. 再把外面给的那一件**也记进去**。名字和条数**都要从投喂口递进去**（口令里留两个 `?`）—— 不许把名字缝进口令里。\n4. **盖章**。\n5. 把整张表端出来，**从多到少**印，一行一格，格式是 `名字 N 条`（名字和 N 中间隔一个空格）。\n\n比如外面给的是\n\n毛线球\n8\n\n就要输出\n\n毛线球 8 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条\n\n（判分用的是**另外一件货**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n名字 = input()\n条数 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (名字, 条数))\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\nfor 货名, 条数 in cur:\n    print(货名 + \" \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "猫粮 8 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条",
+      "stdin": "猫粮\n8\n",
+      "explanation": "这道题的重点是**「添货也要走投喂口」**喵 —— 前面查东西时用投喂口，添东西时同样要用。\n\n`INSERT INTO 库存 VALUES (?, ?)` 里两个 `?` 就是两个投喂口，货从第二个逗号后面递进去：`(名字, 条数)`，一份对一格，**顺序不能反**（表头是先 `名字` 后 `条数`，递货也照这个先后）。\n\n⚠️ **为什么死活不能缝？** 本喵拿真事说话：名字里只要带一个撇号（英文名 `O'Brien` 这种满地都是），缝出来的那句话管家就读不懂了 —— 本喵试过，屏幕上摔出来的是 `sqlite3.OperationalError: near \"Brien\": syntax error`。换成投喂口，同一个名字一点事都没有。\n\n⚠️ 还有两处容易漏的：\n\n- **递货那对括号，一个货时逗号也不能少**：`(名字,)` 对，`(名字)` 错。两个货时就是 `(名字, 条数)`，中间那个逗号照着写。\n- **盖章别忘**：`con.commit()`。这道题特别要看这一句 —— 你把程序跑完再打开别的连接看，没盖章的那一行**根本不在仓库里**。\n\n最后那一步是把整张表端出来：`ORDER BY 条数 DESC` 让它从多到少摆。本喵新加的那一件正好条数最多，它就排在最前头喵。",
+      "templateId": "py-s3-sqlite-new-row",
+      "params": {
+        "name": "猫粮",
+        "sampleName": "毛线球",
+        "n": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:52.155Z",
+        "hash": "07e958325668720c"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-new-row-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天新收了一件货，要把它**记进仓库**，记完再把整张表端出来看看喵。\n\n外面给**两行**：第一行是这件货的**名字**（一串字），第二行是一个数，是它的**条数**。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表。两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 仓库里**本来就有的三格货**先记进去：原味 3 条、海苔味 7 条、麻辣味 5 条。\n3. 再把外面给的那一件**也记进去**。名字和条数**都要从投喂口递进去**（口令里留两个 `?`）—— 不许把名字缝进口令里。\n4. **盖章**。\n5. 把整张表端出来，**从多到少**印，一行一格，格式是 `名字 N 条`（名字和 N 中间隔一个空格）。\n\n比如外面给的是\n\n毛线球\n9\n\n就要输出\n\n毛线球 9 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条\n\n（判分用的是**另外一件货**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n名字 = input()\n条数 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (名字, 条数))\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\nfor 货名, 条数 in cur:\n    print(货名 + \" \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "猫粮 9 条\n海苔味 7 条\n麻辣味 5 条\n原味 3 条",
+      "stdin": "猫粮\n9\n",
+      "explanation": "这道题的重点是**「添货也要走投喂口」**喵 —— 前面查东西时用投喂口，添东西时同样要用。\n\n`INSERT INTO 库存 VALUES (?, ?)` 里两个 `?` 就是两个投喂口，货从第二个逗号后面递进去：`(名字, 条数)`，一份对一格，**顺序不能反**（表头是先 `名字` 后 `条数`，递货也照这个先后）。\n\n⚠️ **为什么死活不能缝？** 本喵拿真事说话：名字里只要带一个撇号（英文名 `O'Brien` 这种满地都是），缝出来的那句话管家就读不懂了 —— 本喵试过，屏幕上摔出来的是 `sqlite3.OperationalError: near \"Brien\": syntax error`。换成投喂口，同一个名字一点事都没有。\n\n⚠️ 还有两处容易漏的：\n\n- **递货那对括号，一个货时逗号也不能少**：`(名字,)` 对，`(名字)` 错。两个货时就是 `(名字, 条数)`，中间那个逗号照着写。\n- **盖章别忘**：`con.commit()`。这道题特别要看这一句 —— 你把程序跑完再打开别的连接看，没盖章的那一行**根本不在仓库里**。\n\n最后那一步是把整张表端出来：`ORDER BY 条数 DESC` 让它从多到少摆。本喵新加的那一件正好条数最多，它就排在最前头喵。",
+      "templateId": "py-s3-sqlite-new-row",
+      "params": {
+        "name": "猫粮",
+        "sampleName": "毛线球",
+        "n": 9
+      },
+      "verified": {
+        "at": "2026-09-16T03:42:47.075Z",
+        "hash": "64c5dd17b7c09df1"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-no-commit-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的摊子每天要干两件事喵：先把今天进的货**记进账本**，再把账**念一遍**。记账和念账是**各开各的账本** —— 记账那一段写完就把账本合上，念账那一段再另开一次。\n\n下面这段程序**跑得起来、一个字都不报错**，可它念出来的是一本**空账本** —— 本喵明明刚记完啊！\n\n请你把它修好。修好之后，它应该先念一行 `账本里有 N 笔喵`（N 是账本里**真正**的笔数），再**按条数从小到大**一笔一行念成 `名字 N 条`。\n\n⚠️ 念账那一段的读法是好的，不用动它。记账那一段里**只差一件事**，别把整段推倒重来喵。",
+      "brokenCode": "import sqlite3\n\n\ndef 记账():\n    conn = sqlite3.connect(\"账本.db\")\n    conn.execute(\"CREATE TABLE 账本 (名字 TEXT, 条数 INTEGER)\")\n    for i in range(1, 3 + 1):\n        conn.execute(\"INSERT INTO 账本 (名字, 条数) VALUES (?, ?)\", (\"小鱼干\", i))\n    conn.close()\n\n\ndef 念账():\n    conn = sqlite3.connect(\"账本.db\")\n    条条 = conn.execute(\"SELECT 条数 FROM 账本 ORDER BY 条数\").fetchall()\n    print(\"账本里有 \" + str(len(条条)) + \" 笔喵\")\n    for 一条 in 条条:\n        print(\"小鱼干 \" + str(一条[0]) + \" 条\")\n    conn.close()\n\n\n记账()\n念账()\n",
+      "referenceFix": "import sqlite3\n\n\ndef 记账():\n    conn = sqlite3.connect(\"账本.db\")\n    conn.execute(\"CREATE TABLE 账本 (名字 TEXT, 条数 INTEGER)\")\n    for i in range(1, 3 + 1):\n        conn.execute(\"INSERT INTO 账本 (名字, 条数) VALUES (?, ?)\", (\"小鱼干\", i))\n    conn.commit()\n    conn.close()\n\n\ndef 念账():\n    conn = sqlite3.connect(\"账本.db\")\n    条条 = conn.execute(\"SELECT 条数 FROM 账本 ORDER BY 条数\").fetchall()\n    print(\"账本里有 \" + str(len(条条)) + \" 笔喵\")\n    for 一条 in 条条:\n        print(\"小鱼干 \" + str(一条[0]) + \" 条\")\n    conn.close()\n\n\n记账()\n念账()\n",
+      "expectedOutput": "账本里有 3 笔喵\n小鱼干 1 条\n小鱼干 2 条\n小鱼干 3 条",
+      "stdin": null,
+      "explanation": "**`conn.commit()` 就是那个「盖上戳、这就算数了」的动作喵。**\n\nsqlite3 收下你的 `INSERT` 之后，**并不马上**写进账本 —— 它先把这几笔**揣在自己兜里**，等你点头。点头就是 `conn.commit()`。你点头之前，这几笔只有**经手的那一次连接**自己看得见：本喵试过，同一个连接里马上 `SELECT`，是查得到的；可你一旦把账本合上（`conn.close()`）再另开一次，那几笔就**没了** —— 不是报错，是**安安静静地没写进去**。\n\n这段程序里记账和念账**各开各的账本**，所以记账那一段不点头，念账那一段看到的就是空账本。程序不摔、不响，只是念出来的数目不对 —— 这正是最难查的那一种毛病。\n\n⚠️ 不止 `close()`：就算程序跑到头自己结束，没点头的账一样会丢。所以**记完账、合上账本之前，先点个头**。\n\n⚠️ 反过来也要知道：`SELECT` 不用点头，它本来就没动过账本。只有 `INSERT` / `UPDATE` / `DELETE` 这些**改了账本**的才要点。",
+      "templateId": "py-s3-sqlite-no-commit",
+      "params": {
+        "n": 3,
+        "thing": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:39.438Z",
+        "hash": "f8183b87769db75a"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-no-commit-008",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的摊子每天要干两件事喵：先把今天进的货**记进账本**，再把账**念一遍**。记账和念账是**各开各的账本** —— 记账那一段写完就把账本合上，念账那一段再另开一次。\n\n下面这段程序**跑得起来、一个字都不报错**，可它念出来的是一本**空账本** —— 本喵明明刚记完啊！\n\n请你把它修好。修好之后，它应该先念一行 `账本里有 N 笔喵`（N 是账本里**真正**的笔数），再**按条数从小到大**一笔一行念成 `名字 N 条`。\n\n⚠️ 念账那一段的读法是好的，不用动它。记账那一段里**只差一件事**，别把整段推倒重来喵。",
+      "brokenCode": "import sqlite3\n\n\ndef 记账():\n    conn = sqlite3.connect(\"账本.db\")\n    conn.execute(\"CREATE TABLE 账本 (名字 TEXT, 条数 INTEGER)\")\n    for i in range(1, 5 + 1):\n        conn.execute(\"INSERT INTO 账本 (名字, 条数) VALUES (?, ?)\", (\"毛线球\", i))\n    conn.close()\n\n\ndef 念账():\n    conn = sqlite3.connect(\"账本.db\")\n    条条 = conn.execute(\"SELECT 条数 FROM 账本 ORDER BY 条数\").fetchall()\n    print(\"账本里有 \" + str(len(条条)) + \" 笔喵\")\n    for 一条 in 条条:\n        print(\"毛线球 \" + str(一条[0]) + \" 条\")\n    conn.close()\n\n\n记账()\n念账()\n",
+      "referenceFix": "import sqlite3\n\n\ndef 记账():\n    conn = sqlite3.connect(\"账本.db\")\n    conn.execute(\"CREATE TABLE 账本 (名字 TEXT, 条数 INTEGER)\")\n    for i in range(1, 5 + 1):\n        conn.execute(\"INSERT INTO 账本 (名字, 条数) VALUES (?, ?)\", (\"毛线球\", i))\n    conn.commit()\n    conn.close()\n\n\ndef 念账():\n    conn = sqlite3.connect(\"账本.db\")\n    条条 = conn.execute(\"SELECT 条数 FROM 账本 ORDER BY 条数\").fetchall()\n    print(\"账本里有 \" + str(len(条条)) + \" 笔喵\")\n    for 一条 in 条条:\n        print(\"毛线球 \" + str(一条[0]) + \" 条\")\n    conn.close()\n\n\n记账()\n念账()\n",
+      "expectedOutput": "账本里有 5 笔喵\n毛线球 1 条\n毛线球 2 条\n毛线球 3 条\n毛线球 4 条\n毛线球 5 条",
+      "stdin": null,
+      "explanation": "**`conn.commit()` 就是那个「盖上戳、这就算数了」的动作喵。**\n\nsqlite3 收下你的 `INSERT` 之后，**并不马上**写进账本 —— 它先把这几笔**揣在自己兜里**，等你点头。点头就是 `conn.commit()`。你点头之前，这几笔只有**经手的那一次连接**自己看得见：本喵试过，同一个连接里马上 `SELECT`，是查得到的；可你一旦把账本合上（`conn.close()`）再另开一次，那几笔就**没了** —— 不是报错，是**安安静静地没写进去**。\n\n这段程序里记账和念账**各开各的账本**，所以记账那一段不点头，念账那一段看到的就是空账本。程序不摔、不响，只是念出来的数目不对 —— 这正是最难查的那一种毛病。\n\n⚠️ 不止 `close()`：就算程序跑到头自己结束，没点头的账一样会丢。所以**记完账、合上账本之前，先点个头**。\n\n⚠️ 反过来也要知道：`SELECT` 不用点头，它本来就没动过账本。只有 `INSERT` / `UPDATE` / `DELETE` 这些**改了账本**的才要点。",
+      "templateId": "py-s3-sqlite-no-commit",
+      "params": {
+        "n": 5,
+        "thing": "毛线球"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:39.680Z",
+        "hash": "2f1f8c5891996b16"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-one-row-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的仓库里记着三格货。下面这段程序**跑得起来、一个字都不报错**，可它只念了**最上面那一格**就收嘴了 —— 剩下那两格，它一个字都没提。\n\n请你把它修好。修好之后，它要把三格货**从多到少**一格一行全念出来，每行的格式是 `名字：N 条`（名字和 N 中间是一个全角冒号）。\n\n⚠️ 开表、记货、盖章、还有摆先后的那句都是好的，别动它们；药只在**念账那两行**里喵。",
+      "brokenCode": "import sqlite3\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 2), (\"海苔味\", 5), (\"麻辣味\", 8)])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\n一行 = cur.fetchone()\nprint(一行[0] + \"：\" + str(一行[1]) + \" 条\")\ncon.close()\n",
+      "referenceFix": "import sqlite3\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 2), (\"海苔味\", 5), (\"麻辣味\", 8)])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\nfor 名字, 条数 in cur:\n    print(名字 + \"：\" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "麻辣味：8 条\n海苔味：5 条\n原味：2 条",
+      "stdin": null,
+      "explanation": "这道题差的是**「叼一口」和「整盘端走」**喵。\n\n`cur.fetchone()` 的意思是**只叼一口**：把端出来的最上面那一行递给本喵，然后就停在那个位置了。后面两格还乖乖待在盘子里，没人去拿 —— 所以屏幕上只有一行。程序不摔、不响，只是**少念了两行**，这种毛病最容易漏过去。\n\n想全念出来，有两条好走的路：\n\n① **一盘端走**：`cur.fetchall()` 把剩下的行一口气全叼回来，本喵再挨个念一遍。它省事，可货多的时候**整套都堆在一只爪子里**，占地方。\n② **叼一行、办一行**（本喵最常用）：`for 名字, 条数 in cur:` —— 每转一回叼回一行，那一行里两格分别接到 `名字` 和 `条数` 两个小仓库里，当场念掉。货多货少都不怕，爪子里一次只拿一行。\n\n两种写法都对，判分只看屏幕上印出来的字。\n\n⚠️ 顺带记一条：`ORDER BY 条数 DESC` 那句是好的，它管的是**谁先谁后**，别顺手删了 —— 删掉之后行序就没人保证了：今天在你机器上它碰巧按进货的先后给你，换一台机器、换一个版本就未必，而你会以为自己的程序坏了。\n\n⚠️ 还有：`fetchone()` 在**盘子空了**的时候叼回来的是一样「什么都没有」的东西，再去取它里面的格子会当场摔。所以真要一口一口叼，得先看看叼回来的是不是空的（比如 `while True:` 里叼一口、空就收手）喵。",
+      "templateId": "py-s3-sqlite-one-row",
+      "params": {
+        "x1": 2,
+        "x2": 5,
+        "x3": 8
+      },
+      "verified": {
+        "at": "2026-09-16T03:40:45.741Z",
+        "hash": "9c9d6f0db1cd9d01"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-one-row-026",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的仓库里记着三格货。下面这段程序**跑得起来、一个字都不报错**，可它只念了**最上面那一格**就收嘴了 —— 剩下那两格，它一个字都没提。\n\n请你把它修好。修好之后，它要把三格货**从多到少**一格一行全念出来，每行的格式是 `名字：N 条`（名字和 N 中间是一个全角冒号）。\n\n⚠️ 开表、记货、盖章、还有摆先后的那句都是好的，别动它们；药只在**念账那两行**里喵。",
+      "brokenCode": "import sqlite3\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 4), (\"海苔味\", 7), (\"麻辣味\", 10)])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\n一行 = cur.fetchone()\nprint(一行[0] + \"：\" + str(一行[1]) + \" 条\")\ncon.close()\n",
+      "referenceFix": "import sqlite3\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 4), (\"海苔味\", 7), (\"麻辣味\", 10)])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\nfor 名字, 条数 in cur:\n    print(名字 + \"：\" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "麻辣味：10 条\n海苔味：7 条\n原味：4 条",
+      "stdin": null,
+      "explanation": "这道题差的是**「叼一口」和「整盘端走」**喵。\n\n`cur.fetchone()` 的意思是**只叼一口**：把端出来的最上面那一行递给本喵，然后就停在那个位置了。后面两格还乖乖待在盘子里，没人去拿 —— 所以屏幕上只有一行。程序不摔、不响，只是**少念了两行**，这种毛病最容易漏过去。\n\n想全念出来，有两条好走的路：\n\n① **一盘端走**：`cur.fetchall()` 把剩下的行一口气全叼回来，本喵再挨个念一遍。它省事，可货多的时候**整套都堆在一只爪子里**，占地方。\n② **叼一行、办一行**（本喵最常用）：`for 名字, 条数 in cur:` —— 每转一回叼回一行，那一行里两格分别接到 `名字` 和 `条数` 两个小仓库里，当场念掉。货多货少都不怕，爪子里一次只拿一行。\n\n两种写法都对，判分只看屏幕上印出来的字。\n\n⚠️ 顺带记一条：`ORDER BY 条数 DESC` 那句是好的，它管的是**谁先谁后**，别顺手删了 —— 删掉之后行序就没人保证了：今天在你机器上它碰巧按进货的先后给你，换一台机器、换一个版本就未必，而你会以为自己的程序坏了。\n\n⚠️ 还有：`fetchone()` 在**盘子空了**的时候叼回来的是一样「什么都没有」的东西，再去取它里面的格子会当场摔。所以真要一口一口叼，得先看看叼回来的是不是空的（比如 `while True:` 里叼一口、空就收手）喵。",
+      "templateId": "py-s3-sqlite-one-row",
+      "params": {
+        "x1": 4,
+        "x2": 7,
+        "x3": 10
+      },
+      "verified": {
+        "at": "2026-09-16T03:40:46.031Z",
+        "hash": "89b9b2e9bd35f284"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-stock-batch-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天进的货要**记进仓库**，记完再端出来看看喵。\n\n外面给的数分两段：**第一行是一个数**，是今天进了几柜货；后面**每行一个数**，是一柜里的条数。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，在里面开一张叫 `库存` 的表。两根表头：`柜号`（放整数）、`条数`（放整数）。\n2. 把外面给的那些条数**一口气**记进去：**第一个数配 1 号，第二个数配 2 号**，照这样一路排下去。\n3. **盖章**（不盖章，仓库里什么都留不下）。\n4. 再把整张表端出来，一行一柜印成 `第I柜 X 条` —— I 是号，X 是条数。\n\n⚠️ 印的时候**从多到少**摆：条数多的排前面；条数一样多的，**号小的排前面**。\n\n比如投喂的是\n\n3\n7\n7\n9\n\n就要输出\n\n第3柜 9 条\n第1柜 7 条\n第2柜 7 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n件数 = int(input())\n条条 = []\nfor i in range(件数):\n    条条.append((i + 1, int(input())))\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (柜号 INTEGER, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", 条条)\ncon.commit()\n\ncur.execute(\"SELECT 柜号, 条数 FROM 库存 ORDER BY 条数 DESC, 柜号\")\nfor 号, 条数 in cur:\n    print(\"第\" + str(号) + \"柜 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "第1柜 6 条\n第3柜 6 条\n第2柜 5 条",
+      "stdin": "3\n6\n5\n6\n",
+      "explanation": "这道题是仓库管家的**全套基本功**喵，四步一步都不能少：\n\n**① 连线**：`sqlite3.connect(\"库存.db\")` 把本喵和仓库接上；仓库文件不存在的话，它顺手建一个空的。\n\n**② 开表**：`CREATE TABLE 库存 (柜号 INTEGER, 条数 INTEGER)` —— 开一张新表，两根表头写好。`INTEGER` 是给格子写的规格，意思是「这一格放整数」。\n\n**③ 一口气记好多行**：`cur.executemany(口令, 一串行)` 把「一串货」一次递给管家。口令里那两个 `?` 是投喂口，跟后面那一串里每一份货**对着位置**配好。当然，写成一圈一圈地递（每圈 `cur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (号, 条数))`）也一样对，只是慢一点、代码长一点。\n\n**④ 盖章**：`con.commit()`。这一句最容易漏，漏了什么都不会响 —— 只是仓库里**什么都没有留下**。\n\n端出来的时候，`SELECT 柜号, 条数 FROM 库存 ORDER BY 条数 DESC, 柜号` 里藏着两个讲究：\n\n- `ORDER BY 条数 DESC` —— 按条数**从多到少**摆。\n- 后面那个 `柜号` 是**打平手时的规矩**：条数一样多，就按号从小到大。这一句不是装饰喵 —— 不写它，一样多的那几行谁先谁后**没人保证**，你今天跑对了，换台机器就可能是另一个样子。\n\n最后 `for 号, 条数 in cur:` 是**一行一行叼**：叼回一行就把两格分给 `号` 和 `条数`，当场念掉。",
+      "templateId": "py-s3-sqlite-stock-batch",
+      "params": {
+        "n": 3,
+        "unit": "柜"
+      },
+      "verified": {
+        "at": "2026-09-16T03:41:28.506Z",
+        "hash": "e5ffbb3797f303bb"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-stock-batch-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天进的货要**记进仓库**，记完再端出来看看喵。\n\n外面给的数分两段：**第一行是一个数**，是今天进了几箱货；后面**每行一个数**，是一箱里的条数。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，在里面开一张叫 `库存` 的表。两根表头：`箱号`（放整数）、`条数`（放整数）。\n2. 把外面给的那些条数**一口气**记进去：**第一个数配 1 号，第二个数配 2 号**，照这样一路排下去。\n3. **盖章**（不盖章，仓库里什么都留不下）。\n4. 再把整张表端出来，一行一箱印成 `第I箱 X 条` —— I 是号，X 是条数。\n\n⚠️ 印的时候**从多到少**摆：条数多的排前面；条数一样多的，**号小的排前面**。\n\n比如投喂的是\n\n3\n5\n5\n6\n\n就要输出\n\n第3箱 6 条\n第1箱 5 条\n第2箱 5 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n件数 = int(input())\n条条 = []\nfor i in range(件数):\n    条条.append((i + 1, int(input())))\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (箱号 INTEGER, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", 条条)\ncon.commit()\n\ncur.execute(\"SELECT 箱号, 条数 FROM 库存 ORDER BY 条数 DESC, 箱号\")\nfor 号, 条数 in cur:\n    print(\"第\" + str(号) + \"箱 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "第2箱 9 条\n第1箱 7 条\n第3箱 2 条",
+      "stdin": "3\n7\n9\n2\n",
+      "explanation": "这道题是仓库管家的**全套基本功**喵，四步一步都不能少：\n\n**① 连线**：`sqlite3.connect(\"库存.db\")` 把本喵和仓库接上；仓库文件不存在的话，它顺手建一个空的。\n\n**② 开表**：`CREATE TABLE 库存 (箱号 INTEGER, 条数 INTEGER)` —— 开一张新表，两根表头写好。`INTEGER` 是给格子写的规格，意思是「这一格放整数」。\n\n**③ 一口气记好多行**：`cur.executemany(口令, 一串行)` 把「一串货」一次递给管家。口令里那两个 `?` 是投喂口，跟后面那一串里每一份货**对着位置**配好。当然，写成一圈一圈地递（每圈 `cur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (号, 条数))`）也一样对，只是慢一点、代码长一点。\n\n**④ 盖章**：`con.commit()`。这一句最容易漏，漏了什么都不会响 —— 只是仓库里**什么都没有留下**。\n\n端出来的时候，`SELECT 箱号, 条数 FROM 库存 ORDER BY 条数 DESC, 箱号` 里藏着两个讲究：\n\n- `ORDER BY 条数 DESC` —— 按条数**从多到少**摆。\n- 后面那个 `箱号` 是**打平手时的规矩**：条数一样多，就按号从小到大。这一句不是装饰喵 —— 不写它，一样多的那几行谁先谁后**没人保证**，你今天跑对了，换台机器就可能是另一个样子。\n\n最后 `for 号, 条数 in cur:` 是**一行一行叼**：叼回一行就把两格分给 `号` 和 `条数`，当场念掉。",
+      "templateId": "py-s3-sqlite-stock-batch",
+      "params": {
+        "n": 3,
+        "unit": "箱"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:52.522Z",
+        "hash": "689fa11b38610f1b"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-stock-batch-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天进的货要**记进仓库**，记完再端出来看看喵。\n\n外面给的数分两段：**第一行是一个数**，是今天进了几柜货；后面**每行一个数**，是一柜里的条数。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，在里面开一张叫 `库存` 的表。两根表头：`柜号`（放整数）、`条数`（放整数）。\n2. 把外面给的那些条数**一口气**记进去：**第一个数配 1 号，第二个数配 2 号**，照这样一路排下去。\n3. **盖章**（不盖章，仓库里什么都留不下）。\n4. 再把整张表端出来，一行一柜印成 `第I柜 X 条` —— I 是号，X 是条数。\n\n⚠️ 印的时候**从多到少**摆：条数多的排前面；条数一样多的，**号小的排前面**。\n\n比如投喂的是\n\n4\n8\n5\n4\n3\n\n就要输出\n\n第1柜 8 条\n第2柜 5 条\n第3柜 4 条\n第4柜 3 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n件数 = int(input())\n条条 = []\nfor i in range(件数):\n    条条.append((i + 1, int(input())))\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (柜号 INTEGER, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", 条条)\ncon.commit()\n\ncur.execute(\"SELECT 柜号, 条数 FROM 库存 ORDER BY 条数 DESC, 柜号\")\nfor 号, 条数 in cur:\n    print(\"第\" + str(号) + \"柜 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "第1柜 4 条\n第2柜 3 条\n第3柜 3 条\n第4柜 1 条",
+      "stdin": "4\n4\n3\n3\n1\n",
+      "explanation": "这道题是仓库管家的**全套基本功**喵，四步一步都不能少：\n\n**① 连线**：`sqlite3.connect(\"库存.db\")` 把本喵和仓库接上；仓库文件不存在的话，它顺手建一个空的。\n\n**② 开表**：`CREATE TABLE 库存 (柜号 INTEGER, 条数 INTEGER)` —— 开一张新表，两根表头写好。`INTEGER` 是给格子写的规格，意思是「这一格放整数」。\n\n**③ 一口气记好多行**：`cur.executemany(口令, 一串行)` 把「一串货」一次递给管家。口令里那两个 `?` 是投喂口，跟后面那一串里每一份货**对着位置**配好。当然，写成一圈一圈地递（每圈 `cur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (号, 条数))`）也一样对，只是慢一点、代码长一点。\n\n**④ 盖章**：`con.commit()`。这一句最容易漏，漏了什么都不会响 —— 只是仓库里**什么都没有留下**。\n\n端出来的时候，`SELECT 柜号, 条数 FROM 库存 ORDER BY 条数 DESC, 柜号` 里藏着两个讲究：\n\n- `ORDER BY 条数 DESC` —— 按条数**从多到少**摆。\n- 后面那个 `柜号` 是**打平手时的规矩**：条数一样多，就按号从小到大。这一句不是装饰喵 —— 不写它，一样多的那几行谁先谁后**没人保证**，你今天跑对了，换台机器就可能是另一个样子。\n\n最后 `for 号, 条数 in cur:` 是**一行一行叼**：叼回一行就把两格分给 `号` 和 `条数`，当场念掉。",
+      "templateId": "py-s3-sqlite-stock-batch",
+      "params": {
+        "n": 4,
+        "unit": "柜"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:52.890Z",
+        "hash": "0db3f6d66b1f289f"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-stock-batch-005",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天进的货要**记进仓库**，记完再端出来看看喵。\n\n外面给的数分两段：**第一行是一个数**，是今天进了几箱货；后面**每行一个数**，是一箱里的条数。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，在里面开一张叫 `库存` 的表。两根表头：`箱号`（放整数）、`条数`（放整数）。\n2. 把外面给的那些条数**一口气**记进去：**第一个数配 1 号，第二个数配 2 号**，照这样一路排下去。\n3. **盖章**（不盖章，仓库里什么都留不下）。\n4. 再把整张表端出来，一行一箱印成 `第I箱 X 条` —— I 是号，X 是条数。\n\n⚠️ 印的时候**从多到少**摆：条数多的排前面；条数一样多的，**号小的排前面**。\n\n比如投喂的是\n\n4\n3\n9\n1\n9\n\n就要输出\n\n第2箱 9 条\n第4箱 9 条\n第1箱 3 条\n第3箱 1 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n件数 = int(input())\n条条 = []\nfor i in range(件数):\n    条条.append((i + 1, int(input())))\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (箱号 INTEGER, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", 条条)\ncon.commit()\n\ncur.execute(\"SELECT 箱号, 条数 FROM 库存 ORDER BY 条数 DESC, 箱号\")\nfor 号, 条数 in cur:\n    print(\"第\" + str(号) + \"箱 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "第1箱 8 条\n第4箱 8 条\n第2箱 3 条\n第3箱 2 条",
+      "stdin": "4\n8\n3\n2\n8\n",
+      "explanation": "这道题是仓库管家的**全套基本功**喵，四步一步都不能少：\n\n**① 连线**：`sqlite3.connect(\"库存.db\")` 把本喵和仓库接上；仓库文件不存在的话，它顺手建一个空的。\n\n**② 开表**：`CREATE TABLE 库存 (箱号 INTEGER, 条数 INTEGER)` —— 开一张新表，两根表头写好。`INTEGER` 是给格子写的规格，意思是「这一格放整数」。\n\n**③ 一口气记好多行**：`cur.executemany(口令, 一串行)` 把「一串货」一次递给管家。口令里那两个 `?` 是投喂口，跟后面那一串里每一份货**对着位置**配好。当然，写成一圈一圈地递（每圈 `cur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (号, 条数))`）也一样对，只是慢一点、代码长一点。\n\n**④ 盖章**：`con.commit()`。这一句最容易漏，漏了什么都不会响 —— 只是仓库里**什么都没有留下**。\n\n端出来的时候，`SELECT 箱号, 条数 FROM 库存 ORDER BY 条数 DESC, 箱号` 里藏着两个讲究：\n\n- `ORDER BY 条数 DESC` —— 按条数**从多到少**摆。\n- 后面那个 `箱号` 是**打平手时的规矩**：条数一样多，就按号从小到大。这一句不是装饰喵 —— 不写它，一样多的那几行谁先谁后**没人保证**，你今天跑对了，换台机器就可能是另一个样子。\n\n最后 `for 号, 条数 in cur:` 是**一行一行叼**：叼回一行就把两格分给 `号` 和 `条数`，当场念掉。",
+      "templateId": "py-s3-sqlite-stock-batch",
+      "params": {
+        "n": 4,
+        "unit": "箱"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:53.268Z",
+        "hash": "dc94312f2a21e2c4"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-stock-batch-006",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天进的货要**记进仓库**，记完再端出来看看喵。\n\n外面给的数分两段：**第一行是一个数**，是今天进了几柜货；后面**每行一个数**，是一柜里的条数。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，在里面开一张叫 `库存` 的表。两根表头：`柜号`（放整数）、`条数`（放整数）。\n2. 把外面给的那些条数**一口气**记进去：**第一个数配 1 号，第二个数配 2 号**，照这样一路排下去。\n3. **盖章**（不盖章，仓库里什么都留不下）。\n4. 再把整张表端出来，一行一柜印成 `第I柜 X 条` —— I 是号，X 是条数。\n\n⚠️ 印的时候**从多到少**摆：条数多的排前面；条数一样多的，**号小的排前面**。\n\n比如投喂的是\n\n5\n5\n7\n4\n3\n2\n\n就要输出\n\n第2柜 7 条\n第1柜 5 条\n第3柜 4 条\n第4柜 3 条\n第5柜 2 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n件数 = int(input())\n条条 = []\nfor i in range(件数):\n    条条.append((i + 1, int(input())))\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (柜号 INTEGER, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", 条条)\ncon.commit()\n\ncur.execute(\"SELECT 柜号, 条数 FROM 库存 ORDER BY 条数 DESC, 柜号\")\nfor 号, 条数 in cur:\n    print(\"第\" + str(号) + \"柜 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "第2柜 9 条\n第4柜 8 条\n第3柜 7 条\n第5柜 3 条\n第1柜 1 条",
+      "stdin": "5\n1\n9\n7\n8\n3\n",
+      "explanation": "这道题是仓库管家的**全套基本功**喵，四步一步都不能少：\n\n**① 连线**：`sqlite3.connect(\"库存.db\")` 把本喵和仓库接上；仓库文件不存在的话，它顺手建一个空的。\n\n**② 开表**：`CREATE TABLE 库存 (柜号 INTEGER, 条数 INTEGER)` —— 开一张新表，两根表头写好。`INTEGER` 是给格子写的规格，意思是「这一格放整数」。\n\n**③ 一口气记好多行**：`cur.executemany(口令, 一串行)` 把「一串货」一次递给管家。口令里那两个 `?` 是投喂口，跟后面那一串里每一份货**对着位置**配好。当然，写成一圈一圈地递（每圈 `cur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (号, 条数))`）也一样对，只是慢一点、代码长一点。\n\n**④ 盖章**：`con.commit()`。这一句最容易漏，漏了什么都不会响 —— 只是仓库里**什么都没有留下**。\n\n端出来的时候，`SELECT 柜号, 条数 FROM 库存 ORDER BY 条数 DESC, 柜号` 里藏着两个讲究：\n\n- `ORDER BY 条数 DESC` —— 按条数**从多到少**摆。\n- 后面那个 `柜号` 是**打平手时的规矩**：条数一样多，就按号从小到大。这一句不是装饰喵 —— 不写它，一样多的那几行谁先谁后**没人保证**，你今天跑对了，换台机器就可能是另一个样子。\n\n最后 `for 号, 条数 in cur:` 是**一行一行叼**：叼回一行就把两格分给 `号` 和 `条数`，当场念掉。",
+      "templateId": "py-s3-sqlite-stock-batch",
+      "params": {
+        "n": 5,
+        "unit": "柜"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:53.654Z",
+        "hash": "3ed416f40fe50e61"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-stock-batch-008",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天进的货要**记进仓库**，记完再端出来看看喵。\n\n外面给的数分两段：**第一行是一个数**，是今天进了几箱货；后面**每行一个数**，是一箱里的条数。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，在里面开一张叫 `库存` 的表。两根表头：`箱号`（放整数）、`条数`（放整数）。\n2. 把外面给的那些条数**一口气**记进去：**第一个数配 1 号，第二个数配 2 号**，照这样一路排下去。\n3. **盖章**（不盖章，仓库里什么都留不下）。\n4. 再把整张表端出来，一行一箱印成 `第I箱 X 条` —— I 是号，X 是条数。\n\n⚠️ 印的时候**从多到少**摆：条数多的排前面；条数一样多的，**号小的排前面**。\n\n比如投喂的是\n\n5\n5\n1\n7\n3\n3\n\n就要输出\n\n第3箱 7 条\n第1箱 5 条\n第4箱 3 条\n第5箱 3 条\n第2箱 1 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n件数 = int(input())\n条条 = []\nfor i in range(件数):\n    条条.append((i + 1, int(input())))\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (箱号 INTEGER, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", 条条)\ncon.commit()\n\ncur.execute(\"SELECT 箱号, 条数 FROM 库存 ORDER BY 条数 DESC, 箱号\")\nfor 号, 条数 in cur:\n    print(\"第\" + str(号) + \"箱 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "第3箱 7 条\n第2箱 6 条\n第4箱 5 条\n第5箱 3 条\n第1箱 2 条",
+      "stdin": "5\n2\n6\n7\n5\n3\n",
+      "explanation": "这道题是仓库管家的**全套基本功**喵，四步一步都不能少：\n\n**① 连线**：`sqlite3.connect(\"库存.db\")` 把本喵和仓库接上；仓库文件不存在的话，它顺手建一个空的。\n\n**② 开表**：`CREATE TABLE 库存 (箱号 INTEGER, 条数 INTEGER)` —— 开一张新表，两根表头写好。`INTEGER` 是给格子写的规格，意思是「这一格放整数」。\n\n**③ 一口气记好多行**：`cur.executemany(口令, 一串行)` 把「一串货」一次递给管家。口令里那两个 `?` 是投喂口，跟后面那一串里每一份货**对着位置**配好。当然，写成一圈一圈地递（每圈 `cur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (号, 条数))`）也一样对，只是慢一点、代码长一点。\n\n**④ 盖章**：`con.commit()`。这一句最容易漏，漏了什么都不会响 —— 只是仓库里**什么都没有留下**。\n\n端出来的时候，`SELECT 箱号, 条数 FROM 库存 ORDER BY 条数 DESC, 箱号` 里藏着两个讲究：\n\n- `ORDER BY 条数 DESC` —— 按条数**从多到少**摆。\n- 后面那个 `箱号` 是**打平手时的规矩**：条数一样多，就按号从小到大。这一句不是装饰喵 —— 不写它，一样多的那几行谁先谁后**没人保证**，你今天跑对了，换台机器就可能是另一个样子。\n\n最后 `for 号, 条数 in cur:` 是**一行一行叼**：叼回一行就把两格分给 `号` 和 `条数`，当场念掉。",
+      "templateId": "py-s3-sqlite-stock-batch",
+      "params": {
+        "n": 5,
+        "unit": "箱"
+      },
+      "verified": {
+        "at": "2026-09-16T03:41:28.799Z",
+        "hash": "9f9a7e1fc9381840"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-threshold-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的仓库里记着三格货：**原味 2 条、海苔味 5 条、麻辣味 8 条**（照这个记，别改喵）。\n\n现在本喵只想看**还剩得够多**的那几格 —— 门槛从外面给：**外面只给一个数**，就是门槛。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表，两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 把上面那三格货记进去，**盖章**。\n3. 只用**一个投喂口**把门槛递进口令里，把**条数不少于门槛**的那些行挑出来（**一样多也算数**）。\n4. 挑出来的行**从多到少**印，一行一格，格式是 `名字 还有 N 条`。\n\n比如外面给的是\n\n4\n\n就要输出\n\n麻辣味 还有 8 条\n海苔味 还有 5 条\n\n（判分用的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n门槛 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 2), (\"海苔味\", 5), (\"麻辣味\", 8)])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\", (门槛,))\nfor 名字, 条数 in cur:\n    print(名字 + \" 还有 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "麻辣味 还有 8 条\n海苔味 还有 5 条",
+      "stdin": "3\n",
+      "explanation": "这道题的主角是**口令里那个投喂口**喵。\n\n门槛是外面给的，本喵写代码的时候**还不知道它是几**，所以不能把它写死进口令里。办法是在口令里留一个 `?`：\n\n```text\nSELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\n```\n\n然后**货从旁边递进去**：`cur.execute(口令, (门槛,))` —— 货放在第二个逗号后面，用一对括号包好。管家会把这一份货填进那个投喂口，剩下的照办。\n\n⚠️ 认准「**不少于**」：口令里写的是 `>=`。写成 `>`（只管多于）的话，**正好等于门槛**的那一格会被漏掉 —— 比如门槛给 5、某格正好 5 条，它就不见了。本喵说「一样多也算数」，指的就是这个符号。\n\n⚠️ 递货那对括号，**只有一个货时逗号也不能少**：`(门槛,)` 对，`(门槛)` 错（那样只是把门槛那串东西原样递过去，管家一拆开数字就会跟你吵）。\n\n⚠️ 还有一条本喵要拎出来讲：**别把门槛缝进口令里**。拿引号把数字拼成一句话，看起来省事，可只要外头给的东西里带了引号（名字、备注、什么都有可能），缝出来的那句话就会被管家**当成真口令**去办 —— 那是要出大事的。从投喂口递进去的货，管家永远只当它是货。\n\n最后 `ORDER BY 条数 DESC` 管的是先后：从多到少。不写它，谁先谁后没人保证喵。",
+      "templateId": "py-s3-sqlite-threshold",
+      "params": {
+        "x1": 2,
+        "x2": 5,
+        "x3": 8
+      },
+      "verified": {
+        "at": "2026-09-16T03:43:23.182Z",
+        "hash": "ede8fadc639736a6"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-threshold-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的仓库里记着三格货：**原味 2 条、海苔味 5 条、麻辣味 9 条**（照这个记，别改喵）。\n\n现在本喵只想看**还剩得够多**的那几格 —— 门槛从外面给：**外面只给一个数**，就是门槛。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表，两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 把上面那三格货记进去，**盖章**。\n3. 只用**一个投喂口**把门槛递进口令里，把**条数不少于门槛**的那些行挑出来（**一样多也算数**）。\n4. 挑出来的行**从多到少**印，一行一格，格式是 `名字 还有 N 条`。\n\n比如外面给的是\n\n2\n\n就要输出\n\n麻辣味 还有 9 条\n海苔味 还有 5 条\n原味 还有 2 条\n\n（判分用的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n门槛 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 2), (\"海苔味\", 5), (\"麻辣味\", 9)])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\", (门槛,))\nfor 名字, 条数 in cur:\n    print(名字 + \" 还有 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "麻辣味 还有 9 条\n海苔味 还有 5 条",
+      "stdin": "4\n",
+      "explanation": "这道题的主角是**口令里那个投喂口**喵。\n\n门槛是外面给的，本喵写代码的时候**还不知道它是几**，所以不能把它写死进口令里。办法是在口令里留一个 `?`：\n\n```text\nSELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\n```\n\n然后**货从旁边递进去**：`cur.execute(口令, (门槛,))` —— 货放在第二个逗号后面，用一对括号包好。管家会把这一份货填进那个投喂口，剩下的照办。\n\n⚠️ 认准「**不少于**」：口令里写的是 `>=`。写成 `>`（只管多于）的话，**正好等于门槛**的那一格会被漏掉 —— 比如门槛给 5、某格正好 5 条，它就不见了。本喵说「一样多也算数」，指的就是这个符号。\n\n⚠️ 递货那对括号，**只有一个货时逗号也不能少**：`(门槛,)` 对，`(门槛)` 错（那样只是把门槛那串东西原样递过去，管家一拆开数字就会跟你吵）。\n\n⚠️ 还有一条本喵要拎出来讲：**别把门槛缝进口令里**。拿引号把数字拼成一句话，看起来省事，可只要外头给的东西里带了引号（名字、备注、什么都有可能），缝出来的那句话就会被管家**当成真口令**去办 —— 那是要出大事的。从投喂口递进去的货，管家永远只当它是货。\n\n最后 `ORDER BY 条数 DESC` 管的是先后：从多到少。不写它，谁先谁后没人保证喵。",
+      "templateId": "py-s3-sqlite-threshold",
+      "params": {
+        "x1": 2,
+        "x2": 5,
+        "x3": 9
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:54.031Z",
+        "hash": "4d603e2b5017c499"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-threshold-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的仓库里记着三格货：**原味 2 条、海苔味 6 条、麻辣味 9 条**（照这个记，别改喵）。\n\n现在本喵只想看**还剩得够多**的那几格 —— 门槛从外面给：**外面只给一个数**，就是门槛。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表，两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 把上面那三格货记进去，**盖章**。\n3. 只用**一个投喂口**把门槛递进口令里，把**条数不少于门槛**的那些行挑出来（**一样多也算数**）。\n4. 挑出来的行**从多到少**印，一行一格，格式是 `名字 还有 N 条`。\n\n比如外面给的是\n\n3\n\n就要输出\n\n麻辣味 还有 9 条\n海苔味 还有 6 条\n\n（判分用的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n门槛 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 2), (\"海苔味\", 6), (\"麻辣味\", 9)])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\", (门槛,))\nfor 名字, 条数 in cur:\n    print(名字 + \" 还有 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "麻辣味 还有 9 条\n海苔味 还有 6 条",
+      "stdin": "4\n",
+      "explanation": "这道题的主角是**口令里那个投喂口**喵。\n\n门槛是外面给的，本喵写代码的时候**还不知道它是几**，所以不能把它写死进口令里。办法是在口令里留一个 `?`：\n\n```text\nSELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\n```\n\n然后**货从旁边递进去**：`cur.execute(口令, (门槛,))` —— 货放在第二个逗号后面，用一对括号包好。管家会把这一份货填进那个投喂口，剩下的照办。\n\n⚠️ 认准「**不少于**」：口令里写的是 `>=`。写成 `>`（只管多于）的话，**正好等于门槛**的那一格会被漏掉 —— 比如门槛给 5、某格正好 5 条，它就不见了。本喵说「一样多也算数」，指的就是这个符号。\n\n⚠️ 递货那对括号，**只有一个货时逗号也不能少**：`(门槛,)` 对，`(门槛)` 错（那样只是把门槛那串东西原样递过去，管家一拆开数字就会跟你吵）。\n\n⚠️ 还有一条本喵要拎出来讲：**别把门槛缝进口令里**。拿引号把数字拼成一句话，看起来省事，可只要外头给的东西里带了引号（名字、备注、什么都有可能），缝出来的那句话就会被管家**当成真口令**去办 —— 那是要出大事的。从投喂口递进去的货，管家永远只当它是货。\n\n最后 `ORDER BY 条数 DESC` 管的是先后：从多到少。不写它，谁先谁后没人保证喵。",
+      "templateId": "py-s3-sqlite-threshold",
+      "params": {
+        "x1": 2,
+        "x2": 6,
+        "x3": 9
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:54.394Z",
+        "hash": "f78a3a72d8da8af8"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-threshold-004",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的仓库里记着三格货：**原味 3 条、海苔味 5 条、麻辣味 8 条**（照这个记，别改喵）。\n\n现在本喵只想看**还剩得够多**的那几格 —— 门槛从外面给：**外面只给一个数**，就是门槛。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表，两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 把上面那三格货记进去，**盖章**。\n3. 只用**一个投喂口**把门槛递进口令里，把**条数不少于门槛**的那些行挑出来（**一样多也算数**）。\n4. 挑出来的行**从多到少**印，一行一格，格式是 `名字 还有 N 条`。\n\n比如外面给的是\n\n4\n\n就要输出\n\n麻辣味 还有 8 条\n海苔味 还有 5 条\n\n（判分用的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n门槛 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 5), (\"麻辣味\", 8)])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\", (门槛,))\nfor 名字, 条数 in cur:\n    print(名字 + \" 还有 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "麻辣味 还有 8 条\n海苔味 还有 5 条\n原味 还有 3 条",
+      "stdin": "3\n",
+      "explanation": "这道题的主角是**口令里那个投喂口**喵。\n\n门槛是外面给的，本喵写代码的时候**还不知道它是几**，所以不能把它写死进口令里。办法是在口令里留一个 `?`：\n\n```text\nSELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\n```\n\n然后**货从旁边递进去**：`cur.execute(口令, (门槛,))` —— 货放在第二个逗号后面，用一对括号包好。管家会把这一份货填进那个投喂口，剩下的照办。\n\n⚠️ 认准「**不少于**」：口令里写的是 `>=`。写成 `>`（只管多于）的话，**正好等于门槛**的那一格会被漏掉 —— 比如门槛给 5、某格正好 5 条，它就不见了。本喵说「一样多也算数」，指的就是这个符号。\n\n⚠️ 递货那对括号，**只有一个货时逗号也不能少**：`(门槛,)` 对，`(门槛)` 错（那样只是把门槛那串东西原样递过去，管家一拆开数字就会跟你吵）。\n\n⚠️ 还有一条本喵要拎出来讲：**别把门槛缝进口令里**。拿引号把数字拼成一句话，看起来省事，可只要外头给的东西里带了引号（名字、备注、什么都有可能），缝出来的那句话就会被管家**当成真口令**去办 —— 那是要出大事的。从投喂口递进去的货，管家永远只当它是货。\n\n最后 `ORDER BY 条数 DESC` 管的是先后：从多到少。不写它，谁先谁后没人保证喵。",
+      "templateId": "py-s3-sqlite-threshold",
+      "params": {
+        "x1": 3,
+        "x2": 5,
+        "x3": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:54.776Z",
+        "hash": "c766fa68ac78f91e"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-threshold-006",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的仓库里记着三格货：**原味 3 条、海苔味 6 条、麻辣味 8 条**（照这个记，别改喵）。\n\n现在本喵只想看**还剩得够多**的那几格 —— 门槛从外面给：**外面只给一个数**，就是门槛。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表，两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 把上面那三格货记进去，**盖章**。\n3. 只用**一个投喂口**把门槛递进口令里，把**条数不少于门槛**的那些行挑出来（**一样多也算数**）。\n4. 挑出来的行**从多到少**印，一行一格，格式是 `名字 还有 N 条`。\n\n比如外面给的是\n\n2\n\n就要输出\n\n麻辣味 还有 8 条\n海苔味 还有 6 条\n原味 还有 3 条\n\n（判分用的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n门槛 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 6), (\"麻辣味\", 8)])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\", (门槛,))\nfor 名字, 条数 in cur:\n    print(名字 + \" 还有 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "麻辣味 还有 8 条\n海苔味 还有 6 条\n原味 还有 3 条",
+      "stdin": "3\n",
+      "explanation": "这道题的主角是**口令里那个投喂口**喵。\n\n门槛是外面给的，本喵写代码的时候**还不知道它是几**，所以不能把它写死进口令里。办法是在口令里留一个 `?`：\n\n```text\nSELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\n```\n\n然后**货从旁边递进去**：`cur.execute(口令, (门槛,))` —— 货放在第二个逗号后面，用一对括号包好。管家会把这一份货填进那个投喂口，剩下的照办。\n\n⚠️ 认准「**不少于**」：口令里写的是 `>=`。写成 `>`（只管多于）的话，**正好等于门槛**的那一格会被漏掉 —— 比如门槛给 5、某格正好 5 条，它就不见了。本喵说「一样多也算数」，指的就是这个符号。\n\n⚠️ 递货那对括号，**只有一个货时逗号也不能少**：`(门槛,)` 对，`(门槛)` 错（那样只是把门槛那串东西原样递过去，管家一拆开数字就会跟你吵）。\n\n⚠️ 还有一条本喵要拎出来讲：**别把门槛缝进口令里**。拿引号把数字拼成一句话，看起来省事，可只要外头给的东西里带了引号（名字、备注、什么都有可能），缝出来的那句话就会被管家**当成真口令**去办 —— 那是要出大事的。从投喂口递进去的货，管家永远只当它是货。\n\n最后 `ORDER BY 条数 DESC` 管的是先后：从多到少。不写它，谁先谁后没人保证喵。",
+      "templateId": "py-s3-sqlite-threshold",
+      "params": {
+        "x1": 3,
+        "x2": 6,
+        "x3": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:55.144Z",
+        "hash": "337920769d1d0713"
+      }
+    },
+    {
+      "id": "bank-py-s3-sqlite-threshold-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的仓库里记着三格货：**原味 3 条、海苔味 6 条、麻辣味 9 条**（照这个记，别改喵）。\n\n现在本喵只想看**还剩得够多**的那几格 —— 门槛从外面给：**外面只给一个数**，就是门槛。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表，两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 把上面那三格货记进去，**盖章**。\n3. 只用**一个投喂口**把门槛递进口令里，把**条数不少于门槛**的那些行挑出来（**一样多也算数**）。\n4. 挑出来的行**从多到少**印，一行一格，格式是 `名字 还有 N 条`。\n\n比如外面给的是\n\n4\n\n就要输出\n\n麻辣味 还有 9 条\n海苔味 还有 6 条\n\n（判分用的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import sqlite3\n\n门槛 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 6), (\"麻辣味\", 9)])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\", (门槛,))\nfor 名字, 条数 in cur:\n    print(名字 + \" 还有 \" + str(条数) + \" 条\")\ncon.close()\n",
+      "expectedOutput": "麻辣味 还有 9 条\n海苔味 还有 6 条\n原味 还有 3 条",
+      "stdin": "3\n",
+      "explanation": "这道题的主角是**口令里那个投喂口**喵。\n\n门槛是外面给的，本喵写代码的时候**还不知道它是几**，所以不能把它写死进口令里。办法是在口令里留一个 `?`：\n\n```text\nSELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\n```\n\n然后**货从旁边递进去**：`cur.execute(口令, (门槛,))` —— 货放在第二个逗号后面，用一对括号包好。管家会把这一份货填进那个投喂口，剩下的照办。\n\n⚠️ 认准「**不少于**」：口令里写的是 `>=`。写成 `>`（只管多于）的话，**正好等于门槛**的那一格会被漏掉 —— 比如门槛给 5、某格正好 5 条，它就不见了。本喵说「一样多也算数」，指的就是这个符号。\n\n⚠️ 递货那对括号，**只有一个货时逗号也不能少**：`(门槛,)` 对，`(门槛)` 错（那样只是把门槛那串东西原样递过去，管家一拆开数字就会跟你吵）。\n\n⚠️ 还有一条本喵要拎出来讲：**别把门槛缝进口令里**。拿引号把数字拼成一句话，看起来省事，可只要外头给的东西里带了引号（名字、备注、什么都有可能），缝出来的那句话就会被管家**当成真口令**去办 —— 那是要出大事的。从投喂口递进去的货，管家永远只当它是货。\n\n最后 `ORDER BY 条数 DESC` 管的是先后：从多到少。不写它，谁先谁后没人保证喵。",
+      "templateId": "py-s3-sqlite-threshold",
+      "params": {
+        "x1": 3,
+        "x2": 6,
+        "x3": 9
+      },
+      "verified": {
+        "at": "2026-09-16T03:43:23.470Z",
+        "hash": "18d06cdb92db4bf0"
+      }
+    }
+  ]
+}

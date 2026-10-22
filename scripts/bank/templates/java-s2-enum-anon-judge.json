@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s2-enum-anon-judge",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-11",
+  "type": "codewrite",
+  "concept": ["当场画的一次性图纸", "把干什么写在投喂的地方", "只用一次就够", "@Override 可有可无"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["0", "5"] },
+    "b": { "kind": "pick", "values": ["1", "3"] },
+    "c": { "kind": "pick", "values": ["6", "4"] },
+    "d": { "kind": "pick", "values": ["5", "6"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "4\n{a}\n{b}\n{c}\n{d}\n", "sampleText": "4\n4\n2\n3\n0\n" },
+  "stemTemplate": "本喵有一张**只用一次**的图纸要当场画 —— 它管的是「这一项算不算合格」喵。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」（这题固定是 `4`），接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`6` 是 `SUN`）。\n\n要写的东西：\n\n1. 一个招式 `report`，收两样：**清单上的一项**、和一份**与猫的约定**（约定的样子稿子开头已经给你了：`Judge`，它有一个本事 `boolean ok(Day d)`）。招式里问一句「这一项合格吗」：合格印 `项名 合格`、否则印 `项名 不合格`；合格就叼回 `true`，否则叼回 `false`。\n2. **「合格」这条规矩，本喵要在用它的那一行当场画** —— 位次是偶数的算合格（`0`、`2`、`4`、`6`），奇数的不算。\n3. `main` 里绕圈读位次，每读一个就喂给 `report` 一次；`report` 说合格的那一次，让一个数加一；所有笔过完，最后印一行 `合格的一共 … 天`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    static boolean report(Day d, Judge j) {\n        if (j.ok(d)) {\n            System.out.println(d.name() + \" 合格\");\n            return true;\n        }\n        System.out.println(d.name() + \" 不合格\");\n        return false;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            if (report(Day.values()[sc.nextInt()], new Judge() {\n                @Override\n                public boolean ok(Day d) {\n                    return d.ordinal() % 2 == 0;\n                }\n            })) {\n                cnt++;\n            }\n        }\n        System.out.println(\"合格的一共 \" + cnt + \" 天\");\n    }\n}\n",
+  "explanationTemplate": "这题的考点就一句话：**「干什么」写在投喂的地方**。\n\n那张只用一次的图纸是这么当场画出来的：\n\n```java\nreport(Day.values()[k], new Judge() {\n    @Override\n    public boolean ok(Day d) {\n        return d.ordinal() % 2 == 0;\n    }\n});\n```\n\n拆开看：`new Judge()` 平常后面跟的是图纸名，这里跟的是一份**与猫的约定** —— 意思是「本喵要一只会照这份约定干活的真猫，可具体怎么干，本喵当场说」；紧跟的一对花括号就是**当场画的那张图纸的身子**；末尾那个分号属于外面那句调用，别漏。\n\n三处容易踩的地方，本喵都真跑过：\n\n- **末尾那个分号。** 画完花括号就当完事、把分号丢掉，翻译官喵会指着最后那个 `}` 说 `';' expected`。\n- **里面写的是完整的本事**，不是一句话。把本事的头和身子写成光秃秃的一整行、省掉「叼回什么」那一截，它当场翻脸：`error: invalid method declaration; return type required` —— 「这一行看着像个本事，可你没说它叼回来什么」。\n- **`@Override` 那顶小帽子可有可无。** 不挂它照样跑得好好的；挂着只是让翻译官喵帮本喵核对「名字是不是真跟约定上写的一样」。所以它是保险，不是非写不可的东西。\n\n为什么这题非要用当场画的写法？因为**「合格」这条规矩只用这一次** —— 为它单独存一张图纸、还得起个名字，全是多余的啰嗦。要是好几处都要用同一条规矩，那就该老实画一张有名字的图纸了。\n\n还有那个 `% 2 == 0`：本喵把参考解里它换成 `% 2 == 1` 真跑过一遍 —— 每一行的「合格」和「不合格」当场对调。所以「合格怎么定」这件事，在这道题里是真被考到的。\n\n最后一句：`cnt++` 得**接住 `report` 叼回来的答案**再加一。因为那条规矩写在 `report` 的身子里，本喵在外面数不着它，只能看它叼回来什么喵。"
+}

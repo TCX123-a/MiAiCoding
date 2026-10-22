@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-06-copy-refused",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-06",
+  "type": "codefix",
+  "concept": ["一块牌子只有一个主人", "复制这条路不给你走", "换主人要打招呼"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵写了个小活儿：投喂口**先给一个数**（要跟着几个数），**再一只一只把数递进来**喵。本喵把它们一格一格塞进一个会自己长大的储物柜，而这个柜子是用牌子拿的（`unique_ptr<vector<int>>`，`p->push_back(x)` 就是「隔着牌子往柜子里塞一格」）。\n\n最后本喵想把手里这块牌子**交给另一块**，写的是 `unique_ptr<vector<int>> q = p;` —— 翻译官喵当场拦下，原话里有 `use of deleted function`。\n\n你帮本喵改对：让这段代码**能编过、能跑完**，并且印出**一行**：柜子里**有几格**。除了把牌子交出去那一句，别的都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <memory>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n    unique_ptr<vector<int>> p = make_unique<vector<int>>();\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        p->push_back(x);\n    }\n    unique_ptr<vector<int>> q = p;\n    cout << q->size() << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <memory>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n    unique_ptr<vector<int>> p = make_unique<vector<int>>();\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        p->push_back(x);\n    }\n    unique_ptr<vector<int>> q = move(p);\n    cout << q->size() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "一句 `use of deleted function` 念作「**这个本事已经被划掉了**」—— 它不是在说名字写错了，是在说「复制这条路**压根不给你走**」喵。\n\n为什么不让走：牌子**走出花括号就会自己把仓库还回去**，要是两块牌子指着同一间仓库，那就是还两次 —— 所以 C++ 干脆不许复制。\n\n换主人得**打招呼**：`move(p)`，念作「`p` 这一份本喵不要了，你搬过去」。搬完之后旧的那块牌子只剩个空壳（课文第五节真跑过 `a 已经空手了` 那一行），所以后面取货只能拿新牌子 `q` 去取。\n\n⚠️ 判分喂的数跟样例不一样，但这一题要的数不用你算 —— 就是投喂口**最先给的那一个**（柜子里塞了几格）。所以别把样例的数写死。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-08-assign-copy",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-08",
+  "type": "codewrite",
+  "concept": ["赋值那一手", "只搬内容不新租", "两只都已经活着的时候"],
+  "instances": 6,
+  "params": {
+    "s": { "kind": "pick", "values": [40, 60] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 1, "max": 9 },
+  "stemTemplate": "上一题本喵给盒子写了照抄招式；可**两只盒子都已经生出来了**的时候，`b = a;` 走的**不是**照抄招式 —— 它走的是另一手，本喵也得自己写。投喂口会递进来**两个数**（一行一个）：第一只、第二只的条数。\n\n请你这么办：\n\n1. **画图纸** `FishBox`：一栏带盖的牌子 `int* p`；出生招式里**租一间屋**（`new`）；收尾招式里**还掉**（`delete`）；再画公开招式 `get` 和 `set`。\n2. **自己写照抄招式**（另租一间、搬内容）。\n3. **再写赋值那一手**（名字是 `operator=` 那一手）：它**只把对方屋里的内容搬进本喵已有的那间屋**，**不许新租**（新租会把旧屋的地址冲掉，那间屋就再也没人还了）；最后把本喵**自己原样叼回去**，好让 `b = a = c;` 这种话能连着写。\n4. 在 `main` 里：读进两个数 → 生两只盒子 → 让第二只**照第一只的内容改**（`b = a;`）→ 再把**第一只**改成 {s} → 印**两行**：\n\n```text\nXX 那一格现在是 N 条\n```\n\n（先印 `a` 那一格，再印 `b` 那一格）\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n    FishBox(const FishBox& other) { p = new int(*other.p); }\n    ~FishBox() { delete p; }\n\n    FishBox& operator=(const FishBox& other) {\n        *p = *other.p;\n        return *this;\n    }\n\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    int x = 0;\n    int y = 0;\n    cin >> x >> y;\n\n    FishBox a(x);\n    FishBox b(y);\n    b = a;\n    a.set({s});\n    cout << \"a 那一格现在是 \" << a.get() << \" 条\" << endl;\n    cout << \"b 那一格现在是 \" << b.get() << \" 条\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题要和上一题**对照着**记，两者只差一个字，意思差很远喵：\n\n| | 照抄招式 | 赋值那一手 |\n|---|---|---|\n| 什么时候被叫起来 | **造一只新盒子**的时候（`FishBox b = a;`） | **两只都已经活着**的时候（`b = a;`） |\n| 里面那一句 | `p = new int(*other.p);` —— **新租**一间 | `*p = *other.p;` —— **不新租**，搬内容 |\n| 行尾 | 不用 | 要 `&` 和 `return *this;` |\n\n为什么赋值**不能**新租？因为本喵这只盒子的 `p` 那一格里，**已经记着一间租好的屋**了。要是写成 `p = new int(*other.p);`，本喵就把那间旧屋的地址**冲掉了** —— 那间屋再也无人归还，**漏了一间屋**。所以赋值那一手做的事是：把对方屋里的内容**搬进本喵已有的那间屋**。\n\n跑出来的两行就是证据：\n\n- `b = a;` 之后 `b` 那间屋里是 `a` 原来的数；\n- 本喵再把 `a` 改成 {s} 时，`b` **一点都不受影响**（两只各有各的屋）；\n- 屏幕上先印的 `a` 是新数 {s}，后印的 `b` 还停在原来的数上。\n\n⚠️ 最后别忘了 `return *this;` 和行尾那个 `&` —— 它们是同一件事的两半：**叼回去的是本喵自己，不是复印件**。这样 `b = a = c;` 才能一路接着写下去。"
+}

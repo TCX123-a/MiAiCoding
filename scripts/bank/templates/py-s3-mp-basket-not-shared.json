@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-mp-basket-not-shared",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-04",
+  "type": "codefix",
+  "concept": ["multiprocessing", "Manager", "进程间不共享内存", "进程 vs 线程"],
+  "instances": 2,
+  "params": {
+    "k": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "count": "{k}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要让 {k} 只小猫**分头**干活：一只猫分到一个数，把它**平方**一下，算完丢进**同一个篮子**里。那 {k} 个数会一行一个报给你，最后本喵把篮子里的东西**加起来**印一个数。\n\n可它跑是跑起来了，印出来的却**永远是 `0`** —— 明明每只猫都干了活，篮子里却像什么都没进过喵。你帮本喵把篮子修好。\n\n改好之后要印出**这 {k} 个数的平方和**：一个数，占一行。",
+  "brokenCodeTemplate": "import multiprocessing as mp\n\n\ndef 平方(篮子, 数):\n    篮子.append(数 * 数)\n\n\ndef 主流程():\n    起点 = []\n    for _ in range({k}):\n        起点.append(int(input()))\n    篮子 = []\n    孩子们 = []\n    for i in range({k}):\n        p = mp.Process(target=平方, args=(篮子, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    print(sum(篮子))\n\n\nif __name__ == '__main__':\n    主流程()\n",
+  "referenceFixTemplate": "import multiprocessing as mp\n\n\ndef 平方(篮子, 数):\n    篮子.append(数 * 数)\n\n\ndef 主流程():\n    起点 = []\n    for _ in range({k}):\n        起点.append(int(input()))\n    篮子 = mp.Manager().list()\n    孩子们 = []\n    for i in range({k}):\n        p = mp.Process(target=平方, args=(篮子, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    print(sum(篮子))\n\n\nif __name__ == '__main__':\n    主流程()\n",
+  "explanationTemplate": "这道题踩的是多进程**最要命的那条规矩**：**孩子和本喵不住在同一块地盘上**喵。\n\n上一课那种「叫好几只猫一起干活」的做法，是**同一块地盘、同一个篮子** —— 一只猫放进去，另一只猫伸手就摸得到。\n\n换成**把孩子送到别的地盘**（多进程）就完全不一样了：你递给它一个篮子，它拿到的**不是那个篮子**，而是照着你的篮子**又编了一个一模一样的**。它把自己算的东西全放进**它自己那个**里，本喵手里这个一口都没动 —— 加起来当然是 `0`。\n\n要真的用**同一个**篮子，得换成专门给多进程造的：把 `篮子 = []` 改成\n\n```python\n篮子 = mp.Manager().list()\n```\n\n就行。这样的篮子全世界只有一个，谁都能伸手进去放。\n\n⚠️ 还有一条：孩子放东西是要花时间的，本喵得**等它们都放完**（`p.join()`）才数得准。少等一步，数出来的就少几样 —— 而且少等这一步之后**屏幕上是什么样子，得看篮子是哪一种**：本喵把 `join()` 那一段删掉，拿**本课这道题的普通篮子**真跑了一遍，`0` 是印出来了，屏幕上却**安安静静**，一个字都没有；换成上面那个 **`Manager` 篮子**再删掉 `join()`，收工那一瞬间才会甩出一大段子进程的红字（`AttributeError: 'ForkAwareLocal' object has no attribute 'connection'`，五千多字节），而**退出码两种都还是 `0`**。所以「数字不对」和「屏幕干净」是两件事喵：不管哪一种，摔的都是那几只小猫，正门自己走完了 —— 光看退出码看不出来，**光看屏幕也看不出来**。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-13-multiply-bottom",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-13",
+  "type": "codewrite",
+  "concept": ["把包里每一样乘起来", "空包要垫的空答案该挑谁", "同一张图纸喂两样和三样都行"],
+  "instances": 6,
+  "params": {
+    "w": { "kind": "pick", "values": ["2", "3"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 2, "max": 9 },
+  "stemTemplate": "投喂口会给**一个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 写**一张**图纸 `multiplyAll`：把包里每一样乘起来，**包是空的时候也要给得出答案**（垫的底要挑对，别把答案乘没了）；\n3. 拿这同一张图纸问三回，印出三行：\n\n- 第一行：`空包 X` —— **一样东西都不喂**，看它交回来什么；\n- 第二行：`两个的乘积 Y` —— 喂投喂口给的那个数和 `{w}`；\n- 第三行：`三个的乘积 Z` —— 喂投喂口给的那个数、`{w}`、`5`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\n// 在这儿写那一张图纸：multiplyAll\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    // 在这儿写：同一张图纸问三回，印出三行\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename... Args>\nint multiplyAll(Args... args) {\n    return (args * ... * 1);\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    cout << \"空包 \" << multiplyAll() << endl;\n    cout << \"两个的乘积 \" << multiplyAll(n, {w}) << endl;\n    cout << \"三个的乘积 \" << multiplyAll(n, {w}, 5) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的关键是**末尾垫的那个底要挑对**喵。\n\n把包里每一样乘起来的写法是 `(args * ... * 1)`：每一样挨个用 `*` 串起来，末尾再拿 `1` 乘一下。为什么是 `1` 而不是 `0`？因为这一题要交得回**空包**的答案 —— 垫 `0` 的话，包里满满也被那一下乘成 `0`，第一行就会印出 `空包 0`；垫 `1`（乘法里的「空答案」）才对：加 1 不改变结果，空包时它自己就是答案。\n\n所以三行分别是：空包那次交回 `1`；喂两样是那个数乘 `{w}`；喂三样再乘 `5`。同一张图纸喂两样、三样都能干 —— 这正是「来几样都行」最省事的地方。\n\n⚠️ 说实话一句：这一题的三行字是**印出来的结果**，判分只看印出来的字。你要是把 `空包` 那一行直接写死成 `1` 也能过 —— 可那就没练到「垫底挑谁」这件事了。垫 `0` 还是垫 `1`，写下去的那一刻就决定了空包时交回来的是不是「这件事的空答案」。"
+}

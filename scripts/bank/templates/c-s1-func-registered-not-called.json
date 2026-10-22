@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-func-registered-not-called",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-12",
+  "type": "codefix",
+  "concept": ["喊招式", "登记与施展是两件事", "静默错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "三花"] },
+    "words": { "kind": "pick", "values": ["本喵把 greet 记在招式簿上了", "greet 已经登记好啦喵"] }
+  },
+  "stemTemplate": "本喵写好了一招 `greet`，专门跟一只猫打招呼：喂进去名字，它印一行 `你好，名字喵～`。\n\n本喵想着 main 里这样：先跟 `{name}` 打个招呼，再印一行 `{words}`。\n\n可跑起来以后，打招呼那句话**一个字都没出现**，屏幕上只有 `{words}` 喵…… 翻译官喵还一声都没吭。\n\n你帮本喵看看是哪儿漏了，把它改好。改好之后，程序应该**先**印 `你好，{name}喵～`、**再**印 `{words}`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nvoid greet(char name[]) {\n    printf(\"你好，%s喵～\\n\", name);\n}\n\nint main(void) {\n    printf(\"{words}\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nvoid greet(char name[]) {\n    printf(\"你好，%s喵～\\n\", name);\n}\n\nint main(void) {\n    greet(\"{name}\");\n    printf(\"{words}\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "屏幕上静悄悄的时候，先回头翻招式簿：**本喵真的喊过它吗？**\n\n这是零基础最容易摔、又**最查不出来**的坑喵。写招式那一段，从头到尾只是**登记** —— 翻译官喵把它的名字和做法记在本子上，登记的时候**一格也不动**。真正开动，是在 `main` 里**报名字喊它那一下**。\n\n这一跤的特点是：**不报错、不警告、屏幕上少了一句招呼**。你没法从翻译官喵的抱怨里看出问题，因为它觉得这份代码完全合法 —— 本喵只是写了一个没人用的招式而已。\n\n所以只能靠自检口诀：**登记完，回头看看喊了没有。**\n\n修法就是在 `main` 里补一句 `greet(\"{name}\");`。\n\n（顺带记住：喊它的时候括号里喂什么，是由招式头上摆的碗决定的 —— 这一招收一串字，所以喂 `\"{name}\"`。）"
+}

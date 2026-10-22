@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-ns-own-room",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-12",
+  "type": "codewrite",
+  "concept": ["自己开一间分区", "分区里的碗照常能改", "带分区名喊招式"],
+  "instances": 6,
+  "params": {
+    "start": { "kind": "pick", "values": ["10", "8"] },
+    "times": { "kind": "pick", "values": ["3", "6"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{times}\n", "sampleText": "2\n" },
+  "stemTemplate": "这一回本喵要**自己开一间分区**喵。\n\n请你照这个次序办：\n\n1. 开一间叫 `kitchen` 的分区；\n2. 里面放一只叫 `fish` 的碗，先摆上 {start} 条；\n3. 再放**一招**叫 `eat`：每喊它一次，就把 `kitchen::fish` 减掉 1；\n4. 投喂口会递进来一个整数，表示**要喊几次** `eat`；喊完那么多次之后，把 `kitchen::fish` 印出来（**一行**）。\n\n印出来就是一行（X 是算出来的数）：\n\n```text\nX\n```\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nnamespace kitchen {\n    int fish = {start};\n\n    void eat() {\n        kitchen::fish = kitchen::fish - 1;\n    }\n}\n\nint main() {\n    int times = 0;\n    cin >> times;\n\n    for (int i = 0; i < times; i++) {\n        kitchen::eat();\n    }\n    cout << kitchen::fish << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题三件事，一件一件说喵。\n\n**一、怎么开一间。** 写 `namespace kitchen`，后面跟一对大括号，圈住的就是这一间里的东西。里头那只碗的真名其实是带分区名的全名 `kitchen::fish`，里头那招的真名叫 `kitchen::eat`。\n\n**二、怎么喊它。** 站在外面喊，就得带上分区名写得清清楚楚：`kitchen::eat()`、`kitchen::fish`。分区**不是玻璃柜**，它只是给名字分了房间 —— 所以里头那只碗照常能改，`kitchen::fish = kitchen::fish - 1;` 这一句越减越小，就是这个道理。\n\n**三、为什么要用分区。** 因为名字住在哪儿是要紧事：`eat`、`fish` 这种大路货的名字，搁在自己开的这间里就**和工具箱里那位同名的不相干**，谁也管不着谁。\n\n最后一个细节：`{times}` 是投喂口递进来的数，`kitchen::fish` 要减几次得看它 —— 所以「喊几次」这件事必须由递进来的数说了算，不能写死。"
+}

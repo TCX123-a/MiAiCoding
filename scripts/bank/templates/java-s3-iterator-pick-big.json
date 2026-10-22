@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-iterator-pick-big",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-02",
+  "type": "codewrite",
+  "concept": ["派一位向导顺着往下问", "边走边挑出够大的", "挑出来的收进新柜子"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 3 },
+    "t": { "kind": "int", "min": 5, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要把柜子里**够大**的那些挑出来，收进一只新柜子里喵。\n\n这一题**必须派一位向导**去走：不看编号、也不数一共几件，只做那两句 —— 先问「还有下一件吗」，它说有，才把下一件叼出来。叼出来的每一件顺手比一比：够得上 {t} 的就往新柜子里放一个。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请它们收进柜子、挑完之后，印三行：\n\n```text\n原柜子里有 N 件\n够大的有 C 件\n它们是 那一串\n```\n\n- `N` 是**原柜子**的件数（挑完之后它一件都不该少）；\n- `C` 是新柜子的件数；\n- 第三行把新柜子直接印出来（方括号加逗号空格那个样子），**前面别自己拼**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n        List<Integer> picked = new ArrayList<>();\n        Iterator<Integer> it = nums.iterator();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n        List<Integer> picked = new ArrayList<>();\n        Iterator<Integer> it = nums.iterator();\n        while (it.hasNext()) {\n            int x = it.next();\n            if (x >= {t}) {\n                picked.add(x);\n            }\n        }\n        System.out.println(\"原柜子里有 \" + nums.size() + \" 件\");\n        System.out.println(\"够大的有 \" + picked.size() + \" 件\");\n        System.out.println(\"它们是 \" + picked);\n    }\n}\n",
+  "explanationTemplate": "这题的重点是**那位向导的两句话**喵。\n\n**一、`it.hasNext()` 是问话，`it.next()` 是叼东西。** 问话答真，本喵才伸手；伸手的同时向导**自己往前挪一格**。全程本喵一个编号都没写、也没数过一共几件 —— 这就是它比「报编号拿东西」稳的地方：编号要自己数，数错一点就当场炸。\n\n**二、挑出来的得另起一只柜子装。** 本喵一边走一边把够大的往 `picked` 里放 —— 往一只**新**柜子里放，而不是去动正在走的这一只。这一点很要紧：要是本喵一边走一边从原柜子里拿走东西，那就踩上课文第二节那个坑了。\n\n**三、原柜子一件都没少。** 因为本喵从头到尾只是在**读**它。所以第一行印的件数还是原来那个 —— 这是「边读边挑」和「边读边拿」的区别，值得对着印出来的三行多看两眼。\n\n**四、够大的有几件，别自己数。** 新柜子自己会报件数，印出来就行 —— 自己立个小篮子一件件加，多一个能数错的地方。\n\n**五、为什么这里不能用「挨个过一遍」。** 能用，而且更短。但这题要练的是**那位向导本身** —— 看清它在干什么，以后碰上「边走边拿」的场合才知道该找谁。"
+}

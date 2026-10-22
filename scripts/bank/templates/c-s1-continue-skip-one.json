@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-continue-skip-one",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-08",
+  "type": "codewrite",
+  "concept": ["continue", "跳过一圈", "圈还在转"],
+  "instances": 6,
+  "params": {
+    "limit": { "kind": "int", "min": 5, "max": 6 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫粮"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{limit}\n", "count": 1, "min": 2, "max": 4 },
+  "stemTemplate": "本喵要从 1 数到 {limit}。可这次有个新规矩：**其中有一个数调皮，它那一圈不印**，别的数都要印出来。\n\n请你写个程序：**先从投喂口读进来两个数**，第一个是数到几为止（就是 {limit}），第二个是**那一圈要跳过**的数（它自己不印出来，但它**后面的数照印**）。一个数一行往下印，最后印一行 `跑完喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int limit = 0;\n    int skip = 0;\n\n    if (scanf(\"%d\", &limit) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &skip) != 1) {\n        return 1;\n    }\n\n    for (int i = 1; i <= limit; i++) {\n        if (i == skip) {\n            continue;\n        }\n        printf(\"%d\\n\", i);\n    }\n    printf(\"跑完喵\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "`continue` 的脾气是**「这一圈剩下的活儿不干了」—— 圈本身还在转**喵。所以那个调皮的数没被印出来，它后面的数一个不落地照样跑完，最后才轮到圈外那句「跑完喵」。\n\n把这一题和上一题摆在一起看，两个词的分界就清楚了：\n\n| 撞上以后 | 圈 | 这一圈剩下的活 | 后面的圈数 |\n|---|---|---|---|\n| `break` | 停了 | 不干了 | 全部作废 |\n| `continue` | 还在转 | 不干了 | 照跑 |\n\n还有一件事值得提前记住：`continue` 和 `break` **都只认自己住的那一层**。这一题只有一层圈，所以看着简单；等圈里套上圈，内层那次 `continue` 跳的只是内层这一圈，外层该怎么走还怎么走喵。"
+}

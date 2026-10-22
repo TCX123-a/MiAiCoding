@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-guess-srand-in-loop",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-14",
+  "type": "codefix",
+  "concept": ["srand 一句只下种一次", "种子塞进圈里会怎样", "钉住运气"],
+  "instances": 2,
+  "params": {
+    "count": { "kind": "pick", "values": ["3", "5"] }
+  },
+  "stemTemplate": "本喵要连抽 {count} 个数，一个一行。种子钉成 `1`（钉住运气，好对着屏幕一行一行核对）。\n\n可它抽出来的 {count} 个数**一模一样** —— 这机器一局都玩不下去。翻译官喵一个字都没抱怨（这话编得过），是跑出来才对上号。\n\n你帮本喵把出问题的那一处改好：改完要是同一颗种子该吐的那一串（一行一个，各不相同）。种子那个数、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <cstdlib>\nusing namespace std;\n\nint main() {\n    for (int i = 0; i < {count}; i++) {\n        srand(1);\n        cout << \"本喵抽到的数：\" << rand() % 100 + 1 << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <cstdlib>\nusing namespace std;\n\nint main() {\n    srand(1);\n    for (int i = 0; i < {count}; i++) {\n        cout << \"本喵抽到的数：\" << rand() % 100 + 1 << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题是本课那条提醒的活标本喵：**`srand` 一句只能下种一次，而且要在最开头。**\n\n把 `srand(1);` 塞进圈里，每转一圈就**重新下一颗同样的种子** —— 种子一样、吐出来的第一个数就一样，于是每圈吐的都是同一个数。屏幕上看起来就是「怎么抽都抽不出第二个数」。真玩猜数字的时候撞上它，你会碰上一台**怎么猜都猜不中**的机器：心里的数每问一次就重来一次，永远停在那一个上。\n\n改法：把 `srand(1);` **挪到圈外面、`main` 的最开头**，圈里只剩「喊 `rand()`、把结果印出来」。这样种子只下一次，往后每喊一次 `rand()` 它都是接着往下吐 —— 于是 {count} 行各不相同。\n\n顺带记一句：这就是「**钉住运气**」的代价与好处喵 —— 种子钉死，吐出来的那一串永远一样（好处是能对着答案核对），所以真机版玩的时候要换成 `srand(time(0));`，每局换一颗。"
+}

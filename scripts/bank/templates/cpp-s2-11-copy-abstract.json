@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-11-copy-abstract",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-11",
+  "type": "codefix",
+  "concept": ["抽象图纸只能被指着", "不能被照出来", "一个字符的修法"],
+  "instances": 2,
+  "params": {
+    "catName": { "kind": "pick", "values": ["小橘", "大胖"] }
+  },
+  "stemTemplate": "本喵生了一只真猫 {catName}，想让它也能站着那张写着「会叫的动物」的牌子。\n\n翻译官喵当场把本喵拦下了，说**这张图纸生不出真身**。可本喵要的明明只是「让牌子指着这只猫」呀。\n\n你帮本喵改一处，让这只 {catName} 能被那张牌子指着、喊一声能叫出它自己那一版（`X：喵～`）。**小猫图纸和那句喊话都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Animal {\nprotected:\n    string name;\npublic:\n    Animal(string n) : name(n) {}\n    virtual void speak() const = 0;\n};\n\nclass Cat : public Animal {\npublic:\n    Cat(string n) : Animal(n) {}\n    void speak() const override {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nint main() {\n    Cat c(\"{catName}\");\n    Animal a = c;\n    a.speak();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Animal {\nprotected:\n    string name;\npublic:\n    Animal(string n) : name(n) {}\n    virtual void speak() const = 0;\n};\n\nclass Cat : public Animal {\npublic:\n    Cat(string n) : Animal(n) {}\n    void speak() const override {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nint main() {\n    Cat c(\"{catName}\");\n    Animal& a = c;\n    a.speak();\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`error: cannot construct an object of abstract type 'Animal'`\n\n念作：**「你这个写法是要**照这张图纸生一具真身**出来，可它是抽象图纸，生不出来喵。」**\n\n**本喵压根没想生一只新动物 —— 本喵只想让牌子指着那只已经存在的真猫。** 可 `Animal a = c;` 这个写法，电脑读到的是「拿 `c` 的样子，造一只新的 `Animal` 出来」：它要在 `a` 这一格里**放一具实打实的真身**。而抽象图纸那一手只挂了招牌、没有动作，真要造出来，本喵喊一声它该叫成什么？**没有答案** —— 所以翻译官喵不许造。\n\n修法只有**一个字符**：在中间补一个 `&`。\n\n```text\nAnimal& a = c;\n```\n\n补上之后，`a` 就不再是「一具新造的真身」，而是**一张写着「会叫的动物」的牌子**，指着屋里那只真猫（第 2 阶段的「不必还的名字」那一课讲过这件事）。喊下去的那一刻，程序低头看一眼屋里住的是谁，于是印出来的是 {catName} 自己那一版。\n\n⚠️ 一句话钉住：**抽象图纸能被指着，不能被照出来。**\n\n- 想**指着**一只已有的猫 → `Animal& a = c;` 或者 `Animal* p = &c;`，都是一个 `&` 的事。\n- 想**照出来**生一只 → 不行。真想生，就得照一张**不抽象**的图纸（比如 `Cat`），或者把招牌上那几手补完。\n\n本喵第一次栽在这一题上的时候，盯着一屏幕的 `abstract type` 找了半天 —— 心里想的全是「我又没想生动物」，而那一行写的恰恰就是「造一只新的」这个意思。**报错没错，是本喵的写法说的不是本喵想的。**"
+}

@@ -1,0 +1,77 @@
+{
+  "lessonId": "c-stage2-07",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵画了一张共用体的图纸，里面住着 `int i`、`double d` 和 `char s[16]` 三位。量一量这间仓库（`sizeof(union Num)`），量出来是多大？",
+      "options": [
+        "16 —— 按最胖的那位预备",
+        "28 —— 三位的格数加起来",
+        "8 —— 取中间的那位",
+        "4 —— 取最瘦的那位"
+      ],
+      "answer": 0,
+      "explanation": "共用体的仓库是**所有成员共用同一块地方**，所以地方得按**最胖的那位**预备 —— 4、8、16 里最大的是 16 喵。这跟上一课那种「每样各占自己一份、加起来」的图纸正好相反，那才是三份加起来。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵先写 `n.i = 42;` 读到了 42，接着又写了 `n.d = 2.5;`。这时候再去读 `n.i`，读到的是什么？",
+      "options": [
+        "不是 42，也不是什么有意义的东西 —— 那是把 `2.5` 那串字节硬当成整数看的结果",
+        "还是 42 —— 两间格子各记各的，互不干扰",
+        "两个数加起来的结果",
+        "编译器会当场拦下来，程序根本跑不起来"
+      ],
+      "answer": 0,
+      "explanation": "地方只有一间，`n.d = 2.5;` 住进来的时候就把上一位**挤走了**喵。所以共用体的规矩是**写了谁就读谁** —— 去读睡下去的那位以外的人，读到的只是把字节硬当成另一种东西看的结果。这个数在别的机器、别的翻译官喵那儿可能完全不一样，**它不是能记住的知识**，本喵也没把它印在课文里。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵写了一句 `enum Level { LOW = 1, MID, HIGH };`。那么 `HIGH` 印出来是几？",
+      "options": [
+        "3 —— 从 1 开始，后面一个比一个大 1",
+        "2 —— 本喵只给了第一个数，后面两位都算 2",
+        "0 —— 没写数字的都得从 0 开始",
+        "1 —— 三个名字共用同一个编号"
+      ],
+      "answer": 0,
+      "explanation": "不写数字的时候从 0 开始排；本喵写了 `LOW = 1`，后面两位就**从那里接着排**：`MID` 是 2、`HIGH` 是 3 喵。这些名字在 C 里**就是整数**，只是给编号起了个好记的外号，所以 `%d` 照样能印它。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nenum Kind { IS_INT, IS_DOUBLE };\n\nstruct Value {\n    enum Kind kind;\n    union {\n        int i;\n        double d;\n    } num;\n};\n\nint main(void) {\n    struct Value v;\n\n    v.kind = ____;\n    v.num.____ = 7;\n    if (v.kind == IS_INT) {\n        printf(\"整数 %d\\n\", v.num.i);\n    } else {\n        printf(\"小数 %.1f\\n\", v.num.d);\n    }\n    return 0;\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出），补上之后它会印出「整数 7」喵。",
+      "blanks": [
+        { "answer": "IS_INT", "accept": [] },
+        { "answer": "i", "accept": [] }
+      ],
+      "explanation": "带记号的柜子要**两格一起写**：记号那一格先写清今天住的是谁，仓库那一格才写进去喵。底下那句问的是「记号是不是 `IS_INT`」，所以两处得配上同一家 —— 记号写 `IS_INT`，仓库里就住 `i`，这样印出来的才是「整数 7」。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nenum Level { LOW = 3, MID, HIGH };\n\nint main(void) {\n    printf(\"%d %d %d\\n\", LOW, MID, HIGH);\n\n    enum Level lv = LOW;\n    lv = lv + 2;\n    if (lv == HIGH) {\n        printf(\"已经到 %d 档了喵\\n\", lv);\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "3 4 5\n已经到 5 档了喵",
+      "accept": ["3 4 5\n已经到 5 档了喵\n"],
+      "explanation": "`LOW = 3` 一句话，后面两位就接着排成 4 和 5，所以第一行是 `3 4 5` 喵。`lv` 起手装的是 `LOW`（也就是 3），加 2 变成 5 —— 正好是 `HIGH`，所以那句话也印了出来。这些名字在 C 里就是整数，加减法照做不误。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nenum Kind { IS_INT, IS_DOUBLE };\n\nstruct Value {\n    enum Kind kind;\n    union {\n        int i;\n        double d;\n    } num;\n};\n\nint main(void) {\n    struct Value v;\n\n    v.kind = IS_DOUBLE;\n    v.num.d = 2.5;\n    if (v.kind == IS_INT) {\n        printf(\"整数 %d\\n\", v.num.i);\n    } else {\n        printf(\"小数 %.1f\\n\", v.num.d);\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小数 2.5",
+      "accept": ["小数 2.5\n"],
+      "explanation": "柜子两格是一起写的：记号那一格写的是 `IS_DOUBLE`，仓库里住的是 `d`（2.5）喵。底下那句先看记号 —— 记号不是 `IS_INT`，所以走的是另一条路，进的是 `v.num.d` 那扇门，印出来就是 `小数 2.5`。要是记号写着 `IS_DOUBLE` 却跑去读 `v.num.i`，读到的就是个没人认得的数了。"
+    }
+  ]
+}

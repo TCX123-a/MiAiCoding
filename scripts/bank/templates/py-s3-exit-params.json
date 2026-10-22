@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-exit-params",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-02",
+  "type": "codefix",
+  "concept": ["__enter__ 与 __exit__", "出门那一招的收件口", "with 进出都要跑"],
+  "instances": 2,
+  "params": {
+    "box": { "kind": "pick", "values": ["小鱼干盒", "猫粮罐", "毛线球筐", "冻干抽屉"] }
+  },
+  "stemTemplate": "本喵给零食盒写了个**会自己报备**的小家伙：进门的时候印一句「打开 …」，出门的时候印一句「合上 …」，门里还能把盒子自己交出来给本喵接着用。\n\n结果它**跑到一半就翻脸了** —— 屏幕上先把「打开」和「拿一包」两句印出来了，紧接着甩出一串报错，最后那句「合上」再也没出现。\n\n你帮本喵修好它喵。要求：\n\n1. 修完要印出**三句**，顺序是「打开 → 拿一包 → 合上」。\n2. 只许动**出错的那一处**，别的一个字都不许改。\n3. 三句话的字样也不许改。",
+  "brokenCodeTemplate": "class 零食盒:\n    def __init__(self, 名字):\n        self.名字 = 名字\n\n    def __enter__(self):\n        print(\"打开 \" + self.名字)\n        return self\n\n    def __exit__(self):\n        print(\"合上 \" + self.名字)\n\n\nwith 零食盒(\"{box}\") as 盒:\n    print(\"拿一包 \" + 盒.名字)\n",
+  "referenceFixTemplate": "class 零食盒:\n    def __init__(self, 名字):\n        self.名字 = 名字\n\n    def __enter__(self):\n        print(\"打开 \" + self.名字)\n        return self\n\n    def __exit__(self, 类型, 值, 痕迹):\n        print(\"合上 \" + self.名字)\n\n\nwith 零食盒(\"{box}\") as 盒:\n    print(\"拿一包 \" + 盒.名字)\n",
+  "explanationTemplate": "这个坑不是哪一句话写歪了，是**出门那一招少留了收件口**喵。\n\n关门的时候，翻译官喵一定会往 `__exit__` 里塞**三样东西**：摔出来的那种毛病、毛病身上带着的详情、还有它在哪儿摔的痕迹。一样都不会少 —— 就算门里**什么都没摔**，这三样也照样塞，只不过塞进去的是三个空的。\n\n而本喵写的是 `def __exit__(self):`，只留了一个口（那个还是给门自己的）。门一关，外面塞进来三样，它接不住，当场就喊「我只收一个，你们塞了四个」（连门自己那份算上是四个）。\n\n修法就是把那三样接住：`def __exit__(self, 类型, 值, 痕迹):`。名字随便叫，**数量必须对**。\n\n⚠️ 这个坑最迷惑人的地方在于：门里那次报错看着像真的 —— `打开` 和 `拿一包` 都印出来了，其实门里那句 `return self` 一点问题都没有，出事的是**出门**那一步。所以别盯着门里的活看，先看门是怎么合上的。"
+}

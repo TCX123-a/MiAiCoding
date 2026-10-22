@@ -1,0 +1,92 @@
+{
+  "lessonId": "python-stage3-04",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵叫了三只猫一起算鱼干，结果一点都没变快。这是为什么喵？",
+      "options": [
+        "因为解释器脖子上只有一枚金铃铛，同一时刻只有一个线程能执行 Python 代码",
+        "因为那三只猫都在偷偷打盹",
+        "因为鱼干太重了，猫爪子抬不动",
+        "因为算鱼干这种活必须由父猫亲手来做"
+      ],
+      "answer": 0,
+      "explanation": "金铃铛的规矩是「同一时刻，只允许一只猫摇着铃铛执行 Python 代码」喵。算鱼干是纯计算 —— 猫得一直攥着铃铛不放，所以三只猫只能排队轮着来，叫再多也只是排更长的队。想真正同时算，就得**多开几只猫**，每只猫有自己的金铃铛喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "哪种活儿，叫上好几只猫一起干活能真的变快喵？",
+      "options": [
+        "等鱼塘回信、等文件读完这种「等」的活",
+        "把十亿条鱼干的重量加起来这种「算」的活",
+        "两种都能变快，猫多就是快",
+        "两种都不行，叫了也白叫"
+      ],
+      "answer": 0,
+      "explanation": "猫在「等」的时候会**主动松开金铃铛**，别的猫正好接手 —— 所以等回信、读文件这类活，叫上一队猫很划算喵。而「算」的活，猫的手一直不离铃铛，别的猫插不上手，只能排队。抓住这一条，以后选哪路帮手就不会抓瞎了喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "新开的一只猫算出了结果，本喵想在自己这边拿到它，该怎么办喵？",
+      "options": [
+        "让新猫把成果 `put` 进筐里，本喵再 `get` 出来",
+        "直接伸手去新猫的仓库里拿就行",
+        "新猫算完会自动把成果塞回本喵的仓库",
+        "不用管，成果自己会飘回来"
+      ],
+      "answer": 0,
+      "explanation": "每只猫都有**自己的小鱼干仓库**，本喵这边看不见它那边装了什么喵。想让成果回来，就得让新猫主动递出来：把结果 `put` 进那个「排队领小鱼干」的筐（`Queue`），本喵再伸手 `get` 出来 —— 不递出来，它是回不来的喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "python",
+      "code": "from multiprocessing import Process, Queue\n\n\ndef work(queue, n):\n    queue.put((n, n * n))\n\n\n____\n    queue = Queue()\n    jobs = [Process(target=work, args=(queue, n)) for n in [2, 3, 4]]\n    for job in jobs:\n        job.start()\n    for job in jobs:\n        job.join()\n    results = [queue.get() for _ in jobs]\n    for n, value in ____(results):\n        print(f\"{n} 的平方是 {value}\")\n",
+      "stem": "这段代码派出三只新猫各算一个平方，再由父猫排好队统一印出来。请把两个空补上喵：第一个空要填上 Windows 上那层必不可少的保护罩，第二个空让父猫把成果按编号排好队。",
+      "blanks": [
+        {
+          "answer": "if __name__ == '__main__':",
+          "accept": [
+            "if __name__ == \"__main__\":",
+            "if __name__=='__main__':",
+            "if __name__==\"__main__\":"
+          ]
+        },
+        {
+          "answer": "sorted",
+          "accept": []
+        }
+      ],
+      "explanation": "`if __name__ == '__main__':` 这层保护罩只管一件事：新猫是照着剧本重新出生的，它一出生会把剧本从头念一遍；开猫的台词关在保护罩里，新猫念到这儿就会绕过去，不会一只接一只地开下去喵。第二个空要用 `sorted` 把「编号 + 成果」按编号排好 —— 三只猫谁先送回来纯属运气，排好队再印，输出才每次都一样喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "from multiprocessing import Pool\n\n\ndef double(n):\n    return n * 2\n\n\nif __name__ == '__main__':\n    pool = Pool(2)\n    print(pool.map(double, [1, 2, 3]))\n    pool.close()\n    pool.join()\n",
+      "stem": "这段代码的输出是什么喵？（提示：`map` 会把成果按你给进去的顺序交回来）",
+      "answer": "[2, 4, 6]",
+      "accept": ["[2, 4, 6]\n"],
+      "explanation": "`pool.map(double, [1, 2, 3])` 的意思是：把 1、2、3 挨个喂给 `double`，再把成果按原顺序收回来 —— 1 乘 2 得 2、2 乘 2 得 4、3 乘 2 得 6，凑成一整柜 `[2, 4, 6]` 印出来喵。就算池子里两只猫是同时开工的，交回来的顺序照样是你给进去的顺序，不会乱喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "from multiprocessing import Process, Queue\n\nfish = [\"大肥鱼\"]\n\n\ndef add_two(queue):\n    fish.append(\"小鱼干\")\n    fish.append(\"小鱼干\")\n    queue.put(len(fish))\n\n\nif __name__ == '__main__':\n    queue = Queue()\n    p = Process(target=add_two, args=(queue,))\n    p.start()\n    p.join()\n    print(f\"新猫那边 {queue.get()} 条，本喵这边 {len(fish)} 条\")\n",
+      "stem": "这段代码的输出是什么喵？",
+      "answer": "新猫那边 3 条，本喵这边 1 条",
+      "accept": [
+        "新猫那边 3 条，本喵这边 1 条\n",
+        "新猫那边 3 条, 本喵这边 1 条",
+        "新猫那边 3 条,本喵这边 1 条",
+        "新猫那边3条，本喵这边1条"
+      ],
+      "explanation": "新猫出生的时候，它自己那间仓库里也照着剧本摆好了 1 条大肥鱼，它又往里塞了 2 条小鱼干，所以它那边数出来是 3 条喵。而本喵这间仓库**一个字都没被动过** —— 它加的是它自己那间，本喵这边还是孤零零 1 条，所以印出来是「新猫那边 3 条，本喵这边 1 条」喵。"
+    }
+  ]
+}

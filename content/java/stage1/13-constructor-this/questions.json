@@ -1,0 +1,77 @@
+{
+  "lessonId": "java-stage1-13",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵要给图纸写一手「出生」的活儿。下面哪一条是它的死规矩？",
+      "options": [
+        "名字必须和图纸同名，前面不带 `void` 那一截，而且在 `new` 的那一刻自动跑一遍",
+        "名字随便起，只要前面写清 `void` 就行",
+        "名字和图纸同名，但前面必须写 `void`",
+        "名字随便起，等本喵喊它的时候才跑"
+      ],
+      "answer": 0,
+      "explanation": "出生那一手有三条死规矩喵：**名字和图纸同名**、**前面光秃秃的**（既不写 `void`，也不写任何叼回来的类型）、**在 `new` 那一刻自动跑一遍** —— 本喵一声都不用喊。写成 `void Cat(...)` 的话它就降级成普通招式了，出生的时候不管事（第五节那个报错就是这么来的）；名字和图纸不一样更是直接撞 `invalid method declaration`喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵在出生那一手里写了 `name = name;`，喂进去的名字是「小橘」，可印出来是 `null`。这是为什么？",
+      "options": [
+        "喂进来的料把图纸上的家当挡住了 —— 两个 `name` 都指那块料，图纸上那件家当从头到尾没被碰过",
+        "`null` 是翻译官在拦本喵，说这一行不该这么写",
+        "因为喂进来的名字不能在同一行里写两次",
+        "因为图纸上那件家当要先 `new` 一次才能用"
+      ],
+      "answer": 0,
+      "explanation": "招式里的料和图纸上的家当**摆在两层不同的地方**喵：料也叫 `name`，它在本喵眼前那一层，把图纸上那件家当整个挡住了。所以 `name = name;` 里的两个 `name` **指的都是那块料** —— 把「小橘」写进「小橘」自己，原地转了一圈，什么也没发生；图纸上那件家当一直没人碰，还是默认的 `null`。这一句**翻译官一声都不吭**，不报错、不拦下，只给一个错结果 —— 这才是它最坑的地方喵。要写的正路是 `this.name = name;`：`this.` 点明左边是「**这一只**猫自己的家当」喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵在图纸上画了两种出生法：`Cat()` 和 `Cat(String name, int fish)`。喊一句 `new Cat()` 的时候，哪一手会跑？",
+      "options": [
+        "不传参的那个构造方法 `Cat()` —— 电脑按传进去的参数挑，和函数同名时挑哪个是同一套规矩",
+        "两手都跑，先跑空手的、再跑收料的那一手",
+        "收两样料的那一手，因为它写得最全",
+        "编译当场拦下，说本喵画了两手同名的出生法"
+      ],
+      "answer": 0,
+      "explanation": "两手同名的出生法**不算写重**喵：它们的名字一样，可**喂进去的料不一样**（一个空手、一个收两样），电脑按本喵喂的料自己挑 —— `new Cat()` 走空手那一手，`new Cat(\"小橘\", 3)` 走收两样的那一手，这就是招式重名时那套挑法，用在同一张图纸的出生法上照样灵。空手那一手也没白写：它身子里那句 `this(\"无名氏\", 0);` 把活儿**转给另一手干**，所以挂名字、记鱼干数那套活儿只需要写一遍喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "class Cat {\n    String name;\n    int fish;\n\n    Cat(String name, int fish) {\n        this.name = name;\n        this.fish = fish;\n        System.out.println(name + \" 到家了喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c1 = new Cat(\"小橘\", 3);\n        Cat c2 = new Cat(\"狸花\", 1);\n        System.out.println(c1.name + \" \" + c1.fish);\n        System.out.println(c2.name + \" \" + c2.fish);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘 到家了喵\n狸花 到家了喵\n小橘 3\n狸花 1",
+      "accept": ["小橘 到家了喵\n狸花 到家了喵\n小橘 3\n狸花 1\n"],
+      "explanation": "出生那一手**在 `new` 那一刻自动跑一遍**喵：`new Cat(\"小橘\", 3)` 一生出小橘就印了第一行，`new Cat(\"狸花\", 1)` 一生出狸花就印了第二行 —— 这两行开头都在 `main` 里那两句 `new` 的位置上。身子里 `this.name = name;` 把喂进来的料收进这只猫自己的家当，所以后面印 `c1.name`、`c1.fish` 拿到的是「小橘」和 `3`，`c2` 拿到的是「狸花」和 `1` —— 两只猫各带各的账喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "class Cat {\n    String name;\n    int fish;\n\n    Cat(String name) {\n        name = name;\n        fish = 2;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"小橘\");\n        System.out.println(c.name);\n        System.out.println(c.fish);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "null\n2",
+      "accept": ["null\n2\n"],
+      "explanation": "这一手活儿里两句的待遇完全不同喵。`name = name;` 里两个 `name` 指的都是**喂进来的料**（料把图纸上那件家当挡住了），所以是把「小橘」写进「小橘」自己，图纸上那件家当一点没动，印出来还是默认的 `null`。而 `fish = 2;` 这边**没人和它同名**，它指的就是图纸上那件家当，写进去的 `2` 老老实实存住了，印出来是 `2`。同一手活儿、隔着两行，一边是坑一边是对的 —— 差别只在**有没有和料重名**，重名就得写 `this.`喵。"
+    },
+    {
+      "id": "q6",
+      "type": "codefill",
+      "lang": "java",
+      "code": "class Cat {\n    String name;\n\n    Cat(String name) {\n        ____.name = name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = ____ Cat(\"小橘\");\n        System.out.println(c.name);\n    }\n}",
+      "stem": "本喵这张图纸缺了两处：一处是「这一只猫自己的家当」那个前缀，一处是「照着图纸生一只」的动作。补上两个空，让这段代码跑起来、屏幕上印出 `小橘` 喵 —— 一个空填出生那一手身子里、点明「这一只」的那个前缀，另一个空填 `main` 里照图纸生猫的那个动作。",
+      "blanks": [
+        { "answer": "this" },
+        { "answer": "new" }
+      ],
+      "explanation": "第一个空填 `this` —— 喂进来的料和图纸上的家当**同名**（都叫 `name`），不写 `this.` 就是「把料写进料自己」，图纸上那件家当永远空着，印出来会是 `null`喵。`this.` 的意思就是「**这一只**猫自己的家当」，写了它才不会认错边。第二个空填 `new`：`Cat c = new Cat(\"小橘\");` 照着图纸生一只、当场让出生那一手跑一遍，再把名字收进这只猫自己的账上，所以最后印出来是「小橘」喵。"
+    }
+  ]
+}

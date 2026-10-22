@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-unionenum-sizeof-wrong-member",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-07",
+  "type": "codefix",
+  "concept": ["共用体", "sizeof", "量错了成员", "跑得成功但数不对"],
+  "instances": 2,
+  "params": {
+    "L": { "kind": "pick", "values": [16, 24, 32] }
+  },
+  "stemTemplate": "本喵画好了一张**共用体**的图纸：一间仓库，门上挂三个牌子 —— 一个整数、一个小数、还有一条 {L} 格的项链。三样东西**共用同一间仓库**。\n\n现在要量一量这间仓库到底多大。按课文那句「仓库大小 = **最胖的那位**成员」，量出来应当是 **{L} 格**（那条项链最胖），程序要印一行 `仓库 {L} 格`。\n\n可这段代码翻译官喵**一个字都没说**，跑起来却报了个别的数。你帮本喵看看是量到谁头上去了，把它改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nunion Num {\n    int i;\n    double d;\n    char s[{L}];\n};\n\nint main(void) {\n    printf(\"仓库 %d 格\\n\", (int)sizeof(int));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nunion Num {\n    int i;\n    double d;\n    char s[{L}];\n};\n\nint main(void) {\n    printf(\"仓库 %d 格\\n\", (int)sizeof(union Num));\n    return 0;\n}\n",
+  "explanationTemplate": "错在量的是谁喵：代码量的是 `sizeof(int)` —— 那是**整数那一位**占多大（4 格），不是**这间仓库**有多大。\n\n共用体的规矩是：三样东西共用同一块地方，所以地方得按**最胖的那位**预备。这里最胖的是那条 {L} 格的项链，所以整间仓库就是 {L} 格。要量的是**仓库**，写法是把图纸整个套进 `sizeof`：\n\n```c\n(int)sizeof(union Num)\n```\n\n读作「量一下 `union Num` 这一整个多大」。实测下来：`int` 是 4 格、`double` 是 8 格、那条 {L} 格的项链是 {L} 格，而 `union Num` 量出来正是 {L} —— **最胖的那位说了算**。\n\n顺带对照着记：**同样这三样东西，要是画成图纸（`struct`），那就是各占各的一份。** 本喵真量过一遍：{L} 格的项链配出来，共用体是 {L} 格，图纸却是 **{L} 加 16 格**（整数 4 格、小数 8 格，另外还有 4 格是为了让小数排整齐而空出来的）。**共用体省的就是这块地方。**\n\n这类错最烦人的地方在于翻译官喵**挑不出毛病**：`sizeof(int)` 是再正常不过的一句，程序也好好地跑完了，只是数不对。所以本课要养成一个习惯 —— **量完自己对一眼题面要的那个数**。"
+}

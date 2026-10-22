@@ -1,0 +1,23 @@
+{
+  "templateId": "c-s1-calc-bad-choice-break",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-15",
+  "type": "codefix",
+  "concept": ["continue", "break", "循环", "选项重来"],
+  "instances": 2,
+  "params": {
+    "c": { "kind": "pick", "values": [1, 2, 3, 4] },
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "9\n{c}\n{a}\n{b}\n5\n",
+    "sampleText": "9\n3\n7\n2\n5\n"
+  },
+  "stemTemplate": "本喵的小鱼干计算器快完工了喵：菜单印得出来、数也收得进去、四项运算都写好了。\n\n本喵故意逗它一下，敲了个菜单上**没有的**数 —— 它印完那句 `没有这一项喵，再选一次～`，就**直接收摊了**，再也没把菜单摆出来……\n\n你帮本喵看看是哪儿写岔了，把它改好。改好之后，敲到菜单上没有的数时，它应该印一句 `没有这一项喵，再选一次～`，然后**把菜单重新摆出来**接着问，直到敲 `5` 才收工。\n\n（判分会先喂一个菜单上没有的数，再喂一项正常的运算和两条鱼干，最后敲 `5` 收工。）",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            break;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "那句「没有这一项」后面跟的是 `break` 喵 —— `break` 的意思是「**跳出这一圈**」，所以它一印完就整圈收摊，直接走到圈外面去了。\n\n这里要的是 `continue`：它的意思是「**跳回这一圈的开头**」—— 也就是回到 `while` 那一行重新判断，菜单重新摆出来。\n\n两个词只差几个字母，干的事却正好相反：\n\n- `continue` → 这一圈剩下的活儿先不干了，**回到圈的开头**（菜单重摆、再问一次）；\n- `break` → **整圈都不干了**，直接跳到圈外面去（收摊走人）。\n\n所以「这个选项不对，让他重新挑一次」要写 `continue`；而「收工」「读不进去了」这种真要走人的地方才写 `break`。\n\n本喵这台计算器里两种都用到了，正好对照着看一眼：敲 `5` 收工那里要 `break`（真走人），选项不对那里要 `continue`（让他重挑）喵。"
+}

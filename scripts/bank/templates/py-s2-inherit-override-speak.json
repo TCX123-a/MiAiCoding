@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-inherit-override-speak",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-07",
+  "type": "codewrite",
+  "concept": ["图纸套图纸", "重写", "isinstance"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["大肥鱼", "橘猫"] },
+    "sname": { "kind": "pick", "values": ["狸花猫", "小白猫"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{name}\n", "sampleText": "{sname}\n" },
+  "stemTemplate": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上；再有一招 `speak(self)`，印出名字，后面**直接接上** `发出了一声叫`（中间不加空格）。\n2. 一张 `Cat` 小图纸，**照着 `Animal` 画**，并且把 `speak` **盖掉、换自己那版**：印出名字，后面接 `：喵～`。\n\n然后**读一行名字**，用这个名字：\n\n- 照 `Animal` 直接造一只，喊它的 `speak`\n- 再照 `Cat` 造一只，喊它的 `speak`\n- 最后印一行 `isinstance(这只猫, Animal)` 的结果\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一个名字**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print(self.name + \"发出了一声叫\")\n\n\nclass Cat(Animal):\n    def speak(self):\n        print(self.name + \"：喵～\")\n\n\nname = input()\na = Animal(name)\nc = Cat(name)\na.speak()\nc.speak()\nprint(isinstance(c, Animal))\n",
+  "explanationTemplate": "三个地方要盯住喵：\n\n- **`class Cat(Animal):`** —— 名字后面那对小括号里填**大图纸的名字**，读作「照 `Animal` 那张图纸，再画一张 `Cat`」。这一写，大图纸上的说明和招式小图纸**天生就会**：本喵在小图纸里根本没写 `__init__`，可名字照样喂得进去。\n- **盖掉、换自己那版** —— 小图纸上把 `speak` 又写了一遍（名字一样、投喂的东西也一样），于是**小图纸这一版就把大图纸那一版盖住了**。照 `Cat` 生的那只走的是「喵～」，照 `Animal` 生的大图纸那只，还是老老实实印「发出了一声叫」。这叫**盖住只盖住这一条下游的路**，大图纸本身一个字都没被改。\n- **`isinstance(这只猫, 一张图纸)`** —— 读作「这只猫是不是照这张图纸（**或它的下游图纸**）生出来的」。`Cat` 是套在 `Animal` 上画的，所以照 `Cat` 生出来的那只**也算**一只 `Animal`，叼回 `True`。\n\n⚠️ 反过来可就不成立了：照 `Animal` 直接生的那只**不是** `Cat`。认亲是**从上往下认，不往上看** —— 小图纸认大图纸这门亲，大图纸不认小图纸。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-optional-first-big",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-05",
+  "type": "codewrite",
+  "concept": ["把可能找不到写在名分上", "找不到就交回空盒子", "用的时候当场交代兜底"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "t": { "kind": "int", "min": 5, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要去柜子里找**第一件不小于 {t}** 的东西喵。麻烦在于：**很可能一件都找不到** —— 这件事得写在名分上，别瞒着用的人。\n\n请你写一招去找：\n\n- 收的是柜子和那个门槛；\n- 找到了就把它**装进盒子**交回来；\n- **一件都没找到**就交回一只**空盒子**（不许交回空东西）。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。把它们收进柜子、找完之后，印两行：\n\n```text\n柜子里有 N 件\n第一件够大的是：X\n```\n\n- `N` 是件数；\n- `X` 是找到的那一件；**要是空盒子**，就用兜底那一手报 `0`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.Scanner;\n\npublic class Main {\n    static Optional<Integer> firstBig(List<Integer> box, int t) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.Scanner;\n\npublic class Main {\n    static Optional<Integer> firstBig(List<Integer> box, int t) {\n        for (int x : box) {\n            if (x >= t) {\n                return Optional.of(x);\n            }\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n        Optional<Integer> found = firstBig(box, {t});\n        System.out.println(\"柜子里有 \" + box.size() + \" 件\");\n        System.out.println(\"第一件够大的是：\" + found.orElse(0));\n    }\n}\n",
+  "explanationTemplate": "这题的关键根本不是「怎么找」，是**「可能找不到」这件事写在了哪里**喵。\n\n**一、找的那一招名分上就写着「可能没有」。** 它叼回来的是一只**盒子**（`Optional<Integer>`），不是一件东西。这一句话就把「可能有、可能没有」摆到明处了：谁来用这一招，**看一眼名分就知道要交代一句「没有怎么办」**，不用翻文档、也不用打听。\n\n**二、找到和没找到，两条出口都得有。** 绕圈里一碰上够大的，就把它装进盒子直接交回去（`return Optional.of(x)`）；绕完一圈都没碰上，就交回一只空盒子（`return Optional.empty()`）。**绝对不能**在找不到的时候交回一个空东西 —— 那正是本课开头那种一碰就炸的写法，而且它把这个麻烦**甩给了调用的人**。\n\n**三、用的时候当场交代兜底。** `found.orElse(0)` 读作「盒子里有就用盒子里的，空盒子就用 `0`」。这一句是**用的人**的责任：他拿着盒子用，就必须说清楚空了怎么办。本喵说清楚了，所以这行代码从头到尾一次都不会炸。\n\n**四、有没有更进一步的写法。** 本课还教过：要**对盒子里的东西动一手**再交出去，用盒子上自带的那手 `map`；要**只在有东西的时候才做点什么**，用 `ifPresent`。它们的好处是「空盒子」会**一路自动传下去**，本喵不用每一层都手动判一次。这题印出来的那两行都在「拿出来用」这一步，所以 `orElse` 这一手最直接。\n\n**五、为什么 `orElse(0)` 里的 0 不撞车。** 投喂给程序的数都是正的，所以 `0` 一定是「没找到」的意思，不会跟真找到的混起来。挑兜底值时记得看一眼值域 —— 要是投喂的数可能是 0，就得换个别的方式报「没找到」喵。\n\n一句话记住：**「可能没有」不是心里的秘密，是写在名分上的承诺** —— 写上了，用的人就必须交代；交代了，红字就没机会出现。"
+}

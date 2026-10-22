@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-17-dp-swap-two",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-17",
+  "type": "codewrite",
+  "concept": ["换两张牌", "每一步都剥一层", "临时那只也得是牌", "递两张牌的门牌号"],
+  "instances": 6,
+  "params": {
+    "x": { "kind": "int", "min": 3, "max": 4 },
+    "y": { "kind": "int", "min": 8, "max": 9 }
+  },
+  "stemTemplate": "本喵手里有**两张牌**：一张指着装着 {x} 条小鱼干的那只碗，一张指着装着 {y} 条的那只碗。现在要把这两张牌**换个个儿** —— 原来指着第一只碗的改成指着第二只，原来指着第二只的改成指着第一只。\n\n`main` 里那行 `swap_ptr(&p, &q);` 已经写好了，递的正是**两张牌的门牌号**。你要写的是招式本体：接料格已经给好，是两个 `int **`。\n\n印出来的该是两行：第一行「p 指着：」跟着第二只碗里的数，第二行「q 指着：」跟着第一只碗里的数。",
+  "starterTemplate": "#include <stdio.h>\n\n/* 把两张牌换个个儿 */\nvoid swap_ptr(int **a, int **b) {\n    /* ↓ 在这儿写：三行的活 —— 先收好一张、再换、再补上\n       （收好的那一只也得是「牌」，别把星星丢了） */\n}\n\nint main(void) {\n    int x = {x};\n    int y = {y};\n    int *p = &x;\n    int *q = &y;\n\n    swap_ptr(&p, &q);\n    printf(\"p 指着：%d\\n\", *p);\n    printf(\"q 指着：%d\\n\", *q);\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* 把两张牌换个个儿 */\nvoid swap_ptr(int **a, int **b) {\n    int *t = *a;\n    *a = *b;\n    *b = t;\n}\n\nint main(void) {\n    int x = {x};\n    int y = {y};\n    int *p = &x;\n    int *q = &y;\n\n    swap_ptr(&p, &q);\n    printf(\"p 指着：%d\\n\", *p);\n    printf(\"q 指着：%d\\n\", *q);\n    return 0;\n}\n",
+  "explanationTemplate": "换两张牌，和换两只碗里的数是一个套路，只是**每一步都要剥一层**喵：\n\n```text\nint *t = *a;\n*a = *b;\n*b = t;\n```\n\n- `*a` / `*b` 就是「外面那两张牌」—— 剥一层拿到的正好是牌本人；\n- `t` 是一只临时碗，类型必须是 `int *` —— **别把星星丢了**：写成 `int t = *a;` 就是往整数格子里塞门牌号，翻译官喵当场翻脸；\n- 三行的顺序不能乱：先把 `*a` 收好，再让 `*a` 拿到 `*b`，最后把收好的还给 `*b`。少一步或者换顺序，两张牌就会指着同一只碗、另一只再也没人指。\n\n改完之后，第一行跟着的是**第二只碗**里的数、第二行跟着的是**第一只碗**里的数 —— 两张牌真的换了个儿，不是把碗里的数抄来抄去喵。"
+}

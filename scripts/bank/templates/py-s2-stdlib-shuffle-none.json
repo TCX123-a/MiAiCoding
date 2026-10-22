@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-stdlib-shuffle-none",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-06",
+  "type": "codefix",
+  "concept": ["random.shuffle", "原地", "None"],
+  "instances": 2,
+  "params": {
+    "seed": { "kind": "int", "min": 2, "max": 6 }
+  },
+  "stemTemplate": "本喵想让三样吃的排个随机顺序，然后把**排在最前面那一样**报出来喵。\n\n为了答案每次都一样、好对，本喵已经用 `random.seed({seed})` 把起点定死了。\n\n可这段代码一跑就报错。你帮本喵改对，让它印出打乱之后排在最前面的那一样。\n\n⚠️ 三样吃的**不许改**，`random.seed({seed})` 那一行**也不许改**喵。",
+  "brokenCodeTemplate": "import random\n\nrandom.seed({seed})\nbowls = [\"小鱼干\", \"猫粮\", \"冻干\"]\nbowls = random.shuffle(bowls)\nprint(bowls[0])\n",
+  "referenceFixTemplate": "import random\n\nrandom.seed({seed})\nbowls = [\"小鱼干\", \"猫粮\", \"冻干\"]\nrandom.shuffle(bowls)\nprint(bowls[0])\n",
+  "explanationTemplate": "`random.shuffle(一排东西)` 是「**把这一排原地打乱**」喵。要紧的是「原地」两个字：它直接动手把**你递进去的那一排**重新排过，排完**不还给你任何东西** —— 叼回来的是一个空的 `None`。\n\n坏就坏在上面那句 `bowls = random.shuffle(bowls)`：右手边「打乱」这件事已经做完了，可它叼回来的 `None` 又被接进 `bowls` 这个名字里 —— 原来那排碗，名字被一个「空」盖掉了。下一句 `bowls[0]` 想从「空」里拿第 0 样，翻译官喵只能翻脸：空的东西不能按位置取（`'NoneType' object is not subscriptable`）。\n\n⚠️ 正确的用法是**写完这一行就当它已经乱了**，不要去接：`random.shuffle(bowls)` 自己站一行，`bowls` 本身已经变过顺序了。\n\n⚠️ 这个坑跟别的「忘了接住」正好相反：多数招式的战利品**要接住**，`shuffle` 是少数**不用接**的。判别办法很简单 —— 看它是「产出一样新东西」还是「把你给的那一排改一改」：**产出新东西的要接，改一改的不用接**。\n\n⚠️ `random.seed({seed})` 那一行不是装饰：起点一定，打乱出来的顺序才每次都一样，改了它答案就变了，判分自然对不上。"
+}

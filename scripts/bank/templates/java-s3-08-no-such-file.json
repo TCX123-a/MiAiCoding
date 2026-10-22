@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-08-no-such-file",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-08",
+  "type": "codefix",
+  "concept": ["念不存在的门牌会翻脸", "先问一声 exists", "writeString 顺手建文件"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵想让程序做到：账本**要是还没有**，就先写一句「{n1} 的账本」进去，然后念出来。\n\n可它一跑起来就**当场翻脸**，什么都没印出来。\n\n你帮本喵看看：念之前少做了一步什么事？把这一步补上 —— 改好之后该印出 `{n1} 的账本`。\n\n（这一题**不用投喂任何东西**；那份账本从头到尾都不在，得靠程序自己造。）",
+  "brokenCodeTemplate": "import java.nio.file.Files;\nimport java.nio.file.Path;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"还没建的账本.txt\");\n\n        System.out.println(Files.readString(门牌));\n    }\n}\n",
+  "referenceFixTemplate": "import java.nio.file.Files;\nimport java.nio.file.Path;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"还没建的账本.txt\");\n\n        if (!Files.exists(门牌)) {\n            Files.writeString(门牌, \"{n1} 的账本\\n\");\n        }\n\n        System.out.println(Files.readString(门牌));\n    }\n}\n",
+  "explanationTemplate": "**一、它翻脸的原话是 `java.nio.file.NoSuchFileException: 还没建的账本.txt`**，读作「**没有这份文件**」，后面还跟着那份文件的名字。念一份不存在的文件，它没法凭空变出内容来，只能当场拦住。\n\n**二、补的那一步就是「先问一声」：**\n\n```java\nif (!Files.exists(门牌)) {\n    Files.writeString(门牌, \"{n1} 的账本\\n\");\n}\n```\n\n`Files.exists(门牌)` 问「在不在」，答 `true` / `false`；前面加个 `!` 读作「**要是不在**」。不在的时候那句 `writeString` 不光写了字，还**顺手把文件建了出来** —— 门牌本来指的是一个还不存在的位置，写完它就成了真文件。回头再念，念的就是刚写进去的那句。\n\n**三、门牌本身跟这事儿没关系。** `Path.of(...)` 撕一张写着位置的门牌，文件在不在它都能撕 —— 所以「文件不在」这件事**只能靠 `exists` 问，问不出来就只能等它翻脸**。\n\n**四、这种「当场红」其实是好事。** 本课里那些不红不响的坑（忘了拨书签、默认从头写）要念回来才发现不对；这一脚直接把话说清楚，本喵一眼就知道该去问 `exists` 了。"
+}

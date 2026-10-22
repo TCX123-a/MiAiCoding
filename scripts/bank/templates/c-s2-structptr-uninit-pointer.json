@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-structptr-uninit-pointer",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-06",
+  "type": "codefix",
+  "concept": ["牌子没插", "野门牌", "警告", "跑起来就崩"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "狸花", "大肥鱼"] },
+    "f1": { "kind": "int", "min": 2, "max": 4 },
+    "f2": { "kind": "int", "min": 5, "max": 7 }
+  },
+  "stemTemplate": "本喵生了一只猫（名字 `{who}`、食量 {f1}），又想借一块牌子把食量改成 {f2}，最后报一行 `{who} 吃了 {f2} 条喵`。\n\n这段代码翻译官喵**没拦**，只是嘟囔了一句警告，然后程序一跑就倒了（什么都没印出来）。你帮本喵看看牌子那边差了什么，把它改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"{who}\", {f1}};\n    struct Cat *p;\n\n    p->fish = {f2};\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"{who}\", {f1}};\n    struct Cat *p = &a;\n\n    p->fish = {f2};\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵当时的嘟囔是 `warning: 'p' is used uninitialized [-Wuninitialized]` —— 翻过来就是：「**这块牌子 `p` 没插到任何地方，你就拿它进门了。**」\n\n把牌子这件事想清楚就不难懂了喵：\n\n```c\nstruct Cat *p;\n```\n\n这一句只是**画了一块空牌子**，上面一个字没写。它不是门牌号，是一块没插的牌子。接着那句 `p->fish = {f2};` 的意思是「顺着牌子过去，把 `fish` 格改掉」—— 可牌子没插，那本喵顺着它走到哪去了？走到一个**谁也不知道的地方**去了。往那儿写数，程序当然当场倒下。\n\n修法就一个字的事：**牌子生出来的时候就得插上。**\n\n```c\nstruct Cat *p = &a;\n```\n\n`&a` 就是「猫 `a` 住哪儿」那块门牌号 —— 跟学 `scanf` 时写的 `&a.fish` 是同一个 `&`，只是这回问的是**整只猫**的门牌。插好之后，`p->fish` 写进去的才是 `a` 自己的食量。\n\n**记住这句：牌子不是猫。** `struct Cat *p;` 只是画了块牌子，一只猫都没生，必须再让牌子指着某只**已经生好的**猫（`p = &a;`）或者指着一排猫里的某一只（`p = cats;`）才管用。"
+}

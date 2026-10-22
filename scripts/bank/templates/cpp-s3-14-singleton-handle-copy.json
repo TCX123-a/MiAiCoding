@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-14-singleton-handle-copy",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-14",
+  "type": "codefix",
+  "concept": ["只造一只和只递一只", "接货时少写 & 就成了复印", "两个名字是不是同一只"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["4", "7"] },
+    "w2": { "kind": "pick", "values": ["5", "9"] }
+  },
+  "stemTemplate": "本喵的独苗图纸写对了：招式里那句 `static` 在，起手式也藏在 `private:` 底下。可这回两处加的数**没能加在一块儿** —— 两个名字各自捧着各自的碗。\n\n请你改对。**图纸那一半一个字都不用动**，只把主猫接货的地方修好。改好之后，印出来应该是这样：两行「的碗」印的是**同一个数**（`{w1}` 和 `{w2}` 加起来），最后一行印「同一只：是」。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBowl {\npublic:\n    static FishBowl& getInstance() {\n        static FishBowl only;\n        return only;\n    }\n    void add(int n) { count += n; }\n    int count = 0;\nprivate:\n    FishBowl() = default;\n};\n\nint main() {\n    FishBowl a = FishBowl::getInstance();\n    a.add({w1});\n    FishBowl b = FishBowl::getInstance();\n    b.add({w2});\n    cout << \"a 的碗：\" << a.count << endl;\n    cout << \"b 的碗：\" << b.count << endl;\n    cout << \"同一只：\" << (&a == &b ? \"是\" : \"不是\") << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBowl {\npublic:\n    static FishBowl& getInstance() {\n        static FishBowl only;\n        return only;\n    }\n    void add(int n) { count += n; }\n    int count = 0;\nprivate:\n    FishBowl() = default;\n};\n\nint main() {\n    FishBowl& a = FishBowl::getInstance();\n    a.add({w1});\n    FishBowl& b = FishBowl::getInstance();\n    b.add({w2});\n    cout << \"a 的碗：\" << a.count << endl;\n    cout << \"b 的碗：\" << b.count << endl;\n    cout << \"同一只：\" << (&a == &b ? \"是\" : \"不是\") << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题漏的是**接货时的那个 `&`** 喵。图纸那边交回来的形状明明写着 `FishBowl&`（意思是**把那只猫本身递出去**），可主猫这两行写成的是 `FishBowl a = ...` —— 少了那个 `&`，接回去的成了**复印的一份**。\n\n复印件当然也能加自己的数，只是加不进那口真碗里：所以 `a 的碗` 印 `{w1}`、`b 的碗` 印 `{w2}`，最后一行也成了「不是」。\n\n把两行都改成 `FishBowl& a = ...`、`FishBowl& b = ...`，两个名字就都指着**同一只**（同一口碗）：两处加法加起来，两行印的成了同一个数，最后一行也变回「是」。\n\n⚠️ 这一类毛病最费时间的地方是：程序**不报错、不提醒**，两个数看起来还都「有道理」。以后检查的时候别只盯着印出来的数 —— 问一句「**这两个名字是不是同一只**」（`&a == &b`）最快。"
+}

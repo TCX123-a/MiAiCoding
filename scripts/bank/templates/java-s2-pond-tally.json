@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-pond-tally",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-05",
+  "type": "codewrite",
+  "concept": ["整张图纸共用的格子", "static 格子写在图纸里", "Scanner", "两处都改同一格"],
+  "instances": 6,
+  "params": {
+    "cat": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "cat2": { "kind": "pick", "values": ["大胖", "黑豆"] },
+    "n": { "kind": "int", "min": 1, "max": 3 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "鱼塘边坐着两只猫，本喵要让它们**共用一个小本本**：谁吃了几条，都往**同一格**上记。\n\n要画的东西：\n\n- 图纸 `Cat`：一盒自己名字的家当 `String name;`，出生那一手把名字记下来；**再开一格整张图纸共用的**、起步的数是 `0` 的那种格子（前面得加 `static`）。\n- 一手 `void eat(int fish)`：先把这一顿的条数**加进那一格共用的**里，再印一行 **名字 + `：这一顿 ` + 条数 + ` 条`**。\n\n`main` 里这么走：先读一个数 `n`，接着**再读 n 个数**（每一顿吃了几条）；生两只猫，第一只叫 `{cat}`、第二只叫 `{cat2}`；每一顿里让**两只都吃**那只数（各印一行）；最后印一行 **`一共有 ` + 那格共用的 + ` 条`** —— 念它的时候要挂上图纸名。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\nclass Cat {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Cat {\n    static int total = 0;\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    void eat(int fish) {\n        total = total + fish;\n        System.out.println(name + \"：这一顿 \" + fish + \" 条\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Cat a = new Cat(\"{cat}\");\n        Cat b = new Cat(\"{cat2}\");\n        for (int i = 0; i < n; i++) {\n            int fish = sc.nextInt();\n            a.eat(fish);\n            b.eat(fish);\n        }\n        System.out.println(\"一共有 \" + Cat.total + \" 条\");\n    }\n}\n",
+  "explanationTemplate": "本题的关节就是「**共用**」两个字喵。\n\n**一、那一格写在图纸里。** `static int total = 0;` 与其他格子排在一起 —— 前面那个 `static` 是宣告「整张图纸共用一份」，后面 `= 0` 是它起步的数。跟别的语言不一样的地方顺带记一句：Java 的起步的数**就写在图纸里这一行**，不用在图纸外面再补一行。\n\n**二、两只猫改的是同一格。** `eat` 里那句 `total = total + fish;` 里没有 `this.` —— 因为 `total` 压根不是 `this` 的东西。两只猫各喊各的 `eat`，可加的是**同一格**：所以最后那句「一共有」才会是两只猫的总和。\n\n**三、念它要挂图纸名。** 本喵最后写的是 `Cat.total`，不是 `a.total`。两种写法的确是同一格（你真写 `a.total` 翻译官喵也放行），可读代码的人会以为「这是 `a` 自己那份」—— 共用的东西一律念全名，这条规矩能省下很多想不明白的工夫。\n\n**四、格子是两处一起改的。** 招牌上那样写，肚子里也就那样碰：`total = total + fish;` 每喊一次加一次，记的是**从开机到现在所有猫吃过的总数**。要是本喵把它写成 `total = fish;`，那这一格就只剩最后一次的数了 —— 共用的格子也是这样「一改全改」的喵。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-27-name-mismatch",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-27",
+  "type": "codefix",
+  "concept": ["两间屋子一句话", "对号只认名字", "一个字母之差"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "本喵把这个小工程拆成了两间屋子：一间是**登记处**（招式名先报在这儿），另一间是**干活的那间**（正文刻在这里面）。前面都顺，最后一步**对号**的时候停住了：登记处喊的名字是 `fishTotal`，干活那间刻的名字却是 `fishTotals` —— 多出一个 `s` 喵。\n\n翻译官喵的原话里有 `undefined reference`，念作「**喊到这个，没人应**」，指着的名字正是 `fishTotal`。\n\n你帮本喵把它改对。比如投喂给程序的是：\n\n```text\n{sampleInput}\n```\n\n改好之后就要叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外一组数喵。）",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n\nint fishTotal(const std::vector<int>& ws);\n\nint fishTotals(const std::vector<int>& ws) {\n    int s = 0;\n    for (int i = 0; i < static_cast<int>(ws.size()); i++) {\n        s += ws[i];\n    }\n    return s;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> ws(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> ws[i];\n    }\n    std::cout << \"全部加起来：\" << fishTotal(ws) << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n\nint fishTotal(const std::vector<int>& ws);\n\nint fishTotal(const std::vector<int>& ws) {\n    int s = 0;\n    for (int i = 0; i < static_cast<int>(ws.size()); i++) {\n        s += ws[i];\n    }\n    return s;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> ws(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> ws[i];\n    }\n    std::cout << \"全部加起来：\" << fishTotal(ws) << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "两间屋子各自单看都**合规矩**：登记处那行 `int fishTotal(const std::vector<int>& ws);` 是标准的报名；干活那间 `int fishTotals(...)` 也是一条完完整整的招式正文 —— 「每一句写得对不对」这一关，它俩都过了。\n\n卡住的是最后一步**对号**：门房（`main`）喊了一声 `fishTotal`，流水线拿着这个名字满场找「谁叫这个」。干活那间刻的是 `fishTotals` —— 多一个 `s`，在它眼里就是**完全另一个名字**，等于没人应声：`undefined reference`（念作「**喊的这个，没人接**」）。\n\n改法两种：要么把干活那间的名字改回 `fishTotal`（改一处就够）；要么把登记处连同门房喊话一起改成 `fishTotals`（要一起改，两边逐字对上才通）：\n\n```cpp\nint fishTotal(const std::vector<int>& ws) {\n    ...\n}\n```\n\n⚠️ 记住这一步的脾气：**对号只认名字，一个字都不猜。** 报名和正文分住两间屋子之后，「我说的是谁」全靠名字钉住 —— 多一个字母少一个字母，都是两个人。以后报错里看见 `undefined reference`，第一件事就是拿**喊的名字**和**刻的名字**逐字对一遍。"
+}

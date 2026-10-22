@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s3-tree-flip-compare",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-05",
+  "type": "codefix",
+  "concept": ["小的往左大的往右", "中序从小到大", "比较挂反了"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["5", "50"] },
+    "b": { "kind": "pick", "values": ["3", "20"] },
+    "c": { "kind": "pick", "values": ["8", "70"] },
+    "d": { "kind": "pick", "values": ["1", "10"] },
+    "e": { "kind": "pick", "values": ["4", "40"] }
+  },
+  "stemTemplate": "本喵把 **{a}、{b}、{c}、{d}、{e}** 这五个数按这个次序挂到猫爬架上，然后**中序**报一遍 —— 照规矩该是**从小到大**。\n\n可它报出来的正好**倒过来**，从大到小：\n\n```text\n中序：{c} {a} {e} {b} {d}\n```\n\n请你看看**挂东西那一招**里哪句话反了，把它改好。改好之后该印：\n\n```text\n中序：{d} {b} {e} {a} {c}\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value > root->value) {\n        root->left = insert(root->left, value);\n    } else if (value < root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {{a}, {b}, {c}, {d}, {e}};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {{a}, {b}, {c}, {d}, {e}};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "问题出在**两只叉的规矩正好被对调了**喵。\n\n本喵那一版写的是：\n\n```text\nif (value > root->value) {\n    root->left = insert(root->left, value);\n} else if (value < root->value) {\n    root->right = insert(root->right, value);\n}\n```\n\n比这一层**大**的数被交给了**左边**，比这一层**小**的数被交给了右边 —— 这就是「怎么爬都是歪的」的根源：整架架子**每一层都反着长**。\n\n改法就是把两只牌子换回来：比这一层**小**的交给左边（`value < root->value` 走 `left`），**大**的交给右边。正好跟本课那句口诀对上：**小的往左、大的往右**。\n\n为什么中序会「倒过来」？因为中序是「先左边、再自己、最后右边」，而左边那一叉里装的偏偏都是**比这一层大**的数 —— 左右一换，报出来的次序就整整齐齐倒了个头。这也正是本喵拿「从小到大」当下判据的原因：\n\n**中序那一行是不是从小到大，就是这架架子有没有歪的照妖镜喵。**\n\n⚠️ 顺一句：这个错翻译官喵也**不会吭声** —— 本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，五个数一个不少、次序全反，它看不出来。"
+}

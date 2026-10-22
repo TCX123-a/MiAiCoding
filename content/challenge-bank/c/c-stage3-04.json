@@ -1,0 +1,510 @@
+{
+  "lessonId": "c-stage3-04",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-queue-dequeue-from-tail-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "三只猫按 **10、20、30** 的次序排进队伍领小鱼干。本喵要把它们**按先来后到**领出去，可印出来是这个样子：\n\n```text\n领到 30\n领到 20\n领到 10\n```\n\n**后来的反倒先领到了**，这不合规矩喵。\n\n请你把**领猫那一招**改好，让先来的先领到。改好之后该印三行：`领到 10`、`领到 20`、`领到 30`，一行一只，按次序来。\n\n（往队伍里塞猫那几句、还有问空问满的那两招，都不许动。）",
+      "brokenCode": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    tail--;\n    *value = line[tail];\n    return 1;\n}\n\nint main(void) {\n    enqueue(10);\n    enqueue(20);\n    enqueue(30);\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(10);\n    enqueue(20);\n    enqueue(30);\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "领到 10\n领到 20\n领到 30",
+      "stdin": null,
+      "explanation": "毛病是**送客的那一头拿错了**喵。\n\n一条队伍里两个下标各有各的活：\n\n- `tail` 负责**接客**：新来的站在 `line[tail]`，站好之后 `tail++`，指向下一个空位。\n- `head` 负责**送客**：队头那位先领走（`*value = line[head];`），然后 `head++`，指向队伍里新的第一位。\n\n本喵那一版写的是 `tail--; *value = line[tail];` —— 这是**从队尾往外拿**。队尾是最后一个来的，所以「最后来的先领到」，一条队伍当场变成了「后来者先得」，正好跟它的规矩反着来。\n\n更要紧的是：它拿的还是**同一条队伍的同一排格子**，只是从另一头动手。所以程序一声不响地跑完，印出来的三行数都是**真数**，一个都不错 —— 错的只有**次序**。\n\n⚠️ 这种「数都对、次序不对」的毛病，翻译官喵更是帮不上忙：本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，跑起来也不摔。**「先来后到」这条规矩，只能你自己盯着。**\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`。** 拿猫的时候手伸错一头，规矩就反了喵。",
+      "templateId": "c-s3-queue-dequeue-from-tail",
+      "params": {
+        "a": "10",
+        "b": "20",
+        "c": "30"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:36.912Z",
+        "hash": "0ce2100dae858a37"
+      }
+    },
+    {
+      "id": "bank-c-s3-queue-dequeue-from-tail-007",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "三只猫按 **40、50、60** 的次序排进队伍领小鱼干。本喵要把它们**按先来后到**领出去，可印出来是这个样子：\n\n```text\n领到 60\n领到 50\n领到 40\n```\n\n**后来的反倒先领到了**，这不合规矩喵。\n\n请你把**领猫那一招**改好，让先来的先领到。改好之后该印三行：`领到 40`、`领到 50`、`领到 60`，一行一只，按次序来。\n\n（往队伍里塞猫那几句、还有问空问满的那两招，都不许动。）",
+      "brokenCode": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    tail--;\n    *value = line[tail];\n    return 1;\n}\n\nint main(void) {\n    enqueue(40);\n    enqueue(50);\n    enqueue(60);\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(40);\n    enqueue(50);\n    enqueue(60);\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "领到 40\n领到 50\n领到 60",
+      "stdin": null,
+      "explanation": "毛病是**送客的那一头拿错了**喵。\n\n一条队伍里两个下标各有各的活：\n\n- `tail` 负责**接客**：新来的站在 `line[tail]`，站好之后 `tail++`，指向下一个空位。\n- `head` 负责**送客**：队头那位先领走（`*value = line[head];`），然后 `head++`，指向队伍里新的第一位。\n\n本喵那一版写的是 `tail--; *value = line[tail];` —— 这是**从队尾往外拿**。队尾是最后一个来的，所以「最后来的先领到」，一条队伍当场变成了「后来者先得」，正好跟它的规矩反着来。\n\n更要紧的是：它拿的还是**同一条队伍的同一排格子**，只是从另一头动手。所以程序一声不响地跑完，印出来的三行数都是**真数**，一个都不错 —— 错的只有**次序**。\n\n⚠️ 这种「数都对、次序不对」的毛病，翻译官喵更是帮不上忙：本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，跑起来也不摔。**「先来后到」这条规矩，只能你自己盯着。**\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`。** 拿猫的时候手伸错一头，规矩就反了喵。",
+      "templateId": "c-s3-queue-dequeue-from-tail",
+      "params": {
+        "a": "40",
+        "b": "50",
+        "c": "60"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:38.753Z",
+        "hash": "9f5e047c1736ea0e"
+      }
+    },
+    {
+      "id": "bank-c-s3-queue-enqueue-no-tail-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵往队伍里塞了三只猫（10、20、30），结果**一只都领不出来**：\n\n```text\n队伍里有 0 只猫\n```\n\n后头连一行「领到」都没有。翻译官喵一声没吭，编译跑得好好的。\n\n请你把缺的那一句补上。改好之后该印**四行**：先报队伍里有几只，再按先来后到领三只：\n\n```text\n队伍里有 3 只猫\n领到 10\n领到 20\n领到 30\n```",
+      "brokenCode": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(10);\n    enqueue(20);\n    enqueue(30);\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(10);\n    enqueue(20);\n    enqueue(30);\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "队伍里有 3 只猫\n领到 10\n领到 20\n领到 30",
+      "stdin": null,
+      "explanation": "缺的是**站好之后把接客的口子往后挪一格**：\n\n```text\ntail++;\n```\n\n三只猫其实**都站上去了** —— 只不过每一次都站在**同一格**（`line[0]`）上，前一只被后一只盖掉了。更麻烦的是 `tail` 一直停在 0：它既不知道队伍长到哪儿了，也一直跟 `head` 站在同一个位子上。\n\n所以后面每件事都跟着歪：\n\n- `tail - head` 是 0，报「队伍里有 0 只猫」；\n- `dequeue` 一进门先问「空了吗」—— 判据正是 `head == tail`，两个都还是 0，答「空了」，于是**一只都领不出来**。\n\n补上 `tail++` 之后，接客的口子就正常往后挪了：三个人站在三格里，数得清、也领得出来。\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`。** 接客的这一头不光要「让人站下」，还得**把口子往后挪**喵。\n\n⚠️ 顺带记一笔：这一处翻译官喵也**不会吭声** —— 本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有。队伍空不空、站没站上人，全看那两个下标的数对不对，翻译官喵看不出喵。",
+      "templateId": "c-s3-queue-enqueue-no-tail",
+      "params": {
+        "a": "10",
+        "b": "20",
+        "c": "30"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:40.944Z",
+        "hash": "a938c47ce0b98845"
+      }
+    },
+    {
+      "id": "bank-c-s3-queue-enqueue-no-tail-007",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵往队伍里塞了三只猫（40、50、60），结果**一只都领不出来**：\n\n```text\n队伍里有 0 只猫\n```\n\n后头连一行「领到」都没有。翻译官喵一声没吭，编译跑得好好的。\n\n请你把缺的那一句补上。改好之后该印**四行**：先报队伍里有几只，再按先来后到领三只：\n\n```text\n队伍里有 3 只猫\n领到 40\n领到 50\n领到 60\n```",
+      "brokenCode": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(40);\n    enqueue(50);\n    enqueue(60);\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(40);\n    enqueue(50);\n    enqueue(60);\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "队伍里有 3 只猫\n领到 40\n领到 50\n领到 60",
+      "stdin": null,
+      "explanation": "缺的是**站好之后把接客的口子往后挪一格**：\n\n```text\ntail++;\n```\n\n三只猫其实**都站上去了** —— 只不过每一次都站在**同一格**（`line[0]`）上，前一只被后一只盖掉了。更麻烦的是 `tail` 一直停在 0：它既不知道队伍长到哪儿了，也一直跟 `head` 站在同一个位子上。\n\n所以后面每件事都跟着歪：\n\n- `tail - head` 是 0，报「队伍里有 0 只猫」；\n- `dequeue` 一进门先问「空了吗」—— 判据正是 `head == tail`，两个都还是 0，答「空了」，于是**一只都领不出来**。\n\n补上 `tail++` 之后，接客的口子就正常往后挪了：三个人站在三格里，数得清、也领得出来。\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`。** 接客的这一头不光要「让人站下」，还得**把口子往后挪**喵。\n\n⚠️ 顺带记一笔：这一处翻译官喵也**不会吭声** —— 本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有。队伍空不空、站没站上人，全看那两个下标的数对不对，翻译官喵看不出喵。",
+      "templateId": "c-s3-queue-enqueue-no-tail",
+      "params": {
+        "a": "40",
+        "b": "50",
+        "c": "60"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:42.998Z",
+        "hash": "0a7a4d179e9909c9"
+      }
+    },
+    {
+      "id": "bank-c-s3-queue-line-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要开一条**领小鱼干的队伍**：最先来的最先领到。\n\n请你写：\n\n1. 底座是一排摆好的格子，能站 **5** 只猫（`#define` 一个 5 出来）；再摆**两个**数：一个记「队头在哪儿」、一个记「下一个空位在哪儿」。\n2. `is_empty()`：队头跟空位**走到同一个地方**就是空；`is_full()`：空位已经走到头了就是满。\n3. `enqueue(int value)`：**先问满没满** —— 满了答 0；没满就让新来的站好、**把空位往后挪一格**、答 1。\n4. `dequeue(int *value)`：**先问空没空** —— 空了答 0；没空就**从队头**把猫领走、把队头往后挪一格、答 1。\n5. `main` 里依次让 **10、20、30** 站进来；先印一行 `队伍里有 3 只猫`；然后一只一只领走，领一只印一行 `领到 几只`；最后印一行 `队空了吗？空了，可 head 已经走到 3`。\n\n该印出来**五行**：\n\n```text\n队伍里有 3 只猫\n领到 10\n领到 20\n领到 30\n队空了吗？空了，可 head 已经走到 3\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_CATS 5\n\n/* ① 底座 + 两个数：队头在哪儿 / 下一个空位在哪儿 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 新来的站进来 */\n\n/* ④ 从队头领走一只 */\n\nint main(void) {\n    /* ⑤ 让 10、20、30 站进来，报个数，再一只一只领走 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(10);\n    enqueue(20);\n    enqueue(30);\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    printf(\"队空了吗？%s，可 head 已经走到 %d\\n\", is_empty() ? \"空了\" : \"还有\", head);\n    return 0;\n}\n",
+      "expectedOutput": "队伍里有 3 只猫\n领到 10\n领到 20\n领到 30\n队空了吗？空了，可 head 已经走到 3",
+      "stdin": null,
+      "explanation": "一条队伍比碗摞多一个数，是因为它**两头都要动**喵。\n\n**① 两个下标各管一头。**\n\n- `tail` 负责**接客**：新来的站在 `line[tail]`，站好之后 `tail++`，指向下一个空位。\n- `head` 负责**送客**：队头那位先领走（`*value = line[head];`），然后 `head++`，指向队伍里新的第一位。\n\n**② 数一数有几只，用 `tail - head`。** 空位在哪儿减去队头在哪儿，中间的就是队伍里站着的猫。领猫的时候从 `head` 那一头拿、让 `head` 往前走 —— 先来的那个 `head` 最小，所以**先来的先领到**。\n\n**③ 空不空看两个数是不是走到一起。** `head == tail` —— 接客的和送客的站到同一个地方，说明中间的猫都领完了。\n\n**④ 这个写法有个小毛病。** `head` 只会往前走，**前面空出来的格子再也回不来**。本喵真跑过一遍：三只都领完之后 `head` 和 `tail` 都走到 3；再排两只进来，`tail` 就到 5 了；**想排第三只，它就说「满了」—— 可那时候队伍里明明只有 2 只猫，前头还空着三格。** 这个现象叫「假满」，等你学到转圈的写法（走到头就绕回 0），第一件事就是把今天这个坑填上喵。\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`；两个数走到一起，就是空了。**",
+      "templateId": "c-s3-queue-line",
+      "params": {
+        "a": "10",
+        "b": "20",
+        "c": "30"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:51.213Z",
+        "hash": "d29d88ba100aa7b2"
+      }
+    },
+    {
+      "id": "bank-c-s3-queue-line-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要开一条**领小鱼干的队伍**：最先来的最先领到。\n\n请你写：\n\n1. 底座是一排摆好的格子，能站 **5** 只猫（`#define` 一个 5 出来）；再摆**两个**数：一个记「队头在哪儿」、一个记「下一个空位在哪儿」。\n2. `is_empty()`：队头跟空位**走到同一个地方**就是空；`is_full()`：空位已经走到头了就是满。\n3. `enqueue(int value)`：**先问满没满** —— 满了答 0；没满就让新来的站好、**把空位往后挪一格**、答 1。\n4. `dequeue(int *value)`：**先问空没空** —— 空了答 0；没空就**从队头**把猫领走、把队头往后挪一格、答 1。\n5. `main` 里依次让 **10、20、60** 站进来；先印一行 `队伍里有 3 只猫`；然后一只一只领走，领一只印一行 `领到 几只`；最后印一行 `队空了吗？空了，可 head 已经走到 3`。\n\n该印出来**五行**：\n\n```text\n队伍里有 3 只猫\n领到 10\n领到 20\n领到 60\n队空了吗？空了，可 head 已经走到 3\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_CATS 5\n\n/* ① 底座 + 两个数：队头在哪儿 / 下一个空位在哪儿 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 新来的站进来 */\n\n/* ④ 从队头领走一只 */\n\nint main(void) {\n    /* ⑤ 让 10、20、60 站进来，报个数，再一只一只领走 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(10);\n    enqueue(20);\n    enqueue(60);\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    printf(\"队空了吗？%s，可 head 已经走到 %d\\n\", is_empty() ? \"空了\" : \"还有\", head);\n    return 0;\n}\n",
+      "expectedOutput": "队伍里有 3 只猫\n领到 10\n领到 20\n领到 60\n队空了吗？空了，可 head 已经走到 3",
+      "stdin": null,
+      "explanation": "一条队伍比碗摞多一个数，是因为它**两头都要动**喵。\n\n**① 两个下标各管一头。**\n\n- `tail` 负责**接客**：新来的站在 `line[tail]`，站好之后 `tail++`，指向下一个空位。\n- `head` 负责**送客**：队头那位先领走（`*value = line[head];`），然后 `head++`，指向队伍里新的第一位。\n\n**② 数一数有几只，用 `tail - head`。** 空位在哪儿减去队头在哪儿，中间的就是队伍里站着的猫。领猫的时候从 `head` 那一头拿、让 `head` 往前走 —— 先来的那个 `head` 最小，所以**先来的先领到**。\n\n**③ 空不空看两个数是不是走到一起。** `head == tail` —— 接客的和送客的站到同一个地方，说明中间的猫都领完了。\n\n**④ 这个写法有个小毛病。** `head` 只会往前走，**前面空出来的格子再也回不来**。本喵真跑过一遍：三只都领完之后 `head` 和 `tail` 都走到 3；再排两只进来，`tail` 就到 5 了；**想排第三只，它就说「满了」—— 可那时候队伍里明明只有 2 只猫，前头还空着三格。** 这个现象叫「假满」，等你学到转圈的写法（走到头就绕回 0），第一件事就是把今天这个坑填上喵。\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`；两个数走到一起，就是空了。**",
+      "templateId": "c-s3-queue-line",
+      "params": {
+        "a": "10",
+        "b": "20",
+        "c": "60"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:00.197Z",
+        "hash": "8ed361b2768d0959"
+      }
+    },
+    {
+      "id": "bank-c-s3-queue-line-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要开一条**领小鱼干的队伍**：最先来的最先领到。\n\n请你写：\n\n1. 底座是一排摆好的格子，能站 **5** 只猫（`#define` 一个 5 出来）；再摆**两个**数：一个记「队头在哪儿」、一个记「下一个空位在哪儿」。\n2. `is_empty()`：队头跟空位**走到同一个地方**就是空；`is_full()`：空位已经走到头了就是满。\n3. `enqueue(int value)`：**先问满没满** —— 满了答 0；没满就让新来的站好、**把空位往后挪一格**、答 1。\n4. `dequeue(int *value)`：**先问空没空** —— 空了答 0；没空就**从队头**把猫领走、把队头往后挪一格、答 1。\n5. `main` 里依次让 **10、50、60** 站进来；先印一行 `队伍里有 3 只猫`；然后一只一只领走，领一只印一行 `领到 几只`；最后印一行 `队空了吗？空了，可 head 已经走到 3`。\n\n该印出来**五行**：\n\n```text\n队伍里有 3 只猫\n领到 10\n领到 50\n领到 60\n队空了吗？空了，可 head 已经走到 3\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_CATS 5\n\n/* ① 底座 + 两个数：队头在哪儿 / 下一个空位在哪儿 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 新来的站进来 */\n\n/* ④ 从队头领走一只 */\n\nint main(void) {\n    /* ⑤ 让 10、50、60 站进来，报个数，再一只一只领走 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(10);\n    enqueue(50);\n    enqueue(60);\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    printf(\"队空了吗？%s，可 head 已经走到 %d\\n\", is_empty() ? \"空了\" : \"还有\", head);\n    return 0;\n}\n",
+      "expectedOutput": "队伍里有 3 只猫\n领到 10\n领到 50\n领到 60\n队空了吗？空了，可 head 已经走到 3",
+      "stdin": null,
+      "explanation": "一条队伍比碗摞多一个数，是因为它**两头都要动**喵。\n\n**① 两个下标各管一头。**\n\n- `tail` 负责**接客**：新来的站在 `line[tail]`，站好之后 `tail++`，指向下一个空位。\n- `head` 负责**送客**：队头那位先领走（`*value = line[head];`），然后 `head++`，指向队伍里新的第一位。\n\n**② 数一数有几只，用 `tail - head`。** 空位在哪儿减去队头在哪儿，中间的就是队伍里站着的猫。领猫的时候从 `head` 那一头拿、让 `head` 往前走 —— 先来的那个 `head` 最小，所以**先来的先领到**。\n\n**③ 空不空看两个数是不是走到一起。** `head == tail` —— 接客的和送客的站到同一个地方，说明中间的猫都领完了。\n\n**④ 这个写法有个小毛病。** `head` 只会往前走，**前面空出来的格子再也回不来**。本喵真跑过一遍：三只都领完之后 `head` 和 `tail` 都走到 3；再排两只进来，`tail` 就到 5 了；**想排第三只，它就说「满了」—— 可那时候队伍里明明只有 2 只猫，前头还空着三格。** 这个现象叫「假满」，等你学到转圈的写法（走到头就绕回 0），第一件事就是把今天这个坑填上喵。\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`；两个数走到一起，就是空了。**",
+      "templateId": "c-s3-queue-line",
+      "params": {
+        "a": "10",
+        "b": "50",
+        "c": "60"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:02.465Z",
+        "hash": "d34db036b04ab648"
+      }
+    },
+    {
+      "id": "bank-c-s3-queue-line-004",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要开一条**领小鱼干的队伍**：最先来的最先领到。\n\n请你写：\n\n1. 底座是一排摆好的格子，能站 **5** 只猫（`#define` 一个 5 出来）；再摆**两个**数：一个记「队头在哪儿」、一个记「下一个空位在哪儿」。\n2. `is_empty()`：队头跟空位**走到同一个地方**就是空；`is_full()`：空位已经走到头了就是满。\n3. `enqueue(int value)`：**先问满没满** —— 满了答 0；没满就让新来的站好、**把空位往后挪一格**、答 1。\n4. `dequeue(int *value)`：**先问空没空** —— 空了答 0；没空就**从队头**把猫领走、把队头往后挪一格、答 1。\n5. `main` 里依次让 **40、20、30** 站进来；先印一行 `队伍里有 3 只猫`；然后一只一只领走，领一只印一行 `领到 几只`；最后印一行 `队空了吗？空了，可 head 已经走到 3`。\n\n该印出来**五行**：\n\n```text\n队伍里有 3 只猫\n领到 40\n领到 20\n领到 30\n队空了吗？空了，可 head 已经走到 3\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_CATS 5\n\n/* ① 底座 + 两个数：队头在哪儿 / 下一个空位在哪儿 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 新来的站进来 */\n\n/* ④ 从队头领走一只 */\n\nint main(void) {\n    /* ⑤ 让 40、20、30 站进来，报个数，再一只一只领走 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(40);\n    enqueue(20);\n    enqueue(30);\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    printf(\"队空了吗？%s，可 head 已经走到 %d\\n\", is_empty() ? \"空了\" : \"还有\", head);\n    return 0;\n}\n",
+      "expectedOutput": "队伍里有 3 只猫\n领到 40\n领到 20\n领到 30\n队空了吗？空了，可 head 已经走到 3",
+      "stdin": null,
+      "explanation": "一条队伍比碗摞多一个数，是因为它**两头都要动**喵。\n\n**① 两个下标各管一头。**\n\n- `tail` 负责**接客**：新来的站在 `line[tail]`，站好之后 `tail++`，指向下一个空位。\n- `head` 负责**送客**：队头那位先领走（`*value = line[head];`），然后 `head++`，指向队伍里新的第一位。\n\n**② 数一数有几只，用 `tail - head`。** 空位在哪儿减去队头在哪儿，中间的就是队伍里站着的猫。领猫的时候从 `head` 那一头拿、让 `head` 往前走 —— 先来的那个 `head` 最小，所以**先来的先领到**。\n\n**③ 空不空看两个数是不是走到一起。** `head == tail` —— 接客的和送客的站到同一个地方，说明中间的猫都领完了。\n\n**④ 这个写法有个小毛病。** `head` 只会往前走，**前面空出来的格子再也回不来**。本喵真跑过一遍：三只都领完之后 `head` 和 `tail` 都走到 3；再排两只进来，`tail` 就到 5 了；**想排第三只，它就说「满了」—— 可那时候队伍里明明只有 2 只猫，前头还空着三格。** 这个现象叫「假满」，等你学到转圈的写法（走到头就绕回 0），第一件事就是把今天这个坑填上喵。\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`；两个数走到一起，就是空了。**",
+      "templateId": "c-s3-queue-line",
+      "params": {
+        "a": "40",
+        "b": "20",
+        "c": "30"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:04.623Z",
+        "hash": "28b163301e3d9ec9"
+      }
+    },
+    {
+      "id": "bank-c-s3-queue-line-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要开一条**领小鱼干的队伍**：最先来的最先领到。\n\n请你写：\n\n1. 底座是一排摆好的格子，能站 **5** 只猫（`#define` 一个 5 出来）；再摆**两个**数：一个记「队头在哪儿」、一个记「下一个空位在哪儿」。\n2. `is_empty()`：队头跟空位**走到同一个地方**就是空；`is_full()`：空位已经走到头了就是满。\n3. `enqueue(int value)`：**先问满没满** —— 满了答 0；没满就让新来的站好、**把空位往后挪一格**、答 1。\n4. `dequeue(int *value)`：**先问空没空** —— 空了答 0；没空就**从队头**把猫领走、把队头往后挪一格、答 1。\n5. `main` 里依次让 **40、50、30** 站进来；先印一行 `队伍里有 3 只猫`；然后一只一只领走，领一只印一行 `领到 几只`；最后印一行 `队空了吗？空了，可 head 已经走到 3`。\n\n该印出来**五行**：\n\n```text\n队伍里有 3 只猫\n领到 40\n领到 50\n领到 30\n队空了吗？空了，可 head 已经走到 3\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_CATS 5\n\n/* ① 底座 + 两个数：队头在哪儿 / 下一个空位在哪儿 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 新来的站进来 */\n\n/* ④ 从队头领走一只 */\n\nint main(void) {\n    /* ⑤ 让 40、50、30 站进来，报个数，再一只一只领走 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(40);\n    enqueue(50);\n    enqueue(30);\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    printf(\"队空了吗？%s，可 head 已经走到 %d\\n\", is_empty() ? \"空了\" : \"还有\", head);\n    return 0;\n}\n",
+      "expectedOutput": "队伍里有 3 只猫\n领到 40\n领到 50\n领到 30\n队空了吗？空了，可 head 已经走到 3",
+      "stdin": null,
+      "explanation": "一条队伍比碗摞多一个数，是因为它**两头都要动**喵。\n\n**① 两个下标各管一头。**\n\n- `tail` 负责**接客**：新来的站在 `line[tail]`，站好之后 `tail++`，指向下一个空位。\n- `head` 负责**送客**：队头那位先领走（`*value = line[head];`），然后 `head++`，指向队伍里新的第一位。\n\n**② 数一数有几只，用 `tail - head`。** 空位在哪儿减去队头在哪儿，中间的就是队伍里站着的猫。领猫的时候从 `head` 那一头拿、让 `head` 往前走 —— 先来的那个 `head` 最小，所以**先来的先领到**。\n\n**③ 空不空看两个数是不是走到一起。** `head == tail` —— 接客的和送客的站到同一个地方，说明中间的猫都领完了。\n\n**④ 这个写法有个小毛病。** `head` 只会往前走，**前面空出来的格子再也回不来**。本喵真跑过一遍：三只都领完之后 `head` 和 `tail` 都走到 3；再排两只进来，`tail` 就到 5 了；**想排第三只，它就说「满了」—— 可那时候队伍里明明只有 2 只猫，前头还空着三格。** 这个现象叫「假满」，等你学到转圈的写法（走到头就绕回 0），第一件事就是把今天这个坑填上喵。\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`；两个数走到一起，就是空了。**",
+      "templateId": "c-s3-queue-line",
+      "params": {
+        "a": "40",
+        "b": "50",
+        "c": "30"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:06.846Z",
+        "hash": "5940547ef0a5cb68"
+      }
+    },
+    {
+      "id": "bank-c-s3-queue-line-007",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要开一条**领小鱼干的队伍**：最先来的最先领到。\n\n请你写：\n\n1. 底座是一排摆好的格子，能站 **5** 只猫（`#define` 一个 5 出来）；再摆**两个**数：一个记「队头在哪儿」、一个记「下一个空位在哪儿」。\n2. `is_empty()`：队头跟空位**走到同一个地方**就是空；`is_full()`：空位已经走到头了就是满。\n3. `enqueue(int value)`：**先问满没满** —— 满了答 0；没满就让新来的站好、**把空位往后挪一格**、答 1。\n4. `dequeue(int *value)`：**先问空没空** —— 空了答 0；没空就**从队头**把猫领走、把队头往后挪一格、答 1。\n5. `main` 里依次让 **40、50、60** 站进来；先印一行 `队伍里有 3 只猫`；然后一只一只领走，领一只印一行 `领到 几只`；最后印一行 `队空了吗？空了，可 head 已经走到 3`。\n\n该印出来**五行**：\n\n```text\n队伍里有 3 只猫\n领到 40\n领到 50\n领到 60\n队空了吗？空了，可 head 已经走到 3\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_CATS 5\n\n/* ① 底座 + 两个数：队头在哪儿 / 下一个空位在哪儿 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 新来的站进来 */\n\n/* ④ 从队头领走一只 */\n\nint main(void) {\n    /* ⑤ 让 40、50、60 站进来，报个数，再一只一只领走 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue(40);\n    enqueue(50);\n    enqueue(60);\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    printf(\"队空了吗？%s，可 head 已经走到 %d\\n\", is_empty() ? \"空了\" : \"还有\", head);\n    return 0;\n}\n",
+      "expectedOutput": "队伍里有 3 只猫\n领到 40\n领到 50\n领到 60\n队空了吗？空了，可 head 已经走到 3",
+      "stdin": null,
+      "explanation": "一条队伍比碗摞多一个数，是因为它**两头都要动**喵。\n\n**① 两个下标各管一头。**\n\n- `tail` 负责**接客**：新来的站在 `line[tail]`，站好之后 `tail++`，指向下一个空位。\n- `head` 负责**送客**：队头那位先领走（`*value = line[head];`），然后 `head++`，指向队伍里新的第一位。\n\n**② 数一数有几只，用 `tail - head`。** 空位在哪儿减去队头在哪儿，中间的就是队伍里站着的猫。领猫的时候从 `head` 那一头拿、让 `head` 往前走 —— 先来的那个 `head` 最小，所以**先来的先领到**。\n\n**③ 空不空看两个数是不是走到一起。** `head == tail` —— 接客的和送客的站到同一个地方，说明中间的猫都领完了。\n\n**④ 这个写法有个小毛病。** `head` 只会往前走，**前面空出来的格子再也回不来**。本喵真跑过一遍：三只都领完之后 `head` 和 `tail` 都走到 3；再排两只进来，`tail` 就到 5 了；**想排第三只，它就说「满了」—— 可那时候队伍里明明只有 2 只猫，前头还空着三格。** 这个现象叫「假满」，等你学到转圈的写法（走到头就绕回 0），第一件事就是把今天这个坑填上喵。\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`；两个数走到一起，就是空了。**",
+      "templateId": "c-s3-queue-line",
+      "params": {
+        "a": "40",
+        "b": "50",
+        "c": "60"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:52.549Z",
+        "hash": "5f4c0c8b820b3c48"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-peek-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "碗摞上还差一招喵：**只看一眼最上面那只碗里装的是什么，但不把它拿走**。\n\n请你写：\n\n1. 底座一排 5 只碗（`#define` 一个 5 出来），再摆一个数记「摞了几只」。\n2. `is_empty()` / `is_full()` 两招问界面的。\n3. `push(int value)` / `pop(int *value)` 两招，跟平时一样：放碗记得把那个数往上抬，拿碗记得先往下退。\n4. 再写一招 `peek(int *value)`：**先问空没空** —— 空了就答 0；没空就把**最上面那只碗**里装的数叼出来，**那个数一个指头都不许动**，答 1。\n5. `main` 里：先摞上 **1、2、3**；然后 `peek` 一次，印一行 `最上面那只碗里是 几只`；再 `pop` 一次，印一行 `拿走一只，是 几只`；最后再 `peek` 一次，印一行 `现在最上面是 几只`。\n\n该印出来**三行**：\n\n```text\n最上面那只碗里是 3\n拿走一只，是 3\n现在最上面是 2\n```\n\n（注意头两行是**同一个数** —— 这是本喵要看的证据：看了一眼，不代表拿走了喵。）",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    /* 放一只碗上去 */\n\n}\n\nint pop(int *value) {\n    /* 从最上面拿一只下来 */\n\n}\n\nint peek(int *value) {\n    /* ① 先问空没空 */\n    /* ② 把最上面那只碗里的数叼出来，那个数不许动 */\n\n}\n\nint main(void) {\n    /* ③ 摞上 1、2、3，看一眼、拿一只、再看一眼 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint peek(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = bowls[top - 1];\n    return 1;\n}\n\nint main(void) {\n    push(1);\n    push(2);\n    push(3);\n\n    int v = 0;\n    peek(&v);\n    printf(\"最上面那只碗里是 %d\\n\", v);\n\n    pop(&v);\n    printf(\"拿走一只，是 %d\\n\", v);\n\n    peek(&v);\n    printf(\"现在最上面是 %d\\n\", v);\n    return 0;\n}\n",
+      "expectedOutput": "最上面那只碗里是 3\n拿走一只，是 3\n现在最上面是 2",
+      "stdin": null,
+      "explanation": "`peek` 和 `pop` 的区别只有**一句话**喵：**动不动 `top`**。\n\n- `pop` 要先 `top--` —— 退一格，那格上的碗就归你了，碗摞也就矮了一层。**它动了 `top`。**\n- `peek` 里的 `*value = bowls[top - 1];` 念作「最上面那只碗在 `top - 1` 这一格，把它叼出来」—— 叼完 `top` 还是原来那个数，碗摞还是原来那么高。**它没动 `top`。**\n\n为什么是 `top - 1` 而不是 `top`？因为 `top` 是「下一只碗该放在哪儿」，也就是**最上面那只碗的上面一格**。真正的碗在最上面那一格，得往回退一格才摸得到。这也正是 `pop` 里为什么要先 `top--` 才去叼 —— 两招摸的是**同一格**，区别只在 `pop` 摸完把那格让出去了。\n\n这也是本喵要你看头两行是同一个数的原因：看了一眼（3），拿走的还是那一只（3）—— **看**这件事对碗摞**一点影响都没有**。第三行变成 2，才是 `pop` 真的拿走一只之后的样子喵。",
+      "templateId": "c-s3-stack-peek",
+      "params": {
+        "a": "1",
+        "b": "2",
+        "c": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:48.425Z",
+        "hash": "e0e7543a0d09181e"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-peek-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "碗摞上还差一招喵：**只看一眼最上面那只碗里装的是什么，但不把它拿走**。\n\n请你写：\n\n1. 底座一排 5 只碗（`#define` 一个 5 出来），再摆一个数记「摞了几只」。\n2. `is_empty()` / `is_full()` 两招问界面的。\n3. `push(int value)` / `pop(int *value)` 两招，跟平时一样：放碗记得把那个数往上抬，拿碗记得先往下退。\n4. 再写一招 `peek(int *value)`：**先问空没空** —— 空了就答 0；没空就把**最上面那只碗**里装的数叼出来，**那个数一个指头都不许动**，答 1。\n5. `main` 里：先摞上 **1、2、7**；然后 `peek` 一次，印一行 `最上面那只碗里是 几只`；再 `pop` 一次，印一行 `拿走一只，是 几只`；最后再 `peek` 一次，印一行 `现在最上面是 几只`。\n\n该印出来**三行**：\n\n```text\n最上面那只碗里是 7\n拿走一只，是 7\n现在最上面是 2\n```\n\n（注意头两行是**同一个数** —— 这是本喵要看的证据：看了一眼，不代表拿走了喵。）",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    /* 放一只碗上去 */\n\n}\n\nint pop(int *value) {\n    /* 从最上面拿一只下来 */\n\n}\n\nint peek(int *value) {\n    /* ① 先问空没空 */\n    /* ② 把最上面那只碗里的数叼出来，那个数不许动 */\n\n}\n\nint main(void) {\n    /* ③ 摞上 1、2、7，看一眼、拿一只、再看一眼 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint peek(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = bowls[top - 1];\n    return 1;\n}\n\nint main(void) {\n    push(1);\n    push(2);\n    push(7);\n\n    int v = 0;\n    peek(&v);\n    printf(\"最上面那只碗里是 %d\\n\", v);\n\n    pop(&v);\n    printf(\"拿走一只，是 %d\\n\", v);\n\n    peek(&v);\n    printf(\"现在最上面是 %d\\n\", v);\n    return 0;\n}\n",
+      "expectedOutput": "最上面那只碗里是 7\n拿走一只，是 7\n现在最上面是 2",
+      "stdin": null,
+      "explanation": "`peek` 和 `pop` 的区别只有**一句话**喵：**动不动 `top`**。\n\n- `pop` 要先 `top--` —— 退一格，那格上的碗就归你了，碗摞也就矮了一层。**它动了 `top`。**\n- `peek` 里的 `*value = bowls[top - 1];` 念作「最上面那只碗在 `top - 1` 这一格，把它叼出来」—— 叼完 `top` 还是原来那个数，碗摞还是原来那么高。**它没动 `top`。**\n\n为什么是 `top - 1` 而不是 `top`？因为 `top` 是「下一只碗该放在哪儿」，也就是**最上面那只碗的上面一格**。真正的碗在最上面那一格，得往回退一格才摸得到。这也正是 `pop` 里为什么要先 `top--` 才去叼 —— 两招摸的是**同一格**，区别只在 `pop` 摸完把那格让出去了。\n\n这也是本喵要你看头两行是同一个数的原因：看了一眼（7），拿走的还是那一只（7）—— **看**这件事对碗摞**一点影响都没有**。第三行变成 2，才是 `pop` 真的拿走一只之后的样子喵。",
+      "templateId": "c-s3-stack-peek",
+      "params": {
+        "a": "1",
+        "b": "2",
+        "c": "7"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:09.139Z",
+        "hash": "8bb55bd9e14a075a"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-peek-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "碗摞上还差一招喵：**只看一眼最上面那只碗里装的是什么，但不把它拿走**。\n\n请你写：\n\n1. 底座一排 5 只碗（`#define` 一个 5 出来），再摆一个数记「摞了几只」。\n2. `is_empty()` / `is_full()` 两招问界面的。\n3. `push(int value)` / `pop(int *value)` 两招，跟平时一样：放碗记得把那个数往上抬，拿碗记得先往下退。\n4. 再写一招 `peek(int *value)`：**先问空没空** —— 空了就答 0；没空就把**最上面那只碗**里装的数叼出来，**那个数一个指头都不许动**，答 1。\n5. `main` 里：先摞上 **1、6、7**；然后 `peek` 一次，印一行 `最上面那只碗里是 几只`；再 `pop` 一次，印一行 `拿走一只，是 几只`；最后再 `peek` 一次，印一行 `现在最上面是 几只`。\n\n该印出来**三行**：\n\n```text\n最上面那只碗里是 7\n拿走一只，是 7\n现在最上面是 6\n```\n\n（注意头两行是**同一个数** —— 这是本喵要看的证据：看了一眼，不代表拿走了喵。）",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    /* 放一只碗上去 */\n\n}\n\nint pop(int *value) {\n    /* 从最上面拿一只下来 */\n\n}\n\nint peek(int *value) {\n    /* ① 先问空没空 */\n    /* ② 把最上面那只碗里的数叼出来，那个数不许动 */\n\n}\n\nint main(void) {\n    /* ③ 摞上 1、6、7，看一眼、拿一只、再看一眼 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint peek(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = bowls[top - 1];\n    return 1;\n}\n\nint main(void) {\n    push(1);\n    push(6);\n    push(7);\n\n    int v = 0;\n    peek(&v);\n    printf(\"最上面那只碗里是 %d\\n\", v);\n\n    pop(&v);\n    printf(\"拿走一只，是 %d\\n\", v);\n\n    peek(&v);\n    printf(\"现在最上面是 %d\\n\", v);\n    return 0;\n}\n",
+      "expectedOutput": "最上面那只碗里是 7\n拿走一只，是 7\n现在最上面是 6",
+      "stdin": null,
+      "explanation": "`peek` 和 `pop` 的区别只有**一句话**喵：**动不动 `top`**。\n\n- `pop` 要先 `top--` —— 退一格，那格上的碗就归你了，碗摞也就矮了一层。**它动了 `top`。**\n- `peek` 里的 `*value = bowls[top - 1];` 念作「最上面那只碗在 `top - 1` 这一格，把它叼出来」—— 叼完 `top` 还是原来那个数，碗摞还是原来那么高。**它没动 `top`。**\n\n为什么是 `top - 1` 而不是 `top`？因为 `top` 是「下一只碗该放在哪儿」，也就是**最上面那只碗的上面一格**。真正的碗在最上面那一格，得往回退一格才摸得到。这也正是 `pop` 里为什么要先 `top--` 才去叼 —— 两招摸的是**同一格**，区别只在 `pop` 摸完把那格让出去了。\n\n这也是本喵要你看头两行是同一个数的原因：看了一眼（7），拿走的还是那一只（7）—— **看**这件事对碗摞**一点影响都没有**。第三行变成 6，才是 `pop` 真的拿走一只之后的样子喵。",
+      "templateId": "c-s3-stack-peek",
+      "params": {
+        "a": "1",
+        "b": "6",
+        "c": "7"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:11.451Z",
+        "hash": "26e6bd4bf89cc2d3"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-peek-004",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "碗摞上还差一招喵：**只看一眼最上面那只碗里装的是什么，但不把它拿走**。\n\n请你写：\n\n1. 底座一排 5 只碗（`#define` 一个 5 出来），再摆一个数记「摞了几只」。\n2. `is_empty()` / `is_full()` 两招问界面的。\n3. `push(int value)` / `pop(int *value)` 两招，跟平时一样：放碗记得把那个数往上抬，拿碗记得先往下退。\n4. 再写一招 `peek(int *value)`：**先问空没空** —— 空了就答 0；没空就把**最上面那只碗**里装的数叼出来，**那个数一个指头都不许动**，答 1。\n5. `main` 里：先摞上 **4、2、3**；然后 `peek` 一次，印一行 `最上面那只碗里是 几只`；再 `pop` 一次，印一行 `拿走一只，是 几只`；最后再 `peek` 一次，印一行 `现在最上面是 几只`。\n\n该印出来**三行**：\n\n```text\n最上面那只碗里是 3\n拿走一只，是 3\n现在最上面是 2\n```\n\n（注意头两行是**同一个数** —— 这是本喵要看的证据：看了一眼，不代表拿走了喵。）",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    /* 放一只碗上去 */\n\n}\n\nint pop(int *value) {\n    /* 从最上面拿一只下来 */\n\n}\n\nint peek(int *value) {\n    /* ① 先问空没空 */\n    /* ② 把最上面那只碗里的数叼出来，那个数不许动 */\n\n}\n\nint main(void) {\n    /* ③ 摞上 4、2、3，看一眼、拿一只、再看一眼 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint peek(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = bowls[top - 1];\n    return 1;\n}\n\nint main(void) {\n    push(4);\n    push(2);\n    push(3);\n\n    int v = 0;\n    peek(&v);\n    printf(\"最上面那只碗里是 %d\\n\", v);\n\n    pop(&v);\n    printf(\"拿走一只，是 %d\\n\", v);\n\n    peek(&v);\n    printf(\"现在最上面是 %d\\n\", v);\n    return 0;\n}\n",
+      "expectedOutput": "最上面那只碗里是 3\n拿走一只，是 3\n现在最上面是 2",
+      "stdin": null,
+      "explanation": "`peek` 和 `pop` 的区别只有**一句话**喵：**动不动 `top`**。\n\n- `pop` 要先 `top--` —— 退一格，那格上的碗就归你了，碗摞也就矮了一层。**它动了 `top`。**\n- `peek` 里的 `*value = bowls[top - 1];` 念作「最上面那只碗在 `top - 1` 这一格，把它叼出来」—— 叼完 `top` 还是原来那个数，碗摞还是原来那么高。**它没动 `top`。**\n\n为什么是 `top - 1` 而不是 `top`？因为 `top` 是「下一只碗该放在哪儿」，也就是**最上面那只碗的上面一格**。真正的碗在最上面那一格，得往回退一格才摸得到。这也正是 `pop` 里为什么要先 `top--` 才去叼 —— 两招摸的是**同一格**，区别只在 `pop` 摸完把那格让出去了。\n\n这也是本喵要你看头两行是同一个数的原因：看了一眼（3），拿走的还是那一只（3）—— **看**这件事对碗摞**一点影响都没有**。第三行变成 2，才是 `pop` 真的拿走一只之后的样子喵。",
+      "templateId": "c-s3-stack-peek",
+      "params": {
+        "a": "4",
+        "b": "2",
+        "c": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:13.620Z",
+        "hash": "8ddadebc2f763436"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-peek-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "碗摞上还差一招喵：**只看一眼最上面那只碗里装的是什么，但不把它拿走**。\n\n请你写：\n\n1. 底座一排 5 只碗（`#define` 一个 5 出来），再摆一个数记「摞了几只」。\n2. `is_empty()` / `is_full()` 两招问界面的。\n3. `push(int value)` / `pop(int *value)` 两招，跟平时一样：放碗记得把那个数往上抬，拿碗记得先往下退。\n4. 再写一招 `peek(int *value)`：**先问空没空** —— 空了就答 0；没空就把**最上面那只碗**里装的数叼出来，**那个数一个指头都不许动**，答 1。\n5. `main` 里：先摞上 **4、6、3**；然后 `peek` 一次，印一行 `最上面那只碗里是 几只`；再 `pop` 一次，印一行 `拿走一只，是 几只`；最后再 `peek` 一次，印一行 `现在最上面是 几只`。\n\n该印出来**三行**：\n\n```text\n最上面那只碗里是 3\n拿走一只，是 3\n现在最上面是 6\n```\n\n（注意头两行是**同一个数** —— 这是本喵要看的证据：看了一眼，不代表拿走了喵。）",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    /* 放一只碗上去 */\n\n}\n\nint pop(int *value) {\n    /* 从最上面拿一只下来 */\n\n}\n\nint peek(int *value) {\n    /* ① 先问空没空 */\n    /* ② 把最上面那只碗里的数叼出来，那个数不许动 */\n\n}\n\nint main(void) {\n    /* ③ 摞上 4、6、3，看一眼、拿一只、再看一眼 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint peek(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = bowls[top - 1];\n    return 1;\n}\n\nint main(void) {\n    push(4);\n    push(6);\n    push(3);\n\n    int v = 0;\n    peek(&v);\n    printf(\"最上面那只碗里是 %d\\n\", v);\n\n    pop(&v);\n    printf(\"拿走一只，是 %d\\n\", v);\n\n    peek(&v);\n    printf(\"现在最上面是 %d\\n\", v);\n    return 0;\n}\n",
+      "expectedOutput": "最上面那只碗里是 3\n拿走一只，是 3\n现在最上面是 6",
+      "stdin": null,
+      "explanation": "`peek` 和 `pop` 的区别只有**一句话**喵：**动不动 `top`**。\n\n- `pop` 要先 `top--` —— 退一格，那格上的碗就归你了，碗摞也就矮了一层。**它动了 `top`。**\n- `peek` 里的 `*value = bowls[top - 1];` 念作「最上面那只碗在 `top - 1` 这一格，把它叼出来」—— 叼完 `top` 还是原来那个数，碗摞还是原来那么高。**它没动 `top`。**\n\n为什么是 `top - 1` 而不是 `top`？因为 `top` 是「下一只碗该放在哪儿」，也就是**最上面那只碗的上面一格**。真正的碗在最上面那一格，得往回退一格才摸得到。这也正是 `pop` 里为什么要先 `top--` 才去叼 —— 两招摸的是**同一格**，区别只在 `pop` 摸完把那格让出去了。\n\n这也是本喵要你看头两行是同一个数的原因：看了一眼（3），拿走的还是那一只（3）—— **看**这件事对碗摞**一点影响都没有**。第三行变成 6，才是 `pop` 真的拿走一只之后的样子喵。",
+      "templateId": "c-s3-stack-peek",
+      "params": {
+        "a": "4",
+        "b": "6",
+        "c": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:15.880Z",
+        "hash": "3e15d42936138e85"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-peek-007",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "碗摞上还差一招喵：**只看一眼最上面那只碗里装的是什么，但不把它拿走**。\n\n请你写：\n\n1. 底座一排 5 只碗（`#define` 一个 5 出来），再摆一个数记「摞了几只」。\n2. `is_empty()` / `is_full()` 两招问界面的。\n3. `push(int value)` / `pop(int *value)` 两招，跟平时一样：放碗记得把那个数往上抬，拿碗记得先往下退。\n4. 再写一招 `peek(int *value)`：**先问空没空** —— 空了就答 0；没空就把**最上面那只碗**里装的数叼出来，**那个数一个指头都不许动**，答 1。\n5. `main` 里：先摞上 **4、6、7**；然后 `peek` 一次，印一行 `最上面那只碗里是 几只`；再 `pop` 一次，印一行 `拿走一只，是 几只`；最后再 `peek` 一次，印一行 `现在最上面是 几只`。\n\n该印出来**三行**：\n\n```text\n最上面那只碗里是 7\n拿走一只，是 7\n现在最上面是 6\n```\n\n（注意头两行是**同一个数** —— 这是本喵要看的证据：看了一眼，不代表拿走了喵。）",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    /* 放一只碗上去 */\n\n}\n\nint pop(int *value) {\n    /* 从最上面拿一只下来 */\n\n}\n\nint peek(int *value) {\n    /* ① 先问空没空 */\n    /* ② 把最上面那只碗里的数叼出来，那个数不许动 */\n\n}\n\nint main(void) {\n    /* ③ 摞上 4、6、7，看一眼、拿一只、再看一眼 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint peek(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = bowls[top - 1];\n    return 1;\n}\n\nint main(void) {\n    push(4);\n    push(6);\n    push(7);\n\n    int v = 0;\n    peek(&v);\n    printf(\"最上面那只碗里是 %d\\n\", v);\n\n    pop(&v);\n    printf(\"拿走一只，是 %d\\n\", v);\n\n    peek(&v);\n    printf(\"现在最上面是 %d\\n\", v);\n    return 0;\n}\n",
+      "expectedOutput": "最上面那只碗里是 7\n拿走一只，是 7\n现在最上面是 6",
+      "stdin": null,
+      "explanation": "`peek` 和 `pop` 的区别只有**一句话**喵：**动不动 `top`**。\n\n- `pop` 要先 `top--` —— 退一格，那格上的碗就归你了，碗摞也就矮了一层。**它动了 `top`。**\n- `peek` 里的 `*value = bowls[top - 1];` 念作「最上面那只碗在 `top - 1` 这一格，把它叼出来」—— 叼完 `top` 还是原来那个数，碗摞还是原来那么高。**它没动 `top`。**\n\n为什么是 `top - 1` 而不是 `top`？因为 `top` 是「下一只碗该放在哪儿」，也就是**最上面那只碗的上面一格**。真正的碗在最上面那一格，得往回退一格才摸得到。这也正是 `pop` 里为什么要先 `top--` 才去叼 —— 两招摸的是**同一格**，区别只在 `pop` 摸完把那格让出去了。\n\n这也是本喵要你看头两行是同一个数的原因：看了一眼（7），拿走的还是那一只（7）—— **看**这件事对碗摞**一点影响都没有**。第三行变成 6，才是 `pop` 真的拿走一只之后的样子喵。",
+      "templateId": "c-s3-stack-peek",
+      "params": {
+        "a": "4",
+        "b": "6",
+        "c": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:49.640Z",
+        "hash": "2a284d2011570571"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-push-no-top-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵往碗摞上摞了三只碗，然后一只一只往下拿。可程序只印了一行：\n\n```text\n摞了 0 只碗\n```\n\n三只碗**一只都没摞上去**，后头那几行「取到」全没了。翻译官喵一声没吭，编译跑得好好的。\n\n请你把缺的那一句补上。改好之后该印**四行**：先报摞了几只，再把三只碗**从最上面那只开始**一只一只叼出来：\n\n```text\n摞了 3 只碗\n取到 3\n取到 2\n取到 1\n```",
+      "brokenCode": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(1);\n    push(2);\n    push(3);\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(1);\n    push(2);\n    push(3);\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "摞了 3 只碗\n取到 3\n取到 2\n取到 1",
+      "stdin": null,
+      "explanation": "缺的是**放完那只碗之后把 `top` 往上抬一格**：\n\n```text\ntop++;\n```\n\n`top` 在这只碗摞里是**一个数管两件事**喵：它既是「已经摞了几只」，也正好是「下一只碗该放在哪儿」。\n\n- 放一只碗：先放在 `bowls[top]` 这个位子上，放好之后 `top++` —— 碗摞长高一层，`top` 也顺势指向了下一个空位。\n- 拿一只碗：先 `top--` 退到「最上面那只」的位子上，再把它叼出来。\n\n本喵这一版**只做了前半步**：碗放到第 0 格了，可 `top` 还停在 0，所以它以为碗摞是空的 —— 报「摞了 0 只碗」，`pop` 一进门就问「空了吗」，答「空了」，于是碗一只也拿不出来。\n\n⚠️ 更坑的是：**这个错翻译官喵一个字都不会说**。本喵拿 `-Wall` 真编了一遍，不报错、不警告，跑起来也不摔 —— 它只是**答错**。因为从翻译官喵眼里看，`bowls[top] = value;` 写得完全合法，它不知道你心里那句「这只碗摞上去了」还没落地喵。",
+      "templateId": "c-s3-stack-push-no-top",
+      "params": {
+        "a": "1",
+        "b": "2",
+        "c": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:32.934Z",
+        "hash": "a5a996cc6f1d1862"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-push-no-top-007",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵往碗摞上摞了三只碗，然后一只一只往下拿。可程序只印了一行：\n\n```text\n摞了 0 只碗\n```\n\n三只碗**一只都没摞上去**，后头那几行「取到」全没了。翻译官喵一声没吭，编译跑得好好的。\n\n请你把缺的那一句补上。改好之后该印**四行**：先报摞了几只，再把三只碗**从最上面那只开始**一只一只叼出来：\n\n```text\n摞了 3 只碗\n取到 7\n取到 6\n取到 4\n```",
+      "brokenCode": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(4);\n    push(6);\n    push(7);\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(4);\n    push(6);\n    push(7);\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "摞了 3 只碗\n取到 7\n取到 6\n取到 4",
+      "stdin": null,
+      "explanation": "缺的是**放完那只碗之后把 `top` 往上抬一格**：\n\n```text\ntop++;\n```\n\n`top` 在这只碗摞里是**一个数管两件事**喵：它既是「已经摞了几只」，也正好是「下一只碗该放在哪儿」。\n\n- 放一只碗：先放在 `bowls[top]` 这个位子上，放好之后 `top++` —— 碗摞长高一层，`top` 也顺势指向了下一个空位。\n- 拿一只碗：先 `top--` 退到「最上面那只」的位子上，再把它叼出来。\n\n本喵这一版**只做了前半步**：碗放到第 0 格了，可 `top` 还停在 0，所以它以为碗摞是空的 —— 报「摞了 0 只碗」，`pop` 一进门就问「空了吗」，答「空了」，于是碗一只也拿不出来。\n\n⚠️ 更坑的是：**这个错翻译官喵一个字都不会说**。本喵拿 `-Wall` 真编了一遍，不报错、不警告，跑起来也不摔 —— 它只是**答错**。因为从翻译官喵眼里看，`bowls[top] = value;` 写得完全合法，它不知道你心里那句「这只碗摞上去了」还没落地喵。",
+      "templateId": "c-s3-stack-push-no-top",
+      "params": {
+        "a": "4",
+        "b": "6",
+        "c": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:34.763Z",
+        "hash": "30e44f757bc6c254"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-push-pop-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一只**碗摞**：碗一只只往上摞，拿的时候只能从**最上面**那只开始拿 —— 最后摞上去的，最先被拿走。\n\n请你写：\n\n1. 底座是**一排摆好的碗**，能装 **5** 只（`#define` 一个 5 出来），再摆一个数记「已经摞了几只」。\n2. 两招问界面的：`is_empty()` 答「一只都没有了吗」、`is_full()` 答「摞满了吗」，都答 1 或 0。\n3. `push(int value)`：**先问满没满** —— 满了就答 0；没满就把碗放在该放的位子上、**把那个数往上抬一格**、答 1。\n4. `pop(int *value)`：**先问空没空** —— 空了就答 0；没空就把那个数**往下退一格**、从退到的位子上把碗叼出来、答 1。\n5. `main` 里依次摞上 **1、2、3**，印一行 `摞了 3 只碗`；然后**一只一只往下拿**，拿走一只印一行 `取到 几只`；最后印一行 `空了吗？空了`。\n\n该印出来**五行**：\n\n```text\n摞了 3 只碗\n取到 3\n取到 2\n取到 1\n空了吗？空了\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\n/* ① 底座：一排 5 只碗 + 一个数记「摞了几只」 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 放一只碗上去 */\n\n/* ④ 从最上面拿一只下来 */\n\nint main(void) {\n    /* ⑤ 摞上 1、2、3，报个数，再一只一只拿下来 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(1);\n    push(2);\n    push(3);\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    printf(\"空了吗？%s\\n\", is_empty() ? \"空了\" : \"还有\");\n    return 0;\n}\n",
+      "expectedOutput": "摞了 3 只碗\n取到 3\n取到 2\n取到 1\n空了吗？空了",
+      "stdin": null,
+      "explanation": "这只碗摞的全部本事，就压在**一个数**上喵 —— 本喵叫它 `top`。它一个数管两件事：**既是「已经摞了几只」，也正好是「下一只碗该放在哪儿」**。\n\n**① 放一只碗：**\n\n```text\nbowls[top] = value;\ntop++;\n```\n\n先放在 `top` 这个位子上，放好之后往上抬一格 —— 碗摞长高一层，`top` 也顺势指向了下一个空位。这两句**缺一不可**：少了后一句，碗是放进去了，可碗摞自己还以为空着。\n\n**② 拿一只碗：**\n\n```text\ntop--;\n*value = bowls[top];\n```\n\n这两句的次序跟放碗正好**反过来**：先退一格，退到的那一格正是**最上面那只碗**待的地方，再把它叼出来。\n\n**③ 为什么拿出来的次序是倒的。** 先摞 1、再 2、再 3，`top` 走到 3；拿的时候先退到第 2 格 —— 那正是 3。所以出来的是 3、2、1：**最后摞上去的最先被拿走**，这就是这只碗摞的规矩。\n\n**④ 那两招问界面的不能省。** 满了还往上摞，会踩到不属于自己的地方；空了还往下拿，会读到一堆莫名其妙的数字。两句问话看着啰嗦，省的代价是「碗摞塌了」喵。",
+      "templateId": "c-s3-stack-push-pop",
+      "params": {
+        "a": "1",
+        "b": "2",
+        "c": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:45.375Z",
+        "hash": "666ec6f43dd3cdad"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-push-pop-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一只**碗摞**：碗一只只往上摞，拿的时候只能从**最上面**那只开始拿 —— 最后摞上去的，最先被拿走。\n\n请你写：\n\n1. 底座是**一排摆好的碗**，能装 **5** 只（`#define` 一个 5 出来），再摆一个数记「已经摞了几只」。\n2. 两招问界面的：`is_empty()` 答「一只都没有了吗」、`is_full()` 答「摞满了吗」，都答 1 或 0。\n3. `push(int value)`：**先问满没满** —— 满了就答 0；没满就把碗放在该放的位子上、**把那个数往上抬一格**、答 1。\n4. `pop(int *value)`：**先问空没空** —— 空了就答 0；没空就把那个数**往下退一格**、从退到的位子上把碗叼出来、答 1。\n5. `main` 里依次摞上 **1、2、7**，印一行 `摞了 3 只碗`；然后**一只一只往下拿**，拿走一只印一行 `取到 几只`；最后印一行 `空了吗？空了`。\n\n该印出来**五行**：\n\n```text\n摞了 3 只碗\n取到 7\n取到 2\n取到 1\n空了吗？空了\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\n/* ① 底座：一排 5 只碗 + 一个数记「摞了几只」 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 放一只碗上去 */\n\n/* ④ 从最上面拿一只下来 */\n\nint main(void) {\n    /* ⑤ 摞上 1、2、7，报个数，再一只一只拿下来 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(1);\n    push(2);\n    push(7);\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    printf(\"空了吗？%s\\n\", is_empty() ? \"空了\" : \"还有\");\n    return 0;\n}\n",
+      "expectedOutput": "摞了 3 只碗\n取到 7\n取到 2\n取到 1\n空了吗？空了",
+      "stdin": null,
+      "explanation": "这只碗摞的全部本事，就压在**一个数**上喵 —— 本喵叫它 `top`。它一个数管两件事：**既是「已经摞了几只」，也正好是「下一只碗该放在哪儿」**。\n\n**① 放一只碗：**\n\n```text\nbowls[top] = value;\ntop++;\n```\n\n先放在 `top` 这个位子上，放好之后往上抬一格 —— 碗摞长高一层，`top` 也顺势指向了下一个空位。这两句**缺一不可**：少了后一句，碗是放进去了，可碗摞自己还以为空着。\n\n**② 拿一只碗：**\n\n```text\ntop--;\n*value = bowls[top];\n```\n\n这两句的次序跟放碗正好**反过来**：先退一格，退到的那一格正是**最上面那只碗**待的地方，再把它叼出来。\n\n**③ 为什么拿出来的次序是倒的。** 先摞 1、再 2、再 7，`top` 走到 3；拿的时候先退到第 2 格 —— 那正是 7。所以出来的是 7、2、1：**最后摞上去的最先被拿走**，这就是这只碗摞的规矩。\n\n**④ 那两招问界面的不能省。** 满了还往上摞，会踩到不属于自己的地方；空了还往下拿，会读到一堆莫名其妙的数字。两句问话看着啰嗦，省的代价是「碗摞塌了」喵。",
+      "templateId": "c-s3-stack-push-pop",
+      "params": {
+        "a": "1",
+        "b": "2",
+        "c": "7"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:17.696Z",
+        "hash": "b0d2ea1dd864ccc9"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-push-pop-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一只**碗摞**：碗一只只往上摞，拿的时候只能从**最上面**那只开始拿 —— 最后摞上去的，最先被拿走。\n\n请你写：\n\n1. 底座是**一排摆好的碗**，能装 **5** 只（`#define` 一个 5 出来），再摆一个数记「已经摞了几只」。\n2. 两招问界面的：`is_empty()` 答「一只都没有了吗」、`is_full()` 答「摞满了吗」，都答 1 或 0。\n3. `push(int value)`：**先问满没满** —— 满了就答 0；没满就把碗放在该放的位子上、**把那个数往上抬一格**、答 1。\n4. `pop(int *value)`：**先问空没空** —— 空了就答 0；没空就把那个数**往下退一格**、从退到的位子上把碗叼出来、答 1。\n5. `main` 里依次摞上 **1、6、7**，印一行 `摞了 3 只碗`；然后**一只一只往下拿**，拿走一只印一行 `取到 几只`；最后印一行 `空了吗？空了`。\n\n该印出来**五行**：\n\n```text\n摞了 3 只碗\n取到 7\n取到 6\n取到 1\n空了吗？空了\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\n/* ① 底座：一排 5 只碗 + 一个数记「摞了几只」 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 放一只碗上去 */\n\n/* ④ 从最上面拿一只下来 */\n\nint main(void) {\n    /* ⑤ 摞上 1、6、7，报个数，再一只一只拿下来 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(1);\n    push(6);\n    push(7);\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    printf(\"空了吗？%s\\n\", is_empty() ? \"空了\" : \"还有\");\n    return 0;\n}\n",
+      "expectedOutput": "摞了 3 只碗\n取到 7\n取到 6\n取到 1\n空了吗？空了",
+      "stdin": null,
+      "explanation": "这只碗摞的全部本事，就压在**一个数**上喵 —— 本喵叫它 `top`。它一个数管两件事：**既是「已经摞了几只」，也正好是「下一只碗该放在哪儿」**。\n\n**① 放一只碗：**\n\n```text\nbowls[top] = value;\ntop++;\n```\n\n先放在 `top` 这个位子上，放好之后往上抬一格 —— 碗摞长高一层，`top` 也顺势指向了下一个空位。这两句**缺一不可**：少了后一句，碗是放进去了，可碗摞自己还以为空着。\n\n**② 拿一只碗：**\n\n```text\ntop--;\n*value = bowls[top];\n```\n\n这两句的次序跟放碗正好**反过来**：先退一格，退到的那一格正是**最上面那只碗**待的地方，再把它叼出来。\n\n**③ 为什么拿出来的次序是倒的。** 先摞 1、再 6、再 7，`top` 走到 3；拿的时候先退到第 2 格 —— 那正是 7。所以出来的是 7、6、1：**最后摞上去的最先被拿走**，这就是这只碗摞的规矩。\n\n**④ 那两招问界面的不能省。** 满了还往上摞，会踩到不属于自己的地方；空了还往下拿，会读到一堆莫名其妙的数字。两句问话看着啰嗦，省的代价是「碗摞塌了」喵。",
+      "templateId": "c-s3-stack-push-pop",
+      "params": {
+        "a": "1",
+        "b": "6",
+        "c": "7"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:19.311Z",
+        "hash": "d1b63c24a5cf67d8"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-push-pop-004",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一只**碗摞**：碗一只只往上摞，拿的时候只能从**最上面**那只开始拿 —— 最后摞上去的，最先被拿走。\n\n请你写：\n\n1. 底座是**一排摆好的碗**，能装 **5** 只（`#define` 一个 5 出来），再摆一个数记「已经摞了几只」。\n2. 两招问界面的：`is_empty()` 答「一只都没有了吗」、`is_full()` 答「摞满了吗」，都答 1 或 0。\n3. `push(int value)`：**先问满没满** —— 满了就答 0；没满就把碗放在该放的位子上、**把那个数往上抬一格**、答 1。\n4. `pop(int *value)`：**先问空没空** —— 空了就答 0；没空就把那个数**往下退一格**、从退到的位子上把碗叼出来、答 1。\n5. `main` 里依次摞上 **4、2、3**，印一行 `摞了 3 只碗`；然后**一只一只往下拿**，拿走一只印一行 `取到 几只`；最后印一行 `空了吗？空了`。\n\n该印出来**五行**：\n\n```text\n摞了 3 只碗\n取到 3\n取到 2\n取到 4\n空了吗？空了\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\n/* ① 底座：一排 5 只碗 + 一个数记「摞了几只」 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 放一只碗上去 */\n\n/* ④ 从最上面拿一只下来 */\n\nint main(void) {\n    /* ⑤ 摞上 4、2、3，报个数，再一只一只拿下来 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(4);\n    push(2);\n    push(3);\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    printf(\"空了吗？%s\\n\", is_empty() ? \"空了\" : \"还有\");\n    return 0;\n}\n",
+      "expectedOutput": "摞了 3 只碗\n取到 3\n取到 2\n取到 4\n空了吗？空了",
+      "stdin": null,
+      "explanation": "这只碗摞的全部本事，就压在**一个数**上喵 —— 本喵叫它 `top`。它一个数管两件事：**既是「已经摞了几只」，也正好是「下一只碗该放在哪儿」**。\n\n**① 放一只碗：**\n\n```text\nbowls[top] = value;\ntop++;\n```\n\n先放在 `top` 这个位子上，放好之后往上抬一格 —— 碗摞长高一层，`top` 也顺势指向了下一个空位。这两句**缺一不可**：少了后一句，碗是放进去了，可碗摞自己还以为空着。\n\n**② 拿一只碗：**\n\n```text\ntop--;\n*value = bowls[top];\n```\n\n这两句的次序跟放碗正好**反过来**：先退一格，退到的那一格正是**最上面那只碗**待的地方，再把它叼出来。\n\n**③ 为什么拿出来的次序是倒的。** 先摞 4、再 2、再 3，`top` 走到 3；拿的时候先退到第 2 格 —— 那正是 3。所以出来的是 3、2、4：**最后摞上去的最先被拿走**，这就是这只碗摞的规矩。\n\n**④ 那两招问界面的不能省。** 满了还往上摞，会踩到不属于自己的地方；空了还往下拿，会读到一堆莫名其妙的数字。两句问话看着啰嗦，省的代价是「碗摞塌了」喵。",
+      "templateId": "c-s3-stack-push-pop",
+      "params": {
+        "a": "4",
+        "b": "2",
+        "c": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:20.632Z",
+        "hash": "3ca3b3037df59ea9"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-push-pop-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一只**碗摞**：碗一只只往上摞，拿的时候只能从**最上面**那只开始拿 —— 最后摞上去的，最先被拿走。\n\n请你写：\n\n1. 底座是**一排摆好的碗**，能装 **5** 只（`#define` 一个 5 出来），再摆一个数记「已经摞了几只」。\n2. 两招问界面的：`is_empty()` 答「一只都没有了吗」、`is_full()` 答「摞满了吗」，都答 1 或 0。\n3. `push(int value)`：**先问满没满** —— 满了就答 0；没满就把碗放在该放的位子上、**把那个数往上抬一格**、答 1。\n4. `pop(int *value)`：**先问空没空** —— 空了就答 0；没空就把那个数**往下退一格**、从退到的位子上把碗叼出来、答 1。\n5. `main` 里依次摞上 **4、6、3**，印一行 `摞了 3 只碗`；然后**一只一只往下拿**，拿走一只印一行 `取到 几只`；最后印一行 `空了吗？空了`。\n\n该印出来**五行**：\n\n```text\n摞了 3 只碗\n取到 3\n取到 6\n取到 4\n空了吗？空了\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\n/* ① 底座：一排 5 只碗 + 一个数记「摞了几只」 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 放一只碗上去 */\n\n/* ④ 从最上面拿一只下来 */\n\nint main(void) {\n    /* ⑤ 摞上 4、6、3，报个数，再一只一只拿下来 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(4);\n    push(6);\n    push(3);\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    printf(\"空了吗？%s\\n\", is_empty() ? \"空了\" : \"还有\");\n    return 0;\n}\n",
+      "expectedOutput": "摞了 3 只碗\n取到 3\n取到 6\n取到 4\n空了吗？空了",
+      "stdin": null,
+      "explanation": "这只碗摞的全部本事，就压在**一个数**上喵 —— 本喵叫它 `top`。它一个数管两件事：**既是「已经摞了几只」，也正好是「下一只碗该放在哪儿」**。\n\n**① 放一只碗：**\n\n```text\nbowls[top] = value;\ntop++;\n```\n\n先放在 `top` 这个位子上，放好之后往上抬一格 —— 碗摞长高一层，`top` 也顺势指向了下一个空位。这两句**缺一不可**：少了后一句，碗是放进去了，可碗摞自己还以为空着。\n\n**② 拿一只碗：**\n\n```text\ntop--;\n*value = bowls[top];\n```\n\n这两句的次序跟放碗正好**反过来**：先退一格，退到的那一格正是**最上面那只碗**待的地方，再把它叼出来。\n\n**③ 为什么拿出来的次序是倒的。** 先摞 4、再 6、再 3，`top` 走到 3；拿的时候先退到第 2 格 —— 那正是 3。所以出来的是 3、6、4：**最后摞上去的最先被拿走**，这就是这只碗摞的规矩。\n\n**④ 那两招问界面的不能省。** 满了还往上摞，会踩到不属于自己的地方；空了还往下拿，会读到一堆莫名其妙的数字。两句问话看着啰嗦，省的代价是「碗摞塌了」喵。",
+      "templateId": "c-s3-stack-push-pop",
+      "params": {
+        "a": "4",
+        "b": "6",
+        "c": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T16:41:22.248Z",
+        "hash": "e3f967734a5083ce"
+      }
+    },
+    {
+      "id": "bank-c-s3-stack-push-pop-007",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要做一只**碗摞**：碗一只只往上摞，拿的时候只能从**最上面**那只开始拿 —— 最后摞上去的，最先被拿走。\n\n请你写：\n\n1. 底座是**一排摆好的碗**，能装 **5** 只（`#define` 一个 5 出来），再摆一个数记「已经摞了几只」。\n2. 两招问界面的：`is_empty()` 答「一只都没有了吗」、`is_full()` 答「摞满了吗」，都答 1 或 0。\n3. `push(int value)`：**先问满没满** —— 满了就答 0；没满就把碗放在该放的位子上、**把那个数往上抬一格**、答 1。\n4. `pop(int *value)`：**先问空没空** —— 空了就答 0；没空就把那个数**往下退一格**、从退到的位子上把碗叼出来、答 1。\n5. `main` 里依次摞上 **4、6、7**，印一行 `摞了 3 只碗`；然后**一只一只往下拿**，拿走一只印一行 `取到 几只`；最后印一行 `空了吗？空了`。\n\n该印出来**五行**：\n\n```text\n摞了 3 只碗\n取到 7\n取到 6\n取到 4\n空了吗？空了\n```",
+      "starter": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\n/* ① 底座：一排 5 只碗 + 一个数记「摞了几只」 */\n\n/* ② 问界面：空了吗 / 满了吗 */\n\n/* ③ 放一只碗上去 */\n\n/* ④ 从最上面拿一只下来 */\n\nint main(void) {\n    /* ⑤ 摞上 4、6、7，报个数，再一只一只拿下来 */\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint main(void) {\n    push(4);\n    push(6);\n    push(7);\n    printf(\"摞了 %d 只碗\\n\", top);\n    int v = 0;\n    while (pop(&v)) {\n        printf(\"取到 %d\\n\", v);\n    }\n    printf(\"空了吗？%s\\n\", is_empty() ? \"空了\" : \"还有\");\n    return 0;\n}\n",
+      "expectedOutput": "摞了 3 只碗\n取到 7\n取到 6\n取到 4\n空了吗？空了",
+      "stdin": null,
+      "explanation": "这只碗摞的全部本事，就压在**一个数**上喵 —— 本喵叫它 `top`。它一个数管两件事：**既是「已经摞了几只」，也正好是「下一只碗该放在哪儿」**。\n\n**① 放一只碗：**\n\n```text\nbowls[top] = value;\ntop++;\n```\n\n先放在 `top` 这个位子上，放好之后往上抬一格 —— 碗摞长高一层，`top` 也顺势指向了下一个空位。这两句**缺一不可**：少了后一句，碗是放进去了，可碗摞自己还以为空着。\n\n**② 拿一只碗：**\n\n```text\ntop--;\n*value = bowls[top];\n```\n\n这两句的次序跟放碗正好**反过来**：先退一格，退到的那一格正是**最上面那只碗**待的地方，再把它叼出来。\n\n**③ 为什么拿出来的次序是倒的。** 先摞 4、再 6、再 7，`top` 走到 3；拿的时候先退到第 2 格 —— 那正是 7。所以出来的是 7、6、4：**最后摞上去的最先被拿走**，这就是这只碗摞的规矩。\n\n**④ 那两招问界面的不能省。** 满了还往上摞，会踩到不属于自己的地方；空了还往下拿，会读到一堆莫名其妙的数字。两句问话看着啰嗦，省的代价是「碗摞塌了」喵。",
+      "templateId": "c-s3-stack-push-pop",
+      "params": {
+        "a": "4",
+        "b": "6",
+        "c": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T08:41:46.664Z",
+        "hash": "9f1a929777f13061"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s1-func-call-order",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-12",
+  "type": "codefix",
+  "concept": ["关键字参数", "位置参数", "调用顺序", "SyntaxError"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "三花"] },
+    "age": { "kind": "int", "min": 3, "max": 5 },
+    "city": { "kind": "pick", "values": ["猫窝", "鱼塘", "纸箱"] }
+  },
+  "stemTemplate": "本喵要把三样东西报给招式喵：名字、几岁、住哪儿。名字照旧**排队**喂，后两样想**点名**喂（这样就不怕记岔位子）。\n\n可这段代码**还没开跑就被退单了**，翻译官喵指着喊招式的那一行摇头……你帮本喵改对，让它印出「（名字） 今年 （岁数） 岁，住在 （住处）」这样的话。",
+  "brokenCodeTemplate": "def intro(name, age, city):\n    print(name, \"今年\", age, \"岁，住在\", city)\n\nintro(age={age}, \"{name}\", \"{city}\")\n",
+  "referenceFixTemplate": "def intro(name, age, city):\n    print(name, \"今年\", age, \"岁，住在\", city)\n\nintro(\"{name}\", age={age}, city=\"{city}\")\n",
+  "explanationTemplate": "翻译官喵读一眼喊招式的那一行就把单子退回来了，报的是 `SyntaxError: positional argument follows keyword argument` —— 翻成猫话：**点名环节开始之后，又冒出一个没点名的。**\n\n它为什么拦？因为 `age={age}` 一出现，它就当「从这儿起改成点名了」。后面再冒出一个没点名的 `\"{name}\"`，它不知道该把这份东西排在第几个位子上 —— 排在 `age` 前面吗？可 `age` 已经被点走了呀。分不清，索性不许你写。\n\n规矩和招式头上那条是一家人喵：**自带存货的排最后，没点名的排前面。** 改法就是把没点名的挪到最前头：`intro(\"{name}\", age={age}, city=\"{city}\")` —— 前面排队、后面点名，混着来完全没问题。\n\n（顺手认个脾气喵：这一类错是翻译官喵**读一眼就退单**，你写的代码一个字都不会跑。）"
+}

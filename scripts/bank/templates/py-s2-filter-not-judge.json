@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-filter-not-judge",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-11",
+  "type": "codefix",
+  "concept": ["filter", "判官", "lambda"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stemTemplate": "本喵用 `filter` 挑东西：想从 `1` 到 `{n}` 这一排数里，只留下**除得尽 2** 的那些喵。\n\n它**不报错**，跑得也挺顺 —— 可留下的偏偏是**除不尽 2** 的那一批，结果正好反过来了。\n\n你帮本喵改对喵。要求：\n\n1. **照样用 `filter` 配就地写的那一招**（别换成绕圈写法）。\n2. **只印一行**，就是留下的那一排。\n3. 上面摆好的那一排数**一个都不许动**。",
+  "brokenCodeTemplate": "结果 = filter(lambda x: x % 2, range(1, {n} + 1))\nprint(list(结果))\n",
+  "referenceFixTemplate": "结果 = filter(lambda x: x % 2 == 0, range(1, {n} + 1))\nprint(list(结果))\n",
+  "explanationTemplate": "这一处**不报错**，只是答案**正好反了**喵 —— 比报错难抓得多。\n\n根子在 `filter` 对那招的要求上：它**只看那招是点头还是摇头**，别的什么都不管。所以喂进去的那招得当个**判官**，叼回来的得是一句能答「是 / 不是」的判语。\n\n本喵写的是 `lambda x: x % 2` —— 叼回来的是个**数**（`0` 或者 `1`），不是判语。`filter` 只好拿它硬当「对 / 不对」用：`1` 算点头、`0` 算摇头。于是除不尽的（余 `1`）全留下了、除得尽的（余 `0`）全被扔掉 —— 正好挑反。\n\n改法：把那个式子变成**一句判语** —— `x % 2 == 0`。加了 `== 0` 之后，它答的就是「除得尽吗」，`filter` 一眼就明白该留谁喵。\n\n⚠️ 记住这条：`filter` 面前，**叼回一个数**和**叼回一句判语**是两回事。数会不会被当成「对」，全看它是不是 `0` —— 靠运气，不靠本喵的意思。"
+}

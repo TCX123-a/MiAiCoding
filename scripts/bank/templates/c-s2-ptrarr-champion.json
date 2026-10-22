@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-ptrarr-champion",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-02",
+  "type": "codewrite",
+  "concept": ["指针遍历", "指针相减", "找最大"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵把 {n} 只碗一字排开，碗里各放着几条小鱼干，想看看哪只碗装得最多。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 {n} 个数（就是每只碗里的数）。\n\n然后**拿一块牌子从第一只碗一路走到最后一只**，边走边比，找出装得最多的那一只，报一行：`最多的是第 i 只，v 条`（`i` 是碗的编号，从 0 数起；`v` 是那只碗里的数）。\n\n**要是两只碗里的数一样多，报编号更靠前的那只**（第 0 只最靠前）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *best = bowls;\n    for (int *q = bowls; q < bowls + n; q++) {\n        if (*q > *best) {\n            best = q;\n        }\n    }\n\n    printf(\"最多的是第 %d 只，%d 条\\n\", (int)(best - bowls), *best);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题里同时用上了两课的本事喵。\n\n**① 拿牌子走一遍。**\n\n```c\nfor (int *q = bowls; q < bowls + n; q++)\n```\n\n`q` 从第 0 只的门牌号出发，`q < bowls + n` 是「还没走到整排碗末尾再过去一格」，`q++` 一次跨一只碗。\n\n**② 手里另外攒一块「到目前为止最多的那一只」的牌子。** `best` 一开始指着第 0 只，每走到一只碗前面就比一比：`*q > *best` 成立就说明这只更多，把 `best` 挪到它身上。走完一整排，`best` 就钉在最多的那一只上。\n\n**③ 最后要报的是「第几只」** —— 这就是第一课那块「两块牌子相减」的用场：`best - bowls` 的意思是「从第一只走到 `best` 这一只，跨了几只碗」。因为 `bowls` 是第 0 只的门牌号，这个差正好就是**编号**。前面补个 `(int)` 是把话说圆，`%d` 才接得住。\n\n⚠️ 那个比较写成 `>` 不是随手写的：`*q > *best` 只在**严格更多**的时候才换人，所以一样多的两只碗里，**先遇到的那只**会一直留着 —— 这正好就是题里要的「并列时报编号靠前的」。要是手滑写成 `>=`，并列时就换成了后面那只，答案会跟着变喵。"
+}

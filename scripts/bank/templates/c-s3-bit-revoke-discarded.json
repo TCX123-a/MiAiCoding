@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-bit-revoke-discarded",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-02",
+  "type": "codefix",
+  "concept": ["& ~", "收回一盏灯", "算出来的结果扔了", "warning 不拦路"],
+  "instances": 2,
+  "params": {
+    "start": { "kind": "pick", "values": ["4", "7"] }
+  },
+  "stemTemplate": "本喵用一排开关给猫猫当权限牌：第 0 位是「能领小鱼干」、第 2 位是「能睡猫窝」。出场时这张牌子上的读数是 **{start}**。\n\n本喵想**把睡猫窝那盏灯按灭**，可程序印出来的却是：\n\n```text\n收回睡猫窝之后：能\n```\n\n按灭之后怎么还「能」呢？\n\n请你把该改的那一句改好。改好之后该印 **4 行**：\n\n1. `能领小鱼干吗？` —— 小鱼干那盏灯出场是什么样，就是什么样；\n2. `能睡猫窝吗？` —— 同上；\n3. `收回睡猫窝之后：` —— **这一行必须是 `不能`**，这是本喵要盯的；\n4. `还能领小鱼干吗？` —— 小鱼干那盏灯**一根手指头都没碰过**，还是原来的样子。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define CAN_FISH (1 << 0)\n#define CAN_NAP  (1 << 2)\n\nint main(void) {\n    int cat = {start};\n\n    printf(\"能领小鱼干吗？%s\\n\", (cat & CAN_FISH) ? \"能\" : \"不能\");\n    printf(\"能睡猫窝吗？%s\\n\", (cat & CAN_NAP) ? \"能\" : \"不能\");\n\n    cat & ~CAN_NAP;\n\n    printf(\"收回睡猫窝之后：%s\\n\", (cat & CAN_NAP) ? \"能\" : \"不能\");\n    printf(\"还能领小鱼干吗？%s\\n\", (cat & CAN_FISH) ? \"能\" : \"不能\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define CAN_FISH (1 << 0)\n#define CAN_NAP  (1 << 2)\n\nint main(void) {\n    int cat = {start};\n\n    printf(\"能领小鱼干吗？%s\\n\", (cat & CAN_FISH) ? \"能\" : \"不能\");\n    printf(\"能睡猫窝吗？%s\\n\", (cat & CAN_NAP) ? \"能\" : \"不能\");\n\n    cat = cat & ~CAN_NAP;\n\n    printf(\"收回睡猫窝之后：%s\\n\", (cat & CAN_NAP) ? \"能\" : \"不能\");\n    printf(\"还能领小鱼干吗？%s\\n\", (cat & CAN_FISH) ? \"能\" : \"不能\");\n    return 0;\n}\n",
+  "explanationTemplate": "那一句**算得很对，可算完就扔了**喵。\n\n`cat & ~CAN_NAP` 本身一点毛病都没有：`~CAN_NAP` 把睡猫窝那一盏翻成灭、别的翻成亮，再跟 `cat` 一与，睡猫窝那一位就被按灭了 —— **只看这一句，结果是对的**。可它算完的那个新读数**没地方去**：本喵没写 `cat = `，于是那张权限牌上还是原来的数，一步都没变。\n\n所以只要把结果**接回牌子上**：\n\n```text\ncat = cat & ~CAN_NAP;\n```\n\n这是本喵最想让你记住的一条：**算出新值，得把它接回原处**，不然白算。\n\n⚠️ 有意思的是翻译官喵**其实嘀咕了**。本喵真跑时的原话是：\n\n```text\nwarning: statement with no effect [-Wunused-value]\n```\n\n翻过来就是「这一行算出来的东西没人要」。可它**只是警告** —— 编译照样过，程序照跑不误，印出来的还是那句让你挠头的「收回睡猫窝之后：能」。\n\n这一题和上一题合起来就是这个意思：**翻译官喵只负责出声，它不负责拦住你。** 看到 `warning:` 那几行，别当背景音划过去喵。"
+}

@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s2-todo-blueprint",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-14",
+  "type": "codewrite",
+  "concept": ["给一条事项画图纸", "生好几条收进柜子", "toString 管印出来的样子", "纸上第一个数读完要多吃一行"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "pick", "values": ["2", "3"] },
+    "a": { "kind": "pick", "values": ["喂鱼", "洗猫窝"] },
+    "b": { "kind": "pick", "values": ["铲屎", "晒鱼干"] },
+    "c": { "kind": "pick", "values": ["买猫粮", "修猫抓板"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{n}\n{a}\n{b}\n{c}\n", "sampleText": "1\n喂鱼\n" },
+  "stemTemplate": "本喵要把纸上的几件事收成一份清单。投喂给程序的纸上：**第一个数是「后面还有几行字」**，接着正好那么多行，一行一件事。要办的事：\n\n1. 先给「一条事项」画一张图纸：两格家当（内容、办完了没）都关起来（`private`），生的时候两样都喂进来；\n2. 留着三招：`getWhat()`（问内容）、`isDone()`（问办完了没）、`markDone()`（把「办完了没」改成办完）；再写一招 `toString()`，办完的印成 `[x] 内容`、没办的印成 `[ ] 内容`（好让 `System.out.println` 直接印成这个样子）；\n3. `main` 里把纸上的几件事**一条条收进储物柜**（刚收进来的时候都是没办）；\n4. 把**头一件事**办掉；\n5. 从第 `1` 条开始一条条印 `编号. 事项`（这个编号是数给本喵看的，从 `1` 起）；\n6. 最后印一行 `一共 N 件，头一件办完了：true`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一沓纸**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\nclass Todo {\n    // 图纸画在这儿：两格家当 + 三招 + toString()\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        // 纸上第一个数是「后面还有几行字」\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\nclass Todo {\n    private String what;\n    private boolean done;\n\n    Todo(String what, boolean done) {\n        this.what = what;\n        this.done = done;\n    }\n\n    String getWhat() { return what; }\n    boolean isDone() { return done; }\n    void markDone() { done = true; }\n\n    @Override\n    public String toString() {\n        return (done ? \"[x] \" : \"[ ] \") + what;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        sc.nextLine();\n        List<Todo> zhi = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            zhi.add(new Todo(sc.nextLine(), false));\n        }\n        zhi.get(0).markDone();\n        for (int i = 0; i < zhi.size(); i++) {\n            System.out.println((i + 1) + \". \" + zhi.get(i));\n        }\n        System.out.println(\"一共 \" + zhi.size() + \" 件，头一件办完了：\" + zhi.get(0).isDone());\n    }\n}\n",
+  "explanationTemplate": "这一题把课里的东西凑齐了大半：**一张事项图纸**、**收事项的储物柜**、**印出来给本喵看的样子**。\n\n**一、图纸里两格家当关起来，造物招式里用 `this.` 分清楚。** 括号里喂进来的叫 `what`，图纸里那一格也叫 `what` —— `this.what = what;` 里左边是**图纸里那一格**、右边是**喂进来的那一样**。本喵把这一句拆掉真跑过：印出来的内容全成了 `null`（**编得过、跑得起来，就是不冒红字**，这种坏法最难自己发现）。\n\n**二、`toString()` 管印出来的样子。** `System.out.println(zhi.get(i))` 括号里塞的是**一条事项**，屏幕上却能印成 `[x] {a}` 这样 —— 因为翻译官喵印一张图纸之前，会先去问这张图纸有没有 `toString()`；有就照那一招给的东西印。别忘 `@Override` 那顶小帽子。\n\n**三、编号的缝。** 印给本喵看的编号从 `1` 起（`(i + 1)`），柜子里的编号从 `0` 起（`zhi.get(i)`）—— 两个都得写：一个管样子，一个管取东西。本喵把 `- 1` 那一处拆掉真跑过：勾打在了隔壁那条头上。\n\n**四、纸上第一个数读完要多吃一行。** `sc.nextInt()` 只把那个数叼走，那一行末尾的换行还留在纸上。后面要用 `sc.nextLine()` 一行行叼事项 —— 不先把这截空尾巴吃掉，第一条叼回来的会是**一个空行**。本喵在上一课也踩过同一个坑。\n\n判分那沓纸给的行数跟样例**不一样**，所以「只写死一条」的稿子过不了；老老实实按读到的那个数绕圈喵。"
+}

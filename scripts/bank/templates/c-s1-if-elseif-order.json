@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-if-elseif-order",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-06",
+  "type": "codefix",
+  "concept": ["else if", "一串眼色", "最严的排最上面"],
+  "instances": 2,
+  "params": {
+    "score": { "kind": "int", "min": 90, "max": 95 },
+    "unit": { "kind": "pick", "values": ["猫粮", "小鱼干"] }
+  },
+  "stemTemplate": "本喵给大肥鱼今天的表现打了个分：**{score} 分**（满分 100）。本喵的规矩是：90 分往上算「优秀」，60 分往上才是「及格」。\n\n可这段代码印出来的却是及格那一行 —— 它一个错都不报，只是安安静静给出了不对的结果。你帮本喵改对：{score} 分的时候要印出 `{unit} 优秀喵`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int score = {score};\n\n    if (score >= 60) {\n        printf(\"{unit} 及格喵\\n\");\n    } else if (score >= 90) {\n        printf(\"{unit} 优秀喵\\n\");\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int score = {score};\n\n    if (score >= 90) {\n        printf(\"{unit} 优秀喵\\n\");\n    } else if (score >= 60) {\n        printf(\"{unit} 及格喵\\n\");\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一串眼色是**从上往下一个一个问**的：谁先答真就走谁那条路，然后整串到此结束 —— 后面那些**连问都不会被问出口**喵。\n\n{score} 分摆在这儿，第一个眼色「大于等于 60 吗」已经答了真。翻译官喵高高兴兴走了「及格」那条路，后面那句「90 以上吗」它压根没问。所以屏幕上只有及格那一行，而且**一个字都不报错**，只能靠自己看出来不对。\n\n排眼色有一条规矩：**最严的条件放最上面。** 先问「90 以上吗」：答真就直接走「优秀」；答假才轮到「60 以上吗」兜着 —— 这样两头都接得住。\n\n顺带分清它和两个独立 `if` 的区别：两个独立的眼色会**挨个都问一遍**，可能两条路一起走；`if` 加 `else if` 是一串，前面那个答了真，后面的就不问了喵。"
+}

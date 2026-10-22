@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-17-clear-no-tilde",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-17",
+  "type": "codefix",
+  "concept": ["按灭一格", "整排翻面", "少一个波浪号"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "pick", "values": [0, 1, 2, 3] }
+  },
+  "stemTemplate": "本喵给这张牌点亮了最低 4 格（`00001111`），现在要把第 {n} 格**按灭**，别的格子一个都不许动。\n\n可这段代码按下去之后，屏幕上只剩**那一格孤零零亮着**，别的格子全灭了 —— 它跑得起来，翻译官喵一句原话都没有。\n\n你帮本喵改好：改完跑起来，那 8 格里要正好少掉第 {n} 格那一盏，别的一个不少喵。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    int n = {n};\n    card = card & (1u << n);\n    cout << bitset<8>(card) << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    int n = {n};\n    card = card & ~(1u << n);\n    cout << bitset<8>(card) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "坏的那一处少了**一个 `~`** 喵。\n\n`1u << n` 造出来的那串格子，是「只有第 {n} 格亮着」。拿它去「与」，留下的是**两边都亮**的格子 —— 于是除了第 {n} 格，别的全被灭掉了。得到的正好是「只要那一格」，跟本喵要的**反着来**。\n\n「按灭一格」要的是「**除了这一格，别的全亮**」那串格子，它正好就是 `1u << n` 整排翻个面。翻面那一招是 `~`，所以那一处该写成 `card & ~(1u << n)`。\n\n⚠️ 记法就一句：**拨开用 `|`，按灭用 `& ~`**。少掉那个 `~`，同一个式子里两串格子长得几乎一样，作用却刚好相反：一个把那一格点亮成孤零零一盏，一个把它从一片亮里摘掉。\n\n⚠️ 还有一层：这题**改错了也不喊疼**，翻译官喵一句原话都没有 —— 屏幕上是 8 个 0/1，一眼扫过去全是格子，正是最容易看走眼的那种错喵。"
+}

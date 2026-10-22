@@ -1,0 +1,234 @@
+{
+  "lessonId": "cpp-stage1-16",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s1-rec-base-value-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵写了个自己咬自己尾巴的招式 `sumTo`：喂一个数进去，它把 **1 一路加到那个数**，加出来的总数叼回来。\n\n喂 4 进去，它该叼回的是 **1 加到 4 的总数**。可这段代码叼回来的数**每次都多 1**。\n\n它跑得起来，翻译官喵一句原话都没有 —— 坏的不是递推那一步（`n + sumTo(n - 1)` 写得一点没错），坏的是**刹车那一层叼回来的东西**。\n\n你帮本喵改好：改完跑起来，屏幕上要正好是 1 加到 4 的总数，多一条都不行喵。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint sumTo(int n) {\n    if (n == 0) {\n        return 1;\n    }\n    return n + sumTo(n - 1);\n}\n\nint main() {\n    cout << sumTo(4) << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint sumTo(int n) {\n    if (n == 0) {\n        return 0;\n    }\n    return n + sumTo(n - 1);\n}\n\nint main() {\n    cout << sumTo(4) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "10",
+      "stdin": null,
+      "explanation": "坏的那一行是刹车里那句 `return 1;`。这里最容易误会的一点是：**刹车不是「停一下就完事」，它同时还是整条链子的起点**喵。\n\n把链子摊开看：\n\n```\nsumTo(4) = 4 + sumTo(4 - 1) = ... = 4 + 4-1 + ... + 1 + sumTo(0)\n```\n\n看最后那一小截 —— **`sumTo(0)` 叼回多少，整个结果就跟着抬多少**。1 加到 4 该是多少，`sumTo(0)` 就得是多少：它得**叼回 0**（一条都不加，加了个寂寞）。写成 `return 1;`，等于每一层都白送一条鱼干，最后正好多出 1 条。\n\n自己验一遍的办法很朴素：**拿最小的那种情况推**。`sumTo(1)` 该是 1，而递推式给的是 `1 + sumTo(0)` —— 一减就知道 `sumTo(0)` 只能是 0 喵。\n\n⚠️ 这一题最该记住的是**它一声不吭**。刹车写成 `return 1` 完全合规矩，翻译官喵看不出任何毛病 —— 它只认「写法对不对」，**不认「你心里那串数对不对」**。自己咬自己尾巴的招式里出的错，绝大多数都是这种安安静静算错的。",
+      "templateId": "cpp-s1-rec-base-value",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-15T22:44:27.969Z",
+        "hash": "e9ae6e8015f9c0e5"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-base-value-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵写了个自己咬自己尾巴的招式 `sumTo`：喂一个数进去，它把 **1 一路加到那个数**，加出来的总数叼回来。\n\n喂 5 进去，它该叼回的是 **1 加到 5 的总数**。可这段代码叼回来的数**每次都多 1**。\n\n它跑得起来，翻译官喵一句原话都没有 —— 坏的不是递推那一步（`n + sumTo(n - 1)` 写得一点没错），坏的是**刹车那一层叼回来的东西**。\n\n你帮本喵改好：改完跑起来，屏幕上要正好是 1 加到 5 的总数，多一条都不行喵。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint sumTo(int n) {\n    if (n == 0) {\n        return 1;\n    }\n    return n + sumTo(n - 1);\n}\n\nint main() {\n    cout << sumTo(5) << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint sumTo(int n) {\n    if (n == 0) {\n        return 0;\n    }\n    return n + sumTo(n - 1);\n}\n\nint main() {\n    cout << sumTo(5) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "15",
+      "stdin": null,
+      "explanation": "坏的那一行是刹车里那句 `return 1;`。这里最容易误会的一点是：**刹车不是「停一下就完事」，它同时还是整条链子的起点**喵。\n\n把链子摊开看：\n\n```\nsumTo(5) = 5 + sumTo(5 - 1) = ... = 5 + 5-1 + ... + 1 + sumTo(0)\n```\n\n看最后那一小截 —— **`sumTo(0)` 叼回多少，整个结果就跟着抬多少**。1 加到 5 该是多少，`sumTo(0)` 就得是多少：它得**叼回 0**（一条都不加，加了个寂寞）。写成 `return 1;`，等于每一层都白送一条鱼干，最后正好多出 1 条。\n\n自己验一遍的办法很朴素：**拿最小的那种情况推**。`sumTo(1)` 该是 1，而递推式给的是 `1 + sumTo(0)` —— 一减就知道 `sumTo(0)` 只能是 0 喵。\n\n⚠️ 这一题最该记住的是**它一声不吭**。刹车写成 `return 1` 完全合规矩，翻译官喵看不出任何毛病 —— 它只认「写法对不对」，**不认「你心里那串数对不对」**。自己咬自己尾巴的招式里出的错，绝大多数都是这种安安静静算错的。",
+      "templateId": "cpp-s1-rec-base-value",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-15T22:44:31.262Z",
+        "hash": "b10d3714af61e2c0"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-below-main-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵写了个自己咬自己尾巴的招式 `fact` 算阶乘：喂一个数进去，它把 **1 一路乘到那个数**，把乘出来的积叼回来（喂 4 进去，叼回的就是 1×2×3×4）。\n\n喂 5 进去，屏幕上该出现 **5 的阶乘那一个数**。\n\n可这份稿子**翻译官喵压根不肯翻** —— 它只甩回来一句错，屏幕上什么都不会有。\n\n你帮本喵改好：改完跑起来，屏幕上正好是 5 的阶乘。**招式里面那一行都不用动**，动的是它在稿子里的位置喵。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << fact(5) << endl;\n    return 0;\n}\n\nlong long fact(int n) {\n    if (n == 0) {\n        return 1;\n    }\n    return n * fact(n - 1);\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nlong long fact(int n) {\n    if (n == 0) {\n        return 1;\n    }\n    return n * fact(n - 1);\n}\n\nint main() {\n    cout << fact(5) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "120",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: 'fact' was not declared in this scope`，翻成猫话：**「`fact` 这个名字，本喵在登记簿上没找着。」**\n\n它念稿子是**从上往下**念的喵：念到 `main` 里那句 `fact(5)` 的时候，下面那一整招**还没登场** —— 在它眼里这个名字到此刻为止根本没出现过。\n\n⚠️ 注意它卡的**不是**「自己喊自己」那一步：招式在身子里面喊自己，名字在招式脑袋上就登记过了，一点都不算没见过。所以这一题不是「不能自己喊自己」，是**顺序**问题。\n\n两条路都对：\n\n1. **把整招搬到 `main` 上面**（本喵给的改法走的是这条）—— 最简单，一眼就顺；\n2. **在 `main` 上面挂块招牌**：先写一行 `long long fact(int n);` 报个信，真招式还留在下面。招牌只写脑袋、末尾别忘了分号，**别把整招收进来**。\n\n本课记住一句话就够了：**招式要么写在前面，要么先挂招牌。**",
+      "templateId": "cpp-s1-rec-below-main",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-20T10:15:50.931Z",
+        "hash": "51ab1b3183b01c14"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-below-main-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵写了个自己咬自己尾巴的招式 `fact` 算阶乘：喂一个数进去，它把 **1 一路乘到那个数**，把乘出来的积叼回来（喂 4 进去，叼回的就是 1×2×3×4）。\n\n喂 6 进去，屏幕上该出现 **6 的阶乘那一个数**。\n\n可这份稿子**翻译官喵压根不肯翻** —— 它只甩回来一句错，屏幕上什么都不会有。\n\n你帮本喵改好：改完跑起来，屏幕上正好是 6 的阶乘。**招式里面那一行都不用动**，动的是它在稿子里的位置喵。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << fact(6) << endl;\n    return 0;\n}\n\nlong long fact(int n) {\n    if (n == 0) {\n        return 1;\n    }\n    return n * fact(n - 1);\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nlong long fact(int n) {\n    if (n == 0) {\n        return 1;\n    }\n    return n * fact(n - 1);\n}\n\nint main() {\n    cout << fact(6) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "720",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: 'fact' was not declared in this scope`，翻成猫话：**「`fact` 这个名字，本喵在登记簿上没找着。」**\n\n它念稿子是**从上往下**念的喵：念到 `main` 里那句 `fact(6)` 的时候，下面那一整招**还没登场** —— 在它眼里这个名字到此刻为止根本没出现过。\n\n⚠️ 注意它卡的**不是**「自己喊自己」那一步：招式在身子里面喊自己，名字在招式脑袋上就登记过了，一点都不算没见过。所以这一题不是「不能自己喊自己」，是**顺序**问题。\n\n两条路都对：\n\n1. **把整招搬到 `main` 上面**（本喵给的改法走的是这条）—— 最简单，一眼就顺；\n2. **在 `main` 上面挂块招牌**：先写一行 `long long fact(int n);` 报个信，真招式还留在下面。招牌只写脑袋、末尾别忘了分号，**别把整招收进来**。\n\n本课记住一句话就够了：**招式要么写在前面，要么先挂招牌。**",
+      "templateId": "cpp-s1-rec-below-main",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-20T10:15:52.931Z",
+        "hash": "fbd51354f85cf394"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-countdown-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要自己写一招，名字叫 `countDown`：**喂一个数进去，它从那个数一路往下报到 1**，最后再喊一句 `到站喵` 收工。\n\n投喂口会喂进来一个数（报到几）。请你写个程序：**读进来那个数、把这一招喊起来**，让它一路印下来。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n往下 3\n往下 2\n往下 1\n到站喵\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nvoid countDown(int n) {\n    if (n == 0) {\n        cout << \"到站喵\" << endl;\n        return;\n    }\n    cout << \"往下 \" << n << endl;\n    countDown(n - 1);\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    countDown(n);\n    return 0;\n}\n",
+      "expectedOutput": "往下 5\n往下 4\n往下 3\n往下 2\n往下 1\n到站喵",
+      "stdin": "5\n",
+      "explanation": "自己写一招自己咬自己尾巴的招式，照这三块念就行喵：\n\n1. **脑袋**：`void countDown(int n)` —— 它只负责印，不叼回东西，所以是 `void`。括号里那只碗是**收料**的地方。\n2. **刹车**（第一件事就写它）：`if (n == 0)` 那一格 —— 报完最后一句话、`return;` 收工，**不再往下喊自己**。\n3. **身子**：印一句、然后把**减一位的自己**喊起来（`countDown(n - 1);`）。\n\n⚠️ 这一题最容易栽的是**印的那句放在哪儿**。本喵要的是「从大到小」，所以印的那句必须写在**喊自己之前**（去程）—— 要是写在后面，就会变成从 1 报到最大，正好反过来。\n\n再记一条：**`return;` 在 `void` 招式里是「本招到此为止」**，不是「叼回点什么」。刹车那一格里写 `return;` 就够了，别画蛇添足。\n\n最后自己验一遍的办法：**拿最小的数推**。喂 1 进去，应该是「往下 1」再一句收工的那句话；喂 0 进去，应该只剩收工那一句 —— 推得动，说明刹车摆对了喵。",
+      "templateId": "cpp-s1-rec-countdown",
+      "params": {
+        "stop": "到站喵"
+      },
+      "verified": {
+        "at": "2026-09-20T10:15:55.886Z",
+        "hash": "1f3546be9e18758f"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-countdown-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要自己写一招，名字叫 `countDown`：**喂一个数进去，它从那个数一路往下报到 1**，最后再喊一句 `到底啦喵` 收工。\n\n投喂口会喂进来一个数（报到几）。请你写个程序：**读进来那个数、把这一招喊起来**，让它一路印下来。\n\n比如投喂给程序的是\n\n5\n\n程序就要叼回\n\n往下 5\n往下 4\n往下 3\n往下 2\n往下 1\n到底啦喵\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nvoid countDown(int n) {\n    if (n == 0) {\n        cout << \"到底啦喵\" << endl;\n        return;\n    }\n    cout << \"往下 \" << n << endl;\n    countDown(n - 1);\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    countDown(n);\n    return 0;\n}\n",
+      "expectedOutput": "往下 3\n往下 2\n往下 1\n到底啦喵",
+      "stdin": "3\n",
+      "explanation": "自己写一招自己咬自己尾巴的招式，照这三块念就行喵：\n\n1. **脑袋**：`void countDown(int n)` —— 它只负责印，不叼回东西，所以是 `void`。括号里那只碗是**收料**的地方。\n2. **刹车**（第一件事就写它）：`if (n == 0)` 那一格 —— 报完最后一句话、`return;` 收工，**不再往下喊自己**。\n3. **身子**：印一句、然后把**减一位的自己**喊起来（`countDown(n - 1);`）。\n\n⚠️ 这一题最容易栽的是**印的那句放在哪儿**。本喵要的是「从大到小」，所以印的那句必须写在**喊自己之前**（去程）—— 要是写在后面，就会变成从 1 报到最大，正好反过来。\n\n再记一条：**`return;` 在 `void` 招式里是「本招到此为止」**，不是「叼回点什么」。刹车那一格里写 `return;` 就够了，别画蛇添足。\n\n最后自己验一遍的办法：**拿最小的数推**。喂 1 进去，应该是「往下 1」再一句收工的那句话；喂 0 进去，应该只剩收工那一句 —— 推得动，说明刹车摆对了喵。",
+      "templateId": "cpp-s1-rec-countdown",
+      "params": {
+        "stop": "到底啦喵"
+      },
+      "verified": {
+        "at": "2026-09-20T10:15:58.230Z",
+        "hash": "17015de658293e49"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-digits-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要自己写一招，名字叫 `digits`：**喂一个数进去，它叼回这个数是几位数**（喂 7 进去叼回 1，喂 42 进去叼回 2，喂 123 进去叼回 3）。\n\n请你写个程序：**读进来一个数、把这一招喊起来、把它叼回的位数印出来**，印成一行 `X 一共有 Y 位数喵`（X 是喂进去的那个数，Y 是叼回来的位数）。\n\n比如投喂给程序的是\n\n3203\n\n程序就要叼回\n\n3203 一共有 4 位数喵\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）\n\n💡 递推那一步给你搭个桥：**`n` 的位数，等于 `n 除以 10` 的位数再加 1** —— 因为除以 10 就等于把最后一位数抹掉。所以喊自己的时候喂的是 `n / 10`，**不是 `n - 1`**。刹车是「只剩一位数了」。",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint digits(int n) {\n    if (n < 10) {\n        return 1;\n    }\n    return 1 + digits(n / 10);\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    cout << n << \" 一共有 \" << digits(n) << \" 位数喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "5772 一共有 4 位数喵",
+      "stdin": "5772\n",
+      "explanation": "这一题和上一题最大的不同是：**递推那一步喂进去的不再是 `n - 1`**。\n\n前面几题都是「一位一位往下数」，所以喊自己的时候喂 `n - 1`。这一题是「一位一位往下**抹**」—— 所以喂的是 `n / 10`：\n\n```\ndigits(1234) = 1 + digits(123)\n             = 1 + 1 + digits(12)\n             = 1 + 1 + 1 + digits(1)\n             = 1 + 1 + 1 + 1   ← 刹车在 1 这儿停住\n```\n\n**刹车是「只剩一位数了」**：`n < 10` 的时候它当然只有一位，直接叼回 1，不再往下喊。\n\n⚠️ 两个坑：\n\n- **刹车写成 `n == 0`** —— 那 `digits(0)` 会去算 `digits(0/10)`，也就是 `digits(0)`，**原地转圈转到爆**，永远不会停；\n- **递推写成 `1 + digits(n - 1)`** —— 那数的就不是位数了，是「这个数本身」，喂 1234 进去它会喊 1234 次。\n\n这一题想让你记住的是：**自己咬自己尾巴的招式里，「往下一步」不一定是减 1** 喵。`n - 1` 只是最顺手的那个，换成 `n / 10`、`n - 2` 都行 —— 只要**每一步都真的离终点更近**，而且刹车能拦住。",
+      "templateId": "cpp-s1-rec-digits",
+      "params": {
+        "tail": "喵"
+      },
+      "verified": {
+        "at": "2026-09-20T10:16:01.031Z",
+        "hash": "2c496f7af8285f87"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-digits-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要自己写一招，名字叫 `digits`：**喂一个数进去，它叼回这个数是几位数**（喂 7 进去叼回 1，喂 42 进去叼回 2，喂 123 进去叼回 3）。\n\n请你写个程序：**读进来一个数、把这一招喊起来、把它叼回的位数印出来**，印成一行 `X 一共有 Y 位数啦喵`（X 是喂进去的那个数，Y 是叼回来的位数）。\n\n比如投喂给程序的是\n\n1420\n\n程序就要叼回\n\n1420 一共有 4 位数啦喵\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）\n\n💡 递推那一步给你搭个桥：**`n` 的位数，等于 `n 除以 10` 的位数再加 1** —— 因为除以 10 就等于把最后一位数抹掉。所以喊自己的时候喂的是 `n / 10`，**不是 `n - 1`**。刹车是「只剩一位数了」。",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint digits(int n) {\n    if (n < 10) {\n        return 1;\n    }\n    return 1 + digits(n / 10);\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    cout << n << \" 一共有 \" << digits(n) << \" 位数啦喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "9865 一共有 4 位数啦喵",
+      "stdin": "9865\n",
+      "explanation": "这一题和上一题最大的不同是：**递推那一步喂进去的不再是 `n - 1`**。\n\n前面几题都是「一位一位往下数」，所以喊自己的时候喂 `n - 1`。这一题是「一位一位往下**抹**」—— 所以喂的是 `n / 10`：\n\n```\ndigits(1234) = 1 + digits(123)\n             = 1 + 1 + digits(12)\n             = 1 + 1 + 1 + digits(1)\n             = 1 + 1 + 1 + 1   ← 刹车在 1 这儿停住\n```\n\n**刹车是「只剩一位数了」**：`n < 10` 的时候它当然只有一位，直接叼回 1，不再往下喊。\n\n⚠️ 两个坑：\n\n- **刹车写成 `n == 0`** —— 那 `digits(0)` 会去算 `digits(0/10)`，也就是 `digits(0)`，**原地转圈转到爆**，永远不会停；\n- **递推写成 `1 + digits(n - 1)`** —— 那数的就不是位数了，是「这个数本身」，喂 1234 进去它会喊 1234 次。\n\n这一题想让你记住的是：**自己咬自己尾巴的招式里，「往下一步」不一定是减 1** 喵。`n - 1` 只是最顺手的那个，换成 `n / 10`、`n - 2` 都行 —— 只要**每一步都真的离终点更近**，而且刹车能拦住。",
+      "templateId": "cpp-s1-rec-digits",
+      "params": {
+        "tail": "啦喵"
+      },
+      "verified": {
+        "at": "2026-09-20T10:16:03.483Z",
+        "hash": "bbe4f21f48ed5016"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-fact-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要自己写一招，名字叫 `fact`：**喂一个数进去，它把 1 一路乘到那个数，把乘出来的积叼回来**（喂 4 进去叼回 1×2×3×4）。这个积在猫界有个正式名字叫**阶乘**。\n\n请你写个程序：**读进来一个数、把这一招喊起来、把它叼回的积印出来**。屏幕上要有两行：\n\n1. 第一行喊一句 `本喵算好了喵`；\n2. 第二行是 `X 的阶乘是 Y`（X 是喂进去的数，Y 是叼回来的积）。\n\n比如投喂给程序的是\n\n5\n\n程序就要叼回\n\n本喵算好了喵\n5 的阶乘是 120\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nlong long fact(int n) {\n    if (n == 0) {\n        return 1;\n    }\n    return n * fact(n - 1);\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    cout << \"本喵算好了喵\" << endl;\n    cout << n << \" 的阶乘是 \" << fact(n) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "本喵算好了喵\n6 的阶乘是 720",
+      "stdin": "6\n",
+      "explanation": "这一题的递推那一步是**乘法**：`n * fact(n - 1)`。摊开看：\n\n```\nfact(5) = 5 * fact(4) = 5 * 4 * fact(3) = 5 * 4 * 3 * 2 * 1 * fact(0)\n```\n\n看最后那一小截 —— 又是那句老话：**刹车那一层叼回多少，整个积就跟着乘多少**。这里它必须叼回 **1**（乘 1 等于什么都没乘）。要是想当然地跟着求和那题写成 `return 0;`，整个积会**一下子变成 0** —— 因为任何数乘 0 都是 0 喵。\n\n**「刹车那一层叼回什么」是自己咬自己尾巴的招式里最需要动脑的一格**，而它只有一条判据：**把最小的情况代进去，让整个式子成立**。\n\n- 求和：最小是「一条都不加」，叼回 **0**；\n- 求积：最小是「什么都不乘」，叼回 **1**。\n\n⚠️ 顺带看一眼脑袋上那个 `long long`：它是「能装下的数比 `int` 大得多」的那种碗。阶乘长起来快得吓人，喂到 13 就会把 `int` 撑破、叼回一个负数 —— **而翻译官喵还是一句话都不会说**。\n\n写完记得自己验一遍：喂 1 该叼回 1，喂 3 该叼回 6，喂 5 该叼回 120。三个数对得上，这一招就是对的喵。",
+      "templateId": "cpp-s1-rec-fact",
+      "params": {
+        "hello": "本喵算好了喵"
+      },
+      "verified": {
+        "at": "2026-09-20T10:16:06.088Z",
+        "hash": "3a583cf27e750fb6"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-fact-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要自己写一招，名字叫 `fact`：**喂一个数进去，它把 1 一路乘到那个数，把乘出来的积叼回来**（喂 4 进去叼回 1×2×3×4）。这个积在猫界有个正式名字叫**阶乘**。\n\n请你写个程序：**读进来一个数、把这一招喊起来、把它叼回的积印出来**。屏幕上要有两行：\n\n1. 第一行喊一句 `本喵数完啦喵`；\n2. 第二行是 `X 的阶乘是 Y`（X 是喂进去的数，Y 是叼回来的积）。\n\n比如投喂给程序的是\n\n5\n\n程序就要叼回\n\n本喵数完啦喵\n5 的阶乘是 120\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nlong long fact(int n) {\n    if (n == 0) {\n        return 1;\n    }\n    return n * fact(n - 1);\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    cout << \"本喵数完啦喵\" << endl;\n    cout << n << \" 的阶乘是 \" << fact(n) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "本喵数完啦喵\n4 的阶乘是 24",
+      "stdin": "4\n",
+      "explanation": "这一题的递推那一步是**乘法**：`n * fact(n - 1)`。摊开看：\n\n```\nfact(5) = 5 * fact(4) = 5 * 4 * fact(3) = 5 * 4 * 3 * 2 * 1 * fact(0)\n```\n\n看最后那一小截 —— 又是那句老话：**刹车那一层叼回多少，整个积就跟着乘多少**。这里它必须叼回 **1**（乘 1 等于什么都没乘）。要是想当然地跟着求和那题写成 `return 0;`，整个积会**一下子变成 0** —— 因为任何数乘 0 都是 0 喵。\n\n**「刹车那一层叼回什么」是自己咬自己尾巴的招式里最需要动脑的一格**，而它只有一条判据：**把最小的情况代进去，让整个式子成立**。\n\n- 求和：最小是「一条都不加」，叼回 **0**；\n- 求积：最小是「什么都不乘」，叼回 **1**。\n\n⚠️ 顺带看一眼脑袋上那个 `long long`：它是「能装下的数比 `int` 大得多」的那种碗。阶乘长起来快得吓人，喂到 13 就会把 `int` 撑破、叼回一个负数 —— **而翻译官喵还是一句话都不会说**。\n\n写完记得自己验一遍：喂 1 该叼回 1，喂 3 该叼回 6，喂 5 该叼回 120。三个数对得上，这一招就是对的喵。",
+      "templateId": "cpp-s1-rec-fact",
+      "params": {
+        "hello": "本喵数完啦喵"
+      },
+      "verified": {
+        "at": "2026-09-20T10:16:08.481Z",
+        "hash": "7dbcd6ad950f4525"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-print-order-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这一招叫 `show`：喂一个数进去，屏幕上要出现 **3 加 1 行**，而且顺序是定死的：\n\n1. **第一行**先喊一声 `到站`；\n2. 接着**从小到大**一行一个数：`1`、`2`、……、一直到 `3`；\n3. 最后一行就是 `3`。\n\n可它现在印出来**整个是反的** —— 数从大变到小，`到站` 还跑到了最后一行。\n\n你帮本喵改好：改完跑起来，印出来正好是上面那个顺序。**只动印那几句的位置**，`main` 里那一行不用碰喵。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nvoid show(int n) {\n    if (n == 0) {\n        cout << \"到站\" << endl;\n        return;\n    }\n    cout << n << endl;\n    show(n - 1);\n}\n\nint main() {\n    show(3);\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nvoid show(int n) {\n    if (n == 0) {\n        cout << \"到站\" << endl;\n        return;\n    }\n    show(n - 1);\n    cout << n << endl;\n}\n\nint main() {\n    show(3);\n    return 0;\n}\n",
+      "expectedOutput": "到站\n1\n2\n3",
+      "stdin": null,
+      "explanation": "改法只有一处：把 `cout << n << endl;` 这一句**挪到 `show(n - 1);` 后面**。\n\n这一挪，挪的其实是**它属于去程还是回程**喵：\n\n- 写在喊自己**之前** → 这一层还没往下走就先印了 → 印出来是**从大到小**（去程）；\n- 写在喊自己**之后** → 得等里面那一层全干完、才轮到这一层开口 → 印出来是**从小到大**（回程）。\n\n最里面那一层（`n == 0`）说了句 `到站` 就收工，**它是唯一一个不再往下喊的**，所以它一定是第一个开口的 —— 要它排在最前面，它印的那句就别挪（`n == 0` 那里本来就在喊自己之前）。\n\n⚠️ 这种顺序题**不用整条链子算一遍**，看一眼就够了：**`cout` 那句在「喊自己」上面还是下面**。上面 = 去程（大 → 小），下面 = 回程（小 → 大）。这一眼，比死算 `3` 遍快得多，也不会算错。\n\n顺带记住：**「先喊自己」和「先干活」的顺序，就是自己咬自己尾巴的招式里那个「顺序」的全部含义。** 排错了不是乱序，是**正好反过来**。",
+      "templateId": "cpp-s1-rec-print-order",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-20T10:15:46.007Z",
+        "hash": "0af44c4ab85bc49d"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-rec-print-order-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这一招叫 `show`：喂一个数进去，屏幕上要出现 **4 加 1 行**，而且顺序是定死的：\n\n1. **第一行**先喊一声 `到站`；\n2. 接着**从小到大**一行一个数：`1`、`2`、……、一直到 `4`；\n3. 最后一行就是 `4`。\n\n可它现在印出来**整个是反的** —— 数从大变到小，`到站` 还跑到了最后一行。\n\n你帮本喵改好：改完跑起来，印出来正好是上面那个顺序。**只动印那几句的位置**，`main` 里那一行不用碰喵。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nvoid show(int n) {\n    if (n == 0) {\n        cout << \"到站\" << endl;\n        return;\n    }\n    cout << n << endl;\n    show(n - 1);\n}\n\nint main() {\n    show(4);\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nvoid show(int n) {\n    if (n == 0) {\n        cout << \"到站\" << endl;\n        return;\n    }\n    show(n - 1);\n    cout << n << endl;\n}\n\nint main() {\n    show(4);\n    return 0;\n}\n",
+      "expectedOutput": "到站\n1\n2\n3\n4",
+      "stdin": null,
+      "explanation": "改法只有一处：把 `cout << n << endl;` 这一句**挪到 `show(n - 1);` 后面**。\n\n这一挪，挪的其实是**它属于去程还是回程**喵：\n\n- 写在喊自己**之前** → 这一层还没往下走就先印了 → 印出来是**从大到小**（去程）；\n- 写在喊自己**之后** → 得等里面那一层全干完、才轮到这一层开口 → 印出来是**从小到大**（回程）。\n\n最里面那一层（`n == 0`）说了句 `到站` 就收工，**它是唯一一个不再往下喊的**，所以它一定是第一个开口的 —— 要它排在最前面，它印的那句就别挪（`n == 0` 那里本来就在喊自己之前）。\n\n⚠️ 这种顺序题**不用整条链子算一遍**，看一眼就够了：**`cout` 那句在「喊自己」上面还是下面**。上面 = 去程（大 → 小），下面 = 回程（小 → 大）。这一眼，比死算 `4` 遍快得多，也不会算错。\n\n顺带记住：**「先喊自己」和「先干活」的顺序，就是自己咬自己尾巴的招式里那个「顺序」的全部含义。** 排错了不是乱序，是**正好反过来**。",
+      "templateId": "cpp-s1-rec-print-order",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-20T10:15:48.370Z",
+        "hash": "563ba2854ae43ff3"
+      }
+    }
+  ]
+}

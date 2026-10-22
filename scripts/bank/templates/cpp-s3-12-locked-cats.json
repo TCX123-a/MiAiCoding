@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-12-locked-cats",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-12",
+  "type": "codewrite",
+  "concept": ["三只帮手共用一个碗", "动手前先锁上", "都接回来之后再印汇总"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["次", "下"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 500, "max": 900 },
+  "stemTemplate": "投喂口会给**一个数**：那是**每一位帮手**要往碗里加的次数喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 把**大家共用的那个碗**和**一把大家共用的锁**摆在外面（都在最外头，只摆一份）；\n3. 喊 **3 位**帮手来干同一个活儿，每位把碗加那么多次 —— **动手之前先锁上**；\n4. 三只**都接回来之后**，才印一行 `一共 X {unit}`，X 是三只加起来的总数。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    // 在这儿写：往碗里加 times 次，动手之前先锁上\n\n}\n\nint main() {\n    int times = 0;\n    cin >> times;\n\n    // 在这儿写：喊 3 位帮手来干 addMany，都接回来之后再印那一行\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    int times = 0;\n    cin >> times;\n\n    thread t1(addMany, times);\n    thread t2(addMany, times);\n    thread t3(addMany, times);\n    t1.join();\n    t2.join();\n    t3.join();\n\n    cout << \"一共 \" << total << \" {unit}\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题是三只猫抢**同一个碗**的场面喵，四件事一件都不能少：\n\n- **碗和锁都摆在外面**：`int total = 0;` 和 `mutex mtx;` 写在所有活儿的外头，三只帮手认的才是同一个碗、同一把锁。\n- **动手前先锁上**：`lock_guard<mutex> guard(mtx);` 站在加数前面。它一出生就把锁锁上，出了花括号自动开锁，不用你自己惦记着开。\n- **三只都要接回来**：喊了三位就得写三句 `join`，一位都不能漏 —— 漏掉程序当场摔。\n- **都回来了再印**：印那一行写在三句 `join` 的**后面**，所以印出来是稳稳当当的一个数。\n\n⚠️ 关于那把锁，本喵得说句实话：**不加锁也不一定每次都出错**。三只手同时伸进碗里只是**可能**丢一两下，跟三只猫的步子凑不凑巧有关，跑十遍说不定十遍都对。所以加锁不是为了「碰运气碰对」，而是为了**让这个数由你说了算**：加了锁，`一共 3 × times` 就是板上钉钉。判分这一题时用的也是那个稳的数。"
+}

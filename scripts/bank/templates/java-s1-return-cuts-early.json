@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-return-cuts-early",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-09",
+  "type": "codefix",
+  "concept": ["return", "提前收工", "顺序", "不报错的错"],
+  "instances": 2,
+  "params": {
+    "pos": { "kind": "int", "min": 1, "max": 9 },
+    "neg": { "kind": "int", "min": -9, "max": -1 }
+  },
+  "stemTemplate": "本喵的规矩是这样的：问到的是一个**正数**，就直接叼回`还有鱼干喵`；只有问到**不是正数**的时候，才先印一句提示、再叼回`碗空了喵`。\n\n可屏幕上那句提示**提前冒了出来**：问到正数的那一回，它也不管不顾地印了一遍 —— 明明那一回不该有它。它一个错都不报，安安静静就跑完了。\n\n你帮本喵看看这一招哪里不对，把它改好。改好之后，屏幕上应该先印 `{pos} 的答案：还有鱼干喵`，再印那句提示，最后印 `{neg} 的答案：碗空了喵`。",
+  "brokenCodeTemplate": "public class FishCheck {\n    public static String check(int n) {\n        System.out.println(\"这句只在没战利品可叼的时候才轮到\");\n        if (n > 0) {\n            return \"还有鱼干喵\";\n        }\n        return \"碗空了喵\";\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"{pos} 的答案：\" + check({pos}));\n        System.out.println(\"{neg} 的答案：\" + check({neg}));\n    }\n}\n",
+  "referenceFixTemplate": "public class FishCheck {\n    public static String check(int n) {\n        if (n > 0) {\n            return \"还有鱼干喵\";\n        }\n        System.out.println(\"这句只在没战利品可叼的时候才轮到\");\n        return \"碗空了喵\";\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"{pos} 的答案：\" + check({pos}));\n        System.out.println(\"{neg} 的答案：\" + check({neg}));\n    }\n}\n",
+  "explanationTemplate": "`return` 一登场，这一招**当场收工**喵 —— 它后面还剩多少行，一行都不管了。\n\n所以这一招里的三件事，实际是按**写的先后**一件件来的：\n\n1. 先印那句提示（不管问到的是不是正数）；\n2. 再判断：正数就直接交回`还有鱼干喵`；\n3. 剩下的情况才走到最后，交回`碗空了喵`。\n\n想让那句提示**只在不该有战利品的时候**出现，就得把它挪到 `return` **后面**去 —— 也就是把 `if` 那一段（连它的 `return`）摆在前面：正数的那一回在 `if` 里就收工了，根本走不到印字那一行；只有正数之外的那一回，才会顺顺当当走下来，先印提示、再交回`碗空了喵`。\n\n记住这条：**`return` 之后的行不是「下一句」，是「永远轮不到」**。想让它有机会轮到，就得想办法别在前面收工。"
+}

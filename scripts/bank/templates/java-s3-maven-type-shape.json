@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-maven-type-shape",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-25",
+  "type": "codefix",
+  "concept": ["名字对上还得形状对上", "收一排碗就别递一句话", "翻稿子当场就会红"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 3 },
+    "b": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stemTemplate": "本喵这一页有个招式 `装车`：收**一排贴编号的碗**（`int[]`），把里面的数挨个加起来交回来。\n\n本喵这次要装的两件货是 `{a}` 条和 `{b}` 条；可递货的时候手一快，把「货」写成了一句话。翻译官喵翻稿子当场就红了：`incompatible types`。\n\n要求：把递货那一步改成它收得下的形状，让程序印出一行 `装车完成：共 N 条`。\n\n三条都要照办：\n1. 两件货的数（`{a}`、`{b}`）一个都不许改；\n2. 印出来的那行话不许改；\n3. 招式那头的收法（`int[] 货`）不许改——要迁就的是递货的这头。\n\n（这一题不用投喂任何东西喵。）",
+  "brokenCodeTemplate": "public class Main {\n    static int 装车(int[] 货) {\n        int 合计 = 0;\n        for (int x : 货) {\n            合计 = 合计 + x;\n        }\n        return 合计;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"装车完成：共 \" + 装车(\"一车 {a} 条，一筐 {b} 条\") + \" 条\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    static int 装车(int[] 货) {\n        int 合计 = 0;\n        for (int x : 货) {\n            合计 = 合计 + x;\n        }\n        return 合计;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"装车完成：共 \" + 装车(new int[]{{a}, {b}}) + \" 条\");\n    }\n}\n",
+  "explanationTemplate": "**一、红字怎么念**\n\n原话是 `incompatible types: String cannot be converted to int[]`——「一句话」和「一排碗」两种形状对不上，翻译不过去。\n\n**二、名字对上还不够，形状也要对上**\n\n翻译官喵收到一句喊话时，会同时翻两本账：\n\n1. **名字**：被喊的那一招在不在本页？（对不上就是 `cannot find symbol`）\n2. **形状**：递过去的东西，跟人家声明要收的那种对得上吗？（对不上就是 `incompatible types`）\n\n本喵喊的是 `装车`，名字没毛病；坏在递了一串字进去，而人家张开手等着的是一排碗。这类红**翻稿子时当场就出**——不用等运行。\n\n**三、跟清单有什么关系**\n\n管家 Maven 的清单上写「我要哪家的哪件货、哪一版」，写全三样坐标，图的就是取回来的东西**既对得上名字、也对得上形状**。现实里常见的一种翻车，就是清单上写的版本跟代码里照着写的对不上——同一件货，旧版新版收的形状可能不一样，跟这题的红是同一类：名字、形状，缺一不可。\n\n**四、一句话记住**\n\n`incompatible types` 念作「形状不对」：回去看人家声明里张开的手，和本喵递过去的东西。"
+}

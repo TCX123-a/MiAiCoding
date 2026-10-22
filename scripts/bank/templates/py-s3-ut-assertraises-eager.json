@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-ut-assertraises-eager",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-11",
+  "type": "codefix",
+  "concept": ["assertRaises", "该拒绝就拒绝", "投喂要分开排队"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [3, 4, 5] },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫罐头", "冻干块"] }
+  },
+  "stemTemplate": "「平分」这招有个规矩：**没有猫的时候它该拒绝干活**（本喵在招式里写好了，猫数是 0 就抛 `ValueError`）喵。\n\n本喵想给这条规矩写一张体检单：拿 {a} 份{unit}、0 只猫去喂它，看它到底拒不拒绝。\n\n结果这张单子**红了**：体检了 **1 项**、红了 **1 项**。\n\n你帮本喵看看问题出在哪儿，改好它。改好之后：体检了 **1 项**、红了 **0 项**、全绿。\n\n⚠️ 招式里那两行（`if 猫数 <= 0` 和那句 `raise`）一个字都不许动喵 —— 要改的是体检单这一边。",
+  "brokenCodeTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分({a}, 0))\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+  "referenceFixTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分, {a}, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+  "explanationTemplate": "`assertRaises` 要的是「**等会儿**它炸一下」，所以它得自己挑时候去喂 —— 招式名和你投喂的东西是**分开排队**的：先写招式名，再一样一样把你准备喂进去的东西排在后面。\n\n现在这行写成 `平分({a}, 0)` 加了括号，念作「**当场把它喊起来**」。于是还没等到判据开口，{a} 份{unit}分给 0 只猫这件事就先炸了 —— 这一炸发生在判据之外，所以在体检本子上记成「这一项**出错了**」，而不是「这一项红在数值不对」。\n\n一条判据红了说「结果不对」，出错说「它根本没能跑完」，两句话不一样，但你点运行只会看到一个「有红的喵」。\n\n改法是把那对括号拿掉：\n\n```text\nself.assertRaises(ValueError, 平分, {a}, 0)\n```\n\n读作「**它**要是拿 {a} 份和 0 只猫去干活，就该抛 `ValueError`」—— 喂进去的动作交给判据自己做，这才是这条判据的本意。"
+}

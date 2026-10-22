@@ -1,0 +1,78 @@
+{
+  "lessonId": "java-stage2-04",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵立了一份约定 `interface Speaker { void speak(); }`。其中那一行 `void speak();` 的意思是____。",
+      "options": [
+        "凡是签了这份约定的，都必须会这一手；至于怎么出声，由它自己写",
+        "这一手本喵已经写好了，签字的猫白拿",
+        "这一手谁也不许改写",
+        "这一手只有本喵喊得动，别的猫喊不动"
+      ],
+      "answer": 0,
+      "explanation": "约定只管一件件事：**必须会哪几手** —— 所以它后面**没有花括号**，直接拿分号收尾喵。至于「写好了白拿」，那是约定里加上 `default` 的那种招式；「谁也不许改写」是 `final` 的活。今天先认最朴素的那一种：**只有名头，没有身子**。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "铁喵是台机器，跟 `Animal` 那家人毫无关系，可本喵想让它跟猫站进**同一排写 `Speaker` 的牌子**。该怎么做？",
+      "options": [
+        "让 `Robot` **认下这份约定**：`class Robot implements Speaker`，并把那一手写出来",
+        "让 `Robot` **认亲**：`class Robot extends Speaker`",
+        "在 `main` 里写一长串「如果是猫就……如果是机器就……」，挨个问一遍",
+        "把约定改成一张能直接生猫的图纸，再照它生一只机器人"
+      ],
+      "answer": 0,
+      "explanation": "认亲要认的是**图纸**，约定不是图纸 —— `class Robot extends Speaker` 撞的是 `no interface expected here` 喵。那一长串「如果是……」是上一课学过的老办法：写得出来、也跑得通，可院子里每添一位新伙伴就要多补一段问话，正是这一课想甩掉的东西。至于把约定改成能直接生猫的图纸，那等于把「必须会出声」这条规矩撤了，签字的猫也不用补全了。**签字认约定，不问出身**，这才是今天的本事。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "关于「认下一份约定」这件事，下面哪一句才对？",
+      "options": [
+        "一份字可以签好几份约定（`implements Speaker, Walker`），可亲爹只能有一个",
+        "一只猫一辈子只能认一份约定",
+        "实现接口之后它就变成接口的子类了，接口里的函数全都直接拥有",
+        "认下约定，就得把约定上**每一手**都重写一遍，`default` 那种写好了的也不例外"
+      ],
+      "answer": 0,
+      "explanation": "亲爹只有一个（`extends` 后面只跟得下一张图纸），可**约定想签几份签几份**，逗号隔开一路写下去就行喵。认约定也**不是认亲**：签字的猫跟这份约定不是一家人，拿不到什么现成家当，每一手都得自己写 —— 唯一的例外正是 `default` 那种**约定里已经写好怎么干**的招式，那一手是白拿的，不用重写。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "____ Speaker {\n    void speak();\n}\n\nclass Robot ____ Speaker {\n    ____ void speak() {\n        System.out.println(\"嘀嘀，我是机器人\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Speaker s = new Robot();\n        s.speak();\n    }\n}",
+      "stem": "这段代码里有三处被本喵挖空了（用 `____` 标出），补齐之后它会印出「嘀嘀，我是机器人」喵。",
+      "blanks": [
+        { "answer": "interface", "accept": [] },
+        { "answer": "implements", "accept": [] },
+        { "answer": "public", "accept": [] }
+      ],
+      "explanation": "第一处：立一份约定，名字前面要写 `interface`。第二处：认下约定用 `implements` —— 写成 `extends` 就是认亲了，撞的是 `no interface expected here`。第三处：约定上的每一手**天生是「谁都能喊」的**，补的时候必须写上 `public`；漏了会撞 `attempting to assign weaker access privileges; was public`，那句话说的是「你补的这版比约定上写的小了」喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "interface Greeter {\n    void greet();\n\n    default void greetThree() {\n        greet();\n        greet();\n        greet();\n    }\n}\n\nclass Robot implements Greeter {\n    public void greet() {\n        System.out.println(\"嘀嘀\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Greeter g = new Robot();\n        g.greetThree();\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "嘀嘀\n嘀嘀\n嘀嘀",
+      "accept": ["嘀嘀\n嘀嘀\n嘀嘀\n"],
+      "explanation": "机器人**只写了 `greet` 这一手**（`public void greet()` 印一行 `嘀嘀`），`greetThree` 它一个字都没写 —— 那是约定里带着 `default` 的那一手，**已经写好了怎么干**（把 `greet` 喊三遍），签字的猫白拿喵。所以调用 `g.greetThree()` 三遍 `greet`，就印出三个 `嘀嘀`。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "interface Speaker {\n    void speak();\n}\n\nclass Cat implements Speaker {\n    public void speak() {\n        System.out.println(\"小橘：喵～\");\n    }\n}\n\nclass Robot implements Speaker {\n    public void speak() {\n        System.out.println(\"铁喵：嘀嘀\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Speaker[] crowd = { new Cat(), new Robot() };\n        for (Speaker s : crowd) {\n            s.speak();\n        }\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘：喵～\n铁喵：嘀嘀",
+      "accept": ["小橘：喵～\n铁喵：嘀嘀\n"],
+      "explanation": "那一排牌子写的是 `Speaker` —— 一只猫和一台机器签的是**同一份字**，所以站得进同一排喵。`s.speak();` 这一句写的时候压根不管手里是谁：Java 照着**底下的真猫自己那版**去找这一手，猫就喵、机器就嘀嘀。这就是约定最值钱的地方：**往后院里再添一位签了字的新伙伴，那个圈一个字都不用改**。"
+    }
+  ]
+}

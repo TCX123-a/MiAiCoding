@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-09-main-also-works",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-09",
+  "type": "codewrite",
+  "concept": ["派完猫本喵接着往下走", "本喵的格子跟猫的格子各一份", "等回来再报数"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "c1": { "kind": "int", "min": 2, "max": 4 },
+    "c3": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵派一只猫去数鱼，**派出去之后本喵自己也没闲着** —— 自己也数自己的那几格。两边都数完了，本喵再报数。\n\n请你写个程序，照这个次序做：\n\n1. 画一张「会干活的猫」的图纸（名字＋要数几条＋数到多少），那段活就是**转圈**把自己那一格数够；\n2. 生一只猫，名字叫 `{n1}`，要数 {c1} 条；\n3. **派它出去**（不是自己动手）；派完本喵接着往下走：**自己也转圈**数 {c3} 条，数在本喵在 `main` 里另开的一个格子里；\n4. **站在门口等猫回来**；\n5. 回来之后印三行：\n   - `{n1}数到：` 后面接**那一只自己数出来的**条数，再跟一个 ` 条`；\n   - `本喵数到：` 后面接**本喵自己数出来的**条数，再跟一个 ` 条`；\n   - `一共：` 后面接**两个加起来**的条数，再跟一个 ` 条`。\n\n（这一题**不用投喂任何东西**，要数几条本喵已经在上面报给你了。）",
+  "starterTemplate": "public class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n\nclass Cat extends Thread {\n    String 名字;\n    int 要数;\n    int 数到 = 0;\n\n    Cat(String 名字, int 要数) {\n        this.名字 = 名字;\n        this.要数 = 要数;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要数; i++) {\n            数到 = 数到 + 1;\n        }\n    }\n}\n",
+  "referenceSolutionTemplate": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"{n1}\", {c1});\n\n        一只.start();\n\n        int 本喵的数 = 0;\n        for (int i = 0; i < {c3}; i++) {\n            本喵的数 = 本喵的数 + 1;\n        }\n\n        一只.join();\n\n        System.out.println(\"{n1}数到：\" + 一只.数到 + \" 条\");\n        System.out.println(\"本喵数到：\" + 本喵的数 + \" 条\");\n        System.out.println(\"一共：\" + (一只.数到 + 本喵的数) + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    String 名字;\n    int 要数;\n    int 数到 = 0;\n\n    Cat(String 名字, int 要数) {\n        this.名字 = 名字;\n        this.要数 = 要数;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要数; i++) {\n            数到 = 数到 + 1;\n        }\n    }\n}\n",
+  "explanationTemplate": "**一、派出去之后，本喵这条线继续往下走。** `一只.start()` 一喊就当「它出去干活了」，下面那几行是本喵**自己**在干 —— 两路同时进行，这就是「同时派好几只猫」的样子：猫数猫的，本喵数本喵的。\n\n**二、本喵那一格是本喵自己的。** `本喵的数` 摆在 `main` 里，是另开的一格；那只猫的 `数到` 摆在图纸上，是它自己的一份。两个格子互不相干，各数各的，谁也动不了谁。\n\n**三、报数之前一定要 `join()`。** 不等就报，猫那边可能还没数完 —— 报出来的数就说不准了。`join()` 就是「站门口等它回来」，回来了才报。\n\n**四、谁快谁慢由机器定，报出来的内容却是稳的。** 本喵自己在数、猫也在数，两边谁先数完说不准；但报数发生在 `join()` 之后，所以三行的内容跟快慢无关。\n\n**五、等，不等于闲着。** 本喵也可以是干活的那一方：派完猫自己接着数。但只要还要读猫那边的结果，`join()` 就不能少 —— 想怎么等，都绕不开这一声。"
+}

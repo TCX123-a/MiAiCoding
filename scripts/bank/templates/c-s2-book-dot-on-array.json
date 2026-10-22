@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-book-dot-on-array",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-15",
+  "type": "codefix",
+  "concept": ["先点第几格再往格子里走", "点号只对单独一条用", "翻译官喵的提示是线索不是答案"],
+  "instances": 2,
+  "params": {
+    "tel1": { "kind": "pick", "values": ["13800000001", "13900000002"] },
+    "tel2": { "kind": "pick", "values": ["13700000003", "13600000004"] },
+    "tel3": { "kind": "pick", "values": ["13500000005", "13400000006"] }
+  },
+  "stemTemplate": "本喵抄课文的时候手一抖，把「**先点出第几格、再往格子里走**」写反了，于是每一次抄写都变成这个样子：\n\n```c\nstrcpy(book.name[n], \"小橘\");\n```\n\n请你写一段程序：起一本空册子、条数算 0，把 `小橘 {tel1}`、`狸花 {tel2}`、`奶牛 {tel3}` 三条依次抄进去（每抄一条条数自己加一），然后印一行 `一共 <几条> 条`，再从第 1 条起挨个列出来，一条一行印成 `<序号>. <名字> <号码>`。\n\n应当印：\n\n```\n一共 3 条\n1. 小橘 {tel1}\n2. 狸花 {tel2}\n3. 奶牛 {tel3}\n```\n\n可这段代码翻译官喵**把本喵拦下了**，程序根本没编出来。你帮本喵看出它拦的是哪一处、该怎么摆。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    strcpy(book.name[n], \"小橘\");\n    strcpy(book.phone[n], \"{tel1}\");\n    n = n + 1;\n    strcpy(book.name[n], \"狸花\");\n    strcpy(book.phone[n], \"{tel2}\");\n    n = n + 1;\n    strcpy(book.name[n], \"奶牛\");\n    strcpy(book.phone[n], \"{tel3}\");\n    n = n + 1;\n\n    printf(\"一共 %d 条\\n\", n);\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book.name[i], book.phone[i]);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    strcpy(book[n].name, \"小橘\");\n    strcpy(book[n].phone, \"{tel1}\");\n    n = n + 1;\n    strcpy(book[n].name, \"狸花\");\n    strcpy(book[n].phone, \"{tel2}\");\n    n = n + 1;\n    strcpy(book[n].name, \"奶牛\");\n    strcpy(book[n].phone, \"{tel3}\");\n    n = n + 1;\n\n    printf(\"一共 %d 条\\n\", n);\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是这一句，一共喊了四遍：\n\n```\nerror: '(Contact *)&book' is a pointer; did you mean to use '->'?\n```\n\n（前头那个名字随本喵给那一排碗起的名字变，你写 `book` 就是 `book`。）\n\n**① 「点」和「走」的先后是有讲究的。** `book` 是**一排碗** —— 一百只，每只装一条记录。所以要摸到格子里去，只能**先用方括号点出第几只**：\n\n```c\nbook[0]          /* 一圈里头的第 0 只碗 —— 那是「一条记录」 */\n```\n\n点出来以后，才轮到**往这条记录里头走**：\n\n```c\nbook[0].name     /* 第 0 只碗里那条记录的名字那一格 */\nbook[0].phone    /* 号码那一格 */\n```\n\n**② 写反了它为什么当场拦住？** `book.name` 读作「往 `book` 里头走、找它叫 `name` 的那一格」。可 `book` 不是一条记录，它是**一排碗的门牌号** —— 门牌号身上没有叫 `name` 的格子。翻译官喵一眼就看出来了，当场把手按住。\n\n**③ 它给的提示指错了方向，别照抄。** 它说的是「你是不是想用 `->`」—— 因为「对着一块牌子用点号」是它见过的另一种手滑。可这里真正该用的是**方括号**。**提示是线索，不是答案**：它只知道你对着门牌号点了点号，就顺手把另一条路摆出来。你要是真把 `book.name` 改成 `book->name`，它**照样会拦** —— 得自己看懂它为什么觉得点号用错了。\n\n**④ 点出来之后，三种写法通用。** `book[i]` 读作「从排头走过去 i 只」（就是这一课前面那条门牌号加减的规矩），所以下面三句是一回事：\n\n```c\nbook[i].name\n(*(book + i)).name\n(book + i)->name\n```\n\n**⑤ 抄写那一行的序号。** 新抄的一条住在**第 `n` 格**，不是第 n 加 1 格 —— 因为序号从 0 数起，`n` 正好是「已经抄了几条」。所以是 `strcpy(book[n].name, ...)`，**抄完才**把条数加一。这个次序在本课里到处都是，认准它。"
+}

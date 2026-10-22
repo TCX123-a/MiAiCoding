@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-10-dice-line",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-10",
+  "type": "codewrite",
+  "concept": ["摇一次骰子", "要什么范围自己算", "起点在开场前定一次", "一圈摇一把"],
+  "instances": 6,
+  "params": {
+    "seed": { "kind": "int", "min": 3, "max": 4 },
+    "n": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stemTemplate": "本喵要给骰子定个起点，再摇 **{n} 把**，每把 1 到 6。起点 `main` 里已经定好了：种子给的是 `{seed}`。\n\n你要把 `roll_dice` 这一招补完（`main` 已经写在稿子里了，别改它）：**摇 {n} 把**，每摇一把就印出来，**每个数后面跟一个空格**。\n\n印出来的样子：先是 `main` 里那句 `掷 {n} 把：`，接着是 {n} 个数（每个数后面一个空格），最后换行。\n\n⚠️ 这一招里**别再用 `srand`** —— 起点在 `main` 里已经定过一次了，这里只管**摇**（摇的招式是 `rand()`，要 1 到 6 就照课文里那句写）。",
+  "starterTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\n/* 摇 n 把骰子（每把 1 到 6），一把一把印在同一行，每把后面跟一个空格 */\nvoid roll_dice(int n) {\n    /* ↓ 自己写：\n       ① 绕 n 圈，每圈摇一次\n       ② 摇出来的是 1 到 6（照课文里那句写）\n       ③ 摇一把印一把，每个数后面跟一个空格 */\n}\n\nint main(void) {\n    srand({seed});\n    printf(\"掷 {n} 把：\");\n    roll_dice({n});\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\n/* 摇 n 把骰子（每把 1 到 6），一把一把印在同一行，每把后面跟一个空格 */\nvoid roll_dice(int n) {\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", rand() % 6 + 1);\n    }\n}\n\nint main(void) {\n    srand({seed});\n    printf(\"掷 {n} 把：\");\n    roll_dice({n});\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "要「1 到 6」的数，句式就是课文里那句 `rand() % 6 + 1` 喵：先 `% 6` 拿到 0 到 5 的余数，`+ 1` 把整个范围往前挪一格，正好是 1 到 6。摇 `n` 把就绕 `n` 圈，每圈摇一次、印一次。\n\n起点 `srand(种子)` 是**开场前的事**：摆在 `main` 里定一次就够。要是把它搬进这一招、跟摇的动作一起一遍一遍地来，那每一把之前骰子都被拨回起点，摇出来的就是同一个数从头印到尾 —— 看着像随机，其实一点都不随机。\n\n最后记一句：**同一个种子永远给你同一串**。这正是本喵的好玩意儿每次跑都能复现的原因，也是内容里那串标准答案定得下来的原因喵。"
+}

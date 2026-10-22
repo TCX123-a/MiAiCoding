@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-anno-generic-eq",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-10",
+  "type": "codefix",
+  "concept": ["list[int] 与 List[int] 说的是同一句话", "别拿 == 比这两种写法", "get_origin 看底"],
+  "instances": 2,
+  "params": {
+    "t": { "kind": "pick", "values": ["int", "str"] }
+  },
+  "stemTemplate": "要说「这一筐装的全是 `{t}`」，有两种写法喵：**新写法** `list[{t}]`（`list` 后面直接跟一对方括号，不用请任何帮手），**老写法** `List[{t}]`（得先从 `typing` 那本手册里把 `List` 请出来）。本喵想验一验：这两种说法，是不是**一个意思**。\n\n这段代码跑得起来、也不摔，可它印出来的话让本喵不信 —— 它说这俩**不是一个东西**。请你帮本喵改好它：**最后印出来的那句要变成 `True`**（这两块木牌说的确实是同一句话），前两行一个字都不用动。\n\n（判分时筐里装的那样东西会换成另一种喵，说的还是同一句话～）",
+  "brokenCodeTemplate": "from typing import List, get_args\n\nprint(get_args(list[{t}]))\nprint(get_args(List[{t}]))\nprint(list[{t}] == List[{t}])\n",
+  "referenceFixTemplate": "from typing import List, get_args, get_origin\n\nprint(get_args(list[{t}]))\nprint(get_args(List[{t}]))\nprint(get_origin(list[{t}]) is get_origin(List[{t}]))\n",
+  "explanationTemplate": "这一处最容易记反喵：**`list[{t}]` 和 `List[{t}]` 不是同一个东西，可它们说的是同一句话。**\n\n`==` 问的是「你俩**是不是同一个**东西」，所以它老老实实回一个 `False` —— 那不是在说两边意思不一样，只是在说它们**长得不同**。这一课正文里专门提醒过一句：**别拿 `==` 去比这两种写法。**\n\n想验「是不是一个意思」，得看两处**里子**：\n\n- **`get_origin(某种写法)` 看它的底**：两种写法取出来都是 `list`（一筐）。\n- **`get_args(某种写法)` 看里面装的东西**：两种写法取出来都是 `{t}`。\n- **底是同一个东西**，才轮到说它们是一句话 —— 所以要比的是 `get_origin(list[{t}]) is get_origin(List[{t}])`。\n\n⚠️ 为什么这里用 `is`：`is` 问的正是「是不是**同一个**」，而那两个底本来就是同一个东西，所以它才回得了 `True`。"
+}

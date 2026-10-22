@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-map-contains-key",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-09",
+  "type": "codefix",
+  "concept": ["账本上没有 contains", "containsKey", "只要名字的名单", "过不了稿子"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["小橘", "狸花", "大橘"] },
+    "v": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stemTemplate": "本喵想先问一句「账本上有没有这个名字」再动手 —— 结果翻译官喵把稿子退回来了，一个字都没让跑。\n\n请你帮本喵改好，规矩是：**要问的还是那件事**（账本上**有没有这个名字**），只把问的那一招换成账本真正会的那一个。\n\n改好之后，程序该印出这一行：\n\n```text\n{a}在账本上，有 {v} 条喵\n```\n\n只有问名字那一处的问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"{a}\", {v});\n        if (book.contains(\"{a}\")) {\n            System.out.println(\"{a}在账本上，有 \" + book.get(\"{a}\") + \" 条喵\");\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"{a}\", {v});\n        if (book.containsKey(\"{a}\")) {\n            System.out.println(\"{a}在账本上，有 \" + book.get(\"{a}\") + \" 条喵\");\n        }\n    }\n}\n",
+  "explanationTemplate": "这一题属于**过不了稿子那一关**，翻译官喵退回来说的是：\n\n```text\ncannot find symbol\n  symbol:   method contains(String)\n  location: variable book of type Map<String,Integer>\n```\n\n念起来是：**「`book` 身上没有 `contains` 这么一招喵。」** 下面那两行是翻译官喵附上的线索：`symbol:` 说它**没找到的是哪一招**，`location:` 说**是哪样东西**身上没有这招 —— 有了这两行，本喵就不用满篇乱找了。\n\n为什么本喵会顺手写出 `contains`？因为它**确实存在**，只不过长在**别家**身上：\n\n- **只要名字的那种名单**（`Set`）问「有没有」用的就是 `contains`；\n- **账本**（`Map`）里一行有两样东西，问「有没有」的时候得说清问的是**哪一半** —— 所以它的招式名字里带着那个尾巴：**`containsKey`** 问的是名字，「有没有这个东西」另有说法。\n\n这题问的正是**名字**，所以正确答案就是 `containsKey`：\n\n```java\nif (book.containsKey(\"{a}\")) {\n    ...\n}\n```\n\n往后认招式的时候留意这个习惯：**账本上的招式名字常常带 `Key` 或者 `Value`**，因为它天生就有两半。名称里带没带那个尾巴，往往就是「问名字」还是「问东西」的分水岭喵。"
+}

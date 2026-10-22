@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-ref-param-missing-amp",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-10",
+  "type": "codefix",
+  "concept": ["收料用温柔版", "& 小记号", "外面的碗要真的动"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵这一招想给**外面那只碗**加上 1：碗里本来有 {n} 条，喊完这一招，碗里该有 {n} 加 1 条。\n\n可喊完一看，碗里的数**一点没动**，印出来还是 {n}。它跑得起来，翻译官喵一句原话都没有，就是外面的碗没被改到。\n\n你帮本喵把这一招改对：喊完之后，外面那只碗里的数要**真的多 1**。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nvoid addOne(int n) {\n    n = n + 1;\n}\n\nint main() {\n    int fish = {n};\n\n    addOne(fish);\n    cout << fish << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nvoid addOne(int& n) {\n    n = n + 1;\n}\n\nint main() {\n    int fish = {n};\n\n    addOne(fish);\n    cout << fish << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "招式收料有两种收法，差别只在脑袋上那个**小记号**喵：\n\n- **不带记号**（本喵原来那样：`void addOne(int n)`）—— 喊的时候，把外面那只碗里的数**照抄一份**递给招式。招式改的是**那张抄件**，改完抄件就扔了 —— 外面那只碗**一根毛都没动**。\n- **带上记号**（`void addOne(int& n)`）—— 那个 `&` 的意思是「**别抄了，就用外面那只碗本身**」。招式里写的 `n = n + 1;` 改的就是外面那只碗。\n\n一句话记牢：**想让招式改到外面的碗，脑袋上那只碗前面就得加 `&`。**\n\n⚠️ 这一题还是**一声不吭**：抄一份完全合规矩，翻译官喵不觉得有任何问题 —— 它照常编译、照常跑，只是外面的碗没动。露馅的地方只有一个：**喊完再看那只碗，数没变**。\n\n什么时候该抄、什么时候该用温柔版？想想你要的是什么：**只要数、不管外面那只碗**（比如求个和、算个平方）—— 抄一份更省事；**就是要改外面那只碗**（加一条、换个位）—— 脑袋上必须加 `&` 喵。"
+}

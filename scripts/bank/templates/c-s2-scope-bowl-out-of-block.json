@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-scope-bowl-out-of-block",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-10",
+  "type": "codefix",
+  "concept": ["花括号是地盘", "出了圈就不认得", "undeclared", "编译报错"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 9 },
+    "inner": { "kind": "pick", "values": ["里头", "碗里"] },
+    "outer": { "kind": "pick", "values": ["外头", "出了圈"] }
+  },
+  "stemTemplate": "本喵这段代码翻译不过去：翻译官喵说有个名字它**没见过**，可那个名字在本喵眼里明明就写在上面。\n\n你帮本喵把它改好，让程序印出两行 —— 第一行 `{inner} <数>`，第二行 `{outer} <数>`（两行是同一个数）。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    {\n        int bonus = {n};\n        printf(\"{inner} %d\\n\", bonus);\n    }\n\n    printf(\"{outer} %d\\n\", bonus);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bonus = {n};\n\n    {\n        printf(\"{inner} %d\\n\", bonus);\n    }\n\n    printf(\"{outer} %d\\n\", bonus);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: 'bonus' undeclared (first use in this function)` —— `undeclared` 就是「没宣告过 / 不认识这个名字」喵。\n\n它这么说是**讲道理的**：那只叫 `bonus` 的碗摆在花括号**里面**，而花括号是一道**地盘线**。碗摆在圈里，就只有圈里看得见；读出圈的那一句站在圈外面，当然不认得它。\n\n补法就是把碗挪到圈外面去 —— **要让两处都看得见，就得把它摆在外面的地盘上**：\n\n```c\nint bonus = {n};\n```\n\n挪出来之后，圈里圈外用的是**同一只碗**，两行印出来也就是同一个数。\n\n顺带把这条规矩的形状收好：**花括号画地盘，出了圈就不算数**。往后你会天天用到它 —— 圈里的临时碗用完就扔，外面的碗大家一起用，正是靠这道线分清楚的。"
+}

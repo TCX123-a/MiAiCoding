@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-nextline-after-nextint",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-04",
+  "type": "codefix",
+  "concept": ["Scanner", "nextInt", "nextLine", "空行"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 5 },
+    "name": { "kind": "pick", "values": ["小橘", "大肥鱼", "狸花"] }
+  },
+  "stemTemplate": "本喵递给 Scanner 一根纸条喵：第一行是一个数，第二行是一只猫的名字。想把两样都读出来 —— 数读对了，**名字却是空的**！\n\n程序不报错，也不翻脸，就是安安静静地给了本喵一个空名字……你帮本喵看看那个名字躲哪儿去了，把它改好。\n\n改好之后，屏幕上应该是两行：第一行报数字，第二行报名字（那两对方括号也得在喵）。",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(\"{n}\\n{name}\");\n        int num = sc.nextInt();\n        String name = sc.nextLine();\n        System.out.println(\"数字是 \" + num);\n        System.out.println(\"名字是[\" + name + \"]\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(\"{n}\\n{name}\");\n        int num = sc.nextInt();\n        sc.nextLine();\n        String name = sc.nextLine();\n        System.out.println(\"数字是 \" + num);\n        System.out.println(\"名字是[\" + name + \"]\");\n    }\n}\n",
+  "explanationTemplate": "那个名字哪儿也没去，它**还留在纸条上**喵 —— 是中间那个换行挡了路。\n\n`nextInt()` 读数字的时候，只把 {n} 叼走，**后面那个换行还留在原地**。轮到 `nextLine()` 伸手一摸，摸到的正是那个剩下的换行，于是它老老实实汇报：「这一行读完了，里面什么都没有。」\n\n办法只有四个字：**先把空行吃掉** —— 在两句之间补上一句没有名字的 `sc.nextLine();`，它的任务就是把那个剩下的换行吃干净。这样下一句 `nextLine()` 才够得着真正的名字。\n\n那两对方括号就是干这个用的：把读到的东西团团围住，一眼就能看出「里面是空的，还是有东西」。\n\n⚠️ 这个坑最阴的地方是：**它不报错**。程序跑得好好的，只是给你一个看起来挺正常的结果 —— 往后凡是「先读数字、再读一整行」，中间那句吃掉空行的 `nextLine()` 几乎都是必备的喵。"
+}

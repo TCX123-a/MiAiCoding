@@ -1,0 +1,33 @@
+{
+  "templateId": "py-s2-concat-type",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-01",
+  "type": "codefix",
+  "concept": [
+    "类型错误",
+    "拼接",
+    "f-string"
+  ],
+  "instances": 3,
+  "params": {
+    "dish": {
+      "kind": "pick",
+      "values": [
+        "小鱼干",
+        "冻干块",
+        "鱼丸"
+      ]
+    }
+  },
+  "stdinSpec": {
+    "kind": "ints",
+    "count": 1,
+    "min": 3,
+    "max": 9
+  },
+  "stemTemplate": "本喵数了数仓库，想把结果说给猫猫听喵。\n\n请你写个程序：读入一个整数 `n`，打印一行，长得像这样 ——\n\n```text\n还剩 n 条{dish}\n```\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n⚠️ 可这段代码**一跑就报错**。你帮本喵找出毛病改对 —— 改完之后，打印出来的那行要跟上面长得一模一样，一个空格都不能差。",
+  "brokenCodeTemplate": "n = int(input())\nprint(\"还剩 \" + n + \" 条{dish}\")\n",
+  "referenceFixTemplate": "n = int(input())\nprint(\"还剩 \" + str(n) + \" 条{dish}\")\n",
+  "explanationTemplate": "Python 里 `+` 有**两副面孔**喵：两边都是数字时它做加法；**只要有一边是字**，它就切换成「把两串字首尾接起来」。\n\n所以 `\"还剩 \" + n` 这一步，左边是一串字、右边是个整数 —— Python 不知道该按哪副面孔来，干脆报错，让你自己说清楚。\n\n**改法有两种，都对：**\n\n- 用 `str(n)` 把它**明确变成一串字**，然后再接（本喵的参考解走的就是这条）\n- 或者用 f-string：在引号前面写个字母 `f`，再把名字放进花括号里 —— 花括号里的东西**自动**变成字，连手动转都省了\n\n⚠️ 注意 `\"1\" + \"2\"` 得到的是 `\"12\"`，不是 `3` —— 那是「接起来」，不是「加起来」。这也是为什么明明写着 `+`，结果却不对劲。"
+}

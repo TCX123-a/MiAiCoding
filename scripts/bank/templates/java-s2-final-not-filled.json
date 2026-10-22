@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-final-not-filled",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-05",
+  "type": "codefix",
+  "concept": ["final 家当", "钉死的格子必须有人填", "编译错误"],
+  "instances": 2,
+  "params": {
+    "cat": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵把名字那一格钉死了（`final`），想让它一出生就定好、往后谁都不许改 —— 可翻译官喵连门都没放它过。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n{cat}：喵～\n```\n\n那一格钉死的写法本喵不想动，缺的是**谁在什么时候把它填上**喵。",
+  "brokenCodeTemplate": "class Cat {\n    final String name;\n\n    Cat() {\n        System.out.println(\"一只小猫出生了\");\n    }\n\n    void greet() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat a = new Cat();\n        a.greet();\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    final String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    void greet() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat a = new Cat(\"{cat}\");\n        a.greet();\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 **`variable name might not have been initialized`** —— 注意它指着的地方：不是那一行 `final String name;`，而是**出生那一手末尾那个花括号**。它在说：「这一格你说好要钉死，可本喵等到出生那一手整个写完，也没见你往里填过东西喵。」\n\n`final` 的规矩得记清楚：**钉死的格子必须填，而且只填一次。** 两条路任选一条 ——\n\n- **在出生那一手里填**（本喵这版）：给出生那一手开一个投喂口 `Cat(String name)`，第一句就写 `this.name = name;`。往后每只猫出生的时候把自己的名字交进去，填完就锁死。\n- **在声明那一行就填**：`final String name = \"{cat}\";`。名字天生定好、生几只都一个样的时候才这么写。\n\n两条都不占，就是刚才那句原话。顺手记一个反向的坑：填过之后再想改（比如写个 `rename()` 里去 `name = \"大胖\";`），撞的是 **`cannot assign a value to final variable name`** —— 那才是「钉死」本来的意思喵。"
+}

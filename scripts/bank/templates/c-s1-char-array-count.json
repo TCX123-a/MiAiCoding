@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-char-array-count",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-10",
+  "type": "codewrite",
+  "concept": ["字碗", "收尾空爪子", "%c", "自己会停的圈"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["catnip", "fish", "tuna", "miao"] }
+  },
+  "stemTemplate": "起手代码里已经摆好一排**字碗**：方括号空着、双引号里写着一串字，翻译官喵自己数了有几个格。\n\n请你写个程序：用圈**一格一格**念出来，格式是 `第 %d 格是 %c`（一格一行）；念到收尾的那一格就自己停下（那一格**不印**）；最后再单独报一行 `连收尾空爪子一共 %d 格喵`。",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n    char pet[] = \"{word}\";\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    char pet[] = \"{word}\";\n\n    int i = 0;\n    while (pet[i] != '\\0') {\n        printf(\"第 %d 格是 %c\\n\", i, pet[i]);\n        i = i + 1;\n    }\n    printf(\"连收尾空爪子一共 %d 格喵\\n\", (int)sizeof(pet));\n    return 0;\n}\n",
+  "explanationTemplate": "C 里「一串字」的真身，就是**一排碗，每只碗里只装一个字**喵。\n\n- **`char`** 是「一格装一个字的碗」这个形状；用**双引号**一次写好一整串，是 C 给一连串字开的省事写法，省得你一格一格摆。\n- **印整串用 `%s`，印单独一格用 `%c`** —— 这两种写法不能混着用。\n- **末尾永远多一格**，里面装着一个「到此为止」的记号，写出来是反斜杠加一个 0（`'\\0'`）。**它不是字**，就是一个记号 —— 所以量出来的格数总是「字数加一格」。\n\n圈是怎么自己停下的？全靠眼色里那句「**只要还没碰上收尾的记号，就再往前摸一格**」。摸到记号那一格，眼色答真，圈就停了 —— 不用你数它有几个字喵。\n\n⚠️ 摆字碗的时候，格数要**给收尾留出一格**。上一课讲过：C **不拦越界**。要是把收尾那一格的位子挤掉了，C 一样一声不响 —— 印的时候它就会一直往后摸，摸到哪儿才肯停、印出来的是什么，谁也说不准。\n\n最后那个「一共几格」的答案，方括号空着的时候翻译官喵替你数好了：`sizeof(pet)` 量出来就是**连收尾那一格在内**的总格数喵。"
+}

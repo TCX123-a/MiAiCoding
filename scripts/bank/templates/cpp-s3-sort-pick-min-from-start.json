@@ -1,0 +1,20 @@
+{
+  "templateId": "cpp-s3-sort-pick-min-from-start",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-23",
+  "type": "codefix",
+  "concept": ["给小鱼干排排坐", "挑最短", "每一轮都要重新挑", "忘了从头开始挑"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["5", "50"] },
+    "b": { "kind": "pick", "values": ["3", "20"] },
+    "c": { "kind": "pick", "values": ["8", "70"] },
+    "d": { "kind": "pick", "values": ["1", "10"] },
+    "e": { "kind": "pick", "values": ["4", "40"] }
+  },
+  "stemTemplate": "本喵把 **{a}、{b}、{c}、{d}、{e}** 这五个数交给「**挑最短**」那一招：一轮挑一只最短的、换到最前面，下一轮在剩下的里再挑 —— 这样就该排成从小到大。\n\n可印出来那一排**是乱的**：既不是从小到大，也没排整齐。翻译官喵一声没吭，编译跑得好好的。\n\n请你把那一招改对。改好之后该印：\n\n```text\n挑最短：{d} {b} {e} {a} {c}\n```",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n\nvoid pick_min(std::vector<int>& a) {\n    int n = static_cast<int>(a.size());\n    for (int i = 0; i < n - 1; i++) {\n        int min_idx = 0;\n        for (int j = i + 1; j < n; j++) {\n            if (a[j] < a[min_idx]) {\n                min_idx = j;\n            }\n        }\n        std::swap(a[i], a[min_idx]);\n    }\n}\n\nint main() {\n    std::vector<int> a = {{a}, {b}, {c}, {d}, {e}};\n    pick_min(a);\n\n    std::cout << \"挑最短：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n\nvoid pick_min(std::vector<int>& a) {\n    int n = static_cast<int>(a.size());\n    for (int i = 0; i < n - 1; i++) {\n        int min_idx = i;\n        for (int j = i + 1; j < n; j++) {\n            if (a[j] < a[min_idx]) {\n                min_idx = j;\n            }\n        }\n        std::swap(a[i], a[min_idx]);\n    }\n}\n\nint main() {\n    std::vector<int> a = {{a}, {b}, {c}, {d}, {e}};\n    pick_min(a);\n\n    std::cout << \"挑最短：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+  "explanationTemplate": "毛病只有一处，就藏在第一行的那个 `int min_idx = 0;` 里喵。\n\n「挑最短」这一招每一轮要挑的是**还没排好的那一段**里最短的一只 —— 「还没排好的那一段」是从第 `i` 只开始的。可本喵把「先假定哪一只最短」写死成了第 0 只：\n\n```text\nint min_idx = i;\n```\n\n写死成 `0` 之后，每一轮的比较都拿**开头那只**当靶子，最后那只最短的家伙可能早就被换到前面去、又被人换回来 —— 越排越乱。\n\n对比一下两个写法差在哪：`0` 说的是「整排的开头」，`i` 说的才是「**这一轮还没排的那一段的开头**」。该从哪儿开始挑这件事，从「整排」挪到「这一段」，就差在这个 `i` 上。\n\n⚠️ 翻译官喵不会吭声，也不会摔 —— 它只是把一轮一轮的活儿干错了地方。**每一轮都要重新挑一次**，这句话里「重新」两个字，落到代码上就是这个 `i` 喵。"
+}

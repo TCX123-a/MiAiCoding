@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-challenge-macro-parens",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-22",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["小字条", "开工前照抄替换", "括号裹严实", "合体"],
+  "instances": 1,
+  "params": {},
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 1, "max": 9 },
+  "stemTemplate": "本喵给翻译官喵准备了两张**小字条**（`#define` 的小抄）喵：\n\n- `SQUARE(x)` —— 意思是「自己乘自己」；\n- `HALF(x)` —— 意思是「分一半」。\n\n单独拿一个数试它们，都好好的。可今天让它们上场去算 `a + b`（**先把两个数合体**）的时候，两行结果全不对了……\n\n程序读两个数，然后印两行：`先合体再自己乘自己：%d 条喵` 和 `合体之后再分一半：%d 条喵`。你帮本喵把结果改对 —— **最好从字条本身下手**喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。）",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define SQUARE(x) x * x\n#define HALF(x) x / 2\n\nint main(void) {\n    int a = 0;\n    int b = 0;\n    if (scanf(\"%d %d\", &a, &b) != 2) {\n        return 1;\n    }\n\n    printf(\"先合体再自己乘自己：%d 条喵\\n\", SQUARE(a + b));\n    printf(\"合体之后再分一半：%d 条喵\\n\", HALF(a + b));\n\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define SQUARE(x) ((x) * (x))\n#define HALF(x) ((x) / 2)\n\nint main(void) {\n    int a = 0;\n    int b = 0;\n    if (scanf(\"%d %d\", &a, &b) != 2) {\n        return 1;\n    }\n\n    printf(\"先合体再自己乘自己：%d 条喵\\n\", SQUARE(a + b));\n    printf(\"合体之后再分一半：%d 条喵\\n\", HALF(a + b));\n\n    return 0;\n}\n",
+  "explanationTemplate": "小字条不是招式，它是**开工前的照抄替换**喵：翻译官喵在第一遍扫的时候，看见 `SQUARE(a + b)` 就把字条上的内容**原样抄进去**，抄完长这样：\n\n```c\na + b * a + b\n```\n\n—— 这不是「先合体再乘」，这是一句普普通通的算式：先算 `b * a`，再从左往右加。算出来的当然不是合体之后的平方。\n\n`HALF(a + b)` 同理，抄完是 `a + b / 2`：先算 `b / 2` 再加 a，也不是「合体之后分一半」。\n\n改法就是**给字条里的东西裹上括号**，而且裹两层都不嫌多：\n\n```c\n#define SQUARE(x) ((x) * (x))\n#define HALF(x) ((x) / 2)\n```\n\n- `(x)` 这一层是**替塞进来的东西负责** —— 塞进来的是 `a + b`，不裹住它就会当场散开；\n- 外面那层 `((...))` 是**替整张字条负责** —— 字条外面还连着别的运算时，靠它把整块挡起来。\n\n记一条铁律喵：**替换来的东西一律用括号裹严实 —— 里一层、外一层，少一层都可能出鬼。**"
+}

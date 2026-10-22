@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-box-unbox-report",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-06",
+  "type": "codewrite",
+  "concept": ["装数字的图纸", "装箱", "拆箱", "Scanner"],
+  "instances": 6,
+  "params": {
+    "k": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 1, "max": 9 },
+  "stemTemplate": "本喵今天要亲自走一遍**项链 → 数字 → 口袋 → 数字**这条路，看看每一步长什么样喵。\n\n投喂给程序的是**一串项链**（一串按数字排好的字）。`main` 里这么走：\n\n1. 先把这串项链读进来（`Scanner` 读回来的本来就是项链）；\n2. 用 `Integer.parseInt(...)` 把它**接成光溜溜的数字**；\n3. 把这个数字**装进口袋**（递给一个 `Integer`）；\n4. 然后印四行：\n   - `项链接回来是 ` + 那个数字 + ` 条喵`\n   - `装进口袋再拆出来：` + 那只口袋\n   - `算式里先拆箱，加 {k} 得：` + （口袋里那个数 **加上 {k}** 的结果）\n   - `这张图纸最多装到 ` + `Integer.MAX_VALUE`\n\n那两行拼项链的时候，口袋和算式的结果**直接拼进去就行**，不用自己先掏出来喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String line = sc.next();\n        int n = Integer.parseInt(line);\n        Integer boxed = n;\n        System.out.println(\"项链接回来是 \" + n + \" 条喵\");\n        System.out.println(\"装进口袋再拆出来：\" + boxed);\n        System.out.println(\"算式里先拆箱，加 {k} 得：\" + (boxed + {k}));\n        System.out.println(\"这张图纸最多装到 \" + Integer.MAX_VALUE);\n    }\n}\n",
+  "explanationTemplate": "这题四行正好把本课那四个要点各走一遍喵。\n\n**一、项链先接成数字。** 读进来的东西是**一串项链**，不是数字 —— 想算就得先 `Integer.parseInt(line)` 把它接回来。这一步往后天天要用。\n\n**二、装箱是自动的。** `Integer boxed = n;` 右边是光溜溜的 `int`、左边要一只 `Integer`，翻译官一看两边对不上，**顺手就照图纸生一只口袋**把数字装进去。本喵一个字都没多写。\n\n**三、拆箱也是自动的，而且算式里一定会拆。** `boxed + {k}` 里坐着一只口袋，加减乘除只认光溜溜的数字，所以这儿**先拆箱再算**。有意思的是拼项链那一处：`\"...\" + boxed` 印出来的是**口袋里的数字**，不是一张地址之类的东西 —— 因为把口袋接在项链后面的时候，它自己会把数字掏出来。\n\n**四、图纸自带的好用小招式。** `Integer.MAX_VALUE` 是这张图纸随身带着的一个数，喊一声名字就有，不用本喵自己去记那串 2147483647。\n\n顺手记：`Integer.valueOf(7)` 和 `n.intValue()` 是**明着写出来**的装箱和拆箱，跟自动的那两种是一回事 —— 自动只是翻译官替本喵省了这两笔喵。"
+}

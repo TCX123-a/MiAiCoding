@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-re-search-none-group",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-12",
+  "type": "codefix",
+  "concept": ["re.search", "None", "group"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 3 },
+    "d": { "kind": "int", "min": 12, "max": 34 }
+  },
+  "stemTemplate": "本喵写了一段代码，想把项链这串字里**两处**数字都叼出来喵：\n\n1. 先找「猫粮」后面紧跟的那一串数字；\n2. 再找「冻干」后面紧跟的那一串数字。\n\n第一行顺利印出来了，可**跑到一半就断了气** —— 翻译官喵甩了一张纸条，后面那半截一个字都没印出来。\n\n你帮本喵改对喵。要求：\n\n1. **两行都要印出来**，一行一句。\n2. 第二句要是**真的没捞着**，就印一句 `冻干一块都没捞着` —— **不许翻脸**。\n3. 第一句那一行（花纹、写法）**一个字都不许改**，项链那串字也不许动。",
+  "brokenCodeTemplate": "import re\n\n项链 = \"小鱼干{n}条，猫粮{d}袋\"\nprint(re.search(r\"猫粮\\d+\", 项链).group())\nprint(re.search(r\"冻干\\d+\", 项链).group())\n",
+  "referenceFixTemplate": "import re\n\n项链 = \"小鱼干{n}条，猫粮{d}袋\"\nprint(re.search(r\"猫粮\\d+\", 项链).group())\n\n结果 = re.search(r\"冻干\\d+\", 项链)\nif 结果 is None:\n    print(\"冻干一块都没捞着\")\nelse:\n    print(结果.group())\n",
+  "explanationTemplate": "这一段的毛病**藏在一个「什么都不交」的记号上**喵。\n\n`re.search(花纹, 一串字)` 没找着的时候**不发火**，它老老实实交回来一个 `None` —— 就是本喵说过的那种「这里什么都没有」的空记号。本喵却**连看都没看**，直接对着它喊 `.group()`：`group` 是「把卡片上的原文交出来」，可这张卡片压根不存在，它交不出任何东西，只好**当场翻脸**。\n\n所以断气的位置（喊 `.group()` 那一行）和**出毛病的位置**（「冻干」压根不在那串字里）隔着十万八千里 —— 本喵盯着报错的那一行，怎么想都想不通。\n\n稳当的写法有两条：\n\n1. **先接住结果，比一比 `is None`**：是空记号就走另一条路（本喵这里印一句 `冻干一块都没捞着`），不是再喊 `.group()`。\n2. 或者干脆改用**找不到也不发火**的 `re.findall(...)` —— 它没捞着只会给一个空柜子，不会给空记号。\n\n⚠️ 记住这条对照：`findall` 一块都没捞着 → 空柜子；`search` 一块都没捞着 → 空记号 `None`，而**对着空记号喊招式**就是这一段翻脸的原因。"
+}

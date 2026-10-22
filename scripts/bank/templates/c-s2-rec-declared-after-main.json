@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-rec-declared-after-main",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-11",
+  "type": "codefix",
+  "concept": ["先打招呼", "招式写在main后面", "编译错误"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵写了个自己咬自己尾巴的小招式 `sum`：算 1 加到 {n} 的和，`main` 里把它印出来。跑出来应当是 `{n} 之前的和是 <算出来的数>`。\n\n可翻译官喵把整段代码退了回来，还说了一句 `sum` 没见过。**这个招式明明是写了的呀** —— 你帮本喵看看它到底卡在哪一步，把它改好（别去改招式里面，招式本身是好的）。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    printf(\"{n} 之前的和是 %d\\n\", sum({n}));\n    return 0;\n}\n\nint sum(int n) {\n    if (n == 0) {\n        return 0;\n    }\n    return n + sum(n - 1);\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint sum(int n) {\n    if (n == 0) {\n        return 0;\n    }\n    return n + sum(n - 1);\n}\n\nint main(void) {\n    printf(\"{n} 之前的和是 %d\\n\", sum({n}));\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: implicit declaration of function 'sum' [-Wimplicit-function-declaration]` —— 翻过来就是「**`sum` 这个招式本喵没见过就先用上了**」。\n\n为什么会这样？因为翻译官喵是**从上往下读**的。它读到 `main` 里那句 `sum({n})` 的时候，`sum` 那一整段还写在下面呢 —— 在它眼里，这个名字到此刻为止根本没出现过。\n\n**注意它卡的不是「自己喊自己」那一步。** 招式在自己的身体里喊自己，那个名字在招式头上就登记过了，一点都不算没见过。它卡的只是 `main` 喊它的**这一次**。所以本课要分清两件事：**「能不能喊自己」和「先打过招呼」，是两回事。**\n\n改法很朴素：**把整个招式搬到 `main` 前面去**（本喵就是这么改的）。另一种同样好的写法是在 `main` 前面先写一行「招牌」——只报名字和形状、不带身体，比如 `int sum(int n);`，那样招式本身留在后面也认得。\n\n这条规矩在写自己咬自己尾巴的招式时格外容易踩到：因为它体量大、本喵常常顺手就写在后面了。**写之前先在纸上摆好顺序：先招式、后 `main`。**"
+}

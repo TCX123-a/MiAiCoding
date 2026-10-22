@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage3-01",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵走柜子的标准姿势是 `for (auto it = v.begin(); it != v.end(); ++it)`。这里的 `v.end()` 指的是哪一格？",
+      "options": [
+        "**最后一格的后面一格** —— 那一格并不存在，它是柜子尽头的「到此为止」路标",
+        "最后一格本人 —— 所以取货时可以写 `*v.end()`",
+        "第一格 —— 它和 `v.begin()` 是同一格",
+        "柜子里格数最多的那一格"
+      ],
+      "answer": 0,
+      "explanation": "`v.begin()` 指着**第一格**，`v.end()` 指着**最后一格的后面一格** —— 那一格不存在，它像柜子尽头站着的一个「到此为止」的看门猫喵。正因为这样，走完没有的判据才特别干脆：爪子挪到和 `v.end()` 站在一起，就是走完了。也因为它不存在，**取货只能取爪子指着的那一格**（`*it`），`*v.end()` 是错的。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写跑圈的时候手滑，把取货那一句写成了 `cout << it << endl;`（少了一颗小星星）。会发生什么？",
+      "options": [
+        "编译器当场拦下，原话里有 `no match for 'operator<<'` —— 它还会点出右边那一坨是个 `__gnu_cxx::__normal_iterator`",
+        "跑得起来，只是每一轮都印出同一个数",
+        "跑得起来，印出来的是那一格里的货",
+        "跑得起来，印出来的是爪子自己的编号"
+      ],
+      "answer": 0,
+      "explanation": "`it` 是**牌子本身**，`*it` 才是「指着的**那一格里的货**」喵。往 `<<` 的右半边递一张牌子，翻译官喵认不出这是什么、也印不出来 —— 它的原话是 `no match for 'operator<<'`，下面还会点出右边那一坨的类型叫 `__gnu_cxx::__normal_iterator`（就是本喵说的「爪子」）。看到这句，先低头看 `<<` 右边那一坨：**该有的小星星是不是漏了。**"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵写了 `for (int x : v) { x = x * 2; }`，想把柜子里的货都翻一倍。跑完之后柜子里的货怎么样了？",
+      "options": [
+        "一条都没变 —— 编得过、跑得完，编译器一个字都没说",
+        "全都翻倍了 —— 这一格里那个 `x` 就是柜子里那一格本人",
+        "没变，但编译器会警告本喵「`x` 改了没人用」",
+        "编不过 —— 改了又不写回去，编译器要拦"
+      ],
+      "answer": 0,
+      "explanation": "这套新写法里，`x` 拿到的是**那一格货的一份副本** —— 像本喵把鱼干从柜子里捞出来放在旁边看，改副本，柜子里那一份纹丝不动喵。翻译官喵对这种事**一句话都不说**（本喵拿最啰嗦的那档 `-Wall` 真跑过：一个字都没说）。想让改动落回柜子里，得把名字前面加一个 `&`，写成 `for (int &x : v)` —— 那个 `&` 就是「这个 `x` 是柜子里那一格本人」的意思。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back(4);\n    v.push_back(9);\n    v.push_back(2);\n    for (auto it = v.begin(); it != v.end(); ____) {\n        cout << ____ << endl;\n    }\n    return 0;\n}",
+      "stem": "本喵想把柜子从第一格走到最后一格，一格印一行。这段代码里有两个空位（用 `____` 标出）—— 补上之后它会一格印一行，把塞进去的货按顺序印出来喵。",
+      "blanks": [
+        { "answer": "++it", "accept": [] },
+        { "answer": "*it", "accept": [] }
+      ],
+      "explanation": "第一个空位是**把爪子挪到下一格**：`++it` —— 少了它，爪子永远停在第一格，跑圈永远走不完喵。第二个空位是**取货**：`*it` —— 那颗小星星不能丢，丢了翻译官喵就认不出你递过去的是什么了（它的原话是 `no match for 'operator<<'`）。两句合起来念：「挪到下一格；把这一格的货印出来。」"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back(5);\n    v.push_back(1);\n    v.push_back(4);\n    int total = 0;\n    for (int x : v) {\n        total += x;\n    }\n    cout << total << endl;\n    cout << v.size() << endl;\n    return 0;\n}",
+      "stem": "本喵把柜子里的货一份一份地交给 `x`，顺手累加进另一格；最后再问一次柜子里有几格。这段代码的输出是什么？（一行一行照抄）",
+      "answer": "10\n3",
+      "accept": ["10\n3\n"],
+      "explanation": "这套新写法是「一格一格地把货交给 `x`」：先把 `5` 交出去，累加那格变成 5；再交 `1`，变成 6；最后交 `4`，变成 10，所以第一行印 `10` 喵。第二行是问柜子里有几格 —— 塞了三条，所以印 `3`。注意「把货交给 `x`」这件事**不动柜子**：累加用的是本喵另外开的那一格，柜子里的三条一直好好待着。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back(2);\n    v.push_back(7);\n    v.push_back(3);\n    for (int &x : v) {\n        x = x + 1;\n    }\n    for (auto it = v.begin(); it != v.end(); ++it) {\n        cout << *it << endl;\n    }\n    cout << v[0] << endl;\n    return 0;\n}",
+      "stem": "这一回本喵给柜子里的每一格都加 `1`，再用爪子从头走一遍，最后单独报编号取一次第一格。这段代码的输出是什么？（一行一行照抄）",
+      "answer": "3\n8\n4\n3",
+      "accept": ["3\n8\n4\n3\n"],
+      "explanation": "名字前面多了一个 `&`，所以这一回 `x` 就是**柜子里那一格本人**：`x = x + 1` 是真把柜子改掉了 —— `2` 变 `3`、`7` 变 `8`、`3` 变 `4` 喵。爪子那一遍从头到尾把三格印出来（`3`、`8`、`4`），最后那句 `v[0]` 报编号取第一格，印的也是改过之后的 `3`。**和上一题对着看**：上一题的 `x` 是副本，改它柜子不动；这一题的 `&x` 是本人，改它柜子才真的变。"
+    }
+  ]
+}

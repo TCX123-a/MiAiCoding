@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-ptr-type-mismatch",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-14",
+  "type": "codefix",
+  "concept": ["牌子", "指针类型", "incompatible pointer type", "编译错误"],
+  "instances": 2,
+  "params": {
+    "v": { "kind": "int", "min": 3, "max": 7 }
+  },
+  "stemTemplate": "本喵想给一只**装整数的碗**插一块牌子，然后用牌子把碗里的数拿出来印掉喵。\n\n可翻译官喵说**牌子和碗对不上号**……\n\n你帮本喵看看是哪儿写岔了，把它改好。改好之后，程序应该印出 `{v}`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish = {v};\n    double *p = &fish;\n\n    printf(\"%d\\n\", *p);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish = {v};\n    int *p = &fish;\n\n    printf(\"%d\\n\", *p);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: initialization of 'double *' from incompatible pointer type 'int *' [-Wincompatible-pointer-types]` 喵 —— `incompatible pointer type` 就是「**牌子说的和碗里装的不是一回事**」。\n\n`double *p;` 这行字要**分两半读**：\n\n- 前面的 `double` —— 说的是「**它指的那只碗里装的是小数**」；\n- 后面那颗 `*` —— 说的是「**这是一块牌子**」。\n\n所以碗里装什么种类，牌子前头就得写什么种类：碗里装整数就写 `int *`，碗里装小数就写 `double *`。\n\n写成 `double *p = &fish;`，翻译官喵一看：牌子上说这碗装小数，可 `fish` 明明是一只整数碗 —— 两边对不上，当场拦下。\n\n改成 `int *p = &fish;` 就好啦。这一条也是 C「什么都要你自己管」的一部分：**牌子指的是什么碗，你得亲口说清楚。**"
+}

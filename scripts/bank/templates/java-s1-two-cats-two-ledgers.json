@@ -1,0 +1,26 @@
+{
+  "templateId": "java-s1-two-cats-two-ledgers",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-12",
+  "type": "codewrite",
+  "concept": ["一窝真猫", "家当各带各的", "招式动的是这一只", "Scanner"],
+  "instances": 6,
+  "params": {
+    "name1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "name2": { "kind": "pick", "values": ["大胖", "雪球"] },
+    "name3": { "kind": "pick", "values": ["糯米", "团子"] },
+    "name4": { "kind": "pick", "values": ["花卷", "汤圆"] },
+    "a": { "kind": "int", "min": 2, "max": 4 },
+    "b": { "kind": "int", "min": 1, "max": 3 },
+    "n2": { "kind": "int", "min": 2, "max": 5 },
+    "a2": { "kind": "int", "min": 5, "max": 6 },
+    "b2": { "kind": "int", "min": 2, "max": 3 },
+    "n2b": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{name1} {a} {b} {name2} {n2}\n", "sampleText": "{name3} {a2} {b2} {name4} {n2b}\n" },
+  "stemTemplate": "图纸上要画这么一招喵：`void eat(int n)` —— 把 `n` 条加进**这一只**猫自己的账上（动的是 `fish` 那样家当）。\n\n纸条上是**用空格隔开的一整行**，共五样：第一个名字、这只猫两顿的条数、第二个名字、第二只猫一顿的条数。读的时候一样一样来：名字用 `sc.next()`，条数用 `sc.nextInt()`。\n\n`main` 里要生**两只**真猫：头一只先吃一顿、再吃一顿；第二只只吃一顿。最后各印一行账 —— 判分盯的是「**各记各的**」，别把两只猫的账串到一块儿。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外两个名字、另外几组条数**喵。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String who1 = sc.next();\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        String who2 = sc.next();\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Cat {\n    String name;\n    int fish;\n\n    void eat(int n) {\n        fish = fish + n;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String who1 = sc.next();\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        String who2 = sc.next();\n        int n = sc.nextInt();\n\n        Cat c1 = new Cat();\n        c1.name = who1;\n        Cat c2 = new Cat();\n        c2.name = who2;\n\n        c1.eat(a);\n        c1.eat(b);\n        c2.eat(n);\n\n        System.out.println(c1.name + \" 一共吃了 \" + c1.fish + \" 条\");\n        System.out.println(c2.name + \" 一共吃了 \" + c2.fish + \" 条\");\n    }\n}\n",
+  "explanationTemplate": "这一题的魂是**「谁喊就动谁」**喵：`c1.eat(a)` 动的是 `c1` 这只猫的家当，`c2.eat(n)` 动的是 `c2` 的 —— 图纸只画了一张，**家当是每只各带一套**。\n\n- **两只猫得生两只**：`Cat c1 = new Cat();`、`Cat c2 = new Cat();` 各生一只。要是只生一只、拿两块牌子指着同一只猫，两笔账就全算到同一只头上了 —— 这是这一课最容易摔的地方。\n- **招式里那句 `fish = fish + n;` 不用写牌子**：`eat` 前面没有 `static`，它跟着喊它的那一只走，所以这句动的永远是「这一只」的账。\n- **从外面看账要写 `c1.name`、`c1.fish`**：牌子点一下，指的就是**那只猫自己的家当**。\n\n图纸一次、真猫一窝，账各算各的 —— 这就是画图纸最值钱的地方喵。"
+}

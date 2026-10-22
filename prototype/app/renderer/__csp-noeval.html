@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: miai-wall:; media-src 'self' blob: miai-wall:; font-src 'self' data: blob:; connect-src 'self' miai-wall:; frame-src 'self' blob: miai-wall:; worker-src 'self' blob:" />
+<title>miai-wall P1 prototype</title>
+<style>
+  /* 过场/视差 CSS 段逐字移植自 DSH styles.js（:161-187 过场段、:2866-2904 视差段），
+     类名 we- → wp-、变量 --we- → --wp-。 */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+  body { font: 13px/1.5 "Microsoft YaHei", system-ui, sans-serif; color: #e8e8e8; }
+
+  #stage { position: fixed; inset: 0; background: #000; isolation: isolate; overflow: hidden; }
+
+  .wp-slot { position: absolute; inset: 0; overflow: hidden; background: #000; z-index: 2; }
+  /* 切层内容闸门：新层还没有画面时先不参与绘制（屏上留给旧层的像素）。
+     画面到位后这条类被过场路由重写 className 摘掉。 */
+  .wp-slot--pending { opacity: 0; }
+  /* 切换过场：初/终态全由内联样式写入（transitions.mjs 的 switchFrames），
+     这里只提供一条通用 transition；时长由内联 --wp-switch-ms 决定。
+     只动 transform / opacity / clip-path（合成器友好属性；mask/filter 在 video
+     与 iframe 上会掉出合成层，故不用）。 */
+  .wp-slot--switch {
+    transition:
+      transform var(--wp-switch-ms, 700ms) cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity var(--wp-switch-ms, 700ms) cubic-bezier(0.22, 0.61, 0.36, 1),
+      clip-path var(--wp-switch-ms, 700ms) cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: transform, opacity, clip-path;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wp-slot--switch { transition: none !important; }
+  }
+
+  /* 视差段（移植 DSH）：位移、放大倍数全在 calc 里乘出来；只能用 CSS 独立属性
+     translate / scale —— 过场会内联写/清 transform，独立属性才与之叠加而不互相清掉。
+     关掉总开关时属性摘掉 ⇒ 屏上一点痕迹都没有。 */
+  body[data-wp-parallax="on"] .wp-slot {
+    translate: calc(var(--wp-parallax-x, 0px) * var(--wp-parallax-bg, 0))
+      calc(var(--wp-parallax-y, 0px) * var(--wp-parallax-bg, 0));
+    scale: calc(1 + var(--wp-parallax-bg, 0) / 100);
+  }
+  body[data-wp-parallax="on"] .wp-parallax--moving { will-change: translate; }
+
+  .wp-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  #scrim { position: absolute; inset: 0; background: #000; z-index: 3; pointer-events: none; opacity: 0.35; }
+
+  /* ── UI 面（P1 的宿主界面，不属于壁纸层） ── */
+  #hud {
+    position: fixed; top: 10px; left: 12px; z-index: 20;
+    background: rgba(12,14,18,0.82); border: 1px solid #2c3138; border-radius: 8px;
+    padding: 8px 12px; min-width: 260px; backdrop-filter: blur(6px);
+  }
+  #hud .row { display: flex; gap: 8px; }
+  #hud .k { color: #8b93a0; min-width: 44px; }
+  #toolbar { position: fixed; top: 10px; right: 12px; z-index: 21; display: flex; gap: 6px; }
+  button {
+    font: inherit; color: #e8e8e8; background: rgba(24,28,34,0.9); border: 1px solid #343b45;
+    border-radius: 7px; padding: 5px 10px; cursor: pointer;
+  }
+  button:hover { background: rgba(40,46,56,0.95); }
+  #drawer {
+    position: fixed; top: 52px; left: 12px; bottom: 12px; width: 300px; z-index: 19;
+    background: rgba(12,14,18,0.88); border: 1px solid #2c3138; border-radius: 10px;
+    padding: 8px; overflow: auto; display: none; backdrop-filter: blur(6px);
+  }
+  body.drawer-open #drawer { display: block; }
+  .drawer-item {
+    width: 100%; display: flex; align-items: center; gap: 8px; text-align: left;
+    background: transparent; border: 0; border-radius: 7px; padding: 5px 6px; margin: 0 0 2px;
+  }
+  .drawer-item:hover { background: rgba(255,255,255,0.07); }
+  .drawer-item.cur { background: rgba(64,132,255,0.22); outline: 1px solid rgba(64,132,255,0.5); }
+  .drawer-thumb { width: 48px; height: 27px; flex: 0 0 auto; background: #1b1f26; border-radius: 4px; overflow: hidden; }
+  .drawer-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .drawer-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .drawer-badge { flex: 0 0 auto; font-size: 11px; padding: 1px 6px; border-radius: 999px; background: #2a3038; color: #9fb0c8; }
+  .badge-video { background: #3a2f4a; color: #c9a8ff; }
+  .badge-scene { background: #24402f; color: #8fe0b0; }
+  .badge-web { background: #4a3a24; color: #ffcf8f; }
+
+  #panel {
+    position: fixed; top: 52px; right: 12px; bottom: 12px; width: 300px; z-index: 19;
+    background: rgba(12,14,18,0.88); border: 1px solid #2c3138; border-radius: 10px;
+    padding: 10px 12px; overflow: auto; display: none; backdrop-filter: blur(6px);
+  }
+  body.panel-open #panel { display: block; }
+  #panel h3 { margin: 10px 0 4px; font-size: 12px; color: #8b93a0; font-weight: 600; }
+  #panel h3:first-child { margin-top: 0; }
+  .ctl { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+  .ctl label { flex: 0 0 92px; color: #c6ccd6; }
+  .ctl input[type="range"] { flex: 1; }
+  .ctl .v { flex: 0 0 48px; text-align: right; color: #9fb0c8; }
+  .ctl select { flex: 1; background: #1b1f26; color: #e8e8e8; border: 1px solid #343b45; border-radius: 6px; padding: 3px 6px; }
+
+  #toast {
+    position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 30;
+    background: rgba(180,60,50,0.92); color: #fff; padding: 8px 14px; border-radius: 8px;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease; max-width: 70%;
+  }
+  #toast.show { opacity: 1; }
+
+  body.ui-hidden #hud, body.ui-hidden #drawer, body.ui-hidden #panel, body.ui-hidden #toolbar { display: none !important; }
+</style>
+</head>
+<body class="drawer-open panel-open">
+  <div id="stage">
+    <div id="slotA" class="wp-slot"></div>
+    <div id="slotB" class="wp-slot"></div>
+    <div id="scrim"></div>
+  </div>
+
+  <div id="hud">
+    <div class="row"><span class="k">壁纸</span><span id="hud-item">—</span></div>
+    <div class="row"><span class="k">帧率</span><span id="hud-fps">—</span></div>
+    <div class="row"><span class="k">状态</span><span id="hud-state">—</span></div>
+    <div class="row"><span class="k">音频</span><span id="hud-audio">—</span></div>
+  </div>
+
+  <div id="toolbar">
+    <button id="btn-drawer" type="button">库</button>
+    <button id="btn-panel" type="button">设置</button>
+    <button id="btn-next" type="button">下一张</button>
+    <button id="btn-stress" type="button">连切×6</button>
+    <button id="btn-ui" type="button">净屏(H)</button>
+  </div>
+
+  <div id="drawer"><div id="drawer-list"></div></div>
+
+  <div id="panel">
+    <h3>画面</h3>
+    <div class="ctl"><label>遮罩深度</label><input id="rng-dim" type="range" min="0" max="100" step="1" /><span class="v" id="rng-dim-v">35</span></div>
+    <div class="ctl"><label>模糊(px)</label><input id="rng-blur" type="range" min="0" max="40" step="1" /><span class="v" id="rng-blur-v">0px</span></div>
+    <h3>切换</h3>
+    <div class="ctl"><label>过场</label>
+      <select id="sel-transition">
+        <option value="fade">交叉淡化</option>
+        <option value="cut">硬切</option>
+        <option value="push">推移</option>
+        <option value="wipe">擦除</option>
+        <option value="iris">光圈</option>
+        <option value="zoom">缩放</option>
+        <option value="bars">条带</option>
+        <option value="random">随机</option>
+      </select>
+    </div>
+    <div class="ctl"><label>速度</label>
+      <select id="sel-speed"><option value="fast">快</option><option value="normal">标准</option><option value="slow">慢</option></select>
+    </div>
+    <h3>视差（鼠标透视）</h3>
+    <div class="ctl"><label>启用</label><input id="chk-parallax" type="checkbox" /></div>
+    <div class="ctl"><label>幅度 0-10</label><input id="rng-amount" type="range" min="0" max="10" step="0.5" /><span class="v" id="rng-amount-v">3</span></div>
+    <div class="ctl"><label>缓动 0-98</label><input id="rng-smooth" type="range" min="0" max="98" step="1" /><span class="v" id="rng-smooth-v">85</span></div>
+    <h3>音频响应（loopback）</h3>
+    <div class="ctl"><label>启用</label><input id="chk-audio" type="checkbox" /></div>
+    <div class="ctl"><label>增益</label><input id="rng-gain" type="range" min="0" max="100" step="1" /><span class="v" id="rng-gain-v">50</span></div>
+    <h3>性能</h3>
+    <div class="ctl"><label>场景帧率</label>
+      <select id="sel-fps"><option value="15">15</option><option value="30">30</option><option value="60">60</option></select>
+    </div>
+    <h3>轮播</h3>
+    <div class="ctl"><label>启用</label><input id="chk-rotation" type="checkbox" /></div>
+    <div class="ctl"><label>间隔(分)</label>
+      <select id="sel-rotation-interval"><option value="1">1</option><option value="5">5</option><option value="10">10</option></select>
+    </div>
+    <h3>电源</h3>
+    <div class="ctl"><label>失焦暂停</label><input id="chk-pause-blur" type="checkbox" /></div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script type="module" src="app.mjs"></script>
+</body>
+</html>

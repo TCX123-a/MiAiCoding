@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-todo-save-load",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-14",
+  "type": "codewrite",
+  "concept": ["一行一条每行自己补换行", "竖线左边是记号右边是内容", "读回来的样子照册子上的记号来", "读到 null 为止"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["zhi.txt", "biji.txt"] },
+    "a": { "kind": "pick", "values": ["喂鱼", "洗猫窝"] },
+    "b": { "kind": "pick", "values": ["铲屎", "晒鱼干"] },
+    "c": { "kind": "pick", "values": ["买猫粮", "修猫抓板"] }
+  },
+  "stemTemplate": "本喵要把三条事项按册子的规矩存下来、再读回来。册子上**一行一条**，写成 `办完了没|内容`（`0` 是没办、`1` 是办完），中间用一根竖线隔开。要办的事：\n\n1. 写进册子 `{name}`：第一条 `0|{a}`、第二条 `1|{b}`、第三条 `0|{c}`（**每一条自己补换行**）；\n2. 写完再把册子打开，一条条读回来：**照册子上的记号**印成 `[ ] 内容` 或 `[x] 内容` —— 那根竖线得切掉（切完左边那截是记号、右边那截才是内容）；\n3. 最后印一行 `册子上有 N 条`。\n\n这一题不用投喂什么，写完册子再读回来就行。要写进去的三条本喵都替你定好了，判分那边换的是**册子名字**和三条事项本身喵。",
+  "starterTemplate": "import java.io.BufferedReader;\nimport java.io.File;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        // 先写三条进册子，再一条条读回来\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.io.BufferedReader;\nimport java.io.File;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"{name}\");\n        try (FileWriter w = new FileWriter(f)) {\n            w.write(\"0|{a}\\n\");\n            w.write(\"1|{b}\\n\");\n            w.write(\"0|{c}\\n\");\n        }\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(f))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                int cut = hang.indexOf(\"|\");\n                String flag = hang.substring(0, cut);\n                String what = hang.substring(cut + 1);\n                System.out.println((flag.equals(\"1\") ? \"[x] \" : \"[ ] \") + what);\n                n++;\n                hang = r.readLine();\n            }\n        }\n        System.out.println(\"册子上有 \" + n + \" 条\");\n    }\n}\n",
+  "explanationTemplate": "这一题练的是册子那个格式的**两头**：写进去、读回来。\n\n**一、写：一行一条，每条自己补 `\\n`。** `w.write(\"0|{a}\\n\")` —— 那个 `\\n` 得自己写，`w.write` 没有「印完自动换一行」的脾气。三条记录挤在同一个 `try ( … )` 里，这一段一结束抽屉自动关上（写下去的字这时候才真的落进册子）。\n\n**二、读：先切那根竖线，再照记号印。** 骨架是课里那三句：先 `String hang = r.readLine();`，再 `while (hang != null)` 绕着走，**圈的最后一格再喊一次** `hang = r.readLine();`。每一行先 `hang.indexOf(\"|\")` 找出那根竖线在第几个字母上，然后切成两截：`substring(0, cut)` 是**左边**那截（记号 `0` / `1`），`substring(cut + 1)` 是**右边**那截（内容）—— `+ 1` 那一下是为了**把竖线本身跳过去**，不加的话读回来的内容前面会多一根竖线。\n\n**三、记号得真读。** `(flag.equals(\"1\") ? \"[x] \" : \"[ ] \")` —— 印出来的样子**照册子上的记号来**。本喵把这一句换成一律 `[ ] ` 真跑过：三个记号白记了，一个勾都看不见。这一题三条里只有中间那条是 `1`，所以「一律 `[x] `」也一样过不了。\n\n**四、数行数用另一格。** `n` 在每一圈里加一，读到 `null` 就停。没办完的那两条也在数 —— 记号是 `0` 的意思是「这件事还没办」，不是「它不算一条」喵。"
+}

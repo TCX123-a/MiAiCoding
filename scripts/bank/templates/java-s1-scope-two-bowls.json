@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-scope-two-bowls",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-10",
+  "type": "codefix",
+  "concept": ["地盘", "作用域", "already defined", "编译错误"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 3, "max": 5 },
+    "b": { "kind": "int", "min": 7, "max": 9 }
+  },
+  "stemTemplate": "本喵一大早先摆了一只碗，记下 **{a}** 条小鱼干；到了下午账要改成 **{b}** 条 —— 本喵就照着上午那一行原样又抄了一遍，只把数换了。\n\n翻译官喵当场翻脸，说这句话它读不懂。你帮本喵把「改账」写对：**上午那只碗还是那只碗，别再摆一只新的。**\n\n改好之后印出来该是：\n\n```text\n账上有 {b} 条小鱼干喵\n```",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int fish = {a};\n        int fish = {b};\n        System.out.println(\"账上有 \" + fish + \" 条小鱼干喵\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int fish = {a};\n        fish = {b};\n        System.out.println(\"账上有 \" + fish + \" 条小鱼干喵\");\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `variable fish is already defined in method main(String[])` —— 「`fish` 这个名字，在 `main` 这块地盘上已经挂过号了喵。」\n\n上午那句 `int fish = {a};` 干的是**两件事**：摆一只新碗、给它起名叫 `fish`。下午要是照抄一遍，它就想**再摆一只同名的碗** —— 同一个地盘里躺着两只都叫 `fish` 的碗，本喵自己都分不清喊的是哪一只，翻译官索性不许。\n\n改账根本不用摆新碗，把数**倒进原来那只**就行：写成 `fish = {b};`，前面那个 `int` 去掉。打头不写类型，意思就从「再摆一只」变成了「往原来那只里装」—— 这一句跟上午那只，是同一只碗。\n\n这正是这一课下半场那句话：**一块地盘里，同名的碗只能有一只**；多摆一次不叫改账，叫撞车喵。"
+}

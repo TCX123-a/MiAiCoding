@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-06-delete-on-smart",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-06",
+  "type": "codefix",
+  "concept": ["牌子自己会还仓库", "别跟它抢着还", "delete 要的是裸牌子"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["大肥鱼", "小橘"] }
+  },
+  "stemTemplate": "本喵请了一块牌子拿着一件货（货是一间叫 `Fish` 的仓库，它一生下来印 `领到`、被还回去时印 `还回`）。\n\n递货的时候本喵顺手（老习惯）又补了一句 `delete p;`，翻译官喵当场不干了。\n\n你帮本喵改对：让这段代码**能编过、能跑完**，并且印出**三行**，顺序就是事情发生的顺序：\n\n1. `领到 {name}`\n2. `用 {name}`\n3. `还回 {name}`\n\n除了多余的那一句，别的都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    unique_ptr<Fish> p = make_unique<Fish>(\"{name}\");\n    cout << \"用 \" << p->name << endl;\n    delete p;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    unique_ptr<Fish> p = make_unique<Fish>(\"{name}\");\n    cout << \"用 \" << p->name << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "牌子最讨喜的地方就是：**「还仓库」这件事写在它的出生证里**，你一个字都不用写 —— 花括号一结束，它自己就把仓库叼回去了喵。\n\n所以 `delete p;` 那一句是在**跟牌子抢着还**。翻译官喵的原话里有 `argument given to 'delete', expected pointer`，念作「`delete` 要的是一块**裸**牌子，可你递过去的是一块**会自己还**的牌子 —— 这个形状我不认」。\n\n把那句删掉就对了：牌子自己会还，`还回 {name}` 照样印得出来（而且是印在 `用` 的后面 —— 因为它在 `main` 的花括号走出去时才还）。\n\n⚠️ 「手写 `delete`」和「牌子自己还」是**两条路**，一条代码里只能走一条：走了牌子那条，就别再伸手去还了。"
+}

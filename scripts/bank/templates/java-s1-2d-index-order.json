@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s1-2d-index-order",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-08",
+  "type": "codefix",
+  "concept": ["两层编号", "先排后只", "端错了碗"],
+  "instances": 2,
+  "params": {
+    "p": { "kind": "pick", "values": ["2", "3"] },
+    "q": { "kind": "pick", "values": ["4", "5"] },
+    "r": { "kind": "pick", "values": ["6", "7"] },
+    "s": { "kind": "pick", "values": ["8", "9"] }
+  },
+  "stemTemplate": "本喵把四只碗摆成**两排**喵：前两只算第 1 排，后两只算第 2 排，排头那只都是这一排的 0 号。\n\n现在想报一报 **第 2 排第 1 只**碗里有几条。可它端回来的**不是那一只** —— 印出来的数不对，程序却一声不吭，连个错都不报。\n\n你帮本喵看看它方括号里的编号是怎么排的，把它改好。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int[][] grid = {\n            { {p}, {q} },\n            { {r}, {s} }\n        };\n\n        System.out.println(\"第 2 排第 1 只碗里有 \" + grid[0][1] + \" 条喵\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int[][] grid = {\n            { {p}, {q} },\n            { {r}, {s} }\n        };\n\n        System.out.println(\"第 2 排第 1 只碗里有 \" + grid[1][0] + \" 条喵\");\n    }\n}\n",
+  "explanationTemplate": "两层的写法里，**方括号里的编号是从左往右一层层往里走的**喵：第一个方括号找**第几排**（第几只大碗），第二个方括号再找**这一排里的第几只**小碗 —— `grid[1][0]` 才是「第 2 排、排头那只」。\n\n本喵写的是 `grid[0][1]`：先找第 1 排、再找那排的第 2 只 —— 两个编号**正好掉了个个儿**，端回来的是另一只碗里的数。\n\n这种错最费眼神：**它不炸、不报错，程序高高兴兴跑完，只是把碗端错了。** 屏幕上那个数看着也挺像回事。\n\n记法就一句：**念的时候跟着方括号从左到右念** —— 「第几只大碗，里头第几只小碗」。改完以后 `grid[1][0]` 取的正是后一排的排头，跟题面要的那只对上了喵。"
+}

@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-list-scan-and-sum",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-08",
+  "type": "codewrite",
+  "concept": ["逐个过一遍", "攒数", "比大小", "柜子自己长大"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 3 },
+    "t": { "kind": "int", "min": 4, "max": 5 },
+    "vals": { "kind": "pick", "values": ["1\n5\n7", "2\n4\n9"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{n}\n{vals}\n", "sampleText": "4\n2\n4\n9\n1\n" },
+  "stemTemplate": "本喵要把一批号码先收进柜子，再**从头到尾挨个摸一遍**算两笔账喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请先把它们一个不漏地加进柜子，然后印三行：\n\n```text\n柜子里有 N 格\n加起来是 S\n不小于 T 的有 C 格\n```\n\n- `N` 是格数；\n- `S` 是柜子里所有数**加起来**的和；\n- `T` 就是 {t}，`C` 是柜子里**不小于 {t}** 的数有几个。\n\n这三笔账**一个绕圈的招式里就能全算出来** —— 用那种「挨个过一遍」的写法，别去按编号一个个摸。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n        int total = 0;\n        int cnt = 0;\n        for (int x : box) {\n            total = total + x;\n            if (x >= {t}) {\n                cnt++;\n            }\n        }\n        System.out.println(\"柜子里有 \" + box.size() + \" 格\");\n        System.out.println(\"加起来是 \" + total);\n        System.out.println(\"不小于 {t} 的有 \" + cnt + \" 格\");\n    }\n}\n",
+  "explanationTemplate": "这题的重点是**那个「挨个过一遍」的写法**喵。\n\n**一、它比按编号摸好在哪。** 按编号摸得自己管一个 `i`，从 0 数到 `size() - 1` —— 数错一点（比如写成 `size()` 没减一）就当场炸，上一课的那种红字就是那么来的。「挨个过一遍」的写法是 `for (int x : box)`，读作「**把柜子里每一格挨个拿出来，放进 `x`，每拿一格就跑一遍大括号里的东西**」。它不看编号，也就不可能数错。\n\n**二、两个攒数的小篮子。** `total` 攒和、`cnt` 计数，都在绕圈**外面**先立好、给个 0。这一手很要紧：要是把它们写在绕圈**里面**，每转一圈就重新归零，最后拿到的就是**最后一格**的结果，不是全部的结果 —— 这种错**没有红字**，只能靠本喵自己盯。\n\n**三、`x >= {t}` 是在挨个过一遍的时候顺手比一下。** 每拿出来一格就问一句「它够得上 {t} 吗」，够得上就把计数加一。\n\n（顺带说一句这题的判分输入：每组数里都**必定**有够得上 {t} 的、也**必定**有够不上的 —— 所以「比大小」这件事在**每一道**里都真被考到，把那一句 `if` 漏掉、见一个数就加一的人一定会露馅喵。）\n\n**四、柜子自己长大这件事，这题又用了一遍。** `add` 之前本喵一个字都没提「要几格」，柜子跟着投喂的个数自己撑大 —— 所以「几格」这种数，**永远让柜子自己报**，别写死。\n\n顺手说一句装箱：柜子的牌子是 `Integer`，本喵塞进去的是光溜溜的 `int`、拿出来放进 `int x` 也是光溜溜的 `int` —— 两头都是翻译官喵自己顺手装、顺手拆的，本喵一个字没多写喵。"
+}

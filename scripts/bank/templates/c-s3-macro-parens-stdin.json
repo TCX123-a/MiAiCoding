@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-macro-parens-stdin",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-11",
+  "type": "codefix",
+  "concept": ["墙上照抄的条子", "整体没穿括号", "照抄之后运算次序变了", "两层括号缺一不可"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["1", "2"] },
+    "b": { "kind": "pick", "values": ["5", "6"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{a}\n{b}\n", "sampleText": "21\n32\n" },
+  "stemTemplate": "本喵这张条子写着「翻一倍」，喂给它的是**两只数加起来**那个式子：\n\n```text\n#define DOUBLE_BAD(x) x * 2\n```\n\n翻译官喵照着抄，跑起来一声没吭，可第二行的数**不对** —— 它只把后面那只数翻了一倍，前面那只原封不动地加了进去。\n\n请你把它改好，规矩照课文里那条：**喂进来的式子先穿一层括号，整个结果再穿一层**。改好之后该印两行：第一行是两只数**加起来**，第二行是**加起来以后再翻一倍**。\n\n样例喂进去的两只数是\n\n```text\n{sampleInput}\n```\n\n该印出来的是\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外两只数喵，所以你那份印出来的数跟样例不一样，规矩是一样的。）",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define DOUBLE_BAD(x) x * 2\n\nint main(void) {\n    int x, y;\n    if (scanf(\"%d %d\", &x, &y) != 2) {\n        return 1;\n    }\n    printf(\"加起来是 %d\\n\", x + y);\n    printf(\"翻一倍是 %d\\n\", DOUBLE_BAD(x + y));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define DOUBLE_BAD(x) ((x) * 2)\n\nint main(void) {\n    int x, y;\n    if (scanf(\"%d %d\", &x, &y) != 2) {\n        return 1;\n    }\n    printf(\"加起来是 %d\\n\", x + y);\n    printf(\"翻一倍是 %d\\n\", DOUBLE_BAD(x + y));\n    return 0;\n}\n",
+  "explanationTemplate": "病根是**条子少穿了一层括号**喵。\n\n墙上那张条子是**照抄**的：`DOUBLE_BAD(x + y)` 抄出来成了 `x + y * 2` —— 乘号先算，再把 `x` 加上去。于是只有后面那只数被翻了一倍，前面那只**原样**混在里面。\n\n课文里 `HALF_BAD(4)` 栽的是同一个坑：`100 / HALF_BAD(4)` 抄成了 `100 / 4 / 2`，除号从左往右一路算下去，印出来 12，而本喵想要的是 50。\n\n两层括号各管一件事：\n\n- **投喂那层 `(x)`**：管住喂进来的式子别被扯开 —— 少了它，`x + y` 会被 `* 2` 只粘住一半。\n- **整体那层**：管住整个结果别被外面的运算吃掉 —— 这张条子哪天被塞进一个更大的算式里（比如 `100 / DOUBLE_BAD(n)`），少了它，外面的除号就会跟条子里的乘号先凑一对。\n\n两层都穿好之后，抄出来是 `((x + y) * 2)`：先加后乘，第二行才对得上。\n\n> 顺一句：括号是给**照抄的条子**穿的。招式里进门的东西本来就会先算好，不用操心这个喵。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s1-string-eq-vs-equals",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-05",
+  "type": "codefix",
+  "concept": ["==", ".equals", "两串字比一样"],
+  "instances": 2,
+  "params": {
+    "f1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "item": { "kind": "pick", "values": ["雪球", "煤球"] }
+  },
+  "stemTemplate": "本喵做了台「对名字的小机器」喵：纸条上写一只猫的名字，机器印**两行牌子** ——\n\n- 第一行：纸条上写的是不是 `{f1}`\n- 第二行：纸条上写的是不是 `{item}`\n\n两行都只印 `true` 或者 `false`。\n\n可这台机器**一张牌都没翻对** —— 不管纸条上写谁的名字，它两行都印 `false`，连本喵亲手写的名字它都说不认识喵！\n\n你帮本喵看看它拿什么跟什么在比，把它改好。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n它就该叼回\n\n{sampleOutput}\n\n（判分用的是**另外一张纸条**喵～）",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String want = sc.next();\n\n        System.out.println(want == \"{f1}\");\n        System.out.println(want == \"{item}\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String want = sc.next();\n\n        System.out.println(want.equals(\"{f1}\"));\n        System.out.println(want.equals(\"{item}\"));\n    }\n}\n",
+  "stdinSpec": { "kind": "raw", "text": "{item}\n", "sampleText": "{f1}\n" },
+  "explanationTemplate": "两个等号 `==` 问的是一句**很刁钻**的话：「你俩**是不是同一个东西**」喵 —— 像揪着两只猫问「你是她本人吗」。\n\n从纸条上读回来的那串字，跟本喵写在引号里的那串，是**两串各写各的**东西：屏幕上看着一模一样，可它们不是同一个。`==` 老老实实回答了「不是同一个」，于是永远给你 `false`，而且**一个错都不报**。\n\n要比「内里长得一样吗」，得请 `.equals(...)` 出场 —— 它会把两串字**并排摊开一颗一颗对过去**，所以 `want.equals(\"{f1}\")` 才是本喵真正想问的那句话。\n\n写法记牢：**项链的名字写在前头，点一个点，再写 `equals`**，要比的那串放进小括号。往后只要看到 `==` 两边都是项链，一律换成 `.equals(...)` —— 就算它偶尔碰巧印出 `true`，那也是碰巧，不算数喵。"
+}

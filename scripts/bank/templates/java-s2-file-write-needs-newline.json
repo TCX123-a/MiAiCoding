@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-file-write-needs-newline",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-13",
+  "type": "codefix",
+  "concept": ["write 不会自己换行", "两条记录糊成一条", "行数跟着错"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["dangan.txt", "zhangben.txt"] },
+    "a": { "kind": "pick", "values": ["小鱼干 3 条", "小鱼干 5 条"] },
+    "b": { "kind": "pick", "values": ["猫粮 1 碗", "猫粮 2 碗"] }
+  },
+  "stemTemplate": "本喵要把两条记录写进册子，再一条条读回来数一数 —— 可这稿子跑出来是这样的：\n\n```text\n1 号格子：{a}{b}\n一共 1 行\n```\n\n两条记录**糊成了一条**，那个数也跟着错了。请你把它补好，让程序印出：\n\n```text\n1 号格子：{a}\n2 号格子：{b}\n一共 2 行\n```\n\n要补的地方就在**往册子上写字的那两句**上，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"{a}\");\n            w.write(\"{b}\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            int n = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(n + \" 号格子：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"一共 \" + n + \" 行\");\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"{a}\\n\");\n            w.write(\"{b}\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            int n = 0;\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(n + \" 号格子：\" + hang);\n                hang = r.readLine();\n            }\n            System.out.println(\"一共 \" + n + \" 行\");\n        }\n    }\n}\n",
+  "explanationTemplate": "毛病只有一处：**`w.write` 不会自己换行。**\n\n本喵写下去的是这么两句：\n\n```java\nw.write(\"{a}\");\nw.write(\"{b}\");\n```\n\n册子上收到的就成了**紧紧连着的一串字** —— 所以 `readLine()` 一趟就把两条一起叼了回来（题面第一行那个 `{a}{b}` 就是这么来的），行数也从 2 掉成了 1。**这稿子编得过、跑得起来，翻译官喵一个字都不说** —— 它不是「写错了」，是「少写了一样东西」。\n\n补法就是每一句末尾自己补上换行：\n\n```java\nw.write(\"{a}\\n\");\nw.write(\"{b}\\n\");\n```\n\n`\\n` 是**藏起来的一个换行**（不是「反斜杠加 n」两个字符），册子上哪一句自成一行，全看它。\n\n这里有个本喵自己也摔过的地方：**`System.out.println` 和 `w.write` 的脾气不一样。** `println` 印完**自己会换一行**，所以平时写代码从来不补 `\\n`；`w.write` 伸出去的是一支笔 —— **你写什么，册子上就是什么**，换行得你自己动手。\n\n顺带说一句判分：另外那一道的两条记录跟这里不一样，所以「只补一处」「或者干脆不补、把两条拼成一句印出来」都过不了喵。"
+}

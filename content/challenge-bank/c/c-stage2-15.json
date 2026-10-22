@@ -1,0 +1,598 @@
+{
+  "lessonId": "c-stage2-15",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s2-book-add-and-list-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要有一个「加一条」和一个「列出来」的动作：\n\n- `add_one`：头上收「那一排碗」「现在有几条」「名字」「号码」四样。先看装满没有 —— 装满 100 条了就印一行 `记满了喵`，什么也不加、把现在这个数**原样交回去**；没装满就把名字和号码抄进**第 <现在有几条> 格**，然后把**新的条数**交回去。\n- `list_all`：一条都没有就印一行 `还一条都没有喵`；有的话从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`。\n\n请你按课文的样子先画一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；再写好这两招。\n\n`main` 里本喵已经想好了：起一本空册子、条数算 0，先加两条**固定的** —— `狸花 13500000005` 和 `奶牛 13400000006`；**再从外面读进来一条**（名字、空格、号码），也加进去；最后印一行 `一共 <几条> 条`，再把全部列一遍。\n\n比如投喂给程序的是\n\n三花 13700000003\n\n程序就要叼回\n\n一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 三花 13700000003\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"狸花\", \"13500000005\");\n    n = add_one(book, n, \"奶牛\", \"13400000006\");\n\n    char name[32];\n    char phone[20];\n    scanf(\"%31s %19s\", name, phone);\n    n = add_one(book, n, name, phone);\n\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "expectedOutput": "一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 小橘 13800000001",
+      "stdin": "小橘 13800000001\n",
+      "explanation": "这一课的小册子就是**四样东西拼起来的**喵：一张图纸、一个条数、招式的两招（加一条、列出来）。把这道题写顺了，通讯录就等于写好了一半。\n\n**① 图纸为什么单独起个名字？** 照着课文写：\n\n```c\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n```\n\n外面那个 `typedef` 的意思是**给这张图纸起个短名字** —— 起完以后本喵就能写 `Contact book[MAX]`，比每处都写一遍「那种装着名字和号码的东西」省事得多。**一条记录里的每一样都是一格**，名字那格 32 个字、号码那格 20 个字。\n\n**② `add_one` 的关键在最后那一句。** 抄进去用的是 `strcpy(book[n].name, name)`（**不能直接赋值** —— 一格已经摆好的碗换不掉，只能往里抄）。抄完才 `return n + 1;`。**外面必须用 `n = add_one(...)` 接住**，不然新条数就掉地上了。\n\n**③ 为什么新条数不是「外面的 n 自动加一」？** 因为招式头上那个 `int n` 只是一张**复印件** —— 在招式里怎么加，外面那份一个字都不变。想让它变，只有交回来、再自己接住这一条路。\n\n**④ 从外面读进来一条，两格前面都不加 `&`。** 本喵开了 `char name[32]` 和 `char phone[20]` 两个空位，然后\n\n```c\nscanf(\"%31s %19s\", name, phone);\n```\n\n`name` 和 `phone` 本身就是**那两排碗**，`scanf` 要的正是「哪一排」，报名字就行。（要是像课文里那样直接读进册子，就是 `book[n].name` 那两格 —— **照样不加 `&`**，这一条课文专门提过。）\n\n**⑤ 把读进来的接上。** 读到的两格就是**一条现成的记录**，直接递给 `add_one` 让那一招去抄进册子 —— 这也是课文里那招「收进来的是名字和号码两样东西」的用意：它不关心这两样是写死的还是从外面念进来的。\n\n**⑥ 那个 `%31s` 里的 31 是什么？** 是「最宽只收 31 个字」。名字那格是 32 个字宽，最后一位要留给「到此为止」那个记号，所以最多收 31 个。**上限写清楚，就不怕外面递进来一条特别长的**。",
+      "templateId": "c-s2-book-add-and-list",
+      "params": {
+        "who": "小橘",
+        "who2": "三花",
+        "tel": "13800000001",
+        "tel2": "13700000003"
+      },
+      "verified": {
+        "at": "2026-09-16T08:48:35.765Z",
+        "hash": "3d2da517be0f39ff"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-add-and-list-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要有一个「加一条」和一个「列出来」的动作：\n\n- `add_one`：头上收「那一排碗」「现在有几条」「名字」「号码」四样。先看装满没有 —— 装满 100 条了就印一行 `记满了喵`，什么也不加、把现在这个数**原样交回去**；没装满就把名字和号码抄进**第 <现在有几条> 格**，然后把**新的条数**交回去。\n- `list_all`：一条都没有就印一行 `还一条都没有喵`；有的话从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`。\n\n请你按课文的样子先画一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；再写好这两招。\n\n`main` 里本喵已经想好了：起一本空册子、条数算 0，先加两条**固定的** —— `狸花 13500000005` 和 `奶牛 13400000006`；**再从外面读进来一条**（名字、空格、号码），也加进去；最后印一行 `一共 <几条> 条`，再把全部列一遍。\n\n比如投喂给程序的是\n\n三花 13600000004\n\n程序就要叼回\n\n一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 三花 13600000004\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"狸花\", \"13500000005\");\n    n = add_one(book, n, \"奶牛\", \"13400000006\");\n\n    char name[32];\n    char phone[20];\n    scanf(\"%31s %19s\", name, phone);\n    n = add_one(book, n, name, phone);\n\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "expectedOutput": "一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 小橘 13900000002",
+      "stdin": "小橘 13900000002\n",
+      "explanation": "这一课的小册子就是**四样东西拼起来的**喵：一张图纸、一个条数、招式的两招（加一条、列出来）。把这道题写顺了，通讯录就等于写好了一半。\n\n**① 图纸为什么单独起个名字？** 照着课文写：\n\n```c\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n```\n\n外面那个 `typedef` 的意思是**给这张图纸起个短名字** —— 起完以后本喵就能写 `Contact book[MAX]`，比每处都写一遍「那种装着名字和号码的东西」省事得多。**一条记录里的每一样都是一格**，名字那格 32 个字、号码那格 20 个字。\n\n**② `add_one` 的关键在最后那一句。** 抄进去用的是 `strcpy(book[n].name, name)`（**不能直接赋值** —— 一格已经摆好的碗换不掉，只能往里抄）。抄完才 `return n + 1;`。**外面必须用 `n = add_one(...)` 接住**，不然新条数就掉地上了。\n\n**③ 为什么新条数不是「外面的 n 自动加一」？** 因为招式头上那个 `int n` 只是一张**复印件** —— 在招式里怎么加，外面那份一个字都不变。想让它变，只有交回来、再自己接住这一条路。\n\n**④ 从外面读进来一条，两格前面都不加 `&`。** 本喵开了 `char name[32]` 和 `char phone[20]` 两个空位，然后\n\n```c\nscanf(\"%31s %19s\", name, phone);\n```\n\n`name` 和 `phone` 本身就是**那两排碗**，`scanf` 要的正是「哪一排」，报名字就行。（要是像课文里那样直接读进册子，就是 `book[n].name` 那两格 —— **照样不加 `&`**，这一条课文专门提过。）\n\n**⑤ 把读进来的接上。** 读到的两格就是**一条现成的记录**，直接递给 `add_one` 让那一招去抄进册子 —— 这也是课文里那招「收进来的是名字和号码两样东西」的用意：它不关心这两样是写死的还是从外面念进来的。\n\n**⑥ 那个 `%31s` 里的 31 是什么？** 是「最宽只收 31 个字」。名字那格是 32 个字宽，最后一位要留给「到此为止」那个记号，所以最多收 31 个。**上限写清楚，就不怕外面递进来一条特别长的**。",
+      "templateId": "c-s2-book-add-and-list",
+      "params": {
+        "who": "小橘",
+        "who2": "三花",
+        "tel": "13900000002",
+        "tel2": "13600000004"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:11.295Z",
+        "hash": "676072049905a85b"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-add-and-list-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要有一个「加一条」和一个「列出来」的动作：\n\n- `add_one`：头上收「那一排碗」「现在有几条」「名字」「号码」四样。先看装满没有 —— 装满 100 条了就印一行 `记满了喵`，什么也不加、把现在这个数**原样交回去**；没装满就把名字和号码抄进**第 <现在有几条> 格**，然后把**新的条数**交回去。\n- `list_all`：一条都没有就印一行 `还一条都没有喵`；有的话从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`。\n\n请你按课文的样子先画一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；再写好这两招。\n\n`main` 里本喵已经想好了：起一本空册子、条数算 0，先加两条**固定的** —— `狸花 13500000005` 和 `奶牛 13400000006`；**再从外面读进来一条**（名字、空格、号码），也加进去；最后印一行 `一共 <几条> 条`，再把全部列一遍。\n\n比如投喂给程序的是\n\n墨墨 13700000003\n\n程序就要叼回\n\n一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 墨墨 13700000003\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"狸花\", \"13500000005\");\n    n = add_one(book, n, \"奶牛\", \"13400000006\");\n\n    char name[32];\n    char phone[20];\n    scanf(\"%31s %19s\", name, phone);\n    n = add_one(book, n, name, phone);\n\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "expectedOutput": "一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 小橘 13900000002",
+      "stdin": "小橘 13900000002\n",
+      "explanation": "这一课的小册子就是**四样东西拼起来的**喵：一张图纸、一个条数、招式的两招（加一条、列出来）。把这道题写顺了，通讯录就等于写好了一半。\n\n**① 图纸为什么单独起个名字？** 照着课文写：\n\n```c\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n```\n\n外面那个 `typedef` 的意思是**给这张图纸起个短名字** —— 起完以后本喵就能写 `Contact book[MAX]`，比每处都写一遍「那种装着名字和号码的东西」省事得多。**一条记录里的每一样都是一格**，名字那格 32 个字、号码那格 20 个字。\n\n**② `add_one` 的关键在最后那一句。** 抄进去用的是 `strcpy(book[n].name, name)`（**不能直接赋值** —— 一格已经摆好的碗换不掉，只能往里抄）。抄完才 `return n + 1;`。**外面必须用 `n = add_one(...)` 接住**，不然新条数就掉地上了。\n\n**③ 为什么新条数不是「外面的 n 自动加一」？** 因为招式头上那个 `int n` 只是一张**复印件** —— 在招式里怎么加，外面那份一个字都不变。想让它变，只有交回来、再自己接住这一条路。\n\n**④ 从外面读进来一条，两格前面都不加 `&`。** 本喵开了 `char name[32]` 和 `char phone[20]` 两个空位，然后\n\n```c\nscanf(\"%31s %19s\", name, phone);\n```\n\n`name` 和 `phone` 本身就是**那两排碗**，`scanf` 要的正是「哪一排」，报名字就行。（要是像课文里那样直接读进册子，就是 `book[n].name` 那两格 —— **照样不加 `&`**，这一条课文专门提过。）\n\n**⑤ 把读进来的接上。** 读到的两格就是**一条现成的记录**，直接递给 `add_one` 让那一招去抄进册子 —— 这也是课文里那招「收进来的是名字和号码两样东西」的用意：它不关心这两样是写死的还是从外面念进来的。\n\n**⑥ 那个 `%31s` 里的 31 是什么？** 是「最宽只收 31 个字」。名字那格是 32 个字宽，最后一位要留给「到此为止」那个记号，所以最多收 31 个。**上限写清楚，就不怕外面递进来一条特别长的**。",
+      "templateId": "c-s2-book-add-and-list",
+      "params": {
+        "who": "小橘",
+        "who2": "墨墨",
+        "tel": "13900000002",
+        "tel2": "13700000003"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:13.973Z",
+        "hash": "767aa7ccb65ab2ef"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-add-and-list-009",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要有一个「加一条」和一个「列出来」的动作：\n\n- `add_one`：头上收「那一排碗」「现在有几条」「名字」「号码」四样。先看装满没有 —— 装满 100 条了就印一行 `记满了喵`，什么也不加、把现在这个数**原样交回去**；没装满就把名字和号码抄进**第 <现在有几条> 格**，然后把**新的条数**交回去。\n- `list_all`：一条都没有就印一行 `还一条都没有喵`；有的话从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`。\n\n请你按课文的样子先画一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；再写好这两招。\n\n`main` 里本喵已经想好了：起一本空册子、条数算 0，先加两条**固定的** —— `狸花 13500000005` 和 `奶牛 13400000006`；**再从外面读进来一条**（名字、空格、号码），也加进去；最后印一行 `一共 <几条> 条`，再把全部列一遍。\n\n比如投喂给程序的是\n\n三花 13600000004\n\n程序就要叼回\n\n一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 三花 13600000004\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"狸花\", \"13500000005\");\n    n = add_one(book, n, \"奶牛\", \"13400000006\");\n\n    char name[32];\n    char phone[20];\n    scanf(\"%31s %19s\", name, phone);\n    n = add_one(book, n, name, phone);\n\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "expectedOutput": "一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 狸花 13800000001",
+      "stdin": "狸花 13800000001\n",
+      "explanation": "这一课的小册子就是**四样东西拼起来的**喵：一张图纸、一个条数、招式的两招（加一条、列出来）。把这道题写顺了，通讯录就等于写好了一半。\n\n**① 图纸为什么单独起个名字？** 照着课文写：\n\n```c\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n```\n\n外面那个 `typedef` 的意思是**给这张图纸起个短名字** —— 起完以后本喵就能写 `Contact book[MAX]`，比每处都写一遍「那种装着名字和号码的东西」省事得多。**一条记录里的每一样都是一格**，名字那格 32 个字、号码那格 20 个字。\n\n**② `add_one` 的关键在最后那一句。** 抄进去用的是 `strcpy(book[n].name, name)`（**不能直接赋值** —— 一格已经摆好的碗换不掉，只能往里抄）。抄完才 `return n + 1;`。**外面必须用 `n = add_one(...)` 接住**，不然新条数就掉地上了。\n\n**③ 为什么新条数不是「外面的 n 自动加一」？** 因为招式头上那个 `int n` 只是一张**复印件** —— 在招式里怎么加，外面那份一个字都不变。想让它变，只有交回来、再自己接住这一条路。\n\n**④ 从外面读进来一条，两格前面都不加 `&`。** 本喵开了 `char name[32]` 和 `char phone[20]` 两个空位，然后\n\n```c\nscanf(\"%31s %19s\", name, phone);\n```\n\n`name` 和 `phone` 本身就是**那两排碗**，`scanf` 要的正是「哪一排」，报名字就行。（要是像课文里那样直接读进册子，就是 `book[n].name` 那两格 —— **照样不加 `&`**，这一条课文专门提过。）\n\n**⑤ 把读进来的接上。** 读到的两格就是**一条现成的记录**，直接递给 `add_one` 让那一招去抄进册子 —— 这也是课文里那招「收进来的是名字和号码两样东西」的用意：它不关心这两样是写死的还是从外面念进来的。\n\n**⑥ 那个 `%31s` 里的 31 是什么？** 是「最宽只收 31 个字」。名字那格是 32 个字宽，最后一位要留给「到此为止」那个记号，所以最多收 31 个。**上限写清楚，就不怕外面递进来一条特别长的**。",
+      "templateId": "c-s2-book-add-and-list",
+      "params": {
+        "who": "狸花",
+        "who2": "三花",
+        "tel": "13800000001",
+        "tel2": "13600000004"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:16.938Z",
+        "hash": "278ca2d0dd4411cc"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-add-and-list-012",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要有一个「加一条」和一个「列出来」的动作：\n\n- `add_one`：头上收「那一排碗」「现在有几条」「名字」「号码」四样。先看装满没有 —— 装满 100 条了就印一行 `记满了喵`，什么也不加、把现在这个数**原样交回去**；没装满就把名字和号码抄进**第 <现在有几条> 格**，然后把**新的条数**交回去。\n- `list_all`：一条都没有就印一行 `还一条都没有喵`；有的话从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`。\n\n请你按课文的样子先画一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；再写好这两招。\n\n`main` 里本喵已经想好了：起一本空册子、条数算 0，先加两条**固定的** —— `狸花 13500000005` 和 `奶牛 13400000006`；**再从外面读进来一条**（名字、空格、号码），也加进去；最后印一行 `一共 <几条> 条`，再把全部列一遍。\n\n比如投喂给程序的是\n\n墨墨 13700000003\n\n程序就要叼回\n\n一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 墨墨 13700000003\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"狸花\", \"13500000005\");\n    n = add_one(book, n, \"奶牛\", \"13400000006\");\n\n    char name[32];\n    char phone[20];\n    scanf(\"%31s %19s\", name, phone);\n    n = add_one(book, n, name, phone);\n\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "expectedOutput": "一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 狸花 13800000001",
+      "stdin": "狸花 13800000001\n",
+      "explanation": "这一课的小册子就是**四样东西拼起来的**喵：一张图纸、一个条数、招式的两招（加一条、列出来）。把这道题写顺了，通讯录就等于写好了一半。\n\n**① 图纸为什么单独起个名字？** 照着课文写：\n\n```c\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n```\n\n外面那个 `typedef` 的意思是**给这张图纸起个短名字** —— 起完以后本喵就能写 `Contact book[MAX]`，比每处都写一遍「那种装着名字和号码的东西」省事得多。**一条记录里的每一样都是一格**，名字那格 32 个字、号码那格 20 个字。\n\n**② `add_one` 的关键在最后那一句。** 抄进去用的是 `strcpy(book[n].name, name)`（**不能直接赋值** —— 一格已经摆好的碗换不掉，只能往里抄）。抄完才 `return n + 1;`。**外面必须用 `n = add_one(...)` 接住**，不然新条数就掉地上了。\n\n**③ 为什么新条数不是「外面的 n 自动加一」？** 因为招式头上那个 `int n` 只是一张**复印件** —— 在招式里怎么加，外面那份一个字都不变。想让它变，只有交回来、再自己接住这一条路。\n\n**④ 从外面读进来一条，两格前面都不加 `&`。** 本喵开了 `char name[32]` 和 `char phone[20]` 两个空位，然后\n\n```c\nscanf(\"%31s %19s\", name, phone);\n```\n\n`name` 和 `phone` 本身就是**那两排碗**，`scanf` 要的正是「哪一排」，报名字就行。（要是像课文里那样直接读进册子，就是 `book[n].name` 那两格 —— **照样不加 `&`**，这一条课文专门提过。）\n\n**⑤ 把读进来的接上。** 读到的两格就是**一条现成的记录**，直接递给 `add_one` 让那一招去抄进册子 —— 这也是课文里那招「收进来的是名字和号码两样东西」的用意：它不关心这两样是写死的还是从外面念进来的。\n\n**⑥ 那个 `%31s` 里的 31 是什么？** 是「最宽只收 31 个字」。名字那格是 32 个字宽，最后一位要留给「到此为止」那个记号，所以最多收 31 个。**上限写清楚，就不怕外面递进来一条特别长的**。",
+      "templateId": "c-s2-book-add-and-list",
+      "params": {
+        "who": "狸花",
+        "who2": "墨墨",
+        "tel": "13800000001",
+        "tel2": "13700000003"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:19.899Z",
+        "hash": "fa6875db8db3af33"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-add-and-list-015",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要有一个「加一条」和一个「列出来」的动作：\n\n- `add_one`：头上收「那一排碗」「现在有几条」「名字」「号码」四样。先看装满没有 —— 装满 100 条了就印一行 `记满了喵`，什么也不加、把现在这个数**原样交回去**；没装满就把名字和号码抄进**第 <现在有几条> 格**，然后把**新的条数**交回去。\n- `list_all`：一条都没有就印一行 `还一条都没有喵`；有的话从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`。\n\n请你按课文的样子先画一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；再写好这两招。\n\n`main` 里本喵已经想好了：起一本空册子、条数算 0，先加两条**固定的** —— `狸花 13500000005` 和 `奶牛 13400000006`；**再从外面读进来一条**（名字、空格、号码），也加进去；最后印一行 `一共 <几条> 条`，再把全部列一遍。\n\n比如投喂给程序的是\n\n墨墨 13600000004\n\n程序就要叼回\n\n一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 墨墨 13600000004\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"狸花\", \"13500000005\");\n    n = add_one(book, n, \"奶牛\", \"13400000006\");\n\n    char name[32];\n    char phone[20];\n    scanf(\"%31s %19s\", name, phone);\n    n = add_one(book, n, name, phone);\n\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "expectedOutput": "一共 3 条\n1. 狸花 13500000005\n2. 奶牛 13400000006\n3. 狸花 13900000002",
+      "stdin": "狸花 13900000002\n",
+      "explanation": "这一课的小册子就是**四样东西拼起来的**喵：一张图纸、一个条数、招式的两招（加一条、列出来）。把这道题写顺了，通讯录就等于写好了一半。\n\n**① 图纸为什么单独起个名字？** 照着课文写：\n\n```c\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n```\n\n外面那个 `typedef` 的意思是**给这张图纸起个短名字** —— 起完以后本喵就能写 `Contact book[MAX]`，比每处都写一遍「那种装着名字和号码的东西」省事得多。**一条记录里的每一样都是一格**，名字那格 32 个字、号码那格 20 个字。\n\n**② `add_one` 的关键在最后那一句。** 抄进去用的是 `strcpy(book[n].name, name)`（**不能直接赋值** —— 一格已经摆好的碗换不掉，只能往里抄）。抄完才 `return n + 1;`。**外面必须用 `n = add_one(...)` 接住**，不然新条数就掉地上了。\n\n**③ 为什么新条数不是「外面的 n 自动加一」？** 因为招式头上那个 `int n` 只是一张**复印件** —— 在招式里怎么加，外面那份一个字都不变。想让它变，只有交回来、再自己接住这一条路。\n\n**④ 从外面读进来一条，两格前面都不加 `&`。** 本喵开了 `char name[32]` 和 `char phone[20]` 两个空位，然后\n\n```c\nscanf(\"%31s %19s\", name, phone);\n```\n\n`name` 和 `phone` 本身就是**那两排碗**，`scanf` 要的正是「哪一排」，报名字就行。（要是像课文里那样直接读进册子，就是 `book[n].name` 那两格 —— **照样不加 `&`**，这一条课文专门提过。）\n\n**⑤ 把读进来的接上。** 读到的两格就是**一条现成的记录**，直接递给 `add_one` 让那一招去抄进册子 —— 这也是课文里那招「收进来的是名字和号码两样东西」的用意：它不关心这两样是写死的还是从外面念进来的。\n\n**⑥ 那个 `%31s` 里的 31 是什么？** 是「最宽只收 31 个字」。名字那格是 32 个字宽，最后一位要留给「到此为止」那个记号，所以最多收 31 个。**上限写清楚，就不怕外面递进来一条特别长的**。",
+      "templateId": "c-s2-book-add-and-list",
+      "params": {
+        "who": "狸花",
+        "who2": "墨墨",
+        "tel": "13900000002",
+        "tel2": "13600000004"
+      },
+      "verified": {
+        "at": "2026-09-16T08:48:37.444Z",
+        "hash": "29020816dfbb7f20"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-add-no-return-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的小册子有两个动作：\n\n- `add_one`：头上收「那一排碗」「现在有几条」「名字」「号码」四样。先看装满没有 —— 装满 100 条了就印一行 `记满了喵`，什么也不加就收工；没装满就把名字、号码抄进**第 <现在有几条> 格**，再把**新的条数**交回去。\n- `list_all`：一条都没有就印一行 `还一条都没有喵`；有的话从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`。\n\n请你写一段程序试试这两个动作：先起一本空册子、条数算 0，连着加两条 —— `小橘 13800000001` 和 `狸花 13700000003` —— 然后印一行 `一共 <几条> 条`，再把全部列一遍。\n\n本喵要看到的是：\n\n```\n一共 2 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n```\n\n可这段代码跑出来是 `一共 0 条`，后面跟着一行 `还一条都没有喵` —— 条数从头到尾一直是 0，连列出来那一段也空着。翻译官喵**一个字都没说**，规矩上这两招各自都写得没毛病。你帮本喵找出是哪一步没接住。",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nvoid add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    add_one(book, n, \"小橘\", \"13800000001\");\n    add_one(book, n, \"狸花\", \"13700000003\");\n\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"小橘\", \"13800000001\");\n    n = add_one(book, n, \"狸花\", \"13700000003\");\n\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "expectedOutput": "一共 2 条\n1. 小橘 13800000001\n2. 狸花 13700000003",
+      "stdin": null,
+      "explanation": "这一次是真真正正的「**抄进去了，可条数没接住**」喵。\n\n**① 招式头上收的那个数，只是一张复印件。** `add_one` 的头上写着 `int n`，意思是「把外面那个数照样抄一份递进来」。所以在招式里怎么摆弄这份复印件，外面那份**一个字都不会变**。本喵在外面写 `add_one(book, n, ...)`，进来的永远是那个老 0 —— 于是第一条抄进第 0 格，第二条**又**抄进第 0 格，把第一条盖掉了。所以册子里其实只剩一条，条数还是 0，连「一共几条」和列出来那一段都是空的。\n\n**② 想让外面知道新条数，只能把它叼回来。** 把收工那一句从 `void` 换成一个数，把新数算出来交出去：\n\n```c\nint add_one(...) {\n    ...\n    return n + 1;\n}\n```\n\n外面再用同一个名字接住：\n\n```c\nn = add_one(book, n, \"小橘\", \"13800000001\");\n```\n\n左边那个 `n =` 就是**接住** —— 不写它，交回来的数就掉地上了。两处缺一处都不行。\n\n**③ 翻译官喵为什么不吭声？** 因为它看到的每一处**语法上都站得住**：`void` 后面跟一句 `return;` 是规矩的；调用一个招式却**不用**它交回来的数，也是规矩的（C 语言里没接住不算错）。**「说得通」和「做对了」是两件事** —— 翻译官喵管形状，管不了本喵的意图。这种情况只能靠**真跑一遍、看一眼印出来的东西**才发现。\n\n**④ 课文里那句话在这儿对上了**：装满了就**原样把 n 交回去**（写 `return n;`）—— 一条都没加，条数当然不该动。\n\n**⑤ 顺带记住第 ② 条的反面**：`list_all` 不改条数、只是印东西，它的头上就该规规矩矩写 `void` —— **不改外面的东西，就别多此一举交数字**。",
+      "templateId": "c-s2-book-add-no-return",
+      "params": {
+        "tel1": "13800000001",
+        "tel2": "13700000003"
+      },
+      "verified": {
+        "at": "2026-09-16T08:49:50.358Z",
+        "hash": "94f1a02d53b3051c"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-add-no-return-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的小册子有两个动作：\n\n- `add_one`：头上收「那一排碗」「现在有几条」「名字」「号码」四样。先看装满没有 —— 装满 100 条了就印一行 `记满了喵`，什么也不加就收工；没装满就把名字、号码抄进**第 <现在有几条> 格**，再把**新的条数**交回去。\n- `list_all`：一条都没有就印一行 `还一条都没有喵`；有的话从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`。\n\n请你写一段程序试试这两个动作：先起一本空册子、条数算 0，连着加两条 —— `小橘 13900000002` 和 `狸花 13600000004` —— 然后印一行 `一共 <几条> 条`，再把全部列一遍。\n\n本喵要看到的是：\n\n```\n一共 2 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n```\n\n可这段代码跑出来是 `一共 0 条`，后面跟着一行 `还一条都没有喵` —— 条数从头到尾一直是 0，连列出来那一段也空着。翻译官喵**一个字都没说**，规矩上这两招各自都写得没毛病。你帮本喵找出是哪一步没接住。",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nvoid add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    add_one(book, n, \"小橘\", \"13900000002\");\n    add_one(book, n, \"狸花\", \"13600000004\");\n\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"小橘\", \"13900000002\");\n    n = add_one(book, n, \"狸花\", \"13600000004\");\n\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "expectedOutput": "一共 2 条\n1. 小橘 13900000002\n2. 狸花 13600000004",
+      "stdin": null,
+      "explanation": "这一次是真真正正的「**抄进去了，可条数没接住**」喵。\n\n**① 招式头上收的那个数，只是一张复印件。** `add_one` 的头上写着 `int n`，意思是「把外面那个数照样抄一份递进来」。所以在招式里怎么摆弄这份复印件，外面那份**一个字都不会变**。本喵在外面写 `add_one(book, n, ...)`，进来的永远是那个老 0 —— 于是第一条抄进第 0 格，第二条**又**抄进第 0 格，把第一条盖掉了。所以册子里其实只剩一条，条数还是 0，连「一共几条」和列出来那一段都是空的。\n\n**② 想让外面知道新条数，只能把它叼回来。** 把收工那一句从 `void` 换成一个数，把新数算出来交出去：\n\n```c\nint add_one(...) {\n    ...\n    return n + 1;\n}\n```\n\n外面再用同一个名字接住：\n\n```c\nn = add_one(book, n, \"小橘\", \"13900000002\");\n```\n\n左边那个 `n =` 就是**接住** —— 不写它，交回来的数就掉地上了。两处缺一处都不行。\n\n**③ 翻译官喵为什么不吭声？** 因为它看到的每一处**语法上都站得住**：`void` 后面跟一句 `return;` 是规矩的；调用一个招式却**不用**它交回来的数，也是规矩的（C 语言里没接住不算错）。**「说得通」和「做对了」是两件事** —— 翻译官喵管形状，管不了本喵的意图。这种情况只能靠**真跑一遍、看一眼印出来的东西**才发现。\n\n**④ 课文里那句话在这儿对上了**：装满了就**原样把 n 交回去**（写 `return n;`）—— 一条都没加，条数当然不该动。\n\n**⑤ 顺带记住第 ② 条的反面**：`list_all` 不改条数、只是印东西，它的头上就该规规矩矩写 `void` —— **不改外面的东西，就别多此一举交数字**。",
+      "templateId": "c-s2-book-add-no-return",
+      "params": {
+        "tel1": "13900000002",
+        "tel2": "13600000004"
+      },
+      "verified": {
+        "at": "2026-09-16T08:49:51.959Z",
+        "hash": "e30e1e1ce24da89d"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-dot-on-array-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵抄课文的时候手一抖，把「**先点出第几格、再往格子里走**」写反了，于是每一次抄写都变成这个样子：\n\n```c\nstrcpy(book.name[n], \"小橘\");\n```\n\n请你写一段程序：起一本空册子、条数算 0，把 `小橘 13800000001`、`狸花 13700000003`、`奶牛 13500000005` 三条依次抄进去（每抄一条条数自己加一），然后印一行 `一共 <几条> 条`，再从第 1 条起挨个列出来，一条一行印成 `<序号>. <名字> <号码>`。\n\n应当印：\n\n```\n一共 3 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n3. 奶牛 13500000005\n```\n\n可这段代码翻译官喵**把本喵拦下了**，程序根本没编出来。你帮本喵看出它拦的是哪一处、该怎么摆。",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    strcpy(book.name[n], \"小橘\");\n    strcpy(book.phone[n], \"13800000001\");\n    n = n + 1;\n    strcpy(book.name[n], \"狸花\");\n    strcpy(book.phone[n], \"13700000003\");\n    n = n + 1;\n    strcpy(book.name[n], \"奶牛\");\n    strcpy(book.phone[n], \"13500000005\");\n    n = n + 1;\n\n    printf(\"一共 %d 条\\n\", n);\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book.name[i], book.phone[i]);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    strcpy(book[n].name, \"小橘\");\n    strcpy(book[n].phone, \"13800000001\");\n    n = n + 1;\n    strcpy(book[n].name, \"狸花\");\n    strcpy(book[n].phone, \"13700000003\");\n    n = n + 1;\n    strcpy(book[n].name, \"奶牛\");\n    strcpy(book[n].phone, \"13500000005\");\n    n = n + 1;\n\n    printf(\"一共 %d 条\\n\", n);\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "一共 3 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n3. 奶牛 13500000005",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是这一句，一共喊了四遍：\n\n```\nerror: '(Contact *)&book' is a pointer; did you mean to use '->'?\n```\n\n（前头那个名字随本喵给那一排碗起的名字变，你写 `book` 就是 `book`。）\n\n**① 「点」和「走」的先后是有讲究的。** `book` 是**一排碗** —— 一百只，每只装一条记录。所以要摸到格子里去，只能**先用方括号点出第几只**：\n\n```c\nbook[0]          /* 一圈里头的第 0 只碗 —— 那是「一条记录」 */\n```\n\n点出来以后，才轮到**往这条记录里头走**：\n\n```c\nbook[0].name     /* 第 0 只碗里那条记录的名字那一格 */\nbook[0].phone    /* 号码那一格 */\n```\n\n**② 写反了它为什么当场拦住？** `book.name` 读作「往 `book` 里头走、找它叫 `name` 的那一格」。可 `book` 不是一条记录，它是**一排碗的门牌号** —— 门牌号身上没有叫 `name` 的格子。翻译官喵一眼就看出来了，当场把手按住。\n\n**③ 它给的提示指错了方向，别照抄。** 它说的是「你是不是想用 `->`」—— 因为「对着一块牌子用点号」是它见过的另一种手滑。可这里真正该用的是**方括号**。**提示是线索，不是答案**：它只知道你对着门牌号点了点号，就顺手把另一条路摆出来。你要是真把 `book.name` 改成 `book->name`，它**照样会拦** —— 得自己看懂它为什么觉得点号用错了。\n\n**④ 点出来之后，三种写法通用。** `book[i]` 读作「从排头走过去 i 只」（就是这一课前面那条门牌号加减的规矩），所以下面三句是一回事：\n\n```c\nbook[i].name\n(*(book + i)).name\n(book + i)->name\n```\n\n**⑤ 抄写那一行的序号。** 新抄的一条住在**第 `n` 格**，不是第 n 加 1 格 —— 因为序号从 0 数起，`n` 正好是「已经抄了几条」。所以是 `strcpy(book[n].name, ...)`，**抄完才**把条数加一。这个次序在本课里到处都是，认准它。",
+      "templateId": "c-s2-book-dot-on-array",
+      "params": {
+        "tel1": "13800000001",
+        "tel2": "13700000003",
+        "tel3": "13500000005"
+      },
+      "verified": {
+        "at": "2026-09-16T08:48:28.121Z",
+        "hash": "b1cc45fcfa3e331d"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-dot-on-array-007",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵抄课文的时候手一抖，把「**先点出第几格、再往格子里走**」写反了，于是每一次抄写都变成这个样子：\n\n```c\nstrcpy(book.name[n], \"小橘\");\n```\n\n请你写一段程序：起一本空册子、条数算 0，把 `小橘 13900000002`、`狸花 13600000004`、`奶牛 13400000006` 三条依次抄进去（每抄一条条数自己加一），然后印一行 `一共 <几条> 条`，再从第 1 条起挨个列出来，一条一行印成 `<序号>. <名字> <号码>`。\n\n应当印：\n\n```\n一共 3 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n3. 奶牛 13400000006\n```\n\n可这段代码翻译官喵**把本喵拦下了**，程序根本没编出来。你帮本喵看出它拦的是哪一处、该怎么摆。",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    strcpy(book.name[n], \"小橘\");\n    strcpy(book.phone[n], \"13900000002\");\n    n = n + 1;\n    strcpy(book.name[n], \"狸花\");\n    strcpy(book.phone[n], \"13600000004\");\n    n = n + 1;\n    strcpy(book.name[n], \"奶牛\");\n    strcpy(book.phone[n], \"13400000006\");\n    n = n + 1;\n\n    printf(\"一共 %d 条\\n\", n);\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book.name[i], book.phone[i]);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    strcpy(book[n].name, \"小橘\");\n    strcpy(book[n].phone, \"13900000002\");\n    n = n + 1;\n    strcpy(book[n].name, \"狸花\");\n    strcpy(book[n].phone, \"13600000004\");\n    n = n + 1;\n    strcpy(book[n].name, \"奶牛\");\n    strcpy(book[n].phone, \"13400000006\");\n    n = n + 1;\n\n    printf(\"一共 %d 条\\n\", n);\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "一共 3 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n3. 奶牛 13400000006",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是这一句，一共喊了四遍：\n\n```\nerror: '(Contact *)&book' is a pointer; did you mean to use '->'?\n```\n\n（前头那个名字随本喵给那一排碗起的名字变，你写 `book` 就是 `book`。）\n\n**① 「点」和「走」的先后是有讲究的。** `book` 是**一排碗** —— 一百只，每只装一条记录。所以要摸到格子里去，只能**先用方括号点出第几只**：\n\n```c\nbook[0]          /* 一圈里头的第 0 只碗 —— 那是「一条记录」 */\n```\n\n点出来以后，才轮到**往这条记录里头走**：\n\n```c\nbook[0].name     /* 第 0 只碗里那条记录的名字那一格 */\nbook[0].phone    /* 号码那一格 */\n```\n\n**② 写反了它为什么当场拦住？** `book.name` 读作「往 `book` 里头走、找它叫 `name` 的那一格」。可 `book` 不是一条记录，它是**一排碗的门牌号** —— 门牌号身上没有叫 `name` 的格子。翻译官喵一眼就看出来了，当场把手按住。\n\n**③ 它给的提示指错了方向，别照抄。** 它说的是「你是不是想用 `->`」—— 因为「对着一块牌子用点号」是它见过的另一种手滑。可这里真正该用的是**方括号**。**提示是线索，不是答案**：它只知道你对着门牌号点了点号，就顺手把另一条路摆出来。你要是真把 `book.name` 改成 `book->name`，它**照样会拦** —— 得自己看懂它为什么觉得点号用错了。\n\n**④ 点出来之后，三种写法通用。** `book[i]` 读作「从排头走过去 i 只」（就是这一课前面那条门牌号加减的规矩），所以下面三句是一回事：\n\n```c\nbook[i].name\n(*(book + i)).name\n(book + i)->name\n```\n\n**⑤ 抄写那一行的序号。** 新抄的一条住在**第 `n` 格**，不是第 n 加 1 格 —— 因为序号从 0 数起，`n` 正好是「已经抄了几条」。所以是 `strcpy(book[n].name, ...)`，**抄完才**把条数加一。这个次序在本课里到处都是，认准它。",
+      "templateId": "c-s2-book-dot-on-array",
+      "params": {
+        "tel1": "13900000002",
+        "tel2": "13600000004",
+        "tel3": "13400000006"
+      },
+      "verified": {
+        "at": "2026-09-16T08:48:29.376Z",
+        "hash": "2ae7cdeb2005b5b1"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-load-format-mismatch-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的小册子存在盘上，规矩是**一行一条**：名字、一个空格、号码、然后换行。存的时候写的是\n\n```c\nfprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n```\n\n读的那一招也写好了，写成\n\n```c\nfscanf(fp, \"%s,%s\", book[n].name, book[n].phone)\n```\n\n本喵当时想的是「反正就是名字和号码两样」。可跑起来**一条都没读回来** —— 印的是 `一共 0 条` 和 `还一条都没有喵`。\n\n翻译官喵这次**一个字都没说**：这两处各自都是规矩的写法，它看不出毛病，只有本喵自己知道它们俩**对不上**。\n\n请你把读的那一处改成和存的时候**同一套规矩**，让两条记录能原样读回来。名字那格最多装 32 个字、号码那格最多装 20 个字，所以读的时候也照课文的样子把**最宽多少**写清楚，别让翻译官喵去猜。修好以后应该印：\n\n```\n一共 2 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n```",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nvoid save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%s,%s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    strcpy(book[n].name, \"小橘\");\n    strcpy(book[n].phone, \"13800000001\");\n    n = n + 1;\n    strcpy(book[n].name, \"狸花\");\n    strcpy(book[n].phone, \"13700000003\");\n    n = n + 1;\n\n    save_all(book, n, \"book.txt\");\n    n = load_all(book, \"book.txt\");\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nvoid save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    strcpy(book[n].name, \"小橘\");\n    strcpy(book[n].phone, \"13800000001\");\n    n = n + 1;\n    strcpy(book[n].name, \"狸花\");\n    strcpy(book[n].phone, \"13700000003\");\n    n = n + 1;\n\n    save_all(book, n, \"book.txt\");\n    n = load_all(book, \"book.txt\");\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "expectedOutput": "一共 2 条\n1. 小橘 13800000001\n2. 狸花 13700000003",
+      "stdin": null,
+      "explanation": "**存和读是一副对子，两边得照着同一套规矩写** —— 这一课最值钱的一句就是它喵。\n\n**① 对不上的时候到底发生了什么？** 存进去的第一行是 `小橘 13800000001`（名字、空格、号码、换行）。读的时候本喵说「先念一串不要空格的、再念一个逗号、再念一串」：\n\n- 第一步 `%s` 从 `小橘` 开始念，**念到空格就停** —— 它交出 `小橘`，很好；\n- 第二步它等的是一个**逗号**，眼前却是个**空格** —— 对不上，**当场收手**。\n\n于是这一趟只念出 1 样东西。本喵那句 `== 2` 当然不成立，绕圈**一次都没进去**，`n` 从头到尾是 0 —— 所以印出来是 `一共 0 条` 和 `还一条都没有喵`。\n\n**② 修法就是让两边对上。** 存的时候中间是空格，读的时候中间也写空格：\n\n```c\nfscanf(fp, \"%31s %19s\", book[n].name, book[n].phone)\n```\n\n那两个数字是**最宽能装多少**：名字那格是 `char name[32]`，最多装 31 个字（最后一个位置要留给「到此为止」那个记号）；号码那格是 `char phone[20]`，最多 19 个。**写清楚上限，比不写安全** —— 不写的话，碰上一条特别长的内容，它就会一路写过头。\n\n**③ 名字和号码前面都没有 `&`。** `book[n].name` 本身就是**那一排碗**，`fscanf` 要的正是「哪一排」，直接报名字就行，别再拿它的地址。这一课的课文专门提过这一条。\n\n**④ 翻译官喵为什么不吭声？** 因为 `\"%s,%s\"` 是一个**写得完全规矩的规矩** —— 语法上挑不出一点毛病。它管的是形状，管不了本喵心里想的是哪套。**存的人和读的人是同一个本喵，对不上也只有本喵自己能发现**。发现的办法只有一个：真跑一遍，看印出来的东西对不对。\n\n**⑤ 顺带说一句它为什么「读不动就停」是好事。** 万一册子被改坏了、哪一行多出一个字，`fscanf` 交出来的就不是 2 了，绕圈当场收手 —— 交回来的条数就是**真读进来的条数**，不多不少。",
+      "templateId": "c-s2-book-load-format-mismatch",
+      "params": {
+        "tel1": "13800000001",
+        "tel2": "13700000003"
+      },
+      "verified": {
+        "at": "2026-09-16T08:48:24.381Z",
+        "hash": "4ee2d21ef47d8297"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-load-format-mismatch-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的小册子存在盘上，规矩是**一行一条**：名字、一个空格、号码、然后换行。存的时候写的是\n\n```c\nfprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n```\n\n读的那一招也写好了，写成\n\n```c\nfscanf(fp, \"%s,%s\", book[n].name, book[n].phone)\n```\n\n本喵当时想的是「反正就是名字和号码两样」。可跑起来**一条都没读回来** —— 印的是 `一共 0 条` 和 `还一条都没有喵`。\n\n翻译官喵这次**一个字都没说**：这两处各自都是规矩的写法，它看不出毛病，只有本喵自己知道它们俩**对不上**。\n\n请你把读的那一处改成和存的时候**同一套规矩**，让两条记录能原样读回来。名字那格最多装 32 个字、号码那格最多装 20 个字，所以读的时候也照课文的样子把**最宽多少**写清楚，别让翻译官喵去猜。修好以后应该印：\n\n```\n一共 2 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n```",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nvoid save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%s,%s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    strcpy(book[n].name, \"小橘\");\n    strcpy(book[n].phone, \"13900000002\");\n    n = n + 1;\n    strcpy(book[n].name, \"狸花\");\n    strcpy(book[n].phone, \"13600000004\");\n    n = n + 1;\n\n    save_all(book, n, \"book.txt\");\n    n = load_all(book, \"book.txt\");\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nvoid save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    strcpy(book[n].name, \"小橘\");\n    strcpy(book[n].phone, \"13900000002\");\n    n = n + 1;\n    strcpy(book[n].name, \"狸花\");\n    strcpy(book[n].phone, \"13600000004\");\n    n = n + 1;\n\n    save_all(book, n, \"book.txt\");\n    n = load_all(book, \"book.txt\");\n    printf(\"一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}\n",
+      "expectedOutput": "一共 2 条\n1. 小橘 13900000002\n2. 狸花 13600000004",
+      "stdin": null,
+      "explanation": "**存和读是一副对子，两边得照着同一套规矩写** —— 这一课最值钱的一句就是它喵。\n\n**① 对不上的时候到底发生了什么？** 存进去的第一行是 `小橘 13900000002`（名字、空格、号码、换行）。读的时候本喵说「先念一串不要空格的、再念一个逗号、再念一串」：\n\n- 第一步 `%s` 从 `小橘` 开始念，**念到空格就停** —— 它交出 `小橘`，很好；\n- 第二步它等的是一个**逗号**，眼前却是个**空格** —— 对不上，**当场收手**。\n\n于是这一趟只念出 1 样东西。本喵那句 `== 2` 当然不成立，绕圈**一次都没进去**，`n` 从头到尾是 0 —— 所以印出来是 `一共 0 条` 和 `还一条都没有喵`。\n\n**② 修法就是让两边对上。** 存的时候中间是空格，读的时候中间也写空格：\n\n```c\nfscanf(fp, \"%31s %19s\", book[n].name, book[n].phone)\n```\n\n那两个数字是**最宽能装多少**：名字那格是 `char name[32]`，最多装 31 个字（最后一个位置要留给「到此为止」那个记号）；号码那格是 `char phone[20]`，最多 19 个。**写清楚上限，比不写安全** —— 不写的话，碰上一条特别长的内容，它就会一路写过头。\n\n**③ 名字和号码前面都没有 `&`。** `book[n].name` 本身就是**那一排碗**，`fscanf` 要的正是「哪一排」，直接报名字就行，别再拿它的地址。这一课的课文专门提过这一条。\n\n**④ 翻译官喵为什么不吭声？** 因为 `\"%s,%s\"` 是一个**写得完全规矩的规矩** —— 语法上挑不出一点毛病。它管的是形状，管不了本喵心里想的是哪套。**存的人和读的人是同一个本喵，对不上也只有本喵自己能发现**。发现的办法只有一个：真跑一遍，看印出来的东西对不对。\n\n**⑤ 顺带说一句它为什么「读不动就停」是好事。** 万一册子被改坏了、哪一行多出一个字，`fscanf` 交出来的就不是 2 了，绕圈当场收手 —— 交回来的条数就是**真读进来的条数**，不多不少。",
+      "templateId": "c-s2-book-load-format-mismatch",
+      "params": {
+        "tel1": "13900000002",
+        "tel2": "13600000004"
+      },
+      "verified": {
+        "at": "2026-09-16T08:48:26.090Z",
+        "hash": "48b3067f0ac377f2"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-menu-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这是这一课的压轴喵：把册子做成一个**能反复问本喵要干什么**的小工具。\n\n先写好几样东西：\n\n- 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n- `add_one`：装满就印 `记满了喵` 并原样交回条数；没装满就抄进第 <现在有几条> 格，交回**新的条数**；\n- `list_all`：一条都没有就印 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n- `save_all`：把册子写进册子文件（一行一条：名字、空格、号码、换行），写完印一行 `存好了喵`；\n- `load_all`：从册子文件里读回来（能读满两格的才算一条，读不动就停），交回读回来几条；**文件不存在**就印一行 `还没有册子，这次从空的开始喵`、交回 0。\n\n`main` 里的走法是：先**试着**从册子文件里读一趟（读不回来就从空的开始），然后**反复问**，每一轮都先印这三行 —— **注意那个提示是不带换行印出去的**，所以它后面紧接着的东西会接在同一行上：\n\n```\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> \n```\n\n本喵说 `1`，就接着问 `名字> ` 和 `号码> `（也都不带换行），把这一条加进去；说 `2`，就把全部列出来；**说别的、或者干脆说不清楚**（连一个整数都没读到），就收手退出这个反复。收工前把册子存到盘上，印一行 `存好了喵`，最后印一行空行加 `再见喵`。\n\n比如投喂给程序的是\n\n1\n三花\n13700000003\n2\n0\n\n程序就要叼回\n\n还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 三花 13700000003\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子，这次从空的开始喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = load_all(book, \"book.txt\");\n    int running = 1;\n\n    while (running) {\n        printf(\"=== 小鱼干通讯录 ===\\n\");\n        printf(\"1 添加  2 列出  0 退出\\n\");\n        printf(\"请选择> \");\n\n        int choice;\n        if (scanf(\"%d\", &choice) != 1) {\n            running = 0;\n            break;\n        }\n\n        if (choice == 1) {\n            char name[32];\n            char phone[20];\n            printf(\"名字> \");\n            scanf(\"%31s\", name);\n            printf(\"号码> \");\n            scanf(\"%19s\", phone);\n            n = add_one(book, n, name, phone);\n        } else if (choice == 2) {\n            list_all(book, n);\n        } else {\n            running = 0;\n        }\n    }\n\n    save_all(book, n, \"book.txt\");\n    printf(\"\\n再见喵\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 小橘 13800000001\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵",
+      "stdin": "1\n小橘\n13800000001\n2\n0\n",
+      "explanation": "**这一道是整课的合影**喵：图纸、条数、加一条、列出来、存、读，再加上前面学过的「反复问」和「先检查、再干活」。\n\n**① 为什么一进门先读一趟册子？** 因为小册子得**接着上一回**用。读不回来（第一次跑，册子文件还不存在）不算出事 —— 印一句 `还没有册子，这次从空的开始喵`，条数算 0 就行。**这就是「先检查、再干活」**：先看看盘上有没有东西，再决定从哪儿起步。\n\n**② 那个反复问的圈什么时候停？**\n\n```c\nint running = 1;\nwhile (running) {\n```\n\n它不管本喵说了什么，只管那个开关 `running`。下面三条路各管一件事：说 `1` 就接着问名字和号码、说 `2` 就列出来、**说别的就把开关关掉**。\n\n**③ 说不明白的时候也算「别的」。**\n\n```c\nif (scanf(\"%d\", &choice) != 1) {\n    running = 0;\n    break;\n}\n```\n\n`scanf` 交回来的数就是「这一趟读成了几样」，读成一个整数才算 1。**读不到就交别的数** —— 这时候要是还往下走，那个 `choice` 里躺着的是个来路不明的值，本喵就照着它去挑路了。所以先检查、**然后把开关关掉**。\n\n**④ 提示为什么不带换行？** 因为 `printf(\"请选择> \")` 是**印完就停在那里**，光标不往下跳 —— 本喵接着说的东西就会跟在同一行后面。看样例输出就能看明白：`请选择> ` 后面直接跟上了 `名字> `，再跟上 `号码> `，三条挤成一行。这不是印坏了，是**故意不换行**。**要是想让它好看点，自己加一句换行就行**；这道题照着课文的样子来。\n\n**⑤ 收工时那一次存。** 反复问结束时，册子只在**内存**里；不存到盘上，下一次跑就白忙了。所以关掉那个反复问的开关以后立刻 `save_all` —— 这才是「小册子真能留得住」的那一步。\n\n**⑥ 开头那个空行别丢。** 最后印的是 `\\n再见喵\\n` —— **前头那个换行是给 `请选择> ` 收尾的**，不然「再见喵」会跟在那句提示后面挤成一团。",
+      "templateId": "c-s2-book-menu",
+      "params": {
+        "who": "小橘",
+        "who2": "三花",
+        "tel": "13800000001",
+        "tel2": "13700000003"
+      },
+      "verified": {
+        "at": "2026-09-16T08:49:54.493Z",
+        "hash": "33d98ed6fa8b9854"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-menu-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这是这一课的压轴喵：把册子做成一个**能反复问本喵要干什么**的小工具。\n\n先写好几样东西：\n\n- 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n- `add_one`：装满就印 `记满了喵` 并原样交回条数；没装满就抄进第 <现在有几条> 格，交回**新的条数**；\n- `list_all`：一条都没有就印 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n- `save_all`：把册子写进册子文件（一行一条：名字、空格、号码、换行），写完印一行 `存好了喵`；\n- `load_all`：从册子文件里读回来（能读满两格的才算一条，读不动就停），交回读回来几条；**文件不存在**就印一行 `还没有册子，这次从空的开始喵`、交回 0。\n\n`main` 里的走法是：先**试着**从册子文件里读一趟（读不回来就从空的开始），然后**反复问**，每一轮都先印这三行 —— **注意那个提示是不带换行印出去的**，所以它后面紧接着的东西会接在同一行上：\n\n```\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> \n```\n\n本喵说 `1`，就接着问 `名字> ` 和 `号码> `（也都不带换行），把这一条加进去；说 `2`，就把全部列出来；**说别的、或者干脆说不清楚**（连一个整数都没读到），就收手退出这个反复。收工前把册子存到盘上，印一行 `存好了喵`，最后印一行空行加 `再见喵`。\n\n比如投喂给程序的是\n\n1\n三花\n13600000004\n2\n0\n\n程序就要叼回\n\n还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 三花 13600000004\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子，这次从空的开始喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = load_all(book, \"book.txt\");\n    int running = 1;\n\n    while (running) {\n        printf(\"=== 小鱼干通讯录 ===\\n\");\n        printf(\"1 添加  2 列出  0 退出\\n\");\n        printf(\"请选择> \");\n\n        int choice;\n        if (scanf(\"%d\", &choice) != 1) {\n            running = 0;\n            break;\n        }\n\n        if (choice == 1) {\n            char name[32];\n            char phone[20];\n            printf(\"名字> \");\n            scanf(\"%31s\", name);\n            printf(\"号码> \");\n            scanf(\"%19s\", phone);\n            n = add_one(book, n, name, phone);\n        } else if (choice == 2) {\n            list_all(book, n);\n        } else {\n            running = 0;\n        }\n    }\n\n    save_all(book, n, \"book.txt\");\n    printf(\"\\n再见喵\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 小橘 13900000002\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵",
+      "stdin": "1\n小橘\n13900000002\n2\n0\n",
+      "explanation": "**这一道是整课的合影**喵：图纸、条数、加一条、列出来、存、读，再加上前面学过的「反复问」和「先检查、再干活」。\n\n**① 为什么一进门先读一趟册子？** 因为小册子得**接着上一回**用。读不回来（第一次跑，册子文件还不存在）不算出事 —— 印一句 `还没有册子，这次从空的开始喵`，条数算 0 就行。**这就是「先检查、再干活」**：先看看盘上有没有东西，再决定从哪儿起步。\n\n**② 那个反复问的圈什么时候停？**\n\n```c\nint running = 1;\nwhile (running) {\n```\n\n它不管本喵说了什么，只管那个开关 `running`。下面三条路各管一件事：说 `1` 就接着问名字和号码、说 `2` 就列出来、**说别的就把开关关掉**。\n\n**③ 说不明白的时候也算「别的」。**\n\n```c\nif (scanf(\"%d\", &choice) != 1) {\n    running = 0;\n    break;\n}\n```\n\n`scanf` 交回来的数就是「这一趟读成了几样」，读成一个整数才算 1。**读不到就交别的数** —— 这时候要是还往下走，那个 `choice` 里躺着的是个来路不明的值，本喵就照着它去挑路了。所以先检查、**然后把开关关掉**。\n\n**④ 提示为什么不带换行？** 因为 `printf(\"请选择> \")` 是**印完就停在那里**，光标不往下跳 —— 本喵接着说的东西就会跟在同一行后面。看样例输出就能看明白：`请选择> ` 后面直接跟上了 `名字> `，再跟上 `号码> `，三条挤成一行。这不是印坏了，是**故意不换行**。**要是想让它好看点，自己加一句换行就行**；这道题照着课文的样子来。\n\n**⑤ 收工时那一次存。** 反复问结束时，册子只在**内存**里；不存到盘上，下一次跑就白忙了。所以关掉那个反复问的开关以后立刻 `save_all` —— 这才是「小册子真能留得住」的那一步。\n\n**⑥ 开头那个空行别丢。** 最后印的是 `\\n再见喵\\n` —— **前头那个换行是给 `请选择> ` 收尾的**，不然「再见喵」会跟在那句提示后面挤成一团。",
+      "templateId": "c-s2-book-menu",
+      "params": {
+        "who": "小橘",
+        "who2": "三花",
+        "tel": "13900000002",
+        "tel2": "13600000004"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:22.892Z",
+        "hash": "72f6edb0b23140c6"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-menu-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这是这一课的压轴喵：把册子做成一个**能反复问本喵要干什么**的小工具。\n\n先写好几样东西：\n\n- 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n- `add_one`：装满就印 `记满了喵` 并原样交回条数；没装满就抄进第 <现在有几条> 格，交回**新的条数**；\n- `list_all`：一条都没有就印 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n- `save_all`：把册子写进册子文件（一行一条：名字、空格、号码、换行），写完印一行 `存好了喵`；\n- `load_all`：从册子文件里读回来（能读满两格的才算一条，读不动就停），交回读回来几条；**文件不存在**就印一行 `还没有册子，这次从空的开始喵`、交回 0。\n\n`main` 里的走法是：先**试着**从册子文件里读一趟（读不回来就从空的开始），然后**反复问**，每一轮都先印这三行 —— **注意那个提示是不带换行印出去的**，所以它后面紧接着的东西会接在同一行上：\n\n```\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> \n```\n\n本喵说 `1`，就接着问 `名字> ` 和 `号码> `（也都不带换行），把这一条加进去；说 `2`，就把全部列出来；**说别的、或者干脆说不清楚**（连一个整数都没读到），就收手退出这个反复。收工前把册子存到盘上，印一行 `存好了喵`，最后印一行空行加 `再见喵`。\n\n比如投喂给程序的是\n\n1\n墨墨\n13700000003\n2\n0\n\n程序就要叼回\n\n还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 墨墨 13700000003\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子，这次从空的开始喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = load_all(book, \"book.txt\");\n    int running = 1;\n\n    while (running) {\n        printf(\"=== 小鱼干通讯录 ===\\n\");\n        printf(\"1 添加  2 列出  0 退出\\n\");\n        printf(\"请选择> \");\n\n        int choice;\n        if (scanf(\"%d\", &choice) != 1) {\n            running = 0;\n            break;\n        }\n\n        if (choice == 1) {\n            char name[32];\n            char phone[20];\n            printf(\"名字> \");\n            scanf(\"%31s\", name);\n            printf(\"号码> \");\n            scanf(\"%19s\", phone);\n            n = add_one(book, n, name, phone);\n        } else if (choice == 2) {\n            list_all(book, n);\n        } else {\n            running = 0;\n        }\n    }\n\n    save_all(book, n, \"book.txt\");\n    printf(\"\\n再见喵\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 小橘 13900000002\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵",
+      "stdin": "1\n小橘\n13900000002\n2\n0\n",
+      "explanation": "**这一道是整课的合影**喵：图纸、条数、加一条、列出来、存、读，再加上前面学过的「反复问」和「先检查、再干活」。\n\n**① 为什么一进门先读一趟册子？** 因为小册子得**接着上一回**用。读不回来（第一次跑，册子文件还不存在）不算出事 —— 印一句 `还没有册子，这次从空的开始喵`，条数算 0 就行。**这就是「先检查、再干活」**：先看看盘上有没有东西，再决定从哪儿起步。\n\n**② 那个反复问的圈什么时候停？**\n\n```c\nint running = 1;\nwhile (running) {\n```\n\n它不管本喵说了什么，只管那个开关 `running`。下面三条路各管一件事：说 `1` 就接着问名字和号码、说 `2` 就列出来、**说别的就把开关关掉**。\n\n**③ 说不明白的时候也算「别的」。**\n\n```c\nif (scanf(\"%d\", &choice) != 1) {\n    running = 0;\n    break;\n}\n```\n\n`scanf` 交回来的数就是「这一趟读成了几样」，读成一个整数才算 1。**读不到就交别的数** —— 这时候要是还往下走，那个 `choice` 里躺着的是个来路不明的值，本喵就照着它去挑路了。所以先检查、**然后把开关关掉**。\n\n**④ 提示为什么不带换行？** 因为 `printf(\"请选择> \")` 是**印完就停在那里**，光标不往下跳 —— 本喵接着说的东西就会跟在同一行后面。看样例输出就能看明白：`请选择> ` 后面直接跟上了 `名字> `，再跟上 `号码> `，三条挤成一行。这不是印坏了，是**故意不换行**。**要是想让它好看点，自己加一句换行就行**；这道题照着课文的样子来。\n\n**⑤ 收工时那一次存。** 反复问结束时，册子只在**内存**里；不存到盘上，下一次跑就白忙了。所以关掉那个反复问的开关以后立刻 `save_all` —— 这才是「小册子真能留得住」的那一步。\n\n**⑥ 开头那个空行别丢。** 最后印的是 `\\n再见喵\\n` —— **前头那个换行是给 `请选择> ` 收尾的**，不然「再见喵」会跟在那句提示后面挤成一团。",
+      "templateId": "c-s2-book-menu",
+      "params": {
+        "who": "小橘",
+        "who2": "墨墨",
+        "tel": "13900000002",
+        "tel2": "13700000003"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:25.854Z",
+        "hash": "27c8641aff056617"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-menu-009",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这是这一课的压轴喵：把册子做成一个**能反复问本喵要干什么**的小工具。\n\n先写好几样东西：\n\n- 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n- `add_one`：装满就印 `记满了喵` 并原样交回条数；没装满就抄进第 <现在有几条> 格，交回**新的条数**；\n- `list_all`：一条都没有就印 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n- `save_all`：把册子写进册子文件（一行一条：名字、空格、号码、换行），写完印一行 `存好了喵`；\n- `load_all`：从册子文件里读回来（能读满两格的才算一条，读不动就停），交回读回来几条；**文件不存在**就印一行 `还没有册子，这次从空的开始喵`、交回 0。\n\n`main` 里的走法是：先**试着**从册子文件里读一趟（读不回来就从空的开始），然后**反复问**，每一轮都先印这三行 —— **注意那个提示是不带换行印出去的**，所以它后面紧接着的东西会接在同一行上：\n\n```\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> \n```\n\n本喵说 `1`，就接着问 `名字> ` 和 `号码> `（也都不带换行），把这一条加进去；说 `2`，就把全部列出来；**说别的、或者干脆说不清楚**（连一个整数都没读到），就收手退出这个反复。收工前把册子存到盘上，印一行 `存好了喵`，最后印一行空行加 `再见喵`。\n\n比如投喂给程序的是\n\n1\n三花\n13600000004\n2\n0\n\n程序就要叼回\n\n还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 三花 13600000004\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子，这次从空的开始喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = load_all(book, \"book.txt\");\n    int running = 1;\n\n    while (running) {\n        printf(\"=== 小鱼干通讯录 ===\\n\");\n        printf(\"1 添加  2 列出  0 退出\\n\");\n        printf(\"请选择> \");\n\n        int choice;\n        if (scanf(\"%d\", &choice) != 1) {\n            running = 0;\n            break;\n        }\n\n        if (choice == 1) {\n            char name[32];\n            char phone[20];\n            printf(\"名字> \");\n            scanf(\"%31s\", name);\n            printf(\"号码> \");\n            scanf(\"%19s\", phone);\n            n = add_one(book, n, name, phone);\n        } else if (choice == 2) {\n            list_all(book, n);\n        } else {\n            running = 0;\n        }\n    }\n\n    save_all(book, n, \"book.txt\");\n    printf(\"\\n再见喵\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 狸花 13800000001\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵",
+      "stdin": "1\n狸花\n13800000001\n2\n0\n",
+      "explanation": "**这一道是整课的合影**喵：图纸、条数、加一条、列出来、存、读，再加上前面学过的「反复问」和「先检查、再干活」。\n\n**① 为什么一进门先读一趟册子？** 因为小册子得**接着上一回**用。读不回来（第一次跑，册子文件还不存在）不算出事 —— 印一句 `还没有册子，这次从空的开始喵`，条数算 0 就行。**这就是「先检查、再干活」**：先看看盘上有没有东西，再决定从哪儿起步。\n\n**② 那个反复问的圈什么时候停？**\n\n```c\nint running = 1;\nwhile (running) {\n```\n\n它不管本喵说了什么，只管那个开关 `running`。下面三条路各管一件事：说 `1` 就接着问名字和号码、说 `2` 就列出来、**说别的就把开关关掉**。\n\n**③ 说不明白的时候也算「别的」。**\n\n```c\nif (scanf(\"%d\", &choice) != 1) {\n    running = 0;\n    break;\n}\n```\n\n`scanf` 交回来的数就是「这一趟读成了几样」，读成一个整数才算 1。**读不到就交别的数** —— 这时候要是还往下走，那个 `choice` 里躺着的是个来路不明的值，本喵就照着它去挑路了。所以先检查、**然后把开关关掉**。\n\n**④ 提示为什么不带换行？** 因为 `printf(\"请选择> \")` 是**印完就停在那里**，光标不往下跳 —— 本喵接着说的东西就会跟在同一行后面。看样例输出就能看明白：`请选择> ` 后面直接跟上了 `名字> `，再跟上 `号码> `，三条挤成一行。这不是印坏了，是**故意不换行**。**要是想让它好看点，自己加一句换行就行**；这道题照着课文的样子来。\n\n**⑤ 收工时那一次存。** 反复问结束时，册子只在**内存**里；不存到盘上，下一次跑就白忙了。所以关掉那个反复问的开关以后立刻 `save_all` —— 这才是「小册子真能留得住」的那一步。\n\n**⑥ 开头那个空行别丢。** 最后印的是 `\\n再见喵\\n` —— **前头那个换行是给 `请选择> ` 收尾的**，不然「再见喵」会跟在那句提示后面挤成一团。",
+      "templateId": "c-s2-book-menu",
+      "params": {
+        "who": "狸花",
+        "who2": "三花",
+        "tel": "13800000001",
+        "tel2": "13600000004"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:28.789Z",
+        "hash": "a85617a7e7dca535"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-menu-012",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这是这一课的压轴喵：把册子做成一个**能反复问本喵要干什么**的小工具。\n\n先写好几样东西：\n\n- 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n- `add_one`：装满就印 `记满了喵` 并原样交回条数；没装满就抄进第 <现在有几条> 格，交回**新的条数**；\n- `list_all`：一条都没有就印 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n- `save_all`：把册子写进册子文件（一行一条：名字、空格、号码、换行），写完印一行 `存好了喵`；\n- `load_all`：从册子文件里读回来（能读满两格的才算一条，读不动就停），交回读回来几条；**文件不存在**就印一行 `还没有册子，这次从空的开始喵`、交回 0。\n\n`main` 里的走法是：先**试着**从册子文件里读一趟（读不回来就从空的开始），然后**反复问**，每一轮都先印这三行 —— **注意那个提示是不带换行印出去的**，所以它后面紧接着的东西会接在同一行上：\n\n```\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> \n```\n\n本喵说 `1`，就接着问 `名字> ` 和 `号码> `（也都不带换行），把这一条加进去；说 `2`，就把全部列出来；**说别的、或者干脆说不清楚**（连一个整数都没读到），就收手退出这个反复。收工前把册子存到盘上，印一行 `存好了喵`，最后印一行空行加 `再见喵`。\n\n比如投喂给程序的是\n\n1\n墨墨\n13700000003\n2\n0\n\n程序就要叼回\n\n还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 墨墨 13700000003\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子，这次从空的开始喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = load_all(book, \"book.txt\");\n    int running = 1;\n\n    while (running) {\n        printf(\"=== 小鱼干通讯录 ===\\n\");\n        printf(\"1 添加  2 列出  0 退出\\n\");\n        printf(\"请选择> \");\n\n        int choice;\n        if (scanf(\"%d\", &choice) != 1) {\n            running = 0;\n            break;\n        }\n\n        if (choice == 1) {\n            char name[32];\n            char phone[20];\n            printf(\"名字> \");\n            scanf(\"%31s\", name);\n            printf(\"号码> \");\n            scanf(\"%19s\", phone);\n            n = add_one(book, n, name, phone);\n        } else if (choice == 2) {\n            list_all(book, n);\n        } else {\n            running = 0;\n        }\n    }\n\n    save_all(book, n, \"book.txt\");\n    printf(\"\\n再见喵\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 狸花 13800000001\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵",
+      "stdin": "1\n狸花\n13800000001\n2\n0\n",
+      "explanation": "**这一道是整课的合影**喵：图纸、条数、加一条、列出来、存、读，再加上前面学过的「反复问」和「先检查、再干活」。\n\n**① 为什么一进门先读一趟册子？** 因为小册子得**接着上一回**用。读不回来（第一次跑，册子文件还不存在）不算出事 —— 印一句 `还没有册子，这次从空的开始喵`，条数算 0 就行。**这就是「先检查、再干活」**：先看看盘上有没有东西，再决定从哪儿起步。\n\n**② 那个反复问的圈什么时候停？**\n\n```c\nint running = 1;\nwhile (running) {\n```\n\n它不管本喵说了什么，只管那个开关 `running`。下面三条路各管一件事：说 `1` 就接着问名字和号码、说 `2` 就列出来、**说别的就把开关关掉**。\n\n**③ 说不明白的时候也算「别的」。**\n\n```c\nif (scanf(\"%d\", &choice) != 1) {\n    running = 0;\n    break;\n}\n```\n\n`scanf` 交回来的数就是「这一趟读成了几样」，读成一个整数才算 1。**读不到就交别的数** —— 这时候要是还往下走，那个 `choice` 里躺着的是个来路不明的值，本喵就照着它去挑路了。所以先检查、**然后把开关关掉**。\n\n**④ 提示为什么不带换行？** 因为 `printf(\"请选择> \")` 是**印完就停在那里**，光标不往下跳 —— 本喵接着说的东西就会跟在同一行后面。看样例输出就能看明白：`请选择> ` 后面直接跟上了 `名字> `，再跟上 `号码> `，三条挤成一行。这不是印坏了，是**故意不换行**。**要是想让它好看点，自己加一句换行就行**；这道题照着课文的样子来。\n\n**⑤ 收工时那一次存。** 反复问结束时，册子只在**内存**里；不存到盘上，下一次跑就白忙了。所以关掉那个反复问的开关以后立刻 `save_all` —— 这才是「小册子真能留得住」的那一步。\n\n**⑥ 开头那个空行别丢。** 最后印的是 `\\n再见喵\\n` —— **前头那个换行是给 `请选择> ` 收尾的**，不然「再见喵」会跟在那句提示后面挤成一团。",
+      "templateId": "c-s2-book-menu",
+      "params": {
+        "who": "狸花",
+        "who2": "墨墨",
+        "tel": "13800000001",
+        "tel2": "13700000003"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:31.780Z",
+        "hash": "2e8f5339d4a24d4f"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-menu-015",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这是这一课的压轴喵：把册子做成一个**能反复问本喵要干什么**的小工具。\n\n先写好几样东西：\n\n- 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n- `add_one`：装满就印 `记满了喵` 并原样交回条数；没装满就抄进第 <现在有几条> 格，交回**新的条数**；\n- `list_all`：一条都没有就印 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n- `save_all`：把册子写进册子文件（一行一条：名字、空格、号码、换行），写完印一行 `存好了喵`；\n- `load_all`：从册子文件里读回来（能读满两格的才算一条，读不动就停），交回读回来几条；**文件不存在**就印一行 `还没有册子，这次从空的开始喵`、交回 0。\n\n`main` 里的走法是：先**试着**从册子文件里读一趟（读不回来就从空的开始），然后**反复问**，每一轮都先印这三行 —— **注意那个提示是不带换行印出去的**，所以它后面紧接着的东西会接在同一行上：\n\n```\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> \n```\n\n本喵说 `1`，就接着问 `名字> ` 和 `号码> `（也都不带换行），把这一条加进去；说 `2`，就把全部列出来；**说别的、或者干脆说不清楚**（连一个整数都没读到），就收手退出这个反复。收工前把册子存到盘上，印一行 `存好了喵`，最后印一行空行加 `再见喵`。\n\n比如投喂给程序的是\n\n1\n墨墨\n13600000004\n2\n0\n\n程序就要叼回\n\n还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 墨墨 13600000004\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵\n\n（判分用的是**另外一对名字和号码**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子，这次从空的开始喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = load_all(book, \"book.txt\");\n    int running = 1;\n\n    while (running) {\n        printf(\"=== 小鱼干通讯录 ===\\n\");\n        printf(\"1 添加  2 列出  0 退出\\n\");\n        printf(\"请选择> \");\n\n        int choice;\n        if (scanf(\"%d\", &choice) != 1) {\n            running = 0;\n            break;\n        }\n\n        if (choice == 1) {\n            char name[32];\n            char phone[20];\n            printf(\"名字> \");\n            scanf(\"%31s\", name);\n            printf(\"号码> \");\n            scanf(\"%19s\", phone);\n            n = add_one(book, n, name, phone);\n        } else if (choice == 2) {\n            list_all(book, n);\n        } else {\n            running = 0;\n        }\n    }\n\n    save_all(book, n, \"book.txt\");\n    printf(\"\\n再见喵\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "还没有册子，这次从空的开始喵\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 名字> 号码> === 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 1. 狸花 13900000002\n=== 小鱼干通讯录 ===\n1 添加  2 列出  0 退出\n请选择> 存好了喵\n\n再见喵",
+      "stdin": "1\n狸花\n13900000002\n2\n0\n",
+      "explanation": "**这一道是整课的合影**喵：图纸、条数、加一条、列出来、存、读，再加上前面学过的「反复问」和「先检查、再干活」。\n\n**① 为什么一进门先读一趟册子？** 因为小册子得**接着上一回**用。读不回来（第一次跑，册子文件还不存在）不算出事 —— 印一句 `还没有册子，这次从空的开始喵`，条数算 0 就行。**这就是「先检查、再干活」**：先看看盘上有没有东西，再决定从哪儿起步。\n\n**② 那个反复问的圈什么时候停？**\n\n```c\nint running = 1;\nwhile (running) {\n```\n\n它不管本喵说了什么，只管那个开关 `running`。下面三条路各管一件事：说 `1` 就接着问名字和号码、说 `2` 就列出来、**说别的就把开关关掉**。\n\n**③ 说不明白的时候也算「别的」。**\n\n```c\nif (scanf(\"%d\", &choice) != 1) {\n    running = 0;\n    break;\n}\n```\n\n`scanf` 交回来的数就是「这一趟读成了几样」，读成一个整数才算 1。**读不到就交别的数** —— 这时候要是还往下走，那个 `choice` 里躺着的是个来路不明的值，本喵就照着它去挑路了。所以先检查、**然后把开关关掉**。\n\n**④ 提示为什么不带换行？** 因为 `printf(\"请选择> \")` 是**印完就停在那里**，光标不往下跳 —— 本喵接着说的东西就会跟在同一行后面。看样例输出就能看明白：`请选择> ` 后面直接跟上了 `名字> `，再跟上 `号码> `，三条挤成一行。这不是印坏了，是**故意不换行**。**要是想让它好看点，自己加一句换行就行**；这道题照着课文的样子来。\n\n**⑤ 收工时那一次存。** 反复问结束时，册子只在**内存**里；不存到盘上，下一次跑就白忙了。所以关掉那个反复问的开关以后立刻 `save_all` —— 这才是「小册子真能留得住」的那一步。\n\n**⑥ 开头那个空行别丢。** 最后印的是 `\\n再见喵\\n` —— **前头那个换行是给 `请选择> ` 收尾的**，不然「再见喵」会跟在那句提示后面挤成一团。",
+      "templateId": "c-s2-book-menu",
+      "params": {
+        "who": "狸花",
+        "who2": "墨墨",
+        "tel": "13900000002",
+        "tel2": "13600000004"
+      },
+      "verified": {
+        "at": "2026-09-16T08:49:56.261Z",
+        "hash": "cf1fb9cbf1ada2ee"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-save-and-load-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要**能存到盘上、也能从盘上读回来**。存下来的样子是**一行一条**：名字、一个空格、号码、然后换行。\n\n请你写这几样东西：\n\n1. 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n2. `add_one`：装满 100 条就印一行 `记满了喵` 并原样交回条数；没装满就把名字和号码抄进第 <现在有几条> 格，交回**新的条数**；\n3. `list_all`：一条都没有就印一行 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n4. `save_all`：把册子写到盘上的册子文件里（一行一条，按上面那个样子），写完印一行 `存好了喵`；打不开就印一行 `打不开喵`；\n5. `load_all`：从册子文件里往回读 —— **能读满两格的才算一条**，读不动就当场收手，交回一共读回来几条；册子文件不存在的时候印一行 `还没有册子喵`、交回 0。\n\n`main` 里按这个顺序走：起一本空册子、条数算 0，连着加三条 —— `小橘 13800000001`、`狸花 13700000003`、`奶牛 13500000005`；印一行 `存之前一共 <几条> 条`、把全部列一遍，然后**存一次**；**再另起一本新册子**，从册子文件里读回来，印一行 `读回来一共 <几条> 条`、把全部列一遍，最后**再存一次**（存到另一个文件里）收工。\n\n所以屏幕上会是这个样子：\n\n```\n存之前一共 3 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n3. 奶牛 13500000005\n存好了喵\n读回来一共 3 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n3. 奶牛 13500000005\n存好了喵\n```\n\n两组记录一模一样 —— 中间那一个 `存好了喵` 是第一次存的，最后那一个是收工时存的。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"小橘\", \"13800000001\");\n    n = add_one(book, n, \"狸花\", \"13700000003\");\n    n = add_one(book, n, \"奶牛\", \"13500000005\");\n\n    printf(\"存之前一共 %d 条\\n\", n);\n    list_all(book, n);\n    save_all(book, n, \"book.txt\");\n\n    Contact again[MAX];\n    int m = load_all(again, \"book.txt\");\n    printf(\"读回来一共 %d 条\\n\", m);\n    list_all(again, m);\n    save_all(again, m, \"book2.txt\");\n    return 0;\n}\n",
+      "expectedOutput": "存之前一共 3 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n3. 奶牛 13500000005\n存好了喵\n读回来一共 3 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n3. 奶牛 13500000005\n存好了喵",
+      "stdin": null,
+      "explanation": "存和读这一对是这一课最实用的一段喵 —— **写完它，小册子就真的能留下来了**。\n\n**① 存：开、写、关。**\n\n```c\nFILE *fp = fopen(path, \"w\");\nif (fp == NULL) {\n    ...\n    return 0;\n}\nfor (int i = 0; i < n; i++) {\n    fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n}\nfclose(fp);\n```\n\n三件事一件都不能少：**开门**（`fopen` 报的那个 `\"w\"` 是「要写，而且从头写起」）、**一条一条写**、**关门**（`fclose`）。少关一次门，写出去的东西可能还堵在半路上没落到盘上。前面那一道 `fp == NULL` 是保命的：门没开成还硬往里写，程序当场就倒。\n\n**② 读：开门、一条条念、关门。**\n\n```c\nwhile (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n    n = n + 1;\n}\n```\n\n这一行是整道题的核心，三个要点拆开看：\n\n- **`== 2` 是「这一趟读满两格了吗」**。名字和号码是两样东西，读满两样它才交 2；读不动就交别的数，绕圈当场收手。**交回来的数就是它这一趟干成了几样**。\n- **`n < MAX` 挡在前面**：册子最多装 100 条，读满 100 条就收手，别硬往里塞第 101 条。\n- **`book[n].name` 前面没有 `&`**：那两格本身就是碗，直接报名字就行。\n\n**③ 为什么每一条正好落在第 `n` 格？** 因为每读一条就 `n = n + 1`，所以「已经读进来几条」和「下一条该放哪一格」永远是同一个数。**读进来的条数不是本喵数出来的，是这一招交回来的。**\n\n**④ 存和读必须是同一套规矩。** 存的是「名字、空格、号码」，读的时候就得按「不要空格的一串、再不要空格的一串」去念 —— 中间那个空格**它自己会跳过**，所以两边就对上了。要是存的时候用逗号、读的时候找空格，那就是两条规矩，一条都读不回来（这一课那道改错题就是这个坑）。\n\n**⑤ 两个文件都要自己开、自己关。** `main` 里存了一次、读了一次、又存了一次，前后开了三回门 —— **每一回都得配一个 `fclose`**。第一次存完那本在内存里，读回来的是另一本，两边各走各的，所以印出来的一模一样。",
+      "templateId": "c-s2-book-save-and-load",
+      "params": {
+        "tel1": "13800000001",
+        "tel2": "13700000003",
+        "tel3": "13500000005"
+      },
+      "verified": {
+        "at": "2026-09-16T08:48:38.826Z",
+        "hash": "049f626180e087bc"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-save-and-load-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要**能存到盘上、也能从盘上读回来**。存下来的样子是**一行一条**：名字、一个空格、号码、然后换行。\n\n请你写这几样东西：\n\n1. 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n2. `add_one`：装满 100 条就印一行 `记满了喵` 并原样交回条数；没装满就把名字和号码抄进第 <现在有几条> 格，交回**新的条数**；\n3. `list_all`：一条都没有就印一行 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n4. `save_all`：把册子写到盘上的册子文件里（一行一条，按上面那个样子），写完印一行 `存好了喵`；打不开就印一行 `打不开喵`；\n5. `load_all`：从册子文件里往回读 —— **能读满两格的才算一条**，读不动就当场收手，交回一共读回来几条；册子文件不存在的时候印一行 `还没有册子喵`、交回 0。\n\n`main` 里按这个顺序走：起一本空册子、条数算 0，连着加三条 —— `小橘 13800000001`、`狸花 13700000003`、`奶牛 13400000006`；印一行 `存之前一共 <几条> 条`、把全部列一遍，然后**存一次**；**再另起一本新册子**，从册子文件里读回来，印一行 `读回来一共 <几条> 条`、把全部列一遍，最后**再存一次**（存到另一个文件里）收工。\n\n所以屏幕上会是这个样子：\n\n```\n存之前一共 3 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n3. 奶牛 13400000006\n存好了喵\n读回来一共 3 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n3. 奶牛 13400000006\n存好了喵\n```\n\n两组记录一模一样 —— 中间那一个 `存好了喵` 是第一次存的，最后那一个是收工时存的。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"小橘\", \"13800000001\");\n    n = add_one(book, n, \"狸花\", \"13700000003\");\n    n = add_one(book, n, \"奶牛\", \"13400000006\");\n\n    printf(\"存之前一共 %d 条\\n\", n);\n    list_all(book, n);\n    save_all(book, n, \"book.txt\");\n\n    Contact again[MAX];\n    int m = load_all(again, \"book.txt\");\n    printf(\"读回来一共 %d 条\\n\", m);\n    list_all(again, m);\n    save_all(again, m, \"book2.txt\");\n    return 0;\n}\n",
+      "expectedOutput": "存之前一共 3 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n3. 奶牛 13400000006\n存好了喵\n读回来一共 3 条\n1. 小橘 13800000001\n2. 狸花 13700000003\n3. 奶牛 13400000006\n存好了喵",
+      "stdin": null,
+      "explanation": "存和读这一对是这一课最实用的一段喵 —— **写完它，小册子就真的能留下来了**。\n\n**① 存：开、写、关。**\n\n```c\nFILE *fp = fopen(path, \"w\");\nif (fp == NULL) {\n    ...\n    return 0;\n}\nfor (int i = 0; i < n; i++) {\n    fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n}\nfclose(fp);\n```\n\n三件事一件都不能少：**开门**（`fopen` 报的那个 `\"w\"` 是「要写，而且从头写起」）、**一条一条写**、**关门**（`fclose`）。少关一次门，写出去的东西可能还堵在半路上没落到盘上。前面那一道 `fp == NULL` 是保命的：门没开成还硬往里写，程序当场就倒。\n\n**② 读：开门、一条条念、关门。**\n\n```c\nwhile (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n    n = n + 1;\n}\n```\n\n这一行是整道题的核心，三个要点拆开看：\n\n- **`== 2` 是「这一趟读满两格了吗」**。名字和号码是两样东西，读满两样它才交 2；读不动就交别的数，绕圈当场收手。**交回来的数就是它这一趟干成了几样**。\n- **`n < MAX` 挡在前面**：册子最多装 100 条，读满 100 条就收手，别硬往里塞第 101 条。\n- **`book[n].name` 前面没有 `&`**：那两格本身就是碗，直接报名字就行。\n\n**③ 为什么每一条正好落在第 `n` 格？** 因为每读一条就 `n = n + 1`，所以「已经读进来几条」和「下一条该放哪一格」永远是同一个数。**读进来的条数不是本喵数出来的，是这一招交回来的。**\n\n**④ 存和读必须是同一套规矩。** 存的是「名字、空格、号码」，读的时候就得按「不要空格的一串、再不要空格的一串」去念 —— 中间那个空格**它自己会跳过**，所以两边就对上了。要是存的时候用逗号、读的时候找空格，那就是两条规矩，一条都读不回来（这一课那道改错题就是这个坑）。\n\n**⑤ 两个文件都要自己开、自己关。** `main` 里存了一次、读了一次、又存了一次，前后开了三回门 —— **每一回都得配一个 `fclose`**。第一次存完那本在内存里，读回来的是另一本，两边各走各的，所以印出来的一模一样。",
+      "templateId": "c-s2-book-save-and-load",
+      "params": {
+        "tel1": "13800000001",
+        "tel2": "13700000003",
+        "tel3": "13400000006"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:33.999Z",
+        "hash": "cd5dd781bc53ff12"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-save-and-load-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要**能存到盘上、也能从盘上读回来**。存下来的样子是**一行一条**：名字、一个空格、号码、然后换行。\n\n请你写这几样东西：\n\n1. 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n2. `add_one`：装满 100 条就印一行 `记满了喵` 并原样交回条数；没装满就把名字和号码抄进第 <现在有几条> 格，交回**新的条数**；\n3. `list_all`：一条都没有就印一行 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n4. `save_all`：把册子写到盘上的册子文件里（一行一条，按上面那个样子），写完印一行 `存好了喵`；打不开就印一行 `打不开喵`；\n5. `load_all`：从册子文件里往回读 —— **能读满两格的才算一条**，读不动就当场收手，交回一共读回来几条；册子文件不存在的时候印一行 `还没有册子喵`、交回 0。\n\n`main` 里按这个顺序走：起一本空册子、条数算 0，连着加三条 —— `小橘 13800000001`、`狸花 13600000004`、`奶牛 13400000006`；印一行 `存之前一共 <几条> 条`、把全部列一遍，然后**存一次**；**再另起一本新册子**，从册子文件里读回来，印一行 `读回来一共 <几条> 条`、把全部列一遍，最后**再存一次**（存到另一个文件里）收工。\n\n所以屏幕上会是这个样子：\n\n```\n存之前一共 3 条\n1. 小橘 13800000001\n2. 狸花 13600000004\n3. 奶牛 13400000006\n存好了喵\n读回来一共 3 条\n1. 小橘 13800000001\n2. 狸花 13600000004\n3. 奶牛 13400000006\n存好了喵\n```\n\n两组记录一模一样 —— 中间那一个 `存好了喵` 是第一次存的，最后那一个是收工时存的。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"小橘\", \"13800000001\");\n    n = add_one(book, n, \"狸花\", \"13600000004\");\n    n = add_one(book, n, \"奶牛\", \"13400000006\");\n\n    printf(\"存之前一共 %d 条\\n\", n);\n    list_all(book, n);\n    save_all(book, n, \"book.txt\");\n\n    Contact again[MAX];\n    int m = load_all(again, \"book.txt\");\n    printf(\"读回来一共 %d 条\\n\", m);\n    list_all(again, m);\n    save_all(again, m, \"book2.txt\");\n    return 0;\n}\n",
+      "expectedOutput": "存之前一共 3 条\n1. 小橘 13800000001\n2. 狸花 13600000004\n3. 奶牛 13400000006\n存好了喵\n读回来一共 3 条\n1. 小橘 13800000001\n2. 狸花 13600000004\n3. 奶牛 13400000006\n存好了喵",
+      "stdin": null,
+      "explanation": "存和读这一对是这一课最实用的一段喵 —— **写完它，小册子就真的能留下来了**。\n\n**① 存：开、写、关。**\n\n```c\nFILE *fp = fopen(path, \"w\");\nif (fp == NULL) {\n    ...\n    return 0;\n}\nfor (int i = 0; i < n; i++) {\n    fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n}\nfclose(fp);\n```\n\n三件事一件都不能少：**开门**（`fopen` 报的那个 `\"w\"` 是「要写，而且从头写起」）、**一条一条写**、**关门**（`fclose`）。少关一次门，写出去的东西可能还堵在半路上没落到盘上。前面那一道 `fp == NULL` 是保命的：门没开成还硬往里写，程序当场就倒。\n\n**② 读：开门、一条条念、关门。**\n\n```c\nwhile (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n    n = n + 1;\n}\n```\n\n这一行是整道题的核心，三个要点拆开看：\n\n- **`== 2` 是「这一趟读满两格了吗」**。名字和号码是两样东西，读满两样它才交 2；读不动就交别的数，绕圈当场收手。**交回来的数就是它这一趟干成了几样**。\n- **`n < MAX` 挡在前面**：册子最多装 100 条，读满 100 条就收手，别硬往里塞第 101 条。\n- **`book[n].name` 前面没有 `&`**：那两格本身就是碗，直接报名字就行。\n\n**③ 为什么每一条正好落在第 `n` 格？** 因为每读一条就 `n = n + 1`，所以「已经读进来几条」和「下一条该放哪一格」永远是同一个数。**读进来的条数不是本喵数出来的，是这一招交回来的。**\n\n**④ 存和读必须是同一套规矩。** 存的是「名字、空格、号码」，读的时候就得按「不要空格的一串、再不要空格的一串」去念 —— 中间那个空格**它自己会跳过**，所以两边就对上了。要是存的时候用逗号、读的时候找空格，那就是两条规矩，一条都读不回来（这一课那道改错题就是这个坑）。\n\n**⑤ 两个文件都要自己开、自己关。** `main` 里存了一次、读了一次、又存了一次，前后开了三回门 —— **每一回都得配一个 `fclose`**。第一次存完那本在内存里，读回来的是另一本，两边各走各的，所以印出来的一模一样。",
+      "templateId": "c-s2-book-save-and-load",
+      "params": {
+        "tel1": "13800000001",
+        "tel2": "13600000004",
+        "tel3": "13400000006"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:36.241Z",
+        "hash": "8c20ea2951dd76f0"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-save-and-load-004",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要**能存到盘上、也能从盘上读回来**。存下来的样子是**一行一条**：名字、一个空格、号码、然后换行。\n\n请你写这几样东西：\n\n1. 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n2. `add_one`：装满 100 条就印一行 `记满了喵` 并原样交回条数；没装满就把名字和号码抄进第 <现在有几条> 格，交回**新的条数**；\n3. `list_all`：一条都没有就印一行 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n4. `save_all`：把册子写到盘上的册子文件里（一行一条，按上面那个样子），写完印一行 `存好了喵`；打不开就印一行 `打不开喵`；\n5. `load_all`：从册子文件里往回读 —— **能读满两格的才算一条**，读不动就当场收手，交回一共读回来几条；册子文件不存在的时候印一行 `还没有册子喵`、交回 0。\n\n`main` 里按这个顺序走：起一本空册子、条数算 0，连着加三条 —— `小橘 13900000002`、`狸花 13700000003`、`奶牛 13500000005`；印一行 `存之前一共 <几条> 条`、把全部列一遍，然后**存一次**；**再另起一本新册子**，从册子文件里读回来，印一行 `读回来一共 <几条> 条`、把全部列一遍，最后**再存一次**（存到另一个文件里）收工。\n\n所以屏幕上会是这个样子：\n\n```\n存之前一共 3 条\n1. 小橘 13900000002\n2. 狸花 13700000003\n3. 奶牛 13500000005\n存好了喵\n读回来一共 3 条\n1. 小橘 13900000002\n2. 狸花 13700000003\n3. 奶牛 13500000005\n存好了喵\n```\n\n两组记录一模一样 —— 中间那一个 `存好了喵` 是第一次存的，最后那一个是收工时存的。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"小橘\", \"13900000002\");\n    n = add_one(book, n, \"狸花\", \"13700000003\");\n    n = add_one(book, n, \"奶牛\", \"13500000005\");\n\n    printf(\"存之前一共 %d 条\\n\", n);\n    list_all(book, n);\n    save_all(book, n, \"book.txt\");\n\n    Contact again[MAX];\n    int m = load_all(again, \"book.txt\");\n    printf(\"读回来一共 %d 条\\n\", m);\n    list_all(again, m);\n    save_all(again, m, \"book2.txt\");\n    return 0;\n}\n",
+      "expectedOutput": "存之前一共 3 条\n1. 小橘 13900000002\n2. 狸花 13700000003\n3. 奶牛 13500000005\n存好了喵\n读回来一共 3 条\n1. 小橘 13900000002\n2. 狸花 13700000003\n3. 奶牛 13500000005\n存好了喵",
+      "stdin": null,
+      "explanation": "存和读这一对是这一课最实用的一段喵 —— **写完它，小册子就真的能留下来了**。\n\n**① 存：开、写、关。**\n\n```c\nFILE *fp = fopen(path, \"w\");\nif (fp == NULL) {\n    ...\n    return 0;\n}\nfor (int i = 0; i < n; i++) {\n    fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n}\nfclose(fp);\n```\n\n三件事一件都不能少：**开门**（`fopen` 报的那个 `\"w\"` 是「要写，而且从头写起」）、**一条一条写**、**关门**（`fclose`）。少关一次门，写出去的东西可能还堵在半路上没落到盘上。前面那一道 `fp == NULL` 是保命的：门没开成还硬往里写，程序当场就倒。\n\n**② 读：开门、一条条念、关门。**\n\n```c\nwhile (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n    n = n + 1;\n}\n```\n\n这一行是整道题的核心，三个要点拆开看：\n\n- **`== 2` 是「这一趟读满两格了吗」**。名字和号码是两样东西，读满两样它才交 2；读不动就交别的数，绕圈当场收手。**交回来的数就是它这一趟干成了几样**。\n- **`n < MAX` 挡在前面**：册子最多装 100 条，读满 100 条就收手，别硬往里塞第 101 条。\n- **`book[n].name` 前面没有 `&`**：那两格本身就是碗，直接报名字就行。\n\n**③ 为什么每一条正好落在第 `n` 格？** 因为每读一条就 `n = n + 1`，所以「已经读进来几条」和「下一条该放哪一格」永远是同一个数。**读进来的条数不是本喵数出来的，是这一招交回来的。**\n\n**④ 存和读必须是同一套规矩。** 存的是「名字、空格、号码」，读的时候就得按「不要空格的一串、再不要空格的一串」去念 —— 中间那个空格**它自己会跳过**，所以两边就对上了。要是存的时候用逗号、读的时候找空格，那就是两条规矩，一条都读不回来（这一课那道改错题就是这个坑）。\n\n**⑤ 两个文件都要自己开、自己关。** `main` 里存了一次、读了一次、又存了一次，前后开了三回门 —— **每一回都得配一个 `fclose`**。第一次存完那本在内存里，读回来的是另一本，两边各走各的，所以印出来的一模一样。",
+      "templateId": "c-s2-book-save-and-load",
+      "params": {
+        "tel1": "13900000002",
+        "tel2": "13700000003",
+        "tel3": "13500000005"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:38.403Z",
+        "hash": "6d24137ec6cad52c"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-save-and-load-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要**能存到盘上、也能从盘上读回来**。存下来的样子是**一行一条**：名字、一个空格、号码、然后换行。\n\n请你写这几样东西：\n\n1. 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n2. `add_one`：装满 100 条就印一行 `记满了喵` 并原样交回条数；没装满就把名字和号码抄进第 <现在有几条> 格，交回**新的条数**；\n3. `list_all`：一条都没有就印一行 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n4. `save_all`：把册子写到盘上的册子文件里（一行一条，按上面那个样子），写完印一行 `存好了喵`；打不开就印一行 `打不开喵`；\n5. `load_all`：从册子文件里往回读 —— **能读满两格的才算一条**，读不动就当场收手，交回一共读回来几条；册子文件不存在的时候印一行 `还没有册子喵`、交回 0。\n\n`main` 里按这个顺序走：起一本空册子、条数算 0，连着加三条 —— `小橘 13900000002`、`狸花 13600000004`、`奶牛 13500000005`；印一行 `存之前一共 <几条> 条`、把全部列一遍，然后**存一次**；**再另起一本新册子**，从册子文件里读回来，印一行 `读回来一共 <几条> 条`、把全部列一遍，最后**再存一次**（存到另一个文件里）收工。\n\n所以屏幕上会是这个样子：\n\n```\n存之前一共 3 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n3. 奶牛 13500000005\n存好了喵\n读回来一共 3 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n3. 奶牛 13500000005\n存好了喵\n```\n\n两组记录一模一样 —— 中间那一个 `存好了喵` 是第一次存的，最后那一个是收工时存的。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"小橘\", \"13900000002\");\n    n = add_one(book, n, \"狸花\", \"13600000004\");\n    n = add_one(book, n, \"奶牛\", \"13500000005\");\n\n    printf(\"存之前一共 %d 条\\n\", n);\n    list_all(book, n);\n    save_all(book, n, \"book.txt\");\n\n    Contact again[MAX];\n    int m = load_all(again, \"book.txt\");\n    printf(\"读回来一共 %d 条\\n\", m);\n    list_all(again, m);\n    save_all(again, m, \"book2.txt\");\n    return 0;\n}\n",
+      "expectedOutput": "存之前一共 3 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n3. 奶牛 13500000005\n存好了喵\n读回来一共 3 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n3. 奶牛 13500000005\n存好了喵",
+      "stdin": null,
+      "explanation": "存和读这一对是这一课最实用的一段喵 —— **写完它，小册子就真的能留下来了**。\n\n**① 存：开、写、关。**\n\n```c\nFILE *fp = fopen(path, \"w\");\nif (fp == NULL) {\n    ...\n    return 0;\n}\nfor (int i = 0; i < n; i++) {\n    fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n}\nfclose(fp);\n```\n\n三件事一件都不能少：**开门**（`fopen` 报的那个 `\"w\"` 是「要写，而且从头写起」）、**一条一条写**、**关门**（`fclose`）。少关一次门，写出去的东西可能还堵在半路上没落到盘上。前面那一道 `fp == NULL` 是保命的：门没开成还硬往里写，程序当场就倒。\n\n**② 读：开门、一条条念、关门。**\n\n```c\nwhile (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n    n = n + 1;\n}\n```\n\n这一行是整道题的核心，三个要点拆开看：\n\n- **`== 2` 是「这一趟读满两格了吗」**。名字和号码是两样东西，读满两样它才交 2；读不动就交别的数，绕圈当场收手。**交回来的数就是它这一趟干成了几样**。\n- **`n < MAX` 挡在前面**：册子最多装 100 条，读满 100 条就收手，别硬往里塞第 101 条。\n- **`book[n].name` 前面没有 `&`**：那两格本身就是碗，直接报名字就行。\n\n**③ 为什么每一条正好落在第 `n` 格？** 因为每读一条就 `n = n + 1`，所以「已经读进来几条」和「下一条该放哪一格」永远是同一个数。**读进来的条数不是本喵数出来的，是这一招交回来的。**\n\n**④ 存和读必须是同一套规矩。** 存的是「名字、空格、号码」，读的时候就得按「不要空格的一串、再不要空格的一串」去念 —— 中间那个空格**它自己会跳过**，所以两边就对上了。要是存的时候用逗号、读的时候找空格，那就是两条规矩，一条都读不回来（这一课那道改错题就是这个坑）。\n\n**⑤ 两个文件都要自己开、自己关。** `main` 里存了一次、读了一次、又存了一次，前后开了三回门 —— **每一回都得配一个 `fclose`**。第一次存完那本在内存里，读回来的是另一本，两边各走各的，所以印出来的一模一样。",
+      "templateId": "c-s2-book-save-and-load",
+      "params": {
+        "tel1": "13900000002",
+        "tel2": "13600000004",
+        "tel3": "13500000005"
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:40.527Z",
+        "hash": "d92b0d9da9c0185d"
+      }
+    },
+    {
+      "id": "bank-c-s2-book-save-and-load-007",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的小册子要**能存到盘上、也能从盘上读回来**。存下来的样子是**一行一条**：名字、一个空格、号码、然后换行。\n\n请你写这几样东西：\n\n1. 一张图纸：一条记录有什么 —— 一个名字（最多 32 个字）、一个号码（最多 20 个字）；\n2. `add_one`：装满 100 条就印一行 `记满了喵` 并原样交回条数；没装满就把名字和号码抄进第 <现在有几条> 格，交回**新的条数**；\n3. `list_all`：一条都没有就印一行 `还一条都没有喵`，否则从第 1 条数起，一条一行印成 `<序号>. <名字> <号码>`；\n4. `save_all`：把册子写到盘上的册子文件里（一行一条，按上面那个样子），写完印一行 `存好了喵`；打不开就印一行 `打不开喵`；\n5. `load_all`：从册子文件里往回读 —— **能读满两格的才算一条**，读不动就当场收手，交回一共读回来几条；册子文件不存在的时候印一行 `还没有册子喵`、交回 0。\n\n`main` 里按这个顺序走：起一本空册子、条数算 0，连着加三条 —— `小橘 13900000002`、`狸花 13600000004`、`奶牛 13400000006`；印一行 `存之前一共 <几条> 条`、把全部列一遍，然后**存一次**；**再另起一本新册子**，从册子文件里读回来，印一行 `读回来一共 <几条> 条`、把全部列一遍，最后**再存一次**（存到另一个文件里）收工。\n\n所以屏幕上会是这个样子：\n\n```\n存之前一共 3 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n3. 奶牛 13400000006\n存好了喵\n读回来一共 3 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n3. 奶牛 13400000006\n存好了喵\n```\n\n两组记录一模一样 —— 中间那一个 `存好了喵` 是第一次存的，最后那一个是收工时存的。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n    return 1;\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"小橘\", \"13900000002\");\n    n = add_one(book, n, \"狸花\", \"13600000004\");\n    n = add_one(book, n, \"奶牛\", \"13400000006\");\n\n    printf(\"存之前一共 %d 条\\n\", n);\n    list_all(book, n);\n    save_all(book, n, \"book.txt\");\n\n    Contact again[MAX];\n    int m = load_all(again, \"book.txt\");\n    printf(\"读回来一共 %d 条\\n\", m);\n    list_all(again, m);\n    save_all(again, m, \"book2.txt\");\n    return 0;\n}\n",
+      "expectedOutput": "存之前一共 3 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n3. 奶牛 13400000006\n存好了喵\n读回来一共 3 条\n1. 小橘 13900000002\n2. 狸花 13600000004\n3. 奶牛 13400000006\n存好了喵",
+      "stdin": null,
+      "explanation": "存和读这一对是这一课最实用的一段喵 —— **写完它，小册子就真的能留下来了**。\n\n**① 存：开、写、关。**\n\n```c\nFILE *fp = fopen(path, \"w\");\nif (fp == NULL) {\n    ...\n    return 0;\n}\nfor (int i = 0; i < n; i++) {\n    fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n}\nfclose(fp);\n```\n\n三件事一件都不能少：**开门**（`fopen` 报的那个 `\"w\"` 是「要写，而且从头写起」）、**一条一条写**、**关门**（`fclose`）。少关一次门，写出去的东西可能还堵在半路上没落到盘上。前面那一道 `fp == NULL` 是保命的：门没开成还硬往里写，程序当场就倒。\n\n**② 读：开门、一条条念、关门。**\n\n```c\nwhile (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n    n = n + 1;\n}\n```\n\n这一行是整道题的核心，三个要点拆开看：\n\n- **`== 2` 是「这一趟读满两格了吗」**。名字和号码是两样东西，读满两样它才交 2；读不动就交别的数，绕圈当场收手。**交回来的数就是它这一趟干成了几样**。\n- **`n < MAX` 挡在前面**：册子最多装 100 条，读满 100 条就收手，别硬往里塞第 101 条。\n- **`book[n].name` 前面没有 `&`**：那两格本身就是碗，直接报名字就行。\n\n**③ 为什么每一条正好落在第 `n` 格？** 因为每读一条就 `n = n + 1`，所以「已经读进来几条」和「下一条该放哪一格」永远是同一个数。**读进来的条数不是本喵数出来的，是这一招交回来的。**\n\n**④ 存和读必须是同一套规矩。** 存的是「名字、空格、号码」，读的时候就得按「不要空格的一串、再不要空格的一串」去念 —— 中间那个空格**它自己会跳过**，所以两边就对上了。要是存的时候用逗号、读的时候找空格，那就是两条规矩，一条都读不回来（这一课那道改错题就是这个坑）。\n\n**⑤ 两个文件都要自己开、自己关。** `main` 里存了一次、读了一次、又存了一次，前后开了三回门 —— **每一回都得配一个 `fclose`**。第一次存完那本在内存里，读回来的是另一本，两边各走各的，所以印出来的一模一样。",
+      "templateId": "c-s2-book-save-and-load",
+      "params": {
+        "tel1": "13900000002",
+        "tel2": "13600000004",
+        "tel3": "13400000006"
+      },
+      "verified": {
+        "at": "2026-09-16T08:48:40.056Z",
+        "hash": "da212a59346dd09e"
+      }
+    },
+    {
+      "id": "bank-c-s2-challenge-record-bonus-001",
+      "type": "codefix",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵的通讯录换代了：每一号都画了一张**图纸**，上面有两格 —— 一格记它攒了几条小鱼干，一格记奖励。\n\n规矩是：收到的一串数里，**攒得最多的那一号**发 10 条奖励（大家一样多的时候算最前面那一号）。程序把每一号的「攒了多少、奖励多少」都念一遍。\n\n现在的问题是：**奖励怎么都发不出去** —— 念出来的每一行奖励都是 0 喵。本喵明明看见它喊了一嗓子 `give_bonus` 呀……你帮本喵看看，把它改对。\n\n比如投喂给程序的是\n\n5\n8\n3\n8\n7\n3\n\n修好之后就要叼回\n\n第 1 号：8 条，奖励 10 条喵\n第 2 号：3 条，奖励 0 条喵\n第 3 号：8 条，奖励 0 条喵\n第 4 号：7 条，奖励 0 条喵\n第 5 号：3 条，奖励 0 条喵",
+      "brokenCode": "#include <stdio.h>\n\nstruct rec {\n    int fish;\n    int bonus;\n};\n\nvoid give_bonus(struct rec r, int k) {\n    r.bonus = r.bonus + k;\n}\n\nint main(void) {\n    struct rec list[8] = {0};\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &list[i].fish) != 1) {\n            return 1;\n        }\n    }\n\n    int top = 0;\n    for (int i = 1; i < n; i++) {\n        if (list[i].fish > list[top].fish) {\n            top = i;\n        }\n    }\n\n    give_bonus(list[top], 10);\n\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 号：%d 条，奖励 %d 条喵\\n\", i + 1, list[i].fish, list[i].bonus);\n    }\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nstruct rec {\n    int fish;\n    int bonus;\n};\n\nvoid give_bonus(struct rec *r, int k) {\n    r->bonus = r->bonus + k;\n}\n\nint main(void) {\n    struct rec list[8] = {0};\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &list[i].fish) != 1) {\n            return 1;\n        }\n    }\n\n    int top = 0;\n    for (int i = 1; i < n; i++) {\n        if (list[i].fish > list[top].fish) {\n            top = i;\n        }\n    }\n\n    give_bonus(&list[top], 10);\n\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 号：%d 条，奖励 %d 条喵\\n\", i + 1, list[i].fish, list[i].bonus);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "第 1 号：4 条，奖励 0 条喵\n第 2 号：9 条，奖励 10 条喵\n第 3 号：6 条，奖励 0 条喵\n第 4 号：5 条，奖励 0 条喵\n第 5 号：9 条，奖励 0 条喵",
+      "stdin": "5\n4\n9\n6\n5\n9\n",
+      "explanation": "「喊了一嗓子，可原件没变」是这张图纸最经典的一跤喵。\n\n看这行：`give_bonus(list[top], 10);` —— 递过去的是一张**图纸的复印件**。C 里把整张图纸传给别人时，对方拿到的是**照抄的一份**：他在那份上写多少、改多少，跟本喵手里这张原件一点关系都没有。所以奖励确实发了，发在了复印件上，散场就没了。\n\n要改，得让这一招拿到的是**原件的猫爪牌**，而不是复印件：\n\n1. 招式那一头把图纸换成「指向图纸的牌子」：`void give_bonus(struct rec *r, int k)`；\n2. 招式里顺着牌子取格子：`r->bonus = r->bonus + k;`（`r->bonus` 就是「顺着牌子找到那一格」）；\n3. 喊它的那一头**递牌子**：`give_bonus(&list[top], 10);` —— 名字前面多一个 `&`，意思是「这是那一号的原件，牌子拿去」。\n\n三处要一起改，少一处翻译官喵就翻脸（类型对不上）。判据很好记：**「想改原件的事，递牌子；只想看一眼的事，递复印件。」**",
+      "templateId": "c-s2-challenge-record-bonus",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-30T12:36:53.300Z",
+        "hash": "189ea48182db23a3"
+      }
+    },
+    {
+      "id": "bank-c-s2-challenge-rent-reverse-000",
+      "type": "codewrite",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵这次不提前摆碗了，改用**现要现租的仓库**喵：说要几格就临时租几格，用完了还回去。\n\n投喂口先给一个数（要租几格），再一格一格给数。请你写个程序：\n\n1. 按投喂的格数**现租**一个仓库 —— 租多大由那个数说了算，一格不多、一格不少；\n2. 把数一格一格收进去；\n3. 从**最后一格**开始倒着念：`第 X 号收 %d 条喵`（X 是格子号，从 1 数起）；\n4. 念完报总数 `一共 %d 条喵`；\n5. 收工前**把仓库还回去**。\n\n比如投喂给程序的是\n\n4\n18\n29\n10\n19\n\n程序就要叼回\n\n第 4 号收 19 条喵\n第 3 号收 10 条喵\n第 2 号收 29 条喵\n第 1 号收 18 条喵\n一共 76 条喵\n\n（判分喂的是**另外一组数**喵。租仓库、还仓库这两步一个都不能少 —— 少一步本喵下次就租不到了。）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int *fish = malloc(sizeof(int) * n);\n    if (fish == NULL) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &fish[i]) != 1) {\n            free(fish);\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = n - 1; i >= 0; i--) {\n        printf(\"第 %d 号收 %d 条喵\\n\", i + 1, fish[i]);\n        total = total + fish[i];\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n\n    free(fish);\n    return 0;\n}\n",
+      "expectedOutput": "第 4 号收 6 条喵\n第 3 号收 29 条喵\n第 2 号收 4 条喵\n第 1 号收 27 条喵\n一共 66 条喵",
+      "stdin": "4\n27\n4\n29\n6\n",
+      "explanation": "这题把「现要现租的仓库」的三步都走了一遍喵：**租 → 用 → 还**。\n\n**一、租。** `malloc(sizeof(int) * n)` 的意思是：本喵要连着 n 格、每格都放得下一个整数的地皮。它还给本喵一个牌子（就是那块地的**第 0 格的牌子**）—— 之后拿牌子加下标就能摸到任何一格：`fish[i]`。牌子本身类型要写对：装整数地皮的牌子上写的是 `int *`。\n\n**二、用。** 收数和念数跟普通的一排碗一模一样，区别只是这排碗是租来的。注意 `fish == NULL` 那一问不是客套：地皮要不到的时候它真的会给回一个「空牌子」，拿空牌子去写东西会当场塌方。\n\n**三、还。** `free(fish)` 只需要还一次 —— 还的是那块地的**开头**。租来的地**不会自己飞回去**，程序结束前不还，就等于一直占着。\n\n还有一处小讲究：倒着念的时候 `i` 从 `n - 1` 走到 0，圈的条件写 `i >= 0`（写成 `i > 0` 会漏掉第 0 格）。",
+      "templateId": "c-s2-challenge-rent-reverse",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:43.356Z",
+        "hash": "4572037485ba3a89"
+      }
+    },
+    {
+      "id": "bank-c-s2-challenge-rent-reverse-001",
+      "type": "codewrite",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵这次不提前摆碗了，改用**现要现租的仓库**喵：说要几格就临时租几格，用完了还回去。\n\n投喂口先给一个数（要租几格），再一格一格给数。请你写个程序：\n\n1. 按投喂的格数**现租**一个仓库 —— 租多大由那个数说了算，一格不多、一格不少；\n2. 把数一格一格收进去；\n3. 从**最后一格**开始倒着念：`第 X 号收 %d 条喵`（X 是格子号，从 1 数起）；\n4. 念完报总数 `一共 %d 条喵`；\n5. 收工前**把仓库还回去**。\n\n比如投喂给程序的是\n\n5\n3\n10\n3\n7\n19\n\n程序就要叼回\n\n第 5 号收 19 条喵\n第 4 号收 7 条喵\n第 3 号收 3 条喵\n第 2 号收 10 条喵\n第 1 号收 3 条喵\n一共 42 条喵\n\n（判分喂的是**另外一组数**喵。租仓库、还仓库这两步一个都不能少 —— 少一步本喵下次就租不到了。）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int *fish = malloc(sizeof(int) * n);\n    if (fish == NULL) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &fish[i]) != 1) {\n            free(fish);\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = n - 1; i >= 0; i--) {\n        printf(\"第 %d 号收 %d 条喵\\n\", i + 1, fish[i]);\n        total = total + fish[i];\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n\n    free(fish);\n    return 0;\n}\n",
+      "expectedOutput": "第 5 号收 13 条喵\n第 4 号收 13 条喵\n第 3 号收 11 条喵\n第 2 号收 13 条喵\n第 1 号收 6 条喵\n一共 56 条喵",
+      "stdin": "5\n6\n13\n11\n13\n13\n",
+      "explanation": "这题把「现要现租的仓库」的三步都走了一遍喵：**租 → 用 → 还**。\n\n**一、租。** `malloc(sizeof(int) * n)` 的意思是：本喵要连着 n 格、每格都放得下一个整数的地皮。它还给本喵一个牌子（就是那块地的**第 0 格的牌子**）—— 之后拿牌子加下标就能摸到任何一格：`fish[i]`。牌子本身类型要写对：装整数地皮的牌子上写的是 `int *`。\n\n**二、用。** 收数和念数跟普通的一排碗一模一样，区别只是这排碗是租来的。注意 `fish == NULL` 那一问不是客套：地皮要不到的时候它真的会给回一个「空牌子」，拿空牌子去写东西会当场塌方。\n\n**三、还。** `free(fish)` 只需要还一次 —— 还的是那块地的**开头**。租来的地**不会自己飞回去**，程序结束前不还，就等于一直占着。\n\n还有一处小讲究：倒着念的时候 `i` 从 `n - 1` 走到 0，圈的条件写 `i >= 0`（写成 `i > 0` 会漏掉第 0 格）。",
+      "templateId": "c-s2-challenge-rent-reverse",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-30T12:36:55.905Z",
+        "hash": "45bf5a7ee95a4465"
+      }
+    },
+    {
+      "id": "bank-c-s2-challenge-rent-reverse-002",
+      "type": "codewrite",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵这次不提前摆碗了，改用**现要现租的仓库**喵：说要几格就临时租几格，用完了还回去。\n\n投喂口先给一个数（要租几格），再一格一格给数。请你写个程序：\n\n1. 按投喂的格数**现租**一个仓库 —— 租多大由那个数说了算，一格不多、一格不少；\n2. 把数一格一格收进去；\n3. 从**最后一格**开始倒着念：`第 X 号收 %d 条喵`（X 是格子号，从 1 数起）；\n4. 念完报总数 `一共 %d 条喵`；\n5. 收工前**把仓库还回去**。\n\n比如投喂给程序的是\n\n6\n27\n8\n4\n12\n9\n30\n\n程序就要叼回\n\n第 6 号收 30 条喵\n第 5 号收 9 条喵\n第 4 号收 12 条喵\n第 3 号收 4 条喵\n第 2 号收 8 条喵\n第 1 号收 27 条喵\n一共 90 条喵\n\n（判分喂的是**另外一组数**喵。租仓库、还仓库这两步一个都不能少 —— 少一步本喵下次就租不到了。）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int *fish = malloc(sizeof(int) * n);\n    if (fish == NULL) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &fish[i]) != 1) {\n            free(fish);\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = n - 1; i >= 0; i--) {\n        printf(\"第 %d 号收 %d 条喵\\n\", i + 1, fish[i]);\n        total = total + fish[i];\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n\n    free(fish);\n    return 0;\n}\n",
+      "expectedOutput": "第 6 号收 28 条喵\n第 5 号收 20 条喵\n第 4 号收 3 条喵\n第 3 号收 14 条喵\n第 2 号收 28 条喵\n第 1 号收 22 条喵\n一共 115 条喵",
+      "stdin": "6\n22\n28\n14\n3\n20\n28\n",
+      "explanation": "这题把「现要现租的仓库」的三步都走了一遍喵：**租 → 用 → 还**。\n\n**一、租。** `malloc(sizeof(int) * n)` 的意思是：本喵要连着 n 格、每格都放得下一个整数的地皮。它还给本喵一个牌子（就是那块地的**第 0 格的牌子**）—— 之后拿牌子加下标就能摸到任何一格：`fish[i]`。牌子本身类型要写对：装整数地皮的牌子上写的是 `int *`。\n\n**二、用。** 收数和念数跟普通的一排碗一模一样，区别只是这排碗是租来的。注意 `fish == NULL` 那一问不是客套：地皮要不到的时候它真的会给回一个「空牌子」，拿空牌子去写东西会当场塌方。\n\n**三、还。** `free(fish)` 只需要还一次 —— 还的是那块地的**开头**。租来的地**不会自己飞回去**，程序结束前不还，就等于一直占着。\n\n还有一处小讲究：倒着念的时候 `i` 从 `n - 1` 走到 0，圈的条件写 `i >= 0`（写成 `i > 0` 会漏掉第 0 格）。",
+      "templateId": "c-s2-challenge-rent-reverse",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:46.339Z",
+        "hash": "40c484d90735118e"
+      }
+    }
+  ]
+}

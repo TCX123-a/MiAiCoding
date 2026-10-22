@@ -1,0 +1,23 @@
+{
+  "templateId": "java-s2-one-blueprint-two-conditions",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-12",
+  "type": "codewrite",
+  "concept": ["同一张图纸报两种情形", "接住写在圈里面", "出一回事只丢一笔", "计数器"],
+  "instances": 6,
+  "params": {
+    "exName": { "kind": "pick", "values": ["BadCountException", "BadFishCountException"] },
+    "have": { "kind": "pick", "values": ["5", "4"] },
+    "n1": { "kind": "pick", "values": ["3", "2"] },
+    "n2": { "kind": "pick", "values": ["-1", "-2"] },
+    "n3": { "kind": "pick", "values": ["8", "9"] },
+    "n4": { "kind": "pick", "values": ["2", "1"] },
+    "n5": { "kind": "pick", "values": ["4", "3"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "5\n{n1}\n{n2}\n{n3}\n{n4}\n{n5}\n", "sampleText": "5\n2\n-3\n7\n1\n3\n" },
+  "stemTemplate": "本喵要**用同一张出事图纸报两种情形**喵。\n\n要求：\n\n1. 图纸叫 `{exName}`，认 `Exception` 当师父，出生那一手收一句口信**往上交给师父**。\n2. 一个招式 `take`，收两个数 `n` 和 `have`：\n   - `n` **比 0 小** → 当场喊一声，口信 `数量不能是负的喵`；\n   - `n` **比 `have` 大** → 也当场喊一声，口信是 `仓库里只有 ` 接上 `have` 接上 ` 条喵`（`have` 是 `{have}`，就印「仓库里只有 {have} 条喵」）；\n   - 两种都不是 → 把这笔收下（叼回 `n`）。\n3. `main` 里：`have` 这边固定是 `{have}`；先读第一个数（后面还有几笔），接着正好那么多行、一行一个数。\n4. 每一笔**单独**接住：接住就印一行 `第 几次出事：` 接上口信（次数从 1 起，出一回加一）；没出事的笔，把它加到总数上。\n5. 所有笔过完，最后印一行 `出了 几次事，收下 总数 条`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）\n\n两处要害：**同一张图纸能报两种情形**；还有 —— **接住写在绕圈的里面**，所以出一回事只丢一笔，后头的笔照样接着收喵。",
+  "starterTemplate": "import java.util.Scanner;\n\nclass {exName} extends Exception {\n\n}\n\npublic class Main {\n    static int take(int n, int have) {\n\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass {exName} extends Exception {\n    {exName}(String msg) {\n        super(msg);\n    }\n}\n\npublic class Main {\n    static int take(int n, int have) throws {exName} {\n        if (n < 0) {\n            throw new {exName}(\"数量不能是负的喵\");\n        }\n        if (n > have) {\n            throw new {exName}(\"仓库里只有 \" + have + \" 条喵\");\n        }\n        return n;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int have = {have};\n        int total = sc.nextInt();\n        int bad = 0;\n        int sum = 0;\n        for (int i = 0; i < total; i++) {\n            int n = sc.nextInt();\n            try {\n                sum += take(n, have);\n            } catch ({exName} e) {\n                bad++;\n                System.out.println(\"第 \" + bad + \" 笔出事：\" + e.getMessage());\n            }\n        }\n        System.out.println(\"出了 \" + bad + \" 次事，收下 \" + sum + \" 条\");\n    }\n}\n",
+  "explanationTemplate": "这题是课里那条「同一张出事图纸能不能用在两种情形上」的活证据喵。\n\n**一、一张图纸，两处喊。** `take` 身子里有两个 `if`，两个都 `throw new {exName}(…)` —— **同一张图纸，装不同的口信**。接住的那边只管「是这张图纸的就接」，压根不用猜是哪一种情形：**口信里写着呢**。这正是课里那条原则：`{exName}` 这个名字一亮出来，接的人就知道出的是什么事。\n\n**二、两处喊的先后有讲究。** 先看 `n < 0`、再看 `n > have`：一个数不可能**同时**比 `0` 小、又比 `have` 大，所以这题里谁先谁后都不改结果 —— 但换个题目就未必了。**几个 `if` 之间只要可能同时成立，顺序就成了结果的一部分。**\n\n**三、接住写在圈的里面。** 这是和上一题最大的不同：\n\n```java\nfor (int i = 0; i < total; i++) {\n    int n = sc.nextInt();\n    try {\n        sum += take(n, have);\n    } catch ({exName} e) {\n        bad++;\n        System.out.println(\"第 \" + bad + \" 笔出事：\" + e.getMessage());\n    }\n}\n```\n\n出事那一笔**只丢它自己**：接住之后圈接着转，后面的笔照收。把接住挪到圈外面，第一笔出事整个圈就停了，屏幕上会**少好几行** —— 判分那组数里**一定**有两种情形各至少一笔，而且出事之后**还留着笔**，就是拿来盯这一处的。\n\n**四、`bad` 既当计数器又当编号。** `bad++;` 之后当场印 `第 \" + bad + \" 笔出事` —— 第一回印 `1`、第二回印 `2`。\n\n**五、`sum += take(n, have)`。** 这里叼回来的是 `n` 本身（收下的那一笔）。出事的那条路上**压根没往后走**，所以 `sum` 一点都不会被弄脏。\n\n本喵把参考解里第二个 `if` 拆掉真跑过一遍：那一笔本该出事的数被当成「收下」算了进去 —— 出事只剩 1 回，总数跟着变大。所以「两种情形都要判」这件事，在这道题里是真被考到的喵。"
+}

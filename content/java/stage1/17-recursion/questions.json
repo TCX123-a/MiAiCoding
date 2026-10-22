@@ -1,0 +1,83 @@
+{
+  "lessonId": "java-stage1-17",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "课文第一节那一招 `countDown` 里，`if (n == 0)` 这一句叫做**基线条件**。它到底是干什么用的喵？",
+      "options": [
+        "让递归在某个条件下停下来，不再往下喊自己",
+        "让递归跑得更快一点",
+        "让递归能被 main 直接调用",
+        "让递归可以一次喊好几个自己"
+      ],
+      "answer": 0,
+      "explanation": "基线条件就是刹车喵。每一层都往下喊一位，总得有人喊停 —— 停下来的那一层叫「到底了」，它不再喊自己，回程才从它那儿开始。第二节那个把刹车拿掉的反例你也看见了：`javac` 一声不吭，跑起来却是 3、2、1、0、-1、-2 一路数进负数、刷了两万多行才断气，最后甩出 `Exception in thread \"main\" java.lang.StackOverflowError`。**注意它只管「停」，不管「快」** —— 跑得快不快是另一回事，往后的课会讲怎么算得省。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "课文第二节那段拿掉刹车的 `countDown`，`javac` 一个字都没说；可一跑起来，屏幕上最后甩出一句 `Exception in thread \"main\" java.lang.StackOverflowError`。这句话在说的是什么喵？",
+      "options": [
+        "一层层喊自己时，记「待会儿回到哪儿」的那一摞碗摞得太高，地方不够了",
+        "程序印出来的数字太多，把屏幕写满了",
+        "`countDown` 这个名字没有在翻译官那里登记过",
+        "返回值的类型写错了，装不下算出来的数"
+      ],
+      "answer": 0,
+      "explanation": "爆的是那一摞碗喵 —— 每一位喊下一位的时候，自己那点活还没干完，得记住「等会儿回来接着干哪一句」，这就是那一摞碗（调用栈）。没有刹车，就是每一位都在往摞上加碗、永远没人拿走，最后把地方摞爆，整只猫当场地断气。注意另外三条都排除得掉：屏幕写满是打印的事，跟爆不爆没关系；名字没登记过是**编译期**的 `cannot find symbol`，根本跑不起来；类型不对也是编译期的事。**只有这一条是跑起来才发生的。**"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "课文第三节说：印的那句 `System.out.println` 写在「喊自己」的**上边**还是**下边**，决定了它算去程还是回程。写在**下边**的时候，印出来的东西是什么顺序喵？",
+      "options": [
+        "从小到大：最后喊的那一位最先回来，先印自己的那一份",
+        "从大到小：最先喊的那一位先印",
+        "顺序不定，每次跑都可能不一样",
+        "只印一次，因为只有最里面那一层会回来"
+      ],
+      "answer": 0,
+      "explanation": "写在下边 = 属于**回程**喵：这一层得等它喊出去的那位全干完、从摞顶上把碗拿回来，才轮到自己开口。所以最先开口的是最里面那一位（它喊出去的东西最小），最后才是最外面那一位 —— 数字就是从**小到大**出来的。反过来，写在上边 = 属于**去程**，还没往下走就先印了，那就是从大到小。**这不是随机顺序**：每一层「轮到谁开口」是钉死的，跟骰子没关系。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    public static long fact(int n) {\n        if (____) {\n            return 1;\n        }\n        return ____;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(fact(5));\n    }\n}",
+      "stem": "本喵的阶乘招式缺了两格：第一格是**刹车**，第二格是**递推那一步**。空里填什么，才能让 `fact(5)` 印出 120 喵？",
+      "blanks": [
+        {
+          "answer": "n == 0",
+          "accept": ["n==0", "0 == n", "0==n", "n <= 0", "n<=0", "0 >= n", "0>=n"]
+        },
+        {
+          "answer": "n * fact(n - 1)",
+          "accept": ["n*fact(n-1)", "fact(n - 1) * n", "fact(n-1)*n"]
+        }
+      ],
+      "explanation": "第一格是刹车喵：`0!` 规定等于 1，所以 `n` 减到 0 就该收工，这一句成立时直接 `return 1`，不再往下喊自己。少了它，`fact(5)` 会一路喊到负数、永远停不下来 —— 屏幕上最后是那句 `java.lang.StackOverflowError`。第二格是「喊自己」的那一口：**喂进去的料要小一圈**（`n - 1`），**叼回来的战利品要跟自己乘**（`n *`）。两处缺一处都不行：少了 `n - 1` 就是原地转圈，少了 `n *` 就等于每一层白喊 —— 叼回来的数没人用，印出来永远是 1。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void down(int n) {\n        if (n == 0) {\n            return;\n        }\n        System.out.println(\"往下 \" + n);\n        down(n - 1);\n        System.out.println(\"回来 \" + n);\n    }\n\n    public static void main(String[] args) {\n        down(2);\n    }\n}",
+      "stem": "这段代码印出什么喵？",
+      "answer": "往下 2\n往下 1\n回来 1\n回来 2",
+      "accept": ["往下 2\n往下 1\n回来 1\n回来 2\n"],
+      "explanation": "先看两句 `System.out.println` 的位置喵：第一句写在喊自己**之前**（去程），第二句写在**之后**（回程）。所以印出来是「先大后小、再小后大」—— 往下走印 2、1，到底折回来再印 1、2。**中间那两位印出来的数是同一批**（都是 1 和 2），可它们分属两趟，方向正好相反。这一题练的就是「去程和回程是两趟」：看一眼 `System.out.println` 在「喊自己」的上边还是下边，顺序就定了。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void down(int n) {\n        int mine = n * 10;\n        if (n == 0) {\n            return;\n        }\n        down(n - 1);\n        System.out.println(mine);\n    }\n\n    public static void main(String[] args) {\n        down(2);\n    }\n}",
+      "stem": "这一招里每位都摆了一只自己的 `mine`，印的那句写在喊自己**之后**。这段代码印出什么喵？",
+      "answer": "10\n20",
+      "accept": ["10\n20\n"],
+      "explanation": "关键在这一句：`mine` 是**每一位自己的小鱼干仓库**，随招式出生、随招式消失，一层一层的不会互相覆盖喵。走一遍：`down(2)` 摆下 `mine` 是 20，先往下喊；`down(1)` 摆下自己那只，是 10，再往下喊；`down(0)` 看到 `n == 0` 直接 `return`，它一句话都没印。然后一层层折回来：先醒的是 `down(1)`，它开口印的还是**自己那只**（10）；最后才是 `down(2)`，印 20。所以是 10、20 —— **跟谁先回来有关，跟谁先摆下仓库无关**。"
+    }
+  ]
+}

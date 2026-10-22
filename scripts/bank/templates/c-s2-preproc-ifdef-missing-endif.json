@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-preproc-ifdef-missing-endif",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-08",
+  "type": "codefix",
+  "concept": ["条件编译", "#ifdef", "忘了 #endif", "编译报错"],
+  "instances": 2,
+  "params": {
+    "MARK": { "kind": "pick", "values": ["DEBUG", "VERBOSE", "NOTE"] },
+    "first": { "kind": "pick", "values": ["本喵开工了", "先把鱼干数一数", "今天的活儿不多"] },
+    "second": { "kind": "pick", "values": ["顺手记一笔", "记号里这句话也要印", "这一段留给记号"] }
+  },
+  "stemTemplate": "本喵这个程序要印两句话：先印一句 `{first}`，再印一句 `{second}` —— 第二句只在本喵自己登记的记号 `{MARK}` 存在的时候才印。\n\n可翻译官喵把整段代码**退了回来**，一句抱怨就把本喵拦在门外。你帮本喵看看是哪儿没闭上，把它改好：让它能翻译过去，并且把上面那两句话都印出来。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define {MARK} 1\n\nint main(void) {\n    printf(\"{first}\\n\");\n#ifdef {MARK}\n    printf(\"{second}\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define {MARK} 1\n\nint main(void) {\n    printf(\"{first}\\n\");\n#ifdef {MARK}\n    printf(\"{second}\\n\");\n#endif\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: unterminated #ifdef` —— `unterminated` 就是「没到头 / 没关上」喵。\n\n它读到 `#ifdef {MARK}` 的时候会记一笔：「记号在，从这儿往下都留着」；然后它要一直读到 `#endif` 才知道**留到哪儿为止**。本喵这次开了门，却忘了关门，它就不知道剩下的话该怎么算，只好停手 —— 所以整段代码连翻译都没走完。\n\n补法只有一件事：**在第二句话的后面补上 `#endif`**。\n\n顺便记牢这条规矩的形状：`#ifdef`（或者 `#ifndef`）**每开一扇门，就一定要配一个 `#endif` 关上**。这两句是一对，缺了任何一句，报错都长这个样子。\n\n改好之后跑起来是两行：先 `{first}`，再 `{second}` —— 因为 `{MARK}` 在本喵这儿**登记过**（第一行 `#define` 就是干这个的），那段话会留下。要是把那一行删掉，第二句就一个字都不会出现。"
+}

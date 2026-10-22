@@ -1,0 +1,21 @@
+{
+  "templateId": "java-s2-student-cast-without-check",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-15",
+  "type": "codefix",
+  "concept": ["换牌子之前先认亲", "instanceof 是真跑起来才查的", "ClassCastException 当场断气"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["大肥鱼", "小黑"] },
+    "b": { "kind": "pick", "values": ["小橘", "小虎"] },
+    "s1": { "kind": "pick", "values": ["92", "86"] },
+    "c": { "kind": "pick", "values": ["狸花", "花花"] },
+    "s2": { "kind": "pick", "values": ["78", "90"] },
+    "avg": { "kind": "pick", "values": ["85", "88"] }
+  },
+  "stemTemplate": "本喵要给名单上的学员算平均分。可这稿子**跑起来当场断气** —— 翻译官最后那句话里说：\n\n`Exception in thread \"main\" java.lang.ClassCastException: class Person cannot be cast to class Student`\n\n请你把它补好，让程序印出：\n\n```text\n学生 2 只，平均 {avg} 分\n```\n\n名单上第一只（{a}）**不是学员**，另外两只是。毛病只有一处，就在绕圈里**换牌子**那几下。这稿子**编得过** —— 翻译官看稿子的时候一句话都没说喵。",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\nclass Person {\n    private String name;\n\n    Person(String name) {\n        this.name = name;\n    }\n\n    String getName() { return name; }\n\n    String intro() {\n        return \"本喵叫 \" + name;\n    }\n}\n\nclass Student extends Person {\n    private int score;\n\n    Student(String name, int score) {\n        super(name);\n        this.score = score;\n    }\n\n    int getScore() { return score; }\n\n    @Override\n    String intro() {\n        return super.intro() + \"，考了 \" + score + \" 分\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Person> mingdan = new ArrayList<>();\n        mingdan.add(new Person(\"{a}\"));\n        mingdan.add(new Student(\"{b}\", {s1}));\n        mingdan.add(new Student(\"{c}\", {s2}));\n        int sum = 0;\n        int n = 0;\n        for (Person p : mingdan) {\n            Student s = (Student) p;\n            sum += s.getScore();\n            n++;\n        }\n        System.out.println(\"学生 \" + n + \" 只，平均 \" + (sum / n) + \" 分\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\nclass Person {\n    private String name;\n\n    Person(String name) {\n        this.name = name;\n    }\n\n    String getName() { return name; }\n\n    String intro() {\n        return \"本喵叫 \" + name;\n    }\n}\n\nclass Student extends Person {\n    private int score;\n\n    Student(String name, int score) {\n        super(name);\n        this.score = score;\n    }\n\n    int getScore() { return score; }\n\n    @Override\n    String intro() {\n        return super.intro() + \"，考了 \" + score + \" 分\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Person> mingdan = new ArrayList<>();\n        mingdan.add(new Person(\"{a}\"));\n        mingdan.add(new Student(\"{b}\", {s1}));\n        mingdan.add(new Student(\"{c}\", {s2}));\n        int sum = 0;\n        int n = 0;\n        for (Person p : mingdan) {\n            if (p instanceof Student) {\n                Student s = (Student) p;\n                sum += s.getScore();\n                n++;\n            }\n        }\n        System.out.println(\"学生 \" + n + \" 只，平均 \" + (sum / n) + \" 分\");\n    }\n}\n",
+  "explanationTemplate": "这一处是这一课最要紧的顺序：**先认亲，再换牌子。**\n\n坏稿子里直接就是 `Student s = (Student) p;` —— 第一次绕到 {a}（照 `Person` 生的，不是学员），牌子一套上去程序当场断气。本喵真跑过这一版，原话是 `Exception in thread \"main\" java.lang.ClassCastException: class Person cannot be cast to class Student`，念起来是「拿 `Student` 的牌子去套一只 `Person`，套不上喵」。\n\n补法是加一句认亲：\n\n```java\nif (p instanceof Student) {\n    Student s = (Student) p;\n    sum += s.getScore();\n    n++;\n}\n```\n\n`p instanceof Student` 是问「**`p` 指向的那只，是不是照 `Student`（或它的下游）生的**」—— 认准了才换牌子，换的时候才一定换得动。顺带一句喵：认亲那一问不只是拦坏稿子，它**同时就是「谁有分数」的判据** —— {a} 那一问没过，所以它不加分数、也不占人头，`n` 数出来的才是真正的学员个数。\n\n两个容易想歪的地方喵：\n\n- **这类坏法稿子那一关挑不出毛病。** 换牌子是**真跑起来**才查的，`(Student) p` 这一句名字对、圈数对，翻译官看稿子的时候一句话都不说 —— 要等跑到那一只头上才炸。所以判分那两道题里名单是不一样的，光把 `{avg}` 抄一遍过不了。\n- **「先认亲」不是保险，是规矩。** 只要名单里可能坐着不是学员的东西（本喵这种），换牌子之前就必须问过那一句。"
+}

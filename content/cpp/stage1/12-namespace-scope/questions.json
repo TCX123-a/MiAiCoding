@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage1-12",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "前十课每段开头都写着 `using namespace std;`。这一句到底在干什么？",
+      "options": [
+        "把工具箱里所有的函数都抄一遍，抄完就能用了",
+        "把 `std` 这一间的门打开，里面的名字报出来就行、不用带分区名",
+        "把 `cout` 这一件从 `std` 里搬到本喵手边，别的不动",
+        "告诉编译器本喵用的是 C++，不是别的语言"
+      ],
+      "answer": 1,
+      "explanation": "`std` 是一间分区的名字（「标准工具箱」那一间），`cout`、`endl` 这些真名都带着 `std::` 那一截。`using namespace std;` 就是把这一间的门**整扇打开**：里面的名字报出来就行。要是只想搬一件，得写 `using std::cout;` —— 那只搬一件，不开整扇门喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写了一段：招式里先是一只 `total = 0;`，然后一对大括号，里面开了一只 `fish = 3;`、又写了一句 `total = total + fish;`。**大括号结束之后**再写 `cout << fish << endl;`。会怎样？",
+      "options": [
+        "印出 `3`，因为 `fish` 还在",
+        "印出 `0`，因为大括号里那只 `fish` 被清空了",
+        "编译器拦住本喵：`'fish' was not declared in this scope`",
+        "会印出随机的一个数"
+      ],
+      "answer": 2,
+      "explanation": "`fish` 是在那对大括号里开的，**那一层一结束它就没了** —— 跑到围墙外面喊它，翻译官喵只会说「这个名字在本层没听说过」。要注意的是括号里那句 `total = total + fish;` 是**能**用的：`total` 开在外面那一层，里面的东西可以往外借，外面却看不见里面喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵开了两间分区，`kitchen` 里有一只 `fish = 3`，`pond` 里有一只 `fish = 5`。然后在招式里把**两间的门都打开**（`using namespace kitchen;` 和 `using namespace pond;`），再写 `cout << fish << endl;`。会怎样？",
+      "options": [
+        "印出 `3`，先打开的那间说了算",
+        "印出 `5`，后打开的那间盖住前一间",
+        "印出 `8`，两只碗加起来",
+        "编译器拦住本喵：`reference to 'fish' is ambiguous`"
+      ],
+      "answer": 3,
+      "explanation": "两间的门都开着，里头又各有一只同名的碗 —— 这时候喊 `fish`，翻译官喵真的**不知道该拿哪一只**，只能说「ambiguous」（含糊、说不清）。改法很干脆：要么只打开一间，要么写全名 `kitchen::fish`。整间开门方便，代价就是这个喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "stem": "本喵要开一间分区，名字叫 `kitchen`，里头放一只 `fish = 3`；然后在招式里把这一只印出来。把缺的两处补上：",
+      "code": "#include <iostream>\nusing namespace std;\n\nnamespace ____ {\n    int fish = 3;\n}\n\nint main() {\n    cout << ____ << endl;\n    return 0;\n}",
+      "blanks": [
+        { "answer": "kitchen" },
+        { "answer": "kitchen::fish" }
+      ],
+      "explanation": "第一个空填 `kitchen` —— 开间的那一行，`namespace` 后面跟着的就是这间分区的名字。第二个空填 `kitchen::fish` —— 喊分区里的东西，得写上它住在哪一间。填好印出来是 `3`。第二个空要是只写 `fish`，翻译官喵会报 `'fish' was not declared in this scope`：本层没听说过这个名字，它住在 `kitchen` 那间里喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nint fish = 3;\n\nint main() {\n    cout << fish << endl;\n\n    int fish = 10;\n    cout << fish << endl;\n\n    {\n        int fish = 20;\n        cout << fish << endl;\n    }\n\n    cout << fish << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "3\n10\n20\n10",
+      "accept": [],
+      "explanation": "四行 `fish` 站在四层不同的括号里。最外面那只开在所有招式外面，站在哪儿都喊得到，印 `3`；招式里新开的那只把外层**遮住**了，印 `10`；再往里一对大括号里那只印 `20`；出了那对括号，里头那只就跟没开过一样，又印 `10`。内层遮外层，外层看不见内层喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nnamespace kitchen {\n    int fish = 3;\n\n    int add(int a, int b) {\n        return a + b;\n    }\n}\n\nint main() {\n    cout << kitchen::fish << endl;\n    cout << kitchen::add(3, 5) << endl;\n\n    kitchen::fish = 10;\n    cout << kitchen::fish << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "3\n8\n10",
+      "accept": [],
+      "explanation": "`kitchen` 这一间里住着一只 `fish` 和一招 `add`，带上分区名就能喊到：`kitchen::fish` 印 `3`，`kitchen::add(3, 5)` 印 `8`。最后那句 `kitchen::fish = 10;` 直接把那一间里的碗改成了 10 —— 分区只是给名字分了房间，里面的东西照常能改喵。"
+    }
+  ]
+}

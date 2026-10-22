@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-hash-find-backwards",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-08",
+  "type": "codefix",
+  "concept": ["算门牌号", "撞车往后挪", "住和找得用同一个规矩", "找的时候挪反了"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["4", "14"] },
+    "b": { "kind": "pick", "values": ["14", "24"] }
+  },
+  "stemTemplate": "本喵把编号 **{a}** 和 **{b}** 存进鱼干仓库：编号自己算门牌号，算出来的格子有人住了，就**往后挪一格**，还撞就再挪。存完了再按编号把它们**找出来**。\n\n可它答的是「没找到」：\n\n```text\n找 {b}：没找到\n```\n\n编号 {b} 明明刚存进去过。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**找的那一招**改对。改好之后该印：\n\n```text\n找 {b}：找着了\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\n/* 找：答 1 = 找着了，答 0 = 没找到 */\nint find(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        if (shelf[slot] == id) {\n            return 1;\n        }\n        slot = (slot + SLOTS - 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    put({a});\n    put({b});\n\n    if (find({b})) {\n        printf(\"找 {b}：找着了\\n\");\n    } else {\n        printf(\"找 {b}：没找到\\n\");\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define SLOTS 10\n\nint shelf[SLOTS];\nint used[SLOTS];\n\nint slot_of(int id) {\n    return id % SLOTS;\n}\n\nvoid put(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        slot = (slot + 1) % SLOTS;\n    }\n    shelf[slot] = id;\n    used[slot] = 1;\n}\n\n/* 找：答 1 = 找着了，答 0 = 没找到 */\nint find(int id) {\n    int slot = slot_of(id);\n    while (used[slot]) {\n        if (shelf[slot] == id) {\n            return 1;\n        }\n        slot = (slot + 1) % SLOTS;\n    }\n    return 0;\n}\n\nint main(void) {\n    put({a});\n    put({b});\n\n    if (find({b})) {\n        printf(\"找 {b}：找着了\\n\");\n    } else {\n        printf(\"找 {b}：没找到\\n\");\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "毛病在**挪的方向**上喵：存的时候是「往后挪一格」（`slot + 1`），找的时候本喵写成了「往前挪一格」：\n\n```text\nslot = (slot + SLOTS - 1) % SLOTS;\n```\n\n`+ SLOTS - 1` 就是「减一、顺便别让它掉到负数去」—— 听着挺机灵，可方向反了：往后挪进来的东西，往前敲当然敲不着。\n\n这一找错得很憋屈：编号 {b} 算出来是第 4 格（从 0 数起），那一格住的是 **{a}**；本喵往前挪到第 3 格，那格**压根没住过东西** —— 空地就是「这里没有」的证据，于是它理直气壮地答「没找到」。\n\n要改的就是这一句（和存的那一句**一模一样**）：\n\n```text\nslot = (slot + 1) % SLOTS;\n```\n\n**住和找必须走同一条路**：住的时候往哪儿挪，找的时候就得往哪儿挪。挪的方向、挪的次数、撞多少次，两边差一点点，就会出现「刚存进去却找不着」这种怪事喵。"
+}

@@ -1,0 +1,79 @@
+{
+  "lessonId": "java-stage2-01",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵把图纸上的一盒家当写成 `private`，意思是____。",
+      "options": [
+        "只有这个类自己写的函数能访问，外面要用就得走本喵留的小窗",
+        "连类自己的函数也读不到它了",
+        "这只真猫一出生就会把它删掉",
+        "所有真猫共用这一盒家当"
+      ],
+      "answer": 0,
+      "explanation": "盖子扣上之后管的是「外面的人伸不伸得进手」，图纸自己人照样拿得到 —— 出生那一手里的 `this.name = name;` 就是本喵自己伸手，一点问题都没有喵。共用的那盒家当是另一回事，本喵往后的课再讲；「一出生就删掉」更是没这回事喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵想让外面的猫咪**读到**盒子里的鱼干数，又**不让它改**，该怎么办？",
+      "options": [
+        "只开读的那扇小窗，写 `public int getFish() { return fish; }`，不写写的那一扇",
+        "把家当写成 `public`",
+        "只写一扇 `setFish` 就够了",
+        "把鱼干数那一盒换成 `String`"
+      ],
+      "answer": 0,
+      "explanation": "读和写是两扇独立的小窗：只开 `get` 开头那一扇，盒子就成了「只能看不能改」喵。把家当写成 `public` 等于把盖子整个掀了，谁都能改；只写 `set` 开头那一扇等于只留了进货口，外面反而读不出来；把数字换成 `String` 那种一串字，加减就算不动了，也不是本喵想要的东西喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "下面哪一句会被翻译官喵当场拦下，报出 `has private access`？",
+      "options": [
+        "在图纸外面写 `c.name`（`name` 在图纸里是 `private` 的）",
+        "在类的函数里写 `return name;`",
+        "在出生那一手里写 `this.name = name;`",
+        "在图纸里写 `private String name;`"
+      ],
+      "answer": 0,
+      "explanation": "只有「外面的人隔着盖子伸手」才会被拦下喵。图纸自己人 —— 招式里读它、出生那一手里写它 —— 都完全合法；而 `private String name;` 那一句本身就是扣盖子的动作，翻译官喵不但不拦，还老老实实照着办喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "class Cat {\n    ____ String name;\n\n    public void setName(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat();\n        c.setName(\"小橘\");\n        System.out.println(c.getName());\n    }\n}",
+      "stem": "本喵要给 `name` 这盒家当扣上盖子 —— 只留 `setName` 和 `getName` 两扇小窗，空白处该填哪个小词？",
+      "blanks": [
+        {
+          "answer": "private",
+          "accept": []
+        }
+      ],
+      "explanation": "扣盖子的小词就是 `private`：出了这张图纸谁都别想直接碰这盒家当，外面想读想写都得走本喵留的两扇小窗喵。填上之后跑一遍，印出来是小橘 —— 外面是用 `setName` 递进去的，读是 `getName` 叼回来的，一扇窗都没少喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "class Cat {\n    private int fish;\n\n    public void setFish(int fish) {\n        if (fish < 0) {\n            System.out.println(\"不能是负的喵\");\n            return;\n        }\n        this.fish = fish;\n    }\n\n    public int getFish() {\n        return fish;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat();\n        c.setFish(-2);\n        c.setFish(5);\n        System.out.println(c.getFish());\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "不能是负的喵\n5",
+      "accept": ["不能是负的喵\n5\n"],
+      "explanation": "`setFish(-2)` 递进来的是负数，被门口的牌子挡回去了 —— 只印一句提示，账本上一个字都没改；`setFish(5)` 才是真收下的那一笔。所以最后读出来是 5，而不是 3 或者 -2 喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "class Cat {\n    private String name;\n    private int fish;\n\n    Cat(String name, int fish) {\n        this.name = name;\n        this.fish = fish;\n    }\n\n    public String report() {\n        return name + \" 有 \" + fish + \" 条小鱼干\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"小橘\", 3);\n        System.out.println(c.report());\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘 有 3 条小鱼干",
+      "accept": ["小橘 有 3 条小鱼干\n"],
+      "explanation": "两盒家当都盖着盖子，可出生那一手和 `report` 都在图纸里面，伸手完全合法 —— 名字和鱼干数在出生那一刻就装好了，`report` 再把它们拼成一串字叼回来喵。外面从头到尾没碰过盒子里的东西，走的一直是图纸自己留的口子喵。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-10-check-first",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-10",
+  "type": "codewrite",
+  "concept": ["检查在前动账在后", "扔出去的时候账一步没动", "出事时外面原封不动"],
+  "instances": 6,
+  "params": {
+    "s": { "kind": "int", "min": 8, "max": 10 },
+    "k": { "kind": "int", "min": 2, "max": 5 }
+  },
+  "stemTemplate": "这一题请你把 `take` 这个招式写出来：仓库里现有的货就摆在外面，本喵要按课文第三节那句口诀来 —— **检查在前，动账在后**。\n\n请你写 `take`：\n\n1. **先看清楚**：要的比现有的**多**，就把 `不够了` 这句话扔出去 —— 注意这时候**外面的账一点都不能动**；\n2. 够的话才动账：把要的从现有的里减掉；\n3. 动完账印一行：`领走 ` 加上要的数、再跟上一句 `，还剩 `、再跟上现有的数。\n\n`main` 本喵在骨架里已经写好了（它会叫这个招式两次，第二次要的货比仓库里多得多），你只要补上 `take`。\n\n程序要叼回 3 行：第一次领货那一行、`接住：不够了`、还有最后那句 `仓库里还是 …`。",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = {s};\n\nvoid take(int n) {\n\n    /* ① 先看清楚：要的比现有的多，就扔出「不够了」这句话（这时候账一步都不能动） */\n    /* ② 够了才动账：把要的从现有的里减掉 */\n    /* ③ 印一行：领走 N，还剩 M */\n\n}\n\nint main() {\n    try {\n        take({k});\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = {s};\n\nvoid take(int n) {\n    if (n > stock) {\n        throw string(\"不够了\");\n    }\n    stock -= n;\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take({k});\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "`take` 里那两步的**顺序**就是这一题的全部喵：\n\n- **先检查**：要的比现有的多，当场扔出「不够了」。扔的这一下，外面的账**还没动**，所以仓库安然无恙；\n- **再动账**：够的话才从现有的里减掉，接着印那一行。\n\n所以最后一句是「仓库里还是 …」—— 第二次要的那么多、明明没领成，账却一步没挪。要是把检查挪到动账**后面**，账先减、货没领成，仓库会凭空少一笔（这一课的另一道题里本喵就是这么写坏的）。\n\n⚠️ 判据不是「有没有扔出去」，而是「**扔出去的时候，账动了没有**」。"
+}

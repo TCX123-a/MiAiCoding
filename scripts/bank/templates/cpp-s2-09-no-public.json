@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-09-no-public",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-09",
+  "type": "codefix",
+  "concept": ["新图纸照着老图纸画", "那一小段 public 不能省", "够不着而不是私有"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "本喵让新图纸照着老图纸画下来了，小猫图纸上还添了一手「摇尾巴」。图纸里面怎么写都没问题。\n\n可猫窝里那句改名字的话，翻译官喵突然说**够不着**了。\n\n你帮本喵改到能跑起来（小猫叫 {name}，先喵一声、再摇一次尾巴）。**图纸上画的格子、招式、还有猫窝里那几句喊法，一个字都不用改 —— 只动照着画的那一行。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    void meow() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Kitten : Cat {\npublic:\n    void wag() const {\n        cout << name << \" 摇起了尾巴\" << endl;\n    }\n};\n\nint main() {\n    Kitten k;\n    k.name = \"{name}\";\n    k.meow();\n    k.wag();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    void meow() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    void wag() const {\n        cout << name << \" 摇起了尾巴\" << endl;\n    }\n};\n\nint main() {\n    Kitten k;\n    k.name = \"{name}\";\n    k.meow();\n    k.wag();\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:22:7: error: 'std::string Cat::name' is inaccessible within this context`\n\n注意它用的词是 **`inaccessible`（够不着）**，**不是**「私有」。这两个词长得像、意思差很远喵：\n\n- 说「私有」是那一格**本来就没开**；\n- 说「够不着」往往是**新图纸把妈妈给的东西收进了自己兜里**。\n\n这一格在老图纸上明明白白挂的是 `public`，本喵一个字都没改它 —— 那为什么够不着了？因为照着画的那一行少写了 `public`：\n\n```text\nclass Kitten : Cat        ← 本喵写的（漏了）\nclass Kitten : public Cat ← 正确写法\n```\n\n**漏掉这一小段的后果是**：老图纸给的公开东西（格子和招式）**全变成了新图纸自己的私事** —— 不只外面够不着，连本喵自己都别想从外面碰。所以猫窝里 `k.name = \"{name}\";` 这一句第一个被抓出来。\n\n这一跤有个很坑的地方：**它很安静。** 图纸里面怎么写都没问题，报错永远站在**外面那句**上。所以以后看到「够不着」，第一件事就是回头看看照着画的那一行有没有 `public` 喵。"
+}

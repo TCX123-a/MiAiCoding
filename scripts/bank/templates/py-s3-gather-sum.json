@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-gather-sum",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-05",
+  "type": "codewrite",
+  "concept": ["gather 收回来是一排", "一起架上再合起来数", "招式把数叼回来"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "unit": { "kind": "pick", "values": ["条", "尾"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵派猫猫们下水捞鱼，捞完要**合起来数一数**喵。\n\n输入是：第一行一个整数 `n`，接下来 `n` 行每行一个整数 —— 每一行的数就是这一只猫捞到的条数。\n\n请你写一个完整的程序：\n\n1. 写出一招**不着急的招式** `捞鱼(条数)`：进去先架上一口锅等一会儿（`await asyncio.sleep(0.05)`），然后把这个条数**原样叼回来** —— 招式里**不许印任何东西**。\n2. 主招式里读输入，把这 `n` 条**待办小纸条**用 `asyncio.gather(...)` **一口气全架上**；等它们全都回来之后，把叼回来的条数**加起来**，印一行 `一共 X {unit}`（X 就是总和）。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "import asyncio\n\n\nasync def 捞鱼(条数):\n    await asyncio.sleep(0.05)\n    return 条数\n\n\nasync def 主招式():\n    n = int(input())\n    纸条们 = []\n    for _ in range(n):\n        纸条们.append(捞鱼(int(input())))\n\n    结果 = await asyncio.gather(*纸条们)\n\n    一共 = 0\n    for 一条 in 结果:\n        一共 = 一共 + 一条\n\n    print(\"一共 \" + str(一共) + \" {unit}\")\n\n\nasyncio.run(主招式())\n",
+  "explanationTemplate": "这道题和「按投放顺序印出来」那道是一对喵：`gather` 的用法**一模一样**，区别只在**收回来之后干什么**。\n\n`gather` 回来的是一个**排好队的储物柜** —— 一格一个战利品，顺序就是投放的顺序。这次本喵要的不是把它们一个个念出来，而是**把它们加起来**：一格一格取出来，边取边加，最后印一个总数。顺序在这里不重要，**取齐了就行**。\n\n⚠️ 两个地方容易栽：\n\n- **招式里别印东西。** 让它安安静静把数**叼回来**，印的活留给主招式 —— 这样格式和加总都攥在你自己爪子里。\n- **`gather` 收回来的是「一排」，不是「一个」。** 它是一个储物柜，得一格一格取出来再相加（其实拿内建的 `sum(结果)` 一次加完也行，两种都对喵）。\n\n⚠️ 加总的起点别忘：从 **0** 起步，捞到一条加一条。"
+}

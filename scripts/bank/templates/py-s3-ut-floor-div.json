@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-ut-floor-div",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-11",
+  "type": "codefix",
+  "concept": ["assertEqual", "整除", "红的报告"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [5, 7, 9] },
+    "b": { "kind": "pick", "values": [2, 4] }
+  },
+  "stemTemplate": "本喵给「平分」这招留了一张体检单，两个项目，本喵觉得写得挺对的喵。\n\n跑完却红了。体检本子上写着体检了 **2 项**、红了 **2 项**，一句「有红的喵」。\n\n你帮本喵看看是哪儿不对，改好它。改好之后两个项目都该过：体检了 **2 项**、红了 **0 项**、全绿。\n\n（两个项目查的是：{a} 份平分给 {b} 只猫，每只得 {a} 除以 {b} 的整数商；再多来 {b} 份，每只就再多拿 1 份。）\n\n⚠️ 体检单上那**两个项目一个字都不许改** —— 红的不是判据，是招式。",
+  "brokenCodeTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分({a}, {b}), {a} // {b})\n    def test_再多一份(self):\n        self.assertEqual(平分({a} + {b}, {b}), {a} // {b} + 1)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+  "referenceFixTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分({a}, {b}), {a} // {b})\n    def test_再多一份(self):\n        self.assertEqual(平分({a} + {b}, {b}), {a} // {b} + 1)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+  "explanationTemplate": "招式里那一行是 `/`，它算出的是**带小数的商**；判据要的是**整数商**（除不尽的先放着，半份小鱼干不存在）喵。\n\n所以真跑出来是 `{a}` 除以 `{b}` 的小数，标准答案却是整除的结果，两个并排一摆，`assertEqual` 当场就红了。\n\n⚠️ 这里有个特别值得记住的细节：**不是每一项都会红。** 要是你换一组除得尽的数（比如 6 份给 2 只猫），`6 / 2` 算出 `3.0`，而 `3.0 == 3` 在 Python 里是**真**的 —— 那一项会一路绿过去。真正咬住这个毛病的，是那一组**除不尽**的数。\n\n本喵把这条写进体检单的意思就是：只写「正常情况」的体检单等于没体检，能抓住毛病的往往是边界喵。\n\n改法只有一个字：把 `/` 换回 `//`——`//` 只留整个的，除不尽的先放着。"
+}

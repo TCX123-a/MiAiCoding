@@ -1,0 +1,83 @@
+{
+  "lessonId": "java-stage3-06",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下 `LocalDate d = LocalDate.of(2026, 9, 16);`，紧接着单独一行写了 `d.plusDays(3);`，然后印出 `d`。屏幕上会出现什么？",
+      "options": [
+        "印出 `2026-09-16` —— `.plusDays(...)` 是**另撕一张**，本喵没伸爪接住，那一张当场就丢了",
+        "印出 `2026-09-19` —— 三天已经加到 `d` 上了",
+        "当场红，说本喵写的那一句结果没人接",
+        "印出 `2026-09-16`，但会红一行提醒本喵「新撕的那张被丢掉了」"
+      ],
+      "answer": 0,
+      "explanation": "答案是**原来那张，一个字没变**喵。这类日期纸条是**撕下来就定死**的：`.plusDays(3)` 不会在 `d` 上改一个字，它是**另撕一张**写着三天后的纸给本喵。本喵没把它接到一个名字里，那一张**当场就丢了** —— 所以印出来的还是 `2026-09-16`。\n\n最要留心的是它**一点都不红**：没有「结果没人接」这种提醒，跑起来安安静静，只有本喵去对答案才发现日子没动。想让它真动起来，就得写成 `LocalDate later = d.plusDays(3);` —— **要哪张纸，就把哪张纸接到一个名字里**喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵把念法写成了 `yyyy-MM-DD`（月和日两位都用大写），跑起来一个字都不红，可印出来的是 `2026-09-259`。这是怎么回事？",
+      "options": [
+        "`DD` 不是「两位日」，它是**这一年里的第几天** —— 9 月 16 日正好是 2026 年的第 259 天",
+        "`DD` 就是「两位日」，那个 259 是多印出来的，纯属它算错了",
+        "因为年写成了 `yyyy`，应该写成 `YYYY` 才对",
+        "因为月和日两位一起大写会打架，它只好随便给一个数"
+      ],
+      "answer": 0,
+      "explanation": "关键就在**大小写是两件完全不同的事**喵。小写的 `dd` 才是「两位日」；大写的 `DD` 是**「这一年里的第几天」** —— 9 月 16 日往前数，1 到 8 月一共 243 天，再加 16 天，正好是第 259 天，所以它给出的是 259 这种**三位数**。\n\n这跟前面那种「没人接」的错一样**不红不响**：它没坏，它只是老老实实回答了本喵写下的问题 —— 只是本喵问错了问题。所以念法写完，**先把结果印出来看一眼**再往下写，是最省事的一道保险喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "两张纸条相减那一手，本喵把先后**写反了** —— 本该「先起后止」，本喵写成了「先止后起」。屏幕上会出现什么？",
+      "options": [
+        "印出一个**负数**（本该 10 天，印成 `-10`）—— 一个字都不红，它不会提醒本喵顺序反了",
+        "印出的还是 `10`，因为它自己会按早晚把两张纸条排好",
+        "当场红，说前后两张纸条的位置写反了",
+        "印出 `0`，因为它认不出先后，就当作是同一天"
+      ],
+      "answer": 0,
+      "explanation": "**反着写只是给一个负数**喵：本该差 10 天，写成「先止后起」就印成 `-10`。它不会红、不会提醒 —— 它只是照本喵写的先后老老实实算了一遍，然后叼回来一个带减号的数。\n\n所以这一手的规矩要背下来：**`ChronoUnit.DAYS.between(起, 止)`，先后不能反。** 页面上没有红字，唯一的保险就是本喵写完之后对着答案看一眼，或者顺手写一句 `isAfter` / `isBefore` 问一下先后，让程序自己替本喵把关喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.time.LocalDate;\nimport java.time.format.DateTimeFormatter;\n\npublic class Main {\n    public static void main(String[] args) {\n        LocalDate d = LocalDate.of(2026, 9, 16);\n\n        System.out.println(d.____);\n    }\n}",
+      "stem": "空里该填什么，才能把这张纸条**按本喵的念法**念成 `2026年09月16日` 并直接印出来？",
+      "blanks": [
+        {
+          "answer": "format(DateTimeFormatter.ofPattern(\"yyyy年MM月dd日\"))",
+          "accept": []
+        }
+      ],
+      "explanation": "填 `format(DateTimeFormatter.ofPattern(\"yyyy年MM月dd日\"))` 喵。\n\n这串字分两截读：里面那一截 `DateTimeFormatter.ofPattern(\"yyyy年MM月dd日\")` 是**念法清单** —— 告诉它四位年、两位月、两位日，中间夹着的「年」「月」「日」原样印出来；外面那一截 `format(...)` 才是「照着这份清单，把这张纸条念一遍」这个动作。两截要一起写，只给清单不喊这一声，它不知道本喵是要念哪张纸。\n\n印出来就是 `2026年09月16日`。要留意的是`dd` 得写**小写**：大写 `DD` 是「这一年里的第几天」，念出来会变成三位数那种东西喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.time.LocalDate;\nimport java.time.format.DateTimeFormatter;\n\npublic class Main {\n    public static void main(String[] args) {\n        LocalDate d = LocalDate.of(2026, 9, 16);\n        LocalDate later = d.plusDays(5);\n\n        System.out.println(d);\n        System.out.println(later);\n        System.out.println(later.format(DateTimeFormatter.ofPattern(\"MM月dd日\")));\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "2026-09-16\n2026-09-21\n09月21日",
+      "accept": [
+        "2026-09-16\n2026-09-21\n09月21日\n"
+      ],
+      "explanation": "三行分别是 `2026-09-16`、`2026-09-21`、`09月21日` 喵。\n\n第一、二行正是今天那条最要紧的规矩：`d.plusDays(5)` **不会**动原来那张纸条，它是另撕一张；本喵把新撕的那张接到了 `later` 里，所以 `d` 还是 16 日，`later` 才是 21 日。要是本喵当初写成单独一行 `d.plusDays(5);`，第二行就会跟着变成 16 日 —— 这就是「接住它」和「白写」的区别。\n\n第三行是把 `later` 按 `MM月dd日` 念了一遍：两位月 `09`、两位日 `21`，中间那个「月」「日」原样印出来，所以是 `09月21日`。注意 `later` 自己**没被改掉**：念一遍只是在纸上描了个花样子，纸条本身还是 `2026-09-21`。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.time.LocalDate;\nimport java.time.temporal.ChronoUnit;\n\npublic class Main {\n    public static void main(String[] args) {\n        LocalDate start = LocalDate.of(2026, 9, 1);\n        LocalDate end = LocalDate.of(2026, 9, 16);\n\n        System.out.println(ChronoUnit.DAYS.between(start, end));\n        System.out.println(end.isAfter(start));\n        System.out.println(start.getDayOfWeek());\n        System.out.println(start.lengthOfMonth());\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "15\ntrue\nTUESDAY\n30",
+      "accept": [
+        "15\ntrue\nTUESDAY\n30\n"
+      ],
+      "explanation": "四行分别是 `15`、`true`、`TUESDAY`、`30` 喵。\n\n第一行是两张纸条相减：9 月 1 日到 9 月 16 日差 **15** 天（16 减 1，起点那天不算进去，这正是这一手的规矩）。第二行问先后，「后一张更晚吗」答 `true`。第三行报星期几，它报的是洋文 `TUESDAY` —— 要中文得本喵自己配一张对照。第四行是「这个月有几天」，9 月有 30 天。\n\n把这两行放一起看最有用：`between` 的先后**不能反**，反了就是 `-15`；而 `isAfter` 这种问先后的写法，反了也只会答 `true` / `false`，不会红。想让程序替本喵把关，多写一句问先后的，比死记顺序稳当喵。"
+    }
+  ]
+}

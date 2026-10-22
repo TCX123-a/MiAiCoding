@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-func-missing-type",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-12",
+  "type": "codefix",
+  "concept": ["招式头", "每只碗都要写类型", "编译错误"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵写了一招把两个数加起来，可翻译官喵连招式头都没看完就把整段代码退了回来喵……\n\n你帮本喵看看它为什么不高兴，把它改好。改好之后，程序应该印出 **{a} 加 {b} 的结果**。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint add(int a, b) {\n    return a + b;\n}\n\nint main(void) {\n    printf(\"%d\\n\", add({a}, {b}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    printf(\"%d\\n\", add({a}, {b}));\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: unknown type name 'b'` 喵 —— **「`b` 这个名字，本喵不知道它是什么种类的东西。」**\n\n问题在招式头里面：括号里摆了**两只碗**，本喵只在第一只前面写了 `int`，第二只前面空着。C 的硬规矩就是这一条 —— **每一只碗前面都得写清楚它装什么**，一只都不能省。\n\n省了会怎样？翻译官喵读到 `b` 的时候压根不知道那是个名字还是某种没见过的种类，只好当场停下。（它还会顺带抱怨一句 `implicit declaration of function 'add'` —— 因为招式头都没念完，这一招就等于没登记，后面 `main` 里喊它自然也没人应。）\n\n补上第二个 `int` 就好了：`int add(int a, int b)`。\n\n自检口诀：**招式头括号里，碗的只数 = `int` 的个数**，一只一碗、一碗一个类型。"
+}

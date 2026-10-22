@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-20-default-target-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-20",
+  "type": "codewrite",
+  "concept": ["光杆儿跑走默认目标", "argc 连名字自己一起数", "没词先挡一道再分活", "默认有交代、认不得有兜底"],
+  "instances": 6,
+  "params": {
+    "w": { "kind": "pick", "values": ["clean", "tidy"] },
+    "a": { "kind": "pick", "values": ["备料", "和面"] },
+    "b": { "kind": "pick", "values": ["码砖", "上瓦"] },
+    "c": { "kind": "pick", "values": ["擦桌子", "拾掇"] }
+  },
+  "stemTemplate": "最后一关喵：**光杆儿跑**。图纸上第一条规矩是**默认目标** —— 你敲 `mingw32-make` 不带任何词，它就走第一条。本喵要你给这个小工头写 `main`，规矩照稿子里注释来：\n\n- 一个词都没递（光杆儿跑）→ 照默认目标办：印两行；\n- 递的词对得上 → 印一行；\n- 别的词 → 印「认不得」带上原样的词。\n\n跑台跑这条的时候，**不会替你敲任何词** —— 走的就是「光杆儿跑」那一路：该印两行，先「{a}」、再「{b}」。`argc` 是几，先算清楚再落笔。",
+  "starterTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main =====\n   规矩（照图纸的写法）：\n   · 一个词都没递 → 印两行：{a}、{b}；\n   · 递的词是 {w} → 印一行：{c}；\n   · 递了别的词 → 印一行：认不得：<原样的词>。\n   递了几个词看 argc（连名字自己一起数），词本身在 argv[1] 里。 */\n\nint main(int argc, char *argv[]) {\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main ===== */\nint main(int argc, char *argv[]) {\n    if (argc < 2) {\n        printf(\"{a}\\n\");\n        printf(\"{b}\\n\");\n        return 0;\n    }\n    if (strcmp(argv[1], \"{w}\") == 0) {\n        printf(\"{c}\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "`mingw32-make` 不带词的时候走**默认目标**，这不是巧合喵 —— 图纸上没别的话，流水线就从第一条规矩开工；「光杆儿跑」是绝大多数人最常用的那条路。\n\n写 `main` 的手感跟真题里一样：\n\n- `argc` 连名字自己一起数：光杆儿跑 → `1`，屁股后头带一个词 → `2`；\n- 先拿 `argc < 2` 挡一道：没词就照默认目标办（印那两行），然后交代顺利；\n- 有词的时候再看 `argv[1]`，对号的分活，对不上的回「认不得」。\n\n顺一遍图纸思维：这四行规矩就是「默认目标 + 认词分活」的纸上版；等接上真图纸，这些规矩就从 `main` 里搬到 `Makefile` 上 —— 写法不同，思路一模一样：**光杆儿跑有交代，认不得的词有兜底**。\n\n（真图纸里 `mingw32-make`、`mingw32-make clean` 就是你刚写的两路喵。）"
+}

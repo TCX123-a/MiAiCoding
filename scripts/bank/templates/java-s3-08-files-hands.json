@@ -1,0 +1,23 @@
+{
+  "templateId": "java-s3-08-files-hands",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-08",
+  "type": "codewrite",
+  "concept": ["一组现成手势", "第一笔默认写、后面接着添", "问在不在和几个字节"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": {
+    "kind": "ints",
+    "head": "{n}\n",
+    "count": "{n}",
+    "min": 1,
+    "max": 9
+  },
+  "stemTemplate": "本喵要把 **{n} 笔**账记进一份文件（文件名就叫 `账本.txt`），全部用本课那几句**现成手势**，不要自己开管子。\n\n投喂给程序的是：**第一行一个整数 n**，**后面跟 n 行**，一行一个整数，就是第 1 笔、第 2 笔……第 n 笔的条数。\n\n请你写个程序，照这个次序做：\n\n1. 撕一张门牌；\n2. 第 1 笔写成一行 `第 1 笔：x 条`（x 是投喂进来那个数）；\n3. 剩下每一笔都写成一行 `第 k 笔：x 条`（k 接着往下数），**接着后面添** —— 别把前面写的擦掉；\n4. 印一行 `在不在：` 后面接「这份文件在不在」的结果；\n5. 印一行 `几个字节：` 后面接这份文件几个字节；\n6. 最后把整份文件**一口气念回来、原样印出来**（不加任何前缀）。\n\n比如投喂给程序的是\n\n```text\n{sampleInput}\n```\n\n程序就要叼回\n\n```text\n{sampleOutput}\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～ 另外「几个字节」那一行是它自己数出来的，本喵这里不替它算。）",
+  "starterTemplate": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n        Path 门牌 = Path.of(\"账本.txt\");\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n        Path 门牌 = Path.of(\"账本.txt\");\n\n        Files.writeString(门牌, \"第 1 笔：\" + 条数们[0] + \" 条\\n\");\n        for (int i = 1; i < n; i++) {\n            Files.writeString(门牌, \"第 \" + (i + 1) + \" 笔：\" + 条数们[i] + \" 条\\n\", StandardOpenOption.APPEND);\n        }\n\n        System.out.println(\"在不在：\" + Files.exists(门牌));\n        System.out.println(\"几个字节：\" + Files.size(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+  "explanationTemplate": "**一、全部用现成手势，一步都不用自己开管子。** 门牌用 `Path.of` 撕；写字用 `Files.writeString`；问在不在用 `Files.exists`；数几个字节用 `Files.size`；念回来用 `Files.readString`。这几手自己开自己收，所以整个程序里**一句 `close()` 都不用写**。\n\n**二、第 1 笔和第 2 笔的写法不一样，就是本课那个差别。** 第一笔没喊别的话，照默认来：文件不在就顺手建出来、然后从头写。后面每一笔都得多喊一声 `StandardOpenOption.APPEND`，才是「接着后面添」—— 少了它，每一次都把前面的擦干净，最后只剩最后一笔。\n\n**三、「几个字节」不是「几个字」。** `Files.size` 报的是字节数：本喵这些账是汉字加数字，一个汉字要占好几个字节，所以数出来总是比本喵看得见的字数大。这一行让程序自己数，**别在心里估**。\n\n**四、念回来那一手是「一口气」。** `Files.readString` 把整份文件端回来，原样印出去就是本喵写进去的那几行。这一手跟上一课一口一口的写法**读出来一模一样**，区别只在「谁在端」：小文件它最省事，大东西就不该这么端。"
+}

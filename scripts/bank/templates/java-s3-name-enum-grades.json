@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-name-enum-grades",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-26",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": [
+    "未经预先定义的常量不许直接出现在代码里 —— 裸奔的数字就是魔法值",
+    "固定范围的值交给 enum：等级号、等级名、标价绑成一体，加档不用改多处",
+    "枚举成员名全大写，枚举也是一只「有名字的常量箱」"
+  ],
+  "instances": 6,
+  "params": {
+    "g": { "kind": "int", "min": 1, "max": 3 }
+  },
+  "stemTemplate": "本喵这只**水产分级摊**的账，是一位老前辈留下的喵 —— 能跑、也印得对，就是**数字裸奔**得扎眼：\n\n```java\npublic class Main {\n    public static void main(String[] args) {\n        int level = {g};\n        String dan;\n        if (level == 1) {\n            dan = \"小鱼\";\n        } else if (level == 2) {\n            dan = \"中鱼\";\n        } else {\n            dan = \"大鱼\";\n        }\n        int price = level * 3 + 6;\n        System.out.println(\"这只的等级 \" + level + \"，叫「\" + dan + \"」，标价 \" + price + \" 文\");\n    }\n}\n```\n\n请你照**「常量与枚举」**那把尺子改写它：\n\n- 等级只在这几个固定值里转 —— 这种「固定范围值」手册明确推荐交给 **enum** 管：把「等级号、等级名、标价」绑成一体；\n- 那些裸奔的数字（`3`、`6` 和几个等级号）全部请进有名字的常量/枚举里，不许再直接出现在算账的地方；\n- 从**空白**起笔；**输出必须与原版逐字一致** —— 这是本题的硬要求。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "referenceSolutionTemplate": "public class Main {\n    /**\n     * 水产等级：固定范围内的值交给枚举管，等级名和标价都绑在它身上。\n     */\n    enum FishGrade {\n        SMALL(1, \"小鱼\", 9),\n        MEDIUM(2, \"中鱼\", 12),\n        LARGE(3, \"大鱼\", 15);\n\n        private final int code;\n        private final String gradeName;\n        private final int price;\n\n        FishGrade(int code, String gradeName, int price) {\n            this.code = code;\n            this.gradeName = gradeName;\n            this.price = price;\n        }\n\n        /** 按登记号查等级。 */\n        static FishGrade ofCode(int code) {\n            for (FishGrade grade : values()) {\n                if (grade.code == code) {\n                    return grade;\n                }\n            }\n            return null;\n        }\n    }\n\n    public static void main(String[] args) {\n        FishGrade grade = FishGrade.ofCode({g});\n        System.out.println(\"这只的等级 \" + grade.code + \"，叫「\" + grade.gradeName + \"」，标价 \" + grade.price + \" 文\");\n    }\n}",
+  "explanationTemplate": "**一、这摊账的病名叫「魔法值」。** `3`、`6` 在代码里裸奔 —— 它们是什么、改的时候还要连带动哪儿，只有写它的那位知道。手册【强制】：不允许任何**未经预先定义**的常量直接出现在代码里。更麻烦的是那几个等级号：散在分支里，**加一档就要改好几处**。\n\n**二、固定范围的值，交给 enum。** 手册【推荐】说得很准：一只小鱼干仓库的货只在一个固定范围里变化，就该用枚举。把「1 号小鱼标 9 文、2 号中鱼标 12 文、3 号大鱼标 15 文」写成几条**登记条目**，等级号、名字、标价从此绑在一起，谁也不用背。\n\n**三、改写之后的样子：**\n\n```java\npublic class Main {\n    /**\n     * 水产等级：固定范围内的值交给枚举管，等级名和标价都绑在它身上。\n     */\n    enum FishGrade {\n        SMALL(1, \"小鱼\", 9),\n        MEDIUM(2, \"中鱼\", 12),\n        LARGE(3, \"大鱼\", 15);\n\n        private final int code;\n        private final String gradeName;\n        private final int price;\n\n        FishGrade(int code, String gradeName, int price) {\n            this.code = code;\n            this.gradeName = gradeName;\n            this.price = price;\n        }\n\n        /** 按登记号查等级。 */\n        static FishGrade ofCode(int code) {\n            for (FishGrade grade : values()) {\n                if (grade.code == code) {\n                    return grade;\n                }\n            }\n            return null;\n        }\n    }\n\n    public static void main(String[] args) {\n        FishGrade grade = FishGrade.ofCode({g});\n        System.out.println(\"这只的等级 \" + grade.code + \"，叫「\" + grade.gradeName + \"」，标价 \" + grade.price + \" 文\");\n    }\n}\n```\n\n**四、验收要求。** 输出要**和原版逐字一样**：原版报「等级几、叫什么、标价几文」，你的版本也报同样三样，一个字符都不许漂。\n\n一句话记住：**数字可以留在代码里，但必须有个名字在前头领着它走 —— 裸奔的是魔法值，起好名的是常量。**"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-challenge-calc-discount",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-15",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "账单结算", "打折门槛", "等号陷阱"],
+  "instances": 1,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 12, "max": 45 },
+  "stemTemplate": "本喵的小鱼干计算器装好了一个新花样：**今天攒的账够一百条就打八折**。\n\n它的用法是：投喂口先给一个数（今天记了几笔），再一笔一笔给数。程序先报今天一共攒了多少；然后看够不够一百 —— 够了就报打完折实际收多少（乘 8 再除以 10），不够就报原数照收。\n\n可是它现在**不管攒了多少都喊「够一百条啦」**，折扣还永远算成八十条喵……你帮本喵把它改对。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        total = total + x;\n    }\n\n    printf(\"今天一共 %d 条喵\\n\", total);\n\n    if (total = 100) {\n        printf(\"够一百条啦，打完折只收 %d 条喵\\n\", total * 8 / 10);\n    } else {\n        printf(\"还差一点，照旧收 %d 条喵\\n\", total);\n    }\n\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        total = total + x;\n    }\n\n    printf(\"今天一共 %d 条喵\\n\", total);\n\n    if (total >= 100) {\n        printf(\"够一百条啦，打完折只收 %d 条喵\\n\", total * 8 / 10);\n    } else {\n        printf(\"还差一点，照旧收 %d 条喵\\n\", total);\n    }\n\n    return 0;\n}\n",
+  "explanationTemplate": "病根就在 `if (total = 100)` 里那个**光秃秃的等号**喵。\n\n`=` 和 `==` 是两种完全不同的动作：`=` 是**往里放**（放完了整个式子「有了个结果」），`==` 才是**问一句**（问完得到一个「是」或「不是」）。这一行写的是 `total = 100`，意思是：**先把 100 放进 total**，再拿放完的这个 100 去当那句问候 —— 而在 C 眼里，**除了 0 以外的任何数都算「是」**，所以这一问永远点头。\n\n于是两件坏事一起来：\n\n1. 不管今天攒了多少，都走「够一百条啦」那一支；\n2. `total` 被原地改写成了 100 —— 折扣算出来永远是 `100 * 8 / 10`，也就是雷打不动的八十条。\n\n改法：把这一行写成 `if (total >= 100)` —— 那句问候是「有没有攒到一百」，不是往碗里放个 100。\n\n顺带记一句喵：这种错翻译官喵**不会拦**（顶多嘀咕一句 warning），程序照样跑、照样印，只有数字对不上。这种「不喊疼的错」最值得多看两眼。"
+}

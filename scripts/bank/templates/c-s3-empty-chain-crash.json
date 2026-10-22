@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-empty-chain-crash",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-03",
+  "type": "codefix",
+  "concept": ["push_back", "空链表", "NULL", "边界"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵想串一条链子，一只一只挂到**最后面**去喵。可程序一跑就摔了 —— 屏幕上一个字都没印出来。\n\n你帮本喵看看它摔在哪儿，把它改好。改好之后，程序应该把链子从头报出来：每只环报一个数，用 ` -> ` 隔开，最后以 `NULL` 收尾。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, {a});\n    head = push_back(head, {b});\n    head = push_back(head, {a} + {b});\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, {a});\n    head = push_back(head, {b});\n    head = push_back(head, {a} + {b});\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "链子一开始是**空的**喵 —— 捏在手里的牌子是 `NULL`，一只环都还没有。这时候往后面挂第一只环，本喵的 `push_back` 会先摸一摸：`Node *cur = head;`，然后马上问一句 `cur->next`……可 `cur` 是空牌子呀，上面什么都没有，这一伸手就摔了。\n\n课文里「**先看链子是不是空的**」那一步就是为它留的：空的就直接让它当第一环（`return p;`），别的什么都不用做。\n\n这种「第一次做」的岔路在链子上不止一处：挂第一只环、摘第一只环，每一处都得先想一想「要是这里还什么都没有呢」喵。"
+}

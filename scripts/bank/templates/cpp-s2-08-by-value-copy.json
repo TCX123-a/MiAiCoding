@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-08-by-value-copy",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-08",
+  "type": "codewrite",
+  "concept": ["按值递料会偷偷照抄", "照抄一幕看得见", "数输出行数"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "大胖"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "本喵要**亲眼看见**「偷偷照抄」发生在哪一刻。投喂口会递进来**一个数**（盒子里装几条）。\n\n请你这么办：\n\n1. **画图纸** `FishBox`：一栏带盖的牌子 `int* p`。三手都要带上台词：\n   - **出生招式**：`new` 一间屋把数放进去，印一行 `租下一格仓库，放进 N 条`；\n   - **照抄招式**（自己写的那一份，另租一间、搬内容）：印一行 `另租一格，搬进 N 条`；\n   - **收尾招式**：先印一行 `归还这一格仓库`，再 `delete`。\n   - 再画一个公开招式 `get` 把屋里的数叼回来。\n2. **在图纸外面画一招 `show`**：它的料是 `FishBox`，**前面不带那个「不必还的名字」记号**（按值），里面印一行 `{name} 的盒子里 N 条`。\n3. 在 `main` 里：读进那个数 → 生一只盒子 → **喊一次** `show`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n**这一题请你数一数屏幕上有几行**，还要看清每一行是**哪一步**印的。\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) {\n        p = new int(v);\n        cout << \"租下一格仓库，放进 \" << *p << \" 条\" << endl;\n    }\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n        cout << \"另租一格，搬进 \" << *p << \" 条\" << endl;\n    }\n    ~FishBox() {\n        cout << \"归还这一格仓库\" << endl;\n        delete p;\n    }\n    int get() const { return *p; }\n};\n\nvoid show(FishBox b) {\n    cout << \"{name} 的盒子里 \" << b.get() << \" 条\" << endl;\n}\n\nint main() {\n    int v = 0;\n    cin >> v;\n\n    FishBox a(v);\n    show(a);\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题，输出是**五行**（投喂 5 时）：\n\n```text\n租下一格仓库，放进 5 条\n另租一格，搬进 5 条\n{name} 的盒子里 5 条\n归还这一格仓库\n归还这一格仓库\n```\n\n对着这五行数一数，本喵瞒着你干的事就露馅了：\n\n- 第 1 行是 `main` 里生 `a` —— 租了一间屋；\n- 第 2 行**本喵根本没写**。它从哪来的？**喊 `show` 的时候偷偷照抄了一只盒子。** `show` 的料是**按值**的，翻译官喵就得先造一份这个料的复印件 —— 而造复印件，走的就是本喵写的那份照抄招式，于是「另租一格、搬进内容」这一步被喊了起来。\n- 第 4 行是 `show` 里那只**复印件**走了（招式喊完，它的料就该还）；\n- 第 5 行是 `main` 里那只 `a` 走了。**两只盒子各还各的**，所以收尾时有两个「归还」，谁也不撞谁。\n\n⚠️ 这一课最该记住的一句话就在这儿：\n\n> **料写成「按值」，每喊一次就要照抄一只盒子。**\n\n要是本喵**只想看看、不想抄一份**，料的写法就得换成「**不必还的名字**」：`void show(const FishBox& b)` —— 那时候屏幕上就只剩三行（租、看、还），中间那两行全不见了。\n\n这也是本喵要你亲手写一遍「按值」的原因：**这件事藏在你不注意的地方** —— 你没在 `main` 里写任何照抄的话，它自己就发生了。"
+}

@@ -1,0 +1,22 @@
+{
+  "templateId": "c-s3-09-naive-count-report",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-09",
+  "type": "codewrite",
+  "concept": ["一个起点一个起点地试", "对不上就整体挪一格", "数比了几次", "所有起点都试遍了还没有"],
+  "instances": 6,
+  "params": {
+    "e1": { "kind": "pick", "values": ["xy", "pqrst"] },
+    "w": { "kind": "pick", "values": ["ab", "cd"] }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "{e1}{w}\n{w}\n",
+    "sampleText": "miao{w}\n{w}\n"
+  },
+  "stemTemplate": "投喂口里递进来**两行**：第一行是整串，第二行是要找的那一小段。样例输入：\n\n```text\n{sampleInput}\n```\n\n你要把 `naive` 这一招补完（`main` 已经写在稿子里了，别改它）—— 就是 `strstr` 拆开来看的那个**最直白的办法**：\n\n1. 从一个**起点**开始，一颗一颗往下对；\n2. **每比一颗就记一笔**（不管对上没对上，比了就算）；\n3. 对不上 → 这个起点作废，**整体挪一格起点，从头再来**；\n4. 一小段整段都对上了 → 把**比了几次**答回去；所有能站的起点都试遍了还没成，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `朴素对法比了 N 次`；\n- 没找着 → 一行 `朴素对法：没找着`。\n\n样例跑出来是这样：\n\n```text\n{sampleOutput}\n```",
+  "starterTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    /* ↓ 自己写：\n       ① 一句 strlen 量出整串多长、这一小段多长\n       ② 从第 0 个起点开始试：起点最多站到哪儿，想清楚再写条件\n       ③ 每个起点里一颗一颗对：每比一颗记一笔，对不上就 break\n       ④ 整段都对上了 → 答次数；所有起点试遍了 → 答负数 */\n    return -1;\n}\n\nint main(void) {\n    char text[128];\n    char pat[64];\n    if (scanf(\"%127s\", text) != 1) {\n        return 1;\n    }\n    if (scanf(\"%63s\", pat) != 1) {\n        return 1;\n    }\n\n    int a = naive(text, pat);\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 朴素对法：每个起点都从头对一遍，答「比了几次」；所有起点都试遍了还没有就答负数 */\nint naive(const char *text, const char *pat) {\n    int n = (int)strlen(text);\n    int m = (int)strlen(pat);\n    int tries = 0;\n\n    for (int i = 0; i + m <= n; i++) {\n        int j = 0;\n        while (j < m) {\n            tries++;\n            if (text[i + j] != pat[j]) {\n                break;\n            }\n            j++;\n        }\n        if (j == m) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main(void) {\n    char text[128];\n    char pat[64];\n    if (scanf(\"%127s\", text) != 1) {\n        return 1;\n    }\n    if (scanf(\"%63s\", pat) != 1) {\n        return 1;\n    }\n\n    int a = naive(text, pat);\n    if (a < 0) {\n        printf(\"朴素对法：没找着\\n\");\n    } else {\n        printf(\"朴素对法比了 %d 次\\n\", a);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "最直白的找法就一句话：**从一个起点开始，一颗一颗对；对不上就整体挪一格起点、从头再来**喵。\n\n两个最容易写歪的地方：\n\n- **起点最多能站到哪儿**。整串 `n` 颗、要对的这一小段 `m` 颗，最后一个能站下的起点是第 `n - m` 颗 —— 条件写成 `i + m <= n`。写成 `i + m < n` 就把最后一个起点漏掉了，而「那一小段只挂在最末尾」的时候正好会被漏掉。\n- **记账的位置**。课文里是**每比一颗就记一笔**（对不上也记，因为确实比过了）：`tries++` 放在比较之前最不容易错。\n\n这一招的毛病也跟着这个写法来了：崩了之后，**刚对上的那一段一点都不记得**，下一个起点又从头比 —— 同一颗珠子可能被白白重对好几遍。这就是后面小本本要救的事喵。"
+}

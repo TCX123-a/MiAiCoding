@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-enum-item-typo",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-11",
+  "type": "codefix",
+  "concept": ["清单", "项名一个字母不差", "编稿子那一关就被拦下", "cannot find symbol"],
+  "instances": 2,
+  "params": {
+    "picked": { "kind": "pick", "values": ["SPRING", "SUMMER", "WINTER"] }
+  },
+  "stemTemplate": "本喵的四季清单上，四项的名字都取好了；可本喵在 `main` 里挑的时候，**手滑多敲了一个字母**。翻译官喵当场把稿子退回来，一个字都不让跑。\n\n请你把那一处改好，让程序印出：\n\n```text\n现在轮到 {picked}\n```\n\n只有**用的那一处**手滑了 —— 清单上那四项的名字，本喵一个都没写错喵。",
+  "brokenCodeTemplate": "public class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Season s = Season.{picked}X;\n        System.out.println(\"现在轮到 \" + s);\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Season s = Season.{picked};\n        System.out.println(\"现在轮到 \" + s);\n    }\n}\n",
+  "explanationTemplate": "这一处**压根跑不到**：翻译官喵在编稿子那一关就把稿子退回来了。原话是\n\n```text\nerror: cannot find symbol\n  symbol:   variable {picked}X\n  location: class Season\n```\n\n念起来是：**「`Season` 这张清单上，没有叫 `{picked}X` 的一项喵。」**\n\n这正是清单最值钱的地方。回头看看上一课那个 `int day = 8`：翻译官喵只拦得住「不是整数」，拦不住「是整数，可排班表上根本没这一天」。清单把**本喵心里的约定**搬成了**机器读得懂的规矩** —— 名字对不上，它当场就翻脸，压根不用等到跑起来才发现。\n\n两处细节顺手记牢：\n\n- `location: class Season` 说的是**它是在哪儿找的** —— 清单名和项名都得一个字母不差，少一个字母就是另一只猫。\n- 要改的是**用的那一处**。本喵要是反过来去清单里加一项 `{picked}X`，那不是改错，是把本喵的约定改坏了：往后 `{picked}` 和 `{picked}X` 两只猫都合法，谁还分得清喵？\n\n顺带一句：这种错**越早发现越省事**。要是那个名字是在跑起来之后才用到的（比如从键盘上读进来的一串字），翻译官喵就管不着了 —— 那正是「只有固定几种」的东西该列成清单的理由喵。"
+}

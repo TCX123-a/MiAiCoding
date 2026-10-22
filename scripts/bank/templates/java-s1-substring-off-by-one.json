@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s1-substring-off-by-one",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-11",
+  "type": "codefix",
+  "concept": ["substring", "编号从 0 数起", "差一个", "Scanner"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["小鱼干到手喵", "大肥鱼的鱼塘"] },
+    "n": { "kind": "int", "min": 2, "max": 3 },
+    "word2": { "kind": "pick", "values": ["狸花的毛线球", "小橘的猫粮袋"] },
+    "n2": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{word} {n}\n", "sampleText": "{word2} {n2}\n" },
+  "stemTemplate": "纸条上给**一串字**和一个数 `n` 喵。本喵想掏出这串字**最前面那 `n` 颗**珠子印出来 —— 掏是掏出来了，可**每次都多一颗**。\n\n你帮本喵把多出来的那颗找回来，留着原来的样子别动（读纸条、掏珠子这两步都不用改）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一串字**喵，所以别把答案写死～）",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        int n = sc.nextInt();\n        System.out.println(s.substring(0, n + 1));\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        int n = sc.nextInt();\n        System.out.println(s.substring(0, n));\n    }\n}\n",
+  "explanationTemplate": "`substring(a, b)` 掏的是 **`a` 号到「`b` 号之前」**那颗珠子喵：`b` 号本身**不算**。想掏**最前面 `n` 颗**，就是 `0`、`1`……一直到 `n - 1` 号 —— 所以后面那个数该写 `n`，不是 `n + 1`。\n\n本喵这次写的是 `substring(0, n + 1)`：多算了一位，掏出来自然多一颗（`n = 2` 时掏出的是 `0`、`1`、`2` 三颗，而不是 `0`、`1` 两颗）。\n\n这一条是本课最好摔的地方 —— **「到它之前为止」，永远差一个**。改法就是把那个 `+ 1` 拿掉：`s.substring(0, n)`。\n\n（还有一处要留心：后面那个数要是**超过珠子总数**，就不是多一颗的问题了，`StringIndexOutOfBoundsException` 会当场打断气。本喵这次只是在缸里多掏一颗，所以没炸，只是印错了喵。）"
+}

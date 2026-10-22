@@ -1,0 +1,88 @@
+{
+  "lessonId": "common-32",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "开饭名单上每一格印的都是「动物」，可同一行 `pet.eat()` 跑两轮，应的却是两版。按下去那一瞬挑哪一版，看的是什么喵？",
+      "options": [
+        "看它这一瞬对着的那只真身 —— 跑起来那一刻才定，这一手叫**动态绑定**",
+        "看遥控器上印的字：印着「动物」，就永远应大图纸兜底那一版",
+        "看名单的顺序：排在前面的用小图纸那版，排在后面的用兜底版",
+        "看谁嗓门大：两只里谁先应声，往后就都归谁应"
+      ],
+      "answer": 0,
+      "explanation": "「看它这一瞬对着的那只真身」喵：遥控器上印的字只管写代码那一关 —— 翻译官喵只查「大图纸上有没有这一招」，有就放行；真正挑版本是在跑起来那一瞬，由它对着的那只真身说了算。「看遥控器上印的字」「看名单的顺序」「看谁嗓门大」这三句错在同一个思路：把「挑哪一版」提前到了写代码的时候，或者交给跟版本毫不相干的东西。回头看一眼演示块 —— 同一个 `pet`，第二轮应的换成鸟那版，代码一个字没改，变的只有真身。"
+    },
+    {
+      "id": "q2",
+      "type": "codefill",
+      "lang": "java",
+      "code": "class Animal {\n    void eat() {\n        System.out.println(\"……\");\n    }\n}\n\nclass Cat extends Animal {\n    @____\n    void eat() {\n        System.out.println(\"____\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal pet = new Cat();\n        pet.eat();\n    }\n}",
+      "stem": "本喵把猫那版的记号打了一半。两个空按顺序补上：第一个是那个记号的名字（给翻译官喵当校对员用的），第二个是猫应得的那一口喵。",
+      "blanks": [
+        { "answer": "Override", "accept": [] },
+        { "answer": "吃小鱼干", "accept": [] }
+      ],
+      "explanation": "第一个空补 `Override`：凑成 `@Override` 之后，翻译官喵会替本喵盯着「名字有没有抄对、括号里那几样有没有抄歪」，抄错了当场拦下。第二个空补「吃小鱼干」：这一行就是小图纸把大图纸的 `eat` 换成自己那一版 —— 这一手叫重写。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵在 C++ 版的大图纸上忘了给那一招挂 `virtual`，然后又写 `Animal* p = &cat; p->eat();`。会发生什么喵？",
+      "options": [
+        "悄悄应了大图纸兜底那一版：不报错、不崩溃，挑版本退回「照遥控器念」的老脾气",
+        "翻译官喵当场报错，提醒本喵把 `virtual` 补上",
+        "程序直接崩掉，屏幕上留一行提示",
+        "照样应猫那一版，`virtual` 只是写给同行看的注释"
+      ],
+      "answer": 0,
+      "explanation": "这正是 C++ 那个安静的坑喵：不挂 `virtual`，挑版本就退回「照遥控器上印的字念」（行话叫静态绑定）—— `p` 上印的是「动物」，于是兜底版应声，不喊疼、不报错。要它按真身挑版本，`virtual` 这个词必须写上。差别就在手里这支遥控器印的是谁：直接对着 `cat` 这只真身喊，应的是猫那版。"
+    },
+    {
+      "id": "q4",
+      "type": "choice",
+      "stem": "「重写」和「重载」，中文名长得像，机制是两码事。下面哪句把它俩分清了喵？",
+      "options": [
+        "重写：小图纸把大图纸的那一招换成自己一版；重载：同一个名字配好几副括号 —— 看它换掉的是不是大图纸上那一招，就分得开",
+        "重写和重载是一回事，只是不同语言的叫法不同",
+        "正好反过来：重写说的是好几副括号，重载说的是小图纸换掉那一招",
+        "只有 C++ 有重写，只有 Java 有重载，另外两门两个都没有"
+      ],
+      "answer": 0,
+      "explanation": "界碑一句话喵：**看它换掉的是不是大图纸上那一招**。重写（override）换的是大图纸那一招，名字、括号里那几样都对得上，小图纸给出自己那版；重载（overload）是同一个名字配好几副括号，跟图纸套图纸毫无关系 —— 往后学语言线会专门讲它，今天先别混。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "class Animal {\n    protected String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void eat() {\n        System.out.println(name + \"：……\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void eat() {\n        System.out.println(name + \"：吃小鱼干\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal[] pets = { new Cat(\"小橘\"), new Dog(\"大黄\") };\n        for (Animal pet : pets) {\n            pet.eat();\n        }\n    }\n}",
+      "stem": "两只住户装进同一排：小橘照旧重写了 `eat`，大黄的图纸上一招都没补。这段跑完，屏幕上是什么？",
+      "answer": "小橘：吃小鱼干\n大黄：……",
+      "accept": ["小橘：吃小鱼干\n大黄：……\n"],
+      "explanation": "两轮各答各的喵：小橘的真身是猫，应的是猫那一版；轮到大黄，它自己那张图纸上没有这一招，就退回大图纸的兜底版 —— 应的是「……」。所以「没补」不等于报错，是安安静静地退回兜底版：挑版本先看真身自己有没有，没有再往大图纸上找。"
+    },
+    {
+      "id": "q6",
+      "type": "fill",
+      "stem": "「同一句喊话，各猫各样」—— 术语表里给这一手起的原名是「____」。（两个字）",
+      "answer": "多态",
+      "accept": ["多态"],
+      "explanation": "这一手原名叫**多态（一声开饭，各猫各样）**喵：调用处只写一句 `pet.eat()`，轮到谁，由谁的真身在跑起来那一瞬应试哪一版。课文里靠它，把老写法那句 `switch` 请了出去 —— 新住户进门，老代码一个字不用动。"
+    },
+    {
+      "id": "q7",
+      "type": "choice",
+      "stem": "本喵把两张图纸挂在一起，考你一句最要紧的对照：`extends` 和 `implements` 各回答什么问题喵？",
+      "options": [
+        "`extends` 回答「你是**什么**」：猫是动物，讲亲缘；`implements` 回答「你会**做**什么」：会打招呼的都算数，讲的是一份约定",
+        "`extends` 回答「你会做什么」，`implements` 回答「你是什么」—— 写反了也只是风格问题",
+        "两个都要挂在图纸第一行，谁先谁后跟含义无关",
+        "`implements` 只能给动物用，`extends` 只能给机器人用"
+      ],
+      "answer": 0,
+      "explanation": "一句话对照喵：`extends` 讲亲缘 —— 小图纸照着大图纸来，白捡全部设定（猫是动物）；`implements` 讲约定 —— 只要你「会打招呼」就能签，跟你是猫、是鸟、还是机器人毫无关系。写反了不是风格问题：一个问「你是什么」，一个问「你会做什么」，问错了挂上的是完全不同的两张纸。"
+    }
+  ]
+}

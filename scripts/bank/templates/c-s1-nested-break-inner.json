@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-nested-break-inner",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-08",
+  "type": "codefix",
+  "concept": ["嵌套圈", "内层的 break", "只退一层"],
+  "instances": 2,
+  "params": {
+    "rows": { "kind": "int", "min": 2, "max": 3 },
+    "jstop": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stemTemplate": "本喵要把一张 {rows} 行的小表念出来。每一行里，格子号从 1 数到 5：**只有 {jstop} 号那一格跳过不念，别的格子都要念。**\n\n念法是「行号-格号」，几个格子之间用一个空格隔开，一行念完换个行。可这段代码**每一行都提前收摊了** —— 格子还没念完它就走人了。你帮本喵改对。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    for (int r = 1; r <= {rows}; r++) {\n        for (int j = 1; j <= 5; j++) {\n            if (j == {jstop}) {\n                break;\n            }\n            printf(\"%d-%d \", r, j);\n        }\n        printf(\"\\n\");\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    for (int r = 1; r <= {rows}; r++) {\n        for (int j = 1; j <= 5; j++) {\n            if (j == {jstop}) {\n                continue;\n            }\n            printf(\"%d-%d \", r, j);\n        }\n        printf(\"\\n\");\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这道题的坏法特别值得记：**内层那一圈撞上的是 `break`，不是 `continue`** 喵。\n\n- `break` 是**掀桌子走人** —— 内层圈整个停了，{jstop} 后面的格子连看都不看，所以每一行都短短地收了摊。\n- `continue` 是**这道菜不吃了，下一道接着上** —— 圈还在转，只是 {jstop} 那一格跳过去，后面的格子照念。\n\n而且 `break` 只退掉**它住的那一层**：这里它住的是内层（管格子的那个圈），外面那层（管行的圈）动都不动 —— 所以你会看到「**每一行**都少了一截」，而不是「只少了一行」。\n\n想一口气跳出两层，C 里没有现成的一个词可用，常见做法是让外层也看一眼某个记号。这里不需要 — 想清楚「让这一格跳过」和「让这一行到此为止」，选对那个词就够了喵。"
+}

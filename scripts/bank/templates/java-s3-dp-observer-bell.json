@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s3-dp-observer-bell",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-14",
+  "type": "codewrite",
+  "concept": ["谁要听谁自己订上来", "摇铃的挨个喊一句，不知道每位会做什么", "先后按订上来的顺序"],
+  "instances": 6,
+  "params": {
+    "c1": { "kind": "pick", "values": ["小橘", "橘子"] },
+    "c2": { "kind": "pick", "values": ["煤球", "黑豆"] },
+    "r1": { "kind": "pick", "values": ["小鱼干", "猫条"] },
+    "r2": { "kind": "pick", "values": ["猫粮", "鸡肉"] }
+  },
+  "stemTemplate": "本喵要摆一套**摇铃与听众**喵：铃只管摇，谁要听谁自己订上来。\n\n那份约定、铃的图纸（含那个柜子）、两只猫各自的图纸都画好了，你只写三处：\n\n1. **`订上(听众 一位)` 的身体**：把这位塞进名单；\n2. **`摇铃(String 菜名)` 的身体**：挨个喊一句 `听见了`，把菜名递过去；\n3. **`main` 的身体**：造一只铃，先订上 `猫`（名字叫 `{c1}`）、再订上 `懒猫`（名字叫 `{c2}`），然后摇两次铃 —— 先 `{r1}`、再 `{r2}`。\n\n图纸和约定一个都别改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    interface 听众 {\n        void 听见了(String 菜名);\n    }\n\n    static class 开饭铃 {\n        List<听众> 名单 = new ArrayList<>();\n\n        void 订上(听众 一位) {\n\n        }\n\n        void 摇铃(String 菜名) {\n\n        }\n    }\n\n    static class 猫 implements 听众 {\n        String 名字;\n\n        猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 冲向 \" + 菜名);\n        }\n    }\n\n    static class 懒猫 implements 听众 {\n        String 名字;\n\n        懒猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 翻了个身，继续睡\");\n        }\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    interface 听众 {\n        void 听见了(String 菜名);\n    }\n\n    static class 开饭铃 {\n        List<听众> 名单 = new ArrayList<>();\n\n        void 订上(听众 一位) {\n            名单.add(一位);\n        }\n\n        void 摇铃(String 菜名) {\n            for (听众 一位 : 名单) {\n                一位.听见了(菜名);\n            }\n        }\n    }\n\n    static class 猫 implements 听众 {\n        String 名字;\n\n        猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 冲向 \" + 菜名);\n        }\n    }\n\n    static class 懒猫 implements 听众 {\n        String 名字;\n\n        懒猫(String 名字) {\n            this.名字 = 名字;\n        }\n\n        public void 听见了(String 菜名) {\n            System.out.println(名字 + \" 翻了个身，继续睡\");\n        }\n    }\n\n    public static void main(String[] args) {\n        开饭铃 铃 = new 开饭铃();\n        铃.订上(new 猫(\"{c1}\"));\n        铃.订上(new 懒猫(\"{c2}\"));\n        铃.摇铃(\"{r1}\");\n        铃.摇铃(\"{r2}\");\n    }\n}\n",
+  "explanationTemplate": "这一题把课文第三节那套摆法自己搭了一遍喵。\n\n**一、谁要听谁自己订上来。** `订上()` 只做一件事：把这位塞进名单（`名单.add(一位)`）。铃那边**不知道**来的是猫还是懒猫 —— 名单里收的是「会这一招的猫」（那份约定），谁都能装进来。\n\n**二、摇铃的只管挨个喊。** `摇铃()` 里绕圈绕一遍名单，每一位喊一句 `听见了`，菜名原样递过去。**每位听见了会做什么，是它们自己图纸上的事** —— 猫冲过去、懒猫翻个身继续睡，铃一个字都没提过。\n\n**三、先后就是订上来的顺序。** 名单是个会自己长大的柜子：先订上来的排在前面。所以 `{c1}` 那一行在前、`{c2}` 那一行在后；摇两次铃，就是这两行按同样的先后各来一遍。\n\n**四、好处落在「改一处」。** 明天要加一只三花猫，**铃那张图纸一个字都不用改**，她自己 `订上` 就行 —— 这就是前辈猫那句「一声开饭，各猫各样」喵。"
+}

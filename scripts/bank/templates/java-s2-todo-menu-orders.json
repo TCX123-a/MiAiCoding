@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-todo-menu-orders",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-14",
+  "type": "codewrite",
+  "concept": ["菜单骨架：绕圈取一行", "认开头用 startsWith", "敲 q 就 break", "屏幕上的编号差 1"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["喂鱼", "洗猫窝"] },
+    "b": { "kind": "pick", "values": ["铲屎", "晒鱼干"] },
+    "k": { "kind": "pick", "values": ["2", "1"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "add {a}\nadd {b}\ndone {k}\nlist\nq\n", "sampleText": "add 喂鱼\nlist\nq\n" },
+  "stemTemplate": "本喵要写一个「照着命令一条条办」的小管家。投喂给程序的纸上**一行一条命令**，一直读到没有为止：\n\n- `add 内容` —— 把这件事记下来（刚记下来是没办），印一行 `记下了：内容`；\n- `done 编号` —— 把**第几件**办掉（这个编号是数给本喵看的，从 `1` 起），印一行 `办完了：那件事的内容`；\n- `list` —— 从第 `1` 件起一条条印 `编号. 事项`（办完的带 `[x] `、没办的带 `[ ] `）；\n- `q` —— 收工，跳出这一圈；\n\n最后（出了这一圈之后）印一行 `收工，一共 N 件`。\n\n事项一样要有图纸（两格家当关起来、`markDone()` 那一招、`toString()` 那一招），骨架用课里那套喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分敲的是**另外几条**命令，事项的内容也不一样喵，别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\nclass Todo {\n    // 图纸画在这儿：两格家当 + markDone() + toString()\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Todo> zhi = new ArrayList<>();\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\nclass Todo {\n    private String what;\n    private boolean done;\n\n    Todo(String what, boolean done) {\n        this.what = what;\n        this.done = done;\n    }\n\n    String getWhat() { return what; }\n    void markDone() { done = true; }\n\n    @Override\n    public String toString() {\n        return (done ? \"[x] \" : \"[ ] \") + what;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Todo> zhi = new ArrayList<>();\n        Scanner sc = new Scanner(System.in);\n        while (sc.hasNextLine()) {\n            String line = sc.nextLine().trim();\n            if (line.equals(\"q\")) {\n                break;\n            }\n            if (line.startsWith(\"add \")) {\n                zhi.add(new Todo(line.substring(4), false));\n                System.out.println(\"记下了：\" + line.substring(4));\n            } else if (line.startsWith(\"done \")) {\n                int k = Integer.parseInt(line.substring(5));\n                zhi.get(k - 1).markDone();\n                System.out.println(\"办完了：\" + zhi.get(k - 1).getWhat());\n            } else if (line.equals(\"list\")) {\n                for (int i = 0; i < zhi.size(); i++) {\n                    System.out.println((i + 1) + \". \" + zhi.get(i));\n                }\n            }\n        }\n        System.out.println(\"收工，一共 \" + zhi.size() + \" 件\");\n    }\n}\n",
+  "explanationTemplate": "这一题是课里第三节那套菜单骨架的完整体。\n\n**一、绕圈取一行，直到纸上没有为止。** `while (sc.hasNextLine())` 是「还有下一行吗」；每一圈里 `sc.nextLine().trim()` 把这一行取出来（`trim()` 剃掉两头的空白，免得手滑多敲一个空格就认不出来了）。\n\n**二、一条条比过去，比中就干活。** `line.equals(\"q\")` 是「整串就是 `q`」；`line.startsWith(\"add \")` 是「以 `add ` 开头」。**认命令的开头要用 `startsWith`，不能用 `equals`** —— 命令后面还跟着内容呢。认出开头之后，把开头那几个字母**之后**的部分切下来就是内容：`substring(4)` 切的是 `add ` 后面，`substring(5)` 切的是 `done ` 后面，数错位置就会把内容切歪。\n\n**三、编号差 1 的那一下。** 菜单上写 `done {k}`，喊的却是 `zhi.get(k - 1)` —— 屏幕上给本喵看的编号从 `1` 起，柜子里的编号从 `0` 起，**差 1 就在这一处补上**。本喵把 `- 1` 拆掉真跑过：勾打在了隔壁那条头上，连 `办完了：` 后面跟的名字也跟着串了位。\n\n**四、敲 `q` 就 `break`。** 那是**跳出这一圈**：后面就算纸上还有命令也不理了。\n\n**五、收工那一行在圈外。** `收工，一共 N 件` 印在绕圈**外面**，所以不管敲没敲 `q`、敲了几条命令，它都只印一次。\n\n判分敲的是另外几条命令，连事项的内容都换过 —— 光按样例的答案写死过不了喵。"
+}

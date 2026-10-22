@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-gdb-leak-pair-fix",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-13",
+  "type": "codefix",
+  "concept": ["只租不还就是漏", "编号对账两串一样长", "绕圈里租、圈外只还一回"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "pick", "values": ["3", "4"] }
+  },
+  "stemTemplate": "这段稿子数全对、跑得也顺，可它**只租不还**喵 —— 跑一趟看不出毛病，跑一万趟机器就喘了。\n\n本喵教你一只笨办法：给每一次「租」和每一次「还」各配一句**带编号的打印**，跑一遍把两串编号对一对，差几个号就是漏了几间。现在这段稿子里，租的那串印了好几行，还的那串**只有一行** —— 一眼就知道对不上。\n\n请你把病治好：让每一间租来的仓库**用完当场就还**，并且照本喵的办法，还的时候也印一行「`[还] 第 N 回`」，编号跟这一轮的租对上。每一轮都是**先印租、紧接着印还**。`main` 里别的东西别动 —— 改好之后，{n} 行租和 {n} 行还该一一对上，最后再印一行 `收工`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *bowl = NULL;\n    for (int i = 0; i < {n}; i++) {\n        bowl = malloc(4 * sizeof(int));\n        if (bowl == NULL) {\n            return 1;\n        }\n        bowl[0] = i;\n        printf(\"[租] 第 %d 回\\n\", i + 1);\n    }\n    printf(\"[还] 第 1 回\\n\");\n    free(bowl);\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *bowl = NULL;\n    for (int i = 0; i < {n}; i++) {\n        bowl = malloc(4 * sizeof(int));\n        if (bowl == NULL) {\n            return 1;\n        }\n        bowl[0] = i;\n        printf(\"[租] 第 %d 回\\n\", i + 1);\n        printf(\"[还] 第 %d 回\\n\", i + 1);\n        free(bowl);\n    }\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "`bowl` 这张猫爪指向牌只有**一张**喵。每一圈开头那句 `bowl = malloc(...)` 都往牌子上写一个新地址，上一间的地址就被**顶掉**了 —— 想还也找不着，那一间就一直挂在账上。\n\n改法就是**每圈用完当场还**：先把这一间还掉，再印这一轮的编号。编号是**对账用的**：租的那串是 1、2、3……，还的那串照着写 —— 两串一样长，就说明一间不欠。\n\n这类「绕圈里租、圈外只还一回」的形状，漏掉的间数正好是**圈数减一**。记住它，下次一眼就能认出来。"
+}

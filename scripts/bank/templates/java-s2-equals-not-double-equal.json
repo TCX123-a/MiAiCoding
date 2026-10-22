@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-equals-not-double-equal",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-06",
+  "type": "codefix",
+  "concept": ["装数字的图纸", "同一只还是数字一样", "equals", "逻辑错"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 200, "max": 201 }
+  },
+  "stemTemplate": "本喵手里有两只口袋，里面装的明明是**同一个数**。本喵写了一句「两只口袋里的数一样吗」，翻译官喵没拦、程序也没炸 —— 可它给出的答案是**错的**。\n\n请你帮本喵改好。本喵要问的是「**口袋里那两个数字一不一样**」，不是「是不是同一只口袋」。\n\n改好之后，程序该印出这一行：\n\n```text\n两只口袋里的数一样喵\n```\n\n（只有 `if` 那一行的问题，别的本喵都没写错喵。）",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        Integer a = {n};\n        Integer b = {n};\n        if (a == b) {\n            System.out.println(\"两只口袋里的数一样喵\");\n        } else {\n            System.out.println(\"两只口袋里的数不一样喵\");\n        }\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        Integer a = {n};\n        Integer b = {n};\n        if (a.equals(b)) {\n            System.out.println(\"两只口袋里的数一样喵\");\n        } else {\n            System.out.println(\"两只口袋里的数不一样喵\");\n        }\n    }\n}\n",
+  "explanationTemplate": "这是本课最值钱的一道 —— **它不报错，它只是给你一个错的答案。**\n\n症结在于 `==` 问的问题**不是本喵想的那一个**：\n\n- `a == b` 问的是「**这两块牌子指的是不是同一只猫**」\n- `a.equals(b)` 问的才是「**两只口袋里的数字一不一样**」\n\n那为什么 `a` 和 `b` 会是两只不同的猫？因为 `{n}` 这个数**不在那批备货里**。Java 觉得 -128 到 127 这些小数字太常用了，干脆**提前画好一批真猫**放在窝里，谁要装箱就发同一只；超出这批的数字，**每次都得现画一只新的**。所以本喵这两句装箱拿到的是**两只不同的猫**，`==` 就说 `false`。\n\n这就解释了课上那件怪事：两个一样的小数字用 `==` 比说 `true`，两个一样的大数字用 `==` 比说 `false` —— **同一句代码，结果看数字的大小**。这种毛病看着像见鬼，所以：\n\n> **比数字一不一样，一律用 `.equals(...)`，别用 `==`。**\n\n顺手记：这一条和往后那串**小鱼干项链**的陷阱是同一个道理 —— 凡是照图纸生出来的东西，`==` 比的都是「是不是同一只」喵。"
+}

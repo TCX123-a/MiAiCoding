@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-07-not-serializable",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-07",
+  "type": "codefix",
+  "concept": ["挂 Serializable 牌子", "冻不动的猫", "跑起来才翻脸的错"],
+  "instances": 2,
+  "params": {
+    "cls": { "kind": "pick", "values": ["Fish", "Cat"] },
+    "n1": { "kind": "pick", "values": ["小橘", "团子"] },
+    "c1": { "kind": "int", "min": 3, "max": 6 }
+  },
+  "stemTemplate": "本喵想把**一整只猫**冻成字节存进文件。\n\n可它**跑起来的那一刻当场翻脸**（`javac` 那一步一声都不响），连「存好了」都没印出来。\n\n你帮本喵看看：这只猫的图纸上少了什么？把它补上。\n\n改好之后，程序该印一行 `存好了`。\n\n（这一题**不用投喂任何东西**。）",
+  "brokenCodeTemplate": "import java.io.FileOutputStream;\nimport java.io.ObjectOutputStream;\n\nclass {cls} {\n    String 名字;\n    int 条数;\n\n    {cls}(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        {cls} 猫 = new {cls}(\"{n1}\", {c1});\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        System.out.println(\"存好了\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.io.FileOutputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass {cls} implements Serializable {\n    String 名字;\n    int 条数;\n\n    {cls}(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        {cls} 猫 = new {cls}(\"{n1}\", {c1});\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        System.out.println(\"存好了\");\n    }\n}\n",
+  "explanationTemplate": "**一、冻猫的家什只肯冻挂过牌子的猫。** 牌子就是图纸名字后面那半句 `implements Serializable`，读作「本喵这只可以冻」。`ObjectOutputStream` 的 `writeObject(...)` 把人家的猫接过去以后，会先摸一遍**这只猫属于哪张图纸**，发现图纸没挂牌子，当场撂挑子。\n\n**二、这一脚为什么 `javac` 不管。** 语法上一点毛病都没有：图纸是完整的、生猫那一句也写对了 —— 缺的是一条**只有跑起来才知道**的约定。所以本喵看到的是「编译通过、跑起来摔」，报错原话是\n\n```text\nException in thread \"main\" java.io.NotSerializableException: {cls}\n```\n\n冒号后面那几个字母就是**这只猫的图纸名字**（本喵这一窝跑出来的正是 `{cls}`）。\n\n**三、牌子为什么非得挂。** 冻下去的是**字节**，解冻的时候要照着同一张图纸把格子一个个填回来。挂上牌子，等于跟本喵说好：「照这张图纸填格子是安全的」；没挂，就说明这张图纸上的格子（比如管子、跟别的猫绑在一起的东西）**没法照抄**，那就不冻为妙 —— 与其解冻出一只残缺的猫，不如当场翻脸。\n\n**四、动手改的时候注意两件小事。** ① 牌子那半句写在**图纸名字后面**，不是写在某一行格子上；② 顺手 `import java.io.Serializable;` 一句，不然 `javac` 才真的要红了。"
+}

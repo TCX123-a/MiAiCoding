@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s1-guess-keyboard",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-14",
+  "type": "codewrite",
+  "concept": ["真机版：投喂口一个个读", "保险绳收工", "while (true) 配 break"],
+  "instances": 6,
+  "params": {
+    "guesses": { "kind": "pick", "values": ["10\n50\n25\n42", "7\n8\n9"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{guesses}\n", "sampleText": "50\n42\n" },
+  "stemTemplate": "这一回要写**你自己玩**的那一版机器：你一次次往里喂猜的数，机器一次次报信，直到猜中或者**投喂口空了**为止。\n\n请照这个规矩办：\n\n1. 种子钉成 `1`（钉住运气），当场抽一个 1 到 100 的数当心里那个；\n2. 开场先印一行：`本喵想了一个 1 到 100 的数，来猜猜看喵～`；\n3. 每一轮先印 `猜一个数喵：`（这一句**不换行**），再从投喂口读一个数；\n4. **读到了**：猜的数比心里那个小，接 `太小啦喵`；比它大，接 `太大啦喵`；正好猜中接 `猜中啦喵！一共猜了 X 次`（X 是到这一轮为止猜的总次数），然后收工；\n5. **投喂口空了**（没人再往里喂了）：先换一行，再印 `投喂口空了，本喵先收工喵`，收工。\n\n（第 4、5 两条是在**同一轮里**挑的 —— 读得到就报信、读不到就收工，那根「保险绳」第四课教过喵。）\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外几串猜的数**喵，可能猜中，也可能喂到一半就没了～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <cstdlib>\nusing namespace std;\n\nint main() {\n    srand(1);\n    int target = rand() % 100 + 1;\n    int guess = 0;\n    int used = 0;\n\n    cout << \"本喵想了一个 1 到 100 的数，来猜猜看喵～\" << endl;\n    while (true) {\n        cout << \"猜一个数喵：\";\n        if (!(cin >> guess)) {\n            cout << endl << \"投喂口空了，本喵先收工喵\" << endl;\n            break;\n        }\n        used = used + 1;\n\n        if (guess < target) {\n            cout << \"太小啦喵\" << endl;\n        } else if (guess > target) {\n            cout << \"太大啦喵\" << endl;\n        } else {\n            cout << \"猜中啦喵！一共猜了 \" << used << \" 次\" << endl;\n            break;\n        }\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一版跟前面「本喵替你猜」那一版差在三处喵：\n\n**一、`cin >> guess` 上场。** 第四课的投喂口：问一句「猜一个数喵：」，你就敲一个数进去，它把那个数装进 `guess` 里。**猜几次说不准**，所以外面套的是 `while (true)`（不讲圈数的圈），**收工靠 `break`**。\n\n**二、保险绳不能删。** `if (!(cin >> guess))` 是第四课那根绳子：投喂口空了（没人往里喂东西了），别让程序傻等或者乱转 —— 先换一行（`endl`），印一句 `投喂口空了，本喵先收工喵`，然后 `break` 收工。删掉它，机器会拿着上一次猜的那个数空转，屏幕上刷得停不下来。\n\n**三、自己数猜了几次。** 每读到一个数就 `used = used + 1;`，猜中那句把 `used` 印出来。\n\n（真玩的时候还要把 `srand(1)` 换成 `srand(time(0))`，每局换一颗种子 —— 这一题为了对答案，种子先钉死。）"
+}

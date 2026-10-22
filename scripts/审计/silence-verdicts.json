@@ -1,0 +1,3762 @@
+{
+  "content\\c\\stage3\\14-style-defense\\lesson.md#a41b9db1d2b1": {
+    "verdict": "对",
+    "凭什么": "句子说的是「没验货」的 biggest(fish, 0)：它张嘴就掏 fish[0]，而那一格本来就存在（刚放进去 7），所以不是读到坏内存，是稳定地印 7 —— 编译期不报错、运行期不崩，换台机器照样 7。照课文原样真跑：编译零诊断，印 7，退出码 0。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/01-biggest.c ← `gcc -finput-charset=UTF-8 -fexec-charset=UTF-8 -Wall -o 01-biggest.exe 01-biggest.c`（编译退出 0、无任何诊断）→ `./01-biggest.exe`：关键输出 `三碗：7` / `一碗都没有：7`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\13-gdb-leaks\\lesson.md#cad50b579a55": {
+    "verdict": "对",
+    "凭什么": "句子说的是课文那段 sum_from(fish, 1, 5)：跑得起来、印得出数、屏幕上一句提示都没有，可那个数不对（5 个数是 3 1 4 1 5，该 14 却印 11）。真跑：-Wall 下零诊断，退出码 0，只是数错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/02-sum-from.c ← 同一编译命令（退出 0、无诊断）→ 输出仅 `总数是 11`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\13-gdb-leaks\\lesson.md#96f41e460498": {
+    "verdict": "对",
+    "凭什么": "同一段稿子：「翻译官喵不拦」= 编译零诊断、不拦；「程序不崩」= 退出码 0、屏幕照样出字；「安安静静地错」= 印 11 而不是 14。三样都真跑对上了。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/02-sum-from.c ← 编译零诊断、退出 0 → `总数是 11`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\12-variadic\\lesson.md#d9460374ba53": {
+    "verdict": "对",
+    "凭什么": "课文那段 show_int(1, a)：a 是 double 1.5，清单里写的是 va_arg(list, int)。清单不认字，翻译官喵对不定量投喂没有任何核对义务（-Wall 也不核对），真跑：编译一个字没说、退出码 0，印出 0 —— 与「一声没吭、印的是 0」「不报错、不警告」完全一致。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/03-vararg-type.c ← 同一编译命令：退出 0、零诊断 → 输出 `0`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\12-variadic\\lesson.md#ec7ed31c0984": {
+    "verdict": "对",
+    "凭什么": "「类型一定和喂进去的对上（说错不报错）」—— 真跑印证：说错类型时不报错（编译零诊断、程序照样跑、印 0）。隔壁那句「多叼一份毫无意义」也顺带验了：说 3 份只给 2 份，叼回来的是每次都不一样的废数（不是固定的错值），正是「谁也不知道从哪儿抓来的东西」。",
+    "证据字段": "",
+    "跑了什么": "03-vararg-type.c（说错类型）：编译零诊断、退出 0、印 `0`；<workspace>/_probe-tmp/c/04-vararg-count.c ← 连跑三次：`-669771275` / `-461127163` / `451002885`，每次都不同，均零诊断",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\11-macro-conditional\\lesson.md#c29d143cbecb": {
+    "verdict": "对",
+    "凭什么": "句子说宏少穿一层括号时「不会报错、不会警告，只会照抄出一句你没写过的式子，然后安安静静地算错」，并说两个例子分别印出 5 和 12。照课文原样把两个例子都跑了：DOUBLE_BAD(1+2) 抄成 1 + 2 * 2 = 5、HALF_BAD 的 100 / (4) / 2 = 12。-Wall 全程零诊断（正是不报错、不警告），印出的确实是「看着很像那么回事」的数。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/05b-macro-double.c（照抄课文 `#define DOUBLE_BAD(x) x * 2`）← 同一编译命令：退出 0、零诊断 → `不带括号：5` / `带括号：6`；<workspace>/_probe-tmp/c/05-macro-paren.c → 退出 0、零诊断 → `不带括号：12` / `带括号：50`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\11-macro-conditional\\lesson.md#0d68a2c80786": {
+    "verdict": "对",
+    "凭什么": "收尾口诀这句讲的是同一件事：「投喂和整体都要穿小括号，少一层就静悄悄算错」。真跑：少穿哪一层都不报错、不警告（零诊断），只是数错（5、12）。",
+    "证据字段": "",
+    "跑了什么": "同 05-macro-paren.c / 05b-macro-double.c：均编译退出 0、零诊断，印出 12 与 5",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\11-macro-conditional\\lesson.md#12dca6de6eb1": {
+    "verdict": "对",
+    "凭什么": "「宏出错时翻译官喵往往一声不吭」—— 真跑印证：少括号这类宏坑在 -Wall 下零诊断（一个字都不说）。句子用了「往往」留了余地（宏也能撞出别的错来），站得住。",
+    "证据字段": "",
+    "跑了什么": "同 05-macro-paren.c / 05b-macro-double.c：编译退出 0、零诊断，程序照跑",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\09-string-algorithms\\lesson.md#075b67d2f133": {
+    "verdict": "对",
+    "凭什么": "这是引了具体警告名（-Wstringop-overflow=）、具体现象、具体退出码的一句，逐项真跑：「只装得下 4 颗的碗去接 5 颗」（char dst[4]=\"abc\" 接 \"world\"）→ 编译只念一句 `warning: '__builtin_memcpy' writing 6 bytes into a region of size 4 overflows the destination [-Wstringop-overflow=]`，不报错、也不拦（退出 0）；跑起来当场就摔，stdout 和 stderr 一个字都没有，只有退出码 0xC0000005 知道它出了事。逐项对上。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/06-strcat-overflow.c ← 同一编译命令：编译退出 0 + 上述 -Wstringop-overflow= 警告；运行 stdout=空、stderr=空，退出码 3221225477（0xC0000005）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\09-string-algorithms\\lesson.md#60b3f5317c49": {
+    "verdict": "对",
+    "凭什么": "「这两个坑都不会给你一句『你写错了』：一个悄悄给你错结果，一个悄悄摔掉」—— 后半（strcat 越界）真跑：编译不拦、跑起来无输出直接摔 0xC0000005。前半（== 比两串）也另有探针印证：它只嘀咕一句警告，照样把程序生出来，答「不一样」。",
+    "证据字段": "",
+    "跑了什么": "06-strcat-overflow.c（退出码 3221225477、无输出）；对照 <workspace>/_probe-tmp/c/17-array-compare.c：warning: comparison between two arrays [-Warray-compare]、编译退出 0、输出 `两张牌子不一样喵`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\01-memory-model\\lesson.md#d4f9529d7f87": {
+    "verdict": "对",
+    "凭什么": "这句引了编译器原话又给了本机退出码，两样都真跑核对：警告原话一字不差 —— `warning: function returns address of local variable [-Wreturn-local-addr]`；「编译照样过」= 退出码 0；补上 main 直接解引用那块牌子后「跑起来才当场摔」= stdout/stderr 皆空、退出码正是 3221225477（0xC0000005）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/07-return-local.c ← 同一编译命令：编译退出 0 + 上述警告（+warning 下面的源码行）→ 运行 stdout=空、stderr=空，退出码 3221225477（0xC0000005）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage2\\11-recursion\\lesson.md#92983ce4c719": {
+    "verdict": "对",
+    "凭什么": "「它可能一声不响，也可能只出声不拦你」两头都真跑了：(a) 忘写刹车 —— 翻译官喵出声但只出声不拦：`warning: infinite recursion detected [-Winfinite-recursion]` 加一句 `note: recursive call`，编译照样交出成品（退出 0）；跑起来一路数下去撑爆，退出码 3221225725，正是课文说的那个记号。(b) 刹车写对、每一步往反方向挪（countdown(n+1)）—— 真跑编译一个字都不说（零诊断），跑起来同样 3221225725 收不了场。警告名、行为、退出码全对上。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/08-recursion-nobrake.c ← 编译退出 0 + 上述警告与 note；运行输出 3、2、1、0、-1……（333950 字节后断掉），退出码 3221225725（0xC00000FD）；<workspace>/_probe-tmp/c/09-recursion-wrongdir.c ← 编译零诊断、退出 0；运行输出 3、4、5……（288569 字节后断掉），退出码 3221225725",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage2\\09-multifile-and-headers\\lesson.md#205e5d1093d0": {
+    "verdict": "对",
+    "凭什么": "「名字撞了不报错，后一本会被悄悄扔掉」：真搭了两本不同的招牌、各带守卫、共用一个记号名 TOOL_H（甲写 20、乙写 35）—— 编译零诊断（不报错、也不吭声），乙整本被 #ifndef 挡掉，跑出来是 20。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/tool_a.h + <workspace>/_probe-tmp/c/tool_b.h + <workspace>/_probe-tmp/c/31-guard-collision.c ← 同一编译命令：退出 0、无诊断 → 运行输出 `工具版本：20`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage2\\06-struct-and-pointer\\lesson.md#5bbe96779a2c": {
+    "verdict": "对",
+    "凭什么": "这句引了编译器原话、又说「只是警告、编译照样过、跑起来直接断气」——三样都真跑核对：警告原话一字不差（`warning: 'p' is used uninitialized [-Wuninitialized]`，还带 note: 'p' was declared here）；编译照样过（退出 0）；跑起来 stdout/stderr 一个字都不印，直接断气，退出码是异常的那个（0xC0000005）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/12-struct-uninit-ptr.c ← 同一编译命令：编译退出 0 + 上述 -Wuninitialized 警告 → 运行 stdout=空、stderr=空，退出码 3221225477（0xC0000005）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage2\\03-pointer-and-string\\lesson.md#1f4e1d772dff": {
+    "verdict": "对",
+    "凭什么": "「翻译阶段一声不吭，编译的时候连嘀咕都没有」：char *s = \"cat\"; s[0] = 'C'; 真跑编译确实一句 warning 都没有（零诊断、退出 0），程序照样生得出来；「直到它当场断气」也真：一跑就 stdout、stderr 全空，进程没了。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/13-strlit-write.c ← 同一编译命令：退出 0、零诊断 → 运行 stdout=空、stderr=空，退出码 3221225477（0xC0000005）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage2\\01-pointer-arithmetic\\lesson.md#7a6f007882c1": {
+    "verdict": "对",
+    "凭什么": "少了那对括号会得到「碗里的数加一」而不是「下一只碗里的数」：真跑 *p + 1 得 11、*(p + 1) 得 20，翻译官喵一声不吭（-Wall 零诊断），程序照跑不误（退出码 0）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/14-ptr-arith.c ← 同一编译命令：退出 0、零诊断 → 运行 `11` / `20`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\13-functions-advanced\\lesson.md#ef141c2c279b": {
+    "verdict": "不是断言",
+    "凭什么": "这是「小任务」里的第 4 条，是请读者自己动手、自己看的指令（「把招牌改成 int add(int a); 跑一次，看看翻译官喵会不会拦下来」）——是问句，没有断言任何事，也没有「这段代码很安静」的主张可验。标记词「不会拦」是「会不**会拦**下来」的字面子串，机器按字面捞上来的。",
+    "证据字段": "",
+    "跑了什么": "没跑（不需要）：句子是任务指令而非行为断言",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\12-functions-basic\\lesson.md#865b3f7db75e": {
+    "verdict": "对",
+    "凭什么": "登记了 greet 却没在 main 里喊它：真跑编译零诊断（C 对没被用到的非 static 招式不吭声，不是错误、也没有警告），屏幕上只剩 main 那句「本喵把 greet 记在招式簿上了」，「你好喵～」一个字都没出现 —— 屏幕上就是安安静静。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/15-func-not-called.c ← 同一编译命令：退出 0、零诊断 → 运行输出仅 `本喵把 greet 记在招式簿上了`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\12-functions-basic\\lesson.md#4457b9923739": {
+    "verdict": "对",
+    "凭什么": "同 15-func-not-called.c：「不报错、不警告、屏幕上什么都没有」三条真跑全中（编译退出 0、零诊断；运行只有 main 那一行）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/15-func-not-called.c ← 编译退出 0、零诊断 → 运行仅一行输出",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\11-strings\\lesson.md#3a9354d58c0f": {
+    "verdict": "对",
+    "凭什么": "这句把「会念两句警告」和「警告原话里那个数」都写死了，逐项真跑：'AB' 在 -Wall 下正是两句 —— `warning: multi-character character constant [-Wmultichar]` 与 `warning: overflow in conversion from 'int' to 'char' changes value from '16706' to '66' [-Woverflow]`（正是「多字符常量 + 这个数装不进 char」，且 16706、66 两个数与原话分毫不差）；它照样放你过去（退出 0），屏幕上印出来的正是 B 和 66。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/16-multichar.c ← 同一编译命令：退出 0 + 上述两句警告 → 运行 `这一颗是：B` / `它的编号是：66`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\11-strings\\lesson.md#2cdb0a1f4309": {
+    "verdict": "对",
+    "凭什么": "引的警告名一字不差：`warning: comparison between two arrays [-Warray-compare]`；「可它还是把程序生出来了」「警告它不拦人」也真（编译退出 0，跑出来答「不一样」）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/17-array-compare.c ← 同一编译命令：退出 0 + 上述警告 → 运行 `两张牌子不一样喵`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\09-array\\lesson.md#53ddd2c73ac5": {
+    "verdict": "对",
+    "凭什么": "越界读 bowls[3] 那句「没有报错、没有警告，程序高高兴兴跑完了」真跑成立：-Wall 下零诊断（连 -O2 复核也不吭声），程序跑完、退出码 0，照印「跑完了，没人拦本喵喵」。C 不做这道检查是真的。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/18-array-oob.c ← 同一编译命令：退出 0、零诊断（另以 -O2 复核：同样零诊断）→ 运行 `跑完了，没人拦本喵喵`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\06-if-switch\\lesson.md#c8ed1518e317": {
+    "verdict": "对",
+    "凭什么": "95 分那段（>= 60 排在 >= 90 前面）：真跑编译一个错都不报（零诊断、退出 0），屏幕上只印「及格喵」——安安静静给了不对的结果。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/19-if-order.c ← 同一编译命令：退出 0、零诊断 → 运行仅 `及格喵`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\06-if-switch\\lesson.md#bec540c38f6f": {
+    "verdict": "对",
+    "凭什么": "这句说「那只是一句警告，不是错误 —— 它不会拦下这份程序」：真跑编译退出 0（不是错误、没拦），程序照样生出来、照样跑；上一句引的警告原话也对得上（`warning: suggest parentheses around assignment used as truth value [-Wparentheses]`）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/20-if-assign.c ← 同一编译命令：退出 0 + 上述 -Wparentheses 警告 → 运行 `本喵以为碗里有鱼干喵` / `fish 现在是 3 喵`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\06-if-switch\\lesson.md#f148c83d104c": {
+    "verdict": "对",
+    "凭什么": "漏了 break 那段：「翻译官喵一个字都不会警告你」真跑成立 —— -Wall 下零诊断（语法上确实一点问题都没有）；「它只是在安安静静地干错事」也真：屏幕上多印一条鱼，退出码 0。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/21-switch-fallthrough.c ← 同一编译命令：退出 0、零诊断 → 运行 `本喵要一条三文鱼喵` / `本喵要一条秋刀鱼喵`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\06-if-switch\\lesson.md#03331269021e": {
+    "verdict": "对",
+    "凭什么": "「C 不报错，if (fish = 3) 恒为真」：真跑不是错误（编译退出 0、程序照跑），3 不是 0 所以眼色答真、路走了进去。「不报错」这个字眼要按口径理解：-Wall 下会顺口嘀咕一句 suggest parentheses around assignment used as truth value（课文上一节自己就交代过这句），但那不是错误、也不拦你。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/20-if-assign.c ← 编译退出 0（+上述警告）→ 运行 `本喵以为碗里有鱼干喵` / `fish 现在是 3 喵`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\03-variables\\lesson.md#cf1bd34c5b7b": {
+    "verdict": "对",
+    "凭什么": "「递错了 C 当场不拦你（它翻得过去），可念出来的就是一堆没用的东西」：真跑把 %d 的位子递 double、把 %f 的位子递 int —— 确实没拦（编译退出 0、程序翻得过去），念出来的是 0 和 0.000000 这些没用的东西。补一句口径：-Wall 会为牌子对不上嘀咕 -Wformat= 警告（课文没说这里不嘀咕，下一课也专门讲这句 warning），但「不拦」是真的。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/22-format-mismatch.c ← 同一编译命令：退出 0 + 两句 `warning: format ... [-Wformat=]` → 运行 `整数位递了小数：0` / `小数位递了整数：0.000000`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\03-variables\\lesson.md#2fa6d05e1678": {
+    "verdict": "对",
+    "凭什么": "两头都真跑了：「刚才四段都大大方方地报错了」—— 把前四段照原样各编译一遍，四段全是 error（退出码 1），而且课文引的原话与真跑一字不差（-Wint-conversion、invalid suffix、undeclared 那几条）；「可 C 也有一声不吭的时候」也真：紧接着的 int n = 2.9; 那段 -Wall 下零诊断。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/33a-err-int-from-str.c、33b-err-name-2fish.c、33c-err-undeclared.c、33d-err-char-from-str.c ← 各编译一次：全部 error、退出 1（原话与课文引的一致）；对照 <workspace>/_probe-tmp/c/23-int-trunc.c：零诊断、退出 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\03-variables\\lesson.md#edc96e61375d": {
+    "verdict": "对",
+    "凭什么": "「明明该留小数却挂了 int 的牌子，C 不会提醒你，只会安安静静地给你个错数」：真跑 int n = 2.9; 翻译官喵一个字都没说（-Wall 零诊断），印出 2（不是四舍五入，是直接砍）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/23-int-trunc.c ← 同一编译命令：退出 0、零诊断 → 运行 `2`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\14-style-defense\\questions.json#bf731c35eb8c": {
+    "verdict": "对",
+    "凭什么": "解释里说「没验货的那段稿子，空的一排碗也照样『算完了』，还安安静静印出来一个不该看的数」——指的正是本题旁边那段 biggest(fish, 0)（课文里同款）。真跑：编译零诊断（安安静静），exit 0，印出 fish[0] 里的 7。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/01-biggest.c ← 同一编译命令：退出 0、零诊断 → `三碗：7` / `一碗都没有：7`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\03-linked-list\\questions.json#117afba5543c": {
+    "verdict": "对",
+    "凭什么": "「先把爪子设成 NULL，它就安安静静当尾巴」真跑：p->next = NULL 时编译零诊断、链子走一遍印 42、退出码 0（安安静静）。「要是忘了这一句……顺着链子走下去就会摔」也真跑：不设那句的版本把 malloc 来的垃圾当下一只环，当场摔 —— stdout 空、退出码 0xC0000005。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/30-list-uninit-next.c ← 编译零诊断 → 运行 `42`，退出码 0；<workspace>/_probe-tmp/c/30b-list-forgot-next.c（不写 p->next = NULL）← 编译同样零诊断 → 运行 stdout=空、退出码 3221225477（0xC0000005）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage3\\02-bitwise\\questions.json#fa14e675b65b": {
+    "verdict": "对",
+    "凭什么": "这句把编译器原话写死了，真跑一字不差：`warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]`；「只念不拦」也真（编译退出 0、程序放过去）；「跑出来还是个错的」也真 —— 3 和 4 都走 else 那一支（4 明明是偶数却被当成奇数）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/29-bitwise-prec.c ← 同一编译命令：退出 0 + 上述警告 → 运行 `x = 3 被当成奇数喵`；<workspace>/_probe-tmp/c/29b-bitwise-prec-demo.c → `x = 3 走的是「奇数」那一支` / `x = 4 走的是「奇数」那一支`（x = 4 走错）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage2\\09-multifile-and-headers\\questions.json#94434a944899": {
+    "verdict": "对",
+    "凭什么": "「本喵真跑过这一段：乙写着 35、甲写着 20，跑出来是 20，翻译官喵一声都没吭」—— 真搭甲（20）、乙（35）两本不同招牌、各带守卫、共用 TOOL_H：编译零诊断（一声都没吭），跑出来正是 20，乙改过的那个数确实用不上。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/tool_a.h（TOOL_VERSION 20）+ <workspace>/_probe-tmp/c/tool_b.h（TOOL_VERSION 35）+ <workspace>/_probe-tmp/c/31-guard-collision.c ← 同一编译命令：退出 0、无诊断 → 运行 `工具版本：20`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\15-calculator-project\\questions.json#93fc643b7c03": {
+    "verdict": "对",
+    "凭什么": "「两行都是 4」真跑：divide(9, 2) 与当场 9 / 2 都印 4，-Wall 下零诊断（不打招呼、也不报错），说明这一刀是 C 在算式上砍的。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/27-int-div.c ← 同一编译命令：退出 0、零诊断 → 运行 `4` / `4`，退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\12-functions-basic\\questions.json#8c4ae220bcba": {
+    "verdict": "对",
+    "凭什么": "「登记只管记下来，一步都不会动 —— 所以它不报错、不警告，屏幕上就是安安静静」：真跑登记了没人喊的招式，编译零诊断（不报错、不警告），屏幕上除了 main 那一行什么都没有。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/15-func-not-called.c ← 同一编译命令：退出 0、零诊断 → 运行仅 `本喵把 greet 记在招式簿上了`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\12-functions-basic\\questions.json#14cebbacb8a8": {
+    "verdict": "对",
+    "凭什么": "「顺序错了它也不吭声，只是老老实实按新的顺序印出来」：真跑把两样货喂反顺序，编译零诊断（不吭声、不报错），程序照样往下跑，只是印出来的东西换了位置（该 2 条变 0 条，结果串了味）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/26-arg-order.c ← 同一编译命令：退出 0、零诊断 → 运行 `每只猫分到 2 条，一共 5 只猫` / `每只猫分到 0 条，一共 12 只猫`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\06-if-switch\\questions.json#2639337911fa": {
+    "verdict": "对",
+    "凭什么": "「翻译官喵一个字都不会警告你，它安安静静地干错事」：真跑漏 break 那段，-Wall 下零诊断，顺顺当当滑进下一段，屏幕上多印一条鱼。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/21-switch-fallthrough.c ← 同一编译命令：退出 0、零诊断 → 运行 `本喵要一条三文鱼喵` / `本喵要一条秋刀鱼喵`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\05-operators\\questions.json#34531a9fab35": {
+    "verdict": "对",
+    "凭什么": "「写岔了 C 也不拦你 —— n = 5 本来是一句完全合法的句子……一句话都不说」：当作独立一句真跑，-Wall 下确实一个字都不说（零诊断），也不拦（退出 0）。补一句边界说明：把 n = 5 写进眼色里（if (n = 5)）时 -Wall 会嘀咕 suggest parentheses around assignment used as truth value —— 这一点第 6 课自己交代过，与本句说的「独立一句」不冲突。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/28-assign-stmt.c ← 同一编译命令：退出 0、零诊断 → 运行 `5`；对照 <workspace>/_probe-tmp/c/28b-assign-in-if.c（写进眼色里）：退出 0 + warning: suggest parentheses around assignment used as truth value [-Wparentheses]",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\04-printf-scanf\\questions.json#f585bd2cfede": {
+    "verdict": "对",
+    "凭什么": "这句把「只嘀咕一句 warning」「装的是 0 还能装作没事」「装的是别的数就当场断气」三样都写死了，逐样真跑：scanf 忘了 & 只有一句警告 `format '%d' expects argument of type 'int *', but argument 2 has type 'int' [-Wformat=]`（不是错误，退出 0）；屋里装 0 时程序正常跑完、退出码 0、印 0（装作没事）；改装 2 时 stdout/stderr 皆空、退出码 0xC0000005（当场断气）。分界线分毫不差。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/24-scanf-no-amp.c ← 编译退出 0 + 上述 -Wformat= 警告；喂 `42` → `n 现在装的是 0`，退出码 0；<workspace>/_probe-tmp/c/24b-scanf-no-amp-nonzero.c（n = 2）← 同款警告 → stdout=空、stderr=空，退出码 3221225477（0xC0000005）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\02-compile-run\\questions.json#53f2ba36798a": {
+    "verdict": "对",
+    "凭什么": "选项这句「它不报错，但会悄悄生出一份叫 a.exe 的成品」真跑：不写 -o 时翻译官喵一声不吭（零诊断、退出 0），目录里真生出一份 a.exe，而且跑得起来。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/25-no-o.c ← `gcc -finput-charset=UTF-8 -fexec-charset=UTF-8 -Wall 25-no-o.c`（不带 -o）：退出 0、无诊断；`ls -la a.exe` → 60682 字节；`./a.exe` → `万事大吉喵`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\c\\stage1\\02-compile-run\\questions.json#28dfe4534a2e": {
+    "verdict": "对",
+    "凭什么": "「本喵真跑过这一条：不写 -o 的话，翻译官喵一声不吭，生出一份名叫 a.exe 的东西就收工了。它不报错」—— 真跑逐项对上：零诊断（一声不吭）、退出码 0（不报错）、a.exe 真在那（所以敲完命令光标回来会以为万事大吉）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/c/25-no-o.sh + <workspace>/_probe-tmp/c/25-no-o.c ← 同一编译命令去掉 -o：compile exit 0、屏幕无诊断；a.exe 存在（60682 字节）且跑出 `万事大吉喵`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-c.json"
+  },
+  "content\\common\\12-error-reading\\lesson.md#5144f28f01da": {
+    "verdict": "对",
+    "凭什么": "拿 gcc 真跑了一段 C：程序跑起来「连红字都不给」，直接把一串乱七八糟的数叼回来 —— 未初始化变量印出 32758、越界读印出 528946106、溢出印出 -294967296，三次都是垃圾数，运行期一个红字都没有、退出码 0。这正是课文说的那种「不报错、可就是不对」。补一句边界：加 `-Wall` 时未初始化那一处会在**编译期**得到一句 warning，但越界读和溢出连 `-Wall -Wextra` 也一声不响、照样吐垃圾数 —— 所以「有些情况连红字都不给」这个「有些」是站得住的。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p27_c_garbage.c ← `gcc -o p27_c_garbage.exe p27_c_garbage.c`（零诊断）+ `timeout 20 ./p27_c_garbage.exe`：`未初始化变量的值: 32758` / `越界读一排[7]的值: 528946106` / `溢出的值: -294967296`，`RUN_EXIT=0`；另跑 `gcc -Wall -Wextra`：只有未初始化那处一条 warning，越界读/溢出仍无任何诊断，输出仍是垃圾数（这次是 -1854008390 和 -294967296）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\12-error-reading\\lesson.md#d6838961fbd3": {
+    "verdict": "对",
+    "凭什么": "这是个标题，断言的是「逻辑错误不会报错、结果是错的」。拿它自己下面那个例子真跑（`cat1 - cat2`，本想问「第二只比第一只多吃几条」）：印出 `-2`，**一个红字都没有**，程序完完整整跑完 —— 标题说的「一声不吭、可结果是错的」成立。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p26_logic_error.py ← `timeout 20 python -X utf8 p26_logic_error.py`；关键输出：`第二只比第一只多吃了几条： -2` / `（没报错，跑得完完整整）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\11-debugging\\lesson.md#636968e33a5c": {
+    "verdict": "对",
+    "凭什么": "表格里这一行说的是第三窝虫子（逻辑错）：程序跑得欢、答案却是错的、它不报错。真跑一个最小逻辑错：算出来的答案是错的（-2），程序不报错、正常收工，「得本喵自己看出来」符合实情。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p26_logic_error.py ← `timeout 20 python -X utf8 p26_logic_error.py`；关键输出：`第二只比第一只多吃了几条： -2` / `（没报错，跑得完完整整）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\08-io\\lesson.md#40c275dd5fdd": {
+    "verdict": "对",
+    "凭什么": "`input` 叼回来的是一串项链，忘了套 `int(...)` 真跑：`\"3\" + \"3\"` 印出 `33`，不报错 —— 「最难的地方在于忘了套程序不会报错」成立。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p19_concat_str.py ← `timeout 20 python -X utf8 p19_concat_str.py`；关键输出：`不套 int: 33` / `套了 int: 6` / `（两行都没报错）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\07-function\\lesson.md#27f003895754": {
+    "verdict": "对",
+    "凭什么": "「喊的时候忘了小括号（写成 `greet`）」真跑：什么都不会发生、屏幕上一个字都没有、不报错。程序里单独一行 `greet2`（不带括号）就是「提了一句这个名字」，既不打印也不报错 —— 课文说这是「最气猫的一种错」名副其实。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p15_def_no_call.py ← `timeout 20 python -X utf8 p15_def_no_call.py`；关键输出：`--- 下面这一段是「忘了小括号」 ---` 与 `--- 上面只写了个 greet2，什么都不会发生 ---` 两行紧挨着（中间零输出），`EXIT=0`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\07-function\\lesson.md#c3af3c2a71b5": {
+    "verdict": "对",
+    "凭什么": "两个坑都真跑：①「只教不喊」—— 只写 `def greet():` 和身体、不写 `greet()`，跑完屏幕上一个字都没有；②「喊的时候忘了小括号」—— 只写 `greet`，同样什么都没发生、不报错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p15_def_no_call.py ← `timeout 20 python -X utf8 p15_def_no_call.py`：两处标记行之间均零输出，`EXIT=0`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\07-function\\lesson.md#a40e821cef44": {
+    "verdict": "对",
+    "凭什么": "真跑「return 忘了写」：招式不报错、照样跑完（该印的那句照样印了），外面接到的确实是 `None` —— 「招式跑得通 ≠ 招式有用」验证无误。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p20_return_none.py ← `timeout 20 python -X utf8 p20_return_none.py`；关键输出：`橘猫 开饭啦喵` / `招式跑完，外面接到的东西是: None` / `（没报错）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\11-debugging\\questions.json#94e8abe4a764": {
+    "verdict": "对",
+    "凭什么": "这是正确选项（答案 0）的说法：不响的虫子不报错、只给一个错答案。真跑一个最小逻辑错：屏幕上一点红字都没有（stdout 只有 `-2`、stderr 空），答案确实错 —— 选项说法与实情一致，其余三个干扰项（不可能/电脑坏/翻译官喵翻错）都被这次真跑排除。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p26_logic_error.py ← `timeout 20 python -X utf8 p26_logic_error.py`；关键输出：`第二只比第一只多吃了几条： -2` / `（没报错，跑得完完整整）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\11-debugging\\questions.json#7dd098c5566e": {
+    "verdict": "对",
+    "凭什么": "解析里三窝虫子的说法与实跑一致，其中两处可核的细节都验了：①「最阴的一窝一声不吭：程序跑得欢，答案却是错的」→ 真跑逻辑错，不报错、结果错；②「\"3\" 接 \"3\" 变成 33，程序一点事都没有」→ 真跑 `\"3\" + \"3\"` 得 `33`，无异常。它引的「投喂与叼回」那一课（common-08）正是讲这件事，两处说法对得上。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p26_logic_error.py 与 <workspace>/_probe-tmp/py/p19_concat_str.py ← `timeout 20 python -X utf8 p26_logic_error.py`：`第二只比第一只多吃了几条： -2` / `（没报错，跑得完完整整）`，以及 `=== 接项链那件事：\"3\" 接 \"3\" 变成 33，程序一声没吭 ===` → `33` / `（没报错）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\08-io\\questions.json#3589e297eb00": {
+    "verdict": "对",
+    "凭什么": "解析里两处数字和一句静默断言全部真跑对上：`int(n) + int(n)` 出来是 `6`；不套 `+` 就一直在接项链、出来是 `33`；而且「忘了套不会报错、安安静静交给你一个错答案」成立（无异常、无红字）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p19_concat_str.py ← `timeout 20 python -X utf8 p19_concat_str.py`；关键输出：`不套 int: 33` / `套了 int: 6` / `（两行都没报错）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\07-function\\questions.json#3c5a165921d3": {
+    "verdict": "对",
+    "凭什么": "解析的断言「招式不会自己动，也不会报错说没人喊 —— 教完就安安静静待在那儿」真跑：只写 `def greet():` 和身体、不喊它，屏幕上一个字都没有、不报错、退出码 0。同题的四个干扰项（会印一行 / 会一直印 / 会报错说没人喊）都不成立。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p15_def_no_call.py ← `timeout 20 python -X utf8 p15_def_no_call.py`：`--- 下面这一段就是「只教不喊」 ---` 与 `--- 上面这一段跑完，中间应该什么都没印出来 ---` 紧挨着（零输出），`EXIT=0`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\common\\02-program-structure\\questions.json#d09fb6bb7a09": {
+    "verdict": "对",
+    "凭什么": "拿课文自己那份清单真跑：把第二行「走到猫粮碗旁边」和第三行「把小鱼干放进碗里」调个个儿，程序**照样跑完**（四行全印出来），不报错、退出码 0 —— 「电脑不会替你检查顺序合不合理，它只会照着做」成立，而且跑出来确实是一件傻事（人还没到碗边、鱼干先飞过去了）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p25_order_swap.py ← `timeout 20 python -X utf8 p25_order_swap.py`；关键输出：`拿起小鱼干` / `把小鱼干放进碗里` / `走到猫粮碗旁边` / `开饭啦喵！` / `（没报错，照样跑完了）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-common.json"
+  },
+  "content\\cpp\\stage3\\15-library-project\\lesson.md#e86330404c5f": {
+    "verdict": "对",
+    "凭什么": "真跑过：把 find 写成交回一只 Item（少写 *）、borrow 里跟着写成 Item it = find(id); it.out = true;，编译一声不吭（-Wall 无任何输出），程序跑完，list 印出来还是「在架」—— 借出去这件事确实只发生在复印件身上，账对不上。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p01_library_find_byvalue.cpp —— 编译口径 g++ -finput-charset=UTF-8 -fexec-charset=UTF-8 -Wall -o p01.exe p01_library_find_byvalue.cpp（屏幕上无一行输出）；./p01.exe → 办好了 / 1 鱼干小百科 在架；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\15-library-project\\lesson.md#2c2807089194": {
+    "verdict": "对",
+    "凭什么": "真跑过：save 少写最后那一栏、load 照旧 >> id >> kind >> name >> out → 读到第一行的 out 时那个 bool 拼不出 0/1，流当场卡住，shelf 已经被 clear，list 一个字都不印；load 照样返回 true、「读回来了」，-Wall 一声不吭。句子的每一项都对得上（包括「屏幕上只剩空空的架子，一个字都不印」）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p02_library_save_nolast.cpp —— 同口径编译，无警告；./p02.exe → 三行 list / 办好了 2 / 存好了 / 读回来了 / 借出去 0 件（load 之后那次 list 什么都没印）；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\14-design-patterns\\lesson.md#bffce5496ea9": {
+    "verdict": "对",
+    "凭什么": "真跑过：接货写成 FishBowl a = FishBowl::getInstance();（少写 &）→ 编得过（-Wall 无警告，隐式拷贝构造是公开的），印出来 a 的碗：5、b 的碗：3、是不是同一只：不是 —— 各自捧着各自的碗，一句提醒都没有。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p03_singleton_copy.cpp —— 同口径编译，无警告；./p03.exe → a 的碗：5 / b 的碗：3 / 是不是同一只：不是；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\14-design-patterns\\lesson.md#ed5c741e5585": {
+    "verdict": "对",
+    "凭什么": "真跑过：照课文那段把底图纸的 virtual 摘掉、岔路那边的 override 也摘掉 → 编得过、-Wall 一句抱怨都没有（屏幕上零输出），跑起来两声「……」，也就是全塘念的都是底图纸那一句。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p04_missing_virtual.cpp —— 同口径编译，无警告；./p04.exe → 两行都是 ……；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\14-design-patterns\\lesson.md#221fb9552bca": {
+    "verdict": "对",
+    "凭什么": "同上一条：漏挂 virtual（且不写 override）时 -Wall 完全沉默，程序照跑，输出是「看着好像对」的两行「……」，没有任何报错、提示。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p04_missing_virtual.cpp —— 同口径编译，无警告；./p04.exe → …… / ……；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\14-design-patterns\\lesson.md#90097b5d00c7": {
+    "verdict": "对",
+    "凭什么": "同 0/2 号探针：少写 & 照旧编得过、不提醒，只是两个名字各指各的碗（5 和 3 没加在一起）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p03_singleton_copy.cpp —— 同口径编译，无警告；./p03.exe → a 的碗：5 / b 的碗：3 / 是不是同一只：不是",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\13-variadic-template\\lesson.md#bb6a9c05204e": {
+    "verdict": "对",
+    "凭什么": "真跑过：这一节下面那段 addAll 写 int，混着小数的 addAll(1, 2.5) 编得过、-Wall 一声不吭，印出来是 3（半条鱼干没了）。「不声不响」属实。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p06_variadic_int.cpp —— 同口径编译，无警告；./p06.exe → 6 / 3；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\13-variadic-template\\lesson.md#21c9b984a0df": {
+    "verdict": "对",
+    "凭什么": "同上：int addAll(Args... args) 收 1 和 2.5，-Wall 不报错也不提醒（缩窄不警告，那要 -Wconversion），交回来按 int 裁掉小数，印 3。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p06_variadic_int.cpp —— 同口径编译，无警告；./p06.exe → 6 / 3；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\12-thread-basics\\lesson.md#e3dec069c2d0": {
+    "verdict": "对",
+    "凭什么": "真跑过（连跑三遍）：两只猫各算各的碗、都不印字，主猫 join 完才开口 —— 屏幕上永远只有「前半 6 / 后半 15 / 一共 21」这三行，位置一个字都不换。线程「一声不吭」属实。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p07_thread_own_bowl.cpp —— 同口径编译，无警告；./p07.exe 连跑三次都是 前半 6 / 后半 15 / 一共 21",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\04-map-set\\lesson.md#054f15ffa723": {
+    "verdict": "对",
+    "凭什么": "真跑过：tally[\"喵\"] = 1; 写两遍，-Wall 编得过、跑得完、一个字都没说，印出来是「喵 1 / 鱼 1」—— 只有数字出卖你。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p08_map_assign.cpp —— 同口径编译，无警告；./p08.exe → 喵 1 / 鱼 1；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\04-map-set\\lesson.md#df0d8d3c380a": {
+    "verdict": "对",
+    "凭什么": "同上一条探针：= 与 += 的差别只在印出来的数（喵 1 而不是 喵 2），编译一次都没吭声。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p08_map_assign.cpp —— 同口径编译，无警告；./p08.exe → 喵 1 / 鱼 1",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\02-string-deep\\lesson.md#c171d7193f91": {
+    "verdict": "对",
+    "凭什么": "真跑过：\"小鱼干项链\".substr(3, 0) → -Wall 无警告、无报错，屏幕上确实只有一个空行（接下来那行「程序跑完了」是我探针加的，正文那一句只描述了空行本身）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p09_substr_zero.cpp —— 同口径编译，无警告；./p09.exe → 输出一个空行；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\01-stl-iterator\\lesson.md#a7954a333423": {
+    "verdict": "对",
+    "凭什么": "真跑过：for (int x : v) x = x * 2; 之后 -Wall 一个字都没说（编译零输出），柜子里的货还是 1 2 3。课文说「本喵拿最啰嗦的那档念叨（-Wall）真跑过一次」—— 复现一致。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p10_range_for_copy.cpp —— 同口径编译，无警告；./p10.exe → 1 / 2 / 3；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\01-stl-iterator\\lesson.md#941511ed5f4d": {
+    "verdict": "对",
+    "凭什么": "同上：by-value 的 for 循环在 -Wall 下完全沉默，编得过、跑得完、结果不对。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p10_range_for_copy.cpp —— 同口径编译，无警告；./p10.exe → 1 / 2 / 3",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\15-bank-system\\lesson.md#5568cdba2f0b": {
+    "verdict": "对",
+    "凭什么": "真跑过：信用账户的判据照老图纸抄成 amount > balance，-Wall 编得过、无警告；跑起来那一笔被打回来（这一笔没办成：额度也不够喵 / C1 还剩 10 条），不是该有的 -70 —— 答案悄悄错，程序自己不会喊。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p11b_bank_wrong_cond_try.cpp —— 同口径编译，无警告；./p11b.exe → 这一笔没办成：额度也不够喵 / C1 还剩 10 条；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\14-pet-system\\lesson.md#8f36e269a702": {
+    "verdict": "对",
+    "凭什么": "真跑过：for (int i = 0; i < roster.size(); i++) 不但编得过（只是警告不是错误），而且警告原话正是那条 —— warning: comparison of integer expressions of different signedness: 'int' and 'std::vector<Cat>::size_type' {aka 'long long unsigned int'} [-Wsign-compare]。课文点名的警告名一字不差。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p12_sign_compare.cpp —— 同口径编译 → 输出上面那条 -Wsign-compare 警告（compile 成功）；./p12.exe → 三行名字；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\14-pet-system\\lesson.md#8fbe2c238aa6": {
+    "verdict": "对",
+    "凭什么": "真跑过（p13）：漏 public 时翻译官喵根本不安静，当场两条 error（'void Cat::greet()' is inaccessible within this context / 'Cat' is not an accessible base of 'Kitten'），也就是说「外面（还有 main）什么都够不着」这句属实。这里的「悄悄」说的是这一跤容易踩（差一个词就整张扣上盖子），不是「编译器不吭声」—— 课文那段代码块下面就是这两条报错，所以不判它自相矛盾。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p13_private_inherit.cpp —— 同口径编译 → 上面两条 error + note: declared here；compile_exit=1",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\13-class-template-vector\\lesson.md#2bb3cdd90886": {
+    "verdict": "对",
+    "凭什么": "真跑过：vector<int> a(3) 与 vector<int> b{3} 摆在一起 —— -Wall 一声不吭（零输出），跑完 a.size() 印 3、b.size() 印 1，和课文说的一模一样。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p14_vec_paren_brace.cpp —— 同口径编译，无警告；./p14.exe → 3 / 1；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\13-class-template-vector\\lesson.md#b80798e3343c": {
+    "verdict": "对",
+    "凭什么": "真跑过：空碗上 v.size() - 1，-Wall 无警告，屏幕上 0 然后 18446744073709551615，exit=0 —— 一个错都不报，光看「跑没跑起来」发现不了。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p15_size_minus_one.cpp —— 同口径编译，无警告；./p15.exe → 0 / 18446744073709551615；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\11-abstract-interface\\lesson.md#071a41c4a04f": {
+    "verdict": "对",
+    "凭什么": "真跑过：底图纸那一手写成 virtual void speak() const { ... }（给了一个动作），小猫漏写 —— -Wall 编得过、一声不吭，程序照样跑，叫出来的是老图纸那一版（小橘：老图纸那一版喵～），不是小猫自己的声音。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p16_no_pure_virtual.cpp —— 同口径编译，无警告；./p16.exe → 小橘：老图纸那一版喵～；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\11-abstract-interface\\lesson.md#64ef18db033c": {
+    "verdict": "对",
+    "凭什么": "真跑过（两个探针对照）：漏挂 virtual 时顺着牌子 delete，屏幕上只有「小橘：喵～」和「老图纸那半被拆了」—— 小猫那半确实一声不响地没被拆；而翻译官喵只在 delete 那一行嘀咕的那句，原话与课文引的一字不差：warning: deleting object of abstract class type 'Speaker' which has non-virtual destructor will cause undefined behavior [-Wdelete-non-virtual-dtor]。挂上 virtual 之后输出变成「小猫那半也被拆了」在「老图纸那半被拆了」前面，且连那句嘀咕都没有（编译零输出）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p17_abstract_dtor.cpp / p17b_abstract_dtor_virtual.cpp —— 同口径编译（p17 出上面那条 -Wdelete-non-virtual-dtor，p17b 无警告）；./p17.exe → 小橘：喵～ / 老图纸那半被拆了；./p17b.exe → 小橘：喵～ / 小猫那半也被拆了 / 老图纸那半被拆了",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\10-polymorphism-virtual\\lesson.md#27447f857ead": {
+    "verdict": "对",
+    "凭什么": "真跑过：照课文那段代码（Cat 上除收尾外没有别的挂招牌的招式）摘掉 virtual，-Wall 完全沉默（零警告），程序跑完、不崩，只少印「拆小猫那一半」这一行 —— 「只能靠数输出行数发现」在这段代码上属实。（补一句眼见为实：要是老图纸上已经有别的招式挂了 virtual，-Wall 会嘀咕 -Wdelete-non-virtual-dtor，见 53 号探针。）",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p18_poly_dtor.cpp —— 同口径编译，无警告；./p18.exe → 搭猫妈妈那一半 / 搭小猫那一半 / 拆猫妈妈那一半（少一行）；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\09-inheritance\\lesson.md#4bb560e28068": {
+    "verdict": "不是断言",
+    "凭什么": "这句是给后面几课垫的提醒（讲「构造/析构顺序不能靠猜」），没有指向任何一段可运行代码：C++ 里搭/拆的顺序是语言钉死的，写不出「顺序错了」的程序，因此没有可跑的判据。它真正指的坑（老图纸收尾动作没跑到、东西漏掉）在 10 课有可跑的版本，已被 21/53 号探针覆盖。",
+    "证据字段": "",
+    "跑了什么": "未跑（不是行为断言）。相邻可跑版本见 <workspace>/_probe-tmp/cpp/p17_abstract_dtor.cpp / p18b_poly_dtor_with_virtual.cpp",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\03-this-and-const\\lesson.md#c6960c863c8c": {
+    "verdict": "对",
+    "凭什么": "真跑过：rename 里写 name = name;（不写 this->）—— 课文说「本喵特意拿最啰嗦的那档念叨（-Wall）真跑了一遍：翻译官喵一个字都没说」。复现：-Wall 编译零输出，跑出来还是「小橘 有 3 条」，跑得成功、结果全错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p19_this_selfassign.cpp —— 同口径编译，无警告（-Wself-assign 没被 -Wall 带出来）；./p19.exe → 小橘 有 3 条；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\03-this-and-const\\lesson.md#34f1a8a5bcd0": {
+    "verdict": "对",
+    "凭什么": "真跑过：const Cat c1(\"小橘\"); c1.show(); 报错原话里确实有 this —— error: passing 'const Cat' as 'this' argument discards qualifiers [-fpermissive]（与课文引的一字不差）。既证了「报错里那个 this」，也证了「每喊一次招式都（隐式、不用你写）递进来一只 this」这件事。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p20_const_this_error.cpp —— 同口径编译 → 上面那条 error + note: in call to 'void Cat::show()'；compile_exit=1",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\11-pointers-intro\\lesson.md#41aaf0091c1f": {
+    "verdict": "对",
+    "凭什么": "真跑过：delete p; 之后再 *p = 1; —— -Wall 编译零输出（连一句警告都没有，课本说的是「不会拦你」，属实），语法上确实挑不出毛病。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p21_delete_then_use.cpp —— 同口径编译，无警告（compile_exit=0）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\10-references\\lesson.md#457ca45d4d9f": {
+    "verdict": "对",
+    "凭什么": "真跑过：void addOne(int n) { n = n + 1; } 递一只碗进去 —— -Wall 一声不吭（没带出 -Wunused-but-set-parameter），程序照跑，外面那只碗还是 3。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p22_pass_by_value.cpp —— 同口径编译，无警告；./p22.exe → 3（addOne 那一半）；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\10-references\\lesson.md#99a032de7c59": {
+    "verdict": "对",
+    "凭什么": "真跑过：swapTwo(int a, int b) 只换了两个复印件 —— 编得过、-Wall 不吭声，屏幕上老老实实印 3 和 8，只是那两个数没改过。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p22_pass_by_value.cpp —— 同口径编译，无警告；./p22.exe → 3 / 3 / 8（后两行是 swapTwo 的）；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\06-if-switch\\lesson.md#bec540c38f6f": {
+    "verdict": "对",
+    "凭什么": "真跑过：if (fish = 3) —— 翻译官喵确实只嘀咕（原话 warning: suggest parentheses around assignment used as truth value [-Wparentheses]，与课文上一段引的一字不差），是警告不是错误，程序照样生出来、照样跑（印「本喵以为碗里有鱼干喵」「fish 现在是 3 喵」）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p23_if_assign.cpp —— 同口径编译 → 上面那条 -Wparentheses 警告（compile 成功）；./p23.exe → 本喵以为碗里有鱼干喵 / fish 现在是 3 喵；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\06-if-switch\\lesson.md#f148c83d104c": {
+    "verdict": "对",
+    "凭什么": "真跑过：case 1 尾巴上漏 break —— -Wall 一个字都不会警告你（编译零输出），程序顺顺当当滑进 case 2，屏幕上多印一条「本喵要一条秋刀鱼喵」。（顺带记：加上 -Wextra 才会出 -Wimplicit-fallthrough；课文口径是 -Wall，所以这句话成立。）",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p24_switch_fallthrough.cpp —— 同口径 -Wall 编译，无警告；./p24.exe → 本喵要一条三文鱼喵 / 本喵要一条秋刀鱼喵；exit=0（-Wall -Wextra 才会出 -Wimplicit-fallthrough=）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\06-if-switch\\lesson.md#b552610276ff": {
+    "verdict": "对",
+    "凭什么": "真跑过：if (fish = 3) 里 3 不是 0，眼色答真，路就走进去了 —— 屏幕上印出「本喵以为碗里有鱼干喵」，fish 变成 3。C++ 不报错（只警告），只能从结果里发现不对。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p23_if_assign.cpp —— 同口径编译只出 -Wparentheses 警告；./p23.exe → 本喵以为碗里有鱼干喵 / fish 现在是 3 喵",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\05-operators\\lesson.md#43ac1ff03e8a": {
+    "verdict": "对",
+    "凭什么": "真跑过：5 / 2 得 2（不是 2.5）—— -Wall 无警告、无报错，整段跑完印 2 / 2.5 / 2.5 / 1。整数除法确实是个一声不吭的坑。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p25_int_div.cpp —— 同口径编译，无警告；./p25.exe → 2 / 2.5 / 2.5 / 1 / 3 / 3；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\05-operators\\lesson.md#379980a784f7": {
+    "verdict": "对",
+    "凭什么": "真跑过：把 == 写成一个 = 塞进眼色里（if (fish = 3)）—— 编得过（只有 -Wparentheses 警告、不是错误），答案全错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p23_if_assign.cpp —— 同口径编译只出警告；./p23.exe → 本喵以为碗里有鱼干喵 / fish 现在是 3 喵",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\05-operators\\lesson.md#2459b29d46b5": {
+    "verdict": "对",
+    "凭什么": "真跑过课文点的三个坑：5 / 2 印 2、double each = total / cats; 印 3、int i = 3.9; 印 3 —— 三个在 -Wall 下全都一声不吭（零警告零报错），只给一个不对的答案。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p25_int_div.cpp —— 同口径编译，无警告；./p25.exe → 2 / 2.5 / 2.5 / 1 / 3 / 3；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\04-io\\lesson.md#fb37ab6835cc": {
+    "verdict": "对",
+    "凭什么": "这是个标题，指的是下面那个 cin >> 混 getline 的坑。真跑过：投喂「7」和「大肥鱼」两行，不垫 cin.ignore() 时印「小鱼干 7 条 / 名字是 （空空的）」—— -Wall 无警告无报错，屏幕上照样出字（数量还是对的），确实是个不吭声的坑。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p26_cin_ignore.cpp（无 -DUSE_IGNORE）—— 同口径编译，无警告；./p26_noguard.exe < in_7_dafeiyu.txt → 小鱼干 7 条 / 名字是 （空空的）；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\04-io\\lesson.md#46f806e87ed4": {
+    "verdict": "对",
+    "凭什么": "同 34 号探针：那段代码编得过、跑得完、-Wall 一声不吭，只有那个名字是空的。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p26_cin_ignore.cpp —— 同口径编译，无警告；./p26_noguard.exe < in_7_dafeiyu.txt → 名字是 （空空的）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\04-io\\lesson.md#af5b9533f9eb": {
+    "verdict": "对",
+    "凭什么": "同上：这个坑最坏的地方确实是不报错 —— 屏幕照样出字、数量还对，不留意那个空名字就会一路带着错跑下去。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p26_cin_ignore.cpp —— 同口径编译，无警告；./p26_noguard.exe < in_7_dafeiyu.txt → 小鱼干 7 条 / 名字是 （空空的）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\04-io\\lesson.md#a8624547bd06": {
+    "verdict": "不是断言",
+    "凭什么": "这是给学生的小任务（「把两段都敲一遍……想想：为什么它不报错？」），自己不承担任何行为断言；里面引的「不吭声的坑」是上面那个标题。任务的真实性我还是跑了：两段一跑就能看出名字的差别（（空空的）对 大肥鱼）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p26_cin_ignore.cpp —— ./p26_noguard.exe → 名字是 （空空的）；./p26_guard.exe（-DUSE_IGNORE）→ 名字是 大肥鱼",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\15-library-project\\questions.json#9a871f0f470c": {
+    "verdict": "对",
+    "凭什么": "同 0 号探针：find 交回一只 Item 的那一版，-Wall 编得过、无警告，屏幕上一声不吭，账就是错的（架子上那件还印「在架」）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p01_library_find_byvalue.cpp —— 同口径编译，无警告；./p01.exe → 办好了 / 1 鱼干小百科 在架",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\15-library-project\\questions.json#4ea8e0584b5b": {
+    "verdict": "对",
+    "凭什么": "真跑过：load 一律按书接生 —— -Wall 编得过、一声不吭，跑起来本来该印「杂志，可借 3 天」的那一件印成「2 猫粮月报（书，可借 14 天） 在架」，天数被悄悄改掉。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p36_library_kind_wrong.cpp —— 同口径编译，无警告；./p36.exe → 2 猫粮月报（书，可借 14 天） 在架；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\15-library-project\\questions.json#452cb865079f": {
+    "verdict": "对",
+    "凭什么": "真跑过：borrow 里把 it->out 那个检查漏掉 —— -Wall 编得过、无警告，三行印成「办好了 / 办好了 / 办不了」，同一件东西被借出去两次，程序一声不吭。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p37_library_borrow_nocheck.cpp —— 同口径编译，无警告；./p37.exe → 办好了 / 办好了 / 办不了；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\14-design-patterns\\questions.json#a9a27e88d51e": {
+    "verdict": "对",
+    "凭什么": "同 2 号探针：FishBowl a = ...（少了 &）编得过、-Wall 不提醒，5 和 3 没加在一起，两个名字各是各的碗。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p03_singleton_copy.cpp —— 同口径编译，无警告；./p03.exe → a 的碗：5 / b 的碗：3 / 是不是同一只：不是",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\14-design-patterns\\questions.json#6db04e584cce": {
+    "verdict": "对",
+    "凭什么": "同 3 号探针：牌子忘了挂、岔路也别写 override —— 编得过、-Wall 一句抱怨都没有，喊话时全塘念的还是底图纸那句「……」，新岔路确实不吭声。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p04_missing_virtual.cpp —— 同口径编译，无警告；./p04.exe → …… / ……",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\14-design-patterns\\questions.json#116ad3cb7d9e": {
+    "verdict": "对",
+    "凭什么": "真跑过：makeCat(\"别的\") 走兜底那条 → 不报错、不提醒，印出来「毛线球喵！」，也就是安安静静给了一只毛线球猫。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p05_factory_fallback.cpp —— 同口径编译，无警告；./p05.exe → 小鱼干喵！/ 毛线球喵！/ 毛线球喵！；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage3\\11-file-stream\\questions.json#8748e924101d": {
+    "verdict": "对",
+    "凭什么": "真跑过（沙箱内外各跑一遍，结果一样）：本子不在时 ifstream in(\"meiyou_...txt\") 的 is_open()=0，而 fail()=0、good()=1、!in=0 —— 这台机器上单写 if (!in) 确实抓不到「本子不在」，所以「这一课统一用 is_open() 问」是站得住的。（顺带发现一处课文自身的矛盾：lesson.md 第 159 行写的是「!in 给 1（不好使）—— 两个都抓得到」，跟这里和本机实测都对不上；那句不在这次的 62 条里，我没动它。）",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p31_file_missing.cpp、p31b_stream_state.cpp —— 同口径编译，无警告；./p31b.exe → is_open()=0 / fail()=0 / good()=1 / (bool)in=1 / !in=0；./p31.exe → 【!in 这一路】没吭声、【is_open() 这一路】本子没找着喵",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\15-bank-system\\questions.json#2fb278033f45": {
+    "verdict": "对",
+    "凭什么": "同 14 号探针：判据只写 balance 的信用账户 —— 编得过、跑得完、-Wall 一声不吭，答案从 -70 变成被打回来（这一笔没办成 / 还剩 10 条），悄悄地错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p11b_bank_wrong_cond_try.cpp —— 同口径编译，无警告；./p11b.exe → 这一笔没办成：额度也不够喵 / C1 还剩 10 条",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\14-pet-system\\questions.json#272a2e0389d7": {
+    "verdict": "对",
+    "凭什么": "真跑过：class Kitten : Cat（漏 public）—— 翻译官喵原话与课文引的一字不差：error: 'void Cat::greet()' is inaccessible within this context，紧跟 error: 'Cat' is not an accessible base of 'Kitten'。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p13_private_inherit.cpp —— 同口径编译 → 上面两条 error（+ note: declared here）；compile_exit=1",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\13-class-template-vector\\questions.json#9bd92f064ec9": {
+    "verdict": "对",
+    "凭什么": "同 17 号探针：a.size() 印 3、b.size() 印 1 —— 两种都编得过、跑得完，-Wall 一声不吭。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p14_vec_paren_brace.cpp —— 同口径编译，无警告；./p14.exe → 3 / 1",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\13-class-template-vector\\questions.json#5bf67cad5aa7": {
+    "verdict": "对",
+    "凭什么": "同 18 号探针：空碗减一，-Wall 无警告、程序跑完（exit=0），光看「跑没跑起来」确实发现不了。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p15_size_minus_one.cpp —— 同口径编译，无警告；./p15.exe → 0 / 18446744073709551615；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\12-template-basics\\questions.json#ab91e88f2524": {
+    "verdict": "对",
+    "凭什么": "真跑过：把 swap2 的料写成 T a, T b（漏 &）—— -Wall 编得过、一个错都不报，屏幕上印「3 5」；补上 & 之后才是「5 3」。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p27_template_swap_byval.cpp —— 同口径编译，无警告；./p27.exe → 3 5 / 5 3；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\12-template-basics\\questions.json#0833022a0845": {
+    "verdict": "对",
+    "凭什么": "真跑过：bigger<int>(1.5, 2.5) —— 本喵一点名，两个小数被硬塞成 1 和 2，印 2；-Wall 全程零输出（缩窄不警告，那要 -Wconversion），确实一个错都不报、一个警告都没有。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p28_template_explicit_int.cpp —— 同口径编译，无警告；./p28.exe → 2；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\11-abstract-interface\\questions.json#181500b4da66": {
+    "verdict": "对",
+    "凭什么": "真跑过两半：一是漏写招牌的活，翻译官喵的原话正是 error: cannot declare variable 'c' to be of abstract type 'Cat'，后面的 note 就把漏掉的那一手名字原样念出来（'virtual void Animal::speak() const'）；二是老图纸忘了写 = 0 的场面 —— -Wall 编得过、谁也不会提醒，程序照样跑，叫出来的是老图纸那一版。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p38_abstract_error.cpp（编译报上面两条，compile_exit=1）、p16_no_pure_virtual.cpp（同口径编译无警告；./p16.exe → 小橘：老图纸那一版喵～）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\10-polymorphism-virtual\\questions.json#47006da7b409": {
+    "verdict": "对",
+    "凭什么": "真跑过题干那个场面（老图纸已经有别的招式挂了 virtual、收尾忘了挂，顺着牌子 delete）：编得过（只是警告不是错误）、不崩，输出确实比该有的少一行。补一句实话：这种场面 -Wall 会嘀咕 warning: deleting object of polymorphic class type 'Cat' which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]，所以「不报错」成立、「悄悄」有点折扣（课文那段代码本身没有别的虚招式，实测一点警告都没有）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p18b_poly_dtor_with_virtual.cpp —— 同口径编译 → 上面那条 -Wdelete-non-virtual-dtor；./p18b.exe → 搭猫妈妈那一半 / 搭小猫那一半 / 小橘：本喵是小猫喵！/ 拆猫妈妈那一半（少一行，exit=0）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage2\\04-encapsulation\\questions.json#67e90caca294": {
+    "verdict": "对",
+    "凭什么": "真跑过：setFish(int f) 里只写 fish = f;，投喂 -2 —— -Wall 编译零输出，格子里原样装进 -2（印 -2），没有报错、没有警告，只是结果悄悄不对。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p32_encapsulation_negative.cpp —— 同口径编译，无警告；./p32.exe → -2；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\15-ledger\\questions.json#46d70f85b317": {
+    "verdict": "对",
+    "凭什么": "真跑过：addRecord 的料写成 int count（漏 &）—— -Wall 编得过、一声不吭，跑得也欢，可 count 传不出来，三笔全盖在 0 号格，最后印「一共记了 0 笔喵」。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p33_ledger_byvalue.cpp —— 同口径编译，无警告；./p33.exe → 一共记了 0 笔喵；exit=0",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\11-pointers-intro\\questions.json#405b56625ff3": {
+    "verdict": "对",
+    "凭什么": "真跑过两半：读的那一半 —— 翻译官喵只念一句 warning: 'p' is used uninitialized [-Wuninitialized]（与课文引的一字不差），不报错、也没拦，屏幕上确实印出一个 0；写的那一半（*p = 1;）—— 同样只念这一句警告，程序当场被系统掐掉，屏幕上连一行字都没印出来（本机 bash 报 exit=139）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p29_uninit_ptr.cpp —— 同口径编译 → warning: 'p' is used uninitialized [-Wuninitialized]；./p29_read.exe → 0（exit=0）；./p29_write.exe（-DDO_WRITE）→ 无输出，Segmentation fault，exit=139",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\06-if-switch\\questions.json#2639337911fa": {
+    "verdict": "对",
+    "凭什么": "同 29 号探针：case 尾巴漏 break —— -Wall 一个字都不会警告你，程序安安静静地多印一条。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p24_switch_fallthrough.cpp —— 同口径 -Wall 编译无警告；./p24.exe → 本喵要一条三文鱼喵 / 本喵要一条秋刀鱼喵",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\05-operators\\questions.json#eafd93903de8": {
+    "verdict": "对",
+    "凭什么": "同 32 号探针：= 当 == 用 —— 编得过（只有警告、不是错误），程序照样跑，答案全错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p23_if_assign.cpp —— 同口径编译只出 -Wparentheses 警告；./p23.exe → 本喵以为碗里有鱼干喵 / fish 现在是 3 喵",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\04-io\\questions.json#75f4a2dbf721": {
+    "verdict": "对",
+    "凭什么": "同 34/35/36 号探针：cin >> 读完 7、getline 叼到空行 —— -Wall 无警告无报错，屏幕上照样出字。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p26_cin_ignore.cpp —— 同口径编译，无警告；./p26_noguard.exe < in_7_dafeiyu.txt → 小鱼干 7 条 / 名字是 （空空的）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\cpp\\stage1\\02-compile-run\\questions.json#b69e261d4478": {
+    "verdict": "对",
+    "凭什么": "真跑过：在只有 main.cpp 的目录里敲 g++ main.cpp（不带 -o）—— 不报错（compile_exit=0），目录里多出一份 a.exe，跑起来正常印「翻完啦喵」。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/cpp/p34_no_o_flag/ —— g++ -finput-charset=UTF-8 -fexec-charset=UTF-8 -Wall main.cpp（无 -o）→ 无输出、exit=0，生成 a.exe；./a.exe → 翻完啦喵",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-cpp.json"
+  },
+  "content\\java\\stage3\\11-thread-pool\\lesson.md#6b78511a86f2": {
+    "verdict": "对",
+    "凭什么": "句子断言两件事：①`一排碗[5]`（int[3]）编译期翻译官不拦（它不知道运行时碗架只有 3 只）；②运行时那只猫踩坑，坑由 `凭条.get()` 摔回给本喵。两句都真跑对上了：javac 退出码 0（真不拦），跑起来第一行红字和课文引的一字不差。顺带说明：探针的 java 进程最后被 timeout 杀掉（退出码 124），因为异常从 `凭条.get()` 抛出后 `池子.shutdown()` 那一句没机会执行，池里的非守护线程让 JVM 一直不退出——这是代码块下方那段输出没写全的地方，但本句本身没断言运行完就退出，所以不算本句说错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/threadpool_array/Main.java（课文那段原文）＋ `javac -J-Duser.language=en -J-Duser.country=US -encoding UTF-8 Main.java` → exit=0、零输出；`timeout 20 java -Duser.language=en -Duser.country=US -Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 Main` → `Exception in thread \"main\" java.util.concurrent.ExecutionException: java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 3`（后被 timeout 杀，exit=124）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage3\\06-date-time-api\\lesson.md#7e7d95eb0a02": {
+    "verdict": "对",
+    "凭什么": "断言：`yyyy-MM-DD`（大写 DD）不报错，但印出来的日子是错的，给的是「一年里的第几天」。真跑：编译 0 错，LocalDate.of(2026,9,16) 用 ofPattern(\"yyyy-MM-DD\") 印出来正是 `2026-09-259`（1 到 8 月 243 天 + 16 = 259），和课文举的例子一字不差。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/datetime_DD/Main.java ＋ 项目口径 javac/java → javac exit=0；输出 `2026-09-259`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage3\\04-stream-pipeline\\lesson.md#d94a2b279920": {
+    "verdict": "对",
+    "凭什么": "断言两半：①`.collect(...)` 的返回值没人接 → 没有红字、一声不吭；②跟上一课（lambda 捕获后改 count）不一样，那一种翻译官会拦。两半都真跑了：本课这种 javac exit=0、跑出来只印一行「撑过筛子的：」；上一课那种 javac 直接 `error: local variables referenced from a lambda expression must be final or effectively final`，确实是「会拦」。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/stream_collect/Main.java（课文那段原文）→ javac exit=0，输出仅 `撑过筛子的：`；对照 <workspace>/_probe-tmp/java/lambda_capture/Main.java → javac exit=1，`error: local variables referenced from a lambda expression must be final or effectively final`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage2\\10-generics-intro\\lesson.md#629994f810b0": {
+    "verdict": "对",
+    "凭什么": "断言：这个错写的时候看不出来、编译也不拦，非得跑到那一行才翻车。真跑：javac 退出码 0（不拦，一个字红都没有），跑到 `int n = (Integer) box.get(0);` 才炸，炸出来的原话跟课文引的一字不差。附注：默认 javac 会在编译时印一条笼统的 `Note: ... uses unchecked or unsafe operations.`——它不是报错（不影响编译、也点不出这里会炸），和「编译也不拦」不矛盾。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/rawtypes_cast/Main.java（课文那段原文）→ javac exit=0（stderr 两条 Note：unchecked or unsafe operations）；java 输出 `Exception in thread \"main\" java.lang.ClassCastException: class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage2\\07-string-builder\\lesson.md#3c9ad5644578": {
+    "verdict": "对",
+    "凭什么": "断言：用 `==` 比项链不报错、安安静静给一个 false。真跑：纸条上读进来的两串一样的字，`==` 给 false、`.equals` 给 true，编译 0 错、无任何提示。至于句子里「只会给你一个 false」这个普遍说法，课文紧接着的那段（「上面那条 a == b 恰好是 true，只在同一段稿子上写出来的两段一样的字这个特殊情况下成立」）已经把特例自己挑明了，所以不算说错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/eq_strings_scanner/Main.java → javac exit=0；输出 `纸条上读进来的: false` / `equals: true`。另跑课文自己那段 <workspace>/_probe-tmp/java/eq_strings/Main.java → `true` / `false` / `true`（与课文一致）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage2\\07-string-builder\\lesson.md#a3dae074bd35": {
+    "verdict": "对",
+    "凭什么": "同一件事的小抄版：`==` 不报错、只给假答案。真跑：`==` 比两串字不报错（javac exit=0），结果给的是 false（`.equals` 才是 true），一个错都不报。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/eq_strings_scanner/Main.java → javac exit=0，`==` 得 false、equals 得 true；另 <workspace>/_probe-tmp/java/eq_strings/Main.java 复现课文的 true/false/true",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage2\\04-interface\\lesson.md#afd949954396": {
+    "verdict": "不是断言",
+    "凭什么": "「悄悄」在这里修饰的是学员的动作（补稿子时把 public 漏了，改得不显眼），不是在断言某段代码很安静——恰恰相反，这一段上面就是编译报错，句子后半句也明说「翻译官喵不许你把一件本来谁都能喊的事改小」。按最宽的口径当成行为断言读，它也是对的：真跑 javac 报的错和课文代码块引的原话一字不差。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/interface_public/Main.java（课文那段原文）→ javac exit=1：`Main.java:6: error: speak() in Robot cannot implement speak() in Speaker` / `attempting to assign weaker access privileges; was public`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\15-calculator\\lesson.md#d2e8db3ec2f3": {
+    "verdict": "对",
+    "凭什么": "断言：「break 写到 if 外面」和「眼色写成 choice != 0」这两种都一个错都不报，只是安安静静地少干了活。两种都真跑了，javac 都 0 错、跑起来都不报错，只是一轮就收工。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/calc_break_outside/Main.java → javac exit=0，输出 `1 加法 0 收工` + `【圈子收工了，菜单再也不问第二句】`（菜单只问了一句）；<workspace>/_probe-tmp/java/calc_cond_reversed/Main.java → javac exit=0，输出 `1 加法 0 收工` / `收工啦喵～`（第一位客人一报选项就收工）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\13-constructor-this\\lesson.md#b1ba29e28f99": {
+    "verdict": "对",
+    "凭什么": "断言：`this` 写漏了不报错、只出错结果。第四节的例子就是它，真跑过：javac exit=0（连 -Xlint:all 都零提示 →「不提醒」也成立），印出来是 `null` 而不是喂进去的名字。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/nothis/Main.java（课文第四节那段原文）→ javac exit=0（-Xlint:all 同样零输出）；java 输出 `null`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\13-constructor-this\\lesson.md#fc3e7294413e": {
+    "verdict": "对",
+    "凭什么": "断言：喂了「小橘」却印出 null，翻译官一声都没吭（不报错、不拦下，只给错结果）。真跑：javac exit=0、无任何提示，`c.name` 印出来是 `null`。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/nothis/Main.java → javac exit=0（-Xlint:all 零输出）；输出恰为 `null`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\13-constructor-this\\lesson.md#23e03e206b7a": {
+    "verdict": "对",
+    "凭什么": "断言：图纸上的家当（字段）和招式里的料（参数）不是同一层，所以同名不报错、只悄悄地挡住。真跑：参数 `name` 遮住字段 `name` 完全合法，javac exit=0，-Xlint:all 也一个字都不说（没有「遮挡」这类提醒）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/nothis/Main.java → javac exit=0（含 -Xlint:all）；java 输出 `null`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\13-constructor-this\\lesson.md#72b09daff7c4": {
+    "verdict": "对",
+    "凭什么": "对照表这一格：`name = name;`（忘了 this.）→ 家当还是 null（不报错）。真跑：编译 0 错、无提示，印出来就是 `null`。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/nothis/Main.java → javac exit=0；输出 `null`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\13-constructor-this\\lesson.md#9707839d81f4": {
+    "verdict": "对",
+    "凭什么": "断言：料和家当同名忘了写 this. 不报错、只给一个错结果。真跑：编译 0 错、无提示、印 null。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/nothis/Main.java → javac exit=0（-Xlint:all 零输出）；输出 `null`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\13-constructor-this\\lesson.md#54f888dd756d": {
+    "verdict": "对",
+    "凭什么": "断言：`name = name;` 翻译官不吭声，只能自己看出「印出来是 null、不是喂进去的名字」。真跑：编译 0 错、无提示，印出来正是 `null`——两句都对上。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/nothis/Main.java → javac exit=0（-Xlint:all 零输出）；输出 `null`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\11-string\\lesson.md#3c73baee7642": {
+    "verdict": "对",
+    "凭什么": "断言：`s.toUpperCase();` 喊完不接住不报错、不提醒，屏幕上什么都看不出来。真跑：javac exit=0（-Xlint:all 也零提示），接着印 `s` 还是 `小橘`，没有红字也没有任何提醒。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/str_touppercase/Main.java → javac exit=0（含 -Xlint:all）；java 输出 `小橘`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\06-if-switch\\lesson.md#fabd7e44b4b5": {
+    "verdict": "对",
+    "凭什么": "断言：这段代码（95 分撞 `else if (score >= 90)`）一个错都不报，只是安安静静给出不对的结果。真跑：javac exit=0，屏幕上只有「及格喵」，没有任何报错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/elseif/Main.java（课文那段原文）→ javac exit=0；输出 `及格喵`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\06-if-switch\\lesson.md#1a5c437c28a8": {
+    "verdict": "对",
+    "凭什么": "断言：switch 漏掉一个 break，屏幕就会多印几句，而程序一声不吭。真跑：课文那段 `bowl = 2` 的代码 javac exit=0，印出 `还剩两条喵` / `还剩三条喵` 两句，无任何报错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/switch_bowl/Main.java（课文那段原文）→ javac exit=0；输出 `还剩两条喵` / `还剩三条喵`（与课文代码块下方一致）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\04-scanner-println\\lesson.md#a6a3eb617c0e": {
+    "verdict": "对",
+    "凭什么": "断言：忘了在 nextInt 后面吃掉那口换行，程序不会报错，只会安安静静读到一个空行。真跑：javac exit=0，`name` 读到的是空串（印成 `名字是[]`），没有报错、结果看着很正常；补上 `sc.nextLine();` 之后印 `名字是[小橘]`。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/scanner_nextline/Main.java → javac exit=0；输出 `数字是 3` / `名字是[]`。对照 <workspace>/_probe-tmp/java/scanner_fixed/Main.java → `名字是[小橘]`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\02-javac-and-java\\lesson.md#105f26126f87": {
+    "verdict": "不是断言",
+    "凭什么": "「按钮是糖，命令是饭」这一句讲的是工具链（软件里的运行按钮 vs 命令行两条命令），它没有指向任何一段可运行代码，「命令照样跑得起来」也不是「某段程序不报错」的意思。本机 javac / java 都在 PATH 上——这次 33 条复核里所有探针就是拿这两条命令真跑的（顺带把这些命令本身验过了）。",
+    "证据字段": "",
+    "跑了什么": "本次全部 27 个探针都用 `javac -J-Duser.language=en -J-Duser.country=US -encoding UTF-8 Main.java` ＋ `java -Duser.language=en -Duser.country=US -Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 Main` 跑的，命令本身工作正常",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage3\\07-io-buffered-serialization\\questions.json#109308220844": {
+    "verdict": "对",
+    "凭什么": "断言：写了不 close（也不 flush），文件里一个字都没有，而且「一个字都不红」——不报错、不提醒。真跑：程序 javac/java 都 exit=0、屏幕上一个字红都没有，落盘的文件确实存在但是 **0 字节**；只有去念文件才发现是空的。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/io_flush/Main.java（写两行、不 close 不 flush，为免 cd 把落盘路径写成绝对路径）→ javac exit=0、java exit=0，输出 `程序跑完了，既没喊 close() 也没喊 flush()`；`ls -l` 显示 账本.txt 0 字节（`wc -c` = 0）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage3\\06-date-time-api\\questions.json#5295c3d73f9e": {
+    "verdict": "对",
+    "凭什么": "断言：between 先后写反印出负数（本该 10 天印成 -10），一个字都不红、不会提醒顺序反了。真跑：正着写 10、反着写 -10，javac exit=0，运行无红字。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/datetime_between_reversed/Main.java → javac exit=0；输出 `顺着写：10` / `反着写：-10`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage2\\15-student-project\\questions.json#991e840ba794": {
+    "verdict": "对",
+    "凭什么": "断言：换牌子是跑起来才查的（稿子那一关挑不出毛病），第一只不是学员时牌子一套上去就当场断气，原话是 `Exception in thread \"main\" java.lang.ClassCastException: class Person cannot be cast to class Student`。真跑逐条对上：javac exit=0（编译那关真的挑不出毛病），运行时抛出的话和课文引的前半段一字不差（后面那个括号是 JDK 自己追加的模块信息，课文用「——」截断了）。另外两项的判词也对：没有任何补救、是直接翻车；程序不会「悄悄跳过」一只。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/cast_student/Main.java（Person 与 Student 同文件，与随堂题结构一致）→ javac exit=0；java 输出 `Exception in thread \"main\" java.lang.ClassCastException: class Person cannot be cast to class Student (Person and Student are in unnamed module of loader 'app')`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage2\\07-string-builder\\questions.json#2c9def4362b7": {
+    "verdict": "对",
+    "凭什么": "断言：`s.concat(\"喵\")` 没接住，这句完全合法、不会报错，坑正是太安静。真跑：javac exit=0、无任何提示，印出来还是 `小鱼干`（一个字都没变）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/str_concat/Main.java → javac exit=0；java 输出 `小鱼干`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage2\\02-inheritance-super\\questions.json#4cf3bde36e54": {
+    "verdict": "对",
+    "凭什么": "断言两半：①写了 @Override 而名字手滑写错（speek），翻译官会当场告诉你「根本没有这一手可盖」；②不写 @Override 就当你在画一招全新的，那个错悄悄溜过去。两半都真跑了：带 @Override 的那种 javac 报 `error: method does not override or implement a method from a supertype`；不带的 javac exit=0（-Xlint:all 也零提示），程序照跑，印出 `喵～` 和 `……`。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/override_typo/Main.java → javac exit=1：`error: method does not override or implement a method from a supertype`；<workspace>/_probe-tmp/java/override_notag/Main.java（去掉 @Override）→ javac exit=0，输出 `喵～` / `……`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\13-constructor-this\\questions.json#d34d8392d859": {
+    "verdict": "对",
+    "凭什么": "断言：`name = name;` 这一句翻译官一声都不吭（不报错、不拦下、只给错结果），家当还是默认的 null。真跑：javac exit=0（-Xlint:all 零输出），印出来是 `null`。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/nothis/Main.java → javac exit=0（含 -Xlint:all）；java 输出 `null`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\11-string\\questions.json#4dccbc0fbb58": {
+    "verdict": "对",
+    "凭什么": "断言：`s.toUpperCase();` 不接住，它不报错、不提醒、什么都看不出来，屏幕上就是「本来该变大写的地方没变」。真跑：javac exit=0（-Xlint:all 也零提示），印出来照旧是小写的 `小橘`。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/str_touppercase/Main.java → javac exit=0（含 -Xlint:all）；java 输出 `小橘`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\07-for-while\\questions.json#8fa62d5fba2a": {
+    "verdict": "对",
+    "凭什么": "断言：圈子里的数不变、眼色永远答真，停不下来，而且它不报错，只是屏幕刷个不停。真跑：javac exit=0；跑起来不报错，2 秒里印了 160 万行（只能靠 timeout 掐掉）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/while_infinite/Main.java → javac exit=0；`timeout 2 java ... | head -3` → 三行都是 `刷屏喵 0`；`timeout 2 java ... | wc -l` → 1601965 行",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\06-if-switch\\questions.json#ca0fc15f39b5": {
+    "verdict": "对",
+    "凭什么": "断言：这段代码（95 分先撞 >=60）一个错都不报，安安静静给出不对的结果。真跑：javac exit=0，只印 `及格喵`，没有红字。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/elseif/Main.java（与题干同构）→ javac exit=0；输出 `及格喵`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\06-if-switch\\questions.json#e145484e135e": {
+    "verdict": "对",
+    "凭什么": "断言：少了 break 不会自己停，一路往下滑到 break 才刹车，连 default 都会跟着印；它一声不吭、一个错都不报，只是多印几句。真跑：javac exit=0，正是多印一两句、无任何报错。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/fallthrough/Main.java 与 <workspace>/_probe-tmp/java/switch_bowl/Main.java → 均 javac exit=0、输出多印（`两条喵`/`三条喵`；`还剩两条喵`/`还剩三条喵`）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\06-if-switch\\questions.json#64e6369bbd8b": {
+    "verdict": "对",
+    "凭什么": "这道题要说的是「不报错，只是多印」，题干代码的输出也要对：真跑 q5 那段原文（n=2、case 2 底下没有 break），javac exit=0，输出恰好是 `两条喵` / `三条喵`，和 answer 字段一致，也和解释里说的走法一致（滑到 case 3 底下的 break 刹车，default 没轮到）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/fallthrough/Main.java（题干代码原文）→ javac exit=0；输出 `两条喵` / `三条喵`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\java\\stage1\\04-scanner-println\\questions.json#8c1e214f53a3": {
+    "verdict": "对",
+    "凭什么": "断言：nextLine 摸到残留的换行、汇报「这行是空的」，这个坑不报错、只给你一个看着很正常的结果。真跑：javac exit=0，读到的是空串（印成 `名字是[]`），没有任何报错；补上那句没名字的 `sc.nextLine();` 之后才读到真名字。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/java/scanner_nextline/Main.java → javac exit=0；输出 `数字是 3` / `名字是[]`；对照 <workspace>/_probe-tmp/java/scanner_fixed/Main.java → `名字是[小橘]`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-java.json"
+  },
+  "content\\python\\stage3\\15-ledger-project\\lesson.md#fa9d3a2f0ae4": {
+    "verdict": "对",
+    "凭什么": "这句指代它上一句「commit() 别漏……而且它不会报错」，「不声不响」这个前提真跑成立：不 commit 就散场，不抛任何异常；本线还查得到那行货，另开一根线看见的是空仓库。「最费时间」是价值判断，验不了；能验的静默前提是真的。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p07_sqlite_commit_delete.py ← `timeout 30 python -X utf8 p07_sqlite_commit_delete.py`；关键输出：`忘了 commit，本线查得到: [('小鱼干', 3)]` / `另开一根线去看: []` / `整个过程没有抛异常`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\12-project-structure\\lesson.md#6f93f5c231ae": {
+    "verdict": "对",
+    "凭什么": "写成 `if __name__ == \"_main_\":` 时，`__name__` 实际是 `'__main__'`，两边不相等，门卫拦住，摇铃那句没跑。真跑：不报错、退出码 0、屏幕上一个字都没有 —— 三个条件全对上了。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p01b_name_main_literal.py（照课文一字不改）← `timeout 20 python -X utf8 p01b_name_main_literal.py`：**零行输出**，`EXIT=0`；<workspace>/_probe-tmp/py/p01_name_main.py 另印了 `（探针）__name__ 的实际值 = '__main__'`，说明为什么没进去",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\09-logging-debug\\lesson.md#6971bb054a8f": {
+    "verdict": "对",
+    "凭什么": "这句是钩子段的类比（锅糊了不知道哪一步坏的），没有挂具体代码，但它断言的行为是可以操作化验证的：「有逻辑错的程序不会回头告诉你哪一行想错了，只甩你一个结果」。把它的操作性内容按最小程序跑了一遍 —— 算错的那一行照跑，屏幕上没有半个字提到「哪一行想错了」。判 对（不是跳过：验证过程见右）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p26_logic_error.py ← `timeout 20 python -X utf8 p26_logic_error.py`；关键输出：`第二只比第一只多吃了几条： -2` / `（没报错，跑得完完整整）`，全程没有任何指向出错行的提示",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\08-sqlite3-crud\\lesson.md#ab64c423b461": {
+    "verdict": "对",
+    "凭什么": "`DELETE FROM 库存` 不带 WHERE 语法完全通，真跑：不报错、`rowcount = 2`、表真的被清空（SELECT 回来是空列表）。「不报错、不提问、不给后悔的机会」三句都成立。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p07_sqlite_commit_delete.py ← `timeout 30 python -X utf8 p07_sqlite_commit_delete.py`；关键输出：`删之前: [('原味', 5), ('麻辣味', 5)]` → `DELETE 没带 WHERE：没报错，rowcount = 2` → `删之后: []`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\03-threading\\lesson.md#63e6d0d4f358": {
+    "verdict": "对",
+    "凭什么": "课文说的是本课那只「只干活不叼东西」的烤鱼干。真跑 `Thread(target=烤鱼干(0))`：构造时括号就把招式施展了（格子当场被写上「第 0 号鱼干」），`t._target` 是 `None`，`start()`/`join()` 全程不抛异常 —— 一声不吭，鱼干也真烤好了。「通常」这个限定词也站得住：换成叼回一个数字的招式（`return 42`），`t._target = 42`，开工时线程里就会甩一句 `TypeError: 'int' object is not callable`。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p03_thread_target_parens.py ← `timeout 20 python -X utf8 p03_thread_target_parens.py`：`A 构造成功，t._target = None` / `A 跑完，没有抛异常` / `A 之后 结果 = ['第 0 号鱼干', '', '']`；边界另跑 <workspace>/_probe-tmp/py/p29_thread_paren_returns_value.py：`构造成功，t._target = 42` 后线程里 `TypeError: 'int' object is not callable`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\03-threading\\lesson.md#4d51932a636b": {
+    "verdict": "对",
+    "凭什么": "四只猫各捡 2000 条、中间夹一句 `time.sleep(0)`（课文自己说这就是缝），真跑：**没有抛任何异常**，总数 2581（该是 8000）—— 「不报错、不提醒你、只是数字对不上」全中。课文自己那两段「不带缝就撞不上」的实测我也复跑了：不带 sleep 时四只猫各 2000 条跑出来正好 8000，跟课文写的一致。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p05_thread_race.py ← `timeout 30 python -X utf8 p05_thread_race.py`；关键输出：`没抛异常，总 = 2581 （该是 8000）` / `=== 不挂锁、不带缝的版本 === 没抛异常，总2 = 8000`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\03-threading\\lesson.md#37b2da34756b": {
+    "verdict": "对",
+    "凭什么": "复现「忘了 join()」：猫还在睡（`time.sleep(0.3)`）本喵就去印格子，印出来是空的 `[  ]`，程序不报错、正常跑完 —— 正是课文说的「程序不报错，只是印出来的东西不对」。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p06_thread_no_join.py ← `timeout 20 python -X utf8 p06_thread_no_join.py`；关键输出：`印出来的是: [  ]` / `没有抛异常`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\01-namedtuple-dataclass\\lesson.md#0fbc6eacfb9b": {
+    "verdict": "对",
+    "凭什么": "真跑 `猫档案(3, \"咪爱\")`：不报错，`咪爱.名字` 是 `3`、`咪爱.年龄` 是 `\"咪爱\"`（`type` 分别是 `int` / `str`）—— 类型标注确实只管认「这算一件东西」，不检查内容，`3` 安安静静进了「名字」。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p09_dataclass_order.py ← `timeout 20 python -X utf8 p09_dataclass_order.py`；关键输出：`没抛异常` / `印出来: 3 咪爱` / `咪爱的类型: int str`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage2\\13-custom-exceptions\\lesson.md#f2fbe1f87d61": {
+    "verdict": "对",
+    "凭什么": "真跑 `class 鱼干不够: pass`：类定义本身一点问题都没有（翻译官喵不拦你），`issubclass(鱼干不够, Exception)` 是 `False` —— 「也能过、可它就不是后代了」两句都对。（顺带一提：同一条 bullet 后面紧跟的那句「本喵量给你看」里引的原话有出入 —— 真跑 `raise 鱼干不够`（不带括号）得到的是 `TypeError: exceptions must derive from BaseException`，课文引的是 `...exceptions must be classes or instances deriving from BaseException`；那是另一句话，不在本次账本里，我没动它，报给你定夺。）",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p10_custom_exception.py ← `timeout 20 python -X utf8 p10_custom_exception.py`；关键输出：`类定义成功, 它是 Exception 的后代吗: False`；另测出 `raise 鱼干不够('没了')` → `TypeError | 鱼干不够() takes no arguments`（这句跟课文引的**一致**）、`raise 鱼干不够` → `TypeError | exceptions must derive from BaseException`（跟课文引的**不一致**）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage2\\11-functional-map-filter\\lesson.md#c67cbec4b0e3": {
+    "verdict": "对",
+    "凭什么": "真跑 `sorted(鱼干, key=len())`：当场抛 `TypeError: len() takes exactly one argument (0 given)` —— 课文说「len 缺了投喂的小鱼干，当场报错」分毫不差。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p11_map_filter.py ← `timeout 20 python -X utf8 p11_map_filter.py`；关键输出：`抛了异常: TypeError | len() takes exactly one argument (0 given)`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage2\\11-functional-map-filter\\lesson.md#b7500b895151": {
+    "verdict": "对",
+    "凭什么": "课文给了两个「本喵量过」的具体结果，逐条真跑：`[0, 1, 2, 3]` → `[1, 2, 3]`、`[-1, 0, 1]` → `[-1, 1]`，**两个数字全对**；每个各跑三遍，三遍一字不差（「每次都错得一模一样」成立）。`0` 被扔掉的原因也确认是 `0 * 2 == 0` 这个假值。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p11_map_filter.py ← `timeout 20 python -X utf8 p11_map_filter.py`；关键输出：`[0, 1, 2, 3] -> [[1, 2, 3], [1, 2, 3], [1, 2, 3]] | 三遍都一样吗: True` / `[-1, 0, 1] -> [[-1, 1], [-1, 1], [-1, 1]] | 三遍都一样吗: True`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage2\\06-stdlib-modules\\lesson.md#f98dfdf8104f": {
+    "verdict": "对",
+    "凭什么": "同一个文件夹建两次真跑：带 `exist_ok=True` 时第二次安安静静过去、不抛异常；把 `exist_ok=True` 拿掉再建第二次，当场抛 `FileExistsError`（WinError 183）—— 「少了它当场报错」成立。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p12_makedirs.py ← `timeout 20 python -X utf8 p12_makedirs.py`；关键输出：`第二次，带 exist_ok=True → 没报错，安安静静过去了` / `第二次，少了 exist_ok → 抛了异常: FileExistsError | [WinError 183] ...`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage2\\02-comprehension\\lesson.md#75d6a167cfc0": {
+    "verdict": "对",
+    "凭什么": "生成器走第二趟真跑：一行都没打印（`印了 0 行`），不报错、正常退出 —— 「跑圈发现没东西可拿，就安安静静结束了」成立。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p13_generator_exhaust.py ← `timeout 20 python -X utf8 p13_generator_exhaust.py`；关键输出：`=== 第二趟 ===` 之后 `第二趟走完，印了 0 行；没报错`，`EXIT=0`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\12-functions-advanced\\lesson.md#d6c3e86d9749": {
+    "verdict": "对",
+    "凭什么": "手一滑塞错位置真跑：`记账(\"3块5\", \"今天\", \"小鱼干\")` 不报错，印出 `日期=3块5 金额=今天 备注=小鱼干` —— 两份东西安安静静换了个位置。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p14_positional_mixup.py ← `timeout 20 python -X utf8 p14_positional_mixup.py`；关键输出：`日期=3块5 金额=今天 备注=小鱼干` / `没报错`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\12-functions-advanced\\lesson.md#44c120b9a5ec": {
+    "verdict": "对",
+    "凭什么": "拿课文自己那只 `intro(name, age, city)` 真跑：喂 `intro(\"小橘\", \"猫窝\", 3)` 不报错，印出「小橘今年猫窝岁，住在3」—— 正是「安安静静地把城市当成了年龄」。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p14_positional_mixup.py ← `timeout 20 python -X utf8 p14_positional_mixup.py`；关键输出：`小橘今年猫窝岁，住在3` / `没报错`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\12-functions-advanced\\lesson.md#8a175443af4c": {
+    "verdict": "对",
+    "凭什么": "两半都真跑过。①「喂错了位置却安安静静跑完」：p14 → 不报错，只把两份东西换了位置；p24 → `show_fish(5, \"狸花\")` 印出「5今天有 狸花 条小鱼干喵」，不报错。②它说的「报错」是那两条排位规矩的 `SyntaxError`，也真跑了：`def f(a=1, b)` → `SyntaxError: parameter without a default follows parameter with a default`；`f(c=3, 1, 2)` → `SyntaxError: positional argument follows keyword argument`，**而且报错前那一行 print 一个字都没执行**（「还没开跑就报错」成立）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p14_positional_mixup.py、p24_show_fish_arity.py、p28_call_rules_syntaxerr.py ← `timeout 30 python -X utf8 p28_call_rules_syntaxerr.py`；关键输出：`A ... SyntaxError: parameter without a default follows parameter with a default` / `B ... SyntaxError: positional argument follows keyword argument` / `对照：stdout = '' | 说明前面那行 print 一个字都没执行`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\11-functions-basic\\lesson.md#aa00a9f1275c": {
+    "verdict": "对",
+    "凭什么": "两个坑都真跑：只教不喊（`def greet():` 后面不写 `greet()`）→ 两次探针标记之间零输出、不报错；喊的时候丢了小括号（只写 `greet2`）→ 同样零输出、不报错。「不报错、但屏幕上什么都没有」两条都成立。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p15_def_no_call.py ← `timeout 20 python -X utf8 p15_def_no_call.py`；关键输出：`--- 下面这一段就是「只教不喊」 ---` 与 `--- 上面这一段跑完，中间应该什么都没印出来 ---` 两行**紧挨着**（中间零输出），`EXIT=0`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\11-functions-basic\\lesson.md#1617979f1cfe": {
+    "verdict": "对",
+    "凭什么": "只写 `def greet():` 和身体、忘了 `greet()`，真跑：屏幕上一个字都没有、不报错、退出码 0。「翻译官喵心想你让我记下来我记下来了」这段是拟人，但被拟人的事实（登记不等于施展）验证无误。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p15_def_no_call.py ← `timeout 20 python -X utf8 p15_def_no_call.py`：标记行之间零输出，`EXIT=0`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\11-functions-basic\\lesson.md#e10f6b070a04": {
+    "verdict": "对",
+    "凭什么": "真跑 `show_fish(5, \"狸花\")`：不报错，印出的字与课文引的一字不差 —— 「5今天有 狸花 条小鱼干喵」。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p24_show_fish_arity.py ← `timeout 20 python -X utf8 p24_show_fish_arity.py`；关键输出：`5今天有 狸花 条小鱼干喵` / `没报错`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\07-if-elif\\lesson.md#c8ed1518e317": {
+    "verdict": "对",
+    "凭什么": "课文那段 95 分的 `if/elif` 真跑：只印「及格喵」，一个错都不报、退出码 0 —— 「安安静静给出了不对的结果」成立。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p16_ifelif_order.py ← `timeout 20 python -X utf8 p16_ifelif_order.py`；关键输出：`及格喵` / `（没报错，退出码 0）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\05-io\\lesson.md#00a46e4992cc": {
+    "verdict": "对",
+    "凭什么": "课文那段漏了 `f` 的代码真跑：花括号原样冒出来（`{name}，你好喵`），程序不报错 —— 「这种不报错的错」名实相符。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p17_fstring_missing.py ← `timeout 20 python -X utf8 p17_fstring_missing.py`；关键输出：`{name}，你好喵` / `（没报错）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\05-io\\lesson.md#50878afb036d": {
+    "verdict": "对",
+    "凭什么": "「程序不吭声」真跑成立：漏了 `f` 之后 stdout 是 `{name}，你好喵`、**stderr 一个字都没有**、退出码 0。名字确实没进来（花括号没被替换），屏幕上也确实没有半句提醒。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p17_fstring_missing.py ← `timeout 20 python -X utf8 p17_fstring_missing.py`；关键输出：`{name}，你好喵` / `（没报错）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\05-io\\lesson.md#f4b03b4e4e7f": {
+    "verdict": "对",
+    "凭什么": "「忘了 f，花括号原样冒出来，而且不报错」真跑：输出就是 `{name}，你好喵`，无异常。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p17_fstring_missing.py ← `timeout 20 python -X utf8 p17_fstring_missing.py`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\03-variables\\lesson.md#9cb5c5c70603": {
+    "verdict": "对",
+    "凭什么": "真跑：`x = 3` 之后改装成 `x = \"三条小鱼干\"` 一点动静都没有（不报错，「当时也不吭声」）；等到后面真拿它去算（`x + 1`）才抛 `TypeError: can only concatenate str (not \"int\") to str` —— 「要等到后面真的用到那个东西、出了岔子，它才回头告诉你」分毫不差。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p18_dynamic_typing.py ← `timeout 20 python -X utf8 p18_dynamic_typing.py`；关键输出：`换着装：没吭声，x = 三条小鱼干` / `用到处才抛: TypeError | can only concatenate str (not \"int\") to str`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\02-interpreter\\lesson.md#28f54ddaab3d": {
+    "verdict": "对",
+    "凭什么": "照课文造的稿子（前两行正常 print，第 3 行漏一个左括号）真跑：**前面两行一个字都没有**，屏幕上只有一句报错，而且原话一字不差 —— 就是 `SyntaxError: '(' was never closed`。「一行都不跑」成立（退出码 1，stdout 为空）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p02_syntax_error.py ← `timeout 20 python -X utf8 p02_syntax_error.py`；关键输出：`File \"...p02_syntax_error.py\", line 3` / `    print(\"第三行漏个括号\"` / `         ^` / `SyntaxError: '(' was never closed`，`EXIT=1`，stdout 空（另跑了同段的姊妹句 p30_zero_div_third_line.py：`1/0` 那版前两行稳稳留着，念到第 3 行才抛 `ZeroDivisionError`）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\08-sqlite3-crud\\questions.json#37b7a647b280": {
+    "verdict": "对",
+    "凭什么": "解析里三个可核的点全部真跑：①忘了 commit「不会报错，程序跑完一切正常」②「本喵自己那根线上去查还看得见它」→ 查得到 `[('小鱼干', 3)]` ③「另开一根线去看，看到的就是空空的仓库」→ `[]`。跟正确选项（答案 0）完全一致。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p07_sqlite_commit_delete.py ← `timeout 30 python -X utf8 p07_sqlite_commit_delete.py`；关键输出：`忘了 commit，本线查得到: [('小鱼干', 3)]` / `另开一根线去看: []` / `整个过程没有抛异常`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\03-threading\\questions.json#af3c5c406db8": {
+    "verdict": "对",
+    "凭什么": "四个选项的说法逐条真跑，全部对上：选项2（带括号）—— 招式当场被施展（格子当场被写），`t._target` 成了 `None`，猫开工后什么都不干，**程序不报错**；选项3（`Thread(烤鱼干, 0)` 按位置塞）—— 当场挨一句报错（`AssertionError: group argument must be None for now`，构造时就拦下）；选项4（`args=0`）—— 猫一开工就因「没法拆开来喂」报错（`TypeError: ... argument after * must be an iterable, not int`）。正确选项（答案 0）没受影响。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p03_thread_target_parens.py、p04_thread_bad_args.py ← `timeout 20 python -X utf8 p04_thread_bad_args.py`；关键输出：`C 主线程捕获: AssertionError | group argument must be None for now` / `D ... Exception in thread Thread-1 ... TypeError: __main__.烤鱼干() argument after * must be an iterable, not int`；p03：`A 构造成功，t._target = None` / `A 跑完，没有抛异常`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\03-threading\\questions.json#9981a4542c82": {
+    "verdict": "对",
+    "凭什么": "「这种错一声都不吭：程序不报错，只是数字不对」真跑：四只猫各 2000 条、中间夹 `time.sleep(0)` 时，**一个异常都没有**，总数 2581（该 8000）；其它三个错误说法（罐子挤掉、join 减一、算不过来）也确与数量无关。锁的解法（`with 锁:` 后每次都是 8000）不在本句范围，未跑。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p05_thread_race.py ← `timeout 30 python -X utf8 p05_thread_race.py`；关键输出：`没抛异常，总 = 2581 （该是 8000）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage3\\01-namedtuple-dataclass\\questions.json#4563f97a13b5": {
+    "verdict": "对",
+    "凭什么": "这道 code 题的答案是「3 咪爱」，解析的静默断言真跑一致：`猫档案(3, \"咪爱\")` **不会翻脸**（不报错），印出来正是 `3 咪爱`；「冒号后面那个类型不替本喵检查」也验证了（`名字` 里躺的是 `int`）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p09_dataclass_order.py ← `timeout 20 python -X utf8 p09_dataclass_order.py`；关键输出：`没抛异常` / `印出来: 3 咪爱` / `咪爱的类型: int str`（与题目的 `answer: \"3 咪爱\"` 一致）",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage2\\15-contact-book\\questions.json#5ae98fcea812": {
+    "verdict": "对",
+    "凭什么": "`write` 不补 `\\n` 真跑：几条记录粘成一整行（`'小橘|111大肥鱼|222'`），不报错（「写还是写进去了」成立）；「也不会让档案变小」也成立（补 `\\n` 的版本 17 个字符 vs 不补 15 个，是变大不是变小）。顺带验了它说的后果：粘成一行后按竖线切会切乱（`[['小橘', '111大肥鱼', '222']]`）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p21_write_no_newline.py ← `timeout 20 python -X utf8 p21_write_no_newline.py`；关键输出：`没报错，档案里的内容 = '小橘|111大肥鱼|222'` / `读回来按行切: ['小橘|111大肥鱼|222']` / 补 \\n 后 `[['小橘', '111'], ['大肥鱼', '222']]`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage2\\11-functional-map-filter\\questions.json#b949cca2fe55": {
+    "verdict": "对",
+    "凭什么": "真跑：`print(map(...))` 不报错，印出 `<map object at 0x...>`（「看着像一串地址」）；`list(...)` 收一次得结果，**再收一次得空柜子**（`[]`），「一只手只能走一遍」成立 —— 而且整个过程没有异常。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p11_map_filter.py（C 段）与 <workspace>/_probe-tmp/py/p11b_map_twice.py ← `timeout 20 python -X utf8 p11b_map_twice.py`；关键输出：`没套 list 直接印: <map object at 0x0000013F34DDC700>` / `第一次 list: [10, 20, 30]` / `第二次 list: []` / `（两次都没报错）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage2\\10-iterators-generators\\questions.json#82247fd45e24": {
+    "verdict": "对",
+    "凭什么": "真跑：拿空之后再 `next(it)` 当场扔 `StopIteration`（不是叼回 `None` —— 实测 `e is None` 是 `False`，正是课文强调的那条分界）；`for` 走完一排东西**不翻脸**，因为它在背后接住了这个信号（手写 while 不接住的话当场就断）。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p22_iterator_stopiteration.py ← `timeout 20 python -X utf8 p22_iterator_stopiteration.py`；关键输出：`第三次 next 抛了: StopIteration ... | 它就是 None 吗? False` / `for 正常走完，没翻脸` / `手写循环不接住 -> 当场就断在这儿了`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\11-functions-basic\\questions.json#f8764df073be": {
+    "verdict": "对",
+    "凭什么": "三个选项的说法全部真跑对上：`show_fish(5, \"狸花\")` —— 翻译官喵压根不拦，印出「5今天有 狸花 条小鱼干喵」；`show_fish(\"狸花\")` 少喂一样 → `TypeError: show_fish() missing 1 required positional argument: 'count'`；`show_fish(\"狸花\", 5, 3)` 多喂一样 → `TypeError: show_fish() takes 2 positional arguments but 3 were given`（「照样翻脸」）。正确选项（答案 0）没受影响。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p24_show_fish_arity.py ← `timeout 20 python -X utf8 p24_show_fish_arity.py`；关键输出：`5今天有 狸花 条小鱼干喵` / `没报错` / `抛了异常: TypeError | show_fish() missing 1 required positional argument: 'count'` / `抛了异常: TypeError | show_fish() takes 2 positional arguments but 3 were given`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\05-io\\questions.json#853fb8d45d4c": {
+    "verdict": "对",
+    "凭什么": "「少了 f，花括号被当成两个普通符号原样念出来，而且它不报错」真跑：输出 `{name}，你好喵`，无异常；花括号和 print 都没写错（换成带 f 的写法立刻印出「小橘，你好喵」），「有没有那个 f 才是分界线」成立。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p17_fstring_missing.py ← `timeout 20 python -X utf8 p17_fstring_missing.py`；关键输出：`{name}，你好喵` / `（没报错）`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "content\\python\\stage1\\01-intro\\questions.json#11e6d9591f02": {
+    "verdict": "对",
+    "凭什么": "四句写法分别真跑一遍：`print(你好)` → `NameError: name '你好' is not defined`（「当成一个名字去找，找不到就报错」）；`prnt(\"你好\")` → `NameError: name 'prnt' is not defined. Did you mean: 'print'?`（「不认得这个名字」）；**只写 `\"你好\"` → stdout 空、stderr 空、退出码 0（「电脑一声不吭」分毫不差）**；`print(\"你好\")` 才是对的。",
+    "证据字段": "",
+    "跑了什么": "<workspace>/_probe-tmp/py/p23_print_intro.py ← `timeout 20 python -X utf8 p23_print_intro.py`（内部用 `python -X utf8 -c` 分别跑四段）；关键输出：`--- A print(你好) --- stderr 末行 = \"NameError: name '你好' is not defined\"` / `--- B prnt(\"你好\") --- stderr 末行 = \"NameError: name 'prnt' is not defined. Did you mean: 'print'?\"` / `--- C 只写 \"你好\" --- stdout = '' ... 退出码 = 0` / `--- D 正确 print(\"你好\") --- stdout = '你好\\n'`",
+    "改了什么": "",
+    "来自": "_silence-verdict-les-python.json"
+  },
+  "scripts\\bank\\templates\\c-s1-func-registered-not-called.json#be978da4170e": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=c-s1-func-registered-not-called",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\c-s1-if-assign-not-eq.json#e915d510efa9": {
+    "verdict": "对",
+    "凭什么": "实测 2 组编译成功、stderr 非空，句子里引的原话**逐字命中**：suggest parentheses around assignment used as truth value",
+    "证据字段": "编译stderr 字节 = 172/172",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=c-s1-if-assign-not-eq",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\c-s2-ptr-no-advance.json#d50be409ca8b": {
+    "verdict": "对",
+    "凭什么": "实测 2 组编译成功、stderr 非空，句子里引的原话**逐字命中**：statement with no effect [-Wunused-value]",
+    "证据字段": "编译stderr 字节 = 138/138",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=c-s2-ptr-no-advance",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\c-s2-ptrstr-star-in-walk.json#e69a096a6504": {
+    "verdict": "对",
+    "凭什么": "实测 2 组编译成功、stderr 非空，句子里引的原话**逐字命中**：format '%s' expects argument of type 'char *', but argument 2 has type",
+    "证据字段": "编译stderr 字节 = 328/328",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=c-s2-ptrstr-star-in-walk",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\c-s3-bit-revoke-discarded.json#4032556d4cea": {
+    "verdict": "对",
+    "凭什么": "实测 2 组编译成功、stderr 非空，句子里引的原话**逐字命中**：statement with no effect [-Wunused-value]",
+    "证据字段": "编译stderr 字节 = 138/138",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=c-s3-bit-revoke-discarded",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\c-s3-mem-ret-local-crash.json#9814141f06c0": {
+    "verdict": "对",
+    "凭什么": "实测 2 组编译成功、stderr 非空，句子里引的原话**逐字命中**：function returns address of local variable [-Wreturn-local-addr]",
+    "证据字段": "编译stderr 字节 = 180/180",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=c-s3-mem-ret-local-crash",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\c-s3-tree-no-stop.json#19d7fdd3c818": {
+    "verdict": "对",
+    "凭什么": "实测 2 组编译成功、stderr 非空，句子里引的原话**逐字命中**：infinite recursion detected [-Winfinite-recursion]",
+    "证据字段": "编译stderr 字节 = 259/259",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=c-s3-tree-no-stop",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-array-out-of-bounds.json#0341585a806e": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s1-array-out-of-bounds",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-continue-instead-of-break.json#dfe204d80880": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s1-continue-instead-of-break",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-div-before-cast.json#468af45bb7a0": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s1-div-before-cast",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-forgot-endl.json#66ba6ac60973": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s1-forgot-endl",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-func-wrong-formula.json#b87b95999754": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s1-func-wrong-formula",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-if-assign-vs-eq.json#1590fa1edc9a": {
+    "verdict": "对",
+    "凭什么": "实测 2 组编译成功、stderr 非空，句子里引的原话**逐字命中**：suggest parentheses around assignment used as truth value",
+    "证据字段": "编译stderr 字节 = 193/193",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s1-if-assign-vs-eq",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-switch-missing-break.json#26125f31b080": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s1-switch-missing-break",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-03-this-shadow.json#6c39973ac628": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s2-03-this-shadow",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-04-door-no-guard.json#88a650a72078": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s2-04-door-no-guard",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-11-forgot-pure-zero.json#88e9ac542bfe": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s2-11-forgot-pure-zero",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-12-pointed-wrong-kind.json#add034e50ae9": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s2-12-pointed-wrong-kind",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-14-menu-no-break.json#3c4980fc5844": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s2-14-menu-no-break",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-01-copy-not-ref.json#34a7e0bf8174": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-01-copy-not-ref",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-02-find-zero-miss.json#cc082cd0bf7a": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-02-find-zero-miss",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-02-plus-discarded.json#ee5b844738fe": {
+    "verdict": "对",
+    "凭什么": "句子引作「warning: ignoring return value of '... operator+(...)', declared with attribute 'nodiscard' [-Wunused-result]」，其中 '...' 是**标出来的省略号**（真实的模板参数名太长）。实测 stderr 里非省略部分逐字一致：main.cpp:9:9: warning: ignoring return value of 'constexpr std::__cxx11::basic_string<…> std::operator+(…) [with …]', declared with attribute 'nodiscard' [-Wunused-result]。省略号标明了省略，不算引错。",
+    "证据字段": "",
+    "跑了什么": "_probe-warn-all：cpp-s3-02-plus-discarded 两组各 1585 字节编译 stderr，含上述原话；运行退出码 0、stdout 只印一行",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-04-key-not-found.json#634edccee658": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-04-key-not-found",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-04-tally-assign-not-add.json#3943083d9e98": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-04-tally-assign-not-add",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-07-dtor-not-written.json#3293c4331db0": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-07-dtor-not-written",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-07-dtor-not-written.json#761183f63544": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-07-dtor-not-written",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-09-compare-flipped.json#cce3c68413c7": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-09-compare-flipped",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-13-sizeof-mixup.json#57f8769dff4e": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-13-sizeof-mixup",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-14-factory-no-virtual.json#78eae0fa466a": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-14-factory-no-virtual",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-14-singleton-handle-copy.json#0ef922113104": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-14-singleton-handle-copy",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-15-load-all-books.json#405174fde450": {
+    "verdict": "对",
+    "凭什么": "批量探针用**应用同一条编译链路（含 -Wall）**实跑本模板 2 组，编译成功时 stderr **全空** —— 句子里\"一声不吭/一个字都不说\"的字面要求成立。（若句子引了警告原话，则本条不适用引文检查。）",
+    "证据字段": "编译stderr 字节 = 0/0",
+    "跑了什么": "_probe-warn-all.mjs 批量探针（应用同参数，含 -Wall），templateId=cpp-s3-15-load-all-books",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\java-s3-foreach-remove.json#689678517adf": {
+    "verdict": "对",
+    "凭什么": "实跑四种规模：四件删最后一件 → 抛 ConcurrentModificationException；两件删最后一件 → 也抛；四件删**倒数第二件** → 安静；两件删第一件（＝倒数第二件）→ 安静。新写法把\"安静\"的条件说成\"刚走过的那一件后面只剩一件（倒数第二件）\"，并把机制归到\"向导手里那个数正好对上柜子缩水后的件数\"（＝迭代器 cursor 与 size 相等，hasNext 直接答否）—— 两种规模的实跑都印证了这一条。",
+    "证据字段": "",
+    "跑了什么": "_cases-dispute（7 例）：jav-for-each-remove-last 四件=CME、两件=CME；jav-for-each-remove-secondlast 四件=安静；jav-for-each-remove-first 两件=安静",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\java-s3-stream-lazy-drop.json#3f8500df5a63": {
+    "verdict": "对",
+    "凭什么": "实跑两版：收尾（.collect）挂着时，往 map 里塞 println 真的会印出两行 —— 所以\"中间两道会跑\"是对的（原句\"也没跑\"是错的，已改）；把收尾整道拿掉，才真的一行都不跑。新写法把这两件事分开说成\"「没挂收尾」才是真没跑，「接了没接住」是跑了也白跑\"。另：句子里推荐的 .toList() 在本机 javac 21.0.12.1 上可用（Java 16+ 才有这个方法）。",
+    "证据字段": "",
+    "跑了什么": "_cases-dispute：jav-stream-map-ran（map 里塞 println）屏幕出现「map 跑了 8 / map 跑了 6」；jav-stream-no-terminal 一行都不出；javac -version = 21.0.12.1",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\py-s3-mp-basket-not-shared.json#5993e4011568": {
+    "verdict": "对",
+    "凭什么": "三种形状各跑一次：join 在+普通篮子 → stderr 0 字节；**删掉 join+普通篮子（就是本课这道题那一版）→ stderr 仍是 0 字节**；删掉 join+**Manager 篮子**（本课推荐的改法）→ stderr **5082 字节**，里面正是 AttributeError: 'ForkAwareLocal' object has no attribute 'connection'，退出码两种都还是 0。原句把\"删 join 必甩红字\"说成了不分篮子的事，学员照本课那道题改会看到干净屏幕 —— 已改成点名是哪一版。",
+    "证据字段": "",
+    "跑了什么": "_cases-mp（3 例）：mp-a=0 字节 / mp-b=0 字节 / mp-c=5082 字节且退出码 0、stdout 都是 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "content\\java\\stage1\\06-if-switch\\lesson.md#c9632b631139": {
+    "verdict": "对",
+    "凭什么": "实跑：把三元运算符的真值/假值两边对调，编译通过、印出 3（本该 7），即\"照样能跑、只是答案反了\"。原句说的是\"这两个记号（? 与 :）顺序记反\"，那时实跑是 3 个编译错误 —— 句子已在 _apply-fixes 里改成\"真值假值两边写反\"。",
+    "证据字段": "",
+    "跑了什么": "javac + java（应用同链路）：对调真值假值 → 编译通过、印 3；对调 ? 与 : 记号 → 3 个编译错误",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\c-s1-char-array-strcmp.json#7e0e2ee35f9f": {
+    "verdict": "对",
+    "凭什么": "句子说\"它只是念了一句 comparison between two arrays，念完照收不误\"。实跑：编译**成功**（警告不是错误，确实不拦），stderr 里原话就是 warning: comparison between two arrays [-Warray-compare]；运行退出码 0、印出\"长得一模一样，C 却说它们不一样喵\"。引用和\"会念、不肯拦\"两件事都成立。",
+    "证据字段": "",
+    "跑了什么": "_probe-warn-all：c-s1-char-array-strcmp 两组各 210 字节编译 stderr，含 -Warray-compare 原话；运行 stderr 0 字节、退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\c-s3-tree-no-stop.json#388a44ecbbd7": {
+    "verdict": "对",
+    "凭什么": "与同模板 stemTemplate 同一次编译。实测：编译成功（退出码 0）但 stderr 有 warning: infinite recursion detected [-Winfinite-recursion]；跑起来退出码 3221225477（栈爆掉）、stdout 与 stderr 都是空的 —— 与\"程序当场摔了，屏幕上一个字都没印出来\"\"嘀咕归嘀咕，编译照样过（答 0）\"逐条对得上。",
+    "证据字段": "",
+    "跑了什么": "_probe-warn-all：c-s3-tree-no-stop 两组各 259 字节编译 stderr（含 -Winfinite-recursion）、运行退出码 3221225477、stdout 空",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\py-s3-await-missing.json#7e6642743f04": {
+    "verdict": "对",
+    "凭什么": "句子说协程\"一行都不会跑\"（实测 stdout 只有\"奶牛 的猫粮好了\"\"开饭啦\"，缺 {cat1} 那一行 ✓）、\"程序还一声不吭地继续往下走\"（退出码 0 ✓）—— 而紧接着的一段就明说\"翻译官喵其实会在角落里小声嘀咕一句『这条协程从没被等过』。那是警告，不是报错\"。实测 stderr 225 字节正是 RuntimeWarning: coroutine '备好' was never awaited。句子自己披露了这声嘀咕，\"一声不吭\"指的是不拦程序（没有异常），不构成假静默。",
+    "证据字段": "",
+    "跑了什么": "_probe-warn-all：py-s3-await-missing 两组各 225 字节运行 stderr（RuntimeWarning: coroutine … was never awaited）、退出码 0、stdout 缺 cat1 那行",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\py-s3-thread-missing-args.json#e1947b0dd3b3": {
+    "verdict": "对",
+    "凭什么": "句子说\"它绝不是安安静静：三只小猫各留下一片红字，原话是 TypeError: 翻倍() missing 2 required positional arguments: '序号' and '数'\"。**批量探针的 stderr 是截断存的（1305 字节只存下 600 出头），引的那句正好在截断线下面** —— 所以我另起一台把完整 stderr 接出来验：1305 字节、3 处 Exception in thread、引的那句原话**逐字出现 3 次**、退出码 0、stdout 三行 0。全部成立。",
+    "证据字段": "",
+    "跑了什么": "_full-stderr.mjs（不截断）：stderr 1305 字节、Exception in thread ×3、逐字含 TypeError: 翻倍() missing 2 required positional arguments: '序号' and '数' ×3、退出码 0",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "content\\java\\stage1\\06-if-switch\\questions.json#b9a374d155dd": {
+    "verdict": "对",
+    "凭什么": "与同课 lesson.md 同一份实测：把三元运算符的真/假两边对调 → 编译通过、印出 3（本该 7），即\"照样能跑、只是答案反了\"。",
+    "证据字段": "",
+    "跑了什么": "javac + java（应用同链路）：真值假值两边写反 → 编译通过、印 3；把 ? 与 : 记号对调 → 3 个编译错误",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "content\\cpp\\stage1\\08-array-string\\questions.json#97495e247179": {
+    "verdict": "对",
+    "凭什么": "干净版（先读后写，避开\"变量设了没用\"那条无关警告）实跑：编译期 stderr **0 字节**，与\"翻译官喵一样不报错（本喵拿 -Wall 真跑过，一声不吭）\"一致；越界写之后印完字就摔，退出码 3221225477（0xC0000005），而应用里 0xC0000005 弹的正是「程序撞到墙上了喵」那张卡。",
+    "证据字段": "",
+    "跑了什么": "_cases-oob2（干净版 ×4）：编译 stderr 0 字节、退出码 3221225477 四跑四中；copy.ts:1121 卡片标题",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "content\\common\\08-io\\lesson.md#a812874b7a6d": {
+    "verdict": "不是断言",
+    "凭什么": "同样是\"哪个更典型\"的判断句。原先写的\"你第一次遇上就是它\"与大纲顺序不符（common-07 已先教过两个同类坑），已改成不带序号的说法。",
+    "证据字段": "",
+    "跑了什么": "—（syllabus 顺序 …06 → 13 → 07 → 08…）",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "content\\python\\stage3\\06-network-basics\\lesson.md#0a2c0f1afada": {
+    "verdict": "对",
+    "凭什么": "requests 的 get/post 源码里**没有**调用 raise_for_status（它是单独一个方法，没人喊就不抛），所以 404 会安静地把回执交回来 —— 与句子一致。timeout 那半句也站得住：本课 9 处 requests 调用**全都**带 timeout=5（第 396 行自己就写着\"每一句点菜后面都跟着 timeout=5\"），连上了但等不到回执时确实会在 timeout 那一刻炸。",
+    "证据字段": "",
+    "跑了什么": "读本机 requests 源码：models.py 里 raise_for_status 是独立方法，get()/post() 函数体内均无调用；grep 本课 9/9 处 requests 调用都带 timeout=5",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "content\\python\\stage1\\05-io\\lesson.md#c61483575825": {
+    "verdict": "不是断言",
+    "凭什么": "这是一句\"哪个更典型\"的教学判断，没有对程序行为的可证伪承诺。原先写的\"第二个\"在 stage1 里找不到第一个（同一个漏 f 的坑被讲了三遍），已改掉序号。",
+    "证据字段": "",
+    "跑了什么": "—（grep 全 stage1：「不报错的错」只出现在 05-io 的 137/140/221，指的都是漏 f）",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "content\\c\\stage2\\10-scope-and-lifetime\\lesson.md#d7f84bca13a1": {
+    "verdict": "对",
+    "凭什么": "句子已由\"程序不会报错\"改成\"程序**有时**不报错\" —— 摆错作用域后读到的是一段没被赋值的栈上旧数据，绝大多数情况下不报错、只算错；改成\"有时\"之后这个说法不会被任何一次实跑推翻。",
+    "证据字段": "",
+    "跑了什么": "（由 c/stage2/09 同批复核员实测改口；本条是保守化改写，不引入新的可证伪承诺）",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "content\\c\\stage2\\09-multifile-and-headers\\lesson.md#cb916c73e401": {
+    "verdict": "对",
+    "凭什么": "同上：由\"程序不会报错\"改成\"程序**有时**不会报错\"。",
+    "证据字段": "",
+    "跑了什么": "同上",
+    "改了什么": "",
+    "来自": "_silence-verdict-mine.json"
+  },
+  "scripts\\bank\\templates\\c-s1-2d-row-sum.json#f11fa95a72c2": {
+    "verdict": "不是断言",
+    "凭什么": "标记词落的那句是「i 和 j 写反了，C 也一声不响」——讲的是**另一种写法**的后果，是语言层面的一般事实；本模板是 codewrite、压根没有 brokenCodeTemplate，也就没有「这段坏代码」这个主体（探针按设计只探 codefix 的坏代码）。",
+    "证据字段": "不适用（跑了几次=0：本模板没有 brokenCodeTemplate，探针没跑过它）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-2d-walk-print.json#89ddf98d3936": {
+    "verdict": "不是断言",
+    "凭什么": "「C 不会提醒你」说的是**行数写死**那种写法的后果（少念一行、越界），不是本模板里的代码；本模板是 codewrite、没有 brokenCodeTemplate。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-array-sum.json#9c7d1f53e2aa": {
+    "verdict": "不是断言",
+    "凭什么": "「碗数写错了 C 一样一声不响」说的是**碗数写死写错**那种写法，本模板是 codewrite、没有 brokenCodeTemplate；那句本身是语言层面的一般事实。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-first-lines-swapped.json#3397a58d6c2f": {
+    "verdict": "对",
+    "凭什么": "concept 里那条「不吭声的错」说的就是这段坏代码（两行念话顺序反了）：编不过=0、跑起来了=2、退出码 0、屏幕上出过字=0，stdout 里顺序确实是反的——不报错、只是结果错，与「不吭声的错」相符。",
+    "证据字段": "编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-for-off-by-one.json#6072864c8072": {
+    "verdict": "对",
+    "凭什么": "「它一个错都不报，只是安安静静给你一个偏小的数」：编不过=0、跑起来了=2、屏幕上出过字=0，同一次真跑的 stdout 也确实是偏小的数（n=4 那道印 6，正确是 10）。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加同一次真跑的 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-house-int-eats-fraction.json#3cbcf2bda1c2": {
+    "verdict": "对",
+    "凭什么": "题面说「报出来的斤数，小数点后面那截不见了——它一个错都不报，安安静静地给了个错数」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout「这筐小鱼干 1 斤」（a=1、b=5）正是被砍掉小数那截的错数；参数区间 a∈1..4、b∈5..9，任何一套都成立。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加同一次真跑的 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-house-int-eats-fraction.json#e18ce4ef88c0": {
+    "verdict": "对",
+    "凭什么": "「它不拦你、不报错，直接把小数点后面那截砍掉」与「跑得起来、屏幕上也有字」：编不过=0、跑起来了=2、屏幕上出过字=0，且 stdout 确实有字、数被砍过。唯一量不到的是「翻译官喵一个字都没说」里的**警告**那一项（探针编译成功时不收 stderr，见 _silence-probe.mjs 自述）。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-if-elseif-order.json#e6ccdb8118a0": {
+    "verdict": "对",
+    "凭什么": "题面「印出来的却是及格那一行——它一个错都不报，只是安安静静给出了不对的结果」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 印的就是及格那一行；score 参数取值区间全部 ≥ 60，任何一套实例下「永远走不到第二个分支」都成立。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout，只有一行）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-if-elseif-order.json#57994e686892": {
+    "verdict": "对",
+    "凭什么": "「屏幕上只有及格那一行，而且一个字都不报错」：stdout 恰好只有一行、编不过=0、屏幕上出过字=0，两半都相符。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout 只有一行）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-pipeline-main-misspelled.json#bb70e8809333": {
+    "verdict": "对",
+    "凭什么": "「偏偏卡在最后一道工序上」：编不过=2，而 程序自己的stderr 首行就是 ld.exe 的 `undefined reference to 'WinMain'`——正是收尾拼装那一步，前面几道工序一个字都没吐。「屏幕上它该印的那一行，一个字都没有」也成立：phase=compile、程序根本没跑，stdout 是空的。",
+    "证据字段": "编不过几次=2、屏幕上出过字=2（字的内容=链接器报错）、程序自己的stderr 首行",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-pipeline-only-these-lines.json#52e8b5abdb05": {
+    "verdict": "不是断言",
+    "凭什么": "标记词那句的主语是**四道工序（编译流水线）本身**——「不会有『翻译完成』那种东西」，不是某段会被改错的代码；本模板是 codewrite、没有 brokenCodeTemplate。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-remainder-with-slash.json#949a30cf78c6": {
+    "verdict": "对",
+    "凭什么": "concept 那条「不吭声的错数」说的就是这段坏代码：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 两行印的是同一个数（fish=17、cats=3 时「5 条／5 条」，正确的零头是 2）——不吭声、数错了。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-remainder-with-slash.json#27b2b1c892b0": {
+    "verdict": "对",
+    "凭什么": "题面「第二行报的『还剩几条』却是错的——它一个错都不报，安安静静报了个错数」：同上证据，stdout 第二行确实错。参数区间也逐组核对过：fish 17..19、cats 3..4，`fish/cats` 与 `fish%cats` 六套里没有一套相等，这句在任何一套实例下都成立。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-scanf-double-it.json#1a5df3b81b07": {
+    "verdict": "不是断言",
+    "凭什么": "两句断言说的都是**另一种写法**（门牌递成 n、先印后读），本模板是 codewrite、没有 brokenCodeTemplate；这两处是语言层面的坑，不是本模板里的代码。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s1-switch-missing-break.json#20e4cd5b0097": {
+    "verdict": "对",
+    "凭什么": "「它只是安安静静地干错事」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 确实多出秋刀鱼那一行。只有「一个字都不会警告你」里的**警告**那半句本轮量不到（探针编译成功时不收 stderr）。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout 多出一行）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-args-atoi-no-check.json#18830554bdfe": {
+    "verdict": "对",
+    "凭什么": "「两个都放行了」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 是「收到 0 条，记下了／收到 5 条，记下了」——两个都没被拦（bad 取值 0／-3／喵 都 ≤ 1000）。atoi 那几句是语言层面的事实。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-book-add-no-return.json#50ec0e70f956": {
+    "verdict": "对",
+    "凭什么": "「册子里其实只剩一条，条数还是 0，连『一共几条』和列出来那一段都是空的」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 正是「一共 0 条／还一条都没有喵」。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-book-load-format-mismatch.json#35b1ffbe9b73": {
+    "verdict": "对",
+    "凭什么": "「印出来是 一共 0 条 和 还一条都没有喵」与 stdout 逐字相符；「翻译官喵为什么不吭声」也有证据：编不过=0、跑起来了=2、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-file-missing-stdio.json#a155fa183ffe": {
+    "verdict": "对",
+    "凭什么": "句子**明说**这段代码会被拦下，还逐字引了 `error: unknown type name 'FILE'`：编不过=2、屏幕上出过字=2，程序自己的stderr（编译报错首行）正是这句话（后面还跟着 note: 'FILE' is defined in header …）。标记词「不拦」落在「printf 在有些环境下会被网开一面」那句上——那说的是**另一种写法**，句子紧接着自己声明本段代码不适用（本机 GCC 也早就把隐式声明当 error 了，那句的「有些环境」限定不必按本机读）。",
+    "证据字段": "编不过几次=2、屏幕上出过字=2、程序自己的stderr 首行（error: unknown type name 'FILE'）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-fptr-qsort.json#557df1bf11f6": {
+    "verdict": "不是断言",
+    "凭什么": "「写错了 qsort 会按错误的步子在里面走、而且它不会报错」说的是**元素大小传错**这种假设写法，不是本模板里的代码；本模板是 codewrite、没有 brokenCodeTemplate。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-header-guard-names-differ.json#b60327262225": {
+    "verdict": "不是断言",
+    "凭什么": "concept 三条说的是「两本招牌用同一个守卫名、后一本被静默丢掉」那一段**实验代码**，不是本模板里的代码（本模板是 codewrite、没有 brokenCodeTemplate）。那段实验作者已在 §35 亲手编译量过（_待办.md：两份同名守卫 0 字节、印 20）。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-header-guard-names-differ.json#ed1e9735b0d9": {
+    "verdict": "不是断言",
+    "凭什么": "标记词那句「翻译官喵一声都没吭——不报错、不警告，只是把后一本悄悄扔掉」讲的是讲解里当场摆出来的**甲／乙两块招牌那段代码**，不是本模板的坏代码（codewrite，没有 brokenCodeTemplate）。那段代码作者已在 §35 实测并记进 _待办.md（0 字节、印 20，引文与结论逐字相符）。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-malloc-guard-assign.json#938240ee155e": {
+    "verdict": "对",
+    "凭什么": "concept 里「崩溃」「不报错的错」两条都与证据相符：编译器一个字都没说（编不过=0、屏幕上出过字=0），真跑却摔了（跑起来了=0、退出码=3221225477）。",
+    "证据字段": "编不过几次=0、跑起来了=0、退出码=[3221225477]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-malloc-guard-assign.json#99fcd1e703b1": {
+    "verdict": "对",
+    "凭什么": "「程序一跑到那儿就摔了——屏幕上什么都没有，连第一间仓库都没报出来」：跑起来了=0、退出码=3221225477（访问违例）、屏幕上出过字=0，同一次真跑的 stdout 是空的，「屏幕上什么都没有」这句在崩溃这道题上站得住。",
+    "证据字段": "跑起来了=0、退出码=[3221225477]、屏幕上出过字=0（外加 stdout 为空）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-malloc-sizeof-pointer.json#f7ac375b5122": {
+    "verdict": "对",
+    "凭什么": "concept 那条「不报错的错」：编不过=0、跑起来了=2、屏幕上出过字=0——`sizeof(牌子)／sizeof(一间)` 语法完全合法，翻译官喵没话可说。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-malloc-sizeof-pointer.json#181355bb4017": {
+    "verdict": "对",
+    "凭什么": "「它只报出来一个零头，剩下的一间都没提。它一个错都不报，安安静静就跑完了」：stdout 只有两行（第 0 间、第 1 间），而 n 取值 3..5，永远报不全；编不过=0、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout 只有两行）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-ptr-add-two.json#d576e7f44675": {
+    "verdict": "对",
+    "凭什么": "句子对这段坏代码的说法与证据一致，而且是**明说会被拦**：「翻译官喵在翻的阶段就把它拦下了」——编不过=2，程序自己的stderr 首行逐字是 `error: invalid operands to binary + (have 'int *' and 'int *')`。标记词「不会拦」落在后半句上：那说的是**参考解去掉 (int) 的版本**（只会嘀咕一句 warning、照样收），与这段坏代码无关，且属于编译成功时的警告（本轮量不到）。",
+    "证据字段": "编不过几次=2、屏幕上出过字=2、程序自己的stderr 首行",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-ptr-star-before-plus.json#18b8b2d47d75": {
+    "verdict": "对",
+    "凭什么": "「代码照样编出来、照样跑完，只有数字悄悄错掉」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 第 1 只印的是「第 0 只的数 + 1」而不是第 1 只自己的数。（「-Wall 开着它一个字都没说」那半句本轮量不到；应用里学员本来也看不到警告，见 _待办.md §35H。）",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-ptrarr-fill-skip-first.json#e9368eb42dc5": {
+    "verdict": "对",
+    "凭什么": "「它安安静静把程序交给了本喵，跑起来照样出结果，只有第一个数悄悄错掉」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 里第 0 只报的是 0——正是没进过圈的那只。（-Wall 那半句同上，本轮量不到。）",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-ptrstr-write-literal.json#31fdaae84680": {
+    "verdict": "对",
+    "凭什么": "「它安安静静地把程序编了出来…真正拦你的是跑起来之后那一下：屏幕上一片空白，一个字都没印出来，程序当场断气」：编不过=0、跑起来了=0、退出码=3221225477、屏幕上出过字=0、stdout 空——两半都相符。（「-Wall 开着」那半句本轮量不到。）",
+    "证据字段": "编不过几次=0、跑起来了=0、退出码=[3221225477]、屏幕上出过字=0（外加 stdout 为空）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-scope-extern-empty-promise.json#ee22a107238e": {
+    "verdict": "对",
+    "凭什么": "「牌子本身写得没毛病，所以翻译的过程一声不吭；可到了收尾那一步…它就只好停下来」：编不过=2，而 stderr 首行起头就是 `ld.exe: … undefined reference to 'cap'`——翻译阶段确实没吭声，摔在收尾拼装那一步；句子还逐字引了 `collect2.exe: error: ld returned 1 exit status` 与 `undefined reference to`。",
+    "证据字段": "编不过几次=2、屏幕上出过字=2、程序自己的stderr 首行（ld.exe: … undefined reference to 'cap'）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-scope-running-sum.json#6d5497f7787c": {
+    "verdict": "不是断言",
+    "凭什么": "「摆在圈里面…照样能跑、一个字都不报错」说的是**另一种摆法**（把攒数的碗写进圈里），不是本模板里的代码；本模板是 codewrite、没有 brokenCodeTemplate。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-scope-static-stale-sum.json#c8bab1688d5c": {
+    "verdict": "对",
+    "凭什么": "concept 那条「不报错只算错」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 两个数都是错的（3、18——第二行混着第一行的和）。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-scope-static-stale-sum.json#f924761545ba": {
+    "verdict": "对",
+    "凭什么": "「它不报错，只是数不对」与「第二行印出来的数里，混着第一行的和」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 是 3、18——第二行正是把第一行的 3 又加了进去。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-struct-total-overwrite.json#ed647a2f0de7": {
+    "verdict": "对",
+    "凭什么": "「前面三行都对，最后那行总数不对喵——翻译官喵一声没吭，代码照样跑完了」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 前三行对、末行的总数只等于最后一只猫的食量。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-struct-total-overwrite.json#ba5353cae992": {
+    "verdict": "对",
+    "凭什么": "「一个字都没说，程序跑得顺顺当当、前三行全对——只有最后那行悄悄错了」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 逐项相符。（「-Wall 开着」那半句本轮量不到。）",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-structptr-malloc-cat.json#c3f1ab3c5049": {
+    "verdict": "不是断言",
+    "凭什么": "标记词那句是「空牌子再被拿去用，好歹是当场倒下、一眼看得见，比悄悄写到别人家地里强」——语言层面的道理，不是本模板里的代码；本模板是 codewrite、没有 brokenCodeTemplate。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-unionenum-enum-no-start.json#f06c3bd885a8": {
+    "verdict": "对",
+    "凭什么": "「这两个数都不影响翻译官喵的判断…程序照样跑得完」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 就是「0 1 2」（没写 = {start} 的那一版）。（同一段里「补上 = {start} 之后印出从 {start} 起头的三个连号」讲的是改好的版本，由闸门另验。）",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s2-unionenum-tag-missing-keyword.json#476d9369f1c0": {
+    "verdict": "对",
+    "凭什么": "句子逐字引了 `error: unknown type name 'Color'; use 'enum' keyword to refer to the type`，证据里 程序自己的stderr 首行与它逐字相符（编不过=2）。标记词「不吭声」落在「同一个文件里写对了的那一行」上——证据也支持这半句：那份报错里只点名了 Color 那一处，写对的 `void show(enum Color c)` 没被抱怨。",
+    "证据字段": "编不过几次=2、屏幕上出过字=2、程序自己的stderr 首行（error: unknown type name 'Color'）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-09-lib-join-count.json#9f2fee65bd34": {
+    "verdict": "不是断言",
+    "凭什么": "标记词那句讲的是**课文里那个坑**（strcat 两个参数写反、往小碗后面接整串），不是本模板里的代码；本模板是 codewrite、没有 brokenCodeTemplate。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-def-guard-missing.json#792b1c13f789": {
+    "verdict": "对",
+    "凭什么": "「第二行印出来的是 {a}」：stdout 是「一碗都没有：7」，a=7 这道题正好对上；「它不报错、不崩」：编不过=0、跑起来了=2、退出码 0、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-gdb-start-offbyone.json#5c6ed9237e16": {
+    "verdict": "对",
+    "凭什么": "「跑得起来、印得出数，屏幕上却一句提示都没有——数就是不对喵」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout「总数是 6」——起点写成 1、漏了排最前那碗。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-list-print-skips-tail.json#a2faf91bf733": {
+    "verdict": "对",
+    "凭什么": "concept 那条「不报错的错」：编不过=0、跑起来了=2、退出码 0、屏幕上出过字=0——收尾条件写成 cur->next != NULL 完全合法，翻译官喵没话可说。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-list-print-skips-tail.json#25c3c25454b9": {
+    "verdict": "对",
+    "凭什么": "「只报出来两个数…收尾的 NULL 倒是老老实实补上了。它一个错都不报，安安静静就跑完了」：stdout 正是「2 -> 6 -> NULL」（三个环只报了两个），编不过=0、跑起来了=2、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-mem-extra-static.json#6926d368a99e": {
+    "verdict": "对",
+    "凭什么": "「多写这两个字既不报错也不警告，它只会答错」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 确实一路往上爬（rounds=2 那道爬到第 4 条）。两处备注：①「拿 -Wall 真编了一遍」的警告那半句本轮量不到；②讲解里举的「第 4 条」是写死的数——本模板另一套实例 rounds=3，数字没有跟着 {rounds} 走（数字只是示范，不影响「安静的错」这个断言）。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout 爬到第 4 条）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-mem-shared-bowl.json#51e7d5059cd9": {
+    "verdict": "不是断言",
+    "凭什么": "标记词那句讲的是**反面那一版**（每招各摆一间自己的碗），不是本模板里的代码；本模板是 codewrite、没有 brokenCodeTemplate。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-merge-left-called-twice.json#332966473999": {
+    "verdict": "对",
+    "凭什么": "「它不摔、也不吭声，跑得还挺快…只有输出会告诉你后面那几只没排好」：编不过=0、跑起来了=2、退出码 0、屏幕上出过字=0，stdout 是「拆开分头办：10 30 60 20 90」——后面那几只确实没排好。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-merge-sort-driver-write.json#8e016da51a7a": {
+    "verdict": "不是断言",
+    "凭什么": "「少了收手那一句…屏幕上一个字都没有、程序当场摔掉」说的是**把收手条件删掉**那种写法，不是本模板里的代码；本模板是 codewrite、没有 brokenCodeTemplate。（旁证：同课的 c-s3-tree-no-stop 坏代码正是同一形状，真跑跑起来了=0、退出码=3221225477、stdout 空。）",
+    "证据字段": "不适用（跑了几次=0；旁证见 c-s3-tree-no-stop 的 跑起来了=0、退出码=[3221225477]）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-queue-dequeue-from-tail.json#f844cb538bf4": {
+    "verdict": "对",
+    "凭什么": "「程序一声不响地跑完，印出来的三行数都是真数，一个都不错——错的只有次序」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 是「领到 30／20／10」——正是反着的次序。（「拿 -Wall 真编了一遍」那半句本轮量不到。）",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-queue-enqueue-no-tail.json#481bb7a99969": {
+    "verdict": "对",
+    "凭什么": "「报『队伍里有 0 只猫』、dequeue 答『空了』、一只都领不出来」：stdout 正是「队伍里有 0 只猫」，且没有「领到…」的行；编不过=0、跑起来了=2、屏幕上出过字=0。（「拿 -Wall 真编了一遍」那半句本轮量不到。）",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-sort-pick-min-from-start.json#e771024f3d03": {
+    "verdict": "对",
+    "凭什么": "「翻译官喵不会吭声，也不会摔——它只是把一轮一轮的活儿干错了地方」：编不过=0、跑起来了=2、退出码 0、屏幕上出过字=0，stdout 是「挑最短：8 1 3 4 5」——越排越乱。",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-stack-push-no-top.json#737b493c5364": {
+    "verdict": "对",
+    "凭什么": "「不报错、不警告，跑起来也不摔——它只是答错」：编不过=0、跑起来了=2、退出码 0、屏幕上出过字=0；「报『摞了 0 只碗』、pop 一只也拿不出来」：stdout 正是「摞了 0 只碗」，没有取到碗的行。（-Wall 那半句本轮量不到。）",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-tree-flip-compare.json#7b0e09bcade1": {
+    "verdict": "对",
+    "凭什么": "「五个数一个不少、次序全反」：编不过=0、跑起来了=2、屏幕上出过字=0，stdout 是「中序：8 5 4 3 1」——五个数正好倒过来。（「拿 -Wall 真编了一遍」那半句本轮量不到。）",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-tree-insert-no-attach.json#3cf479626191": {
+    "verdict": "对",
+    "凭什么": "「跑起来也不摔，它只是丢东西」：编不过=0、跑起来了=2、退出码 0、屏幕上出过字=0；「整架架子上永远只有最上面那一个」：stdout 是「中序：5」，只剩根。（「拿 -Wall 真编了一遍」那半句本轮量不到。）",
+    "证据字段": "编不过几次=0、跑起来了=2、屏幕上出过字=0（外加 stdout）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\c-s3-varargs-sum-write.json#aaf1544b72b9": {
+    "verdict": "不是断言",
+    "凭什么": "「说错了它不报错，只是叼回来一个跟原来毫无关系的数」是 va_arg 类型不匹配的语言层面事实，不是本模板里的代码；本模板是 codewrite、没有 brokenCodeTemplate。",
+    "证据字段": "不适用（跑了几次=0）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-c.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-04-eat-then-name.json#a035844fe6f6": {
+    "verdict": "不是断言",
+    "凭什么": "主语不是本模板的代码。本模板是「写代码」题，没有 brokenCodeTemplate（跑了几次=0）；句子说的是「cin>> 读完不拿走换行」这种错法不吭声，属于①顺带讲的坑。同一个坑在 cpp-s1-getline-needs-ignore 里才有实测坏码（那条编不过=0、跑起来=2）。参考解本身带着 cin.ignore()，跑起来是正常输出。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-04-eat-then-name.json#277377453df4": {
+    "verdict": "不是断言",
+    "凭什么": "同上：句子在解释「漏了 cin.ignore() 会怎样」——那是学生可能写出的错版，不是本模板里的代码（本模板无 brokenCodeTemplate，跑了几次=0）。参考解带 ignore，行为正常。判据属①。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-04-whole-line.json#59b1db60f87e": {
+    "verdict": "不是断言",
+    "凭什么": "句子讲的是「改用 cin >> 去读一整行」会少一截且不报错——那是另一种写法；本模板无 brokenCodeTemplate（跑了几次=0），参考解用 getline 是对的。句子后半段自己还点明「少给一样货 → no matching function」，那是编译错误，跟「不报错」不矛盾。判据属①。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-biggest-wrong-compare.json#d19fd1b53c9f": {
+    "verdict": "对",
+    "凭什么": "句子只说「坏的地方编得过，所以屏幕上没有红字」——说的是不会有编译报错（红字），没说「连警告都没有」。编不过几次=0 正对应「编得过」，屏幕上出过字=0 正对应「屏幕上没有(红字)」。",
+    "证据字段": "编不过几次=0；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-forgot-endl.json#d6ea2fd70be9": {
+    "verdict": "不是断言",
+    "凭什么": "这条落在 concept 字段，是个名词词条（「不报错的错」这类分课标签），不是描述本模板代码行为的句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，标签含义与事实不冲突。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-forgot-endl.json#3a0df2e8fcbc": {
+    "verdict": "对",
+    "凭什么": "句子把「安静」限定在稿子跑起来的表现上：「它一个错都不报，安安静静就这么念完了」。编不过几次=0（不报错）、跑起来了=2（念完了）、退出码=[0]、屏幕上出过字=0（跑起来没有额外的抱怨）。句子没有说「编译器连警告都没有」，所以按可测的那两层判。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-getline-needs-ignore.json#9f1d5333acee": {
+    "verdict": "不是断言",
+    "凭什么": "落在 concept 字段，是标签词条不是句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，与「不报错的错」这个标签不冲突。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-getline-needs-ignore.json#1c1dcf6d3c62": {
+    "verdict": "对",
+    "凭什么": "句子把「安静」限定在程序上：「它一个错都不报，安安静静就跑完了」。编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0 全部对上；句子没有宣称「编译器连警告都没有」。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-guess-branches-swapped.json#733b79e4b2f6": {
+    "verdict": "对",
+    "凭什么": "「坏的地方编得过，所以屏幕上没有红字」——只说没有编译报错。编不过几次=0 对应「编得过」，屏幕上出过字=0 对应「屏幕上没有(红字)」。",
+    "证据字段": "编不过几次=0；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-lost-brace.json#2b1ba4e0a1e3": {
+    "verdict": "对",
+    "凭什么": "句子说的是编译失败这件事没错：「翻译官喵一直翻到稿子最后都还在等，等不到就整份都不交」——这正是缺右花括号的结果；「屏幕上一个字都没有」指的是没有程序输出（编译失败当然没有输出）。证据 编不过几次=2、跑起来了=0、退出码=[1] 完全对应。句子没有说「编译器一言不发」（它说的是交不出成品），所以不是「说安静、其实编不过」那一类。",
+    "证据字段": "编不过几次=2；跑起来了=0；退出码=[1]；屏幕上出过字=2（印的是报错原文）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-main-returns-int.json#b57293c84985": {
+    "verdict": "对",
+    "凭什么": "句子明说编译不过（「翻译官喵一看门牌不对，整本都不翻，一句都不交」），而且反过来叮嘱学员「屏幕上什么都没有时，第一件事就是去看报错喵」——它承认屏幕上会有报错。证据 编不过几次=2、跑起来了=0 与之一致；编译警告字段里就是那条 error 原文。",
+    "证据字段": "编不过几次=2；跑起来了=0；编译警告=「main.cpp:4:1: error: '::main' must return 'int'」",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-recompile-note.json#32b6328f805f": {
+    "verdict": "不是断言",
+    "凭什么": "主语不是本模板的代码：本模板是「改稿子 → 重翻 → 跑」的操作题，没有 brokenCodeTemplate（跑了几次=0）。这句「翻译官喵翻完了一声不吭」讲的是「编译成功时不打印『翻译完成』」这条通用脾气（属于②讲改好/正常路径，③旁白），不是「某段坏代码很安静」。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-ref-add-extra.json#1b95fc700b54": {
+    "verdict": "不是断言",
+    "凭什么": "句子自己点明主语：「少写了那个记号会怎样……这个坑在本课里已经出现过一次（另一道题正是它）」——讲的是漏 & 的另一种写法、另一道题，本模板无 brokenCodeTemplate（跑了几次=0）。判据属①。（顺带：那句里的「不吭声」同样属于没有警告数据的层，不在本模板代码上，故不另立要新证据。）",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-switch-menu.json#afd932a4f055": {
+    "verdict": "不是断言",
+    "凭什么": "句子自指另一道题：「漏了它，翻译官喵不会拦你……（本课另一道题就是这个坑）」；本模板无 brokenCodeTemplate（跑了几次=0），参考解每块牌子都带 break。「不会拦」= 不打断编译，说的是另一处代码。判据属①。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s1-vector-grow.json#a94943755330": {
+    "verdict": "不是断言",
+    "凭什么": "主语不是本模板的代码：本模板无 brokenCodeTemplate（跑了几次=0），参考解只取 box[0]；句子讲的是「伸手去摸 box[3]」这种错法，而且自己说明了结论依开关而变（不带 -O 当场断气、-O2 一声不吭）。判据属①。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-03-outside-rename.json#28f3d3d36c6a": {
+    "verdict": "不是断言",
+    "凭什么": "「光写 name 改的只是投喂口自己……而且不会报错」讲的是漏掉 this-> 的那种写法，本模板无 brokenCodeTemplate（跑了几次=0）。同一坑在 cpp-s2-03-this-shadow 里有实测坏码（编不过=0、跑起来=2）。判据属①。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-03-this-namesake.json#ac7e64c10676": {
+    "verdict": "不是断言",
+    "凭什么": "句子明说是另一种写法：「要是漏掉 this->，写成 fish = fish + fish;……不会报错、不会警告」——本模板无 brokenCodeTemplate（跑了几次=0），参考解写的是 this->fish = this->fish + fish;。同一坑在本课 cpp-s2-03-this-shadow 有实测坏码（编不过=0、跑起来=2、出过字=0）。判据属①；句里「不会警告」那一层同样没有本批数据，但主语不是本模板代码，故不另立要新证据。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-05-static-this.json#cb78b8799730": {
+    "verdict": "不是断言",
+    "凭什么": "标记词落在「this 是每喊一次招式时悄悄递进来的那只猫」——这是讲 this 这个机制的比喻，主语不是本段代码，判据属③。而句子对本段代码的断言是「翻译官喵的原话是：error: 'this' is unavailable for static member functions」，与证据 编不过几次=2、屏幕上出过字=2（印的就是报错原文）完全一致，不是「说安静」那一类。",
+    "证据字段": "编不过几次=2；跑起来了=0；屏幕上出过字=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-10-cat-parade.json#b95c9b263bea": {
+    "verdict": "不是断言",
+    "凭什么": "主语不是本模板的代码：本模板无 brokenCodeTemplate（跑了几次=0），句子讲的是「老图纸那一手不挂 virtual」这种错法（①）；同一形状在 cpp-s2-11-forgot-pure-zero、cpp-s3-14-factory-no-virtual 里有实测坏码（编不过=0、跑起来=2、出过字=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-10-override-typo.json#3e1fd5b2afb8": {
+    "verdict": "不是断言",
+    "凭什么": "「翻译官喵一声不吭」这句的主语是另一个变种，句子自己写明了：「本喵还实测过没挂护身符的样子（同一段代码，把 override 删掉）」——不是本模板的 brokenCode；本模板的 brokenCode 实测 编不过=2，句子开头正引了那条 error 原话，两边一致。判据属①。",
+    "证据字段": "编不过几次=2；跑起来了=0；屏幕上出过字=2；编译警告=「main.cpp:18:10: error: 'void OrangeCat::speek() const' marked 'override', but does not override」",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-10-virtual-dtor.json#9d4501b26cf4": {
+    "verdict": "不是断言",
+    "凭什么": "「要是收尾那一手漏了招牌，屏幕上会少一行，而且翻译官喵一点也不吭声」——讲的是「漏写 virtual ~Cat()」这种错法（①）；本模板是写代码题，没有 brokenCodeTemplate（跑了几次=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-11-feed-by-contract.json#187f622dc277": {
+    "verdict": "不是断言",
+    "凭什么": "「照样跑」这句明说是另一种写法：「真正阴的那种写法是：老图纸那一手带着动作、又没挂 virtual —— 那样程序照样跑完、一个错都不报」（①）。句子对本模板另外两处断言都是「当场拦下」并引了 error 原话，且本模板无 brokenCodeTemplate（跑了几次=0），不冲突。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-11-speaker-roster.json#4b82f5454e76": {
+    "verdict": "不是断言",
+    "凭什么": "句子明说是另一种写法：「真正阴的是另一种写法：老图纸那一手带着动作、又没挂 virtual……那时候程序照样跑完、一个错都不报」（①）；本模板无 brokenCodeTemplate（跑了几次=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-12-divide-pointed-double.json#80e50f95da75": {
+    "verdict": "不是断言",
+    "凭什么": "标记词落在「课文里『点名之后料被悄悄改小』那个坑，就是它」——句子自己指向另一道题（①）；本模板无 brokenCodeTemplate（跑了几次=0），句子另一处「本喵在本机跑过这一题，屏幕上两行是：{sampleOutput}」讲的是参考解（②，由闸门验证）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-12-pointed-wrong-kind.json#7ca93d9aadfc": {
+    "verdict": "不是断言",
+    "凭什么": "落在 concept 字段，是标签词条不是句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，与「一个错都不报」这个标签不冲突。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-12-swap2-in-place.json#bc3a8417c8e4": {
+    "verdict": "不是断言",
+    "凭什么": "句子明说是漏 & 的那一种：「漏了它写成 void swap2(T a, T b)……本喵在本机真跑过那一种：程序照样跑完、翻译官喵一个错都不报」（①）；本模板无 brokenCodeTemplate（跑了几次=0）。同一错法在 cpp-s2-12-swap2-no-ref 有实测坏码（编不过=0、跑起来=2、出过字=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-12-swap2-no-ref.json#18bb131475e4": {
+    "verdict": "不是断言",
+    "凭什么": "落在 concept 字段，是标签词条不是句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，与「一声不吭的错」这个标签不冲突。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-12-two-kinds-in-one-call.json#f374525e9794": {
+    "verdict": "不是断言",
+    "凭什么": "标记词落在「本喵在课文里写过的那个『点名之后料被悄悄改小』的坑，说的就是它」——指向课文另一处（①）。句子对本段代码的断言是「翻译官喵的原话是：error: no matching function for call to 'add(int, double)'」，与证据 编不过=2、屏幕上出过字=2（印的是报错原文）一致。",
+    "证据字段": "编不过几次=2；跑起来了=0；屏幕上出过字=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-14-kitten-no-public.json#89336bc7f2fe": {
+    "verdict": "不是断言",
+    "凭什么": "标记词落在「就是悄悄把老图纸整张扣上了盖子」——这个「悄悄」是说写代码的人没察觉，是修辞（③），句子接着就引了两条 error 原话，与证据 编不过=2、屏幕上出过字=2（印的是报错原文）一致。句子对本模板的另两处断言分别是「补完之后印什么」（②，闸门验证）和「报错只冲着 k.greet() 那一句来」——后者证据只留了报错首行，没验到细节，但不是「说安静」那一类。",
+    "证据字段": "编不过几次=2；跑起来了=0；屏幕上出过字=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-14-menu-no-break.json#82a5dcf5fd23": {
+    "verdict": "不是断言",
+    "凭什么": "落在 concept 字段，是标签词条不是句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，与「翻译官喵一个字都不提醒」这个标签不冲突（该标签的警告层本批无数据，但这里是词条不是句子）。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-14-menu-reads-commands.json#a048c0448b9b": {
+    "verdict": "不是断言",
+    "凭什么": "标记词落在「最后那个 else 是兜底：本喵还没学会的号码也得回一句话，不能一声不吭」——这是对**程序自己**的要求（要它回话），不是「某段坏代码很安静」的断言（③）。本模板无 brokenCodeTemplate（跑了几次=0）；同一课另两句讲的是「break 漏了会怎样」的另一种写法（①，见 cpp-s2-14-menu-no-break 的实测）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-15-credit-forgets-overdraft.json#b9d69a9952f0": {
+    "verdict": "不是断言",
+    "凭什么": "落在 concept 字段，是标签词条不是句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，与「判据抄错答案悄悄错」这个标签不冲突。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-15-take-no-virtual.json#0320de26f489": {
+    "verdict": "不是断言",
+    "凭什么": "标记词落在「别用『把新图纸那两个字删掉』来过关。删掉 override 确实编得过，但那是另一跤……答案悄悄错，屏幕上一句抱怨都没有」——主语是另一个变种，句子自己点明（①）。本模板 brokenCode 实测 编不过=2，句子开头正引了那条 error 原话，一致。",
+    "证据字段": "编不过几次=2；跑起来了=0；屏幕上出过字=2；编译警告=「main.cpp:38:10: error: 'void CreditAccount::take(int)' marked 'override', but does not override」",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s2-15-two-accounts-take.json#e72e757af164": {
+    "verdict": "不是断言",
+    "凭什么": "句子讲的是「把信用账户那一手照老图纸抄成 balance」这种错法（①）：「编得过、跑得完，答案悄悄错」；本模板无 brokenCodeTemplate（跑了几次=0）。同一错法在 cpp-s2-15-credit-forgets-overdraft 有实测坏码（编不过=0、跑起来=2、出过字=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-01-copy-not-ref.json#b005b02e8f84": {
+    "verdict": "不是断言",
+    "凭什么": "落在 concept 字段，是标签词条不是句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，与「不报错但结果悄悄不对」这个标签不冲突。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-03-front-push-report.json#8b1cbaf7b53c": {
+    "verdict": "不是断言",
+    "凭什么": "句子明说是另一种写法：「顺手写成 push_back：那样印出来是投喂的原顺序，编得过、跑得完、翻译官喵一声不吭」（①）；本模板是写代码题，无 brokenCodeTemplate（跑了几次=0）。同一错法在 cpp-s3-03-new-first-push-front 有实测坏码（编不过=0、跑起来=2、出过字=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-03-new-first-push-front.json#695c4958e894": {
+    "verdict": "不是断言",
+    "凭什么": "落在 concept 字段，是标签词条不是句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，与「顺序错翻译官不吭声」这个标签不冲突。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-04-tally-assign-not-add.json#0f91720092c8": {
+    "verdict": "不是断言",
+    "凭什么": "落在 concept 字段，是标签词条不是句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，与「不报错但数悄悄不对」这个标签不冲突。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-04-tally-three-names.json#414aca51d4ac": {
+    "verdict": "不是断言",
+    "凭什么": "句子明说是另一种写法：「要是写成 tally[a] = 1;，同一个名字出现几回都还是 1 —— 而且翻译官喵一个字都不说」（①）；本模板无 brokenCodeTemplate（跑了几次=0）。同一错法在 cpp-s3-04-tally-assign-not-add 有实测坏码（编不过=0、跑起来=2、出过字=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-06-raw-leak-return.json#7084864f3bf6": {
+    "verdict": "对",
+    "凭什么": "句子的断言是「程序跑起来不报错，就是少印了一行」——说的是运行时不报错（外加少印一行）。编不过几次=0（能跑起来）、跑起来了=2、退出码=[0]、屏幕上出过字=0（跑起来没有 stderr 抱怨）全部对上。句子没有宣称「编译器连警告都没有」。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-07-close-forgotten.json#37f780b946f9": {
+    "verdict": "对",
+    "凭什么": "句子说「程序不报错，就是少印一行」——落点是运行时行为。编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0 全部对上；没有宣称「编译器连警告都没有」。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-07-lock-guard.json#0e6f6869ff78": {
+    "verdict": "不是断言",
+    "凭什么": "句子列的是两种写歪的写法：「① 忘了写 ~Locker() → 锁只上不开（……而且程序不报错）；② 把 unlock() 也手写一遍 → 开锁会被喊两次」（①）；本模板是写代码题，无 brokenCodeTemplate（跑了几次=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-08-move-not-called.json#b0309d43900d": {
+    "verdict": "对",
+    "凭什么": "句子把「安静」定义在自己给出的两件事上：「走错了路程序照样跑、结果也照样对（b 里的货是一样的），只是白白抄了一份出来」。「照样跑」由 编不过几次=0、跑起来了=2、退出码=[0] 坐实；跑起来没有额外抱怨由 屏幕上出过字=0 坐实。句子没有宣称「编译器连警告都没有」。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-09-compare-flipped.json#2a3860c643f9": {
+    "verdict": "不是断言",
+    "凭什么": "落在 concept 字段，是标签词条不是句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，与「错得一声不吭」这个标签不冲突。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-09-count-shared.json#e2aa5ed26c6a": {
+    "verdict": "不是断言",
+    "凭什么": "句子讲的是「漏掉 &」的另一种写法：「小招式改的成了自己揣着的那一份副本，外面那个数从头到尾一动不动 —— 要么当场编不过，要么安安静静给你一个 0」（①）；本模板无 brokenCodeTemplate（跑了几次=0）。句子自己还留了「要么编不过、要么安静」两种可能，不是对某段固定代码的断言。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-09-sort-desc.json#6c1c7c3cefc3": {
+    "verdict": "不是断言",
+    "凭什么": "句子自指另一道题：「要是写成 a < b，印出来就成了从小到大 —— 本喵这一课另一道题里那个『一声不吭的错』就是它」（①）；本模板无 brokenCodeTemplate（跑了几次=0），参考解写的是 a > b，那道题（cpp-s3-09-compare-flipped）有实测坏码。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-10-guard-write.json#978c52e2c8ca": {
+    "verdict": "不是断言",
+    "凭什么": "标记词落在「中间那句 throw 把活儿掐断了，却掐不断『守卫已经生出来了』这件事，所以收尾照样跑，而且排在『接住』前面」——说的是**改好之后**这段代码的行为（②，参考解由闸门另行验证），也正是 C++ 的栈展开保证，不是「某段坏代码很安静」。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-11-binary-total.json#b51397b04f6e": {
+    "verdict": "不是断言",
+    "凭什么": "句子讲的是「倒出去与读回来字节数不一致」这种写法：「读出来的东西就全乱了，而程序照样跑得完……安安静静给你一个错的数」（①）；本模板无 brokenCodeTemplate（跑了几次=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-11-open-not-checked.json#e0bd328ba19f": {
+    "verdict": "对",
+    "凭什么": "句子把「安静」定义在这段代码跑起来的表现上：「本子不在的时候，C++ 不会当场摔 —— 它只是把那本本子留在『没打开』的状态，然后什么都不读。所以这段代码照样跑完、照样安安静静地收工」——说的是运行时不抛、不抱怨。编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0 全部对上。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-11-word-split.json#c8549d593a20": {
+    "verdict": "对",
+    "凭什么": "句子说「这两个姿势挑错了，程序不报错、照跑，只是印出来的东西变了样」——说的是不报错（运行时/编译都不报错）。编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0 全部对上。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-12-bowl-shadowed.json#8c53a96e6952": {
+    "verdict": "对",
+    "凭什么": "句子说「这一类错不会报错：同名的小碗和大碗都是正经东西，代码从头到尾跑得顺顺当当」——断的是没有编译错误、跑得完。编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0 全部对上。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-13-pass-pack-dots.json#ef000359797c": {
+    "verdict": "不是断言",
+    "凭什么": "标记词落在句末另一种手滑写法上：「要是手滑只递了某一样（比如写 countAll(4)），程序编得过、也不报错，只是数出来的样数永远少一位」（①）。句子对本段代码的断言是「于是当场拦下：error: parameter packs not expanded with '...'」，与证据 编不过=2、屏幕上出过字=2（印的是报错原文）一致。",
+    "证据字段": "编不过几次=2；跑起来了=0；屏幕上出过字=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-14-bell-first-ear-only.json#fa7886fcea09": {
+    "verdict": "对",
+    "凭什么": "句子把「安静」定义在自己给出的两件事上：「程序编得过、跑得也安静（它看不出来）」——即编得过 + 跑起来没有抱怨。编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0 全部对上；句子没有宣称「编译器连警告都没有」。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-14-bell-listeners.json#d1ce60949fee": {
+    "verdict": "不是断言",
+    "凭什么": "句子明说是另一种写法：「ring 里要是漏写了走名单那一步（比如只喊了第一位），程序编得过、跑得也安静」（①）；本模板是写代码题，无 brokenCodeTemplate（跑了几次=0）。同一错法在 cpp-s3-14-bell-first-ear-only 有实测坏码（编不过=0、跑起来=2、出过字=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-14-factory-no-virtual.json#e173a55b1af2": {
+    "verdict": "不是断言",
+    "凭什么": "落在 concept 字段，是标签词条不是句子，判据属③。顺带核对：本模板 brokenCode 实测 编不过=0、跑起来=2、屏幕上出过字=0，与「不报错不提醒的坑」这个标签不冲突。",
+    "证据字段": "落在字段=concept；编不过几次=0；跑起来了=2",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-14-pond-singleton.json#6dd367285ca7": {
+    "verdict": "不是断言",
+    "凭什么": "句子讲的是三种写歪的写法：「只造一次那句少了 static……少写 &……起手式不藏……三种都不会报错，只会让结果悄悄不对」（①）；本模板是写代码题，无 brokenCodeTemplate（跑了几次=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-15-borrow-no-state.json#95e6bab726f0": {
+    "verdict": "对",
+    "凭什么": "句子说「这一处漏了不会报错，而且看最后那一行还看不出来」——断的是不会报错（编译错误）。编不过几次=0 正对应；跑起来了=2、退出码=[0]、屏幕上出过字=0 说明程序跑完且没有 stderr 抱怨。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-15-borrow-some.json#27cafd2d4cef": {
+    "verdict": "不是断言",
+    "凭什么": "句子讲的是缺了②那一步的写法：「少看第二样，同一件东西就能被借出去无数次，而屏幕上照样一行一行印着『办好了』」（①）；本模板是写代码题，无 brokenCodeTemplate（跑了几次=0）。同一错法在 cpp-s3-15-borrow-no-state 有实测坏码（编不过=0、跑起来=2、出过字=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-15-project-commands.json#354a539c3b6c": {
+    "verdict": "不是断言",
+    "凭什么": "句子讲的是漏写判据的写法：「giveBack 看『找到了没有』和『本来借出去没有』。第二条最容易漏 —— 漏了的话，一件从来没借出去的东西也能被『还』回来，而程序一声不吭」（①）；本模板无 brokenCodeTemplate（跑了几次=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-15-save-load-roundtrip.json#5eb5c1c57c56": {
+    "verdict": "不是断言",
+    "凭什么": "句子讲的是两种写歪的写法：「存几栏读几栏 —— 少一栏就会一件都不剩，而且不报错」「名字里一有空格……又是一种不报错的坏法」（①）；本模板无 brokenCodeTemplate（跑了几次=0）。同一错法在 cpp-s3-15-save-missing-column 有实测坏码（编不过=0、跑起来=2、出过字=0）。",
+    "证据字段": "这段坏代码=「(这个题型没有 brokenCodeTemplate)」；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\cpp-s3-15-save-missing-column.json#ef269cd5c9a3": {
+    "verdict": "对",
+    "凭什么": "句子说「要紧的是它不报错：load 照样回一句『读回来了』……所以『存几栏、读几栏』这种事，光看有没有报错是发现不了的」——断的是没有报错。编不过几次=0 正对应；跑起来了=2、退出码=[0]、屏幕上出过字=0 说明读到底、跑完、没有 stderr 抱怨。",
+    "证据字段": "编不过几次=0；跑起来了=2；退出码=[0]；屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-cpp.json"
+  },
+  "scripts\\bank\\templates\\java-s1-2d-index-order.json#162e974279fb": {
+    "verdict": "对",
+    "凭什么": "主语就是模板里的坏代码（grid[0][1] 端错了碗）。2 次实跑全部编过、正常跑完、屏幕上没出过任何字，与「印出来的数不对，程序却一声不吭，连个错都不报」一致。另外模板 params 里 p∈{2,3}、q∈{4,5}、r∈{6,7}、s∈{8,9}，grid[0][1]=q 恒不等于 grid[1][0]=r，「数不对」这一半也必然成立。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-2d-index-order.json#ee257ee75d1e": {
+    "verdict": "对",
+    "凭什么": "「它不炸、不报错，程序高高兴兴跑完，只是把碗端错了」——同一段坏代码，2 次实跑：一次都没被编译拦下，两次都正常跑完，退出码 0，屏幕上没出过字（也无 stderr）。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-array-reverse-report.json#e39aa16f4c50": {
+    "verdict": "不是断言",
+    "凭什么": "主语不是这道题的坏代码 —— 该题型是 codewrite，压根没有 brokenCodeTemplate（跑了几次=0）。带标记词的那半句是假设变体：「要是把眼色写成 i > 0」这个另外的坑（类别①）。该变体按 Java 语义确实安静（循环在 i==0 之前就退出，不抛异常，只是漏掉 0 号），但这一步不在本次实跑覆盖内；要把它也收进账本，得单独跑一个最小程序。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-blueprint-not-newed.json#90c64c08b72c": {
+    "verdict": "不是断言",
+    "凭什么": "带标记词的「翻译官就不拦了」说的是另一个变体（Cat c = null;），不是模板里的坏代码。模板坏代码（Cat c; 不 new）的证据是编不过几次=2、屏幕上出过字=2，报 variable c might not have been initialized —— 句子前半段正是照实讲这个编译错（「翻译官一眼看出来，不让程序带着这个窟窿往下跑」），明说它会报错。所以标记词落在顺带讲的另一个坑上（类别①）。（Cat c = null; 那条「编译不管、跑起来才炸」不在本次覆盖内。）",
+    "证据字段": "编不过几次=2 / 跑起来了=0 / 屏幕/编译 stderr 出过字=2，原文 variable c might not have been initialized",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-calc-break-outside.json#376d270bd1e0": {
+    "verdict": "对",
+    "凭什么": "「这一处坑的可怕之处是一个错都不报」指的就是坏代码（break 站在 if 花括号外面）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。括号里那句「还有一处同样安静的错法（眼色写反）」是顺带讲的另一个变体，不影响本句主体。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-calc-full-machine.json#c0a80598fc70": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0），句子主语不是坏代码。带标记词的「不报错，只是少说一句」讲的是假设变体「最后那条 else 不写」这个另外的坑（类别①）。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-calc-menu-outside.json#029a33f4d034": {
+    "verdict": "对",
+    "凭什么": "「翻译官一声没吭（这处不报错）：圈子转得好好的」说的就是模板坏代码（菜单那句话站在圈子外面）：编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0，确实一声没吭。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-calc-menu-outside.json#d92c1c472003": {
+    "verdict": "对",
+    "凭什么": "「而且两个都不报错」里，本题这一半（菜单站错地方）由坏代码实跑支撑：编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。（另一半 break 站错地方是上一题的坏代码，本次证据同样显示安静。）",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-calc-unknown-silent.json#089bf4a335f3": {
+    "verdict": "对",
+    "凭什么": "「机器一声不吭……翻译官不报错，是本喵自己发现的」说的就是模板坏代码（缺最后那条兜底 else）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-calc-unknown-silent.json#b907b45f3373": {
+    "verdict": "对",
+    "凭什么": "「程序不报错，只是安静地少说了一句话」：同一段坏代码实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-ctor-birth-with-stuff.json#9626ef594bd2": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0），句子主语不是坏代码。带标记词的「（不报错，只出错结果）」是顺带讲的另一个坑 —— 假设少写 this. 前缀写成 name = name; 那个变体（类别①）；段末引的 constructor ... cannot be applied to given types 也是讲投喂口对不上的另一类错。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-ctor-forgot-this.json#2622758747ba": {
+    "verdict": "对",
+    "凭什么": "标签「不报错只出错结果」说的正是模板坏代码（name = name; 自我赋值）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-ctor-forgot-this.json#33621b1a662b": {
+    "verdict": "对",
+    "凭什么": "「这一处不报错、不提醒，只给一个错结果」「只悄悄地挡住」「不报错，才更吓人」：同一段坏代码实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-for-missing-semicolon.json#70826bd2ee03": {
+    "verdict": "对",
+    "凭什么": "句子的主张就是「翻译官当场拦下、这段代码一个字都没跑起来」，证据完全对上：编不过几次=2、跑起来了=0、退出码=[1]、屏幕上出过字=2，编译原文 ';' expected（句子还引了这句原文，正是本次跑出来的那一行）。带标记词的「安安静静」只出现在结尾的对比句（比安安静静给个错答案省心多了），指另一类错，不是这段代码。",
+    "证据字段": "编不过几次=2 / 跑起来了=0 / 屏幕上出过字=2，原文 ';' expected",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-for-off-by-one.json#5d934a8ea60f": {
+    "verdict": "对",
+    "凭什么": "「程序一个错都不报，只是安安静静少加了一条」说的就是坏代码（眼色写成 i < {n}）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-fully-qualified-scanner.json#43f93916b58b": {
+    "verdict": "不是断言",
+    "凭什么": "带标记词的「一行都不写 import，程序照样跑得欢」说的不是坏代码，而是另一种正确写法 —— 每次都把全名写齐（本模板的参考解正是 java.util.Scanner 那一版），属于类别②：讲改好之后/另一种合法写法的版本，由闸门另行验证。本模板是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-grid-row-sum.json#c1918e008751": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「程序不报错也不炸，只是端回来别处的数」讲的是假设变体「两个编号写反」，是顺带讲的另一个坑（类别①），不是本题的坏代码。（同一类错法在 java-s1-2d-index-order 的坏代码上有实跑支撑：编得过、跑得起来、屏幕上没字。）",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-if-assign-equals.json#4bd60564dbfd": {
+    "verdict": "对",
+    "凭什么": "句子主张「翻译官喵当场就把这一行拦下了……这段代码是一个字都没跑起来」，证据完全对上：编不过几次=2、跑起来了=0、退出码=[1]、屏幕上出过字=2，编译原文 incompatible types: int cannot be converted to boolean（句子引的正是它）。带标记词的「安安静静」在结尾的对比句里，说的是另一类错，不是这段代码。",
+    "证据字段": "编不过几次=2 / 跑起来了=0 / 屏幕上出过字=2，原文 incompatible types: int cannot be converted to boolean",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-if-elseif-order.json#1c4edc92fa3c": {
+    "verdict": "对",
+    "凭什么": "「程序一个错都不报，安安静静就给出了不对的名次」说的就是坏代码（松散条件排在最上头）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-int-division-truncate.json#7ab15602120b": {
+    "verdict": "对",
+    "凭什么": "「它不四舍五入，也不报错，只是安安静静少给你一块」说的就是坏代码（total / 4 两边都是整数）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。模板 params 里 total∈{9,11,13,15} 都不被 4 整除，所以「少给你一块」这一半也必然发生。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-missing-import-scanner.json#40d3db02a79d": {
+    "verdict": "不是断言",
+    "凭什么": "带标记词的「不写 import 也行喵 —— 每次都写全名照样跑得欢」说的是另一种正确写法那一版（= 另一个模板 java-s1-fully-qualified-scanner 的参考解），不是本模板的坏代码；属于类别②。本模板坏代码那一半，句子开头正是照实讲编译错（cannot find symbol），证据：编不过几次=2、屏幕上出过字=2。",
+    "证据字段": "编不过几次=2 / 跑起来了=0 / 屏幕上出过字=2，原文 cannot find symbol",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-nextline-after-nextint.json#f291fb04b31b": {
+    "verdict": "对",
+    "凭什么": "「程序不报错，也不翻脸，就是安安静静地给了本喵一个空名字」说的就是坏代码（少一句吃掉空行的 nextLine）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-nextline-after-nextint.json#8cd6b13fe4d9": {
+    "verdict": "对",
+    "凭什么": "「这个坑最阴的地方是：它不报错。程序跑得好好的」：同一段坏代码实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-return-cuts-early.json#6525352d363b": {
+    "verdict": "对",
+    "凭什么": "标签「不报错的错」指的就是模板坏代码（那句 println 提前冒出来）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-return-cuts-early.json#4f5404ac2395": {
+    "verdict": "对",
+    "凭什么": "「它一个错都不报，安安静静就跑完了」：同一段坏代码实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-substring-slice.json#dc04873f571a": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的那句讲的是假设变体「a 比 b 大 / b 超过珠子数」这个另外的坑（类别①），不是本题的坏代码。该变体「编译时一声不吭、跑起来才炸」按 Java 语义成立（越界与否取决于运行期读进来的 a、b，javac 无从判断，运行到那一句才抛 StringIndexOutOfBoundsException），但这不在本次实跑覆盖里。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-switch-dish-menu.json#1318c3196680": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「屏幕上一个字都没有」讲的是假设变体「不写 default」这个另外的坑（类别①）。另外提醒一句读法：这里的「一个字都没有」说的是没有程序输出（switch 没匹配上、什么都不印），不是「编译器不吭声」——按你的提醒，没有输出≠没有报错。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-this-eat-report.json#e23dd7316dcc": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「少写就是 name = name; 那个不报错的坑」讲的是顺带提的另一个变体（类别①），不是本题的坏代码（本题连坏代码都没有）。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s1-trim-not-caught.json#cfc705f18a55": {
+    "verdict": "对",
+    "凭什么": "「这种错不报错、不提醒，屏幕上安安静静，翻译官一个字都不说」说的就是模板坏代码（s.trim(); 没接住）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-cap-guard.json#22d64d91aaa9": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「而且程序一声不吭，只有数对不上」讲的是假设变体「记账那行写成 fish = more;」这个另外的坑（类别①），不是本题的坏代码。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-concat-uncaught.json#fe8f89bf0362": {
+    "verdict": "对",
+    "凭什么": "标签「不报错的错」指的就是模板坏代码（s.concat(...) 的返回值没接住）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-enum-anon-judge.json#a0e4ab06c202": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「不挂它照样跑得好好的」讲的是假设变体「@Override 那顶小帽子不写」这个另外的坑（类别①），不是本题的坏代码。（同一段里「三处容易踩的地方，本喵都真跑过」讲的也是几个变体的编译错，同样不在本次实跑覆盖内。）",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-enum-ordinal-offbyone.json#3ecd87fa76ab": {
+    "verdict": "对",
+    "凭什么": "「这一题是跑起来不对的那一类：稿子编得过，屏幕上没有红字，就是数不对」说的就是模板坏代码（漏了 +1）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。句末那句「MON 是第 01 天」讲的是另一个变体（把括号省掉），本次证据没覆盖，但按字符串拼接的左结合确实会印出 01，跟句子一致。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-equals-not-double-equal.json#9e6556d8a95d": {
+    "verdict": "对",
+    "凭什么": "「它不报错，它只是给你一个错的答案」说的就是模板坏代码（用 == 比两只口袋）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。句子说 {n} 不在 Integer 那批备货里，模板 params 正是 min 200 / max 201（都在 -128~127 之外），所以 a == b 必为 false、「错的答案」这半边也成立。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0（另：params n 为 200~201，在缓存区间外）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-file-append-log.json#09ef18dcf194": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「前面的字是静悄悄没的，翻译官喵一个字都不说」讲的是假设变体「第二回不喂 true」这个另外的坑（类别①），不是本题的坏代码。句子自称「本喵真跑过」，但那次实验不在本次证据里。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-generic-method-twice.json#fe40a17040aa": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「（数字装箱也在悄悄干活）」不是「这段代码很安静」的断言，是顺带提一句自动装箱这个机制（类别③纯修辞/顺带讲的机制），既不指坏代码也不指某个变体。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-iface-weaker-access.json#e7f1a6467816": {
+    "verdict": "对",
+    "凭什么": "句子讲的是「翻译官喵当场拦下」并原样引了报错原话，证据完全对上：编不过几次=2、跑起来了=0、退出码=[1]、屏幕上出过字=2，编译原文正是 speak() in Robot cannot implement speak() in Speaker（句子还带了底下的 weaker access privileges 那一行）。带标记词的「悄悄」是比喻本喵自己把 public 招牌偷偷摘了，不是断言代码安静。",
+    "证据字段": "编不过几次=2 / 跑起来了=0 / 屏幕上出过字=2，原文 speak() in Robot cannot implement speak() in Speaker",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-insert-arg-order.json#2fa18eb2b502": {
+    "verdict": "对",
+    "凭什么": "句子如实说「这个错翻译官喵会在稿子那一关就拦住，一个字的输出都不会有」，证据：编不过几次=2、跑起来了=0、退出码=[1]、屏幕上出过字=2，报错原文 no suitable method found for insert(String,int) 与句子引的一字不差。带标记词的「悄悄」在括号里，指的是另一类错（跑得好好的、答案悄悄错掉），不是这段代码。",
+    "证据字段": "编不过几次=2 / 跑起来了=0 / 屏幕上出过字=2，原文 no suitable method found for insert(String,int)",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-ledger-rewrite-report.json#7316bb1c9020": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的那句说的是参考解（正确那一版）里 book.get(\"大肥鱼\") 印出一行 null 的行为，属于类别②：讲改好之后那一版的行为，由闸门另行验证参考解输出。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-list-remove-shift.json#48d41b19bf44": {
+    "verdict": "对",
+    "凭什么": "标签「不报错的错」指的就是模板坏代码（remove(0) 之后还去摸编号 1）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。模板 params 里 n2、n3 的取值集合不相交，摸到的必定不是原来第二只，跟讲解一致。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-naked-pocket-cast.json#7c9757ba2abc": {
+    "verdict": "对",
+    "凭什么": "句子说的是「稿子那一关过得干干净净（翻译稿子也不拦），红字是程序跑到那一句才冒出来的」——证据正好是这两件事各一件：编不过几次=0（编译这一关确实没拦），屏幕上出过字=2 且程序自己的stderr 就是句子里原样引的 ClassCastException，跑起来了=0、退出码=[1]。带标记词的「不拦」指编译那一关，句子自己也明说了运行期才冒红字。",
+    "证据字段": "编不过几次=0 / 跑起来了=0 / 退出码=[1] / 屏幕上出过字=2，stderr = ClassCastException",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-override-typo.json#06c4c582f871": {
+    "verdict": "不是断言",
+    "凭什么": "带标记词的「会安安静静地溜过去……程序一声不吭」说的是假设变体「要是没写 @Override」（小图纸上多出一招没人喊得动的 speek），不是模板里的坏代码（类别①）。模板坏代码（挂着 @Override 的 speek）证据是编不过几次=2，而句子前半段正是照实讲这个编译错：method does not override or implement a method from a supertype。",
+    "证据字段": "编不过几次=2 / 跑起来了=0 / 屏幕上出过字=2，原文 method does not override or implement a method from a supertype",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-same-word-not-same-bracelet.json#90c7e2addd6f": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「拿它去比字，它只会安安静静地骗本喵」讲的是 == 比项链这条通则（顺带讲的另一个坑，类别①），不是本题的坏代码。（这条通则另有实跑支撑：java-s2-equals-not-double-equal 的坏代码同样是「== 比两只口袋」，编不过几次=0、跑起来了=2、屏幕上出过字=0。）",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-set-not-list.json#7e6abc1b5a28": {
+    "verdict": "对",
+    "凭什么": "标签「不报错的错」指的就是模板坏代码（名单用 List 装）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-set-not-list.json#4ec67aaef956": {
+    "verdict": "对",
+    "凭什么": "「这一题也是翻译官喵一个字都没说的那一类：程序跑得顺顺当当……选错了装法，它不会拦本喵」：同一段坏代码实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-setter-guard-missing.json#1faf46785555": {
+    "verdict": "对",
+    "凭什么": "句子自称「本喵量过：javac 的 stderr 0 字节、跑起来退出码 0」，证据对上：编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。（按你更正的读法补一句：编译成功那一路的 stderr 本次探针量不到，所以「0 字节」只能算与证据一致，不能说已被证明；被证明的是「编译器没拦、程序正常跑完、屏幕上没出过字」。）",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-super-chain.json#a9adf43a544d": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「要是把这两句写反了……程序一声不吭，只是两行换了位置」讲的是假设变体「super.speak() 和补的那行写反」这个另外的坑（类别①），不是本题的坏代码。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s2-swallow-empty-catch.json#852850ffca74": {
+    "verdict": "对",
+    "凭什么": "「编得过、跑得起来、却静悄悄少了一行的那一类……它是一声不吭的」「接住的括号里空着，稿子编得过，程序照常往下走，翻译官喵一个字都不说」说的就是模板坏代码（空 catch）：2 次实跑编不过几次=0（编译放行）、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s3-04-result-dropped.json#9646bec6383a": {
+    "verdict": "对",
+    "凭什么": "「它不拦你，它只是给你一个错的数」「一个字都不会红」说的就是模板坏代码（count() 的返回值没接住）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s3-06-pattern-DD.json#0ddc387e522f": {
+    "verdict": "对",
+    "凭什么": "「不红不响，只是印出来的不是本喵要的」「它不报错 —— 清单写错只是念法不对」说的就是模板坏代码（yyyy-MM-DD）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s3-06-plusdays-dropped.json#eb7ebbdf4437": {
+    "verdict": "对",
+    "凭什么": "「单独写一句 d.plusDays({k}); 语法上挑不出错，javac 一声不响，跑起来也一声不响」说的就是模板坏代码：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s3-07-buffered-ledger.json#fd6348e5e80d": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「忘了它，文件里可能一个字都没有 —— 而程序一个字都不会红」讲的是假设变体「忘了 close()」这个另外的坑（类别①），不是本题的坏代码。",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s3-anno-missing-runtime.json#b4f74609d175": {
+    "verdict": "对",
+    "凭什么": "「这一摔不是翻译那一关拦的 —— 程序照样跑起来了，只是光片上空着」说的就是模板坏代码（RetentionPolicy.CLASS）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s3-dp-singleton-no-guard.json#805c282feaab": {
+    "verdict": "对",
+    "凭什么": "「这一摔不是翻译那一关拦的 —— 坏版本照样跑得起来，只是答案错了」说的就是模板坏代码（拿碗() 里补单例那一格的心思没写）：2 次实跑编不过几次=0、跑起来了=2、退出码=[0]、屏幕上出过字=0。",
+    "证据字段": "编不过几次=0 / 跑起来了=2 / 退出码=[0] / 屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\java-s3-stream-pipeline.json#6204ae73bb21": {
+    "verdict": "不是断言",
+    "凭什么": "该题型是 codewrite，没有 brokenCodeTemplate（跑了几次=0）。带标记词的「少挂了收尾那道，整条线就是一声不吭 —— 这一课那道改错题演的就是这件事」讲的是假设变体「整条线不挂收尾」这个另外的坑（类别①），不是本题的坏代码。（顺带记：它指向的那道改错题 java-s3-stream-lazy-drop，我另立了一条「要新证据」，因为那句「中间两道也没跑」对不上。）",
+    "证据字段": "跑了几次=0（该题型没有 brokenCodeTemplate，无坏代码可跑）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-java.json"
+  },
+  "scripts\\bank\\templates\\py-s1-branch-order.json#848daab56815": {
+    "verdict": "对",
+    "凭什么": "「一个错都不报 —— 它只是安安静静给出不对的结果」说的正是本模板的坏代码（宽松条件排在前面）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-forgot-store.json#3f2a9daa9a55": {
+    "verdict": "对",
+    "凭什么": "「它不报错、也不吭声，只是数不对」说的正是本模板坏代码（fish + 1 算完没装回去）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-fstring-no-f.json#415c1a12ce95": {
+    "verdict": "对",
+    "凭什么": "concept 里的「不报错的错」指的是漏了 f 的坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-fstring-no-f.json#36005405cadd": {
+    "verdict": "对",
+    "凭什么": "「它不报错，程序觉得自己一切正常，只是屏幕上多了一对花括号」说的正是本模板坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-func-arg-order.json#a6624ae95333": {
+    "verdict": "对",
+    "凭什么": "concept 里的「不报错的错」指的是实参顺序递反的坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-func-arg-order.json#4d0a6ccecbce": {
+    "verdict": "对",
+    "凭什么": "「递反了顺序，它一声不吭」就是本模板坏代码的错法（{count} 与 {cat} 换了座位），件数不缺所以不拦。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-func-kwarg-order.json#8bf792b8d8fe": {
+    "verdict": "对",
+    "凭什么": "「代码照跑不误，结果悄悄就错了」说的正是本模板坏代码（三个实参整体串位）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-func-multi-return.json#5cc437c7786e": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0），句子没有「这段坏代码」可指。标记词在否定句里：「两边个数对不上会当场报错，所以这个错法不会悄悄溜过去」——主语是拆包个数不匹配这种错法，不是说本模板代码安静。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-input-no-int.json#0bb013ef15fc": {
+    "verdict": "对",
+    "凭什么": "「翻译官喵一声不吭、程序也跑完了……它不报错」说的正是本模板坏代码（少了两件 int() 外套）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-lines-order.json#acd213c07163": {
+    "verdict": "对",
+    "凭什么": "「程序跑得好好的，翻译官喵一声不吭，只是输出的顺序不对」说的正是本模板坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-loop-off-by-one.json#304219aa1351": {
+    "verdict": "对",
+    "凭什么": "「程序不报错、翻译官喵一声不吭」说的正是本模板坏代码（range(n - 1)）。跑 1 次、正常结束，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=1、跑起来了=1、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-no-print-call.json#67e2abe35813": {
+    "verdict": "对",
+    "凭什么": "stem 说「屏幕上一个字都没有，可它也没报错」——坏代码就是一个光秃秃的字符串字面量，本来就印不出东西，也不甩错。「没报错」这一半由退出码支撑；「没输出」是这段代码本身的形状（没有人喊 print）。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-no-print-call.json#1778574f3c7f": {
+    "verdict": "对",
+    "凭什么": "「屏幕安安静静 —— 而且它一声不吭，连错都不报」说的正是本模板坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-print-oneline.json#289328d6f954": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。这句安静断言讲的是另一种写法「把数字写到引号外面去（分好几样喂给 print）」，是顺带讲的坑，不是说本模板的代码。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-read-two-sum.json#0f3a39d8ef1d": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「少了 int() 会怎样？……程序一声不吭」是顺带讲另一种写法（少了 int()），不是本模板的代码。旁证：同一坏法在 py-s1-input-no-int 模板里真跑过——退出码 0、屏幕上出过字 0，那句顺带话站得住。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-reassign-swap.json#be2aad264416": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「它不生气、也不报错，直接就装进去了」讲的是学员要写的那份正确代码（动态类型重赋值）的行为，属于参考解那一侧，由闸门真跑出 expectedOutput 另行验证。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-tier-report.json#a5ee34a11f72": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「反过来把宽松的排在前面……它不报错，只是安安静静给错答案」是顺带讲另一种排序写法，不是本模板的代码。旁证：同一坏法在 py-s1-branch-order 模板里真跑过——退出码 0、屏幕上出过字 0。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s1-upper-no-paren.json#143ad8291b28": {
+    "verdict": "对",
+    "凭什么": "「它没报错，只是答非所问」（漏了括号只把招式本身拿出来）说的正是本模板坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-contact-menu-no-break.json#b9a521094dad": {
+    "verdict": "对",
+    "凭什么": "「程序照样跑得动、照样不报错」说的是 break 摆错位置这一类坏法；本模板坏代码（少了 break）真跑 2 次都跑起来、没有甩错，与句子一致。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-deco-no-return-in-shell.json#ad369f1e07e7": {
+    "verdict": "对",
+    "凭什么": "stem「可这一段一声不吭地算错了 —— 它不报错，只是印出来的第二行是个『空』」说的正是本模板坏代码（壳里少 return）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-deco-no-return-in-shell.json#1cb37aa1e800": {
+    "verdict": "对",
+    "凭什么": "「这是这一课最阴的一个坑：它不报错喵」说的正是本模板坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-deco-wraps-missing.json#0f64186bdc5e": {
+    "verdict": "对",
+    "凭什么": "「这一处也不报错，只是把一个名字说错了」说的正是本模板坏代码（少贴 @functools.wraps）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-dunder-bowl-str-add.json#073f6230bf53": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。标记词在讲机制：「print(碗) 的时候，Python 先悄悄喊一遍 碗.__str__()」——说的是 Python 内部替你喊这一招，不是在说某段代码跑起来不吭声。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-dunder-eq-missing.json#0ac370634773": {
+    "verdict": "对",
+    "凭什么": "「这一处不报错，它只是悄悄给出一个你不想要的答案」说的正是本模板坏代码（图纸上少 __eq__）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-dunder-name.json#c4a36c3c927d": {
+    "verdict": "不是断言",
+    "凭什么": "标记词在纯修辞句里：「每个 .py 文件里，都悄悄揣着一块写着名字的牌子」。句子对这段坏代码明说会甩错，还引了原话 NameError: name 'name' is not defined —— 与证据一致（退出码 1、屏幕上出过字 2），不是「说它安静」。",
+    "证据字段": "退出码=[1]、屏幕上出过字=2、程序自己的stderr 有 Traceback（句子自己也明说这段会报 NameError）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-dunder-str-print-not-return.json#ca4dcaac8409": {
+    "verdict": "不是断言",
+    "凭什么": "标记词在讲机制：「print(a) 的时候，Python 会先悄悄喊一遍 a.__str__()」。句子对这段坏代码明说会翻脸（__str__ returned non-string），与证据一致（退出码 1、屏幕上出过字 2）。",
+    "证据字段": "退出码=[1]、屏幕上出过字=2、程序自己的stderr 有 Traceback（句子自己也明说这段会翻脸）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-dunder-sum-bowls.json#7b0d359118fb": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。两处「不报错」分别讲「+ 造出来的新碗没人接」和「忘了写 __str__」这两种另写的坑（顺带讲的坑），不是本模板的代码。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-exc-order.json#2d50f5147da5": {
+    "verdict": "对",
+    "凭什么": "「这一段一个字都不报错，它只是接手接错了人」说的正是本模板坏代码（except 顺序写反）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-file-append-trap.json#74028f695fd2": {
+    "verdict": "对",
+    "凭什么": "「已经存在的档案会被当场清空，而且一声不吭」＋「这个坑不报错」说的正是本模板坏代码（两次都用 \"w\"）。真跑 3 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=3、跑起来了=3、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-file-ledger.json#93f14a13c089": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「真忘了关、马上去读……一个字都不报错」讲的是忘了 close 这个坑，「另开一块去读，才会安安静静叼回一个空串」讲的是另一种场景；句子自己已说明同一个把手上读写会甩 io.UnsupportedOperation、退出码 1。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-file-mode-r.json#b1e5420cef8b": {
+    "verdict": "不是断言",
+    "凭什么": "标记词所在的「不报错」讲的是另一种坏法（本意是追加却写成 \"w\"，档案被静默清空）；句子对这段坏代码明说「这份档案必须已经存在，不存在就当场报错 —— 你看到的就是这一条」，与证据一致（退出码 1、屏幕上出过字 3）。",
+    "证据字段": "退出码=[1]、屏幕上出过字=3、程序自己的stderr 有 Traceback（句子自己也明说会当场报错）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-filter-not-judge.json#70ee4be370d5": {
+    "verdict": "对",
+    "凭什么": "「这一处不报错，只是答案正好反了」说的正是本模板坏代码（lambda 漏了 == 0）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-gen-exhausted.json#73e18b2355c6": {
+    "verdict": "对",
+    "凭什么": "「走完就空了，而且不会报错」说的正是本模板坏代码（生成器被走了两遍）。真跑 3 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=3、跑起来了=3、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-gen-hand-reused.json#b688b1bc19f2": {
+    "verdict": "对",
+    "凭什么": "stem「它一声不吭、不报错，最气人了」说的正是本模板坏代码（同一只手走两遍）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-gen-hand-reused.json#768fa7265f68": {
+    "verdict": "对",
+    "凭什么": "「第二遍再 list(it)……给你一个空储物柜 [] —— 而且一声不吭」说的正是本模板坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-gen-next-past-end.json#2fd2d1aca627": {
+    "verdict": "不是断言",
+    "凭什么": "stem 里「安安静静」说的是改好之后的版本（「让它安安静静印出三行：{a}、{b}、碗空啦」），那由闸门跑参考解验证；句子对现在这段明说「跑到第三行就报错了」，与证据一致（退出码 1、屏幕上出过字 2）。",
+    "证据字段": "退出码=[1]、屏幕上出过字=2（句子自己明说现在这段会报错）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-gen-next-past-end.json#7a43e96e94d1": {
+    "verdict": "不是断言",
+    "凭什么": "标记词在讲 for 的机制：「for 为什么能安安静静把一排东西走完 —— 它背后悄悄接住了这个信号」；句子对这段代码明说第三趟 next 会甩 StopIteration，与证据一致（退出码 1、屏幕上出过字 2）。",
+    "证据字段": "退出码=[1]、屏幕上出过字=2（句子自己明说这段会甩 StopIteration）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-inherit-pass-missing.json#5ecc4154ae95": {
+    "verdict": "不是断言",
+    "凭什么": "标记词「一个字都没有」说的是图纸（类体）里面空着，不是屏幕没输出——正是「没有内容」≠「没有报错」的分界。句子对这段代码明说「翻译官喵当场拦下」报错，与证据一致（退出码 1、屏幕上出过字 2）。",
+    "证据字段": "退出码=[1]、屏幕上出过字=2、程序自己的stderr 有 File …line 9（句子自己明说会被拦下）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-map-double-all.json#d8a440204196": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「忘了先读 n……一个字都不报错，只是结果全歪了」是顺带讲的另一种坑（漏读个数那一行），不是本模板的代码。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-map-print-without-list.json#2075657d4341": {
+    "verdict": "对",
+    "凭什么": "「这一处不报错，它只是不给本喵要的东西」说的正是本模板坏代码（print 了那只手而不是收进柜子）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-organize-isfile-skip.json#e4d0dfb370e5": {
+    "verdict": "对",
+    "凭什么": "「给抽屉改名一点也不报错」＋「跑起来不报错，但动的跟你以为的不是同一样东西」说的正是本模板坏代码（少了把关那一句）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-organize-join-missing.json#9bef2f78a1d6": {
+    "verdict": "对",
+    "凭什么": "「这一句搬家不报错，因为程序站着的地方也是个正经位置，写过去完全合法」说的正是本模板坏代码（新名字没拼抽屉）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-organize-pick-photo.json#6e2054da8ef8": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「口径是只数选中的，这一点写歪了不报错」是顺带讲编号口径写歪这个坑，不是本模板的代码。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-organize-rename-loses-ext.json#193947219419": {
+    "verdict": "对",
+    "凭什么": "「这一段一个字都不报错 —— 名字确实改了」说的正是本模板坏代码（新名字丢了后缀）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-re-bracket-unpaired.json#6de3304b2afa": {
+    "verdict": "不是断言",
+    "凭什么": "标记词在对比句里：「而『少写一段』那种花纹完全合法，它会一声不响地跑完」——说的是另一种坏法；句子对这段坏代码明说「翻脸翻得很痛快……一行都不肯跑」，与证据一致（退出码 1、屏幕上出过字 2）。",
+    "证据字段": "退出码=[1]、屏幕上出过字=2（句子自己明说这段会翻脸）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-re-findall-digit-short.json#bf06de0d7581": {
+    "verdict": "对",
+    "凭什么": "stem「它不报错，跑得顺顺的」说的正是本模板坏代码（花纹少了 +）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-re-findall-digit-short.json#415fba92d97b": {
+    "verdict": "对",
+    "凭什么": "「这一处不报错，它只是悄悄给本喵另一种结果」说的正是本模板坏代码（少了 +）；同句里与「方括号没配对」的对比是旁证。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-re-findall-numbers.json#1c474a205169": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「findall 一块都没捞着……安安静静跑完」讲的是 findall 空结果的通用行为，「少了 + 会一声不响跑完」是顺带讲的另一种花纹。旁证：同一坏法在 py-s2-re-findall-digit-short 里真跑过——退出码 0、屏幕上出过字 0。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-set-member.json#eda7a3cbc473": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「写错了它不会报错，但后面一 add 就翻脸」讲的是把空集合写成 {} 这个另写的坑——句子自己已说明后面会翻脸，不是「这段代码一直安静」。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-stdlib-makedirs-exist-ok.json#83032ec22f26": {
+    "verdict": "不是断言",
+    "凭什么": "标记词在讲参数语义：「exist_ok=True，读作『要是它已经在了，别翻脸，安安静静过去』」——说的是改好之后/加参数之后的样子；句子对这段坏代码明说会当场翻脸报「已经存在」的错，与证据一致（退出码 1、屏幕上出过字 2）。",
+    "证据字段": "退出码=[1]、屏幕上出过字=2（句子自己明说会当场翻脸）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s2-stdlib-pi-call.json#73228ccf934f": {
+    "verdict": "不是断言",
+    "凭什么": "标记词所在的「不会报错」讲的是相反的另一种写法（招式漏了括号，写成 math.sqrt）；句子对这段坏代码明说当场翻脸（'float' object is not callable），与证据一致（退出码 1、屏幕上出过字 2）。",
+    "证据字段": "退出码=[1]、屏幕上出过字=2（句子自己明说这段会当场翻脸）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-anno-not-checked.json#0b11affc4377": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「木牌上写着『整数』，塞进去的却是一串字 —— 它一声不吭，照跑不误」讲的是注解不被检查这件事，主语是学员要写的那份代码（＝参考解），由闸门真跑出 expectedOutput 另行验证。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-dataclass-fish-log.json#727330564c1f": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「顺序投反了它不报错，只是档案里的东西悄悄换了位置」是顺带讲按位置投喂的坑，不是本模板的代码。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-exit-swallow.json#458b2f3eb04b": {
+    "verdict": "对",
+    "凭什么": "「它跑得完全合法，一句报错都不甩，只是悄悄少印了一句」（__exit__ 叼回真货把岔子按下）说的正是本模板坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-gather-sum.json#c9c5138f4935": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「招式里别印东西。让它安安静静把数叼回来」是写给学员的做法（讲的是要写的那份代码），不是本模板某段坏代码的行为。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-guard-typo-mian.json#5cf6201279fe": {
+    "verdict": "对",
+    "凭什么": "stem「程序也没报错，安安静静就跑完了」说的正是本模板坏代码（__mian__ 拼错）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-guard-typo-mian.json#384ca0c3c314": {
+    "verdict": "对",
+    "凭什么": "「程序不报错。它安安静静跑完了，只印了喊话那一行」说的正是本模板坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-http-missing-body.json#b12d400b5f7e": {
+    "verdict": "不是断言",
+    "凭什么": "标记词「一个字都没有」说的是客人收到的回话正文是空的（这道题要你数出来的那个 bug），不是「程序跑起来不吭声」；程序侧的安静由证据支持（跑起来 2/2、退出码 0）。",
+    "证据字段": "跑起来了=2/2、退出码=[0]（标记词说的是回话正文为空，不是屏幕出字）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-http-post-body.json#d1e807c38890": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「拼错了它大多不报错」是顺带讲报文换行写法这个坑（句子自己还举了会干等到超时的反例），不是本模板的代码。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-json-save-drawer.json#69ec617ac55c": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「『读回来是空的』和『一个字都不报错』是两件事」是句总结，句子对那个变体明说 json.load 当场翻脸、退出码 1（说它不安静），不是断言本模板代码安静。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-led-commit-missing.json#0378f2379a66": {
+    "verdict": "对",
+    "凭什么": "stem「程序一点错都没报，安安静静就跑完了」说的正是本模板坏代码（漏了 commit）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-led-commit-missing.json#4f03e3ded4fb": {
+    "verdict": "对",
+    "凭什么": "「漏了它，程序不会报错。它安安静静跑完，你只会觉得『本喵明明记过啊』」说的正是本模板坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-log-debug-probe.json#2a63bad5b148": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「光把那句 logging.debug 摆进去，本子上一个字都不会有……而且它一个字都不报错」是顺带讲没写 level= 门槛这个坑（另一种写法），不是本模板的代码。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-log-level-gate.json#fd3eea016ffe": {
+    "verdict": "对",
+    "凭什么": "「还有一点：门槛只管印不印。那条日志的代码照样在跑，一个字都不报错」说的正是本模板坏代码（门槛设成 WARNING 把 INFO 拦掉）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-log-off-by-one.json#0039e71e4dca": {
+    "verdict": "对",
+    "凭什么": "concept 里的「少绕了一圈的毛病不报错」指的是本模板坏代码（range(筐数 - 1)）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-log-off-by-one.json#914a7a0aa646": {
+    "verdict": "对",
+    "凭什么": "「这种毛病最阴的地方在于它一个字都不报错：外面给的数还剩一个没人读，程序也不吭声」说的正是本模板坏代码。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-namedtuple-cat-card.json#c68c9cb2abc2": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。两处安静断言讲的都是顺带讲的坑：顺序投反（按位置投喂）和按位置取（方括号取 0/1），不是本模板的代码。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-pat-observer-overwrite.json#3170ea435791": {
+    "verdict": "对",
+    "凭什么": "「那行字本身一点毛病没有，程序也不报错 —— 它只是悄悄少通知了一只」说的正是本模板坏代码（把 append 写成重设）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-socket-no-decode.json#51f59e68943b": {
+    "verdict": "不是断言",
+    "凭什么": "标记词所在的「小鱼干已送达 安安静静变成 灏忛奔骞插凡閫佽揪」讲的是两边编解码不一致这种另写的场景（顺带讲的坑）；句子里对这段坏代码本身（print 一串字节记号）不涉及报错断言。程序侧证据：跑起来 2/2、退出码 0、屏幕上出过字 0。",
+    "证据字段": "跑起来了=2/2、退出码=[0]、屏幕上出过字=0（标记词说的是另一种编解码场景）",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-sqlite-no-commit.json#f37a81ba5fdd": {
+    "verdict": "对",
+    "凭什么": "「不是报错，是安安静静地没写进去」＋「程序不摔、不响，只是念出来的数目不对」说的正是本模板坏代码（记账不 commit）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-time-sleep.json#97cd77f9d63e": {
+    "verdict": "对",
+    "凭什么": "「这种错最阴的地方是它不报错：程序照样跑完、字照样印出来，只是顺序不对」说的正是本模板坏代码（用会占爪子的 time.sleep）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-ut-assert-family.json#837ba2869123": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。标记词「不告诉你」讲的是 assertTrue 红了不给差值这件事（几条判据的教学），跟某段代码安不安静无关。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-ut-name-must-be-test.json#29be6d036367": {
+    "verdict": "对",
+    "凭什么": "stem「程序既不报错，也不提醒 —— 它只是安安静静地什么都没干」说的正是本模板坏代码（测试方法名不以 test 开头）。真跑 2 次都跑起来，没有甩错。",
+    "证据字段": "这段坏代码真跑起来：跑了几次=2、跑起来了=2、退出码=[0]、屏幕上出过字=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  },
+  "scripts\\bank\\templates\\py-s3-with-append.json#462baa12fcfe": {
+    "verdict": "不是断言",
+    "凭什么": "本模板没有 brokenCodeTemplate（跑了几次 0）。「更麻烦的是忘了也不报错 —— 字还揣在翻译官喵的兜里没落盘，你去读，读回来的是空荡荡的册子」讲的是自己叫 close 那种写法（顺带讲的坑），不是本模板的代码。",
+    "证据字段": "这段坏代码＝(这个题型没有 brokenCodeTemplate)；跑了几次=0",
+    "跑了什么": "",
+    "改了什么": "",
+    "来自": "_silence-verdict-tpl-python.json"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s2-comp-if-tail",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-02",
+  "type": "codefix",
+  "concept": ["推导式", "if 挂在尾巴上", "SyntaxError"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 },
+    "line": { "kind": "pick", "values": [60, 70] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 50, "max": 80 },
+  "stemTemplate": "本喵翻出一排分数，只想把**及格**的那些挑出来喵（及格线是 {line} 分）。\n\n请你写个程序：**第一行读一个整数 n**，接下来 n 行每行一个分数 —— 打印一行，就是把挑出来的那些分数照柜子本来的样子印。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n⚠️ 可这段代码**压根跑不起来** —— 翻译官喵念到那句挑分数的配方就翻脸了（语法错误），一行都印不出来。你帮本喵找出毛病改对：改完之后，打印出来的那行要跟上面长得一模一样，一个空格都不能差。",
+  "brokenCodeTemplate": "n = int(input())\nnums = []\nfor _ in range(n):\n    nums.append(int(input()))\n\npassed = [if x >= {line} for x in nums]\nprint(passed)\n",
+  "referenceFixTemplate": "n = int(input())\nnums = []\nfor _ in range(n):\n    nums.append(int(input()))\n\npassed = [x for x in nums if x >= {line}]\nprint(passed)\n",
+  "explanationTemplate": "推导式这条配方，翻译官喵是**按从头到尾的顺序**读的喵，三截各有各的位子：\n\n- **最前面**那一截写「进来的东西变成什么样」（这里是 `x`，原样放进柜子）；\n- **中间** `for x in nums` 说「从哪儿拿、拿到的东西叫什么」；\n- **尾巴上**那一截 `if` 才是**挑不挑**。\n\n现在 `if` 被顶到了最前面，翻译官喵读到配方开头就是一句 `if`，读不懂，当场甩你一句 `SyntaxError: invalid syntax` —— 这是**最严重的一档**，程序压根没开始跑。\n\n改法就是把整句 `if x >= {line}` **挪到尾巴上**：加工在前、`for` 在中间、挑不挑在最后。挪过去之后，那几颗没答「是」的分数就会被跳过，新柜子里只剩及格的 ✓\n\n（顺口记喵：筛选和加工能住在同一行里 —— 前面的部分管「进来之后变成什么样」，尾巴上的 `if` 管「哪些能进来」。）"
+}

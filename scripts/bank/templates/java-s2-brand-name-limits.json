@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-brand-name-limits",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-03",
+  "type": "codefix",
+  "concept": ["牌子上的图纸名", "认亲", "换牌子", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵手里这块牌子写的是 `Animal`，可底下装的明明是**一只猫**。猫会睡，本喵就照着它喊了一嗓子 —— 翻译官喵却说：**翻遍这块牌子，没找着这一招**，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n{name}睡着了，呼噜呼噜\n```\n\n招式本喵都写好了，**别去改图纸**；要改的是 `main` 里那几行——本喵得先跟它**认个亲**，再换一块牌子才喊得动喵。",
+  "brokenCodeTemplate": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"：……\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    void sleep() {\n        System.out.println(name + \"睡着了，呼噜呼噜\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal a = new Cat(\"{name}\");\n        a.sleep();\n    }\n}\n",
+  "referenceFixTemplate": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"：……\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    void sleep() {\n        System.out.println(name + \"睡着了，呼噜呼噜\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal a = new Cat(\"{name}\");\n        if (a instanceof Cat) {\n            Cat c = (Cat) a;\n            c.sleep();\n        }\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话分两截，第一截是 **`cannot find symbol`**（本喵点了它**没有**的招式），底下那几行线索才是真值钱的：\n\n- `symbol: method sleep()` —— **本喵在找哪一招**\n- `location: variable a of type Animal` —— **本喵是在哪块牌子上找的**\n\n最后这一行是本题的钥匙。Java 是**认字**的：本喵在代码里喊得出哪些招式，**是照着牌子上写的图纸名去查的**。牌子写 `Animal`，那就只有 `Animal` 上也画着的招式喊得动 —— `sleep` 是小图纸才添上的，本喵在 `Animal` 这张图纸上当然翻不到。\n\n**牌子管的是「本喵写得动哪些」，不是「底下那只真猫会不会」。** 底下那只确实是猫、确实会睡，可本喵手里的牌子写的是大图纸。\n\n正路是那把老钥匙：**先认亲、再换牌子**。\n\n```java\nif (a instanceof Cat) {\n    Cat c = (Cat) a;\n    c.sleep();\n}\n```\n\n- `a instanceof Cat` 问一句「本喵手里这只到底是不是猫」；\n- `(Cat) a` 把这块牌子**换一块写 `Cat` 的**（这一步叫向下转型），它照样指着原来那只真猫，只是牌子上的名字换了；\n- 换了牌子再喊 `sleep`，翻译官就找得到了。\n\n顺手记：**换牌子之前一定要先问一句**。要是底下装的其实是狗，硬换牌子再喊，就是另一种翻车法了喵。"
+}

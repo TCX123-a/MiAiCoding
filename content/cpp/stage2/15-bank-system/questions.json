@@ -1,0 +1,91 @@
+{
+  "lessonId": "cpp-stage2-15",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "这台银行里，信用账户凭什么能**透支**（余额取成负数也不拦）？",
+      "options": [
+        "信用账户那张图纸把「取钱」这一手**改写**了：判据从「比余额多就不干」换成「比余额 + 额度多才不干」",
+        "信用账户是普通账户的复印件，余额不够的时候它自动替主人垫上",
+        "只要名册里装的是牌子，取钱就自动能透支",
+        "老图纸那一手挂上 `virtual` 之后，所有账户都能透支了"
+      ],
+      "answer": 0,
+      "explanation": "透支不是 `virtual` 送的，是**新图纸改写那一手**换来的喵：老图纸上写的是 `if (amount > balance)`，信用账户那一份写的是 `if (amount > balance + limit)` —— 一个词的差别，「余额」换成了「余额 + 额度」喵。`virtual` 只管一件事：本喵顺着牌子喊「取钱」的时候，程序**低头看一眼牌子后面站的是谁**（第 10 课）—— 那一句喊到什么，才是改写那一手决定的事喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "名册写成 `vector<Account*> roster`（碗里装**牌子**），为什么不直接写成 `vector<Account> roster`（碗里装真猫）？",
+      "options": [
+        "真猫放进去会被**复印成老图纸的样子** —— 信用账户那半多出来的格子（额度）和改写过的取钱那一手全丢了",
+        "牌子比真猫短，碗装得下更多只",
+        "因为 `new` 出来的对象必须带类型，不然编译器不让过",
+        "因为会自己变长的碗装不下真猫，只能装牌子"
+      ],
+      "answer": 0,
+      "explanation": "这是第 08 课那个「复印」的坑在这儿复发喵：碗里的格子是老图纸那种（只装得下老图纸的两格加两手），信用账户塞进去会被**照着老图纸复印一份** —— 多出来的那一格 `limit`、还有改写过的「取钱」全都没了，取钱就按老图纸的规矩办（余额不够就翻车）喵。所以本喵让真猫生在外面（`new Account(...)` / `new CreditAccount(...)`），碗里只插**牌子**：牌子只有一种，牌子后面站的是谁是另一回事喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "第五节那段里，本喵把软垫从**圈里面**挪到了**整个圈子外面**（`try` 包住整个 `for`），跑起来会怎样？",
+      "options": [
+        "普通账户一翻车，那辆车把**整个圈**一起带走了 —— 信用账户那一笔根本没轮上办，屏幕上只剩一句「有一笔没办成」",
+        "跑起来一样，只是屏幕上那句话换了换位置",
+        "程序当场就停 —— 车扔出来没人接",
+        "编译器当场拦下，这段编不过去"
+      ],
+      "answer": 0,
+      "explanation": "本喵真跑过这一版，屏幕上只剩一句 `有一笔没办成：余额不够喵` 喵。普通账户（余额 50、要取 80）先翻车，车往上一飞，**整个圈就当场作废了** —— 排在后面的信用账户连 `take` 都没喊到，本来那笔该办成（透支成 -70）、该印两行报账，全没了喵。软垫不是为了「让屏幕好看」，是为了**别把整段活一起带走**：铺在真的会翻的那几句周围，一笔一块，翻了一笔还有下一笔喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\n#include <stdexcept>\nusing namespace std;\n\nclass Account {\nprotected:\n    string id;\n    int balance;\npublic:\n    Account(string i, int b) : id(i), balance(b) {}\n    int getBalance() { return balance; }\n    virtual void take(int amount) {\n        if (amount > balance) {\n            throw runtime_error(\"余额不够喵\");\n        }\n        balance = balance - amount;\n    }\n};\n\nclass CreditAccount : public Account {\nprotected:\n    int limit;\npublic:\n    CreditAccount(string i, int b, int l) : Account(i, b), limit(l) {}\n    void take(int amount) override {\n        if (amount > ____) {\n            throw runtime_error(\"额度也不够喵\");\n        }\n        balance = balance - amount;\n    }\n};\n\nint main() {\n    CreditAccount c(\"C1\", 10, 100);\n    c.take(80);\n    cout << \"C1 还剩 \" << c.getBalance() << \" 条\" << endl;\n    return 0;\n}",
+      "stem": "信用账户那张图纸改写「取钱」那一手的时候，**判据**（用 `____` 标出）该写什么？补上之后这一笔该办成，屏幕上要印出 `C1 还剩 -70 条` 喵。",
+      "blanks": [
+        { "answer": "balance + limit", "accept": ["balance+limit", "limit + balance", "limit+balance"] }
+      ],
+      "explanation": "填的是 `balance + limit` —— 「余额加上额度都还不够，本喵才不干」喵。这一格 `limit` 是新图纸自己多出来的（老图纸上没有），而 `balance` 是从老图纸那儿接过来的家底：`protected:` 那一小段让它够得着喵。卡里 10 条、额度 100，取 80 —— 80 比 110 小，所以办成，余额成 `10 - 80 = -70` 喵。要是判据只写 `balance`（照老图纸抄），这笔就被打回来了：编得过、跑得完，**答案悄悄错**（第三节那个摔法二就是这一跤）喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int cmd = -1;\n    while (cin >> cmd) {\n        if (cmd == 0) {\n            cout << \"收工喵\" << endl;\n            break;\n        }\n\n        int amount = 0;\n        if (cmd == 1 || cmd == 2) {\n            ____\n        }\n\n        cout << \"办一笔 \" << cmd << \"：\" << amount << \" 条\" << endl;\n    }\n    return 0;\n}",
+      "stem": "报账的号码（`3`）和收工的号码（`0`）后面**没有金额** —— 所以只有存钱（`1`）和取钱（`2`）才该伸手去读金额。那一道门里（用 `____` 标出）该填什么？本喵喂 `1 20 3 0` 进去，屏幕上要印出三行：`办一笔 1：20 条`、`办一笔 3：0 条`、`收工喵` 喵。",
+      "blanks": [
+        { "answer": "cin >> amount;", "accept": ["cin>>amount;"] }
+      ],
+      "explanation": "填的是 `cin >> amount;` —— 「金额从投喂口进来」喵。有了这道门，报账的 `3` 就不会被伸手去读一个不存在的金额：`amount` 是那一圈里当场生出来的（每圈都是新的 0），所以报账印出来的是 `0 条` 喵。要是把这道门拆掉、每一圈都去读金额，报账后面那个本该是 `0`（收工）的号码会被**当成金额吃掉** —— 圈里的号码就全错位了，收工也收不成喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\n#include <vector>\n#include <stdexcept>\nusing namespace std;\n\nclass Account {\nprotected:\n    string id;\n    int balance;\npublic:\n    Account(string i, int b) : id(i), balance(b) {}\n    virtual ~Account() {}\n    string getId() { return id; }\n    int getBalance() { return balance; }\n    virtual void take(int amount) {\n        if (amount > balance) {\n            throw runtime_error(\"余额不够喵\");\n        }\n        balance = balance - amount;\n        cout << id << \" 取走 \" << amount << \" 条，现在 \" << balance << \" 条\" << endl;\n    }\n};\n\nclass CreditAccount : public Account {\nprotected:\n    int limit;\npublic:\n    CreditAccount(string i, int b, int l) : Account(i, b), limit(l) {}\n    void take(int amount) override {\n        if (amount > balance + limit) {\n            throw runtime_error(\"额度也不够喵\");\n        }\n        balance = balance - amount;\n        cout << id << \" 取走 \" << amount << \" 条（能透支），现在 \" << balance << \" 条\" << endl;\n    }\n};\n\nint main() {\n    vector<Account*> roster;\n    roster.push_back(new Account(\"A1\", 40));\n    roster.push_back(new CreditAccount(\"C1\", 20, 50));\n\n    for (Account* p : roster) {\n        try {\n            p->take(60);\n        } catch (const runtime_error& e) {\n            cout << p->getId() << \" 这一笔没办成：\" << e.what() << endl;\n        }\n    }\n\n    for (Account* p : roster) {\n        cout << p->getId() << \" 还剩 \" << p->getBalance() << \" 条\" << endl;\n        delete p;\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "A1 这一笔没办成：余额不够喵\nC1 取走 60 条（能透支），现在 -40 条\nA1 还剩 40 条\nC1 还剩 -40 条",
+      "accept": [
+        "A1 这一笔没办成：余额不够喵\nC1 取走 60 条（能透支），现在 -40 条\nA1 还剩 40 条\nC1 还剩 -40 条\n"
+      ],
+      "explanation": "本喵喊的是同一句「取 60 条」，两只账户各应各样喵。普通账户里只有 40 条，`take` 一算不够就扔车，被那块软垫接住，印出「这一笔没办成：余额不够喵」；信用账户有 20 条加 50 的额度，60 比 70 小，办成 —— 余额成 `20 - 60 = -40`（透支，那一手改写过了，所以后面还多印了「（能透支）」三个字）喵。最后挨着报账：普通账户那 40 条**一分没动**（那一笔根本没办成），信用账户是 -40 喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Account {\nprotected:\n    string id;\n    int balance;\npublic:\n    Account(string i, int b) : id(i), balance(b) {}\n    void save(int amount) {\n        balance = balance + amount;\n        cout << id << \" 存进 \" << amount << \" 条，现在 \" << balance << \" 条\" << endl;\n    }\n};\n\nclass SavingsAccount : public Account {\nprotected:\n    int rate;\npublic:\n    SavingsAccount(string i, int b, int r) : Account(i, b), rate(r) {}\n    int interest() {\n        return balance * rate / 100;\n    }\n    void showInterest() {\n        cout << id << \" 的利息是 \" << interest() << \" 条\" << endl;\n    }\n};\n\nint main() {\n    SavingsAccount s(\"S1\", 60, 10);\n    s.save(40);\n    cout << s.interest() << endl;\n    s.showInterest();\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "S1 存进 40 条，现在 100 条\n10\nS1 的利息是 10 条",
+      "accept": [
+        "S1 存进 40 条，现在 100 条\n10\nS1 的利息是 10 条\n"
+      ],
+      "explanation": "储蓄账户那张图纸照着老图纸画的，`save` 那一手它一个字都没写（老图纸那儿接过来的），所以第一行照印喵。存进去 40：`60 + 40 = 100` 条。接着印 `s.interest()`：`balance * rate / 100` 就是 `100 * 10 / 100 = 10`，两个整数相除，除不尽的小数点后面直接切掉喵。最后 `showInterest()` 把同一个数念成一句话喵。"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s1-04-eat-then-name",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-04",
+  "type": "codewrite",
+  "concept": ["两件工具混着用", "管子里的残渣", "cin.ignore 垫一句"],
+  "instances": 6,
+  "params": {
+    "fish": { "kind": "int", "min": 2, "max": 9 },
+    "name": { "kind": "pick", "values": ["小橘 喵", "大肥鱼 二号", "三花 小喵"] },
+    "word": { "kind": "pick", "values": ["小鱼干", "冻干"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{fish}\n{name}\n", "sampleText": "9\n花花 小队长\n" },
+  "stemTemplate": "这次两件工具要**混着用**：投喂口里有两行，第一行是**一个数**，第二行是**一整行字**（中间带个空格）。\n\n请你写一只程序，印出两行：\n\n```text\n{word} N 条\n名字是 <第二行那一整行>\n```\n\n⚠️ 这一课有个**不吭声的坑**正等在这里：先读数字的那件工具读完就停，可它**没把那个换行拿走** —— 换行还留在管子里，下一件工具一开口就先叼到它。前面本喵已经喂过你一句口令，这时候正好用上。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组字**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    int fish = 0;\n    string name;\n    cin >> fish;\n    cin.ignore();\n    getline(cin, name);\n\n    cout << \"{word} \" << fish << \" 条\" << endl;\n    cout << \"名字是 \" << name << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题要看清那个**不报错的坑**是怎么来的，一步一步喵：\n\n1. `cin >> fish` 只认「一样东西」，读到那个数后面的**换行**时就停下来了；\n2. 可它**没把那个换行拿走** —— 换行还留在管子里；\n3. 这时候 `getline` 一开口，先叼到的东西正是那个换行。它确实叼到了「一整行」，只不过**这一行是空的**，所以名字那间屋里什么都没有；\n4. 而真正的第二行（带空格的那串字）还排在管子后面，压根没轮到它。\n\n屏幕上会是「名字是」后面空空的，**而且它一个错都不报** —— 这种坑最难自己发现。\n\n解法就是在两件工具中间垫一句 `cin.ignore();`：它的活是「**把管子里剩着的那一个字符丢掉**」，丢掉的正是那个捣乱的换行。丢完再开口，`getline` 叼到的才是真正的第二行。\n\n记住这条口令：**`cin >>` 和 `getline` 混着用的时候，中间垫一句 `cin.ignore();`**。"
+}

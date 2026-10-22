@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-19-which-cat",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-19",
+  "type": "codewrite",
+  "concept": ["先照光再动手", "照不到会递空牌子", "照光不改手上那张牌子"],
+  "instances": 6,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "小P"] },
+    "other": { "kind": "pick", "values": ["狸花", "小灰"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 1, "max": 2 },
+  "stemTemplate": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n两只猫都搭好了，牌子 `p` 也已经指着其中一只，缺的就是**照光那一手**。你要补的就是它，然后分两条路印字：\n\n- 照到了：印 `是橘猫：` 接上它的名字；\n- 照不到：印 `不是橘猫：` 接上它的名字。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"{who}\");\n    TabbyCat t(\"{other}\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"{who}\");\n    TabbyCat t(\"{other}\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"不是橘猫：\" : \"是橘猫：\") << p->name << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的姿势是**先照、先查空，再动手**喵：\n\n- `dynamic_cast<OrangeCat*>(p)` 拿手上那张「猫」牌子去照橘猫：照到了递一张新牌子 `a`，照不到递**空牌子**；\n- 所以下一句必须先问 `a == nullptr`：是空牌子就说明屋里住的不是橘猫，两条路印不同的字。\n\n顺序不能反：**照完不查就顺手去读**，等于把「万一不是」这一半赌掉了。还有个细节：照光**不改手上那张牌子** —— `p` 从头到尾都还是「猫」，从头到尾都够得着 `p->name`，所以两支里印名字都用它。"
+}

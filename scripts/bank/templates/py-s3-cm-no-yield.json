@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-cm-no-yield",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-02",
+  "type": "codefix",
+  "concept": ["contextlib.contextmanager", "招式跑到一半先交门", "两半截的门"],
+  "instances": 2,
+  "params": {
+    "drawer": { "kind": "pick", "values": ["冰箱抽屉", "工具箱", "针线匣"] }
+  },
+  "stemTemplate": "本喵想做一个「开抽屉」的门：进门的时候印一句「拉开 …」，出门的时候印一句「推回 …」，门里那件事就夹在这两句中间。门上顶了个 `@`，用的是 `contextlib` 里那个 `contextmanager` 帮手。\n\n结果它**根本跑不起来**：屏幕上先把「拉开 …」和「推回 …」**两句都印了出来**，然后甩出一串报错；`with` 门里那句「拿出小鱼干」压根没轮到。\n\n你帮本喵修好它喵。要求：\n\n1. 修完要印出**三句**，顺序是「拉开 …」→「拿出小鱼干」→「推回 …」。\n2. 只许在**开抽屉那一招里面补上一处**，别的一个字都不许改。\n3. 三句话的字样也不许改。",
+  "brokenCodeTemplate": "from contextlib import contextmanager\n\n\n@contextmanager\ndef 开抽屉(名字):\n    print(\"拉开 \" + 名字)\n    print(\"推回 \" + 名字)\n\n\nwith 开抽屉(\"{drawer}\"):\n    print(\"拿出小鱼干\")\n",
+  "referenceFixTemplate": "from contextlib import contextmanager\n\n\n@contextmanager\ndef 开抽屉(名字):\n    print(\"拉开 \" + 名字)\n    yield\n    print(\"推回 \" + 名字)\n\n\nwith 开抽屉(\"{drawer}\"):\n    print(\"拿出小鱼干\")\n",
+  "explanationTemplate": "这个坑的关键是 `contextmanager` 那个帮手**怎么认门**喵。\n\n它接手的招式，得是一个**跑到一半会停下来的招式**：停下来的那一下，就是「门交给外面」的那一刻；等门里的活干完，再回来跑剩下的半截。\n\n可本喵写的这一招**从头顶一口气跑到了尾**，中间一次都没停。于是帮手拿到的是它跑完之后交出来的东西（其实什么都没交出来），等它再想「往下走一步」的时候，手上是空的，当场就喊 `TypeError`。\n\n**症状里最值钱的是那两句话的先后**：「拉开」和「推回」是**挤在一起、在门里那句之前**印完的。这两句话本来应该一前一后把门里那句夹在正中 —— 现在它们黏在一块儿，说明整招是**一口气跑完**的，中间根本没停。找到这一点，就知道该在哪儿补上那个「停下来的记号」（`yield`）了。\n\n补上之后再看顺序：`拉开` 先出，门里的 `拿出小鱼干` 夹在中间，`推回` 最后出。那句「停下来的记号」在的位置，正好把这一招切成**门里门外两半截**。"
+}

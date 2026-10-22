@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-struct-row-and-total",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-05",
+  "type": "codewrite",
+  "concept": ["结构体数组", "点号", "累加"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫罐头", "冻干块"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 3, "min": 1, "max": 9 },
+  "stemTemplate": "本喵摆了一排**三只猫**，名字按顺序是小橘、狸花、大肥鱼。它们今天各吃了几条{unit}，要从键盘上一个个读进来（一行一个，一共三行）。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），然后在 `main` 里**摆一排三只猫**：名字一次填好，食量先占个位、等读进来再盖上去。\n\n接着把三只猫一只一只报出来，格式是 `<名字> 吃了 <食量> 条{unit}`，一只一行；最后再报一行 `一共 <总数> 条{unit}`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[3] = {\n        {\"小橘\", 0},\n        {\"狸花\", 0},\n        {\"大肥鱼\", 0}\n    };\n\n    for (int i = 0; i < 3; i++) {\n        if (scanf(\"%d\", &cats[i].fish) != 1) {\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = 0; i < 3; i++) {\n        printf(\"%s 吃了 %d 条{unit}\\n\", cats[i].name, cats[i].fish);\n        total = total + cats[i].fish;\n    }\n    printf(\"一共 %d 条{unit}\\n\", total);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题练的是**一排猫**，跟「一排碗」是同一套本事，只是每一只身上多带了几个格子喵。\n\n**① 一排猫怎么摆？** 名字交出来的时候，正好可以**一次填好一排**（下面按排版换行写，真写的时候花括号位置不影响意思）：\n\n```c\nstruct Cat cats[3] =\n{\n    {\n        \"小橘\", 0\n    },\n    {\n        \"狸花\", 0\n    },\n    {\n        \"大肥鱼\", 0\n    }\n};\n```\n\n外面那层花括号是「这一排」，里面每一小对是「一只猫身上的格子」。这是 C 给图纸留的甜头：**摆一排的时候可以一次填完，不用一格一格赋值。** 食量先填 0 占个位 —— 反正下一步就读进来盖掉它。\n\n**② 读进来的时候要问门牌号。** `scanf(\"%d\", &cats[i].fish)`：先挑出第 i 只猫，再进它的 `fish` 格 —— 那是一只碗，所以前面得写 `&`。（对照着记：`cats[i].name` 是一排碗的名字，读它的时候**不用**写 `&`。）\n\n**③ 跑圈一只只报、顺路算总账。** 走一圈同时干两件事：印这一只，再把它的食量加进 `total`。这里最容易写歪的就是那句累加 —— 一定要写成 `total = total + cats[i].fish;`，写成 `total = cats[i].fish;` 的话，前面几只的账会被一只只盖掉，最后只剩最后一只的数。\n\n**④ 点号的顺序别弄反。** `cats[i].name` 读作「先挑出第 i 只猫，再进它的名字格」。写成 `cats.name[i]` 翻译官喵会拦你 —— 因为 `cats` 是**一排猫**，不是一只猫，它身上没有 `name` 这格喵。"
+}

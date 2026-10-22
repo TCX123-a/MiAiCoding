@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-catch-order-wrong",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-12",
+  "type": "codefix",
+  "concept": ["先小后大", "能接小的那只也能接住所有小辈", "has already been caught"],
+  "instances": 2,
+  "params": {
+    "idx": { "kind": "pick", "values": ["5", "9"] },
+    "size": { "kind": "pick", "values": ["2", "3"] }
+  },
+  "stemTemplate": "本喵在 `try` 里干了一件越界的活，底下写了两只接猫的括号：一只等着接**小而具体**的那一种，一只等着接**大的**那一种。可这稿子**编都编不过**。\n\n请你改好，让程序印出这一行（就是小而具体的那只接住它）：\n\n```text\n越界了：Index {idx} out of bounds for length {size}\n```\n\n要求：**两只接猫的括号都得原样留着**（不许删、不许改成别的名字）—— 这题要的是让它们俩都站对位置。别的本喵都没写错喵。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        try {\n            int[] fish = new int[{size}];\n            fish[{idx}] = 1;\n        } catch (Exception e) {\n            System.out.println(\"出事了喵\");\n        } catch (ArrayIndexOutOfBoundsException e) {\n            System.out.println(\"越界了：\" + e.getMessage());\n        }\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        try {\n            int[] fish = new int[{size}];\n            fish[{idx}] = 1;\n        } catch (ArrayIndexOutOfBoundsException e) {\n            System.out.println(\"越界了：\" + e.getMessage());\n        } catch (Exception e) {\n            System.out.println(\"出事了喵\");\n        }\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话只有一条：\n\n```text\nerror: exception ArrayIndexOutOfBoundsException has already been caught\n```\n\n念起来是：**「这只出事的东西，前面那只已经接住了。」**\n\n道理不绕：**能接住 `Exception` 的那只猫，本来就能接住它的所有小辈** —— `ArrayIndexOutOfBoundsException` 正是它的小辈。大的那只站在前面，一网就打尽了，**小的那只永远轮不到**。翻译官喵觉得「写了一句永远用不上的话」这件事必须当场说清，于是把稿子退了回来。\n\n所以顺序得反过来：**越具体的越写前面，越宽泛的越写后面**。\n\n```java\n} catch (ArrayIndexOutOfBoundsException e) {\n    System.out.println(\"越界了：\" + e.getMessage());\n} catch (Exception e) {\n    System.out.println(\"出事了喵\");\n}\n```\n\n改完之后小的先接、大的殿后 —— 本喵真跑过，印出来就是 `越界了：Index {idx} out of bounds for length {size}`；后面那只大的还在等着接别的，这一趟没轮到它。\n\n还有一处细节：`e.getMessage()` 叼回来的是 `Index {idx} out of bounds for length {size}` —— 这是翻译官喵自带的一句说法，本喵原样印出来就行，别自己拼一句。**接住的那一只自己带着口信**，这也是为什么接的地方能一边接、一边把话说清楚喵。"
+}

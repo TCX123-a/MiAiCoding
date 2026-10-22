@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-run-missing",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-05",
+  "type": "codefix",
+  "concept": ["asyncio.run", "看锅猫要请才出来", "待办小纸条不会自己动"],
+  "instances": 2,
+  "params": {
+    "cat1": { "kind": "pick", "values": ["大橘", "小黑", "三花"] },
+    "cat2": { "kind": "pick", "values": ["奶牛", "狸花", "布偶"] }
+  },
+  "brokenCodeTemplate": "import asyncio\n\n\nasync def 报时(名字):\n    await asyncio.sleep(0.05)\n    print(名字 + \" 到了\")\n\n\nasync def 主招式():\n    await 报时(\"{cat1}\")\n    await 报时(\"{cat2}\")\n    print(\"集合完毕\")\n\n\nprint(\"点名开始\")\n主招式()\n",
+  "referenceFixTemplate": "import asyncio\n\n\nasync def 报时(名字):\n    await asyncio.sleep(0.05)\n    print(名字 + \" 到了\")\n\n\nasync def 主招式():\n    await 报时(\"{cat1}\")\n    await 报时(\"{cat2}\")\n    print(\"集合完毕\")\n\n\nprint(\"点名开始\")\nasyncio.run(主招式())\n",
+  "stemTemplate": "本喵的猫猫们要集合点名，结果屏幕上**只剩开头那一行**喵。\n\n这段代码的本意是：`{cat1}`、`{cat2}` 各自报到（`asyncio.sleep` 就是「架上一口锅、等它一小会儿」），两只都报完，最后印一句 `集合完毕`；最开头还有一句普通的招呼 `点名开始`。\n\n现在它**跑完、退出码也是 `0`**，可除了 `点名开始`，后面**一个字都没印出来**。屏幕也**不是全空的**：收尾的时候角落里会冒出一句**警告**（是警告不是报错）。请你把它修好：让**四行**都齐、顺序也对。\n\n⚠️ 只差**一处**喵。",
+  "explanationTemplate": "**`async def` 写出来的招式，喊它不会马上跑**喵：`主招式()` 这一句只给本喵叼回来一张「**待办小纸条**」，而**纸条是不会自己动的** —— 得有人把它交到看锅猫的爪子里。\n\n看锅猫是要**请**才出来的：`asyncio.run(...)` 就是这个「请」的动作 —— 它当场把看锅猫叫出来，让它把这张纸条跑完，跑完收工。少了这一句，看锅猫压根没露面，纸条就一直躺着，谁也不会去看那口锅。\n\n这就解释了屏幕上那奇怪的一幕：开头那句 `点名开始` **印得出来**（它不在招式里，就是普普通通的一句话），可后面整段**全哑了** —— 招式写得再漂亮也没用，因为根本没猫看锅。\n\n⚠️ 翻译官喵照例只会小声嘀咕一句「这条协程从没被等过」—— 是**警告**不是报错，所以这种错看起来最像「程序什么都没干」，而不像「程序坏了」。\n\n⚠️ 还有个小地方记一下喵：`asyncio.run(...)` 一次只请看锅猫看**一张**纸条。所以常见的写法是像这道题这样 —— 让主招式在里面一条条 `await`，外面**只请一次**看锅猫。"
+}

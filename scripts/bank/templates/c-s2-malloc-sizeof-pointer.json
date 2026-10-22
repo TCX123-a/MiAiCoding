@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-malloc-sizeof-pointer",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-04",
+  "type": "codefix",
+  "concept": ["sizeof", "指针", "招式", "量不出排", "不报错的错"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "step": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵把「一间一间报出来」这一步打包成了一招，只把那排仓库的牌子喂了进去。\n\n可它报着报着就停了 —— 本喵明明租了 {n} 间，它只报出来一个零头，剩下的一间都没提。它一个错都不报，安安静静就跑完了。\n\n你帮本喵看看这一招哪里不对，把它改好。改好之后，程序应该从第 0 间开始一间一间报出来：`第 0 间：` 后面跟着那一间里放的数，一行一间，一共 {n} 行，一间都不许少。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nvoid show(int *rooms) {\n    int cnt = (int)(sizeof(rooms) / sizeof(rooms[0]));\n    for (int i = 0; i < cnt; i++) {\n        printf(\"第 %d 间：%d\\n\", i, rooms[i]);\n    }\n}\n\nint main(void) {\n    int n = {n};\n    int *rooms = (int *)malloc(sizeof(int) * n);\n\n    if (rooms == NULL) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        rooms[i] = (i + 1) * {step};\n    }\n\n    show(rooms);\n\n    free(rooms);\n    rooms = NULL;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nvoid show(int *rooms, int n) {\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 间：%d\\n\", i, rooms[i]);\n    }\n}\n\nint main(void) {\n    int n = {n};\n    int *rooms = (int *)malloc(sizeof(int) * n);\n\n    if (rooms == NULL) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        rooms[i] = (i + 1) * {step};\n    }\n\n    show(rooms, n);\n\n    free(rooms);\n    rooms = NULL;\n    return 0;\n}\n",
+  "explanationTemplate": "这一招里的尺子**量错了东西**喵。\n\n`rooms` 是一块**牌子**，上面写着那排仓库的头一个编号 —— 它自己不是那排仓库。所以 `sizeof(rooms)` 量到的是**牌子占几格**（8 格，装一个编号用的），跟仓库里还剩多少间毫无关系。\n\n`sizeof(rooms[0])` 量到的才是**一间占几格**（4 格）。8 除以 4 等于 2 —— 于是那一圈只转了两圈就停了，剩下的仓库它连看都没看。\n\n课文里那句提醒说的正是这件事：**招式里量牌子只有 8**。沿着牌子能找到几间，牌子上**没写着**这个数 —— 想知道，就得当成一样东西额外喂进去，也就是给它多加一个「几只」：`show(rooms, n)`。\n\n（顺带分清楚：只有写成一整排那种「贴好编号的碗」写法时，量整排、再除以量一只，才量得出只数。同样的两个公式，量牌子就是量牌子 —— 这题栽的就是这个跟头。）"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-preproc-define-semicolon",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-08",
+  "type": "codefix",
+  "concept": ["#define", "手滑多打分号", "换字换进去", "编译报错"],
+  "instances": 2,
+  "params": {
+    "NAME": { "kind": "pick", "values": ["MAX_FISH", "CAP", "LIMIT"] },
+    "value": { "kind": "int", "min": 20, "max": 40 }
+  },
+  "stemTemplate": "本喵这段代码翻译不过去，翻译官喵指着用 `{NAME}` 的那一句说怪话。\n\n你帮本喵把它改好：让程序能翻译过去，并且印出一行 `仓容 <本喵定的那个数> 条小鱼干`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define {NAME} {value};\n\nint main(void) {\n    printf(\"仓容 %d 条小鱼干\\n\", {NAME});\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define {NAME} {value}\n\nint main(void) {\n    printf(\"仓容 %d 条小鱼干\\n\", {NAME});\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: expected ')' before ';' token`，后面还跟着一句 `note: in expansion of macro '{NAME}'`（`macro` 就是宏）喵。\n\n那句话的意思是：**这个分号被当成 `{NAME}` 的一部分换进去了**。换开之后，用它的那一句变成了「括号还没闭上，先撞上一个分号」，翻译官喵当然要拦。\n\n补法只有一件事：**把 `#define` 那一行屁股后面的分号删掉**。\n\n顺带记牢这条规矩的形状：**`#define` 不是正经的 C 话，它不需要分号收尾。** 你多打的那个分号不是\"被忽略\"了，而是会跟着一起换进每一处用它的地方 —— 平时运气好没碍事，等它碍事的时候，报错就长这个样子。"
+}

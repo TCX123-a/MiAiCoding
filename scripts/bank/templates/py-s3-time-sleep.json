@@ -1,0 +1,19 @@
+{
+  "templateId": "py-s3-time-sleep",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-05",
+  "type": "codefix",
+  "concept": ["time.sleep 占着爪子死等", "await asyncio.sleep 把爪子让出去", "谁先到点谁先回来"],
+  "instances": 2,
+  "params": {
+    "cat1": { "kind": "pick", "values": ["大橘", "三花", "奶牛"] },
+    "cat2": { "kind": "pick", "values": ["小黑", "狸花", "布偶"] },
+    "t1": { "kind": "pick", "values": [0.4, 0.5, 0.6] },
+    "t2": { "kind": "pick", "values": [0.1, 0.2] }
+  },
+  "brokenCodeTemplate": "import asyncio\nimport time\n\n\nasync def 抓鱼(名字, 等多久):\n    time.sleep(等多久)\n    print(名字 + \" 抓完了\")\n\n\nasync def 主招式():\n    await asyncio.gather(抓鱼(\"{cat1}\", {t1}), 抓鱼(\"{cat2}\", {t2}))\n    print(\"都收工了\")\n\n\nasyncio.run(主招式())\n",
+  "referenceFixTemplate": "import asyncio\nimport time\n\n\nasync def 抓鱼(名字, 等多久):\n    await asyncio.sleep(等多久)\n    print(名字 + \" 抓完了\")\n\n\nasync def 主招式():\n    await asyncio.gather(抓鱼(\"{cat1}\", {t1}), 抓鱼(\"{cat2}\", {t2}))\n    print(\"都收工了\")\n\n\nasyncio.run(主招式())\n",
+  "stemTemplate": "本喵把两只猫**一起**派出去抓鱼，要的是「**谁先抓完谁先喊**」喵。\n\n这段代码跑得起来、也不报错，可是顺序**总是反的**：要忙得久的那只先喊，一会儿就能回来的那只反倒排在后头。\n\n请你把它修好：让等得短的那只**先**喊、等得久的那只**后**喊，两只都喊完了再印 `都收工了`。\n\n⚠️ 只改**一处**喵。",
+  "explanationTemplate": "问题出在 `time.sleep(等多久)` 这一句 —— 它是「**抱着爪子死等**」喵。\n\n抱着爪子死等的意思是：这段时间里这只猫**占着灶台哪儿也不去**，看锅猫只能干瞪眼。灶台只有一处，一口锅架上去，别的锅就得**排队** —— 于是本来「一起派出去」的两件事，变成了一前一后：代码里排前面的先喊、排后面的后喊，**跟等多久一点关系都没有**。\n\n`await asyncio.sleep(等多久)` 才是**不占爪子的等**：这只猫把爪子让出来，去旁边待着，看锅猫转头就能去照看别的锅；谁的时辰先到，谁就先被喊回来。所以「谁快谁先喊」这件事，靠的全是「等的时候把爪子让出去」。\n\n⚠️ 这种错最阴的地方是**它不报错**：程序照样跑完、字照样印出来，只是顺序不对。要发现它，得盯着**顺序**看。\n\n⚠️ 记一条大规矩：凡是「架上去、等结果」的活儿（等定时器到点、等远处的猫回话、等文件读完），等的这口气都得**让出去**；只有「抱着铲子拼命翻炒」那种爪子一直占着的活，才轮不到看锅猫帮忙。\n\n（改完 `import time` 就没人用了 —— 留着不报错，顺手删掉也行喵。）"
+}

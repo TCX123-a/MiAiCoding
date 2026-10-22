@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-20-dep-chain-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-20",
+  "type": "codewrite",
+  "concept": ["前一步的战利品是后一步的投喂", "依赖链断一环整条废", "按顺序把三步串起来", "中间收成先接住再喂下一环"],
+  "instances": 6,
+  "params": {
+    "raw": { "kind": "pick", "values": ["2", "5"] },
+    "p": { "kind": "pick", "values": ["1", "3"] },
+    "k": { "kind": "pick", "values": ["2", "4"] },
+    "l": { "kind": "pick", "values": ["2", "1"] }
+  },
+  "stemTemplate": "图纸思维里，一条规矩的**依赖链**长这样喵：前一步的战利品，是后一步的投喂 —— 一条链子从头串到尾，断一环整条就废。\n\n三步手艺都已经写好了（备料、揉、烤），`main` 也写好了；就差 `fish_bake` 的身子还在偷懒（直接还 0）。请你把三步**按顺序串起来**：上一环的收成喂给下一环，最后把收成叼回给 `main`。\n\n（三个数的脾气都在稿子里摆着呢：备料加 {p}、揉乘 {k}、烤减 {l}。）改好之后该印一行 `成品 X 条` —— X 就是把三步串一遍得出的数，一步都不能少、也不能倒。",
+  "starterTemplate": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + {p};\n}\n\nint fish_knead(int x) {\n    return x * {k};\n}\n\nint fish_burn(int x) {\n    return x - {l};\n}\n\n/* ===== 身子区：fish_bake 的身子 =====\n   把三步按顺序串起来：先备料、再揉、后烤；\n   前一步的收成喂给后一步，最后一口叼回去。\n   现在这身子在偷懒（还 0），把它换成真的活。 */\nint fish_bake(int raw) {\n    return 0;\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake({raw}));\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + {p};\n}\n\nint fish_knead(int x) {\n    return x * {k};\n}\n\nint fish_burn(int x) {\n    return x - {l};\n}\n\n/* ===== 身子区：fish_bake 的身子 ===== */\nint fish_bake(int raw) {\n    int prepared = fish_prep(raw);\n    int kneaded = fish_knead(prepared);\n    return fish_burn(kneaded);\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake({raw}));\n    return 0;\n}\n",
+  "explanationTemplate": "依赖链就一句话喵：**前一步的收成，是后一步的投喂**。这条链子三步：备料 → 揉 → 烤。\n\n```text\nint prepared = fish_prep(raw);\nint kneaded = fish_knead(prepared);\nreturn fish_burn(kneaded);\n```\n\n- 顺序不能倒：先「揉」后「备料」，揉的时候就不知道自己在揉什么；\n- 中间的收成要有地方接住（本喵用的是小仓库），接住了才能喂给下一环；\n- 最后一环的收成，就是整条链子的成品 —— 一口叼回去。\n\n顺一遍图纸思维：真图纸里写一条规矩，本质上就是写这条链子 —— 「目标 X 依赖 Y，Y 依赖 Z」；每一环只管自己的活，收成往下一递，谁都不多管闲事。这就是课文里「认词分活」的分工感：**每环管好自己，链子自己会走通**。\n\n再补一句反例的痛：链子要是断了（某一环的收成没人接、或者顺序倒了），台面上不红不崩，出来的就是安心说胡话的假数 —— 和「递反袋子」那根坑同一个家族。"
+}

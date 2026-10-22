@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-reflect-ctor-signature",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-12",
+  "type": "codefix",
+  "concept": ["找产房报的是样子的名字", "报错了找不到就是找不到", "跑到那一步才炸"],
+  "instances": 2,
+  "params": {
+    "f": { "kind": "pick", "values": ["name", "nickname"] },
+    "v": { "kind": "pick", "values": ["Kitty", "Mimi"] }
+  },
+  "stemTemplate": "本喵想照图纸接生一只真猫出来。图纸上那间产房收的是**一串字**，可本喵报错了它收的是哪种，**一跑就挨了一句『找不到』**喵。\n\n你帮本喵把这处报错的地方改好 —— 别的都别动。改好之后，程序该印出**一行**：`接生出来这只叫：` 后面跟着本喵投喂进去的那串字。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        String {f};\n\n        Cat(String {f}) {\n            this.{f} = {f};\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor(int.class);\n        Cat 猫 = (Cat) 产房.newInstance(\"{v}\");\n        System.out.println(\"接生出来这只叫：\" + 猫.{f});\n    }\n}\n",
+  "referenceFixTemplate": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        String {f};\n\n        Cat(String {f}) {\n            this.{f} = {f};\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor(String.class);\n        Cat 猫 = (Cat) 产房.newInstance(\"{v}\");\n        System.out.println(\"接生出来这只叫：\" + 猫.{f});\n    }\n}\n",
+  "explanationTemplate": "这一摔的原话是：\n\n```text\nException in thread \"main\" java.lang.NoSuchMethodException: Main$Cat.<init>(int)\n```\n\n念法是：「**本喵照着名字在图纸上找一圈，没找到你说的那间。**」后半句 `Main$Cat.<init>(int)` 是它在把本喵报的名字念一遍 —— 图纸上那间产房明明收的是 `String`，本喵报的却是 `int`。\n\n找产房时括号里报的**不是值，是样子的名字**：收一串字就报 `String.class`，收整数就报 `int.class`。报几样、报什么，都得跟图纸上那间**一模一样**；**它不会替本喵猜「大概想说的是另一间吧」**，找不到就当场翻脸。\n\n改好之后跑出来是：\n\n```text\n接生出来这只叫：{v}\n```\n\n顺带记一句：这一摔是**跑到那一句**才发生的 —— 报的名字写在括号里，翻译官喵在翻译那一步看不见它，所以这段代码能顺利翻译过去，只在真跑到那一步时挨骂喵。"
+}

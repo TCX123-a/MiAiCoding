@@ -1,0 +1,72 @@
+{
+  "lessonId": "python-stage3-11",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写的体检单里，一个体检项目的名字必须以什么开头，翻译官喵才会把它拎出来跑？",
+      "options": ["`test`", "`check`", "`assert`", "`main`"],
+      "answer": 0,
+      "explanation": "翻译官喵扫一遍体检单，只认 `test` 开头的项目——叫 `检查两只猫` 它理都不理喵。`assert` 那一族是**判据**的名字开头（要求相等、要求为真……），`main` 是喊开工的口令，跟项目名没关系喵～"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "体检报告里出现 `AssertionError: 3.5 != 3` 这一行，它在说什么？",
+      "options": [
+        "真跑出来的是 3.5，本喵写死的标准答案是 3",
+        "函数当场崩了，压根没跑起来",
+        "3.5 和 3 都算对，可以放心收工",
+        "体检单的语法写错了，解释器读不懂"
+      ],
+      "answer": 0,
+      "explanation": "`!=` 念作「不等于」，这一行把两边并排摆着给你看：前面是**招式真跑出来的**，后面是**体检单里写死的标准答案**喵。所以它一下就露了馅——`3.5` 正是把整除 `//` 写成普通除法 `/` 的结果，一眼就能找到病根喵～"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵直接写一行 `unittest.main()` 去跑体检，跑完之后程序真正的输出里看不到报告，这是为什么？",
+      "options": [
+        "报告默认走侧渠，是印给终端里的你看的",
+        "因为全绿了才不打印，红了才有字",
+        "因为 `unittest.main()` 只检查语法，不真的跑体检",
+        "因为报告必须先存进文件，才能被看见"
+      ],
+      "answer": 0,
+      "explanation": "报告和日志走的是同一条**侧渠**，不挤正文喵。它一点没坏——你自己在终端里跑的时候，该出现的字样一个都不会少；本喵想把报告读进正文给你看，才要另外指定「印到正文里」喵～"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "python",
+      "code": "import unittest\n\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n\nclass 平分体检(unittest.TestCase):\n    def ____两只猫平分六条(self):\n        self.____(平分(6, 2), 3)\n",
+      "stem": "本喵这张体检单缺了两处：项目名开头少了记号（补上它，翻译官喵才会把这个项目拎出来跑），判据那行也少了名字（要补的那条判据专门要求「两样相等」）。",
+      "blanks": [
+        { "answer": "test_" },
+        { "answer": "assertEqual" }
+      ],
+      "explanation": "项目名**必须以 `test` 开头**，这是翻译官喵认项目的唯一记号；要求「两样相等」的那条判据叫 `assertEqual`（assert 是断言、equal 是相等）喵。填完这段跑起来**一声不响**——它只是定义了一张体检单，没喊开工，所以什么都不会印喵～"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "import unittest\n\nclass 体检(unittest.TestCase):\n    def test_两只猫平分六条(self):\n        self.assertEqual(6 // 2, 3)\n    def test_除不尽时向下取整(self):\n        self.assertEqual(7 // 2, 3)\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(体检).run(本子)\nprint(本子.testsRun)\nprint(本子.wasSuccessful())\n",
+      "stem": "这段体检跑完，会印出哪两行？一行是一行，照程序真印出来的样子写。",
+      "answer": "2\nTrue",
+      "accept": ["2\nTrue\n"],
+      "explanation": "两个项目都过喵：`//` 是**整除**，`7 // 2` 得 3，本喵写的标准答案也是 3，对得上。`本子.testsRun` 是「跑了几个项目」，所以是第一行 `2`；`本子.wasSuccessful()` 全绿答「真」，印出来是 `True`，所以第二行是它喵～"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "import unittest\n\nclass 体检(unittest.TestCase):\n    def test_相等(self):\n        self.assertEqual(2 + 3, 6)\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(体检).run(本子)\nprint(\"跑了\", 本子.testsRun, \"项\")\nprint(\"挂了\", len(本子.failures), \"项\")\n",
+      "stem": "这个项目明明挂了，可程序自己一句红字都没说——那它会印出哪两行？",
+      "answer": "跑了 1 项\n挂了 1 项",
+      "accept": ["跑了 1 项\n挂了 1 项\n"],
+      "explanation": "体检本子只**记成绩**，不会自己喊；要喊得靠 `print` 喵。`2 + 3` 是 5，判据却要求等于 6，所以这一项挂进了 `failures` 那本清单里，`len()` 一下正好是 `1` 项。注意每行里 `跑了` 和数字之间有一个空格——那是 `print` 用逗号隔开两样东西时自动留的喵～"
+    }
+  ]
+}

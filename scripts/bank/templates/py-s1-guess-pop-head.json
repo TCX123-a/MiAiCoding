@@ -1,0 +1,19 @@
+{
+  "templateId": "py-s1-guess-pop-head",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-15",
+  "type": "codefix",
+  "concept": ["list", "pop 取哪一头", "从头一条一条取"],
+  "instances": 2,
+  "params": {
+    "secret": { "kind": "int", "min": 3, "max": 5 },
+    "g1": { "kind": "int", "min": 1, "max": 2 },
+    "g2": { "kind": "int", "min": 6, "max": 7 },
+    "g3": { "kind": "int", "min": 8, "max": 9 }
+  },
+  "stemTemplate": "本喵的替身柜子规矩是**先报的数放在头上**喵：排好的是 {g1}、{g2}、{g3}，大肥鱼心里那个数（{secret}）压在最底下，本该**最后**才轮到它。\n\n可程序一开跑，头一条报的就是柜子最底下那个数，直接喊了「猜中」，前面三条一条都没轮到……你帮本喵改对，让它**照着放进去的顺序**一条一条从上往下取出来报。",
+  "brokenCodeTemplate": "target = {secret}\nguesses = [{g1}, {g2}, {g3}, {secret}]\n\nwhile True:\n    guess = guesses.pop()\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        break\n",
+  "referenceFixTemplate": "target = {secret}\nguesses = [{g1}, {g2}, {g3}, {secret}]\n\nwhile True:\n    guess = guesses.pop(0)\n    if guess < target:\n        print(guess, \"太小啦喵\")\n    elif guess > target:\n        print(guess, \"太大啦喵\")\n    else:\n        print(guess, \"猜中啦喵！\")\n        break\n",
+  "explanationTemplate": "替身柜子（列表）的两头都会取：`pop(0)` 是从**头上**取下一条，`pop()`（或者 `pop(-1)`）是从**尾巴上**取下一条喵 —— 带不带那个编号，取的就是两头不同的数。\n\n现在程序写的 `pop()` 是**从尾巴上**取。尾巴上压着的正是**最后放进去**的那个数（{secret}），所以它头一下就把答案掏了出来，第一圈就喊中收工了。\n\n改法就是给 `pop` 喂一个 0：`guesses.pop(0)` —— 编号 0 说的就是**头上第一条**。这样每转一圈取走最前面的那一条，{g1}、{g2}、{g3} 才会挨个轮上，压在最底下的答案留到最后才出现喵。\n\n（取一条就少一条：同一个 `pop` 取过的位置不会再有东西，所以这个圈不会卡在同一处来回取。）"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-ptrstr-star-in-walk",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-03",
+  "type": "codefix",
+  "concept": ["%c与%s", "指针遍历项链", "Wformat", "运行时崩溃"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["cat", "fish", "bird", "moon"] }
+  },
+  "stemTemplate": "本喵有一条项链，是 `{word}` 这几个字母串起来的。\n\n程序想用一块牌子从第一颗珠子走起，**一颗一颗**地把整条项链念出来，最后再换一行收尾。\n\n可它跑起来什么都没印就断气了喵 —— 翻译官喵这回**出了声**，但没把本喵拦下，代码照样编了出来。你帮本喵看看它说的是什么意思，把程序改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"{word}\";\n\n    for (char *p = s; *p != '\\0'; p++) {\n        printf(\"%s\", *p);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"{word}\";\n\n    for (char *p = s; *p != '\\0'; p++) {\n        printf(\"%c\", *p);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `warning: format '%s' expects argument of type 'char *', but argument 2 has type 'int' [-Wformat=]` —— 翻过来就是「**`%s` 要的是一整条项链（牌子），你喂进来的是一颗珠子**」。\n\n毛病在那颗星上。走这一趟的 `p` 是**一块牌子**，`*p` 是**当前这颗珠子** —— 一个字符。`%s` 的脾气是「把从这块牌子开始的一整条项链印出来」，而走一颗印一颗要的是 `%c`。\n\n⚠️ 这里最贵的一点是：**它只出声，不拦人。** 本喵真跑过这一版 —— 警告归警告，程序照样被编了出来、交到了本喵手里。然后一跑起来，`%s` 拿着「一颗珠子的字码」当门牌号，顺着这个奇怪的地址去找项链，当场断气：**一个字都没印出来。**\n\n把这一对收进兜里：**`%c` 印一颗珠子，`%s` 印一整条项链；一个收字符，一个收牌子。** 走一圈一颗一颗印的场合，永远配 `%c` 喵。"
+}

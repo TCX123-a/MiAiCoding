@@ -1,0 +1,79 @@
+{
+  "lessonId": "java-stage2-10",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下一张图纸 `class Bowl<T>`，那个 `T` 是什么？",
+      "options": [
+        "一块**空着的尺码** —— 用的时候填什么，图纸上写 `T` 的地方就是什么",
+        "一只真猫的名字，图纸生出来就叫 `T`",
+        "一个数字，表示这柜子能装几件",
+        "图纸的名字，可以随便改"
+      ],
+      "answer": 0,
+      "explanation": "`T` 是图纸上**空着的那块尺码**，是个占位符喵。`Bowl<String>` 就是把尺码填成项链，`Bowl<Integer>` 就是填成数字 —— 同一张图纸量出不同尺寸。它**不是**具体某样东西，也不是格数，更不是图纸名（图纸名在 `Bowl` 那个位置）喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "柜子填上尺码之后，比起那个「什么都收」的万能口袋，最大的好处是什么？",
+      "options": [
+        "塞错东西**翻译稿子的时候就报错**，而且取出来**不用自己贴标签**",
+        "柜子跑起来更快，装得更多",
+        "取东西的时候自动帮本喵转成想要的那种",
+        "装进去的东西会自动排好顺序"
+      ],
+      "answer": 0,
+      "explanation": "填了尺码之后，塞错东西在**翻稿子那一关就被拦下**（`incompatible types`），不用等跑到那一行才炸喵；取出来的时候 Java 已经知道尺码，所以**不用再自己贴 `(Integer)` 那种标签**。它不会让柜子跑得更快、也不会自动帮本喵转弯（贴错标签照样炸），更和顺序无关 —— 那是另外的招喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "`List<String> names` 和 `List<Integer> nums` 两只柜子，问一句 `names.getClass() == nums.getClass()` 会印出什么？",
+      "options": [
+        "`true` —— 尺码只给翻稿子的时候看，翻完就被擦掉了",
+        "`false` —— 尺码不同，柜子的种类当然不同",
+        "印出 `String` 或者 `Integer`",
+        "编译就过不去"
+      ],
+      "answer": 0,
+      "explanation": "尺码是给**翻稿子的时候**站岗的，翻完之后尖括号里的东西**被擦掉**了 —— 跑起来两只柜子都只是「一只装东西的柜子」，所以它俩答 `true`喵。这就是类型擦除。也正因为擦掉了，「跑起来还想问出尺码」的写法根本做不到；这句话本身完全合法，不会报错喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<____> names = new ArrayList<>();\n        names.add(\"小橘\");\n        System.out.println(names.get(0));\n    }\n}",
+      "stem": "这柜子只打算装项链，尺码那一块该填什么？（填一截刚好让 `names.add(\"小橘\");` 合法）",
+      "blanks": [
+        {
+          "answer": "String",
+          "accept": []
+        }
+      ],
+      "explanation": "填 `String`：尺码填成项链，柜子就只收项链，`names.add(\"小橘\");` 这才对得上尺寸喵。要是填 `Integer` 或者干脆空着不填，塞一条项链进去就会被拦下（空着的话是万能口袋，翻译官喵不再替本喵把关）喵。填好之后印出来是 `小橘`。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "class Bowl<T> {\n    private T thing;\n\n    void put(T thing) {\n        this.thing = thing;\n    }\n\n    T take() {\n        return thing;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Bowl<Integer> b = new Bowl<>();\n        b.put(10);\n        System.out.println(b.take() + 5);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "15",
+      "accept": ["15\n"],
+      "explanation": "这一只柜子把尺码填成了数字（`Bowl<Integer>`），所以 `take()` 叼回来的东西 Java 已经知道是数字，**可以直接做加法**，不用本喵再贴标签喵。`10 + 5` 得 `15`喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    static <E> void printTwice(E item) {\n        System.out.println(item);\n        System.out.println(item);\n    }\n\n    public static void main(String[] args) {\n        printTwice(3);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "3\n3",
+      "accept": ["3\n3\n"],
+      "explanation": "这是一招**会量体裁衣的招式**：尖括号写在叼回什么之前，`E` 是这一招的空尺码喵。喂进去一个数字，`E` 当场就定成数字那种图纸（装箱也在悄悄干活），招式里连着印两遍，所以是两行 `3`喵。"
+    }
+  ]
+}

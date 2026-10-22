@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s1-challenge-backwards-tally",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-15",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "倒着念", "边走边累计", "一排贴编号的猫粮碗"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 2, "max": 30 },
+  "stemTemplate": "本喵今天收到的账要**倒着念**：最新的先念、最老的最后念，而且每念一个就报一次**到这会儿为止攒了多少**喵。\n\n投喂口先给一个数（今天收了几笔），再一笔一笔给数。请你写个程序：\n\n1. 先把账一笔不漏地收进**一排贴编号的猫粮碗**里（第 0 只碗装第一笔……）；\n2. 从**最后一只碗**开始往前走，一边走一边念：`第 X 号收 %d 条，累计 %d 条喵`（X 是第几笔，从 1 数起；累计是**从开始念到现在**加起来的合计）；\n3. 念完最后一行报总账：`一共 %d 条喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。碗的编号从 0 数起，可本喵嘴里念的是「第 1 笔」—— 这个差一位别弄丢。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        // 收账、倒着念、边念边累计\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        int[] bills = new int[n];\n        for (int i = 0; i < n; i++) {\n            bills[i] = sc.nextInt();\n        }\n\n        int running = 0;\n        for (int i = n - 1; i >= 0; i--) {\n            running = running + bills[i];\n            System.out.println(\"第 \" + (i + 1) + \" 号收 \" + bills[i] + \" 条，累计 \" + running + \" 条喵\");\n        }\n        System.out.println(\"一共 \" + running + \" 条喵\");\n    }\n}\n",
+  "explanationTemplate": "这一题把「正着收、倒着念」和「边走边攒」叠在了一起喵。\n\n**一、收账那一趟**：`i` 从 0 走到 n 减 1，让「第几笔」和「第几只碗」一一对上，第 0 只碗装第一笔。\n\n**二、念账那一趟**：`i` 从 `n - 1` 出发，每念一笔就 `i--`，一直念到 `i` 变成负数为止 —— 所以圈的条件是 `i >= 0`，不是 `i > 0`（写成 `i > 0` 会把第 0 只碗漏掉，那可是最老的一笔）。\n\n**三、累计**：它和总账其实是**同一个数**。边走边加：先 `running = running + bills[i]`，再印这一行 —— 这样印出来的「累计」天然是「念到目前」的合计；等念完最后一笔，`running` 正好就是总数，最后一行直接印它，不用再算第二遍。\n\n**四、差一位**：碗从 0 号数起，嘴里念的却是「第几笔」—— 从 1 数起，所以印的时候要 `i + 1`。\n\n小提醒喵：累加要**先加再印**，顺序反了累计就会少自己那笔。"
+}

@@ -1,0 +1,372 @@
+{
+  "lessonId": "java-stage3-27",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-doc-fill-javadoc-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这只装筐账本**缺了半只手**喵：骨架给你了，可那只算「能装满几筐」的方法还是个空壳（里面只有 `return 0;`），两处该写 Javadoc 的地方也全是光板。\n\n你补两件事：\n\n1. **把方法做对**：按每筐容量算能装满的**整筐数**（整数除法，零头另算 —— 骨架里已经替你留好了位置）；\n2. **把文档补上**：按本课（Javadoc 规范）给**图纸和这只方法**写注释 —— 图纸注释用一句话说清职责；方法注释里 `@param`、`@return` 一个都不能少。\n\n投喂口先叼**每筐容量**、再叼**鱼干总数**（一行一个数）。印**两行**：\n\n```text\n装满 X 筐\n筐外剩 Y 条\n```\n\n比如投喂给程序的是\n\n5\n78\n\n就该叼回\n\n装满 15 筐\n筐外剩 3 条\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        // TODO 1：把 fullBaskets 补对（整数除法，零头不用它管）\n        // TODO 2：给类和 fullBaskets 补 Javadoc（类一句话；方法 @param、@return 齐全）\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}",
+      "referenceSolution": "import java.util.Scanner;\n\n/**\n * 鱼干装筐小账本。\n */\npublic class Main {\n    /**\n     * 按每筐的容量算能装满几筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @param perBasket 每筐容量\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return fishTotal / perBasket;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}",
+      "expectedOutput": "装满 8 筐\n筐外剩 1 条",
+      "stdin": "5\n41\n",
+      "explanation": "**一、这一节要练的动作只有一个：让方法在没人讲解的情况下也能被读懂。** 两处注释的分工：\n\n- **图纸注释**（`/** ... */` 顶在图纸头上）：一句话说清「这张图纸是干什么的」—— 比如「鱼干装筐小账本」；\n- **方法注释**：`@param` 逐只交代投喂的小鱼干的含义、`@return` 交代叼回来的战利品，再补一句话说「做什么」，缺一不可。\n\n本喵的参考样子：\n\n```java\nimport java.util.Scanner;\n\n/**\n * 鱼干装筐小账本。\n */\npublic class Main {\n    /**\n     * 按每筐的容量算能装满几筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @param perBasket 每筐容量\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return fishTotal / perBasket;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}\n```\n\n**二、`/** */` 和 `//` 的分工。** 图纸、图纸上的属性、图纸里的招式用 **Javadoc 注释**（`/** ... */`）—— 它是给 IDE 悬浮提示、自动补全、文档生成器读的；`//` 留给方法**内部**的短句说明。拿 `//` 给图纸里的招式写注释，IDE 里鼠标悬上去一片空白 —— 看的人还得跳进方法体里找线索。\n\n**三、方法体那行。** 整数除法天然舍零头：`37 / 5` 得 `7`，整筐数就是它；零头 `37 % 5` 得 `2`，骨架里已经替你摆好了。\n\n一句话记住：**注释写给「三个月后的自己」和「从没来过的新人」—— 目标是他们不用问人，就能安全地改你的代码。**",
+      "templateId": "java-s3-doc-fill-javadoc",
+      "params": {
+        "p": 5
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:07.319Z",
+        "hash": "edce45fd4994492b"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-fill-javadoc-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这只装筐账本**缺了半只手**喵：骨架给你了，可那只算「能装满几筐」的方法还是个空壳（里面只有 `return 0;`），两处该写 Javadoc 的地方也全是光板。\n\n你补两件事：\n\n1. **把方法做对**：按每筐容量算能装满的**整筐数**（整数除法，零头另算 —— 骨架里已经替你留好了位置）；\n2. **把文档补上**：按本课（Javadoc 规范）给**图纸和这只方法**写注释 —— 图纸注释用一句话说清职责；方法注释里 `@param`、`@return` 一个都不能少。\n\n投喂口先叼**每筐容量**、再叼**鱼干总数**（一行一个数）。印**两行**：\n\n```text\n装满 X 筐\n筐外剩 Y 条\n```\n\n比如投喂给程序的是\n\n6\n87\n\n就该叼回\n\n装满 14 筐\n筐外剩 3 条\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        // TODO 1：把 fullBaskets 补对（整数除法，零头不用它管）\n        // TODO 2：给类和 fullBaskets 补 Javadoc（类一句话；方法 @param、@return 齐全）\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}",
+      "referenceSolution": "import java.util.Scanner;\n\n/**\n * 鱼干装筐小账本。\n */\npublic class Main {\n    /**\n     * 按每筐的容量算能装满几筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @param perBasket 每筐容量\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return fishTotal / perBasket;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}",
+      "expectedOutput": "装满 3 筐\n筐外剩 2 条",
+      "stdin": "6\n20\n",
+      "explanation": "**一、这一节要练的动作只有一个：让方法在没人讲解的情况下也能被读懂。** 两处注释的分工：\n\n- **图纸注释**（`/** ... */` 顶在图纸头上）：一句话说清「这张图纸是干什么的」—— 比如「鱼干装筐小账本」；\n- **方法注释**：`@param` 逐只交代投喂的小鱼干的含义、`@return` 交代叼回来的战利品，再补一句话说「做什么」，缺一不可。\n\n本喵的参考样子：\n\n```java\nimport java.util.Scanner;\n\n/**\n * 鱼干装筐小账本。\n */\npublic class Main {\n    /**\n     * 按每筐的容量算能装满几筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @param perBasket 每筐容量\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return fishTotal / perBasket;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}\n```\n\n**二、`/** */` 和 `//` 的分工。** 图纸、图纸上的属性、图纸里的招式用 **Javadoc 注释**（`/** ... */`）—— 它是给 IDE 悬浮提示、自动补全、文档生成器读的；`//` 留给方法**内部**的短句说明。拿 `//` 给图纸里的招式写注释，IDE 里鼠标悬上去一片空白 —— 看的人还得跳进方法体里找线索。\n\n**三、方法体那行。** 整数除法天然舍零头：`37 / 5` 得 `7`，整筐数就是它；零头 `37 % 5` 得 `2`，骨架里已经替你摆好了。\n\n一句话记住：**注释写给「三个月后的自己」和「从没来过的新人」—— 目标是他们不用问人，就能安全地改你的代码。**",
+      "templateId": "java-s3-doc-fill-javadoc",
+      "params": {
+        "p": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:23:29.843Z",
+        "hash": "acb0b0984a0deb61"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-fill-javadoc-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这只装筐账本**缺了半只手**喵：骨架给你了，可那只算「能装满几筐」的方法还是个空壳（里面只有 `return 0;`），两处该写 Javadoc 的地方也全是光板。\n\n你补两件事：\n\n1. **把方法做对**：按每筐容量算能装满的**整筐数**（整数除法，零头另算 —— 骨架里已经替你留好了位置）；\n2. **把文档补上**：按本课（Javadoc 规范）给**图纸和这只方法**写注释 —— 图纸注释用一句话说清职责；方法注释里 `@param`、`@return` 一个都不能少。\n\n投喂口先叼**每筐容量**、再叼**鱼干总数**（一行一个数）。印**两行**：\n\n```text\n装满 X 筐\n筐外剩 Y 条\n```\n\n比如投喂给程序的是\n\n7\n38\n\n就该叼回\n\n装满 5 筐\n筐外剩 3 条\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        // TODO 1：把 fullBaskets 补对（整数除法，零头不用它管）\n        // TODO 2：给类和 fullBaskets 补 Javadoc（类一句话；方法 @param、@return 齐全）\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}",
+      "referenceSolution": "import java.util.Scanner;\n\n/**\n * 鱼干装筐小账本。\n */\npublic class Main {\n    /**\n     * 按每筐的容量算能装满几筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @param perBasket 每筐容量\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return fishTotal / perBasket;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}",
+      "expectedOutput": "装满 8 筐\n筐外剩 6 条",
+      "stdin": "7\n62\n",
+      "explanation": "**一、这一节要练的动作只有一个：让方法在没人讲解的情况下也能被读懂。** 两处注释的分工：\n\n- **图纸注释**（`/** ... */` 顶在图纸头上）：一句话说清「这张图纸是干什么的」—— 比如「鱼干装筐小账本」；\n- **方法注释**：`@param` 逐只交代投喂的小鱼干的含义、`@return` 交代叼回来的战利品，再补一句话说「做什么」，缺一不可。\n\n本喵的参考样子：\n\n```java\nimport java.util.Scanner;\n\n/**\n * 鱼干装筐小账本。\n */\npublic class Main {\n    /**\n     * 按每筐的容量算能装满几筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @param perBasket 每筐容量\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return fishTotal / perBasket;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}\n```\n\n**二、`/** */` 和 `//` 的分工。** 图纸、图纸上的属性、图纸里的招式用 **Javadoc 注释**（`/** ... */`）—— 它是给 IDE 悬浮提示、自动补全、文档生成器读的；`//` 留给方法**内部**的短句说明。拿 `//` 给图纸里的招式写注释，IDE 里鼠标悬上去一片空白 —— 看的人还得跳进方法体里找线索。\n\n**三、方法体那行。** 整数除法天然舍零头：`37 / 5` 得 `7`，整筐数就是它；零头 `37 % 5` 得 `2`，骨架里已经替你摆好了。\n\n一句话记住：**注释写给「三个月后的自己」和「从没来过的新人」—— 目标是他们不用问人，就能安全地改你的代码。**",
+      "templateId": "java-s3-doc-fill-javadoc",
+      "params": {
+        "p": 7
+      },
+      "verified": {
+        "at": "2026-10-20T17:23:33.012Z",
+        "hash": "8f7b89b321710676"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-fill-javadoc-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这只装筐账本**缺了半只手**喵：骨架给你了，可那只算「能装满几筐」的方法还是个空壳（里面只有 `return 0;`），两处该写 Javadoc 的地方也全是光板。\n\n你补两件事：\n\n1. **把方法做对**：按每筐容量算能装满的**整筐数**（整数除法，零头另算 —— 骨架里已经替你留好了位置）；\n2. **把文档补上**：按本课（Javadoc 规范）给**图纸和这只方法**写注释 —— 图纸注释用一句话说清职责；方法注释里 `@param`、`@return` 一个都不能少。\n\n投喂口先叼**每筐容量**、再叼**鱼干总数**（一行一个数）。印**两行**：\n\n```text\n装满 X 筐\n筐外剩 Y 条\n```\n\n比如投喂给程序的是\n\n8\n79\n\n就该叼回\n\n装满 9 筐\n筐外剩 7 条\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        // TODO 1：把 fullBaskets 补对（整数除法，零头不用它管）\n        // TODO 2：给类和 fullBaskets 补 Javadoc（类一句话；方法 @param、@return 齐全）\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}",
+      "referenceSolution": "import java.util.Scanner;\n\n/**\n * 鱼干装筐小账本。\n */\npublic class Main {\n    /**\n     * 按每筐的容量算能装满几筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @param perBasket 每筐容量\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return fishTotal / perBasket;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}",
+      "expectedOutput": "装满 9 筐\n筐外剩 1 条",
+      "stdin": "8\n73\n",
+      "explanation": "**一、这一节要练的动作只有一个：让方法在没人讲解的情况下也能被读懂。** 两处注释的分工：\n\n- **图纸注释**（`/** ... */` 顶在图纸头上）：一句话说清「这张图纸是干什么的」—— 比如「鱼干装筐小账本」；\n- **方法注释**：`@param` 逐只交代投喂的小鱼干的含义、`@return` 交代叼回来的战利品，再补一句话说「做什么」，缺一不可。\n\n本喵的参考样子：\n\n```java\nimport java.util.Scanner;\n\n/**\n * 鱼干装筐小账本。\n */\npublic class Main {\n    /**\n     * 按每筐的容量算能装满几筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @param perBasket 每筐容量\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal, int perBasket) {\n        return fishTotal / perBasket;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int perBasket = sc.nextInt();\n        int fishTotal = sc.nextInt();\n        int spare = fishTotal % perBasket;\n        System.out.println(\"装满 \" + fullBaskets(fishTotal, perBasket) + \" 筐\");\n        System.out.println(\"筐外剩 \" + spare + \" 条\");\n    }\n}\n```\n\n**二、`/** */` 和 `//` 的分工。** 图纸、图纸上的属性、图纸里的招式用 **Javadoc 注释**（`/** ... */`）—— 它是给 IDE 悬浮提示、自动补全、文档生成器读的；`//` 留给方法**内部**的短句说明。拿 `//` 给图纸里的招式写注释，IDE 里鼠标悬上去一片空白 —— 看的人还得跳进方法体里找线索。\n\n**三、方法体那行。** 整数除法天然舍零头：`37 / 5` 得 `7`，整筐数就是它；零头 `37 % 5` 得 `2`，骨架里已经替你摆好了。\n\n一句话记住：**注释写给「三个月后的自己」和「从没来过的新人」—— 目标是他们不用问人，就能安全地改你的代码。**",
+      "templateId": "java-s3-doc-fill-javadoc",
+      "params": {
+        "p": 8
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:10.421Z",
+        "hash": "9b3694043d19c793"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-from-javadoc-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "这一题反过来练：**需求方只给了文档，代码归你写**喵。\n\n要交出的是一张图纸 `Main`，上面有一只方法，它的 Javadoc 是这样的（**照它写实现**，每个词都是需求）：\n\n```java\n/**\n * 算这些天平均每天攒下多少条（向下取整）。\n *\n * @param dailyCounts 每天攒到的条数（至少一天）\n * @return 平均每天攒到的条数\n */\nstatic int averageOf(int[] dailyCounts);\n```\n\n投喂口：先给一个数（记了几天），再一行一个当天的条数。印**一行**：`平均每天 ` 拼上平均条数，再拼 ` 条`。\n\n比如投喂给程序的是\n\n5\n7\n7\n5\n3\n4\n\n就该叼回\n\n平均每天 5 条\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": null,
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    /**\n     * 算这些天平均每天攒下多少条（向下取整）。\n     *\n     * @param dailyCounts 每天攒到的条数（至少一天）\n     * @return 平均每天攒到的条数\n     */\n    static int averageOf(int[] dailyCounts) {\n        int total = 0;\n        for (int count : dailyCounts) {\n            total = total + count;\n        }\n        return total / dailyCounts.length;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int days = sc.nextInt();\n        int[] dailyCounts = new int[days];\n        for (int i = 0; i < days; i++) {\n            dailyCounts[i] = sc.nextInt();\n        }\n        System.out.println(\"平均每天 \" + averageOf(dailyCounts) + \" 条\");\n    }\n}",
+      "expectedOutput": "平均每天 4 条",
+      "stdin": "5\n1\n9\n1\n8\n4\n",
+      "explanation": "**一、Javadoc 就是「写给实现者的需求单」。** 这一题故意不给你代码、只给文档 —— 因为企业里真会有这种时刻：需求单先定下来，实现照着它落。文档上两句关键：**向下取整**（除法的整数版），以及 `@param dailyCounts` 说的是「每天攒到的条数」这一排贴编号的猫粮碗。\n\n**二、参考实现（方法部分）。**\n\n```java\nstatic int averageOf(int[] dailyCounts) {\n    int total = 0;\n    for (int count : dailyCounts) {\n        total = total + count;\n    }\n    return total / dailyCounts.length;\n}\n```\n\n顺着 Javadoc 看：投喂的小鱼干的名字 `dailyCounts` 和 `@param` 对上了；`total / dailyCounts.length` 用整数除法，正好兑现「向下取整」那句；天数直接取 `length`，不用再传一个「几天」进来 —— **投喂的小鱼干只留必要的**，文档里没写的别乱加。\n\n**三、你写完之后的对齐动作。** 回头**逐条对**：`@param` 的名字对不对、`@return` 的话和实际返回对不对、注释里写的边界（至少一天）和代码行为对不对。这一步「回头对」，就是对「注释与代码同步」的日常操练。\n\n一句话记住：**文档写之前是设计，写完是合同 —— 实现是照着合同交货。**",
+      "templateId": "java-s3-doc-from-javadoc",
+      "params": {
+        "d": 5
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:13.463Z",
+        "hash": "a852285e39abfe64"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-from-javadoc-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "这一题反过来练：**需求方只给了文档，代码归你写**喵。\n\n要交出的是一张图纸 `Main`，上面有一只方法，它的 Javadoc 是这样的（**照它写实现**，每个词都是需求）：\n\n```java\n/**\n * 算这些天平均每天攒下多少条（向下取整）。\n *\n * @param dailyCounts 每天攒到的条数（至少一天）\n * @return 平均每天攒到的条数\n */\nstatic int averageOf(int[] dailyCounts);\n```\n\n投喂口：先给一个数（记了几天），再一行一个当天的条数。印**一行**：`平均每天 ` 拼上平均条数，再拼 ` 条`。\n\n比如投喂给程序的是\n\n6\n4\n9\n4\n3\n1\n1\n\n就该叼回\n\n平均每天 3 条\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": null,
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    /**\n     * 算这些天平均每天攒下多少条（向下取整）。\n     *\n     * @param dailyCounts 每天攒到的条数（至少一天）\n     * @return 平均每天攒到的条数\n     */\n    static int averageOf(int[] dailyCounts) {\n        int total = 0;\n        for (int count : dailyCounts) {\n            total = total + count;\n        }\n        return total / dailyCounts.length;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int days = sc.nextInt();\n        int[] dailyCounts = new int[days];\n        for (int i = 0; i < days; i++) {\n            dailyCounts[i] = sc.nextInt();\n        }\n        System.out.println(\"平均每天 \" + averageOf(dailyCounts) + \" 条\");\n    }\n}",
+      "expectedOutput": "平均每天 4 条",
+      "stdin": "6\n4\n3\n1\n9\n9\n1\n",
+      "explanation": "**一、Javadoc 就是「写给实现者的需求单」。** 这一题故意不给你代码、只给文档 —— 因为企业里真会有这种时刻：需求单先定下来，实现照着它落。文档上两句关键：**向下取整**（除法的整数版），以及 `@param dailyCounts` 说的是「每天攒到的条数」这一排贴编号的猫粮碗。\n\n**二、参考实现（方法部分）。**\n\n```java\nstatic int averageOf(int[] dailyCounts) {\n    int total = 0;\n    for (int count : dailyCounts) {\n        total = total + count;\n    }\n    return total / dailyCounts.length;\n}\n```\n\n顺着 Javadoc 看：投喂的小鱼干的名字 `dailyCounts` 和 `@param` 对上了；`total / dailyCounts.length` 用整数除法，正好兑现「向下取整」那句；天数直接取 `length`，不用再传一个「几天」进来 —— **投喂的小鱼干只留必要的**，文档里没写的别乱加。\n\n**三、你写完之后的对齐动作。** 回头**逐条对**：`@param` 的名字对不对、`@return` 的话和实际返回对不对、注释里写的边界（至少一天）和代码行为对不对。这一步「回头对」，就是对「注释与代码同步」的日常操练。\n\n一句话记住：**文档写之前是设计，写完是合同 —— 实现是照着合同交货。**",
+      "templateId": "java-s3-doc-from-javadoc",
+      "params": {
+        "d": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:23:36.145Z",
+        "hash": "181568cb4dd84031"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-from-javadoc-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "这一题反过来练：**需求方只给了文档，代码归你写**喵。\n\n要交出的是一张图纸 `Main`，上面有一只方法，它的 Javadoc 是这样的（**照它写实现**，每个词都是需求）：\n\n```java\n/**\n * 算这些天平均每天攒下多少条（向下取整）。\n *\n * @param dailyCounts 每天攒到的条数（至少一天）\n * @return 平均每天攒到的条数\n */\nstatic int averageOf(int[] dailyCounts);\n```\n\n投喂口：先给一个数（记了几天），再一行一个当天的条数。印**一行**：`平均每天 ` 拼上平均条数，再拼 ` 条`。\n\n比如投喂给程序的是\n\n7\n9\n2\n7\n5\n6\n5\n8\n\n就该叼回\n\n平均每天 6 条\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": null,
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    /**\n     * 算这些天平均每天攒下多少条（向下取整）。\n     *\n     * @param dailyCounts 每天攒到的条数（至少一天）\n     * @return 平均每天攒到的条数\n     */\n    static int averageOf(int[] dailyCounts) {\n        int total = 0;\n        for (int count : dailyCounts) {\n            total = total + count;\n        }\n        return total / dailyCounts.length;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int days = sc.nextInt();\n        int[] dailyCounts = new int[days];\n        for (int i = 0; i < days; i++) {\n            dailyCounts[i] = sc.nextInt();\n        }\n        System.out.println(\"平均每天 \" + averageOf(dailyCounts) + \" 条\");\n    }\n}",
+      "expectedOutput": "平均每天 4 条",
+      "stdin": "7\n1\n1\n5\n9\n5\n6\n5\n",
+      "explanation": "**一、Javadoc 就是「写给实现者的需求单」。** 这一题故意不给你代码、只给文档 —— 因为企业里真会有这种时刻：需求单先定下来，实现照着它落。文档上两句关键：**向下取整**（除法的整数版），以及 `@param dailyCounts` 说的是「每天攒到的条数」这一排贴编号的猫粮碗。\n\n**二、参考实现（方法部分）。**\n\n```java\nstatic int averageOf(int[] dailyCounts) {\n    int total = 0;\n    for (int count : dailyCounts) {\n        total = total + count;\n    }\n    return total / dailyCounts.length;\n}\n```\n\n顺着 Javadoc 看：投喂的小鱼干的名字 `dailyCounts` 和 `@param` 对上了；`total / dailyCounts.length` 用整数除法，正好兑现「向下取整」那句；天数直接取 `length`，不用再传一个「几天」进来 —— **投喂的小鱼干只留必要的**，文档里没写的别乱加。\n\n**三、你写完之后的对齐动作。** 回头**逐条对**：`@param` 的名字对不对、`@return` 的话和实际返回对不对、注释里写的边界（至少一天）和代码行为对不对。这一步「回头对」，就是对「注释与代码同步」的日常操练。\n\n一句话记住：**文档写之前是设计，写完是合同 —— 实现是照着合同交货。**",
+      "templateId": "java-s3-doc-from-javadoc",
+      "params": {
+        "d": 7
+      },
+      "verified": {
+        "at": "2026-10-20T17:23:38.497Z",
+        "hash": "5fdd877f29d1fb5b"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-from-javadoc-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "这一题反过来练：**需求方只给了文档，代码归你写**喵。\n\n要交出的是一张图纸 `Main`，上面有一只方法，它的 Javadoc 是这样的（**照它写实现**，每个词都是需求）：\n\n```java\n/**\n * 算这些天平均每天攒下多少条（向下取整）。\n *\n * @param dailyCounts 每天攒到的条数（至少一天）\n * @return 平均每天攒到的条数\n */\nstatic int averageOf(int[] dailyCounts);\n```\n\n投喂口：先给一个数（记了几天），再一行一个当天的条数。印**一行**：`平均每天 ` 拼上平均条数，再拼 ` 条`。\n\n比如投喂给程序的是\n\n8\n7\n1\n9\n9\n7\n3\n5\n2\n\n就该叼回\n\n平均每天 5 条\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": null,
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    /**\n     * 算这些天平均每天攒下多少条（向下取整）。\n     *\n     * @param dailyCounts 每天攒到的条数（至少一天）\n     * @return 平均每天攒到的条数\n     */\n    static int averageOf(int[] dailyCounts) {\n        int total = 0;\n        for (int count : dailyCounts) {\n            total = total + count;\n        }\n        return total / dailyCounts.length;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int days = sc.nextInt();\n        int[] dailyCounts = new int[days];\n        for (int i = 0; i < days; i++) {\n            dailyCounts[i] = sc.nextInt();\n        }\n        System.out.println(\"平均每天 \" + averageOf(dailyCounts) + \" 条\");\n    }\n}",
+      "expectedOutput": "平均每天 5 条",
+      "stdin": "8\n7\n2\n6\n6\n7\n8\n6\n1\n",
+      "explanation": "**一、Javadoc 就是「写给实现者的需求单」。** 这一题故意不给你代码、只给文档 —— 因为企业里真会有这种时刻：需求单先定下来，实现照着它落。文档上两句关键：**向下取整**（除法的整数版），以及 `@param dailyCounts` 说的是「每天攒到的条数」这一排贴编号的猫粮碗。\n\n**二、参考实现（方法部分）。**\n\n```java\nstatic int averageOf(int[] dailyCounts) {\n    int total = 0;\n    for (int count : dailyCounts) {\n        total = total + count;\n    }\n    return total / dailyCounts.length;\n}\n```\n\n顺着 Javadoc 看：投喂的小鱼干的名字 `dailyCounts` 和 `@param` 对上了；`total / dailyCounts.length` 用整数除法，正好兑现「向下取整」那句；天数直接取 `length`，不用再传一个「几天」进来 —— **投喂的小鱼干只留必要的**，文档里没写的别乱加。\n\n**三、你写完之后的对齐动作。** 回头**逐条对**：`@param` 的名字对不对、`@return` 的话和实际返回对不对、注释里写的边界（至少一天）和代码行为对不对。这一步「回头对」，就是对「注释与代码同步」的日常操练。\n\n一句话记住：**文档写之前是设计，写完是合同 —— 实现是照着合同交货。**",
+      "templateId": "java-s3-doc-from-javadoc",
+      "params": {
+        "d": 8
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:15.751Z",
+        "hash": "0fd3f064772cb361"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-legacy-annotate-000",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵翻到一段**跑得动、但没人敢接**的老代码喵 —— 逻辑没错、输出正常，就是**注释全是敷衍、名字全是天书**：\n\n```java\npublic class Main {\n    // 本喵的旧账：算一箱鱼干该装几只袋（上个版本的说法）\n    static int f(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        int x = 47;\n        int y = 6;\n        // 输出结果\n        System.out.println(\"每只猫分到 \" + f(x, y) + \" 条\");\n        System.out.println(\"还剩 \" + (x % y) + \" 条\");\n    }\n}\n```\n\n请你照本课的尺子（Javadoc 规范）做一次彻底改写：\n\n- 图纸和方法补上 **Javadoc**：图纸的职责一句话；方法写清做什么，`@param`、`@return` 一个都不能少；\n- 名字全部换成人话（`f`、`a`、`b`、`x`、`y` 一个都别留）；\n- 那条和代码对不上的旧注释删掉；`// 输出结果` 这种**复述代码**的注释也删 —— 手册说：命名和结构自己能说清的事，注释别抢话；\n- 从**空白**起笔；**输出必须与原版逐字一致** —— 这是本题的硬要求。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": null,
+      "referenceSolution": "/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = 47;\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}",
+      "expectedOutput": "每只猫分到 7 条\n还剩 5 条",
+      "stdin": null,
+      "explanation": "**一、这段老代码挨的骂，一条一条来。** 先记住手册的总纲：图纸、图纸上的属性、图纸里的招式的注释必须用 **Javadoc**（`/** ... */`），而不是 `//` —— 不然 IDE 的悬浮提示、补全、文档生成器全都读不到。\n\n**二、具体到每一处：**\n\n- **图纸注释缺失**：图纸头顶什么都没有。Javadoc 第一句要写**职责**：「鱼干平分小工具」—— 新人一眼知道该不该进来。\n- **方法 `f`**：名字是谜语（手册：望文不知义的名字一律不行），也没有 Javadoc。换成 `shareOf` 这类「读出来就是人话」的名字，并补上 `@param`、`@return`。\n- **投喂的小鱼干 `a`、`b` / 小鱼干仓库 `x`、`y`**：全是单字母。投喂的小鱼干的名字是**调用者看到的第一个提示** —— `fishTotal`、`catCount` 摆出来，传参时就不会传反。\n- **那条旧注释**（「算一箱鱼干该装几只袋」）：和代码做的事（平分给猫）**对不上**。手册【推荐】说得直白：代码改，注释一起改；不同步的注释比没有注释更毒，它会把读的人带沟里。\n- **`// 输出结果`**：纯**复述代码**的注释（手册：好的命名和结构自己会说话，注释别抢话）。删。\n\n**三、参考改写：**\n\n```java\n/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = 47;\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}\n```\n\n**四、验收。** 输出要**和原版逐字一样** —— 原版印两行，你的版本也印那两行，一个字符都不许漂。\n\n一句话记住：**老代码重整的第一刀，不是改逻辑，是让「名字」和「注释」说人话 —— 逻辑一句都没动，接手的人已经敢改了。**",
+      "templateId": "java-s3-doc-legacy-annotate",
+      "params": {
+        "f": 47
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:17.214Z",
+        "hash": "8dd047de9dfbd87c"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-legacy-annotate-001",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵翻到一段**跑得动、但没人敢接**的老代码喵 —— 逻辑没错、输出正常，就是**注释全是敷衍、名字全是天书**：\n\n```java\npublic class Main {\n    // 本喵的旧账：算一箱鱼干该装几只袋（上个版本的说法）\n    static int f(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        int x = 48;\n        int y = 6;\n        // 输出结果\n        System.out.println(\"每只猫分到 \" + f(x, y) + \" 条\");\n        System.out.println(\"还剩 \" + (x % y) + \" 条\");\n    }\n}\n```\n\n请你照本课的尺子（Javadoc 规范）做一次彻底改写：\n\n- 图纸和方法补上 **Javadoc**：图纸的职责一句话；方法写清做什么，`@param`、`@return` 一个都不能少；\n- 名字全部换成人话（`f`、`a`、`b`、`x`、`y` 一个都别留）；\n- 那条和代码对不上的旧注释删掉；`// 输出结果` 这种**复述代码**的注释也删 —— 手册说：命名和结构自己能说清的事，注释别抢话；\n- 从**空白**起笔；**输出必须与原版逐字一致** —— 这是本题的硬要求。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": null,
+      "referenceSolution": "/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = 48;\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}",
+      "expectedOutput": "每只猫分到 8 条\n还剩 0 条",
+      "stdin": null,
+      "explanation": "**一、这段老代码挨的骂，一条一条来。** 先记住手册的总纲：图纸、图纸上的属性、图纸里的招式的注释必须用 **Javadoc**（`/** ... */`），而不是 `//` —— 不然 IDE 的悬浮提示、补全、文档生成器全都读不到。\n\n**二、具体到每一处：**\n\n- **图纸注释缺失**：图纸头顶什么都没有。Javadoc 第一句要写**职责**：「鱼干平分小工具」—— 新人一眼知道该不该进来。\n- **方法 `f`**：名字是谜语（手册：望文不知义的名字一律不行），也没有 Javadoc。换成 `shareOf` 这类「读出来就是人话」的名字，并补上 `@param`、`@return`。\n- **投喂的小鱼干 `a`、`b` / 小鱼干仓库 `x`、`y`**：全是单字母。投喂的小鱼干的名字是**调用者看到的第一个提示** —— `fishTotal`、`catCount` 摆出来，传参时就不会传反。\n- **那条旧注释**（「算一箱鱼干该装几只袋」）：和代码做的事（平分给猫）**对不上**。手册【推荐】说得直白：代码改，注释一起改；不同步的注释比没有注释更毒，它会把读的人带沟里。\n- **`// 输出结果`**：纯**复述代码**的注释（手册：好的命名和结构自己会说话，注释别抢话）。删。\n\n**三、参考改写：**\n\n```java\n/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = 48;\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}\n```\n\n**四、验收。** 输出要**和原版逐字一样** —— 原版印两行，你的版本也印那两行，一个字符都不许漂。\n\n一句话记住：**老代码重整的第一刀，不是改逻辑，是让「名字」和「注释」说人话 —— 逻辑一句都没动，接手的人已经敢改了。**",
+      "templateId": "java-s3-doc-legacy-annotate",
+      "params": {
+        "f": 48
+      },
+      "verified": {
+        "at": "2026-10-20T17:23:39.979Z",
+        "hash": "6d7983edccfe713d"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-legacy-annotate-002",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵翻到一段**跑得动、但没人敢接**的老代码喵 —— 逻辑没错、输出正常，就是**注释全是敷衍、名字全是天书**：\n\n```java\npublic class Main {\n    // 本喵的旧账：算一箱鱼干该装几只袋（上个版本的说法）\n    static int f(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        int x = 49;\n        int y = 6;\n        // 输出结果\n        System.out.println(\"每只猫分到 \" + f(x, y) + \" 条\");\n        System.out.println(\"还剩 \" + (x % y) + \" 条\");\n    }\n}\n```\n\n请你照本课的尺子（Javadoc 规范）做一次彻底改写：\n\n- 图纸和方法补上 **Javadoc**：图纸的职责一句话；方法写清做什么，`@param`、`@return` 一个都不能少；\n- 名字全部换成人话（`f`、`a`、`b`、`x`、`y` 一个都别留）；\n- 那条和代码对不上的旧注释删掉；`// 输出结果` 这种**复述代码**的注释也删 —— 手册说：命名和结构自己能说清的事，注释别抢话；\n- 从**空白**起笔；**输出必须与原版逐字一致** —— 这是本题的硬要求。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": null,
+      "referenceSolution": "/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = 49;\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}",
+      "expectedOutput": "每只猫分到 8 条\n还剩 1 条",
+      "stdin": null,
+      "explanation": "**一、这段老代码挨的骂，一条一条来。** 先记住手册的总纲：图纸、图纸上的属性、图纸里的招式的注释必须用 **Javadoc**（`/** ... */`），而不是 `//` —— 不然 IDE 的悬浮提示、补全、文档生成器全都读不到。\n\n**二、具体到每一处：**\n\n- **图纸注释缺失**：图纸头顶什么都没有。Javadoc 第一句要写**职责**：「鱼干平分小工具」—— 新人一眼知道该不该进来。\n- **方法 `f`**：名字是谜语（手册：望文不知义的名字一律不行），也没有 Javadoc。换成 `shareOf` 这类「读出来就是人话」的名字，并补上 `@param`、`@return`。\n- **投喂的小鱼干 `a`、`b` / 小鱼干仓库 `x`、`y`**：全是单字母。投喂的小鱼干的名字是**调用者看到的第一个提示** —— `fishTotal`、`catCount` 摆出来，传参时就不会传反。\n- **那条旧注释**（「算一箱鱼干该装几只袋」）：和代码做的事（平分给猫）**对不上**。手册【推荐】说得直白：代码改，注释一起改；不同步的注释比没有注释更毒，它会把读的人带沟里。\n- **`// 输出结果`**：纯**复述代码**的注释（手册：好的命名和结构自己会说话，注释别抢话）。删。\n\n**三、参考改写：**\n\n```java\n/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = 49;\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}\n```\n\n**四、验收。** 输出要**和原版逐字一样** —— 原版印两行，你的版本也印那两行，一个字符都不许漂。\n\n一句话记住：**老代码重整的第一刀，不是改逻辑，是让「名字」和「注释」说人话 —— 逻辑一句都没动，接手的人已经敢改了。**",
+      "templateId": "java-s3-doc-legacy-annotate",
+      "params": {
+        "f": 49
+      },
+      "verified": {
+        "at": "2026-10-20T17:23:41.333Z",
+        "hash": "d3b33b27155d9651"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-legacy-annotate-003",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵翻到一段**跑得动、但没人敢接**的老代码喵 —— 逻辑没错、输出正常，就是**注释全是敷衍、名字全是天书**：\n\n```java\npublic class Main {\n    // 本喵的旧账：算一箱鱼干该装几只袋（上个版本的说法）\n    static int f(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        int x = 50;\n        int y = 6;\n        // 输出结果\n        System.out.println(\"每只猫分到 \" + f(x, y) + \" 条\");\n        System.out.println(\"还剩 \" + (x % y) + \" 条\");\n    }\n}\n```\n\n请你照本课的尺子（Javadoc 规范）做一次彻底改写：\n\n- 图纸和方法补上 **Javadoc**：图纸的职责一句话；方法写清做什么，`@param`、`@return` 一个都不能少；\n- 名字全部换成人话（`f`、`a`、`b`、`x`、`y` 一个都别留）；\n- 那条和代码对不上的旧注释删掉；`// 输出结果` 这种**复述代码**的注释也删 —— 手册说：命名和结构自己能说清的事，注释别抢话；\n- 从**空白**起笔；**输出必须与原版逐字一致** —— 这是本题的硬要求。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": null,
+      "referenceSolution": "/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = 50;\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}",
+      "expectedOutput": "每只猫分到 8 条\n还剩 2 条",
+      "stdin": null,
+      "explanation": "**一、这段老代码挨的骂，一条一条来。** 先记住手册的总纲：图纸、图纸上的属性、图纸里的招式的注释必须用 **Javadoc**（`/** ... */`），而不是 `//` —— 不然 IDE 的悬浮提示、补全、文档生成器全都读不到。\n\n**二、具体到每一处：**\n\n- **图纸注释缺失**：图纸头顶什么都没有。Javadoc 第一句要写**职责**：「鱼干平分小工具」—— 新人一眼知道该不该进来。\n- **方法 `f`**：名字是谜语（手册：望文不知义的名字一律不行），也没有 Javadoc。换成 `shareOf` 这类「读出来就是人话」的名字，并补上 `@param`、`@return`。\n- **投喂的小鱼干 `a`、`b` / 小鱼干仓库 `x`、`y`**：全是单字母。投喂的小鱼干的名字是**调用者看到的第一个提示** —— `fishTotal`、`catCount` 摆出来，传参时就不会传反。\n- **那条旧注释**（「算一箱鱼干该装几只袋」）：和代码做的事（平分给猫）**对不上**。手册【推荐】说得直白：代码改，注释一起改；不同步的注释比没有注释更毒，它会把读的人带沟里。\n- **`// 输出结果`**：纯**复述代码**的注释（手册：好的命名和结构自己会说话，注释别抢话）。删。\n\n**三、参考改写：**\n\n```java\n/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = 50;\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}\n```\n\n**四、验收。** 输出要**和原版逐字一样** —— 原版印两行，你的版本也印那两行，一个字符都不许漂。\n\n一句话记住：**老代码重整的第一刀，不是改逻辑，是让「名字」和「注释」说人话 —— 逻辑一句都没动，接手的人已经敢改了。**",
+      "templateId": "java-s3-doc-legacy-annotate",
+      "params": {
+        "f": 50
+      },
+      "verified": {
+        "at": "2026-10-20T17:23:42.681Z",
+        "hash": "14032a58fbabdb83"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-legacy-annotate-004",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵翻到一段**跑得动、但没人敢接**的老代码喵 —— 逻辑没错、输出正常，就是**注释全是敷衍、名字全是天书**：\n\n```java\npublic class Main {\n    // 本喵的旧账：算一箱鱼干该装几只袋（上个版本的说法）\n    static int f(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        int x = 51;\n        int y = 6;\n        // 输出结果\n        System.out.println(\"每只猫分到 \" + f(x, y) + \" 条\");\n        System.out.println(\"还剩 \" + (x % y) + \" 条\");\n    }\n}\n```\n\n请你照本课的尺子（Javadoc 规范）做一次彻底改写：\n\n- 图纸和方法补上 **Javadoc**：图纸的职责一句话；方法写清做什么，`@param`、`@return` 一个都不能少；\n- 名字全部换成人话（`f`、`a`、`b`、`x`、`y` 一个都别留）；\n- 那条和代码对不上的旧注释删掉；`// 输出结果` 这种**复述代码**的注释也删 —— 手册说：命名和结构自己能说清的事，注释别抢话；\n- 从**空白**起笔；**输出必须与原版逐字一致** —— 这是本题的硬要求。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "starter": null,
+      "referenceSolution": "/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = 51;\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}",
+      "expectedOutput": "每只猫分到 8 条\n还剩 3 条",
+      "stdin": null,
+      "explanation": "**一、这段老代码挨的骂，一条一条来。** 先记住手册的总纲：图纸、图纸上的属性、图纸里的招式的注释必须用 **Javadoc**（`/** ... */`），而不是 `//` —— 不然 IDE 的悬浮提示、补全、文档生成器全都读不到。\n\n**二、具体到每一处：**\n\n- **图纸注释缺失**：图纸头顶什么都没有。Javadoc 第一句要写**职责**：「鱼干平分小工具」—— 新人一眼知道该不该进来。\n- **方法 `f`**：名字是谜语（手册：望文不知义的名字一律不行），也没有 Javadoc。换成 `shareOf` 这类「读出来就是人话」的名字，并补上 `@param`、`@return`。\n- **投喂的小鱼干 `a`、`b` / 小鱼干仓库 `x`、`y`**：全是单字母。投喂的小鱼干的名字是**调用者看到的第一个提示** —— `fishTotal`、`catCount` 摆出来，传参时就不会传反。\n- **那条旧注释**（「算一箱鱼干该装几只袋」）：和代码做的事（平分给猫）**对不上**。手册【推荐】说得直白：代码改，注释一起改；不同步的注释比没有注释更毒，它会把读的人带沟里。\n- **`// 输出结果`**：纯**复述代码**的注释（手册：好的命名和结构自己会说话，注释别抢话）。删。\n\n**三、参考改写：**\n\n```java\n/**\n * 鱼干平分小工具。\n */\npublic class Main {\n    /**\n     * 算每只猫能平分到多少条（向下取整）。\n     *\n     * @param fishTotal 鱼干总数\n     * @param catCount  猫的只数\n     * @return 每只猫分到的条数\n     */\n    static int shareOf(int fishTotal, int catCount) {\n        return fishTotal / catCount;\n    }\n\n    public static void main(String[] args) {\n        int fishTotal = 51;\n        int catCount = 6;\n        System.out.println(\"每只猫分到 \" + shareOf(fishTotal, catCount) + \" 条\");\n        System.out.println(\"还剩 \" + (fishTotal % catCount) + \" 条\");\n    }\n}\n```\n\n**四、验收。** 输出要**和原版逐字一样** —— 原版印两行，你的版本也印那两行，一个字符都不许漂。\n\n一句话记住：**老代码重整的第一刀，不是改逻辑，是让「名字」和「注释」说人话 —— 逻辑一句都没动，接手的人已经敢改了。**",
+      "templateId": "java-s3-doc-legacy-annotate",
+      "params": {
+        "f": 51
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:18.562Z",
+        "hash": "76ae1d453bcfd613"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-param-swap-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这只算结余的小工具，**报数报成了负数**喵 —— 明明只领走一部分，屏幕上却印出一个带减号的数。\n\n答案写在**方法的 Javadoc** 里：`@param quota` 是配额、`@param used` 是已领走，谁先谁后写得清清楚楚。可门口那行调用**把两个数传反了**。\n\n你照着 Javadoc 的名单把调用改对，让它印出**一行**：`还能领 ` 拼上「配额 − 已领走」的结余，再拼 ` 条`。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    /**\n     * 算配额领完一部分之后还剩多少。\n     *\n     * @param quota 配额条数\n     * @param used 已经领走的条数\n     * @return 还能领的条数\n     */\n    static int left(int quota, int used) {\n        return quota - used;\n    }\n\n    public static void main(String[] args) {\n        int quota = 30;\n        int used = 18;\n        System.out.println(\"还能领 \" + left(used, quota) + \" 条\");\n    }\n}",
+      "referenceFix": "public class Main {\n    /**\n     * 算配额领完一部分之后还剩多少。\n     *\n     * @param quota 配额条数\n     * @param used 已经领走的条数\n     * @return 还能领的条数\n     */\n    static int left(int quota, int used) {\n        return quota - used;\n    }\n\n    public static void main(String[] args) {\n        int quota = 30;\n        int used = 18;\n        System.out.println(\"还能领 \" + left(quota, used) + \" 条\");\n    }\n}",
+      "expectedOutput": "还能领 12 条",
+      "stdin": null,
+      "explanation": "**一、Javadoc 的 `@param` 名单是写给谁看的？** 写给**调用者**：方法要求「第一个数给配额、第二个给已领走」。写调用的人没按名单核对，位置上先放了 `used`、后放了 `quota`：\n\n```java\nSystem.out.println(\"还能领 \" + left(used, quota) + \" 条\");\n```\n\n于是方法内部老老实实做「先来的减后来的」—— 结余就这么变成了负数。\n\n**二、修法是把位置扳回来**（方法本身没有错，错的是投喂的手）：\n\n```java\nSystem.out.println(\"还能领 \" + left(quota, used) + \" 条\");\n```\n\n**三、这种错为什么值得讲。** 投喂顺序这种约定，翻译官喵**不会**帮你检查：两只投喂的小鱼干都是 `int`，传反了照样编过，只有看到怪结果才会被发现。所以 Javadoc 的 `@param` 要写、更要读 —— 它是这类「没人拦你」的坑边上那块警示牌。\n\n一句话记住：**调用之前对着 `@param` 名单点一遍名 —— 两个都是 int 的时候，翻译官喵帮不了你。**",
+      "templateId": "java-s3-doc-param-swap",
+      "params": {
+        "q": 30
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:19.908Z",
+        "hash": "4674148243a9de70"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-param-swap-004",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这只算结余的小工具，**报数报成了负数**喵 —— 明明只领走一部分，屏幕上却印出一个带减号的数。\n\n答案写在**方法的 Javadoc** 里：`@param quota` 是配额、`@param used` 是已领走，谁先谁后写得清清楚楚。可门口那行调用**把两个数传反了**。\n\n你照着 Javadoc 的名单把调用改对，让它印出**一行**：`还能领 ` 拼上「配额 − 已领走」的结余，再拼 ` 条`。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    /**\n     * 算配额领完一部分之后还剩多少。\n     *\n     * @param quota 配额条数\n     * @param used 已经领走的条数\n     * @return 还能领的条数\n     */\n    static int left(int quota, int used) {\n        return quota - used;\n    }\n\n    public static void main(String[] args) {\n        int quota = 34;\n        int used = 18;\n        System.out.println(\"还能领 \" + left(used, quota) + \" 条\");\n    }\n}",
+      "referenceFix": "public class Main {\n    /**\n     * 算配额领完一部分之后还剩多少。\n     *\n     * @param quota 配额条数\n     * @param used 已经领走的条数\n     * @return 还能领的条数\n     */\n    static int left(int quota, int used) {\n        return quota - used;\n    }\n\n    public static void main(String[] args) {\n        int quota = 34;\n        int used = 18;\n        System.out.println(\"还能领 \" + left(quota, used) + \" 条\");\n    }\n}",
+      "expectedOutput": "还能领 16 条",
+      "stdin": null,
+      "explanation": "**一、Javadoc 的 `@param` 名单是写给谁看的？** 写给**调用者**：方法要求「第一个数给配额、第二个给已领走」。写调用的人没按名单核对，位置上先放了 `used`、后放了 `quota`：\n\n```java\nSystem.out.println(\"还能领 \" + left(used, quota) + \" 条\");\n```\n\n于是方法内部老老实实做「先来的减后来的」—— 结余就这么变成了负数。\n\n**二、修法是把位置扳回来**（方法本身没有错，错的是投喂的手）：\n\n```java\nSystem.out.println(\"还能领 \" + left(quota, used) + \" 条\");\n```\n\n**三、这种错为什么值得讲。** 投喂顺序这种约定，翻译官喵**不会**帮你检查：两只投喂的小鱼干都是 `int`，传反了照样编过，只有看到怪结果才会被发现。所以 Javadoc 的 `@param` 要写、更要读 —— 它是这类「没人拦你」的坑边上那块警示牌。\n\n一句话记住：**调用之前对着 `@param` 名单点一遍名 —— 两个都是 int 的时候，翻译官喵帮不了你。**",
+      "templateId": "java-s3-doc-param-swap",
+      "params": {
+        "q": 34
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:21.912Z",
+        "hash": "12b076a286bd6f8b"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-return-promise-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵的小仓库**领过头了**喵：库存不够它也不拦，领完一结账，第二行印出一个带减号的数。可方法的 Javadoc 上白纸黑字写着：`@return`「库存不够时按 0 结算，不会出现负数」—— 现在这个负数，就是把规定当耳旁风的样子。\n\n你照 Javadoc 的约定把它修好，让它印**两行**：\n\n```text\n库存 12 条\n领完还剩 0 条\n```\n\n（这一份里要领走 20 条、库存不够 —— 结余必须按约定结算成 0。这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    /**\n     * 从库存里领走一些，返回结余。\n     *\n     * @param stock 库存条数\n     * @param take 要领走的条数\n     * @return 领完剩下的条数；库存不够时按 0 结算，不会出现负数\n     */\n    static int afterTaking(int stock, int take) {\n        return stock - take;\n    }\n\n    public static void main(String[] args) {\n        int stock = 12;\n        int take = 20;\n        System.out.println(\"库存 \" + stock + \" 条\");\n        System.out.println(\"领完还剩 \" + afterTaking(stock, take) + \" 条\");\n    }\n}",
+      "referenceFix": "public class Main {\n    /**\n     * 从库存里领走一些，返回结余。\n     *\n     * @param stock 库存条数\n     * @param take 要领走的条数\n     * @return 领完剩下的条数；库存不够时按 0 结算，不会出现负数\n     */\n    static int afterTaking(int stock, int take) {\n        return Math.max(0, stock - take);\n    }\n\n    public static void main(String[] args) {\n        int stock = 12;\n        int take = 20;\n        System.out.println(\"库存 \" + stock + \" 条\");\n        System.out.println(\"领完还剩 \" + afterTaking(stock, take) + \" 条\");\n    }\n}",
+      "expectedOutput": "库存 12 条\n领完还剩 0 条",
+      "stdin": null,
+      "explanation": "**一、先分清「谁说了算」。** 这个方法的 Javadoc 上有三句承诺：`@param stock` 是库存、`@param take` 是领走的、`@return`「不够时按 0 结算，不会出现负数」。承诺写在那儿，代码就得照办 —— 这条修的不是算式，是**约定的兑现**。\n\n**二、没兑现的那一步：负数的兜底。** `stock - take` 本身没毛病，毛病是**减出负数时没有人接住**。补一句：\n\n```java\nreturn Math.max(0, stock - take);\n```\n\n`Math.max(0, ...)` 的意思是「0 和差值里挑大的那个」：够领就报差值，领过头就报到 0 —— 负数一步都不许出门。\n\n**三、这就是 `@return` 写细的价值。** 写 Javadoc 的时候顺手把边界情形（「不够时怎么办」）写清楚，等于先把**规格**定下来：后来写实现的人照着做、写测试的人照着测，各就其位。要是当初只写「返回剩余」四个字，「不够时归 0 还是报负」就只能靠猜。\n\n一句话记住：**Javadoc 不是装饰，是方法对外的承诺书 —— 写下的每一句，代码都要还。**",
+      "templateId": "java-s3-doc-return-promise",
+      "params": {
+        "s": "12"
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:23.902Z",
+        "hash": "97900df4cbc25abc"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-return-promise-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵的小仓库**领过头了**喵：库存不够它也不拦，领完一结账，第二行印出一个带减号的数。可方法的 Javadoc 上白纸黑字写着：`@return`「库存不够时按 0 结算，不会出现负数」—— 现在这个负数，就是把规定当耳旁风的样子。\n\n你照 Javadoc 的约定把它修好，让它印**两行**：\n\n```text\n库存 8 条\n领完还剩 0 条\n```\n\n（这一份里要领走 20 条、库存不够 —— 结余必须按约定结算成 0。这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    /**\n     * 从库存里领走一些，返回结余。\n     *\n     * @param stock 库存条数\n     * @param take 要领走的条数\n     * @return 领完剩下的条数；库存不够时按 0 结算，不会出现负数\n     */\n    static int afterTaking(int stock, int take) {\n        return stock - take;\n    }\n\n    public static void main(String[] args) {\n        int stock = 8;\n        int take = 20;\n        System.out.println(\"库存 \" + stock + \" 条\");\n        System.out.println(\"领完还剩 \" + afterTaking(stock, take) + \" 条\");\n    }\n}",
+      "referenceFix": "public class Main {\n    /**\n     * 从库存里领走一些，返回结余。\n     *\n     * @param stock 库存条数\n     * @param take 要领走的条数\n     * @return 领完剩下的条数；库存不够时按 0 结算，不会出现负数\n     */\n    static int afterTaking(int stock, int take) {\n        return Math.max(0, stock - take);\n    }\n\n    public static void main(String[] args) {\n        int stock = 8;\n        int take = 20;\n        System.out.println(\"库存 \" + stock + \" 条\");\n        System.out.println(\"领完还剩 \" + afterTaking(stock, take) + \" 条\");\n    }\n}",
+      "expectedOutput": "库存 8 条\n领完还剩 0 条",
+      "stdin": null,
+      "explanation": "**一、先分清「谁说了算」。** 这个方法的 Javadoc 上有三句承诺：`@param stock` 是库存、`@param take` 是领走的、`@return`「不够时按 0 结算，不会出现负数」。承诺写在那儿，代码就得照办 —— 这条修的不是算式，是**约定的兑现**。\n\n**二、没兑现的那一步：负数的兜底。** `stock - take` 本身没毛病，毛病是**减出负数时没有人接住**。补一句：\n\n```java\nreturn Math.max(0, stock - take);\n```\n\n`Math.max(0, ...)` 的意思是「0 和差值里挑大的那个」：够领就报差值，领过头就报到 0 —— 负数一步都不许出门。\n\n**三、这就是 `@return` 写细的价值。** 写 Javadoc 的时候顺手把边界情形（「不够时怎么办」）写清楚，等于先把**规格**定下来：后来写实现的人照着做、写测试的人照着测，各就其位。要是当初只写「返回剩余」四个字，「不够时归 0 还是报负」就只能靠猜。\n\n一句话记住：**Javadoc 不是装饰，是方法对外的承诺书 —— 写下的每一句，代码都要还。**",
+      "templateId": "java-s3-doc-return-promise",
+      "params": {
+        "s": "8"
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:25.942Z",
+        "hash": "158d5d8366a00d44"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-stale-round-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这位老伙计的**行为和它的注释对不上**了喵：方法注释上写着一条规矩 ——「不满一打的零头舍掉，只算整打的」；可它现在**一条都不舍**，原样端上来。\n\n你照注释的规矩把它修回来（一打 = 12 条），让它印出**一行**：`按整打算 ` 拼上「舍掉零头之后」的条数，再拼 ` 条`。\n\n- 这次注释是**对的**，别改注释，改代码；\n- 这一题修的正是「注释与代码同步」：改代码的人把这一步弄丢了，注释把该做的事记了下来。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    /**\n     * 按整打折算：不满一打的零头舍掉，只算整打的条数。\n     *\n     * @param fish 鱼干条数\n     * @return 折算后的整打条数\n     */\n    static int toDozens(int fish) {\n        return fish;\n    }\n\n    public static void main(String[] args) {\n        int fish = 38;\n        System.out.println(\"按整打算 \" + toDozens(fish) + \" 条\");\n    }\n}",
+      "referenceFix": "public class Main {\n    /**\n     * 按整打折算：不满一打的零头舍掉，只算整打的条数。\n     *\n     * @param fish 鱼干条数\n     * @return 折算后的整打条数\n     */\n    static int toDozens(int fish) {\n        return fish / 12 * 12;\n    }\n\n    public static void main(String[] args) {\n        int fish = 38;\n        System.out.println(\"按整打算 \" + toDozens(fish) + \" 条\");\n    }\n}",
+      "expectedOutput": "按整打算 36 条",
+      "stdin": null,
+      "explanation": "**一、先弄清这是哪边的错。** 手册有一条【推荐】：改了代码，注释要跟着一起改 —— 不同步，就像公路网和导航软件各说各话，照它走的人会被带沟里。这题里**注释说得对、代码把步骤弄丢了**，所以要修代码；现实里更常见的是反过来的「馊注释」—— 两种都致命，因为**大家是用注释理解代码的**。\n\n**二、舍零头怎么写。** 「一打 12 条、只算整打」是把条数**向下取整到 12 的倍数**：\n\n```java\nreturn fish / 12 * 12;\n```\n\n两个整数相除本来就舍零头（`38 / 12` 得 `3`），再乘回 12 就回到了整打的条数。**先除后乘**的顺序别反：`fish * 12 / 12` 一步回到原地，等于什么都没舍。\n\n**三、改完回头看一眼注释。** 注释已经写对了，你只需要确认修完的代码**逐字兑现**了它的每一句 —— 这正是「注释与代码同步」的日常操练。\n\n一句话记住：**注释写下的「该做什么」，是后来每个读代码的人的导航 —— 两边对不上时，先弄清哪边说的是真相，再动手。**",
+      "templateId": "java-s3-doc-stale-round",
+      "params": {
+        "t": "38"
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:27.965Z",
+        "hash": "0ba50765bc586eec"
+      }
+    },
+    {
+      "id": "bank-java-s3-doc-stale-round-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这位老伙计的**行为和它的注释对不上**了喵：方法注释上写着一条规矩 ——「不满一打的零头舍掉，只算整打的」；可它现在**一条都不舍**，原样端上来。\n\n你照注释的规矩把它修回来（一打 = 12 条），让它印出**一行**：`按整打算 ` 拼上「舍掉零头之后」的条数，再拼 ` 条`。\n\n- 这次注释是**对的**，别改注释，改代码；\n- 这一题修的正是「注释与代码同步」：改代码的人把这一步弄丢了，注释把该做的事记了下来。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "public class Main {\n    /**\n     * 按整打折算：不满一打的零头舍掉，只算整打的条数。\n     *\n     * @param fish 鱼干条数\n     * @return 折算后的整打条数\n     */\n    static int toDozens(int fish) {\n        return fish;\n    }\n\n    public static void main(String[] args) {\n        int fish = 50;\n        System.out.println(\"按整打算 \" + toDozens(fish) + \" 条\");\n    }\n}",
+      "referenceFix": "public class Main {\n    /**\n     * 按整打折算：不满一打的零头舍掉，只算整打的条数。\n     *\n     * @param fish 鱼干条数\n     * @return 折算后的整打条数\n     */\n    static int toDozens(int fish) {\n        return fish / 12 * 12;\n    }\n\n    public static void main(String[] args) {\n        int fish = 50;\n        System.out.println(\"按整打算 \" + toDozens(fish) + \" 条\");\n    }\n}",
+      "expectedOutput": "按整打算 48 条",
+      "stdin": null,
+      "explanation": "**一、先弄清这是哪边的错。** 手册有一条【推荐】：改了代码，注释要跟着一起改 —— 不同步，就像公路网和导航软件各说各话，照它走的人会被带沟里。这题里**注释说得对、代码把步骤弄丢了**，所以要修代码；现实里更常见的是反过来的「馊注释」—— 两种都致命，因为**大家是用注释理解代码的**。\n\n**二、舍零头怎么写。** 「一打 12 条、只算整打」是把条数**向下取整到 12 的倍数**：\n\n```java\nreturn fish / 12 * 12;\n```\n\n两个整数相除本来就舍零头（`38 / 12` 得 `3`），再乘回 12 就回到了整打的条数。**先除后乘**的顺序别反：`fish * 12 / 12` 一步回到原地，等于什么都没舍。\n\n**三、改完回头看一眼注释。** 注释已经写对了，你只需要确认修完的代码**逐字兑现**了它的每一句 —— 这正是「注释与代码同步」的日常操练。\n\n一句话记住：**注释写下的「该做什么」，是后来每个读代码的人的导航 —— 两边对不上时，先弄清哪边说的是真相，再动手。**",
+      "templateId": "java-s3-doc-stale-round",
+      "params": {
+        "t": "50"
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:29.944Z",
+        "hash": "a4383120de304f94"
+      }
+    }
+  ]
+}

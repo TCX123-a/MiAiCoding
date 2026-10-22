@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-list-print-skips-tail",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-03",
+  "type": "codefix",
+  "concept": ["链表", "遍历", "收尾条件", "尾巴", "不报错的错"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 5 },
+    "b": { "kind": "int", "min": 6, "max": 9 }
+  },
+  "stemTemplate": "本喵照着课文把三只环串成了一串，想让程序从头报一遍。\n\n可屏幕上**少了一截**：只报出来两个数，最后那一只环连影子都没有 —— 但收尾的 `NULL` 倒是老老实实补上了。它一个错都不报，安安静静就跑完了。\n\n你帮本喵看看这段代码哪里不对，把它改好。改好之后，三只环应该一只不落地报出来：每只环报一个数、中间用 ` -> ` 隔开，最后再补一个 `NULL`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur->next != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, {a});\n    head = push_back(head, {b});\n    head = push_back(head, {a} + {b});\n\n    print_list(head);\n\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, {a});\n    head = push_back(head, {b});\n    head = push_back(head, {a} + {b});\n\n    print_list(head);\n\n    return 0;\n}\n",
+  "explanationTemplate": "报数那一圈，问题出在**转到什么时候停**喵。\n\n`while (cur->next != NULL)` 问的是：「**本喵的爪子还牵着下一只吗？**」所以走到最后那一只 —— 它爪子是空的 —— 圈子就停了，那一只**还没被报过**。屏幕上看起来就是「数报少了，`NULL` 倒是补上了」。\n\n有意思的是：**同一个写法，在挂着的那一步里是对的**。`push_back` 要找尾巴，靠的正是「谁爪子空谁就是尾巴」，它必须这么问。\n\n可报数要问的是另一个问题：「**本喵自己还在吗？**」写成 `while (cur != NULL)`，最后一只才有机会被报出来；报完再挪到空处，圈子正好停在 `NULL` 上。\n\n两处写法长得几乎一样，问的却是两件事。下次写到这类转圈，先想清楚：**这一步要问的是「我下面还有没有」，还是「我自己还在不在」？**"
+}

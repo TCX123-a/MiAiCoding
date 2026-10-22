@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-exit-swallow",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-02",
+  "type": "codefix",
+  "concept": ["__exit__ 叼回来的那个值", "出门那一招决定岔子去留", "跑得顺但印得少"],
+  "instances": 2,
+  "params": {
+    "vault": { "kind": "pick", "values": ["猫粮柜", "冻干箱", "小鱼干窖"] }
+  },
+  "stemTemplate": "本喵给保险箱写了个**进门印一句、出门印一句**的小家伙，门里还故意出了点岔子：本喵在门里喊了一声「钥匙断在里面了」，就等外面那句接话的。\n\n它**一句报错都没甩**，跑得干干净净、退出得也体面 —— 可念出来的**少了一句**：外面那句「抓到：…」自始至终没出现。\n\n你帮本喵修好它喵。要求：\n\n1. 修完要印出**五句**，顺序是「开锁：…」→「取出 …」→「上锁：…」→「抓到：钥匙断在里面了」→「收工」。\n2. 只许动**一处**，别的一个字都不许改。\n3. `开锁` / `取出` / `上锁` / `抓到` / `收工` 这些字样一个都不许改。",
+  "brokenCodeTemplate": "class 保险箱:\n    def __init__(self, 名字):\n        self.名字 = 名字\n\n    def __enter__(self):\n        print(\"开锁：\" + self.名字)\n        return self\n\n    def __exit__(self, 类型, 值, 痕迹):\n        print(\"上锁：\" + self.名字)\n        return True\n\n\ntry:\n    with 保险箱(\"{vault}\") as 箱:\n        print(\"取出 \" + 箱.名字)\n        raise ValueError(\"钥匙断在里面了\")\nexcept ValueError as e:\n    print(\"抓到：\" + str(e))\nprint(\"收工\")\n",
+  "referenceFixTemplate": "class 保险箱:\n    def __init__(self, 名字):\n        self.名字 = 名字\n\n    def __enter__(self):\n        print(\"开锁：\" + self.名字)\n        return self\n\n    def __exit__(self, 类型, 值, 痕迹):\n        print(\"上锁：\" + self.名字)\n        return False\n\n\ntry:\n    with 保险箱(\"{vault}\") as 箱:\n        print(\"取出 \" + 箱.名字)\n        raise ValueError(\"钥匙断在里面了\")\nexcept ValueError as e:\n    print(\"抓到：\" + str(e))\nprint(\"收工\")\n",
+  "explanationTemplate": "这次不是少接住了什么，是**出门那一招多回了一句话**喵。\n\n门合上的时候，`__exit__` 会叼一个东西回来，意思很明确：\n\n① 叼回来的是**假的**（或者干脆什么都不叼）→ 「这个岔子本喵不管，原样往外扔」；\n② 叼回来的是**真的** → 「这个岔子本喵吃下了，别往外传」。\n\n本喵写的是 `return True`，真货。于是门里那声「钥匙断在里面了」被门口这只手**按了下去**，外面那句等着的 `except` 一直没等到东西，自然就不吭声了。\n\n最坑的是程序**根本不会提醒你**：它跑得完全合法，一句报错都不甩，只是悄悄少印了一句。所以这道题**不会甩任何报错给你看** —— 能拿到的线索只有「门里那声喊是真的、出门那句印也是真的、可中间那句接话没了」。\n\n改法：把那一行换成 `return False`，或者干脆删掉它（什么都不叼，就等于假）。\n\n⚠️ 顺带认一认这两个极端：`__exit__` 里**什么都不叼**，是这一招最常见的写法；而叼一个真货回来，是留给那些「门里出事也算正常、本喵自己扛」的场合用的。用错了不会报错，只会**静悄悄地改变外面的走向**。"
+}

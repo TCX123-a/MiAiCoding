@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-pkg-run-full-name",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-19",
+  "type": "codefix",
+  "concept": ["全名", "java 命令", "包", "ClassNotFoundException"],
+  "instances": 2,
+  "params": {
+    "cls": { "kind": "pick", "values": ["Main", "FishTank"] }
+  },
+  "stemTemplate": "本喵要给「从稿子到跑起来」抄一张小抄，该念**四行**喵：\n\n```text\n稿子放在：com/fish/tank/{cls}.java\n编译：javac com/fish/tank/{cls}.java\n产物落点：com/fish/tank/{cls}.class\n运行：java com.fish.tank.{cls}\n```\n\n这四行是**该有的样子**；可稿子里最后一行抄漏了半截 —— 光秃秃喊了个名字。你帮本喵把它补全：**喊人得连住处一起喊**。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"稿子放在：com/fish/tank/{cls}.java\");\n        System.out.println(\"编译：javac com/fish/tank/{cls}.java\");\n        System.out.println(\"产物落点：com/fish/tank/{cls}.class\");\n        System.out.println(\"运行：java {cls}\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"稿子放在：com/fish/tank/{cls}.java\");\n        System.out.println(\"编译：javac com/fish/tank/{cls}.java\");\n        System.out.println(\"产物落点：com/fish/tank/{cls}.class\");\n        System.out.println(\"运行：java com.fish.tank.{cls}\");\n    }\n}\n",
+  "explanationTemplate": "本喵真拿一个带包的程序试过，翻译官喵不认短名的原话是：\n\n```text\nError: Could not find or load main class {cls}\nCaused by: java.lang.ClassNotFoundException: {cls}\n```\n\n甚至搬着小板凳坐进 `com/fish/tank/` 这层文件夹里喊短名，它还是翻脸，换一句更狠的：`Error: Could not find or load main class {cls}`，底下跟着 `Caused by: java.lang.NoClassDefFoundError: {cls} (wrong name: com/fish/tank/{cls})` —— 意思是「人我找着了，可**名字对不上号**：人家的全名叫 `com.fish.tank.{cls}`，你光喊 `{cls}` 是谁？」\n\n所以住进包里的图纸，喊它要**从包名一路喊到底**：`java com.fish.tank.{cls}`。对照小抄前两行就明白了：编译的时候，`javac` 要的是**文件在哪**（路径，斜杠分隔）；运行的时候，`java` 要的是**这张图纸的全名**（包名接名字，点分隔）—— 一个找文件、一个喊名字，斜杠和点各管各的。\n\n（编译产物落在哪？就落在稿子旁边那层目录里：`com/fish/tank/` 底下会多出一个 `.class` —— 这就是「包与目录物理映射」的另一半喵。）"
+}

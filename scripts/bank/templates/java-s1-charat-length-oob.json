@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s1-charat-length-oob",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-11",
+  "type": "codefix",
+  "concept": ["charAt", "编号越界", "断气", "Scanner"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["小鱼干到手喵", "大肥鱼的鱼塘"] },
+    "word2": { "kind": "pick", "values": ["狸花的毛线球", "小橘的猫粮袋"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{word}\n", "sampleText": "{word2}\n" },
+  "stemTemplate": "本喵想印出一串字的**最后一颗珠子**喵。这串字每次从纸条上来，长短都不一样，所以本喵偷了个懒：不写死编号，拿「有几颗」这个数去报编号。\n\n结果这程序**一跑就断气** —— 屏幕上红字一长串，该印的那行一个字都没有。\n\n你帮本喵把编号改对，让它把这串字的最后一颗印出来。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一串字**喵，长短也不一样。）",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        System.out.println(\"最后一颗是 \" + s.charAt(s.length()));\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        System.out.println(\"最后一颗是 \" + s.charAt(s.length() - 1));\n    }\n}\n",
+  "explanationTemplate": "编号是**从 `0` 数起**的喵：一串字要是有 6 颗，合法的编号就只有 `0` 到 `5`。而「有几颗」这个数（`s.length()`）本身就是**第一个越界的编号** —— 拿它去掏珠子，翻译官编译时一声不吭，一跑起来当场就是那句：\n\n```text\nException in thread \"main\" java.lang.StringIndexOutOfBoundsException: Index 6 out of bounds for length 6\n```\n\n念起来是「编号 6 越界了，这只缸只有 6 颗珠子喵」。后面还跟着好几行 `at java.base/...`，那是出事地点，真正要读的是**第一行**。\n\n**最后一颗的编号，永远是「几颗减一」**：写成 `s.charAt(s.length() - 1)` 就对了。这也是本课那句话：合法的编号是 `0` 到「珠子数减一」喵。"
+}

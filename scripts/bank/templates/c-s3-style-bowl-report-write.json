@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-style-bowl-report-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-21",
+  "type": "codewrite",
+  "concept": ["占位的 0 换成真数", "一出生不变的数全大写", "逐碗报账", "严格超过才算超限"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["6", "3"] },
+    "b": { "kind": "pick", "values": ["2", "5"] },
+    "c": { "kind": "pick", "values": ["7", "4"] },
+    "lim": { "kind": "pick", "values": ["4", "3"] }
+  },
+  "stemTemplate": "逐碗报账喵。骨架里该起的名都起好了，你来做两件事：\n\n**一、** 把两处占位的 `0` 换成真数 —— 限额是 {lim}、这一排 3 碗（`FISH_LIMIT`、`BOWL_COUNT` 这俩名字，一出生就不许再变的数，全大写）。\n\n**二、** 把 `print_bowl` 写完：\n\n1. 一碗一行，长这样 —— `第 N 碗：X 条`（碗号从 1 数起，X 是这碗里的条数）；\n2. 哪一碗**严格超过**限额（正好等于不算），就在这一行的**行尾**再缀上『 超限！』—— 先一个空格，再接全角的『超限！』；没超的碗行尾干干净净；\n3. 三碗全部报完，最后一行是你没动过的 `合计 X 条喵`。\n\n`main` 别动。三碗分别是 {a}、{b}、{c} 条。",
+  "starterTemplate": "#include <stdio.h>\n\n/* ↓ 这两行还占着位：把 0 换成题面给的数（限额 {lim}、这一排 3 碗）。 */\n#define FISH_LIMIT 0\n#define BOWL_COUNT 0\n\n/* 印一碗的账：第 N 碗几条；超了限额的在行尾再缀一句。 */\nvoid print_bowl(int index, int fish, int limit) {\n    /* ↓ 在这儿写 */\n}\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    for (int i = 0; i < BOWL_COUNT; i++) {\n        print_bowl(i + 1, fish[i], FISH_LIMIT);\n    }\n    printf(\"合计 %d 条喵\\n\", fish[0] + fish[1] + fish[2]);\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* 限额：一碗最多报这么多条；这一排的碗数。\n   一出生就不许再变的数，全大写。 */\n#define FISH_LIMIT {lim}\n#define BOWL_COUNT 3\n\n/* 印一碗的账：第 N 碗几条；严格超过限额的在行尾缀「 超限！」。 */\nvoid print_bowl(int index, int fish, int limit) {\n    printf(\"第 %d 碗：%d 条\", index, fish);\n    if (fish > limit) {\n        printf(\" 超限！\");\n    }\n    printf(\"\\n\");\n}\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    for (int i = 0; i < BOWL_COUNT; i++) {\n        print_bowl(i + 1, fish[i], FISH_LIMIT);\n    }\n    printf(\"合计 %d 条喵\\n\", fish[0] + fish[1] + fish[2]);\n    return 0;\n}\n",
+  "explanationTemplate": "三件事各归各位喵：\n\n**一、两个 `0` 换成真数。** `#define FISH_LIMIT 0`、`#define BOWL_COUNT 0` 是**占位**：把 `0` 换成题面给的数（{lim} 和 3）。名字为什么全大写？这两样**一出生就不许再变** —— 限额是规矩、碗数是这一排的家底，全大写就是「定死的数」的招牌。\n\n**二、严格超过才缀尾巴。** 判断用 `>`，不是 `>=`：\n\n```c\nif (fish > limit) {\n    printf(\" 超限！\");\n}\n```\n\n正好等于限额的那碗**不算超** —— 题面说好的。\n\n**三、一句 `printf` 分两截印。** 先印 `第 N 碗：X 条`，超了再补一小截 ` 超限！`，最后统一换行。缀字别硬并进一处 `printf`：并进去格式串又长又绕，分开写，超限和不超限共用前半截，「差别只在那一个小尾巴」一眼看清。\n\n**四、注释照骨架的路子来。** 招式头顶那句讲的是**它负责什么** —— 这就是「注释讲职责、不讲流水账」：不用写「这句在打印」，写清「印一碗的账」就够了。"
+}

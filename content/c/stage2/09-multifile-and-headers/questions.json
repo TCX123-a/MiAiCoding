@@ -1,0 +1,78 @@
+{
+  "lessonId": "c-stage2-09",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "招牌本（`.h`）里该放的那一行，长什么样？",
+      "options": [
+        "`int add(int a, int b);` —— 结尾一个分号，没有花括号",
+        "`int add(int a, int b) { return a + b; }` —— 带着花括号，一并把活也写进去",
+        "`#include \"add.h\"` —— 把招牌本自己再抄一遍",
+        "`add(3, 5);` —— 直接写上主猫怎么喊它"
+      ],
+      "answer": 0,
+      "explanation": "招牌本是**给别人抄的**，里头只写「有这么一招、它长什么样」——所以那一行结尾是**一个分号**、没有花括号喵。带花括号的是**身子**（这一招真正怎么干），身子只该留一份、放在干活本里。要是把身子也写进招牌，那份招牌被抄两遍的时候，两个身子就撞上了，翻译官喵会当场念 `error: redefinition of 'add'`。「`#include \"add.h\"` —— 把招牌本自己再抄一遍」是把招牌抄一遍的动作（那行字写在**要抄它的那一本**里，不是招牌本身的内容），「`add(3, 5);` —— 直接写上主猫怎么喊它」是**喊**这一招的写法，用在主猫的本子里，都不该出现在招牌上。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵把同一份招牌抄了两遍，**两遍都带着身子**，而且一份守卫都没套。翻译官喵会怎么办？",
+      "options": [
+        "报 `error: redefinition of 'add'` —— 说本喵把 `add` 教了两遍",
+        "报 `error: implicit declaration of function 'add'` —— 说不认识这一招",
+        "一声不吭，照样把两份身子都收下，跑出正确结果",
+        "报 `error: unterminated #ifdef` —— 说门开了没关"
+      ],
+      "answer": 0,
+      "explanation": "`#include` 干的活是**把那一本原样抄到这一行**，所以抄两遍就真有**两份身子**摆在翻译官喵眼前 —— 它会念 `error: redefinition of 'add'`，`redefinition` 就是「又定义了一遍」喵。「报 `error: implicit declaration of function 'add'` —— 说不认识这一招」是**没有宣告过就用**才会撞上的（另一种毛病），「一声不吭，照样把两份身子都收下，跑出正确结果」不可能：`redefinition` 是它认得出的重复，不会照单全收，而且它连结果都不会给你，直接退回；「报 `error: unterminated #ifdef` —— 说门开了没关」是 `#ifdef` 少了 `#endif` 才会说的话，跟重复无关。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "甲乙两本是**不同的**招牌，两本都套了守卫，可乙顺手用了甲那个记号名（都叫 `TOOL_H`）。跑起来会怎样？",
+      "options": [
+        "乙招牌被整本跳过，程序照常跑起来，印出来的却是甲招牌里的数",
+        "编译器报 `error: redefinition` —— 两处声明重了",
+        "编译器报 `error: implicit declaration` —— `TOOL_H` 没登记过",
+        "两本的内容都会生效，后抄进来的那一本说的算"
+      ],
+      "answer": 0,
+      "explanation": "这就是守卫最阴的地方：**它不报错**喵。甲招牌先把 `TOOL_H` 登记上了，乙招牌一上门问「`TOOL_H` 登记了没」，得到的回答是「登记过了」——于是它以为「这本已经抄过了」，**整本跳过**。可它挡掉的不只是重复的那一份，而是「凡是叫这个名字的、后面来的全挡」，所以乙招牌里改过的那个数是**用不上的**，印出来还是甲的数。本喵真跑过这一段：乙写着 35、甲写着 20，跑出来是 20，翻译官喵一声都没吭 —— 这种错没有红字提示，只能靠「一本书一个记号名」这条口诀躲开。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n____ ADD_H\n____ ADD_H\n\nint add(int a, int b) {\n    return a + b;\n}\n\n____\n\nint main(void) {\n    printf(\"结果 %d\\n\", add(3, 5));\n    return 0;\n}\n",
+      "stem": "招牌自己带的卫士一共三行，本喵把**开头两个字**和**收尾那一行**挖掉了。把三个空补全，让这份招牌抄几遍都只留一份。",
+      "blanks": [
+        { "answer": "#ifndef", "accept": [] },
+        { "answer": "#define", "accept": [] },
+        { "answer": "#endif", "accept": [] }
+      ],
+      "explanation": "守卫三行的分工是：`#ifndef ADD_H` 负责**问**（「`ADD_H` 没登记过的话，就从这儿往下读」），`#define ADD_H` 负责**登记**（「现在把它登记上，下回再来就拦住你」），`#endif` 负责**收尾**（「读到这儿为止」）喵。三行缺一不可 —— 尤其是中间那句 `#define`：少了它，`ADD_H` 就永远没登记过，第二次抄同一份招牌时它照样放行，又变成两份身子打架。补完之后这段代码能编过、跑起来印出 `结果 8`（本喵填回去真跑过）。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n/* ── 甲招牌 ── */\n#ifndef TOOL_H\n#define TOOL_H\n#define CAP 12\n#endif\n\n/* ── 乙招牌（另一本，仓容后来改过）── */\n/* 它顺手也用了 TOOL_H 这个名字 */\n#ifndef TOOL_H\n#define TOOL_H\n#define CAP 48\n#endif\n\nint main(void) {\n    printf(\"仓容 %d 条\\n\", CAP);\n    return 0;\n}\n",
+      "stem": "这段代码会印出什么？（先自己一句句读一遍，别急着跑喵）",
+      "answer": "仓容 12 条",
+      "accept": ["仓容 12 条\n"],
+      "explanation": "印出来的是**甲招牌的 12**喵 —— 乙招牌整本被跳过了。甲招牌先抄进来，把 `TOOL_H` 登记上；乙招牌虽然是一本**不同的**招牌（里头写着改过的 48），可它顺手用了同一个记号名，于是它上门问「`TOOL_H` 登记了没」的时候得到「登记过了」的回答，翻译官喵就当成「这本抄过了」，整本跳过。所以乙的 48 **一个字都没生效**，而程序照常跑完、连一句提醒都没有。要让它说 48，就得把乙那一行的记号名改成自己的（比如 `TOOL2_H`）。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#ifndef ADD_H\n#define ADD_H\n\nint add(int a, int b) {\n    return a + b;\n}\n\n#endif\n\n#ifndef SUB_H\n#define SUB_H\n\nint sub(int a, int b) {\n    return a - b;\n}\n\n#endif\n\nint main(void) {\n    printf(\"%d %d\\n\", add(4, 6), sub(4, 6));\n    return 0;\n}\n",
+      "stem": "这回两本招牌**各用各的记号名**了。这段代码会印出什么？",
+      "answer": "10 -2",
+      "accept": ["10 -2\n"],
+      "explanation": "印出 `10 -2` 喵。两本招牌各用各的记号名（`ADD_H` 和 `SUB_H`），所以谁也不会被谁挡掉：第一本抄进来，`add` 收下并登记 `ADD_H`；第二本抄进来，`SUB_H` 还没登记过，照样放行，`sub` 也收下了。于是主猫两招都能用 —— `4 + 6` 是 `10`，`4 - 6` 是 `-2`，中间隔一个空格印在同一行上。对照上一题看：**差别只在记号名是不是各用各的**，一个是整本丢掉、一个是两本都好用。"
+    }
+  ]
+}

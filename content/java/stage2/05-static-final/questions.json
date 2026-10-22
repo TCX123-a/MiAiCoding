@@ -1,0 +1,78 @@
+{
+  "lessonId": "java-stage2-05",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下一行 `a.count = 100;`（`count` 是图纸里那一格**整张图纸共用**的东西）。按这一课学到的，下面哪一句才对？",
+      "options": [
+        "只有 `a` 自己那一份变成 100，别的猫读出来还是原来的数",
+        "改的是全院子共用的那一份：`Cat.count` 和 `b.count` 读出来也一起变成 100",
+        "编译器会当场拦下，说共用的那一份不许拿去改",
+        "这一行编不过，因为共用的格子一律要拿图纸名去念"
+      ],
+      "answer": 1,
+      "explanation": "「共用」这两个字是这一课的关节喵：`a.count`、`b.count`、`Cat.count` **指的是同一份**，一共就这一格 —— 所以本喵拿 `a` 去改，`b` 那一侧也会「看见」。本喵真跑过：改完再印 `Cat.count` 和 `b.count`，出来是 `100 100`。翻译官喵**不拦**这种写法（连挑刺的开关都问过，它一个字都没说），可它会让读代码的人（包括三天后的你自己）以为这是 `a` 自己的一格 —— 所以本喵的规矩是：共用的那份一律念 `Cat.count`。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`static` 招式里，下面哪一样是**碰不得**的？",
+      "options": [
+        "某只猫自己那一格（比如 `name`）—— 连 `this` 也写不了",
+        "全图纸共用的那一格（比如 `count`）",
+        "喊它的时候投喂进去的那个数",
+        "在函数里创建一个对象，再用它自己的成员"
+      ],
+      "answer": 0,
+      "explanation": "念一下翻译官喵的原话：`non-static variable name cannot be referenced from a static context` —— **「`name` 是每只猫自己的一份，可你现在站的是 `static` 招式，喊它的时候压根没有猫站在旁边，你要用的是哪只猫的 `name`？」** 共用的那一格随便碰；投喂进来的那个数、现生一只猫再拿它的格子用，也都行。`this` 更不能写 —— 撞的是另一句：`non-static variable this cannot be referenced from a static context`。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵想让全院子共用一条「一顿最多三条」的规矩，而且要**改只改一处、谁都改不动它**。该写成哪一样？",
+      "options": [
+        "`final int MAX_FISH = 3;`，念的时候写 `Cat.MAX_FISH`",
+        "`static int MAX_FISH = 3;`，谁想改就顺手改掉",
+        "`static final int MAX_FISH = 3;`，念的时候写 `Cat.MAX_FISH`",
+        "`static final String name = \"小橘\";`，在出生那一手里填"
+      ],
+      "answer": 2,
+      "explanation": "「全院子共用」是 `static` 管的事，「只填一次、往后锁死」是 `final` 管的事 —— 两样合在一起才是**常量**喵。只写 `final`，这一格就成了每只猫各有一份，`Cat.MAX_FISH` 这种念法也就不认了（那会儿得拿某只猫去念）；只写 `static`，谁都能顺手把它改成别的数，那还叫什么规矩。「`static final String name = \"小橘\";`，在出生那一手里填」这一项要特别当心：名字是**每只猫自己**的东西，钉死的只是「这只猫叫什么」，跟全院子共用的规矩没关系 —— 给它加上 `static`，三只猫就只剩一个名字了。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "class Cat {\n    ____ int count = 0;\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n        count = count + 1;\n    }\n\n    ____ int howMany() {\n        return count;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        new Cat(\"小橘\");\n        new Cat(\"狸花\");\n        System.out.println(\"一共 \" + ____.howMany() + \" 只\");\n    }\n}",
+      "stem": "这段代码里有三处被本喵挖空了（用 `____` 标出），补齐之后它会印出「一共 2 只」喵。",
+      "blanks": [
+        { "answer": "static", "accept": [] },
+        { "answer": "static", "accept": [] },
+        { "answer": "Cat", "accept": [] }
+      ],
+      "explanation": "前两处空填的都是 `static`：第一处是**整张图纸共用**的那一格（起步的数 `0` 就写在这一行里，不用在图纸外面再补一行）；第二处是**挂在图纸上的招式** —— 这种招式不需要先有一只猫也能喊。第三处空要填图纸名 `Cat`：共用的那一份一律念全名（`Cat.howMany()`），念全名，读代码的人才知道「这不是哪只猫自己的招式」喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "class Cat {\n    static int count = 0;\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n        count = count + 1;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat a = new Cat(\"小橘\");\n        Cat b = new Cat(\"狸花\");\n        Cat c = new Cat(\"大胖\");\n        System.out.println(Cat.count + \" \" + a.name);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "3 小橘",
+      "accept": ["3 小橘\n"],
+      "explanation": "每生一只猫，出生那一手都会去**同一格**上做 `count = count + 1` —— 生三只、加三次，所以 `Cat.count` 是 `3`喵。`a.name` 就不一样了：它是**每只猫各有一份**的那种格子，`a` 是小橘，所以印 `小橘`。两个数的来路要分清：`Cat.count` 拿图纸名念（全院子共用），`a.name` 拿某只猫去念（这只猫自己那一份）。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "class Cat {\n    static final int MAX_FISH = 3;\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    void eat(int fish) {\n        if (fish > MAX_FISH) {\n            System.out.println(name + \"：太多啦\");\n        } else {\n            System.out.println(name + \"：吃了 \" + fish + \" 条\");\n        }\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat a = new Cat(\"小橘\");\n        a.eat(2);\n        a.eat(5);\n        System.out.println(\"上限是 \" + Cat.MAX_FISH);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘：吃了 2 条\n小橘：太多啦\n上限是 3",
+      "accept": ["小橘：吃了 2 条\n小橘：太多啦\n上限是 3\n"],
+      "explanation": "`MAX_FISH` 是全院子共用、又钉死的那一份（`static final`）：2 条没越过 3，照吃；5 条越过了，被拦下来印一行 `太多啦`。最后那一行是拿图纸名去念上限，印 `3`喵 —— 这条规矩要改，只改这一处，全院子立刻都按新的来；这也正是「能吃几条」这种数该待的地方：**它不属于哪只猫，属于整张图纸**。"
+    }
+  ]
+}

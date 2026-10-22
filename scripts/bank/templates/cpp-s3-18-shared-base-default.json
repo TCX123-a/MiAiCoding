@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-18-shared-base-default",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-18",
+  "type": "codefix",
+  "concept": ["共用底座没人喂料", "底座自带一个不缺料的搭法", "安静地错"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "小P", "小灰"] }
+  },
+  "stemTemplate": "这一段的底座图纸上**有两个出生招式**：一个要喂名字，还有一个**什么都不用喂**（不喂就用它自带的那个名字）。\n\n两张岔路图纸都挂上了那一手，出生招式里也各自写了一句话给底座喂料。可外面拼起来之后，印出来的名字却是 `(还没起名字)` —— 而且**翻译官喵一句原话都没有**：这段代码编得过、跑得起来，屏幕上就是名字不对。\n\n你帮本喵改好，让它喂上 `{who}`，正好印出这六行：\n\n1. `搭一份会喵的底座：{who}`\n2. `搭会打呼噜的那一半`\n3. `搭会踩奶的那一半`\n4. `{who}：喵～`\n5. `{who}：呼噜呼噜～`\n6. `{who}：踩踩踩～`\n\n提示：先想清楚一件事 —— 照出 `b` 的这一段代码里，谁才是「**最外面那张图纸**」喵？",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat() : name(\"(还没起名字)\") {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    MeowCat(const string& n) : name(n) {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr() : MeowCat(\"打呼噜的底座\") {\n        cout << \"搭会打呼噜的那一半\" << endl;\n    }\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead() : MeowCat(\"踩奶的底座\") {\n        cout << \"搭会踩奶的那一半\" << endl;\n    }\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(), Knead() {}\n};\n\nint main() {\n    Baby b(\"{who}\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat() : name(\"(还没起名字)\") {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    MeowCat(const string& n) : name(n) {\n        cout << \"搭一份会喵的底座：\" << name << endl;\n    }\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr() : MeowCat(\"打呼噜的底座\") {\n        cout << \"搭会打呼噜的那一半\" << endl;\n    }\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead() : MeowCat(\"踩奶的底座\") {\n        cout << \"搭会踩奶的那一半\" << endl;\n    }\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : MeowCat(n), Purr(), Knead() {}\n};\n\nint main() {\n    Baby b(\"{who}\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+  "explanationTemplate": "这一题坏的**不是写法，是位子**喵。\n\n挂上那一手之后，那份共用的底座由**最外面那张图纸**搭、也由它喂料 —— 中间那两句（`Purr` 里的「打呼噜的底座」、`Knead` 里的「踩奶的底座」）**站在这个位子上不算数**，它们只在「自己单独当最外面那张」时才作数。\n\n改法就是把料喂在最外面那张图纸的出生招式里：`Baby(const string& n) : MeowCat(n), Purr(), Knead()` —— 写在最前面，因为**共用的底座最先搭**。\n\n⚠️ 这一题最该记住的是：**它为什么不报错**。底座图纸上那个「什么都不用喂」的搭法一直在那儿，`Baby` 不喂，翻译官喵就安安静静地用了它 —— 于是名字从头到尾都是「(还没起名字)」，程序照跑不误，一行红字都没有。\n\n⚠️ 对照着记：要是底座图纸上**只有**「要喂名字」的那一个搭法，同样的漏法就会当场编不过（`no matching function for call to 'MeowCat::MeowCat()'`）。**同样一个漏法，报不报错全看底座那张图纸上有没有那个不缺料的搭法** —— 所以「编过了」这句话，在挂过那一手之后就不太靠得住了喵。"
+}

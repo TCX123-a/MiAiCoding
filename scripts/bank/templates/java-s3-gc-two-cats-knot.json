@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-gc-two-cats-knot",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-18",
+  "type": "codewrite",
+  "concept": ["两只互相攥着对方的牌子", "外面一张牌都不留", "从根上走不到就是没人要"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "煤球"] },
+    "n2": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stemTemplate": "本喵要摆一个「谁也够不着谁」的阵喵：两只猫**互相攥着对方的牌子**，可外面一张牌都不留。请你写个程序，照这个次序做：\n\n1. 照图纸生两只猫，名字分别叫 `{n1}` 和 `{n2}`，各拿一张牌攥在手上；\n2. 让两只**互相**把对方记到图纸上那一格里（甲那格记乙，乙那格记甲）；\n3. 印三行：\n   - `甲的朋友是：` 后面接**甲攥着的那只**的名字；\n   - `乙的朋友是：` 后面接**乙攥着的那只**的名字；\n   - `两位互相指着对方吗：` 后面接 `true` 或 `false` —— 甲记着的是乙、乙记着的也是甲，就印 `true`。\n\n（这一题**不用投喂任何东西**，两只叫什么名字本喵都写在上面了。）",
+  "starterTemplate": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n\nclass Cat {\n    String name;\n    Cat 朋友;\n\n    Cat(String name) {\n        this.name = name;\n    }\n}\n",
+  "referenceSolutionTemplate": "public class Main {\n    public static void main(String[] args) {\n        Cat 甲 = new Cat(\"{n1}\");\n        Cat 乙 = new Cat(\"{n2}\");\n        甲.朋友 = 乙;\n        乙.朋友 = 甲;\n        System.out.println(\"甲的朋友是：\" + 甲.朋友.name);\n        System.out.println(\"乙的朋友是：\" + 乙.朋友.name);\n        System.out.println(\"两位互相指着对方吗：\" + (甲.朋友 == 乙 && 乙.朋友 == 甲));\n    }\n}\n\nclass Cat {\n    String name;\n    Cat 朋友;\n\n    Cat(String name) {\n        this.name = name;\n    }\n}\n",
+  "explanationTemplate": "**一、这一步不是又生一只，是记下对方。** `甲.朋友 = 乙;` 只是把**乙那张牌**记进甲的那一格；两只盒子从头到尾都只有两只。\n\n**二、为什么第三行这样写。** 要问「是不是互相指着」，就得同时看两边：甲记的是乙，**并且**乙记的是甲。少看一边，印出来的 `true` 就是假的。\n\n**三、这个阵要说明什么。** 跑完之后两只盒子还互相攥着对方的牌子 —— 换「只数有几张牌指着我」那种老路子的算法，它们各有一张，谁也数不成零，于是**永远收不走**。可课文里的自动铲屎官不是这么算的：它**从几个根出发，顺着一串牌子一路走**。这个阵里两只盒子外面一张牌都没有，根上走不到它们 —— 所以它们早就算「没人要」了，哪怕彼此攥得再紧。\n\n**四、一句话记住。** 「够不够得着」是**从根上看的**，不是从盒子看盒子。"
+}

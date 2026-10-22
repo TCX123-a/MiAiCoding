@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-thread-missing-args",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-03",
+  "type": "codefix",
+  "concept": ["threading.Thread", "args 投喂", "小猫拿不到东西就干不了活"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": [2, 6] },
+    "n2": { "kind": "pick", "values": [3, 7] },
+    "n3": { "kind": "pick", "values": [4, 5] }
+  },
+  "stemTemplate": "本喵还是请三只小猫帮忙把三只碗里的数**翻个倍**，写进结果柜里**属于自己**的那一格。\n\n这回喵更奇怪了：本喵这边**退出码还是 `0`**，看着就像跑完了 —— 可屏幕并不干净：印出来的三个数**全是 0**、柜子里一个数都没记上，旁边还挂着**三片红字**。你帮本喵看看问题出在哪，把它改好。\n\n改好之后，程序应该把三只碗翻倍后的数**各印一行**：先印第一只碗的、再印第二只碗的、最后第三只碗的。",
+  "brokenCodeTemplate": "import threading\n\n碗 = [{n1}, {n2}, {n3}]\n结果 = [0, 0, 0]\n\n\ndef 翻倍(序号, 数):\n    结果[序号] = 数 * 2\n\n\n猫们 = []\nfor i in range(3):\n    一只猫 = threading.Thread(target=翻倍)\n    猫们.append(一只猫)\n\nfor 一只猫 in 猫们:\n    一只猫.start()\n\nfor 一只猫 in 猫们:\n    一只猫.join()\n\nfor 一个数 in 结果:\n    print(一个数)\n",
+  "referenceFixTemplate": "import threading\n\n碗 = [{n1}, {n2}, {n3}]\n结果 = [0, 0, 0]\n\n\ndef 翻倍(序号, 数):\n    结果[序号] = 数 * 2\n\n\n猫们 = []\nfor i in range(3):\n    一只猫 = threading.Thread(target=翻倍, args=(i, 碗[i]))\n    猫们.append(一只猫)\n\nfor 一只猫 in 猫们:\n    一只猫.start()\n\nfor 一只猫 in 猫们:\n    一只猫.join()\n\nfor 一个数 in 结果:\n    print(一个数)\n",
+  "explanationTemplate": "`Thread` 那行只说了「**叫哪一手活儿来干**」（`target`），可那一手活儿**要用到的东西**得另外**投喂**给它 —— 就是 `args`。\n\n本喵这次光点了招式的名字，忘了投喂：小猫被叫醒之后一伸手，发现手里**空空的**，它自己那一手活儿要两个东西（写哪一格、翻哪个数），一个都没拿到，只好当场撂挑子。\n\n⚠️ 最坑的地方在这儿：它撂挑子是**在它自己那边**发生的 —— 本喵这边照常往下走（`join()` 等回来的，是一只「已经结束、其实什么也没干」的猫），柜子里三格还是原来的 `0`，**退出码也还是 `0`**。可它**绝不是「安安静静」**：三只小猫各留下一片红字，原话是 `TypeError: 翻倍() missing 2 required positional arguments: '序号' and '数'`，而且它明说了这是**在小猫自己那边**摔的。**看退出码以为一切正常，看屏幕才知道三次全摔了** —— 「跑得起来」和「跑得对」是两件事，这道理在这一课里会一直出现。\n\n顺便记一个特别容易错的写法：`args=(i, 碗[i])` 里最后**那个逗号**不能省。写成 `args=(i)` 的话，它不是「一串里只有一个」，它就**等于** `i` 本身 —— 翻译官喵会说「这根本不是一串东西」，照样投喂不进去（本喵真试过：`args` 写成一个光秃秃的整数时，小猫一样是空着手被叫醒的）。"
+}

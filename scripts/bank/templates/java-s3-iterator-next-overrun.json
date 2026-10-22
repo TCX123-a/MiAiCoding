@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-iterator-next-overrun",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-02",
+  "type": "codefix",
+  "concept": ["向导走到底了还硬要", "先问一句还有没有", "有才叼"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["小橘", "煤球"] },
+    "w2": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stemTemplate": "本喵派了一位向导去走柜子，柜子里明明只有两件，本喵却伸手要了**三次**喵。\n\n前两次都好好叼回来了，第三次当场就炸 —— 而且炸出来的红字**指的那一行，语法上一个毛病都没有**。\n\n你帮本喵改成「**先问一句「还有下一件吗」，它说有，本喵才伸手**」的写法。这样柜子里有几件都能走完，一件不多要。\n\n投喂的那两件**一个字都别动**。改好之后它该印两行，把那两件一个一个印出来。\n\n（这一题**不用投喂任何东西**，那两样字是固定死的。）",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"{w1}\");\n        names.add(\"{w2}\");\n\n        Iterator<String> it = names.iterator();\n        System.out.println(it.next());\n        System.out.println(it.next());\n        System.out.println(it.next());\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"{w1}\");\n        names.add(\"{w2}\");\n\n        Iterator<String> it = names.iterator();\n        while (it.hasNext()) {\n            System.out.println(it.next());\n        }\n    }\n}\n",
+  "explanationTemplate": "这题演的是向导那句问话**存在的全部理由**喵。\n\n**一、红字里那个名字的直译是「没有下一个了」。** 本喵伸手要第三件的时候，向导手上已经什么都没有了 —— 柜子里就两件。它不是说语法写错了，是说**本喵要的东西不在那儿**。\n\n**二、注意前两行印出来了。** 所以这个错**不是一开始就炸**的：前面好好叼了两回，第三回才翻脸。数据一变（柜子里只剩一件），炸的位置也跟着往前挪 —— 这种「看数据脸色」的错，光看代码是看不出来的。\n\n**三、改成先问一句就稳了。** `it.hasNext()` 问「还有下一件吗」，答真才伸手。柜子里几件都能走完，一件不多要、一件不少拿。这就是上一课那个「挨个过一遍」背后站着的那套问话。\n\n**四、别用「心里数着几件」来兜。** 有人会想「我知道柜子里有两件，那就伸手两次」。这样写**数据一变就炸**，而且炸的位置和这次一模一样 —— 本喵要的不是「这次能跑」，是**每次都稳**喵。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-anno-value-name",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-13",
+  "type": "codefix",
+  "concept": ["省事写法只认 value 这个栏名", "贴的地方写全栏名也立得住", "纸条上的栏叫什么，是画纸条的人定的"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["开饭了", "该吃饭了"] },
+    "m": { "kind": "pick", "values": ["打招呼", "招手"] }
+  },
+  "stemTemplate": "本喵给招式贴纸条的时候图省事：括号里只写了那串字、连栏名都没写。结果翻译官喵**两条一起报**，连翻译那一关都没过喵。\n\n你帮本喵把**贴纸条那一行**改对 —— 别的都别动，纸条上那一栏的名字也别动（它就叫「值」）。改好之后，程序该印出**一行**：`读到的备注：` 后面跟着纸条上写的那串字。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.reflect.Method;\n\npublic class Main {\n    @Retention(RetentionPolicy.RUNTIME)\n    @interface 纸条 {\n        String 值();\n    }\n\n    static class 小猫 {\n        @纸条(\"{a}\")\n        void {m}() {\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Method 一招 = 小猫.class.getDeclaredMethod(\"{m}\");\n        纸条 小纸条 = 一招.getAnnotation(纸条.class);\n        System.out.println(\"读到的备注：\" + 小纸条.值());\n    }\n}\n",
+  "referenceFixTemplate": "import java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.reflect.Method;\n\npublic class Main {\n    @Retention(RetentionPolicy.RUNTIME)\n    @interface 纸条 {\n        String 值();\n    }\n\n    static class 小猫 {\n        @纸条(值 = \"{a}\")\n        void {m}() {\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Method 一招 = 小猫.class.getDeclaredMethod(\"{m}\");\n        纸条 小纸条 = 一招.getAnnotation(纸条.class);\n        System.out.println(\"读到的备注：\" + 小纸条.值());\n    }\n}\n",
+  "explanationTemplate": "翻译官喵两条一起报，原话是这样喵：\n\n```text\nMain.java:12: error: cannot find symbol\nsymbol:   method value()\nMain.java:12: error: annotation @纸条 is missing a default value for the element '值'\n```\n\n两句连起来读，就是它的心思：\n\n- 第一句「**找不到叫 `value` 的东西**」—— 本喵用的是**省事写法**（括号里只写一样东西、连栏名都不写），而省事写法只认一个栏名：`value`。纸条上那一栏叫「值」，它当然找不到。\n- 第二句「**`值` 这一栏没给东西**」—— 它把括号里那串字当成「连栏名都没写」，于是按「一样都没填」算；可 `值` 这一栏又没留默认值，两头对不上，只好一起报出来。\n\n修法两条都立得住：把栏名改回 `value`；或者**老老实实把栏名写上**，改成 `@纸条(值 = \"开饭了\")` 这个样子。\n\n这一题的修法是**后一条**（题目说了纸条上那一栏的名字别动）—— 改的是**贴纸条那一行**。改完再跑，就印出 `读到的备注：` 后面跟着那串字喵。"
+}

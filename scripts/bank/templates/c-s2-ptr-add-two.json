@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-ptr-add-two",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-01",
+  "type": "codefix",
+  "concept": ["指针算术", "指针相减", "编译错误"],
+  "instances": 2,
+  "params": {
+    "base": { "kind": "int", "min": 1, "max": 3 },
+    "k": { "kind": "int", "min": 2, "max": 4 },
+    "step": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵在架子上摆了 5 只碗：第 0 只碗里放着 {base} 条小鱼干，往后每只碗都比前一只多 {step} 条。\n\n程序摆了**两块牌子** —— 一块指着第 0 只碗，一块指着第 {k} 只碗。它要报三行：第一行是第 0 只碗里的数，第二行是第 {k} 只碗里的数，第三行报一报**这两块牌子之间隔了几只碗**（也就是 {k} 减 0，差是 {k}）。\n\n前两行都报对了，第三行翻译官喵直接不干了，把整段代码退了回来。你帮本喵看看它为什么不高兴，把它改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[5];\n    int *p = bowls;\n\n    for (int i = 0; i < 5; i++) {\n        bowls[i] = {base} + i * {step};\n    }\n\n    int *q = bowls + {k};\n\n    printf(\"第 0 只：%d\\n\", *p);\n    printf(\"第 {k} 只：%d\\n\", *q);\n    printf(\"两块牌子相隔 %d 只\\n\", p + q);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[5];\n    int *p = bowls;\n\n    for (int i = 0; i < 5; i++) {\n        bowls[i] = {base} + i * {step};\n    }\n\n    int *q = bowls + {k};\n\n    printf(\"第 0 只：%d\\n\", *p);\n    printf(\"第 {k} 只：%d\\n\", *q);\n    printf(\"两块牌子相隔 %d 只\\n\", (int)(q - p));\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: invalid operands to binary + (have 'int *' and 'int *')` —— 翻过来就是「**这两个东西的加法，本喵不认**」。\n\n道理很简单：一块牌子上写的是「某只碗住在哪儿」，**两块牌子的门牌号加起来**指不到任何一只碗，所以 C 里根本没有这个运算。既然没有，翻译官喵在翻的阶段就把它拦下了 —— 这一类错**根本跑不起来**，你不可能带着它上考场，这算是件好事喵。\n\n两块牌子之间**只有减法**是有意义的：`q - p` 得到的是一个**数** —— 「从 `p` 这一只走到 `q` 这一只，要跨几只碗」。这里 `q` 是 `p` 往后挪了 {k} 只，所以差正是 {k}。\n\n那个 `(int)` 是顺手把话说圆：相减得到的是另一种宽度的整数，收窄成 `int` 之后 `%d` 才接得住。**本喵真跑过一遍**：不写这个 `(int)`，程序照样跑得成功、数字也印得对，可翻译官喵会嘀咕一句 `warning: format '%d' expects argument of type 'int', but argument 2 has type 'long long int' [-Wformat=]` —— 它不会拦下你，只是嫌你不讲究。补上更干净喵。\n\n收下这条：**牌子可以减、不可以加**。你以后想把两块牌子「合起来」，多半是想岔了。"
+}

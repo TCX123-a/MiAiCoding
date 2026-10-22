@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s3-08-directories-append",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-08",
+  "type": "codewrite",
+  "concept": ["柜子不在就先造", "门牌拼进柜子", "两笔里一笔接着添"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "n2": { "kind": "pick", "values": ["大肥鱼", "团子"] },
+    "c1": { "kind": "int", "min": 2, "max": 9 },
+    "c2": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵要把账本放进**两层柜子**里，路径是 `鱼塘/深水区/账本.txt`（本喵这里写斜杠是为了好读，实际拼的时候交给它自己补分隔符）。\n\n请你写个程序，照这个次序做：\n\n1. 先撕一张**柜子**的门牌：`鱼塘` 底下的 `深水区`；\n2. 把柜子**造出来** —— 不在就造，已经在也别让它翻脸；\n3. 再撕一张**账本**的门牌：`鱼塘`、`深水区`、`账本.txt` 三段拼出来的；\n4. 第 1 笔写成一行 `{n1} {c1} 条`（后面跟一个换行）；\n5. 第 2 笔写成一行 `{n2} {c2} 条`（后面跟一个换行），**接着后面添**，别把第 1 笔擦掉；\n6. 印一行 `几个字节：` 后面接**它自己数出来的**字节数（不是本喵替它算好写死的）；\n7. 最后把整份文件**一口气念回来、原样印出来**（不加任何前缀）—— 两笔都要在，先写的在前。\n\n（这一题**不用投喂任何东西**；柜子和文件都得靠程序自己造出来。）",
+  "starterTemplate": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 柜子 = Path.of(\"鱼塘\", \"深水区\");\n        Files.createDirectories(柜子);\n\n        Path 门牌 = Path.of(\"鱼塘\", \"深水区\", \"账本.txt\");\n\n        Files.writeString(门牌, \"{n1} {c1} 条\\n\");\n        Files.writeString(门牌, \"{n2} {c2} 条\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"几个字节：\" + Files.size(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+  "explanationTemplate": "**一、柜子得先造出来，文件才有地方落。** `Files.createDirectories(柜子)` 读作「这个柜子不在就先造一个」——中间缺的每一层它都替本喵补齐；**已经在的话它也不翻脸**，照样往下走。所以这一步不用先问在不在，直接造最省事。\n\n**二、门牌是拼出来的。** `Path.of(\"鱼塘\", \"深水区\", \"账本.txt\")` 一截一截交进去，分隔符它自己补 —— 本喵那串「鱼塘/深水区/账本.txt」只是写给人看的，真拼的时候别自己拿字加斜杠。\n\n**三、两笔的写法不一样，差的就是那一声。** 第 1 笔照默认来（文件不在就建、从头写）；第 2 笔多喊一声 `StandardOpenOption.APPEND` 才是**接着后面添**。少了这一声，第 1 笔当场被擦掉，念回来只剩一行。\n\n**四、`Files.size` 数的是字节，不是字数。** 本喵这里写的「26」只是个样子：一个汉字占好几个字节，真数是多少得让程序自己报 —— 所以这一行**别在心里估**，交给它数。\n\n**五、念回来还是那一手「一口气」。** `Files.readString` 把整份文件端回来、原样印出去，两笔都在、先写的在前。"
+}

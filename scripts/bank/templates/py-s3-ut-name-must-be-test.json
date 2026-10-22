@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-ut-name-must-be-test",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-11",
+  "type": "codefix",
+  "concept": ["unittest", "test 开头的项目名", "体检本子"],
+  "instances": 2,
+  "params": {
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫罐头", "冻干块"] },
+    "a": { "kind": "int", "min": 6, "max": 8 }
+  },
+  "stemTemplate": "本喵给「平分{unit}」这招写了一张体检单，上面**明明白白写了一个项目**喵。\n\n可是跑完之后，体检本子上记的是：**一项都没体检**。程序既不报错，也不提醒 —— 它只是安安静静地什么都没干。\n\n你帮本喵看看这张单子哪里不对，改好它。改好之后，本子上应该记着体检了 **1 项**、红了 **0 项**、全绿。\n\n（那个项目要检查的是：{a} 份{unit}平分给 2 只猫，每只得 {a} 份。）",
+  "brokenCodeTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def 检查平分(self):\n        self.assertEqual(平分({a} * 2, 2), {a})\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+  "referenceFixTemplate": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_平分(self):\n        self.assertEqual(平分({a} * 2, 2), {a})\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+  "explanationTemplate": "翻译官喵拎体检项目的时候，**只认一种名字**：以 `test` 开头的那种喵。\n\n`def 检查平分(self):` 这个名字起得很通顺，可它开头不是 `test` —— 于是在翻译官喵眼里，它跟一张单子角落里随手写的备注没区别，扫过去就完事了。**它没有被跳过，它是压根没被认出来。**\n\n最阴的地方在这儿：跑完的账是**干净**的。一项都没跑，自然一项都没红，`wasSuccessful()` 老老实实答「我成功了」——本子上于是写着「体检了 0 项」和一句「全绿喵」。你要是不看第一行那个数字，根本发现不了这张单子其实是空的。\n\n改法就一个字的事：把项目名改成以 `test` 开头的，比如 `test_平分`。项目名起清楚一点只有好处 —— 报告里念的就是这个名字，将来红了，你一眼知道挂的是哪一项。"
+}

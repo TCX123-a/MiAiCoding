@@ -1,0 +1,88 @@
+{
+  "lessonId": "c-stage1-14",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想知道 `fish` 那只碗摆在架子的哪个位置。下面哪种写法能把这个位置问出来？",
+      "options": [
+        "`&fish`",
+        "`*fish`",
+        "`fish&`",
+        "`fish*`"
+      ],
+      "answer": 0,
+      "explanation": "`&` 就是「问门牌号」的记号，写在碗的名字**前面**喵。`*fish` 是另一回事 —— 那是「顺着牌子走」，可 `fish` 是一只普通的碗、根本不是牌子，翻译官喵会当场甩一句 `invalid type argument of unary '*'` 把它拦下。`fish&`、`fish*` 这两种写法 C 压根不认，名字后面挂记号是没有这个规矩的喵～"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写了一句 `int *p, q;`。这句话里，哪几个名字是牌子？",
+      "options": [
+        "只有 `p` 是牌子，`q` 是一只普通的碗",
+        "`p` 和 `q` 都是牌子",
+        "只有 `q` 是牌子",
+        "两个都不是牌子"
+      ],
+      "answer": 0,
+      "explanation": "声明里那颗 `*` **只管紧挨着它的那一个名字**喵。所以 `p` 是牌子，`q` 是一只普普通通的碗 —— 后面直接写 `q = 7;` 完全没问题。想声明两块牌子，得老老实实写两遍：`int *p, *q;`。这里特别容易摔，本喵见过好多猫在这儿打了个滚喵～"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵写了一句 `int *p;`，还没让它指向任何一只碗。下面哪种做法是对的？",
+      "options": [
+        "先写 `p = &fish;` 让它指上一只真碗，再去顺牌子",
+        "直接写 `*p = 1;`，反正 C 也不会拦",
+        "直接写 `printf(\"%d\\n\", *p);` 试试里面有什么",
+        "把它当成数字 0 用"
+      ],
+      "answer": 0,
+      "explanation": "没指碗的牌子是**野牌子**，上面写着一串没意义的编号喵。顺着它拿东西或者放东西，那多半不是你的碗，C 也不会拦你 —— 接下来发生什么谁也说不准。所以本喵的死规矩是：**牌子当场声明，当场指碗**。先 `p = &fish;`，再顺牌子，这才是能睡安稳觉的写法喵～"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    int fish = 5;\n    int *p = ____;\n    ____ = 99;\n    printf(\"%d\\n\", fish);\n    return 0;\n}",
+      "stem": "本喵想让牌子 `p` 指着 `fish` 那只碗，再顺着它把碗里的数改成 `99`。两个空该填什么喵？",
+      "blanks": [
+        { "answer": "&fish" },
+        { "answer": "*p" }
+      ],
+      "explanation": "第一只空填 `&fish`喵 —— 把 `fish` 的门牌号问出来，记在牌子上（牌子当场指碗，这条规矩别忘了）。第二只空填 `*p` —— 「顺着牌子走到那只碗前面」，后面跟 `= 99` 就是把数放进去。填完跑一遍，屏幕上印 `99`：改的是**原件本人**，不是抄件喵～"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nvoid treat(int *p) {\n    *p = *p * 10;\n}\n\nint main(void) {\n    int fish = 3;\n    treat(____ fish);\n    printf(\"%d\\n\", fish);\n    return 0;\n}",
+      "stem": "这一招要把喂进来的碗里的数**乘十**，而且是改到原件上。空里该填什么记号喵？",
+      "blanks": [
+        { "answer": "&" }
+      ],
+      "explanation": "填 `&`喵。招式头上写的是 `int *p`，说明它收的是**门牌号**，所以喊它的时候得把 `fish` 的牌子交出去。填完跑一遍印 `30`：招式里顺着牌子改了那只碗，回到 `main` 一印**真的变了** —— 这就是牌子和抄件的分水岭。要是漏了这个记号，翻译官喵会说 `makes pointer from integer without a cast`，还会顺手提醒你用 `&`喵～"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    int fish = 5;\n    int *p = &fish;\n    int *q = p;\n\n    *q = 42;\n    printf(\"%d\\n\", *p);\n    printf(\"%d\\n\", fish);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "42\n42",
+      "accept": ["42\n42\n"],
+      "explanation": "`int *q = p;` 是**把牌子上的内容（门牌号）抄给另一块牌子**喵 —— 所以 `q` 和 `p` 指的是**同一只碗**。顺着 `q` 放进一个 `42`，`p` 走过去一看也是 `42`；再直接报名字看那只碗，还是 `42`。牌子能印很多张，门牌号只有一个，指的都是同一只碗喵～"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    int b = 2;\n    int *p, q;\n\n    p = &b;\n    q = 7;\n    printf(\"%d %d\\n\", q, *p);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "7 2",
+      "accept": ["7 2\n"],
+      "explanation": "`q` 是一只普通的碗，`q = 7;` 就是老老实实放了个 `7` 进去；`p` 是牌子，`p = &b;` 让它指着 `b` 那只碗，所以 `*p` 顺过来的是 **`b` 碗里的 `2`**。印的时候先印 `q` 再印 `*p`，所以是 `7 2`喵～ 这道题就是在提醒你：`int *p, q;` 里**只有 `p` 是牌子**喵。"
+    }
+  ]
+}

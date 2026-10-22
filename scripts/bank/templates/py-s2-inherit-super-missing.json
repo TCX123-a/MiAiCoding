@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-inherit-super-missing",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-07",
+  "type": "codefix",
+  "concept": ["super", "__init__", "AttributeError"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["大肥鱼", "小鳕鱼"] },
+    "fat": { "kind": "int", "min": 3, "max": 9 }
+  },
+  "stemTemplate": "本喵画了两张图纸喵：一张 `Animal`（有名字），一张照它画的 `Fish`。\n\n小图纸上本喵**自己盖了一版 `__init__`** —— 除了名字，还要多存一样「本鱼有几斤」；`speak` 也盖了一版。\n\n可这段代码一跑就报错。你帮本喵改对，让它印出这样的一行：\n\n```text\n{name}：咕噜咕噜，本鱼有 {fat} 斤\n```\n\n⚠️ 两段已经写好的东西**一个字都不许改**：`Animal` 那张大图纸，还有 `speak` 里印的那句话。",
+  "brokenCodeTemplate": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nf = Fish(\"{name}\", {fat})\nf.speak()\n",
+  "referenceFixTemplate": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        super().__init__(name)\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nf = Fish(\"{name}\", {fat})\nf.speak()\n",
+  "explanationTemplate": "毛病出在小图纸**自己写了 `__init__`** 这件事上喵。\n\n大图纸上那一段（把名字放进仓库）本来是小图纸天生就会的。可**小图纸只要自己写了一版 `__init__`，大图纸那一版就被整个盖住了** —— 于是「把名字放好」这一步**没有人干**，`self.name` 这个仓库压根没建起来。\n\n所以程序能一路跑到 `speak`，直到那里去取 `self.name` 才翻脸：`'Fish' object has no attribute 'name'`（这条鱼身上没有 `name` 这样东西）。\n\n⚠️ **报错位置离真正的毛病很远** —— 报的是取名字的那一行，可错的是建仓库的那一段。这是套图纸最容易栽的坑。\n\n修法是在小图纸的 `__init__` 里**先请上一层图纸把它那版跑一遍**：`super().__init__(name)`。几点要记牢：\n\n- `super()` 就是「**上一层图纸**」的意思，写在小图纸里面。\n- 它后面**不用喂 `self`**，Python 自己会递过去。\n- 这一句要放在**存自己那一样之前** —— 顺序反了不影响这个例子，但先请完上一层再动自己的仓库，才是不会出事的那一种写法。"
+}

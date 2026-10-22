@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-07-flush-then-more",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-07",
+  "type": "codewrite",
+  "concept": ["flush 倒一趟但不收工", "close 收工", "两次念到的行数"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 3 },
+    "b": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stemTemplate": "本喵想看看「倒一趟」和「收工」到底差在哪儿。\n\n请你写个程序，照这个次序做（文件名叫 `两趟.txt`，用**套了篮子的写法**）：\n\n1. 先往篮子里写 **{a} 行**：编号从 1 数起，第 k 行就写 `第 k 行`；\n2. 喊一声 `flush()` —— **倒一趟，但先不收工**；\n3. 这时候把 `两趟.txt` 念一遍，数出**念到几行**，印一行 `第一次念到 X 行`；\n4. 接着往**同一只篮子**里再写 **{b} 行**：编号接着往下数（上一趟数到 {a}，这一趟就从它后面接着来），每行照样写 `第 k 行`；\n5. 喊一声 `close()` 收工；\n6. 再把 `两趟.txt` 念一遍，数出念到几行，印一行 `第二次念到 Y 行`。\n\n两行都印成 `第一次念到 2 行`、`第二次念到 3 行` 这个样子。\n\n（这一题**不用投喂任何东西**：写和念都在程序里一次做完。）",
+  "starterTemplate": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"两趟.txt\"));\n\n        for (int i = 1; i <= {a}; i++) {\n            笔.write(\"第 \" + i + \" 行\");\n            笔.newLine();\n        }\n        笔.flush();\n\n        BufferedReader 眼一 = new BufferedReader(new FileReader(\"两趟.txt\"));\n        int 一 = 0;\n        while (眼一.readLine() != null) {\n            一 = 一 + 1;\n        }\n        眼一.close();\n        System.out.println(\"第一次念到 \" + 一 + \" 行\");\n\n        for (int i = {a} + 1; i <= {a} + {b}; i++) {\n            笔.write(\"第 \" + i + \" 行\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼二 = new BufferedReader(new FileReader(\"两趟.txt\"));\n        int 二 = 0;\n        while (眼二.readLine() != null) {\n            二 = 二 + 1;\n        }\n        眼二.close();\n        System.out.println(\"第二次念到 \" + 二 + \" 行\");\n    }\n}\n",
+  "explanationTemplate": "**一、两次念到的数为什么不一样。** 第一趟念的是 **{a} 行**，第二趟念的是 **{a} + {b} 行**。\n\n**二、`flush()` 说的是「现在就把篮子里的倒出去」。** 倒完，篮子还在本喵手上 —— 文件里已经躺着先写的那 {a} 行，所以这时候念得到它们；可它**没有收工**，本喵还能接着往同一只篮子塞字。\n\n**三、`close()` 说的是「倒干净、收工」。** 后面那 {b} 行也是在篮子里攒着，一声 `close()` 才被倒进文件，所以第二趟念的时候，{a} + {b} 行全在。\n\n**四、这里最容易踩的两个坑。**\n\n① **两声喊反了**：要是第 2 步直接写成 `close()`，篮子就收工了，第 4 步那句 `笔.write(...)` 会当场翻脸 —— 收工的工具不许再写。\n\n② **一声都不喊**：既不 `flush()` 也不 `close()`，那**两趟念出来的都是 0 行** —— 字全留在篮子里，跟没写过一样。本课那道「念回来是 `null`」的题，坏的就是这一脚。\n\n**五、念的时候要开新眼睛。** 每一趟念都新开一只 `BufferedReader`，念完 `close()` 收工。同一只眼睛不要跨着两次写去用 —— 它记着自己念到哪儿了，跨着用会数漏。"
+}

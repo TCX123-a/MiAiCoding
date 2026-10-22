@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-map-null-unbox",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-09",
+  "type": "codefix",
+  "concept": ["账本", "get 拿不到给空口袋", "拆箱", "运行期翻车"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "b": { "kind": "pick", "values": ["大肥鱼", "小黄鱼"] },
+    "d": { "kind": "int", "min": 0, "max": 1 }
+  },
+  "stemTemplate": "账本上明明只写过 `{a}` 那一行，本喵却伸手去拿 `{b}` 的 —— 程序跑起来了，可屏幕上冒出来的不是数字，是**一大段红字**。\n\n请你帮本喵改好，规矩是：**名字不在账本上的时候，就当它来过 {d} 趟**。这一处别用 `if` 分开写两遍，试试那种**带着兜底值去取**的招式，一行就够。\n\n改好之后，程序该印出这一行：\n\n```text\n{b} 有 {d} 条喵\n```\n\n只有拿东西那一处的问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"{a}\", 3);\n        int n = book.get(\"{b}\");\n        System.out.println(\"{b} 有 \" + n + \" 条喵\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"{a}\", 3);\n        int n = book.getOrDefault(\"{b}\", {d});\n        System.out.println(\"{b} 有 \" + n + \" 条喵\");\n    }\n}\n",
+  "explanationTemplate": "这一题是课里**最值钱的那条坑**，值得一句一句拆开看喵。\n\n**一、稿子那一关它过得干干净净。** `int n = book.get(\"{b}\");` 这一句翻译官一个字都没说 —— 它确实是一句合法的写法。\n\n**二、跑到那一句才炸。** 红字头一句是这样的：\n\n```text\nException in thread \"main\" java.lang.NullPointerException: Cannot invoke \"java.lang.Integer.intValue()\" because the return value of \"java.util.Map.get(Object)\" is null\n```\n\n念起来是：**「本喵要把 `get` 叼回来的东西拆箱，可它叼回来的是一只空口袋喵。」** 名字不在账本上 → `get` 给的是 `null`，不是 `0`、也不是报错 → 把这个空口袋塞给光溜溜的 `int` 时要自动拆箱 → 炸在拆箱那一步。\n\n**三、正路是带着兜底值去取。**\n\n```java\nint n = book.getOrDefault(\"{b}\", {d});\n```\n\n读法是「**名字在就给真东西，不在就给 {d}**」。这一招把事情一次办完，不用先问一句再取一次。\n\n**四、这条坑为什么最值钱。** 因为在账本这里，**「拿不到」是常态，不是意外。** 名单上有一万个名字，本喵要查的那个偏偏不在，太正常了。所以往后凡是**从账本里取东西**的地方，本喵都得先在心里过一句：这个名字**保证**在吗？不保证，就用 `getOrDefault`，或者先 `containsKey` 问一句。\n\n顺手和上一课接上：柜子上「编号数过了」是**当场炸**，账本上「名字拿不到」是**叼个空口袋回来** —— 这两样都得本喵自己防着喵。"
+}

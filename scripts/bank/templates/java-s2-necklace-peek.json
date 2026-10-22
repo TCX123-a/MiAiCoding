@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-necklace-peek",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-07",
+  "type": "codewrite",
+  "concept": ["编号从 0 起", "length", "charAt", "substring 不含尾巴"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["小鱼干喵", "大胖鱼喵", "小橘干喵"] },
+    "k": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stemTemplate": "本喵要拿项链 `{word}` 练练手上那几个招式喵。\n\n按下面的顺序印**四行**（那个 `K` 就是 {k}）：\n\n```text\n这串有 N 颗\n编号 K 那颗是 X\n从头剪到编号 K 之前：Y\n最后一颗是 Z\n```\n\n- `N` 是这串的颗数；\n- `X` 是**编号 K** 那一颗；\n- `Y` 是**从编号 0 一路剪到编号 K 之前**、剪出来的那几颗（**编号 K 那颗不算在里面**）；\n- `Z` 是**最后一颗**。这一处**别直接写死数字** —— 让它自己算出来是哪一号。\n\n冒号、空格都照上面印的样子来。这一题**不用投喂任何东西**，程序自己就能跑。",
+  "starterTemplate": "public class Main {\n    public static void main(String[] args) {\n        String s = \"{word}\";\n\n    }\n}\n",
+  "referenceSolutionTemplate": "public class Main {\n    public static void main(String[] args) {\n        String s = \"{word}\";\n        System.out.println(\"这串有 \" + s.length() + \" 颗\");\n        System.out.println(\"编号 {k} 那颗是 \" + s.charAt({k}));\n        System.out.println(\"从头剪到编号 {k} 之前：\" + s.substring(0, {k}));\n        System.out.println(\"最后一颗是 \" + s.charAt(s.length() - 1));\n    }\n}\n",
+  "explanationTemplate": "这题四行，正好把项链上最常用的四个规矩各走一遍喵。\n\n**一、`length()` 是招式，带小括号。** 它叼回来的是「串上有几颗」。往后会见到别家把「有几样」写成一个不带括号的数，那是另一回事，别记混。\n\n**二、`charAt(K)` 摸的是编号 K 那一颗，而编号从 0 数起。** 所以 `{word}` 这几颗的编号是 0、1、2、3 —— 能不能摸到编号 {k}，取决于这串**到底有几颗**。\n\n**三、`substring(0, K)` 剪的是「编号 0 开始、到编号 K 之前」。** 关键就在那个**「之前」**：编号 K 那一颗**不算**。四颗的串上 `substring(0, 1)` 剪出来只有**一颗**，不是两颗；`substring(1, 4)` 才是「编号 1 起，剪到编号 4 之前」＝三颗。往后一见到 `substring`，本喵就先在心里问一遍：**这第二个数是「剪到哪儿之前」**。\n\n**四、最后一颗的编号是 `length() - 1`，不是 `length()`。** 四颗的串编号只到 3，写 `charAt(4)` 会**当场炸**（那串红字叫 `StringIndexOutOfBoundsException`），不是叼回一个空值来糊弄本喵。所以摸最后一颗的标准写法就是 `s.charAt(s.length() - 1)` —— 这题不让写死数字，练的就是这一手。\n\n顺手记：`indexOf(...)` 那一小段**从哪个编号开始**，也是照 0 数起；找不到它**不炸**，叼回来一个 `-1` 当记号。所以见过 `-1` 就知道「压根没有」喵。"
+}

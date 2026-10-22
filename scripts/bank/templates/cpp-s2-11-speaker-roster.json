@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s2-11-speaker-roster",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-11",
+  "type": "codewrite",
+  "concept": ["一份干干净净的约定", "互不相干的三只站进同一排牌子", "挨个喊一声各猫各样"],
+  "instances": 6,
+  "params": {
+    "catName": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "fishName": { "kind": "pick", "values": ["大肥鱼", "胖头鱼"] },
+    "dogName": { "kind": "pick", "values": ["旺财", "大黄"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 3, "min": 1, "max": 9 },
+  "stemTemplate": "本喵要办一场**点名大会**：名单上写的是「会叫的」，站上去的却是一只猫、一条大肥鱼、一只小狗 —— 它们**互不相干**（没有谁是谁的妈妈），可都答应了同一份约定。投喂口会递进来**三个数**（一行一个）：这三只各吃了几条小鱼干。\n\n请你这么办：\n\n1. **画那张约定图纸** `Speaker`：身上**只有**一手 `speak()`，它只挂招牌、不写动作；再加一个收尾招式 `virtual ~Speaker() {}`。**这张图纸上不许有别的栏位、也不许有别的招式** —— 它就是一份干干净净的约定。\n2. **画三张照它画下来的图纸**，每张自己添一栏 `name`（一串字）和一个整数 `fish`（吃了几条），出生招式把两样填上；再把 `speak` 补成自己的版本（补的那一手挂上 `override`）：\n   - `Cat` → `X：喵～本喵吃了 N 条`\n   - `Fish` → `X：咕噜咕噜～本喵吃了 N 条`\n   - `Dog` → `X：汪！本喵吃了 N 条`\n3. 在 `main` 里：读进三个数 → 生三只（名字分别是 `{catName}`、`{fishName}`、`{dogName}`）→ 把它们放进**一排写着 `Speaker` 的牌子**里 → **用跑圈的办法挨个喊一声**。\n\n也就是说：本喵手上来回只有一份「会叫的」名单，喊的是同一句话，三只各叫各的。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Speaker {\npublic:\n    virtual void speak() const = 0;\n    virtual ~Speaker() {}\n};\n\nclass Cat : public Speaker {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    void speak() const override {\n        cout << name << \"：喵～本喵吃了 \" << fish << \" 条\" << endl;\n    }\n};\n\nclass Fish : public Speaker {\n    string name;\n    int fish;\npublic:\n    Fish(string n, int f) : name(n), fish(f) {}\n    void speak() const override {\n        cout << name << \"：咕噜咕噜～本喵吃了 \" << fish << \" 条\" << endl;\n    }\n};\n\nclass Dog : public Speaker {\n    string name;\n    int fish;\npublic:\n    Dog(string n, int f) : name(n), fish(f) {}\n    void speak() const override {\n        cout << name << \"：汪！本喵吃了 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    int c = 0;\n    cin >> a >> b >> c;\n\n    Cat cat(\"{catName}\", a);\n    Fish fish(\"{fishName}\", b);\n    Dog dog(\"{dogName}\", c);\n\n    Speaker* roster[3];\n    roster[0] = &cat;\n    roster[1] = &fish;\n    roster[2] = &dog;\n\n    for (int i = 0; i < 3; i++) {\n        roster[i]->speak();\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题是本课最重要的手感：**本喵手上只有一份「会叫的」名单，喊的是同一句话，三只各叫各的。**\n\n- 那一排牌子 `Speaker* roster[3]` 上，每一张写的都是「会叫的」，可它们指的分别是猫、大肥鱼、小狗。**牌子上写的是「你会不会这几手」，不是「你是谁家的孩子」** —— 这是这一课和上一课最大的分别。\n- `roster[i]->speak()` 是**顺着牌子喊** —— 喊下去的那一刻，程序才低头看一眼屋里住的是谁，再决定跑哪一版。\n- **三只互不相干，却都能站进这排牌子**：它们没有谁是谁的妈妈，只是各自照 `Speaker` 画了下来、把那一手补上了。**「说好会这几手的，都得能用这几手」** —— 这一排牌子正是这句话的实测。\n\n⚠️ 三处最容易摔的地方：\n\n1. **约定那一手要写成 `virtual` 和 `= 0` 两块记号都齐全。** 只写 `= 0` 漏掉 `virtual`，本喵在本机真试过：翻译官喵**当场拦下**，原话是 `error: initializer specified for non-virtual method` —— 光有 `= 0` 这一个记号，它不认这是约定。真正阴的是另一种写法：老图纸那一手**带着动作、又没挂 `virtual`**（照它画下来的那份同名一手也不能挂 `override`，挂了反而编不过）—— 那时候程序照样跑完、**一个错都不报**，可顺着牌子喊会一律跑老图纸那一版。本喵实测的这一版印出来的是老图纸那句占位的话，而不是三只各叫各的。\n2. **约定图纸上不许有栏位。** 本喵这一课的约定之所以干净，正因为它只有那一手 + 收尾。要是添了一栏数据，每一张照它画下来的都得先想办法把那一栏填上，那就不再是「会这几手就行」的约定了。\n3. **补写的那三手必须和老图纸一字不差**（名字、料、行尾的 `const`），末尾都挂 `override` —— 打错字的时候翻译官喵当场拦下。\n\n这一手最值钱的地方在**往后**：哪天本喵再画一只鸭子、让它照 `Speaker` 补上那一手，就能直接塞进这排牌子里 —— 喊话那一段一个字都不用动。"
+}

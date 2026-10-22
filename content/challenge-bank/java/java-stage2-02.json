@@ -1,0 +1,366 @@
+{
+  "lessonId": "java-stage2-02",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s2-instanceof-report-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画一大一小两张图纸，还要**当面问问它们认不认亲**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Cat`：套在大图纸上，自己再带一盒鱼干数；出生那一手收**名字和鱼干数两样**，名字那份**请大图纸去记**；把 `speak()` **盖掉、换上自己那版**（**名字 + `：喵～本喵有 ` + 鱼干数 + ` 条小鱼干`**）。\n\n投喂给程序的只有**一个数**：猫的鱼干数。程序该这么走：\n\n1. 读那个数；\n2. 照小图纸生一只猫（名字用题目给的），鱼干数就用读到的这个数；\n3. 再照**大图纸直接**生一只动物（名字也用题目给的）；\n4. 先喊猫那一招，再喊动物那一招；\n5. 最后印两行认亲的结果：`照猫图纸生的也是动物：` 后面接「猫是不是动物」，`照动物图纸生的不是猫：` 后面接「动物是不是猫」。\n\n小提示喵：认亲算出来的是 `true` / `false`，要把它跟前面那串项链**拼在一起**印，记得给它**加一对小括号**。\n\n比如投喂给程序的是\n\n6\n\n程序就要叼回\n\n小橘：喵～本喵有 6 条小鱼干\n大肥鱼发出了一声叫\n照猫图纸生的也是动物：true\n照动物图纸生的不是猫：false\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Cat extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～本喵有 \" + fish + \" 条小鱼干\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fish = sc.nextInt();\n        Cat c = new Cat(\"小橘\", fish);\n        Animal a = new Animal(\"大肥鱼\");\n        c.speak();\n        a.speak();\n        System.out.println(\"照猫图纸生的也是动物：\" + (c instanceof Animal));\n        System.out.println(\"照动物图纸生的不是猫：\" + (a instanceof Cat));\n    }\n}\n",
+      "expectedOutput": "小橘：喵～本喵有 4 条小鱼干\n大肥鱼发出了一声叫\n照猫图纸生的也是动物：true\n照动物图纸生的不是猫：false",
+      "stdin": "4\n",
+      "explanation": "这题的本体是最后那两行**认亲**喵。\n\n`c instanceof Animal` 读作「**`c` 是不是照 `Animal` 这张图纸（或者它的下游图纸）生出来的**」。`c` 是照 `Cat` 生的，而 `Cat` 套在 `Animal` 上面，所以它**也是**一只 `Animal` → `true`。\n\n反过来那句 `a instanceof Cat`：`a` 是**直接**照大图纸生的，它身上没有小图纸那一层，所以是 `false`。认亲只**从上往下**认，不能倒着认。\n\n两个小地方要注意：\n\n- **加括号**：认亲是拿「左边那整个东西」去比，本喵要它比的是 `c`，不是前面那串项链。加一对小括号把范围圈清楚，翻译官才不会把整串项链当成要比的东西。\n- **别把 `true` / `false` 写死**：那是本机算出来的结果，写死了换一组名字就对不上。\n\n另外两处是老朋友了：出生那一手头一句的 `super(name);`（名字交给大图纸装），和挂着 `@Override` 的**盖掉、换自己那版**。**认亲的结果不会因为你盖掉了哪一招而变** —— 盖掉只换叫声，不换亲缘喵。",
+      "templateId": "java-s2-instanceof-report",
+      "params": {
+        "name": "小橘",
+        "other": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:12.020Z",
+        "hash": "f73123194921bc3a"
+      }
+    },
+    {
+      "id": "bank-java-s2-instanceof-report-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画一大一小两张图纸，还要**当面问问它们认不认亲**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Cat`：套在大图纸上，自己再带一盒鱼干数；出生那一手收**名字和鱼干数两样**，名字那份**请大图纸去记**；把 `speak()` **盖掉、换上自己那版**（**名字 + `：喵～本喵有 ` + 鱼干数 + ` 条小鱼干`**）。\n\n投喂给程序的只有**一个数**：猫的鱼干数。程序该这么走：\n\n1. 读那个数；\n2. 照小图纸生一只猫（名字用题目给的），鱼干数就用读到的这个数；\n3. 再照**大图纸直接**生一只动物（名字也用题目给的）；\n4. 先喊猫那一招，再喊动物那一招；\n5. 最后印两行认亲的结果：`照猫图纸生的也是动物：` 后面接「猫是不是动物」，`照动物图纸生的不是猫：` 后面接「动物是不是猫」。\n\n小提示喵：认亲算出来的是 `true` / `false`，要把它跟前面那串项链**拼在一起**印，记得给它**加一对小括号**。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n小橘：喵～本喵有 3 条小鱼干\n河豚发出了一声叫\n照猫图纸生的也是动物：true\n照动物图纸生的不是猫：false\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Cat extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～本喵有 \" + fish + \" 条小鱼干\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fish = sc.nextInt();\n        Cat c = new Cat(\"小橘\", fish);\n        Animal a = new Animal(\"河豚\");\n        c.speak();\n        a.speak();\n        System.out.println(\"照猫图纸生的也是动物：\" + (c instanceof Animal));\n        System.out.println(\"照动物图纸生的不是猫：\" + (a instanceof Cat));\n    }\n}\n",
+      "expectedOutput": "小橘：喵～本喵有 9 条小鱼干\n河豚发出了一声叫\n照猫图纸生的也是动物：true\n照动物图纸生的不是猫：false",
+      "stdin": "9\n",
+      "explanation": "这题的本体是最后那两行**认亲**喵。\n\n`c instanceof Animal` 读作「**`c` 是不是照 `Animal` 这张图纸（或者它的下游图纸）生出来的**」。`c` 是照 `Cat` 生的，而 `Cat` 套在 `Animal` 上面，所以它**也是**一只 `Animal` → `true`。\n\n反过来那句 `a instanceof Cat`：`a` 是**直接**照大图纸生的，它身上没有小图纸那一层，所以是 `false`。认亲只**从上往下**认，不能倒着认。\n\n两个小地方要注意：\n\n- **加括号**：认亲是拿「左边那整个东西」去比，本喵要它比的是 `c`，不是前面那串项链。加一对小括号把范围圈清楚，翻译官才不会把整串项链当成要比的东西。\n- **别把 `true` / `false` 写死**：那是本机算出来的结果，写死了换一组名字就对不上。\n\n另外两处是老朋友了：出生那一手头一句的 `super(name);`（名字交给大图纸装），和挂着 `@Override` 的**盖掉、换自己那版**。**认亲的结果不会因为你盖掉了哪一招而变** —— 盖掉只换叫声，不换亲缘喵。",
+      "templateId": "java-s2-instanceof-report",
+      "params": {
+        "name": "小橘",
+        "other": "河豚"
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:06.282Z",
+        "hash": "336ae2896a4ef21b"
+      }
+    },
+    {
+      "id": "bank-java-s2-instanceof-report-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画一大一小两张图纸，还要**当面问问它们认不认亲**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Cat`：套在大图纸上，自己再带一盒鱼干数；出生那一手收**名字和鱼干数两样**，名字那份**请大图纸去记**；把 `speak()` **盖掉、换上自己那版**（**名字 + `：喵～本喵有 ` + 鱼干数 + ` 条小鱼干`**）。\n\n投喂给程序的只有**一个数**：猫的鱼干数。程序该这么走：\n\n1. 读那个数；\n2. 照小图纸生一只猫（名字用题目给的），鱼干数就用读到的这个数；\n3. 再照**大图纸直接**生一只动物（名字也用题目给的）；\n4. 先喊猫那一招，再喊动物那一招；\n5. 最后印两行认亲的结果：`照猫图纸生的也是动物：` 后面接「猫是不是动物」，`照动物图纸生的不是猫：` 后面接「动物是不是猫」。\n\n小提示喵：认亲算出来的是 `true` / `false`，要把它跟前面那串项链**拼在一起**印，记得给它**加一对小括号**。\n\n比如投喂给程序的是\n\n7\n\n程序就要叼回\n\n狸花：喵～本喵有 7 条小鱼干\n大肥鱼发出了一声叫\n照猫图纸生的也是动物：true\n照动物图纸生的不是猫：false\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Cat extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～本喵有 \" + fish + \" 条小鱼干\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fish = sc.nextInt();\n        Cat c = new Cat(\"狸花\", fish);\n        Animal a = new Animal(\"大肥鱼\");\n        c.speak();\n        a.speak();\n        System.out.println(\"照猫图纸生的也是动物：\" + (c instanceof Animal));\n        System.out.println(\"照动物图纸生的不是猫：\" + (a instanceof Cat));\n    }\n}\n",
+      "expectedOutput": "狸花：喵～本喵有 4 条小鱼干\n大肥鱼发出了一声叫\n照猫图纸生的也是动物：true\n照动物图纸生的不是猫：false",
+      "stdin": "4\n",
+      "explanation": "这题的本体是最后那两行**认亲**喵。\n\n`c instanceof Animal` 读作「**`c` 是不是照 `Animal` 这张图纸（或者它的下游图纸）生出来的**」。`c` 是照 `Cat` 生的，而 `Cat` 套在 `Animal` 上面，所以它**也是**一只 `Animal` → `true`。\n\n反过来那句 `a instanceof Cat`：`a` 是**直接**照大图纸生的，它身上没有小图纸那一层，所以是 `false`。认亲只**从上往下**认，不能倒着认。\n\n两个小地方要注意：\n\n- **加括号**：认亲是拿「左边那整个东西」去比，本喵要它比的是 `c`，不是前面那串项链。加一对小括号把范围圈清楚，翻译官才不会把整串项链当成要比的东西。\n- **别把 `true` / `false` 写死**：那是本机算出来的结果，写死了换一组名字就对不上。\n\n另外两处是老朋友了：出生那一手头一句的 `super(name);`（名字交给大图纸装），和挂着 `@Override` 的**盖掉、换自己那版**。**认亲的结果不会因为你盖掉了哪一招而变** —— 盖掉只换叫声，不换亲缘喵。",
+      "templateId": "java-s2-instanceof-report",
+      "params": {
+        "name": "狸花",
+        "other": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:09.538Z",
+        "hash": "4028b9890a896153"
+      }
+    },
+    {
+      "id": "bank-java-s2-instanceof-report-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画一大一小两张图纸，还要**当面问问它们认不认亲**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Cat`：套在大图纸上，自己再带一盒鱼干数；出生那一手收**名字和鱼干数两样**，名字那份**请大图纸去记**；把 `speak()` **盖掉、换上自己那版**（**名字 + `：喵～本喵有 ` + 鱼干数 + ` 条小鱼干`**）。\n\n投喂给程序的只有**一个数**：猫的鱼干数。程序该这么走：\n\n1. 读那个数；\n2. 照小图纸生一只猫（名字用题目给的），鱼干数就用读到的这个数；\n3. 再照**大图纸直接**生一只动物（名字也用题目给的）；\n4. 先喊猫那一招，再喊动物那一招；\n5. 最后印两行认亲的结果：`照猫图纸生的也是动物：` 后面接「猫是不是动物」，`照动物图纸生的不是猫：` 后面接「动物是不是猫」。\n\n小提示喵：认亲算出来的是 `true` / `false`，要把它跟前面那串项链**拼在一起**印，记得给它**加一对小括号**。\n\n比如投喂给程序的是\n\n4\n\n程序就要叼回\n\n狸花：喵～本喵有 4 条小鱼干\n河豚发出了一声叫\n照猫图纸生的也是动物：true\n照动物图纸生的不是猫：false\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Cat extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～本喵有 \" + fish + \" 条小鱼干\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fish = sc.nextInt();\n        Cat c = new Cat(\"狸花\", fish);\n        Animal a = new Animal(\"河豚\");\n        c.speak();\n        a.speak();\n        System.out.println(\"照猫图纸生的也是动物：\" + (c instanceof Animal));\n        System.out.println(\"照动物图纸生的不是猫：\" + (a instanceof Cat));\n    }\n}\n",
+      "expectedOutput": "狸花：喵～本喵有 3 条小鱼干\n河豚发出了一声叫\n照猫图纸生的也是动物：true\n照动物图纸生的不是猫：false",
+      "stdin": "3\n",
+      "explanation": "这题的本体是最后那两行**认亲**喵。\n\n`c instanceof Animal` 读作「**`c` 是不是照 `Animal` 这张图纸（或者它的下游图纸）生出来的**」。`c` 是照 `Cat` 生的，而 `Cat` 套在 `Animal` 上面，所以它**也是**一只 `Animal` → `true`。\n\n反过来那句 `a instanceof Cat`：`a` 是**直接**照大图纸生的，它身上没有小图纸那一层，所以是 `false`。认亲只**从上往下**认，不能倒着认。\n\n两个小地方要注意：\n\n- **加括号**：认亲是拿「左边那整个东西」去比，本喵要它比的是 `c`，不是前面那串项链。加一对小括号把范围圈清楚，翻译官才不会把整串项链当成要比的东西。\n- **别把 `true` / `false` 写死**：那是本机算出来的结果，写死了换一组名字就对不上。\n\n另外两处是老朋友了：出生那一手头一句的 `super(name);`（名字交给大图纸装），和挂着 `@Override` 的**盖掉、换自己那版**。**认亲的结果不会因为你盖掉了哪一招而变** —— 盖掉只换叫声，不换亲缘喵。",
+      "templateId": "java-s2-instanceof-report",
+      "params": {
+        "name": "狸花",
+        "other": "河豚"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:14.035Z",
+        "hash": "e7816a7446479e33"
+      }
+    },
+    {
+      "id": "bank-java-s2-missing-super-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵照着大图纸画了一张小图纸，可**出生那一手里忘了开口请大图纸出手** —— 翻译官喵当场拦下它，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n小橘：喵～\n```\n\n小图纸上那招 `speak` 本喵写得没错，别去动它喵。",
+      "brokenCode": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        this.name = name;\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"小橘\");\n        c.speak();\n    }\n}\n",
+      "referenceFix": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"小橘\");\n        c.speak();\n    }\n}\n",
+      "expectedOutput": "小橘：喵～",
+      "stdin": null,
+      "explanation": "翻译官喵的原话头一行是 **`constructor Animal in class Animal cannot be applied to given types;`**，底下还跟着三行「账本」：\n\n- `required: String` —— 大图纸出生那一手**要**一样东西\n- `found: no arguments` —— 可小图纸一样都没给它\n- `reason: actual and formal argument lists differ in length` —— 对不上，是因为两边**料的数目**不一样\n\n为什么会算出这笔账？Java 有一条暗规矩：**小图纸的出生那一手，第一句要不是 `super(...)`，翻译官就自动替你补一句 `super()`** —— 也就是「请大图纸的**空手**那一手」。可大图纸上只有收名字的那一版、压根没有空手那一版，补进去当然对不上。\n\n正路只有一条：**在小图纸出生那一手的头一句老老实实写 `super(name);`**，把大图纸要的料喂过去。位置也很讲究 —— 它必须是身子的**第一句**：大图纸还没收拾完，本喵不能先动别的。\n\n改完就记住本课那句话：**大图纸的出生那一手不会自己跑**，得小图纸开口请它喵。",
+      "templateId": "java-s2-missing-super",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:27.714Z",
+        "hash": "2e23f9e6a6555cfb"
+      }
+    },
+    {
+      "id": "bank-java-s2-missing-super-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵照着大图纸画了一张小图纸，可**出生那一手里忘了开口请大图纸出手** —— 翻译官喵当场拦下它，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n狸花：喵～\n```\n\n小图纸上那招 `speak` 本喵写得没错，别去动它喵。",
+      "brokenCode": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        this.name = name;\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"狸花\");\n        c.speak();\n    }\n}\n",
+      "referenceFix": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"狸花\");\n        c.speak();\n    }\n}\n",
+      "expectedOutput": "狸花：喵～",
+      "stdin": null,
+      "explanation": "翻译官喵的原话头一行是 **`constructor Animal in class Animal cannot be applied to given types;`**，底下还跟着三行「账本」：\n\n- `required: String` —— 大图纸出生那一手**要**一样东西\n- `found: no arguments` —— 可小图纸一样都没给它\n- `reason: actual and formal argument lists differ in length` —— 对不上，是因为两边**料的数目**不一样\n\n为什么会算出这笔账？Java 有一条暗规矩：**小图纸的出生那一手，第一句要不是 `super(...)`，翻译官就自动替你补一句 `super()`** —— 也就是「请大图纸的**空手**那一手」。可大图纸上只有收名字的那一版、压根没有空手那一版，补进去当然对不上。\n\n正路只有一条：**在小图纸出生那一手的头一句老老实实写 `super(name);`**，把大图纸要的料喂过去。位置也很讲究 —— 它必须是身子的**第一句**：大图纸还没收拾完，本喵不能先动别的。\n\n改完就记住本课那句话：**大图纸的出生那一手不会自己跑**，得小图纸开口请它喵。",
+      "templateId": "java-s2-missing-super",
+      "params": {
+        "name": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:29.047Z",
+        "hash": "f9943d9e8c3f7ed0"
+      }
+    },
+    {
+      "id": "bank-java-s2-override-typo-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一张小图纸，想在大图纸那一招之外**先请大图纸出一声、再补上本喵自己那句**。可翻译官喵把爪子拍下来了，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这两行：\n\n```text\n小橘发出了一声叫\n小橘：喵～\n```\n\n（第一行是大图纸那一版的样子，第二行才是本喵补的那句。）",
+      "brokenCode": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speek() {\n        super.speak();\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"小橘\");\n        c.speak();\n    }\n}\n",
+      "referenceFix": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        super.speak();\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"小橘\");\n        c.speak();\n    }\n}\n",
+      "expectedOutput": "小橘发出了一声叫\n小橘：喵～",
+      "stdin": null,
+      "explanation": "翻译官喵的原话只有一句：**`method does not override or implement a method from a supertype`** —— 念起来是「本喵这一手，上面**根本没有可盖的**」。\n\n它指的是那一行 `@Override`。这张小纸条的意思本来是「本喵这一手是**故意**要盖掉上面某一版的」，可翻译官拿着本喵写下的名字往上找了一圈：**大图纸上压根没有叫这个名字的一手**，于是当场翻脸。\n\n症结就是**名字手滑多打了一个字母** —— 写成了 `speek`，而大图纸上叫 `speak`。名字不一样，翻译官就当成「本喵新写的一张招式」，新招式没有什么可盖的，`@Override` 那张纸条就成了假的。\n\n把名字改对之后，本喵想要的行为才出得来：\n\n- `super.speak();` 请上一层把大图纸那一版跑一遍 → 印出第一行；\n- 接着本喵自己那行印出第二行。\n\n**这张小纸条值钱就值在这儿**：要是没写 `@Override`，同一个拼写错会**安安静静地溜过去** —— 小图纸上多出一招没人喊得动的 `speek`，而 `main` 里喊 `speak` 走的还是大图纸那一版，程序一声不吭、结果就是不对。所以本喵每次盖掉大图纸某一版，都写上它喵。\n\n顺手记：`super.speak()` 请的是**上一层那一版**，不是再喊一次自己 —— 写在盖掉的那一招里面也是安全的，不会绕回去。",
+      "templateId": "java-s2-override-typo",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:15.911Z",
+        "hash": "38fcb1585a7173ec"
+      }
+    },
+    {
+      "id": "bank-java-s2-override-typo-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一张小图纸，想在大图纸那一招之外**先请大图纸出一声、再补上本喵自己那句**。可翻译官喵把爪子拍下来了，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这两行：\n\n```text\n狸花发出了一声叫\n狸花：喵～\n```\n\n（第一行是大图纸那一版的样子，第二行才是本喵补的那句。）",
+      "brokenCode": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speek() {\n        super.speak();\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"狸花\");\n        c.speak();\n    }\n}\n",
+      "referenceFix": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        super.speak();\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"狸花\");\n        c.speak();\n    }\n}\n",
+      "expectedOutput": "狸花发出了一声叫\n狸花：喵～",
+      "stdin": null,
+      "explanation": "翻译官喵的原话只有一句：**`method does not override or implement a method from a supertype`** —— 念起来是「本喵这一手，上面**根本没有可盖的**」。\n\n它指的是那一行 `@Override`。这张小纸条的意思本来是「本喵这一手是**故意**要盖掉上面某一版的」，可翻译官拿着本喵写下的名字往上找了一圈：**大图纸上压根没有叫这个名字的一手**，于是当场翻脸。\n\n症结就是**名字手滑多打了一个字母** —— 写成了 `speek`，而大图纸上叫 `speak`。名字不一样，翻译官就当成「本喵新写的一张招式」，新招式没有什么可盖的，`@Override` 那张纸条就成了假的。\n\n把名字改对之后，本喵想要的行为才出得来：\n\n- `super.speak();` 请上一层把大图纸那一版跑一遍 → 印出第一行；\n- 接着本喵自己那行印出第二行。\n\n**这张小纸条值钱就值在这儿**：要是没写 `@Override`，同一个拼写错会**安安静静地溜过去** —— 小图纸上多出一招没人喊得动的 `speek`，而 `main` 里喊 `speak` 走的还是大图纸那一版，程序一声不吭、结果就是不对。所以本喵每次盖掉大图纸某一版，都写上它喵。\n\n顺手记：`super.speak()` 请的是**上一层那一版**，不是再喊一次自己 —— 写在盖掉的那一招里面也是安全的，不会绕回去。",
+      "templateId": "java-s2-override-typo",
+      "params": {
+        "name": "狸花"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:17.148Z",
+        "hash": "f623d5adddb5b0c0"
+      }
+    },
+    {
+      "id": "bank-java-s2-parent-private-field-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "大图纸把名字这盒家当**扣上了盖子**，另外留了一扇读它的小窗。小图纸套在它上面：出生那一手里老老实实请了大图纸、也把鱼干数装好了 —— 可小图纸里那句印账的话过不了翻译官喵这一关，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n小橘 有 3 条小鱼干喵\n```\n\n只改小图纸里伸手的那一处就好，大图纸本喵一个字都不想动喵。",
+      "brokenCode": "class Animal {\n    private String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n}\n\nclass Cat extends Animal {\n    private int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    void report() {\n        System.out.println(this.name + \" 有 \" + fish + \" 条小鱼干喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"小橘\", 3);\n        c.report();\n    }\n}\n",
+      "referenceFix": "class Animal {\n    private String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n}\n\nclass Cat extends Animal {\n    private int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    void report() {\n        System.out.println(getName() + \" 有 \" + fish + \" 条小鱼干喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"小橘\", 3);\n        c.report();\n    }\n}\n",
+      "expectedOutput": "小橘 有 3 条小鱼干喵",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 **`name has private access in Animal`**。\n\n这句最容易被误会成「小图纸明明跟大图纸认了亲，怎么还碰不到」。答案就一句话：**认亲不等于拿到钥匙。** 盖子认的是「**哪张图纸写的招式**」，不是「谁跟谁认了亲」—— `name` 是 `Animal` 扣上的，`Cat` 里写的招式**照样在门外**。\n\n正路是走大图纸留的那扇小窗，把 `this.name` 换成 `getName()`：小窗的身子写在 `Animal` 里面，所以它拿得到那个名字；小图纸只管把接到的项链用起来。\n\n顺手记一句本课的老话：**套图纸套来的是「会用」，不是「能改」**。大图纸盖上盖子，小图纸**同样**伸不进手 —— 上一课学的那套盖子，套了图纸也一样管用喵。",
+      "templateId": "java-s2-parent-private-field",
+      "params": {
+        "name": "小橘",
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:33.820Z",
+        "hash": "269398d941c4ac6a"
+      }
+    },
+    {
+      "id": "bank-java-s2-parent-private-field-009",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "大图纸把名字这盒家当**扣上了盖子**，另外留了一扇读它的小窗。小图纸套在它上面：出生那一手里老老实实请了大图纸、也把鱼干数装好了 —— 可小图纸里那句印账的话过不了翻译官喵这一关，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n狸花 有 7 条小鱼干喵\n```\n\n只改小图纸里伸手的那一处就好，大图纸本喵一个字都不想动喵。",
+      "brokenCode": "class Animal {\n    private String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n}\n\nclass Cat extends Animal {\n    private int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    void report() {\n        System.out.println(this.name + \" 有 \" + fish + \" 条小鱼干喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"狸花\", 7);\n        c.report();\n    }\n}\n",
+      "referenceFix": "class Animal {\n    private String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n}\n\nclass Cat extends Animal {\n    private int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    void report() {\n        System.out.println(getName() + \" 有 \" + fish + \" 条小鱼干喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"狸花\", 7);\n        c.report();\n    }\n}\n",
+      "expectedOutput": "狸花 有 7 条小鱼干喵",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 **`name has private access in Animal`**。\n\n这句最容易被误会成「小图纸明明跟大图纸认了亲，怎么还碰不到」。答案就一句话：**认亲不等于拿到钥匙。** 盖子认的是「**哪张图纸写的招式**」，不是「谁跟谁认了亲」—— `name` 是 `Animal` 扣上的，`Cat` 里写的招式**照样在门外**。\n\n正路是走大图纸留的那扇小窗，把 `this.name` 换成 `getName()`：小窗的身子写在 `Animal` 里面，所以它拿得到那个名字；小图纸只管把接到的项链用起来。\n\n顺手记一句本课的老话：**套图纸套来的是「会用」，不是「能改」**。大图纸盖上盖子，小图纸**同样**伸不进手 —— 上一课学的那套盖子，套了图纸也一样管用喵。",
+      "templateId": "java-s2-parent-private-field",
+      "params": {
+        "name": "狸花",
+        "n": 7
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:35.216Z",
+        "hash": "64081cc5daa2f54a"
+      }
+    },
+    {
+      "id": "bank-java-s2-super-chain-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画**一大一小两张图纸**，小的套在大的上面喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手收一个名字并记下；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Cat`：套在 `Animal` 上，自己再带一盒鱼干数；出生那一手收**名字和鱼干数两样** —— 名字这一份要**请大图纸去记**，然后才记自己的鱼干数；把 `speak()` **盖掉、换上自己那版**，一共两行：先请大图纸那一版跑一遍，再印 **名字 + `：喵～本喵有 ` + 鱼干数 + ` 条小鱼干`**。\n\n投喂给程序的只有**一个数**：猫的鱼干数。程序该这么走：读那个数 → 照小图纸生一只猫（名字用题目给的）→ 喊一声 `speak()`。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n小橘发出了一声叫\n小橘：喵～本喵有 1 条小鱼干\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Cat extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    @Override\n    void speak() {\n        super.speak();\n        System.out.println(name + \"：喵～本喵有 \" + fish + \" 条小鱼干\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fish = sc.nextInt();\n        Cat c = new Cat(\"小橘\", fish);\n        c.speak();\n    }\n}\n",
+      "expectedOutput": "小橘发出了一声叫\n小橘：喵～本喵有 9 条小鱼干",
+      "stdin": "9\n",
+      "explanation": "这题把本课的**构造链**和 **`super.`** 两件事一次串完喵。\n\n**出生那一手**：大图纸只有 `Animal(String name)` 这一版，所以小图纸自己写了出生那一手之后，头一句必须 `super(name);` —— 名字这盒家当**只有大图纸装得进去**，小图纸是请它代劳。装完大图纸那份，才轮到自己那行 `this.fish = fish;`。\n\n**盖掉那一招**：`speak()` 上面挂 `@Override`，是告诉翻译官「这一版是故意盖掉上一层那版的」。身子里的两句顺序就是印出来的顺序：\n\n- `super.speak();` —— 请上一层把它那版跑一遍，印出「发出了一声叫」；\n- 下一行才是本喵补的「：喵～本喵有 N 条小鱼干」。\n\n要是把这两句写反了，印出来的顺序就倒过来 —— **程序一声不吭，只是两行换了位置**，这类错只能靠对输出。\n\n顺手记：**大图纸一个字都没被改过**。`super.speak()` 只是「请它跑一趟」，不是盖掉它喵。",
+      "templateId": "java-s2-super-chain",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:19.379Z",
+        "hash": "cb461d13f477b685"
+      }
+    },
+    {
+      "id": "bank-java-s2-super-chain-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画**一大一小两张图纸**，小的套在大的上面喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手收一个名字并记下；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Cat`：套在 `Animal` 上，自己再带一盒鱼干数；出生那一手收**名字和鱼干数两样** —— 名字这一份要**请大图纸去记**，然后才记自己的鱼干数；把 `speak()` **盖掉、换上自己那版**，一共两行：先请大图纸那一版跑一遍，再印 **名字 + `：喵～本喵有 ` + 鱼干数 + ` 条小鱼干`**。\n\n投喂给程序的只有**一个数**：猫的鱼干数。程序该这么走：读那个数 → 照小图纸生一只猫（名字用题目给的）→ 喊一声 `speak()`。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n狸花发出了一声叫\n狸花：喵～本喵有 3 条小鱼干\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Cat extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    int fish;\n\n    Cat(String name, int fish) {\n        super(name);\n        this.fish = fish;\n    }\n\n    @Override\n    void speak() {\n        super.speak();\n        System.out.println(name + \"：喵～本喵有 \" + fish + \" 条小鱼干\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fish = sc.nextInt();\n        Cat c = new Cat(\"狸花\", fish);\n        c.speak();\n    }\n}\n",
+      "expectedOutput": "狸花发出了一声叫\n狸花：喵～本喵有 6 条小鱼干",
+      "stdin": "6\n",
+      "explanation": "这题把本课的**构造链**和 **`super.`** 两件事一次串完喵。\n\n**出生那一手**：大图纸只有 `Animal(String name)` 这一版，所以小图纸自己写了出生那一手之后，头一句必须 `super(name);` —— 名字这盒家当**只有大图纸装得进去**，小图纸是请它代劳。装完大图纸那份，才轮到自己那行 `this.fish = fish;`。\n\n**盖掉那一招**：`speak()` 上面挂 `@Override`，是告诉翻译官「这一版是故意盖掉上一层那版的」。身子里的两句顺序就是印出来的顺序：\n\n- `super.speak();` —— 请上一层把它那版跑一遍，印出「发出了一声叫」；\n- 下一行才是本喵补的「：喵～本喵有 N 条小鱼干」。\n\n要是把这两句写反了，印出来的顺序就倒过来 —— **程序一声不吭，只是两行换了位置**，这类错只能靠对输出。\n\n顺手记：**大图纸一个字都没被改过**。`super.speak()` 只是「请它跑一趟」，不是盖掉它喵。",
+      "templateId": "java-s2-super-chain",
+      "params": {
+        "name": "狸花"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:21.376Z",
+        "hash": "5ce260b831880a95"
+      }
+    },
+    {
+      "id": "bank-java-s2-two-children-speak-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画**一大两小三张图纸**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Dog` 和 `Fish` 都套在这张大图纸上，各自把 `speak()` **盖掉、换上自己那版**：\n\n- `Dog` 印 **名字 + `：汪！`**\n- `Fish` 印 **名字 + `：咕噜咕噜`**\n\n投喂给程序的只有**一个数**。程序该这么走：读那个数 → 照三张图纸各生一只（名字都用题目给的）→ **喊那么多声** `Dog` 那一招 → 再喊一声 `Fish` 的 → 最后喊一声大图纸**直接生出来**那只动物的。\n\n最后那一声是故意留的：**大图纸本身一个字都没被改过**，照它直接生出来的动物，喊起来还是老样子喵。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n大黄：汪！\n大黄：汪！\n大黄：汪！\n泡泡：咕噜咕噜\n大肥鱼发出了一声叫\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Dog extends Animal {\n\n}\n\nclass Fish extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\nclass Fish extends Animal {\n    Fish(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：咕噜咕噜\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Dog d = new Dog(\"大黄\");\n        Fish f = new Fish(\"泡泡\");\n        Animal a = new Animal(\"大肥鱼\");\n        for (int i = 0; i < n; i++) {\n            d.speak();\n        }\n        f.speak();\n        a.speak();\n    }\n}\n",
+      "expectedOutput": "大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n泡泡：咕噜咕噜\n大肥鱼发出了一声叫",
+      "stdin": "7\n",
+      "explanation": "这题练的是**「大图纸只画一遍，小图纸各改各的」**喵。\n\n三张图纸的关系：`Dog` 和 `Fish` 的图纸名后面都写着 `extends Animal`，所以「有名字、会出一声」这套设定**一个字都不用重抄**。两张小图纸只做了两件事：\n\n1. **出生那一手各写一遍**，头一句都是 `super(name);` —— 把名字交给大图纸去装。要是有哪张小图纸漏了这一句，翻译官喵就会拦下来说那一长串 `constructor ... cannot be applied to given types`。\n2. **把 `speak()` 盖掉、换上自己那版**，各自换成自己那种叫声，头上都挂着 `@Override`。\n\n本喵特意让 `main` 最后再喊一声**照大图纸直接生出来**的那只动物：它印的还是「发出了一声叫」。这说明**盖掉只盖住小图纸这条往下的路**，大图纸本身一根毛都没动。\n\n`main` 那边就是：读一个数当喊几声，生三只，然后照题目要求的顺序喊 —— `Dog` 喊够那么多声、`Fish` 一声、大图纸那只一声。**顺序和声数都得对**，少喊一声输出就对不上喵。",
+      "templateId": "java-s2-two-children-speak",
+      "params": {
+        "dog": "大黄",
+        "fishName": "泡泡",
+        "animalName": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:23.787Z",
+        "hash": "0bdc1f463153886e"
+      }
+    },
+    {
+      "id": "bank-java-s2-two-children-speak-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画**一大两小三张图纸**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Dog` 和 `Fish` 都套在这张大图纸上，各自把 `speak()` **盖掉、换上自己那版**：\n\n- `Dog` 印 **名字 + `：汪！`**\n- `Fish` 印 **名字 + `：咕噜咕噜`**\n\n投喂给程序的只有**一个数**。程序该这么走：读那个数 → 照三张图纸各生一只（名字都用题目给的）→ **喊那么多声** `Dog` 那一招 → 再喊一声 `Fish` 的 → 最后喊一声大图纸**直接生出来**那只动物的。\n\n最后那一声是故意留的：**大图纸本身一个字都没被改过**，照它直接生出来的动物，喊起来还是老样子喵。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n大黄：汪！\n泡泡：咕噜咕噜\n河豚发出了一声叫\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Dog extends Animal {\n\n}\n\nclass Fish extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\nclass Fish extends Animal {\n    Fish(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：咕噜咕噜\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Dog d = new Dog(\"大黄\");\n        Fish f = new Fish(\"泡泡\");\n        Animal a = new Animal(\"河豚\");\n        for (int i = 0; i < n; i++) {\n            d.speak();\n        }\n        f.speak();\n        a.speak();\n    }\n}\n",
+      "expectedOutput": "大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n泡泡：咕噜咕噜\n河豚发出了一声叫",
+      "stdin": "7\n",
+      "explanation": "这题练的是**「大图纸只画一遍，小图纸各改各的」**喵。\n\n三张图纸的关系：`Dog` 和 `Fish` 的图纸名后面都写着 `extends Animal`，所以「有名字、会出一声」这套设定**一个字都不用重抄**。两张小图纸只做了两件事：\n\n1. **出生那一手各写一遍**，头一句都是 `super(name);` —— 把名字交给大图纸去装。要是有哪张小图纸漏了这一句，翻译官喵就会拦下来说那一长串 `constructor ... cannot be applied to given types`。\n2. **把 `speak()` 盖掉、换上自己那版**，各自换成自己那种叫声，头上都挂着 `@Override`。\n\n本喵特意让 `main` 最后再喊一声**照大图纸直接生出来**的那只动物：它印的还是「发出了一声叫」。这说明**盖掉只盖住小图纸这条往下的路**，大图纸本身一根毛都没动。\n\n`main` 那边就是：读一个数当喊几声，生三只，然后照题目要求的顺序喊 —— `Dog` 喊够那么多声、`Fish` 一声、大图纸那只一声。**顺序和声数都得对**，少喊一声输出就对不上喵。",
+      "templateId": "java-s2-two-children-speak",
+      "params": {
+        "dog": "大黄",
+        "fishName": "泡泡",
+        "animalName": "河豚"
+      },
+      "verified": {
+        "at": "2026-10-20T17:17:18.803Z",
+        "hash": "ceac2ca4d2f78dcf"
+      }
+    },
+    {
+      "id": "bank-java-s2-two-children-speak-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画**一大两小三张图纸**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Dog` 和 `Fish` 都套在这张大图纸上，各自把 `speak()` **盖掉、换上自己那版**：\n\n- `Dog` 印 **名字 + `：汪！`**\n- `Fish` 印 **名字 + `：咕噜咕噜`**\n\n投喂给程序的只有**一个数**。程序该这么走：读那个数 → 照三张图纸各生一只（名字都用题目给的）→ **喊那么多声** `Dog` 那一招 → 再喊一声 `Fish` 的 → 最后喊一声大图纸**直接生出来**那只动物的。\n\n最后那一声是故意留的：**大图纸本身一个字都没被改过**，照它直接生出来的动物，喊起来还是老样子喵。\n\n比如投喂给程序的是\n\n8\n\n程序就要叼回\n\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n金金：咕噜咕噜\n河豚发出了一声叫\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Dog extends Animal {\n\n}\n\nclass Fish extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\nclass Fish extends Animal {\n    Fish(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：咕噜咕噜\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Dog d = new Dog(\"大黄\");\n        Fish f = new Fish(\"金金\");\n        Animal a = new Animal(\"河豚\");\n        for (int i = 0; i < n; i++) {\n            d.speak();\n        }\n        f.speak();\n        a.speak();\n    }\n}\n",
+      "expectedOutput": "大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n大黄：汪！\n金金：咕噜咕噜\n河豚发出了一声叫",
+      "stdin": "7\n",
+      "explanation": "这题练的是**「大图纸只画一遍，小图纸各改各的」**喵。\n\n三张图纸的关系：`Dog` 和 `Fish` 的图纸名后面都写着 `extends Animal`，所以「有名字、会出一声」这套设定**一个字都不用重抄**。两张小图纸只做了两件事：\n\n1. **出生那一手各写一遍**，头一句都是 `super(name);` —— 把名字交给大图纸去装。要是有哪张小图纸漏了这一句，翻译官喵就会拦下来说那一长串 `constructor ... cannot be applied to given types`。\n2. **把 `speak()` 盖掉、换上自己那版**，各自换成自己那种叫声，头上都挂着 `@Override`。\n\n本喵特意让 `main` 最后再喊一声**照大图纸直接生出来**的那只动物：它印的还是「发出了一声叫」。这说明**盖掉只盖住小图纸这条往下的路**，大图纸本身一根毛都没动。\n\n`main` 那边就是：读一个数当喊几声，生三只，然后照题目要求的顺序喊 —— `Dog` 喊够那么多声、`Fish` 一声、大图纸那只一声。**顺序和声数都得对**，少喊一声输出就对不上喵。",
+      "templateId": "java-s2-two-children-speak",
+      "params": {
+        "dog": "大黄",
+        "fishName": "金金",
+        "animalName": "河豚"
+      },
+      "verified": {
+        "at": "2026-10-20T17:17:21.916Z",
+        "hash": "fcfc2d6cfff84dab"
+      }
+    },
+    {
+      "id": "bank-java-s2-two-children-speak-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画**一大两小三张图纸**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Dog` 和 `Fish` 都套在这张大图纸上，各自把 `speak()` **盖掉、换上自己那版**：\n\n- `Dog` 印 **名字 + `：汪！`**\n- `Fish` 印 **名字 + `：咕噜咕噜`**\n\n投喂给程序的只有**一个数**。程序该这么走：读那个数 → 照三张图纸各生一只（名字都用题目给的）→ **喊那么多声** `Dog` 那一招 → 再喊一声 `Fish` 的 → 最后喊一声大图纸**直接生出来**那只动物的。\n\n最后那一声是故意留的：**大图纸本身一个字都没被改过**，照它直接生出来的动物，喊起来还是老样子喵。\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\n旺财：汪！\n旺财：汪！\n泡泡：咕噜咕噜\n大肥鱼发出了一声叫\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Dog extends Animal {\n\n}\n\nclass Fish extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\nclass Fish extends Animal {\n    Fish(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：咕噜咕噜\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Dog d = new Dog(\"旺财\");\n        Fish f = new Fish(\"泡泡\");\n        Animal a = new Animal(\"大肥鱼\");\n        for (int i = 0; i < n; i++) {\n            d.speak();\n        }\n        f.speak();\n        a.speak();\n    }\n}\n",
+      "expectedOutput": "旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n泡泡：咕噜咕噜\n大肥鱼发出了一声叫",
+      "stdin": "4\n",
+      "explanation": "这题练的是**「大图纸只画一遍，小图纸各改各的」**喵。\n\n三张图纸的关系：`Dog` 和 `Fish` 的图纸名后面都写着 `extends Animal`，所以「有名字、会出一声」这套设定**一个字都不用重抄**。两张小图纸只做了两件事：\n\n1. **出生那一手各写一遍**，头一句都是 `super(name);` —— 把名字交给大图纸去装。要是有哪张小图纸漏了这一句，翻译官喵就会拦下来说那一长串 `constructor ... cannot be applied to given types`。\n2. **把 `speak()` 盖掉、换上自己那版**，各自换成自己那种叫声，头上都挂着 `@Override`。\n\n本喵特意让 `main` 最后再喊一声**照大图纸直接生出来**的那只动物：它印的还是「发出了一声叫」。这说明**盖掉只盖住小图纸这条往下的路**，大图纸本身一根毛都没动。\n\n`main` 那边就是：读一个数当喊几声，生三只，然后照题目要求的顺序喊 —— `Dog` 喊够那么多声、`Fish` 一声、大图纸那只一声。**顺序和声数都得对**，少喊一声输出就对不上喵。",
+      "templateId": "java-s2-two-children-speak",
+      "params": {
+        "dog": "旺财",
+        "fishName": "泡泡",
+        "animalName": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-10-20T17:17:25.040Z",
+        "hash": "c15dabc2c57bf180"
+      }
+    },
+    {
+      "id": "bank-java-s2-two-children-speak-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画**一大两小三张图纸**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Dog` 和 `Fish` 都套在这张大图纸上，各自把 `speak()` **盖掉、换上自己那版**：\n\n- `Dog` 印 **名字 + `：汪！`**\n- `Fish` 印 **名字 + `：咕噜咕噜`**\n\n投喂给程序的只有**一个数**。程序该这么走：读那个数 → 照三张图纸各生一只（名字都用题目给的）→ **喊那么多声** `Dog` 那一招 → 再喊一声 `Fish` 的 → 最后喊一声大图纸**直接生出来**那只动物的。\n\n最后那一声是故意留的：**大图纸本身一个字都没被改过**，照它直接生出来的动物，喊起来还是老样子喵。\n\n比如投喂给程序的是\n\n5\n\n程序就要叼回\n\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n金金：咕噜咕噜\n大肥鱼发出了一声叫\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Dog extends Animal {\n\n}\n\nclass Fish extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\nclass Fish extends Animal {\n    Fish(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：咕噜咕噜\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Dog d = new Dog(\"旺财\");\n        Fish f = new Fish(\"金金\");\n        Animal a = new Animal(\"大肥鱼\");\n        for (int i = 0; i < n; i++) {\n            d.speak();\n        }\n        f.speak();\n        a.speak();\n    }\n}\n",
+      "expectedOutput": "旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n金金：咕噜咕噜\n大肥鱼发出了一声叫",
+      "stdin": "9\n",
+      "explanation": "这题练的是**「大图纸只画一遍，小图纸各改各的」**喵。\n\n三张图纸的关系：`Dog` 和 `Fish` 的图纸名后面都写着 `extends Animal`，所以「有名字、会出一声」这套设定**一个字都不用重抄**。两张小图纸只做了两件事：\n\n1. **出生那一手各写一遍**，头一句都是 `super(name);` —— 把名字交给大图纸去装。要是有哪张小图纸漏了这一句，翻译官喵就会拦下来说那一长串 `constructor ... cannot be applied to given types`。\n2. **把 `speak()` 盖掉、换上自己那版**，各自换成自己那种叫声，头上都挂着 `@Override`。\n\n本喵特意让 `main` 最后再喊一声**照大图纸直接生出来**的那只动物：它印的还是「发出了一声叫」。这说明**盖掉只盖住小图纸这条往下的路**，大图纸本身一根毛都没动。\n\n`main` 那边就是：读一个数当喊几声，生三只，然后照题目要求的顺序喊 —— `Dog` 喊够那么多声、`Fish` 一声、大图纸那只一声。**顺序和声数都得对**，少喊一声输出就对不上喵。",
+      "templateId": "java-s2-two-children-speak",
+      "params": {
+        "dog": "旺财",
+        "fishName": "金金",
+        "animalName": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-10-20T17:17:28.131Z",
+        "hash": "cf1024c9779362f2"
+      }
+    },
+    {
+      "id": "bank-java-s2-two-children-speak-007",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要画**一大两小三张图纸**喵。\n\n大图纸 `Animal`：一盒名字家当；出生那一手记下名字；一招 `speak()`，印 **名字 + `发出了一声叫`**。\n\n小图纸 `Dog` 和 `Fish` 都套在这张大图纸上，各自把 `speak()` **盖掉、换上自己那版**：\n\n- `Dog` 印 **名字 + `：汪！`**\n- `Fish` 印 **名字 + `：咕噜咕噜`**\n\n投喂给程序的只有**一个数**。程序该这么走：读那个数 → 照三张图纸各生一只（名字都用题目给的）→ **喊那么多声** `Dog` 那一招 → 再喊一声 `Fish` 的 → 最后喊一声大图纸**直接生出来**那只动物的。\n\n最后那一声是故意留的：**大图纸本身一个字都没被改过**，照它直接生出来的动物，喊起来还是老样子喵。\n\n比如投喂给程序的是\n\n9\n\n程序就要叼回\n\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n金金：咕噜咕噜\n河豚发出了一声叫\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Dog extends Animal {\n\n}\n\nclass Fish extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\nclass Fish extends Animal {\n    Fish(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：咕噜咕噜\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Dog d = new Dog(\"旺财\");\n        Fish f = new Fish(\"金金\");\n        Animal a = new Animal(\"河豚\");\n        for (int i = 0; i < n; i++) {\n            d.speak();\n        }\n        f.speak();\n        a.speak();\n    }\n}\n",
+      "expectedOutput": "旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n旺财：汪！\n金金：咕噜咕噜\n河豚发出了一声叫",
+      "stdin": "7\n",
+      "explanation": "这题练的是**「大图纸只画一遍，小图纸各改各的」**喵。\n\n三张图纸的关系：`Dog` 和 `Fish` 的图纸名后面都写着 `extends Animal`，所以「有名字、会出一声」这套设定**一个字都不用重抄**。两张小图纸只做了两件事：\n\n1. **出生那一手各写一遍**，头一句都是 `super(name);` —— 把名字交给大图纸去装。要是有哪张小图纸漏了这一句，翻译官喵就会拦下来说那一长串 `constructor ... cannot be applied to given types`。\n2. **把 `speak()` 盖掉、换上自己那版**，各自换成自己那种叫声，头上都挂着 `@Override`。\n\n本喵特意让 `main` 最后再喊一声**照大图纸直接生出来**的那只动物：它印的还是「发出了一声叫」。这说明**盖掉只盖住小图纸这条往下的路**，大图纸本身一根毛都没动。\n\n`main` 那边就是：读一个数当喊几声，生三只，然后照题目要求的顺序喊 —— `Dog` 喊够那么多声、`Fish` 一声、大图纸那只一声。**顺序和声数都得对**，少喊一声输出就对不上喵。",
+      "templateId": "java-s2-two-children-speak",
+      "params": {
+        "dog": "旺财",
+        "fishName": "金金",
+        "animalName": "河豚"
+      },
+      "verified": {
+        "at": "2026-10-09T15:02:25.833Z",
+        "hash": "c27542b3cc924d15"
+      }
+    }
+  ]
+}

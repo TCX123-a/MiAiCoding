@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-09-kitten-ctor-missing",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-09",
+  "type": "codefix",
+  "concept": ["出生招式里的交代", "先搭妈妈那一半", "报错现场"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "老图纸的出生招式要收一样料（一串名字），小猫图纸的出生招式也收了一样料，可翻译官喵说**妈妈那一半搭不起来**。\n\n你帮本喵改到能跑起来（小猫叫 {name}，搭好的时候印一行）。**`main` 里的喊法、还有印东西那一行，都不用改。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) {\n        cout << \"小猫那一半搭好：\" << name << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"{name}\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"小猫那一半搭好：\" << name << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"{name}\");\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:14:22: error: no matching function for call to 'Cat::Cat()'`\n\n翻成猫话：**「本喵要搭一只猫，可找不到一个能空手搭妈妈那一半的招式喵。」**（`Cat()` 是「一样料都不收的出生招式」的写法。）\n\n根子在这一件事上：**小猫图纸照出来的真猫，是「妈妈那一半 + 小猫那一半」拼起来的。** 本喵那只小猫的出生招式只顾着搭自己这一半，**妈妈那一半怎么搭，一个字都没交代** —— 翻译官喵只好去找一个「不用料就能搭」的妈妈出生招式；可老图纸上写着的那个偏偏要收一串名字，两边对不上。\n\n改法就是把那一样料**交代给妈妈**，写在出生招式后面的那一小段里：\n\n```text\nKitten(string n) : Cat(n)\n```\n\n（就是接在出生招式名字后面的一小段，后面才轮到本喵自己那一半的大括号。）\n\n念作：「**先把 `n` 交给妈妈的出生招式，妈妈那一半搭好了，本喵这一半才开始。**」\n\n顺序这件事钉死成一句话就够：\n\n> **搭的时候从妈妈往上搭，拆的时候从小猫往下拆。**\n\n⚠️ 顺手记一条：那一小段 `: Cat(n)` 是**按顺序排在最前面的** —— 它比小猫自己这一半的活更早跑。所以本喵在 `Kitten` 的活里印 `name`，印出来的是**妈妈那一半刚才填好的**那个名字。"
+}

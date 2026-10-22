@@ -1,0 +1,82 @@
+{
+  "lessonId": "java-stage1-07",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵的圈数牌从 `0` 摆起，想让 `for` **正好跑三圈**——眼色该写哪一个？",
+      "options": ["`i < 3`", "`i <= 3`", "`i > 3`", "`i == 3`"],
+      "answer": 0,
+      "explanation": "牌子从 `0` 摆起，跑起来就是 `0`、`1`、`2` 三块，眼色在**每一圈开跑前**问一句喵：`0 < 3` 真、`1 < 3` 真、`2 < 3` 真，撞到 `3 < 3` 才答假收工——整整三圈。写成 `i <= 3` 就会多跑一圈：`3 <= 3` 也答真，屏幕上会多出一行 `3`。反过来，要是牌子从 `1` 摆起，想跑三圈就得写 `i <= 3` 了——**起点和眼色是一对，得搭着看**喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写了个 `while`，圈里只印了一句话，忘了让碗里的数变小。跑起来会怎样喵？",
+      "options": [
+        "翻译官当场拦下，跑不起来",
+        "眼色永远答真，这一圈绕不完，屏幕会刷个不停",
+        "自动帮本喵改成最多跑一圈",
+        "圈子里的活儿一次都不干"
+      ],
+      "answer": 1,
+      "explanation": "`while` 只放眼色，牌子怎么变要自己在圈里写喵。圈子里的数一直不变，眼色就永远答真，于是它绕完一圈又绕一圈，停不下来——而且它不报错，只是屏幕刷个不停。`for` 不会有这个毛病，因为「怎么变」就写在小括号的第三段里。写完 `while` 先低头看一眼：**圈里有没有一句在改那个数**喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "`break` 和 `continue` 的分工，下面哪一句是对的喵？",
+      "options": [
+        "`break` 是不绕了，`continue` 是这一圈先不算，接着绕下一圈",
+        "两个词意思一样，写哪个都行",
+        "`continue` 直接结束整个圈子，跳到圈外",
+        "`break` 只跳过这一圈，圈子照样接着绕"
+      ],
+      "answer": 0,
+      "explanation": "`break` 是**整个圈子都不绕了**，直接跳到圈外接着往下跑喵；`continue` 是**这一圈剩下的活儿不干了，但圈子接着绕下一圈**。拿数 `1` 到 `5` 的例子看：在 `i == 3` 那儿踩 `break`，屏幕上只剩 `1`、`2`；踩 `continue`，屏幕上却是 `1`、`2`、`4`、`5`——只有 `3` 不见了。上一课 `switch` 里的 `break` 也是「不干了下班」，跟这儿是一个意思喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        for (int i = 0; i < 3; i++) {\n            System.out.println(i);\n        }\n        System.out.println(\"跑完啦\");\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "0\n1\n2\n跑完啦",
+      "accept": ["0\n1\n2\n跑完啦\n"],
+      "explanation": "牌子从 `0` 摆起，眼色是 `i < 3` 喵：`0 < 3` 真、`1 < 3` 真、`2 < 3` 真，于是印出 `0`、`1`、`2`；撞到 `3 < 3` 答假就收工，所以**第一句印的是 `0` 不是 `1`**。收工之后，站在圈外的那句「跑完啦」接着跑，只印一次喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int total = 0;\n        for (int i = 1; i <= 5; i++) {\n            total = total + i;\n        }\n        System.out.println(total);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "15",
+      "accept": ["15\n"],
+      "explanation": "这一圈跑的是 `1` 到 `5` 五块牌子喵，圈里每转一圈都把 `total` 加一次：`1`、`3`、`6`、`10`、`15`——攒到最后是 `15`。`total` 这块牌子摆在**圈的外面**，所以它攒着的结果能活到圈外，最后那句才印得出来；要是把它挪进圈子里面，每圈都会重新摆一次 `0`，那就白攒了喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int left = 2;\n        while (left > 0) {\n            System.out.println(\"还剩 \" + left + \" 条喵\");\n            left--;\n        }\n        System.out.println(\"发完啦\");\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "还剩 2 条喵\n还剩 1 条喵\n发完啦",
+      "accept": ["还剩 2 条喵\n还剩 1 条喵\n发完啦\n"],
+      "explanation": "碗里 2 条喵：眼色 `left > 0` 答真就进圈，印一句「还剩 2 条喵」，然后 `left--` 把数变成 `1`；再问一次 `1 > 0` 还是真，印「还剩 1 条喵」，`left` 变成 `0`；再问 `0 > 0` 答假，收工。所以圈里那两句一共印了两次，圈外的「发完啦」印一次。**圈里那句 `left--` 是这个圈能停下来的关键**，少了它就会一直绕下去喵。"
+    },
+    {
+      "id": "q7",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int total = 0;\n        for (int i = 1; i ____ 3; i____) {\n            total = total + i;\n        }\n        System.out.println(total);\n    }\n}",
+      "stem": "本喵想让屏幕上印出 `6`——也就是把 `1`、`2`、`3` 攒起来。`for` 小括号的第二段和第三段各补一个记号喵。",
+      "blanks": [
+        { "answer": "<=" },
+        { "answer": "++" }
+      ],
+      "explanation": "写全了就是 `for (int i = 1; i <= 3; i++)` 喵：起点是 `1`，眼色问「小于等于 3 吗」，所以牌子走过 `1`、`2`、`3` 三块；收尾 `i++` 每圈把牌子加 `1`，圈子才向前走。圈里 `total` 一路攒：`1`、`3`、`6`，印出 `6`。要是眼色写成 `i < 3`，牌子只走 `1`、`2` 两块，攒出来是 `3`——**眼色一改，跑几圈就变了**喵。"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s2-09-build-teardown",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-09",
+  "type": "codewrite",
+  "concept": ["搭的时候先妈妈后小猫", "拆的时候先小猫后妈妈", "数输出行数"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] },
+    "word": { "kind": "pick", "values": ["晒太阳", "打盹"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{name}\n", "sampleText": "小胖\n" },
+  "stemTemplate": "本喵要把**搭的顺序**和**拆的顺序**都印出来看清楚。投喂口会递进来**一串字**（名字）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏够得着的那一档的 `name`（一串字）；出生招式把名字填进去，**并印一行** `先搭妈妈那一半：X`；收尾招式**印一行** `后拆妈妈那一半：X`。\n2. **让新图纸照它画下来**：叫 `Kitten`；出生招式**先把料交给妈妈**（那一小段 `: Cat(n)` 不能省），**再印一行** `再搭小猫那一半：X`；收尾招式**印一行** `先拆小猫那一半：X`。\n3. 在 `main` 里：照 `Kitten` 生一只小猫（名字用投喂口递进来的），然后**印一行** `---- {word} ----`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n**这一题请你数一数屏幕上有几行、每一行是哪一个动作印的。**\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {\n        cout << \"先搭妈妈那一半：\" << name << endl;\n    }\n    ~Cat() {\n        cout << \"后拆妈妈那一半：\" << name << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"再搭小猫那一半：\" << name << endl;\n    }\n    ~Kitten() {\n        cout << \"先拆小猫那一半：\" << name << endl;\n    }\n};\n\nint main() {\n    string name;\n    cin >> name;\n\n    Kitten k(name);\n    cout << \"---- {word} ----\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题（名字用小橘时），屏幕上是五行：\n\n```text\n先搭妈妈那一半：小橘\n再搭小猫那一半：小橘\n---- 晒太阳 ----\n先拆小猫那一半：小橘\n后拆妈妈那一半：小橘\n```\n\n对着这五行看顺序，一句话就记住了：\n\n> **搭的时候从妈妈往上搭，拆的时候从小猫往下拆。**\n\n- **搭**：小猫图纸照出来的真猫，是「妈妈那一半 + 小猫那一半」拼起来的。那一小段 `: Cat(n)` 排在最前面，所以妈妈的活**先**跑完，妈妈那一半里已经有名字了，本喵这一半才开始。\n- **中间那一行**是本喵在 `main` 里印的：它夹在两**头**中间，说明那时候两只猫**都活着** —— 妈妈那一半和小猫那一半都在。\n- **拆**：顺序**反过来**，小猫那一半先走、妈妈那一半后走。就像拆房子：楼上先拆掉，地基最后挖。\n\n⚠️ 为什么这个顺序不能靠猜？本喵下一课会讲得更狠：**妈妈那一半的收尾动作要是没跑到，它管着的东西就漏了。**（比如上一课那种「现要现租的仓库」—— 收尾没跑到，那间屋就再也没人还了。）顺序这件事看着像细节，它管的是**东西有没有还清**。\n\n⚠️ 顺手记一个反过来的例子：要是把出生招式后面那一小段 `: Cat(n)` **删掉**，翻译官喵会报 `no matching function for call to 'Cat::Cat()'` —— 它找不到一个「不用料就能搭妈妈那一半」的招式。"
+}

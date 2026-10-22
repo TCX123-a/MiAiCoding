@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-const-report",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-05",
+  "type": "codewrite",
+  "concept": ["常量 static final", "规矩只写一处", "条件判断", "Scanner"],
+  "instances": 6,
+  "params": {
+    "cat": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "max": { "kind": "int", "min": 4, "max": 6 },
+    "n": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 2, "max": 9 },
+  "stemTemplate": "鱼塘边立了条规矩：一顿最多吃几条。这个数是**全院子共用、又谁都改不了**的，本喵要把它写成一格**常量**。\n\n要画的东西：\n\n- 图纸 `Cat`：一格常量 `static final int MAX_FISH = {max};`（两个词各管一半：共用、钉死），一盒自己名字的家当，出生那一手把名字记下来。\n- 一手 `void eat(int fish)`：**越过规矩**（比上限大）就印一行 **名字 + `：太多啦，最多 ` + 上限 + ` 条`**；没越过就印 **名字 + `：吃了 ` + 条数 + ` 条`**。判断里那个上限，一律**念 `MAX_FISH`**，不许把 `{max}` 这个数直接写死在判断里。\n\n`main` 里这么走：读一个数 `n`，接着**再读 n 个数**（每一顿吃了几条）；生一只猫叫 `{cat}`；每一顿让它吃一次；最后印一行 **`规矩是 ` + 上限 + ` 条`** —— 念那一格常量的时候要挂上图纸名。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\nclass Cat {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Cat {\n    static final int MAX_FISH = {max};\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    void eat(int fish) {\n        if (fish > MAX_FISH) {\n            System.out.println(name + \"：太多啦，最多 \" + MAX_FISH + \" 条\");\n        } else {\n            System.out.println(name + \"：吃了 \" + fish + \" 条\");\n        }\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Cat a = new Cat(\"{cat}\");\n        for (int i = 0; i < n; i++) {\n            int fish = sc.nextInt();\n            a.eat(fish);\n        }\n        System.out.println(\"规矩是 \" + Cat.MAX_FISH + \" 条\");\n    }\n}\n",
+  "explanationTemplate": "本题练的是**常量**：`static final` 就是把今天学的两个词合起来用喵。\n\n**一、`static` 管「只有一份」。** 这条规矩不属于任何一只猫 —— 它是鱼塘边的规矩，全院子共用。所以它念起来是 `Cat.MAX_FISH`（挂图纸名），不是 `a.MAX_FISH`。\n\n**二、`final` 管「只填一次」。** 钉死的那一格，起步的数就在声明那一行填好，往后谁都不许再动它（你要是在哪只手底下写 `MAX_FISH = 3;`，撞的就是 `cannot assign a value to static final variable MAX_FISH`）。\n\n**三、规矩只写一处，用处却有好几处。** 判断里的 `fish > MAX_FISH` 和最后那行「规矩是……条」念的是**同一条规矩** —— 这就是常量最值钱的地方：往后要把上限改成别的数，**只改声明那一行这一处**，全院子立刻都按新规矩来。反过来说，要是你在判断里写死一个 `{max}`、最后那行又写死一个 `{max}`，全院子就散成了好几份规矩，改一处忘一处，早晚对不上。\n\n**四、名字的写法。** 常量的名字照本喵的习惯**全用大写、词间加小下划线**（`MAX_FISH`）—— 一眼就看得出「这不是哪只猫的格子，是全院子钉死的规矩」。"
+}

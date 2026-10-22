@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-dp-singleton-no-guard",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-14",
+  "type": "codefix",
+  "concept": ["拿碗前先看图纸那一格空着没有", "少了判空每次都是新的一只", "单例的考点就是「怎么喊都只给同一只」"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 5 }
+  },
+  "stemTemplate": "本喵这段单例跑起来，两处拿到的居然**不是同一只碗**喵。\n\n毛病在 `拿碗()` 里 —— 你看一眼就明白了。别的都别动，图纸那一格和锁上的产房都别碰。改好之后，程序该印出**两行**：第一行 `是同一只碗吗：true`，第二行 `乙 里看到的存量：` 后面跟着本喵添进去的那个数。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        猫粮碗 甲 = 猫粮碗.拿碗();\n        猫粮碗 乙 = 猫粮碗.拿碗();\n        甲.存量 = 甲.存量 + {n};\n        System.out.println(\"是同一只碗吗：\" + (甲 == 乙));\n        System.out.println(\"乙 里看到的存量：\" + 乙.存量);\n    }\n}\n\nclass 猫粮碗 {\n    private static 猫粮碗 唯一的一只;\n\n    int 存量;\n\n    private 猫粮碗() {\n    }\n\n    static 猫粮碗 拿碗() {\n        唯一的一只 = new 猫粮碗();\n        return 唯一的一只;\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        猫粮碗 甲 = 猫粮碗.拿碗();\n        猫粮碗 乙 = 猫粮碗.拿碗();\n        甲.存量 = 甲.存量 + {n};\n        System.out.println(\"是同一只碗吗：\" + (甲 == 乙));\n        System.out.println(\"乙 里看到的存量：\" + 乙.存量);\n    }\n}\n\nclass 猫粮碗 {\n    private static 猫粮碗 唯一的一只;\n\n    int 存量;\n\n    private 猫粮碗() {\n    }\n\n    static 猫粮碗 拿碗() {\n        if (唯一的一只 == null) {\n            唯一的一只 = new 猫粮碗();\n        }\n        return 唯一的一只;\n    }\n}\n",
+  "explanationTemplate": "坏版本印出来的是这样两行喵：\n\n```text\n是同一只碗吗：false\n乙 里看到的存量：0\n```\n\n毛病只有一处：`拿碗()` 里**没有先看图纸那一格**，每喊一次就当场造一只新的、再把那一格盖掉。于是 `甲` 拿到一只、`乙` 拿到另一只 —— 问「是不是同一只」答 `false`；本喵往 `甲` 里添的那些鱼干，`乙` 那边当然看不到，所以第二行是 `0`。\n\n改法就是把单例那句心思补回去：\n\n```java\nif (唯一的一只 == null) {\n    唯一的一只 = new 猫粮碗();\n}\nreturn 唯一的一只;\n```\n\n先看那一格**空着没有**：空着才动手造、造完顺手记进去；已经记着了就直接把那一只递出去。补上之后 `甲` 和 `乙` 拿到的是同一只，第二行才跟着本喵添的数变。\n\n顺带记一句：**这一摔不是翻译那一关拦的** —— 坏版本照样跑得起来，只是答案错了。单例这种摆法，翻译官喵帮不上忙，得靠你自己盯着「拿到的是不是同一只」喵。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-scanf-price-lf",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-04",
+  "type": "codewrite",
+  "concept": ["%lf 与 %f", "%.2f 留两位", "没人喂就保持原样"],
+  "instances": 6,
+  "params": {
+    "p": { "kind": "pick", "values": ["2.5", "3.75", "4.25"] },
+    "q": { "kind": "pick", "values": ["7.5", "8.25"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{p}\n", "sampleText": "{q}\n" },
+  "stemTemplate": "请你写个程序：**先从投喂口读进来一个价钱**（可能带小数点），再用保留两位小数的钩子报出来，样子是 `价钱 %.2f 元`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（接小数的那只钩子，和念小数的那只**长得不一样**喵 —— 别照抄。判分用的是**另外一组数**，别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    double price = 0;\n    scanf(\"%lf\", &price);\n    printf(\"价钱 %.2f 元\\n\", price);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题把「接」和「念」两只钩子放在一起，正好比一比喵：\n\n```c\nscanf(\"%lf\", &price);          // 接：%lf\nprintf(\"价钱 %.2f 元\\n\", price); // 念：%f\n```\n\n**接小数用 `%lf`，念小数用 `%f`** —— 区别就是前面那个 `l`。写反了 C 不一定拦你，只会轻轻嘀咕一句；前面那道「叼回来的永远是 0.00」的题，栽的就是这个跟头。\n\n另外两件事顺手记一下喵：\n\n- **没人喂就保持原样。** 屋子先装 0（`double price = 0;`），要是投喂口什么都没递、流空了，`scanf` 不会动那间屋 —— 屏幕上就还是 0.00，不会冒出怪东西。\n- **`%.2f` 里的 `2` 是「小数点后留两位」**，它会按两位那个样子念（该进位的时候会进位）。"
+}

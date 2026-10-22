@@ -1,0 +1,482 @@
+{
+  "lessonId": "java-stage3-05",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-05-get-on-empty-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一段小代码：先从柜子里找一个名字对应的东西，再把找到的报出来喵。\n\n可它**一跑就当场炸了** —— 第一行印出来了，第二行刚跑到就炸。\n\n红字里头说 `No value present`，意思是「**里头没东西**」。\n\n你帮本喵改到它顺顺当当跑完、印出**两行**：\n\n```text\n找到的：...\n兜底的：啥也没有\n```\n\n- 第一行报的是**找到的那样东西**；\n- 第二行报**兜底那句话** —— 因为第二个名字**不在柜子里**。\n\n名字、货、还有前面那两招都别去改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"冻干\")) {\n            return Optional.of(\"一包冻干\");\n        }\n        return Optional.empty();\n    }\n\n    static void show(Optional<String> box, String label) {\n        System.out.println(label + box.get());\n    }\n\n    public static void main(String[] args) {\n        show(find(\"冻干\"), \"找到的：\");\n        show(find(\"别的\"), \"兜底的：\");\n    }\n}\n",
+      "referenceFix": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"冻干\")) {\n            return Optional.of(\"一包冻干\");\n        }\n        return Optional.empty();\n    }\n\n    static void show(Optional<String> box, String label) {\n        System.out.println(label + box.orElse(\"啥也没有\"));\n    }\n\n    public static void main(String[] args) {\n        show(find(\"冻干\"), \"找到的：\");\n        show(find(\"别的\"), \"兜底的：\");\n    }\n}\n",
+      "expectedOutput": "找到的：一包冻干\n兜底的：啥也没有",
+      "stdin": null,
+      "explanation": "**一、红字怎么念。** 头一个词 `NoSuchElementException` 说的是「**要掏的那一件不存在**」，后半句 `No value present` 直译是「**里头没东西**」。`.get()` 这一手读作「**不管怎么样，把里面的东西掏给我**」—— 盒子里真有东西时它当然掏得出来；空盒子它也照样硬掏，掏不着就当场炸。\n\n**二、为什么第一行没炸。** 第一个名字在柜子里，那只盒子里**真的有东西**，掏得着。第二个名字**不在柜子里**，`find` 交回来的是一只**空盒子** —— 同一句话，撞上空盒子就炸。**炸不炸，取决于盒子里有没有东西，不取决于本喵写得对不对** —— 这就是「跑起来才炸」那一类麻烦。\n\n**三、改法：把「空了怎么办」当场交代掉。** 把硬掏那一手换成 `.orElse(...)`（读作「有就用里面的，没有就用兜底那句」），空盒子这回有台阶下了。**这一改是把「可能没有」接回自己手里，不是把它再扔出去。**\n\n**四、为什么只改了这一处。** 改动越小越好：第一行那个盒子**当下确实有东西**，不碰它也跑得对。不过课文那句「**别用 `.get()`**」是认真的 —— **今天盒子里有东西，不等于明天也有**；真要稳，两处都该把兜底交代上。\n\n一句话记住：**硬掏那一手是把「可能没有」又扔回去；空盒子要用 `orElse`（或者别的那几手）接住。**",
+      "templateId": "java-s3-05-get-on-empty",
+      "params": {
+        "w": "冻干",
+        "v": "一包冻干"
+      },
+      "verified": {
+        "at": "2026-09-16T11:43:28.327Z",
+        "hash": "328de054efe353ee"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-get-on-empty-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一段小代码：先从柜子里找一个名字对应的东西，再把找到的报出来喵。\n\n可它**一跑就当场炸了** —— 第一行印出来了，第二行刚跑到就炸。\n\n红字里头说 `No value present`，意思是「**里头没东西**」。\n\n你帮本喵改到它顺顺当当跑完、印出**两行**：\n\n```text\n找到的：...\n兜底的：啥也没有\n```\n\n- 第一行报的是**找到的那样东西**；\n- 第二行报**兜底那句话** —— 因为第二个名字**不在柜子里**。\n\n名字、货、还有前面那两招都别去改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"毛线球\")) {\n            return Optional.of(\"两个毛线球\");\n        }\n        return Optional.empty();\n    }\n\n    static void show(Optional<String> box, String label) {\n        System.out.println(label + box.get());\n    }\n\n    public static void main(String[] args) {\n        show(find(\"毛线球\"), \"找到的：\");\n        show(find(\"别的\"), \"兜底的：\");\n    }\n}\n",
+      "referenceFix": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"毛线球\")) {\n            return Optional.of(\"两个毛线球\");\n        }\n        return Optional.empty();\n    }\n\n    static void show(Optional<String> box, String label) {\n        System.out.println(label + box.orElse(\"啥也没有\"));\n    }\n\n    public static void main(String[] args) {\n        show(find(\"毛线球\"), \"找到的：\");\n        show(find(\"别的\"), \"兜底的：\");\n    }\n}\n",
+      "expectedOutput": "找到的：两个毛线球\n兜底的：啥也没有",
+      "stdin": null,
+      "explanation": "**一、红字怎么念。** 头一个词 `NoSuchElementException` 说的是「**要掏的那一件不存在**」，后半句 `No value present` 直译是「**里头没东西**」。`.get()` 这一手读作「**不管怎么样，把里面的东西掏给我**」—— 盒子里真有东西时它当然掏得出来；空盒子它也照样硬掏，掏不着就当场炸。\n\n**二、为什么第一行没炸。** 第一个名字在柜子里，那只盒子里**真的有东西**，掏得着。第二个名字**不在柜子里**，`find` 交回来的是一只**空盒子** —— 同一句话，撞上空盒子就炸。**炸不炸，取决于盒子里有没有东西，不取决于本喵写得对不对** —— 这就是「跑起来才炸」那一类麻烦。\n\n**三、改法：把「空了怎么办」当场交代掉。** 把硬掏那一手换成 `.orElse(...)`（读作「有就用里面的，没有就用兜底那句」），空盒子这回有台阶下了。**这一改是把「可能没有」接回自己手里，不是把它再扔出去。**\n\n**四、为什么只改了这一处。** 改动越小越好：第一行那个盒子**当下确实有东西**，不碰它也跑得对。不过课文那句「**别用 `.get()`**」是认真的 —— **今天盒子里有东西，不等于明天也有**；真要稳，两处都该把兜底交代上。\n\n一句话记住：**硬掏那一手是把「可能没有」又扔回去；空盒子要用 `orElse`（或者别的那几手）接住。**",
+      "templateId": "java-s3-05-get-on-empty",
+      "params": {
+        "w": "毛线球",
+        "v": "两个毛线球"
+      },
+      "verified": {
+        "at": "2026-09-16T11:43:29.973Z",
+        "hash": "9d8ad6d18b40e384"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-if-present-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`冻干`（本喵给它的货是 `一包冻干`）、`毛线球`（货是 `三个毛线球`）；`雨伞` **不在这里**喵。\n\n请你写一招 `find`：交给它一个名字，对得上就把那样东西**装盒**交回；对不上就交回**空盒子**（名分上就写着「可能有、可能没有」）。\n\n然后在 `main` 里**按顺序**对这三个名字各喊一次：`冻干`、`毛线球`、`雨伞` ——\n\n- **有东西的时候**才印一行 `找到的是 ` 加上那样东西；\n- **空盒子一个字都不许印**。\n\n印出来该是\n\n```text\n找到的是 一包冻干\n找到的是 三个毛线球\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"冻干\")) {\n            return Optional.of(\"一包冻干\");\n        }\n        if (key.equals(\"毛线球\")) {\n            return Optional.of(\"三个毛线球\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        find(\"冻干\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"毛线球\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"雨伞\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n    }\n}\n",
+      "expectedOutput": "找到的是 一包冻干\n找到的是 三个毛线球",
+      "stdin": null,
+      "explanation": "**一、这题要练的是「空盒子一句话不说」。** 三种交代里，这里该用的是 `.ifPresent(...)` 那一手（课文对照表第二行：「**有东西的时候才做一件事**」）。\n\n**二、为什么不能拿 `orElse` 顶。** `orElse` 是「有就用里面的、没有就用兜底那句」—— 它**一定会给你一样东西**，那本喵就非得印它不可。可这题的要求是**空盒子一个字都不许印**：第三个名字根本不在柜子里，那一行就该**不出现**，而不是印一句兜底的话。**这两手长得像，用处正好相反：一个「一定要给你一样东西」，一个「没有就跳过」。**\n\n**三、`.ifPresent(v -> ...)` 读作「有东西才做这件事」。** 盒子里空着的时候它**跳过**，一句话不说；有东西的时候才把那一小截跑一遍。所以三行一模一样的写法，印出来只有两行 —— 少的那一行，正是空盒子那一次。\n\n**四、`find` 那一招的名分也不能忘。** 它交回来的是一只**盒子**（名分上就写着「可能有、可能没有」），不是一样东西；找到装盒、没找到交空盒子。**本喵没有交回空东西** —— 那正是会炸的那条路。\n\n一句话记住：**有东西才做一件事用 `ifPresent`；空盒子就跳过，一个字都不印。**",
+      "templateId": "java-s3-05-if-present",
+      "params": {
+        "k1": "冻干",
+        "v1": "一包冻干",
+        "k2": "毛线球",
+        "v2": "三个毛线球",
+        "k3": "雨伞"
+      },
+      "verified": {
+        "at": "2026-09-16T11:48:25.227Z",
+        "hash": "28b58c865f23c9bd"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-if-present-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`冻干`（本喵给它的货是 `一包冻干`）、`猫条`（货是 `两根猫条`）；`雨伞` **不在这里**喵。\n\n请你写一招 `find`：交给它一个名字，对得上就把那样东西**装盒**交回；对不上就交回**空盒子**（名分上就写着「可能有、可能没有」）。\n\n然后在 `main` 里**按顺序**对这三个名字各喊一次：`冻干`、`猫条`、`雨伞` ——\n\n- **有东西的时候**才印一行 `找到的是 ` 加上那样东西；\n- **空盒子一个字都不许印**。\n\n印出来该是\n\n```text\n找到的是 一包冻干\n找到的是 两根猫条\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"冻干\")) {\n            return Optional.of(\"一包冻干\");\n        }\n        if (key.equals(\"猫条\")) {\n            return Optional.of(\"两根猫条\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        find(\"冻干\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"猫条\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"雨伞\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n    }\n}\n",
+      "expectedOutput": "找到的是 一包冻干\n找到的是 两根猫条",
+      "stdin": null,
+      "explanation": "**一、这题要练的是「空盒子一句话不说」。** 三种交代里，这里该用的是 `.ifPresent(...)` 那一手（课文对照表第二行：「**有东西的时候才做一件事**」）。\n\n**二、为什么不能拿 `orElse` 顶。** `orElse` 是「有就用里面的、没有就用兜底那句」—— 它**一定会给你一样东西**，那本喵就非得印它不可。可这题的要求是**空盒子一个字都不许印**：第三个名字根本不在柜子里，那一行就该**不出现**，而不是印一句兜底的话。**这两手长得像，用处正好相反：一个「一定要给你一样东西」，一个「没有就跳过」。**\n\n**三、`.ifPresent(v -> ...)` 读作「有东西才做这件事」。** 盒子里空着的时候它**跳过**，一句话不说；有东西的时候才把那一小截跑一遍。所以三行一模一样的写法，印出来只有两行 —— 少的那一行，正是空盒子那一次。\n\n**四、`find` 那一招的名分也不能忘。** 它交回来的是一只**盒子**（名分上就写着「可能有、可能没有」），不是一样东西；找到装盒、没找到交空盒子。**本喵没有交回空东西** —— 那正是会炸的那条路。\n\n一句话记住：**有东西才做一件事用 `ifPresent`；空盒子就跳过，一个字都不印。**",
+      "templateId": "java-s3-05-if-present",
+      "params": {
+        "k1": "冻干",
+        "v1": "一包冻干",
+        "k2": "猫条",
+        "v2": "两根猫条",
+        "k3": "雨伞"
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:02.558Z",
+        "hash": "ff29d10c80e244bb"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-if-present-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`冻干`（本喵给它的货是 `三袋鱼干`）、`猫条`（货是 `三个毛线球`）；`雨伞` **不在这里**喵。\n\n请你写一招 `find`：交给它一个名字，对得上就把那样东西**装盒**交回；对不上就交回**空盒子**（名分上就写着「可能有、可能没有」）。\n\n然后在 `main` 里**按顺序**对这三个名字各喊一次：`冻干`、`猫条`、`雨伞` ——\n\n- **有东西的时候**才印一行 `找到的是 ` 加上那样东西；\n- **空盒子一个字都不许印**。\n\n印出来该是\n\n```text\n找到的是 三袋鱼干\n找到的是 三个毛线球\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"冻干\")) {\n            return Optional.of(\"三袋鱼干\");\n        }\n        if (key.equals(\"猫条\")) {\n            return Optional.of(\"三个毛线球\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        find(\"冻干\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"猫条\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"雨伞\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n    }\n}\n",
+      "expectedOutput": "找到的是 三袋鱼干\n找到的是 三个毛线球",
+      "stdin": null,
+      "explanation": "**一、这题要练的是「空盒子一句话不说」。** 三种交代里，这里该用的是 `.ifPresent(...)` 那一手（课文对照表第二行：「**有东西的时候才做一件事**」）。\n\n**二、为什么不能拿 `orElse` 顶。** `orElse` 是「有就用里面的、没有就用兜底那句」—— 它**一定会给你一样东西**，那本喵就非得印它不可。可这题的要求是**空盒子一个字都不许印**：第三个名字根本不在柜子里，那一行就该**不出现**，而不是印一句兜底的话。**这两手长得像，用处正好相反：一个「一定要给你一样东西」，一个「没有就跳过」。**\n\n**三、`.ifPresent(v -> ...)` 读作「有东西才做这件事」。** 盒子里空着的时候它**跳过**，一句话不说；有东西的时候才把那一小截跑一遍。所以三行一模一样的写法，印出来只有两行 —— 少的那一行，正是空盒子那一次。\n\n**四、`find` 那一招的名分也不能忘。** 它交回来的是一只**盒子**（名分上就写着「可能有、可能没有」），不是一样东西；找到装盒、没找到交空盒子。**本喵没有交回空东西** —— 那正是会炸的那条路。\n\n一句话记住：**有东西才做一件事用 `ifPresent`；空盒子就跳过，一个字都不印。**",
+      "templateId": "java-s3-05-if-present",
+      "params": {
+        "k1": "冻干",
+        "v1": "三袋鱼干",
+        "k2": "猫条",
+        "v2": "三个毛线球",
+        "k3": "雨伞"
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:04.783Z",
+        "hash": "127f7142b6e52bee"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-if-present-019",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`鱼干`（本喵给它的货是 `一包冻干`）、`毛线球`（货是 `两根猫条`）；`拖鞋` **不在这里**喵。\n\n请你写一招 `find`：交给它一个名字，对得上就把那样东西**装盒**交回；对不上就交回**空盒子**（名分上就写着「可能有、可能没有」）。\n\n然后在 `main` 里**按顺序**对这三个名字各喊一次：`鱼干`、`毛线球`、`拖鞋` ——\n\n- **有东西的时候**才印一行 `找到的是 ` 加上那样东西；\n- **空盒子一个字都不许印**。\n\n印出来该是\n\n```text\n找到的是 一包冻干\n找到的是 两根猫条\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"鱼干\")) {\n            return Optional.of(\"一包冻干\");\n        }\n        if (key.equals(\"毛线球\")) {\n            return Optional.of(\"两根猫条\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        find(\"鱼干\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"毛线球\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"拖鞋\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n    }\n}\n",
+      "expectedOutput": "找到的是 一包冻干\n找到的是 两根猫条",
+      "stdin": null,
+      "explanation": "**一、这题要练的是「空盒子一句话不说」。** 三种交代里，这里该用的是 `.ifPresent(...)` 那一手（课文对照表第二行：「**有东西的时候才做一件事**」）。\n\n**二、为什么不能拿 `orElse` 顶。** `orElse` 是「有就用里面的、没有就用兜底那句」—— 它**一定会给你一样东西**，那本喵就非得印它不可。可这题的要求是**空盒子一个字都不许印**：第三个名字根本不在柜子里，那一行就该**不出现**，而不是印一句兜底的话。**这两手长得像，用处正好相反：一个「一定要给你一样东西」，一个「没有就跳过」。**\n\n**三、`.ifPresent(v -> ...)` 读作「有东西才做这件事」。** 盒子里空着的时候它**跳过**，一句话不说；有东西的时候才把那一小截跑一遍。所以三行一模一样的写法，印出来只有两行 —— 少的那一行，正是空盒子那一次。\n\n**四、`find` 那一招的名分也不能忘。** 它交回来的是一只**盒子**（名分上就写着「可能有、可能没有」），不是一样东西；找到装盒、没找到交空盒子。**本喵没有交回空东西** —— 那正是会炸的那条路。\n\n一句话记住：**有东西才做一件事用 `ifPresent`；空盒子就跳过，一个字都不印。**",
+      "templateId": "java-s3-05-if-present",
+      "params": {
+        "k1": "鱼干",
+        "v1": "一包冻干",
+        "k2": "毛线球",
+        "v2": "两根猫条",
+        "k3": "拖鞋"
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:07.127Z",
+        "hash": "ccbea5ef1dac0b08"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-if-present-025",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`鱼干`（本喵给它的货是 `三袋鱼干`）、`毛线球`（货是 `三个毛线球`）；`拖鞋` **不在这里**喵。\n\n请你写一招 `find`：交给它一个名字，对得上就把那样东西**装盒**交回；对不上就交回**空盒子**（名分上就写着「可能有、可能没有」）。\n\n然后在 `main` 里**按顺序**对这三个名字各喊一次：`鱼干`、`毛线球`、`拖鞋` ——\n\n- **有东西的时候**才印一行 `找到的是 ` 加上那样东西；\n- **空盒子一个字都不许印**。\n\n印出来该是\n\n```text\n找到的是 三袋鱼干\n找到的是 三个毛线球\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"鱼干\")) {\n            return Optional.of(\"三袋鱼干\");\n        }\n        if (key.equals(\"毛线球\")) {\n            return Optional.of(\"三个毛线球\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        find(\"鱼干\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"毛线球\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"拖鞋\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n    }\n}\n",
+      "expectedOutput": "找到的是 三袋鱼干\n找到的是 三个毛线球",
+      "stdin": null,
+      "explanation": "**一、这题要练的是「空盒子一句话不说」。** 三种交代里，这里该用的是 `.ifPresent(...)` 那一手（课文对照表第二行：「**有东西的时候才做一件事**」）。\n\n**二、为什么不能拿 `orElse` 顶。** `orElse` 是「有就用里面的、没有就用兜底那句」—— 它**一定会给你一样东西**，那本喵就非得印它不可。可这题的要求是**空盒子一个字都不许印**：第三个名字根本不在柜子里，那一行就该**不出现**，而不是印一句兜底的话。**这两手长得像，用处正好相反：一个「一定要给你一样东西」，一个「没有就跳过」。**\n\n**三、`.ifPresent(v -> ...)` 读作「有东西才做这件事」。** 盒子里空着的时候它**跳过**，一句话不说；有东西的时候才把那一小截跑一遍。所以三行一模一样的写法，印出来只有两行 —— 少的那一行，正是空盒子那一次。\n\n**四、`find` 那一招的名分也不能忘。** 它交回来的是一只**盒子**（名分上就写着「可能有、可能没有」），不是一样东西；找到装盒、没找到交空盒子。**本喵没有交回空东西** —— 那正是会炸的那条路。\n\n一句话记住：**有东西才做一件事用 `ifPresent`；空盒子就跳过，一个字都不印。**",
+      "templateId": "java-s3-05-if-present",
+      "params": {
+        "k1": "鱼干",
+        "v1": "三袋鱼干",
+        "k2": "毛线球",
+        "v2": "三个毛线球",
+        "k3": "拖鞋"
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:09.400Z",
+        "hash": "af514db0cf84fc8f"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-if-present-031",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`鱼干`（本喵给它的货是 `三袋鱼干`）、`猫条`（货是 `两根猫条`）；`拖鞋` **不在这里**喵。\n\n请你写一招 `find`：交给它一个名字，对得上就把那样东西**装盒**交回；对不上就交回**空盒子**（名分上就写着「可能有、可能没有」）。\n\n然后在 `main` 里**按顺序**对这三个名字各喊一次：`鱼干`、`猫条`、`拖鞋` ——\n\n- **有东西的时候**才印一行 `找到的是 ` 加上那样东西；\n- **空盒子一个字都不许印**。\n\n印出来该是\n\n```text\n找到的是 三袋鱼干\n找到的是 两根猫条\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"鱼干\")) {\n            return Optional.of(\"三袋鱼干\");\n        }\n        if (key.equals(\"猫条\")) {\n            return Optional.of(\"两根猫条\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        find(\"鱼干\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"猫条\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"拖鞋\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n    }\n}\n",
+      "expectedOutput": "找到的是 三袋鱼干\n找到的是 两根猫条",
+      "stdin": null,
+      "explanation": "**一、这题要练的是「空盒子一句话不说」。** 三种交代里，这里该用的是 `.ifPresent(...)` 那一手（课文对照表第二行：「**有东西的时候才做一件事**」）。\n\n**二、为什么不能拿 `orElse` 顶。** `orElse` 是「有就用里面的、没有就用兜底那句」—— 它**一定会给你一样东西**，那本喵就非得印它不可。可这题的要求是**空盒子一个字都不许印**：第三个名字根本不在柜子里，那一行就该**不出现**，而不是印一句兜底的话。**这两手长得像，用处正好相反：一个「一定要给你一样东西」，一个「没有就跳过」。**\n\n**三、`.ifPresent(v -> ...)` 读作「有东西才做这件事」。** 盒子里空着的时候它**跳过**，一句话不说；有东西的时候才把那一小截跑一遍。所以三行一模一样的写法，印出来只有两行 —— 少的那一行，正是空盒子那一次。\n\n**四、`find` 那一招的名分也不能忘。** 它交回来的是一只**盒子**（名分上就写着「可能有、可能没有」），不是一样东西；找到装盒、没找到交空盒子。**本喵没有交回空东西** —— 那正是会炸的那条路。\n\n一句话记住：**有东西才做一件事用 `ifPresent`；空盒子就跳过，一个字都不印。**",
+      "templateId": "java-s3-05-if-present",
+      "params": {
+        "k1": "鱼干",
+        "v1": "三袋鱼干",
+        "k2": "猫条",
+        "v2": "两根猫条",
+        "k3": "拖鞋"
+      },
+      "verified": {
+        "at": "2026-09-16T11:48:26.312Z",
+        "hash": "ab14d47d468d93dd"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-length-report-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`鱼干`（货是 `三袋鱼干`）、`猫粮`（货是 `两袋猫粮`）；`雨伞` **不在这里**喵。\n\n请你写两招：\n\n1. **`find`** —— 交给它一个名字，对得上就把那样东西**装盒**交回，对不上交回**空盒子**；\n2. **`report`** —— 名分上写着**盒子里装的是一句话**：先拿 `find` 找到，再**要是盒子里有东西，就把那样东西加工成一句话**装回盒子交回（用盒子上自带的那一手加工）。那句话的样子是\n\n```text\n那样东西 有 N 个字\n```\n\n- `N` 是**那样东西自己的**字数（不是名字的字数）；\n- 空盒子就一路空着回来。\n\n然后在 `main` 里对 `鱼干` 和 `雨伞` 各喊一次，印**两行** —— 印的时候**顺着盒子挂**（有东西就用盒子里那一句话，空盒子就用兜底那句：那个名字 + ` 不在柜子里`），**别自己另起一个分岔**去问空没空。\n\n比如柜子里放着 `鱼干`（货是 `三袋鱼干`）和 `猫粮`，另一样 `雨伞` 不在柜子里，印出来就该是\n\n```text\n三袋鱼干 有 4 个字\n雨伞 不在柜子里\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"鱼干\")) {\n            return Optional.of(\"三袋鱼干\");\n        }\n        if (key.equals(\"猫粮\")) {\n            return Optional.of(\"两袋猫粮\");\n        }\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return find(key).map(s -> s + \" 有 \" + s.length() + \" 个字\");\n    }\n\n    public static void main(String[] args) {\n        System.out.println(report(\"鱼干\").orElse(\"鱼干 不在柜子里\"));\n        System.out.println(report(\"雨伞\").orElse(\"雨伞 不在柜子里\"));\n    }\n}\n",
+      "expectedOutput": "三袋鱼干 有 4 个字\n雨伞 不在柜子里",
+      "stdin": null,
+      "explanation": "**一、`report` 这一招的名分是「盒子里装的是一句话」。** 它交回来的不是那样东西、也不是个数，而是**一句话**；找不到的时候交回的是一只**空盒子** —— 「没有」这件事照样写在名分上，用的人一眼看得见，就得当场交代。\n\n**二、加工那一手：`map`。** 它读作「**要是盒子里有东西，就对它动这一手**」—— 这里动的一手是把**那样东西**换成一句话。**字数数的是那样东西自己，不是名字**：货是 `三袋鱼干`，报出来就是 4 个字。盒子空着的时候它什么都不做，直接还一只空盒子回来 —— **空盒子一路自动空到底**。\n\n**三、最后一步顺着盒子挂。** `report` 后面接上 `.orElse(...)`，读作「盒子里有就用盒子里那句话；空盒子就用兜底这句」。**这两手一前一后，正好把两种情形都盖住了**，全程没自己另起分岔去问空没空。\n\n**四、要是自己另起分岔会怎样。** 最省事的写法（掏出来再说）撞上空盒子会当场炸；拿个数去顶空盒子，又会印成一句跟本来想说的一点都不像的话 —— 两样都跟该有的样子对不上。**盒子这一套的好处，就是逼着本喵把「没有」也一起想清楚。**\n\n一句话记住：**有东西就加工（`map`），没有就用兜底（`orElse`）—— 两句话都挂在盒子上说。**",
+      "templateId": "java-s3-05-length-report",
+      "params": {
+        "k1": "鱼干",
+        "v1": "三袋鱼干",
+        "k2": "猫粮",
+        "v2": "两袋猫粮",
+        "k3": "雨伞"
+      },
+      "verified": {
+        "at": "2026-09-16T11:44:22.160Z",
+        "hash": "15872b516ea900ba"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-length-report-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`鱼干`（货是 `三袋鱼干`）、`毛线球`（货是 `两个毛线球`）；`雨伞` **不在这里**喵。\n\n请你写两招：\n\n1. **`find`** —— 交给它一个名字，对得上就把那样东西**装盒**交回，对不上交回**空盒子**；\n2. **`report`** —— 名分上写着**盒子里装的是一句话**：先拿 `find` 找到，再**要是盒子里有东西，就把那样东西加工成一句话**装回盒子交回（用盒子上自带的那一手加工）。那句话的样子是\n\n```text\n那样东西 有 N 个字\n```\n\n- `N` 是**那样东西自己的**字数（不是名字的字数）；\n- 空盒子就一路空着回来。\n\n然后在 `main` 里对 `鱼干` 和 `雨伞` 各喊一次，印**两行** —— 印的时候**顺着盒子挂**（有东西就用盒子里那一句话，空盒子就用兜底那句：那个名字 + ` 不在柜子里`），**别自己另起一个分岔**去问空没空。\n\n比如柜子里放着 `鱼干`（货是 `三袋鱼干`）和 `猫粮`，另一样 `雨伞` 不在柜子里，印出来就该是\n\n```text\n三袋鱼干 有 4 个字\n雨伞 不在柜子里\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"鱼干\")) {\n            return Optional.of(\"三袋鱼干\");\n        }\n        if (key.equals(\"毛线球\")) {\n            return Optional.of(\"两个毛线球\");\n        }\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return find(key).map(s -> s + \" 有 \" + s.length() + \" 个字\");\n    }\n\n    public static void main(String[] args) {\n        System.out.println(report(\"鱼干\").orElse(\"鱼干 不在柜子里\"));\n        System.out.println(report(\"雨伞\").orElse(\"雨伞 不在柜子里\"));\n    }\n}\n",
+      "expectedOutput": "三袋鱼干 有 4 个字\n雨伞 不在柜子里",
+      "stdin": null,
+      "explanation": "**一、`report` 这一招的名分是「盒子里装的是一句话」。** 它交回来的不是那样东西、也不是个数，而是**一句话**；找不到的时候交回的是一只**空盒子** —— 「没有」这件事照样写在名分上，用的人一眼看得见，就得当场交代。\n\n**二、加工那一手：`map`。** 它读作「**要是盒子里有东西，就对它动这一手**」—— 这里动的一手是把**那样东西**换成一句话。**字数数的是那样东西自己，不是名字**：货是 `三袋鱼干`，报出来就是 4 个字。盒子空着的时候它什么都不做，直接还一只空盒子回来 —— **空盒子一路自动空到底**。\n\n**三、最后一步顺着盒子挂。** `report` 后面接上 `.orElse(...)`，读作「盒子里有就用盒子里那句话；空盒子就用兜底这句」。**这两手一前一后，正好把两种情形都盖住了**，全程没自己另起分岔去问空没空。\n\n**四、要是自己另起分岔会怎样。** 最省事的写法（掏出来再说）撞上空盒子会当场炸；拿个数去顶空盒子，又会印成一句跟本来想说的一点都不像的话 —— 两样都跟该有的样子对不上。**盒子这一套的好处，就是逼着本喵把「没有」也一起想清楚。**\n\n一句话记住：**有东西就加工（`map`），没有就用兜底（`orElse`）—— 两句话都挂在盒子上说。**",
+      "templateId": "java-s3-05-length-report",
+      "params": {
+        "k1": "鱼干",
+        "v1": "三袋鱼干",
+        "k2": "毛线球",
+        "v2": "两个毛线球",
+        "k3": "雨伞"
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:11.697Z",
+        "hash": "3519965b87ea4f79"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-length-report-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`鱼干`（货是 `一包冻干`）、`毛线球`（货是 `两袋猫粮`）；`雨伞` **不在这里**喵。\n\n请你写两招：\n\n1. **`find`** —— 交给它一个名字，对得上就把那样东西**装盒**交回，对不上交回**空盒子**；\n2. **`report`** —— 名分上写着**盒子里装的是一句话**：先拿 `find` 找到，再**要是盒子里有东西，就把那样东西加工成一句话**装回盒子交回（用盒子上自带的那一手加工）。那句话的样子是\n\n```text\n那样东西 有 N 个字\n```\n\n- `N` 是**那样东西自己的**字数（不是名字的字数）；\n- 空盒子就一路空着回来。\n\n然后在 `main` 里对 `鱼干` 和 `雨伞` 各喊一次，印**两行** —— 印的时候**顺着盒子挂**（有东西就用盒子里那一句话，空盒子就用兜底那句：那个名字 + ` 不在柜子里`），**别自己另起一个分岔**去问空没空。\n\n比如柜子里放着 `鱼干`（货是 `三袋鱼干`）和 `猫粮`，另一样 `雨伞` 不在柜子里，印出来就该是\n\n```text\n三袋鱼干 有 4 个字\n雨伞 不在柜子里\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"鱼干\")) {\n            return Optional.of(\"一包冻干\");\n        }\n        if (key.equals(\"毛线球\")) {\n            return Optional.of(\"两袋猫粮\");\n        }\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return find(key).map(s -> s + \" 有 \" + s.length() + \" 个字\");\n    }\n\n    public static void main(String[] args) {\n        System.out.println(report(\"鱼干\").orElse(\"鱼干 不在柜子里\"));\n        System.out.println(report(\"雨伞\").orElse(\"雨伞 不在柜子里\"));\n    }\n}\n",
+      "expectedOutput": "一包冻干 有 4 个字\n雨伞 不在柜子里",
+      "stdin": null,
+      "explanation": "**一、`report` 这一招的名分是「盒子里装的是一句话」。** 它交回来的不是那样东西、也不是个数，而是**一句话**；找不到的时候交回的是一只**空盒子** —— 「没有」这件事照样写在名分上，用的人一眼看得见，就得当场交代。\n\n**二、加工那一手：`map`。** 它读作「**要是盒子里有东西，就对它动这一手**」—— 这里动的一手是把**那样东西**换成一句话。**字数数的是那样东西自己，不是名字**：货是 `三袋鱼干`，报出来就是 4 个字。盒子空着的时候它什么都不做，直接还一只空盒子回来 —— **空盒子一路自动空到底**。\n\n**三、最后一步顺着盒子挂。** `report` 后面接上 `.orElse(...)`，读作「盒子里有就用盒子里那句话；空盒子就用兜底这句」。**这两手一前一后，正好把两种情形都盖住了**，全程没自己另起分岔去问空没空。\n\n**四、要是自己另起分岔会怎样。** 最省事的写法（掏出来再说）撞上空盒子会当场炸；拿个数去顶空盒子，又会印成一句跟本来想说的一点都不像的话 —— 两样都跟该有的样子对不上。**盒子这一套的好处，就是逼着本喵把「没有」也一起想清楚。**\n\n一句话记住：**有东西就加工（`map`），没有就用兜底（`orElse`）—— 两句话都挂在盒子上说。**",
+      "templateId": "java-s3-05-length-report",
+      "params": {
+        "k1": "鱼干",
+        "v1": "一包冻干",
+        "k2": "毛线球",
+        "v2": "两袋猫粮",
+        "k3": "雨伞"
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:13.943Z",
+        "hash": "14cc5c93d188d374"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-length-report-019",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`冻干`（货是 `三袋鱼干`）、`猫粮`（货是 `两个毛线球`）；`拖鞋` **不在这里**喵。\n\n请你写两招：\n\n1. **`find`** —— 交给它一个名字，对得上就把那样东西**装盒**交回，对不上交回**空盒子**；\n2. **`report`** —— 名分上写着**盒子里装的是一句话**：先拿 `find` 找到，再**要是盒子里有东西，就把那样东西加工成一句话**装回盒子交回（用盒子上自带的那一手加工）。那句话的样子是\n\n```text\n那样东西 有 N 个字\n```\n\n- `N` 是**那样东西自己的**字数（不是名字的字数）；\n- 空盒子就一路空着回来。\n\n然后在 `main` 里对 `冻干` 和 `拖鞋` 各喊一次，印**两行** —— 印的时候**顺着盒子挂**（有东西就用盒子里那一句话，空盒子就用兜底那句：那个名字 + ` 不在柜子里`），**别自己另起一个分岔**去问空没空。\n\n比如柜子里放着 `鱼干`（货是 `三袋鱼干`）和 `猫粮`，另一样 `雨伞` 不在柜子里，印出来就该是\n\n```text\n三袋鱼干 有 4 个字\n雨伞 不在柜子里\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"冻干\")) {\n            return Optional.of(\"三袋鱼干\");\n        }\n        if (key.equals(\"猫粮\")) {\n            return Optional.of(\"两个毛线球\");\n        }\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return find(key).map(s -> s + \" 有 \" + s.length() + \" 个字\");\n    }\n\n    public static void main(String[] args) {\n        System.out.println(report(\"冻干\").orElse(\"冻干 不在柜子里\"));\n        System.out.println(report(\"拖鞋\").orElse(\"拖鞋 不在柜子里\"));\n    }\n}\n",
+      "expectedOutput": "三袋鱼干 有 4 个字\n拖鞋 不在柜子里",
+      "stdin": null,
+      "explanation": "**一、`report` 这一招的名分是「盒子里装的是一句话」。** 它交回来的不是那样东西、也不是个数，而是**一句话**；找不到的时候交回的是一只**空盒子** —— 「没有」这件事照样写在名分上，用的人一眼看得见，就得当场交代。\n\n**二、加工那一手：`map`。** 它读作「**要是盒子里有东西，就对它动这一手**」—— 这里动的一手是把**那样东西**换成一句话。**字数数的是那样东西自己，不是名字**：货是 `三袋鱼干`，报出来就是 4 个字。盒子空着的时候它什么都不做，直接还一只空盒子回来 —— **空盒子一路自动空到底**。\n\n**三、最后一步顺着盒子挂。** `report` 后面接上 `.orElse(...)`，读作「盒子里有就用盒子里那句话；空盒子就用兜底这句」。**这两手一前一后，正好把两种情形都盖住了**，全程没自己另起分岔去问空没空。\n\n**四、要是自己另起分岔会怎样。** 最省事的写法（掏出来再说）撞上空盒子会当场炸；拿个数去顶空盒子，又会印成一句跟本来想说的一点都不像的话 —— 两样都跟该有的样子对不上。**盒子这一套的好处，就是逼着本喵把「没有」也一起想清楚。**\n\n一句话记住：**有东西就加工（`map`），没有就用兜底（`orElse`）—— 两句话都挂在盒子上说。**",
+      "templateId": "java-s3-05-length-report",
+      "params": {
+        "k1": "冻干",
+        "v1": "三袋鱼干",
+        "k2": "猫粮",
+        "v2": "两个毛线球",
+        "k3": "拖鞋"
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:16.224Z",
+        "hash": "d534090f58cceab9"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-length-report-025",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`冻干`（货是 `一包冻干`）、`猫粮`（货是 `两袋猫粮`）；`拖鞋` **不在这里**喵。\n\n请你写两招：\n\n1. **`find`** —— 交给它一个名字，对得上就把那样东西**装盒**交回，对不上交回**空盒子**；\n2. **`report`** —— 名分上写着**盒子里装的是一句话**：先拿 `find` 找到，再**要是盒子里有东西，就把那样东西加工成一句话**装回盒子交回（用盒子上自带的那一手加工）。那句话的样子是\n\n```text\n那样东西 有 N 个字\n```\n\n- `N` 是**那样东西自己的**字数（不是名字的字数）；\n- 空盒子就一路空着回来。\n\n然后在 `main` 里对 `冻干` 和 `拖鞋` 各喊一次，印**两行** —— 印的时候**顺着盒子挂**（有东西就用盒子里那一句话，空盒子就用兜底那句：那个名字 + ` 不在柜子里`），**别自己另起一个分岔**去问空没空。\n\n比如柜子里放着 `鱼干`（货是 `三袋鱼干`）和 `猫粮`，另一样 `雨伞` 不在柜子里，印出来就该是\n\n```text\n三袋鱼干 有 4 个字\n雨伞 不在柜子里\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"冻干\")) {\n            return Optional.of(\"一包冻干\");\n        }\n        if (key.equals(\"猫粮\")) {\n            return Optional.of(\"两袋猫粮\");\n        }\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return find(key).map(s -> s + \" 有 \" + s.length() + \" 个字\");\n    }\n\n    public static void main(String[] args) {\n        System.out.println(report(\"冻干\").orElse(\"冻干 不在柜子里\"));\n        System.out.println(report(\"拖鞋\").orElse(\"拖鞋 不在柜子里\"));\n    }\n}\n",
+      "expectedOutput": "一包冻干 有 4 个字\n拖鞋 不在柜子里",
+      "stdin": null,
+      "explanation": "**一、`report` 这一招的名分是「盒子里装的是一句话」。** 它交回来的不是那样东西、也不是个数，而是**一句话**；找不到的时候交回的是一只**空盒子** —— 「没有」这件事照样写在名分上，用的人一眼看得见，就得当场交代。\n\n**二、加工那一手：`map`。** 它读作「**要是盒子里有东西，就对它动这一手**」—— 这里动的一手是把**那样东西**换成一句话。**字数数的是那样东西自己，不是名字**：货是 `三袋鱼干`，报出来就是 4 个字。盒子空着的时候它什么都不做，直接还一只空盒子回来 —— **空盒子一路自动空到底**。\n\n**三、最后一步顺着盒子挂。** `report` 后面接上 `.orElse(...)`，读作「盒子里有就用盒子里那句话；空盒子就用兜底这句」。**这两手一前一后，正好把两种情形都盖住了**，全程没自己另起分岔去问空没空。\n\n**四、要是自己另起分岔会怎样。** 最省事的写法（掏出来再说）撞上空盒子会当场炸；拿个数去顶空盒子，又会印成一句跟本来想说的一点都不像的话 —— 两样都跟该有的样子对不上。**盒子这一套的好处，就是逼着本喵把「没有」也一起想清楚。**\n\n一句话记住：**有东西就加工（`map`），没有就用兜底（`orElse`）—— 两句话都挂在盒子上说。**",
+      "templateId": "java-s3-05-length-report",
+      "params": {
+        "k1": "冻干",
+        "v1": "一包冻干",
+        "k2": "猫粮",
+        "v2": "两袋猫粮",
+        "k3": "拖鞋"
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:18.497Z",
+        "hash": "39149a7f57857ed1"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-length-report-031",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "柜子里放着两样东西：`冻干`（货是 `一包冻干`）、`毛线球`（货是 `两个毛线球`）；`拖鞋` **不在这里**喵。\n\n请你写两招：\n\n1. **`find`** —— 交给它一个名字，对得上就把那样东西**装盒**交回，对不上交回**空盒子**；\n2. **`report`** —— 名分上写着**盒子里装的是一句话**：先拿 `find` 找到，再**要是盒子里有东西，就把那样东西加工成一句话**装回盒子交回（用盒子上自带的那一手加工）。那句话的样子是\n\n```text\n那样东西 有 N 个字\n```\n\n- `N` 是**那样东西自己的**字数（不是名字的字数）；\n- 空盒子就一路空着回来。\n\n然后在 `main` 里对 `冻干` 和 `拖鞋` 各喊一次，印**两行** —— 印的时候**顺着盒子挂**（有东西就用盒子里那一句话，空盒子就用兜底那句：那个名字 + ` 不在柜子里`），**别自己另起一个分岔**去问空没空。\n\n比如柜子里放着 `鱼干`（货是 `三袋鱼干`）和 `猫粮`，另一样 `雨伞` 不在柜子里，印出来就该是\n\n```text\n三袋鱼干 有 4 个字\n雨伞 不在柜子里\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+      "starter": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"冻干\")) {\n            return Optional.of(\"一包冻干\");\n        }\n        if (key.equals(\"毛线球\")) {\n            return Optional.of(\"两个毛线球\");\n        }\n        return Optional.empty();\n    }\n\n    static Optional<String> report(String key) {\n        return find(key).map(s -> s + \" 有 \" + s.length() + \" 个字\");\n    }\n\n    public static void main(String[] args) {\n        System.out.println(report(\"冻干\").orElse(\"冻干 不在柜子里\"));\n        System.out.println(report(\"拖鞋\").orElse(\"拖鞋 不在柜子里\"));\n    }\n}\n",
+      "expectedOutput": "一包冻干 有 4 个字\n拖鞋 不在柜子里",
+      "stdin": null,
+      "explanation": "**一、`report` 这一招的名分是「盒子里装的是一句话」。** 它交回来的不是那样东西、也不是个数，而是**一句话**；找不到的时候交回的是一只**空盒子** —— 「没有」这件事照样写在名分上，用的人一眼看得见，就得当场交代。\n\n**二、加工那一手：`map`。** 它读作「**要是盒子里有东西，就对它动这一手**」—— 这里动的一手是把**那样东西**换成一句话。**字数数的是那样东西自己，不是名字**：货是 `三袋鱼干`，报出来就是 4 个字。盒子空着的时候它什么都不做，直接还一只空盒子回来 —— **空盒子一路自动空到底**。\n\n**三、最后一步顺着盒子挂。** `report` 后面接上 `.orElse(...)`，读作「盒子里有就用盒子里那句话；空盒子就用兜底这句」。**这两手一前一后，正好把两种情形都盖住了**，全程没自己另起分岔去问空没空。\n\n**四、要是自己另起分岔会怎样。** 最省事的写法（掏出来再说）撞上空盒子会当场炸；拿个数去顶空盒子，又会印成一句跟本来想说的一点都不像的话 —— 两样都跟该有的样子对不上。**盒子这一套的好处，就是逼着本喵把「没有」也一起想清楚。**\n\n一句话记住：**有东西就加工（`map`），没有就用兜底（`orElse`）—— 两句话都挂在盒子上说。**",
+      "templateId": "java-s3-05-length-report",
+      "params": {
+        "k1": "冻干",
+        "v1": "一包冻干",
+        "k2": "毛线球",
+        "v2": "两个毛线球",
+        "k3": "拖鞋"
+      },
+      "verified": {
+        "at": "2026-09-16T11:44:23.391Z",
+        "hash": "5b3b33e9fe446ea5"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-return-null-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一招 `find`：名分上写着「叼回来的是一只**盒子**」（可能有、可能没有）喵。\n\n可它**一跑就当场炸了** —— 第一行印出来了，第二行刚跑到就炸。红字里说：叫不动那一手，因为 `find` 交回来的东西是**空的**（原话那句 `because the return value of \"Main.find(String)\" is null`）。\n\n你帮本喵看看：**没找到的那条路，本喵交回的是什么**。\n\n改好之后它该印**两行**：\n\n```text\n一个罐头\n啥也没有\n```\n\n名字、货、和用盒子那两句都别去改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"罐头\")) {\n            return Optional.of(\"一个罐头\");\n        }\n        return null;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(find(\"罐头\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+      "referenceFix": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"罐头\")) {\n            return Optional.of(\"一个罐头\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        System.out.println(find(\"罐头\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+      "expectedOutput": "一个罐头\n啥也没有",
+      "stdin": null,
+      "explanation": "**一、红字怎么念。** `Cannot invoke ... because the return value of \"Main.find(String)\" is null` 直译是「**叫不动那一手，因为 `find` 交回来的东西是空的**」。翻译官喵说得很准：毛病不在用盒子那两句上，在**交回来的东西**上。\n\n**二、错在哪：名分上写着盒子，交回来的却是空东西。** `find` 的名分上写得清清楚楚：叼回来的是一只**盒子**（可能有、可能没有）。可没找到那条路上，本喵交回的是一个**空东西** —— 拿名分跟货一对，**货不对板**：说好交盒子的，结果交了个空气。用的人照着名分去开盒，一开就炸。\n\n**三、为什么这比别处更阴。** 名分本来是本课最值钱的东西 —— 它把「可能没有」**写在明处**，用的人一眼看得见、就得交代一句。可名分上说盒子、货却是空的，**这个承诺就成了假的**：用的人照着它写，写的时候一点毛病都没有，跑起来才炸。\n\n**四、改法：交回一只真盒子。** 没找到那条路别交空东西，交回**一只空盒子**（`Optional.empty()`）。空盒子和空东西**长得像、意思正好相反**：空盒子是「本喵找过了，没有」这件**写在名分里的事实**；空东西只是「这儿什么都没有」，什么也没交代。\n\n一句话记住：**名分上写了盒子，就一条路都不许交空东西 —— 没找到也交一只空盒子。**",
+      "templateId": "java-s3-05-return-null",
+      "params": {
+        "w": "罐头",
+        "v": "一个罐头"
+      },
+      "verified": {
+        "at": "2026-09-16T11:43:31.896Z",
+        "hash": "1069d6e5845a391f"
+      }
+    },
+    {
+      "id": "bank-java-s3-05-return-null-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一招 `find`：名分上写着「叼回来的是一只**盒子**」（可能有、可能没有）喵。\n\n可它**一跑就当场炸了** —— 第一行印出来了，第二行刚跑到就炸。红字里说：叫不动那一手，因为 `find` 交回来的东西是**空的**（原话那句 `because the return value of \"Main.find(String)\" is null`）。\n\n你帮本喵看看：**没找到的那条路，本喵交回的是什么**。\n\n改好之后它该印**两行**：\n\n```text\n两根猫条\n啥也没有\n```\n\n名字、货、和用盒子那两句都别去改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"猫条\")) {\n            return Optional.of(\"两根猫条\");\n        }\n        return null;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(find(\"猫条\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+      "referenceFix": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"猫条\")) {\n            return Optional.of(\"两根猫条\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        System.out.println(find(\"猫条\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+      "expectedOutput": "两根猫条\n啥也没有",
+      "stdin": null,
+      "explanation": "**一、红字怎么念。** `Cannot invoke ... because the return value of \"Main.find(String)\" is null` 直译是「**叫不动那一手，因为 `find` 交回来的东西是空的**」。翻译官喵说得很准：毛病不在用盒子那两句上，在**交回来的东西**上。\n\n**二、错在哪：名分上写着盒子，交回来的却是空东西。** `find` 的名分上写得清清楚楚：叼回来的是一只**盒子**（可能有、可能没有）。可没找到那条路上，本喵交回的是一个**空东西** —— 拿名分跟货一对，**货不对板**：说好交盒子的，结果交了个空气。用的人照着名分去开盒，一开就炸。\n\n**三、为什么这比别处更阴。** 名分本来是本课最值钱的东西 —— 它把「可能没有」**写在明处**，用的人一眼看得见、就得交代一句。可名分上说盒子、货却是空的，**这个承诺就成了假的**：用的人照着它写，写的时候一点毛病都没有，跑起来才炸。\n\n**四、改法：交回一只真盒子。** 没找到那条路别交空东西，交回**一只空盒子**（`Optional.empty()`）。空盒子和空东西**长得像、意思正好相反**：空盒子是「本喵找过了，没有」这件**写在名分里的事实**；空东西只是「这儿什么都没有」，什么也没交代。\n\n一句话记住：**名分上写了盒子，就一条路都不许交空东西 —— 没找到也交一只空盒子。**",
+      "templateId": "java-s3-05-return-null",
+      "params": {
+        "w": "猫条",
+        "v": "两根猫条"
+      },
+      "verified": {
+        "at": "2026-09-16T11:43:33.454Z",
+        "hash": "73808d3bf23fea20"
+      }
+    },
+    {
+      "id": "bank-java-s3-optional-first-big-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要去柜子里找**第一件不小于 5** 的东西喵。麻烦在于：**很可能一件都找不到** —— 这件事得写在名分上，别瞒着用的人。\n\n请你写一招去找：\n\n- 收的是柜子和那个门槛；\n- 找到了就把它**装进盒子**交回来；\n- **一件都没找到**就交回一只**空盒子**（不许交回空东西）。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。把它们收进柜子、找完之后，印两行：\n\n```text\n柜子里有 N 件\n第一件够大的是：X\n```\n\n- `N` 是件数；\n- `X` 是找到的那一件；**要是空盒子**，就用兜底那一手报 `0`。\n\n比如投喂给程序的是\n\n3\n1\n7\n6\n\n程序就要叼回\n\n柜子里有 3 件\n第一件够大的是：7\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.Scanner;\n\npublic class Main {\n    static Optional<Integer> firstBig(List<Integer> box, int t) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.Scanner;\n\npublic class Main {\n    static Optional<Integer> firstBig(List<Integer> box, int t) {\n        for (int x : box) {\n            if (x >= t) {\n                return Optional.of(x);\n            }\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n        Optional<Integer> found = firstBig(box, 5);\n        System.out.println(\"柜子里有 \" + box.size() + \" 件\");\n        System.out.println(\"第一件够大的是：\" + found.orElse(0));\n    }\n}\n",
+      "expectedOutput": "柜子里有 3 件\n第一件够大的是：6",
+      "stdin": "3\n1\n4\n6\n",
+      "explanation": "这题的关键根本不是「怎么找」，是**「可能找不到」这件事写在了哪里**喵。\n\n**一、找的那一招名分上就写着「可能没有」。** 它叼回来的是一只**盒子**（`Optional<Integer>`），不是一件东西。这一句话就把「可能有、可能没有」摆到明处了：谁来用这一招，**看一眼名分就知道要交代一句「没有怎么办」**，不用翻文档、也不用打听。\n\n**二、找到和没找到，两条出口都得有。** 绕圈里一碰上够大的，就把它装进盒子直接交回去（`return Optional.of(x)`）；绕完一圈都没碰上，就交回一只空盒子（`return Optional.empty()`）。**绝对不能**在找不到的时候交回一个空东西 —— 那正是本课开头那种一碰就炸的写法，而且它把这个麻烦**甩给了调用的人**。\n\n**三、用的时候当场交代兜底。** `found.orElse(0)` 读作「盒子里有就用盒子里的，空盒子就用 `0`」。这一句是**用的人**的责任：他拿着盒子用，就必须说清楚空了怎么办。本喵说清楚了，所以这行代码从头到尾一次都不会炸。\n\n**四、有没有更进一步的写法。** 本课还教过：要**对盒子里的东西动一手**再交出去，用盒子上自带的那手 `map`；要**只在有东西的时候才做点什么**，用 `ifPresent`。它们的好处是「空盒子」会**一路自动传下去**，本喵不用每一层都手动判一次。这题印出来的那两行都在「拿出来用」这一步，所以 `orElse` 这一手最直接。\n\n**五、为什么 `orElse(0)` 里的 0 不撞车。** 投喂给程序的数都是正的，所以 `0` 一定是「没找到」的意思，不会跟真找到的混起来。挑兜底值时记得看一眼值域 —— 要是投喂的数可能是 0，就得换个别的方式报「没找到」喵。\n\n一句话记住：**「可能没有」不是心里的秘密，是写在名分上的承诺** —— 写上了，用的人就必须交代；交代了，红字就没机会出现。",
+      "templateId": "java-s3-optional-first-big",
+      "params": {
+        "n": 3,
+        "t": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:51:18.892Z",
+        "hash": "6c20b065a8e37e59"
+      }
+    },
+    {
+      "id": "bank-java-s3-optional-first-big-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要去柜子里找**第一件不小于 6** 的东西喵。麻烦在于：**很可能一件都找不到** —— 这件事得写在名分上，别瞒着用的人。\n\n请你写一招去找：\n\n- 收的是柜子和那个门槛；\n- 找到了就把它**装进盒子**交回来；\n- **一件都没找到**就交回一只**空盒子**（不许交回空东西）。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。把它们收进柜子、找完之后，印两行：\n\n```text\n柜子里有 N 件\n第一件够大的是：X\n```\n\n- `N` 是件数；\n- `X` 是找到的那一件；**要是空盒子**，就用兜底那一手报 `0`。\n\n比如投喂给程序的是\n\n3\n4\n8\n3\n\n程序就要叼回\n\n柜子里有 3 件\n第一件够大的是：8\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.Scanner;\n\npublic class Main {\n    static Optional<Integer> firstBig(List<Integer> box, int t) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.Scanner;\n\npublic class Main {\n    static Optional<Integer> firstBig(List<Integer> box, int t) {\n        for (int x : box) {\n            if (x >= t) {\n                return Optional.of(x);\n            }\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n        Optional<Integer> found = firstBig(box, 6);\n        System.out.println(\"柜子里有 \" + box.size() + \" 件\");\n        System.out.println(\"第一件够大的是：\" + found.orElse(0));\n    }\n}\n",
+      "expectedOutput": "柜子里有 3 件\n第一件够大的是：7",
+      "stdin": "3\n2\n7\n7\n",
+      "explanation": "这题的关键根本不是「怎么找」，是**「可能找不到」这件事写在了哪里**喵。\n\n**一、找的那一招名分上就写着「可能没有」。** 它叼回来的是一只**盒子**（`Optional<Integer>`），不是一件东西。这一句话就把「可能有、可能没有」摆到明处了：谁来用这一招，**看一眼名分就知道要交代一句「没有怎么办」**，不用翻文档、也不用打听。\n\n**二、找到和没找到，两条出口都得有。** 绕圈里一碰上够大的，就把它装进盒子直接交回去（`return Optional.of(x)`）；绕完一圈都没碰上，就交回一只空盒子（`return Optional.empty()`）。**绝对不能**在找不到的时候交回一个空东西 —— 那正是本课开头那种一碰就炸的写法，而且它把这个麻烦**甩给了调用的人**。\n\n**三、用的时候当场交代兜底。** `found.orElse(0)` 读作「盒子里有就用盒子里的，空盒子就用 `0`」。这一句是**用的人**的责任：他拿着盒子用，就必须说清楚空了怎么办。本喵说清楚了，所以这行代码从头到尾一次都不会炸。\n\n**四、有没有更进一步的写法。** 本课还教过：要**对盒子里的东西动一手**再交出去，用盒子上自带的那手 `map`；要**只在有东西的时候才做点什么**，用 `ifPresent`。它们的好处是「空盒子」会**一路自动传下去**，本喵不用每一层都手动判一次。这题印出来的那两行都在「拿出来用」这一步，所以 `orElse` 这一手最直接。\n\n**五、为什么 `orElse(0)` 里的 0 不撞车。** 投喂给程序的数都是正的，所以 `0` 一定是「没找到」的意思，不会跟真找到的混起来。挑兜底值时记得看一眼值域 —— 要是投喂的数可能是 0，就得换个别的方式报「没找到」喵。\n\n一句话记住：**「可能没有」不是心里的秘密，是写在名分上的承诺** —— 写上了，用的人就必须交代；交代了，红字就没机会出现。",
+      "templateId": "java-s3-optional-first-big",
+      "params": {
+        "n": 3,
+        "t": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:15.476Z",
+        "hash": "e3c404b1e6edcac2"
+      }
+    },
+    {
+      "id": "bank-java-s3-optional-first-big-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要去柜子里找**第一件不小于 5** 的东西喵。麻烦在于：**很可能一件都找不到** —— 这件事得写在名分上，别瞒着用的人。\n\n请你写一招去找：\n\n- 收的是柜子和那个门槛；\n- 找到了就把它**装进盒子**交回来；\n- **一件都没找到**就交回一只**空盒子**（不许交回空东西）。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。把它们收进柜子、找完之后，印两行：\n\n```text\n柜子里有 N 件\n第一件够大的是：X\n```\n\n- `N` 是件数；\n- `X` 是找到的那一件；**要是空盒子**，就用兜底那一手报 `0`。\n\n比如投喂给程序的是\n\n4\n2\n6\n9\n4\n\n程序就要叼回\n\n柜子里有 4 件\n第一件够大的是：6\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.Scanner;\n\npublic class Main {\n    static Optional<Integer> firstBig(List<Integer> box, int t) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.Scanner;\n\npublic class Main {\n    static Optional<Integer> firstBig(List<Integer> box, int t) {\n        for (int x : box) {\n            if (x >= t) {\n                return Optional.of(x);\n            }\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n        Optional<Integer> found = firstBig(box, 5);\n        System.out.println(\"柜子里有 \" + box.size() + \" 件\");\n        System.out.println(\"第一件够大的是：\" + found.orElse(0));\n    }\n}\n",
+      "expectedOutput": "柜子里有 4 件\n第一件够大的是：5",
+      "stdin": "4\n2\n5\n6\n8\n",
+      "explanation": "这题的关键根本不是「怎么找」，是**「可能找不到」这件事写在了哪里**喵。\n\n**一、找的那一招名分上就写着「可能没有」。** 它叼回来的是一只**盒子**（`Optional<Integer>`），不是一件东西。这一句话就把「可能有、可能没有」摆到明处了：谁来用这一招，**看一眼名分就知道要交代一句「没有怎么办」**，不用翻文档、也不用打听。\n\n**二、找到和没找到，两条出口都得有。** 绕圈里一碰上够大的，就把它装进盒子直接交回去（`return Optional.of(x)`）；绕完一圈都没碰上，就交回一只空盒子（`return Optional.empty()`）。**绝对不能**在找不到的时候交回一个空东西 —— 那正是本课开头那种一碰就炸的写法，而且它把这个麻烦**甩给了调用的人**。\n\n**三、用的时候当场交代兜底。** `found.orElse(0)` 读作「盒子里有就用盒子里的，空盒子就用 `0`」。这一句是**用的人**的责任：他拿着盒子用，就必须说清楚空了怎么办。本喵说清楚了，所以这行代码从头到尾一次都不会炸。\n\n**四、有没有更进一步的写法。** 本课还教过：要**对盒子里的东西动一手**再交出去，用盒子上自带的那手 `map`；要**只在有东西的时候才做点什么**，用 `ifPresent`。它们的好处是「空盒子」会**一路自动传下去**，本喵不用每一层都手动判一次。这题印出来的那两行都在「拿出来用」这一步，所以 `orElse` 这一手最直接。\n\n**五、为什么 `orElse(0)` 里的 0 不撞车。** 投喂给程序的数都是正的，所以 `0` 一定是「没找到」的意思，不会跟真找到的混起来。挑兜底值时记得看一眼值域 —— 要是投喂的数可能是 0，就得换个别的方式报「没找到」喵。\n\n一句话记住：**「可能没有」不是心里的秘密，是写在名分上的承诺** —— 写上了，用的人就必须交代；交代了，红字就没机会出现。",
+      "templateId": "java-s3-optional-first-big",
+      "params": {
+        "n": 4,
+        "t": 5
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:18.690Z",
+        "hash": "02d82df7839ae4ff"
+      }
+    },
+    {
+      "id": "bank-java-s3-optional-first-big-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要去柜子里找**第一件不小于 6** 的东西喵。麻烦在于：**很可能一件都找不到** —— 这件事得写在名分上，别瞒着用的人。\n\n请你写一招去找：\n\n- 收的是柜子和那个门槛；\n- 找到了就把它**装进盒子**交回来；\n- **一件都没找到**就交回一只**空盒子**（不许交回空东西）。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。把它们收进柜子、找完之后，印两行：\n\n```text\n柜子里有 N 件\n第一件够大的是：X\n```\n\n- `N` 是件数；\n- `X` 是找到的那一件；**要是空盒子**，就用兜底那一手报 `0`。\n\n比如投喂给程序的是\n\n4\n3\n8\n2\n2\n\n程序就要叼回\n\n柜子里有 4 件\n第一件够大的是：8\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.Scanner;\n\npublic class Main {\n    static Optional<Integer> firstBig(List<Integer> box, int t) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Optional;\nimport java.util.Scanner;\n\npublic class Main {\n    static Optional<Integer> firstBig(List<Integer> box, int t) {\n        for (int x : box) {\n            if (x >= t) {\n                return Optional.of(x);\n            }\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n        Optional<Integer> found = firstBig(box, 6);\n        System.out.println(\"柜子里有 \" + box.size() + \" 件\");\n        System.out.println(\"第一件够大的是：\" + found.orElse(0));\n    }\n}\n",
+      "expectedOutput": "柜子里有 4 件\n第一件够大的是：6",
+      "stdin": "4\n6\n6\n2\n5\n",
+      "explanation": "这题的关键根本不是「怎么找」，是**「可能找不到」这件事写在了哪里**喵。\n\n**一、找的那一招名分上就写着「可能没有」。** 它叼回来的是一只**盒子**（`Optional<Integer>`），不是一件东西。这一句话就把「可能有、可能没有」摆到明处了：谁来用这一招，**看一眼名分就知道要交代一句「没有怎么办」**，不用翻文档、也不用打听。\n\n**二、找到和没找到，两条出口都得有。** 绕圈里一碰上够大的，就把它装进盒子直接交回去（`return Optional.of(x)`）；绕完一圈都没碰上，就交回一只空盒子（`return Optional.empty()`）。**绝对不能**在找不到的时候交回一个空东西 —— 那正是本课开头那种一碰就炸的写法，而且它把这个麻烦**甩给了调用的人**。\n\n**三、用的时候当场交代兜底。** `found.orElse(0)` 读作「盒子里有就用盒子里的，空盒子就用 `0`」。这一句是**用的人**的责任：他拿着盒子用，就必须说清楚空了怎么办。本喵说清楚了，所以这行代码从头到尾一次都不会炸。\n\n**四、有没有更进一步的写法。** 本课还教过：要**对盒子里的东西动一手**再交出去，用盒子上自带的那手 `map`；要**只在有东西的时候才做点什么**，用 `ifPresent`。它们的好处是「空盒子」会**一路自动传下去**，本喵不用每一层都手动判一次。这题印出来的那两行都在「拿出来用」这一步，所以 `orElse` 这一手最直接。\n\n**五、为什么 `orElse(0)` 里的 0 不撞车。** 投喂给程序的数都是正的，所以 `0` 一定是「没找到」的意思，不会跟真找到的混起来。挑兜底值时记得看一眼值域 —— 要是投喂的数可能是 0，就得换个别的方式报「没找到」喵。\n\n一句话记住：**「可能没有」不是心里的秘密，是写在名分上的承诺** —— 写上了，用的人就必须交代；交代了，红字就没机会出现。",
+      "templateId": "java-s3-optional-first-big",
+      "params": {
+        "n": 4,
+        "t": 6
+      },
+      "verified": {
+        "at": "2026-09-16T08:51:20.842Z",
+        "hash": "192406fd3578ca2c"
+      }
+    },
+    {
+      "id": "bank-java-s3-optional-of-null-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一段小代码，想把「兜里可能是空的」这种情况用盒子接住，空了就报一句兜底的话喵。\n\n可它**一跑就当场炸了** —— 连第一行都没印出来。\n\n你帮本喵看看：那只盒子是**怎么装进去的**。装的时候用错了哪一手？把它改好。\n\n改好之后它该印**三行**：\n\n- 第一行是兜底那句话；\n- 第二行是本喵要找的那样东西；\n- 第三行还是兜底那句话（因为要找的那样东西**不在这里**）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑；那两样字都是固定死的，别去改它们。）",
+      "brokenCode": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"鱼干\")) {\n            return Optional.of(\"三袋鱼干\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        String maybe = null;\n        System.out.println(Optional.of(maybe).orElse(\"兜里是空的\"));\n        System.out.println(find(\"鱼干\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+      "referenceFix": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"鱼干\")) {\n            return Optional.of(\"三袋鱼干\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        String maybe = null;\n        System.out.println(Optional.ofNullable(maybe).orElse(\"兜里是空的\"));\n        System.out.println(find(\"鱼干\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+      "expectedOutput": "兜里是空的\n三袋鱼干\n啥也没有",
+      "stdin": null,
+      "explanation": "这题把本课最容易被绊倒的那一手演了一遍喵：**装箱的那两手，脾气完全不一样。**\n\n**一、`Optional.of(...)` 是「严厉」那一手。** 它的意思是「本喵拿命担保，这里头的东西**一定不是空的**」。所以本喵把一个**真的是空**的东西递给它，它当场翻脸，扔出一个 `NullPointerException` 从里面冒出来 —— 而且注意：它是**在装箱那一步就炸的**，不是等到后面用的时候。所以第一行都没印出来。\n\n**二、炸出来的红字还指得很准。** 那串名字里有一句 `Objects.requireNonNull` —— 念作「本喵要求这东西不是空的」，就是它干的。看见这一句，就知道问题出在「拿空东西去撞严厉那一手」，而不是别的地方。\n\n**三、`Optional.ofNullable(...)` 才是「宽容」那一手。** 它读作「装了，要是空的就给我一只空盒子」。本喵这里兜里正好是空的，于是它老老实实交回一只**空盒子** —— 不炸。后面 `.orElse(\"兜里是空的\")` 一看盒子是空的，就报出兜底那句话。\n\n**四、另一半没坏，一个字都别动。** 第二个 `find(\"鱼干\")` 里用的是严厉那一手，可它**递进去的东西真的不是空的**（开头已经跟 `鱼干` 比过了），所以那一手用在那儿完全没问题。这也是本课要分清的地方：**不是严厉那一手不能用，而是别拿空东西去撞它。**\n\n**五、盒子的价值在哪。** 「兜里可能是空的」这件事，从前只能靠本喵心里记着，忘了就是一行红字；现在它**明明白白写在名分上**了（叼回来的是一只盒子），用的时候必须当场交代一句「空了怎么办」。红字就从「不知道哪一行」提前到了「写的时候就想清楚」喵。",
+      "templateId": "java-s3-optional-of-null",
+      "params": {
+        "w": "鱼干",
+        "v": "三袋鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T08:51:14.173Z",
+        "hash": "97cf13e9b91f38f6"
+      }
+    },
+    {
+      "id": "bank-java-s3-optional-of-null-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一段小代码，想把「兜里可能是空的」这种情况用盒子接住，空了就报一句兜底的话喵。\n\n可它**一跑就当场炸了** —— 连第一行都没印出来。\n\n你帮本喵看看：那只盒子是**怎么装进去的**。装的时候用错了哪一手？把它改好。\n\n改好之后它该印**三行**：\n\n- 第一行是兜底那句话；\n- 第二行是本喵要找的那样东西；\n- 第三行还是兜底那句话（因为要找的那样东西**不在这里**）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑；那两样字都是固定死的，别去改它们。）",
+      "brokenCode": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"猫粮\")) {\n            return Optional.of(\"两袋猫粮\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        String maybe = null;\n        System.out.println(Optional.of(maybe).orElse(\"兜里是空的\"));\n        System.out.println(find(\"猫粮\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+      "referenceFix": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"猫粮\")) {\n            return Optional.of(\"两袋猫粮\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        String maybe = null;\n        System.out.println(Optional.ofNullable(maybe).orElse(\"兜里是空的\"));\n        System.out.println(find(\"猫粮\").orElse(\"啥也没有\"));\n        System.out.println(find(\"别的\").orElse(\"啥也没有\"));\n    }\n}\n",
+      "expectedOutput": "兜里是空的\n两袋猫粮\n啥也没有",
+      "stdin": null,
+      "explanation": "这题把本课最容易被绊倒的那一手演了一遍喵：**装箱的那两手，脾气完全不一样。**\n\n**一、`Optional.of(...)` 是「严厉」那一手。** 它的意思是「本喵拿命担保，这里头的东西**一定不是空的**」。所以本喵把一个**真的是空**的东西递给它，它当场翻脸，扔出一个 `NullPointerException` 从里面冒出来 —— 而且注意：它是**在装箱那一步就炸的**，不是等到后面用的时候。所以第一行都没印出来。\n\n**二、炸出来的红字还指得很准。** 那串名字里有一句 `Objects.requireNonNull` —— 念作「本喵要求这东西不是空的」，就是它干的。看见这一句，就知道问题出在「拿空东西去撞严厉那一手」，而不是别的地方。\n\n**三、`Optional.ofNullable(...)` 才是「宽容」那一手。** 它读作「装了，要是空的就给我一只空盒子」。本喵这里兜里正好是空的，于是它老老实实交回一只**空盒子** —— 不炸。后面 `.orElse(\"兜里是空的\")` 一看盒子是空的，就报出兜底那句话。\n\n**四、另一半没坏，一个字都别动。** 第二个 `find(\"猫粮\")` 里用的是严厉那一手，可它**递进去的东西真的不是空的**（开头已经跟 `猫粮` 比过了），所以那一手用在那儿完全没问题。这也是本课要分清的地方：**不是严厉那一手不能用，而是别拿空东西去撞它。**\n\n**五、盒子的价值在哪。** 「兜里可能是空的」这件事，从前只能靠本喵心里记着，忘了就是一行红字；现在它**明明白白写在名分上**了（叼回来的是一只盒子），用的时候必须当场交代一句「空了怎么办」。红字就从「不知道哪一行」提前到了「写的时候就想清楚」喵。",
+      "templateId": "java-s3-optional-of-null",
+      "params": {
+        "w": "猫粮",
+        "v": "两袋猫粮"
+      },
+      "verified": {
+        "at": "2026-09-16T08:51:15.922Z",
+        "hash": "407bcaba0ca073eb"
+      }
+    }
+  ]
+}

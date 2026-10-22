@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-26-scope-forgot",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-26",
+  "type": "codefix",
+  "concept": ["大宅子的图纸", "招式挂在宅子名下", "图纸外面要报家门"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "本喵这座大宅子（`Tank`）里囤着一批货，**称总重**那一条招式在图纸里只报了个名，正文挪到图纸外面写了。\n\n可这一挪就出事了：**编不过** —— 翻译官喵拦在图纸外面那条招式上，原话里有 `non-member function` 和 `cannot have cv-qualifier`，念作「**这不是哪座宅子里的招式，只是个站在门口的路人**」。\n\n你帮本喵把它改对。比如投喂给程序的是：\n\n```text\n{sampleInput}\n```\n\n改好之后就要叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外一组数喵。）",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n\nclass Tank {\npublic:\n    void put(int w) {\n        weights.push_back(w);\n    }\n\n    int total() const;\n\nprivate:\n    std::vector<int> weights;\n};\n\nint total() const {\n    int s = 0;\n    for (int i = 0; i < static_cast<int>(weights.size()); i++) {\n        s += weights[i];\n    }\n    return s;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    Tank t;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        t.put(w);\n    }\n    std::cout << \"总重：\" << t.total() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n\nclass Tank {\npublic:\n    void put(int w) {\n        weights.push_back(w);\n    }\n\n    int total() const;\n\nprivate:\n    std::vector<int> weights;\n};\n\nint Tank::total() const {\n    int s = 0;\n    for (int i = 0; i < static_cast<int>(weights.size()); i++) {\n        s += weights[i];\n    }\n    return s;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    Tank t;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        t.put(w);\n    }\n    std::cout << \"总重：\" << t.total() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "坏在**图纸外面那条招式的门牌**上。\n\n图纸里那行 `int total() const;` 只算**报了个名**：它告诉翻译官喵「本宅子有这么一条招式，正文回头补」。正文真挪到图纸外面之后，开头必须先**报家门** —— `Tank::` —— 意思是「这是**大宅子 `Tank` 名下**的那条 `total`」。\n\n少了家门，它在翻译官喵眼里就是一条**站在门口散养的普通招式**：于是 `const`（表示「不许动宅子里的东西」的那半句）安在路人身上不合法（原话 `cannot have cv-qualifier`），正文里伸手摸 `weights` 也摸不着（原话 `was not declared in this scope`，念作「**这个名号我不认识**」）。\n\n改法就是把家门补上：\n\n```cpp\nint Tank::total() const {\n    ...\n}\n```\n\n记一句：**图纸里只报名，图纸外要报家门。** 正文挪出去不丢人，丢人的是忘了挂牌。\n\n⚠️ 这一条以后天天用：宅子越大，正文越会挪到单独的屋子里去写 —— 那个门牌就是「这条招式属于谁」的唯一凭据，报错里看见 `non-member`，先低头找门牌。"
+}

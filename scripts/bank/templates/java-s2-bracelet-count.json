@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-bracelet-count",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-07",
+  "type": "codewrite",
+  "concept": ["会自己长大的抽屉", "append", "toString", "length"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 4 },
+    "link": { "kind": "pick", "values": ["、", "，"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵今天要办一场到场登记喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（每只猫的号码牌，一行一个）。\n\n请用一根**会自己长大的抽屉**把这些号码接成一串 —— 号码之间用 `{link}` 隔开、**最后一个后面不要多余的隔开符** —— 然后印两行：\n\n1. `今天到了 ` + n + ` 个号：` + 接成的那一串\n2. `这串项链有 ` + 那一串的颗数 + ` 个字`\n\n最后那一串得**先从抽屉里倒成项链，再去数颗数**喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            if (i > 0) {\n                sb.append(\"{link}\");\n            }\n            sb.append(x);\n        }\n        String line = sb.toString();\n        System.out.println(\"今天到了 \" + n + \" 个号：\" + line);\n        System.out.println(\"这串项链有 \" + line.length() + \" 个字\");\n    }\n}\n",
+  "explanationTemplate": "这题是本课那句经验的正面用法喵：**要在一个绕圈的招式里反复接东西，就用抽屉。**\n\n**一、隔开符为什么要写在前面。** 抽屉里的写法是「不是第一个的时候，先塞一个隔开符，再塞号码」。要是反过来、塞完号码再补隔开符，那**最后一个号码后面会多出一个隔开符** —— 项链上白白长出一颗字，颗数也跟着多一，两行输出全错。这种错**没有红字**，只能靠自己盯。\n\n**二、抽屉怎么塞数。** `sb.append(x)` 里的 `x` 是光溜溜的数字，抽屉一样收 —— 它会把数字**照着念出来**塞进去。所以 `sb.append(5)` 塞进去的还是那颗 `5`，不用本喵先自己转一道。\n\n**三、倒出来才数。** 抽屉自己也有 `length()`，但它数的是**抽屉里攒了几颗**、跟项链长得一不一样是两回事。题目要的是那一串的颗数，所以规矩是**先 `toString()` 倒成项链，再对项链喊 `length()`**。\n\n**四、为什么这一题非得用抽屉。** 圈数只有两三圈的时候，拿 `line = line + x` 硬拼也能得到一模一样的结果 —— 差别在**窝里留下的半成品**：硬拼每圈都要串一条新项链、扔掉一条旧的；抽屉自始至终只有一根。圈数一多（比如把一整份名单接成一段话），硬拼那一堆半成品就堆成小山了。\n\n所以本喵的规矩是：**一次接两三个，直接 `+` 最舒服；要在绕圈里反复接，就换抽屉。**"
+}

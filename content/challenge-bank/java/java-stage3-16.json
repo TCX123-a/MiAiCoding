@@ -1,0 +1,240 @@
+{
+  "lessonId": "java-stage3-16",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-chain-not-started-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵要在绕圈里一条一条往小鱼干项链上接新鱼，一边接一边把**搬家的字符数**记下来。\n\n稿子写好了，可**翻译官**扫了一眼就把它打回来 —— 屏幕上红着一行字，说有一格**还没热身就被拿去用了**。这跟跑起来以后才炸不一样：翻译官压根不放它上跑道，一个数都不会印。\n\n你帮本喵把那一格补上：只加几个字符，别动别的。改好之后跑起来该印一行 —— 本喵记好啦，再加上搬了多少个字符、最后串上有多少条。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = 8;\n        long moved = 0;\n        String chain;\n        for (int i = 0; i < n; i++) {\n            moved += chain.length();\n            chain = chain + \"鱼\";\n        }\n        System.out.println(\"本喵记好啦：搬了 \" + moved + \" 个字符，接成 \" + chain.length() + \" 条\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = 8;\n        long moved = 0;\n        String chain = \"\";\n        for (int i = 0; i < n; i++) {\n            moved += chain.length();\n            chain = chain + \"鱼\";\n        }\n        System.out.println(\"本喵记好啦：搬了 \" + moved + \" 个字符，接成 \" + chain.length() + \" 条\");\n    }\n}\n",
+      "expectedOutput": "本喵记好啦：搬了 28 个字符，接成 8 条",
+      "stdin": null,
+      "explanation": "坏的那一处是 `String chain;` 那一行：本喵只**留了一个位置**，却没往里放东西，下一行就要问它「你现在多长」—— 问一个还没热身的位置，翻译官当场把它打回来：\n\n```text\nMain.java:7: error: variable chain might not have been initialized\n```\n\n那句英文念出来就是「**这个位置可能还没热身就被拿去用了**」。翻译官不许这种事发生：**读一个还没热身的位置，读出来的东西不是 0，而是「说不准」** —— 与其让它带着说不准的东西往下跑，不如现在就不放行。\n\n治法就是把位置和东西一起给：`String chain = \"\";` —— 空的一串也是**一串**，长度是 0，能问、能接。这一处改完，账就顺着跑出来了。\n\n借这道题记两件事，都跟**圈数**有关喵：\n\n1. **每一趟的活儿是「整串搬一次家」。** 第 1 趟搬 0 个字符（手上是空的）、第 2 趟搬 1 个、第 3 趟搬 2 个……第 n 趟搬 n - 1 个。加起来是 `0 + 1 + … + (n - 1)`，这个形状就是课文第二节那本「两两试」的账：n 一大，它长起来是**平方**的。\n2. **同一件事有一档更省的做法**：另一只容器手上有一块**预留的空地**，新的一条直接塞进空位，旧的一条不用抄。它一共只干 n 件事。所以「接一串」这件事，两种写法差着整整一档量级 —— 这是往后写代码最容易踩、也最容易省下来的一个坑。",
+      "templateId": "java-s3-chain-not-started",
+      "params": {
+        "n": 8,
+        "word": "本喵记好啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:29.759Z",
+        "hash": "7489e7189d0701c6"
+      }
+    },
+    {
+      "id": "bank-java-s3-chain-not-started-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵要在绕圈里一条一条往小鱼干项链上接新鱼，一边接一边把**搬家的字符数**记下来。\n\n稿子写好了，可**翻译官**扫了一眼就把它打回来 —— 屏幕上红着一行字，说有一格**还没热身就被拿去用了**。这跟跑起来以后才炸不一样：翻译官压根不放它上跑道，一个数都不会印。\n\n你帮本喵把那一格补上：只加几个字符，别动别的。改好之后跑起来该印一行 —— 本喵算好啦，再加上搬了多少个字符、最后串上有多少条。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = 9;\n        long moved = 0;\n        String chain;\n        for (int i = 0; i < n; i++) {\n            moved += chain.length();\n            chain = chain + \"鱼\";\n        }\n        System.out.println(\"本喵算好啦：搬了 \" + moved + \" 个字符，接成 \" + chain.length() + \" 条\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = 9;\n        long moved = 0;\n        String chain = \"\";\n        for (int i = 0; i < n; i++) {\n            moved += chain.length();\n            chain = chain + \"鱼\";\n        }\n        System.out.println(\"本喵算好啦：搬了 \" + moved + \" 个字符，接成 \" + chain.length() + \" 条\");\n    }\n}\n",
+      "expectedOutput": "本喵算好啦：搬了 36 个字符，接成 9 条",
+      "stdin": null,
+      "explanation": "坏的那一处是 `String chain;` 那一行：本喵只**留了一个位置**，却没往里放东西，下一行就要问它「你现在多长」—— 问一个还没热身的位置，翻译官当场把它打回来：\n\n```text\nMain.java:7: error: variable chain might not have been initialized\n```\n\n那句英文念出来就是「**这个位置可能还没热身就被拿去用了**」。翻译官不许这种事发生：**读一个还没热身的位置，读出来的东西不是 0，而是「说不准」** —— 与其让它带着说不准的东西往下跑，不如现在就不放行。\n\n治法就是把位置和东西一起给：`String chain = \"\";` —— 空的一串也是**一串**，长度是 0，能问、能接。这一处改完，账就顺着跑出来了。\n\n借这道题记两件事，都跟**圈数**有关喵：\n\n1. **每一趟的活儿是「整串搬一次家」。** 第 1 趟搬 0 个字符（手上是空的）、第 2 趟搬 1 个、第 3 趟搬 2 个……第 n 趟搬 n - 1 个。加起来是 `0 + 1 + … + (n - 1)`，这个形状就是课文第二节那本「两两试」的账：n 一大，它长起来是**平方**的。\n2. **同一件事有一档更省的做法**：另一只容器手上有一块**预留的空地**，新的一条直接塞进空位，旧的一条不用抄。它一共只干 n 件事。所以「接一串」这件事，两种写法差着整整一档量级 —— 这是往后写代码最容易踩、也最容易省下来的一个坑。",
+      "templateId": "java-s3-chain-not-started",
+      "params": {
+        "n": 9,
+        "word": "本喵算好啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:30.973Z",
+        "hash": "9ac5c05c31cb1496"
+      }
+    },
+    {
+      "id": "bank-java-s3-chain-vs-builder-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要用**两种写法**接同一串小鱼干项链（每接一条都是一句话的功夫），然后把两本账都记下来喵：\n\n1. **直接拼**：每接一条都另开一串新的，把手上那一串**整个抄过去**再挂上新的一条 —— 抄掉的字符数记在账上；\n2. **会自己长大的那只**：它手上有一块**预留的空地**，新的一条直接塞进空位，旧的一条都不用抄 —— 塞的次数记在账上。\n\n投喂给程序的是：**一行一个数 n**（要接多少条）。请它印四行：\n\n```text\n本喵接好啦\n直接拼搬了 A 个字符\n会自己长大的塞了 B 次\n两边一样长：true\n```\n\n- 第一行把 本喵接好啦 **原样**印出来；\n- `A` 是第一种写法抄掉的字符总数；\n- `B` 是第二种写法塞的次数；\n- 第四行把那两串的**长度一样不一样**直接印出来（会是 `true`，照印就好）。\n\n比如投喂给程序的是\n\n6\n\n程序就要叼回\n\n本喵接好啦\n直接拼搬了 15 个字符\n会自己长大的塞了 6 次\n两边一样长：true\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        long moved = 0;\n        String chain = \"\";\n        for (int i = 0; i < n; i++) {\n            moved += chain.length();\n            chain = chain + \"鱼\";\n        }\n\n        StringBuilder fast = new StringBuilder();\n        int puts = 0;\n        for (int i = 0; i < n; i++) {\n            fast.append(\"鱼\");\n            puts++;\n        }\n\n        System.out.println(\"本喵接好啦\");\n        System.out.println(\"直接拼搬了 \" + moved + \" 个字符\");\n        System.out.println(\"会自己长大的塞了 \" + puts + \" 次\");\n        System.out.println(\"两边一样长：\" + (chain.length() == fast.length()));\n    }\n}\n",
+      "expectedOutput": "本喵接好啦\n直接拼搬了 21 个字符\n会自己长大的塞了 7 次\n两边一样长：true",
+      "stdin": "7\n",
+      "explanation": "这道题把课文第六节那笔账**自己算了一遍** —— 值得对着四行输出多看两眼喵。\n\n**第一本账是「搬家」的账。** 第一种写法每接一条都要把手上那一串整个抄走，所以第 1 趟抄 0 个（手上还是空的）、第 2 趟抄 1 个、第 3 趟抄 2 个……第 n 趟抄 n - 1 个。加起来是 `0 + 1 + … + (n - 1)`。本喵真按过这个数：n 是 1024 时，这一本账是 **523776** —— 跟课文第二节「两两试」那本账是同一个形状，也就是同一个量级。\n\n**第二本账是「塞」的账。** 另一只手上有一块预留的空地，塞进去一条就占一格，旧的一条都不用搬，所以它一共只干 n 件事。n 是 1024 时这本账就是 **1024**。\n\n**同一个需求、两种写法：一本账是 n 的平方那个形状，另一本只是 n。** 这就是第六节想让你亲眼看见的那件事。\n\n最后一行那个「一样长」不是凑数的：它证明两种写法接出来的是**同一串东西** —— 不是「快的写法偷工减料」，而是「干同一件事，一种写法的账大得多」。这一点很要紧：往后挑写法的时候，先看结果一不一样，再看账差多少喵。",
+      "templateId": "java-s3-chain-vs-builder",
+      "params": {
+        "word": "本喵接好啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:32.762Z",
+        "hash": "2e95115b1d46923c"
+      }
+    },
+    {
+      "id": "bank-java-s3-chain-vs-builder-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要用**两种写法**接同一串小鱼干项链（每接一条都是一句话的功夫），然后把两本账都记下来喵：\n\n1. **直接拼**：每接一条都另开一串新的，把手上那一串**整个抄过去**再挂上新的一条 —— 抄掉的字符数记在账上；\n2. **会自己长大的那只**：它手上有一块**预留的空地**，新的一条直接塞进空位，旧的一条都不用抄 —— 塞的次数记在账上。\n\n投喂给程序的是：**一行一个数 n**（要接多少条）。请它印四行：\n\n```text\n本喵记好啦\n直接拼搬了 A 个字符\n会自己长大的塞了 B 次\n两边一样长：true\n```\n\n- 第一行把 本喵记好啦 **原样**印出来；\n- `A` 是第一种写法抄掉的字符总数；\n- `B` 是第二种写法塞的次数；\n- 第四行把那两串的**长度一样不一样**直接印出来（会是 `true`，照印就好）。\n\n比如投喂给程序的是\n\n7\n\n程序就要叼回\n\n本喵记好啦\n直接拼搬了 21 个字符\n会自己长大的塞了 7 次\n两边一样长：true\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        long moved = 0;\n        String chain = \"\";\n        for (int i = 0; i < n; i++) {\n            moved += chain.length();\n            chain = chain + \"鱼\";\n        }\n\n        StringBuilder fast = new StringBuilder();\n        int puts = 0;\n        for (int i = 0; i < n; i++) {\n            fast.append(\"鱼\");\n            puts++;\n        }\n\n        System.out.println(\"本喵记好啦\");\n        System.out.println(\"直接拼搬了 \" + moved + \" 个字符\");\n        System.out.println(\"会自己长大的塞了 \" + puts + \" 次\");\n        System.out.println(\"两边一样长：\" + (chain.length() == fast.length()));\n    }\n}\n",
+      "expectedOutput": "本喵记好啦\n直接拼搬了 15 个字符\n会自己长大的塞了 6 次\n两边一样长：true",
+      "stdin": "6\n",
+      "explanation": "这道题把课文第六节那笔账**自己算了一遍** —— 值得对着四行输出多看两眼喵。\n\n**第一本账是「搬家」的账。** 第一种写法每接一条都要把手上那一串整个抄走，所以第 1 趟抄 0 个（手上还是空的）、第 2 趟抄 1 个、第 3 趟抄 2 个……第 n 趟抄 n - 1 个。加起来是 `0 + 1 + … + (n - 1)`。本喵真按过这个数：n 是 1024 时，这一本账是 **523776** —— 跟课文第二节「两两试」那本账是同一个形状，也就是同一个量级。\n\n**第二本账是「塞」的账。** 另一只手上有一块预留的空地，塞进去一条就占一格，旧的一条都不用搬，所以它一共只干 n 件事。n 是 1024 时这本账就是 **1024**。\n\n**同一个需求、两种写法：一本账是 n 的平方那个形状，另一本只是 n。** 这就是第六节想让你亲眼看见的那件事。\n\n最后一行那个「一样长」不是凑数的：它证明两种写法接出来的是**同一串东西** —— 不是「快的写法偷工减料」，而是「干同一件事，一种写法的账大得多」。这一点很要紧：往后挑写法的时候，先看结果一不一样，再看账差多少喵。",
+      "templateId": "java-s3-chain-vs-builder",
+      "params": {
+        "word": "本喵记好啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:34.323Z",
+        "hash": "f219e6751e8ef321"
+      }
+    },
+    {
+      "id": "bank-java-s3-count-both-laps-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要用**同一排碗**、**同一件小活儿**，把两本账都记一遍喵：\n\n1. **挨个摸一遍**：从头到尾走一趟；\n2. **两两试**：每一对都试一遍 —— 外面那只挨个按下去，里面那只从它**下一位**开始往后试。\n\n投喂给程序的是：**一行一个数 n**（碗的只数）。两本账都记完之后，印三行：\n\n```text\n本喵记好啦\n挨个摸一遍 X 圈\n两两试 Y 圈\n```\n\n- 第一行把 本喵记好啦 **原样**印出来；\n- `X` 是第一本账走完的圈数；\n- `Y` 是第二本账走完的圈数。\n\n比如投喂给程序的是\n\n4\n\n程序就要叼回\n\n本喵记好啦\n挨个摸一遍 4 圈\n两两试 6 圈\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        int one = 0;\n        for (int i = 0; i < n; i++) {\n            one++;\n        }\n\n        int two = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                two++;\n            }\n        }\n\n        System.out.println(\"本喵记好啦\");\n        System.out.println(\"挨个摸一遍 \" + one + \" 圈\");\n        System.out.println(\"两两试 \" + two + \" 圈\");\n    }\n}\n",
+      "expectedOutput": "本喵记好啦\n挨个摸一遍 5 圈\n两两试 10 圈",
+      "stdin": "5\n",
+      "explanation": "这题的账要**分开记**：两本账各用一个小篮子数，别拿一个篮子装两样东西喵。\n\n**第一本账：走一趟就是 n 圈。** 外圈从 0 号碗走到 n - 1 号碗，正好 n 步 —— 那就是 n 圈。\n\n**第二本账：每一对只数一次。** 关键在内圈的**起点**是 `i + 1`：外圈按到 0 号时，内圈试 1、2、…、n - 1 号（n - 1 圈）；外圈按到 1 号时，内圈从 2 号起步（n - 2 圈）……最后一只是 0 圈。加起来是 `(n - 1) + (n - 2) + … + 0`，也就是 `n × (n - 1) ÷ 2`。\n\n拿投喂的样例对着看一眼：第一行印出来的就是碗的只数，第二行套那个算式算一下就能对上 —— **对不上就是内圈的起点写松了**。起点写成 `i` 的话，每一对会被数两遍，还多出「自己跟自己」的那些圈；写成 `0` 的话，同一对会在两个方向各出现一次，第二本账直接翻倍。\n\n⚠️ 最后一句是这道题真正想让你带走的：**同一个问题、两种数法，圈数可以差出一整个数量级。** n 小的时候（样例里那样）差不了几个数；等 n 涨到千位、万位，第一本账只是跟着涨 n，第二本账涨的是 n 的平方 —— 这就是课文第四节那张对照表说的东西喵。",
+      "templateId": "java-s3-count-both-laps",
+      "params": {
+        "word": "本喵记好啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:35.825Z",
+        "hash": "2f19bcad6408089d"
+      }
+    },
+    {
+      "id": "bank-java-s3-count-both-laps-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要用**同一排碗**、**同一件小活儿**，把两本账都记一遍喵：\n\n1. **挨个摸一遍**：从头到尾走一趟；\n2. **两两试**：每一对都试一遍 —— 外面那只挨个按下去，里面那只从它**下一位**开始往后试。\n\n投喂给程序的是：**一行一个数 n**（碗的只数）。两本账都记完之后，印三行：\n\n```text\n本喵算好啦\n挨个摸一遍 X 圈\n两两试 Y 圈\n```\n\n- 第一行把 本喵算好啦 **原样**印出来；\n- `X` 是第一本账走完的圈数；\n- `Y` 是第二本账走完的圈数。\n\n比如投喂给程序的是\n\n4\n\n程序就要叼回\n\n本喵算好啦\n挨个摸一遍 4 圈\n两两试 6 圈\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        int one = 0;\n        for (int i = 0; i < n; i++) {\n            one++;\n        }\n\n        int two = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                two++;\n            }\n        }\n\n        System.out.println(\"本喵算好啦\");\n        System.out.println(\"挨个摸一遍 \" + one + \" 圈\");\n        System.out.println(\"两两试 \" + two + \" 圈\");\n    }\n}\n",
+      "expectedOutput": "本喵算好啦\n挨个摸一遍 5 圈\n两两试 10 圈",
+      "stdin": "5\n",
+      "explanation": "这题的账要**分开记**：两本账各用一个小篮子数，别拿一个篮子装两样东西喵。\n\n**第一本账：走一趟就是 n 圈。** 外圈从 0 号碗走到 n - 1 号碗，正好 n 步 —— 那就是 n 圈。\n\n**第二本账：每一对只数一次。** 关键在内圈的**起点**是 `i + 1`：外圈按到 0 号时，内圈试 1、2、…、n - 1 号（n - 1 圈）；外圈按到 1 号时，内圈从 2 号起步（n - 2 圈）……最后一只是 0 圈。加起来是 `(n - 1) + (n - 2) + … + 0`，也就是 `n × (n - 1) ÷ 2`。\n\n拿投喂的样例对着看一眼：第一行印出来的就是碗的只数，第二行套那个算式算一下就能对上 —— **对不上就是内圈的起点写松了**。起点写成 `i` 的话，每一对会被数两遍，还多出「自己跟自己」的那些圈；写成 `0` 的话，同一对会在两个方向各出现一次，第二本账直接翻倍。\n\n⚠️ 最后一句是这道题真正想让你带走的：**同一个问题、两种数法，圈数可以差出一整个数量级。** n 小的时候（样例里那样）差不了几个数；等 n 涨到千位、万位，第一本账只是跟着涨 n，第二本账涨的是 n 的平方 —— 这就是课文第四节那张对照表说的东西喵。",
+      "templateId": "java-s3-count-both-laps",
+      "params": {
+        "word": "本喵算好啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:37.267Z",
+        "hash": "2e61e20b96b3ca26"
+      }
+    },
+    {
+      "id": "bank-java-s3-halving-asks-total-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一排猫粮碗，编号从 1 排到 n。要连着做两件事喵：\n\n1. **一把砍到底**：把这一排反复**掰成两半、只留左边那一半**，一直留到只剩一只碗为止 —— 掰一下记一刀；\n2. **每一只碗都从头砍一遍**：对每一只碗，都照着上面那件事做一遍，每一刀算**一句问话**。\n\n投喂给程序的是：**一行一个数 n**（碗的只数）。请它印三行：\n\n```text\n本喵砍完啦\n一把砍到底要 C 刀\n一共问 T 句\n```\n\n- 第一行把 本喵砍完啦 **原样**印出来；\n- `C` 是第一件事掰的刀数；\n- `T` 是第二件事一共问的句数。\n\n比如投喂给程序的是\n\n16\n\n程序就要叼回\n\n本喵砍完啦\n一把砍到底要 4 刀\n一共问 64 句\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        int cuts = 0;\n        int left = n;\n        while (left > 1) {\n            left = left / 2;\n            cuts++;\n        }\n\n        long asks = 0;\n        for (int i = 0; i < n; i++) {\n            left = n;\n            while (left > 1) {\n                left = left / 2;\n                asks++;\n            }\n        }\n\n        System.out.println(\"本喵砍完啦\");\n        System.out.println(\"一把砍到底要 \" + cuts + \" 刀\");\n        System.out.println(\"一共问 \" + asks + \" 句\");\n    }\n}\n",
+      "expectedOutput": "本喵砍完啦\n一把砍到底要 4 刀\n一共问 68 句",
+      "stdin": "17\n",
+      "explanation": "这题的两行输出，正好是**同一个动作在两个高度上数出来的** —— 值得对着看一会儿喵。\n\n**第一行：一只碗要砍几刀。** 每一刀都把剩下的只数砍掉一半：n 只砍到 1 只，刀数是「n 能被 2 连除几次」。这件事**长起来非常慢** —— 只数翻一倍，刀数才多 1。所以第二件事里那 n 只碗，每只都砍一遍，一共是 `n × 刀数`。\n\n**第二行：整个活儿一共问多少句。** 把上面那个动作对每一只碗各做一遍，就是 `n × 刀数` —— 这正好是课本里 `n log n` 那一行的形状：**每只碗都要照顾到（n），而照顾一只只要砍半着问几次（log n）。**\n\n⚠️ 跟课文里的锚点数对照一下：n 是 1024 的时候，砍半着问只要 10 句，而「两两试」那本账是 523776 圈 —— **差着五万多倍**。同一个「找最靠里那一只」的需求，砍半着问就是比挨对儿试省这么多。这就是量级这件事为什么值得先量一量再动手喵。",
+      "templateId": "java-s3-halving-asks-total",
+      "params": {
+        "word": "本喵砍完啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:51.756Z",
+        "hash": "0eb7c0b025effb09"
+      }
+    },
+    {
+      "id": "bank-java-s3-halving-asks-total-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一排猫粮碗，编号从 1 排到 n。要连着做两件事喵：\n\n1. **一把砍到底**：把这一排反复**掰成两半、只留左边那一半**，一直留到只剩一只碗为止 —— 掰一下记一刀；\n2. **每一只碗都从头砍一遍**：对每一只碗，都照着上面那件事做一遍，每一刀算**一句问话**。\n\n投喂给程序的是：**一行一个数 n**（碗的只数）。请它印三行：\n\n```text\n本喵数好啦\n一把砍到底要 C 刀\n一共问 T 句\n```\n\n- 第一行把 本喵数好啦 **原样**印出来；\n- `C` 是第一件事掰的刀数；\n- `T` 是第二件事一共问的句数。\n\n比如投喂给程序的是\n\n16\n\n程序就要叼回\n\n本喵数好啦\n一把砍到底要 4 刀\n一共问 64 句\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        int cuts = 0;\n        int left = n;\n        while (left > 1) {\n            left = left / 2;\n            cuts++;\n        }\n\n        long asks = 0;\n        for (int i = 0; i < n; i++) {\n            left = n;\n            while (left > 1) {\n                left = left / 2;\n                asks++;\n            }\n        }\n\n        System.out.println(\"本喵数好啦\");\n        System.out.println(\"一把砍到底要 \" + cuts + \" 刀\");\n        System.out.println(\"一共问 \" + asks + \" 句\");\n    }\n}\n",
+      "expectedOutput": "本喵数好啦\n一把砍到底要 4 刀\n一共问 68 句",
+      "stdin": "17\n",
+      "explanation": "这题的两行输出，正好是**同一个动作在两个高度上数出来的** —— 值得对着看一会儿喵。\n\n**第一行：一只碗要砍几刀。** 每一刀都把剩下的只数砍掉一半：n 只砍到 1 只，刀数是「n 能被 2 连除几次」。这件事**长起来非常慢** —— 只数翻一倍，刀数才多 1。所以第二件事里那 n 只碗，每只都砍一遍，一共是 `n × 刀数`。\n\n**第二行：整个活儿一共问多少句。** 把上面那个动作对每一只碗各做一遍，就是 `n × 刀数` —— 这正好是课本里 `n log n` 那一行的形状：**每只碗都要照顾到（n），而照顾一只只要砍半着问几次（log n）。**\n\n⚠️ 跟课文里的锚点数对照一下：n 是 1024 的时候，砍半着问只要 10 句，而「两两试」那本账是 523776 圈 —— **差着五万多倍**。同一个「找最靠里那一只」的需求，砍半着问就是比挨对儿试省这么多。这就是量级这件事为什么值得先量一量再动手喵。",
+      "templateId": "java-s3-halving-asks-total",
+      "params": {
+        "word": "本喵数好啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:53.275Z",
+        "hash": "ae627b674eb569bf"
+      }
+    },
+    {
+      "id": "bank-java-s3-halving-step-too-big-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵有一排猫粮碗，只数正好是 **2 的 8 次方**，碗里的小鱼干一条比一条多。\n\n本喵要找最靠里那一只，用的办法是「**一步短一半**」：先跨一大步出去，看看站的那一格够不够大；够就往里挪一步，不够就待在原地；然后**把步子砍一半**再试，一直到步子短得迈不动为止。\n\n可这段稿子**第一步就摔了**：屏幕上红着一行字，说本喵要端的那只碗不在这排上。你帮本喵修好**起手那一格**：只改这一处，别动别的。改好之后该印一行 —— 本喵问到啦，再加上问了多少句、停在哪只碗上。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = 1 << 8;\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int target = bowls[n - 1];\n        int pos = 0;\n        int asks = 0;\n        for (int step = n; step > 0; step = step / 2) {\n            if (bowls[pos + step] <= target) {\n                pos = pos + step;\n            }\n            asks++;\n        }\n        System.out.println(\"本喵问到啦：问了 \" + asks + \" 句，停在 \" + bowls[pos] + \" 号碗\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = 1 << 8;\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int target = bowls[n - 1];\n        int pos = 0;\n        int asks = 0;\n        for (int step = n / 2; step > 0; step = step / 2) {\n            if (bowls[pos + step] <= target) {\n                pos = pos + step;\n            }\n            asks++;\n        }\n        System.out.println(\"本喵问到啦：问了 \" + asks + \" 句，停在 \" + bowls[pos] + \" 号碗\");\n    }\n}\n",
+      "expectedOutput": "本喵问到啦：问了 8 句，停在 256 号碗",
+      "stdin": null,
+      "explanation": "坏的那一处是起手那一格：`step = n` —— 第一跨就想跨出**整整一排那么远**。\n\n本喵这会儿站在 0 号碗上，第一脚要落的地方是 `0 + n`：那一格压根不在这排上（这排一共 8 个数量的碗，编号从 0 排到 n - 1），当场炸掉 —— 屏幕上那句 `ArrayIndexOutOfBoundsException` 念出来就是「**报的这个编号，这一排没那么多只碗**」。\n\n治法是把起手那一跨收到**正中间**：`step = n / 2`。这一改不是随便凑的，它管着两件事喵：\n\n1. **第一脚落在正中间**，这一排碗里哪一格都到得了，而且**一脚都不会踩出去** —— 往后每一步都比上一步短一半，站在哪都不会越过最后一格；\n2. **步子从「一半」开始，就正好是 `log₂ n` 步**。这一排有 2 的 8 次方只碗，所以只需要问 **8 句**：一脚到中间、再一脚到四分之三……每问一句，剩下的范围就砍掉一半。\n\n⚠️ 这题最值钱的就是第 2 条：**「每问一句砍一半」的活儿，圈数是用「这个数能砍几次」来数的**，不是用碗数来数的。同样一排碗，挨个摸一遍要 n 句，砍半着问只要 log₂ n 句 —— n = 1024 时是 10240 对 10，差着三个数量级。课文第四节的对照表里，`log n` 那一行说的就是这种干活方式喵。",
+      "templateId": "java-s3-halving-step-too-big",
+      "params": {
+        "n": 8,
+        "word": "本喵问到啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:54.236Z",
+        "hash": "3c9701232a4bae2b"
+      }
+    },
+    {
+      "id": "bank-java-s3-halving-step-too-big-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵有一排猫粮碗，只数正好是 **2 的 9 次方**，碗里的小鱼干一条比一条多。\n\n本喵要找最靠里那一只，用的办法是「**一步短一半**」：先跨一大步出去，看看站的那一格够不够大；够就往里挪一步，不够就待在原地；然后**把步子砍一半**再试，一直到步子短得迈不动为止。\n\n可这段稿子**第一步就摔了**：屏幕上红着一行字，说本喵要端的那只碗不在这排上。你帮本喵修好**起手那一格**：只改这一处，别动别的。改好之后该印一行 —— 本喵数好啦，再加上问了多少句、停在哪只碗上。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = 1 << 9;\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int target = bowls[n - 1];\n        int pos = 0;\n        int asks = 0;\n        for (int step = n; step > 0; step = step / 2) {\n            if (bowls[pos + step] <= target) {\n                pos = pos + step;\n            }\n            asks++;\n        }\n        System.out.println(\"本喵数好啦：问了 \" + asks + \" 句，停在 \" + bowls[pos] + \" 号碗\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = 1 << 9;\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int target = bowls[n - 1];\n        int pos = 0;\n        int asks = 0;\n        for (int step = n / 2; step > 0; step = step / 2) {\n            if (bowls[pos + step] <= target) {\n                pos = pos + step;\n            }\n            asks++;\n        }\n        System.out.println(\"本喵数好啦：问了 \" + asks + \" 句，停在 \" + bowls[pos] + \" 号碗\");\n    }\n}\n",
+      "expectedOutput": "本喵数好啦：问了 9 句，停在 512 号碗",
+      "stdin": null,
+      "explanation": "坏的那一处是起手那一格：`step = n` —— 第一跨就想跨出**整整一排那么远**。\n\n本喵这会儿站在 0 号碗上，第一脚要落的地方是 `0 + n`：那一格压根不在这排上（这排一共 9 个数量的碗，编号从 0 排到 n - 1），当场炸掉 —— 屏幕上那句 `ArrayIndexOutOfBoundsException` 念出来就是「**报的这个编号，这一排没那么多只碗**」。\n\n治法是把起手那一跨收到**正中间**：`step = n / 2`。这一改不是随便凑的，它管着两件事喵：\n\n1. **第一脚落在正中间**，这一排碗里哪一格都到得了，而且**一脚都不会踩出去** —— 往后每一步都比上一步短一半，站在哪都不会越过最后一格；\n2. **步子从「一半」开始，就正好是 `log₂ n` 步**。这一排有 2 的 9 次方只碗，所以只需要问 **9 句**：一脚到中间、再一脚到四分之三……每问一句，剩下的范围就砍掉一半。\n\n⚠️ 这题最值钱的就是第 2 条：**「每问一句砍一半」的活儿，圈数是用「这个数能砍几次」来数的**，不是用碗数来数的。同样一排碗，挨个摸一遍要 n 句，砍半着问只要 log₂ n 句 —— n = 1024 时是 10240 对 10，差着三个数量级。课文第四节的对照表里，`log n` 那一行说的就是这种干活方式喵。",
+      "templateId": "java-s3-halving-step-too-big",
+      "params": {
+        "n": 9,
+        "word": "本喵数好啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:28:55.564Z",
+        "hash": "5d00dabc4d027f5c"
+      }
+    },
+    {
+      "id": "bank-java-s3-pairs-overrun-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵摆了 7 只猫粮碗，1 号碗里 1 条小鱼干、2 号碗里 2 条……一直摆到 7 号碗。现在想数一数：**有几对碗，合起来正好等于「最小那一只加上最大那一只」**。\n\n数法就是「每一对都试一遍」：外面那只碗挨个按下去，里面那只从它的**下一位**开始往后试。可这段稿子一跑到里面那一层就**当场没了**，一串数都没印出来。\n\n你帮本喵修好它：只改那一处眼色，别动别的。翻好的稿子跑起来，该印出一行 —— 本喵数完啦，再加上数出来的对数喵。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = 7;\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int want = n + 1;\n        int pairs = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j <= n; j++) {\n                if (bowls[i] + bowls[j] == want) {\n                    pairs++;\n                }\n            }\n        }\n        System.out.println(\"本喵数完啦：\" + pairs + \" 对\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = 7;\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int want = n + 1;\n        int pairs = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (bowls[i] + bowls[j] == want) {\n                    pairs++;\n                }\n            }\n        }\n        System.out.println(\"本喵数完啦：\" + pairs + \" 对\");\n    }\n}\n",
+      "expectedOutput": "本喵数完啦：3 对",
+      "stdin": null,
+      "explanation": "坏的那一处是里面那层绕圈的眼色：`j <= n` 多算了一格。\n\n这一排碗的编号是 **0 到 n - 1** —— 一共 7 只，最后一只的编号就是 n - 1。眼色写成 `<= n`，最后那一趟就会去端 **n 号碗**：那一只压根不在这一排上，当场炸掉 —— 屏幕上那句 `ArrayIndexOutOfBoundsException` 念出来就是「**报的这个编号，这一排没那么多只碗**」，后面的活儿跟着全停。\n\n治法就是把那一格收回来：`j < n`。\n\n⚠️ 这一题最该记住的是**它跟「圈数」的关系**：眼色松一格，里面那层就**多绕一圈**，而多出来的那一圈往往就是踩空的那一脚。反过来也一样值钱 —— 判「每一对只数一次」靠的正是那个起点 `j = i + 1`：\n\n- 起点写成 `i`，每一对会被数两遍，还多出「自己跟自己」的那些圈；\n- 起点写成 `0`，同一对会在两个方向各出现一次，圈数直接翻倍；\n- 只有 `i + 1` 才是「一对只数一次」—— 圈数正好是 `n × (n - 1) ÷ 2`。\n\n顺着这条线往下想：**圈数不是数出来的，是边界写出来的。** 边界写对，账自然对得上喵。",
+      "templateId": "java-s3-pairs-overrun",
+      "params": {
+        "n": 7,
+        "word": "本喵数完啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:11.749Z",
+        "hash": "c5cf1d6583289140"
+      }
+    },
+    {
+      "id": "bank-java-s3-pairs-overrun-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵摆了 8 只猫粮碗，1 号碗里 1 条小鱼干、2 号碗里 2 条……一直摆到 8 号碗。现在想数一数：**有几对碗，合起来正好等于「最小那一只加上最大那一只」**。\n\n数法就是「每一对都试一遍」：外面那只碗挨个按下去，里面那只从它的**下一位**开始往后试。可这段稿子一跑到里面那一层就**当场没了**，一串数都没印出来。\n\n你帮本喵修好它：只改那一处眼色，别动别的。翻好的稿子跑起来，该印出一行 —— 本喵算好啦，再加上数出来的对数喵。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        int n = 8;\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int want = n + 1;\n        int pairs = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j <= n; j++) {\n                if (bowls[i] + bowls[j] == want) {\n                    pairs++;\n                }\n            }\n        }\n        System.out.println(\"本喵算好啦：\" + pairs + \" 对\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int n = 8;\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int want = n + 1;\n        int pairs = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (bowls[i] + bowls[j] == want) {\n                    pairs++;\n                }\n            }\n        }\n        System.out.println(\"本喵算好啦：\" + pairs + \" 对\");\n    }\n}\n",
+      "expectedOutput": "本喵算好啦：4 对",
+      "stdin": null,
+      "explanation": "坏的那一处是里面那层绕圈的眼色：`j <= n` 多算了一格。\n\n这一排碗的编号是 **0 到 n - 1** —— 一共 8 只，最后一只的编号就是 n - 1。眼色写成 `<= n`，最后那一趟就会去端 **n 号碗**：那一只压根不在这一排上，当场炸掉 —— 屏幕上那句 `ArrayIndexOutOfBoundsException` 念出来就是「**报的这个编号，这一排没那么多只碗**」，后面的活儿跟着全停。\n\n治法就是把那一格收回来：`j < n`。\n\n⚠️ 这一题最该记住的是**它跟「圈数」的关系**：眼色松一格，里面那层就**多绕一圈**，而多出来的那一圈往往就是踩空的那一脚。反过来也一样值钱 —— 判「每一对只数一次」靠的正是那个起点 `j = i + 1`：\n\n- 起点写成 `i`，每一对会被数两遍，还多出「自己跟自己」的那些圈；\n- 起点写成 `0`，同一对会在两个方向各出现一次，圈数直接翻倍；\n- 只有 `i + 1` 才是「一对只数一次」—— 圈数正好是 `n × (n - 1) ÷ 2`。\n\n顺着这条线往下想：**圈数不是数出来的，是边界写出来的。** 边界写对，账自然对得上喵。",
+      "templateId": "java-s3-pairs-overrun",
+      "params": {
+        "n": 8,
+        "word": "本喵算好啦"
+      },
+      "verified": {
+        "at": "2026-09-20T11:29:13.020Z",
+        "hash": "7527f407d1f4a206"
+      }
+    }
+  ]
+}

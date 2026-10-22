@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-missing-super",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-02",
+  "type": "codefix",
+  "concept": ["图纸套图纸", "super", "构造链", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵照着大图纸画了一张小图纸，可**出生那一手里忘了开口请大图纸出手** —— 翻译官喵当场拦下它，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n{name}：喵～\n```\n\n小图纸上那招 `speak` 本喵写得没错，别去动它喵。",
+  "brokenCodeTemplate": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        this.name = name;\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.speak();\n    }\n}\n",
+  "referenceFixTemplate": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.speak();\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话头一行是 **`constructor Animal in class Animal cannot be applied to given types;`**，底下还跟着三行「账本」：\n\n- `required: String` —— 大图纸出生那一手**要**一样东西\n- `found: no arguments` —— 可小图纸一样都没给它\n- `reason: actual and formal argument lists differ in length` —— 对不上，是因为两边**料的数目**不一样\n\n为什么会算出这笔账？Java 有一条暗规矩：**小图纸的出生那一手，第一句要不是 `super(...)`，翻译官就自动替你补一句 `super()`** —— 也就是「请大图纸的**空手**那一手」。可大图纸上只有收名字的那一版、压根没有空手那一版，补进去当然对不上。\n\n正路只有一条：**在小图纸出生那一手的头一句老老实实写 `super(name);`**，把大图纸要的料喂过去。位置也很讲究 —— 它必须是身子的**第一句**：大图纸还没收拾完，本喵不能先动别的。\n\n改完就记住本课那句话：**大图纸的出生那一手不会自己跑**，得小图纸开口请它喵。"
+}

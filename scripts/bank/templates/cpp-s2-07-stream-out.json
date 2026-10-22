@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-07-stream-out",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-07",
+  "type": "codewrite",
+  "concept": ["流运算符写在图纸外面", "左边是 cout", "一路接力 return os"],
+  "instances": 6,
+  "params": {
+    "fishWord": { "kind": "pick", "values": ["小鱼干", "冻干"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "本喵想让 `cout << 袋子` 直接印出一整句话，不用再喊 `howMany()`。投喂口会递进来**一个数**（袋子里有几条）。\n\n请你这么办：\n\n1. **画图纸** `FishBag`：一栏带盖的 `count`（一个整数）+ 一个出生招式。\n2. **在图纸外面定制 `<<`**，左右两边都当塞进来的料。它要把袋子印成这一段：\n\n```text\n[一袋 N 条{fishWord}]\n```\n\n3. 在 `main` 里读进那个数、生一只袋子，然后**在一条印东西的式子中间**把它印出来：\n\n```cpp\ncout << \"本喵手里有：\" << a << \"喵\" << endl;\n```\n\n也就是整行印成：`本喵手里有：[一袋 N 条{fishWord}]喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBag {\n    int count;\npublic:\n    FishBag(int c) : count(c) {}\n    friend ostream& operator<<(ostream& os, const FishBag& bag);\n};\n\nostream& operator<<(ostream& os, const FishBag& bag) {\n    os << \"[一袋 \" << bag.count << \" 条{fishWord}]\";\n    return os;\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    FishBag a(n);\n    cout << \"本喵手里有：\" << a << \"喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题练的是本课最讲究的一手，四处都要对上喵：\n\n1. **它必须写在图纸外面。** 因为 `<<` 左边坐的是 `cout`，它**不是本喵图纸生的**。把定制招式写进图纸里，翻译官喵会去袋子里找规矩，而左边根本不是袋子 —— 找错了地方，它只会回一句 `no match for 'operator<<'`。\n2. **两样料平起平坐**：第一份是坐左边的 `cout`（`ostream& os`），第二份是坐右边的袋子（`const FishBag& bag`）。\n3. **`cout` 那头要原样传下去、并且叼回来**：两头都带 `&`，最后一句 `return os;`。这正是为了让 `<<` 能**一路接力** —— `cout << \"本喵手里有：\" << a << \"喵\"` 这一长串，是把同一只 `cout` 一路传下去，掉了接力棒，后面那个 `\"喵\"` 就没人接了。\n4. **它读的是袋子里带盖的那一格**，所以图纸里要留一行 `friend ostream& operator<<(ostream&, const FishBag&);` —— 正是上一课那一手开门。\n\n（另一种同样对的写法是**不开门，改给袋子配一个公开招式**读条数，外面那一手喊它。本喵这里挑的是开门那一种，因为外面这一手直接读那一格，本来就是开门这一手的用途。）\n\n⚠️ 还有一件顺手的事：`bag` 前面那个 `const` 别丢 —— 印东西只是看看，不该改到对方。"
+}

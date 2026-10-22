@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-07-outside-needs-key",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-07",
+  "type": "codefix",
+  "concept": ["外面的定制招式也要够格子", "公开招式", "报错现场"],
+  "instances": 2,
+  "params": {
+    "x": { "kind": "int", "min": 3, "max": 6 },
+    "y": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵把加号那一手写在了图纸**外面**（两只袋子当料递进去，平起平坐），图纸里也留了一个公开招式 `howMany`。\n\n可翻译官喵说本喵够不着那一格。\n\n你帮本喵改到能跑起来，让它印出两袋合起来的条数（一只 {x} 条、一只 {y} 条）。**把定制那一手留在图纸外面**，图纸里的那个公开招式也别删。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBag {\n    int count;\npublic:\n    FishBag(int c) : count(c) {}\n    int howMany() const { return count; }\n};\n\nFishBag operator+(const FishBag& a, const FishBag& b) {\n    return FishBag(a.count + b.count);\n}\n\nint main() {\n    FishBag a({x});\n    FishBag b({y});\n    FishBag c = a + b;\n    cout << c.howMany() << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBag {\n    int count;\npublic:\n    FishBag(int c) : count(c) {}\n    int howMany() const { return count; }\n};\n\nFishBag operator+(const FishBag& a, const FishBag& b) {\n    return FishBag(a.howMany() + b.howMany());\n}\n\nint main() {\n    FishBag a({x});\n    FishBag b({y});\n    FishBag c = a + b;\n    cout << c.howMany() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:12:22: error: 'int FishBag::count' is private within this context`\n\n翻成猫话：**「`FishBag` 盒子里的 `count` 那一格，你现在站的这个地方够不着喵。」**\n\n这里最容易犯的糊涂是：**「我是图纸外面定制的加号」不等于「我进了门」。** 图纸外面那一手，身份上还是外面的一手 —— 它站在门外，`count` 是带盖的，它照样够不着。\n\n改法有两条，都对：\n\n1. **走公开招式**（本喵这里挑的）：图纸里已经留了 `howMany()`，把它喊起来就行 —— `FishBag(a.howMany() + b.howMany())`。这也是上课说过的那句：外面那一手「只要 `howMany` 是个公开招式就够，**连开门都不用**」。\n2. **开一扇后门**：在图纸里写一行 `friend FishBag operator+(const FishBag&, const FishBag&);`，那一手就能直接读 `a.count + b.count`。\n\n⚠️ 顺手记一个位置上的差别：**同样的事情，写成图纸里的招式时靠「自己」分左右**（`B operator+(const B& other) const` 里，自己的是 `count`、对方的是 `other.count`）；**写成外面的一手时两边平起平坐**（`a` 和 `b` 都是料，谁也不必是「自己」）。"
+}

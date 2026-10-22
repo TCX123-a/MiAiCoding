@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-doc-return-promise",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-27",
+  "type": "codefix",
+  "concept": [
+    "@return 要把边界情形写清楚：「库存不够时按 0 结算」就是一条规格",
+    "承诺写进 Javadoc，代码就得照办：负数不许出门，Math.max(0, ...) 是那道门",
+    "文档写细 = 先把规格定下来，实现和测试各就其位"
+  ],
+  "instances": 2,
+  "params": {
+    "s": { "kind": "pick", "values": ["12", "8"] }
+  },
+  "stemTemplate": "本喵的小仓库**领过头了**喵：库存不够它也不拦，领完一结账，第二行印出一个带减号的数。可方法的 Javadoc 上白纸黑字写着：`@return`「库存不够时按 0 结算，不会出现负数」—— 现在这个负数，就是把规定当耳旁风的样子。\n\n你照 Javadoc 的约定把它修好，让它印**两行**：\n\n```text\n库存 {s} 条\n领完还剩 0 条\n```\n\n（这一份里要领走 20 条、库存不够 —— 结余必须按约定结算成 0。这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "public class Main {\n    /**\n     * 从库存里领走一些，返回结余。\n     *\n     * @param stock 库存条数\n     * @param take 要领走的条数\n     * @return 领完剩下的条数；库存不够时按 0 结算，不会出现负数\n     */\n    static int afterTaking(int stock, int take) {\n        return stock - take;\n    }\n\n    public static void main(String[] args) {\n        int stock = {s};\n        int take = 20;\n        System.out.println(\"库存 \" + stock + \" 条\");\n        System.out.println(\"领完还剩 \" + afterTaking(stock, take) + \" 条\");\n    }\n}",
+  "referenceFixTemplate": "public class Main {\n    /**\n     * 从库存里领走一些，返回结余。\n     *\n     * @param stock 库存条数\n     * @param take 要领走的条数\n     * @return 领完剩下的条数；库存不够时按 0 结算，不会出现负数\n     */\n    static int afterTaking(int stock, int take) {\n        return Math.max(0, stock - take);\n    }\n\n    public static void main(String[] args) {\n        int stock = {s};\n        int take = 20;\n        System.out.println(\"库存 \" + stock + \" 条\");\n        System.out.println(\"领完还剩 \" + afterTaking(stock, take) + \" 条\");\n    }\n}",
+  "explanationTemplate": "**一、先分清「谁说了算」。** 这个方法的 Javadoc 上有三句承诺：`@param stock` 是库存、`@param take` 是领走的、`@return`「不够时按 0 结算，不会出现负数」。承诺写在那儿，代码就得照办 —— 这条修的不是算式，是**约定的兑现**。\n\n**二、没兑现的那一步：负数的兜底。** `stock - take` 本身没毛病，毛病是**减出负数时没有人接住**。补一句：\n\n```java\nreturn Math.max(0, stock - take);\n```\n\n`Math.max(0, ...)` 的意思是「0 和差值里挑大的那个」：够领就报差值，领过头就报到 0 —— 负数一步都不许出门。\n\n**三、这就是 `@return` 写细的价值。** 写 Javadoc 的时候顺手把边界情形（「不够时怎么办」）写清楚，等于先把**规格**定下来：后来写实现的人照着做、写测试的人照着测，各就其位。要是当初只写「返回剩余」四个字，「不够时归 0 还是报负」就只能靠猜。\n\n一句话记住：**Javadoc 不是装饰，是方法对外的承诺书 —— 写下的每一句，代码都要还。**"
+}

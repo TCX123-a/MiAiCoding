@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-18-diamond-merge",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-18",
+  "type": "codewrite",
+  "concept": ["两条岔路挂过那一手", "共用的底座只搭一次", "最外面那张图纸喂料"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["下", "回"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "投喂口会给**一个数**：次数喵。\n\n骨架里三张图纸都画好了：一张**底座**（会喵），另外两张各照着底座画过一次（一张会打呼噜、一张会踩奶）—— 而且这两张**照着底座画的那一行都挂上了那一手**。\n\n你要补两处：\n\n1. 一张**两样都会**的新图纸，照着这两张一起画下来（两张前面都写清楚是公开给外面的）；\n2. `main` 里照它生一只猫（次数就是读进来那个数），然后**三样本事各喊一次**：先喵、再呼噜、再踩奶。\n\n关键的一步在那张新图纸的出生招式里：**那份共用的底座由谁喂料**，想清楚写在哪儿 —— 写对了，`搭那份共用的底座：` 这一行只会出现**一次**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    int times;\npublic:\n    MeowCat(int k) : times(k) { cout << \"搭那份共用的底座：\" << times << endl; }\n    void meow() const { cout << \"喵 \" << times << \" {unit}\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(int k) : MeowCat(k) { cout << \"搭会打呼噜的那一半\" << endl; }\n    void purr() const { cout << \"呼噜 \" << times << \" {unit}\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(int k) : MeowCat(k) { cout << \"搭会踩奶的那一半\" << endl; }\n    void knead() const { cout << \"踩奶 \" << times << \" {unit}\" << endl; }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    int times;\npublic:\n    MeowCat(int k) : times(k) { cout << \"搭那份共用的底座：\" << times << endl; }\n    void meow() const { cout << \"喵 \" << times << \" {unit}\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(int k) : MeowCat(k) { cout << \"搭会打呼噜的那一半\" << endl; }\n    void purr() const { cout << \"呼噜 \" << times << \" {unit}\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(int k) : MeowCat(k) { cout << \"搭会踩奶的那一半\" << endl; }\n    void knead() const { cout << \"踩奶 \" << times << \" {unit}\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(int k) : MeowCat(k), Purr(k), Knead(k) {}\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    Baby b(n);\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的正主是那张新图纸的出生招式：\n\n```text\nBaby(int k) : MeowCat(k), Purr(k), Knead(k)\n```\n\n三块料，缺一不可喵。\n\n- **`MeowCat(k)`** —— 挂上那一手之后，那份共用的底座归**最外面那张图纸**搭，也归它喂料。**漏了它，这段代码根本编不过**：`Purr`、`Knead` 里那两句喂料站在这个位子上**不算数**，可底座那张图纸又要求喂一个名字（它没有「什么都不用喂」的搭法）。翻译官喵的原话是 `no matching function for call to 'MeowCat::MeowCat()'`。\n- **`Purr(k), Knead(k)`** —— 中间那两块料照样要写（图纸上写着要喂），只是它们喂给底座的**那一半**会被无视。\n\n然后是**顺序**：共用的底座**最先**搭，接着左边、右边，最后才是自己那一半。所以头三行是「底座 → 左 → 右」，一眼就能看出底座**只搭了一次** —— 要是它印了两遍，那就说明有一条路**没挂上那一手**。\n\n⚠️ 最后三行的次数**全是同一个数**：只有一份底座，三条路喊的都是它。要是三行里冒出来一个别的数，那说明底座又被拆成两份了喵。"
+}

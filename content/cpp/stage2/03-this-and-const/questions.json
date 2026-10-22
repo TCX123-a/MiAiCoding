@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage2-03",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵把 `show` 的肚子写在图纸外面，招式名**前面空着**（只写了 `void show() const`，没说它属于哪张图纸）。翻译官喵当场拦下，报的原话里有 `non-member function`。该动手改哪儿？",
+      "options": [
+        "在函数名 `show` 前面补上 `Cat::`，告诉编译器它是哪张类上的",
+        "把尾巴上那颗 `const` 删掉 —— 少了它就不算类上的函数了",
+        "回到图纸里，把只报名字的那一行 `void show() const;` 删掉",
+        "在 `main` 里把 `c1.show();` 改成把 `c1` 递进去的写法"
+      ],
+      "answer": 0,
+      "explanation": "报错里那个 `non-member function` 说的是「这不是哪张图纸上的招式」—— 既然不在图纸上，它自然也没资格说自己是只读的（`cv-qualifier` 那句说的就是这个）喵。`Cat::` 那一小段就是认领暗号：挂上它，翻译官喵才知道要进哪张图纸里去找 `name`、`fish` 那几格。删掉图纸里那行「先打个招呼」只会更糟（招式的名字就没人认了），改 `main` 里那一句更是没道理。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "一招 `rename(string name)` 的肚子里只有一句：`name = name;`。本喵在 `main` 里喊了 `c1.rename(\"大胖\");` —— 跑完之后这只猫叫什么？",
+      "options": [
+        "还是它原来的名字 —— 那一句只改了投喂口自己，格子纹丝不动，而且**不报错**",
+        "改成了「大胖」—— 两个 `name` 里近的那个是格子",
+        "名字那一格变成空的 —— 两个字互相抵消了",
+        "根本跑不起来 —— 编译器会拦下这种重名的写法"
+      ],
+      "answer": 0,
+      "explanation": "招式肚子里站着两个 `name`：一个是投喂口，一个是格子。近的那个赢，所以光写 `name` 指的是**投喂口**——于是这一句念作「把投喂口装进投喂口里」，什么都没发生，格子里的名字一动不动喵。本喵真跑过，`-Wall` 那档最啰嗦的念叨也没说一个字、程序照跑 —— 这正是它最坑的地方：不吵不闹，只是活干歪了。要碰格子必须指名道姓写 `this->name`。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "图纸上有一招 `void show()`，尾巴上**没有** `const`；它的肚子里其实只印了一行字，一个格子都没碰。现在本喵生了一只**带封印的猫**（`const Cat c1(\"小橘\");`）去喊它 —— 会怎样？",
+      "options": [
+        "编译器拦下 —— 带 `const` 的函数只认同样带 `const` 的函数",
+        "顺利跑起来 —— 反正肚子里确实没碰格子",
+        "跑得起来，但那一行字印不出来",
+        "跑得起来，只是这只猫身上的封印会被摘掉"
+      ],
+      "answer": 0,
+      "explanation": "翻译官喵判断这一招会不会动格子，**只看尾巴上有没有那颗 `const`，不看肚子**喵。所以哪怕你肚子里真的一个字都没碰，只要尾巴上空着，它就按「这一招要动格子」算 —— 而带封印的猫不允许自己被随便改，两边谈不拢，当场拦下。想让它跑起来，给 `show` 的尾巴补一颗 `const` 就行。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n    void rename(string name);\n};\n\nvoid ____rename(string name) {\n    ____->name = name;\n}\n\nint main() {\n    Cat c1(\"小橘\");\n    c1.rename(\"大胖\");\n    cout << c1.name << endl;\n    return 0;\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出），补上之后它会印出「大胖」喵。",
+      "blanks": [
+        { "answer": "Cat::", "accept": [] },
+        { "answer": "this", "accept": [] }
+      ],
+      "explanation": "第一处是招式定义写在图纸外面必须挂的认领暗号：`Cat::`，念作「`Cat` 这张图纸上的」—— 少了它，翻译官喵就不知道进哪张图纸去找格子喵。第二处是投喂口和格子同名时的写法：`this->name` 念作「本喵自己那一格 `name`」，光写 `name` 只会碰到投喂口，名字就改不掉了。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void rename(string name) {\n        name = name;\n    }\n    void show() const {\n        cout << name << \" 有 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Cat c1(\"小橘\", 3);\n    c1.rename(\"大胖\");\n    c1.show();\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘 有 3 条",
+      "accept": ["小橘 有 3 条\n"],
+      "explanation": "这一招想改名，可肚子里写的是 `name = name;` —— 两个 `name` 指的都是**投喂口**，格子压根没被碰过喵。所以喊完 `rename(\"大胖\")` 之后，名字那一格里装着的还是「小橘」，印出来自然也是小橘。这段代码能编过、能跑完、也没有任何念叨，只是活干歪了 —— 想改对，得写 `this->name = name;`。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void rename(string name) {\n        this->name = name;\n    }\n    void show() const {\n        cout << name << \" 有 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Cat c1(\"小橘\", 3);\n    Cat c2(\"狸花\", 1);\n    c1.rename(\"大胖\");\n    c1.show();\n    c2.show();\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "大胖 有 3 条\n狸花 有 1 条",
+      "accept": ["大胖 有 3 条\n狸花 有 1 条\n"],
+      "explanation": "`this` 是每次喊招式时悄悄递进来的**那只猫**喵。`c1.rename(\"大胖\");` 递进去的是 `c1`，所以 `this->name` 改的是 `c1` 那一格；`c2` 从头到尾没人碰过，名字和条数一点没变。招式只有一份，可每次喊它，`this` 指的都可能换一只猫 —— 这就是「招式被哪只猫喊，就替哪只猫干活」。"
+    }
+  ]
+}

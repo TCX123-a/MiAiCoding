@@ -1,0 +1,24 @@
+{
+  "templateId": "py-s1-rec-base-value",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-16",
+  "type": "codefix",
+  "concept": [
+    "停车那一层交回什么",
+    "整条链子的起点",
+    "安安静静算错"
+  ],
+  "instances": 2,
+  "params": {
+    "n": {
+      "kind": "int",
+      "min": 4,
+      "max": 5
+    }
+  },
+  "stemTemplate": "本喵写了个自己咬自己尾巴的招式 `sum_to`：喂一个数进去，它把 **1 一路加到那个数**，加出来的总数叼回来。\n\n喂 {n} 进去，它该叼回的是 **1 加到 {n} 的总数**。可这段稿子叼回来的数**每次都多 1**。\n\n它跑得起来，翻译官喵一句原话都没有 —— 坏的不是往下喊的那一步（`n + sum_to(n - 1)` 写得一点没错），坏的是**停车那一层交回来的东西**。\n\n你帮本喵改好：改完跑起来，屏幕上要正好是 1 加到 {n} 的总数，多一条都不行喵。",
+  "brokenCodeTemplate": "def sum_to(n):\n    if n == 0:\n        return 1\n    return n + sum_to(n - 1)\n\nprint(sum_to({n}))\n",
+  "referenceFixTemplate": "def sum_to(n):\n    if n == 0:\n        return 0\n    return n + sum_to(n - 1)\n\nprint(sum_to({n}))\n",
+  "explanationTemplate": "坏的那一行是停车那一层里那句 `return 1`。这里最容易误会的一点是：**「什么时候停」和「停下来交回什么」是两件事**，而后面这件同样是这一招的根基喵。\n\n把链子摊开看：\n\n```\nsum_to({n}) = {n} + sum_to({n} - 1) = ... = {n} + {n}-1 + ... + 1 + sum_to(0)\n```\n\n看最后那一小截 —— **`sum_to(0)` 交回多少，整个结果就跟着抬多少**。1 加到 {n} 该是多少，`sum_to(0)` 就得是多少：它得**交回 0**（一条都不加，加了个寂寞）。写成 `return 1`，等于每一层都白送一条鱼干，最后正好多出 1 条。\n\n自己验一遍的办法很朴素：**拿最小的那种情况推**。`sum_to(1)` 该是 1，而往下喊的那一步给的是 `1 + sum_to(0)` —— 一减就知道 `sum_to(0)` 只能是 0 喵。\n\n⚠️ 这一题最该记住的是**它一声不吭**。停车那层写成 `return 1` 完全合规矩，翻译官喵看不出任何毛病 —— 它只认「写法对不对」，**不认「你心里那串数对不对」**。自己咬自己尾巴的招式里出的错，绝大多数都是这种安安静静算错的。"
+}

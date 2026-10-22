@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s2-enum-rest-counter",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-11",
+  "type": "codewrite",
+  "concept": ["清单 + 分支天生一对", "case 后面写项名", "两格共用一个身子", "计数"],
+  "instances": 6,
+  "params": {
+    "rest1": { "kind": "pick", "values": ["5", "6"] },
+    "day1": { "kind": "pick", "values": ["0", "2"] },
+    "rest2": { "kind": "pick", "values": ["6", "0"] },
+    "day2": { "kind": "pick", "values": ["3", "4"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "4\n{rest1}\n{day1}\n{rest2}\n{day2}\n", "sampleText": "4\n6\n1\n0\n5\n" },
+  "stemTemplate": "本喵要给排班表上的每一天盖章：**`SAT` 和 `SUN` 是休息日**，别的都不是。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」，接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`5` 是 `SAT`、`6` 是 `SUN`）。每一笔印一行：休息日印 `项名 是休息日`，否则印 `项名 不是休息日`。所有笔过完，最后印一行 `休息日有 … 天`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    static boolean isRest(Day d) {\n        switch (d) {\n            case SAT:\n            case SUN:\n                return true;\n            default:\n                return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            Day d = Day.values()[k];\n            if (isRest(d)) {\n                System.out.println(d.name() + \" 是休息日\");\n                cnt++;\n            } else {\n                System.out.println(d.name() + \" 不是休息日\");\n            }\n        }\n        System.out.println(\"休息日有 \" + cnt + \" 天\");\n    }\n}\n",
+  "explanationTemplate": "这题多练一样东西：**拿清单上的一项当分支的开关**。\n\n`switch (d)` 的括号里直接就能放清单上的一项，`case` 后面写**项名**就行。本喵真试过写全的 `case Day.SAT:` —— 这一版翻译官喵**也收**，只是括号里已经说清是哪张清单了，多写一份纯属啰嗦。\n\n```java\ncase SAT:\ncase SUN:\n    return true;\n```\n\n两格共用一个身子：落到哪一格，都往下走到那一句。这也是这一课最家常的用法 —— **「是不是这几种」的活，交给清单和分支一起干**。\n\n三处要留神：\n\n- **`case` 后面的名字也得一个字母不差。** 手滑写成 `case SATRDAY:`，翻译官喵当场说 `error: cannot find symbol`、`symbol: variable SATRDAY`、`location: class Main` —— 注意那个 `location` 指的是**本喵写这段 `switch` 的地方**，不是清单（本喵真跑过）。又一次「清单之外的名字，编稿子那一关就被拦下」。\n- **数不出来就露馅。** `cnt` 从 0 起，每盖到一个休息日加一，最后印出来。判分那组数里**一定**有休息日、也一定有不是休息日的 —— 所以「只印不数」或者「数错了」都藏不住。\n- **先把那一项叼出来，再拿它去问。** `Day.values()[k]` 里位次从 `0` 起，和上一题同款。`d` 接住的是**清单上的一项本身**，所以 `d.name()` 印得出项名，`switch (d)` 也认它。\n\n顺带说一句这题的判分输入：它是**写死的**，所以每一组里什么时候碰上休息日、碰上几个，都是本喵挑好的 —— 保证「两格共用一个身子」这件事真被考到，不是碰运气喵。"
+}

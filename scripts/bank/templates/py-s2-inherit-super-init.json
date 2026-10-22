@@ -1,0 +1,19 @@
+{
+  "templateId": "py-s2-inherit-super-init",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-07",
+  "type": "codewrite",
+  "concept": ["super", "__init__", "图纸套图纸"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["大肥鱼", "小鳕鱼"] },
+    "fish": { "kind": "int", "min": 3, "max": 5 },
+    "sname": { "kind": "pick", "values": ["鲸鱼", "小黄鱼"] },
+    "sfish": { "kind": "int", "min": 7, "max": 9 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{name}\n{fish}\n", "sampleText": "{sname}\n{sfish}\n" },
+  "stemTemplate": "本喵要画两张图纸喵：\n\n1. 一张 `Animal` 大图纸：`__init__` 把名字存到**这只动物自己**身上。\n2. 一张 `Fish` 小图纸，照着 `Animal` 画，但**自己盖了一版 `__init__`** —— 除了名字，还要多存一样：本鱼有几斤小鱼干。\n3. 小图纸上再写一招 `speak(self)`，印出一行：名字后面接 `：咕噜咕噜，本鱼有 `，再接上斤数，最后接 ` 斤`（斤数前后**各有一个空格**，别漏）。\n\n然后**读两行**：第一行是名字，第二行是一个整数（斤数）。用它们造一条鱼，喊它的 `speak`。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Fish(Animal):\n    def __init__(self, name, fat):\n        super().__init__(name)\n        self.fat = fat\n\n    def speak(self):\n        print(self.name + \"：咕噜咕噜，本鱼有 \" + str(self.fat) + \" 斤\")\n\n\nname = input()\nfat = int(input())\nf = Fish(name, fat)\nf.speak()\n",
+  "explanationTemplate": "这一题的关键在**小图纸自己写了 `__init__`** 这件事上喵。\n\n大图纸上原本有那么一段（把名字存好）。小图纸**只要自己写了** `__init__`，就**把大图纸那一版整个盖住了** —— 于是「把名字存好」这一步**不会自动发生**了，得本喵自己请回来干。\n\n请的办法就是开头那一句 `super().__init__(name)` —— 读作「**先请上一层图纸，把它那版 `__init__` 跑一遍**」。`super()` 就是「上一层」的意思。\n\n⚠️ `super()` 后面**不用喂 `self`**。你站在哪张小图纸上，Python 自己清楚，它会替你把 `self` 递过去。写成 `super(self)` 反而会被当场拦下。\n\n⚠️ 顺序很讲究：**先请上一层把名字放好，再存自己那一样**。要是漏了 `super()` 这句，名字那个仓库**压根没被建起来** —— 程序在喊 `speak` 的那一刻才翻脸说「没有 name 这样东西」，报错位置离真正的毛病远得很，最难查。\n\n⚠️ 别忘了第二行读进来的是**一串字**，要转成整数才能拿去拼：本喵这里用 `str(...)` 往回接，或者用别的方式也都行，只要拼出来的字一模一样。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s2-gen-hand-reused",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-10",
+  "type": "codefix",
+  "concept": ["一只手只能走一遍", "list", "空储物柜"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["小鱼干", "小银鱼"] },
+    "b": { "kind": "pick", "values": ["猫粮", "鸡肉条"] },
+    "c": { "kind": "pick", "values": ["冻干", "小虾米"] }
+  },
+  "stemTemplate": "本喵想印两遍这三样东西：`{a}`、`{b}`、`{c}` —— **每一遍都要完完整整的三样**喵。\n\n可现在**第二遍印出来是个空储物柜**（`[]`），而且它**一声不吭、不报错**，最气人了。你帮本喵改对。\n\n⚠️ 那三样东西、还有两行 `print(list(it))` 都**不许改** —— 本喵要的是**再请一只新的手**。",
+  "brokenCodeTemplate": "def 数鱼干():\n    yield \"{a}\"\n    yield \"{b}\"\n    yield \"{c}\"\n\n\nit = iter(数鱼干())\nprint(list(it))\nprint(list(it))\n",
+  "referenceFixTemplate": "def 数鱼干():\n    yield \"{a}\"\n    yield \"{b}\"\n    yield \"{c}\"\n\n\nit = iter(数鱼干())\nprint(list(it))\nit = iter(数鱼干())\nprint(list(it))\n",
+  "explanationTemplate": "这一处的毛病是**一只走空的手被本喵又走了一遍**喵。\n\n- `list(手)` 读作「**把剩下的全都装进一个储物柜里**」：它顺着这只手一直走到头，把手上的东西一样不落全收进去。\n- 手自己揣着一个**小本本**，记着「夹到第几格了」。第一遍走到头，本本已经翻到末页。\n- 走空之后它**不会自己复原**：第二遍再 `list(it)`，小本本上写着「没有下一条了」，于是给你一个**空储物柜** `[]` —— 而且**一声不吭**，这就是它最阴的地方。\n\n规矩一句就够：**一只手只能走一遍**。走过去了就回不来，想再来一遍得**重新请一只新的手** —— `it = iter(数鱼干())` 再来一次（或者干脆 `list(数鱼干())`，每次新喊一遍招式，请出来的都是新的一只）。\n\n⚠️ 还要分清「走空的是谁」：`iter(一排东西)` 并**没有**把东西复制一份，它只是请了只手指着那一排 —— 手走过的地方，东西**还在原地**。所以空掉的是**手**，不是那三样东西；本喵只要再请一只新的手，三样又齐齐整整了。"
+}

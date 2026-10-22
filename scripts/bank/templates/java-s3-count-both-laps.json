@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-count-both-laps",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-16",
+  "type": "codewrite",
+  "concept": ["同一件小活儿记两本账", "一趟走完的圈数", "每一对只数一次"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["本喵记好啦", "本喵算好啦"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 4, "max": 5 },
+  "stemTemplate": "本喵要用**同一排碗**、**同一件小活儿**，把两本账都记一遍喵：\n\n1. **挨个摸一遍**：从头到尾走一趟；\n2. **两两试**：每一对都试一遍 —— 外面那只挨个按下去，里面那只从它**下一位**开始往后试。\n\n投喂给程序的是：**一行一个数 n**（碗的只数）。两本账都记完之后，印三行：\n\n```text\n{word}\n挨个摸一遍 X 圈\n两两试 Y 圈\n```\n\n- 第一行把 {word} **原样**印出来；\n- `X` 是第一本账走完的圈数；\n- `Y` 是第二本账走完的圈数。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        int one = 0;\n        for (int i = 0; i < n; i++) {\n            one++;\n        }\n\n        int two = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                two++;\n            }\n        }\n\n        System.out.println(\"{word}\");\n        System.out.println(\"挨个摸一遍 \" + one + \" 圈\");\n        System.out.println(\"两两试 \" + two + \" 圈\");\n    }\n}\n",
+  "explanationTemplate": "这题的账要**分开记**：两本账各用一个小篮子数，别拿一个篮子装两样东西喵。\n\n**第一本账：走一趟就是 n 圈。** 外圈从 0 号碗走到 n - 1 号碗，正好 n 步 —— 那就是 n 圈。\n\n**第二本账：每一对只数一次。** 关键在内圈的**起点**是 `i + 1`：外圈按到 0 号时，内圈试 1、2、…、n - 1 号（n - 1 圈）；外圈按到 1 号时，内圈从 2 号起步（n - 2 圈）……最后一只是 0 圈。加起来是 `(n - 1) + (n - 2) + … + 0`，也就是 `n × (n - 1) ÷ 2`。\n\n拿投喂的样例对着看一眼：第一行印出来的就是碗的只数，第二行套那个算式算一下就能对上 —— **对不上就是内圈的起点写松了**。起点写成 `i` 的话，每一对会被数两遍，还多出「自己跟自己」的那些圈；写成 `0` 的话，同一对会在两个方向各出现一次，第二本账直接翻倍。\n\n⚠️ 最后一句是这道题真正想让你带走的：**同一个问题、两种数法，圈数可以差出一整个数量级。** n 小的时候（样例里那样）差不了几个数；等 n 涨到千位、万位，第一本账只是跟着涨 n，第二本账涨的是 n 的平方 —— 这就是课文第四节那张对照表说的东西喵。"
+}

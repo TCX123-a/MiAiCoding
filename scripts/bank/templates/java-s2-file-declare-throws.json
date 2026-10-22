@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-file-declare-throws",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-13",
+  "type": "codefix",
+  "concept": ["册子这套本事是要表态的", "头上写 throws", "IOException 是这一家的名字"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["dangan.txt", "zhangben.txt"] },
+    "msg": { "kind": "pick", "values": ["小鱼干 3 条", "猫粮 1 碗"] }
+  },
+  "stemTemplate": "这稿子**连编都编不过**。翻译官喵指着 `main` 的头上说话，原话本喵抄一句在这儿：`Main.java:7: error: unreported exception IOException; must be caught or declared to be thrown`。\n\n请你把它补好，让程序印出：\n\n```text\n写进去的字：{msg}\n```\n\n要补的地方**只在 `main` 的头上**（还有一句 `import` 别忘了），动册子那几句本喵都没写错喵。",
+  "brokenCodeTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"{msg}\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            System.out.println(\"写进去的字：\" + r.readLine());\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"{msg}\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            System.out.println(\"写进去的字：\" + r.readLine());\n        }\n    }\n}\n",
+  "explanationTemplate": "这题补的是一句话：**册子这一套本事全归「要表态的」那一档。**\n\n上一课学过这件事：出事的东西分两档，`Exception` 这一家是「你不写清怎么办，稿子就退回来」的那一档。**动册子的本事全在这一档里** —— 所以 `main` 的头上不表态，连编都编不过。\n\n补法就是给它一句话（外加那句 `import java.io.IOException;`）：\n\n```java\npublic static void main(String[] args) throws IOException {\n```\n\n`IOException` 是这一家**总的名字**。有了这一句，本喵的意思就是「出了事本喵不在这儿管，往上报」—— 和上一课那条「要表态的」是同一件事。\n\n还有一处值得看一眼：**翻译官喵一口气报了好几条**，报的是同一件事的不同位置 —— 拉开抽屉那一下、写字那一下、**关上抽屉那一下**。本喵真跑过，它连「抽屉是在这一段结束时自动关的」都替本喵数了出来：`exception thrown from implicit call to close() on resource variable 'w'`。所以别以为「我只写了一句 `w.write`，怎么报这么多」—— 那支笔的每一动都可能出事。\n\n还有一个新面孔：册子**不在**的时候，拉开读字那根管子报的名字是 `FileNotFoundException`（「册子没找到」）。本喵真跑过，它认 `IOException` 当师父 —— 所以头上那一句 `throws IOException` 一并把它盖住了，不用写两行。\n\n补好之后程序印的是那一行 `写进去的字：…` —— 先把字写进册子、再读回来，两件事都真的做了，把 `w.write` 那一句删掉就印不出东西了喵。"
+}

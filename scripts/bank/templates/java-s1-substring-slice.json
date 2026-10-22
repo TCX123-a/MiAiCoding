@@ -1,0 +1,22 @@
+{
+  "templateId": "java-s1-substring-slice",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-11",
+  "type": "codewrite",
+  "concept": ["substring", "掏一段", "length", "Scanner"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["小鱼干到手喵", "大肥鱼的鱼塘"] },
+    "a": { "kind": "int", "min": 1, "max": 2 },
+    "b": { "kind": "int", "min": 4, "max": 5 },
+    "word2": { "kind": "pick", "values": ["狸花的毛线球", "小橘的猫粮袋"] },
+    "a2": { "kind": "int", "min": 2, "max": 3 },
+    "b2": { "kind": "int", "min": 5, "max": 6 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{word} {a} {b}\n", "sampleText": "{word2} {a2} {b2}\n" },
+  "stemTemplate": "纸条上给**一串字**和**两个编号** `a`、`b` 喵。本喵要掏出从 `a` 号到 `b` 号**之前**的那一段，印两行：先印切出来的一段，再印这段有几颗。\n\n纸条上的两个编号是保准合法的：`a` 比 `b` 小，`b` 不超过珠子数，不用本喵自己防。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一串字、另外两个编号**喵，别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        String piece = s.substring(a, b);\n        System.out.println(\"切出来的是 \" + piece);\n        System.out.println(\"这段有 \" + piece.length() + \" 颗\");\n    }\n}\n",
+  "explanationTemplate": "那句规矩再念一遍：`substring(a, b)` 是**从 `a` 号掏到「`b` 号之前」** —— `b` 号那颗不算。所以 `substring(1, 4)` 掏出来的是 `1`、`2`、`3` 三颗，不是四颗。\n\n- **切下来的那一段是一只新缸**：用牌子 `piece` 把它接住，后面 `piece.length()` 才问得到它有几颗。想知道它多长，直接问它比拿 `b - a` 硬算更稳（以后 `b` 要是从别处算出来的，硬算就容易错）。\n- **编号合不合法得自己盯**：`a` 要是比 `b` 大，或者 `b` 超过珠子数，这一句当场就是 `StringIndexOutOfBoundsException` —— 编译时一声不吭，跑起来才炸。\n\n顺一句：`piece` 和原来那只缸**是两只不同的缸**，切它、印它，都不会动到原来那只分毫喵。"
+}

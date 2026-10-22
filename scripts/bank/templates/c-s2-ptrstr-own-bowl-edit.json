@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s2-ptrstr-own-bowl-edit",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-03",
+  "type": "codewrite",
+  "concept": ["char数组", "可写", "方括号与星号", "项链改珠子"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["cat", "fish", "bird"] },
+    "word2": { "kind": "pick", "values": ["moon", "star", "leaf"] },
+    "k": { "kind": "int", "min": 0, "max": 2 },
+    "up": { "kind": "pick", "values": ["X", "Z", "Q"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{word}\n{k}\n", "sampleText": "{word2}\n{k}\n" },
+  "stemTemplate": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报两个数。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行，就是**要换第几颗珠子**，编号从 0 数起）。\n\n然后**把第 k 颗珠子换成 `{up}`**，报两行：\n\n1. 第一行照写 `改之前：`，后面紧跟原来那条项链；\n2. 第二行照写 `改之后：`，后面紧跟换过珠子以后的那条项链。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"改之前：%s\\n\", word);\n    word[k] = '{up}';\n    printf(\"改之后：%s\\n\", word);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题练的是「**要动字，就得自己摆碗**」喵。\n\n**① 先摆一排自己的碗。** `char word[64];` 是本喵自己摆的一排碗，`scanf(\"%s\", word)` 把键盘上那条项链一颗一颗接进去。**这排碗是本喵自己的** —— 这一点决定了能不能往下刻。\n\n**② 方括号挑碗、放珠子。** `word[k] = '{up}';` 读作「先挑出第 k 只碗，再把 `{up}` 那颗珠子放进去」。写成 `*(word + k) = '{up}';` 一模一样，一个方括号正好换一颗星加一对括号。\n\n**③ 为什么这条项链能刻？** 因为 `word` 指的是**本喵自己摆的那排碗**。对照着想一想上一题的坑：`char *s = \"cat\";` 那种牌子指的是**写死在程序里的字**，往那儿刻字会当场断气。所以判断标准不是「用牌子还是用碗名」，而是「**那块地方是不是本喵自己的**」。\n\n顺带一个容易绊人的地方：`word` 这个名字本身**挪不动**（`word++` 翻译官喵会拦），想往后走要另起一块牌子。不过这道题不需要挪 —— **刻字只靠编号就行**，`word[k]` 直接够到第 k 只碗，名字不动也没什么关系喵。"
+}

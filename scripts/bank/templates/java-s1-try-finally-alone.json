@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-try-finally-alone",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-14",
+  "type": "codefix",
+  "concept": ["finally", "只有 finally 没有 catch", "越界", "断气"],
+  "instances": 2,
+  "params": {
+    "tail": { "kind": "pick", "values": ["账记完了喵", "收摊了喵"] }
+  },
+  "stemTemplate": "本喵把**收尾**那一句放进了 `finally`，可整段里**没写 `catch`** 喵：碗是收好了（`碗收好了` 印出来了），程序却在半路**还是断气** —— 最后那句一个字没跑。\n\n你帮本喵把这一路车接住（`catch` 里印 `越界了喵`），三块的顺序要排对：先接住、再收碗、最后照常收尾。\n\n改好之后屏幕上该是三行：\n\n```text\n越界了喵\n碗收好了\n{tail}\n```\n\n（碗那几行、还有最后那一句都别动喵。）",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int[] bowls = {3, 5, 7};\n        try {\n            System.out.println(bowls[3]);\n        } finally {\n            System.out.println(\"碗收好了\");\n        }\n        System.out.println(\"{tail}\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int[] bowls = {3, 5, 7};\n        try {\n            System.out.println(bowls[3]);\n        } catch (ArrayIndexOutOfBoundsException e) {\n            System.out.println(\"越界了喵\");\n        } finally {\n            System.out.println(\"碗收好了\");\n        }\n        System.out.println(\"{tail}\");\n    }\n}\n",
+  "explanationTemplate": "`finally` 的活儿是**不管翻没翻车都要干的那几句**（收碗、关账）喵 —— 可它**接不住车**。这一次它照样跑了（`碗收好了` 印出来了），但没人接住这一路车，程序最后还是断气，`finally` 后面那句一个字没跑。\n\n**想让程序活着把活干完，`catch` 那一块不能省。** 三块各管什么，一次排清：\n\n- `try` —— 放没底的活儿；哪句翻了车，它**后面**的句子全跳过；\n- `catch (ArrayIndexOutOfBoundsException e)` —— 这一路就接住（这儿是「一排碗的编号越界」：三只碗的编号只有 `0`、`1`、`2`，`bowls[3]` 越界）；\n- `finally` —— 接不接住都跑，摆在最后收尾。\n\n接住之后，`finally` 后面那句也就照常跑了 —— 这才是这一课要的那个「翻完车接着把账记完」喵。"
+}

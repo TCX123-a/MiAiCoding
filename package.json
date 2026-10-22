@@ -1,0 +1,135 @@
+{
+  "name": "miai-biancheng",
+  "version": "0.1.0",
+  "description": "咪爱编程——猫咪口吻 + 大肥鱼陪你学编程的离线学习伴侣",
+  "main": "./out/main/index.js",
+  "private": true,
+  "author": "miai",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "npm run build:content && electron-vite build",
+    "build:app": "electron-vite build",
+    "package:win": "npm run build && electron-builder --win nsis --x64",
+    "start": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false && vue-tsc --noEmit -p tsconfig.web.json --composite false",
+    "validate:content": "node scripts/content-validate.mjs",
+    "check:samples": "node scripts/check-lesson-code.mjs",
+    "check:questions": "node scripts/check-question-code.mjs",
+    "check:answers": "node scripts/check-code-answers.mjs",
+    "check:bank": "node scripts/check-bank.mjs",
+    "check:packed": "node scripts/check-content-packed.mjs",
+    "build:content": "node scripts/content-build.mjs --allow-missing",
+    "build:content:strict": "node scripts/content-build.mjs",
+    "gen:notices": "node scripts/gen-third-party-notices.mjs",
+    "test": "vitest run",
+    "protocol:sync": "node scripts/protocol-sync.mjs copy",
+    "protocol:check": "node scripts/protocol-sync.mjs check",
+    "check:foreign": "node scripts/模拟陌生电脑.mjs"
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.20.3",
+    "@codemirror/commands": "^6.11.0",
+    "@codemirror/lang-cpp": "^6.0.3",
+    "@codemirror/lang-java": "^6.0.2",
+    "@codemirror/lang-python": "^6.2.1",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/state": "^6.7.4",
+    "@codemirror/view": "^6.43.11",
+    "@formkit/auto-animate": "^0.10.0",
+    "@lezer/highlight": "^1.2.3",
+    "animejs": "^4.5.0",
+    "echarts": "^6.1.0",
+    "highlight.js": "^11.12.0",
+    "markdown-it": "^15.0.1",
+    "markdown-it-container": "^4.0.0",
+    "pinia": "^3.0.4",
+    "splitpanes": "^4.1.2",
+    "vue": "^3.5.42",
+    "vue-router": "^4.6.4",
+    "webwallgl": "2.1.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.2.0",
+    "@types/node": "^26.5.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "dsh-pet": "0.3.5",
+    "electron": "^44.9.3",
+    "electron-builder": "^26.0.12",
+    "electron-vite": "^5.0.0",
+    "iconv-lite": "^0.7.3",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.6",
+    "vitest": "^5.0.0",
+    "vue-tsc": "^3.3.11"
+  },
+  "build": {
+    "appId": "com.miai.biancheng",
+    "productName": "咪爱编程",
+    "copyright": "Copyright © 2026 miai",
+    "directories": {
+      "output": "release",
+      "buildResources": "resources"
+    },
+    "files": [
+      "out/**/*",
+      "package.json",
+      "LICENSE",
+      "THIRD-PARTY-NOTICES.md",
+      "THIRD-PARTY-CODE-NOTICES.md",
+      "docs/comfyui_workflow.json",
+      "docs/comfyui_workflow.md",
+      "LICENSES/**/*",
+      "!node_modules/**/*",
+      "!out/pet-helper/.vendor-stamp"
+    ],
+    "extraResources": [
+      {
+        "from": "THIRD-PARTY-NOTICES.md",
+        "to": "THIRD-PARTY-NOTICES.md"
+      },
+      {
+        "from": "THIRD-PARTY-CODE-NOTICES.md",
+        "to": "THIRD-PARTY-CODE-NOTICES.md"
+      },
+      {
+        "from": "LICENSE",
+        "to": "LICENSE"
+      },
+      {
+        "from": "LICENSES",
+        "to": "LICENSES"
+      }
+    ],
+    "asar": true,
+    "electronVersion": "44.9.3",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "resources/icon.ico",
+      "artifactName": "miai-biancheng-${version}-setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "咪爱编程",
+      "installerIcon": "resources/icon.ico",
+      "uninstallerIcon": "resources/icon.ico",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true
+    },
+    "mac": {
+      "icon": "resources/icon.icns",
+      "category": "public.app-category.education"
+    }
+  }
+}

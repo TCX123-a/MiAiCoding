@@ -1,0 +1,462 @@
+{
+  "lessonId": "java-stage2-09",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s2-ledger-rewrite-report-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要拿账本当面演三件事喵：**同一个名字写两遍会怎样**、**名字不在时 `get` 叼回来什么**、**带兜底值去取又是多少**。\n\n`main` 里这么走：\n\n1. 账本上先写两行：`小橘` 配 `3`、`狸花` 配 `5`；\n2. **同一个名字再写一遍**：`小橘` 配 `6`；\n3. 然后印四行：\n   - `账本上有 ` + **几个名字** + ` 个名字`\n   - `小橘 那一行是 ` + 按名字取回来的那一行\n   - `大肥鱼 那一行是 ` + 拿 `大肥鱼` 这个名字去 `get` 的结果\n   - `大肥鱼 兜底之后是 ` + 拿 `大肥鱼` 去取、**兜底值给 0** 的结果\n\n第三行印出来的是一串写着 `null` 的字 —— 那就是「什么都没叼到」的样子，本喵要亲眼看看它。\n\n这一题**不用投喂任何东西**，程序自己就能跑。",
+      "starter": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"小橘\", 3);\n        book.put(\"狸花\", 5);\n        book.put(\"小橘\", 6);\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        System.out.println(\"小橘 那一行是 \" + book.get(\"小橘\"));\n        System.out.println(\"大肥鱼 那一行是 \" + book.get(\"大肥鱼\"));\n        System.out.println(\"大肥鱼 兜底之后是 \" + book.getOrDefault(\"大肥鱼\", 0));\n    }\n}\n",
+      "expectedOutput": "账本上有 2 个名字\n小橘 那一行是 6\n大肥鱼 那一行是 null\n大肥鱼 兜底之后是 0",
+      "stdin": null,
+      "explanation": "这四行正好把本课的头号坑演了个全喵。\n\n**一、同一个名字再写一遍是「改写」，不是「加一行」。** `小橘` 先配了 `3`，又配了 `6` —— 账本上**还是那一行**，右边换成了 `6`。所以第一行印出来是 **2 个名字**（`小橘` 和 `狸花` 各一行），不是 3；第二行取回来的是 `6`，不是 `3`。\n\n**二、名字不在时 `get` 给的是空口袋，不是 0、也不是报错。** 第三行印出来是一串写着 `null` 的字。**这一行是最值得盯住的** —— 因为它是**安安静静**印出来的：程序一点没炸，屏幕上连一行红字都没有，可本喵手里拿到的压根不是数字。\n\n**三、空口袋为什么危险，得跟前面那个题对起来看。** 这一题里本喵只是把它**拼进项链**印出来，所以只得到一个写着 `null` 的字；上一道题里本喵把它**塞给光溜溜的 `int`**，那就当场炸了。同一只空口袋、两种下场 —— 区别只在本喵拿它去干了什么。\n\n**四、带兜底值去取就省心了。** `book.getOrDefault(\"大肥鱼\", 0)` 的意思是「**名字在就给真东西，不在就给 0**」。第四行印出来就是 `0`。\n\n所以在账本这里，本喵给自己立一条规矩：**凡是取东西的地方，先问自己一句「这个名字保证在吗」** —— 不保证，就用带兜底值的那一招，或者先问一句「它在不在」再动手。\n\n（顺带记一句形状上的事：账本一行里有两半 —— 名字和东西，所以名分那一行尖括号里挂着**两块牌子**。上面那句读作「名字是项链，东西是数字」喵。）",
+      "templateId": "java-s2-ledger-rewrite-report",
+      "params": {
+        "a": "小橘",
+        "b": "狸花",
+        "u": 6,
+        "d": 0
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:11.143Z",
+        "hash": "7bd209ea83cdeb78"
+      }
+    },
+    {
+      "id": "bank-java-s2-ledger-rewrite-report-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要拿账本当面演三件事喵：**同一个名字写两遍会怎样**、**名字不在时 `get` 叼回来什么**、**带兜底值去取又是多少**。\n\n`main` 里这么走：\n\n1. 账本上先写两行：`小橘` 配 `3`、`狸花` 配 `5`；\n2. **同一个名字再写一遍**：`小橘` 配 `7`；\n3. 然后印四行：\n   - `账本上有 ` + **几个名字** + ` 个名字`\n   - `小橘 那一行是 ` + 按名字取回来的那一行\n   - `大肥鱼 那一行是 ` + 拿 `大肥鱼` 这个名字去 `get` 的结果\n   - `大肥鱼 兜底之后是 ` + 拿 `大肥鱼` 去取、**兜底值给 1** 的结果\n\n第三行印出来的是一串写着 `null` 的字 —— 那就是「什么都没叼到」的样子，本喵要亲眼看看它。\n\n这一题**不用投喂任何东西**，程序自己就能跑。",
+      "starter": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"小橘\", 3);\n        book.put(\"狸花\", 5);\n        book.put(\"小橘\", 7);\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        System.out.println(\"小橘 那一行是 \" + book.get(\"小橘\"));\n        System.out.println(\"大肥鱼 那一行是 \" + book.get(\"大肥鱼\"));\n        System.out.println(\"大肥鱼 兜底之后是 \" + book.getOrDefault(\"大肥鱼\", 1));\n    }\n}\n",
+      "expectedOutput": "账本上有 2 个名字\n小橘 那一行是 7\n大肥鱼 那一行是 null\n大肥鱼 兜底之后是 1",
+      "stdin": null,
+      "explanation": "这四行正好把本课的头号坑演了个全喵。\n\n**一、同一个名字再写一遍是「改写」，不是「加一行」。** `小橘` 先配了 `3`，又配了 `7` —— 账本上**还是那一行**，右边换成了 `7`。所以第一行印出来是 **2 个名字**（`小橘` 和 `狸花` 各一行），不是 3；第二行取回来的是 `7`，不是 `3`。\n\n**二、名字不在时 `get` 给的是空口袋，不是 0、也不是报错。** 第三行印出来是一串写着 `null` 的字。**这一行是最值得盯住的** —— 因为它是**安安静静**印出来的：程序一点没炸，屏幕上连一行红字都没有，可本喵手里拿到的压根不是数字。\n\n**三、空口袋为什么危险，得跟前面那个题对起来看。** 这一题里本喵只是把它**拼进项链**印出来，所以只得到一个写着 `null` 的字；上一道题里本喵把它**塞给光溜溜的 `int`**，那就当场炸了。同一只空口袋、两种下场 —— 区别只在本喵拿它去干了什么。\n\n**四、带兜底值去取就省心了。** `book.getOrDefault(\"大肥鱼\", 1)` 的意思是「**名字在就给真东西，不在就给 1**」。第四行印出来就是 `1`。\n\n所以在账本这里，本喵给自己立一条规矩：**凡是取东西的地方，先问自己一句「这个名字保证在吗」** —— 不保证，就用带兜底值的那一招，或者先问一句「它在不在」再动手。\n\n（顺带记一句形状上的事：账本一行里有两半 —— 名字和东西，所以名分那一行尖括号里挂着**两块牌子**。上面那句读作「名字是项链，东西是数字」喵。）",
+      "templateId": "java-s2-ledger-rewrite-report",
+      "params": {
+        "a": "小橘",
+        "b": "狸花",
+        "u": 7,
+        "d": 1
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:11.829Z",
+        "hash": "382d4a8b53cf6968"
+      }
+    },
+    {
+      "id": "bank-java-s2-ledger-rewrite-report-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要拿账本当面演三件事喵：**同一个名字写两遍会怎样**、**名字不在时 `get` 叼回来什么**、**带兜底值去取又是多少**。\n\n`main` 里这么走：\n\n1. 账本上先写两行：`小橘` 配 `3`、`花卷` 配 `5`；\n2. **同一个名字再写一遍**：`小橘` 配 `7`；\n3. 然后印四行：\n   - `账本上有 ` + **几个名字** + ` 个名字`\n   - `小橘 那一行是 ` + 按名字取回来的那一行\n   - `大肥鱼 那一行是 ` + 拿 `大肥鱼` 这个名字去 `get` 的结果\n   - `大肥鱼 兜底之后是 ` + 拿 `大肥鱼` 去取、**兜底值给 0** 的结果\n\n第三行印出来的是一串写着 `null` 的字 —— 那就是「什么都没叼到」的样子，本喵要亲眼看看它。\n\n这一题**不用投喂任何东西**，程序自己就能跑。",
+      "starter": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"小橘\", 3);\n        book.put(\"花卷\", 5);\n        book.put(\"小橘\", 7);\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        System.out.println(\"小橘 那一行是 \" + book.get(\"小橘\"));\n        System.out.println(\"大肥鱼 那一行是 \" + book.get(\"大肥鱼\"));\n        System.out.println(\"大肥鱼 兜底之后是 \" + book.getOrDefault(\"大肥鱼\", 0));\n    }\n}\n",
+      "expectedOutput": "账本上有 2 个名字\n小橘 那一行是 7\n大肥鱼 那一行是 null\n大肥鱼 兜底之后是 0",
+      "stdin": null,
+      "explanation": "这四行正好把本课的头号坑演了个全喵。\n\n**一、同一个名字再写一遍是「改写」，不是「加一行」。** `小橘` 先配了 `3`，又配了 `7` —— 账本上**还是那一行**，右边换成了 `7`。所以第一行印出来是 **2 个名字**（`小橘` 和 `花卷` 各一行），不是 3；第二行取回来的是 `7`，不是 `3`。\n\n**二、名字不在时 `get` 给的是空口袋，不是 0、也不是报错。** 第三行印出来是一串写着 `null` 的字。**这一行是最值得盯住的** —— 因为它是**安安静静**印出来的：程序一点没炸，屏幕上连一行红字都没有，可本喵手里拿到的压根不是数字。\n\n**三、空口袋为什么危险，得跟前面那个题对起来看。** 这一题里本喵只是把它**拼进项链**印出来，所以只得到一个写着 `null` 的字；上一道题里本喵把它**塞给光溜溜的 `int`**，那就当场炸了。同一只空口袋、两种下场 —— 区别只在本喵拿它去干了什么。\n\n**四、带兜底值去取就省心了。** `book.getOrDefault(\"大肥鱼\", 0)` 的意思是「**名字在就给真东西，不在就给 0**」。第四行印出来就是 `0`。\n\n所以在账本这里，本喵给自己立一条规矩：**凡是取东西的地方，先问自己一句「这个名字保证在吗」** —— 不保证，就用带兜底值的那一招，或者先问一句「它在不在」再动手。\n\n（顺带记一句形状上的事：账本一行里有两半 —— 名字和东西，所以名分那一行尖括号里挂着**两块牌子**。上面那句读作「名字是项链，东西是数字」喵。）",
+      "templateId": "java-s2-ledger-rewrite-report",
+      "params": {
+        "a": "小橘",
+        "b": "花卷",
+        "u": 7,
+        "d": 0
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:14.067Z",
+        "hash": "79e7f24315ba70b4"
+      }
+    },
+    {
+      "id": "bank-java-s2-ledger-rewrite-report-009",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要拿账本当面演三件事喵：**同一个名字写两遍会怎样**、**名字不在时 `get` 叼回来什么**、**带兜底值去取又是多少**。\n\n`main` 里这么走：\n\n1. 账本上先写两行：`大橘` 配 `3`、`狸花` 配 `5`；\n2. **同一个名字再写一遍**：`大橘` 配 `6`；\n3. 然后印四行：\n   - `账本上有 ` + **几个名字** + ` 个名字`\n   - `大橘 那一行是 ` + 按名字取回来的那一行\n   - `大肥鱼 那一行是 ` + 拿 `大肥鱼` 这个名字去 `get` 的结果\n   - `大肥鱼 兜底之后是 ` + 拿 `大肥鱼` 去取、**兜底值给 1** 的结果\n\n第三行印出来的是一串写着 `null` 的字 —— 那就是「什么都没叼到」的样子，本喵要亲眼看看它。\n\n这一题**不用投喂任何东西**，程序自己就能跑。",
+      "starter": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"大橘\", 3);\n        book.put(\"狸花\", 5);\n        book.put(\"大橘\", 6);\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        System.out.println(\"大橘 那一行是 \" + book.get(\"大橘\"));\n        System.out.println(\"大肥鱼 那一行是 \" + book.get(\"大肥鱼\"));\n        System.out.println(\"大肥鱼 兜底之后是 \" + book.getOrDefault(\"大肥鱼\", 1));\n    }\n}\n",
+      "expectedOutput": "账本上有 2 个名字\n大橘 那一行是 6\n大肥鱼 那一行是 null\n大肥鱼 兜底之后是 1",
+      "stdin": null,
+      "explanation": "这四行正好把本课的头号坑演了个全喵。\n\n**一、同一个名字再写一遍是「改写」，不是「加一行」。** `大橘` 先配了 `3`，又配了 `6` —— 账本上**还是那一行**，右边换成了 `6`。所以第一行印出来是 **2 个名字**（`大橘` 和 `狸花` 各一行），不是 3；第二行取回来的是 `6`，不是 `3`。\n\n**二、名字不在时 `get` 给的是空口袋，不是 0、也不是报错。** 第三行印出来是一串写着 `null` 的字。**这一行是最值得盯住的** —— 因为它是**安安静静**印出来的：程序一点没炸，屏幕上连一行红字都没有，可本喵手里拿到的压根不是数字。\n\n**三、空口袋为什么危险，得跟前面那个题对起来看。** 这一题里本喵只是把它**拼进项链**印出来，所以只得到一个写着 `null` 的字；上一道题里本喵把它**塞给光溜溜的 `int`**，那就当场炸了。同一只空口袋、两种下场 —— 区别只在本喵拿它去干了什么。\n\n**四、带兜底值去取就省心了。** `book.getOrDefault(\"大肥鱼\", 1)` 的意思是「**名字在就给真东西，不在就给 1**」。第四行印出来就是 `1`。\n\n所以在账本这里，本喵给自己立一条规矩：**凡是取东西的地方，先问自己一句「这个名字保证在吗」** —— 不保证，就用带兜底值的那一招，或者先问一句「它在不在」再动手。\n\n（顺带记一句形状上的事：账本一行里有两半 —— 名字和东西，所以名分那一行尖括号里挂着**两块牌子**。上面那句读作「名字是项链，东西是数字」喵。）",
+      "templateId": "java-s2-ledger-rewrite-report",
+      "params": {
+        "a": "大橘",
+        "b": "狸花",
+        "u": 6,
+        "d": 1
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:16.378Z",
+        "hash": "6fc2669b43ece2dd"
+      }
+    },
+    {
+      "id": "bank-java-s2-ledger-rewrite-report-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要拿账本当面演三件事喵：**同一个名字写两遍会怎样**、**名字不在时 `get` 叼回来什么**、**带兜底值去取又是多少**。\n\n`main` 里这么走：\n\n1. 账本上先写两行：`大橘` 配 `3`、`花卷` 配 `5`；\n2. **同一个名字再写一遍**：`大橘` 配 `6`；\n3. 然后印四行：\n   - `账本上有 ` + **几个名字** + ` 个名字`\n   - `大橘 那一行是 ` + 按名字取回来的那一行\n   - `大肥鱼 那一行是 ` + 拿 `大肥鱼` 这个名字去 `get` 的结果\n   - `大肥鱼 兜底之后是 ` + 拿 `大肥鱼` 去取、**兜底值给 0** 的结果\n\n第三行印出来的是一串写着 `null` 的字 —— 那就是「什么都没叼到」的样子，本喵要亲眼看看它。\n\n这一题**不用投喂任何东西**，程序自己就能跑。",
+      "starter": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"大橘\", 3);\n        book.put(\"花卷\", 5);\n        book.put(\"大橘\", 6);\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        System.out.println(\"大橘 那一行是 \" + book.get(\"大橘\"));\n        System.out.println(\"大肥鱼 那一行是 \" + book.get(\"大肥鱼\"));\n        System.out.println(\"大肥鱼 兜底之后是 \" + book.getOrDefault(\"大肥鱼\", 0));\n    }\n}\n",
+      "expectedOutput": "账本上有 2 个名字\n大橘 那一行是 6\n大肥鱼 那一行是 null\n大肥鱼 兜底之后是 0",
+      "stdin": null,
+      "explanation": "这四行正好把本课的头号坑演了个全喵。\n\n**一、同一个名字再写一遍是「改写」，不是「加一行」。** `大橘` 先配了 `3`，又配了 `6` —— 账本上**还是那一行**，右边换成了 `6`。所以第一行印出来是 **2 个名字**（`大橘` 和 `花卷` 各一行），不是 3；第二行取回来的是 `6`，不是 `3`。\n\n**二、名字不在时 `get` 给的是空口袋，不是 0、也不是报错。** 第三行印出来是一串写着 `null` 的字。**这一行是最值得盯住的** —— 因为它是**安安静静**印出来的：程序一点没炸，屏幕上连一行红字都没有，可本喵手里拿到的压根不是数字。\n\n**三、空口袋为什么危险，得跟前面那个题对起来看。** 这一题里本喵只是把它**拼进项链**印出来，所以只得到一个写着 `null` 的字；上一道题里本喵把它**塞给光溜溜的 `int`**，那就当场炸了。同一只空口袋、两种下场 —— 区别只在本喵拿它去干了什么。\n\n**四、带兜底值去取就省心了。** `book.getOrDefault(\"大肥鱼\", 0)` 的意思是「**名字在就给真东西，不在就给 0**」。第四行印出来就是 `0`。\n\n所以在账本这里，本喵给自己立一条规矩：**凡是取东西的地方，先问自己一句「这个名字保证在吗」** —— 不保证，就用带兜底值的那一招，或者先问一句「它在不在」再动手。\n\n（顺带记一句形状上的事：账本一行里有两半 —— 名字和东西，所以名分那一行尖括号里挂着**两块牌子**。上面那句读作「名字是项链，东西是数字」喵。）",
+      "templateId": "java-s2-ledger-rewrite-report",
+      "params": {
+        "a": "大橘",
+        "b": "花卷",
+        "u": 6,
+        "d": 0
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:18.695Z",
+        "hash": "3a2f435553ca4b0a"
+      }
+    },
+    {
+      "id": "bank-java-s2-ledger-rewrite-report-015",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要拿账本当面演三件事喵：**同一个名字写两遍会怎样**、**名字不在时 `get` 叼回来什么**、**带兜底值去取又是多少**。\n\n`main` 里这么走：\n\n1. 账本上先写两行：`大橘` 配 `3`、`花卷` 配 `5`；\n2. **同一个名字再写一遍**：`大橘` 配 `7`；\n3. 然后印四行：\n   - `账本上有 ` + **几个名字** + ` 个名字`\n   - `大橘 那一行是 ` + 按名字取回来的那一行\n   - `大肥鱼 那一行是 ` + 拿 `大肥鱼` 这个名字去 `get` 的结果\n   - `大肥鱼 兜底之后是 ` + 拿 `大肥鱼` 去取、**兜底值给 1** 的结果\n\n第三行印出来的是一串写着 `null` 的字 —— 那就是「什么都没叼到」的样子，本喵要亲眼看看它。\n\n这一题**不用投喂任何东西**，程序自己就能跑。",
+      "starter": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"大橘\", 3);\n        book.put(\"花卷\", 5);\n        book.put(\"大橘\", 7);\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        System.out.println(\"大橘 那一行是 \" + book.get(\"大橘\"));\n        System.out.println(\"大肥鱼 那一行是 \" + book.get(\"大肥鱼\"));\n        System.out.println(\"大肥鱼 兜底之后是 \" + book.getOrDefault(\"大肥鱼\", 1));\n    }\n}\n",
+      "expectedOutput": "账本上有 2 个名字\n大橘 那一行是 7\n大肥鱼 那一行是 null\n大肥鱼 兜底之后是 1",
+      "stdin": null,
+      "explanation": "这四行正好把本课的头号坑演了个全喵。\n\n**一、同一个名字再写一遍是「改写」，不是「加一行」。** `大橘` 先配了 `3`，又配了 `7` —— 账本上**还是那一行**，右边换成了 `7`。所以第一行印出来是 **2 个名字**（`大橘` 和 `花卷` 各一行），不是 3；第二行取回来的是 `7`，不是 `3`。\n\n**二、名字不在时 `get` 给的是空口袋，不是 0、也不是报错。** 第三行印出来是一串写着 `null` 的字。**这一行是最值得盯住的** —— 因为它是**安安静静**印出来的：程序一点没炸，屏幕上连一行红字都没有，可本喵手里拿到的压根不是数字。\n\n**三、空口袋为什么危险，得跟前面那个题对起来看。** 这一题里本喵只是把它**拼进项链**印出来，所以只得到一个写着 `null` 的字；上一道题里本喵把它**塞给光溜溜的 `int`**，那就当场炸了。同一只空口袋、两种下场 —— 区别只在本喵拿它去干了什么。\n\n**四、带兜底值去取就省心了。** `book.getOrDefault(\"大肥鱼\", 1)` 的意思是「**名字在就给真东西，不在就给 1**」。第四行印出来就是 `1`。\n\n所以在账本这里，本喵给自己立一条规矩：**凡是取东西的地方，先问自己一句「这个名字保证在吗」** —— 不保证，就用带兜底值的那一招，或者先问一句「它在不在」再动手。\n\n（顺带记一句形状上的事：账本一行里有两半 —— 名字和东西，所以名分那一行尖括号里挂着**两块牌子**。上面那句读作「名字是项链，东西是数字」喵。）",
+      "templateId": "java-s2-ledger-rewrite-report",
+      "params": {
+        "a": "大橘",
+        "b": "花卷",
+        "u": 7,
+        "d": 1
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:12.225Z",
+        "hash": "39d2f33792498f3a"
+      }
+    },
+    {
+      "id": "bank-java-s2-ledger-tally-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要拿账本记一笔「每只猫来了几趟」喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。同一只猫可能来好几趟。\n\n请用账本一行一行记下来 —— 记的时候**别写 `if` 分开判断「在不在」**，用那种「**带着兜底值去取、加一、再写回去**」的一行写法 —— 然后印三行：\n\n```text\n账本上有 M 个名字\n把所有名字的趟数加起来是 S\n1 来了 C 趟\n```\n\n- `M` 是账本上**有几个名字**；\n- `S` 是把**每个名字的趟数挨个加起来**的总数（当心：这里得先把名字拢成一串再挨个摸）；\n- 最后一行问的名字就是 `1`，**它可能压根没来过** —— 那就当它来了 0 趟。\n\n比如投喂给程序的是\n\n3\n2\n1\n1\n\n程序就要叼回\n\n账本上有 2 个名字\n把所有名字的趟数加起来是 3\n1 来了 2 趟\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.HashMap;\nimport java.util.Map;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Map<String, Integer> book = new HashMap<>();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashMap;\nimport java.util.Map;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Map<String, Integer> book = new HashMap<>();\n        for (int i = 0; i < n; i++) {\n            String name = sc.next();\n            book.put(name, book.getOrDefault(name, 0) + 1);\n        }\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        int total = 0;\n        for (String name : book.keySet()) {\n            total = total + book.get(name);\n        }\n        System.out.println(\"把所有名字的趟数加起来是 \" + total);\n        System.out.println(\"1 来了 \" + book.getOrDefault(\"1\", 0) + \" 趟\");\n    }\n}\n",
+      "expectedOutput": "账本上有 2 个名字\n把所有名字的趟数加起来是 3\n1 来了 1 趟",
+      "stdin": "3\n2\n2\n1\n",
+      "explanation": "这题是账本最经典的用法：**「这个月来了几趟」全靠一行代码**喵。\n\n**一、那行「加账」的话掰开看。**\n\n```java\nbook.put(name, book.getOrDefault(name, 0) + 1);\n```\n\n右半边先算：**名字在就用它现在的趟数、不在就用 0**，然后加一。左半边把算出来的数**再写回同一个名字**上。要是名字已经在了，这一写就是**改写那一行**，不是加一行 —— 所以同一个名字来几趟都只占一行，`size()` 报的才是**有几个名字**。\n\n**二、为什么不能用 `get` 直接取。** 名字第一次来的时候账本上没这一行，`get` 叼回来的是**空口袋**。空口袋拿去加一（拆箱）就是那串红字了。`getOrDefault` 就是为这个场面生的。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，而来的人比这段号多，所以**必然有重名** —— 这题不给「碰巧人人不同」留后门，只写 `put(name, 1)`、忘了把趟数加上去的人，第二行一定会露馅喵。）\n\n**三、挨个摸之前得先把名字拢成一串。** 账本不像柜子那样有编号可以数着摸 —— 它的招式是 `book.keySet()`：**把所有名字拢成一串**，然后就能用「挨个过一遍」的写法走了，走的时候 `book.get(name)` 拿那一行右边的数。\n\n**四、为什么这个总数是稳的。** 账本按名字算出来的座位号摆，**不按本喵写进去的先后摆**，所以挨个摸出来的顺序看着乱七八糟 —— 那不是出 bug 了。本喵做的这件事（把所有数加起来）**跟顺序无关**，所以结果永远是稳的。这也是课里那句话：挨个过一遍的时候，只做跟顺序无关的事。\n\n**五、记一笔的另一种稳妥写法。** 万一名字真的不在、本喵又不想给兜底值，那就先 `containsKey` 问一句再动手 —— 两种都行，本喵自己挑顺手的那种喵。",
+      "templateId": "java-s2-ledger-tally",
+      "params": {
+        "n": 3,
+        "want": "1"
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:03.628Z",
+        "hash": "31b62b7922e853a4"
+      }
+    },
+    {
+      "id": "bank-java-s2-ledger-tally-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要拿账本记一笔「每只猫来了几趟」喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。同一只猫可能来好几趟。\n\n请用账本一行一行记下来 —— 记的时候**别写 `if` 分开判断「在不在」**，用那种「**带着兜底值去取、加一、再写回去**」的一行写法 —— 然后印三行：\n\n```text\n账本上有 M 个名字\n把所有名字的趟数加起来是 S\n2 来了 C 趟\n```\n\n- `M` 是账本上**有几个名字**；\n- `S` 是把**每个名字的趟数挨个加起来**的总数（当心：这里得先把名字拢成一串再挨个摸）；\n- 最后一行问的名字就是 `2`，**它可能压根没来过** —— 那就当它来了 0 趟。\n\n比如投喂给程序的是\n\n3\n1\n2\n1\n\n程序就要叼回\n\n账本上有 2 个名字\n把所有名字的趟数加起来是 3\n2 来了 1 趟\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.HashMap;\nimport java.util.Map;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Map<String, Integer> book = new HashMap<>();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashMap;\nimport java.util.Map;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Map<String, Integer> book = new HashMap<>();\n        for (int i = 0; i < n; i++) {\n            String name = sc.next();\n            book.put(name, book.getOrDefault(name, 0) + 1);\n        }\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        int total = 0;\n        for (String name : book.keySet()) {\n            total = total + book.get(name);\n        }\n        System.out.println(\"把所有名字的趟数加起来是 \" + total);\n        System.out.println(\"2 来了 \" + book.getOrDefault(\"2\", 0) + \" 趟\");\n    }\n}\n",
+      "expectedOutput": "账本上有 2 个名字\n把所有名字的趟数加起来是 3\n2 来了 1 趟",
+      "stdin": "3\n1\n1\n2\n",
+      "explanation": "这题是账本最经典的用法：**「这个月来了几趟」全靠一行代码**喵。\n\n**一、那行「加账」的话掰开看。**\n\n```java\nbook.put(name, book.getOrDefault(name, 0) + 1);\n```\n\n右半边先算：**名字在就用它现在的趟数、不在就用 0**，然后加一。左半边把算出来的数**再写回同一个名字**上。要是名字已经在了，这一写就是**改写那一行**，不是加一行 —— 所以同一个名字来几趟都只占一行，`size()` 报的才是**有几个名字**。\n\n**二、为什么不能用 `get` 直接取。** 名字第一次来的时候账本上没这一行，`get` 叼回来的是**空口袋**。空口袋拿去加一（拆箱）就是那串红字了。`getOrDefault` 就是为这个场面生的。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，而来的人比这段号多，所以**必然有重名** —— 这题不给「碰巧人人不同」留后门，只写 `put(name, 1)`、忘了把趟数加上去的人，第二行一定会露馅喵。）\n\n**三、挨个摸之前得先把名字拢成一串。** 账本不像柜子那样有编号可以数着摸 —— 它的招式是 `book.keySet()`：**把所有名字拢成一串**，然后就能用「挨个过一遍」的写法走了，走的时候 `book.get(name)` 拿那一行右边的数。\n\n**四、为什么这个总数是稳的。** 账本按名字算出来的座位号摆，**不按本喵写进去的先后摆**，所以挨个摸出来的顺序看着乱七八糟 —— 那不是出 bug 了。本喵做的这件事（把所有数加起来）**跟顺序无关**，所以结果永远是稳的。这也是课里那句话：挨个过一遍的时候，只做跟顺序无关的事。\n\n**五、记一笔的另一种稳妥写法。** 万一名字真的不在、本喵又不想给兜底值，那就先 `containsKey` 问一句再动手 —— 两种都行，本喵自己挑顺手的那种喵。",
+      "templateId": "java-s2-ledger-tally",
+      "params": {
+        "n": 3,
+        "want": "2"
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:21.778Z",
+        "hash": "6a4a49bab4b6be16"
+      }
+    },
+    {
+      "id": "bank-java-s2-ledger-tally-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要拿账本记一笔「每只猫来了几趟」喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。同一只猫可能来好几趟。\n\n请用账本一行一行记下来 —— 记的时候**别写 `if` 分开判断「在不在」**，用那种「**带着兜底值去取、加一、再写回去**」的一行写法 —— 然后印三行：\n\n```text\n账本上有 M 个名字\n把所有名字的趟数加起来是 S\n1 来了 C 趟\n```\n\n- `M` 是账本上**有几个名字**；\n- `S` 是把**每个名字的趟数挨个加起来**的总数（当心：这里得先把名字拢成一串再挨个摸）；\n- 最后一行问的名字就是 `1`，**它可能压根没来过** —— 那就当它来了 0 趟。\n\n比如投喂给程序的是\n\n4\n2\n2\n2\n1\n\n程序就要叼回\n\n账本上有 2 个名字\n把所有名字的趟数加起来是 4\n1 来了 1 趟\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.HashMap;\nimport java.util.Map;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Map<String, Integer> book = new HashMap<>();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashMap;\nimport java.util.Map;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Map<String, Integer> book = new HashMap<>();\n        for (int i = 0; i < n; i++) {\n            String name = sc.next();\n            book.put(name, book.getOrDefault(name, 0) + 1);\n        }\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        int total = 0;\n        for (String name : book.keySet()) {\n            total = total + book.get(name);\n        }\n        System.out.println(\"把所有名字的趟数加起来是 \" + total);\n        System.out.println(\"1 来了 \" + book.getOrDefault(\"1\", 0) + \" 趟\");\n    }\n}\n",
+      "expectedOutput": "账本上有 2 个名字\n把所有名字的趟数加起来是 4\n1 来了 2 趟",
+      "stdin": "4\n2\n1\n2\n1\n",
+      "explanation": "这题是账本最经典的用法：**「这个月来了几趟」全靠一行代码**喵。\n\n**一、那行「加账」的话掰开看。**\n\n```java\nbook.put(name, book.getOrDefault(name, 0) + 1);\n```\n\n右半边先算：**名字在就用它现在的趟数、不在就用 0**，然后加一。左半边把算出来的数**再写回同一个名字**上。要是名字已经在了，这一写就是**改写那一行**，不是加一行 —— 所以同一个名字来几趟都只占一行，`size()` 报的才是**有几个名字**。\n\n**二、为什么不能用 `get` 直接取。** 名字第一次来的时候账本上没这一行，`get` 叼回来的是**空口袋**。空口袋拿去加一（拆箱）就是那串红字了。`getOrDefault` 就是为这个场面生的。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，而来的人比这段号多，所以**必然有重名** —— 这题不给「碰巧人人不同」留后门，只写 `put(name, 1)`、忘了把趟数加上去的人，第二行一定会露馅喵。）\n\n**三、挨个摸之前得先把名字拢成一串。** 账本不像柜子那样有编号可以数着摸 —— 它的招式是 `book.keySet()`：**把所有名字拢成一串**，然后就能用「挨个过一遍」的写法走了，走的时候 `book.get(name)` 拿那一行右边的数。\n\n**四、为什么这个总数是稳的。** 账本按名字算出来的座位号摆，**不按本喵写进去的先后摆**，所以挨个摸出来的顺序看着乱七八糟 —— 那不是出 bug 了。本喵做的这件事（把所有数加起来）**跟顺序无关**，所以结果永远是稳的。这也是课里那句话：挨个过一遍的时候，只做跟顺序无关的事。\n\n**五、记一笔的另一种稳妥写法。** 万一名字真的不在、本喵又不想给兜底值，那就先 `containsKey` 问一句再动手 —— 两种都行，本喵自己挑顺手的那种喵。",
+      "templateId": "java-s2-ledger-tally",
+      "params": {
+        "n": 4,
+        "want": "1"
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:24.939Z",
+        "hash": "6c62c29713ceb332"
+      }
+    },
+    {
+      "id": "bank-java-s2-ledger-tally-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要拿账本记一笔「每只猫来了几趟」喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。同一只猫可能来好几趟。\n\n请用账本一行一行记下来 —— 记的时候**别写 `if` 分开判断「在不在」**，用那种「**带着兜底值去取、加一、再写回去**」的一行写法 —— 然后印三行：\n\n```text\n账本上有 M 个名字\n把所有名字的趟数加起来是 S\n2 来了 C 趟\n```\n\n- `M` 是账本上**有几个名字**；\n- `S` 是把**每个名字的趟数挨个加起来**的总数（当心：这里得先把名字拢成一串再挨个摸）；\n- 最后一行问的名字就是 `2`，**它可能压根没来过** —— 那就当它来了 0 趟。\n\n比如投喂给程序的是\n\n4\n2\n2\n2\n2\n\n程序就要叼回\n\n账本上有 1 个名字\n把所有名字的趟数加起来是 4\n2 来了 4 趟\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.HashMap;\nimport java.util.Map;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Map<String, Integer> book = new HashMap<>();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashMap;\nimport java.util.Map;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Map<String, Integer> book = new HashMap<>();\n        for (int i = 0; i < n; i++) {\n            String name = sc.next();\n            book.put(name, book.getOrDefault(name, 0) + 1);\n        }\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        int total = 0;\n        for (String name : book.keySet()) {\n            total = total + book.get(name);\n        }\n        System.out.println(\"把所有名字的趟数加起来是 \" + total);\n        System.out.println(\"2 来了 \" + book.getOrDefault(\"2\", 0) + \" 趟\");\n    }\n}\n",
+      "expectedOutput": "账本上有 2 个名字\n把所有名字的趟数加起来是 4\n2 来了 1 趟",
+      "stdin": "4\n2\n1\n1\n1\n",
+      "explanation": "这题是账本最经典的用法：**「这个月来了几趟」全靠一行代码**喵。\n\n**一、那行「加账」的话掰开看。**\n\n```java\nbook.put(name, book.getOrDefault(name, 0) + 1);\n```\n\n右半边先算：**名字在就用它现在的趟数、不在就用 0**，然后加一。左半边把算出来的数**再写回同一个名字**上。要是名字已经在了，这一写就是**改写那一行**，不是加一行 —— 所以同一个名字来几趟都只占一行，`size()` 报的才是**有几个名字**。\n\n**二、为什么不能用 `get` 直接取。** 名字第一次来的时候账本上没这一行，`get` 叼回来的是**空口袋**。空口袋拿去加一（拆箱）就是那串红字了。`getOrDefault` 就是为这个场面生的。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，而来的人比这段号多，所以**必然有重名** —— 这题不给「碰巧人人不同」留后门，只写 `put(name, 1)`、忘了把趟数加上去的人，第二行一定会露馅喵。）\n\n**三、挨个摸之前得先把名字拢成一串。** 账本不像柜子那样有编号可以数着摸 —— 它的招式是 `book.keySet()`：**把所有名字拢成一串**，然后就能用「挨个过一遍」的写法走了，走的时候 `book.get(name)` 拿那一行右边的数。\n\n**四、为什么这个总数是稳的。** 账本按名字算出来的座位号摆，**不按本喵写进去的先后摆**，所以挨个摸出来的顺序看着乱七八糟 —— 那不是出 bug 了。本喵做的这件事（把所有数加起来）**跟顺序无关**，所以结果永远是稳的。这也是课里那句话：挨个过一遍的时候，只做跟顺序无关的事。\n\n**五、记一笔的另一种稳妥写法。** 万一名字真的不在、本喵又不想给兜底值，那就先 `containsKey` 问一句再动手 —— 两种都行，本喵自己挑顺手的那种喵。",
+      "templateId": "java-s2-ledger-tally",
+      "params": {
+        "n": 4,
+        "want": "2"
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:05.448Z",
+        "hash": "5c0d83f45356d3a3"
+      }
+    },
+    {
+      "id": "bank-java-s2-map-contains-key-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想先问一句「账本上有没有这个名字」再动手 —— 结果翻译官喵把稿子退回来了，一个字都没让跑。\n\n请你帮本喵改好，规矩是：**要问的还是那件事**（账本上**有没有这个名字**），只把问的那一招换成账本真正会的那一个。\n\n改好之后，程序该印出这一行：\n\n```text\n小橘在账本上，有 2 条喵\n```\n\n只有问名字那一处的问题，别的本喵都没写错喵。",
+      "brokenCode": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"小橘\", 2);\n        if (book.contains(\"小橘\")) {\n            System.out.println(\"小橘在账本上，有 \" + book.get(\"小橘\") + \" 条喵\");\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"小橘\", 2);\n        if (book.containsKey(\"小橘\")) {\n            System.out.println(\"小橘在账本上，有 \" + book.get(\"小橘\") + \" 条喵\");\n        }\n    }\n}\n",
+      "expectedOutput": "小橘在账本上，有 2 条喵",
+      "stdin": null,
+      "explanation": "这一题属于**过不了稿子那一关**，翻译官喵退回来说的是：\n\n```text\ncannot find symbol\n  symbol:   method contains(String)\n  location: variable book of type Map<String,Integer>\n```\n\n念起来是：**「`book` 身上没有 `contains` 这么一招喵。」** 下面那两行是翻译官喵附上的线索：`symbol:` 说它**没找到的是哪一招**，`location:` 说**是哪样东西**身上没有这招 —— 有了这两行，本喵就不用满篇乱找了。\n\n为什么本喵会顺手写出 `contains`？因为它**确实存在**，只不过长在**别家**身上：\n\n- **只要名字的那种名单**（`Set`）问「有没有」用的就是 `contains`；\n- **账本**（`Map`）里一行有两样东西，问「有没有」的时候得说清问的是**哪一半** —— 所以它的招式名字里带着那个尾巴：**`containsKey`** 问的是名字，「有没有这个东西」另有说法。\n\n这题问的正是**名字**，所以正确答案就是 `containsKey`：\n\n```java\nif (book.containsKey(\"小橘\")) {\n    ...\n}\n```\n\n往后认招式的时候留意这个习惯：**账本上的招式名字常常带 `Key` 或者 `Value`**，因为它天生就有两半。名称里带没带那个尾巴，往往就是「问名字」还是「问东西」的分水岭喵。",
+      "templateId": "java-s2-map-contains-key",
+      "params": {
+        "a": "小橘",
+        "v": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:45:55.419Z",
+        "hash": "be08effb5869a46f"
+      }
+    },
+    {
+      "id": "bank-java-s2-map-contains-key-005",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想先问一句「账本上有没有这个名字」再动手 —— 结果翻译官喵把稿子退回来了，一个字都没让跑。\n\n请你帮本喵改好，规矩是：**要问的还是那件事**（账本上**有没有这个名字**），只把问的那一招换成账本真正会的那一个。\n\n改好之后，程序该印出这一行：\n\n```text\n大橘在账本上，有 3 条喵\n```\n\n只有问名字那一处的问题，别的本喵都没写错喵。",
+      "brokenCode": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"大橘\", 3);\n        if (book.contains(\"大橘\")) {\n            System.out.println(\"大橘在账本上，有 \" + book.get(\"大橘\") + \" 条喵\");\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"大橘\", 3);\n        if (book.containsKey(\"大橘\")) {\n            System.out.println(\"大橘在账本上，有 \" + book.get(\"大橘\") + \" 条喵\");\n        }\n    }\n}\n",
+      "expectedOutput": "大橘在账本上，有 3 条喵",
+      "stdin": null,
+      "explanation": "这一题属于**过不了稿子那一关**，翻译官喵退回来说的是：\n\n```text\ncannot find symbol\n  symbol:   method contains(String)\n  location: variable book of type Map<String,Integer>\n```\n\n念起来是：**「`book` 身上没有 `contains` 这么一招喵。」** 下面那两行是翻译官喵附上的线索：`symbol:` 说它**没找到的是哪一招**，`location:` 说**是哪样东西**身上没有这招 —— 有了这两行，本喵就不用满篇乱找了。\n\n为什么本喵会顺手写出 `contains`？因为它**确实存在**，只不过长在**别家**身上：\n\n- **只要名字的那种名单**（`Set`）问「有没有」用的就是 `contains`；\n- **账本**（`Map`）里一行有两样东西，问「有没有」的时候得说清问的是**哪一半** —— 所以它的招式名字里带着那个尾巴：**`containsKey`** 问的是名字，「有没有这个东西」另有说法。\n\n这题问的正是**名字**，所以正确答案就是 `containsKey`：\n\n```java\nif (book.containsKey(\"大橘\")) {\n    ...\n}\n```\n\n往后认招式的时候留意这个习惯：**账本上的招式名字常常带 `Key` 或者 `Value`**，因为它天生就有两半。名称里带没带那个尾巴，往往就是「问名字」还是「问东西」的分水岭喵。",
+      "templateId": "java-s2-map-contains-key",
+      "params": {
+        "a": "大橘",
+        "v": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:45:57.007Z",
+        "hash": "a444baf649ea2fa8"
+      }
+    },
+    {
+      "id": "bank-java-s2-map-null-unbox-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "账本上明明只写过 `小橘` 那一行，本喵却伸手去拿 `大肥鱼` 的 —— 程序跑起来了，可屏幕上冒出来的不是数字，是**一大段红字**。\n\n请你帮本喵改好，规矩是：**名字不在账本上的时候，就当它来过 0 趟**。这一处别用 `if` 分开写两遍，试试那种**带着兜底值去取**的招式，一行就够。\n\n改好之后，程序该印出这一行：\n\n```text\n大肥鱼 有 0 条喵\n```\n\n只有拿东西那一处的问题，别的本喵都没写错喵。",
+      "brokenCode": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"小橘\", 3);\n        int n = book.get(\"大肥鱼\");\n        System.out.println(\"大肥鱼 有 \" + n + \" 条喵\");\n    }\n}\n",
+      "referenceFix": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"小橘\", 3);\n        int n = book.getOrDefault(\"大肥鱼\", 0);\n        System.out.println(\"大肥鱼 有 \" + n + \" 条喵\");\n    }\n}\n",
+      "expectedOutput": "大肥鱼 有 0 条喵",
+      "stdin": null,
+      "explanation": "这一题是课里**最值钱的那条坑**，值得一句一句拆开看喵。\n\n**一、稿子那一关它过得干干净净。** `int n = book.get(\"大肥鱼\");` 这一句翻译官一个字都没说 —— 它确实是一句合法的写法。\n\n**二、跑到那一句才炸。** 红字头一句是这样的：\n\n```text\nException in thread \"main\" java.lang.NullPointerException: Cannot invoke \"java.lang.Integer.intValue()\" because the return value of \"java.util.Map.get(Object)\" is null\n```\n\n念起来是：**「本喵要把 `get` 叼回来的东西拆箱，可它叼回来的是一只空口袋喵。」** 名字不在账本上 → `get` 给的是 `null`，不是 `0`、也不是报错 → 把这个空口袋塞给光溜溜的 `int` 时要自动拆箱 → 炸在拆箱那一步。\n\n**三、正路是带着兜底值去取。**\n\n```java\nint n = book.getOrDefault(\"大肥鱼\", 0);\n```\n\n读法是「**名字在就给真东西，不在就给 0**」。这一招把事情一次办完，不用先问一句再取一次。\n\n**四、这条坑为什么最值钱。** 因为在账本这里，**「拿不到」是常态，不是意外。** 名单上有一万个名字，本喵要查的那个偏偏不在，太正常了。所以往后凡是**从账本里取东西**的地方，本喵都得先在心里过一句：这个名字**保证**在吗？不保证，就用 `getOrDefault`，或者先 `containsKey` 问一句。\n\n顺手和上一课接上：柜子上「编号数过了」是**当场炸**，账本上「名字拿不到」是**叼个空口袋回来** —— 这两样都得本喵自己防着喵。",
+      "templateId": "java-s2-map-null-unbox",
+      "params": {
+        "a": "小橘",
+        "b": "大肥鱼",
+        "d": 0
+      },
+      "verified": {
+        "at": "2026-09-16T08:45:51.835Z",
+        "hash": "4de72c3c5a15c01f"
+      }
+    },
+    {
+      "id": "bank-java-s2-map-null-unbox-007",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "账本上明明只写过 `狸花` 那一行，本喵却伸手去拿 `小黄鱼` 的 —— 程序跑起来了，可屏幕上冒出来的不是数字，是**一大段红字**。\n\n请你帮本喵改好，规矩是：**名字不在账本上的时候，就当它来过 1 趟**。这一处别用 `if` 分开写两遍，试试那种**带着兜底值去取**的招式，一行就够。\n\n改好之后，程序该印出这一行：\n\n```text\n小黄鱼 有 1 条喵\n```\n\n只有拿东西那一处的问题，别的本喵都没写错喵。",
+      "brokenCode": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"狸花\", 3);\n        int n = book.get(\"小黄鱼\");\n        System.out.println(\"小黄鱼 有 \" + n + \" 条喵\");\n    }\n}\n",
+      "referenceFix": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"狸花\", 3);\n        int n = book.getOrDefault(\"小黄鱼\", 1);\n        System.out.println(\"小黄鱼 有 \" + n + \" 条喵\");\n    }\n}\n",
+      "expectedOutput": "小黄鱼 有 1 条喵",
+      "stdin": null,
+      "explanation": "这一题是课里**最值钱的那条坑**，值得一句一句拆开看喵。\n\n**一、稿子那一关它过得干干净净。** `int n = book.get(\"小黄鱼\");` 这一句翻译官一个字都没说 —— 它确实是一句合法的写法。\n\n**二、跑到那一句才炸。** 红字头一句是这样的：\n\n```text\nException in thread \"main\" java.lang.NullPointerException: Cannot invoke \"java.lang.Integer.intValue()\" because the return value of \"java.util.Map.get(Object)\" is null\n```\n\n念起来是：**「本喵要把 `get` 叼回来的东西拆箱，可它叼回来的是一只空口袋喵。」** 名字不在账本上 → `get` 给的是 `null`，不是 `0`、也不是报错 → 把这个空口袋塞给光溜溜的 `int` 时要自动拆箱 → 炸在拆箱那一步。\n\n**三、正路是带着兜底值去取。**\n\n```java\nint n = book.getOrDefault(\"小黄鱼\", 1);\n```\n\n读法是「**名字在就给真东西，不在就给 1**」。这一招把事情一次办完，不用先问一句再取一次。\n\n**四、这条坑为什么最值钱。** 因为在账本这里，**「拿不到」是常态，不是意外。** 名单上有一万个名字，本喵要查的那个偏偏不在，太正常了。所以往后凡是**从账本里取东西**的地方，本喵都得先在心里过一句：这个名字**保证**在吗？不保证，就用 `getOrDefault`，或者先 `containsKey` 问一句。\n\n顺手和上一课接上：柜子上「编号数过了」是**当场炸**，账本上「名字拿不到」是**叼个空口袋回来** —— 这两样都得本喵自己防着喵。",
+      "templateId": "java-s2-map-null-unbox",
+      "params": {
+        "a": "狸花",
+        "b": "小黄鱼",
+        "d": 1
+      },
+      "verified": {
+        "at": "2026-09-16T08:45:53.434Z",
+        "hash": "230a446acc2e7878"
+      }
+    },
+    {
+      "id": "bank-java-s2-name-list-dedupe-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要记一份「**今天来过的都有谁**」的名单喵：同一只来三趟，名单上也只能算一只。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。请把它们一个不漏地塞进名单，然后印三行：\n\n```text\n名单上一共 M 只\n一共投喂了 N 次\n去过的名字里有 1 吗：在不在\n```\n\n- `M` 是名单上**有几个名字**（重复的只算一只）；\n- `N` 就是投喂的总次数；\n- 最后一行问的是 `1` 这个名字**在不在名单上**，在就印 `true`、不在就印 `false`。\n\n比如投喂给程序的是\n\n4\n3\n1\n1\n2\n\n程序就要叼回\n\n名单上一共 3 只\n一共投喂了 4 次\n去过的名字里有 1 吗：true\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n        for (int i = 0; i < n; i++) {\n            names.add(sc.next());\n        }\n        System.out.println(\"名单上一共 \" + names.size() + \" 只\");\n        System.out.println(\"一共投喂了 \" + n + \" 次\");\n        System.out.println(\"去过的名字里有 1 吗：\" + names.contains(\"1\"));\n    }\n}\n",
+      "expectedOutput": "名单上一共 2 只\n一共投喂了 4 次\n去过的名字里有 1 吗：true",
+      "stdin": "4\n2\n2\n2\n1\n",
+      "explanation": "这题的重点是**「来过几趟」和「都有谁来」是两回事**喵。\n\n**一、名单天生就会去重。** `names.add(sc.next())` 连塞 n 遍，同样的名字**只留一件** —— 所以 `size()` 报的是**有几个不同的名字**，而不是投喂了几次。投喂的次数得另记（这题直接用投喂进来的那个 n 就行）。\n\n这正是课上那句话的用法：小橘来了三趟，名单上它只能算**一只**。要是本喵拿上一课那种**按编号排队的柜子**来装，来几趟就记几行，`size()` 报出来的就是**投喂的次数**，跟第一行要的「有几个名字」压根不是一回事 —— 那种错**没有红字**，只能靠自己选对装法。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，所以**必然有重名** —— 这题不给「碰巧没重名」留后门，不写去重就一定会被抓住喵。）\n\n**二、问在不在用 `contains`。** 名单问在不在就是 `contains`；账本问在不在是 `containsKey`（因为账本一行里有两半，得说清问的是哪一半）。这两样别记混。\n\n**三、`true` / `false` 拼进项链里就是那串字。** 最后一行把问出来的结果直接接在项链后面 —— 它印出来就是 `true` 或者 `false`，不用本喵自己写 `if` 转一道。\n\n**四、顺序不保证。** 名单跟账本一样，是按名字算出来的座位号摆的，**不按本喵塞进去的先后摆**。本喵这题印的三行**都跟顺序无关**（个数、次数、在不在），所以结果永远是稳的。要按顺序看，得另喊一招已经自己排好的那种名单，往后再说喵。",
+      "templateId": "java-s2-name-list-dedupe",
+      "params": {
+        "n": 4,
+        "k": "1"
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:07.665Z",
+        "hash": "a29c800257922341"
+      }
+    },
+    {
+      "id": "bank-java-s2-name-list-dedupe-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要记一份「**今天来过的都有谁**」的名单喵：同一只来三趟，名单上也只能算一只。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。请把它们一个不漏地塞进名单，然后印三行：\n\n```text\n名单上一共 M 只\n一共投喂了 N 次\n去过的名字里有 2 吗：在不在\n```\n\n- `M` 是名单上**有几个名字**（重复的只算一只）；\n- `N` 就是投喂的总次数；\n- 最后一行问的是 `2` 这个名字**在不在名单上**，在就印 `true`、不在就印 `false`。\n\n比如投喂给程序的是\n\n4\n1\n2\n1\n1\n\n程序就要叼回\n\n名单上一共 2 只\n一共投喂了 4 次\n去过的名字里有 2 吗：true\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n        for (int i = 0; i < n; i++) {\n            names.add(sc.next());\n        }\n        System.out.println(\"名单上一共 \" + names.size() + \" 只\");\n        System.out.println(\"一共投喂了 \" + n + \" 次\");\n        System.out.println(\"去过的名字里有 2 吗：\" + names.contains(\"2\"));\n    }\n}\n",
+      "expectedOutput": "名单上一共 2 只\n一共投喂了 4 次\n去过的名字里有 2 吗：true",
+      "stdin": "4\n2\n2\n1\n2\n",
+      "explanation": "这题的重点是**「来过几趟」和「都有谁来」是两回事**喵。\n\n**一、名单天生就会去重。** `names.add(sc.next())` 连塞 n 遍，同样的名字**只留一件** —— 所以 `size()` 报的是**有几个不同的名字**，而不是投喂了几次。投喂的次数得另记（这题直接用投喂进来的那个 n 就行）。\n\n这正是课上那句话的用法：小橘来了三趟，名单上它只能算**一只**。要是本喵拿上一课那种**按编号排队的柜子**来装，来几趟就记几行，`size()` 报出来的就是**投喂的次数**，跟第一行要的「有几个名字」压根不是一回事 —— 那种错**没有红字**，只能靠自己选对装法。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，所以**必然有重名** —— 这题不给「碰巧没重名」留后门，不写去重就一定会被抓住喵。）\n\n**二、问在不在用 `contains`。** 名单问在不在就是 `contains`；账本问在不在是 `containsKey`（因为账本一行里有两半，得说清问的是哪一半）。这两样别记混。\n\n**三、`true` / `false` 拼进项链里就是那串字。** 最后一行把问出来的结果直接接在项链后面 —— 它印出来就是 `true` 或者 `false`，不用本喵自己写 `if` 转一道。\n\n**四、顺序不保证。** 名单跟账本一样，是按名字算出来的座位号摆的，**不按本喵塞进去的先后摆**。本喵这题印的三行**都跟顺序无关**（个数、次数、在不在），所以结果永远是稳的。要按顺序看，得另喊一招已经自己排好的那种名单，往后再说喵。",
+      "templateId": "java-s2-name-list-dedupe",
+      "params": {
+        "n": 4,
+        "k": "2"
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:34.518Z",
+        "hash": "0c3c746ac2f33d70"
+      }
+    },
+    {
+      "id": "bank-java-s2-name-list-dedupe-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要记一份「**今天来过的都有谁**」的名单喵：同一只来三趟，名单上也只能算一只。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。请把它们一个不漏地塞进名单，然后印三行：\n\n```text\n名单上一共 M 只\n一共投喂了 N 次\n去过的名字里有 3 吗：在不在\n```\n\n- `M` 是名单上**有几个名字**（重复的只算一只）；\n- `N` 就是投喂的总次数；\n- 最后一行问的是 `3` 这个名字**在不在名单上**，在就印 `true`、不在就印 `false`。\n\n比如投喂给程序的是\n\n4\n2\n1\n3\n3\n\n程序就要叼回\n\n名单上一共 3 只\n一共投喂了 4 次\n去过的名字里有 3 吗：true\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n        for (int i = 0; i < n; i++) {\n            names.add(sc.next());\n        }\n        System.out.println(\"名单上一共 \" + names.size() + \" 只\");\n        System.out.println(\"一共投喂了 \" + n + \" 次\");\n        System.out.println(\"去过的名字里有 3 吗：\" + names.contains(\"3\"));\n    }\n}\n",
+      "expectedOutput": "名单上一共 3 只\n一共投喂了 4 次\n去过的名字里有 3 吗：true",
+      "stdin": "4\n1\n2\n3\n2\n",
+      "explanation": "这题的重点是**「来过几趟」和「都有谁来」是两回事**喵。\n\n**一、名单天生就会去重。** `names.add(sc.next())` 连塞 n 遍，同样的名字**只留一件** —— 所以 `size()` 报的是**有几个不同的名字**，而不是投喂了几次。投喂的次数得另记（这题直接用投喂进来的那个 n 就行）。\n\n这正是课上那句话的用法：小橘来了三趟，名单上它只能算**一只**。要是本喵拿上一课那种**按编号排队的柜子**来装，来几趟就记几行，`size()` 报出来的就是**投喂的次数**，跟第一行要的「有几个名字」压根不是一回事 —— 那种错**没有红字**，只能靠自己选对装法。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，所以**必然有重名** —— 这题不给「碰巧没重名」留后门，不写去重就一定会被抓住喵。）\n\n**二、问在不在用 `contains`。** 名单问在不在就是 `contains`；账本问在不在是 `containsKey`（因为账本一行里有两半，得说清问的是哪一半）。这两样别记混。\n\n**三、`true` / `false` 拼进项链里就是那串字。** 最后一行把问出来的结果直接接在项链后面 —— 它印出来就是 `true` 或者 `false`，不用本喵自己写 `if` 转一道。\n\n**四、顺序不保证。** 名单跟账本一样，是按名字算出来的座位号摆的，**不按本喵塞进去的先后摆**。本喵这题印的三行**都跟顺序无关**（个数、次数、在不在），所以结果永远是稳的。要按顺序看，得另喊一招已经自己排好的那种名单，往后再说喵。",
+      "templateId": "java-s2-name-list-dedupe",
+      "params": {
+        "n": 4,
+        "k": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:37.677Z",
+        "hash": "2c1ed7fb24733994"
+      }
+    },
+    {
+      "id": "bank-java-s2-name-list-dedupe-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要记一份「**今天来过的都有谁**」的名单喵：同一只来三趟，名单上也只能算一只。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。请把它们一个不漏地塞进名单，然后印三行：\n\n```text\n名单上一共 M 只\n一共投喂了 N 次\n去过的名字里有 1 吗：在不在\n```\n\n- `M` 是名单上**有几个名字**（重复的只算一只）；\n- `N` 就是投喂的总次数；\n- 最后一行问的是 `1` 这个名字**在不在名单上**，在就印 `true`、不在就印 `false`。\n\n比如投喂给程序的是\n\n5\n3\n2\n3\n3\n3\n\n程序就要叼回\n\n名单上一共 2 只\n一共投喂了 5 次\n去过的名字里有 1 吗：false\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n        for (int i = 0; i < n; i++) {\n            names.add(sc.next());\n        }\n        System.out.println(\"名单上一共 \" + names.size() + \" 只\");\n        System.out.println(\"一共投喂了 \" + n + \" 次\");\n        System.out.println(\"去过的名字里有 1 吗：\" + names.contains(\"1\"));\n    }\n}\n",
+      "expectedOutput": "名单上一共 3 只\n一共投喂了 5 次\n去过的名字里有 1 吗：true",
+      "stdin": "5\n1\n1\n3\n2\n3\n",
+      "explanation": "这题的重点是**「来过几趟」和「都有谁来」是两回事**喵。\n\n**一、名单天生就会去重。** `names.add(sc.next())` 连塞 n 遍，同样的名字**只留一件** —— 所以 `size()` 报的是**有几个不同的名字**，而不是投喂了几次。投喂的次数得另记（这题直接用投喂进来的那个 n 就行）。\n\n这正是课上那句话的用法：小橘来了三趟，名单上它只能算**一只**。要是本喵拿上一课那种**按编号排队的柜子**来装，来几趟就记几行，`size()` 报出来的就是**投喂的次数**，跟第一行要的「有几个名字」压根不是一回事 —— 那种错**没有红字**，只能靠自己选对装法。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，所以**必然有重名** —— 这题不给「碰巧没重名」留后门，不写去重就一定会被抓住喵。）\n\n**二、问在不在用 `contains`。** 名单问在不在就是 `contains`；账本问在不在是 `containsKey`（因为账本一行里有两半，得说清问的是哪一半）。这两样别记混。\n\n**三、`true` / `false` 拼进项链里就是那串字。** 最后一行把问出来的结果直接接在项链后面 —— 它印出来就是 `true` 或者 `false`，不用本喵自己写 `if` 转一道。\n\n**四、顺序不保证。** 名单跟账本一样，是按名字算出来的座位号摆的，**不按本喵塞进去的先后摆**。本喵这题印的三行**都跟顺序无关**（个数、次数、在不在），所以结果永远是稳的。要按顺序看，得另喊一招已经自己排好的那种名单，往后再说喵。",
+      "templateId": "java-s2-name-list-dedupe",
+      "params": {
+        "n": 5,
+        "k": "1"
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:40.768Z",
+        "hash": "b634a1aaf14b2969"
+      }
+    },
+    {
+      "id": "bank-java-s2-name-list-dedupe-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要记一份「**今天来过的都有谁**」的名单喵：同一只来三趟，名单上也只能算一只。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。请把它们一个不漏地塞进名单，然后印三行：\n\n```text\n名单上一共 M 只\n一共投喂了 N 次\n去过的名字里有 2 吗：在不在\n```\n\n- `M` 是名单上**有几个名字**（重复的只算一只）；\n- `N` 就是投喂的总次数；\n- 最后一行问的是 `2` 这个名字**在不在名单上**，在就印 `true`、不在就印 `false`。\n\n比如投喂给程序的是\n\n5\n3\n2\n3\n2\n3\n\n程序就要叼回\n\n名单上一共 2 只\n一共投喂了 5 次\n去过的名字里有 2 吗：true\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n        for (int i = 0; i < n; i++) {\n            names.add(sc.next());\n        }\n        System.out.println(\"名单上一共 \" + names.size() + \" 只\");\n        System.out.println(\"一共投喂了 \" + n + \" 次\");\n        System.out.println(\"去过的名字里有 2 吗：\" + names.contains(\"2\"));\n    }\n}\n",
+      "expectedOutput": "名单上一共 3 只\n一共投喂了 5 次\n去过的名字里有 2 吗：true",
+      "stdin": "5\n3\n1\n3\n2\n1\n",
+      "explanation": "这题的重点是**「来过几趟」和「都有谁来」是两回事**喵。\n\n**一、名单天生就会去重。** `names.add(sc.next())` 连塞 n 遍，同样的名字**只留一件** —— 所以 `size()` 报的是**有几个不同的名字**，而不是投喂了几次。投喂的次数得另记（这题直接用投喂进来的那个 n 就行）。\n\n这正是课上那句话的用法：小橘来了三趟，名单上它只能算**一只**。要是本喵拿上一课那种**按编号排队的柜子**来装，来几趟就记几行，`size()` 报出来的就是**投喂的次数**，跟第一行要的「有几个名字」压根不是一回事 —— 那种错**没有红字**，只能靠自己选对装法。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，所以**必然有重名** —— 这题不给「碰巧没重名」留后门，不写去重就一定会被抓住喵。）\n\n**二、问在不在用 `contains`。** 名单问在不在就是 `contains`；账本问在不在是 `containsKey`（因为账本一行里有两半，得说清问的是哪一半）。这两样别记混。\n\n**三、`true` / `false` 拼进项链里就是那串字。** 最后一行把问出来的结果直接接在项链后面 —— 它印出来就是 `true` 或者 `false`，不用本喵自己写 `if` 转一道。\n\n**四、顺序不保证。** 名单跟账本一样，是按名字算出来的座位号摆的，**不按本喵塞进去的先后摆**。本喵这题印的三行**都跟顺序无关**（个数、次数、在不在），所以结果永远是稳的。要按顺序看，得另喊一招已经自己排好的那种名单，往后再说喵。",
+      "templateId": "java-s2-name-list-dedupe",
+      "params": {
+        "n": 5,
+        "k": "2"
+      },
+      "verified": {
+        "at": "2026-10-20T17:14:43.981Z",
+        "hash": "acc871f4c4a1879b"
+      }
+    },
+    {
+      "id": "bank-java-s2-name-list-dedupe-005",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要记一份「**今天来过的都有谁**」的名单喵：同一只来三趟，名单上也只能算一只。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。请把它们一个不漏地塞进名单，然后印三行：\n\n```text\n名单上一共 M 只\n一共投喂了 N 次\n去过的名字里有 3 吗：在不在\n```\n\n- `M` 是名单上**有几个名字**（重复的只算一只）；\n- `N` 就是投喂的总次数；\n- 最后一行问的是 `3` 这个名字**在不在名单上**，在就印 `true`、不在就印 `false`。\n\n比如投喂给程序的是\n\n5\n3\n3\n2\n1\n1\n\n程序就要叼回\n\n名单上一共 3 只\n一共投喂了 5 次\n去过的名字里有 3 吗：true\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n        for (int i = 0; i < n; i++) {\n            names.add(sc.next());\n        }\n        System.out.println(\"名单上一共 \" + names.size() + \" 只\");\n        System.out.println(\"一共投喂了 \" + n + \" 次\");\n        System.out.println(\"去过的名字里有 3 吗：\" + names.contains(\"3\"));\n    }\n}\n",
+      "expectedOutput": "名单上一共 3 只\n一共投喂了 5 次\n去过的名字里有 3 吗：true",
+      "stdin": "5\n1\n2\n2\n1\n3\n",
+      "explanation": "这题的重点是**「来过几趟」和「都有谁来」是两回事**喵。\n\n**一、名单天生就会去重。** `names.add(sc.next())` 连塞 n 遍，同样的名字**只留一件** —— 所以 `size()` 报的是**有几个不同的名字**，而不是投喂了几次。投喂的次数得另记（这题直接用投喂进来的那个 n 就行）。\n\n这正是课上那句话的用法：小橘来了三趟，名单上它只能算**一只**。要是本喵拿上一课那种**按编号排队的柜子**来装，来几趟就记几行，`size()` 报出来的就是**投喂的次数**，跟第一行要的「有几个名字」压根不是一回事 —— 那种错**没有红字**，只能靠自己选对装法。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，所以**必然有重名** —— 这题不给「碰巧没重名」留后门，不写去重就一定会被抓住喵。）\n\n**二、问在不在用 `contains`。** 名单问在不在就是 `contains`；账本问在不在是 `containsKey`（因为账本一行里有两半，得说清问的是哪一半）。这两样别记混。\n\n**三、`true` / `false` 拼进项链里就是那串字。** 最后一行把问出来的结果直接接在项链后面 —— 它印出来就是 `true` 或者 `false`，不用本喵自己写 `if` 转一道。\n\n**四、顺序不保证。** 名单跟账本一样，是按名字算出来的座位号摆的，**不按本喵塞进去的先后摆**。本喵这题印的三行**都跟顺序无关**（个数、次数、在不在），所以结果永远是稳的。要按顺序看，得另喊一招已经自己排好的那种名单，往后再说喵。",
+      "templateId": "java-s2-name-list-dedupe",
+      "params": {
+        "n": 5,
+        "k": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:09.581Z",
+        "hash": "4ed5650ba6abd0e6"
+      }
+    },
+    {
+      "id": "bank-java-s2-set-not-list-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵要的是一份**只留一件**的名单：同一只猫来了几趟，名单上只算**一只**。\n\n可这份程序印出来的数**偏大** —— 它把 `小橘` 记了两次、`狸花` 也记了两次。本喵瞧出来了：它拿的是那种**按编号排队、来者不拒**的柜子，不是只要名字的那种名单。\n\n请你帮本喵改好，规矩是：\n\n1. 左边那份**名分**和右边**实给的柜子**都换成「**只要名字、同样的塞两遍只留一件**」的那种；\n2. 该带进来的东西记得带进来；\n3. **`add` 那几行一个字都不许动**（本喵就是要每只都塞一遍）。\n\n改好之后，程序该印出这一行：\n\n```text\n名单上有 3 只\n```\n\n只有名分、实柜子和该带的头有问题，别的本喵都没写错喵。",
+      "brokenCode": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"小橘\");\n        names.add(\"狸花\");\n        names.add(\"小橘\");\n        names.add(\"大胖\");\n        names.add(\"狸花\");\n        System.out.println(\"名单上有 \" + names.size() + \" 只\");\n    }\n}\n",
+      "referenceFix": "import java.util.HashSet;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Set<String> names = new HashSet<>();\n        names.add(\"小橘\");\n        names.add(\"狸花\");\n        names.add(\"小橘\");\n        names.add(\"大胖\");\n        names.add(\"狸花\");\n        System.out.println(\"名单上有 \" + names.size() + \" 只\");\n    }\n}\n",
+      "expectedOutput": "名单上有 3 只",
+      "stdin": null,
+      "explanation": "这一题也是**翻译官喵一个字都没说**的那一类：程序跑得顺顺当当，印出来的数却是错的。**选错了装法**，它不会拦本喵。\n\n两个装法的分别在这儿：\n\n| 装法 | 塞进去重复的东西会怎样 |\n|---|---|\n| 按编号排队的柜子（`List`） | **照收**，来几趟记几趟 |\n| 只要名字的名单（`Set`） | **只留一件**，同样的再塞也不多记 |\n\n本喵这题要的是**名单**，所以那几行 `add` 塞了两遍 `小橘`、两遍 `狸花`，`size()` 就该回到 `3`（`小橘`、`狸花`、`大胖` 各一只）。用柜子装的话，五趟全记着，印出来就是 `5`。\n\n正路是把名分和实体两边一起换：\n\n```java\nSet<String> names = new HashSet<>();\n```\n\n- **左边**那份名分换成 `Set` —— 这份约定说的是「只要名字」；\n- **右边** `new` 后面换成账本那家的实体 `HashSet`（它是同一个道理的另一种装法：账本记「名字配东西」，名单只记**名字**）。\n- 两边该带的头也一起换掉，别留着上一份的头不用。\n\n那 `add` 那几行为什么一个字都不用动？因为**名单也会 `add`** —— 约定不一样，招式名字却对得上。这正是课上说的「名分和实体分开」的好处：**本喵要的东西没变，只换了底下装的那种**，用它的那几行照旧。\n\n顺手把两种问法摆一起：**账本**问名字在不在用 `containsKey`（一行里有两半，得说清问哪一半）；**名单**问在不在用 `contains`，拿掉一个用 `remove`（它会叼回 `true` / `false`，告诉本喵到底拿掉没拿掉）喵。",
+      "templateId": "java-s2-set-not-list",
+      "params": {
+        "a": "小橘",
+        "b": "狸花",
+        "c": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T08:45:59.115Z",
+        "hash": "9167739c45ef1d9e"
+      }
+    },
+    {
+      "id": "bank-java-s2-set-not-list-007",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵要的是一份**只留一件**的名单：同一只猫来了几趟，名单上只算**一只**。\n\n可这份程序印出来的数**偏大** —— 它把 `大橘` 记了两次、`花卷` 也记了两次。本喵瞧出来了：它拿的是那种**按编号排队、来者不拒**的柜子，不是只要名字的那种名单。\n\n请你帮本喵改好，规矩是：\n\n1. 左边那份**名分**和右边**实给的柜子**都换成「**只要名字、同样的塞两遍只留一件**」的那种；\n2. 该带进来的东西记得带进来；\n3. **`add` 那几行一个字都不许动**（本喵就是要每只都塞一遍）。\n\n改好之后，程序该印出这一行：\n\n```text\n名单上有 3 只\n```\n\n只有名分、实柜子和该带的头有问题，别的本喵都没写错喵。",
+      "brokenCode": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"大橘\");\n        names.add(\"花卷\");\n        names.add(\"大橘\");\n        names.add(\"小黄\");\n        names.add(\"花卷\");\n        System.out.println(\"名单上有 \" + names.size() + \" 只\");\n    }\n}\n",
+      "referenceFix": "import java.util.HashSet;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Set<String> names = new HashSet<>();\n        names.add(\"大橘\");\n        names.add(\"花卷\");\n        names.add(\"大橘\");\n        names.add(\"小黄\");\n        names.add(\"花卷\");\n        System.out.println(\"名单上有 \" + names.size() + \" 只\");\n    }\n}\n",
+      "expectedOutput": "名单上有 3 只",
+      "stdin": null,
+      "explanation": "这一题也是**翻译官喵一个字都没说**的那一类：程序跑得顺顺当当，印出来的数却是错的。**选错了装法**，它不会拦本喵。\n\n两个装法的分别在这儿：\n\n| 装法 | 塞进去重复的东西会怎样 |\n|---|---|\n| 按编号排队的柜子（`List`） | **照收**，来几趟记几趟 |\n| 只要名字的名单（`Set`） | **只留一件**，同样的再塞也不多记 |\n\n本喵这题要的是**名单**，所以那几行 `add` 塞了两遍 `大橘`、两遍 `花卷`，`size()` 就该回到 `3`（`大橘`、`花卷`、`小黄` 各一只）。用柜子装的话，五趟全记着，印出来就是 `5`。\n\n正路是把名分和实体两边一起换：\n\n```java\nSet<String> names = new HashSet<>();\n```\n\n- **左边**那份名分换成 `Set` —— 这份约定说的是「只要名字」；\n- **右边** `new` 后面换成账本那家的实体 `HashSet`（它是同一个道理的另一种装法：账本记「名字配东西」，名单只记**名字**）。\n- 两边该带的头也一起换掉，别留着上一份的头不用。\n\n那 `add` 那几行为什么一个字都不用动？因为**名单也会 `add`** —— 约定不一样，招式名字却对得上。这正是课上说的「名分和实体分开」的好处：**本喵要的东西没变，只换了底下装的那种**，用它的那几行照旧。\n\n顺手把两种问法摆一起：**账本**问名字在不在用 `containsKey`（一行里有两半，得说清问哪一半）；**名单**问在不在用 `contains`，拿掉一个用 `remove`（它会叼回 `true` / `false`，告诉本喵到底拿掉没拿掉）喵。",
+      "templateId": "java-s2-set-not-list",
+      "params": {
+        "a": "大橘",
+        "b": "花卷",
+        "c": "小黄"
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:00.838Z",
+        "hash": "2555860e9a345892"
+      }
+    }
+  ]
+}

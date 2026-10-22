@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-08-warehouse-stays",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-08",
+  "type": "codewrite",
+  "concept": ["搬家只改归属", "仓库还是同一间", "件数再多也是一下"],
+  "instances": 6,
+  "params": {
+    "k": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵要用真跑证明一件很值钱的事：**搬家根本没换仓库**。\n\n请你写 `main`：\n\n1. 请一块 `vector<int>`，装着**第 1 件到第 {k} 件**（一共 {k} 件，从 1 数起）；\n2. 先把这个仓库的**门牌**记在手心里 —— 就是拿仓库本身去问一下「门牌号是多少」（那个 `data()`）；\n3. 把整块 vector **搬**给另一个名字；\n4. 印三行：\n   - 新名字里有几件；\n   - 老名字里有几件；\n   - 仓库还是不是同一间 —— 是就印 `同一间`，不是就印 `换了间`。\n\n程序要叼回这 3 行：\n\n1. `{k}`\n2. `0`\n3. `同一间`\n\n第 3 行是这一题的重点喵：**件数一件都没抄**，过手的只是「这间仓库归谁」。",
+  "starterTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> a;\n    for (int i = 1; i <= {k}; i++) {\n        a.push_back(i);\n    }\n\n    int* before = a.data();\n    vector<int> b = move(a);\n\n    cout << b.size() << endl;\n    cout << a.size() << endl;\n    cout << (b.data() == before ? \"同一间\" : \"换了间\") << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "三行是这么来的喵：\n\n- 第一行 `{k}` —— 货跟着**新名字**走，{k} 件一件不少；\n- 第二行 `0` —— **老名字空了**，搬家就是把名字上的东西交出去；\n- 第三行 `同一间` —— 先把门牌记在手心里（`before`），搬完再拿新名字问一次，两次问出来**是同一间仓库**。\n\n第三行就是「搬一个三百万件的 vector 和搬一个三件的 vector 一样快」的原因：搬家只把**仓库的归属**过个手，跟里头有几件货**没关系**。要是本喵当初写的是 `vector<int> b = a;`（没打招呼，走拷贝那条路），那程序会老老实实**再租一间仓库**、把货一件件抄过去 —— 那时候第三行印的就是 `换了间` 了。"
+}

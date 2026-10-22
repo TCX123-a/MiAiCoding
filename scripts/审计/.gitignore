@@ -1,0 +1,40 @@
+# 这个目录是「审计台」：既放着能反复再跑的台子，也放着当初排查时的一次性草稿。
+# 两者必须分开 —— 草稿进 git 只会让后来的人以为它是要维护的代码。
+#
+# 判据只有一条：**它还能不能重新跑出一个结论？**
+#   · 能，而且结论（为什么这么判、踩过什么坑）写在文件头注释里 → 留下，是要传下去的工具
+#       audit_errorlib.py      报错规则实测台
+#       triggers.py            每条规则的触发用例（键是 pattern，不是序号）
+#       known_dormant.py       已知够不着的规则登记表
+#       retrigger.py           改 pattern 后同步触发器
+#       verify-validator-guards.mjs  反向验证：校验器自己还抓不抓得住缺陷
+#       audit-terms*.mjs       术语扫盲器
+#       rewrite-errorlib-terms.mjs   215 处文案改写的执行脚本
+#       probe*.py              工具链行为的取证探针（GCC/javac 到底怎么报）
+#       _fix_round*.py / _fix_rules.mjs
+#                              真正改过 content/ 的收口脚本。
+#                              **它们记录了「为什么改成这样」，triggers.py 的注释会引用它们，别删。**
+#   · 不能，只是当时对答案用的草稿 → 忽略
+#       下面这些全部属于这一类。
+
+_work/            # 实测台跑触发用例时的工作目录（每次跑都重建）
+*.bak
+__pycache__/
+
+# 一次性探针：结论已经写进上面的永久台子或 _fix_round*.py 的注释里了
+_tprobe*.py
+_probe*.mjs
+_tricky.mjs
+_brace.mjs
+_ctx.mjs
+_exitprobe.mjs
+_javac_probe.mjs
+_pprobe.mjs
+_regexcheck.mjs
+_strict.mjs
+_jtest/
+
+# 跑出来的东西（内容会变，答案在台子的 stdout 里，不在文件里）
+_audit_run2.txt
+_rewrite-review*.txt
+_errorlib_problems.json

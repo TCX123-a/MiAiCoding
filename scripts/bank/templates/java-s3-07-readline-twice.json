@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-07-readline-twice",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-07",
+  "type": "codefix",
+  "concept": ["readLine 每喊一次吞一行", "念一次存一个名字", "while 里不能用两次"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵先把 {n} 条记进名单文件，再一行一行念回来印出去。\n\n可它印出来的东西**少了一半**，末尾还多印了一行 `null`。\n\n你帮本喵看看念法哪里不对，把它改好 —— 改好之后应该从 `第 1 条` 一直到 `第 {n} 条`，一行不少、一行不多。\n\n（这一题**不用投喂任何东西**：名单是程序自己先写好、再念的。）",
+  "brokenCodeTemplate": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"名单.txt\"));\n        for (int i = 1; i <= {n}; i++) {\n            笔.write(\"第 \" + i + \" 条\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"名单.txt\"));\n        while (眼.readLine() != null) {\n            System.out.println(眼.readLine());\n        }\n        眼.close();\n    }\n}\n",
+  "referenceFixTemplate": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"名单.txt\"));\n        for (int i = 1; i <= {n}; i++) {\n            笔.write(\"第 \" + i + \" 条\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"名单.txt\"));\n        String 行;\n        while ((行 = 眼.readLine()) != null) {\n            System.out.println(行);\n        }\n        眼.close();\n    }\n}\n",
+  "explanationTemplate": "`readLine()` 每喊一次就**吞掉一整行**、眼睛往前挪一格喵。\n\n**一、这个绕圈里喊了两次。** 条件里喊一次（吞掉的是第 1 行，只拿来比了一下「是不是没有了」），身子里又喊一次（吞掉第 2 行，印出来的也是第 2 行）。于是每转一圈就有一行被白白吞掉 —— 印出来就只剩一半。\n\n**二、`null` 是哪儿来的。** 转到最后，条件里那一喊正好把最后一行吞了，可它非 `null`，所以绕圈还得再转一圈；这一圈身子里又喊一次，这时候眼睛后面已经什么都没有了，叼回来的就是 `null`，本喵那句印的就是它。\n\n**三、修法就是本课那个形状：念一次、存进一个名字，条件跟身子都用那一个名字。**\n\n```java\nString 行;\nwhile ((行 = 眼.readLine()) != null) {\n    System.out.println(行);\n}\n```\n\n外面先摆一个 `行`，条件里「喊一次、存进 `行`、再拿 `行` 比 `null`」，身子里印的就是同一个 `行`。一次吞一行，一行都不漏。\n\n**四、往后自己写的时候盯住这一条**：`readLine()` 这个动作**本身就把行吃掉了**，所以它在一个绕圈里最好只出现一次 —— 出现两次，坏的不是「快一点」，是**丢数据**。"
+}

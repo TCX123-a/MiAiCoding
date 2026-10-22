@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s1-try-parse-finally",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-14",
+  "type": "codewrite",
+  "concept": ["try", "catch", "finally", "Scanner"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["12", "喵"] },
+    "word2": { "kind": "pick", "values": ["7", "鱼干"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{word}\n", "sampleText": "{word2}\n" },
+  "stemTemplate": "纸条上给**一串字**喵。本喵要把它**变成一个数**：\n\n- 变得成：印 `两倍是 X 喵`（`X` 是这个数的两倍）\n- 变不成：**不许断气**，印 `这串字不算数喵`\n- **不管翻没翻车**，最后都要印 `收工喵` —— 这一句要放进 `finally` 里\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一串字**喵 —— 可能是数、也可能不是，两条路都要走得了。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String word = sc.next();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String word = sc.next();\n        try {\n            int n = Integer.parseInt(word);\n            System.out.println(\"两倍是 \" + (n * 2) + \" 喵\");\n        } catch (NumberFormatException e) {\n            System.out.println(\"这串字不算数喵\");\n        } finally {\n            System.out.println(\"收工喵\");\n        }\n    }\n}\n",
+  "explanationTemplate": "三块各自管什么，这一题正好一次用全喵：\n\n- **`try`** —— 放没底的活儿：把字变成数那句，加上紧跟的那句打印。翻了车，它**后面**的句子全跳过；\n- **`catch (NumberFormatException e)`** —— 「一串字变不成数」这一路接住，印一句自己的话；\n- **`finally`** —— **不管翻没翻车都要干**的那几句：收工这句话就住在这儿。\n\n有一处最容易踩：`finally` **接不住车**。要是只写 `finally` 不写 `catch`，收工的活儿照样干（那句会印出来），可没人接住这一路车，程序最后还是断气。想让程序活着把活干完，`catch` 那一块不能省。\n\n还有一笔地盘的账：`int n = Integer.parseInt(word);` 里那个 `n`，只活在 `try` 那一块地方 —— 出了 `try` / `catch` 就喊不着它了。所以用它的那句打印，得跟它待在**同一块**地方（写在 `try` 里面）喵。"
+}

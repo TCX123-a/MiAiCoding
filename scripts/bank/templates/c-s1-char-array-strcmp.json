@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-char-array-strcmp",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-10",
+  "type": "codefix",
+  "concept": ["字碗", "比位置还是比内容", "strcmp"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["miao", "tuna", "nip", "fish"] }
+  },
+  "stemTemplate": "本喵有两块小牌子，上面写的是同一串字：`{word}`。本喵想问一句「这两块牌子上的字一不一样」，可这段代码偏偏说它们**不一样** —— 明明一模一样喵。\n\n你帮本喵改对：两块牌子上的字一样的时候，要印出 `C 说它们一样喵`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    char a[] = \"{word}\";\n    char b[] = \"{word}\";\n\n    if (a == b) {\n        printf(\"C 说它们一样喵\\n\");\n    } else {\n        printf(\"长得一模一样，C 却说它们不一样喵\\n\");\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char a[] = \"{word}\";\n    char b[] = \"{word}\";\n\n    if (strcmp(a, b) == 0) {\n        printf(\"C 说它们一样喵\\n\");\n    } else {\n        printf(\"长得一模一样，C 却说它们不一样喵\\n\");\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "两块牌子上的字一模一样，`a == b` 却答**假**喵。为什么？因为这里的 `a` 和 `b` 拿出来的**不是「那串字」，而是「那排字碗摆在哪儿」** —— `==` 比的是**两排碗摆的位置**，而 `a` 和 `b` 是各摆各的两排，位置当然不一样。\n\n**这一条和 Python 差得最远。** 那边两串一样的字用 `==` 一比就答真；C 里 `==` 只比位置，不比内容。想在 C 里比「牌子上的字一不一样」，得请**专门比内容的招式**出场：`strcmp(a, b) == 0`。\n\n`strcmp(a, b)` 就是专管这件事的：**两块牌子上的字一模一样时，它给的答案是 0**。这个 0 不是「没答案」，是**「差着零个」**的意思 —— 差 0 就是一模一样喵。\n\n还有一步不能忘：这个招式不住在开场就带着的那间工具箱里，得**在文件开头多请一行**把 `string.h` 带进来才用得上；少了那一行，翻译官喵会说不认识这个名字。\n\n改完再回头看那段坏代码：它语法上一点毛病都没有，翻译官喵**压根不会拦** —— 本喵在命令行里真跑过一遍，它只是念了一句 `comparison between two arrays`（「这是在拿两排碗比呀」），念完照收不误，跑出来就是个不对的答案喵。**会念、不肯拦**，这种错最容易漏过去。"
+}

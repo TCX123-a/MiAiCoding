@@ -1,0 +1,87 @@
+{
+  "lessonId": "java-stage1-06",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵这么写：`if (score >= 60)` 印「及格喵」，后面接 `else if (score >= 90)` 印「优秀喵」。`score` 是 95，跑出来却只有「及格喵」。为什么喵？",
+      "options": [
+        "两个眼色都得问一遍，只不过第二个答了假",
+        "第一个眼色答了真，电脑走完那条路就收工，后面的候补连问都不问",
+        "`else if` 必须排在 `else` 后面才生效，排前面就不跑了",
+        "95 不比 90 大，所以第二个眼色答的是假"
+      ],
+      "answer": 1,
+      "explanation": "一串 `if` / `else if` / `else` 是**从上往下一个一个问**的：谁先答了真，电脑就走谁那条路，然后**整串到此结束**，后面的候补连问都不问喵。95 分先去撞「大于等于 60 吗」那一条，一撞就中，「优秀喵」那句话根本没机会上场。修法很简单：**把最严的规矩放最上面**，先问「90 以上吗」，再问「60 以上吗」。这段代码一个错都不报，安安静静给出不对的结果，最费眼神喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`switch` 里戳中 `case 2` 之后，本喵忘了写 `break`，屏幕会怎样喵？",
+      "options": [
+        "翻译官当场拦下，跑不起来",
+        "从戳中的那一格开始一路往下滑，下面几格的活儿也挨个干了",
+        "什么都不印，因为这一格不算数",
+        "自动跳到 `default` 那一格，只印兜底的话"
+      ],
+      "answer": 1,
+      "explanation": "`break` 的意思是「这一格办完了，收工走人」喵。少了它，`switch` 戳中 `case 2` 之后**不会自己停**：它从那一格开始一路往下滑，把下面的格子挨个执行过去，直到撞上 `break` 才刹车；要是连最后一格也没写，`default` 那句也会跟着印出来。它一声不吭、一个错都不报，只是多印几句——所以每一格办完事都要记得 `break` 喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵想让「有鱼干就吃」和「鱼干还挺多就多拿两条」这两句话**都有机会**印出来。该怎么排喵？",
+      "options": [
+        "串成一串：`if` 后面接 `else if`",
+        "写成两个各自独立的 `if`，一个眼色一句",
+        "写成两个 `switch`，一个眼色一个",
+        "把两句话都塞进同一个 `if` 的大括号里"
+      ],
+      "answer": 1,
+      "explanation": "串成一串的 `if` / `else if` **最多只走一条路**：前面答了真，后面就被跳过喵。想让两句话**都**有机会上场，就把它们写成**两个各自独立的 `if`**——电脑会把两个眼色一个一个都问一遍，谁答真谁就上场。反过来说，要是你心里想的规矩是「这两条路最多只能走一条」，那就该串成一串。用哪种，看你心里的规矩是哪一条喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int fish = 2;\n        if (fish >= 5) {\n            System.out.println(\"鱼干满满喵\");\n        } else if (fish > 0) {\n            System.out.println(\"快见底啦喵\");\n        } else {\n            System.out.println(\"碗空了喵\");\n        }\n        System.out.println(\"本喵去晒太阳啦喵\");\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "快见底啦喵\n本喵去晒太阳啦喵",
+      "accept": ["快见底啦喵\n本喵去晒太阳啦喵\n"],
+      "explanation": "碗里 2 条喵。第一个眼色「大于等于 5 吗」答假，往下撞第二个「比 0 大吗」——答真，「快见底啦喵」上场，这一串眼色到此结束，兜底那句没轮到。最后一句「本喵去晒太阳啦喵」站在整串眼色**外面**，不管碗里几条都会跑，所以屏幕上一定有两句。要是把最后那句挪进 `else` 的大括号里，碗里 2 条的时候就看不见它啦。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int n = 2;\n        switch (n) {\n            case 1:\n                System.out.println(\"一条喵\");\n            case 2:\n                System.out.println(\"两条喵\");\n            case 3:\n                System.out.println(\"三条喵\");\n                break;\n            default:\n                System.out.println(\"数不清喵\");\n        }\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "两条喵\n三条喵",
+      "accept": ["两条喵\n三条喵\n"],
+      "explanation": "`n` 是 2，戳中的是 `case 2`，「两条喵」先印出来喵。可这一格底下**没写 `break`**，于是它一路往下滑：`case 3` 的活儿也照干，「三条喵」又印了一句，直到撞上 `case 3` 底下的 `break` 才刹车。所以屏幕上多出一句「三条喵」——这就是漏掉 `break` 的样子：不报错，只是多印喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int a = 7;\n        int b = 3;\n        int max = a > b ? a : b;\n        System.out.println(max);\n        System.out.println(a > b ? \"左边大喵\" : \"右边大喵\");\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "7\n左边大喵",
+      "accept": ["7\n左边大喵\n"],
+      "explanation": "第一行 `a > b ? a : b` 读作「`a` 比 `b` 大吗？大就用 `a`，不然用 `b`」喵——`7` 比 `3` 大，所以 `max` 拿到 `7`，印出 `7`。第二行挑了「左边大喵」：`?` 前面是眼色、`?` 后面是答真时候的值、`:` 后面是答假时候的值，眼色答了真，就取中间那一串。两边放数字或者放两串字都行，只要是同一个料喵。"
+    },
+    {
+      "id": "q7",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int a = 7;\n        int b = 3;\n        System.out.println(a > b ____ a ____ b);\n    }\n}",
+      "stem": "本喵想让它印出 `7`——用一句话里的小眼色来挑大的那个。两个记号按顺序补上喵。",
+      "blanks": [
+        { "answer": "?" },
+        { "answer": ":" }
+      ],
+      "explanation": "写全了就是 `a > b ? a : b` 喵：`?` 前面是眼色、`?` 后面是答真时候的值、`:` 后面是答假时候的值。`7` 比 `3` 大，取 `?` 和 `:` 中间的那个 `a`，印出 `7`。真值假值两边写反了照样能跑，只是答案反了——最费眼神的就是这种喵。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-naked-pocket-cast",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-10",
+  "type": "codefix",
+  "concept": ["万能口袋", "自己贴标签", "量体裁衣的图纸", "运行期翻车"],
+  "instances": 2,
+  "params": {
+    "v": { "kind": "int", "min": 6, "max": 8 },
+    "word": { "kind": "pick", "values": ["小鱼干", "小黄鱼"] }
+  },
+  "stemTemplate": "本喵摆了一只**没填尺码**的口袋，往里塞了一条项链，取出来的时候自己贴了个「数字」的标签 —— 程序跑起来了，可屏幕上冒出来的是**一大段红字**。\n\n请你帮本喵改好，规矩是**按课上的正路走**：\n\n1. 给这只口袋**填上尺码**，尺码就填「装数字的那张图纸」；\n2. 塞进去的换成数字 `{v}`；\n3. 取出来的时候**别再自己贴标签**，让抽屉量出来的尺码替本喵作保。\n\n改好之后，程序该印出这一行：\n\n```text\n{v}\n```\n\n那一处告诉翻译官喵「这只口袋只装数字」的写法，正是本课要练的那一对尖括号喵。",
+  "brokenCodeTemplate": "import java.util.ArrayList;\n\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList box = new ArrayList();\n        box.add(\"{word}\");\n        int n = (Integer) box.get(0);\n        System.out.println(n);\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\n\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<Integer> box = new ArrayList<>();\n        box.add({v});\n        int n = box.get(0);\n        System.out.println(n);\n    }\n}\n",
+  "explanationTemplate": "这一题是**跑起来才炸**的那一类喵 —— 稿子那一关它过得干干净净（课上原话：这个错**写的时候看不出来、翻译稿子也不拦**），红字是程序跑到那一句才冒出来的：\n\n```text\nException in thread \"main\" java.lang.ClassCastException: class java.lang.String cannot be cast to class java.lang.Integer (java.lang.String and java.lang.Integer are in module java.base of loader 'bootstrap')\n```\n\n念起来是：**「本喵贴上『数字』的标签要把它当数字用，可口袋里装的是项链喵。」**\n\n**一、为什么会走到这一步。** 不填尺码的时候，这只口袋是个**万能口袋**：什么东西都收，因为收进去的时候都当成了 `Object`（万物都能装的那种口袋）。麻烦在后面 —— **取出来的时候本喵得自己贴标签**：`(Integer) box.get(0)` 这一笔就是「**本喵保证它是数字**」。可口袋里装的明明是项链，保证落空，**跑到这一步才炸**。\n\n**二、正路是给口袋填上尺码。**\n\n```java\nArrayList<Integer> box = new ArrayList<>();\nbox.add({v});\nint n = box.get(0);\n```\n\n尖括号里那块 `Integer` 就是**这张图纸上空着没填的尺码**，本喵把它填成了「装数字的那张图纸」。填完之后：\n\n- 取出来的东西**本来就认得出是数字**，`int n = box.get(0);` 直接就行，**那一笔贴标签的活儿不用本喵干了**；\n- 而且**塞错东西的时候翻译官喵当场就拦** —— 本喵要是往这只口袋塞一条项链，稿子那一关就过不去，压根不用等跑到这儿来炸。\n\n**三、尖括号里为什么不能写 `int`。** 这是本课的另一条规矩：**尖括号里只认「真猫那种」**。光溜溜的家当（`int` 那种裸类型）填不进去，必须填**装数字的那张图纸** `Integer`。这也是为什么上一课学的那张图纸这么常用喵。\n\n一句话收个尾：**留一块空尺码，让图纸自己量体裁衣 —— 塞错的早发现，取出来的不用贴标签。**"
+}

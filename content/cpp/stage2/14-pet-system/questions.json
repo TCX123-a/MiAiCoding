@@ -1,0 +1,91 @@
+{
+  "lessonId": "cpp-stage2-14",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵把 `Cat` 的两格家底挂成 `protected:` 而不是 `private:`，为的是哪一件事？",
+      "options": [
+        "让**照着这个类派生出来的子类**够得着 —— 子类的函数里能直接调用 `name`",
+        "让 `main` 里也能直接写 `a.name`，想看就看",
+        "让这两格谁都能改，省得走小窗",
+        "没什么讲究，两种写法一模一样"
+      ],
+      "answer": 0,
+      "explanation": "`protected:` 管的是「**这张图纸 + 照着它画下来的新图纸**够得着」，外面（`main`）照样够不着喵。本喵这一课把名字挂 `protected:`，正是为了小猫那一手 `showDays()` 里能直接喊 `name`；要是挂成 `private:`，翻译官喵当场拦下，原话是 `error: 'std::string Cat::name' is private within this context`（本喵在本机真跑过）。想让外面也能看一眼，就得另外留一扇小窗（那两手 `getName()` / `getAge()`）喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写 `class Kitten : Cat`，把那一小段 `public` 漏掉了，跑起来会怎样？",
+      "options": [
+        "编译器当场拦下 —— 老类整张被扣上了盖子，`k.greet()` 够不着",
+        "一样跑，只是小猫那张图纸少接了几手",
+        "跑得起来，只是名册上少念一只",
+        "只在给小猫加新格子的时候才出错"
+      ],
+      "answer": 0,
+      "explanation": "少了那一小段 `public`，等于**悄悄把老图纸整张扣上了盖子**：图纸套是套上了，可外面什么都够不着喵。本喵在本机真跑过，翻译官喵的原话是 `error: 'void Cat::greet()' is inaccessible within this context`，还跟一句 `error: 'Cat' is not an accessible base of 'Kitten'`。这一跤在抄写法的时候几乎必踩 —— 两种写法差的就是那一个词喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "菜单那一圈里，收摊那一支最后写的那句 `break;` 是干什么的？",
+      "options": [
+        "**跳出这个走号码的圈** —— 走到它，后面剩下的号码一个都不再走",
+        "只跳出收摊那一支 `if`，号码接着一个一个走",
+        "把名册里登记的猫全清空",
+        "让屏幕上后面的话全都不印"
+      ],
+      "answer": 0,
+      "explanation": "`break;` 管的是**那一圈**：本喵这一课的号码碗里是 `1, 3, 2, 0, 1`，收摊之后**还跟着一个 `1`**，可屏幕上那个 `1` 一个字都没印出来 —— 这就是 `break;` 干的事喵。漏了它的样子本喵真跑过：收摊那一句印出来了，**收摊却没收成**，后面照登记不误，最后名册上多出来一只喵。它跳的是「走号码的圈」，不是那一个 `if` 喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten ____ {\npublic:\n    Kitten(string n, int a) : Cat(n, a) {}\n};\n\nint main() {\n    Kitten k(\"棉花\", 1);\n    k.greet();\n    return 0;\n}",
+      "stem": "小猫那张图纸要**照着老图纸画下来**，那一小段（用 `____` 标出）该填什么？补上之后，屏幕上要印出 `我是棉花，今年 1 岁喵` 喵。",
+      "blanks": [
+        { "answer": ": public Cat", "accept": [":public Cat"] }
+      ],
+      "explanation": "填的是 `: public Cat` —— 念作「**这张图纸照着 `Cat` 画下来**」，老图纸上的格子和手，小猫这张图纸上自动就有喵。中间那一小段 `public` 管的是「老图纸的公开小手，新图纸对外还公不公开」：漏了它就成了 `class Kitten : Cat`，本喵在本机真跑过，翻译官喵报的是 `error: 'void Cat::greet()' is inaccessible within this context` —— 明明套上了，外面却够不着喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : ____, days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"棉花\", 1, 20);\n    k.showDays();\n    return 0;\n}",
+      "stem": "小猫出生的时候，得先把名字和岁数**递回给老图纸那一手**（用 `____` 标出）。补上之后，屏幕上要印出 `棉花 出生 20 天啦` 喵。",
+      "blanks": [
+        { "answer": "Cat(n, a)", "accept": ["Cat(n,a)"] }
+      ],
+      "explanation": "填的是 `Cat(n, a)` —— 妈妈先出生、小猫后出生，所以这两样先递回老图纸那一手，再管自己多出来的那一格 `days`喵。不填它（写成 `: name(n)` 这种），本喵在本机真跑过，翻译官喵报两句：`error: class 'Kitten' does not have any field named 'name'` 和 `error: no matching function for call to 'Cat::Cat()'` —— 前一句说「小猫自己名下没这一格」，后一句说「你没给老图纸喂料」喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    vector<Cat> roster;\n    roster.push_back(Cat(\"小橘\", 3));\n    roster.push_back(Cat(\"大胖\", 5));\n    cout << roster.size() << endl;\n    for (Cat& c : roster) {\n        c.greet();\n    }\n\n    Kitten k(\"棉花\", 1, 20);\n    k.greet();\n    k.showDays();\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "2\n我是小橘，今年 3 岁喵\n我是大胖，今年 5 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 20 天啦",
+      "accept": [
+        "2\n我是小橘，今年 3 岁喵\n我是大胖，今年 5 岁喵\n我是棉花，今年 1 岁喵\n棉花 出生 20 天啦\n"
+      ],
+      "explanation": "第一行 `roster.size()` 印 `2` —— 碗里两只，碗自己数出来的喵。接着挨着过一遍名册：`for (Cat& c : roster)` 里那个 `&` 是**别复印、指着真身**，两只都念出来了喵。最后那只小猫是**单独生出来的**：`k.greet()` 那一手它自己一句都没写，是从老图纸那儿接过来的（所以能印出「我是棉花…」）；`k.showDays()` 是它自己多出来的那一手，印的是天数喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    vector<Cat> roster;\n    vector<int> keys = {1, 1, 0, 1};\n\n    for (int cmd : keys) {\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"小橘\", 3));\n        } else {\n            cout << \"本喵还不会这个号码喵\" << endl;\n        }\n    }\n    cout << \"走出去之后名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "收摊喵，今天登记了 2 只\n走出去之后名册上 2 只",
+      "accept": [
+        "收摊喵，今天登记了 2 只\n走出去之后名册上 2 只\n"
+      ],
+      "explanation": "号码碗里是 `1, 1, 0, 1`喵。前两个 `1` 各登记一只（登记的时候一句话都没印，所以屏幕上看不见它们）；走到 `0` 那一支，印出「收摊喵，今天登记了 2 只」，紧跟着那句 `break;` **跳出了走号码的圈** —— 收摊后面那个 `1` 一个都没走，所以最后名册上还是 `2` 只喵。要是把 `break;` 漏了，最后一行就会变成 `3` 只喵。"
+    }
+  ]
+}

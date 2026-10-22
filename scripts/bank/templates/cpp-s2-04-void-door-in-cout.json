@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-04-void-door-in-cout",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-04",
+  "type": "codefix",
+  "concept": ["问数的门要把数叼回来", "招式前面那个词要说实话", "void 塞不进输出箭头"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "n": { "kind": "int", "min": 2, "max": 5 }
+  },
+  "stemTemplate": "本喵想把格子里的数**叼回来**给别人用，可这道门本喵写歪了：它变成了「只在自己肚子里印字、什么都不叼回来」的那种招式。`main` 里本喵还把它塞在输出箭头的右边，想让它叼个数回来印 —— 翻译官喵当场拦下喵。\n\n你帮本喵改**一处**，让程序跑起来、印出一行 `本喵的账：N`（`N` 就是格子里的条数）。**`main` 里那一句不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprivate:\n    string name;\n    int fish;\n\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void getFish() const {\n        cout << \"格子里的数是 \" << fish << endl;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\", {n});\n    cout << \"本喵的账：\" << c1.getFish() << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprivate:\n    string name;\n    int fish;\n\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    int getFish() const {\n        return fish;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\", {n});\n    cout << \"本喵的账：\" << c1.getFish() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:20:26: error: no match for 'operator<<' (operand types are 'std::basic_ostream<char>' and 'void')`\n\n翻成猫话：**「你要我把一个 `void` 印出来 —— 可 `void` 的意思是『啥都没叼回来』，它装不进输出箭头的右半边。」**\n\n这一招的真正毛病在**前面那个词**：写 `void` 就是「只干活、不叼东西回来」，写 `int` 才是「干完活叼一个整数回来」。喊它的人想拿这个数去印、去算，招式前面就必须写清楚会叼回什么，肚子里还要有一句 `return fish;` 把它叼出去。\n\n改法是把前面那个词换成 `int`，再把肚子里那行印字换成一句 `return fish;`。改完它就从「只会自己印字的招式」变成了一道**真正的问数的门**。\n\n⚠️ 看到 `no match for 'operator<<'` 就先低头看看箭头右边那一招**前面写的是什么** —— 写了 `void` 的招式只能自己喊，不能塞进箭头里。"
+}

@@ -1,0 +1,95 @@
+{
+  "lessonId": "java-stage3-22",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "尺子法里，一圈扫完、比尺子短的都已经站到左边了，接下来要对**尺子**做什么喵？",
+      "options": [
+        "把尺子和 `fish[small]` 换个个儿，让它站到两拨的分界线上",
+        "把尺子直接扔掉，下一次重新挑一只",
+        "把尺子留在最右边不动，反正它本来就在那头",
+        "把尺子挪到整摊的最前面"
+      ],
+      "answer": 0,
+      "explanation": "尺子的位子必须**定死**，不然拆出来的两拨就白分了喵。扫完一圈，`small` 正好停在「短的都过完了」的那个位子上 —— 把尺子和 `fish[small]` 换个位子，尺子就落在两拨中间。这一步不做的话，尺子还待在最右边，可它的值是这一摊里最大的那只，右边那半就又混进了不比自己长的东西，往下的拆分全乱了。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "合并法在合的时候说「谁短谁先出」，是拿**哪两只**在比喵？",
+      "options": [
+        "两段各自**头上那一只**",
+        "两段各自的最后那一只",
+        "左边那段的每一只，和右边那段的每一只，两两都要比",
+        "两段里最短的那一只"
+      ],
+      "answer": 0,
+      "explanation": "要合的两段**各自都是理好的**，所以每段里最短的一定站在它自己那段的头上喵。那就只消各看头一只：谁短谁先出，出完把自己那段的头往后挪一格，再接着比。整个合的过程每一步都只比一次，合完一段只要扫一遍 —— 这正是它快的原因。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "为什么尺子法和合并法比上一课那三招快那么多喵？",
+      "options": [
+        "它们把「只数乘只数」的力气换成了「只数乘拆的层数」",
+        "它们用的爪子更厉害，一次能比好几只",
+        "它们偷偷把一部分鱼干丢掉了",
+        "它们其实不快，只是本喵数错了"
+      ],
+      "answer": 0,
+      "explanation": "对半拆有个好脾气：鱼干**翻一倍，只多拆一刀**（1024 只要 10 刀，2048 只要 11 刀）喵。而每一刀前后只要把这一摊扫一遍，所以总的力气大约是「只数乘层数」—— 1024 只鱼干就是一万次上下，比憨办法的五十多万次少了五十倍。秘诀不在爪子快，在**想法**：一大摊拆成两小摊分头办，办完再合起来。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    static <T extends Comparable<T>> void quick_sort(T[] fish, int lo, int hi) {\n        if (lo >= hi) {\n            return;\n        }\n\n        T ruler = fish[hi];\n        int small = lo;\n\n        for (int i = lo; i < hi; i++) {\n            if (fish[i].compareTo(ruler) < 0) {\n                T t = fish[i];\n                fish[i] = fish[small];\n                fish[small] = t;\n                small++;\n            }\n        }\n\n        T t = fish[____];\n        fish[____] = fish[hi];\n        fish[hi] = ____;\n\n        quick_sort(fish, lo, small - 1);\n        quick_sort(fish, small + 1, hi);\n    }\n\n    public static void main(String[] args) {\n        Integer[] fish = {5, 2, 9, 1, 7, 3};\n        quick_sort(fish, 0, fish.length - 1);\n        for (int i = 0; i < fish.length; i++) {\n            System.out.print(fish[i] + \" \");\n        }\n        System.out.println();\n    }\n}",
+      "stem": "尺子站到分界线上那三句，本喵挖了三个空。补完之后这段程序该印出 `1 2 3 5 7 9` 喵～",
+      "blanks": [
+        { "answer": "small" },
+        { "answer": "small" },
+        { "answer": "t" }
+      ],
+      "explanation": "这三句和上一课换位子的三句是**同一个套路**喵：先把分界线上的那只捧在手上（`t`），再把尺子挪到分界线上，最后把手上的那只放回尺子原来待的最右边。分界线在哪儿？就是 `small` —— 扫完一圈它正好停在「短的都过完了」的位子上。所以前两空填 `small`，最后那空填手上那只 `t`。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\n\npublic class Main {\n    static <T extends Comparable<T>> void merge(T[] fish, int lo, int mid, int hi) {\n        ArrayList<T> tmp = new ArrayList<>();\n        int i = lo;\n        int j = mid + 1;\n\n        while (i <= mid && j <= hi) {\n            if (fish[i].compareTo(fish[j]) <= 0) {\n                tmp.add(fish[____]);\n            } else {\n                tmp.add(fish[____]);\n            }\n        }\n        while (i <= mid) {\n            tmp.add(fish[i++]);\n        }\n        while (j <= hi) {\n            tmp.add(fish[j++]);\n        }\n        for (int t = 0; t < tmp.size(); t++) {\n            fish[lo + t] = tmp.get(____);\n        }\n    }\n\n    static <T extends Comparable<T>> void merge_sort(T[] fish, int lo, int hi) {\n        if (lo >= hi) {\n            return;\n        }\n        int mid = (lo + hi) / 2;\n        merge_sort(fish, lo, mid);\n        merge_sort(fish, mid + 1, hi);\n        merge(fish, lo, mid, hi);\n    }\n\n    public static void main(String[] args) {\n        Integer[] fish = {5, 2, 9, 1, 7, 3};\n        merge_sort(fish, 0, fish.length - 1);\n        for (int i = 0; i < fish.length; i++) {\n            System.out.print(fish[i] + \" \");\n        }\n        System.out.println();\n    }\n}",
+      "stem": "合并法里「谁短谁先出」和「搬回原来的摊子」各有空位。补完之后它会印出 `1 2 3 5 7 9` 喵～",
+      "blanks": [
+        { "answer": "i++" },
+        { "answer": "j++" },
+        { "answer": "t" }
+      ],
+      "explanation": "合的时候每段各自看头上那一只：左边那只不更长，就先出左边的（`fish[i++]`，出完左边那段的头往后挪一格）；不然就先出右边的（`fish[j++]`）喵。前两空是**同一件事的两条岔路**，方向正好相反。最后那个搬回去的圈用 `t` 当计数：临时仓库里从 0 数起，摊子上从 `lo` 数起，所以是 `fish[lo + t] = tmp.get(t)`。这个圈千万别省 —— 不搬回来，原来那摊一点没变。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    static <T extends Comparable<T>> void quick_sort(T[] fish, int lo, int hi) {\n        if (lo >= hi) {\n            return;\n        }\n\n        T ruler = fish[hi];\n        int small = lo;\n\n        for (int i = lo; i < hi; i++) {\n            if (fish[i].compareTo(ruler) < 0) {\n                T t = fish[i];\n                fish[i] = fish[small];\n                fish[small] = t;\n                small++;\n            }\n        }\n\n        T t = fish[small];\n        fish[small] = fish[hi];\n        fish[hi] = t;\n\n        quick_sort(fish, lo, small - 1);\n        quick_sort(fish, small + 1, hi);\n    }\n\n    public static void main(String[] args) {\n        Integer[] fish = {9, 3, 7, 1, 6, 2};\n        quick_sort(fish, 0, fish.length - 1);\n        System.out.print(\"尺子法：\");\n        for (int i = 0; i < fish.length; i++) {\n            System.out.print(fish[i] + \" \");\n        }\n        System.out.println();\n    }\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "尺子法：1 2 3 6 7 9",
+      "accept": [
+        "尺子法：1 2 3 6 7 9\n"
+      ],
+      "explanation": "尺子法不管中途怎么挪，最后一定把整摊理成从短到长：`1 2 3 6 7 9` 喵。它和上一课的憨办法**结果一样、路子完全不同** —— 挑一只尺子、短的站左边、长的站右边，尺子站到分界线上把位子定死，左右两半再各自照同样的办法来一遍。前面那句 `尺子法：` 原样印出，后面每只印一个数加一个空格。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\n\npublic class Main {\n    static <T extends Comparable<T>> void merge(T[] fish, int lo, int mid, int hi) {\n        ArrayList<T> tmp = new ArrayList<>();\n        int i = lo;\n        int j = mid + 1;\n\n        while (i <= mid && j <= hi) {\n            if (fish[i].compareTo(fish[j]) <= 0) {\n                tmp.add(fish[i++]);\n            } else {\n                tmp.add(fish[j++]);\n            }\n        }\n        while (i <= mid) {\n            tmp.add(fish[i++]);\n        }\n        while (j <= hi) {\n            tmp.add(fish[j++]);\n        }\n        for (int t = 0; t < tmp.size(); t++) {\n            fish[lo + t] = tmp.get(t);\n        }\n    }\n\n    static <T extends Comparable<T>> void merge_sort(T[] fish, int lo, int hi) {\n        if (lo >= hi) {\n            return;\n        }\n        int mid = (lo + hi) / 2;\n        merge_sort(fish, lo, mid);\n        merge_sort(fish, mid + 1, hi);\n        merge(fish, lo, mid, hi);\n    }\n\n    public static void main(String[] args) {\n        Integer[] fish = {8, 4, 9, 2, 5, 1};\n        merge_sort(fish, 0, fish.length - 1);\n        System.out.print(\"合并法：\");\n        for (int i = 0; i < fish.length; i++) {\n            System.out.print(fish[i] + \" \");\n        }\n        System.out.println();\n    }\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "合并法：1 2 4 5 8 9",
+      "accept": [
+        "合并法：1 2 4 5 8 9\n"
+      ],
+      "explanation": "合并法是先拆到底再合回来，结果照样是从短到长：`1 2 4 5 8 9` 喵。它和尺子法最像的一点是：**合的时候每一步只比一次** —— 两段各自都是理好的，所以只消各看头一只，谁短谁先出。前面那句 `合并法：` 原样印出，后面每只印一个数加一个空格。"
+    }
+  ]
+}

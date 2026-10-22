@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-ledger-rewrite-report",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-09",
+  "type": "codewrite",
+  "concept": ["同一个名字再写是改写", "get 拿不到给空口袋", "getOrDefault 兜底", "size"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["小橘", "大橘"] },
+    "b": { "kind": "pick", "values": ["狸花", "花卷"] },
+    "u": { "kind": "int", "min": 6, "max": 7 },
+    "d": { "kind": "int", "min": 0, "max": 1 }
+  },
+  "stemTemplate": "本喵要拿账本当面演三件事喵：**同一个名字写两遍会怎样**、**名字不在时 `get` 叼回来什么**、**带兜底值去取又是多少**。\n\n`main` 里这么走：\n\n1. 账本上先写两行：`{a}` 配 `3`、`{b}` 配 `5`；\n2. **同一个名字再写一遍**：`{a}` 配 `{u}`；\n3. 然后印四行：\n   - `账本上有 ` + **几个名字** + ` 个名字`\n   - `{a} 那一行是 ` + 按名字取回来的那一行\n   - `大肥鱼 那一行是 ` + 拿 `大肥鱼` 这个名字去 `get` 的结果\n   - `大肥鱼 兜底之后是 ` + 拿 `大肥鱼` 去取、**兜底值给 {d}** 的结果\n\n第三行印出来的是一串写着 `null` 的字 —— 那就是「什么都没叼到」的样子，本喵要亲眼看看它。\n\n这一题**不用投喂任何东西**，程序自己就能跑。",
+  "starterTemplate": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.HashMap;\nimport java.util.Map;\n\npublic class Main {\n    public static void main(String[] args) {\n        Map<String, Integer> book = new HashMap<>();\n        book.put(\"{a}\", 3);\n        book.put(\"{b}\", 5);\n        book.put(\"{a}\", {u});\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        System.out.println(\"{a} 那一行是 \" + book.get(\"{a}\"));\n        System.out.println(\"大肥鱼 那一行是 \" + book.get(\"大肥鱼\"));\n        System.out.println(\"大肥鱼 兜底之后是 \" + book.getOrDefault(\"大肥鱼\", {d}));\n    }\n}\n",
+  "explanationTemplate": "这四行正好把本课的头号坑演了个全喵。\n\n**一、同一个名字再写一遍是「改写」，不是「加一行」。** `{a}` 先配了 `3`，又配了 `{u}` —— 账本上**还是那一行**，右边换成了 `{u}`。所以第一行印出来是 **2 个名字**（`{a}` 和 `{b}` 各一行），不是 3；第二行取回来的是 `{u}`，不是 `3`。\n\n**二、名字不在时 `get` 给的是空口袋，不是 0、也不是报错。** 第三行印出来是一串写着 `null` 的字。**这一行是最值得盯住的** —— 因为它是**安安静静**印出来的：程序一点没炸，屏幕上连一行红字都没有，可本喵手里拿到的压根不是数字。\n\n**三、空口袋为什么危险，得跟前面那个题对起来看。** 这一题里本喵只是把它**拼进项链**印出来，所以只得到一个写着 `null` 的字；上一道题里本喵把它**塞给光溜溜的 `int`**，那就当场炸了。同一只空口袋、两种下场 —— 区别只在本喵拿它去干了什么。\n\n**四、带兜底值去取就省心了。** `book.getOrDefault(\"大肥鱼\", {d})` 的意思是「**名字在就给真东西，不在就给 {d}**」。第四行印出来就是 `{d}`。\n\n所以在账本这里，本喵给自己立一条规矩：**凡是取东西的地方，先问自己一句「这个名字保证在吗」** —— 不保证，就用带兜底值的那一招，或者先问一句「它在不在」再动手。\n\n（顺带记一句形状上的事：账本一行里有两半 —— 名字和东西，所以名分那一行尖括号里挂着**两块牌子**。上面那句读作「名字是项链，东西是数字」喵。）"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-ptrstr-bead-bowl",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-03",
+  "type": "codefix",
+  "concept": ["char与char*", "项链", "编译错误", "Wint-conversion"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["cat", "fish", "bird", "moon"] }
+  },
+  "stemTemplate": "本喵有一条项链，是 `{word}` 这几个字母串起来的。\n\n程序要把整条项链**原样印出来**（一行）。可翻译官喵一瞧见就不干了，把整段代码退了回来。你帮本喵看看它为什么不高兴，把它改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    char s = \"{word}\";\n    printf(\"%s\\n\", s);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"{word}\";\n    printf(\"%s\\n\", s);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: initialization of 'char' from 'char *' makes integer from pointer without a cast [-Wint-conversion]` —— 翻过来是「**你想把一条项链塞进一只只装一颗珠子的碗，本喵不认**」。\n\n看那行 `char s = \"{word}\";`：左边是 `char`，那是**一只碗，一次只装一颗珠子**；右边是 `\"{word}\"`，那是**一整条项链**。项链在 C 里不是珠子，它是一种**门牌号** —— 说的是「这几颗珠子从哪儿开始排」。想把门牌号当成一颗珠子塞进碗里，翻译官喵当场拦下。\n\n装项链要用**牌子**：`char *s = \"{word}\";` —— 「那条项链住在哪儿」。\n\n紧跟着还有一句 `warning: format '%s' expects argument of type 'char *', but argument 2 has type 'int' [-Wformat=]`，它说的是同一件事的另一面：`%s` 要的是**一条项链**（也就是牌子），不是一颗珠子。\n\n收下这条对照喵：**一只碗装一颗珠子（`char`），一块牌子指一整条项链（`char *`）。** 差的就是那颗星。"
+}

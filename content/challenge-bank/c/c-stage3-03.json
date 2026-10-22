@@ -1,0 +1,360 @@
+{
+  "lessonId": "c-stage3-03",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-empty-chain-crash-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵想串一条链子，一只一只挂到**最后面**去喵。可程序一跑就摔了 —— 屏幕上一个字都没印出来。\n\n你帮本喵看看它摔在哪儿，把它改好。改好之后，程序应该把链子从头报出来：每只环报一个数，用 ` -> ` 隔开，最后以 `NULL` 收尾。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, 1);\n    head = push_back(head, 5);\n    head = push_back(head, 1 + 5);\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, 1);\n    head = push_back(head, 5);\n    head = push_back(head, 1 + 5);\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "1 -> 5 -> 6 -> NULL",
+      "stdin": null,
+      "explanation": "链子一开始是**空的**喵 —— 捏在手里的牌子是 `NULL`，一只环都还没有。这时候往后面挂第一只环，本喵的 `push_back` 会先摸一摸：`Node *cur = head;`，然后马上问一句 `cur->next`……可 `cur` 是空牌子呀，上面什么都没有，这一伸手就摔了。\n\n课文里「**先看链子是不是空的**」那一步就是为它留的：空的就直接让它当第一环（`return p;`），别的什么都不用做。\n\n这种「第一次做」的岔路在链子上不止一处：挂第一只环、摘第一只环，每一处都得先想一想「要是这里还什么都没有呢」喵。",
+      "templateId": "c-s3-empty-chain-crash",
+      "params": {
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T00:52:49.508Z",
+        "hash": "1d1d8382eac4e7f2"
+      }
+    },
+    {
+      "id": "bank-c-s3-empty-chain-crash-019",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵想串一条链子，一只一只挂到**最后面**去喵。可程序一跑就摔了 —— 屏幕上一个字都没印出来。\n\n你帮本喵看看它摔在哪儿，把它改好。改好之后，程序应该把链子从头报出来：每只环报一个数，用 ` -> ` 隔开，最后以 `NULL` 收尾。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, 4);\n    head = push_back(head, 9);\n    head = push_back(head, 4 + 9);\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, 4);\n    head = push_back(head, 9);\n    head = push_back(head, 4 + 9);\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "4 -> 9 -> 13 -> NULL",
+      "stdin": null,
+      "explanation": "链子一开始是**空的**喵 —— 捏在手里的牌子是 `NULL`，一只环都还没有。这时候往后面挂第一只环，本喵的 `push_back` 会先摸一摸：`Node *cur = head;`，然后马上问一句 `cur->next`……可 `cur` 是空牌子呀，上面什么都没有，这一伸手就摔了。\n\n课文里「**先看链子是不是空的**」那一步就是为它留的：空的就直接让它当第一环（`return p;`），别的什么都不用做。\n\n这种「第一次做」的岔路在链子上不止一处：挂第一只环、摘第一只环，每一处都得先想一想「要是这里还什么都没有呢」喵。",
+      "templateId": "c-s3-empty-chain-crash",
+      "params": {
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T00:52:50.982Z",
+        "hash": "d44cf82540ee117a"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-print-skips-tail-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵照着课文把三只环串成了一串，想让程序从头报一遍。\n\n可屏幕上**少了一截**：只报出来两个数，最后那一只环连影子都没有 —— 但收尾的 `NULL` 倒是老老实实补上了。它一个错都不报，安安静静就跑完了。\n\n你帮本喵看看这段代码哪里不对，把它改好。改好之后，三只环应该一只不落地报出来：每只环报一个数、中间用 ` -> ` 隔开，最后再补一个 `NULL`。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur->next != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, 2);\n    head = push_back(head, 6);\n    head = push_back(head, 2 + 6);\n\n    print_list(head);\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, 2);\n    head = push_back(head, 6);\n    head = push_back(head, 2 + 6);\n\n    print_list(head);\n\n    return 0;\n}\n",
+      "expectedOutput": "2 -> 6 -> 8 -> NULL",
+      "stdin": null,
+      "explanation": "报数那一圈，问题出在**转到什么时候停**喵。\n\n`while (cur->next != NULL)` 问的是：「**本喵的爪子还牵着下一只吗？**」所以走到最后那一只 —— 它爪子是空的 —— 圈子就停了，那一只**还没被报过**。屏幕上看起来就是「数报少了，`NULL` 倒是补上了」。\n\n有意思的是：**同一个写法，在挂着的那一步里是对的**。`push_back` 要找尾巴，靠的正是「谁爪子空谁就是尾巴」，它必须这么问。\n\n可报数要问的是另一个问题：「**本喵自己还在吗？**」写成 `while (cur != NULL)`，最后一只才有机会被报出来；报完再挪到空处，圈子正好停在 `NULL` 上。\n\n两处写法长得几乎一样，问的却是两件事。下次写到这类转圈，先想清楚：**这一步要问的是「我下面还有没有」，还是「我自己还在不在」？**",
+      "templateId": "c-s3-list-print-skips-tail",
+      "params": {
+        "a": 2,
+        "b": 6
+      },
+      "verified": {
+        "at": "2026-09-16T11:44:59.971Z",
+        "hash": "891269238e815edb"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-print-skips-tail-015",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵照着课文把三只环串成了一串，想让程序从头报一遍。\n\n可屏幕上**少了一截**：只报出来两个数，最后那一只环连影子都没有 —— 但收尾的 `NULL` 倒是老老实实补上了。它一个错都不报，安安静静就跑完了。\n\n你帮本喵看看这段代码哪里不对，把它改好。改好之后，三只环应该一只不落地报出来：每只环报一个数、中间用 ` -> ` 隔开，最后再补一个 `NULL`。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur->next != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, 5);\n    head = push_back(head, 9);\n    head = push_back(head, 5 + 9);\n\n    print_list(head);\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = push_back(head, 5);\n    head = push_back(head, 9);\n    head = push_back(head, 5 + 9);\n\n    print_list(head);\n\n    return 0;\n}\n",
+      "expectedOutput": "5 -> 9 -> 14 -> NULL",
+      "stdin": null,
+      "explanation": "报数那一圈，问题出在**转到什么时候停**喵。\n\n`while (cur->next != NULL)` 问的是：「**本喵的爪子还牵着下一只吗？**」所以走到最后那一只 —— 它爪子是空的 —— 圈子就停了，那一只**还没被报过**。屏幕上看起来就是「数报少了，`NULL` 倒是补上了」。\n\n有意思的是：**同一个写法，在挂着的那一步里是对的**。`push_back` 要找尾巴，靠的正是「谁爪子空谁就是尾巴」，它必须这么问。\n\n可报数要问的是另一个问题：「**本喵自己还在吗？**」写成 `while (cur != NULL)`，最后一只才有机会被报出来；报完再挪到空处，圈子正好停在 `NULL` 上。\n\n两处写法长得几乎一样，问的却是两件事。下次写到这类转圈，先想清楚：**这一步要问的是「我下面还有没有」，还是「我自己还在不在」？**",
+      "templateId": "c-s3-list-print-skips-tail",
+      "params": {
+        "a": 5,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T11:45:01.865Z",
+        "hash": "c7ac13bd22800bbf"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-push-back-print-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想串一条链子喵：读进来几只环的编号，一只一只挂到**最后面**去，再从头走到尾报一遍。\n\n请你写个程序：**先读进来一个数**（这次要串几只环），**再读进来 3 行数**（一行一个，是每只环上挂的编号）。一只一只挂到最**后面** —— 挂的顺序就是读进来的顺序，别弄反喵；挂完从头走到尾报出来：每只环报一个数，用 ` -> ` 隔开，最后以 `NULL` 收尾。\n\n用完了记得把环一只一只还给仓库喵。\n\n比如投喂给程序的是\n\n3\n8\n7\n3\n\n程序就要叼回\n\n8 -> 7 -> 3 -> NULL\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_back(head, v);\n    }\n\n    print_list(head);\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "9 -> 5 -> 7 -> NULL",
+      "stdin": "3\n9\n5\n7\n",
+      "explanation": "串链子这一步，课文里叫**挂到最后面**喵：新环造好之后，先看链子是不是空的（空的就直接让它当第一环），不然就一路摸到最后一环，把它的爪子接到新环上。\n\n有两个容易踩的地方：\n\n**① 牌子要重新捏好。** 这一招可能把**新的第一环**叼回来（空链子上挂第一只的时候就会），所以外面必须写成 `head = push_back(head, v);` —— 少写那个 `head =`，刚挂上去的环就丢了。\n\n**② 报完要一只只还。** 一边走一边先记牢下一环、再放掉当前这只；顺序反过来，放掉当前这只之后就再也找不到下一环了喵。",
+      "templateId": "c-s3-list-push-back-print",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T00:52:53.277Z",
+        "hash": "87dfb28aeba5dfe9"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-push-back-print-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想串一条链子喵：读进来几只环的编号，一只一只挂到**最后面**去，再从头走到尾报一遍。\n\n请你写个程序：**先读进来一个数**（这次要串几只环），**再读进来 4 行数**（一行一个，是每只环上挂的编号）。一只一只挂到最**后面** —— 挂的顺序就是读进来的顺序，别弄反喵；挂完从头走到尾报出来：每只环报一个数，用 ` -> ` 隔开，最后以 `NULL` 收尾。\n\n用完了记得把环一只一只还给仓库喵。\n\n比如投喂给程序的是\n\n4\n5\n5\n7\n3\n\n程序就要叼回\n\n5 -> 5 -> 7 -> 3 -> NULL\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_back(head, v);\n    }\n\n    print_list(head);\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "3 -> 7 -> 9 -> 1 -> NULL",
+      "stdin": "4\n3\n7\n9\n1\n",
+      "explanation": "串链子这一步，课文里叫**挂到最后面**喵：新环造好之后，先看链子是不是空的（空的就直接让它当第一环），不然就一路摸到最后一环，把它的爪子接到新环上。\n\n有两个容易踩的地方：\n\n**① 牌子要重新捏好。** 这一招可能把**新的第一环**叼回来（空链子上挂第一只的时候就会），所以外面必须写成 `head = push_back(head, v);` —— 少写那个 `head =`，刚挂上去的环就丢了。\n\n**② 报完要一只只还。** 一边走一边先记牢下一环、再放掉当前这只；顺序反过来，放掉当前这只之后就再也找不到下一环了喵。",
+      "templateId": "c-s3-list-push-back-print",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T00:52:54.699Z",
+        "hash": "b471b48cfe084128"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-push-back-print-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想串一条链子喵：读进来几只环的编号，一只一只挂到**最后面**去，再从头走到尾报一遍。\n\n请你写个程序：**先读进来一个数**（这次要串几只环），**再读进来 5 行数**（一行一个，是每只环上挂的编号）。一只一只挂到最**后面** —— 挂的顺序就是读进来的顺序，别弄反喵；挂完从头走到尾报出来：每只环报一个数，用 ` -> ` 隔开，最后以 `NULL` 收尾。\n\n用完了记得把环一只一只还给仓库喵。\n\n比如投喂给程序的是\n\n5\n9\n8\n4\n9\n2\n\n程序就要叼回\n\n9 -> 8 -> 4 -> 9 -> 2 -> NULL\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_back(head, v);\n    }\n\n    print_list(head);\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "4 -> 5 -> 3 -> 9 -> 3 -> NULL",
+      "stdin": "5\n4\n5\n3\n9\n3\n",
+      "explanation": "串链子这一步，课文里叫**挂到最后面**喵：新环造好之后，先看链子是不是空的（空的就直接让它当第一环），不然就一路摸到最后一环，把它的爪子接到新环上。\n\n有两个容易踩的地方：\n\n**① 牌子要重新捏好。** 这一招可能把**新的第一环**叼回来（空链子上挂第一只的时候就会），所以外面必须写成 `head = push_back(head, v);` —— 少写那个 `head =`，刚挂上去的环就丢了。\n\n**② 报完要一只只还。** 一边走一边先记牢下一环、再放掉当前这只；顺序反过来，放掉当前这只之后就再也找不到下一环了喵。",
+      "templateId": "c-s3-list-push-back-print",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T00:52:56.108Z",
+        "hash": "276955d4dcc46c34"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-push-front-count-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵今天要**把环一只一只挂到链子的最前面**喵：先读到的先挂，后面每读到一只，都挂到最前头去。\n\n请你写个程序：\n\n① 先读进来一个数（有几只环：4），再一行一行读进来 4 个数（每只环上写的数）；\n② 每读到一个数就造一只环，挂到链子的**最前面**；\n③ 挂完从头报一遍 —— 每只环报一个数、中间用 ` -> ` 隔开，走到空爪子再补一个 `NULL`；\n④ 再报一行链子上有几只环，形如 `链子上有 5 只环`：这活儿打包成一招，名字叫 `list_len`，喂进去链子的头，把只数叼回来；\n⑤ 用完了把环一只一只还回去。\n\n比如投喂给程序的是\n\n4\n6\n6\n4\n2\n\n程序就要叼回\n\n2 -> 4 -> 6 -> 6 -> NULL\n链子上有 4 只环\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_front(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    p->next = head;\n    return p;\n}\n\nint list_len(Node *head) {\n    int cnt = 0;\n    Node *cur = head;\n    while (cur != NULL) {\n        cnt = cnt + 1;\n        cur = cur->next;\n    }\n    return cnt;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_front(head, v);\n    }\n\n    print_list(head);\n    printf(\"链子上有 %d 只环\\n\", list_len(head));\n\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "1 -> 2 -> 5 -> 2 -> NULL\n链子上有 4 只环",
+      "stdin": "4\n2\n5\n2\n1\n",
+      "explanation": "挂到最前面，反的是**顺序**喵 —— 每来一只新环，它都抢在所有人前面当第一只：\n\n```c\np->next = head;   /* 新环的爪子牵住原来的头 */\nreturn p;         /* 新环自己当新的头 */\n```\n\n这两句就是顺序反过来的地方：原来的那一串全排在它后面，所以读进来 4 个数，报出来是**倒着的** —— 先读到的反而排在最末尾。\n\n（课文里挂尾巴那一招正好相反：它是**一路走到最后再牵上**，顺序和读进来的一模一样。挂头和挂尾差的就这一点。）\n\n另外两件小事：\n\n**① 只数要现数一遍才准。** `list_len` 从空碗 `0` 起步、一路走到空爪子为止 —— 链子怎么挂怎么摘，数出来的都是当下这个准数。要是在别处偷偷记住一个数，链子一改它立刻就不对了。\n\n**② 还回去之前先记住下一只。** `free(cur)` 一出手，那只环连同它爪子上的地址一起消失 —— 所以得**先**把下一只的位置抄下来（`Node *next = cur->next;`），再还、再挪过去。顺序反了，下一只就再也找不着了。",
+      "templateId": "c-s3-list-push-front-count",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:50:52.631Z",
+        "hash": "874e6d8e37c6cbeb"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-push-front-count-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵今天要**把环一只一只挂到链子的最前面**喵：先读到的先挂，后面每读到一只，都挂到最前头去。\n\n请你写个程序：\n\n① 先读进来一个数（有几只环：5），再一行一行读进来 5 个数（每只环上写的数）；\n② 每读到一个数就造一只环，挂到链子的**最前面**；\n③ 挂完从头报一遍 —— 每只环报一个数、中间用 ` -> ` 隔开，走到空爪子再补一个 `NULL`；\n④ 再报一行链子上有几只环，形如 `链子上有 5 只环`：这活儿打包成一招，名字叫 `list_len`，喂进去链子的头，把只数叼回来；\n⑤ 用完了把环一只一只还回去。\n\n比如投喂给程序的是\n\n5\n7\n7\n8\n6\n9\n\n程序就要叼回\n\n9 -> 6 -> 8 -> 7 -> 7 -> NULL\n链子上有 5 只环\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_front(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    p->next = head;\n    return p;\n}\n\nint list_len(Node *head) {\n    int cnt = 0;\n    Node *cur = head;\n    while (cur != NULL) {\n        cnt = cnt + 1;\n        cur = cur->next;\n    }\n    return cnt;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_front(head, v);\n    }\n\n    print_list(head);\n    printf(\"链子上有 %d 只环\\n\", list_len(head));\n\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "7 -> 4 -> 1 -> 4 -> 6 -> NULL\n链子上有 5 只环",
+      "stdin": "5\n6\n4\n1\n4\n7\n",
+      "explanation": "挂到最前面，反的是**顺序**喵 —— 每来一只新环，它都抢在所有人前面当第一只：\n\n```c\np->next = head;   /* 新环的爪子牵住原来的头 */\nreturn p;         /* 新环自己当新的头 */\n```\n\n这两句就是顺序反过来的地方：原来的那一串全排在它后面，所以读进来 5 个数，报出来是**倒着的** —— 先读到的反而排在最末尾。\n\n（课文里挂尾巴那一招正好相反：它是**一路走到最后再牵上**，顺序和读进来的一模一样。挂头和挂尾差的就这一点。）\n\n另外两件小事：\n\n**① 只数要现数一遍才准。** `list_len` 从空碗 `0` 起步、一路走到空爪子为止 —— 链子怎么挂怎么摘，数出来的都是当下这个准数。要是在别处偷偷记住一个数，链子一改它立刻就不对了。\n\n**② 还回去之前先记住下一只。** `free(cur)` 一出手，那只环连同它爪子上的地址一起消失 —— 所以得**先**把下一只的位置抄下来（`Node *next = cur->next;`），再还、再挪过去。顺序反了，下一只就再也找不着了。",
+      "templateId": "c-s3-list-push-front-count",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:58.442Z",
+        "hash": "805aa2b6a4b80f86"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-push-front-count-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵今天要**把环一只一只挂到链子的最前面**喵：先读到的先挂，后面每读到一只，都挂到最前头去。\n\n请你写个程序：\n\n① 先读进来一个数（有几只环：6），再一行一行读进来 6 个数（每只环上写的数）；\n② 每读到一个数就造一只环，挂到链子的**最前面**；\n③ 挂完从头报一遍 —— 每只环报一个数、中间用 ` -> ` 隔开，走到空爪子再补一个 `NULL`；\n④ 再报一行链子上有几只环，形如 `链子上有 5 只环`：这活儿打包成一招，名字叫 `list_len`，喂进去链子的头，把只数叼回来；\n⑤ 用完了把环一只一只还回去。\n\n比如投喂给程序的是\n\n6\n2\n5\n3\n2\n1\n7\n\n程序就要叼回\n\n7 -> 1 -> 2 -> 3 -> 5 -> 2 -> NULL\n链子上有 6 只环\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_front(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    p->next = head;\n    return p;\n}\n\nint list_len(Node *head) {\n    int cnt = 0;\n    Node *cur = head;\n    while (cur != NULL) {\n        cnt = cnt + 1;\n        cur = cur->next;\n    }\n    return cnt;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_front(head, v);\n    }\n\n    print_list(head);\n    printf(\"链子上有 %d 只环\\n\", list_len(head));\n\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "1 -> 7 -> 9 -> 3 -> 7 -> 5 -> NULL\n链子上有 6 只环",
+      "stdin": "6\n5\n7\n3\n9\n7\n1\n",
+      "explanation": "挂到最前面，反的是**顺序**喵 —— 每来一只新环，它都抢在所有人前面当第一只：\n\n```c\np->next = head;   /* 新环的爪子牵住原来的头 */\nreturn p;         /* 新环自己当新的头 */\n```\n\n这两句就是顺序反过来的地方：原来的那一串全排在它后面，所以读进来 6 个数，报出来是**倒着的** —— 先读到的反而排在最末尾。\n\n（课文里挂尾巴那一招正好相反：它是**一路走到最后再牵上**，顺序和读进来的一模一样。挂头和挂尾差的就这一点。）\n\n另外两件小事：\n\n**① 只数要现数一遍才准。** `list_len` 从空碗 `0` 起步、一路走到空爪子为止 —— 链子怎么挂怎么摘，数出来的都是当下这个准数。要是在别处偷偷记住一个数，链子一改它立刻就不对了。\n\n**② 还回去之前先记住下一只。** `free(cur)` 一出手，那只环连同它爪子上的地址一起消失 —— 所以得**先**把下一只的位置抄下来（`Node *next = cur->next;`），再还、再挪过去。顺序反了，下一只就再也找不着了。",
+      "templateId": "c-s3-list-push-front-count",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-16T11:50:54.536Z",
+        "hash": "a7328f5d9f3561b7"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-remove-value-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想给链子做个小手术喵：先串一条链子，再把里面**第一只编号是这个数的环**摘掉。\n\n请你写个程序：**第一行读进来一个数**（要摘掉的那个编号），**第二行读进来一个数**（这次要串几只环），**再读 3 行数**（一行一个，是每只环上挂的编号）。一只一只挂到**后面**去；然后从第一环摸起，摸到编号对上的那一只就把它摘掉 —— **只摘第一只，摘完就停**；要是摸到尾都没找到，就原样叼回，一个字都别改。\n\n最后报一行，形如 `摘 2（摘到了）：1 -> 3 -> NULL` —— 括号里那两个词二选一：摘到了就写 `摘到了`，没找到就写 `没找到`；冒号后面把链子从头报出来（每只环报一个数、用 ` -> ` 隔开、以 `NULL` 收尾）。\n\n用完了记得把环一只一只还回去喵。\n\n比如投喂给程序的是\n\n1\n3\n1\n3\n1\n\n程序就要叼回\n\n摘 1（摘到了）：3 -> 1 -> NULL\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nNode *remove_value(Node *head, int x, int *found) {\n    Node *cur = head;\n    Node *prev = NULL;\n    *found = 0;\n    while (cur != NULL) {\n        if (cur->x == x) {\n            if (prev == NULL) {\n                head = cur->next;\n            } else {\n                prev->next = cur->next;\n            }\n            free(cur);\n            *found = 1;\n            return head;\n        }\n        prev = cur;\n        cur = cur->next;\n    }\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int x;\n    int n;\n    if (scanf(\"%d\", &x) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_back(head, v);\n    }\n\n    int found = 0;\n    head = remove_value(head, x, &found);\n\n    printf(\"摘 %d（%s）：\", x, found ? \"摘到了\" : \"没找到\");\n    print_list(head);\n\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "摘 1（摘到了）：2 -> 3 -> NULL",
+      "stdin": "1\n3\n1\n2\n3\n",
+      "explanation": "摘环这一步的精髓是：**手里要同时捏着两只环** —— 当前这只（`cur`）和它前面那只（`prev`）喵。\n\n为什么要留着前面那只？因为「摘」这个动作其实是**让前面那只跨过去牵后面那只**：`prev->next = cur->next;`。要是只捏着当前这只，摘掉它之后，前面那只还牵着一段已经还给仓库的地方 —— 链子当场就断了。\n\n两个岔路必须分开处理：\n\n- **摘的正好是第一环**：前面没有环能跨过去，只能把捏在手里的牌子往下挪一格（`head = cur->next;`）。这一格最容易漏，因为「前面那只」这时候是空的。\n- **走到底都没找到**：原样叼回，一个字都别改 —— 这是最容易被当成出错的一种「正常结果」喵。\n\n还有两个细节：摘下来的环要 `free` 掉才算真的还回去；`found` 是把自己仓库的牌子递进去、让招式往里面写「摘到没有」，所以递的时候要带个 `&`（写 `&found`），招式里面用 `*found` 写进去。",
+      "templateId": "c-s3-list-remove-value",
+      "params": {
+        "x": 1,
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T00:52:57.871Z",
+        "hash": "66c4fc82342dd96d"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-remove-value-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想给链子做个小手术喵：先串一条链子，再把里面**第一只编号是这个数的环**摘掉。\n\n请你写个程序：**第一行读进来一个数**（要摘掉的那个编号），**第二行读进来一个数**（这次要串几只环），**再读 4 行数**（一行一个，是每只环上挂的编号）。一只一只挂到**后面**去；然后从第一环摸起，摸到编号对上的那一只就把它摘掉 —— **只摘第一只，摘完就停**；要是摸到尾都没找到，就原样叼回，一个字都别改。\n\n最后报一行，形如 `摘 2（摘到了）：1 -> 3 -> NULL` —— 括号里那两个词二选一：摘到了就写 `摘到了`，没找到就写 `没找到`；冒号后面把链子从头报出来（每只环报一个数、用 ` -> ` 隔开、以 `NULL` 收尾）。\n\n用完了记得把环一只一只还回去喵。\n\n比如投喂给程序的是\n\n1\n4\n1\n2\n2\n2\n\n程序就要叼回\n\n摘 1（摘到了）：2 -> 2 -> 2 -> NULL\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nNode *remove_value(Node *head, int x, int *found) {\n    Node *cur = head;\n    Node *prev = NULL;\n    *found = 0;\n    while (cur != NULL) {\n        if (cur->x == x) {\n            if (prev == NULL) {\n                head = cur->next;\n            } else {\n                prev->next = cur->next;\n            }\n            free(cur);\n            *found = 1;\n            return head;\n        }\n        prev = cur;\n        cur = cur->next;\n    }\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int x;\n    int n;\n    if (scanf(\"%d\", &x) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_back(head, v);\n    }\n\n    int found = 0;\n    head = remove_value(head, x, &found);\n\n    printf(\"摘 %d（%s）：\", x, found ? \"摘到了\" : \"没找到\");\n    print_list(head);\n\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "摘 1（没找到）：3 -> 3 -> 2 -> 3 -> NULL",
+      "stdin": "1\n4\n3\n3\n2\n3\n",
+      "explanation": "摘环这一步的精髓是：**手里要同时捏着两只环** —— 当前这只（`cur`）和它前面那只（`prev`）喵。\n\n为什么要留着前面那只？因为「摘」这个动作其实是**让前面那只跨过去牵后面那只**：`prev->next = cur->next;`。要是只捏着当前这只，摘掉它之后，前面那只还牵着一段已经还给仓库的地方 —— 链子当场就断了。\n\n两个岔路必须分开处理：\n\n- **摘的正好是第一环**：前面没有环能跨过去，只能把捏在手里的牌子往下挪一格（`head = cur->next;`）。这一格最容易漏，因为「前面那只」这时候是空的。\n- **走到底都没找到**：原样叼回，一个字都别改 —— 这是最容易被当成出错的一种「正常结果」喵。\n\n还有两个细节：摘下来的环要 `free` 掉才算真的还回去；`found` 是把自己仓库的牌子递进去、让招式往里面写「摘到没有」，所以递的时候要带个 `&`（写 `&found`），招式里面用 `*found` 写进去。",
+      "templateId": "c-s3-list-remove-value",
+      "params": {
+        "x": 1,
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:39:01.433Z",
+        "hash": "9488553c84ee613d"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-remove-value-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想给链子做个小手术喵：先串一条链子，再把里面**第一只编号是这个数的环**摘掉。\n\n请你写个程序：**第一行读进来一个数**（要摘掉的那个编号），**第二行读进来一个数**（这次要串几只环），**再读 5 行数**（一行一个，是每只环上挂的编号）。一只一只挂到**后面**去；然后从第一环摸起，摸到编号对上的那一只就把它摘掉 —— **只摘第一只，摘完就停**；要是摸到尾都没找到，就原样叼回，一个字都别改。\n\n最后报一行，形如 `摘 2（摘到了）：1 -> 3 -> NULL` —— 括号里那两个词二选一：摘到了就写 `摘到了`，没找到就写 `没找到`；冒号后面把链子从头报出来（每只环报一个数、用 ` -> ` 隔开、以 `NULL` 收尾）。\n\n用完了记得把环一只一只还回去喵。\n\n比如投喂给程序的是\n\n1\n5\n2\n3\n2\n2\n3\n\n程序就要叼回\n\n摘 1（没找到）：2 -> 3 -> 2 -> 2 -> 3 -> NULL\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nNode *remove_value(Node *head, int x, int *found) {\n    Node *cur = head;\n    Node *prev = NULL;\n    *found = 0;\n    while (cur != NULL) {\n        if (cur->x == x) {\n            if (prev == NULL) {\n                head = cur->next;\n            } else {\n                prev->next = cur->next;\n            }\n            free(cur);\n            *found = 1;\n            return head;\n        }\n        prev = cur;\n        cur = cur->next;\n    }\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int x;\n    int n;\n    if (scanf(\"%d\", &x) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_back(head, v);\n    }\n\n    int found = 0;\n    head = remove_value(head, x, &found);\n\n    printf(\"摘 %d（%s）：\", x, found ? \"摘到了\" : \"没找到\");\n    print_list(head);\n\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "摘 1（摘到了）：2 -> 1 -> 3 -> 2 -> NULL",
+      "stdin": "1\n5\n2\n1\n1\n3\n2\n",
+      "explanation": "摘环这一步的精髓是：**手里要同时捏着两只环** —— 当前这只（`cur`）和它前面那只（`prev`）喵。\n\n为什么要留着前面那只？因为「摘」这个动作其实是**让前面那只跨过去牵后面那只**：`prev->next = cur->next;`。要是只捏着当前这只，摘掉它之后，前面那只还牵着一段已经还给仓库的地方 —— 链子当场就断了。\n\n两个岔路必须分开处理：\n\n- **摘的正好是第一环**：前面没有环能跨过去，只能把捏在手里的牌子往下挪一格（`head = cur->next;`）。这一格最容易漏，因为「前面那只」这时候是空的。\n- **走到底都没找到**：原样叼回，一个字都别改 —— 这是最容易被当成出错的一种「正常结果」喵。\n\n还有两个细节：摘下来的环要 `free` 掉才算真的还回去；`found` 是把自己仓库的牌子递进去、让招式往里面写「摘到没有」，所以递的时候要带个 `&`（写 `&found`），招式里面用 `*found` 写进去。",
+      "templateId": "c-s3-list-remove-value",
+      "params": {
+        "x": 1,
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:39:04.456Z",
+        "hash": "f892bf92d385745c"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-remove-value-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想给链子做个小手术喵：先串一条链子，再把里面**第一只编号是这个数的环**摘掉。\n\n请你写个程序：**第一行读进来一个数**（要摘掉的那个编号），**第二行读进来一个数**（这次要串几只环），**再读 3 行数**（一行一个，是每只环上挂的编号）。一只一只挂到**后面**去；然后从第一环摸起，摸到编号对上的那一只就把它摘掉 —— **只摘第一只，摘完就停**；要是摸到尾都没找到，就原样叼回，一个字都别改。\n\n最后报一行，形如 `摘 2（摘到了）：1 -> 3 -> NULL` —— 括号里那两个词二选一：摘到了就写 `摘到了`，没找到就写 `没找到`；冒号后面把链子从头报出来（每只环报一个数、用 ` -> ` 隔开、以 `NULL` 收尾）。\n\n用完了记得把环一只一只还回去喵。\n\n比如投喂给程序的是\n\n2\n3\n1\n3\n1\n\n程序就要叼回\n\n摘 2（没找到）：1 -> 3 -> 1 -> NULL\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nNode *remove_value(Node *head, int x, int *found) {\n    Node *cur = head;\n    Node *prev = NULL;\n    *found = 0;\n    while (cur != NULL) {\n        if (cur->x == x) {\n            if (prev == NULL) {\n                head = cur->next;\n            } else {\n                prev->next = cur->next;\n            }\n            free(cur);\n            *found = 1;\n            return head;\n        }\n        prev = cur;\n        cur = cur->next;\n    }\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int x;\n    int n;\n    if (scanf(\"%d\", &x) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_back(head, v);\n    }\n\n    int found = 0;\n    head = remove_value(head, x, &found);\n\n    printf(\"摘 %d（%s）：\", x, found ? \"摘到了\" : \"没找到\");\n    print_list(head);\n\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "摘 2（摘到了）：1 -> 3 -> NULL",
+      "stdin": "2\n3\n2\n1\n3\n",
+      "explanation": "摘环这一步的精髓是：**手里要同时捏着两只环** —— 当前这只（`cur`）和它前面那只（`prev`）喵。\n\n为什么要留着前面那只？因为「摘」这个动作其实是**让前面那只跨过去牵后面那只**：`prev->next = cur->next;`。要是只捏着当前这只，摘掉它之后，前面那只还牵着一段已经还给仓库的地方 —— 链子当场就断了。\n\n两个岔路必须分开处理：\n\n- **摘的正好是第一环**：前面没有环能跨过去，只能把捏在手里的牌子往下挪一格（`head = cur->next;`）。这一格最容易漏，因为「前面那只」这时候是空的。\n- **走到底都没找到**：原样叼回，一个字都别改 —— 这是最容易被当成出错的一种「正常结果」喵。\n\n还有两个细节：摘下来的环要 `free` 掉才算真的还回去；`found` 是把自己仓库的牌子递进去、让招式往里面写「摘到没有」，所以递的时候要带个 `&`（写 `&found`），招式里面用 `*found` 写进去。",
+      "templateId": "c-s3-list-remove-value",
+      "params": {
+        "x": 2,
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:39:07.416Z",
+        "hash": "335f466b1a3eefd6"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-remove-value-004",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想给链子做个小手术喵：先串一条链子，再把里面**第一只编号是这个数的环**摘掉。\n\n请你写个程序：**第一行读进来一个数**（要摘掉的那个编号），**第二行读进来一个数**（这次要串几只环），**再读 4 行数**（一行一个，是每只环上挂的编号）。一只一只挂到**后面**去；然后从第一环摸起，摸到编号对上的那一只就把它摘掉 —— **只摘第一只，摘完就停**；要是摸到尾都没找到，就原样叼回，一个字都别改。\n\n最后报一行，形如 `摘 2（摘到了）：1 -> 3 -> NULL` —— 括号里那两个词二选一：摘到了就写 `摘到了`，没找到就写 `没找到`；冒号后面把链子从头报出来（每只环报一个数、用 ` -> ` 隔开、以 `NULL` 收尾）。\n\n用完了记得把环一只一只还回去喵。\n\n比如投喂给程序的是\n\n2\n4\n2\n1\n2\n2\n\n程序就要叼回\n\n摘 2（摘到了）：1 -> 2 -> 2 -> NULL\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nNode *remove_value(Node *head, int x, int *found) {\n    Node *cur = head;\n    Node *prev = NULL;\n    *found = 0;\n    while (cur != NULL) {\n        if (cur->x == x) {\n            if (prev == NULL) {\n                head = cur->next;\n            } else {\n                prev->next = cur->next;\n            }\n            free(cur);\n            *found = 1;\n            return head;\n        }\n        prev = cur;\n        cur = cur->next;\n    }\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int x;\n    int n;\n    if (scanf(\"%d\", &x) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_back(head, v);\n    }\n\n    int found = 0;\n    head = remove_value(head, x, &found);\n\n    printf(\"摘 %d（%s）：\", x, found ? \"摘到了\" : \"没找到\");\n    print_list(head);\n\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "摘 2（摘到了）：3 -> 3 -> 2 -> NULL",
+      "stdin": "2\n4\n3\n2\n3\n2\n",
+      "explanation": "摘环这一步的精髓是：**手里要同时捏着两只环** —— 当前这只（`cur`）和它前面那只（`prev`）喵。\n\n为什么要留着前面那只？因为「摘」这个动作其实是**让前面那只跨过去牵后面那只**：`prev->next = cur->next;`。要是只捏着当前这只，摘掉它之后，前面那只还牵着一段已经还给仓库的地方 —— 链子当场就断了。\n\n两个岔路必须分开处理：\n\n- **摘的正好是第一环**：前面没有环能跨过去，只能把捏在手里的牌子往下挪一格（`head = cur->next;`）。这一格最容易漏，因为「前面那只」这时候是空的。\n- **走到底都没找到**：原样叼回，一个字都别改 —— 这是最容易被当成出错的一种「正常结果」喵。\n\n还有两个细节：摘下来的环要 `free` 掉才算真的还回去；`found` 是把自己仓库的牌子递进去、让招式往里面写「摘到没有」，所以递的时候要带个 `&`（写 `&found`），招式里面用 `*found` 写进去。",
+      "templateId": "c-s3-list-remove-value",
+      "params": {
+        "x": 2,
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:39:10.320Z",
+        "hash": "4513c9283cd51e1e"
+      }
+    },
+    {
+      "id": "bank-c-s3-list-remove-value-005",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵想给链子做个小手术喵：先串一条链子，再把里面**第一只编号是这个数的环**摘掉。\n\n请你写个程序：**第一行读进来一个数**（要摘掉的那个编号），**第二行读进来一个数**（这次要串几只环），**再读 5 行数**（一行一个，是每只环上挂的编号）。一只一只挂到**后面**去；然后从第一环摸起，摸到编号对上的那一只就把它摘掉 —— **只摘第一只，摘完就停**；要是摸到尾都没找到，就原样叼回，一个字都别改。\n\n最后报一行，形如 `摘 2（摘到了）：1 -> 3 -> NULL` —— 括号里那两个词二选一：摘到了就写 `摘到了`，没找到就写 `没找到`；冒号后面把链子从头报出来（每只环报一个数、用 ` -> ` 隔开、以 `NULL` 收尾）。\n\n用完了记得把环一只一只还回去喵。\n\n比如投喂给程序的是\n\n2\n5\n1\n3\n1\n3\n2\n\n程序就要叼回\n\n摘 2（摘到了）：1 -> 3 -> 1 -> 3 -> NULL\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nNode *push_back(Node *head, int x) {\n    Node *p = new_node(x);\n    if (p == NULL) {\n        return head;\n    }\n    if (head == NULL) {\n        return p;\n    }\n    Node *cur = head;\n    while (cur->next != NULL) {\n        cur = cur->next;\n    }\n    cur->next = p;\n    return head;\n}\n\nNode *remove_value(Node *head, int x, int *found) {\n    Node *cur = head;\n    Node *prev = NULL;\n    *found = 0;\n    while (cur != NULL) {\n        if (cur->x == x) {\n            if (prev == NULL) {\n                head = cur->next;\n            } else {\n                prev->next = cur->next;\n            }\n            free(cur);\n            *found = 1;\n            return head;\n        }\n        prev = cur;\n        cur = cur->next;\n    }\n    return head;\n}\n\nvoid print_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n}\n\nvoid free_list(Node *head) {\n    Node *cur = head;\n    while (cur != NULL) {\n        Node *next = cur->next;\n        free(cur);\n        cur = next;\n    }\n}\n\nint main(void) {\n    int x;\n    int n;\n    if (scanf(\"%d\", &x) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    Node *head = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        head = push_back(head, v);\n    }\n\n    int found = 0;\n    head = remove_value(head, x, &found);\n\n    printf(\"摘 %d（%s）：\", x, found ? \"摘到了\" : \"没找到\");\n    print_list(head);\n\n    free_list(head);\n    head = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "摘 2（摘到了）：3 -> 2 -> 1 -> 1 -> NULL",
+      "stdin": "2\n5\n2\n3\n2\n1\n1\n",
+      "explanation": "摘环这一步的精髓是：**手里要同时捏着两只环** —— 当前这只（`cur`）和它前面那只（`prev`）喵。\n\n为什么要留着前面那只？因为「摘」这个动作其实是**让前面那只跨过去牵后面那只**：`prev->next = cur->next;`。要是只捏着当前这只，摘掉它之后，前面那只还牵着一段已经还给仓库的地方 —— 链子当场就断了。\n\n两个岔路必须分开处理：\n\n- **摘的正好是第一环**：前面没有环能跨过去，只能把捏在手里的牌子往下挪一格（`head = cur->next;`）。这一格最容易漏，因为「前面那只」这时候是空的。\n- **走到底都没找到**：原样叼回，一个字都别改 —— 这是最容易被当成出错的一种「正常结果」喵。\n\n还有两个细节：摘下来的环要 `free` 掉才算真的还回去；`found` 是把自己仓库的牌子递进去、让招式往里面写「摘到没有」，所以递的时候要带个 `&`（写 `&found`），招式里面用 `*found` 写进去。",
+      "templateId": "c-s3-list-remove-value",
+      "params": {
+        "x": 2,
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T00:52:59.363Z",
+        "hash": "451fbd86bac65127"
+      }
+    },
+    {
+      "id": "bank-c-s3-struct-unknown-type-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵照着课文画了一张图纸（就是每只环长什么样的那张），想串一条两只环的链子喵。可翻译官喵一瞧见图纸就板起了脸，说它不认识一个名字……\n\n你帮本喵看看图纸里哪里写歪了，把它改好。改好之后，程序应该把这条链子从头报出来：每只环报一个数，用 ` -> ` 隔开，最后以 `NULL` 收尾。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nint main(void) {\n    Node *head = new_node(1);\n    Node *second = new_node(5);\n    if (head == NULL || second == NULL) {\n        return 1;\n    }\n    head->next = second;\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n\n    free(second);\n    free(head);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nint main(void) {\n    Node *head = new_node(1);\n    Node *second = new_node(5);\n    if (head == NULL || second == NULL) {\n        return 1;\n    }\n    head->next = second;\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n\n    free(second);\n    free(head);\n    return 0;\n}\n",
+      "expectedOutput": "1 -> 5 -> NULL",
+      "stdin": null,
+      "explanation": "问题出在图纸**里面**那一行喵：`Node *next;` 用了一个**还没挂上去的外号**。\n\n画图纸的时候，`typedef` 那一行还没读完 —— 外号 `Node` 要**整张图纸画完之后**才生效。所以图纸**里面**只能老老实实写全名 `struct Node *next;`，图纸**外面**才能用外号 `Node *`。\n\n记住这条分界线：**里面写全名，外面写外号。** 翻译官喵说 `unknown type name 'Node'`，翻过来就是「本喵不认识这个名字」—— 它不是故意刁难，是真的还没轮到认识的时候喵。",
+      "templateId": "c-s3-struct-unknown-type",
+      "params": {
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T00:52:47.109Z",
+        "hash": "600cf2e885dedf3f"
+      }
+    },
+    {
+      "id": "bank-c-s3-struct-unknown-type-019",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵照着课文画了一张图纸（就是每只环长什么样的那张），想串一条两只环的链子喵。可翻译官喵一瞧见图纸就板起了脸，说它不认识一个名字……\n\n你帮本喵看看图纸里哪里写歪了，把它改好。改好之后，程序应该把这条链子从头报出来：每只环报一个数，用 ` -> ` 隔开，最后以 `NULL` 收尾。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nint main(void) {\n    Node *head = new_node(4);\n    Node *second = new_node(9);\n    if (head == NULL || second == NULL) {\n        return 1;\n    }\n    head->next = second;\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n\n    free(second);\n    free(head);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nNode *new_node(int x) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->x = x;\n    p->next = NULL;\n    return p;\n}\n\nint main(void) {\n    Node *head = new_node(4);\n    Node *second = new_node(9);\n    if (head == NULL || second == NULL) {\n        return 1;\n    }\n    head->next = second;\n\n    Node *cur = head;\n    while (cur != NULL) {\n        printf(\"%d -> \", cur->x);\n        cur = cur->next;\n    }\n    printf(\"NULL\\n\");\n\n    free(second);\n    free(head);\n    return 0;\n}\n",
+      "expectedOutput": "4 -> 9 -> NULL",
+      "stdin": null,
+      "explanation": "问题出在图纸**里面**那一行喵：`Node *next;` 用了一个**还没挂上去的外号**。\n\n画图纸的时候，`typedef` 那一行还没读完 —— 外号 `Node` 要**整张图纸画完之后**才生效。所以图纸**里面**只能老老实实写全名 `struct Node *next;`，图纸**外面**才能用外号 `Node *`。\n\n记住这条分界线：**里面写全名，外面写外号。** 翻译官喵说 `unknown type name 'Node'`，翻过来就是「本喵不认识这个名字」—— 它不是故意刁难，是真的还没轮到认识的时候喵。",
+      "templateId": "c-s3-struct-unknown-type",
+      "params": {
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T00:52:48.239Z",
+        "hash": "6abfc62939fdfdc4"
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "lessonId": "java-stage2-02",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下一句 `class Cat extends Animal`，这句的意思是____。",
+      "options": [
+        "照着 `Animal` 那个父类再定义一个 `Cat` 子类，父类的字段和函数子类天生就会",
+        "把 `Animal` 那张图纸改个名字，从此它就叫 `Cat` 了",
+        "照 `Animal` 生一只真猫，名字就取作 `Cat`",
+        "让 `Animal` 反过来照着 `Cat` 画"
+      ],
+      "answer": 0,
+      "explanation": "`extends` 后面跟着的那张图纸是**上游**，这句读作「照它画」喵。画完以后，大图纸上的家当和招式小图纸一个字都不用重抄，天生就会 —— 这正是套图纸最省事的地方。改名字、生真猫、反过来认亲，都不是这一句干的事喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "小图纸自己写了出生那一手，它的**第一句**必须写什么？",
+      "options": [
+        "`super(name);` —— 请上一层把它那版跑一遍，把料喂过去",
+        "什么都不用写，大图纸那版会自己跑起来",
+        "先写一句 `@Override` 打头",
+        "`this.super(name);`"
+      ],
+      "answer": 0,
+      "explanation": "大图纸的出生那一手**不会自己跑**喵。小图纸的第一句要是不写 `super(...)`，翻译官喵会替你插一句「请大图纸的空手那一版」，可大图纸上常常压根没有空手那一版 —— 于是当场撞 `constructor ... cannot be applied to given types`。`@Override` 是给招式用的纸条，写在出生那一手身上没有意义；`this.super` 也不是 Java 里的写法喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "在小图纸上重写一招的时候，本喵为什么要写 `@Override`？",
+      "options": [
+        "告诉编译器「本喵这个方法是故意盖掉上面那一版的」，名字写错了它会当场提醒",
+        "写上它这一招会跑得更快",
+        "它会把大图纸上那一版删掉",
+        "带上它以后，只有小图纸能喊这一招"
+      ],
+      "answer": 0,
+      "explanation": "`@Override` 是一张写给翻译官喵的小纸条：本喵这一手**是故意要盖掉上面某一张图纸上的同一招**喵。有了它，万一名字手滑写错（比如写成 `speek`），翻译官会当场告诉你「根本没有这一手可盖」；不写的话它就当你在画一招全新的，那个错就悄悄溜过去了。它不改速度、不删东西、也不管谁喊得动喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n}\n\nclass Cat ____ Animal {\n    Cat(String name) {\n        ____(name);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"小橘\");\n        System.out.println(c.name);\n    }\n}",
+      "stem": "本喵要让小图纸照着大图纸画，出生的时候还得把名字交给大图纸那一手 —— 两个空白处各填哪个小词？",
+      "blanks": [
+        {
+          "answer": "extends",
+          "accept": []
+        },
+        {
+          "answer": "super",
+          "accept": []
+        }
+      ],
+      "explanation": "第一处填 `extends`：图纸名后面跟上它，读作「照这张图纸再画一张」喵。第二处填 `super`：小图纸自己写了出生那一手，第一句就得请上一层把它那版跑一遍，`super(name)` 就是把名字这盒家当交给它去装。两处都填对之后跑一遍，印出来是小橘 —— 名字确实是大图纸那一手装进去的喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"安静地待着\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal a = new Animal(\"大肥鱼\");\n        Animal b = new Cat(\"小橘\");\n        a.speak();\n        b.speak();\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "大肥鱼安静地待着\n小橘：喵～",
+      "accept": ["大肥鱼安静地待着\n小橘：喵～\n"],
+      "explanation": "`a` 是照大图纸直接生的，喊 `speak` 走的是大图纸那一版；`b` 虽然挂着一块 `Animal` 的牌子，可它底下的真猫是照 `Cat` 生的，喊的招式是小图纸重写过的那一版喵。所以两行输出不一样 —— 重写盖住的只是**这一条往下走的路**，大图纸自己一点没变喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        super.speak();\n        System.out.println(\"……然后补了一声喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"小橘\");\n        c.speak();\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘发出了一声叫\n……然后补了一声喵～",
+      "accept": ["小橘发出了一声叫\n……然后补了一声喵～\n"],
+      "explanation": "小图纸虽然把 `speak` 重写了，但身子里的第一句是 `super.speak();` —— 请上一层把它那版先跑一遍，所以先印出大图纸那句；跑完才轮到本喵自己添的那一句喵。这正是「不是要换掉它，而是想在它干完之后再添一句」的写法喵。"
+    }
+  ]
+}

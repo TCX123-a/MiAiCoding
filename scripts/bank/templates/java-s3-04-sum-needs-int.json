@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-04-sum-needs-int",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-04",
+  "type": "codefix",
+  "concept": ["求和那一手只认光溜溜的整数", "加工那一手能把口袋倒空", "翻译稿子时就红"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["3", "4"] },
+    "b": { "kind": "pick", "values": ["8", "9"] },
+    "c": { "kind": "pick", "values": ["1", "2"] }
+  },
+  "stemTemplate": "本喵想算一笔账：柜子里那几件**加起来是多少**喵。本喵从柜子头上接了一条线，中间挂了一道**加工**，后面跟着求和那一手 —— 可翻译稿子的时候就红了，一行都没跑。\n\n红字说**这条线上找不着叫 `sum` 的那一手**。\n\n你帮本喵把这一句改到能跑为止，让它印出**一行**：`加起来是 N`。三件东西都写在稿子里，别去改；印的那句话也别去改。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        nums.add({a});\n        nums.add({b});\n        nums.add({c});\n\n        System.out.println(\"加起来是 \" + nums.stream().map(n -> n).sum());\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        nums.add({a});\n        nums.add({b});\n        nums.add({c});\n\n        System.out.println(\"加起来是 \" + nums.stream().mapToInt(n -> n).sum());\n    }\n}\n",
+  "explanationTemplate": "红字是 `cannot find symbol`，下面两行补的是 `symbol: method sum()`，还有一行交代它翻的是**这条线自己那本册子** —— 翻过来就是「**这条线上没有叫 `sum` 的那一手**」。\n\n**一、求和那一手长在哪里。** 它长在「**一排光溜溜的整数**」身上，不长在这条线上。本喵这条线流过去的，是**装东西的口袋**（`Stream` 就是这种一头进一头出的线，兜里揣的全是口袋）；在口袋身上找求和那一手，当然找不着 —— 红字说的「location」就是在交代本喵：你要找的那一手，不在你现在翻的这本册子上。\n\n**二、`.mapToInt(n -> n)` 就是把口袋倒空、换成光溜溜的整数。** 它跟 `.map` 一样是**中间那一道**（只登记、不动手），换完之后流过去的每一件都是光溜溜的整数，后面的 `.sum()` 就找得着了。课文第四节那句「求和那一手只认光溜溜的整数」说的就是这个。\n\n**三、跟数件数那一手对照着记。** `.count()` 长在**线**上；`.sum()` 长在**光溜溜的整数那排**上，所以它前面必须带一段 `.mapToInt(...)`。本喵算两笔账的时候，两句话长得不一样，原因就在这儿。\n\n**四、这一处改法是「换一段、不是删一句」。** 中间那一道还在，只是换了个写法 —— 加工这一手本来就管「把一件换成另一样」，这里换的是**口袋换成整数**。改完那句话读作：「从这几件里，把口袋都换成光溜溜的整数，加起来」，一句话念得通。\n\n一句话记住：**求和之前，先让流过去的东西变成光溜溜的整数。**"
+}

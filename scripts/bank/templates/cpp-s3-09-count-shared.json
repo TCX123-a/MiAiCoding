@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-09-count-shared",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-09",
+  "type": "codewrite",
+  "concept": ["共用同一个才改得动外面的数", "只读的揣一份", "两种带法混着写"],
+  "instances": 6,
+  "params": {
+    "k": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵要用一段小招式**挨个过一遍**这一排数（`3, 1, 4, 1, 5`），数出**比门槛大的有几个**。\n\n这一题的重点全在方括号那一栏：小招式要读门槛（只读，不用改），而**数出来的那个数得攒在外面** —— 小招式每碰到一个合格的，就让外面那个数涨一。\n\n请你写 `main`：\n\n1. 备一排装数的碗：`3, 1, 4, 1, 5`；\n2. 门槛 `limit` 是 `{k}`；\n3. 在外面备一个从 `0` 起的计数；\n4. 当场写一段小招式，交给「挨个过一遍」那件活儿（`for_each`）；\n5. 最后印一行：外面那个计数。\n\n程序要叼回一行，就是一个数字。",
+  "starterTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = {k};\n    int count = 0;\n\n    for_each(v.begin(), v.end(), [&count, limit](int x) {\n        if (x > limit) {\n            count++;\n        }\n    });\n\n    cout << count << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "方括号里带了两个名字、两种带法喵 —— 这一题正是靠这个把数攒起来的：\n\n- `&count` 是**共用同一个**：小招式里每 `count++` 一次，外面那个计数就跟着涨一次，所以最后印出来才不是 `0`；\n- `limit` 是**揣一份**：判断里只读它、压根不用改，揣一份最省心。\n\n判据还是课文第四节那句话：**「我要改它吗？」** 这一题里的 `count` 要改，所以加 `&`；`limit` 不改，所以不加。\n\n⚠️ 漏掉 `&` 是本喵见过最多的错：小招式改的成了**自己揣着的那一份副本**，外面那个数从头到尾一动不动 —— 要么当场编不过，要么安安静静给你一个 `0`。"
+}

@@ -1,0 +1,22 @@
+{
+  "templateId": "c-s3-16-layers-report",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-16",
+  "type": "codewrite",
+  "concept": ["数圈数", "一路砍半", "每层过的都是整本", "砍到只剩一只就收工"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["下", "圈"] }
+  },
+  "stdinSpec": {
+    "kind": "ints",
+    "count": 1,
+    "min": 8,
+    "max": 12
+  },
+  "stemTemplate": "本喵换一条路：把本子**一路砍半**，每砍一刀之前都先把**整本碗过一遍**，一直砍到只剩一只碗为止。现在要数的是：这一路下来，碗一共被过了多少{unit}。\n\n投喂口里递进来的是**一个数**：本子上有几只碗。样例输入：\n\n```text\n{sampleInput}\n```\n\n你要把这一招补完（稿子里 `main` 已经把印法写死了，别改它）：\n\n1. 先把这个数接住；\n2. 数出「一层一层过下来」一共过了多少{unit}；\n3. 按稿子里写死的格式印一行。\n\n样例跑出来是这样：\n\n```text\n{sampleOutput}\n```",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    /* ↓ 自己写：把本子一路砍半，每层先把整本过一遍，\n       数一数一共过了多少{unit}\n       ① 一层过的永远是整本，不是剩下的那几只\n       ② 只剩一只碗的时候就收工，不用再砍 */\n    long long rounds = 0;\n\n    printf(\"层层砍半：%lld {unit}\\n\", rounds);\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    long long rounds = 0;\n    int size = n;\n    while (size > 1) {\n        rounds = rounds + n;\n        size = size / 2;\n    }\n\n    printf(\"层层砍半：%lld {unit}\\n\", rounds);\n    return 0;\n}\n",
+  "explanationTemplate": "这一招是**两层套着**的喵：外面那个绕圈管「本子砍了几刀」，里面那一趟管「这一层把整本过一遍」。\n\n```text\nwhile (size > 1) {\n    rounds = rounds + n;    /* 每一层过的是整本 n 只 */\n    size = size / 2;\n}\n```\n\n两个坑都得绕开：\n\n1. **每层加的是 `n`，不是 `size`** —— 砍小的是**下一层**的本子，这一层该过的还是整本。加成 `size` 的话越往后加得越少，数出来会明显偏小。\n2. **绕圈的口气是「还剩不止一只」** —— 只剩一只碗的时候这一层就没东西可比了，写成「还剩一只也接着砍」会白白多算一层。\n\n这一招的总数是 `n × 层数`。层数只跟着 `log n` 慢慢爬，可每一层都是实打实的一整排 —— 这就是大 O 记号里 `O(n log n)` 那一档，也是课文里 10240 那个锚点的来历。"
+}

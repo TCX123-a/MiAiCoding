@@ -1,0 +1,21 @@
+{
+  "templateId": "cpp-s1-addrecord-no-count",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-15",
+  "type": "codefix",
+  "concept": ["记一笔的收尾那一句", "count = count + 1 别漏", "三笔全盖在 0 号格上"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["猫粮", "猫薄荷"] },
+    "a1": { "kind": "pick", "values": ["30", "50"] },
+    "n2": { "kind": "pick", "values": ["小鱼干", "逗猫棒"] },
+    "a2": { "kind": "pick", "values": ["12", "20"] },
+    "n3": { "kind": "pick", "values": ["猫窝", "猫爬架"] },
+    "a3": { "kind": "pick", "values": ["88", "99"] }
+  },
+  "stemTemplate": "本喵这台机器往一排卡片里**记三笔账**（{n1}、{n2}、{n3}），记完把每一笔印一行，最后报一句「一共记了几笔」。\n\n可这一回它只印出一句话 `一共记了 0 笔喵` —— 三笔全没了。翻译官喵一个字都没抱怨（这话编得过），是跑出来才对上号。\n\n你帮本喵把出问题的那一处改好：改完三行账和那句「一共记了 3 笔喵」都要在。三笔的料、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    addRecord(book, count, \"{n1}\", {a1});\n    addRecord(book, count, \"{n2}\", {a2});\n    addRecord(book, count, \"{n3}\", {a3});\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    addRecord(book, count, \"{n1}\", {a1});\n    addRecord(book, count, \"{n2}\", {a2});\n    addRecord(book, count, \"{n3}\", {a3});\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题坏的地方**编得过**，所以屏幕上只有「0 笔」这句话不对：**三笔账全盖在第 0 号格上了**。\n\n`addRecord` 里少了一句 —— 记一笔的**收尾**：\n\n`count = count + 1;`\n\n细看没有它会怎样喵：\n\n- 第一笔记在第 `count` 格（0 号格），记完 `count` 还是 0；\n- 第二笔又来，还是「第 0 格」→ **盖掉第一笔**；\n- 第三笔照旧盖下去 —— 最后只剩最后一笔的影子，而外面那只 `count` 一直是 0，所以连印都印不出来（那个圈的圈数是 `i < count`，一圈也没转）。\n\n漏掉这一句是本课最容易栽的地方喵：**「把卡片放进去」和「把编号往后挪一格」是两件事，一件都不能少。** 放进去的是那两栏，挪编号的是这一句 —— 它才是「记了一笔」真正的收尾。"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-02-dtor-no-param",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-02",
+  "type": "codefix",
+  "concept": ["收尾招式的脑袋", "它不收料", "编译期报错现场"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "三花"] }
+  },
+  "stemTemplate": "本喵画了一张叫 `Cat` 的图纸：出生招式把名字装好，收尾招式负责在猫走的时候印一行「收摊啦」。\n\n画完本喵瞧着收尾招式那个空空的脑袋有点不放心，就顺手给它也开了一个投喂口 —— 结果翻译官喵当场拦下，一行都不让跑喵。\n\n你帮本喵改一处，让它跑起来、把那行字印出来。**除了收尾招式的脑袋，别的地方都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    ~Cat(string tail) {\n        cout << name << \" 收摊啦\" << endl;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    ~Cat() {\n        cout << name << \" 收摊啦\" << endl;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\");\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:11:5: error: destructors may not have parameters`\n\n翻成猫话：**「收尾招式的脑袋上不许有投喂口喵。」**\n\n为什么？因为**没有人喊它** —— 它是大括号一结束就自己跑的那一趟。既然没人喊，也就没人给它递料，那么开一个投喂口就只能是个误会。\n\n改法就是把那一对括号里的东西**清空**：`~Cat()`。\n\n顺带认个亲：出生招式也不写叼回什么，收尾招式也不收料 —— 这两招都不是被喊去干活的普通招式，它们只在自己该来的那一刻自己跑喵。"
+}

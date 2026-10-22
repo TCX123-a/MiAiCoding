@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-ut-red-note",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-20",
+  "type": "codefix",
+  "concept": ["红的那一行要报出名字和两个数", "只印一个「红」字，翻回去也看不出是谁坏了", "把「你要的」和「做出来的」并排摆出来"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "pick", "values": ["除不尽这一项", "余数这一项"] }
+  },
+  "stemTemplate": "本喵这只体检台红了以后只印了一个「红」字 —— 报名字和两个数的那一行被本喵弄丢了，翻回去也看不出是**哪一项**坏的、**差了多少**喵。\n\n请你把它补上，改到印出**两行**：\n\n```text\n红 {n}：叼回来 4，该是 3\n红了 1 项\n```\n\n- 第一行要报出**这一项的名字**、**叼回来的数**、**该是的数**，三样缺一不可；\n- 第二行是总账，本喵没写错，别动它；\n- 门口那行调用（名字和两个数本喵都写好了）也别动。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "public class Main {\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红\");\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"{n}\", 8 / 2, 3);\n        System.out.println(\"红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    static int 红了几项 = 0;\n\n    static void 查相等(String 名字, int 叼回来, int 该是) {\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            红了几项++;\n            System.out.println(\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是);\n        }\n    }\n\n    public static void main(String[] args) {\n        查相等(\"{n}\", 8 / 2, 3);\n        System.out.println(\"红了 \" + 红了几项 + \" 项\");\n    }\n}\n",
+  "explanationTemplate": "**一、只印一个「红」字，等于没报。** 体检台最值钱的地方是红了以后能**定位**喵：哪一项、叼回来多少、该是多少。屏幕上只有一行「红」，你还得自己翻回单子去数它是第几项 —— 那正是判据该替你省掉的力气。\n\n**二、要补的那一行。** 名字和两个数本来就捏在判据手边（它们就是这一趟收进来的那三样），用加号一段一段接出来就行：`\"红 \" + 名字 + \"：叼回来 \" + 叼回来 + \"，该是 \" + 该是`。三样缺一不可 —— 少了名字不知道是谁，少了两个数不知道差多少。\n\n**三、改完真跑过。** 屏幕上印的是 `红 除不尽这一项：叼回来 4，该是 3` 加一行 `红了 1 项` —— 一眼就看得出它跟该是的 3 差了 1。\n\n一句话记住：**红的那一行，要把「你要的」和「做出来的」并排摆出来。**"
+}

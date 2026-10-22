@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-array-fill-walk",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-08",
+  "type": "codewrite",
+  "concept": ["先装一排碗", "报编号取碗", "一格一行"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "冻干块"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵今天要摆 **{n} 只碗**（一排碗本喵已经给你备好了，装得下 5 只）。投喂口会**先给一个数**（要摆几只），**再一只一只给 {n} 个数**。\n\n请你写个程序：\n\n1. **先把这 {n} 个数挨个装进碗里**（第 0 格装第一个、第 1 格装第二个……）；\n2. **装完**再从第 0 格开始，报一行一格：`第 X 格有 Y 条{unit}喵`（X 是格子的编号，Y 是那一格里装的数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int fish[5];\n    for (int i = 0; i < n; i++) {\n        cin >> fish[i];\n    }\n    for (int i = 0; i < n; i++) {\n        cout << \"第 \" << i << \" 格有 \" << fish[i] << \" 条{unit}喵\" << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题最值得记的是：**读进来和印出去是两趟，各跑一个圈**。\n\n- **第一趟（装货）**：跑一个从 0 到 n 减 1 的圈，每圈干两件事 —— 读进来一个数，把它装进**第 `i` 格**。装货的位置写成 `fish[i]`：`i` 走到哪，数就装到哪一格。\n- **第二趟（报数）**：套**同一个编号**再走一遍，每圈印一行 `第 i 格有 fish[i] 条…` —— 这就是「报编号取碗」。\n\n为什么非要两趟、不能一边读一边印？因为题目要求「**先装完再报**」—— 要是边读边印，报出来的顺序就跟读的顺序死死绑在一起了。分开写还有一个好处：**以后想在报之前对整排做点别的（加起来、挑最大的、掉个头），随时往里加一段就行。**\n\n两个常见小坑喵：**① 格数给够了吗** —— 这一题最多摆 5 只，那就得备够 5 格；**② 编号别数错** —— `i` 从 0 走到 n 减 1，别写成 `i <= n`（那会报到第 n 格去，格子外面啦）。"
+}

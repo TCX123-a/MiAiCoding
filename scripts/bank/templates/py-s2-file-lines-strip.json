@@ -1,0 +1,35 @@
+{
+  "templateId": "py-s2-file-lines-strip",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-04",
+  "type": "codefix",
+  "concept": [
+    "逐行读",
+    "strip",
+    "换行"
+  ],
+  "instances": 3,
+  "params": {
+    "a": {
+      "kind": "pick",
+      "values": [
+        "小鱼干",
+        "鱼丸",
+        "冻干块"
+      ]
+    },
+    "b": {
+      "kind": "pick",
+      "values": [
+        "猫粮",
+        "罐头",
+        "肉泥"
+      ]
+    }
+  },
+  "stemTemplate": "本喵把两行字记进了档案室，再一行一行念出来 —— 可念的时候**每两行之间都夹了一个空行**喵。\n\n你帮本喵改对，让念出来的两行**紧挨着**，中间不夹空的。\n\n⚠️ 往档案里写的那一段不用动，毛病出在念的时候。",
+  "brokenCodeTemplate": "with open(\"note.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(\"{a}\\n{b}\\n\")\n\nwith open(\"note.txt\", encoding=\"utf-8\") as f:\n    for line in f:\n        print(line)\n",
+  "referenceFixTemplate": "with open(\"note.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(\"{a}\\n{b}\\n\")\n\nwith open(\"note.txt\", encoding=\"utf-8\") as f:\n    for line in f:\n        print(line.strip())\n",
+  "explanationTemplate": "**从档案里一行一行读出来的时候，行尾那个换行是跟着一起给你的喵。** 也就是说 `line` 拿到的是「小鱼干 + 换行」这一整段，不是光秃秃的「小鱼干」。\n\n而 `print()` 又**自己在末尾再补一个换行**。两个换行摞在一起 —— 于是每一行后面都多出一个空行。\n\n改法就是先把那一段两头的空白剪掉：`line.strip()`，然后再交给 `print`。\n\n⚠️ 也可以让 `print` **别补**那个换行：写成 `print(line, end=\"\")`。两种都对，看你想把「处理换行」这件事放在哪一步。\n\n⚠️ 顺带记住 `.strip()` 剪的是**两头**（换行和空格一起剪）；只想剪行尾的话另有写法（`rstrip`），这题用不上。"
+}

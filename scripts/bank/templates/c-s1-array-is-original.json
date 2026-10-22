@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-array-is-original",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-13",
+  "type": "codewrite",
+  "concept": ["整排碗是原件", "招式改一排碗", "两只碗", "循环"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵想让一招把**整排碗**都翻成十倍喵。\n\n请你写个程序：**先读进来一个数**（这次有几只碗），**再读进来 {n} 行数**（一行一个，摆进那排碗里）。\n\n然后写一招 `timesTen`：招式头里摆**两只**碗 —— 一只接**那排碗**（写成 `int bowl[]`，方括号里空着）、一只接**排数**（写成 `int count`）；身体里转 `count` 圈，把每只碗里的数都乘 10。\n\n喊一声这一招，然后把那排碗**从头到尾**印出来，一行一只。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\n// 在这里登记 timesTen 这一招（它要改那排碗本人）\n\nint main(void) {\n    int n;\n\n    // 先读「有几只碗」\n\n    // 摆一排够宽的碗，把 {n} 个数读进去\n\n    // 喊一声 timesTen\n\n    // 把整排碗从头到尾印出来\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nvoid timesTen(int bowl[], int count) {\n    int i;\n    for (i = 0; i < count; i++) {\n        bowl[i] = bowl[i] * 10;\n    }\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bowl[10];\n    int i;\n    for (i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowl[i]) != 1) {\n            return 1;\n        }\n    }\n\n    timesTen(bowl, n);\n\n    for (i = 0; i < n; i++) {\n        printf(\"%d\\n\", bowl[i]);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这是本课最要紧的一条区别喵：**单个的碗**（装整数、小数这种小东西的）喂进招式，招式拿到的是**抄件**，它怎么改外面都不动；而**整排碗**交出去的不是抄件，是**「这排碗架在哪儿」**这条信息 —— 招式拿着它，就能走到碗前面直接伸手改**你自己的原件**。\n\n所以 `timesTen(bowl, n)` 喊完之后回到 `main`，那排碗**真的**变成十倍了。这也是为什么这一招**不用**写 `&`：整排碗的名字自己就充当了门牌号（下一课会把这件事讲透）。\n\n招式头里的两只碗，一只都不能少：\n\n- `int bowl[]` 接**那排碗**（方括号空着，长度交给喊它的人定）；\n- `int count` 接**排数** —— 招式自己不知道这排碗有多长，得你亲口告诉它，不然它数不出要转几圈。\n\n最后提醒一个老坑：印的时候要**从头到尾**转一圈印，别只印 `bowl[0]`。"
+}

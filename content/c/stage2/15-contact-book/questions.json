@@ -1,0 +1,76 @@
+{
+  "lessonId": "c-stage2-15",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵的通讯录摆在 `Contact book[MAX];` 这一排碗里。想拿到**第一条记录的名字**，该写哪个喵？",
+      "options": [
+        "`book[0].name` —— 先指出第几条，再点出记录里的哪一样",
+        "`book.name[0]` —— 先点名字，再取第一个字",
+        "`name.book[0]` —— 名字在前、条数在后",
+        "`book[0][name]` —— 拿方括号套进去"
+      ],
+      "answer": 0,
+      "explanation": "点名的写法是**一层一层往里走**：先 `[0]` 指出第几条，再用一个点指出**记录里的哪一样**，所以是 `book[0].name` 喵。反过来写成 `book.name[0]` 意思就完全变了 —— 那是「先点出这条记录的名字、再取它的第 0 个字」喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵明明可以在 `add_one` 里面写一句 `n = n + 1;`，却偏要用 `return n + 1;` 让 `main` 自己接住。这是为什么喵？",
+      "options": [
+        "被调函数里的 `n` 只是把数**按值传了进去**，在里面怎么改都动不了 `main` 手里那个变量",
+        "因为函数里不许改传进来的东西",
+        "因为 `return` 比 `=` 跑得快",
+        "因为编译器看到 `n = n + 1;` 会报错"
+      ],
+      "answer": 0,
+      "explanation": "「现在有几条」是 `main` 手里那只碗记着的事；`add_one` 收到的 `n` 只是**抄了一份的数**，在里面改成多少都回不去喵。所以只能把新数字**叼回来**让 `main` 自己接着（`n = add_one(book, n, ...);`）。注意那排碗不一样：`book` 递进去的是**本尊**，招式里改的 `book[n]` 外面立刻看得见喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "第五节那本册子里被夹了一行乱写的，`load_all` 却**一声不吭把它收下当成了记录**。为什么会这样喵？",
+      "options": [
+        "`fscanf` 只管按格式抓两个词，它没法判断这两个词是不是一条真记录",
+        "因为程序读到那一行就崩了，后面的记录没读进来",
+        "因为册子被写成了「不是给眼睛看」的存法",
+        "因为 `load_all` 忘了检查 `NULL`"
+      ],
+      "answer": 0,
+      "explanation": "`fscanf` 只按格式**抓两个词**：抓到两个就收下，它压根没有「名字里不该有空格、号码该是一串数字」这种常识喵。所以格式撞对了它就照收 —— 把 `这一行乱写的` 当名字、`狸花` 当号码，凑成一条「记录」。要拦住这种事，只能读回来之后**自己再验一遍**喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子，这次从空的开始喵\\n\");\n        return 0;\n    }\n    while (n < MAX && ____) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    FILE *fp = fopen(\"book.txt\", \"w\");\n    fprintf(fp, \"小橘 13800000001\\n\");\n    fclose(fp);\n\n    Contact book[MAX];\n    int n = load_all(book, \"book.txt\");\n    printf(\"读回来 %d 条：%s %s\\n\", n, book[0].name, book[0].phone);\n    return 0;\n}",
+      "stem": "本喵想让绕圈在「这一趟抓到了两样」的时候继续往下走。那格空里该填什么喵？",
+      "blanks": [
+        { "answer": "fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2" }
+      ],
+      "explanation": "空里要填的是「这一趟成功抓到两样了吗」：`fscanf(...) == 2` 喵。`fscanf` 每喊一次，给回来的是**这一次成功抓到的样数** —— 抓到两样才接着读，读到册子末尾抓不满两样，绕圈自然收工。还有个小地方：那两只碗本身就是碗（不是碗里的数），所以这里**不用写 `&`**喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    list_all(book, n);\n    n = add_one(book, n, \"小橘\", \"13800000001\");\n    n = add_one(book, n, \"狸花\", \"13900000002\");\n    n = add_one(book, n, \"奶牛\", \"13700000003\");\n    printf(\"现在一共 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？",
+      "answer": "还一条都没有喵\n现在一共 3 条\n1. 小橘 13800000001\n2. 狸花 13900000002\n3. 奶牛 13700000003",
+      "accept": ["还一条都没有喵\n现在一共 3 条\n1. 小橘 13800000001\n2. 狸花 13900000002\n3. 奶牛 13700000003\n"],
+      "explanation": "一进门本喵先念一遍空通讯录 —— 一条都没有，于是 `list_all` 提醒了一声喵。接着连加三条，每回都把新条数**叼回来**接住（`n = add_one(...)`），所以 `n` 一路涨到 3。最后再念一遍，三条按加进去的顺序排着：先加的在前喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\n#define MAX 100\n\ntypedef struct {\n    char name[32];\n    char phone[20];\n} Contact;\n\nint add_one(Contact book[], int n, char *name, char *phone) {\n    if (n >= MAX) {\n        printf(\"记满了喵\\n\");\n        return n;\n    }\n    strcpy(book[n].name, name);\n    strcpy(book[n].phone, phone);\n    return n + 1;\n}\n\nvoid list_all(Contact book[], int n) {\n    if (n == 0) {\n        printf(\"还一条都没有喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s %s\\n\", i + 1, book[i].name, book[i].phone);\n    }\n}\n\nvoid save_all(Contact book[], int n, char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"册子打不开喵\\n\");\n        return;\n    }\n    for (int i = 0; i < n; i++) {\n        fprintf(fp, \"%s %s\\n\", book[i].name, book[i].phone);\n    }\n    fclose(fp);\n    printf(\"存好了喵\\n\");\n}\n\nint load_all(Contact book[], char *path) {\n    FILE *fp = fopen(path, \"r\");\n    int n = 0;\n    if (fp == NULL) {\n        printf(\"还没有册子，这次从空的开始喵\\n\");\n        return 0;\n    }\n    while (n < MAX && fscanf(fp, \"%31s %19s\", book[n].name, book[n].phone) == 2) {\n        n = n + 1;\n    }\n    fclose(fp);\n    return n;\n}\n\nint main(void) {\n    Contact book[MAX];\n    int n = 0;\n\n    n = add_one(book, n, \"小橘\", \"13800000001\");\n    n = add_one(book, n, \"狸花\", \"13900000002\");\n    printf(\"本喵先加了两条，现在有 %d 条\\n\", n);\n    list_all(book, n);\n\n    save_all(book, n, \"book.txt\");\n\n    n = load_all(book, \"book.txt\");\n    printf(\"重新读回来 %d 条\\n\", n);\n    list_all(book, n);\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？",
+      "answer": "本喵先加了两条，现在有 2 条\n1. 小橘 13800000001\n2. 狸花 13900000002\n存好了喵\n重新读回来 2 条\n1. 小橘 13800000001\n2. 狸花 13900000002",
+      "accept": ["本喵先加了两条，现在有 2 条\n1. 小橘 13800000001\n2. 狸花 13900000002\n存好了喵\n重新读回来 2 条\n1. 小橘 13800000001\n2. 狸花 13900000002\n"],
+      "explanation": "先加两条、念一遍，接着 `save_all` 把两条一条一行写进册子（印一句「存好了喵」），最后 `load_all` 照着同一套格式读回来喵。注意「重新读回来」那句是 `load_all` 把**读到了几条**叼回来之后才印的，所以它排在「存好了喵」后面；两条记录连名字带号码一字不差 —— 这就是「关灯也不会丢」的样子喵。"
+    }
+  ]
+}

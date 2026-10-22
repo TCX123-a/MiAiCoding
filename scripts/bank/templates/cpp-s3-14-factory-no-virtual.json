@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-14-factory-no-virtual",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-14",
+  "type": "codefix",
+  "concept": ["底图纸那一句要挂牌子", "不挂牌子全塘念同一句", "不报错不提醒的坑"],
+  "instances": 2,
+  "params": {
+    "k1": { "kind": "pick", "values": ["fish", "yarn"] },
+    "k2": { "kind": "pick", "values": ["ball", "wool"] },
+    "w": { "kind": "pick", "values": ["毛线球", "毛绒球"] }
+  },
+  "stemTemplate": "本喵写了一张底图纸 `Cat`、两张岔路图纸，还写了一张接生图纸 `makeCat`：报 `\"{k1}\"` 就接生第一只，报别的（本喵这儿报的是 `\"{k2}\"`）兜底接生第二只。\n\n可跑起来两行**念的是一模一样的一句**：「……」。本喵明明给两只猫都写了各自的话。你帮本喵改对：**主猫喂进去的两个名字、两张岔路图纸里那两句，都不用动**。\n\n改好之后，第一行该念第一只自己的那句，第二行该念 `{w}喵！`。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string speak() const { return \"……\"; }\n    virtual ~Cat() = default;\n};\n\nclass FishCat : public Cat {\npublic:\n    string speak() const { return \"小鱼干喵！\"; }\n};\n\nclass BallCat : public Cat {\npublic:\n    string speak() const { return \"{w}喵！\"; }\n};\n\nunique_ptr<Cat> makeCat(const string& kind) {\n    if (kind == \"{k1}\") return make_unique<FishCat>();\n    return make_unique<BallCat>();\n}\n\nint main() {\n    auto c1 = makeCat(\"{k1}\");\n    auto c2 = makeCat(\"{k2}\");\n    cout << c1->speak() << endl;\n    cout << c2->speak() << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    virtual string speak() const { return \"……\"; }\n    virtual ~Cat() = default;\n};\n\nclass FishCat : public Cat {\npublic:\n    string speak() const override { return \"小鱼干喵！\"; }\n};\n\nclass BallCat : public Cat {\npublic:\n    string speak() const override { return \"{w}喵！\"; }\n};\n\nunique_ptr<Cat> makeCat(const string& kind) {\n    if (kind == \"{k1}\") return make_unique<FishCat>();\n    return make_unique<BallCat>();\n}\n\nint main() {\n    auto c1 = makeCat(\"{k1}\");\n    auto c2 = makeCat(\"{k2}\");\n    cout << c1->speak() << endl;\n    cout << c2->speak() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题少的是底图纸那一句上的**牌子** `virtual` 喵。没挂牌子的话，底图纸里那句 `speak` 就只是一句普通的话；两张岔路图纸里的话再响，也**传不出来** —— 主猫拿到的两只猫，走到哪一只面前念的都是底图纸那句「……」。\n\n补上 `virtual`（顺手给两张岔路那句加上 `override` 更保险），同一份主猫再跑一遍，各自就念各自那句了：第一行印第一只的话，第二行印 `{w}喵！`。\n\n⚠️ 这个坑的坏处在于它**一声不吭**：不挂牌子、岔路也别写 `override`，程序编得过、跑得起来，只是结果是一个「看着好像对」的「……」。牌子管的是「**这一句各猫各样，走到谁面前就念谁那句**」—— 写底图纸的时候先把牌子挂上，比事后找这个坑便宜得多。"
+}

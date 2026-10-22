@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-preproc-area-macro-parens",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-08",
+  "type": "codewrite",
+  "concept": ["宏", "括号", "换字不换意思", "跑得成功但数不对"],
+  "instances": 6,
+  "params": {
+    "x": { "kind": "int", "min": 2, "max": 5 },
+    "y": { "kind": "int", "min": 6, "max": 9 }
+  },
+  "stemTemplate": "本喵要用一个**宏**来算长方形的地盘有多大：长 × 宽。\n\n这回的长和宽不是现成的数，而是两个式子 —— 长写成 `{x} + 1`，宽写成 `{y}`。请写好这个宏（名字就叫 `AREA`，收两样投喂：长和宽），让 `main` 里那一句能印出正确的数。\n\n跑起来要印一行：先 `面积` 两个字，一个空格，然后是算出来的数。",
+  "starterTemplate": "#include <stdio.h>\n\n/* ── 在这里写下你的宏 ── */\n\nint main(void) {\n    printf(\"面积 %d\\n\", AREA({x} + 1, {y}));\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n#define AREA(w, h) ((w) * (h))\n\nint main(void) {\n    printf(\"面积 %d\\n\", AREA({x} + 1, {y}));\n    return 0;\n}\n",
+  "explanationTemplate": "这题只有一个考点：**宏收下的是一段字，不是算好的数**喵。\n\n要是本喵写的是 `#define AREA(w, h) w * h`，那 `AREA({x} + 1, {y})` 会被**原样铺开**成：\n\n```c\n{x} + 1 * {y}\n```\n\n先乘后加，算出来是 {x} 加 {y} —— 不是本喵要的那个数。最气人的是它**一个字都不报**：程序照跑，只是数不对。\n\n正确的写法是**每个字母各包一层括号、整个身子再包一层**：\n\n```c\n#define AREA(w, h) ((w) * (h))\n```\n\n这样铺开之后是 `(({x} + 1) * ({y}))`：先算括号里的 {x} 加 1，再乘 {y}，得到正确的数。\n\n把这条规矩收好：**写宏的时候，投喂进来的东西外面全都要套括号** —— 因为你根本不知道将来谁会往里塞式子。"
+}

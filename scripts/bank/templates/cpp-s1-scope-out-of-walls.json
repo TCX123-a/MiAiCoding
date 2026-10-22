@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-scope-out-of-walls",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-12",
+  "type": "codefix",
+  "concept": ["大括号是一道围墙", "'fish' was not declared in this scope", "结果要提前开碗装"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "pick", "values": ["3", "6"] }
+  },
+  "stemTemplate": "本喵要算一笔账：外面开一只 `total` 先从 0 起，里层那对大括号里开一只碗装着 {fish} 条鱼，把它加进 `total`，出了括号再把 `total` 印出来。\n\n可翻译官喵当场就把稿子退回来了，它还标出了是哪一行哪一列出的墙。\n\n你帮本喵把它改好：改完要能印出 `total` 装着的那个数。碗里装的数、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int total = 0;\n    {\n        int fish = {fish};\n        total = total + fish;\n    }\n    total = total + fish;\n    cout << total << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int total = 0;\n    {\n        int fish = {fish};\n        total = total + fish;\n    }\n    cout << total << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵这一回的原话是：\n\n`error: 'fish' was not declared in this scope`\n\n`not declared in this scope` 念作「**这个名字在本层没听说过**」（scope 就是「这一层」的意思）。它还连位置都标好了，照着位置看一眼就知道是哪一个名字出了墙。\n\n根子在**大括号那一道围墙**上喵：`fish` 是在里层那对括号里开的，**那一层一结束它就没了**。所以括号**里面**那句 `total = total + fish;` 一点毛病都没有（那时候 `fish` 还活着，而且它改的是**外面**那只 `total` —— 外面开的碗，里面喊得到）；可括号**外面**那句一模一样的话，是站在围墙外面喊里头开的名字，翻译官喵当场不认。\n\n改法：把出墙的那一句删掉。**结果要带出来，得提前在外面开一只碗装着** —— 这一段里的 `total` 就是干这个的，所以删完之后印出来正好是 {fish}。"
+}

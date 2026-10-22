@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-18-diamond-one-base",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-18",
+  "type": "codefix",
+  "concept": ["两条路都照着同一张底座画", "肚子里两份底座", "直接喊说不清"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "小P", "小灰"] }
+  },
+  "stemTemplate": "本喵手里有三张图纸喵：一张**底座**（会喵的猫），另外两张各照着它画过一次 —— 一张会打呼噜、一张会踩奶。最后那张「两样都会」照着**这两张一起**画下来。\n\n画出来看着挺像回事，可它**编不过**：翻译官喵指着 `b.meow()` 那一行，说这一手**说不清**（`ambiguous`）—— 两条路上都找得到它，它挑不出该用哪一份。\n\n你帮本喵改好：让照出来的那只猫**肚子里只留一份底座**。改完跑起来要正好印出这三行：\n\n1. `{who}：喵～`\n2. `{who}：呼噜呼噜～`\n3. `{who}：踩踩踩～`\n\n提示：要挂的那一手写在「**照着底座画**」的那一行上（不在身体里），而且**两条路都要挂**。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"{who}\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : MeowCat(n), Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"{who}\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+  "explanationTemplate": "坏在哪儿喵：`class Baby : public Purr, public Knead` 这两条路**各自照着底座画过一次** —— 于是照出来的猫肚子里有**两份**底座。`b.meow()` 一喊，两条路上都找得到它，翻译官喵只能说 `ambiguous`（说不清）。\n\n改法是**两条路都挂上那一手**：`class Purr : virtual public MeowCat`、`class Knead : virtual public MeowCat` —— 意思是「照着底座画，但这份底座整只猫里**只留一份**」。\n\n⚠️ **只挂一边不管用**：另一条路上还带着自己那份，肚子里照样是两份，`b.meow()` 还是说不清。\n\n⚠️ 还有一步很容易漏：挂上那一手之后，那份**共用的**底座由**最外面那张图纸**喂料 —— 也就是把 `MeowCat(n)` 写进 `Baby` 的出生招式里（写在最前面，它**最先**搭）。中间那两句写给底座的（`Purr`、`Knead` 出生招式里各自的 `MeowCat(n)`）从此**一律不算数**。漏了这一步，翻译官喵会改口报 `no matching function for call to 'MeowCat::MeowCat()'` —— 底座那张图纸要求喂一个名字，没有「什么都不用喂」的搭法。\n\n自己验一遍：印出来的三行名字**一模一样**，说明三条路喊的都是同一份底座喵。"
+}

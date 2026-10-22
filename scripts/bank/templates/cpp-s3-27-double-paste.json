@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-27-double-paste",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-27",
+  "type": "codefix",
+  "concept": ["同一段稿子贴两处", "名字只交一份家底", "单屋子都对、拼起来撞车"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "本喵的流水线有个规矩：**同名字的招式，全程只能有一份正文**。可这一版里，`stamp`（满 10 分盖一个章）的正文在两间屋子里各贴了一份 —— 两份一模一样，本喵当时还觉得挺稳妥喵。\n\n结果**编不过**。翻译官喵的原话是 `redefinition of 'int stamp(int)'`，念作「**这个名字的家底，你交了两遍**」。\n\n你帮本喵把它改对。比如投喂给程序的是：\n\n```text\n{sampleInput}\n```\n\n改好之后就要叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外一组数喵。）",
+  "brokenCodeTemplate": "#include <iostream>\n\n/* 满 10 分盖一个章 */\nint stamp(int score) {\n    return score / 10;\n}\n\n/* 这段稿子在另一间屋子里也贴了一遍 */\nint stamp(int score) {\n    return score / 10;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int score = 0;\n        std::cin >> score;\n        total += stamp(score);\n    }\n    std::cout << \"一共盖了 \" << total << \" 个章\" << std::endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n\n/* 满 10 分盖一个章 */\nint stamp(int score) {\n    return score / 10;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int score = 0;\n        std::cin >> score;\n        total += stamp(score);\n    }\n    std::cout << \"一共盖了 \" << total << \" 个章\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "错不在正文 —— 两份正文**一字不差，都是对的**；错在**同一个名字交了两份家底**。\n\n翻译官喵走到「这个名字该长什么样」这一步：一条名字只认一份正文。它先看见第一份、折好收进档案；翻到第二份，认出这是**刚才那位**（原话还跟着 `note: 'int stamp(int)' previously defined here`，念作「**这位刚才登记过了**」），于是当场翻脸：`redefinition`（念作「**重复登记**」）。\n\n改法：**删掉一份**，只留一处正文。\n\n```cpp\nint stamp(int score) {\n    return score / 10;\n}\n```\n\n⚠️ 这一条以后在真工程里会换个面孔找上门：两个屋子（两个文件）各写了一份**同名招式**的正文，单看每个屋子都合格，拼起来就撞车 —— 到那时候它念的词叫 `multiple definition`（念作「**多处都报了同一位**」），今天这份叫 `redefinition`，**同一种病：一份稿子被多贴了一份**。\n\n删稿的时候别慌：两份本来就一样，留哪份都行 —— **关键是只留一份**喵。"
+}

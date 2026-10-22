@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-unionenum-enum-no-start",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-07",
+  "type": "codefix",
+  "concept": ["枚举", "编号从哪开始", "跑得成功但数不对"],
+  "instances": 2,
+  "params": {
+    "start": { "kind": "pick", "values": [1, 2, 5] }
+  },
+  "stemTemplate": "本喵给三档起了名字 `LOW`、`MID`、`HIGH`，说好**第一档从 {start} 开始数**，后面一位比一位大 1。程序要把三个编号印在一行里，中间用空格隔开。\n\n跑出来却不对 —— 印的是 `0 1 2`，本喵要的是**从 {start} 起头**的那三个连号（{start}、{start} 加 1、{start} 加 2）。翻译官喵**一个字都没说**。你帮本喵看看是漏写了什么，把它改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nenum Level { LOW, MID, HIGH };\n\nint main(void) {\n    printf(\"%d %d %d\\n\", LOW, MID, HIGH);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nenum Level { LOW = {start}, MID, HIGH };\n\nint main(void) {\n    printf(\"%d %d %d\\n\", LOW, MID, HIGH);\n    return 0;\n}\n",
+  "explanationTemplate": "漏的是那一句 `= {start}` 喵。\n\n枚举这串名字的编号规矩是：\n\n- **不写的话**，翻译官喵就从 **0** 开始，一个比一个大 1 —— 所以 `LOW` 是 0、`MID` 是 1、`HIGH` 是 2；\n- **写了起点**，比如 `LOW = {start}`，就从 {start} 开始，后面两位自动接上「{start} 加 1」和「{start} 加 2」。\n\n所以补上 `= {start}` 之后，印出来就是从 {start} 起头的三个连号。\n\n**为什么要给起点？** 因为有些编号天生不是从 0 数起的喵 —— 比如「档位」从 1 档开始、「星期」有些地方从 1 数到 7。硬从 0 开始的话，写代码的人自己得在心里偷偷加一，早晚要错。\n\n这两个数都不影响翻译官喵的判断：`LOW` 到底是 0 还是 {start}，对它来说都是「一串起好名字的编号」，程序照样跑得完。**所以这一类错要靠本喵自己对着题面看数**，别指望翻译官喵喊你。\n\n（顺便记住：名字前面那个 `enum` 永远不能省 —— `enum Level` 才是完整的名字。）"
+}

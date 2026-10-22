@@ -1,0 +1,291 @@
+{
+  "lessonId": "cpp-stage3-09",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-09-compare-flipped-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵要的是**从大到小** —— 最大的站最前面。可排出来偏偏是从小到大：小招式**身子那一行**的判断写反了。\n\n你帮本喵改对（只动小招式身子里的那一行，别的地方一个字都别碰）。\n\n这一排数是 `3, 1, 4, 1, 5`。排完之后**一行一个数**印出来，从最大印到最小。",
+      "brokenCode": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a < b;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a > b;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "5\n4\n3\n1\n1",
+      "stdin": null,
+      "explanation": "小招式只回答排排坐那件活儿一个问题：**什么情况下 `a` 该站在 `b` 前面？**\n\n本喵写的是 `a < b` —— 那是「小的站前面」，排出来自然是从小到大。把它翻个面写成 `a > b`，意思就成了「大的站前面」，印出来才是从大到小。\n\n⚠️ 这种错**一个字都不会报**：编译的时候安安静静，跑起来数也一个不少，只是顺序反了 —— 跟那种编不过的错正好相反，它一声不吭。所以本喵的习惯是排完**先瞟一眼头一个数**：要的是最大，头一个就该是最大。排排坐的错，几乎全落在这一眼上。",
+      "templateId": "cpp-s3-09-compare-flipped",
+      "params": {
+        "nums": "3, 1, 4, 1, 5"
+      },
+      "verified": {
+        "at": "2026-09-16T11:20:50.243Z",
+        "hash": "5ad0f4eb6f3524ca"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-compare-flipped-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵要的是**从大到小** —— 最大的站最前面。可排出来偏偏是从小到大：小招式**身子那一行**的判断写反了。\n\n你帮本喵改对（只动小招式身子里的那一行，别的地方一个字都别碰）。\n\n这一排数是 `9, 5, 6, 5, 3`。排完之后**一行一个数**印出来，从最大印到最小。",
+      "brokenCode": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {9, 5, 6, 5, 3};\n\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a < b;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {9, 5, 6, 5, 3};\n\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a > b;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "9\n6\n5\n5\n3",
+      "stdin": null,
+      "explanation": "小招式只回答排排坐那件活儿一个问题：**什么情况下 `a` 该站在 `b` 前面？**\n\n本喵写的是 `a < b` —— 那是「小的站前面」，排出来自然是从小到大。把它翻个面写成 `a > b`，意思就成了「大的站前面」，印出来才是从大到小。\n\n⚠️ 这种错**一个字都不会报**：编译的时候安安静静，跑起来数也一个不少，只是顺序反了 —— 跟那种编不过的错正好相反，它一声不吭。所以本喵的习惯是排完**先瞟一眼头一个数**：要的是最大，头一个就该是最大。排排坐的错，几乎全落在这一眼上。",
+      "templateId": "cpp-s3-09-compare-flipped",
+      "params": {
+        "nums": "9, 5, 6, 5, 3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:20:53.613Z",
+        "hash": "c8a6f562f1f4df9b"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-count-shared-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要用一段小招式**挨个过一遍**这一排数（`3, 1, 4, 1, 5`），数出**比门槛大的有几个**。\n\n这一题的重点全在方括号那一栏：小招式要读门槛（只读，不用改），而**数出来的那个数得攒在外面** —— 小招式每碰到一个合格的，就让外面那个数涨一。\n\n请你写 `main`：\n\n1. 备一排装数的碗：`3, 1, 4, 1, 5`；\n2. 门槛 `limit` 是 `2`；\n3. 在外面备一个从 `0` 起的计数；\n4. 当场写一段小招式，交给「挨个过一遍」那件活儿（`for_each`）；\n5. 最后印一行：外面那个计数。\n\n程序要叼回一行，就是一个数字。",
+      "starter": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 2;\n    int count = 0;\n\n    for_each(v.begin(), v.end(), [&count, limit](int x) {\n        if (x > limit) {\n            count++;\n        }\n    });\n\n    cout << count << endl;\n    return 0;\n}\n",
+      "expectedOutput": "3",
+      "stdin": null,
+      "explanation": "方括号里带了两个名字、两种带法喵 —— 这一题正是靠这个把数攒起来的：\n\n- `&count` 是**共用同一个**：小招式里每 `count++` 一次，外面那个计数就跟着涨一次，所以最后印出来才不是 `0`；\n- `limit` 是**揣一份**：判断里只读它、压根不用改，揣一份最省心。\n\n判据还是课文第四节那句话：**「我要改它吗？」** 这一题里的 `count` 要改，所以加 `&`；`limit` 不改，所以不加。\n\n⚠️ 漏掉 `&` 是本喵见过最多的错：小招式改的成了**自己揣着的那一份副本**，外面那个数从头到尾一动不动 —— 要么当场编不过，要么安安静静给你一个 `0`。",
+      "templateId": "cpp-s3-09-count-shared",
+      "params": {
+        "k": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:21:17.179Z",
+        "hash": "2162a38c024f57b8"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-count-shared-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要用一段小招式**挨个过一遍**这一排数（`3, 1, 4, 1, 5`），数出**比门槛大的有几个**。\n\n这一题的重点全在方括号那一栏：小招式要读门槛（只读，不用改），而**数出来的那个数得攒在外面** —— 小招式每碰到一个合格的，就让外面那个数涨一。\n\n请你写 `main`：\n\n1. 备一排装数的碗：`3, 1, 4, 1, 5`；\n2. 门槛 `limit` 是 `3`；\n3. 在外面备一个从 `0` 起的计数；\n4. 当场写一段小招式，交给「挨个过一遍」那件活儿（`for_each`）；\n5. 最后印一行：外面那个计数。\n\n程序要叼回一行，就是一个数字。",
+      "starter": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 3;\n    int count = 0;\n\n    for_each(v.begin(), v.end(), [&count, limit](int x) {\n        if (x > limit) {\n            count++;\n        }\n    });\n\n    cout << count << endl;\n    return 0;\n}\n",
+      "expectedOutput": "2",
+      "stdin": null,
+      "explanation": "方括号里带了两个名字、两种带法喵 —— 这一题正是靠这个把数攒起来的：\n\n- `&count` 是**共用同一个**：小招式里每 `count++` 一次，外面那个计数就跟着涨一次，所以最后印出来才不是 `0`；\n- `limit` 是**揣一份**：判断里只读它、压根不用改，揣一份最省心。\n\n判据还是课文第四节那句话：**「我要改它吗？」** 这一题里的 `count` 要改，所以加 `&`；`limit` 不改，所以不加。\n\n⚠️ 漏掉 `&` 是本喵见过最多的错：小招式改的成了**自己揣着的那一份副本**，外面那个数从头到尾一动不动 —— 要么当场编不过，要么安安静静给你一个 `0`。",
+      "templateId": "cpp-s3-09-count-shared",
+      "params": {
+        "k": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:44.401Z",
+        "hash": "c5fb0c16ffa12de8"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-count-shared-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要用一段小招式**挨个过一遍**这一排数（`3, 1, 4, 1, 5`），数出**比门槛大的有几个**。\n\n这一题的重点全在方括号那一栏：小招式要读门槛（只读，不用改），而**数出来的那个数得攒在外面** —— 小招式每碰到一个合格的，就让外面那个数涨一。\n\n请你写 `main`：\n\n1. 备一排装数的碗：`3, 1, 4, 1, 5`；\n2. 门槛 `limit` 是 `4`；\n3. 在外面备一个从 `0` 起的计数；\n4. 当场写一段小招式，交给「挨个过一遍」那件活儿（`for_each`）；\n5. 最后印一行：外面那个计数。\n\n程序要叼回一行，就是一个数字。",
+      "starter": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 4;\n    int count = 0;\n\n    for_each(v.begin(), v.end(), [&count, limit](int x) {\n        if (x > limit) {\n            count++;\n        }\n    });\n\n    cout << count << endl;\n    return 0;\n}\n",
+      "expectedOutput": "1",
+      "stdin": null,
+      "explanation": "方括号里带了两个名字、两种带法喵 —— 这一题正是靠这个把数攒起来的：\n\n- `&count` 是**共用同一个**：小招式里每 `count++` 一次，外面那个计数就跟着涨一次，所以最后印出来才不是 `0`；\n- `limit` 是**揣一份**：判断里只读它、压根不用改，揣一份最省心。\n\n判据还是课文第四节那句话：**「我要改它吗？」** 这一题里的 `count` 要改，所以加 `&`；`limit` 不改，所以不加。\n\n⚠️ 漏掉 `&` 是本喵见过最多的错：小招式改的成了**自己揣着的那一份副本**，外面那个数从头到尾一动不动 —— 要么当场编不过，要么安安静静给你一个 `0`。",
+      "templateId": "cpp-s3-09-count-shared",
+      "params": {
+        "k": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:21:19.389Z",
+        "hash": "0fd361b7924e74dd"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-forgot-capture-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这段程序想数一数**比门槛大的有几个**喵，可它连编都编不过 —— 翻译官喵指着小招式里那一行骂了一句：那个名字**没被带进来**。\n\n你帮本喵改对（只动**方括号那一截**，别的地方一个字都别碰）。\n\n改好之后印一行：`比 2 大的有 N 个`（那个 N 由程序自己数出来）。要数的这一排是 `3, 1, 4, 1, 5`。",
+      "brokenCode": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 2;\n\n    int n = count_if(v.begin(), v.end(), [](int x) {\n        return x > limit;\n    });\n\n    cout << \"比 \" << limit << \" 大的有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 2;\n\n    int n = count_if(v.begin(), v.end(), [limit](int x) {\n        return x > limit;\n    });\n\n    cout << \"比 \" << limit << \" 大的有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "比 2 大的有 3 个",
+      "stdin": null,
+      "explanation": "小招式里那一行写的是 `x > limit`，可它的方括号是**空的** —— 空方括号的意思正是「本喵不碰外面任何东西」。于是那句里的 `limit` 成了小招式**从没见过的名字**，翻译官喵只好拦住，报的错就是「这个名字没被带进来」。\n\n改法只有一处：把要用的那个名字写进方括号 —— `[limit]`。它干的正是课文第三节那件事：**把外面的 `limit` 揣一份带进来**，小招式里这才看得见它。\n\n⚠️ 方括号里**写谁才带谁**：只带 `limit`，小招式里就只认得 `limit`，别的外面那些名字照样看不见。这一题最容易走的岔路是不写方括号里的名字、把小招式里的 `limit` 换成一个写死的数 —— 那样这一次确实能跑，可门槛以后一改，小招式里用的还是老的那个数 —— 这一课的另一道题就专门等在那儿。",
+      "templateId": "cpp-s3-09-forgot-capture",
+      "params": {
+        "k": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:20:44.286Z",
+        "hash": "b3f287e039edea97"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-forgot-capture-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这段程序想数一数**比门槛大的有几个**喵，可它连编都编不过 —— 翻译官喵指着小招式里那一行骂了一句：那个名字**没被带进来**。\n\n你帮本喵改对（只动**方括号那一截**，别的地方一个字都别碰）。\n\n改好之后印一行：`比 4 大的有 N 个`（那个 N 由程序自己数出来）。要数的这一排是 `3, 1, 4, 1, 5`。",
+      "brokenCode": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 4;\n\n    int n = count_if(v.begin(), v.end(), [](int x) {\n        return x > limit;\n    });\n\n    cout << \"比 \" << limit << \" 大的有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 4;\n\n    int n = count_if(v.begin(), v.end(), [limit](int x) {\n        return x > limit;\n    });\n\n    cout << \"比 \" << limit << \" 大的有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "比 4 大的有 1 个",
+      "stdin": null,
+      "explanation": "小招式里那一行写的是 `x > limit`，可它的方括号是**空的** —— 空方括号的意思正是「本喵不碰外面任何东西」。于是那句里的 `limit` 成了小招式**从没见过的名字**，翻译官喵只好拦住，报的错就是「这个名字没被带进来」。\n\n改法只有一处：把要用的那个名字写进方括号 —— `[limit]`。它干的正是课文第三节那件事：**把外面的 `limit` 揣一份带进来**，小招式里这才看得见它。\n\n⚠️ 方括号里**写谁才带谁**：只带 `limit`，小招式里就只认得 `limit`，别的外面那些名字照样看不见。这一题最容易走的岔路是不写方括号里的名字、把小招式里的 `limit` 换成一个写死的数 —— 那样这一次确实能跑，可门槛以后一改，小招式里用的还是老的那个数 —— 这一课的另一道题就专门等在那儿。",
+      "templateId": "cpp-s3-09-forgot-capture",
+      "params": {
+        "k": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:20:47.274Z",
+        "hash": "bbe14bee62c1ab86"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-sort-by-length-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题排的**不是大小，是货名有几个字** —— 字少的站前面。\n\n请你写 `main`：\n\n1. 备一排货名：\"鱼干\", \"大肥鱼\", \"鱼\"；\n2. 当场写一段小招式喂给排排坐那件活儿 —— 身子那行判断的意思是「字少的站前面」（拿 `size()` 比）；\n3. 排完**一行一个货名**印出来。\n\n程序要叼回 3 行，从字最少的印到最多的。",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<string> w = {\"鱼干\", \"大肥鱼\", \"鱼\"};\n\n    sort(w.begin(), w.end(), [](string a, string b) {\n        return a.size() < b.size();\n    });\n\n    for (string x : w) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "鱼\n鱼干\n大肥鱼",
+      "stdin": null,
+      "explanation": "小招式里比的是 `a.size() < b.size()` —— **谁的字数少，谁站前面**。\n\n排排坐那件活儿**不在乎本喵比的是什么**，它只问小招式一句话：「`a` 该不该站前面？」比大小也好、比长短也好，写进身子那一行就成 —— 这正是「顺手就能用的小招式」最好用的地方：换个比法，只要换身子那一行。\n\n⚠️ `size()` 数的是**字节**，不是字：这一排货名全是中文字，一个字占三，所以「字少的站前面」和「字节少的站前面」在这儿恰好是同一件事。要是货名里混进了字母或者空格，这两件事就要分家 —— 那时候 `size()` 数出来的仍然是字节。\n\n⚠️ 身子那行要是顺手写成比大小那种写法，程序照样跑、也照样排，只是排出来的顺序跟本喵要的完全不是一回事。",
+      "templateId": "cpp-s3-09-sort-by-length",
+      "params": {
+        "words": "\"鱼干\", \"大肥鱼\", \"鱼\""
+      },
+      "verified": {
+        "at": "2026-09-16T11:21:22.052Z",
+        "hash": "699abaf14e810718"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-sort-by-length-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题排的**不是大小，是货名有几个字** —— 字少的站前面。\n\n请你写 `main`：\n\n1. 备一排货名：\"汤\", \"小鱼罐头\", \"鱼干\"；\n2. 当场写一段小招式喂给排排坐那件活儿 —— 身子那行判断的意思是「字少的站前面」（拿 `size()` 比）；\n3. 排完**一行一个货名**印出来。\n\n程序要叼回 3 行，从字最少的印到最多的。",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<string> w = {\"汤\", \"小鱼罐头\", \"鱼干\"};\n\n    sort(w.begin(), w.end(), [](string a, string b) {\n        return a.size() < b.size();\n    });\n\n    for (string x : w) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "汤\n鱼干\n小鱼罐头",
+      "stdin": null,
+      "explanation": "小招式里比的是 `a.size() < b.size()` —— **谁的字数少，谁站前面**。\n\n排排坐那件活儿**不在乎本喵比的是什么**，它只问小招式一句话：「`a` 该不该站前面？」比大小也好、比长短也好，写进身子那一行就成 —— 这正是「顺手就能用的小招式」最好用的地方：换个比法，只要换身子那一行。\n\n⚠️ `size()` 数的是**字节**，不是字：这一排货名全是中文字，一个字占三，所以「字少的站前面」和「字节少的站前面」在这儿恰好是同一件事。要是货名里混进了字母或者空格，这两件事就要分家 —— 那时候 `size()` 数出来的仍然是字节。\n\n⚠️ 身子那行要是顺手写成比大小那种写法，程序照样跑、也照样排，只是排出来的顺序跟本喵要的完全不是一回事。",
+      "templateId": "cpp-s3-09-sort-by-length",
+      "params": {
+        "words": "\"汤\", \"小鱼罐头\", \"鱼干\""
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:48.096Z",
+        "hash": "2d72c09d3c553e05"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-sort-by-length-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题排的**不是大小，是货名有几个字** —— 字少的站前面。\n\n请你写 `main`：\n\n1. 备一排货名：\"鱼丸\", \"鱼\", \"大肥鱼干\"；\n2. 当场写一段小招式喂给排排坐那件活儿 —— 身子那行判断的意思是「字少的站前面」（拿 `size()` 比）；\n3. 排完**一行一个货名**印出来。\n\n程序要叼回 3 行，从字最少的印到最多的。",
+      "starter": "#include <iostream>\n#include <string>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<string> w = {\"鱼丸\", \"鱼\", \"大肥鱼干\"};\n\n    sort(w.begin(), w.end(), [](string a, string b) {\n        return a.size() < b.size();\n    });\n\n    for (string x : w) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "鱼\n鱼丸\n大肥鱼干",
+      "stdin": null,
+      "explanation": "小招式里比的是 `a.size() < b.size()` —— **谁的字数少，谁站前面**。\n\n排排坐那件活儿**不在乎本喵比的是什么**，它只问小招式一句话：「`a` 该不该站前面？」比大小也好、比长短也好，写进身子那一行就成 —— 这正是「顺手就能用的小招式」最好用的地方：换个比法，只要换身子那一行。\n\n⚠️ `size()` 数的是**字节**，不是字：这一排货名全是中文字，一个字占三，所以「字少的站前面」和「字节少的站前面」在这儿恰好是同一件事。要是货名里混进了字母或者空格，这两件事就要分家 —— 那时候 `size()` 数出来的仍然是字节。\n\n⚠️ 身子那行要是顺手写成比大小那种写法，程序照样跑、也照样排，只是排出来的顺序跟本喵要的完全不是一回事。",
+      "templateId": "cpp-s3-09-sort-by-length",
+      "params": {
+        "words": "\"鱼丸\", \"鱼\", \"大肥鱼干\""
+      },
+      "verified": {
+        "at": "2026-09-16T11:21:24.734Z",
+        "hash": "c8a033c6195e1726"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-sort-desc-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "请你在 `main` 里**就地写一段没有名字的小招式**，交给排排坐那件活儿，把这一排数排成**从大到小**。\n\n请你写 `main`：\n\n1. 备一排装数的碗，里面是 `3, 1, 4, 1, 5`；\n2. 当场写一段小招式喂给排排坐那件活儿 —— 身子那行判断的意思是「大的站前面」；\n3. 排完**一行一个数**印出来，从最大印到最小。\n\n程序要叼回 5 行，每行一个数，从大到小。\n\n这段小招式**不用起名字**：整段直接写在需要它的那个地方。",
+      "starter": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a > b;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "5\n4\n3\n1\n1",
+      "stdin": null,
+      "explanation": "四截各归各位喵：\n\n- **方括号**是**空的** —— 这段小招式只碰喂进来的两条，不用从外面带东西；\n- **投喂口**接住排排坐递过来的两条（先递一条、再递另一条）；\n- **身子**就是那一行 `return a > b;`；\n- 前面**没有名字**，写完就地用掉，这一课省的就是那个名字。\n\n从大到小的关键全在身子那一行：`a > b` 的意思是「`a` 比 `b` 大的时候，`a` 站前面」，一路排下来就是从最大往下走。要是写成 `a < b`，印出来就成了从小到大 —— 本喵这一课另一道题里那个「一声不吭的错」就是它。\n\n⚠️ 印的部分本喵特意写成**一行一个数**：数之间不夹空格，读起来、对起来都不容易看错。",
+      "templateId": "cpp-s3-09-sort-desc",
+      "params": {
+        "nums": "3, 1, 4, 1, 5"
+      },
+      "verified": {
+        "at": "2026-09-16T11:21:04.627Z",
+        "hash": "78d42ba4d2551277"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-sort-desc-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "请你在 `main` 里**就地写一段没有名字的小招式**，交给排排坐那件活儿，把这一排数排成**从大到小**。\n\n请你写 `main`：\n\n1. 备一排装数的碗，里面是 `2, 7, 1, 8, 2`；\n2. 当场写一段小招式喂给排排坐那件活儿 —— 身子那行判断的意思是「大的站前面」；\n3. 排完**一行一个数**印出来，从最大印到最小。\n\n程序要叼回 5 行，每行一个数，从大到小。\n\n这段小招式**不用起名字**：整段直接写在需要它的那个地方。",
+      "starter": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {2, 7, 1, 8, 2};\n\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a > b;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "8\n7\n2\n2\n1",
+      "stdin": null,
+      "explanation": "四截各归各位喵：\n\n- **方括号**是**空的** —— 这段小招式只碰喂进来的两条，不用从外面带东西；\n- **投喂口**接住排排坐递过来的两条（先递一条、再递另一条）；\n- **身子**就是那一行 `return a > b;`；\n- 前面**没有名字**，写完就地用掉，这一课省的就是那个名字。\n\n从大到小的关键全在身子那一行：`a > b` 的意思是「`a` 比 `b` 大的时候，`a` 站前面」，一路排下来就是从最大往下走。要是写成 `a < b`，印出来就成了从小到大 —— 本喵这一课另一道题里那个「一声不吭的错」就是它。\n\n⚠️ 印的部分本喵特意写成**一行一个数**：数之间不夹空格，读起来、对起来都不容易看错。",
+      "templateId": "cpp-s3-09-sort-desc",
+      "params": {
+        "nums": "2, 7, 1, 8, 2"
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:51.825Z",
+        "hash": "8a89bf506a0d3c0b"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-sort-desc-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "请你在 `main` 里**就地写一段没有名字的小招式**，交给排排坐那件活儿，把这一排数排成**从大到小**。\n\n请你写 `main`：\n\n1. 备一排装数的碗，里面是 `9, 5, 6, 5, 3`；\n2. 当场写一段小招式喂给排排坐那件活儿 —— 身子那行判断的意思是「大的站前面」；\n3. 排完**一行一个数**印出来，从最大印到最小。\n\n程序要叼回 5 行，每行一个数，从大到小。\n\n这段小招式**不用起名字**：整段直接写在需要它的那个地方。",
+      "starter": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {9, 5, 6, 5, 3};\n\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a > b;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "9\n6\n5\n5\n3",
+      "stdin": null,
+      "explanation": "四截各归各位喵：\n\n- **方括号**是**空的** —— 这段小招式只碰喂进来的两条，不用从外面带东西；\n- **投喂口**接住排排坐递过来的两条（先递一条、再递另一条）；\n- **身子**就是那一行 `return a > b;`；\n- 前面**没有名字**，写完就地用掉，这一课省的就是那个名字。\n\n从大到小的关键全在身子那一行：`a > b` 的意思是「`a` 比 `b` 大的时候，`a` 站前面」，一路排下来就是从最大往下走。要是写成 `a < b`，印出来就成了从小到大 —— 本喵这一课另一道题里那个「一声不吭的错」就是它。\n\n⚠️ 印的部分本喵特意写成**一行一个数**：数之间不夹空格，读起来、对起来都不容易看错。",
+      "templateId": "cpp-s3-09-sort-desc",
+      "params": {
+        "nums": "9, 5, 6, 5, 3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:21:07.079Z",
+        "hash": "e63c7e758b6029f4"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-stale-capture-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这回是**先把小招式装好**（存进那个叫 `ok` 的盒子），之后才把门槛抬高，最后拿它去数。\n\n毛病出在这儿：数出来的个数还是**按老门槛**算的 —— 小招式里看到的门槛没跟着抬。\n\n你帮本喵改对（只动方括号那一截，别的地方一个字都别碰）。\n\n改好之后印一行：`门槛 4 以上有 N 个`（那个 N 由程序自己数出来）。要数的这一排是 `3, 1, 4, 1, 5`。",
+      "brokenCode": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 2;\n\n    auto ok = [limit](int x) {\n        return x > limit;\n    };\n\n    limit = 4;\n\n    int n = count_if(v.begin(), v.end(), ok);\n    cout << \"门槛 \" << limit << \" 以上有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 2;\n\n    auto ok = [&limit](int x) {\n        return x > limit;\n    };\n\n    limit = 4;\n\n    int n = count_if(v.begin(), v.end(), ok);\n    cout << \"门槛 \" << limit << \" 以上有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "门槛 4 以上有 1 个",
+      "stdin": null,
+      "explanation": "这一题里那两种带法的差别露了脸喵 —— 因为本喵是**先装小招式、后改门槛**的：\n\n- `[limit]` 是**揣一份**：装小招式的那一刻，本喵就把当时的门槛抄了一份带走。之后外面怎么改，小招式手里那份**永远是老的那个** —— 它还在拿 `2` 当门槛，数出来的个数跟同一行印出来的门槛对不上；\n- `[&limit]` 是**共用同一个**：小招式每次跑都去看外面那个门槛现在是多少，抬过之后它就用新的。\n\n判据还是课文第四节那一句：**「我要改它吗？」** 这一题的门槛后面确实会变，所以得共用。\n\n⚠️ 平时本喵老说「揣一份最省心」，可这一题正好相反：**小招式活得比那次改动久**（它是先装好、后用的），这时候再揣一份，揣到的就是过期的那个。",
+      "templateId": "cpp-s3-09-stale-capture",
+      "params": {
+        "final": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:20:57.391Z",
+        "hash": "e18710afb24f4fc5"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-09-stale-capture-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这回是**先把小招式装好**（存进那个叫 `ok` 的盒子），之后才把门槛抬高，最后拿它去数。\n\n毛病出在这儿：数出来的个数还是**按老门槛**算的 —— 小招式里看到的门槛没跟着抬。\n\n你帮本喵改对（只动方括号那一截，别的地方一个字都别碰）。\n\n改好之后印一行：`门槛 5 以上有 N 个`（那个 N 由程序自己数出来）。要数的这一排是 `3, 1, 4, 1, 5`。",
+      "brokenCode": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 2;\n\n    auto ok = [limit](int x) {\n        return x > limit;\n    };\n\n    limit = 5;\n\n    int n = count_if(v.begin(), v.end(), ok);\n    cout << \"门槛 \" << limit << \" 以上有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 2;\n\n    auto ok = [&limit](int x) {\n        return x > limit;\n    };\n\n    limit = 5;\n\n    int n = count_if(v.begin(), v.end(), ok);\n    cout << \"门槛 \" << limit << \" 以上有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "门槛 5 以上有 0 个",
+      "stdin": null,
+      "explanation": "这一题里那两种带法的差别露了脸喵 —— 因为本喵是**先装小招式、后改门槛**的：\n\n- `[limit]` 是**揣一份**：装小招式的那一刻，本喵就把当时的门槛抄了一份带走。之后外面怎么改，小招式手里那份**永远是老的那个** —— 它还在拿 `2` 当门槛，数出来的个数跟同一行印出来的门槛对不上；\n- `[&limit]` 是**共用同一个**：小招式每次跑都去看外面那个门槛现在是多少，抬过之后它就用新的。\n\n判据还是课文第四节那一句：**「我要改它吗？」** 这一题的门槛后面确实会变，所以得共用。\n\n⚠️ 平时本喵老说「揣一份最省心」，可这一题正好相反：**小招式活得比那次改动久**（它是先装好、后用的），这时候再揣一份，揣到的就是过期的那个。",
+      "templateId": "cpp-s3-09-stale-capture",
+      "params": {
+        "final": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:21:00.863Z",
+        "hash": "a1aae20c294dd6b9"
+      }
+    }
+  ]
+}

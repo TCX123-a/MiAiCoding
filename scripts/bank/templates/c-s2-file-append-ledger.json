@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-file-append-ledger",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-13",
+  "type": "codewrite",
+  "concept": ["a 是接着写", "三天添三笔", "账本不撕"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 3 },
+    "b": { "kind": "int", "min": 4, "max": 6 },
+    "c": { "kind": "int", "min": 7, "max": 9 }
+  },
+  "stemTemplate": "本喵的账本要**一天添一笔**，连着记三天，一天都不能把前面的撕掉。\n\n请你写一段程序，按这个顺序做：\n\n1. 第一次拉开册子 `zhangben.txt`，写上 `第一天 {a} 条`，关上；\n2. 第二次拉开**同一本**册子，**在前一天的后面接着**写上 `第二天 {b} 条`，关上；\n3. 第三次还是接着写 `第三天 {c} 条`，关上；\n4. 最后以读的方式拉开，把整本册子**一行一行读出来印一遍**（一行一行印，末尾不要再自己加换行）。\n\n三笔都要在，一行都不能少。每次拉开之后都别忘了先看看牌子是不是空的、用完都别忘了关上抽屉。",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 {a} 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 {b} 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第三天 {c} 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+  "explanationTemplate": "这一课真正的分界线就在**打开方式**那一个字母上喵。\n\n**第一天**用的是 `\"w\"` —— 「撕掉重写」。第一次记账，册子本来是空的（或者有一本旧的），撕掉重来正合本喵的意。\n\n**第二天、第三天**都用 `\"a\"` —— 「接着写」。它保留原来的字，在停笔的地方往下写。要是这里手滑写成 `\"w\"`，那本喵每记一天就把前面全撕一遍，最后册子上只剩第三天那一行 —— **而且翻译官喵一个字都不会说**，因为 `\"w\"` 完全合法，程序也好好地跑完了。\n\n三种打开方式再收一遍：\n\n| 打开方式 | 意思 |\n|---|---|\n| `\"r\"` | 只读。册子要是不在，叼回来的是 `NULL` |\n| `\"w\"` | 撕掉重写。册子不在就新建一本 |\n| `\"a\"` | 接着写。册子不在就新建一本 |\n\n**一天添一笔的活，几乎总是「头一次 `w`、往后每次都 `a`」。** 这个形状你往后天天会用到。\n\n另外三个细节也别丢：**每本册子的名字一个字母都不能差**（差一个字母就是另一本册子）；**每次拉开之后都先看看牌子是不是空的**（拉不开的时候叼回来的是一张空牌子，不检查就往下走，程序会当场倒下）；**用完就关**（写进去的字可能还揣在翻译官喵兜里没真落进册子，程序半路翻车时最容易吃这个亏）。"
+}

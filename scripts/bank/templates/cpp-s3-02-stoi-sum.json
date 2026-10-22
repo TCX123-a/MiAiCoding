@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s3-02-stoi-sum",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-02",
+  "type": "codewrite",
+  "concept": ["到手的是数字样子的字", "转成能算的数", "再把数变回一串字"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": [12, 34, 57] },
+    "b": { "kind": "pick", "values": [7, 26, 81] },
+    "unit": { "kind": "pick", "values": ["条", "罐"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{a} {b}\n", "sampleText": "23 68\n" },
+  "stemTemplate": "投喂口会递进来**两个数**（一行，中间用空格隔开）喵。\n\n请你写个程序：把这两段数字转成**能算的数**再加起来，然后印**两行**：\n\n1. 第一行：加出来的**和**；\n2. 第二行：**和后面接上 `{unit}`**（中间没有空格）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string a = \"\";\n    string b = \"\";\n    cin >> a >> b;\n\n    int total = stoi(a) + stoi(b);\n    cout << total << endl;\n    cout << to_string(total) + \"{unit}\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题藏着一个很容易踩的坑：**投喂进来的数字，到手其实是「一串字」**喵。\n\n所以想直接拿它们做加法，翻译官喵会当场拦下 —— 它的原话里有 `cannot convert`，念作「**这个转换我做不了**」：一串字变不成能算的数。\n\n正确的走法是**先转再加**：\n\n- `stoi(a)` 把一串数字**转成能算的数**（念作「**string to int**」—— 把一串字变成整数）；\n- 转好之后 `+` 才是算术的加。\n\n⚠️ 要是直接 `a + b`，那是**接字**不是加法：`\"12\"` 接上 `\"7\"` 得到的是 `127`，而 12 加 7 是 19 —— 这俩长得都能看，可意思完全不一样。\n\n⚠️ 第二行要把**数**和 `{unit}` 接在一起，得先把数**变回一串字**：`to_string(total)`。顺序是**先变再接**；直接拿 `total + \"{unit}\"` 这种写法，翻译官喵也不认。"
+}

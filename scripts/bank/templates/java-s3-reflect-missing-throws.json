@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-reflect-missing-throws",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-12",
+  "type": "codefix",
+  "concept": ["找产房是可能出事的", "出事要事先交代", "翻译那一关就拦下"],
+  "instances": 2,
+  "params": {
+    "t": { "kind": "pick", "values": ["String", "int"] }
+  },
+  "stemTemplate": "本喵想照图纸找那间产房，再问一句「它收的是哪种东西」。可这一段**连翻译那一关都没过**喵。\n\n你帮本喵把缺的那一块补上 —— 别的都别动，也别改印出来的形状。改好之后，程序该印出**一行**：`产房收的是：` 后面跟着那种东西的名字。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        {t} value;\n\n        Cat({t} value) {\n            this.value = value;\n        }\n    }\n\n    public static void main(String[] args) {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor({t}.class);\n        System.out.println(\"产房收的是：\" + 产房.getParameterTypes()[0].getSimpleName());\n    }\n}\n",
+  "referenceFixTemplate": "import java.lang.reflect.Constructor;\n\npublic class Main {\n    static class Cat {\n        {t} value;\n\n        Cat({t} value) {\n            this.value = value;\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        Constructor<?> 产房 = Cat.class.getDeclaredConstructor({t}.class);\n        System.out.println(\"产房收的是：\" + 产房.getParameterTypes()[0].getSimpleName());\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是这一句：\n\n```text\nerror: unreported exception NoSuchMethodException; must be caught or declared to be thrown\n```\n\n念法是：「**找产房这一手是可能出事的，你出门之前没跟本喵交代。**」\n\n为什么可能出事？因为找产房是**照着名字找**的：图纸上要是没有那间，这一手就会当场翻脸（上面那一段 `NoSuchMethodException` 就是它翻脸的样子）。Java 的规矩跟前面学的取货凭条一个脾气：**任何「可能出事」的一手，要么当场接住，要么在门口提前交代一声**。这一课的稿子都用的是「提前交代」这条省事的路子，形状就是在 `main` 那一行的结尾加一句 `throws Exception`。\n\n补上之后形状是：\n\n```java\npublic static void main(String[] args) throws Exception {\n```\n\n再跑，它就印出 `产房收的是：` 后面跟着那种东西的名字。\n\n**注意这一摔跟上一题那一摔不一样**：这一摔发生在**翻译那一关**（因为「可能出事」这句交代是翻译官喵管的事），所以程序一个字都还没跑就被拦下了喵。"
+}

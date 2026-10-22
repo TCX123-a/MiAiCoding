@@ -1,0 +1,272 @@
+{
+  "lessonId": "cpp-stage3-17",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-17-clear-no-tilde-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵给这张牌点亮了最低 4 格（`00001111`），现在要把第 0 格**按灭**，别的格子一个都不许动。\n\n可这段代码按下去之后，屏幕上只剩**那一格孤零零亮着**，别的格子全灭了 —— 它跑得起来，翻译官喵一句原话都没有。\n\n你帮本喵改好：改完跑起来，那 8 格里要正好少掉第 0 格那一盏，别的一个不少喵。",
+      "brokenCode": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    int n = 0;\n    card = card & (1u << n);\n    cout << bitset<8>(card) << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    int n = 0;\n    card = card & ~(1u << n);\n    cout << bitset<8>(card) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "00001110",
+      "stdin": null,
+      "explanation": "坏的那一处少了**一个 `~`** 喵。\n\n`1u << n` 造出来的那串格子，是「只有第 0 格亮着」。拿它去「与」，留下的是**两边都亮**的格子 —— 于是除了第 0 格，别的全被灭掉了。得到的正好是「只要那一格」，跟本喵要的**反着来**。\n\n「按灭一格」要的是「**除了这一格，别的全亮**」那串格子，它正好就是 `1u << n` 整排翻个面。翻面那一招是 `~`，所以那一处该写成 `card & ~(1u << n)`。\n\n⚠️ 记法就一句：**拨开用 `|`，按灭用 `& ~`**。少掉那个 `~`，同一个式子里两串格子长得几乎一样，作用却刚好相反：一个把那一格点亮成孤零零一盏，一个把它从一片亮里摘掉。\n\n⚠️ 还有一层：这题**改错了也不喊疼**，翻译官喵一句原话都没有 —— 屏幕上是 8 个 0/1，一眼扫过去全是格子，正是最容易看走眼的那种错喵。",
+      "templateId": "cpp-s3-17-clear-no-tilde",
+      "params": {
+        "n": 0
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:31.051Z",
+        "hash": "576001d1826d2519"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-clear-no-tilde-003",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵给这张牌点亮了最低 4 格（`00001111`），现在要把第 3 格**按灭**，别的格子一个都不许动。\n\n可这段代码按下去之后，屏幕上只剩**那一格孤零零亮着**，别的格子全灭了 —— 它跑得起来，翻译官喵一句原话都没有。\n\n你帮本喵改好：改完跑起来，那 8 格里要正好少掉第 3 格那一盏，别的一个不少喵。",
+      "brokenCode": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    int n = 3;\n    card = card & (1u << n);\n    cout << bitset<8>(card) << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    int n = 3;\n    card = card & ~(1u << n);\n    cout << bitset<8>(card) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "00000111",
+      "stdin": null,
+      "explanation": "坏的那一处少了**一个 `~`** 喵。\n\n`1u << n` 造出来的那串格子，是「只有第 3 格亮着」。拿它去「与」，留下的是**两边都亮**的格子 —— 于是除了第 3 格，别的全被灭掉了。得到的正好是「只要那一格」，跟本喵要的**反着来**。\n\n「按灭一格」要的是「**除了这一格，别的全亮**」那串格子，它正好就是 `1u << n` 整排翻个面。翻面那一招是 `~`，所以那一处该写成 `card & ~(1u << n)`。\n\n⚠️ 记法就一句：**拨开用 `|`，按灭用 `& ~`**。少掉那个 `~`，同一个式子里两串格子长得几乎一样，作用却刚好相反：一个把那一格点亮成孤零零一盏，一个把它从一片亮里摘掉。\n\n⚠️ 还有一层：这题**改错了也不喊疼**，翻译官喵一句原话都没有 —— 屏幕上是 8 个 0/1，一眼扫过去全是格子，正是最容易看走眼的那种错喵。",
+      "templateId": "cpp-s3-17-clear-no-tilde",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:33.428Z",
+        "hash": "6898a22647bfeec0"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-flip-bit-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口先报一个数：要翻的是**第几格**（格号从最右边那格数起，最右边那格是第 0 格）；紧接着一行一个数（0 到 255 之间），就是要翻的那个数。\n\n请你写个程序，印**一行**，形状是\n\n`182 的格子是 10110110，翻第 3 格之后是 10111110`\n\n也就是：那个数 + ` 的格子是 ` + 原来那 8 格 + `，翻第 ` + 格号 + ` 格之后是 ` + 翻完的那 8 格喵。\n\n「翻一格」的意思是：那一格原来是亮的就按灭，原来是灭的就点亮，**别的格子一个都不许动**。\n\n比如投喂给程序的是\n\n3\n194\n\n程序就要叼回\n\n194 的格子是 11000010，翻第 3 格之后是 11001010\n\n（判分喂的是**另一批数**，别把答案写死喵～）",
+      "starter": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n    cin >> n;\n    cin >> x;\n    unsigned int flipped = x ^ (1u << n);\n    cout << x << \" 的格子是 \" << bitset<8>(x)\n         << \"，翻第 \" << n << \" 格之后是 \" << bitset<8>(flipped) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "13 的格子是 00001101，翻第 3 格之后是 00000101",
+      "stdin": "3\n13\n",
+      "explanation": "「翻一格」这件事，正好是**两边不一样才留**那一招的看家本事喵（那个记号是 `^`）。\n\n拿一串「只有第 `n` 格亮着」的格子（`1u << n`）去和原来的数比：第 `n` 格上，原来亮、这串也亮 → 一样 → 灭；原来灭、这串亮 → 不一样 → 亮。**正好翻了个面**。别的格子上这串全是灭的，两边一样 → 原样不动。\n\n一格不多、一格不少，这就是「翻」：`x ^ (1u << n)`。\n\n⚠️ 顺带把那个老坑钉死：`^` **不是**「几次方」，`2 ^ 3` 不是 8 而是 1 —— 它读的是两边每一格一不一样。\n\n⚠️ 括号还是那一句：`1u << n` 外面括起来，省了它就先算别的去了。\n\n⚠️ 印格子用 `bitset<8>` 最省事：它**一格不落地印满 8 格**（高处的格子灭着也照样印成 0），拿它跟原来那串对着看，翻的是哪一格一眼就到喵。",
+      "templateId": "cpp-s3-17-flip-bit",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:36.628Z",
+        "hash": "478422ae186ffd37"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-flip-bit-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口先报一个数：要翻的是**第几格**（格号从最右边那格数起，最右边那格是第 0 格）；紧接着一行一个数（0 到 255 之间），就是要翻的那个数。\n\n请你写个程序，印**一行**，形状是\n\n`182 的格子是 10110110，翻第 3 格之后是 10111110`\n\n也就是：那个数 + ` 的格子是 ` + 原来那 8 格 + `，翻第 ` + 格号 + ` 格之后是 ` + 翻完的那 8 格喵。\n\n「翻一格」的意思是：那一格原来是亮的就按灭，原来是灭的就点亮，**别的格子一个都不许动**。\n\n比如投喂给程序的是\n\n6\n223\n\n程序就要叼回\n\n223 的格子是 11011111，翻第 6 格之后是 10011111\n\n（判分喂的是**另一批数**，别把答案写死喵～）",
+      "starter": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n    cin >> n;\n    cin >> x;\n    unsigned int flipped = x ^ (1u << n);\n    cout << x << \" 的格子是 \" << bitset<8>(x)\n         << \"，翻第 \" << n << \" 格之后是 \" << bitset<8>(flipped) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "46 的格子是 00101110，翻第 6 格之后是 01101110",
+      "stdin": "6\n46\n",
+      "explanation": "「翻一格」这件事，正好是**两边不一样才留**那一招的看家本事喵（那个记号是 `^`）。\n\n拿一串「只有第 `n` 格亮着」的格子（`1u << n`）去和原来的数比：第 `n` 格上，原来亮、这串也亮 → 一样 → 灭；原来灭、这串亮 → 不一样 → 亮。**正好翻了个面**。别的格子上这串全是灭的，两边一样 → 原样不动。\n\n一格不多、一格不少，这就是「翻」：`x ^ (1u << n)`。\n\n⚠️ 顺带把那个老坑钉死：`^` **不是**「几次方」，`2 ^ 3` 不是 8 而是 1 —— 它读的是两边每一格一不一样。\n\n⚠️ 括号还是那一句：`1u << n` 外面括起来，省了它就先算别的去了。\n\n⚠️ 印格子用 `bitset<8>` 最省事：它**一格不落地印满 8 格**（高处的格子灭着也照样印成 0），拿它跟原来那串对着看，翻的是哪一格一眼就到喵。",
+      "templateId": "cpp-s3-17-flip-bit",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:38.963Z",
+        "hash": "e238a487559225f0"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-low-four-shift-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵手里这个数是 182，想把它**最低那 4 格**单独取出来印一遍。\n\n可这段代码取出来的**不是最低那 4 格** —— 它跑得起来、翻译官喵一句原话都没有，只是印出来的那个数默默不对。\n\n你帮本喵把那一处改对：改完跑起来，屏幕上 `low =` 那一行要是**最低 4 格**的读数，多一格少一格都不行喵。",
+      "brokenCode": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned int x = 182;\n    unsigned int low = x >> 4;\n    cout << \"x   = \" << bitset<8>(x) << endl;\n    cout << \"low = \" << low << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned int x = 182;\n    unsigned int low = x & 15;\n    cout << \"x   = \" << bitset<8>(x) << endl;\n    cout << \"low = \" << low << endl;\n    return 0;\n}\n",
+      "expectedOutput": "x   = 10110110\nlow = 6",
+      "stdin": null,
+      "explanation": "坏的那一处是挪格子用的那个 `4` 喵。\n\n`>>` 做的是**整排一起往右挪**：最右边挪出去的那几格**丢了**，左边空出来的补 0。拿 182 来说，它最低那 4 格被整排挪走了 —— 挪回来的那 4 格是**高处**的那几格，正是本喵不想要的那几格。\n\n要「只留下最低 4 格」该用哪一招？**拿一块筛子去筛**：`15` 的那串格子是 `00001111`（最低 4 格全亮、上面全灭），拿去和原来的数一「与」，上面那些格被 0 灭掉、底下 4 格原样留下。所以那一处该写成 `x & 15`。\n\n⚠️ 这一题最该记住的是：**「取最低几格」是筛（`&`），不是挪（`>>`）**。两者都能让屏幕上的数变小，看起来都像「取出来了」—— 可一个取的是最低那几格，另一个取的是挪下来的那几格，取的根本不是同一批格子喵。\n\n⚠️ 还有一层：这题**改错了也不喊疼**。写成 `>>` 翻译官喵一句原话都不说，只是印出来的数默默不对 —— 往后最费时间的坑，几乎全是这种安安静静错掉的。",
+      "templateId": "cpp-s3-17-low-four-shift",
+      "params": {
+        "x": 182
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:40.551Z",
+        "hash": "9f7b9a0e0bb64edd"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-low-four-shift-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵手里这个数是 111，想把它**最低那 4 格**单独取出来印一遍。\n\n可这段代码取出来的**不是最低那 4 格** —— 它跑得起来、翻译官喵一句原话都没有，只是印出来的那个数默默不对。\n\n你帮本喵把那一处改对：改完跑起来，屏幕上 `low =` 那一行要是**最低 4 格**的读数，多一格少一格都不行喵。",
+      "brokenCode": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned int x = 111;\n    unsigned int low = x >> 4;\n    cout << \"x   = \" << bitset<8>(x) << endl;\n    cout << \"low = \" << low << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned int x = 111;\n    unsigned int low = x & 15;\n    cout << \"x   = \" << bitset<8>(x) << endl;\n    cout << \"low = \" << low << endl;\n    return 0;\n}\n",
+      "expectedOutput": "x   = 01101111\nlow = 15",
+      "stdin": null,
+      "explanation": "坏的那一处是挪格子用的那个 `4` 喵。\n\n`>>` 做的是**整排一起往右挪**：最右边挪出去的那几格**丢了**，左边空出来的补 0。拿 111 来说，它最低那 4 格被整排挪走了 —— 挪回来的那 4 格是**高处**的那几格，正是本喵不想要的那几格。\n\n要「只留下最低 4 格」该用哪一招？**拿一块筛子去筛**：`15` 的那串格子是 `00001111`（最低 4 格全亮、上面全灭），拿去和原来的数一「与」，上面那些格被 0 灭掉、底下 4 格原样留下。所以那一处该写成 `x & 15`。\n\n⚠️ 这一题最该记住的是：**「取最低几格」是筛（`&`），不是挪（`>>`）**。两者都能让屏幕上的数变小，看起来都像「取出来了」—— 可一个取的是最低那几格，另一个取的是挪下来的那几格，取的根本不是同一批格子喵。\n\n⚠️ 还有一层：这题**改错了也不喊疼**。写成 `>>` 翻译官喵一句原话都不说，只是印出来的数默默不对 —— 往后最费时间的坑，几乎全是这种安安静静错掉的。",
+      "templateId": "cpp-s3-17-low-four-shift",
+      "params": {
+        "x": 111
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:42.944Z",
+        "hash": "0cb02a8545aa3f04"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-nth-bit-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口先报一个数：要看的是**第几格**（格号从最右边那格数起，最右边那格是第 0 格）；紧接着一行一个数，就是要看的那个数。\n\n请你写个程序，印**一行**，形状是\n\n`182 的第 3 位是 0`\n\n也就是：那个数 + 一个空格 + `的第` + 格号 + `位是` + 那一格的状态（亮着写 1、灭着写 0）喵。\n\n比如投喂给程序的是\n\n0\n238\n\n程序就要叼回\n\n238 的第 0 位是 0\n\n（判分喂的是**另一批数**，别把答案写死喵～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n    cin >> n;\n    cin >> x;\n    cout << x << \" 的第 \" << n << \" 位是 \" << ((x >> n) & 1) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "41 的第 0 位是 1",
+      "stdin": "0\n41\n",
+      "explanation": "要单看某一格，两步就够喵：\n\n1. **先把那一格挪到最右边**：整排往右挪 `n` 格，原来的第 `n` 格就落到了最低那格上 —— 写成 `x >> n`。\n2. **再把最低那格单独拎出来**：拿 `1` 去「与」它，别的格子全被灭掉，只剩那一格 —— 写成 `& 1`。\n\n合起来就是 `(x >> n) & 1`。它只会是 0 或 1，直接印出去就是那一格的状态。\n\n⚠️ 那对括号**别省**喵。省了的话，`>>` 和 `&` 哪个先算就由优先级说了算，而这两个记号的先后并不像你以为的那样。加括号不要钱，猜错了要命。\n\n⚠️ 还有：格号是**从最右边那格数起**的，最右边那格是第 0 格。数错一位，印出来的就是隔壁那格的状态 —— 而它看上去一样合理喵。",
+      "templateId": "cpp-s3-17-nth-bit",
+      "params": {
+        "n": 0
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:45.983Z",
+        "hash": "3752eaccdba69afe"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-nth-bit-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口先报一个数：要看的是**第几格**（格号从最右边那格数起，最右边那格是第 0 格）；紧接着一行一个数，就是要看的那个数。\n\n请你写个程序，印**一行**，形状是\n\n`182 的第 3 位是 0`\n\n也就是：那个数 + 一个空格 + `的第` + 格号 + `位是` + 那一格的状态（亮着写 1、灭着写 0）喵。\n\n比如投喂给程序的是\n\n3\n208\n\n程序就要叼回\n\n208 的第 3 位是 0\n\n（判分喂的是**另一批数**，别把答案写死喵～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n    cin >> n;\n    cin >> x;\n    cout << x << \" 的第 \" << n << \" 位是 \" << ((x >> n) & 1) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "156 的第 3 位是 1",
+      "stdin": "3\n156\n",
+      "explanation": "要单看某一格，两步就够喵：\n\n1. **先把那一格挪到最右边**：整排往右挪 `n` 格，原来的第 `n` 格就落到了最低那格上 —— 写成 `x >> n`。\n2. **再把最低那格单独拎出来**：拿 `1` 去「与」它，别的格子全被灭掉，只剩那一格 —— 写成 `& 1`。\n\n合起来就是 `(x >> n) & 1`。它只会是 0 或 1，直接印出去就是那一格的状态。\n\n⚠️ 那对括号**别省**喵。省了的话，`>>` 和 `&` 哪个先算就由优先级说了算，而这两个记号的先后并不像你以为的那样。加括号不要钱，猜错了要命。\n\n⚠️ 还有：格号是**从最右边那格数起**的，最右边那格是第 0 格。数错一位，印出来的就是隔壁那格的状态 —— 而它看上去一样合理喵。",
+      "templateId": "cpp-s3-17-nth-bit",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:01:34.932Z",
+        "hash": "715b4b51c390d0bf"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-nth-bit-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口先报一个数：要看的是**第几格**（格号从最右边那格数起，最右边那格是第 0 格）；紧接着一行一个数，就是要看的那个数。\n\n请你写个程序，印**一行**，形状是\n\n`182 的第 3 位是 0`\n\n也就是：那个数 + 一个空格 + `的第` + 格号 + `位是` + 那一格的状态（亮着写 1、灭着写 0）喵。\n\n比如投喂给程序的是\n\n7\n246\n\n程序就要叼回\n\n246 的第 7 位是 1\n\n（判分喂的是**另一批数**，别把答案写死喵～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    unsigned int x = 0;\n    cin >> n;\n    cin >> x;\n    cout << x << \" 的第 \" << n << \" 位是 \" << ((x >> n) & 1) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "18 的第 7 位是 0",
+      "stdin": "7\n18\n",
+      "explanation": "要单看某一格，两步就够喵：\n\n1. **先把那一格挪到最右边**：整排往右挪 `n` 格，原来的第 `n` 格就落到了最低那格上 —— 写成 `x >> n`。\n2. **再把最低那格单独拎出来**：拿 `1` 去「与」它，别的格子全被灭掉，只剩那一格 —— 写成 `& 1`。\n\n合起来就是 `(x >> n) & 1`。它只会是 0 或 1，直接印出去就是那一格的状态。\n\n⚠️ 那对括号**别省**喵。省了的话，`>>` 和 `&` 哪个先算就由优先级说了算，而这两个记号的先后并不像你以为的那样。加括号不要钱，猜错了要命。\n\n⚠️ 还有：格号是**从最右边那格数起**的，最右边那格是第 0 格。数错一位，印出来的就是隔壁那格的状态 —— 而它看上去一样合理喵。",
+      "templateId": "cpp-s3-17-nth-bit",
+      "params": {
+        "n": 7
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:48.239Z",
+        "hash": "2f8610e13a079ea6"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-odd-or-even-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口先报一个数：这一回有几条小鱼干过来；紧接着一行一条，把那些数给你。\n\n请你写个程序：**来一个就印一行**，说清它是奇数还是偶数，形状是\n\n`7 是奇数`\n`42 是偶数`\n\n也就是「那个数 + 一个空格 + `是` + `奇数` 或 `偶数`」喵。\n\n比如投喂给程序的是\n\n2\n48\n61\n\n程序就要叼回\n\n48 是偶数\n61 是奇数\n\n（判分喂的是**另一批数**，条数也可能不一样，别把答案写死喵～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n    for (int i = 0; i < n; i++) {\n        int v = 0;\n        cin >> v;\n        cout << v << \" 是\" << ((v & 1) ? \"奇数\" : \"偶数\") << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "50 是偶数\n23 是奇数",
+      "stdin": "2\n50\n23\n",
+      "explanation": "奇偶这一件事，只有**最低那格**在说话喵。\n\n别的格子代表的都是 2、4、8、16…… 全是 2 的整数倍，只有最低那格代表那个 1。所以一个数**最低那格亮着就是奇数、灭着就是偶数**。\n\n`v & 1` 正好只把最低那格留下来：上面所有格子都被 `1` 的 0 灭掉，最低那格原样照抄。结果不是 0 就是 1，拿它去看鱼干眼色（`? :` 那一招），奇数印「奇数」、偶数印「偶数」。\n\n⚠️ 别绕远路去算「除以 2 余几」—— 这一课的正主就是**直接看那一格**，它是什么，这个数就是什么性子，一眼就到。\n\n⚠️ 还有一处最容易写错：先读进来的那个数**是条数**，不是要判的数。它说的是「后面还有几行」，真正**每读一个判一个**的是绕鱼干跑圈那一段。少读一个、或者多印一行，屏幕上都会对不上喵。",
+      "templateId": "cpp-s3-17-odd-or-even",
+      "params": {
+        "n": 2
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:50.428Z",
+        "hash": "2b7d6d0aaea99b6a"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-odd-or-even-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口先报一个数：这一回有几条小鱼干过来；紧接着一行一条，把那些数给你。\n\n请你写个程序：**来一个就印一行**，说清它是奇数还是偶数，形状是\n\n`7 是奇数`\n`42 是偶数`\n\n也就是「那个数 + 一个空格 + `是` + `奇数` 或 `偶数`」喵。\n\n比如投喂给程序的是\n\n3\n94\n20\n90\n\n程序就要叼回\n\n94 是偶数\n20 是偶数\n90 是偶数\n\n（判分喂的是**另一批数**，条数也可能不一样，别把答案写死喵～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n    for (int i = 0; i < n; i++) {\n        int v = 0;\n        cin >> v;\n        cout << v << \" 是\" << ((v & 1) ? \"奇数\" : \"偶数\") << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "33 是奇数\n25 是奇数\n59 是奇数",
+      "stdin": "3\n33\n25\n59\n",
+      "explanation": "奇偶这一件事，只有**最低那格**在说话喵。\n\n别的格子代表的都是 2、4、8、16…… 全是 2 的整数倍，只有最低那格代表那个 1。所以一个数**最低那格亮着就是奇数、灭着就是偶数**。\n\n`v & 1` 正好只把最低那格留下来：上面所有格子都被 `1` 的 0 灭掉，最低那格原样照抄。结果不是 0 就是 1，拿它去看鱼干眼色（`? :` 那一招），奇数印「奇数」、偶数印「偶数」。\n\n⚠️ 别绕远路去算「除以 2 余几」—— 这一课的正主就是**直接看那一格**，它是什么，这个数就是什么性子，一眼就到。\n\n⚠️ 还有一处最容易写错：先读进来的那个数**是条数**，不是要判的数。它说的是「后面还有几行」，真正**每读一个判一个**的是绕鱼干跑圈那一段。少读一个、或者多印一行，屏幕上都会对不上喵。",
+      "templateId": "cpp-s3-17-odd-or-even",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:01:39.270Z",
+        "hash": "e8b9941479c79ea1"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-odd-or-even-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口先报一个数：这一回有几条小鱼干过来；紧接着一行一条，把那些数给你。\n\n请你写个程序：**来一个就印一行**，说清它是奇数还是偶数，形状是\n\n`7 是奇数`\n`42 是偶数`\n\n也就是「那个数 + 一个空格 + `是` + `奇数` 或 `偶数`」喵。\n\n比如投喂给程序的是\n\n4\n81\n88\n41\n41\n\n程序就要叼回\n\n81 是奇数\n88 是偶数\n41 是奇数\n41 是奇数\n\n（判分喂的是**另一批数**，条数也可能不一样，别把答案写死喵～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n    for (int i = 0; i < n; i++) {\n        int v = 0;\n        cin >> v;\n        cout << v << \" 是\" << ((v & 1) ? \"奇数\" : \"偶数\") << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "95 是奇数\n19 是奇数\n62 是偶数\n88 是偶数",
+      "stdin": "4\n95\n19\n62\n88\n",
+      "explanation": "奇偶这一件事，只有**最低那格**在说话喵。\n\n别的格子代表的都是 2、4、8、16…… 全是 2 的整数倍，只有最低那格代表那个 1。所以一个数**最低那格亮着就是奇数、灭着就是偶数**。\n\n`v & 1` 正好只把最低那格留下来：上面所有格子都被 `1` 的 0 灭掉，最低那格原样照抄。结果不是 0 就是 1，拿它去看鱼干眼色（`? :` 那一招），奇数印「奇数」、偶数印「偶数」。\n\n⚠️ 别绕远路去算「除以 2 余几」—— 这一课的正主就是**直接看那一格**，它是什么，这个数就是什么性子，一眼就到。\n\n⚠️ 还有一处最容易写错：先读进来的那个数**是条数**，不是要判的数。它说的是「后面还有几行」，真正**每读一个判一个**的是绕鱼干跑圈那一段。少读一个、或者多印一行，屏幕上都会对不上喵。",
+      "templateId": "cpp-s3-17-odd-or-even",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:52.635Z",
+        "hash": "cc2b85e88a005d0c"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-parens-cout-and-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这张牌亮了最低 4 格（`00001111`），本喵想印出「第 1 格那一盏灯的值」—— 拿牌去和那一盏灯一「与」，屏幕上就该出现那一盏灯的值。\n\n可这段代码**根本编不过**，翻译官喵当场把本喵拦下了。\n\n你帮本喵改好：改完能过，而且印出来的数要正好是那一盏灯的值喵。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    const unsigned char LAMP = 1u << 1;\n    cout << card & LAMP << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    const unsigned char LAMP = 1u << 1;\n    cout << (card & LAMP) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "2",
+      "stdin": null,
+      "explanation": "这一行编不过的根子，是**同一个记号的两副面孔撞在了一起**喵。\n\n`<<` 在这个语言里有两副面孔：一副是「整排往左挪格子」，另一副是「把东西印到屏幕上」。翻译官喵按**优先级**去读，而印东西那副绑得更紧 —— 于是它先把 `card` 塞进屏幕，塞完的那个东西已经不是本喵的牌了，再拿它去「与」一个数，没有这种招式，当场拦下。\n\n本喵要的是「**先算与、再把结果印出去**」。要改读法就得**加括号**：把「先算与」那一段整个括起来，让它先算完，再交给屏幕上那个箭头。\n\n⚠️ 这一题最该记住的是：**屏幕上那个箭头和挪格子那个箭头是同一个记号**。撞在一起的时候，括号是唯一能说清「先算哪一步」的办法 —— 翻译官喵读不懂你的心思，它只读优先级。\n\n⚠️ 顺带记一句：这一题是**少数会当场喊疼的错**，编不过，所以一定会被发现。真正难查的是那些默默算错、一声不吭的 —— 同一课里 `x & 1 == 0` 那一个就是。",
+      "templateId": "cpp-s3-17-parens-cout-and",
+      "params": {
+        "n": 1
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:54.152Z",
+        "hash": "3d0c96031175ed8e"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-17-parens-cout-and-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这张牌亮了最低 4 格（`00001111`），本喵想印出「第 3 格那一盏灯的值」—— 拿牌去和那一盏灯一「与」，屏幕上就该出现那一盏灯的值。\n\n可这段代码**根本编不过**，翻译官喵当场把本喵拦下了。\n\n你帮本喵改好：改完能过，而且印出来的数要正好是那一盏灯的值喵。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    const unsigned char LAMP = 1u << 3;\n    cout << card & LAMP << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    unsigned char card = 0b00001111;\n    const unsigned char LAMP = 1u << 3;\n    cout << (card & LAMP) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "8",
+      "stdin": null,
+      "explanation": "这一行编不过的根子，是**同一个记号的两副面孔撞在了一起**喵。\n\n`<<` 在这个语言里有两副面孔：一副是「整排往左挪格子」，另一副是「把东西印到屏幕上」。翻译官喵按**优先级**去读，而印东西那副绑得更紧 —— 于是它先把 `card` 塞进屏幕，塞完的那个东西已经不是本喵的牌了，再拿它去「与」一个数，没有这种招式，当场拦下。\n\n本喵要的是「**先算与、再把结果印出去**」。要改读法就得**加括号**：把「先算与」那一段整个括起来，让它先算完，再交给屏幕上那个箭头。\n\n⚠️ 这一题最该记住的是：**屏幕上那个箭头和挪格子那个箭头是同一个记号**。撞在一起的时候，括号是唯一能说清「先算哪一步」的办法 —— 翻译官喵读不懂你的心思，它只读优先级。\n\n⚠️ 顺带记一句：这一题是**少数会当场喊疼的错**，编不过，所以一定会被发现。真正难查的是那些默默算错、一声不吭的 —— 同一课里 `x & 1 == 0` 那一个就是。",
+      "templateId": "cpp-s3-17-parens-cout-and",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:56.028Z",
+        "hash": "3d0de389be22134a"
+      }
+    }
+  ]
+}

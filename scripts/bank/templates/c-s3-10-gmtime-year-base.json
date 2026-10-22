@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-10-gmtime-year-base",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-10",
+  "type": "codefix",
+  "concept": ["把秒数换成日子", "年份要从 1900 起数", "往外拿的时候加回去", "三个起数点不一样"],
+  "instances": 2,
+  "params": {
+    "sec": { "kind": "pick", "values": ["1700000000", "1600000000"] }
+  },
+  "stemTemplate": "本喵把怀表上那串数字换成了人看的日子。**月份和「第几天」那两格都是对的**，可**年份那一格**印出来是个**三位数**（`123` 这种）—— 谁家的年份长这样喵？\n\n请你把那一行改对（别的都别动）。改好之后：\n\n- 年份得是**四位数**（`2023` 这样）；\n- 还是那个格式：`那个数换成日子是：YYYY-MM-DD，一年里的第 D 天`，月份和日子该补 0 的补 0；\n- 「一年里的第几天」那一格本来就是对的，别顺手改坏了。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = {sec}L;\n    struct tm *t = gmtime(&fixed);\n\n    printf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n           t->tm_year, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <time.h>\n\nint main(void) {\n    time_t fixed = {sec}L;\n    struct tm *t = gmtime(&fixed);\n\n    printf(\"那个数换成日子是：%d-%02d-%02d，一年里的第 %d 天\\n\",\n           t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_yday + 1);\n    return 0;\n}\n",
+  "explanationTemplate": "牌子上的 `tm_year` 装的不是年份本身，而是「**从 1900 起数过了几年**」喵：本喵那串数字是 2023 年，牌子上写的是 `123`（2023 减掉 1900）。往外拿的时候得自己**加回 1900**，这就跟月份、第几天那两格一样，都是「它从别处起数、你得自己挪回来」。\n\n```text\nt->tm_year + 1900\n```\n\n这一课最容易咬人的就是这三个**起数点**各不相同：\n\n- 年份从 **1900** 起数 → 要 `+ 1900`；\n- 月份从 **0** 起数（0 是一月）→ 要 `+ 1`；\n- 「一年里的第几天」也从 **0** 起数 → 要 `+ 1`。\n\n上一行里月份和第几天都加对了，只有年份没加 —— 于是年份那一格只剩个三位数。查这种错的口诀是：**把牌子上的每一格都问一遍「你是从哪儿起数的」**。"
+}

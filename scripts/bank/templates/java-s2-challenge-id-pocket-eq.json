@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-challenge-id-pocket-eq",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-15",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "装盒子", "同一只还是同一个内容", "重号抓不到"],
+  "instances": 1,
+  "params": {},
+  "stdinSpec": { "kind": "raw", "text": "4\n150\n131\n150\n176\n", "sampleText": "3\n141\n141\n188\n" },
+  "stemTemplate": "本喵的号牌口袋到货了喵：装的全是**大号牌**（一百开外的号）。规矩是：\n\n- **同一个号来了两次**，就把它抓出来，印 `X 号来了两次喵`（抓到一个就够，不用全抓）；\n- 一个重号都没有，就印 `没有重号喵`。\n\n可现在它**永远报「没有重号喵」**—— 哪怕同一个号明明来了两次！你帮本喵找找病根。\n\n比如投喂 `141`、`141`、`188`（前面还有一个数表示一共几个号），它就咬死说「没有重号喵」喵……\n\n（判分喂的是**另外一组号**喵，也都是大号。）",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        ArrayList<Integer> ids = new ArrayList<Integer>();\n        for (int i = 0; i < n; i++) {\n            ids.add(sc.nextInt());\n        }\n\n        boolean found = false;\n        for (int i = 0; i < ids.size() && !found; i++) {\n            for (int j = i + 1; j < ids.size() && !found; j++) {\n                if (ids.get(i) == ids.get(j)) {\n                    System.out.println(ids.get(i) + \" 号来了两次喵\");\n                    found = true;\n                }\n            }\n        }\n\n        if (!found) {\n            System.out.println(\"没有重号喵\");\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        ArrayList<Integer> ids = new ArrayList<Integer>();\n        for (int i = 0; i < n; i++) {\n            ids.add(sc.nextInt());\n        }\n\n        boolean found = false;\n        for (int i = 0; i < ids.size() && !found; i++) {\n            for (int j = i + 1; j < ids.size() && !found; j++) {\n                if (ids.get(i).equals(ids.get(j))) {\n                    System.out.println(ids.get(i) + \" 号来了两次喵\");\n                    found = true;\n                }\n            }\n        }\n\n        if (!found) {\n            System.out.println(\"没有重号喵\");\n        }\n    }\n}\n",
+  "explanationTemplate": "`==` 在两块小盒子上问的是**「是不是同一只盒子」**，不是「盒子里装的值一不一样」喵。\n\n`ArrayList<Integer>` 的每一格装的都是**打包过的小盒子**。`ids.get(i) == ids.get(j)` 问的是「这两格指的是不是同一只盒子」—— 就算两只盒子里都写着 150，只要它们**是两只不同的盒子**，答案就是「不是」。而这个程序里，每个号放进口袋时都会**新做一只盒子**，所以这一问永远是「不是」，重号自然一个也抓不到。\n\n这题特别阴的地方在于：**小号**（大概 -128 到 127 之间）的盒子，Java 平时会**重复利用**几只旧的 —— 那种情况下 `==` 又碰巧是对的！所以这个错小数据测不出来、换批号就翻脸。今天这批号全在**一百开外**，一律是新盒子，错就藏不住了。\n\n改法：要比「盒子里的内容」，用 `.equals`：\n\n```java\nif (ids.get(i).equals(ids.get(j)))\n```\n\n记一句喵：**比盒子里装的东西，一律用 `.equals`；`==` 只配问「是不是同一只」。**"
+}

@@ -1,0 +1,79 @@
+{
+  "lessonId": "java-stage3-01",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵给空尺码加了一道门槛，写成 `<T extends Number>`。这句话在说什么？",
+      "options": [
+        "这块尺码**只能填 `Number` 那一家的成员**（整数、小数那种），填别的翻译稿子时就红",
+        "`T` 从此变成 `Number` 本身，函数里再也用不上别的写法",
+        "这一招只收一只东西，多的一概不收",
+        "`Number` 是这一招的名字，跟尺码无关"
+      ],
+      "answer": 0,
+      "explanation": "`extends` 在这里读作**门槛**：`T` 只收 `Number` 那一家（`Integer`、`Double` 都行）喵。写上门槛的好处是招式里能放心用这一家都会的本事，比如 `value.doubleValue()` —— 因为填进来的东西**保证**带着这手本事。它不给招式改名，也跟收几只东西没关系喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵想写一招「把柜子里的东西一件件印出来」，试了用 `List<Object>` 去收 `List<String>`，翻译官喵拦下了。为什么？",
+      "options": [
+        "`List<Object>` 和 `List<String>` 是**两种不同的柜子名分**，谁也不是谁的爹 —— 真收下它，本喵就能往这只装项链的柜子里塞数字，尺码当场就破",
+        "`List<Object>` 是老掉牙的写法，新版 Java 不再支持",
+        "因为 `printAll` 这个名字起得不好，编译器不认",
+        "得先把 `List<String>` 转成 `List<Object>` 再传进去"
+      ],
+      "answer": 0,
+      "explanation": "**不是**转一下就能解决的事喵：真让这一招收下它，招式里就能往这只柜子里塞一个数字，而它明明是装项链的 —— 尺码当场破了。所以翻译官喵宁可一开始就拦，报的是 `incompatible types`。想收下所有柜子，正确写法是 `List<?>`：装项链的、装数字的都递得进去喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "前辈猫传下来那句 PECS 口诀，是怎么念的？",
+      "options": [
+        "只管**往外叼**的写 `extends`，只管**往里塞**的写 `super`",
+        "只管往外叼的写 `super`，只管往里塞的写 `extends`",
+        "两个都写 `extends`，反正差不多",
+        "两个都写 `?` 就够了，不用管往哪边"
+      ],
+      "answer": 0,
+      "explanation": "正是这一句喵：往外叼（把东西取出来用）写 `? extends Number`，叼出来的一定是数字那一家的；往里塞（往柜子里放东西）写 `? super Integer`，塞进去的一定对得上尺寸。搞反了不会跑出怪结果，而是**翻译稿子的时候就红**（`int cannot be converted to CAP#1`）—— 这算好事喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    static double total(List<____> box) {\n        double sum = 0;\n        for (Number n : box) {\n            sum = sum + n.doubleValue();\n        }\n        return sum;\n    }\n\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        nums.add(5);\n        System.out.println(total(nums));\n    }\n}",
+      "stem": "这一招只管把柜子里的东西叼出来加一加，尺码那一段该填什么？（填一截刚好让招式里那句 `Number n` 叫得动）",
+      "blanks": [
+        {
+          "answer": "? extends Number",
+          "accept": []
+        }
+      ],
+      "explanation": "填 `? extends Number`：这是**只管往外叼**的写法 —— 叼出来的东西保证是数字那一家的，`n.doubleValue()` 才叫得动喵。填成 `? super Integer` 也能编译，可那样这招的意思就变成「往里塞」了，跟「叼出来加一加」对不上；填 `Number` 或者干脆不填更不行（前者收不了 `List<Integer>`，后者叼出来的是万物那种口袋，叫不动 `doubleValue()`）喵。填好后印出来是 5.0。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    static void fill(List<? super Integer> box) {\n        box.add(1);\n        box.add(2);\n        box.add(3);\n    }\n\n    public static void main(String[] args) {\n        List<Object> nums = new ArrayList<>();\n        fill(nums);\n        System.out.println(nums);\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "[1, 2, 3]",
+      "accept": ["[1, 2, 3]\n"],
+      "explanation": "`fill` 这道门槛写的是 `? super Integer`（只管往里塞的那种），本喵递进去的是尺码填万物那种柜子 —— 装得下万物当然装得下整数，所以三件都塞进去了喵。这句门槛读作「一只至少装得下 `Integer` 的柜子」；要是本喵递的是尺码填项链那种，那就递不进去了喵。印出来是 [1, 2, 3]。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    static <T extends Comparable<T>> T biggest(T a, T b) {\n        if (a.compareTo(b) >= 0) {\n            return a;\n        }\n        return b;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(biggest(7, 21));\n        System.out.println(biggest(\"小橘\", \"煤球\"));\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "21\n煤球",
+      "accept": ["21\n煤球\n"],
+      "explanation": "`T extends Comparable<T>` 这道门槛的意思是「会跟同类比大小」。第一句喂两个整数，大的那个是 `21`；第二句喂两条项链，比大小是按字的先后排的，`煤球` 排在 `小橘` 后面，所以大的是 `煤球`喵。门槛让 `a.compareTo(b)` 这一手随时叫得动 —— 这正是写门槛的唯一理由喵。"
+    }
+  ]
+}

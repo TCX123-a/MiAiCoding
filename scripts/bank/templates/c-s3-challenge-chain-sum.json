@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-challenge-chain-sum",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-18",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["链子", "一节一节往前走", "清点漏一节", "圈的问法"],
+  "instances": 1,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 2, "max": 30 },
+  "stemTemplate": "本喵最近迷上了**链子**：一节一节接起来，每节挂一条小鱼干。今天的接法是**每读到一节就接在最前面**，接完整串从头清点一遍。\n\n投喂口先给一个数（要接几节），再一节一节给数（每节挂几条）。清点的结果要印两行：`链子上有 %d 只喵` 和 `一共 %d 条喵`。\n\n可是清点出了岔子：**每次都少算一节** —— 明明接了好几节，报出来的节数总差一喵，总数也跟着少一截。你帮本喵把这一趟清点改对。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct node {\n    int fish;\n    struct node *next;\n};\n\nint main(void) {\n    struct node *head = NULL;\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        struct node *fresh = malloc(sizeof(struct node));\n        if (fresh == NULL) {\n            return 1;\n        }\n        fresh->fish = x;\n        fresh->next = head;\n        head = fresh;\n    }\n\n    int count = 0;\n    int total = 0;\n    struct node *p = head;\n    while (p->next != NULL) {\n        count = count + 1;\n        total = total + p->fish;\n        p = p->next;\n    }\n\n    printf(\"链子上有 %d 只喵\\n\", count);\n    printf(\"一共 %d 条喵\\n\", total);\n\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct node {\n    int fish;\n    struct node *next;\n};\n\nint main(void) {\n    struct node *head = NULL;\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        struct node *fresh = malloc(sizeof(struct node));\n        if (fresh == NULL) {\n            return 1;\n        }\n        fresh->fish = x;\n        fresh->next = head;\n        head = fresh;\n    }\n\n    int count = 0;\n    int total = 0;\n    struct node *p = head;\n    while (p != NULL) {\n        count = count + 1;\n        total = total + p->fish;\n        p = p->next;\n    }\n\n    printf(\"链子上有 %d 只喵\\n\", count);\n    printf(\"一共 %d 条喵\\n\", total);\n\n    return 0;\n}\n",
+  "explanationTemplate": "漏掉的那一节，正是**走到的最后一节** —— 病根在那一趟清点的**问法**上喵。\n\n`while (p->next != NULL)` 这句问的是：**「下一节还在吗？」** 可圈里干的事是「把**当前这一节**记上一笔，然后往前走」。轮到最后一节时，它老老实实问了一句「你后面还有吗」—— 没有，于是圈不进去，**这一节自己就从头到尾没被记上过**。\n\n看出来了吗：问的是「后面」，记的是「自己」，两者差了半拍。改法很直接，把问法换成\n\n```c\nwhile (p != NULL)\n```\n\n意思是「**我这一节还在吗**？还在就记一笔、再往前走」。这样每一节都会被记上，走到「我自己是空的」才收工 —— 一圈不多、一圈不少。\n\n顺带记个规律喵：顺着链子清点时，圈的问法要**盯住当前这一节**，别盯下一节 —— 盯下一节的写法，必丢最后一节。"
+}

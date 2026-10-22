@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-structptr-feed-by-pointer",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-06",
+  "type": "codewrite",
+  "concept": ["传牌子", "改本人", "->", "void招式"],
+  "instances": 6,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "狸花", "大肥鱼"] },
+    "f1": { "kind": "int", "min": 2, "max": 4 },
+    "f2": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵有一只猫（名字 `{who}`、食量 {f1}），要请一招给它添 {f2} 条小鱼干。\n\n请你写一招：头上收**一块指着猫的牌子**、再加一个「要添几条」。招式里把这只猫的食量**加上**那个数 —— 改的是**本人**，不往回带任何东西（所以这一招头上是 `void`）。\n\n`main` 里：生好那只猫，先报一行 `{who} 吃了 {f1} 条喵`；再喊这一招（喊的时候别忘了把牌子的**门牌号**递过去）；最后报第二行 `喂过之后 {who} 吃了 <加完之后的数> 条喵`。",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nvoid feed(struct Cat *c, int n) {\n    c->fish = c->fish + n;\n}\n\nint main(void) {\n    struct Cat a = {\"{who}\", {f1}};\n\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    feed(&a, {f2});\n    printf(\"喂过之后 %s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题是上一课那个「多出一只副本」的账，现在来还喵。\n\n**① 为什么非得递牌子？** 上一课看过：招式头上直接写 `struct Cat c` 的话，翻译官喵会**照着抄一份副本**再交给招式。招式里改得再热闹，改的都是那份副本，`main` 里本人该多少还是多少 —— 这跟递一条项链过去是一样的规矩。\n\n想让招式改到**本人**，就得跟递一排碗那样：**把门牌号递过去**。牌子的记号是在图纸后面加一颗星：\n\n```c\nvoid feed(struct Cat *c, int n)\n```\n\n**② 招式里进门用箭头。** `c` 现在是一块牌子，不是猫，所以进门不能用点号，得用 `c->fish`。整句 `c->fish = c->fish + n;` 读作「顺着牌子进那只猫的 `fish` 格，读出旧的、加上 n、再写回去」。\n\n**③ 喊的时候别忘了取门牌号。**\n\n```c\nfeed(&a, {f2});\n```\n\n那个 `&a` 不能漏 —— 跟 `scanf(\"%d\", &a.fish)` 里那个 `&` 是同一件事：招式要的是「猫在哪儿」，本喵得把门牌号给它。漏了 `&` 的话，是把整只猫又抄了一份递过去，本课就白学了喵。\n\n**一句话收口：图纸后面加星，招式就能改本人；喊的时候加 `&`，把门牌号递过去。**"
+}

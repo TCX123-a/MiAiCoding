@@ -1,0 +1,84 @@
+{
+  "lessonId": "c-stage3-20",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵抄了一份 `Makefile`，可施工命令那几行开头，本喵敲成了四个空格。敲 `mingw32-make` 会看到什么？",
+      "options": [
+        "`undefined reference` —— 又是名字没对上",
+        "什么错都不报，空格和 Tab 它都认",
+        "`missing separator` —— 它看不懂那一行",
+        "`Warning: recipe starts with spaces` —— 它好心提醒一句"
+      ],
+      "answer": 2,
+      "explanation": "图纸里施工命令那几行，开头必须是一个**真正的 Tab**。它不提醒「你用了空格」，只说 `missing separator`（缺分隔符）—— 别硬背译文，记住判据：那几行用 Tab 缩进。本喵真敲过这个错，原话在第四节。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵的图纸里有一行 `main.o: main.c fish.h` —— 原料那一栏比直觉多列了一个 `fish.h`。为什么招牌本也要算原料？",
+      "options": [
+        "改了 `fish.h`，译过它的半成品就都算过时，会被重新译一遍",
+        "`fish.h` 里存着译到一半的数据，得跟着一起拼",
+        "不列上的话，`fish.h` 会被 `clean` 当垃圾扫掉",
+        "习惯写法，列不列一个样"
+      ],
+      "answer": 0,
+      "explanation": "图纸靠**谁比谁新**来判断要不要重造。招牌本一改，`main.c` 和 `fish.c` 的成果就都可能过时 —— 把 `fish.h` 写进原料栏，改招牌才会触发重译。本喵真跑过这一步：碰过 `fish.h` 之后再敲 `mingw32-make`，两张半成品都重新译了，然后拼一次。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "什么都没改，再敲一次 `mingw32-make`，它说 `'prog.exe' is up to date.`。它凭什么断定「不用重造」？",
+      "options": [
+        "它把 `prog.exe` 打开瞄了一眼，看内容对不对",
+        "它藏着一个「上次干过活」的小本子，第二次就跳过",
+        "随机的 —— 第二次碰巧跳过了而已",
+        "它比对修改时间：原料都没比成品新，就没活可干"
+      ],
+      "answer": 3,
+      "explanation": "图纸上的每一条都在说「谁靠谁」，它就照着这张网比时间：原料比成品新，相关的那几步才重跑。所以改一行 `fish.c`，它只重译 `fish.o` 再拼一次 —— 第三节真跑给你看了；`main.o` 那一步一丝没动。"
+    },
+    {
+      "id": "q4",
+      "type": "choice",
+      "stem": "本课最后登场的 `CMakeLists.txt`，和 `Makefile` 到底是什么关系？",
+      "options": [
+        "同一张图纸的两个名字，内容一模一样",
+        "先读需求清单、照你这台机器现造一份施工图（Makefile 或别的），再照图施工",
+        "它是「调试版」的 Makefile",
+        "两者无关，工程里只能二选一"
+      ],
+      "answer": 1,
+      "explanation": "`Makefile` 是给某一类机器画的死图纸；换个系统、换个翻译官喵就得重画。`CMakeLists.txt` 是更高一层的话术：「我要一个 `prog`，用 `main.c` 和 `fish.c`」—— 具体画成什么图纸、交给哪支施工队，它到你这台机器上现定。本机它挑的施工队叫 Ninja，图纸就生成在 `build/` 里。"
+    },
+    {
+      "id": "q5",
+      "type": "fill",
+      "stem": "这台机器的工具链里，照图施工的那条命令怎么写？（别写成 Linux 教程里的短名字）",
+      "answer": "mingw32-make",
+      "accept": [],
+      "explanation": "Windows 这套工具链里它穿全名 `mingw32-make`；短名字 `make` 是 Linux 上的叫法，本机直接敲会告诉你找不到这条命令。它的大名其实叫 GNU Make，本机这份是 4.4.1。"
+    },
+    {
+      "id": "q6",
+      "type": "fill",
+      "stem": "大肥鱼想把半成品和成品一次扫干净。图纸里那条「打扫卫生」的规矩，叫什么名字？",
+      "answer": "clean",
+      "accept": [],
+      "explanation": "`clean` 不是它的保留字，只是大家约定俗成的叫法：`mingw32-make clean` 会去执行图纸里那条 `clean:` 名下写好的清扫命令（本机写的是 `rm -f *.o prog.exe`）。"
+    },
+    {
+      "id": "q7",
+      "type": "codefill",
+      "lang": "c",
+      "stem": "本喵把流水线三步挨个念出来的那个小本子有一处不对：步数现在从 0 数起。把空缺补一补，让输出从 `第 1 步` 开始。",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    const char *steps[3] = {\"编译 main.c\", \"编译 fish.c\", \"链接\"};\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 步：%s\\n\", ____, steps[i]);\n    }\n\n    return 0;\n}\n",
+      "blanks": [
+        { "answer": "i + 1", "accept": [] }
+      ],
+      "explanation": "`i` 从 0 开始数，而「第几步」要从 1 开始说 —— `i + 1` 正好补上这一格错位。填回去跑一遍，三行就是「第 1/2/3 步」。"
+    }
+  ]
+}

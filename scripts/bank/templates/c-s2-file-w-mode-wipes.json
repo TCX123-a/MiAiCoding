@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-file-w-mode-wipes",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-13",
+  "type": "codefix",
+  "concept": ["w 是撕掉重写", "a 是接着写", "跑得成功但数不对"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵的账本要**一天添一笔**：先记上第一天的 `{a}` 条，隔一天再在**后面接着**记上第二天的 `{b}` 条，最后把整本册子读出来印一遍。\n\n读出来应当是**两行都在**：\n\n```\n第一天 {a} 条\n第二天 {b} 条\n```\n\n可现在只印出一行 —— 第一天那条不见了。翻译官喵**一个字都没说**。你帮本喵看看第二回拉开抽屉的时候哪里写错了（**只改一个字母**）。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 {a} 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 {b} 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 {a} 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 {b} 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+  "explanationTemplate": "第二回拉开抽屉用的是 `\"w\"`，得改成 **`\"a\"`** 喵。\n\n三种打开方式的分界线记牢：\n\n| 打开方式 | 意思 |\n|---|---|\n| `\"r\"` | **只读**。册子上的字一个字都不动；册子要是不在，叼回来的就是 `NULL` |\n| `\"w\"` | **写**。拉开的那一刻，**原来写的字全被撕掉**，从头写起；册子不在就新建一本 |\n| `\"a\"` | **接着写**。保留原来的字，在停笔的地方往下写；册子不在就新建一本 |\n\n原来那句 `\"w\"` 的意思是「撕掉重写」—— 所以第二回拉开抽屉的一瞬间，第一天那条就已经被擦干净了。第二笔写在了一张白纸上，读出来的当然只有它自己。\n\n**`\"w\"` 和 `\"a\"` 只差一个字母，后果却是整本册子。** 而且这一处翻译官喵一个字都不会说：`\"w\"` 是个完全合法的打开方式，程序也好好地跑完了 —— 它压根不知道本喵心里想的是「添一笔」。\n\n所以往后写「一天添一笔」这种活，先在心里问一句：**这回是要重新写一本，还是在后面接着写？**\n\n（顺手再记一条同族的规矩：拉开抽屉之后 `fclose` 别忘 —— 一是写进去的字可能还揣在翻译官喵兜里没真落进册子，程序半路翻车时最容易吃这个亏；二是抽屉开得太多，翻译官喵会忙不过来。）"
+}

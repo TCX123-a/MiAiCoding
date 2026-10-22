@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-doc-stale-round",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-27",
+  "type": "codefix",
+  "concept": [
+    "注释与代码必须同步：不同步时，照注释理解代码的人会被带沟里",
+    "「一打 12 条、只算整打」= 向下取整到 12 的倍数：先除后乘，顺序别反",
+    "本情形的真相在注释这边：代码把该做的步骤弄丢了，修代码而不是改注释"
+  ],
+  "instances": 2,
+  "params": {
+    "t": { "kind": "pick", "values": ["38", "50"] }
+  },
+  "stemTemplate": "本喵这位老伙计的**行为和它的注释对不上**了喵：方法注释上写着一条规矩 ——「不满一打的零头舍掉，只算整打的」；可它现在**一条都不舍**，原样端上来。\n\n你照注释的规矩把它修回来（一打 = 12 条），让它印出**一行**：`按整打算 ` 拼上「舍掉零头之后」的条数，再拼 ` 条`。\n\n- 这次注释是**对的**，别改注释，改代码；\n- 这一题修的正是「注释与代码同步」：改代码的人把这一步弄丢了，注释把该做的事记了下来。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "public class Main {\n    /**\n     * 按整打折算：不满一打的零头舍掉，只算整打的条数。\n     *\n     * @param fish 鱼干条数\n     * @return 折算后的整打条数\n     */\n    static int toDozens(int fish) {\n        return fish;\n    }\n\n    public static void main(String[] args) {\n        int fish = {t};\n        System.out.println(\"按整打算 \" + toDozens(fish) + \" 条\");\n    }\n}",
+  "referenceFixTemplate": "public class Main {\n    /**\n     * 按整打折算：不满一打的零头舍掉，只算整打的条数。\n     *\n     * @param fish 鱼干条数\n     * @return 折算后的整打条数\n     */\n    static int toDozens(int fish) {\n        return fish / 12 * 12;\n    }\n\n    public static void main(String[] args) {\n        int fish = {t};\n        System.out.println(\"按整打算 \" + toDozens(fish) + \" 条\");\n    }\n}",
+  "explanationTemplate": "**一、先弄清这是哪边的错。** 手册有一条【推荐】：改了代码，注释要跟着一起改 —— 不同步，就像公路网和导航软件各说各话，照它走的人会被带沟里。这题里**注释说得对、代码把步骤弄丢了**，所以要修代码；现实里更常见的是反过来的「馊注释」—— 两种都致命，因为**大家是用注释理解代码的**。\n\n**二、舍零头怎么写。** 「一打 12 条、只算整打」是把条数**向下取整到 12 的倍数**：\n\n```java\nreturn fish / 12 * 12;\n```\n\n两个整数相除本来就舍零头（`38 / 12` 得 `3`），再乘回 12 就回到了整打的条数。**先除后乘**的顺序别反：`fish * 12 / 12` 一步回到原地，等于什么都没舍。\n\n**三、改完回头看一眼注释。** 注释已经写对了，你只需要确认修完的代码**逐字兑现**了它的每一句 —— 这正是「注释与代码同步」的日常操练。\n\n一句话记住：**注释写下的「该做什么」，是后来每个读代码的人的导航 —— 两边对不上时，先弄清哪边说的是真相，再动手。**"
+}

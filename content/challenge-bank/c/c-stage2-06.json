@@ -1,0 +1,433 @@
+{
+  "lessonId": "c-stage2-06",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s2-structptr-best-cat-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵摆了**五只猫**，名字按顺序是小橘、狸花、大肥鱼、三花、墨墨。今天来了几只猫要报食量：第一行是一个数 `n`，后面**一行一个**，一共 n 个数，按顺序对上前 n 只猫。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），摆好这一排五只猫，把读进来的数一只只填进对应那只猫的格子里。然后**用一块牌子**从排头走一圈，找出吃得最多的那只 —— 如果并列，报**靠前**的那只（也就是只在新的一只**严格更多**时才换牌子）。\n\n最后印一行：`<名字> 吃得最多，<食量> 条喵`。\n\n比如投喂给程序的是\n\n3\n2\n8\n5\n\n程序就要叼回\n\n狸花 吃得最多，8 条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[5] = {\n        {\"小橘\", 0},\n        {\"狸花\", 0},\n        {\"大肥鱼\", 0},\n        {\"三花\", 0},\n        {\"墨墨\", 0}\n    };\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &cats[i].fish) != 1) {\n            return 1;\n        }\n    }\n\n    struct Cat *best = cats;\n    for (struct Cat *p = cats; p < cats + n; p++) {\n        if (p->fish > best->fish) {\n            best = p;\n        }\n    }\n\n    printf(\"%s 吃得最多，%d 条喵\\n\", best->name, best->fish);\n    return 0;\n}\n",
+      "expectedOutput": "小橘 吃得最多，7 条喵",
+      "stdin": "3\n7\n4\n7\n",
+      "explanation": "这道题是本课两样本事的合成喵：**一块牌子走一圈**，外加本课开头那道题里「挑冠军」的老套路。\n\n**① 一块牌子负责走，另一块牌子负责记。**\n\n```c\nstruct Cat *best = cats;\nfor (struct Cat *p = cats; p < cats + n; p++) {\n```\n\n`p` 是**走的那块** —— 每转一圈 `p++` 往前挪一只。`best` 是**记的那块** —— 它记着「到目前为止吃得最多的那只住哪」。两块牌子各干各的，缺了哪块都不行：少了 `p` 走不动，少了 `best` 就记不住。\n\n**② 走一圈的路怎么画？** `for (struct Cat *p = cats; p < cats + n; p++)`。这里借的正是第二课那条规矩：`cats` 是排头那块门牌号，`cats + n` 就是绕过 n 只之后的门牌号，`p < cats + n` 读作「还没走过头」。\n\n**③ 并列为什么取靠前的？** 因为这里写的是**严格更多**才换：\n\n```c\nif (p->fish > best->fish)\n```\n\n用的是一根尖朝右的 `>`，不是 `>=`。所以后面那只跟当前冠军打平的时候，`best` 一个字都不动，还是指着靠前那只。题目要求「并列报靠前的」，这一根尖的方向就是答案喵。\n\n**④ 最后报的时候不用再加星。** `best->name` 读的是那块牌子指着的那只猫的名字。牌子本身就是门牌号，直接顺着它进门就行。",
+      "templateId": "c-s2-structptr-best-cat",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:28:06.117Z",
+        "hash": "e131cdc9848082fc"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-best-cat-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵摆了**五只猫**，名字按顺序是小橘、狸花、大肥鱼、三花、墨墨。今天来了几只猫要报食量：第一行是一个数 `n`，后面**一行一个**，一共 n 个数，按顺序对上前 n 只猫。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），摆好这一排五只猫，把读进来的数一只只填进对应那只猫的格子里。然后**用一块牌子**从排头走一圈，找出吃得最多的那只 —— 如果并列，报**靠前**的那只（也就是只在新的一只**严格更多**时才换牌子）。\n\n最后印一行：`<名字> 吃得最多，<食量> 条喵`。\n\n比如投喂给程序的是\n\n4\n3\n1\n9\n6\n\n程序就要叼回\n\n大肥鱼 吃得最多，9 条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[5] = {\n        {\"小橘\", 0},\n        {\"狸花\", 0},\n        {\"大肥鱼\", 0},\n        {\"三花\", 0},\n        {\"墨墨\", 0}\n    };\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &cats[i].fish) != 1) {\n            return 1;\n        }\n    }\n\n    struct Cat *best = cats;\n    for (struct Cat *p = cats; p < cats + n; p++) {\n        if (p->fish > best->fish) {\n            best = p;\n        }\n    }\n\n    printf(\"%s 吃得最多，%d 条喵\\n\", best->name, best->fish);\n    return 0;\n}\n",
+      "expectedOutput": "狸花 吃得最多，4 条喵",
+      "stdin": "4\n3\n4\n3\n1\n",
+      "explanation": "这道题是本课两样本事的合成喵：**一块牌子走一圈**，外加本课开头那道题里「挑冠军」的老套路。\n\n**① 一块牌子负责走，另一块牌子负责记。**\n\n```c\nstruct Cat *best = cats;\nfor (struct Cat *p = cats; p < cats + n; p++) {\n```\n\n`p` 是**走的那块** —— 每转一圈 `p++` 往前挪一只。`best` 是**记的那块** —— 它记着「到目前为止吃得最多的那只住哪」。两块牌子各干各的，缺了哪块都不行：少了 `p` 走不动，少了 `best` 就记不住。\n\n**② 走一圈的路怎么画？** `for (struct Cat *p = cats; p < cats + n; p++)`。这里借的正是第二课那条规矩：`cats` 是排头那块门牌号，`cats + n` 就是绕过 n 只之后的门牌号，`p < cats + n` 读作「还没走过头」。\n\n**③ 并列为什么取靠前的？** 因为这里写的是**严格更多**才换：\n\n```c\nif (p->fish > best->fish)\n```\n\n用的是一根尖朝右的 `>`，不是 `>=`。所以后面那只跟当前冠军打平的时候，`best` 一个字都不动，还是指着靠前那只。题目要求「并列报靠前的」，这一根尖的方向就是答案喵。\n\n**④ 最后报的时候不用再加星。** `best->name` 读的是那块牌子指着的那只猫的名字。牌子本身就是门牌号，直接顺着它进门就行。",
+      "templateId": "c-s2-structptr-best-cat",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:48.982Z",
+        "hash": "3754387a44193a6c"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-best-cat-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵摆了**五只猫**，名字按顺序是小橘、狸花、大肥鱼、三花、墨墨。今天来了几只猫要报食量：第一行是一个数 `n`，后面**一行一个**，一共 n 个数，按顺序对上前 n 只猫。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），摆好这一排五只猫，把读进来的数一只只填进对应那只猫的格子里。然后**用一块牌子**从排头走一圈，找出吃得最多的那只 —— 如果并列，报**靠前**的那只（也就是只在新的一只**严格更多**时才换牌子）。\n\n最后印一行：`<名字> 吃得最多，<食量> 条喵`。\n\n比如投喂给程序的是\n\n5\n7\n9\n8\n7\n7\n\n程序就要叼回\n\n狸花 吃得最多，9 条喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[5] = {\n        {\"小橘\", 0},\n        {\"狸花\", 0},\n        {\"大肥鱼\", 0},\n        {\"三花\", 0},\n        {\"墨墨\", 0}\n    };\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &cats[i].fish) != 1) {\n            return 1;\n        }\n    }\n\n    struct Cat *best = cats;\n    for (struct Cat *p = cats; p < cats + n; p++) {\n        if (p->fish > best->fish) {\n            best = p;\n        }\n    }\n\n    printf(\"%s 吃得最多，%d 条喵\\n\", best->name, best->fish);\n    return 0;\n}\n",
+      "expectedOutput": "狸花 吃得最多，6 条喵",
+      "stdin": "5\n2\n6\n3\n6\n6\n",
+      "explanation": "这道题是本课两样本事的合成喵：**一块牌子走一圈**，外加本课开头那道题里「挑冠军」的老套路。\n\n**① 一块牌子负责走，另一块牌子负责记。**\n\n```c\nstruct Cat *best = cats;\nfor (struct Cat *p = cats; p < cats + n; p++) {\n```\n\n`p` 是**走的那块** —— 每转一圈 `p++` 往前挪一只。`best` 是**记的那块** —— 它记着「到目前为止吃得最多的那只住哪」。两块牌子各干各的，缺了哪块都不行：少了 `p` 走不动，少了 `best` 就记不住。\n\n**② 走一圈的路怎么画？** `for (struct Cat *p = cats; p < cats + n; p++)`。这里借的正是第二课那条规矩：`cats` 是排头那块门牌号，`cats + n` 就是绕过 n 只之后的门牌号，`p < cats + n` 读作「还没走过头」。\n\n**③ 并列为什么取靠前的？** 因为这里写的是**严格更多**才换：\n\n```c\nif (p->fish > best->fish)\n```\n\n用的是一根尖朝右的 `>`，不是 `>=`。所以后面那只跟当前冠军打平的时候，`best` 一个字都不动，还是指着靠前那只。题目要求「并列报靠前的」，这一根尖的方向就是答案喵。\n\n**④ 最后报的时候不用再加星。** `best->name` 读的是那块牌子指着的那只猫的名字。牌子本身就是门牌号，直接顺着它进门就行。",
+      "templateId": "c-s2-structptr-best-cat",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:28:07.774Z",
+        "hash": "7713af730bce298c"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-feed-by-pointer-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有一只猫（名字 `小橘`、食量 2），要请一招给它添 3 条小鱼干。\n\n请你写一招：头上收**一块指着猫的牌子**、再加一个「要添几条」。招式里把这只猫的食量**加上**那个数 —— 改的是**本人**，不往回带任何东西（所以这一招头上是 `void`）。\n\n`main` 里：生好那只猫，先报一行 `小橘 吃了 2 条喵`；再喊这一招（喊的时候别忘了把牌子的**门牌号**递过去）；最后报第二行 `喂过之后 小橘 吃了 <加完之后的数> 条喵`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nvoid feed(struct Cat *c, int n) {\n    c->fish = c->fish + n;\n}\n\nint main(void) {\n    struct Cat a = {\"小橘\", 2};\n\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    feed(&a, 3);\n    printf(\"喂过之后 %s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+      "expectedOutput": "小橘 吃了 2 条喵\n喂过之后 小橘 吃了 5 条喵",
+      "stdin": null,
+      "explanation": "这道题是上一课那个「多出一只副本」的账，现在来还喵。\n\n**① 为什么非得递牌子？** 上一课看过：招式头上直接写 `struct Cat c` 的话，翻译官喵会**照着抄一份副本**再交给招式。招式里改得再热闹，改的都是那份副本，`main` 里本人该多少还是多少 —— 这跟递一条项链过去是一样的规矩。\n\n想让招式改到**本人**，就得跟递一排碗那样：**把门牌号递过去**。牌子的记号是在图纸后面加一颗星：\n\n```c\nvoid feed(struct Cat *c, int n)\n```\n\n**② 招式里进门用箭头。** `c` 现在是一块牌子，不是猫，所以进门不能用点号，得用 `c->fish`。整句 `c->fish = c->fish + n;` 读作「顺着牌子进那只猫的 `fish` 格，读出旧的、加上 n、再写回去」。\n\n**③ 喊的时候别忘了取门牌号。**\n\n```c\nfeed(&a, 3);\n```\n\n那个 `&a` 不能漏 —— 跟 `scanf(\"%d\", &a.fish)` 里那个 `&` 是同一件事：招式要的是「猫在哪儿」，本喵得把门牌号给它。漏了 `&` 的话，是把整只猫又抄了一份递过去，本课就白学了喵。\n\n**一句话收口：图纸后面加星，招式就能改本人；喊的时候加 `&`，把门牌号递过去。**",
+      "templateId": "c-s2-structptr-feed-by-pointer",
+      "params": {
+        "who": "小橘",
+        "f1": 2,
+        "f2": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:28:00.135Z",
+        "hash": "36f8cbb93c6fb37d"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-feed-by-pointer-005",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有一只猫（名字 `小橘`、食量 3），要请一招给它添 5 条小鱼干。\n\n请你写一招：头上收**一块指着猫的牌子**、再加一个「要添几条」。招式里把这只猫的食量**加上**那个数 —— 改的是**本人**，不往回带任何东西（所以这一招头上是 `void`）。\n\n`main` 里：生好那只猫，先报一行 `小橘 吃了 3 条喵`；再喊这一招（喊的时候别忘了把牌子的**门牌号**递过去）；最后报第二行 `喂过之后 小橘 吃了 <加完之后的数> 条喵`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nvoid feed(struct Cat *c, int n) {\n    c->fish = c->fish + n;\n}\n\nint main(void) {\n    struct Cat a = {\"小橘\", 3};\n\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    feed(&a, 5);\n    printf(\"喂过之后 %s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+      "expectedOutput": "小橘 吃了 3 条喵\n喂过之后 小橘 吃了 8 条喵",
+      "stdin": null,
+      "explanation": "这道题是上一课那个「多出一只副本」的账，现在来还喵。\n\n**① 为什么非得递牌子？** 上一课看过：招式头上直接写 `struct Cat c` 的话，翻译官喵会**照着抄一份副本**再交给招式。招式里改得再热闹，改的都是那份副本，`main` 里本人该多少还是多少 —— 这跟递一条项链过去是一样的规矩。\n\n想让招式改到**本人**，就得跟递一排碗那样：**把门牌号递过去**。牌子的记号是在图纸后面加一颗星：\n\n```c\nvoid feed(struct Cat *c, int n)\n```\n\n**② 招式里进门用箭头。** `c` 现在是一块牌子，不是猫，所以进门不能用点号，得用 `c->fish`。整句 `c->fish = c->fish + n;` 读作「顺着牌子进那只猫的 `fish` 格，读出旧的、加上 n、再写回去」。\n\n**③ 喊的时候别忘了取门牌号。**\n\n```c\nfeed(&a, 5);\n```\n\n那个 `&a` 不能漏 —— 跟 `scanf(\"%d\", &a.fish)` 里那个 `&` 是同一件事：招式要的是「猫在哪儿」，本喵得把门牌号给它。漏了 `&` 的话，是把整只猫又抄了一份递过去，本课就白学了喵。\n\n**一句话收口：图纸后面加星，招式就能改本人；喊的时候加 `&`，把门牌号递过去。**",
+      "templateId": "c-s2-structptr-feed-by-pointer",
+      "params": {
+        "who": "小橘",
+        "f1": 3,
+        "f2": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:51.277Z",
+        "hash": "69d2d6d2cbad0381"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-feed-by-pointer-010",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有一只猫（名字 `狸花`、食量 2），要请一招给它添 4 条小鱼干。\n\n请你写一招：头上收**一块指着猫的牌子**、再加一个「要添几条」。招式里把这只猫的食量**加上**那个数 —— 改的是**本人**，不往回带任何东西（所以这一招头上是 `void`）。\n\n`main` 里：生好那只猫，先报一行 `狸花 吃了 2 条喵`；再喊这一招（喊的时候别忘了把牌子的**门牌号**递过去）；最后报第二行 `喂过之后 狸花 吃了 <加完之后的数> 条喵`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nvoid feed(struct Cat *c, int n) {\n    c->fish = c->fish + n;\n}\n\nint main(void) {\n    struct Cat a = {\"狸花\", 2};\n\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    feed(&a, 4);\n    printf(\"喂过之后 %s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+      "expectedOutput": "狸花 吃了 2 条喵\n喂过之后 狸花 吃了 6 条喵",
+      "stdin": null,
+      "explanation": "这道题是上一课那个「多出一只副本」的账，现在来还喵。\n\n**① 为什么非得递牌子？** 上一课看过：招式头上直接写 `struct Cat c` 的话，翻译官喵会**照着抄一份副本**再交给招式。招式里改得再热闹，改的都是那份副本，`main` 里本人该多少还是多少 —— 这跟递一条项链过去是一样的规矩。\n\n想让招式改到**本人**，就得跟递一排碗那样：**把门牌号递过去**。牌子的记号是在图纸后面加一颗星：\n\n```c\nvoid feed(struct Cat *c, int n)\n```\n\n**② 招式里进门用箭头。** `c` 现在是一块牌子，不是猫，所以进门不能用点号，得用 `c->fish`。整句 `c->fish = c->fish + n;` 读作「顺着牌子进那只猫的 `fish` 格，读出旧的、加上 n、再写回去」。\n\n**③ 喊的时候别忘了取门牌号。**\n\n```c\nfeed(&a, 4);\n```\n\n那个 `&a` 不能漏 —— 跟 `scanf(\"%d\", &a.fish)` 里那个 `&` 是同一件事：招式要的是「猫在哪儿」，本喵得把门牌号给它。漏了 `&` 的话，是把整只猫又抄了一份递过去，本课就白学了喵。\n\n**一句话收口：图纸后面加星，招式就能改本人；喊的时候加 `&`，把门牌号递过去。**",
+      "templateId": "c-s2-structptr-feed-by-pointer",
+      "params": {
+        "who": "狸花",
+        "f1": 2,
+        "f2": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:53.516Z",
+        "hash": "19a8fb8cb582cbae"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-feed-by-pointer-016",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有一只猫（名字 `狸花`、食量 4），要请一招给它添 4 条小鱼干。\n\n请你写一招：头上收**一块指着猫的牌子**、再加一个「要添几条」。招式里把这只猫的食量**加上**那个数 —— 改的是**本人**，不往回带任何东西（所以这一招头上是 `void`）。\n\n`main` 里：生好那只猫，先报一行 `狸花 吃了 4 条喵`；再喊这一招（喊的时候别忘了把牌子的**门牌号**递过去）；最后报第二行 `喂过之后 狸花 吃了 <加完之后的数> 条喵`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nvoid feed(struct Cat *c, int n) {\n    c->fish = c->fish + n;\n}\n\nint main(void) {\n    struct Cat a = {\"狸花\", 4};\n\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    feed(&a, 4);\n    printf(\"喂过之后 %s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+      "expectedOutput": "狸花 吃了 4 条喵\n喂过之后 狸花 吃了 8 条喵",
+      "stdin": null,
+      "explanation": "这道题是上一课那个「多出一只副本」的账，现在来还喵。\n\n**① 为什么非得递牌子？** 上一课看过：招式头上直接写 `struct Cat c` 的话，翻译官喵会**照着抄一份副本**再交给招式。招式里改得再热闹，改的都是那份副本，`main` 里本人该多少还是多少 —— 这跟递一条项链过去是一样的规矩。\n\n想让招式改到**本人**，就得跟递一排碗那样：**把门牌号递过去**。牌子的记号是在图纸后面加一颗星：\n\n```c\nvoid feed(struct Cat *c, int n)\n```\n\n**② 招式里进门用箭头。** `c` 现在是一块牌子，不是猫，所以进门不能用点号，得用 `c->fish`。整句 `c->fish = c->fish + n;` 读作「顺着牌子进那只猫的 `fish` 格，读出旧的、加上 n、再写回去」。\n\n**③ 喊的时候别忘了取门牌号。**\n\n```c\nfeed(&a, 4);\n```\n\n那个 `&a` 不能漏 —— 跟 `scanf(\"%d\", &a.fish)` 里那个 `&` 是同一件事：招式要的是「猫在哪儿」，本喵得把门牌号给它。漏了 `&` 的话，是把整只猫又抄了一份递过去，本课就白学了喵。\n\n**一句话收口：图纸后面加星，招式就能改本人；喊的时候加 `&`，把门牌号递过去。**",
+      "templateId": "c-s2-structptr-feed-by-pointer",
+      "params": {
+        "who": "狸花",
+        "f1": 4,
+        "f2": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:55.671Z",
+        "hash": "9935e586019c233d"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-feed-by-pointer-021",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有一只猫（名字 `大肥鱼`、食量 3），要请一招给它添 3 条小鱼干。\n\n请你写一招：头上收**一块指着猫的牌子**、再加一个「要添几条」。招式里把这只猫的食量**加上**那个数 —— 改的是**本人**，不往回带任何东西（所以这一招头上是 `void`）。\n\n`main` 里：生好那只猫，先报一行 `大肥鱼 吃了 3 条喵`；再喊这一招（喊的时候别忘了把牌子的**门牌号**递过去）；最后报第二行 `喂过之后 大肥鱼 吃了 <加完之后的数> 条喵`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nvoid feed(struct Cat *c, int n) {\n    c->fish = c->fish + n;\n}\n\nint main(void) {\n    struct Cat a = {\"大肥鱼\", 3};\n\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    feed(&a, 3);\n    printf(\"喂过之后 %s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+      "expectedOutput": "大肥鱼 吃了 3 条喵\n喂过之后 大肥鱼 吃了 6 条喵",
+      "stdin": null,
+      "explanation": "这道题是上一课那个「多出一只副本」的账，现在来还喵。\n\n**① 为什么非得递牌子？** 上一课看过：招式头上直接写 `struct Cat c` 的话，翻译官喵会**照着抄一份副本**再交给招式。招式里改得再热闹，改的都是那份副本，`main` 里本人该多少还是多少 —— 这跟递一条项链过去是一样的规矩。\n\n想让招式改到**本人**，就得跟递一排碗那样：**把门牌号递过去**。牌子的记号是在图纸后面加一颗星：\n\n```c\nvoid feed(struct Cat *c, int n)\n```\n\n**② 招式里进门用箭头。** `c` 现在是一块牌子，不是猫，所以进门不能用点号，得用 `c->fish`。整句 `c->fish = c->fish + n;` 读作「顺着牌子进那只猫的 `fish` 格，读出旧的、加上 n、再写回去」。\n\n**③ 喊的时候别忘了取门牌号。**\n\n```c\nfeed(&a, 3);\n```\n\n那个 `&a` 不能漏 —— 跟 `scanf(\"%d\", &a.fish)` 里那个 `&` 是同一件事：招式要的是「猫在哪儿」，本喵得把门牌号给它。漏了 `&` 的话，是把整只猫又抄了一份递过去，本课就白学了喵。\n\n**一句话收口：图纸后面加星，招式就能改本人；喊的时候加 `&`，把门牌号递过去。**",
+      "templateId": "c-s2-structptr-feed-by-pointer",
+      "params": {
+        "who": "大肥鱼",
+        "f1": 3,
+        "f2": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:57.903Z",
+        "hash": "858d2a802c88fdf3"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-feed-by-pointer-026",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有一只猫（名字 `大肥鱼`、食量 4），要请一招给它添 5 条小鱼干。\n\n请你写一招：头上收**一块指着猫的牌子**、再加一个「要添几条」。招式里把这只猫的食量**加上**那个数 —— 改的是**本人**，不往回带任何东西（所以这一招头上是 `void`）。\n\n`main` 里：生好那只猫，先报一行 `大肥鱼 吃了 4 条喵`；再喊这一招（喊的时候别忘了把牌子的**门牌号**递过去）；最后报第二行 `喂过之后 大肥鱼 吃了 <加完之后的数> 条喵`。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nvoid feed(struct Cat *c, int n) {\n    c->fish = c->fish + n;\n}\n\nint main(void) {\n    struct Cat a = {\"大肥鱼\", 4};\n\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    feed(&a, 5);\n    printf(\"喂过之后 %s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+      "expectedOutput": "大肥鱼 吃了 4 条喵\n喂过之后 大肥鱼 吃了 9 条喵",
+      "stdin": null,
+      "explanation": "这道题是上一课那个「多出一只副本」的账，现在来还喵。\n\n**① 为什么非得递牌子？** 上一课看过：招式头上直接写 `struct Cat c` 的话，翻译官喵会**照着抄一份副本**再交给招式。招式里改得再热闹，改的都是那份副本，`main` 里本人该多少还是多少 —— 这跟递一条项链过去是一样的规矩。\n\n想让招式改到**本人**，就得跟递一排碗那样：**把门牌号递过去**。牌子的记号是在图纸后面加一颗星：\n\n```c\nvoid feed(struct Cat *c, int n)\n```\n\n**② 招式里进门用箭头。** `c` 现在是一块牌子，不是猫，所以进门不能用点号，得用 `c->fish`。整句 `c->fish = c->fish + n;` 读作「顺着牌子进那只猫的 `fish` 格，读出旧的、加上 n、再写回去」。\n\n**③ 喊的时候别忘了取门牌号。**\n\n```c\nfeed(&a, 5);\n```\n\n那个 `&a` 不能漏 —— 跟 `scanf(\"%d\", &a.fish)` 里那个 `&` 是同一件事：招式要的是「猫在哪儿」，本喵得把门牌号给它。漏了 `&` 的话，是把整只猫又抄了一份递过去，本课就白学了喵。\n\n**一句话收口：图纸后面加星，招式就能改本人；喊的时候加 `&`，把门牌号递过去。**",
+      "templateId": "c-s2-structptr-feed-by-pointer",
+      "params": {
+        "who": "大肥鱼",
+        "f1": 4,
+        "f2": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:28:01.326Z",
+        "hash": "3ebace88eb7b0b6e"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-malloc-cat-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵今天想**现租一只猫**：不用在 `main` 里提前生好，直接跟大仓库要一块刚够一只猫住的地方，让牌子指着它。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），然后：\n\n1. 跟仓库要一块地方，**大小正好是一只猫**（别写死数字，用「量一下一只猫多大」那个招式）；要完**先看看有没有租到** —— 没租到就印一行 `仓库没租到喵` 然后收工；\n2. 把名字填成 `小橘`（用抄项链那一招）、食量填成 3；\n3. 印一行 `小橘 有 3 条喵`；\n4. 用完把地方**还回去**，牌子也擦干净（让它指着空）。\n\n仓库那头（`malloc`/`free`）住在 `stdlib.h` 家里，抄项链的招式住在 `string.h` 家里喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat *p = (struct Cat *)malloc(sizeof(struct Cat));\n\n    if (p == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 0;\n    }\n\n    strcpy(p->name, \"小橘\");\n    p->fish = 3;\n    printf(\"%s 有 %d 条喵\\n\", p->name, p->fish);\n\n    free(p);\n    p = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "小橘 有 3 条喵",
+      "stdin": null,
+      "explanation": "一块地能不能住下一只猫，得先**量一下**喵。\n\n**① 量一只猫多大：`sizeof(struct Cat)`。** 这是翻译官喵替本喵算的：把图纸上每一个格子各占多大加起来。自己拿计算器去凑数字（写 `sizeof(char)*20 + sizeof(int)` 之类）看着聪明，可图纸一改就全错，还是让翻译官喵去量最稳。\n\n**② 补写「这块地方按一只猫来读」。** 仓库那头只管给一块地，它不知道本喵要住猫还是住别的，所以交回来的是一块**说不清是什么**的门牌号。要给牌子配上记号，得自己补一句：\n\n```c\n(struct Cat *)malloc(sizeof(struct Cat))\n```\n\n前面那对括号加图纸记号，读作「**这块地，按一只猫来读**」。少了它翻译官喵会拦你（说不清的东西配不上带记号的牌子）。\n\n**③ 要完先看租没租到。** 仓库也可能两手一摊（比如地方不够），那时候拿回来的门牌号是 `NULL`（空牌子）。不先检查就顺着空牌子进门，程序当场就倒 —— 所以 `if (p == NULL)` 那一步不是客套话，是真要做的事。\n\n**④ 用完记得还。** `free(p);` 把地方交回仓库，`p = NULL;` 是把牌子擦干净。擦这一下很像多此一举，可它是个好习惯：空牌子再被谁拿去用，好歹是当场倒下、一眼看得见，比悄悄写到别人家地里强得多喵。",
+      "templateId": "c-s2-structptr-malloc-cat",
+      "params": {
+        "who": "小橘",
+        "f1": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:28:02.776Z",
+        "hash": "3f35c2f0d54a48b8"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-malloc-cat-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵今天想**现租一只猫**：不用在 `main` 里提前生好，直接跟大仓库要一块刚够一只猫住的地方，让牌子指着它。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），然后：\n\n1. 跟仓库要一块地方，**大小正好是一只猫**（别写死数字，用「量一下一只猫多大」那个招式）；要完**先看看有没有租到** —— 没租到就印一行 `仓库没租到喵` 然后收工；\n2. 把名字填成 `小橘`（用抄项链那一招）、食量填成 6；\n3. 印一行 `小橘 有 6 条喵`；\n4. 用完把地方**还回去**，牌子也擦干净（让它指着空）。\n\n仓库那头（`malloc`/`free`）住在 `stdlib.h` 家里，抄项链的招式住在 `string.h` 家里喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat *p = (struct Cat *)malloc(sizeof(struct Cat));\n\n    if (p == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 0;\n    }\n\n    strcpy(p->name, \"小橘\");\n    p->fish = 6;\n    printf(\"%s 有 %d 条喵\\n\", p->name, p->fish);\n\n    free(p);\n    p = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "小橘 有 6 条喵",
+      "stdin": null,
+      "explanation": "一块地能不能住下一只猫，得先**量一下**喵。\n\n**① 量一只猫多大：`sizeof(struct Cat)`。** 这是翻译官喵替本喵算的：把图纸上每一个格子各占多大加起来。自己拿计算器去凑数字（写 `sizeof(char)*20 + sizeof(int)` 之类）看着聪明，可图纸一改就全错，还是让翻译官喵去量最稳。\n\n**② 补写「这块地方按一只猫来读」。** 仓库那头只管给一块地，它不知道本喵要住猫还是住别的，所以交回来的是一块**说不清是什么**的门牌号。要给牌子配上记号，得自己补一句：\n\n```c\n(struct Cat *)malloc(sizeof(struct Cat))\n```\n\n前面那对括号加图纸记号，读作「**这块地，按一只猫来读**」。少了它翻译官喵会拦你（说不清的东西配不上带记号的牌子）。\n\n**③ 要完先看租没租到。** 仓库也可能两手一摊（比如地方不够），那时候拿回来的门牌号是 `NULL`（空牌子）。不先检查就顺着空牌子进门，程序当场就倒 —— 所以 `if (p == NULL)` 那一步不是客套话，是真要做的事。\n\n**④ 用完记得还。** `free(p);` 把地方交回仓库，`p = NULL;` 是把牌子擦干净。擦这一下很像多此一举，可它是个好习惯：空牌子再被谁拿去用，好歹是当场倒下、一眼看得见，比悄悄写到别人家地里强得多喵。",
+      "templateId": "c-s2-structptr-malloc-cat",
+      "params": {
+        "who": "小橘",
+        "f1": 6
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:00.124Z",
+        "hash": "a8daa9d20de73124"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-malloc-cat-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵今天想**现租一只猫**：不用在 `main` 里提前生好，直接跟大仓库要一块刚够一只猫住的地方，让牌子指着它。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），然后：\n\n1. 跟仓库要一块地方，**大小正好是一只猫**（别写死数字，用「量一下一只猫多大」那个招式）；要完**先看看有没有租到** —— 没租到就印一行 `仓库没租到喵` 然后收工；\n2. 把名字填成 `狸花`（用抄项链那一招）、食量填成 4；\n3. 印一行 `狸花 有 4 条喵`；\n4. 用完把地方**还回去**，牌子也擦干净（让它指着空）。\n\n仓库那头（`malloc`/`free`）住在 `stdlib.h` 家里，抄项链的招式住在 `string.h` 家里喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat *p = (struct Cat *)malloc(sizeof(struct Cat));\n\n    if (p == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 0;\n    }\n\n    strcpy(p->name, \"狸花\");\n    p->fish = 4;\n    printf(\"%s 有 %d 条喵\\n\", p->name, p->fish);\n\n    free(p);\n    p = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "狸花 有 4 条喵",
+      "stdin": null,
+      "explanation": "一块地能不能住下一只猫，得先**量一下**喵。\n\n**① 量一只猫多大：`sizeof(struct Cat)`。** 这是翻译官喵替本喵算的：把图纸上每一个格子各占多大加起来。自己拿计算器去凑数字（写 `sizeof(char)*20 + sizeof(int)` 之类）看着聪明，可图纸一改就全错，还是让翻译官喵去量最稳。\n\n**② 补写「这块地方按一只猫来读」。** 仓库那头只管给一块地，它不知道本喵要住猫还是住别的，所以交回来的是一块**说不清是什么**的门牌号。要给牌子配上记号，得自己补一句：\n\n```c\n(struct Cat *)malloc(sizeof(struct Cat))\n```\n\n前面那对括号加图纸记号，读作「**这块地，按一只猫来读**」。少了它翻译官喵会拦你（说不清的东西配不上带记号的牌子）。\n\n**③ 要完先看租没租到。** 仓库也可能两手一摊（比如地方不够），那时候拿回来的门牌号是 `NULL`（空牌子）。不先检查就顺着空牌子进门，程序当场就倒 —— 所以 `if (p == NULL)` 那一步不是客套话，是真要做的事。\n\n**④ 用完记得还。** `free(p);` 把地方交回仓库，`p = NULL;` 是把牌子擦干净。擦这一下很像多此一举，可它是个好习惯：空牌子再被谁拿去用，好歹是当场倒下、一眼看得见，比悄悄写到别人家地里强得多喵。",
+      "templateId": "c-s2-structptr-malloc-cat",
+      "params": {
+        "who": "狸花",
+        "f1": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:02.487Z",
+        "hash": "ddd0c81278dc79dc"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-malloc-cat-008",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵今天想**现租一只猫**：不用在 `main` 里提前生好，直接跟大仓库要一块刚够一只猫住的地方，让牌子指着它。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），然后：\n\n1. 跟仓库要一块地方，**大小正好是一只猫**（别写死数字，用「量一下一只猫多大」那个招式）；要完**先看看有没有租到** —— 没租到就印一行 `仓库没租到喵` 然后收工；\n2. 把名字填成 `狸花`（用抄项链那一招）、食量填成 6；\n3. 印一行 `狸花 有 6 条喵`；\n4. 用完把地方**还回去**，牌子也擦干净（让它指着空）。\n\n仓库那头（`malloc`/`free`）住在 `stdlib.h` 家里，抄项链的招式住在 `string.h` 家里喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat *p = (struct Cat *)malloc(sizeof(struct Cat));\n\n    if (p == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 0;\n    }\n\n    strcpy(p->name, \"狸花\");\n    p->fish = 6;\n    printf(\"%s 有 %d 条喵\\n\", p->name, p->fish);\n\n    free(p);\n    p = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "狸花 有 6 条喵",
+      "stdin": null,
+      "explanation": "一块地能不能住下一只猫，得先**量一下**喵。\n\n**① 量一只猫多大：`sizeof(struct Cat)`。** 这是翻译官喵替本喵算的：把图纸上每一个格子各占多大加起来。自己拿计算器去凑数字（写 `sizeof(char)*20 + sizeof(int)` 之类）看着聪明，可图纸一改就全错，还是让翻译官喵去量最稳。\n\n**② 补写「这块地方按一只猫来读」。** 仓库那头只管给一块地，它不知道本喵要住猫还是住别的，所以交回来的是一块**说不清是什么**的门牌号。要给牌子配上记号，得自己补一句：\n\n```c\n(struct Cat *)malloc(sizeof(struct Cat))\n```\n\n前面那对括号加图纸记号，读作「**这块地，按一只猫来读**」。少了它翻译官喵会拦你（说不清的东西配不上带记号的牌子）。\n\n**③ 要完先看租没租到。** 仓库也可能两手一摊（比如地方不够），那时候拿回来的门牌号是 `NULL`（空牌子）。不先检查就顺着空牌子进门，程序当场就倒 —— 所以 `if (p == NULL)` 那一步不是客套话，是真要做的事。\n\n**④ 用完记得还。** `free(p);` 把地方交回仓库，`p = NULL;` 是把牌子擦干净。擦这一下很像多此一举，可它是个好习惯：空牌子再被谁拿去用，好歹是当场倒下、一眼看得见，比悄悄写到别人家地里强得多喵。",
+      "templateId": "c-s2-structptr-malloc-cat",
+      "params": {
+        "who": "狸花",
+        "f1": 6
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:04.735Z",
+        "hash": "4cef7f1a10f9ddbc"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-malloc-cat-011",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵今天想**现租一只猫**：不用在 `main` 里提前生好，直接跟大仓库要一块刚够一只猫住的地方，让牌子指着它。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），然后：\n\n1. 跟仓库要一块地方，**大小正好是一只猫**（别写死数字，用「量一下一只猫多大」那个招式）；要完**先看看有没有租到** —— 没租到就印一行 `仓库没租到喵` 然后收工；\n2. 把名字填成 `大肥鱼`（用抄项链那一招）、食量填成 4；\n3. 印一行 `大肥鱼 有 4 条喵`；\n4. 用完把地方**还回去**，牌子也擦干净（让它指着空）。\n\n仓库那头（`malloc`/`free`）住在 `stdlib.h` 家里，抄项链的招式住在 `string.h` 家里喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat *p = (struct Cat *)malloc(sizeof(struct Cat));\n\n    if (p == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 0;\n    }\n\n    strcpy(p->name, \"大肥鱼\");\n    p->fish = 4;\n    printf(\"%s 有 %d 条喵\\n\", p->name, p->fish);\n\n    free(p);\n    p = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "大肥鱼 有 4 条喵",
+      "stdin": null,
+      "explanation": "一块地能不能住下一只猫，得先**量一下**喵。\n\n**① 量一只猫多大：`sizeof(struct Cat)`。** 这是翻译官喵替本喵算的：把图纸上每一个格子各占多大加起来。自己拿计算器去凑数字（写 `sizeof(char)*20 + sizeof(int)` 之类）看着聪明，可图纸一改就全错，还是让翻译官喵去量最稳。\n\n**② 补写「这块地方按一只猫来读」。** 仓库那头只管给一块地，它不知道本喵要住猫还是住别的，所以交回来的是一块**说不清是什么**的门牌号。要给牌子配上记号，得自己补一句：\n\n```c\n(struct Cat *)malloc(sizeof(struct Cat))\n```\n\n前面那对括号加图纸记号，读作「**这块地，按一只猫来读**」。少了它翻译官喵会拦你（说不清的东西配不上带记号的牌子）。\n\n**③ 要完先看租没租到。** 仓库也可能两手一摊（比如地方不够），那时候拿回来的门牌号是 `NULL`（空牌子）。不先检查就顺着空牌子进门，程序当场就倒 —— 所以 `if (p == NULL)` 那一步不是客套话，是真要做的事。\n\n**④ 用完记得还。** `free(p);` 把地方交回仓库，`p = NULL;` 是把牌子擦干净。擦这一下很像多此一举，可它是个好习惯：空牌子再被谁拿去用，好歹是当场倒下、一眼看得见，比悄悄写到别人家地里强得多喵。",
+      "templateId": "c-s2-structptr-malloc-cat",
+      "params": {
+        "who": "大肥鱼",
+        "f1": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:36:07.027Z",
+        "hash": "e021d4119aa478e3"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-malloc-cat-014",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵今天想**现租一只猫**：不用在 `main` 里提前生好，直接跟大仓库要一块刚够一只猫住的地方，让牌子指着它。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），然后：\n\n1. 跟仓库要一块地方，**大小正好是一只猫**（别写死数字，用「量一下一只猫多大」那个招式）；要完**先看看有没有租到** —— 没租到就印一行 `仓库没租到喵` 然后收工；\n2. 把名字填成 `大肥鱼`（用抄项链那一招）、食量填成 7；\n3. 印一行 `大肥鱼 有 7 条喵`；\n4. 用完把地方**还回去**，牌子也擦干净（让它指着空）。\n\n仓库那头（`malloc`/`free`）住在 `stdlib.h` 家里，抄项链的招式住在 `string.h` 家里喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat *p = (struct Cat *)malloc(sizeof(struct Cat));\n\n    if (p == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 0;\n    }\n\n    strcpy(p->name, \"大肥鱼\");\n    p->fish = 7;\n    printf(\"%s 有 %d 条喵\\n\", p->name, p->fish);\n\n    free(p);\n    p = NULL;\n    return 0;\n}\n",
+      "expectedOutput": "大肥鱼 有 7 条喵",
+      "stdin": null,
+      "explanation": "一块地能不能住下一只猫，得先**量一下**喵。\n\n**① 量一只猫多大：`sizeof(struct Cat)`。** 这是翻译官喵替本喵算的：把图纸上每一个格子各占多大加起来。自己拿计算器去凑数字（写 `sizeof(char)*20 + sizeof(int)` 之类）看着聪明，可图纸一改就全错，还是让翻译官喵去量最稳。\n\n**② 补写「这块地方按一只猫来读」。** 仓库那头只管给一块地，它不知道本喵要住猫还是住别的，所以交回来的是一块**说不清是什么**的门牌号。要给牌子配上记号，得自己补一句：\n\n```c\n(struct Cat *)malloc(sizeof(struct Cat))\n```\n\n前面那对括号加图纸记号，读作「**这块地，按一只猫来读**」。少了它翻译官喵会拦你（说不清的东西配不上带记号的牌子）。\n\n**③ 要完先看租没租到。** 仓库也可能两手一摊（比如地方不够），那时候拿回来的门牌号是 `NULL`（空牌子）。不先检查就顺着空牌子进门，程序当场就倒 —— 所以 `if (p == NULL)` 那一步不是客套话，是真要做的事。\n\n**④ 用完记得还。** `free(p);` 把地方交回仓库，`p = NULL;` 是把牌子擦干净。擦这一下很像多此一举，可它是个好习惯：空牌子再被谁拿去用，好歹是当场倒下、一眼看得见，比悄悄写到别人家地里强得多喵。",
+      "templateId": "c-s2-structptr-malloc-cat",
+      "params": {
+        "who": "大肥鱼",
+        "f1": 7
+      },
+      "verified": {
+        "at": "2026-09-16T08:28:04.046Z",
+        "hash": "6f07cf9e6211d13b"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-star-dot-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵给一只猫（名字 `小橘`、食量 2）配了一块**指着它的牌子**，程序要用这块牌子把那两格东西报出来，印一行 `小橘 吃了 2 条喵`。\n\n名字那格写得没错，可食量那格翻译官喵一瞧见就不干了，把整段代码退了回来 —— 它不光拦下，还在底下画了个小箭头把答案指给本喵看喵。你帮本喵看看它说的是什么意思，把程序改好。",
+      "brokenCode": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"小橘\", 2};\n    struct Cat *p = &a;\n\n    printf(\"%s 吃了 %d 条喵\\n\", (*p).name, *p.fish);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"小橘\", 2};\n    struct Cat *p = &a;\n\n    printf(\"%s 吃了 %d 条喵\\n\", (*p).name, p->fish);\n    return 0;\n}\n",
+      "expectedOutput": "小橘 吃了 2 条喵",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: 'p' is a pointer; did you mean to use '->'?` —— 它反问了本喵一句：「**`p` 是一块牌子呀，你是不是想用 `->`？**」底下还真画了一根小箭头指着 `->`，等于把答案写在卷子上了。\n\n为什么会这样？因为 C 的排队规矩里，**点号 `.` 排在星星 `*` 前面**。你写的 `*p.fish` 会被它读成「先算 `p.fish`，再给结果加颗星」—— 可 `p` 是块牌子，牌子哪来的 `fish` 格？于是它猜：你其实是想**顺着牌子进那一格**吧。\n\n顺着牌子进门有两种写法，**意思一模一样**：\n\n- `(*p).fish` —— 先把牌子指向的那只猫拿出来（那对括号不能省！），再进它的 `fish` 格；\n- `p->fish` —— 上面那种的省字版，一根小箭头，读作「顺着牌子过去，进那一格」。\n\n所以这句话钉死两件事：**牌子上进门用 `->`，真猫上进门用 `.`。** 同一个格子的两种写法之间，差的就是那对括号和那根箭头喵。",
+      "templateId": "c-s2-structptr-star-dot",
+      "params": {
+        "who": "小橘",
+        "f1": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:27:49.804Z",
+        "hash": "81a441146bf497b9"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-star-dot-008",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵给一只猫（名字 `大肥鱼`、食量 4）配了一块**指着它的牌子**，程序要用这块牌子把那两格东西报出来，印一行 `大肥鱼 吃了 4 条喵`。\n\n名字那格写得没错，可食量那格翻译官喵一瞧见就不干了，把整段代码退了回来 —— 它不光拦下，还在底下画了个小箭头把答案指给本喵看喵。你帮本喵看看它说的是什么意思，把程序改好。",
+      "brokenCode": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"大肥鱼\", 4};\n    struct Cat *p = &a;\n\n    printf(\"%s 吃了 %d 条喵\\n\", (*p).name, *p.fish);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"大肥鱼\", 4};\n    struct Cat *p = &a;\n\n    printf(\"%s 吃了 %d 条喵\\n\", (*p).name, p->fish);\n    return 0;\n}\n",
+      "expectedOutput": "大肥鱼 吃了 4 条喵",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: 'p' is a pointer; did you mean to use '->'?` —— 它反问了本喵一句：「**`p` 是一块牌子呀，你是不是想用 `->`？**」底下还真画了一根小箭头指着 `->`，等于把答案写在卷子上了。\n\n为什么会这样？因为 C 的排队规矩里，**点号 `.` 排在星星 `*` 前面**。你写的 `*p.fish` 会被它读成「先算 `p.fish`，再给结果加颗星」—— 可 `p` 是块牌子，牌子哪来的 `fish` 格？于是它猜：你其实是想**顺着牌子进那一格**吧。\n\n顺着牌子进门有两种写法，**意思一模一样**：\n\n- `(*p).fish` —— 先把牌子指向的那只猫拿出来（那对括号不能省！），再进它的 `fish` 格；\n- `p->fish` —— 上面那种的省字版，一根小箭头，读作「顺着牌子过去，进那一格」。\n\n所以这句话钉死两件事：**牌子上进门用 `->`，真猫上进门用 `.`。** 同一个格子的两种写法之间，差的就是那对括号和那根箭头喵。",
+      "templateId": "c-s2-structptr-star-dot",
+      "params": {
+        "who": "大肥鱼",
+        "f1": 4
+      },
+      "verified": {
+        "at": "2026-09-16T08:27:51.183Z",
+        "hash": "c70f3efeb3107d1b"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-uninit-pointer-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵生了一只猫（名字 `小橘`、食量 2），又想借一块牌子把食量改成 5，最后报一行 `小橘 吃了 5 条喵`。\n\n这段代码翻译官喵**没拦**，只是嘟囔了一句警告，然后程序一跑就倒了（什么都没印出来）。你帮本喵看看牌子那边差了什么，把它改好。",
+      "brokenCode": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"小橘\", 2};\n    struct Cat *p;\n\n    p->fish = 5;\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"小橘\", 2};\n    struct Cat *p = &a;\n\n    p->fish = 5;\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+      "expectedOutput": "小橘 吃了 5 条喵",
+      "stdin": null,
+      "explanation": "翻译官喵当时的嘟囔是 `warning: 'p' is used uninitialized [-Wuninitialized]` —— 翻过来就是：「**这块牌子 `p` 没插到任何地方，你就拿它进门了。**」\n\n把牌子这件事想清楚就不难懂了喵：\n\n```c\nstruct Cat *p;\n```\n\n这一句只是**画了一块空牌子**，上面一个字没写。它不是门牌号，是一块没插的牌子。接着那句 `p->fish = 5;` 的意思是「顺着牌子过去，把 `fish` 格改掉」—— 可牌子没插，那本喵顺着它走到哪去了？走到一个**谁也不知道的地方**去了。往那儿写数，程序当然当场倒下。\n\n修法就一个字的事：**牌子生出来的时候就得插上。**\n\n```c\nstruct Cat *p = &a;\n```\n\n`&a` 就是「猫 `a` 住哪儿」那块门牌号 —— 跟学 `scanf` 时写的 `&a.fish` 是同一个 `&`，只是这回问的是**整只猫**的门牌。插好之后，`p->fish` 写进去的才是 `a` 自己的食量。\n\n**记住这句：牌子不是猫。** `struct Cat *p;` 只是画了块牌子，一只猫都没生，必须再让牌子指着某只**已经生好的**猫（`p = &a;`）或者指着一排猫里的某一只（`p = cats;`）才管用。",
+      "templateId": "c-s2-structptr-uninit-pointer",
+      "params": {
+        "who": "小橘",
+        "f1": 2,
+        "f2": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:27:56.442Z",
+        "hash": "76ab71688095adf2"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-uninit-pointer-026",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵生了一只猫（名字 `大肥鱼`、食量 4），又想借一块牌子把食量改成 7，最后报一行 `大肥鱼 吃了 7 条喵`。\n\n这段代码翻译官喵**没拦**，只是嘟囔了一句警告，然后程序一跑就倒了（什么都没印出来）。你帮本喵看看牌子那边差了什么，把它改好。",
+      "brokenCode": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"大肥鱼\", 4};\n    struct Cat *p;\n\n    p->fish = 7;\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"大肥鱼\", 4};\n    struct Cat *p = &a;\n\n    p->fish = 7;\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+      "expectedOutput": "大肥鱼 吃了 7 条喵",
+      "stdin": null,
+      "explanation": "翻译官喵当时的嘟囔是 `warning: 'p' is used uninitialized [-Wuninitialized]` —— 翻过来就是：「**这块牌子 `p` 没插到任何地方，你就拿它进门了。**」\n\n把牌子这件事想清楚就不难懂了喵：\n\n```c\nstruct Cat *p;\n```\n\n这一句只是**画了一块空牌子**，上面一个字没写。它不是门牌号，是一块没插的牌子。接着那句 `p->fish = 7;` 的意思是「顺着牌子过去，把 `fish` 格改掉」—— 可牌子没插，那本喵顺着它走到哪去了？走到一个**谁也不知道的地方**去了。往那儿写数，程序当然当场倒下。\n\n修法就一个字的事：**牌子生出来的时候就得插上。**\n\n```c\nstruct Cat *p = &a;\n```\n\n`&a` 就是「猫 `a` 住哪儿」那块门牌号 —— 跟学 `scanf` 时写的 `&a.fish` 是同一个 `&`，只是这回问的是**整只猫**的门牌。插好之后，`p->fish` 写进去的才是 `a` 自己的食量。\n\n**记住这句：牌子不是猫。** `struct Cat *p;` 只是画了块牌子，一只猫都没生，必须再让牌子指着某只**已经生好的**猫（`p = &a;`）或者指着一排猫里的某一只（`p = cats;`）才管用。",
+      "templateId": "c-s2-structptr-uninit-pointer",
+      "params": {
+        "who": "大肥鱼",
+        "f1": 4,
+        "f2": 7
+      },
+      "verified": {
+        "at": "2026-09-16T08:27:58.135Z",
+        "hash": "9d51f0c97241751f"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-walk-no-advance-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵摆了**一排三只猫**：小橘吃 1 条、狸花吃 4 条、大肥鱼吃 7 条。现在拿一块牌子从排头出发，走一圈把三只猫连同总账一起报出来：\n\n```\n小橘 吃了 1 条喵\n狸花 吃了 4 条喵\n大肥鱼 吃了 7 条喵\n一共 1 + 4 + 7 条喵\n```\n\n（最后那一行里的加号当然要自己算出来喵，写成 `一共 {} 条喵` 那样。）\n\n这段代码翻译官喵**一个字都没说**，程序也跑起来了 —— 可叼回来的东西不对。你帮本喵看看是哪一步出了岔子，把它改好。",
+      "brokenCode": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[3] = {\n        {\"小橘\", 1},\n        {\"狸花\", 4},\n        {\"大肥鱼\", 7}\n    };\n    struct Cat *p = cats;\n    int total = 0;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"%s 吃了 %d 条喵\\n\", p->name, p->fish);\n        total = total + p->fish;\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[3] = {\n        {\"小橘\", 1},\n        {\"狸花\", 4},\n        {\"大肥鱼\", 7}\n    };\n    struct Cat *p = cats;\n    int total = 0;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"%s 吃了 %d 条喵\\n\", p->name, p->fish);\n        total = total + p->fish;\n        p++;\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n    return 0;\n}\n",
+      "expectedOutput": "小橘 吃了 1 条喵\n狸花 吃了 4 条喵\n大肥鱼 吃了 7 条喵\n一共 12 条喵",
+      "stdin": null,
+      "explanation": "这是本课最阴的一个坑喵：**编译安然无事、跑起来也不崩，只是答案不对。**\n\n`for (int i = 0; i < 3; i++)` 这句看着很齐整 —— `i` 从 0 数到 2，转三圈，圈数一点没错。可是圈数对，**牌子不动也没用**：`p` 一直指着排头那只小橘，所以转三圈就印了三遍小橘，总账也变成 `3 × 1`。\n\n对照上一课的写法就清楚了：**绕圈的是 `i`，可本喵真正在读的是 `p` 指的那只猫。** 每转一圈，除了把 `i` 加一，还得让牌子自己往前挪一只：\n\n```c\np++;\n```\n\n一句就够。挪完这一圈，下一圈进来时 `p` 才指着狸花，再下一圈才是大肥鱼。\n\n顺便认一下这种坑的脸：**翻译官喵不管「意思对不对」，它只管「字写没写规矩」。** 牌子不动它挑不出毛病，得靠本喵自己走一遍例子 —— 你在纸上把三圈里 `p` 指谁写下来，一眼就看见那只小橘重复了三次喵。",
+      "templateId": "c-s2-structptr-walk-no-advance",
+      "params": {
+        "f1": 1,
+        "f2": 4,
+        "f3": 7
+      },
+      "verified": {
+        "at": "2026-09-16T08:27:52.752Z",
+        "hash": "0e4ad0b9349939f2"
+      }
+    },
+    {
+      "id": "bank-c-s2-structptr-walk-no-advance-026",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵摆了**一排三只猫**：小橘吃 3 条、狸花吃 6 条、大肥鱼吃 9 条。现在拿一块牌子从排头出发，走一圈把三只猫连同总账一起报出来：\n\n```\n小橘 吃了 3 条喵\n狸花 吃了 6 条喵\n大肥鱼 吃了 9 条喵\n一共 3 + 6 + 9 条喵\n```\n\n（最后那一行里的加号当然要自己算出来喵，写成 `一共 {} 条喵` 那样。）\n\n这段代码翻译官喵**一个字都没说**，程序也跑起来了 —— 可叼回来的东西不对。你帮本喵看看是哪一步出了岔子，把它改好。",
+      "brokenCode": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[3] = {\n        {\"小橘\", 3},\n        {\"狸花\", 6},\n        {\"大肥鱼\", 9}\n    };\n    struct Cat *p = cats;\n    int total = 0;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"%s 吃了 %d 条喵\\n\", p->name, p->fish);\n        total = total + p->fish;\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[3] = {\n        {\"小橘\", 3},\n        {\"狸花\", 6},\n        {\"大肥鱼\", 9}\n    };\n    struct Cat *p = cats;\n    int total = 0;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"%s 吃了 %d 条喵\\n\", p->name, p->fish);\n        total = total + p->fish;\n        p++;\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n    return 0;\n}\n",
+      "expectedOutput": "小橘 吃了 3 条喵\n狸花 吃了 6 条喵\n大肥鱼 吃了 9 条喵\n一共 18 条喵",
+      "stdin": null,
+      "explanation": "这是本课最阴的一个坑喵：**编译安然无事、跑起来也不崩，只是答案不对。**\n\n`for (int i = 0; i < 3; i++)` 这句看着很齐整 —— `i` 从 0 数到 2，转三圈，圈数一点没错。可是圈数对，**牌子不动也没用**：`p` 一直指着排头那只小橘，所以转三圈就印了三遍小橘，总账也变成 `3 × 3`。\n\n对照上一课的写法就清楚了：**绕圈的是 `i`，可本喵真正在读的是 `p` 指的那只猫。** 每转一圈，除了把 `i` 加一，还得让牌子自己往前挪一只：\n\n```c\np++;\n```\n\n一句就够。挪完这一圈，下一圈进来时 `p` 才指着狸花，再下一圈才是大肥鱼。\n\n顺便认一下这种坑的脸：**翻译官喵不管「意思对不对」，它只管「字写没写规矩」。** 牌子不动它挑不出毛病，得靠本喵自己走一遍例子 —— 你在纸上把三圈里 `p` 指谁写下来，一眼就看见那只小橘重复了三次喵。",
+      "templateId": "c-s2-structptr-walk-no-advance",
+      "params": {
+        "f1": 3,
+        "f2": 6,
+        "f3": 9
+      },
+      "verified": {
+        "at": "2026-09-16T08:27:54.489Z",
+        "hash": "89ad1130f936c186"
+      }
+    }
+  ]
+}

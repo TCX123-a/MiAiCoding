@@ -1,0 +1,21 @@
+{
+  "templateId": "java-s2-cap-guard",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-01",
+  "type": "codewrite",
+  "concept": ["带盖的小鱼干盒", "小窗", "一次只收这么多", "Scanner"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "cap": { "kind": "pick", "values": ["3", "5", "8"] },
+    "s1": { "kind": "pick", "values": ["1", "2"] },
+    "s2": { "kind": "pick", "values": ["1", "2", "3"] },
+    "n": { "kind": "int", "min": 3, "max": 3 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{n}\n9\n{s1}\n{s2}\n", "sampleText": "{n}\n{s2}\n9\n3\n" },
+  "stemTemplate": "本喵给鱼干盒开了个**进货口**喵，规矩是：**一次最多只添 {cap} 条**。\n\n家当还是那两样（名字、账上的鱼干数），全盖上盖子，只开小窗进出。\n\n投喂给程序的纸上：**第一个数是「后面还有几笔」**，接着正好那么多行，一行一个数，每一笔都从进货口递进去。进货口收到一笔时：\n\n- 这笔**超过 {cap}** → 不收，只印一句 `一次最多只添 {cap} 条喵`，账上**一点都不动**\n- 否则 → 把这一笔**添到账上**（在原来那个数上加上去，不是改写）\n\n所有笔过完，最后印一行：**名字**、` 账上 `、**账上的数**、` 条小鱼干喵`，拼起来。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\nclass Cat {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Cat {\n    private String name;\n    private int fish;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n\n    public int getFish() {\n        return fish;\n    }\n\n    public void feed(int more) {\n        if (more > {cap}) {\n            System.out.println(\"一次最多只添 {cap} 条喵\");\n            return;\n        }\n        fish = fish + more;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        Cat c = new Cat(\"{name}\");\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            c.feed(sc.nextInt());\n        }\n        System.out.println(c.getName() + \" 账上 \" + c.getFish() + \" 条小鱼干喵\");\n    }\n}\n",
+  "explanationTemplate": "这题和上一题只差**牌子上的那句话**，可要看清两处不同喵。\n\n**不同之一：牌子拦的是「太大」的一笔。** 上一题拦负数，这一题拦超过 {cap} 的数 —— 牌子的形状一模一样，只是眼色反了个方向：`if (more > {cap})`。\n\n**不同之二：这一笔是「添上去」不是「改写」。** 记账那行写的是 `fish = fish + more;`：先读账上原来的数，加上这一笔，再写回去。写 `fish = more;` 就变成「账上只剩最后一笔」，前面收过的全丢了 —— 而且程序**一声不吭**，只有数对不上。\n\n（顺带说一句这题的判分输入：每一组里都**必定**有一笔超过 {cap} 的、也**必定**有两笔收得下的 —— 所以「拦坏账」和「算总账」这两件事在**每一道**里都真被考到，漏了哪一件都会露馅喵。）\n\n还有那个 `return;` 别忘了：牌子印完就收工，账上一个数都不动。\n\n`main` 那边和上一题同款：读第一个数当笔数，圈子里一趟递一笔，最后拼一行印出来。\n\n顺手记：**「拦坏账」和「算总账」是两件事，可以写在同一个招式里**，但顺序别弄反 —— 先看眼色、再动账本喵。"
+}

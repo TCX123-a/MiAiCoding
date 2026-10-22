@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-05-if-present",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-05",
+  "type": "codewrite",
+  "concept": ["有东西的时候才做一件事", "空盒子一句话不说就跳过", "这跟一定要给你一样东西的兜底正好相反"],
+  "instances": 6,
+  "params": {
+    "k1": { "kind": "pick", "values": ["冻干", "鱼干"] },
+    "v1": { "kind": "pick", "values": ["一包冻干", "三袋鱼干"] },
+    "k2": { "kind": "pick", "values": ["毛线球", "猫条"] },
+    "v2": { "kind": "pick", "values": ["三个毛线球", "两根猫条"] },
+    "k3": { "kind": "pick", "values": ["雨伞", "拖鞋"] }
+  },
+  "stemTemplate": "柜子里放着两样东西：`{k1}`（本喵给它的货是 `{v1}`）、`{k2}`（货是 `{v2}`）；`{k3}` **不在这里**喵。\n\n请你写一招 `find`：交给它一个名字，对得上就把那样东西**装盒**交回；对不上就交回**空盒子**（名分上就写着「可能有、可能没有」）。\n\n然后在 `main` 里**按顺序**对这三个名字各喊一次：`{k1}`、`{k2}`、`{k3}` ——\n\n- **有东西的时候**才印一行 `找到的是 ` 加上那样东西；\n- **空盒子一个字都不许印**。\n\n印出来该是\n\n```text\n找到的是 {v1}\n找到的是 {v2}\n```\n\n（这一题**不用投喂任何东西**，名字和货都是固定死的。）",
+  "starterTemplate": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Optional;\n\npublic class Main {\n    static Optional<String> find(String key) {\n        if (key.equals(\"{k1}\")) {\n            return Optional.of(\"{v1}\");\n        }\n        if (key.equals(\"{k2}\")) {\n            return Optional.of(\"{v2}\");\n        }\n        return Optional.empty();\n    }\n\n    public static void main(String[] args) {\n        find(\"{k1}\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"{k2}\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n        find(\"{k3}\").ifPresent(v -> System.out.println(\"找到的是 \" + v));\n    }\n}\n",
+  "explanationTemplate": "**一、这题要练的是「空盒子一句话不说」。** 三种交代里，这里该用的是 `.ifPresent(...)` 那一手（课文对照表第二行：「**有东西的时候才做一件事**」）。\n\n**二、为什么不能拿 `orElse` 顶。** `orElse` 是「有就用里面的、没有就用兜底那句」—— 它**一定会给你一样东西**，那本喵就非得印它不可。可这题的要求是**空盒子一个字都不许印**：第三个名字根本不在柜子里，那一行就该**不出现**，而不是印一句兜底的话。**这两手长得像，用处正好相反：一个「一定要给你一样东西」，一个「没有就跳过」。**\n\n**三、`.ifPresent(v -> ...)` 读作「有东西才做这件事」。** 盒子里空着的时候它**跳过**，一句话不说；有东西的时候才把那一小截跑一遍。所以三行一模一样的写法，印出来只有两行 —— 少的那一行，正是空盒子那一次。\n\n**四、`find` 那一招的名分也不能忘。** 它交回来的是一只**盒子**（名分上就写着「可能有、可能没有」），不是一样东西；找到装盒、没找到交空盒子。**本喵没有交回空东西** —— 那正是会炸的那条路。\n\n一句话记住：**有东西才做一件事用 `ifPresent`；空盒子就跳过，一个字都不印。**"
+}

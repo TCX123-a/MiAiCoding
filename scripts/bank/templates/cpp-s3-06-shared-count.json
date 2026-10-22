@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-06-shared-count",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-06",
+  "type": "codewrite",
+  "concept": ["几处共用一份", "数人头", "手放下不等于仓库还了"],
+  "instances": 6,
+  "params": {
+    "x": { "kind": "pick", "values": [3, 5, 7] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{x}\n", "sampleText": "28\n" },
+  "stemTemplate": "投喂口会给**一个数**喵（就一个）。\n\n请你写个程序：\n\n1. 请一块 `shared_ptr` 装着这个数（用那个「一趟把两件事都做了」的招式）；\n2. 印**一行**：现在有几只手拿着它（用那个**数人头**的招式）；\n3. 开一层**花括号**，里头请**另一块牌子指着同一份**，再印**一行**有几只手；\n4. 出了花括号再印**一行**有几只手；\n5. 最后印**一行**那个数本身。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n    int v = 0;\n    cin >> v;\n\n    shared_ptr<int> a = make_shared<int>(v);\n    cout << a.use_count() << endl;\n    {\n        shared_ptr<int> b = a;\n        cout << a.use_count() << endl;\n    }\n    cout << a.use_count() << endl;\n    cout << *a << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "数人头那一招是 `use_count()`，念作「**现在有几只手指着这间仓库**」喵。\n\n- 刚请来只有一只手 → 印 `1`；\n- 花括号里多了一块牌子指着**同一份**（`shared_ptr` 是可以复制的，这是它和 `unique_ptr` 最大的不同）→ 两只手 → 印 `2`；\n- 那只手一放下（走出花括号）→ 回到一只手 → 印 `1`。\n\n⚠️ 第三个 `1` **不等于仓库还了**：仓库要等**最后一根手指**也松开（也就是 `main` 走完）才被叼回去。所以最后一行照样能拿 `a` 取货，印出投喂进来的那个数（`*a`）。\n\n⚠️ 判分喂的数跟样例不一样，别写死。"
+}

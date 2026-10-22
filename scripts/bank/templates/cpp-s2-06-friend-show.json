@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s2-06-friend-show",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-06",
+  "type": "codewrite",
+  "concept": ["盒子扣着盖子", "开后门的招式", "指名道姓给一只猫"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] },
+    "fish": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{name}\n{fish}\n", "sampleText": "小胖\n7\n" },
+  "stemTemplate": "本喵要考你**开后门**。投喂口会递进来两样：先是一串字（猫的名字），再是一个数（条数）。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏**都扣着盖子**（只有图纸自己的招式够得着）—— `name` 装一串字，`fish` 装一个整数；再画一个出生招式，把这两栏填上。\n2. **在图纸里开一扇后门**：写一行 `friend`，把**外面一个叫 `showAccount` 的招式**放进来。\n3. **在外面那个招式里**印一行，直接读盒子里那两栏：\n\n```text\nXX 的账上是 N 条小鱼干喵\n```\n\n4. 在 `main` 里照图纸生一只猫（名字和条数都用投喂口递进来的），然后**把这只猫递给那一招**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    friend void showAccount(const Cat& c);\n};\n\nvoid showAccount(const Cat& c) {\n    cout << c.name << \" 的账上是 \" << c.fish << \" 条小鱼干喵\" << endl;\n}\n\nint main() {\n    string name;\n    int fish = 0;\n    cin >> name >> fish;\n\n    Cat c1(name, fish);\n    showAccount(c1);\n    return 0;\n}\n",
+  "explanationTemplate": "后门这一手，三件事要一起对上喵：\n\n1. **在图纸里写那一行**。位置在图纸的大括号里，字面就是 `friend void showAccount(const Cat& c);`。这一行是**图纸给出去的通行证**——从这一刻起，`showAccount` 够得到这张图纸生出来的每一只猫的**任何一格**，带盖的也不例外。\n2. **招式本身画在外面**。拿到通行证**不等于**它变成了图纸上的招式 —— 它还是外面的一手。所以图纸里只写一行「本喵认识它」，招式的身子写在图纸外面。\n3. **喊它的时候不写那只猫**。图纸上的招式是「哪只猫 · 招式名」；开后门的招式是「**招式名(哪只猫)**」——把猫当料递进去。写 `showAccount(c1);`。\n\n再补两句边界，都是本课强调过的：**后门是单向的**（本喵给它开门，它不会把钥匙回赠给本喵），**后门也不传递**（拿到通行证的只有它一个，它认识的朋友不算数）。\n\n⚠️ 还有一句最容易忘的：**别把 `friend` 那一行漏了**。漏了的话，哪怕招式的写法完全正确，翻译官喵也会说那一格够不着。"
+}

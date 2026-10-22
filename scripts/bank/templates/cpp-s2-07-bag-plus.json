@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-07-bag-plus",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-07",
+  "type": "codewrite",
+  "concept": ["给加号定制新动作", "定制招式写在图纸里", "算出来的还是自己的真猫"],
+  "instances": 6,
+  "params": {
+    "label": { "kind": "pick", "values": ["小鱼干", "猫罐头"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 1, "max": 9 },
+  "stemTemplate": "本喵要给 `+` 换一套动作：**两只袋子相加，算出一只新袋子，条数是两袋加起来**。投喂口会递进来**两个数**（一行一个）：第一只袋子的条数、第二只袋子的条数。\n\n请你这么办：\n\n1. **画图纸** `FishBag`：一栏带盖的 `count`（一个整数），一个出生招式把这一栏填上；再画一个**公开招式** `howMany`，把条数叼回来。\n2. **在图纸里定制加号**（写在图纸大括号里面），让 `袋子 + 袋子` 算出一只**新袋子**。行尾记得挂上那个 `const`（加法不该改到原来那两只）。\n3. 在 `main` 里读进两个数，生两只袋子，把两只加起来的袋子接住，印**一行**：\n\n```text\n两袋{label}合起来 N 条喵\n```\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBag {\n    int count;\npublic:\n    FishBag(int c) : count(c) {}\n\n    FishBag operator+(const FishBag& other) const {\n        return FishBag(count + other.count);\n    }\n\n    int howMany() const { return count; }\n};\n\nint main() {\n    int x = 0;\n    int y = 0;\n    cin >> x >> y;\n\n    FishBag a(x);\n    FishBag b(y);\n    FishBag c = a + b;\n    cout << \"两袋{label}合起来 \" << c.howMany() << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的关键在三个地方，缺一个都不成喵：\n\n1. **名字的位置写 `operator+`**。`operator` 是「本喵要定制一个符号」的口令，后面紧跟那个符号，写在一起念作「加号这个符号」。它的定义位置和普通招式一样 —— **写在图纸里面，就是图纸上的招式**。\n2. **左右两边各自对上谁**。`a + b` 里，**左边那只就是「自己」**（招式里不带前缀的 `count`），**右边那只塞进了 `other`**（`other.count`）。所以里面有两个数：自己的和对方的。\n3. **叼回来的还是一只袋子**。`return FishBag(count + other.count);` 算出的是 `FishBag`，不是数字 —— 正因为这样，`a + b` 才能被 `c` 接住、接着喊 `c.howMany()`。要是返回数字，`FishBag c = a + b;` 这一句根本写不成。\n\n行尾那个 `const` 的用处单独说一句：它说的是**「本喵自己这只袋子也不许被改」**。加法读起来是「算一个新的出来」，谁都不该被改动；写上它，本喵哪天手滑改了自己那一格，翻译官喵会当场拦下来。\n\n（同一条规矩的另一半：料前面那个 `const FishBag& other` 说的是「只看对方一眼，不许改它」。三个 `const` 各管一段，都是这一课的常规动作喵。）"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-09-strcmp-eq",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-09",
+  "type": "codefix",
+  "concept": ["两串比一比", "答 0 才算一样", "牌子不等于珠子", "该用 strcmp"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["fishcake", "tunacake"] }
+  },
+  "stemTemplate": "本喵想比一比**两碗珠子是不是一模一样**。它答的是：\n\n```text\n这两串一样吗？不一样\n```\n\n可两个碗里装的明明是同一串 `{w}`。请你把**比的那一下**改对（`main` 里其余几行别动）。改好之后该印：\n\n```text\n这两串一样吗？一样\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char bowl[32] = \"{w}\";\n    char other[32] = \"{w}\";\n\n    printf(\"这两串一样吗？%s\\n\", bowl == other ? \"一样\" : \"不一样\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char bowl[32] = \"{w}\";\n    char other[32] = \"{w}\";\n\n    printf(\"这两串一样吗？%s\\n\", strcmp(bowl, other) == 0 ? \"一样\" : \"不一样\");\n    return 0;\n}\n",
+  "explanationTemplate": "两串珠子摆在**两个不同的碗**里。`==` 比的不是碗里的珠子，而是**两个碗的牌子**（各自在哪儿）—— 两个碗当然不在一块儿，所以它答「不一样」喵。\n\n要比**碗里的珠子**，得请 `strcmp` 出手，而且它答 `0` 才算一样：\n\n```text\nstrcmp(bowl, other) == 0 ? \"一样\" : \"不一样\"\n```\n\n`strcmp` 是一门**比大小**的招式：前面那串排在前面就答负数、排在后面就答正数、**一模一样才答 0**。所以判断「一样」写 `== 0`；判断「不一样」写 `!= 0`。\n\n记住这一条就不会再错：**牌子一样不代表珠子一样，珠子一样也不代表牌子一样** —— 想比珠子，永远写 `strcmp(...) == 0`。"
+}

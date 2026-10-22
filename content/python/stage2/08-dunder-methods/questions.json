@@ -1,0 +1,79 @@
+{
+  "lessonId": "python-stage2-08",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想让 `print(a)` 印出自己写好的一句话，而不是那串谁也不认识的怪字。图纸里该加哪一招？",
+      "options": [
+        "`__str__`",
+        "`__print__`",
+        "`__show__`",
+        "`__init__`"
+      ],
+      "answer": 0,
+      "explanation": "「这只猫被 `print` 的时候该长什么样」这个时刻，Python 会替你喊的是 `__str__` 喵。名字里那个 `str` 就是「话」的意思：它得把要说的话**叼回来**（用 `return`），Python 再拿这句话去印。`__print__`、`__show__` 都是本喵自己编的名字，翻译官喵的规矩册里没有这两条，写了等于没写；`__init__` 管的是**生猫那一刻**，和打印不沾边——而且它早就写过了喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写了一句 `a + b`，图纸上 `def __add__(self, other):` 里面的 `self` 和 `other` 分别是谁？",
+      "options": [
+        "`self` 是 `+` 左边那只 `a`，`other` 是右边那只 `b`",
+        "`self` 是右边那只 `b`，`other` 是左边那只 `a`",
+        "两个都指 `a`",
+        "`self` 指图纸，`other` 指真猫"
+      ],
+      "answer": 0,
+      "explanation": "`+` 的左边摆着谁，Python 就喊谁的 `__add__`：本喵写 `a + b`，背地里发生的是 `a.__add__(b)`，所以 `self` 接住的是**左边那只 `a`**，`other` 接住的是**右边那只 `b`**喵。这也是为什么它必须用 `self.n + other.n` —— 两个仓库分属两只碗，写反了本喵就会得到一份乱七八糟的结果。记不住就把这两个名字念一遍：自己、另一个喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "图纸上**没有**写 `__eq__` 的时候，两只分别生出来的、装的鱼干数都是 3 的碗，用 `==` 比一比会得到什么？",
+      "options": [
+        "`False` —— Python 默认只比「是不是同一只碗」，两只分别生出来的当然不是同一只",
+        "`True` —— 两只碗装的数一样，Python 会自动看出来",
+        "报错 —— 说这两只碗之间不能用 `==`",
+        "`None` —— 比不出结果"
+      ],
+      "answer": 0,
+      "explanation": "不写 `__eq__`，Python 就按它出厂时的老规矩办：**只比是不是同一只碗**（也就是同一个仓库住址）喵。`Bowl(3)` 和 `Bowl(3)` 是照着图纸**分别生出来**的两只，住址各不相同，所以哪怕装的数一模一样，比的也是 `False`。想让「装的数一样就算相等」，就得自己把 `__eq__` 写上，把比较改成比里面的数。报错是不会的——`==` 这种比法 Python 本来就会，只是它默认按老规矩比喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "stem": "本喵想让两只碗能用 `+` 加起来，图纸上那个空该填哪一招的名字？",
+      "lang": "python",
+      "code": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def ____(self, other):\n        return Bowl(self.n + other.n)\n\na = Bowl(3)\nb = Bowl(4)\nprint(a + b)\n",
+      "blanks": [
+        {
+          "answer": "__add__",
+          "accept": ["__add__"]
+        }
+      ],
+      "explanation": "「`+` 的左边摆着这只碗」这个时刻，Python 替你喊的招式叫 `__add__`，所以空里填 `__add__` 喵。名字是**前后各两条下划线**夹起来的，一共四条，少一条它就不算魔法方法、Python 永远不会替你喊。填好之后，本喵写 `a + b` 就等于让 Python 背地里去喊 `a.__add__(b)`，`self` 接住 `a`、`other` 接住 `b`，叼回来一只新碗喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __str__(self):\n        return f\"装了 {self.n} 条小鱼干\"\n\n    def __add__(self, other):\n        return Bowl(self.n + other.n)\n\nprint(Bowl(3) + Bowl(4))\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "装了 7 条小鱼干",
+      "accept": ["装了 7 条小鱼干\n"],
+      "explanation": "一层层拆开看喵：最里面 `Bowl(3) + Bowl(4)`，`+` 左边摆着那只装 3 条的碗，Python 就喊它的 `__add__`，`self.n + other.n` 是 3 + 4 = 7，叼回来**一只新碗**，装着 7 条。接着 `print(...)` 接住这只新碗，Python 又去喊它的 `__str__`，叼回来「装了 7 条小鱼干」这句话，于是印出来的就是这一行喵。两个时刻前后接力：先用 `__add__` 算出新碗，再用 `__str__` 把新碗说成一句话。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __len__(self):\n        return self.n\n\n    def __eq__(self, other):\n        return self.n == other.n\n\nprint(len(Bowl(5)))\nprint(Bowl(5) == Bowl(5))\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "5\nTrue",
+      "accept": ["5\nTrue\n"],
+      "explanation": "第一行 `len(Bowl(5))`：`len(...)` 套在碗上的时候，Python 替你喊 `__len__`，它叼回来 `self.n`，也就是 `5`，所以印出 `5` 喵。第二行 `Bowl(5) == Bowl(5)`：`==` 两边摆着两只碗，Python 喊左边那只的 `__eq__`，`self.n == other.n` 是 5 == 5，叼回 `True`。这里比的**是两个数字**，数字的 `==` Python 天生就认，不会回头再喊 `__eq__`，所以不会转圈圈喵。"
+    }
+  ]
+}

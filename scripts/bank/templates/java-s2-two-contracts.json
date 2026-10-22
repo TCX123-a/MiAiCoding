@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-two-contracts",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-04",
+  "type": "codewrite",
+  "concept": ["与猫的约定", "一口气认下好几份约定", "两块牌子各管一手", "Scanner"],
+  "instances": 6,
+  "params": {
+    "cat": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 2, "max": 5 },
+  "stemTemplate": "上一节讲过：一只猫可以**一口气认下好几份**约定 —— 这回就让它真的当一回「**既能出声、又会走路**」的猫。\n\n要立的东西：\n\n- 约定 `Speaker`：一手 `void speak();`（只有名头）。\n- 约定 `Walker`：一手 `void walk(int laps);`（只有名头 —— 括号里那个 `laps` 是「走几圈」，喊它的人得投喂一个数）。\n- 图纸 `Cat`：**一口气认下这两份约定**（两名字中间用逗号隔开），两手都补上：\n  - `speak` 印 **名字 + `：喵～`**；\n  - `walk` 印 **名字 + `绕鱼塘走了一圈`**，投喂几圈就印**几行**。\n\n`main` 里这么走：读一个数（走几圈），生**一只**猫，然后给它两块牌子 —— 一块写 `Speaker`、一块写 `Walker`，**两块牌子底下装的是同一只猫**。先拿出声那块牌子喊一声 `speak`，再拿走路那块牌子喊一声 `walk`，把那个数投喂进去。\n\n猫就是这一只，别生两只喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\ninterface Speaker {\n\n}\n\ninterface Walker {\n\n}\n\nclass Cat implements Speaker, Walker {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\ninterface Speaker {\n    void speak();\n}\n\ninterface Walker {\n    void walk(int laps);\n}\n\nclass Cat implements Speaker, Walker {\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    @Override\n    public void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n\n    @Override\n    public void walk(int laps) {\n        for (int i = 0; i < laps; i++) {\n            System.out.println(name + \"绕鱼塘走了一圈\");\n        }\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int laps = sc.nextInt();\n        Cat c = new Cat(\"{cat}\");\n        Speaker s = c;\n        Walker w = c;\n        s.speak();\n        w.walk(laps);\n    }\n}\n",
+  "explanationTemplate": "本题练的是「**一只猫，两份约定**」喵。\n\n**一、认下好几份怎么写。** 图纸开头那一句里，两份约定的名字用**逗号**隔开：`implements Speaker, Walker`。这么一写，猫就得**两份都补全**：`speak` 和 `walk` 一个都不能少，少一个翻译官喵就会说 `... does not override abstract method ...`。\n\n**二、两块牌子各管一手。** 本喵只生了一只猫，却给了它两块牌子：\n\n```java\nCat c = new Cat(\"小橘\");\nSpeaker s = c;\nWalker w = c;\n```\n\n这不是生了两只 —— 底下的猫**从头到尾只有一只**，只是它同时挂着两块牌子。**牌子写什么名字，本喵才喊得动什么**：拿 `s` 喊 `speak` 行、喊 `walk` 不行；拿 `w` 喊 `walk` 行、喊 `speak` 不行。真要两边都喊，就把牌子**认亲换一块**（上一节那手）。\n\n**三、约定的名头里可以带投喂。** `void walk(int laps);` 这手是要喂一个数的，所以补的时候**名头要一字不差**：`public void walk(int laps)` —— 少写那个数、或者换个数名，都算**没补上**，又是那句 `does not override`。\n\n**四、为什么这么分。** 本喵想把「会出声」和「会走路」分成两件事：出声的约定管出声、走路的约定管走路。往后院里来一只**只会走路的**（比如一只小鸭子），按 `Walker` 画就行，它**不必**被迫学一声叫 —— 拆成几份小约定，各家只认自己那份，这就是它跟「一张大图纸全包」的差别喵。"
+}

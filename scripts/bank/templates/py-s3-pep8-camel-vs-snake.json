@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-pep8-camel-vs-snake",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-23",
+  "type": "codefix",
+  "concept": ["snake_case", "camelCase 混进来", "同名不同屋"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 5 },
+    "b": { "kind": "int", "min": 3, "max": 6 }
+  },
+  "stemTemplate": "本喵的小账本出了件怪事喵：三碗小鱼干分别是 **{a} 条、4 条、{b} 条**，跑起来一声不吭、也不摔，可报出来的总数却是 `0`——一条都没进账。\n\n你帮本喵把账捋顺。改好之后要报出**真正的总数**，样式是一行 `总共 X 条小鱼干`。\n\n（本喵给你递个放大镜喵：账里那**两行名字**，看着像同一个名字的两种写法——可在 Python 眼里它俩到底是不是同一间屋，你替本喵盯紧了。）",
+  "brokenCodeTemplate": "bowls = [{a}, 4, {b}]\ntotal_fish = 0\ntotalFish = 0\nfor bowl in bowls:\n    totalFish = totalFish + bowl\nprint(\"总共\", total_fish, \"条小鱼干\")\n",
+  "referenceFixTemplate": "bowls = [{a}, 4, {b}]\ntotal_fish = 0\nfor bowl in bowls:\n    total_fish = total_fish + bowl\nprint(\"总共\", total_fish, \"条小鱼干\")\n",
+  "explanationTemplate": "毛病就出在**名字的拼法**上喵：`total_fish` 和 `totalFish` 只差一个下划线、几处字母大小写，看上去是同一个名字的两种写法——可在 Python 眼里，它们是**两间不同的屋**：一间进过账，一间从头到尾空着。\n\n程序干的正是这件事：加出来的数全进了骆驼式那间（`totalFish`），报数时念的却是下划线式那间（`total_fish`）的门牌——念到的是一个**从没进过账**的 0。所以它不摔也不闹，只是数不对，这种坏法最难当场发现。\n\n改法是**把两间并成一间**，并且按公约统一成下划线式：\n\n```python\nbowls = [{a}, 4, {b}]\ntotal_fish = 0\nfor bowl in bowls:\n    total_fish = total_fish + bowl\nprint(\"总共\", total_fish, \"条小鱼干\")\n```\n\n公约（PEP 8）管名字的条文说得很直接：**普通名字和招式名一律小写字母加下划线**（`lower_case_with_underscores`），骆驼式（`totalFish` 这种中间拱起来的拼法）是留给「图纸」那一路的写法。抄来的名字和自己新起的名字一旦并存，「差一个字母就是另一间屋」的坑就埋下了——**名字看着像，东西却不是同一样，才是真会咬人的地方**喵。"
+}

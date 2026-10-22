@@ -1,0 +1,21 @@
+{
+  "templateId": "c-s3-proj-swap-forgot-name",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-15",
+  "type": "codefix",
+  "concept": ["交换：名字和分数要一起换", "只换一半就是张冠李戴", "临时小本本 ts / tn"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "大黄"] },
+    "n2": { "kind": "pick", "values": ["小白", "小灰"] },
+    "n3": { "kind": "pick", "values": ["阿花", "咪咪"] },
+    "s1": { "kind": "pick", "values": ["90", "88"] },
+    "s2": { "kind": "pick", "values": ["85", "92"] },
+    "s3": { "kind": "pick", "values": ["95", "79"] }
+  },
+  "stemTemplate": "排座这招**排是排了，可排出来的表是张冠李戴的**喵：分数确实从高到低站着，名字却全停在原来的位置 —— 于是「{n1} {s3} 分」这种胡说八道就印出来了。\n\n病根是交换的时候**只换了一半**。档案盒里装着名字和分数两样东西，换就得一起换。请你把这招改对（别的都别动）。改好之后该印三行：{n3} {s3} 分、{n1} {s1} 分、{n2} {s2} 分 —— 名字和分数得是**同一位**的。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nvoid sort_by_score(Node *head) {\n    for (Node *a = head; a != NULL; a = a->next) {\n        for (Node *b = a->next; b != NULL; b = b->next) {\n            if (b->score > a->score) {\n                int ts = a->score;\n                a->score = b->score;\n                b->score = ts;\n            }\n        }\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n    head = add_last(head, \"{n3}\", {s3});\n    sort_by_score(head);\n    print_all(head);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nvoid sort_by_score(Node *head) {\n    for (Node *a = head; a != NULL; a = a->next) {\n        for (Node *b = a->next; b != NULL; b = b->next) {\n            if (b->score > a->score) {\n                int ts = a->score;\n                a->score = b->score;\n                b->score = ts;\n                char *tn = a->name;\n                a->name = b->name;\n                b->name = tn;\n            }\n        }\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n    head = add_last(head, \"{n3}\", {s3});\n    sort_by_score(head);\n    print_all(head);\n    return 0;\n}\n",
+  "explanationTemplate": "名字和分数是**分开躺在盒子里**的两件东西喵，谁也不会「跟着」谁动。只换分数的结果是：分数排好了，名字还停在原来的位置 —— 于是印出来的是「{n1} {s3} 分」这种**张冠李戴**的账。\n\n这种错最吓人的地方是：屏幕上看着特别整齐（三行、分数从高到低），你要是不认识这几位学员，压根看不出问题 —— 跟上一课那个「印错了仓库」的毛病一个脾气。\n\n两样一起换就是那四句：先把这一节的分数和名字各抄进临时的小本本（`ts`、`tn`），再把另一节的抄过来，最后把小本本里的还回去。**为什么非要那个小本本**：一覆盖，原来那个值就没了 —— 跟交换两碗小鱼干是同一个道理。"
+}

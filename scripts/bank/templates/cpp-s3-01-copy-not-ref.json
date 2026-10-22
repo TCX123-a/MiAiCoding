@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-01-copy-not-ref",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-01",
+  "type": "codefix",
+  "concept": ["跑圈里拿到的是副本", "要改柜子里的货得加 &", "不报错但结果悄悄不对"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [1, 4] },
+    "b": { "kind": "pick", "values": [2, 6] },
+    "c": { "kind": "pick", "values": [3, 7] }
+  },
+  "stemTemplate": "本喵想给柜子里的货**每一格都翻一倍**，于是写了个跑圈去改。可跑完一看，柜子里的货**一点没变**。\n\n你帮本喵把它改对：**要让改动真的落回柜子里**（每一格都变成原来的两倍）。塞货和印货那几句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back({a});\n    v.push_back({b});\n    v.push_back({c});\n\n    for (int x : v) {\n        x = x * 2;\n    }\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back({a});\n    v.push_back({b});\n    v.push_back({c});\n\n    for (int &x : v) {\n        x = x * 2;\n    }\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题里翻译官喵**一个字都不说**喵 —— 编得过、跑得完，只是结果悄悄不对（本喵拿最啰嗦的那档念叨 `-Wall` 真跑过一遍，才敢这么写）。\n\n问题出在那一圈里那个名字：它拿到的是**那一格货的一份副本** —— 像本喵把鱼干从柜子里捞出来放在旁边看。改副本，柜子里那一份纹丝不动。\n\n要让改动落回柜子里，名字前面得加一个 `&`，写成\n\n`for (int &x : v)`\n\n那个 `&` 的意思是「**这个名字就是柜子里那一格本人**」，不是副本。加完以后，同一句 `x = x * 2;` 才是真的在动柜子。\n\n⚠️ 只加 `&` 就够了，别顺手把 `int` 改成别的东西 —— `&` 加上原来那个类型名，就是「这一格的本人」的写法。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-struct-name-assign",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-05",
+  "type": "codefix",
+  "concept": ["strcpy", "一排碗不能整个换", "编译错误", "string.h"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "狸花", "大肥鱼"] },
+    "f1": { "kind": "int", "min": 1, "max": 4 }
+  },
+  "stemTemplate": "本喵照着课文的样子画好了一张图纸，要生一只猫：名字叫 `{who}`、食量填 {f1}，然后印一行 `{who} 吃了 {f1} 条喵`。\n\n名字那格是一排碗（图纸上写的是 `char name[20];`）。可翻译官喵一瞧见就不干了，把整段代码退了回来。你帮本喵看看它为什么不高兴，把它改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <string.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a;\n    a.name = \"{who}\";\n    a.fish = {f1};\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <string.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a;\n    strcpy(a.name, \"{who}\");\n    a.fish = {f1};\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: assignment to expression with array type` —— 翻过来就是「**一整排碗，不能整个换掉**」。\n\n**为什么 `a.fish = {f1};` 就行、`a.name = \"{who}\";` 就不行？** 因为这两个格子的货不一样：\n\n- `a.fish` 是**一只碗** —— 一只碗当然能整个装进一条新的小鱼干；\n- `a.name` 不是一只碗，它是**一排 20 只碗本身的名字**。一排碗的名字挪不动、也换不了，跟上一课 `bowls++` 被拦下来是同一个道理：它不是一只仓库，是个算出来的门牌号。\n\n想把一整条项链搬进这排碗里，只能**一颗一颗搬** —— 这件事有个现成的招式干，叫 `strcpy`（「把项链抄过去」），它住在 `string.h` 家里。写成 `strcpy(a.name, \"{who}\");` 就对了。\n\n顺带把这一条也收下：**整只猫倒是可以整个搬**（`struct Cat b = a;` 或者 `b = a;`）—— 那是翻译官喵替你一颗颗珠子搬过去。搬不动的只有「一排碗」这**一个格子里**的东西喵。"
+}

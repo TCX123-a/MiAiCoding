@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s2-challenge-id-set-report",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-15",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "天生的去重行家", "排排坐的清单", "回原册找重号"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵的号牌册子又乱又长喵：有的号来了两次、三次。要交一份小结，印法是这样：\n\n1. 先印一行 `不重复的号码有 X 个喵`（X 是**不同号**的总数）；\n2. 接着**从小到大**把每个不同的号各印一行；\n3. 最后印一行 `重号的有 X 个喵`（X 是**来了不止一次的号有几种**，不是多出来的次数）。\n\n投喂口先给一个数（今天报了几次号），再一个一个给号（1 到 9 的号）。\n\n提示喵：前几课学过的「**集合**」天生就管去重；排排坐可以用现成的 `sorted`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组号**喵。）",
+  "starterTemplate": "n = int(input())\nids = []\nfor i in range(n):\n    ids.append(int(input()))\n\n# 去重清单 + 数重号\n",
+  "referenceSolutionTemplate": "n = int(input())\nids = []\nfor i in range(n):\n    ids.append(int(input()))\n\ndistinct = sorted(set(ids))\nprint(\"不重复的号码有\", len(distinct), \"个喵\")\nfor x in distinct:\n    print(x)\n\nrepeated = 0\nfor x in distinct:\n    if ids.count(x) > 1:\n        repeated = repeated + 1\nprint(\"重号的有\", repeated, \"个喵\")\n",
+  "explanationTemplate": "这题的主角是**集合** —— 它天生就管「同样的东西只留一份」喵。\n\n**一、去重。** `set(ids)` 一过手，重复的号自动只剩一份。再让 `sorted(...)` 一裹，就得到**从小到大排好的不重复清单**。两件事拼起来一句就够：\n\n```python\ndistinct = sorted(set(ids))\n```\n\n**二、数重号。** 判一个号是不是重号，最直白的办法是**回原册里数一数它来过几次**：\n\n```python\nif ids.count(x) > 1:\n```\n\n超过一次就算一个重号。注意数的是「**有几种号重了**」，不是「一共多出来几次」—— 比如 `141` 来了三次，那是**一种**重号，不是两笔。\n\n**三、原册别扔。** 去重清单是从原册做出来的，可「谁重了」还得回原册查 —— 所以两份都要留着。\n\n顺带说一句喵：集合天生**没有先后**，打印之前一定要过一道 `sorted`，不然每次印出来的顺序都可能不一样。"
+}

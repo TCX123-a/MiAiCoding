@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-mod-rejects-decimal",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-05",
+  "type": "codefix",
+  "concept": ["取余只认整数", "operator%", "两边都得挂整数牌"],
+  "instances": 2,
+  "params": {
+    "total": { "kind": "pick", "values": ["7", "9"] }
+  },
+  "stemTemplate": "本喵要把 {total} 条小鱼干**三条捆成一捆**，问点单机「捆完之后还剩几条」。\n\n可翻译官喵当场就把稿子退回来了，屏幕上连一个字都没有。\n\n你帮本喵把它改好：改完要能印出剩下的条数。碗里装的那个数、还有要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int total = {total};\n    int left = total % 3.0;\n    cout << \"没捆完的还剩 \" << left << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int total = {total};\n    int left = total % 3;\n    cout << \"没捆完的还剩 \" << left << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵这一回的原话是：\n\n`error: invalid operands of types 'int' and 'double' to binary 'operator%'`\n\n`operator%` 是「**取余这件家伙**」，`invalid operands` 是「**这两件货它不收**」—— 右边那件带着小数点，它不认。\n\n为什么取余不认小数？取余问的是「除完还剩**几个整的**」，而小数除出来的那点零头本来就是个小零头，谈不上「剩几个」。所以 `%` 两边**都必须挂整数牌**：一边是小数都不行。\n\n改法只有一处：把 `3.0` 写回 `3`。\n\n往后记牢这一对搭档喵：`/` 和 `%` 是同一对动作的两半 —— **`/` 拿走商、`%` 拿走剩下的零头**；两件货都是整数时，它俩配合起来正好把一堆积木分干净，一点不剩。"
+}

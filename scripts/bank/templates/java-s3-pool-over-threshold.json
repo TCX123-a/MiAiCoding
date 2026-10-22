@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-pool-over-threshold",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-11",
+  "type": "codewrite",
+  "concept": ["凭条里装的不一定是数", "每张凭条带着自己那件活的数", "取货顺序决定印出来的顺序"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "t": { "kind": "int", "min": 5, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵手上有一道门槛：**不小于 {t}** 的就算「够大」。要把投喂进来的每个数都交给猫去量一量，**按投喂的先后**把每件的量法印出来，最后数一数有几件够大喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。池子雇 **n 只猫**（一件活一只）。程序该印出 **n + 1 行**：\n\n- 前 n 行，每行是**那个数 + 一个空格 + 判定**（`够大` 或 `太小`），顺序要跟投喂的一模一样；\n- 最后一行印 `够大的有 X 件`（X 是判定为「够大」的件数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）\n\n猫只负责量出那一行字，印还是本喵自己按顺序印。",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\nimport java.util.concurrent.ExecutorService;\nimport java.util.concurrent.Executors;\nimport java.util.concurrent.Future;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n        ExecutorService 池子 = Executors.newFixedThreadPool({n});\n        List<Future<String>> 凭条们 = new ArrayList<>();\n        for (int x : nums) {\n            凭条们.add(池子.submit(() -> x >= {t} ? x + \" 够大\" : x + \" 太小\"));\n        }\n\n        int 够大的件数 = 0;\n        for (Future<String> 凭条 : 凭条们) {\n            String 这一行 = 凭条.get();\n            System.out.println(这一行);\n            if (这一行.contains(\"够大\")) {\n                够大的件数 = 够大的件数 + 1;\n            }\n        }\n        System.out.println(\"够大的有 \" + 够大的件数 + \" 件\");\n        池子.shutdown();\n    }\n}\n",
+  "explanationTemplate": "这一题有两处和前面那几题不一样，都值得你停一下喵。\n\n**一、凭条里装的不一定得是「是 / 不是」，也可以是字。** 那件活干完交回来的是一整行字（比如 `{t} 够大` 那个样子），所以凭条的尖括号里写的是 `String`（`Future<String>`）。**凭条里装什么，由那件活交回什么决定。**\n\n**二、每张凭条里带着自己那件活的数。** 这一点很关键：行里的数是**那件活自己写进去的**，不是主路这只猫另外配的。所以取货顺序一乱，印出来的**数也跟着乱** —— 一眼就能看出来顺序错没错。\n\n**三、判定表本身也是那件活的战利品。** 参考解里猫**不印任何字**，它只把那一行字交回来；印出来、还有数一数有几件够大，都是主路这只猫拿到凭条之后干的事（数数用的是 `contains(\"够大\")`）。要是让猫自己去印，{n} 只猫谁先量完谁先印，顺序就跟投喂的对不上了。\n\n**四、取货按投喂的先后。** 凭条是按投喂顺序塞进柜子的，取货时按柜子的顺序一张张 `get()`，印出来的顺序就和投喂一致。\n\n**五、数数的小篮子要立在外面。** `够大的件数` 在绕圈**外面**先立好、给个 0，转到哪一行带「够大」就加 1。\n\n**六、`get()` 一个都不能少。** 少取一张凭条，就等于少印一行、还少算一件，`够大的有 X 件` 那个数也会跟着错。最后别忘了 `池子.shutdown()` 打烊喵。"
+}

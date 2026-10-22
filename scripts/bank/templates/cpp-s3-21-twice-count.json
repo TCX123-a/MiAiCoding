@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-21-twice-count",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-21",
+  "type": "codewrite",
+  "concept": ["宏把投喂的那句话抄两遍", "招式只算一遍", "数一数就知道"],
+  "instances": 6,
+  "params": {
+    "tag": { "kind": "pick", "values": ["条子算的", "吩咐算的"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "本喵要做个**数数**的小实验：同一句话，递给条子（宏）和递给真招式，分别会被喊几遍喵。\n\n投喂口会喂进来一个数 —— 当作**计数器的起点**。请你写个程序：\n\n1. 在门外放一只记数的碗 `calls`，先把它设成投喂进来那个数（**从头到尾就这一只碗，中间不许换新的、也不许清零**）；\n2. 写一招 `next()`：每被喊一次，就把 `calls` 加一，然后把此刻的 `calls` 叼回来；\n3. 写一张条子 `TWICE_M(x)`，换成 `x + x`（括号两处都套）；再写一招 `twice_f(int x)`，身子里也是 `return x + x;`。\n\n然后按这个顺序印四行：\n\n- 第一行先印 `{tag}：`，紧接着印 `TWICE_M(next())` 那个数；\n- 第二行印 `calls` 此刻的数；\n- 第三行先印 `招式：`，紧接着印 `twice_f(next())` 那个数；\n- 第四行印 `calls` 此刻的数。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个起点**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nint calls = 0;\n\nint next() {\n    calls = calls + 1;\n    return calls;\n}\n\n#define TWICE_M(x) ((x) + (x))\n\nint twice_f(int x) {\n    return x + x;\n}\n\nint main() {\n    cin >> calls;\n\n    cout << \"{tag}：\" << TWICE_M(next()) << endl;\n    cout << calls << endl;\n    cout << \"招式：\" << twice_f(next()) << endl;\n    cout << calls << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "四行数字里藏着这一课最值钱的一件事喵：**条子会把你说的话抄两遍。**\n\n**第一、二行**：`TWICE_M(next())` 换完是 `((next()) + (next()))` —— 那句 `next()` **被抄了两遍**，于是它被**真的喊了两次**，`calls` 一下子往前蹦了两格。第一行那个数是两次喊出来的结果加起来：假如起点是 3，喊出来的是 4 和 5，加起来就是 9。\n\n**第三、四行**：`twice_f(next())` 是**真招式** —— 翻译官喵先把投喂进来的东西算好（喊**一次** `next()`，拿到一个数），再进门做 `x + x`。所以 `calls` 只往前蹦了**一格**（接上刚才那个例子：从 5 蹦到 6，叼回来的是 12）。\n\n这就是「宏 vs 招式」最实在的一条差别：**招式先把你投喂的东西算好再进门；宏是照着字换，换几遍就干几遍活。** 换成往后会写的 `i++` 那种句子，条子能让你得到一个自己都说不清的数（翻译官喵会给一句警告，可它照样把程序交给你）。\n\n所以规矩很朴素：**要算的东西，交给招式；只有「开工前换字」这一类事，才轮得到条子。**"
+}

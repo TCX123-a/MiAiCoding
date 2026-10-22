@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-19-no-virtual-gate",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-19",
+  "type": "codefix",
+  "concept": ["照光的硬门槛", "底座上至少挂一手招牌", "当场拦住比悄悄转错强"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "小P", "小灰"] }
+  },
+  "stemTemplate": "底座上一手挂了招牌的都没有，程序里直接来了一手 `dynamic_cast` —— 翻译官喵看了当场翻脸，**一个字都编不出来**喵。这不是坏事：照光得先能问「屋里住的是谁」，而这份记录是挂了招牌的那一手带来的。\n\n补一手最简单也最常用的挂招牌（出生招式那一手就行），让它编得动。\n\n修好之后，屏幕上只有一行：\n\n1. `照出来了：{who}`\n\n⚠️ 这一题跟「补个分号」不一样：翻译官喵的原话里有 `source type is not polymorphic`，它不是挑刺，是这道门槛真的绕不过去。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"{who}\");\n    Cat* p = &o;\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了：\" + a->name) << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"{who}\");\n    Cat* p = &o;\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了：\" + a->name) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "照光要在**跑起来的时候**问一句「这间屋里住的到底是谁」，这句话得有个地方记着喵。记它的地方不是白来的：底座上至少得挂一手招牌（`virtual`，最容易的就是出生招式 `virtual ~Cat() {}`），翻译官喵才会给每只猫配这样一份记录。一手招牌都没有的底座，它连记录都不配，照光没人可问，于是**当场拦下来、不许编过**，原话是 `cannot 'dynamic_cast' ... (source type is not polymorphic)`。\n\n换个角度看这也是好事：编不过，比「悄悄转错」强得多 —— 前面那种不照光的写法（`static_cast`）就是悄悄转错，翻译官喵一声不吭，等本喵拿着错牌子去读别人那一格才发现。所以这道门槛宁可要。"
+}

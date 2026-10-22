@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-unionenum-tag-missing-keyword",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-07",
+  "type": "codefix",
+  "concept": ["枚举", "enum关键字不能省", "编译错误"],
+  "instances": 2,
+  "params": {
+    "c1": { "kind": "pick", "values": ["RED", "GREEN", "BLUE"] }
+  },
+  "stemTemplate": "本喵给三种颜色起了名字，又请了一招 `show`：给它一个颜色，它把颜色的名字报出来。\n\n`main` 里要请它报 `{c1}` 这一种。可翻译官喵把整段代码退了回来。你帮本喵看看它为什么不高兴 —— 它一般会把答案指给你的喵。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nenum Color { RED, GREEN, BLUE };\n\nvoid show(enum Color c) {\n    if (c == RED) {\n        printf(\"红色\\n\");\n    } else if (c == GREEN) {\n        printf(\"绿色\\n\");\n    } else {\n        printf(\"蓝色\\n\");\n    }\n}\n\nint main(void) {\n    Color c = {c1};\n    show(c);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nenum Color { RED, GREEN, BLUE };\n\nvoid show(enum Color c) {\n    if (c == RED) {\n        printf(\"红色\\n\");\n    } else if (c == GREEN) {\n        printf(\"绿色\\n\");\n    } else {\n        printf(\"蓝色\\n\");\n    }\n}\n\nint main(void) {\n    enum Color c = {c1};\n    show(c);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: unknown type name 'Color'; use 'enum' keyword to refer to the type` —— 翻过来就是：「**`Color` 这个名字本喵没见过 —— 要用它，前面得带上 `enum`。**」（后半句就是这个意思，等于把答案指给你了。）\n\n为什么会这样？因为 `Color` 只是**贴在那串编号上的标签**；这串编号完整的名字是 `enum Color`。翻译官喵读代码的时候，只认得「`enum` 后面跟着哪个标签」这种形状 —— 光秃秃一个 `Color`，它当然没见过。\n\n有意思的是**同一个文件里，上面那一行 `void show(enum Color c)` 写得是对的** —— 写对了它就不吭声。所以这类错常常只出现在一处，看着像是「上面明明能跑」，其实只是那一处你顺手写全了而已。\n\n**一句话记牢：`struct` 和 `enum` 这两个记号，用的时候一个字母都不能省。** 标签本身不是名字，`struct Cat`、`enum Color` 才是。\n\n再补一件相关的事：`{c1}` 这个名字**不用带任何前缀** —— 它是直接写在花括号里的「编号外号」，翻译官喵一眼认得。所以 `c == {c1}` 这么写是对的，别手痒加上 `enum`。"
+}

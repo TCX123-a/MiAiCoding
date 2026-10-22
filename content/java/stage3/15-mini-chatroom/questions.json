@@ -1,0 +1,80 @@
+{
+  "lessonId": "java-stage3-15",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "开一扇门的时候，门牌号为什么写 `0`？",
+      "options": [
+        "`0` 是让系统**随便挑一个空号**，挑完的那一个用 `门.getLocalPort()` 问回来；写死一个号，那个号在别人窝里可能已经被占了",
+        "`0` 是「先不开门」，等母猫自己挑好号再去开",
+        "`0` 是开在 0 号门上，谁都能来敲",
+        "`0` 是「这门不限个数」，本喵想开几扇就开几扇"
+      ],
+      "answer": 0,
+      "explanation": "课文第一节那一行 `new ServerSocket(0, 50, InetAddress.getByName(\"127.0.0.1\"))` 里，第一个投喂就是门牌号。**写 `0` = 让系统挑一个空号**，挑好之后要告诉别人是哪个号，就用 `门.getLocalPort()` 问一句。写死一个号（比如 8888）也能开，可那个号在别人机器上未必空着 —— 本喵的稿子要走到哪儿都跑得动，就别写死喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "门口来了一位客人，为什么非得**另派一只猫**陪着，门房自己陪着不行？",
+      "options": [
+        "门房自己陪着的话，这位客人一闷着不说话，门房就卡在「等它说话」那一步上，后面的客人连门都进不来",
+        "门房自己陪着的话，客人的话会被串到别人那条管子上去",
+        "门房自己陪着的话，名单上就记不住这位客人",
+        "门房自己陪着的话，`accept()` 交回来的那支管子编译器不认"
+      ],
+      "answer": 0,
+      "explanation": "课文第二节那段里，`甲` 进门之后一个字都没说 —— 守着甲的那只猫就卡在等它说话那一步上。要是门房亲自陪着甲，`accept()` 那一句就没机会再被喊到，乙 敲得开门（门是开着的）却没人招呼它。**门房的本分只有一个：开门。** 开完立刻派一只新猫去陪这位，自己回到门口接着等 —— 这就是第 9 课那手「派一只猫」在这儿的用处。所以 `守门的` 那个绕圈里，`accept()` 的下一句永远是 `new Thread(() -> 守着一位(客)).start()`。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "屋里那份名单，为什么既要用 `Collections.synchronizedList(new ArrayList<>())` 造，转发的时候还要再 `synchronized (屋里)` 锁一段？",
+      "options": [
+        "名单会被好几只猫一起碰：自带锁只保证「添一笔」这种单次动作安全，而「从头翻到尾」是一串动作，得整段锁上才不会被翻到一半改掉",
+        "自带锁管的是「谁先添谁后添」的先后，再锁一段是为了让话按先后转发出去",
+        "再锁一段是因为名单里存的是管子，管子本身不许两只猫同时写",
+        "再锁一段是为了程序收工的时候能把名单一起关掉"
+      ],
+      "answer": 0,
+      "explanation": "课文第三节说得很直：`Collections.synchronizedList(...)` 是**一张自带锁的名单**，好几只猫同时往里添、同时翻，它都替你排好队；可「从头翻到尾」是一连串动作，翻到一半名单被人改了，翻的动作就乱了 —— 所以往外转话那一段，是整段 `synchronized (屋里) { ... }` 锁起来的。而且这两把是**同一把锁**（自带的锁锁的就是那张名单自己），所以「添一笔」和「翻一遍」互相之间也排得上队喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.IOException;\nimport java.io.InputStreamReader;\nimport java.io.OutputStreamWriter;\nimport java.io.PrintWriter;\nimport java.net.InetAddress;\nimport java.net.ServerSocket;\nimport java.net.Socket;\nimport java.nio.charset.StandardCharsets;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static final List<PrintWriter> 屋里 = Collections.____(new ArrayList<>());\n\n    public static void main(String[] args) throws Exception {\n        ServerSocket 门 = new ServerSocket(0, 50, InetAddress.getByName(\"127.0.0.1\"));\n        int 端口 = 门.getLocalPort();\n        Thread 守门的 = new Thread(() -> {\n            try {\n                while (true) {\n                    Socket 客 = 门.accept();\n                    new Thread(() -> 守着一位(客)).start();\n                }\n            } catch (IOException e) {\n            }\n        });\n        守门的.setDaemon(true);\n        守门的.start();\n\n        Socket 甲 = new Socket(\"127.0.0.1\", 端口);\n        PrintWriter 甲写 = 写手(甲);\n        BufferedReader 甲读 = 读者(甲);\n        甲写.println(\"甲\");\n        System.out.println(\"甲 听到：\" + 甲读.readLine());\n        甲写.println(\"甲：开饭了\");\n        System.out.println(\"甲 听到：\" + 甲读.readLine());\n        甲写.println(\"再见\");\n        甲.close();\n    }\n\n    static void 守着一位(Socket 客) {\n        try {\n            BufferedReader 读 = 读者(客);\n            PrintWriter 写 = 写手(客);\n            String 名字 = 读.____();\n            屋里.add(写);\n            写.println(\"欢迎 \" + 名字);\n            String 一句;\n            while ((一句 = 读.readLine()) != null) {\n                if (一句.____(\"再见\")) {\n                    break;\n                }\n                转给所有人(一句);\n            }\n            屋里.____(写);\n            客.close();\n        } catch (IOException e) {\n        }\n    }\n\n    static void 转给所有人(String 一句) {\n        ____ (屋里) {\n            for (PrintWriter 写 : 屋里) {\n                写.println(一句);\n            }\n        }\n    }\n\n    static PrintWriter 写手(Socket 客) throws IOException {\n        return new PrintWriter(new OutputStreamWriter(客.getOutputStream(), StandardCharsets.UTF_8), true);\n    }\n\n    static BufferedReader 读者(Socket 客) throws IOException {\n        return new BufferedReader(new InputStreamReader(客.getInputStream(), StandardCharsets.UTF_8));\n    }\n}",
+      "stem": "这段代码缺了五处，把它补完整，让它跑起来印出这两行：`甲 听到：欢迎 甲`、`甲 听到：甲：开饭了`。",
+      "blanks": [
+        { "answer": "synchronizedList", "accept": [] },
+        { "answer": "readLine", "accept": [] },
+        { "answer": "equals", "accept": [] },
+        { "answer": "remove", "accept": [] },
+        { "answer": "synchronized", "accept": [] }
+      ],
+      "explanation": "五处正好是这一课的五手喵。**第一处** `synchronizedList` 是「一张自带锁的名单」—— 屋里几位随时在变，好几只猫一起碰它。**第二处** `readLine()` 是「一行一行听」：进门第一句是这位的名字，所以屋里能用它拼出 `欢迎 甲`。**第三处** `equals` 是比一比这一句是不是 `再见` —— 是的话就跳出绕圈去退房（**这一句必须在**，不然这位永远退不了房）。**第四处** `屋里.remove(写)` 是把这位从名单上划掉：划掉之后别人说话就不会再往一支已经关掉的管子上递了。**第五处** `synchronized (屋里) { ... }` 是「从头翻到尾」那一段的锁 —— 单次添一笔由名单自带的锁管，翻一整遍得整段锁上。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.IOException;\nimport java.io.InputStreamReader;\nimport java.io.OutputStreamWriter;\nimport java.io.PrintWriter;\nimport java.net.InetAddress;\nimport java.net.ServerSocket;\nimport java.net.Socket;\nimport java.nio.charset.StandardCharsets;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ServerSocket 门 = new ServerSocket(0, 50, InetAddress.getByName(\"127.0.0.1\"));\n        int 端口 = 门.getLocalPort();\n        Thread 守门的 = new Thread(() -> {\n            try {\n                while (true) {\n                    Socket 客 = 门.accept();\n                    new Thread(() -> 守着一位(客)).start();\n                }\n            } catch (IOException e) {\n            }\n        });\n        守门的.setDaemon(true);\n        守门的.start();\n\n        Socket 甲 = new Socket(\"127.0.0.1\", 端口);\n        Socket 乙 = new Socket(\"127.0.0.1\", 端口);\n        Socket 丙 = new Socket(\"127.0.0.1\", 端口);\n        写手(乙).println(\"有鱼吗\");\n        写手(丙).println(\"开饭了\");\n        System.out.println(\"乙 的管子：\" + 读者(乙).readLine());\n        System.out.println(\"丙 的管子：\" + 读者(丙).readLine());\n        甲.close();\n        乙.close();\n        丙.close();\n    }\n\n    static void 守着一位(Socket 客) {\n        try {\n            写手(客).println(\"收到：\" + 读者(客).readLine());\n            客.close();\n        } catch (IOException e) {\n        }\n    }\n\n    static PrintWriter 写手(Socket 客) throws IOException {\n        return new PrintWriter(new OutputStreamWriter(客.getOutputStream(), StandardCharsets.UTF_8), true);\n    }\n\n    static BufferedReader 读者(Socket 客) throws IOException {\n        return new BufferedReader(new InputStreamReader(客.getInputStream(), StandardCharsets.UTF_8));\n    }\n}",
+      "stem": "这段代码的输出是什么？（两行）",
+      "answer": "乙 的管子：收到：有鱼吗\n丙 的管子：收到：开饭了",
+      "accept": ["乙 的管子：收到：有鱼吗\n丙 的管子：收到：开饭了\n"],
+      "explanation": "**`甲` 是故意闷着的** —— 它进了门一个字都没说，守着它的那只猫就卡在等它说话那一步上。可门房开完门就回门口了，乙 丙 各有一位新猫招呼：乙 说 `有鱼吗`、丙 说 `开饭了`，两位各自把话送到，各自的管子也各自拿回了回话。所以两行都印得出来（乙 在前、丙 在后，是**母猫自己摆的先后** —— 这两句读的先后写在代码里，跟谁先说话没关系）。这一题就是课文第二节那个「一位客人一只猫」的用处喵：**一位闷着，不耽误别的位**。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.IOException;\nimport java.io.InputStreamReader;\nimport java.io.OutputStreamWriter;\nimport java.io.PrintWriter;\nimport java.net.InetAddress;\nimport java.net.ServerSocket;\nimport java.net.Socket;\nimport java.nio.charset.StandardCharsets;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        ServerSocket 门 = new ServerSocket(0, 50, InetAddress.getByName(\"127.0.0.1\"));\n        int 端口 = 门.getLocalPort();\n        Thread 守门的 = new Thread(() -> {\n            try {\n                Socket 客 = 门.accept();\n                PrintWriter 写 = 写手(客);\n                BufferedReader 读 = 读者(客);\n                写.println(\"收到：\" + 读.readLine());\n                写.println(\"收到：\" + 读.readLine());\n            } catch (IOException e) {\n            }\n        });\n        守门的.start();\n\n        Socket 自己 = new Socket(\"127.0.0.1\", 端口);\n        PrintWriter 写 = 写手(自己);\n        BufferedReader 读 = 读者(自己);\n        写.println(\"开饭了\");\n        写.println(\"有鱼吗\");\n        System.out.println(\"自己 听到：\" + 读.readLine());\n        System.out.println(\"自己 听到：\" + 读.readLine());\n        自己.close();\n        守门的.join();\n    }\n\n    static PrintWriter 写手(Socket 客) throws IOException {\n        return new PrintWriter(new OutputStreamWriter(客.getOutputStream(), StandardCharsets.UTF_8), true);\n    }\n\n    static BufferedReader 读者(Socket 客) throws IOException {\n        return new BufferedReader(new InputStreamReader(客.getInputStream(), StandardCharsets.UTF_8));\n    }\n}",
+      "stem": "这段代码的输出是什么？（两行）",
+      "answer": "自己 听到：收到：开饭了\n自己 听到：收到：有鱼吗",
+      "accept": ["自己 听到：收到：开饭了\n自己 听到：收到：有鱼吗\n"],
+      "explanation": "一支管子开出来，两头各拿一支写手一支读者，**来回了整整两趟**：这一头先送 `开饭了`、再送 `有鱼吗`；那一头收一句回一句，两句的先后跟着送出去的先后走。这一头读的时候也是**按本喵自己摆的先后**读两行 —— 所以印出来第一行是 `收到：开饭了`、第二行是 `收到：有鱼吗`，顺序一点不含糊。这一题照的是课文第一节那块砖：**门认客人，管子认两头** —— 门牌号是临时的（`getLocalPort()` 问回来的），管子认的是这两头，不认号。"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-abstract-instantiate",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-03",
+  "type": "codefix",
+  "concept": ["只画了一半的图纸", "abstract", "不许直接生猫", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵那张大图纸**只画了一半**：那一招 `speak` 只有个头、还没写完。小图纸倒是老老实实补上了。\n\n可本喵在 `main` 里**照着大图纸直接生了一只** —— 翻译官喵把爪子拍下来，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n{name}：喵～\n```\n\n牌子那半边本喵一个字都不想动，问题出在**生**的那半边喵。",
+  "brokenCodeTemplate": "abstract class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    abstract void speak();\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal a = new Animal(\"{name}\");\n        a.speak();\n    }\n}\n",
+  "referenceFixTemplate": "abstract class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    abstract void speak();\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Animal a = new Cat(\"{name}\");\n        a.speak();\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 **`Animal is abstract; cannot be instantiated`**，念起来是「`Animal` 是张**只画了一半的图纸**，不能拿来生真猫喵」。\n\n有一条最容易走岔的地方：这句话**跟出生那一手没关系**。本喵第一反应往往是「是不是 `Animal(...)` 那一段写错了」—— 不是。构造链那套写法一个字都没毛病，问题在于**这张图纸本身就不许生**。\n\n为什么？看那一行 `abstract void speak();` —— 这一招**只有个头、没有身子**。要真让它生出猫来，回头喊一声「出声」，它该干什么？写那张图纸的人压根没说。翻译官喵宁可不让你生，也不想让一只「不知道该干什么」的猫跑进院子里。\n\n正路有两条：\n\n- **换一张写得完的图纸来生**：`Animal a = new Cat(\"{name}\");` —— 牌子这半边照样写 `Animal`（照 `Cat` 生的猫本来就是动物，收得下），只是**生**的那一头交给小图纸。这也是本题的正解。\n- 或者把大图纸头上那个 `abstract` 拿掉、再把那一招补上身子 —— 可这就等于本喵自己把「必须会出声」这条规矩撤了，这一课学的本事也就白学喵。\n\n顺手记：**牌子上写的图纸名，和生的时候用的图纸名，本来就是两回事**。这一题正好把这一点演给本喵看。"
+}

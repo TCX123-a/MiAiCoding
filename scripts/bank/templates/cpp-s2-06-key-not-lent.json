@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-06-key-not-lent",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-06",
+  "type": "codefix",
+  "concept": ["后门不传递", "整张图纸开门", "报错现场"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 2, "max": 3 },
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "本喵给猫大夫那张图纸开了后门，猫大夫翻账本翻得好好的。\n\n现在来了个**学徒**，它也想瞄一眼盒子里的条数——可信封递进去，翻译官喵还是说**够不着**喵。\n\n你帮本喵改到能跑起来。**猫大夫那张图纸、还有猫窝那段账，都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    friend class Vet;\n};\n\nclass Vet {\n};\n\nclass Assistant {\npublic:\n    void peek(const Cat& c) {\n        cout << c.fish << endl;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\", {fish});\n    Assistant a;\n    a.peek(c1);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    friend class Vet;\n    friend class Assistant;\n};\n\nclass Vet {\n};\n\nclass Assistant {\npublic:\n    void peek(const Cat& c) {\n        cout << c.fish << endl;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\", {fish});\n    Assistant a;\n    a.peek(c1);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:19:19: error: 'int Cat::fish' is private within this context`\n\n翻成猫话：**「`cat` 盒子里的 `fish` 那一格，你现在站的这个地方够不着喵。」**\n\n本喵明明开过后门了呀？——因为开的是**给猫大夫那张图纸的**，学徒不是猫大夫。这一条是刻意的：\n\n> **后门不传递。** 通行证不许转借：`Vet` 有，`Assistant` 没有。想让它进得来，就得在图纸里**再写一行**，把名字写清楚。\n\n要是通行证能转借，那本喵开一次门就等于给全世界开门了——盖子也就白扣了。\n\n顺带记上另外两条边界喵：**后门是单向的**（本喵给谁开门是本喵单方面签的字，对方不会把它的钥匙回赠过来），**后门也不是工牌**（拿到通行证的招式身份上还是外面的一手）。\n\n想让这一位进来，解法就是在图纸里补上给它那一行。"
+}

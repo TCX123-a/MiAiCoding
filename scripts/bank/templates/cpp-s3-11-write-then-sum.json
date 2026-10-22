@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-11-write-then-sum",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-11",
+  "type": "codewrite",
+  "concept": ["写进小本本再读回来", "ofstream 与 ifstream", "先合上再翻开"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["条", "颗"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "投喂口会**先给一个数**（表示接下来有几个数），**再一个一个给 {n} 个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 把这 {n} 个数**一行一个**写进小本本（名字随便起）；\n2. **合上本子**；\n3. 重新翻开本子，把数一个一个读回来，**读到一个就印一行**；\n4. 数都读完之后，最后再印一行 `一共 X {unit}`，X 是读回来的这些数加在一起。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <fstream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <fstream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    ofstream out(\"nums.txt\");\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        out << x << endl;\n    }\n    out.close();\n\n    ifstream in(\"nums.txt\");\n    int x = 0;\n    int total = 0;\n    while (in >> x) {\n        cout << x << endl;\n        total = total + x;\n    }\n    cout << \"一共 \" << total << \" {unit}\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题要连着用两件工具喵：一件**只写**的 `ofstream`、一件**只读**的 `ifstream`。\n\n三处容易松的地方：\n\n- **合上本子那一句 `out.close()` 不能省。** 写进去的东西要等合上本子才真正落到本子上；本喵自己的习惯是写完立刻合上，然后再去读 —— 先合上、再翻开，这个顺序最省心。\n- **读回来用 `while (in >> x)`。** 它念作「**还读得动就接着读**」：本子里有几个数，就叼几个，不用本喵另外数一遍。读到本子末尾它自己就停。\n- **印和加要是同一个数。** 每叼回来一个，既印出去、也加进总和里，两件事写在同一个肚子里；少了哪个，输出都会不对。\n\n⚠️ 投喂口**先给的是个数**，别把它当成第一个要记的数 —— 先念一个 `cin >> n;`，再进屋转圈收数。"
+}

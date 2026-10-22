@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-10-book-on-blueprint",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-10",
+  "type": "codefix",
+  "concept": ["账本那一格只有一份", "static 一掉就变成每只猫各一本", "锁也跟着掉"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "int", "min": 3, "max": 5 },
+    "n2": { "kind": "int", "min": 6, "max": 8 }
+  },
+  "stemTemplate": "本喵要的是**一本账**：两只猫记的是**同一本**，母猫最后问它们各自「你手上那本账记了多少」，两行必须**一模一样**，而且得是两只加起来的总数。\n\n可这段代码印出来是两行**不一样的数**：\n\n```text\n小橘手上的账本：{n1} 条\n狸花手上的账本：{n2} 条\n```\n\n你帮本喵改对：改完之后两行都要是**两只加起来**的总数（{n1} 和 {n2} 是两只猫各自要记的笔数，这两处不用动）。\n\n（这一题**不用投喂任何东西**。）",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 甲 = new Cat(\"小橘\", {n1});\n        Cat 乙 = new Cat(\"狸花\", {n2});\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(甲.名字 + \"手上的账本：\" + 甲.账本 + \" 条\");\n        System.out.println(乙.名字 + \"手上的账本：\" + 乙.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            记一笔();\n        }\n    }\n\n    synchronized void 记一笔() {\n        账本 = 账本 + 1;\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 甲 = new Cat(\"小橘\", {n1});\n        Cat 乙 = new Cat(\"狸花\", {n2});\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(甲.名字 + \"手上的账本：\" + 甲.账本 + \" 条\");\n        System.out.println(乙.名字 + \"手上的账本：\" + 乙.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            记一笔();\n        }\n    }\n\n    static synchronized void 记一笔() {\n        账本 = 账本 + 1;\n    }\n}\n",
+  "explanationTemplate": "**一、账本那一格该摆在图纸上。** 课文第一节里那句 `static int 账本 = 0;` 读作「**这一格只有一份，照这张图纸长的猫都共用它**」。少了那个 `static`，就变成了**每只猫家里各摆一本** —— 两只猫各记各的，谁也看不见谁那本，所以印出来是 {n1} 和 {n2} 两个不一样的数。\n\n**二、锁也跟着一起掉。** 这一份里 `记一笔()` 前面也少了个 `static`：锁变成了**每一只猫自己那一把**。修的时候两处得一起加回去 —— 课文第三节那个「小心喵」说的就是这件事：`static` 一掉，「看着有锁，其实拦不住谁」。\n\n**三、改法只有两处。** `int 账本 = 0;` 改成 `static int 账本 = 0;`；`synchronized void 记一笔()` 改成 `static synchronized void 记一笔()`。改完两只猫翻开的是同一本，两行会印出**一模一样**的总数。\n\n**四、那个总数为什么是稳的。** `static synchronized` 那一把锁把「记一笔」这段路守在图纸上，一次只放一只猫进去；两只都干完了（`join()` 回来了）母猫才念账，所以每次都一样。"
+}

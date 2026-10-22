@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-pool-two-jobs",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-11",
+  "type": "codewrite",
+  "concept": ["两件活可以连着交出去", "交完再取货不互相挡", "两张凭条各领各的战利品"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要把同一串数**分给两件活**：一件算**加起来是多少**，一件算**里面最大的是哪个**。两件活都交给**同一个雇了 2 只猫的池子**，凭条取回来再印喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。程序该印出**两行**：\n\n```text\n和 S\n最大 M\n```\n\n- `S` 是这 n 个数加起来的和；\n- `M` 是这 n 个数里最大的那个。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）\n\n猫只负责算，印还是本喵自己印。",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\nimport java.util.concurrent.ExecutorService;\nimport java.util.concurrent.Executors;\nimport java.util.concurrent.Future;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n        ExecutorService 池子 = Executors.newFixedThreadPool(2);\n        Future<Integer> 求和凭条 = 池子.submit(() -> {\n            int s = 0;\n            for (int x : nums) {\n                s = s + x;\n            }\n            return s;\n        });\n        Future<Integer> 最大凭条 = 池子.submit(() -> {\n            int m = nums.get(0);\n            for (int x : nums) {\n                if (x > m) {\n                    m = x;\n                }\n            }\n            return m;\n        });\n\n        System.out.println(\"和 \" + 求和凭条.get());\n        System.out.println(\"最大 \" + 最大凭条.get());\n        池子.shutdown();\n    }\n}\n",
+  "explanationTemplate": "这一题最想让你看清的一件事是：**两件活是连着交出去的，中间没有停下来等**喵。\n\n**一、先交两件，再取两件。** 参考解里连着两次 `池子.submit(...)`，两次之间**没有** `get()` —— 所以第二件活不必等第一件干完才被派出去。池子里有 2 只猫，两件活各自被一只猫接走，是**同时**在算的。\n\n**二、取货才等。** 印 `和` 的那一行会先 `求和凭条.get()`：要是求和还没算完，本喵就在这儿等它。等完了再取第二张凭条。**取货的顺序由你写，不由猫决定**。\n\n**三、两张凭条各领各的战利品。** 一张凭条里装的是 `Integer`，另一张也是 —— 但它们**对应的是不同的活**。取错凭条（比如算最大那件活的结果没被用上、拿求和的结果去印「最大」）印出来就是两行一样的数，一眼能看出来。\n\n**四、两件活都能读到柜子。** 那两件活里都用了外面的 `nums` —— 它在外面立好之后再没被换过（这一课前面那条「只读不换的可以进活里」的老规矩），所以两件活都能安心读。\n\n**五、池子里正好 2 只猫。** 两件活，两只猫，各接一件；就算只雇一只猫也照样能出结果（活排队），只是算得慢些。\n\n**六、别忘打烊。** `池子.shutdown()`，派过活的池子不打烊程序就不走喵。"
+}

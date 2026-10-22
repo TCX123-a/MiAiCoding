@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-array-sum",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-09",
+  "type": "codewrite",
+  "concept": ["一排碗", "跑圈加报编号", "小碗摆在外面"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫粮"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵今天摆了 {n} 只碗，一只一只往里面装{unit}。\n\n请你写个程序：**先从投喂口读进来一个数**（就是摆了几只碗），**再读进来 {n} 行数**（一行一个，是每只碗里装了几条{unit}）。把这些数一只碗一格地装进一排碗里，然后把**这一排碗全加起来**，最后单独印一行总数：`一共 %d 条{unit}喵`。\n\n（这排碗最多摆 5 只，今天只用了 {n} 只喵。）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[5] = {0};\n    int n = 0;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        total = total + bowls[i];\n    }\n    printf(\"一共 %d 条{unit}喵\\n\", total);\n    return 0;\n}\n",
+  "explanationTemplate": "「**跑圈 + 报编号**」是这一课最常用的搭法喵：`i` 从 0 走到碗数减一，每圈用 `bowls[i]` 摸到这一只碗 —— 装数的时候这么写，取数的时候也这么写。\n\n这道题分两趟走：**先装、再攒**。为什么不能一趟干完？其实也能 —— 每读一个数就顺手加进小碗里，一道圈就够了。分成两趟写，是因为「一排碗先摆好、之后再回头看它」这个形状在后面的题目里会一直用到。\n\n⚠️ 那只小碗 `int total = 0;` 有两个讲究：\n\n- **要洗成 0** —— 没洗过的碗里装的是上一摊留下的东西，加进去的数就是错的。\n- **要摆在圈外面** —— 摆到圈里的话，每一圈都会被重新洗成 0，跑完只剩最后一只碗里那个数。\n\n顺带记一下：**碗的只数可以写死，也可以让翻译官喵自己量**（`sizeof(bowls) / sizeof(bowls[0])`）。这道题的圈数跟着读进来的那个数走，两种写法都行；可要是碗数写错了，C 一样**一声不响**—— 写少了就少数一只，写多了就伸手摸到碗排外面去，摸到什么谁也说不准喵。"
+}

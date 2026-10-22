@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-10-override-typo",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-10",
+  "type": "codefix",
+  "concept": ["改写那一手挂了护身符", "名字差一个字", "报错现场"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "本喵让橘猫图纸改写老图纸的 `speak`，还在那一手上挂了护身符。\n\n翻译官喵当场拦下本喵，说**妈妈图纸上没有一手能让本喵改写**。\n\n你帮本喵改到能跑起来（橘猫叫 {name}，喊一声，印出橘猫那一版台词）。**护身符留在原地，别的都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n    virtual void speak() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(string n) : Cat(n) {}\n    void speek() const override {\n        cout << name << \"：本喵是橘猫，喵喵喵！\" << endl;\n    }\n};\n\nint main() {\n    OrangeCat o(\"{name}\");\n    o.speak();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n    virtual void speak() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(string n) : Cat(n) {}\n    void speak() const override {\n        cout << name << \"：本喵是橘猫，喵喵喵！\" << endl;\n    }\n};\n\nint main() {\n    OrangeCat o(\"{name}\");\n    o.speak();\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:18:10: error: 'void OrangeCat::speek() const' marked 'override', but does not override`\n\n念作：**「你给这一手挂了『我要改写妈妈那一手』的牌子，可妈妈图纸上根本没有一手能让你改写喵。」**\n\n这一题本喵把 `speak` 打成了 `speek`（少了个 `a`）。**报错里那前半段 `'void OrangeCat::speek() const'` 就是证据** —— 翻译官喵把本喵写的那一行原样念了一遍，本喵对着妈妈那行一比，那个字母就露馅了。所以看到这条错，第一件事是**拿两边的名字对一遍**（名字、料、行尾的 `const`，三样都要一字不差）。\n\n本喵还实测过**没挂护身符**的样子（同一段代码，把 `override` 删掉）：翻译官喵**一声不吭**，程序跑得「成功」，只是喊出来的是老图纸那一版 ——\n\n```text\n{name}：喵～\n```\n\n于是本喵对着满屋子猫喊了半天，一只都没动，还找不出原因。**这就是护身符的价值：六个字母，换一辈子不摔。**\n\n所以规矩定死：**凡是打算改写老图纸那一手的，一律挂上 `override`。**"
+}

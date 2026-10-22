@@ -1,0 +1,84 @@
+{
+  "lessonId": "java-stage2-15",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "小图纸把大图纸那一招盖掉之后，想「先请大图纸串一遍、再添自己那半句」—— 戴 `@Override` 那顶帽子，身子里写的是 `return super.intro() + \"，考了 \" + score + \" 分\";`。\n\n要是把 `super.intro()` 写成 `this.intro()`，会怎样？",
+      "options": [
+        "那一招会原地打转、绕到本喵的兜塞不下，当场断气",
+        "印出来一模一样 —— 两种写法是一回事",
+        "编不过，翻译官说这里不许用 `this`",
+        "跑得起来，只是印出来少半句（「本喵叫 」那半句没了）"
+      ],
+      "answer": 0,
+      "explanation": "`super.intro()` 和 `this.intro()` 差一个字，指的东西差一层喵：\n\n- **`super.intro()`** 是「**请上一层那张图纸**把它那一版跑一遍」—— 本喵现在站在小图纸上，上一层就是大图纸，所以它把「本喵叫 小橘」串好叼回来。\n- **`this.intro()`** 是「喊本喵**自己**那一招」—— 可本喵现在站的地方**就是**这一招，它喊自己、自己再喊自己……本喵真跑过这一版：程序当场断气，报的是兜塞满了（`StackOverflowError`）。\n\n顺带纠一个容易想歪的点：这不是「编不过」，是**跑起来才炸**。光是看一眼稿子，`this.intro()` 挑不出毛病 —— 它名字对、圈数也对，翻译官一句话都不说就放行了。这类坏法要靠「读懂它到底喊的是谁」才拦得住。\n\n「编不过，翻译官说这里不许用 `this`」说的也是反的：`this` 在招式里完全可以写（本喵在造物招式里写 `this.what = what;` 写了两年了），问题不在能不能写，在**写到这儿会绕回自己身上**。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵把一只学员装进牌子写 `Person` 的柜子里 —— 收的时候是 `mingdan.add(new Person(\"大肥鱼\"));` 和 `mingdan.add(new Student(\"小橘\", 92));`，绕圈里喊的是同一句 `p.intro()`，印的时候走的是 `System.out.println`。\n\n小橘印出来的是哪一版 `intro()`？",
+      "options": [
+        "小图纸盖掉的那一版 —— 真猫是谁，就念谁那一版",
+        "大图纸那一版 —— 牌子写 `Person`，念的就只能是 `Person` 上的",
+        "编不过，翻译官说 `p` 这块牌子上没有 `intro`",
+        "两版都会印一遍"
+      ],
+      "answer": 0,
+      "explanation": "这是第三课那句话又见了一回：**喊的是哪一招看名字，念的是哪一版看真猫。**\n\n本喵在代码里写的是 `p.intro()` —— 翻译官要**先照牌子上的图纸名查一查有没有这一招**：`Person` 上画着 `intro()`，所以这一句挑得出毛病、编得过。可到了**真跑起来那一刻**，它再去看**柜子里那只到底是照哪张图纸生的**：小橘是照 `Student` 生的，`Student` 把 `intro()` 盖掉了，于是念的是小图纸那一版（`本喵叫 小橘，考了 92 分`）。本喵真跑过：同一行代码，本喵那条印的是「本喵叫 大肥鱼」，小橘那条印的是带分数的那一版。\n\n三个错项各自的毛病喵：**「大图纸那一版 —— 牌子写 `Person`，念的就只能是 `Person` 上的」** —— 牌子管的是「你**喊得动**哪些招式」，不管「念哪一版」，牌子写 `Person` 照样能喊到小图纸上盖过的那一版；**「编不过，翻译官说 `p` 这块牌子上没有 `intro`」** —— `intro()` 正好是 `Person` 上也画着的一招，所以编得过（要是喊的是只有小图纸才有的 `getScore()`，那才是编不过）；**「两版都会印一遍」** —— 一次 `println` 只喊一招，没有「两版都印」这回事。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "算平均分那一段里，本喵把认亲那一句拆掉了 —— 绕圈里直接就是 `Student s = (Student) p;`、`sum += s.getScore();`、`n++;`，一句 `instanceof` 都没有。\n\n名单上第一只是**本喵自己**（照 `Person` 生的，不是学员）。跑起来会怎样？",
+      "options": [
+        "绕到第一只就当场断气，报的名字是 `ClassCastException`",
+        "跑得起来，只是平均分算少了一点儿",
+        "编不过，翻译官说这两张图纸对不上",
+        "跑得起来，只是本喵自己那条被悄悄跳过了"
+      ],
+      "answer": 0,
+      "explanation": "`(Student) p` 是**换牌子**：本喵拿了一块写 `Student` 的牌子，要套在 `p` 指向的那只头上。**换牌子之前必须先认亲**（`instanceof`）—— 因为这一下是**真跑起来的时候才查的**，翻译官看稿子的那一关不管这件事。\n\n第一只是本喵自己，照 `Person` 生的，压根不是学员。牌子一套上去，程序当场断气。本喵真跑过，原话是 `Exception in thread \"main\" java.lang.ClassCastException: class Person cannot be cast to class Student` —— 念起来就是「拿 `Student` 的牌子去套一只 `Person`，套不上喵」。\n\n三个错项：**「跑得起来，只是平均分算少了一点儿」**说得像「少算一点」，其实这一步**没有任何补救**，是直接翻车（断气那一刻往后的活一概不干，第 12 课那条老规矩）；**「编不过，翻译官说这两张图纸对不上」**是反的 —— 换牌子是**跑起来**才查的，稿子那一关挑不出毛病（这也是它最阴的地方）；**「跑得起来，只是本喵自己那条被悄悄跳过了」**也不对，程序不会「悄悄跳过」一只，它只会当场断气。\n\n补法就是认亲那一句：\n\n```java\nif (p instanceof Student) {\n    Student s = (Student) p;\n    ...\n}\n```\n\n—— **先问「你是不是学员」，再换牌子**，换的时候才一定换得动。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.File;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.ArrayList;\nimport java.util.List;\n\nclass Person {\n    private String name;\n\n    Person(String name) {\n        this.name = name;\n    }\n\n    String getName() { return name; }\n\n    String intro() {\n        return \"本喵叫 \" + name;\n    }\n}\n\nclass Student extends Person {\n    private int score;\n\n    Student(String name, int score) {\n        super(name);\n        this.score = score;\n    }\n\n    int getScore() { return score; }\n\n    @Override\n    String intro() {\n        return super.intro() + \"，考了 \" + score + \" 分\";\n    }\n}\n\npublic class Main {\n    static final String BOOK = \"mingdan.txt\";\n\n    public static void main(String[] args) throws IOException {\n        List<Person> mingdan = new ArrayList<>();\n        mingdan.add(new Person(\"大肥鱼\"));\n        mingdan.add(new Student(\"小橘\", 92));\n        save(mingdan);\n        for (Person p : load()) {\n            System.out.println(p.intro());\n        }\n    }\n\n    static void save(List<Person> mingdan) throws IOException {\n        try (FileWriter w = new FileWriter(BOOK)) {\n            for (Person p : mingdan) {\n                if (p ____ Student) {\n                    Student s = (____) p;\n                    w.write(\"1|\" + s.getName() + \"|\" + s.getScore() + \"____\");\n                } else {\n                    w.write(\"0|\" + p.getName() + \"\\n\");\n                }\n            }\n        }\n    }\n\n    static List<Person> load() throws IOException {\n        List<Person> out = new ArrayList<>();\n        File f = new File(BOOK);\n        if (!f.exists()) {\n            return out;\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(f))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                int cut = hang.indexOf(\"|\");\n                String flag = hang.substring(0, cut);\n                String rest = hang.substring(cut + 1);\n                if (flag.equals(\"1\")) {\n                    int cut2 = rest.indexOf(\"|\");\n                    String mingzi = rest.substring(0, ____);\n                    int fenshu = Integer.parseInt(rest.substring(____));\n                    out.add(new Student(mingzi, fenshu));\n                } else {\n                    out.add(new Person(rest));\n                }\n                hang = r.readLine();\n            }\n        }\n        return out;\n    }\n}\n",
+      "stem": "本喵把「名单存进册子、再读回来」写好了，把五处抠掉了。填上让它跑起来、并且印出：\n\n```text\n本喵叫 大肥鱼\n本喵叫 小橘，考了 92 分\n```",
+      "blanks": [
+        { "answer": "instanceof", "accept": [] },
+        { "answer": "Student", "accept": [] },
+        { "answer": "\\n", "accept": [] },
+        { "answer": "cut2", "accept": [] },
+        { "answer": "cut2 + 1", "accept": ["cut2+1"] }
+      ],
+      "explanation": "五个空，正好是这一课那两件大事的关节喵。\n\n**一、`instanceof`** 和 **二、`Student`** —— 存的时候要分岔：`if (p instanceof Student)` 是**认亲**（问一句「你是不是学员」），认准了才 `(Student) p` **换牌子**，然后才喊得动只画在小图纸上的 `getScore()`。这一对是搭档：**先认亲、再换牌子**，顺序反了就是上一节那道题的下场（`ClassCastException`）。\n\n**三、`\\n`** —— 写册子的时候，每一行末尾的换行得自己补。少写了它，两条记录会糊成一串，读回来只有 1 条（第 13 课那条老规矩）。\n\n**四、`cut2`** 和 **五、`cut2 + 1`** —— 册子上一条学员记录有两根竖线（`1|小橘|92`），所以要**切两刀**：第一刀把标记 `1` 和剩下那一整截 `小橘|92` 分开；第二刀是在剩下那一截里再找竖线，`substring(0, cut2)` 切出名字、`substring(cut2 + 1)` 切出分数（`+ 1` 那一下是为了把**第二根**竖线本身跳过去）。\n\n顺带看一眼那个**顺序**：第二刀是写在 `if (flag.equals(\"1\"))` 里面的。这不是省事，是**必须** —— 不是学员那一行（`0|大肥鱼`）只有一根竖线，闭着眼睛切第二刀的话 `indexOf` 会叼回 `-1`，`substring(0, -1)` 当场把程序摁死。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "class Person {\n    private String name;\n\n    Person(String name) {\n        this.name = name;\n    }\n\n    String intro() {\n        return \"本喵叫 \" + name;\n    }\n}\n\nclass Student extends Person {\n    private int score;\n\n    Student(String name, int score) {\n        super(name);\n        this.score = score;\n    }\n\n    @Override\n    String intro() {\n        return super.intro() + \"，考了 \" + score + \" 分\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Person p = new Student(\"小橘\", 92);\n        System.out.println(p.intro());\n        System.out.println(\"牌子上的图纸名是不是 Person：\" + (p instanceof Person));\n        System.out.println(\"它是不是学员：\" + (p instanceof Student));\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "本喵叫 小橘，考了 92 分\n牌子上的图纸名是不是 Person：true\n它是不是学员：true",
+      "accept": [
+        "本喵叫 小橘，考了 92 分\n牌子上的图纸名是不是 Person：true\n它是不是学员：true\n"
+      ],
+      "explanation": "三行喵。\n\n**第一行是「牌子上的图纸名可以和真猫不一样」那一手**：`Person p = new Student(\"小橘\", 92);` 左边牌子写 `Person`、右边生的却是学员 —— 通得过，因为**照 `Student` 生的东西也是一只 `Person`**。印的时候喊的是 `p.intro()`，翻译官先照牌子上的 `Person` 查一查有没有这一招（有，编得过），真跑起来再去看**真猫是谁**：小橘是照 `Student` 生的，念的是小图纸**盖过**的那一版，所以带上了分数。\n\n**后两行是认亲**（`instanceof`）：`p` 指向的那只，**是不是照 `Person` 生的**？是不是照 `Student` 生的？—— 两个都是 `true`。这正是一句认亲的**方向感**：套图纸是**从上往下**认的，小学员**也是**一只 `Person`；反过来（拿一只 `Person` 去问「是不是学员」）才会是 `false`，因为大图纸直接生的东西不是学员。\n\n把这两件事合起来记就是：**牌子管你喊得动哪些招式，认亲管「它到底是什么」，念哪一版看真猫。**"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\nclass Person {\n    private String name;\n\n    Person(String name) {\n        this.name = name;\n    }\n\n    String getName() { return name; }\n\n    String intro() {\n        return \"本喵叫 \" + name;\n    }\n}\n\nclass Student extends Person {\n    private int score;\n\n    Student(String name, int score) {\n        super(name);\n        this.score = score;\n    }\n\n    int getScore() { return score; }\n\n    @Override\n    String intro() {\n        return super.intro() + \"，考了 \" + score + \" 分\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Person> mingdan = new ArrayList<>();\n        mingdan.add(new Person(\"大肥鱼\"));\n        mingdan.add(new Student(\"小橘\", 92));\n        mingdan.add(new Student(\"狸花\", 78));\n        mingdan.add(new Student(\"小虎\", 88));\n        for (Person p : mingdan) {\n            System.out.println(p.intro());\n        }\n        int sum = 0;\n        int n = 0;\n        for (Person p : mingdan) {\n            if (p instanceof Student) {\n                Student s = (Student) p;\n                sum += s.getScore();\n                n++;\n            }\n        }\n        System.out.println(\"学生 \" + n + \" 只，平均 \" + (sum / n) + \" 分\");\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "本喵叫 大肥鱼\n本喵叫 小橘，考了 92 分\n本喵叫 狸花，考了 78 分\n本喵叫 小虎，考了 88 分\n学生 3 只，平均 86 分",
+      "accept": [
+        "本喵叫 大肥鱼\n本喵叫 小橘，考了 92 分\n本喵叫 狸花，考了 78 分\n本喵叫 小虎，考了 88 分\n学生 3 只，平均 86 分\n"
+      ],
+      "explanation": "五行喵，前四行是「一句话喊出去，各猫各样」，最后一行是认亲 + 换牌子攒出来的。\n\n**前四行**：一个柜子里装着四只，牌子都是 `Person`，绕圈里喊的都是同一句 `p.intro()` —— 可印出来不一样：本喵那条是**大图纸那一版**（`本喵叫 大肥鱼`），三位学员是**小图纸盖过的那一版**（`super.intro()` 串名字 + 接上分数）。**牌子管你喊得动哪些招式，念哪一版看真猫。**\n\n**最后一行**：`sum` 加的是分数、`n` 数的是学员个数 —— 两个都得靠 `p instanceof Student` 先认亲，认准了才 `(Student) p` 换牌子、才喊得动 `getScore()`。本喵那一条**不是学员**，认亲那一问就把它挡在外面了：它不加分数、也不占人头。\n\n算一下：三位学员的分数是 `92 + 78 + 88 = 258`，`258 / 3 = 86` —— 正好除得整整齐齐（本喵特意挑的）。要是你拿到的名单加起来是单数，`sum / n` 会把小数点后面那半个**扔掉**（不是四舍五入）—— 那是整数相除的老脾气，值得自己试一遍喵。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s1-rec-fact",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-16",
+  "type": "codewrite",
+  "concept": ["自己写递归招式", "把数叼回来", "阶乘"],
+  "instances": 6,
+  "params": {
+    "hello": { "kind": "pick", "values": ["本喵算好了喵", "本喵数完啦喵"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "", "count": 1, "min": 4, "max": 6 },
+  "stemTemplate": "本喵要自己写一招，名字叫 `fact`：**喂一个数进去，它把 1 一路乘到那个数，把乘出来的积叼回来**（喂 4 进去叼回 1×2×3×4）。这个积在猫界有个正式名字叫**阶乘**。\n\n请你写个程序：**读进来一个数、把这一招喊起来、把它叼回的积印出来**。屏幕上要有两行：\n\n1. 第一行喊一句 `{hello}`；\n2. 第二行是 `X 的阶乘是 Y`（X 是喂进去的数，Y 是叼回来的积）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nlong long fact(int n) {\n    if (n == 0) {\n        return 1;\n    }\n    return n * fact(n - 1);\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    cout << \"{hello}\" << endl;\n    cout << n << \" 的阶乘是 \" << fact(n) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的递推那一步是**乘法**：`n * fact(n - 1)`。摊开看：\n\n```\nfact(5) = 5 * fact(4) = 5 * 4 * fact(3) = 5 * 4 * 3 * 2 * 1 * fact(0)\n```\n\n看最后那一小截 —— 又是那句老话：**刹车那一层叼回多少，整个积就跟着乘多少**。这里它必须叼回 **1**（乘 1 等于什么都没乘）。要是想当然地跟着求和那题写成 `return 0;`，整个积会**一下子变成 0** —— 因为任何数乘 0 都是 0 喵。\n\n**「刹车那一层叼回什么」是自己咬自己尾巴的招式里最需要动脑的一格**，而它只有一条判据：**把最小的情况代进去，让整个式子成立**。\n\n- 求和：最小是「一条都不加」，叼回 **0**；\n- 求积：最小是「什么都不乘」，叼回 **1**。\n\n⚠️ 顺带看一眼脑袋上那个 `long long`：它是「能装下的数比 `int` 大得多」的那种碗。阶乘长起来快得吓人，喂到 13 就会把 `int` 撑破、叼回一个负数 —— **而翻译官喵还是一句话都不会说**。\n\n写完记得自己验一遍：喂 1 该叼回 1，喂 3 该叼回 6，喂 5 该叼回 120。三个数对得上，这一招就是对的喵。"
+}

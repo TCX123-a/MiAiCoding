@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s2-ptrstr-tail-from-k",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-03",
+  "type": "codewrite",
+  "concept": ["牌子往后挪", "项链尾巴", "%s", "指针加整数"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["cat", "fish", "bird"] },
+    "word2": { "kind": "pick", "values": ["moon", "star", "leaf"] },
+    "k": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{word}\n{k}\n", "sampleText": "{word2}\n{k}\n" },
+  "stemTemplate": "本喵递给你一条项链：是几个**不带空格**的字母串起来的。另外本喵还会报一个数，那是「**从第几颗珠子起**」。\n\n请你写个程序：先读进来这条项链（一行，不带空格），再读进来那个数（一行）。然后报两行：\n\n1. `整条：` 后面紧跟着整条项链**原样**；\n2. 第二行开头照写 `从第 k 颗起：`（把 `k` 换成你读进来的那个数），后面紧跟**从第 k 颗起一直到最后**的那一截尾巴（含第 k 颗自己）。\n\n珠子的编号从 0 数起。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一条项链**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    char word[64];\n    int k;\n\n    if (scanf(\"%s\", word) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n\n    printf(\"整条：%s\\n\", word);\n    printf(\"从第 %d 颗起：%s\\n\", k, word + k);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题只有一个「啊哈」的地方喵：**一截尾巴，照样是一整条项链。**\n\n- 「一整条项链」在 C 里不是「那一串珠子全都在这儿」，而是「**从哪一颗开始**」这个门牌号。所以把门牌号往后挪 k 颗，剩下的那一截**自己就是一条完整的项链** —— 末尾那颗看不见的收尾珠子还在，`%s` 照样认。\n- 门牌号怎么往后挪？第一课就学过了：一排碗的名字加 k，就是第 k 颗的门牌号。这里写成 `word + k` 一行就够了。\n\n不用另摆一排碗，也不用绕圈，一行就印出尾巴 —— 这就是「牌子加一加，项链往后挪」的省事之处。\n\n两条对照顺手收下喵：\n\n- 想印**一截尾巴**：`word + k`，配 `%s`；\n- 想印**第 k 颗那一颗珠子**：`word[k]`（和 `*(word + k)` 是一回事），配 `%c`。\n\n⚠️ 还有一件小事值得想一想：`k` **是从键盘读进来的**，写程序的时候本喵压根不知道它会是几，所以**不能**把它写死在代码里 —— 这也是为什么参考解要先读一遍、再拿读到的那个数去用。往后凡是从外面进来的东西，都得先接住、再使用，跟项链多长是一个道理。"
+}

@@ -1,0 +1,21 @@
+{
+  "templateId": "c-s3-proj-best-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-15",
+  "type": "codewrite",
+  "concept": ["自己写在链子上找最高分", "王座初始值请第一节", "空链子守卫叼 NULL"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "大黄"] },
+    "n2": { "kind": "pick", "values": ["小白", "小灰"] },
+    "n3": { "kind": "pick", "values": ["阿花", "咪咪"] },
+    "s1": { "kind": "pick", "values": ["90", "88"] },
+    "s2": { "kind": "pick", "values": ["85", "92"] },
+    "s3": { "kind": "pick", "values": ["95", "79"] }
+  },
+  "stemTemplate": "再来一招要你自己写喵：`best_in_list` —— 把链子上**分数最高**的那一节叼回来。两处别忘：链子还空着的时候叼 `NULL` 回去（门口就靠它印「一个人都没有喵」），以及**王座上的初始值该从哪儿请**。\n\n骨架里这一招现在只会叼 `NULL`，所以两回都印「一个人都没有喵」。写好之后该印两行：`第一名：{n3} {s3} 分`、`一个人都没有喵`。",
+  "starterTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    /* ↓ 在这儿写：空链子先拦住；王座请第一节坐下，从第二节开始一个一个比；\n       谁分高谁上位，最后把王座上那位交回去。 */\n\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n    head = add_last(head, \"{n3}\", {s3});\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    if (head == NULL) {\n        return NULL;\n    }\n    Node *best = head;\n    for (Node *p = head->next; p != NULL; p = p->next) {\n        if (p->score > best->score) {\n            best = p;\n        }\n    }\n    return best;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"{n1}\", {s1});\n    head = add_last(head, \"{n2}\", {s2});\n    head = add_last(head, \"{n3}\", {s3});\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "两句口诀喵：**空链子先拦住**（`head == NULL` 就直接叼 `NULL` 回去）—— 少了这句，下一句「王座请第一节坐下」就会伸爪子去碰一位根本不存在的学员，稿子当场崩掉；**王座上的初始值请第一节**（`Node *best = head;`），它是链子上**真实存在**的那一位。\n\n然后从**第二节**开始比（`p = head->next`）—— 第一节已经坐上王座了，不用再跟自己比一回。每一节用 `p->score > best->score` 量一下，分高就上位（`best = p;`）。绕完一圈，王座上坐着的就是最高分那位。\n\n这回叼回来的是**一整节**（不是分数），所以门口能直接拿 `top->name` 和 `top->score` 印 —— 这也是链子比一排碗灵巧的地方：找着了谁，连它身上别的账也一并找回来了。"
+}

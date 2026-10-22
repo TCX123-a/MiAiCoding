@@ -1,0 +1,88 @@
+{
+  "lessonId": "common-29",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵在 `Game` 这张图纸里写了一行 `static int plays = 0;` —— 「一共开过几局」就记在它身上。这一份数是挂在谁身上的喵？",
+      "options": [
+        "挂在整张图纸上：不管生了几局，全院共用这一份",
+        "挂在最先出生的那一局身上：谁先来就归谁",
+        "每一局各挂一份，各记各的",
+        "谁也不挂：它就是块临时砖，跑完就没"
+      ],
+      "answer": 0,
+      "explanation": "「画在图纸上的那一份」就是**静态成员**的意思喵 —— 它不属于任何一局，属于整张图纸；读它写它都拿图纸名（`Game.plays`）。要是每局各挂一份，那「一共开过几局」就永远数不对：谁去数，数出来的都只是自己那一份。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写了两句：`Game.plays` 和 `game.fish`。这两句分别是拿什么名字去念的喵？",
+      "options": [
+        "`Game.plays` 拿图纸名念，念的是图纸上那一份；`game.fish` 拿真猫名念，念的是这一局自己的账",
+        "两句都是拿真猫名念，只是写法长短不一样",
+        "`Game.plays` 拿真猫名念，`game.fish` 拿图纸名念",
+        "两句都是拿图纸名念，`game` 只是个凑巧的名字"
+      ],
+      "answer": 0,
+      "explanation": "大小写不是随便打的喵：`Game` 那张图纸上的东西拿图纸名念（Java 写 `Game.plays`、C++ 写 `Game::plays`），每一局自己带的那一份拿真猫名念（`game.fish`）。这两句打在**两个不同的东西**上 —— 少看一眼大小写，意思就跑到对面去了。"
+    },
+    {
+      "id": "q3",
+      "type": "fill",
+      "stem": "术语表里的说法：**画在图纸上的那一份**叫静态成员；**每只真猫自己带的那一份**叫____成员。（两个字）",
+      "answer": "实例",
+      "accept": ["实例"],
+      "explanation": "空白填**实例**喵：「每只真猫自己带的那一份」叫**实例成员**。照图纸生出来的每一只，就是一个**实例** —— 名字、这一局的账跟着实例走；计数器、常量这种画在图纸上的，才加 `static`。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "class Game {\n    ____ int plays = 0;              // 一共开过几次，画在图纸上\n\n    void play(int got) {\n        plays = plays + 1;           // 每跑一次，图纸上那份加一\n        System.out.println(\"抓到 \" + got + \" 条\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Game a = new Game();\n        Game b = new Game();\n        a.play(2);\n        b.play(5);\n        System.out.println(____.plays);\n    }\n}",
+      "stem": "两处挖空了：①让 `plays` 画在图纸上；②念图纸上那一份的时候，前面站谁的名字。补齐之后，最后一行会印出 `2` 喵。",
+      "blanks": [
+        { "answer": "static", "accept": [] },
+        { "answer": "Game", "accept": [] }
+      ],
+      "explanation": "第一空填 `static`：`plays` 是「一共」的数 —— 不属于任何一局，该画在图纸上，两局才共数同一份。第二空填图纸名 `Game`：共用的那份一律拿图纸名念（`Game.plays`），读代码的人一眼就知道「这不是哪一局自己的东西」。跑一遍看看：`a.play(2)` 加到 1、`b.play(5)` 又加到 2 —— 两只不同的真游戏动的是**同一份**，所以是 2。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "class Cat {\n    String name;\n    static int count = 0;\n\n    Cat(String name) {\n        this.name = name;\n        count = count + 1;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat a = new Cat(\"小橘\");\n        Cat b = new Cat(\"狸花\");\n        System.out.println(a.name + \" \" + b.name + \" \" + Cat.count);\n    }\n}",
+      "stem": "同一个类，本喵连喊了两声 `new`。这段代码的输出是什么？",
+      "answer": "小橘 狸花 2",
+      "accept": ["小橘 狸花 2\n"],
+      "explanation": "照同一张图纸连喊两声 `new`，小橘、狸花两只各站起来一只，各带各的名字喵 —— 一个类能造几只猫？想造几只造几只。`count` 不一样：它画在图纸上（`static`），每生一只都去**同一份**上加一，生了两只所以是 2。两个数的来路分清：名字拿真猫名念，`count` 拿图纸名念。"
+    },
+    {
+      "id": "q6",
+      "type": "choice",
+      "stem": "本喵写了一个 all-static 的类：账 `static int fish`、抓一圈 `static void play(...)`、跑整局 `static void run(...)`，main 里从头到尾喊它们，一局都没 `new` 过。按本课的判据句，下面哪一句判得对喵？",
+      "options": [
+        "`fish`、`play`、`run` 三处都该改回实例成员 —— 它们是「一局自己的活」，该跟着每一局走；只剩门（`main`）留 `static`",
+        "全都不该改：能跑的程序就是好程序",
+        "只有 `fish` 该改，招式留在门口更省事",
+        "`main` 也该改成实例成员，跟着 `new` 出来的对象走"
+      ],
+      "answer": 0,
+      "explanation": "拿判据句挨个过喵：账按一局一份记（该改实例）、抓一圈和跑整局都是「这一局在干」（也该改实例）—— 这三处都该交还给真猫；交还完，门里就只剩「生一局、喊一声」两行，这就是第二版的样子。门（`main`）的 `static` 不一样，是被逼的、删不得：起步那一刻一局都还没生出来，能喊的只有画在图纸上的招式。「全都不该改：能跑的程序就是好程序」那句「能跑就行」，正好是给过程式程序套层壳的借口 —— 能跑，可活没分给该干它的猫。"
+    },
+    {
+      "id": "q7",
+      "type": "choice",
+      "stem": "本喵在图纸的招式里碰了某只真猫自己的格子，翻译官喵当场拦下：`non-static variable fish cannot be referenced from a static context`。按本课立下的规矩，正解是什么喵？",
+      "options": [
+        "把这一招也交还给真猫：去掉招式的 `static`，先 `new` 一只、再拿真猫名喊它 —— 错的是「这招站在没有猫的地方」，不是「格子没加 static」",
+        "给 `fish` 补上 `static`，编译能过就行",
+        "在这招里再 `new` 一只新的，用新的那只的格子凑合",
+        "把 `main` 那一行的 `static` 删掉"
+      ],
+      "answer": 0,
+      "explanation": "翻译官喵那句话翻过来是：「你现在站的这招旁边没有真猫，够不着人家的格子」喵。错在**这活站错了地方** —— 它本来就是「一局自己的活」，正解是把招式也交还给真猫（去掉 `static`、拿真猫名喊）。给 `fish` 贴 `static` 是让全院的猫共用一本账，编译是过了，数却全乱了 —— 「编译不过」不是加 `static` 的信号。「在这招里再 `new` 一只新的，用新的那只的格子凑合」更离谱：账算到新猫头上，原来那只白抓。「把 `main` 那一行的 `static` 删掉」更不行：程序连门都进不去。"
+    }
+  ]
+}

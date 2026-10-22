@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s2-10-cat-parade",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-10",
+  "type": "codewrite",
+  "concept": ["一份猫的名单", "挨个顺着牌子喊", "各猫做出各猫的动作"],
+  "instances": 6,
+  "params": {
+    "orangeName": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "tabbyName": { "kind": "pick", "values": ["狸花", "三花"] },
+    "blackName": { "kind": "pick", "values": ["煤球", "黑豆"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 3, "min": 1, "max": 9 },
+  "stemTemplate": "本喵手上要**一份写着「猫」的名单**，挨个喊一声，各猫做出各猫的动作。投喂口会递进来**三个数**（一行一个）：橘猫、狸花猫、黑猫各吃了几条。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：够得着的那一档的 `name`（一串字）和 `fish`（一个整数），出生招式把两样填上；再画一招 `speak`，印一行 `X：喵～`，**挂上那个三个字母的招牌**（这一手是要被改写的）。\n2. **画三张照它画下来的图纸**，每张把 `speak` **改写成自己的版本**（改写那一手都挂上 `override`）：\n   - `OrangeCat` → `X：本喵是橘猫，吃了 N 条，喵喵喵！`\n   - `TabbyCat` → `X：本喵是狸花猫，吃了 N 条，喵呜～`\n   - `BlackCat` → `X：本喵是黑猫，吃了 N 条，喵嗷～`\n3. 在 `main` 里：读进三个数 → 生三只猫（名字分别是 `{orangeName}`、`{tabbyName}`、`{blackName}`）→ 把三只猫的**门牌地址**放进一排写着「猫」的牌子里 → **用跑圈的办法顺着牌子挨个喊一声**。\n\n也就是说：本喵从头到尾**只拿着一张「猫」的名单**，喊的是同一句话，各猫自己决定喊出什么。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    virtual void speak() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(string n, int f) : Cat(n, f) {}\n    void speak() const override {\n        cout << name << \"：本喵是橘猫，吃了 \" << fish << \" 条，喵喵喵！\" << endl;\n    }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(string n, int f) : Cat(n, f) {}\n    void speak() const override {\n        cout << name << \"：本喵是狸花猫，吃了 \" << fish << \" 条，喵呜～\" << endl;\n    }\n};\n\nclass BlackCat : public Cat {\npublic:\n    BlackCat(string n, int f) : Cat(n, f) {}\n    void speak() const override {\n        cout << name << \"：本喵是黑猫，吃了 \" << fish << \" 条，喵嗷～\" << endl;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    int c = 0;\n    cin >> a >> b >> c;\n\n    OrangeCat o(\"{orangeName}\", a);\n    TabbyCat t(\"{tabbyName}\", b);\n    BlackCat k(\"{blackName}\", c);\n\n    Cat* cats[3];\n    cats[0] = &o;\n    cats[1] = &t;\n    cats[2] = &k;\n\n    for (int i = 0; i < 3; i++) {\n        cats[i]->speak();\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题是本课最重要的手感：**本喵手上只有一份「猫」的名单，喊的是同一句话，各猫做出各猫的动作。**\n\n- 那一排牌子 `Cat* cats[3]` 上，每一张写的都是「猫」，可它们指的分别是橘猫、狸花猫、黑猫。牌子只记录门牌号，**不记录屋里住的是谁**（这是第一阶段就讲过的事）。\n- `cats[i]->speak()` 是**顺着牌子喊** —— 喊下去的那一刻，程序才低头看一眼「这家住的到底是哪位」，再决定跑哪一版。这就是「**等真跑起来再看**」的意思。\n- **那一排牌子本喵一份都没写错**：三张图纸都是照着 `Cat` 画下来的，所以三只猫都能站进「猫」的位置。上一课那句「**小猫本来就是猫**」在这里就是钥匙。\n\n⚠️ 三处最容易摔的地方：\n\n1. **老图纸那一手必须挂 `virtual`。** 不挂的话，翻译官喵在翻译阶段就把话说死了：牌子上写的是「猫」，就指到老图纸那一版上去，根本不会低头看屋里住的是谁 —— 三行全会变成平平无奇的「喵～」。\n2. **改写的那三手必须和妈妈那一手一字不差**（名字、料、行尾的 `const`）。差一个字就成了「另外长了一手新的」，牌子上写「猫」的时候照样跑老图纸那一版。三手都挂 `override`，打错字当场就会被拦下。\n3. **别把 `&o` / `&t` / `&k` 的门牌地址写错位置。** `cats[0]` 对应的是名字在第一位的那只猫，行顺序要对上。\n\n这一手最值钱的地方在**往后**：哪天本喵再画一张黑猫图纸、把 `speak` 改写掉，就能直接塞进这排牌子里 —— 喊话那一段一个字都不用动。"
+}

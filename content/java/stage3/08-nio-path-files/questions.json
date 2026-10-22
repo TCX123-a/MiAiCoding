@@ -1,0 +1,87 @@
+{
+  "lessonId": "java-stage3-08",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵开管子把 26 个字节拉进了货舱，**忘了拨书签**（没写 `另一个.flip()`），紧接着就数「从现在这个位置起还剩几个字节」。数出来是多少？",
+      "options": [
+        "`0` 个 —— 书签还停在末尾，本喵念出来是空的",
+        "26 个 —— 刚装进去多少就是多少",
+        "当场红，提醒本喵货舱里少了那一步",
+        "26 个，但拼出来是乱码"
+      ],
+      "answer": 0,
+      "explanation": "答案是 `0` 个喵。\n\n货舱里夹着的那枚**书签**，记的是「本喵现在读到哪儿了」。往里装字节的时候它一路往前挪，装完就停在**末尾** —— 那意思是「本喵**写到这儿**了」。可本喵接下来要干的是**念**：念要的是「从第一格念到写到的这儿」。一正一反，中间就差那句 `flip()`：**把书签拨回第一格**，同时记下「读到哪儿为止」。\n\n忘了拨，书签就停在 26，「从这儿到末尾还剩几个」自然是 0 —— 取 0 个字节拼回一串字，念出来就是空的。最坑的是它**一个字都不红**：管子开了、字节也真拉进来了，只是本喵念的地方不对。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵拿同一张门牌写了两手：先 `Files.writeString(门牌, \"小橘 3 条\\n\");`，紧接着又 `Files.writeString(门牌, \"狸花 5 条\\n\");`（第二手**没喊** `StandardOpenOption.APPEND`）。这份文件里最后躺着什么？",
+      "options": [
+        "只剩 `狸花 5 条` —— 第二手把第一手**擦掉重写**了",
+        "两笔都在 —— 写过了就留下了",
+        "当场红，说同一张门牌不许写两回",
+        "两笔都在，但顺序反了"
+      ],
+      "answer": 0,
+      "explanation": "答案是只剩后写的那一笔喵。\n\n`Files.writeString` 默认那三样规矩里有一条是「**先擦干净再写**」（从头写）。本喵没喊别的话，它就照默认来：第一手把「小橘 3 条」写进去，第二手先把文件擦成空的、再把「狸花 5 条」写进去 —— 第一笔就这么没了，而且**一个字都不红**。\n\n想接着后面添，得在本喵这头喊一声 `StandardOpenOption.APPEND`（它写在 `writeString` 的**第三格**上）。这一脚和上一课「忘了收工」是一路的：**默认的动作不一定是你想要的那个**，想要别的，就得自己开口。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵拿一张门牌去念：`Files.readString(门牌)` —— 可这份文件**压根还没建**。会出什么事？",
+      "options": [
+        "当场红：`java.nio.file.NoSuchFileException`，原话里还带着那份文件的名字",
+        "念回来一个 `null`，不红不响",
+        "念回来一对空引号 `\"\"`，文件顺手被建出来",
+        "念回来一段提示，说「这份文件是空的」"
+      ],
+      "answer": 0,
+      "explanation": "答案是当场红喵：原话是 `Exception in thread \"main\" java.nio.file.NoSuchFileException: 还没建的账本.txt`，读作「**没有这份文件**」，后面还跟着它的名字。\n\n这一脚跟本课别处的坑正好相反：**它不给你含糊的机会**。念一份不存在的文件，它没法凭空变出内容来，所以干脆拦住 —— 这种「当场红」反而是好事，比默默给个 `null` 强得多。\n\n想让它「没有就先造一份」，得本喵自己先问一声：`if (!Files.exists(门牌)) { ... }`，不在就先 `writeString` 写一句进去 —— `writeString` 顺手就把文件建出来了，回过头再念就念得到。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.nio.file.Files;\nimport java.nio.file.Path;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"账本.txt\");\n\n        if (!Files.____(门牌)) {\n            Files.____(门牌, \"空空如也\\n\");\n        }\n\n        System.out.println(Files.readString(门牌));\n    }\n}",
+      "stem": "本喵想让它「没有这份账本就先写一句进去」。两个空按顺序各该填什么？",
+      "blanks": [
+        {
+          "answer": "exists",
+          "accept": []
+        },
+        {
+          "answer": "writeString",
+          "accept": []
+        }
+      ],
+      "explanation": "第一个空填 `exists` 喵：`Files.exists(门牌)` 是「问一声在不在」，答 `true` / `false`。前面加一个 `!` 读作「**要是不在**」—— 两个符号合起来就是「这份文件要是还不存在，就跑下面那一步」。\n\n第二个空填 `writeString`：`Files.writeString(门牌, 一串字)` 是「一口气把整串字写进去」，**文件不在就顺手建一个** —— 所以这一手不光写了字，还把门牌指的是哪份文件给造了出来。\n\n要是第一个空写成 `size`（问几个字节）呢？文件不在的时候它自己就先翻脸了，本喵那句「不在就先建」根本轮不到跑。问在不在，只能用 `exists` 喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"餐券.txt\");\n\n        Files.writeString(门牌, \"小橘\\n\");\n        Files.writeString(门牌, \"狸花\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"在不在：\" + Files.exists(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "在不在：true\n小橘\n狸花",
+      "accept": [
+        "在不在：true\n小橘\n狸花\n"
+      ],
+      "explanation": "三行分别是 `在不在：true`、`小橘`、`狸花` 喵。\n\n第一手 `writeString` 把「小橘」写进去 —— 这份文件原本还不存在，是它顺手建出来的，所以那一手之后门牌指的就已经是一份真文件了。\n\n第二手**多喊了一声** `StandardOpenOption.APPEND`（接着后面添），所以它是跟在「小橘」后面写的，没有把前一笔擦掉 —— 这正是本课讲的那个差别：**不喊就是从头写，喊了才是接着添**。\n\n最后那行问「在不在」得到 `true`（文件确实建出来了），再把整份念回来原样印出两行。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"大肥鱼\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "大肥鱼",
+      "accept": [
+        "大肥鱼\n"
+      ],
+      "explanation": "只印一行：`大肥鱼` 喵。\n\n前半截开了根**管子**（`FileChannel.open`，规矩里喊了 `CREATE` 和 `WRITE`），拿「大肥鱼」变的字节糊了一只**货舱**，整趟灌进文件，然后 `close()` 收工 —— 「写了就收工」这条规矩，在管子这里一样管用。\n\n后半截换一根管子往外拉：`入口.size()` 报这份文件一共几个字节，本喵照它备一只**正好装得下**的货舱（`allocate`），拉进来，然后**拨书签** —— `另一个.flip()` 把书签拨回第一格。\n\n最后那一长句读作「从货舱里**现在这个位置**起，取**还剩的这些**字节，按 UTF-8 那本字典拼回一串字」—— 拨过书签，位置是第一格、剩下的是整排 9 个字节，拼出来正好是「大肥鱼」。要是把这句 `flip()` 去掉，同一条句子取到的就是 0 个字节，本喵会看到一行**空**的。"
+    }
+  ]
+}

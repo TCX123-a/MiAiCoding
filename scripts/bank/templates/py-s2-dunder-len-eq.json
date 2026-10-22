@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-dunder-len-eq",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-08",
+  "type": "codewrite",
+  "concept": ["__len__", "__eq__", "整数", "比数字"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫粮", "冻干"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 2, "max": 9 },
+  "stemTemplate": "本喵的碗里装着{unit}，它还得能回答两个问题喵：\n\n1. `len(碗)` 报出**里面装着几样**\n2. 两只碗用 `==` 比的时候，**装的数一样就算相等**（哪怕它们是分两次生的两只不同的碗）\n\n请你画好这张图纸，然后**读两行整数**（一行一个，先读到的是 `x`，后读到的是 `y`），拿它们造两只碗 `a` 和 `b`，最后**印三行**：\n\n1. `len(a)` 的结果\n2. `a == b` 的结果\n3. 拿 `x` 这个数**再新造一只**碗，跟 `a` 比 —— `==` 的结果\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __len__(self):\n        return self.n\n\n    def __eq__(self, other):\n        return self.n == other.n\n\n\nx = int(input())\ny = int(input())\na = Bowl(x)\nb = Bowl(y)\nprint(len(a))\nprint(a == b)\nprint(Bowl(x) == a)\n",
+  "explanationTemplate": "这两招管的是两个不同的时刻，本喵一个一个说喵。\n\n- **`__len__` 的时刻**：`len(...)` 套在这只碗上的时候。它叼回来的必须是**一个不小于 0 的整数** —— Python 拿这个数去数「有几样」，叼回小数或者话（字）它都翻脸。这里碗里装几个就报几个，所以叼回 `self.n` 正合适。\n- **`__eq__` 的时刻**：`==` 两边摆着两只碗的时候。它得叼回 `True` 或 `False`。\n\n⚠️ **`__eq__` 里比的是两个数字**：`self.n == other.n`。数字的 `==` Python 天生就认，**不会再回头喊 `__eq__`**，所以这里不会转圈圈；要是手一滑写成 `self == other`，那才是自己喊自己，转不停的圈。\n\n⚠️ **第三行才是本喵要这一招的理由**：`Bowl(x)` 是**新生的另一只**。不写 `__eq__` 的话，Python 默认只比「是不是同一只碗」，这一行会印 `False`，可本喵明明造的是装着同样多的碗。补上这一招，它才印 `True`。\n\n⚠️ 顺手记一句：`__eq__` 里的 `self` 是 `==` **左边**那只，`other` 是**右边**那只 —— 万一以后想写「我的数比你的大」这种规矩，就知道该拿谁跟谁比了。"
+}

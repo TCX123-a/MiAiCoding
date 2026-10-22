@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-exc-type-name",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-13",
+  "type": "codefix",
+  "concept": ["type(e).__name__", "纸条上的名字"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 3 },
+    "b": { "kind": "pick", "values": [2, 3] }
+  },
+  "stemTemplate": "本喵想把纸条上**写的那串名字**叼出来印一印 —— 名字不是纸条的内容，是纸条上写着的那几个字母。\n\n它**前面那一行倒是印出来了**，轮到印名字的时候**断了气**，后面什么都没印。\n\n你帮本喵改对喵。要求：\n\n1. **两行都要印出来**：第一行是分到的鱼干，第二行是纸条上的名字。\n2. 印名字那一行**只许动一小处**，别的部分一个字都不许改（本喵要练的正是那一小处）。\n3. 转圈的那一排数、还有招式里那一行，都不许动。",
+  "brokenCodeTemplate": "def 分鱼干(份数):\n    if 份数 <= 0:\n        raise ValueError(\"份数得是正数喵\")\n    return 份数 * {b}\n\nfor 一份 in [{a}, 0]:\n    try:\n        print(\"分到\", 分鱼干(一份))\n    except Exception as e:\n        print(\"纸条上的名字：\", e.__name__)\n",
+  "referenceFixTemplate": "def 分鱼干(份数):\n    if 份数 <= 0:\n        raise ValueError(\"份数得是正数喵\")\n    return 份数 * {b}\n\nfor 一份 in [{a}, 0]:\n    try:\n        print(\"分到\", 分鱼干(一份))\n    except Exception as e:\n        print(\"纸条上的名字：\", type(e).__name__)\n",
+  "explanationTemplate": "要害在「`e` 是什么」这件事上喵：`except Exception as e` 里的 `e` 是**接过纸条之后给纸条起的名字**，它手里拿的是**纸条本身**。\n\n- 想知道纸条上**写着什么话**，直接印 `e`（本喵上一段就是这么干的）。\n- 想知道纸条上**写的那串名字**，得先问一句「这张纸条是**哪一款**的」：`type(e)` 就是把这张纸条的**款式**取出来，后面再跟一个 `.__name__`，取出来才是那串名字（`ValueError` 这种）。\n\n本喵少写了前面那半截，直接对着纸条喊 `.__name__` —— 纸条本身没长这个东西，翻译官喵只好当场断气。查这种毛病有个好习惯：**拿到名字之前先问自己一句「我现在手里是纸条，还是纸条的款式」**，问过就不容易漏。\n\n⚠️ 还有一条顺带记的：这一段里 `except Exception` 是**笼统**的那条，它接住了本来属于别的款式的纸条 —— 而 `type(e).__name__` 正好能把「接住的那张到底叫什么」印出来。所以笼统接住**不是**把线索丢了，只要本喵顺手把名字印一句，就还查得下去喵。"
+}

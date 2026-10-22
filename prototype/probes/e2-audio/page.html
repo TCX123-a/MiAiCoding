@@ -1,0 +1,118 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>E2 page</title>
+<body style="font: 14px monospace; background: #111; color: #0f0">
+<div id="status">boot</div>
+<script>
+  const OUT = (tag, obj) => console.log('E2 ' + tag + ' ' + JSON.stringify(obj));
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const status = document.getElementById('status');
+
+  async function measure(ctxB, analyser, ms, phase) {
+    const n = analyser.frequencyBinCount;
+    const buf = new Float32Array(n);
+    const binHz = ctxB.sampleRate / (2 * n);
+    const dbAt = (hz) => {
+      const c = Math.round(hz / binHz);
+      let s = 0, k = 0;
+      for (let i = Math.max(1, c - 3); i <= Math.min(n - 1, c + 3); i++) { s += buf[i]; k++; }
+      return s / k;
+    };
+    const rows = [];
+    const t0p = performance.now();
+    while (performance.now() - t0p < ms) {
+      analyser.getFloatFrequencyData(buf);
+      let peakBin = 1, peak = -Infinity;
+      for (let i = 1; i < n; i++) if (buf[i] > peak) { peak = buf[i]; peakBin = i; }
+      rows.push({ peakHz: +(peakBin * binHz).toFixed(1), peakDb: +peak.toFixed(1), d440: +dbAt(440).toFixed(1), d880: +dbAt(880).toFixed(1) });
+      status.textContent = phase + ' ' + rows.length;
+      await sleep(100);
+    }
+    // 注意：Chromium 的 float 频谱对零能量 bin 返回 -Infinity，均值会被单个静音样本毒成 -Infinity
+    // （JSON.stringify(-Infinity) → null，曾让整列读数变 null）。一律只对有限值求均值。
+    const meanFinite = (f) => {
+      const v = rows.map(f).filter(Number.isFinite);
+      return v.length ? { v: +(v.reduce((a, b) => a + b, 0) / v.length).toFixed(1), n: v.length } : { v: null, n: 0 };
+    };
+    const loud = rows.filter((r) => r.peakDb > -70);
+    OUT('phase', {
+      phase,
+      samples: rows.length,
+      meanPeakDb: meanFinite((r) => r.peakDb),
+      meanD440: meanFinite((r) => r.d440),
+      meanD880: meanFinite((r) => r.d880),
+      loudCount: loud.length,
+      peakHzWhenLoud: loud.map((r) => r.peakHz),
+    });
+  }
+
+  async function run() {
+    let stream;
+    try {
+      // 关闭 WebRTC 三件套（回声消除/降噪/自动增益）——渲染默认全开，会让音乐被门限/泵动扭曲，
+      // 音乐响应必须裸信号。getSettings 里核对是否真被关闭。
+      stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+      });
+    } catch (e) {
+      OUT('fail', { where: 'getDisplayMedia', msg: String(e) });
+      return;
+    }
+    const at = stream.getAudioTracks();
+    const vt = stream.getVideoTracks();
+    OUT('tracks', {
+      audio: at.length,
+      video: vt.length,
+      audioLabel: at[0] ? at[0].label : null,
+      audioSettings: at[0] && at[0].getSettings ? at[0].getSettings() : null,
+      audioState: at[0] ? at[0].readyState : null,
+    });
+    if (!at.length) {
+      OUT('fail', { where: 'no-audio-track' });
+      return;
+    }
+
+    const ctxB = new AudioContext();
+    const src = ctxB.createMediaStreamSource(stream);
+    const an = ctxB.createAnalyser();
+    an.fftSize = 8192;
+    an.smoothingTimeConstant = 0;
+    src.connect(an); // 只在分析链里，绝不接 destination（防回授）
+    OUT('analyser', {
+      state: ctxB.state,
+      sampleRate: ctxB.sampleRate,
+      fftSize: an.fftSize,
+      binCount: an.frequencyBinCount,
+      binHz: +(ctxB.sampleRate / an.fftSize).toFixed(3),
+    });
+    await sleep(300);
+
+    await measure(ctxB, an, 1000, 'silence');
+
+    const ctxA = new AudioContext();
+    await ctxA.resume();
+    const osc = ctxA.createOscillator();
+    const g = ctxA.createGain();
+    g.gain.value = 0;
+    osc.frequency.value = 440;
+    osc.connect(g);
+    g.connect(ctxA.destination);
+    osc.start();
+    g.gain.linearRampToValueAtTime(0.12, ctxA.currentTime + 0.02);
+
+    await measure(ctxB, an, 2000, 'tone440');
+    osc.frequency.setValueAtTime(880, ctxA.currentTime);
+    await measure(ctxB, an, 1500, 'tone880');
+    g.gain.linearRampToValueAtTime(0, ctxA.currentTime + 0.02);
+    await sleep(80);
+    osc.stop();
+    await measure(ctxB, an, 1200, 'after');
+
+    stream.getTracks().forEach((t) => t.stop());
+    OUT('done', {});
+  }
+
+  run().catch((e) => OUT('fail', { where: 'run', msg: String(e) }));
+</script>
+</body>

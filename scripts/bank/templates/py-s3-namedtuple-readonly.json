@@ -1,0 +1,34 @@
+{
+  "templateId": "py-s3-namedtuple-readonly",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-01",
+  "type": "codefix",
+  "concept": ["namedtuple", "只读", "重新造一块"],
+  "instances": 2,
+  "params": {
+    "a": {
+      "kind": "pick",
+      "values": [
+        "咪咪",
+        "花花",
+        "团子"
+      ]
+    },
+    "w0": {
+      "kind": "int",
+      "min": 2,
+      "max": 4
+    }
+  },
+  "stdinSpec": {
+    "kind": "ints",
+    "count": 1,
+    "min": 1,
+    "max": 9
+  },
+  "stemTemplate": "本喵给猫猫做了张猫牌喵 —— 牌子上就两样：`name`（名字）和 `weight`（斤数）。牌子做成什么样，图纸那一行已经写好了。\n\n刚才这只猫又称了一遍，**正确的斤数在外面给进来的那个数里**。本喵就顺手写了这么一句，想把牌子上的斤数换掉：\n\n```text\nc.weight = n\n```\n\n结果这一行**跑不过去**，翻译官喵当场翻脸。\n\n你帮本喵改对：把外面给进来的那个数当成新的斤数，最后印出\n\n```\n{a} 现在 XX 斤\n```\n\n（`XX` 就是外面给的那个数喵。）\n\n比如外面给的是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n⚠️ `c` 这个名字底下**从头到尾都得是那张牌子的样子** —— 最后印的时候，名字和斤数都要从 `c` 身上取；不许把印的那一行改成直接拼外面进来的那个数糊弄过去。\n\n⚠️ 图纸那一行、还有最后印的那一行，都不许动。",
+  "brokenCodeTemplate": "from collections import namedtuple\n\n猫 = namedtuple(\"猫\", \"name weight\")\n\nc = 猫(\"{a}\", {w0})\n\nn = int(input())\nc.weight = n\nprint(c.name + \" 现在 \" + str(c.weight) + \" 斤\")\n",
+  "referenceFixTemplate": "from collections import namedtuple\n\n猫 = namedtuple(\"猫\", \"name weight\")\n\nc = 猫(\"{a}\", {w0})\n\nn = int(input())\nc = 猫(c.name, n)\nprint(c.name + \" 现在 \" + str(c.weight) + \" 斤\")\n",
+  "explanationTemplate": "`namedtuple` 造出来的那张牌子是**只读**的喵：`c.weight = ...` 这种「往牌子上重新写一笔」的动作，翻译官喵一律拦下来（它说的是 `can't set attribute`，意思是「这个身上挂的东西不能改」）。\n\n这是刻意设计的，不是毛病：牌子发下去之后谁都能改的话，你手上那份和本喵手上那份就可能对不上，查起来非常费劲 —— 所以它干脆不让改。\n\n那想换斤数怎么办？**重新造一块**。已经造好的那块身上的东西**读**得出来（`c.name`、`c.weight` 都能读），于是拿旧的当料，造一块新的：\n\n```text\nc = 猫(c.name, n)\n```\n\n读旧的、造新的、再把 `c` 这个名字指到新造好的那一块上。\n\n⚠️ 注意这不是「把原来那块改了」，是**换了一块**。别人手上如果还捏着旧的那块，他看到的永远是你造新牌子**之前**的斤数 —— 这一点想明白了，这套只读的路子才算真会。"
+}

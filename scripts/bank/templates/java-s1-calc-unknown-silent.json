@@ -1,0 +1,22 @@
+{
+  "templateId": "java-s1-calc-unknown-silent",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-15",
+  "type": "codefix",
+  "concept": ["else 兜底", "岔路", "不报错只少干活"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 3 },
+    "b": { "kind": "int", "min": 4, "max": 5 },
+    "c": { "kind": "int", "min": 6, "max": 7 },
+    "d": { "kind": "int", "min": 8, "max": 9 },
+    "a2": { "kind": "int", "min": 10, "max": 11 },
+    "b2": { "kind": "int", "min": 12, "max": 13 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "9 {a} {b}\n2 {c} {d}\n0\n", "sampleText": "9 {a2} {b2}\n0\n" },
+  "stemTemplate": "本喵这台计算器只认 `1`（加法）和 `2`（减法），`0` 是收工喵。麻烦在这儿：**客人报了一个菜单上没有的数**，机器一声不吭 —— 圈子照转，可那一单就像没发生过。\n\n翻译官不报错，是本喵自己发现的。你帮本喵给**最后那条岔路**补上话：认不出的数，就印 `本喵还不认识这个数喵`。\n\n（纸条上每一单都排着「选项 + 两个数」三样，认不出的那一单也不例外。）\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分给的是**另外几单**喵，里面也会报一个菜单上没有的数。）",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            if (choice == 1) {\n                System.out.println(\"结果是 \" + add(a, b));\n            } else if (choice == 2) {\n                System.out.println(\"结果是 \" + sub(a, b));\n            }\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            if (choice == 1) {\n                System.out.println(\"结果是 \" + add(a, b));\n            } else if (choice == 2) {\n                System.out.println(\"结果是 \" + sub(a, b));\n            } else {\n                System.out.println(\"本喵还不认识这个数喵\");\n            }\n        }\n    }\n}\n",
+  "explanationTemplate": "本喵那串 `if / else if` 只写了「是 `1` 怎么办」「是 `2` 怎么办」，**没有最后那条兜底的 `else`** 喵。于是报 `9` 的那一单：每一条都不成立，链条从头走到尾，**一句也没跑** —— 程序不报错，只是安静地少说了一句话；接着读下两个数、圈子转回菜单，就像那一单没来过。\n\n补的就是最后那一条：\n\n```java\n} else {\n    System.out.println(\"本喵还不认识这个数喵\");\n}\n```\n\n这一步在第三步里也是同一个形状：`if / else if` 管**认识的选择**，最后那条 `else` 管**兜底**（认识不了的那种）。整台机器就是三样拼起来的：**招式拆开 → 菜单绕圈 → 岔子接住**。少一条兜底，客人报了怪数字，机器就装聋作哑喵。"
+}

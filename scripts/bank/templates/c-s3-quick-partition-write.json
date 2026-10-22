@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-quick-partition-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-07",
+  "type": "codewrite",
+  "concept": ["尺子法", "拿最后一只当尺子", "矮的往左站", "尺子站到中线上"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 5, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "「**尺子法**」的规矩是这样的：拿这一段**最后一只**当尺子，比它矮的统统换到左边来，比它高的留在右边，最后让**尺子自己站到中间那条线上**（左边全是矮的、右边全是高的），再把尺子站的位子**答回去**。\n\n`quick`（拆开分头办那一招）已经写好在底座里了，它每次都会拿你答回来的位子把这一段切成两半。请你把 `partition` 补完：\n\n1. 先把最后一只的值抄下来当尺子；\n2. 从这一段头上往后看，看见比尺子矮的，就跟**左边那条线的下一位**换个个儿，然后把那条线往右挪一格；\n3. 走完之后，把尺子换到**那条线上**，让尺子站到它该站的位子；\n4. 把这个位子答回去。\n\n输入先给一个数（一共几只），然后一行一只。样例输入：\n\n```text\n{sampleInput}\n```\n\n该印出来**一行**：`尺子法：` 后面跟着排好的数（每只后面一个空格）：\n\n```text\n{sampleOutput}\n```",
+  "starterTemplate": "#include <stdio.h>\n\n/* 分堆：拿最后一只当尺子，比它矮的换到左边，比它高的留在右边，尺子站到中线上 */\nint partition(int a[], int lo, int hi) {\n\n    /* ① 把最后一只的值抄下来当尺子（别拿位子，抄值） */\n    /* ② 从 lo 往后看：比尺子矮的，换到左边那条线的下一位，线往右挪一格 */\n    /* ③ 走完之后，把尺子换到那条线上 */\n    /* ④ 把尺子现在站的位子答回去 */\n\n}\n\nvoid quick(int a[], int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    quick(a, 0, n - 1);\n\n    printf(\"尺子法：\");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", a[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* 分堆：拿最后一只当尺子，比它矮的换到左边，比它高的留在右边，尺子站到中线上 */\nint partition(int a[], int lo, int hi) {\n    int pivot = a[hi];\n    int i = lo;\n\n    for (int j = lo; j < hi; j++) {\n        if (a[j] < pivot) {\n            int t = a[i];\n            a[i] = a[j];\n            a[j] = t;\n            i++;\n        }\n    }\n\n    int t = a[i];\n    a[i] = a[hi];\n    a[hi] = t;\n    return i;\n}\n\nvoid quick(int a[], int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    quick(a, 0, n - 1);\n\n    printf(\"尺子法：\");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", a[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "分堆这一招的骨架是**一条线 + 一趟扫**喵：\n\n```text\nint pivot = a[hi];\nint i = lo;\nfor (int j = lo; j < hi; j++) {\n    if (a[j] < pivot) {\n        int t = a[i]; a[i] = a[j]; a[j] = t;\n        i++;\n    }\n}\nint t = a[i]; a[i] = a[hi]; a[hi] = t;\nreturn i;\n```\n\n四处要留意：\n\n**① 尺子抄的是「值」，不是「位子」。** 抄值，换位子的时候尺子不会跟着跑；要是记位子，一路换下来尺子自己都不知道跑哪儿去了。\n\n**② `i` 是「矮的一摊的下一个空位」。** 每收一只矮的，就把它换到 `i` 那一位上，然后 `i` 往右挪一格。走完这一趟，`lo` 到 `i - 1` 全是比尺子矮的。\n\n**③ 最后那三行不能少。** 尺子还杵在最右边，得把它换到 `i` 位上 —— 换完，左边全矮、右边全高，**尺子这一位就算安顿好了**。\n\n**④ 答回去的是 `i`。** `quick` 就是拿这个位子把这一段切成两半的：左边 `lo` 到 `i - 1`、右边 `i + 1` 到 `hi`。答错了位子，两半就会**重叠或者漏掉**，切出来的东西也不对。\n\n本喵给你留一句分头记：**抄值当尺子，扫一趟，尺子归位，答位子。**"
+}

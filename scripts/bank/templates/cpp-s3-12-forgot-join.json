@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-12-forgot-join",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-12",
+  "type": "codefix",
+  "concept": ["喊来的帮手要有交代", "少写 join 程序当场摔", "terminate called without an active exception"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["小鱼干", "猫粮", "毛线球"] },
+    "w2": { "kind": "pick", "values": ["大肥鱼", "小奶猫", "橘猫"] }
+  },
+  "stemTemplate": "本喵喊了两只帮手干活：一位把 `{w1}` 记进自己的碗，另一位把 `{w2}` 记进自己的碗。两只碗都是**各用各的**，一点也不用排队。\n\n可这段代码一跑就**当场摔**喵 —— 翻译官喵丢下一句「有件事还没收尾，我就被丢下了」。你帮本喵看看漏了哪一步：**两只碗里记的东西一个字都不用动**，让程序顺顺当当跑完就行。\n\n改好之后，程序要印出三行：先是 `{w1}`，再是 `{w2}`，最后是 `两只都回来了喵`。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <thread>\n#include <string>\nusing namespace std;\n\nstring bowl1;\nstring bowl2;\n\nvoid cleanBowl() {\n    bowl1 = \"{w1}\";\n}\n\nvoid dryFish() {\n    bowl2 = \"{w2}\";\n}\n\nint main() {\n    thread t1(cleanBowl);\n    thread t2(dryFish);\n    t1.join();\n    cout << bowl1 << endl;\n    cout << bowl2 << endl;\n    cout << \"两只都回来了喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <thread>\n#include <string>\nusing namespace std;\n\nstring bowl1;\nstring bowl2;\n\nvoid cleanBowl() {\n    bowl1 = \"{w1}\";\n}\n\nvoid dryFish() {\n    bowl2 = \"{w2}\";\n}\n\nint main() {\n    thread t1(cleanBowl);\n    thread t2(dryFish);\n    t1.join();\n    t2.join();\n    cout << bowl1 << endl;\n    cout << bowl2 << endl;\n    cout << \"两只都回来了喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题漏的是**接第二位帮手回家**的那一句喵。\n\n代码里喊了两位（`thread t1(...)` 和 `thread t2(...)`），却只写了 `t1.join();` —— 主猫等回了第一位就自己收工走了，第二位还挂着没人管。C++ 的规矩是：喊来的帮手，**走之前必须有个交代**。没有交代，程序当场了结，翻译官喵的原话是\n\n`terminate called without an active exception`\n\n念作「有件事还没收尾，我就被丢下了」。补上 `t2.join();`，主猫就站住等它回来，三行才会按写好的顺序印出来。\n\n⚠️ 注意这句摔下来的话**不点名**是哪一位没说清楚 —— 它不说「t2 漏了」，只告诉你「有件事没收尾」。所以看到它，就回去**一位一位数**：喊了几句 `thread`，就该有几句 `join`。\n\n⚠️ 还有一处容易看走眼：第二位帮手要记的东西（`{w2}`）在它摔下来之前**可能已经记好了**，也可能没记好 —— 这两件事谁先谁后本来说不准。所以别拿「我那次印出来是对的」当修好的证据：程序摔了就是没对。"
+}

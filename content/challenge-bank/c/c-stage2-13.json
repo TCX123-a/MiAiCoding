@@ -1,0 +1,410 @@
+{
+  "lessonId": "c-stage2-13",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s2-file-append-ledger-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的账本要**一天添一笔**，连着记三天，一天都不能把前面的撕掉。\n\n请你写一段程序，按这个顺序做：\n\n1. 第一次拉开册子 `zhangben.txt`，写上 `第一天 1 条`，关上；\n2. 第二次拉开**同一本**册子，**在前一天的后面接着**写上 `第二天 4 条`，关上；\n3. 第三次还是接着写 `第三天 7 条`，关上；\n4. 最后以读的方式拉开，把整本册子**一行一行读出来印一遍**（一行一行印，末尾不要再自己加换行）。\n\n三笔都要在，一行都不能少。每次拉开之后都别忘了先看看牌子是不是空的、用完都别忘了关上抽屉。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 1 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 4 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第三天 7 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "expectedOutput": "第一天 1 条\n第二天 4 条\n第三天 7 条",
+      "stdin": null,
+      "explanation": "这一课真正的分界线就在**打开方式**那一个字母上喵。\n\n**第一天**用的是 `\"w\"` —— 「撕掉重写」。第一次记账，册子本来是空的（或者有一本旧的），撕掉重来正合本喵的意。\n\n**第二天、第三天**都用 `\"a\"` —— 「接着写」。它保留原来的字，在停笔的地方往下写。要是这里手滑写成 `\"w\"`，那本喵每记一天就把前面全撕一遍，最后册子上只剩第三天那一行 —— **而且翻译官喵一个字都不会说**，因为 `\"w\"` 完全合法，程序也好好地跑完了。\n\n三种打开方式再收一遍：\n\n| 打开方式 | 意思 |\n|---|---|\n| `\"r\"` | 只读。册子要是不在，叼回来的是 `NULL` |\n| `\"w\"` | 撕掉重写。册子不在就新建一本 |\n| `\"a\"` | 接着写。册子不在就新建一本 |\n\n**一天添一笔的活，几乎总是「头一次 `w`、往后每次都 `a`」。** 这个形状你往后天天会用到。\n\n另外三个细节也别丢：**每本册子的名字一个字母都不能差**（差一个字母就是另一本册子）；**每次拉开之后都先看看牌子是不是空的**（拉不开的时候叼回来的是一张空牌子，不检查就往下走，程序会当场倒下）；**用完就关**（写进去的字可能还揣在翻译官喵兜里没真落进册子，程序半路翻车时最容易吃这个亏）。",
+      "templateId": "c-s2-file-append-ledger",
+      "params": {
+        "a": 1,
+        "b": 4,
+        "c": 7
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:20.807Z",
+        "hash": "048d36966c8c3994"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-append-ledger-005",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的账本要**一天添一笔**，连着记三天，一天都不能把前面的撕掉。\n\n请你写一段程序，按这个顺序做：\n\n1. 第一次拉开册子 `zhangben.txt`，写上 `第一天 1 条`，关上；\n2. 第二次拉开**同一本**册子，**在前一天的后面接着**写上 `第二天 5 条`，关上；\n3. 第三次还是接着写 `第三天 9 条`，关上；\n4. 最后以读的方式拉开，把整本册子**一行一行读出来印一遍**（一行一行印，末尾不要再自己加换行）。\n\n三笔都要在，一行都不能少。每次拉开之后都别忘了先看看牌子是不是空的、用完都别忘了关上抽屉。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 1 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 5 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第三天 9 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "expectedOutput": "第一天 1 条\n第二天 5 条\n第三天 9 条",
+      "stdin": null,
+      "explanation": "这一课真正的分界线就在**打开方式**那一个字母上喵。\n\n**第一天**用的是 `\"w\"` —— 「撕掉重写」。第一次记账，册子本来是空的（或者有一本旧的），撕掉重来正合本喵的意。\n\n**第二天、第三天**都用 `\"a\"` —— 「接着写」。它保留原来的字，在停笔的地方往下写。要是这里手滑写成 `\"w\"`，那本喵每记一天就把前面全撕一遍，最后册子上只剩第三天那一行 —— **而且翻译官喵一个字都不会说**，因为 `\"w\"` 完全合法，程序也好好地跑完了。\n\n三种打开方式再收一遍：\n\n| 打开方式 | 意思 |\n|---|---|\n| `\"r\"` | 只读。册子要是不在，叼回来的是 `NULL` |\n| `\"w\"` | 撕掉重写。册子不在就新建一本 |\n| `\"a\"` | 接着写。册子不在就新建一本 |\n\n**一天添一笔的活，几乎总是「头一次 `w`、往后每次都 `a`」。** 这个形状你往后天天会用到。\n\n另外三个细节也别丢：**每本册子的名字一个字母都不能差**（差一个字母就是另一本册子）；**每次拉开之后都先看看牌子是不是空的**（拉不开的时候叼回来的是一张空牌子，不检查就往下走，程序会当场倒下）；**用完就关**（写进去的字可能还揣在翻译官喵兜里没真落进册子，程序半路翻车时最容易吃这个亏）。",
+      "templateId": "c-s2-file-append-ledger",
+      "params": {
+        "a": 1,
+        "b": 5,
+        "c": 9
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:48.322Z",
+        "hash": "ef24e50db5709959"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-append-ledger-010",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的账本要**一天添一笔**，连着记三天，一天都不能把前面的撕掉。\n\n请你写一段程序，按这个顺序做：\n\n1. 第一次拉开册子 `zhangben.txt`，写上 `第一天 2 条`，关上；\n2. 第二次拉开**同一本**册子，**在前一天的后面接着**写上 `第二天 4 条`，关上；\n3. 第三次还是接着写 `第三天 8 条`，关上；\n4. 最后以读的方式拉开，把整本册子**一行一行读出来印一遍**（一行一行印，末尾不要再自己加换行）。\n\n三笔都要在，一行都不能少。每次拉开之后都别忘了先看看牌子是不是空的、用完都别忘了关上抽屉。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 2 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 4 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第三天 8 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "expectedOutput": "第一天 2 条\n第二天 4 条\n第三天 8 条",
+      "stdin": null,
+      "explanation": "这一课真正的分界线就在**打开方式**那一个字母上喵。\n\n**第一天**用的是 `\"w\"` —— 「撕掉重写」。第一次记账，册子本来是空的（或者有一本旧的），撕掉重来正合本喵的意。\n\n**第二天、第三天**都用 `\"a\"` —— 「接着写」。它保留原来的字，在停笔的地方往下写。要是这里手滑写成 `\"w\"`，那本喵每记一天就把前面全撕一遍，最后册子上只剩第三天那一行 —— **而且翻译官喵一个字都不会说**，因为 `\"w\"` 完全合法，程序也好好地跑完了。\n\n三种打开方式再收一遍：\n\n| 打开方式 | 意思 |\n|---|---|\n| `\"r\"` | 只读。册子要是不在，叼回来的是 `NULL` |\n| `\"w\"` | 撕掉重写。册子不在就新建一本 |\n| `\"a\"` | 接着写。册子不在就新建一本 |\n\n**一天添一笔的活，几乎总是「头一次 `w`、往后每次都 `a`」。** 这个形状你往后天天会用到。\n\n另外三个细节也别丢：**每本册子的名字一个字母都不能差**（差一个字母就是另一本册子）；**每次拉开之后都先看看牌子是不是空的**（拉不开的时候叼回来的是一张空牌子，不检查就往下走，程序会当场倒下）；**用完就关**（写进去的字可能还揣在翻译官喵兜里没真落进册子，程序半路翻车时最容易吃这个亏）。",
+      "templateId": "c-s2-file-append-ledger",
+      "params": {
+        "a": 2,
+        "b": 4,
+        "c": 8
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:50.317Z",
+        "hash": "6869fb10aeefe385"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-append-ledger-016",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的账本要**一天添一笔**，连着记三天，一天都不能把前面的撕掉。\n\n请你写一段程序，按这个顺序做：\n\n1. 第一次拉开册子 `zhangben.txt`，写上 `第一天 2 条`，关上；\n2. 第二次拉开**同一本**册子，**在前一天的后面接着**写上 `第二天 6 条`，关上；\n3. 第三次还是接着写 `第三天 8 条`，关上；\n4. 最后以读的方式拉开，把整本册子**一行一行读出来印一遍**（一行一行印，末尾不要再自己加换行）。\n\n三笔都要在，一行都不能少。每次拉开之后都别忘了先看看牌子是不是空的、用完都别忘了关上抽屉。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 2 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 6 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第三天 8 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "expectedOutput": "第一天 2 条\n第二天 6 条\n第三天 8 条",
+      "stdin": null,
+      "explanation": "这一课真正的分界线就在**打开方式**那一个字母上喵。\n\n**第一天**用的是 `\"w\"` —— 「撕掉重写」。第一次记账，册子本来是空的（或者有一本旧的），撕掉重来正合本喵的意。\n\n**第二天、第三天**都用 `\"a\"` —— 「接着写」。它保留原来的字，在停笔的地方往下写。要是这里手滑写成 `\"w\"`，那本喵每记一天就把前面全撕一遍，最后册子上只剩第三天那一行 —— **而且翻译官喵一个字都不会说**，因为 `\"w\"` 完全合法，程序也好好地跑完了。\n\n三种打开方式再收一遍：\n\n| 打开方式 | 意思 |\n|---|---|\n| `\"r\"` | 只读。册子要是不在，叼回来的是 `NULL` |\n| `\"w\"` | 撕掉重写。册子不在就新建一本 |\n| `\"a\"` | 接着写。册子不在就新建一本 |\n\n**一天添一笔的活，几乎总是「头一次 `w`、往后每次都 `a`」。** 这个形状你往后天天会用到。\n\n另外三个细节也别丢：**每本册子的名字一个字母都不能差**（差一个字母就是另一本册子）；**每次拉开之后都先看看牌子是不是空的**（拉不开的时候叼回来的是一张空牌子，不检查就往下走，程序会当场倒下）；**用完就关**（写进去的字可能还揣在翻译官喵兜里没真落进册子，程序半路翻车时最容易吃这个亏）。",
+      "templateId": "c-s2-file-append-ledger",
+      "params": {
+        "a": 2,
+        "b": 6,
+        "c": 8
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:52.457Z",
+        "hash": "7eda7451c408d232"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-append-ledger-021",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的账本要**一天添一笔**，连着记三天，一天都不能把前面的撕掉。\n\n请你写一段程序，按这个顺序做：\n\n1. 第一次拉开册子 `zhangben.txt`，写上 `第一天 3 条`，关上；\n2. 第二次拉开**同一本**册子，**在前一天的后面接着**写上 `第二天 5 条`，关上；\n3. 第三次还是接着写 `第三天 7 条`，关上；\n4. 最后以读的方式拉开，把整本册子**一行一行读出来印一遍**（一行一行印，末尾不要再自己加换行）。\n\n三笔都要在，一行都不能少。每次拉开之后都别忘了先看看牌子是不是空的、用完都别忘了关上抽屉。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 3 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 5 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第三天 7 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "expectedOutput": "第一天 3 条\n第二天 5 条\n第三天 7 条",
+      "stdin": null,
+      "explanation": "这一课真正的分界线就在**打开方式**那一个字母上喵。\n\n**第一天**用的是 `\"w\"` —— 「撕掉重写」。第一次记账，册子本来是空的（或者有一本旧的），撕掉重来正合本喵的意。\n\n**第二天、第三天**都用 `\"a\"` —— 「接着写」。它保留原来的字，在停笔的地方往下写。要是这里手滑写成 `\"w\"`，那本喵每记一天就把前面全撕一遍，最后册子上只剩第三天那一行 —— **而且翻译官喵一个字都不会说**，因为 `\"w\"` 完全合法，程序也好好地跑完了。\n\n三种打开方式再收一遍：\n\n| 打开方式 | 意思 |\n|---|---|\n| `\"r\"` | 只读。册子要是不在，叼回来的是 `NULL` |\n| `\"w\"` | 撕掉重写。册子不在就新建一本 |\n| `\"a\"` | 接着写。册子不在就新建一本 |\n\n**一天添一笔的活，几乎总是「头一次 `w`、往后每次都 `a`」。** 这个形状你往后天天会用到。\n\n另外三个细节也别丢：**每本册子的名字一个字母都不能差**（差一个字母就是另一本册子）；**每次拉开之后都先看看牌子是不是空的**（拉不开的时候叼回来的是一张空牌子，不检查就往下走，程序会当场倒下）；**用完就关**（写进去的字可能还揣在翻译官喵兜里没真落进册子，程序半路翻车时最容易吃这个亏）。",
+      "templateId": "c-s2-file-append-ledger",
+      "params": {
+        "a": 3,
+        "b": 5,
+        "c": 7
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:54.326Z",
+        "hash": "45d99542ec135966"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-append-ledger-026",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵的账本要**一天添一笔**，连着记三天，一天都不能把前面的撕掉。\n\n请你写一段程序，按这个顺序做：\n\n1. 第一次拉开册子 `zhangben.txt`，写上 `第一天 3 条`，关上；\n2. 第二次拉开**同一本**册子，**在前一天的后面接着**写上 `第二天 6 条`，关上；\n3. 第三次还是接着写 `第三天 9 条`，关上；\n4. 最后以读的方式拉开，把整本册子**一行一行读出来印一遍**（一行一行印，末尾不要再自己加换行）。\n\n三笔都要在，一行都不能少。每次拉开之后都别忘了先看看牌子是不是空的、用完都别忘了关上抽屉。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 3 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 6 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第三天 9 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "expectedOutput": "第一天 3 条\n第二天 6 条\n第三天 9 条",
+      "stdin": null,
+      "explanation": "这一课真正的分界线就在**打开方式**那一个字母上喵。\n\n**第一天**用的是 `\"w\"` —— 「撕掉重写」。第一次记账，册子本来是空的（或者有一本旧的），撕掉重来正合本喵的意。\n\n**第二天、第三天**都用 `\"a\"` —— 「接着写」。它保留原来的字，在停笔的地方往下写。要是这里手滑写成 `\"w\"`，那本喵每记一天就把前面全撕一遍，最后册子上只剩第三天那一行 —— **而且翻译官喵一个字都不会说**，因为 `\"w\"` 完全合法，程序也好好地跑完了。\n\n三种打开方式再收一遍：\n\n| 打开方式 | 意思 |\n|---|---|\n| `\"r\"` | 只读。册子要是不在，叼回来的是 `NULL` |\n| `\"w\"` | 撕掉重写。册子不在就新建一本 |\n| `\"a\"` | 接着写。册子不在就新建一本 |\n\n**一天添一笔的活，几乎总是「头一次 `w`、往后每次都 `a`」。** 这个形状你往后天天会用到。\n\n另外三个细节也别丢：**每本册子的名字一个字母都不能差**（差一个字母就是另一本册子）；**每次拉开之后都先看看牌子是不是空的**（拉不开的时候叼回来的是一张空牌子，不检查就往下走，程序会当场倒下）；**用完就关**（写进去的字可能还揣在翻译官喵兜里没真落进册子，程序半路翻车时最容易吃这个亏）。",
+      "templateId": "c-s2-file-append-ledger",
+      "params": {
+        "a": 3,
+        "b": 6,
+        "c": 9
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:21.953Z",
+        "hash": "05953d70a9611ea3"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-binary-roundtrip-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "前面那些招式写的都是**给人看的字**。这一道要搬的是**一整排碗里装的东西**：原样存进去、原样取回来。\n\n请你写一段程序，按这个顺序做：\n\n1. 准备好一排刚好 n 只的碗，把 n 个数从键盘上读进来（一行一个）；\n2. 以**原样搬**的方式拉开一本叫 `dangan.bin` 的册子（打开方式别忘了那个表示「原样搬」的字母）；拉不开就印一行 `打不开喵` 收工；\n3. 用「整排碗原样搬」那招把这排碗搬进册子，关上抽屉；\n4. 另准备一排同样大小的碗、**先都填成 0**；再以原样读的方式拉开册子，拉不开就印一行 `读不到喵` 收工；\n5. 读回来的时候，那一招**会叼回一个数**：这一趟真搬到了几个 —— 把它印成一行 `读回来 <几> 个数`；\n6. 最后把这排碗里的数**一行一个**印出来。\n\n比如投喂给程序的是\n\n4\n1\n5\n\n程序就要叼回\n\n读回来 3 个数\n4\n1\n5\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int bowl[3];\n\n    for (int i = 0; i < 3; i++) {\n        if (scanf(\"%d\", &bowl[i]) != 1) {\n            return 1;\n        }\n    }\n\n    FILE *fp = fopen(\"dangan.bin\", \"wb\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fwrite(bowl, sizeof(int), 3, fp);\n    fclose(fp);\n\n    int back[3];\n    for (int i = 0; i < 3; i++) {\n        back[i] = 0;\n    }\n\n    fp = fopen(\"dangan.bin\", \"rb\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    int got = (int)fread(back, sizeof(int), 3, fp);\n    fclose(fp);\n\n    printf(\"读回来 %d 个数\\n\", got);\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d\\n\", back[i]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "读回来 3 个数\n6\n6\n3",
+      "stdin": "6\n6\n3\n",
+      "explanation": "搬整排碗的四样投喂，一个都不能少喵：\n\n| 投喂 | 是什么 |\n|---|---|\n| `bowl` | **从哪儿搬**（那一排碗） |\n| `sizeof(int)` | **每只碗多大** |\n| `3` | **搬几只** |\n| `fp` | **搬到哪本册子上** |\n\n`fread` 是反着来的一套，四样投喂一个不多一个不少。**它叼回来的是一个数：这一趟真搬到了几个** —— 本喵把它印出来，正是因为它是「搬成功了没有」的凭据。搬回来几只碗，它就报几。\n\n**那个 `b` 是什么意思？** 打开方式后面多一个 `b`（`\"wb\"`、`\"rb\"`），意思是「**这是原样搬的，不是给猫看的字**」，所以叫**二进制**。要是用 `\"w\"` 打开一本二进制册子、再拿记事本去看，你会看到一堆莫名其妙的符号 —— 那很正常：**那本册子本来就不是写给眼睛看的。**\n\n**为什么这排碗要先填成 0？** 这是个保险动作：万一册子只搬回来一部分（比如写的时候只写了两只），剩下那些碗里是什么就说不清了。先填 0，读回来一看便知。当然本喵这道题写几只就搬几只，`got` 报的一定是 3。\n\n**它和 `fprintf` 那一族的分工**，一句话记牢：\n\n- **写给眼睛看的**（账本、名单）用 `fprintf` + `fgets` —— 一行一行，人能读；\n- **原样搬碗里的东西**用 `fwrite` + `fread` —— 打开方式记得带 `b`。\n\n（还有个老规矩：这一家子 `FILE`、`fopen`、`fwrite`、`fclose` 全都住在 `stdio.h` 家里，文件头上那一行 `#include` 不能缺。）",
+      "templateId": "c-s2-file-binary-roundtrip",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:23.945Z",
+        "hash": "839baf9e428a9e95"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-binary-roundtrip-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "前面那些招式写的都是**给人看的字**。这一道要搬的是**一整排碗里装的东西**：原样存进去、原样取回来。\n\n请你写一段程序，按这个顺序做：\n\n1. 准备好一排刚好 n 只的碗，把 n 个数从键盘上读进来（一行一个）；\n2. 以**原样搬**的方式拉开一本叫 `dangan.bin` 的册子（打开方式别忘了那个表示「原样搬」的字母）；拉不开就印一行 `打不开喵` 收工；\n3. 用「整排碗原样搬」那招把这排碗搬进册子，关上抽屉；\n4. 另准备一排同样大小的碗、**先都填成 0**；再以原样读的方式拉开册子，拉不开就印一行 `读不到喵` 收工；\n5. 读回来的时候，那一招**会叼回一个数**：这一趟真搬到了几个 —— 把它印成一行 `读回来 <几> 个数`；\n6. 最后把这排碗里的数**一行一个**印出来。\n\n比如投喂给程序的是\n\n4\n1\n1\n7\n\n程序就要叼回\n\n读回来 4 个数\n4\n1\n1\n7\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int bowl[4];\n\n    for (int i = 0; i < 4; i++) {\n        if (scanf(\"%d\", &bowl[i]) != 1) {\n            return 1;\n        }\n    }\n\n    FILE *fp = fopen(\"dangan.bin\", \"wb\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fwrite(bowl, sizeof(int), 4, fp);\n    fclose(fp);\n\n    int back[4];\n    for (int i = 0; i < 4; i++) {\n        back[i] = 0;\n    }\n\n    fp = fopen(\"dangan.bin\", \"rb\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    int got = (int)fread(back, sizeof(int), 4, fp);\n    fclose(fp);\n\n    printf(\"读回来 %d 个数\\n\", got);\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d\\n\", back[i]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "读回来 4 个数\n3\n3\n1\n8",
+      "stdin": "3\n3\n1\n8\n",
+      "explanation": "搬整排碗的四样投喂，一个都不能少喵：\n\n| 投喂 | 是什么 |\n|---|---|\n| `bowl` | **从哪儿搬**（那一排碗） |\n| `sizeof(int)` | **每只碗多大** |\n| `4` | **搬几只** |\n| `fp` | **搬到哪本册子上** |\n\n`fread` 是反着来的一套，四样投喂一个不多一个不少。**它叼回来的是一个数：这一趟真搬到了几个** —— 本喵把它印出来，正是因为它是「搬成功了没有」的凭据。搬回来几只碗，它就报几。\n\n**那个 `b` 是什么意思？** 打开方式后面多一个 `b`（`\"wb\"`、`\"rb\"`），意思是「**这是原样搬的，不是给猫看的字**」，所以叫**二进制**。要是用 `\"w\"` 打开一本二进制册子、再拿记事本去看，你会看到一堆莫名其妙的符号 —— 那很正常：**那本册子本来就不是写给眼睛看的。**\n\n**为什么这排碗要先填成 0？** 这是个保险动作：万一册子只搬回来一部分（比如写的时候只写了两只），剩下那些碗里是什么就说不清了。先填 0，读回来一看便知。当然本喵这道题写几只就搬几只，`got` 报的一定是 4。\n\n**它和 `fprintf` 那一族的分工**，一句话记牢：\n\n- **写给眼睛看的**（账本、名单）用 `fprintf` + `fgets` —— 一行一行，人能读；\n- **原样搬碗里的东西**用 `fwrite` + `fread` —— 打开方式记得带 `b`。\n\n（还有个老规矩：这一家子 `FILE`、`fopen`、`fwrite`、`fclose` 全都住在 `stdio.h` 家里，文件头上那一行 `#include` 不能缺。）",
+      "templateId": "c-s2-file-binary-roundtrip",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:25.681Z",
+        "hash": "c70328cb22e98528"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-missing-stdio-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要往档案室的一本册子里记一笔账：写上 `小鱼干 2 条`，再把它读回来印一行 `读到：小鱼干 2 条`。\n\n写和读放在同一段里，你一次跑完就能看见效果。可翻译官喵把整段代码退了回来，第一句就是「`FILE` 这个名字本喵没见过」。你帮本喵把开头缺的那一样补上（**别去改中间那几行**，它们都是好的）。",
+      "brokenCode": "int main(void) {\n    FILE *fp = fopen(\"dangan.txt\", \"w\");\n    if (fp == NULL) {\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 2 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"dangan.txt\", \"r\");\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"读到：%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"dangan.txt\", \"w\");\n    if (fp == NULL) {\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 2 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"dangan.txt\", \"r\");\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"读到：%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "expectedOutput": "读到：小鱼干 2 条",
+      "stdin": null,
+      "explanation": "缺的是最上面那一行 `#include <stdio.h>` 喵。\n\n翻译官喵最上面那句原话是 `error: unknown type name 'FILE'` —— 翻过来就是「**`FILE` 这个名字本喵没见过**」。紧跟着还会抱怨 `fopen`、`fprintf`、`fclose`、`printf` 一堆名字都没见过，**那些都是从第一句牵出来的**，不用一条条去看。\n\n它其实还很贴心：真正的报错里会跟着一句 `note: 'FILE' is defined in header '<stdio.h>'; this is probably fixable by adding '#include <stdio.h>'` —— **等于把答案写在卷子上了**。看见这句提示，就别再盯着代码找错别字了，去文件头上补那一行。\n\n为什么会这样？因为档案室这一家子 —— `FILE`、`fopen`、`fprintf`、`fclose`、`fgets` —— **全都住在 `stdio.h` 家里**。本喵不请档案管理员出场，翻译官喵就一个都不认得。（`printf` 也一样住那儿，只是它在有些环境下会被「网开一面」，所以有时候少了这一行它只是嘀咕一句、不拦你 —— 但今天这一家子它一个都不会放过。）\n\n补上那一行之后程序就通了：**先拉开抽屉写一行、关上；再拉开读、一行行印出来。** 写在册子上的字是真真切切落在硬盘上的，关灯、关机、明天再来，它都还在 —— 这就是本课开头那只「用完就拆的仓库」和册子的分别。",
+      "templateId": "c-s2-file-missing-stdio",
+      "params": {
+        "n": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:06.890Z",
+        "hash": "7de43f779ad3fee3"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-missing-stdio-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要往档案室的一本册子里记一笔账：写上 `小鱼干 5 条`，再把它读回来印一行 `读到：小鱼干 5 条`。\n\n写和读放在同一段里，你一次跑完就能看见效果。可翻译官喵把整段代码退了回来，第一句就是「`FILE` 这个名字本喵没见过」。你帮本喵把开头缺的那一样补上（**别去改中间那几行**，它们都是好的）。",
+      "brokenCode": "int main(void) {\n    FILE *fp = fopen(\"dangan.txt\", \"w\");\n    if (fp == NULL) {\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 5 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"dangan.txt\", \"r\");\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"读到：%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"dangan.txt\", \"w\");\n    if (fp == NULL) {\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 5 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"dangan.txt\", \"r\");\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"读到：%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "expectedOutput": "读到：小鱼干 5 条",
+      "stdin": null,
+      "explanation": "缺的是最上面那一行 `#include <stdio.h>` 喵。\n\n翻译官喵最上面那句原话是 `error: unknown type name 'FILE'` —— 翻过来就是「**`FILE` 这个名字本喵没见过**」。紧跟着还会抱怨 `fopen`、`fprintf`、`fclose`、`printf` 一堆名字都没见过，**那些都是从第一句牵出来的**，不用一条条去看。\n\n它其实还很贴心：真正的报错里会跟着一句 `note: 'FILE' is defined in header '<stdio.h>'; this is probably fixable by adding '#include <stdio.h>'` —— **等于把答案写在卷子上了**。看见这句提示，就别再盯着代码找错别字了，去文件头上补那一行。\n\n为什么会这样？因为档案室这一家子 —— `FILE`、`fopen`、`fprintf`、`fclose`、`fgets` —— **全都住在 `stdio.h` 家里**。本喵不请档案管理员出场，翻译官喵就一个都不认得。（`printf` 也一样住那儿，只是它在有些环境下会被「网开一面」，所以有时候少了这一行它只是嘀咕一句、不拦你 —— 但今天这一家子它一个都不会放过。）\n\n补上那一行之后程序就通了：**先拉开抽屉写一行、关上；再拉开读、一行行印出来。** 写在册子上的字是真真切切落在硬盘上的，关灯、关机、明天再来，它都还在 —— 这就是本课开头那只「用完就拆的仓库」和册子的分别。",
+      "templateId": "c-s2-file-missing-stdio",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:08.316Z",
+        "hash": "a11323e9c450178e"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-off-by-one-lines-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要往册子上记三笔账：`小鱼干 1 条`、`猫粮 4 碗`、`冻干块 7 块`，然后一行一行读回来，边读边报第几行。\n\n读回来应当是（**行号从 1 数起**）：\n\n```\n第 1 行：小鱼干 1 条\n第 2 行：猫粮 4 碗\n第 3 行：冻干块 7 块\n一共 3 行\n```\n\n可跑出来行号全都往后偏了一行。翻译官喵**一个字都没说**。你帮本喵找出这一处笔误（**只差一个数**）。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 1 条\\n\");\n    fprintf(fp, \"猫粮 4 碗\\n\");\n    fprintf(fp, \"冻干块 7 块\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 1;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"第 %d 行：%s\", n, line);\n        n = n + 1;\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 1 条\\n\");\n    fprintf(fp, \"猫粮 4 碗\\n\");\n    fprintf(fp, \"冻干块 7 块\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 0;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"第 %d 行：%s\", n, line);\n        n = n + 1;\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 0 行：小鱼干 1 条\n第 1 行：猫粮 4 碗\n第 2 行：冻干块 7 块\n一共 3 行",
+      "stdin": null,
+      "explanation": "那一处笔误就一个字：**数行号的那只碗，开手的时候应该装 0，不是 1。**\n\n```c\nint n = 0;\n```\n\n为什么会偏？因为这只碗的身世是「**到此刻为止已经读到了几行**」。一开始一行都还没读到，所以它是 **0**；每读回来一行，才 `n = n + 1;` 加一。\n\n原来写成 `int n = 1;`，等于**先白送了一行**：第一行读回来报的是 2，第二行报 3，第三行报 4；最后那只碗停在 4，所以总数也印成 4 —— 明明册子上只有三行。\n\n**这类错有个好认的脸：句子本身一点毛病没有，翻译官喵一个字都不说，只是数全都往后错了一格。** 它管的是「字写没写规矩」，管不了「本喵心里打算从几数起」。所以写完这种带计数器的地方，**自己在纸上走一遍第一步**：还没读的时候应该是几？\n\n顺便把读文件那段的三样投喂再对一遍喵：`fgets(line, sizeof(line), fp)` —— `line` 是接这一行的碗、`sizeof(line)` 是这只碗最多能接多少个格子（超了只接这么多，不会撑破碗）、`fp` 是从哪本册子读。读到册子末尾叼回来的就是 `NULL`，绕圈自然收工。",
+      "templateId": "c-s2-file-off-by-one-lines",
+      "params": {
+        "a": 1,
+        "b": 4,
+        "c": 7
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:09.980Z",
+        "hash": "3f1835def445c0f1"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-off-by-one-lines-026",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵要往册子上记三笔账：`小鱼干 3 条`、`猫粮 6 碗`、`冻干块 9 块`，然后一行一行读回来，边读边报第几行。\n\n读回来应当是（**行号从 1 数起**）：\n\n```\n第 1 行：小鱼干 3 条\n第 2 行：猫粮 6 碗\n第 3 行：冻干块 9 块\n一共 3 行\n```\n\n可跑出来行号全都往后偏了一行。翻译官喵**一个字都没说**。你帮本喵找出这一处笔误（**只差一个数**）。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 3 条\\n\");\n    fprintf(fp, \"猫粮 6 碗\\n\");\n    fprintf(fp, \"冻干块 9 块\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 1;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"第 %d 行：%s\", n, line);\n        n = n + 1;\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 3 条\\n\");\n    fprintf(fp, \"猫粮 6 碗\\n\");\n    fprintf(fp, \"冻干块 9 块\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 0;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"第 %d 行：%s\", n, line);\n        n = n + 1;\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 0 行：小鱼干 3 条\n第 1 行：猫粮 6 碗\n第 2 行：冻干块 9 块\n一共 3 行",
+      "stdin": null,
+      "explanation": "那一处笔误就一个字：**数行号的那只碗，开手的时候应该装 0，不是 1。**\n\n```c\nint n = 0;\n```\n\n为什么会偏？因为这只碗的身世是「**到此刻为止已经读到了几行**」。一开始一行都还没读到，所以它是 **0**；每读回来一行，才 `n = n + 1;` 加一。\n\n原来写成 `int n = 1;`，等于**先白送了一行**：第一行读回来报的是 2，第二行报 3，第三行报 4；最后那只碗停在 4，所以总数也印成 4 —— 明明册子上只有三行。\n\n**这类错有个好认的脸：句子本身一点毛病没有，翻译官喵一个字都不说，只是数全都往后错了一格。** 它管的是「字写没写规矩」，管不了「本喵心里打算从几数起」。所以写完这种带计数器的地方，**自己在纸上走一遍第一步**：还没读的时候应该是几？\n\n顺便把读文件那段的三样投喂再对一遍喵：`fgets(line, sizeof(line), fp)` —— `line` 是接这一行的碗、`sizeof(line)` 是这只碗最多能接多少个格子（超了只接这么多，不会撑破碗）、`fp` 是从哪本册子读。读到册子末尾叼回来的就是 `NULL`，绕圈自然收工。",
+      "templateId": "c-s2-file-off-by-one-lines",
+      "params": {
+        "a": 3,
+        "b": 6,
+        "c": 9
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:12.108Z",
+        "hash": "04c70bfdbe878dee"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-w-mode-wipes-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的账本要**一天添一笔**：先记上第一天的 `1` 条，隔一天再在**后面接着**记上第二天的 `5` 条，最后把整本册子读出来印一遍。\n\n读出来应当是**两行都在**：\n\n```\n第一天 1 条\n第二天 5 条\n```\n\n可现在只印出一行 —— 第一天那条不见了。翻译官喵**一个字都没说**。你帮本喵看看第二回拉开抽屉的时候哪里写错了（**只改一个字母**）。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 1 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 5 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 1 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 5 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "expectedOutput": "第一天 1 条\n第二天 5 条",
+      "stdin": null,
+      "explanation": "第二回拉开抽屉用的是 `\"w\"`，得改成 **`\"a\"`** 喵。\n\n三种打开方式的分界线记牢：\n\n| 打开方式 | 意思 |\n|---|---|\n| `\"r\"` | **只读**。册子上的字一个字都不动；册子要是不在，叼回来的就是 `NULL` |\n| `\"w\"` | **写**。拉开的那一刻，**原来写的字全被撕掉**，从头写起；册子不在就新建一本 |\n| `\"a\"` | **接着写**。保留原来的字，在停笔的地方往下写；册子不在就新建一本 |\n\n原来那句 `\"w\"` 的意思是「撕掉重写」—— 所以第二回拉开抽屉的一瞬间，第一天那条就已经被擦干净了。第二笔写在了一张白纸上，读出来的当然只有它自己。\n\n**`\"w\"` 和 `\"a\"` 只差一个字母，后果却是整本册子。** 而且这一处翻译官喵一个字都不会说：`\"w\"` 是个完全合法的打开方式，程序也好好地跑完了 —— 它压根不知道本喵心里想的是「添一笔」。\n\n所以往后写「一天添一笔」这种活，先在心里问一句：**这回是要重新写一本，还是在后面接着写？**\n\n（顺手再记一条同族的规矩：拉开抽屉之后 `fclose` 别忘 —— 一是写进去的字可能还揣在翻译官喵兜里没真落进册子，程序半路翻车时最容易吃这个亏；二是抽屉开得太多，翻译官喵会忙不过来。）",
+      "templateId": "c-s2-file-w-mode-wipes",
+      "params": {
+        "a": 1,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:14.316Z",
+        "hash": "6bc8870b3f58ee74"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-w-mode-wipes-019",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵的账本要**一天添一笔**：先记上第一天的 `4` 条，隔一天再在**后面接着**记上第二天的 `9` 条，最后把整本册子读出来印一遍。\n\n读出来应当是**两行都在**：\n\n```\n第一天 4 条\n第二天 9 条\n```\n\n可现在只印出一行 —— 第一天那条不见了。翻译官喵**一个字都没说**。你帮本喵看看第二回拉开抽屉的时候哪里写错了（**只改一个字母**）。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 4 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 9 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第一天 4 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"a\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"第二天 9 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+      "expectedOutput": "第一天 4 条\n第二天 9 条",
+      "stdin": null,
+      "explanation": "第二回拉开抽屉用的是 `\"w\"`，得改成 **`\"a\"`** 喵。\n\n三种打开方式的分界线记牢：\n\n| 打开方式 | 意思 |\n|---|---|\n| `\"r\"` | **只读**。册子上的字一个字都不动；册子要是不在，叼回来的就是 `NULL` |\n| `\"w\"` | **写**。拉开的那一刻，**原来写的字全被撕掉**，从头写起；册子不在就新建一本 |\n| `\"a\"` | **接着写**。保留原来的字，在停笔的地方往下写；册子不在就新建一本 |\n\n原来那句 `\"w\"` 的意思是「撕掉重写」—— 所以第二回拉开抽屉的一瞬间，第一天那条就已经被擦干净了。第二笔写在了一张白纸上，读出来的当然只有它自己。\n\n**`\"w\"` 和 `\"a\"` 只差一个字母，后果却是整本册子。** 而且这一处翻译官喵一个字都不会说：`\"w\"` 是个完全合法的打开方式，程序也好好地跑完了 —— 它压根不知道本喵心里想的是「添一笔」。\n\n所以往后写「一天添一笔」这种活，先在心里问一句：**这回是要重新写一本，还是在后面接着写？**\n\n（顺手再记一条同族的规矩：拉开抽屉之后 `fclose` 别忘 —— 一是写进去的字可能还揣在翻译官喵兜里没真落进册子，程序半路翻车时最容易吃这个亏；二是抽屉开得太多，翻译官喵会忙不过来。）",
+      "templateId": "c-s2-file-w-mode-wipes",
+      "params": {
+        "a": 4,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:16.102Z",
+        "hash": "b5757150bdb845ca"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-write-and-read-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要在档案室里记两笔账，然后一行行读回来数一数。\n\n请你写一段程序，按这个顺序做四件事：\n\n1. 以**写**的方式拉开一本叫 `zhangben.txt` 的册子；**拉开之后先看看拉没拉开** —— 没拉开就印一行 `档案室的门打不开喵` 然后收工；\n2. 往册子上写**两行**（每行末尾都要有换行）：`小鱼干 1 条` 和 `猫粮 1 碗`，写完把抽屉关上；\n3. 再以**读**的方式拉开同一本册子；同样先检查 —— 打不开就印一行 `找不到这本册子喵` 然后收工；\n4. 一行一行读回来，边读边报：`第 1 行：<那一行>`（**行号从 1 数起**），读完关上抽屉，最后再印一行 `一共 <几> 行`。\n\n注意第 4 步印行的时候**末尾不要再自己加一个换行** —— 读回来的那一行本来就带着一个。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"档案室的门打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 1 条\\n\");\n    fprintf(fp, \"猫粮 1 碗\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"找不到这本册子喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 0;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        n = n + 1;\n        printf(\"第 %d 行：%s\", n, line);\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 行：小鱼干 1 条\n第 2 行：猫粮 1 碗\n一共 2 行",
+      "stdin": null,
+      "explanation": "这道题把「拉开抽屉 → 写 → 关上 → 再拉开读」整套走了一遍喵。四个地方值得盯一眼：\n\n**① `fopen` 喂两样东西：册子的名字和打开方式。** 名字要**加引号**（它是一串字，不是本喵要用的名字）。册子和程序放在同一个地方时，直接写名字就行，不用写一长串路径。**前后两次的名字必须一个字母都不差** —— 差一个字母就是两本册子，第二次会拉开一本空的。\n\n**② `FILE *fp = ...` 叼回来的是「册子的猫爪指向牌」。** `fopen` 干完这件事，把**这本拉开的册子**叼回来，本喵给它起名叫 `fp`。后面 `fprintf`、`fgets`、`fclose` 都拿这张牌子去干活 —— 牌子不装内容，装着「那本册子在哪儿」。\n\n**③ 牌子一定要先检查再用。** 拉开失败的时候叼回来的是一张「什么都没有」的牌子（`NULL`）。不检查就顺着它干活，程序当场倒下。翻译官喵**不会替你检查**：它只管代码写得对不对，管不了那本册子到底在不在。\n\n**④ `fgets` 那三样投喂和那个计数器。**\n\n| 投喂 | 是什么 |\n|---|---|\n| `line` | 一只碗，用来接这一行 |\n| `sizeof(line)` | 这只碗有多大 —— 超了就只接这么多，**不会撑破碗** |\n| `fp` | 从哪本册子上读 |\n\n它每喊一次叼回来一行；**读到册子末尾、再没有下一行的时候，叼回来的就是 `NULL`**，所以绕圈的意思是「只要还叼得回一行，就接着读」。\n\n计数器那只碗开手要装 **0**（到此刻为止还没读到一行），每读一行加一。**`printf(\"第 %d 行：%s\", n, line)` 里没有写 `\\n`** —— 因为 `fgets` 叼回来的那一行**末尾本来就带着一个换行符**，再加一个就多出空行了。\n\n**⑤ 为什么非要经一遍册子？** 因为册子上的字是真真切切写在硬盘上的：关灯、关机、明天再来，它都还在。程序里那些仓库是**用完就拆**的 —— 这就是本课开头那只「一关灯就不见了」的账本和册子的分别。",
+      "templateId": "c-s2-file-write-and-read",
+      "params": {
+        "a": 1,
+        "b": 1
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:18.290Z",
+        "hash": "a643f06d7dfea7e0"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-write-and-read-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要在档案室里记两笔账，然后一行行读回来数一数。\n\n请你写一段程序，按这个顺序做四件事：\n\n1. 以**写**的方式拉开一本叫 `zhangben.txt` 的册子；**拉开之后先看看拉没拉开** —— 没拉开就印一行 `档案室的门打不开喵` 然后收工；\n2. 往册子上写**两行**（每行末尾都要有换行）：`小鱼干 1 条` 和 `猫粮 3 碗`，写完把抽屉关上；\n3. 再以**读**的方式拉开同一本册子；同样先检查 —— 打不开就印一行 `找不到这本册子喵` 然后收工；\n4. 一行一行读回来，边读边报：`第 1 行：<那一行>`（**行号从 1 数起**），读完关上抽屉，最后再印一行 `一共 <几> 行`。\n\n注意第 4 步印行的时候**末尾不要再自己加一个换行** —— 读回来的那一行本来就带着一个。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"档案室的门打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 1 条\\n\");\n    fprintf(fp, \"猫粮 3 碗\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"找不到这本册子喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 0;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        n = n + 1;\n        printf(\"第 %d 行：%s\", n, line);\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 行：小鱼干 1 条\n第 2 行：猫粮 3 碗\n一共 2 行",
+      "stdin": null,
+      "explanation": "这道题把「拉开抽屉 → 写 → 关上 → 再拉开读」整套走了一遍喵。四个地方值得盯一眼：\n\n**① `fopen` 喂两样东西：册子的名字和打开方式。** 名字要**加引号**（它是一串字，不是本喵要用的名字）。册子和程序放在同一个地方时，直接写名字就行，不用写一长串路径。**前后两次的名字必须一个字母都不差** —— 差一个字母就是两本册子，第二次会拉开一本空的。\n\n**② `FILE *fp = ...` 叼回来的是「册子的猫爪指向牌」。** `fopen` 干完这件事，把**这本拉开的册子**叼回来，本喵给它起名叫 `fp`。后面 `fprintf`、`fgets`、`fclose` 都拿这张牌子去干活 —— 牌子不装内容，装着「那本册子在哪儿」。\n\n**③ 牌子一定要先检查再用。** 拉开失败的时候叼回来的是一张「什么都没有」的牌子（`NULL`）。不检查就顺着它干活，程序当场倒下。翻译官喵**不会替你检查**：它只管代码写得对不对，管不了那本册子到底在不在。\n\n**④ `fgets` 那三样投喂和那个计数器。**\n\n| 投喂 | 是什么 |\n|---|---|\n| `line` | 一只碗，用来接这一行 |\n| `sizeof(line)` | 这只碗有多大 —— 超了就只接这么多，**不会撑破碗** |\n| `fp` | 从哪本册子上读 |\n\n它每喊一次叼回来一行；**读到册子末尾、再没有下一行的时候，叼回来的就是 `NULL`**，所以绕圈的意思是「只要还叼得回一行，就接着读」。\n\n计数器那只碗开手要装 **0**（到此刻为止还没读到一行），每读一行加一。**`printf(\"第 %d 行：%s\", n, line)` 里没有写 `\\n`** —— 因为 `fgets` 叼回来的那一行**末尾本来就带着一个换行符**，再加一个就多出空行了。\n\n**⑤ 为什么非要经一遍册子？** 因为册子上的字是真真切切写在硬盘上的：关灯、关机、明天再来，它都还在。程序里那些仓库是**用完就拆**的 —— 这就是本课开头那只「一关灯就不见了」的账本和册子的分别。",
+      "templateId": "c-s2-file-write-and-read",
+      "params": {
+        "a": 1,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:56.402Z",
+        "hash": "4b654b2cc2d7b579"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-write-and-read-004",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要在档案室里记两笔账，然后一行行读回来数一数。\n\n请你写一段程序，按这个顺序做四件事：\n\n1. 以**写**的方式拉开一本叫 `zhangben.txt` 的册子；**拉开之后先看看拉没拉开** —— 没拉开就印一行 `档案室的门打不开喵` 然后收工；\n2. 往册子上写**两行**（每行末尾都要有换行）：`小鱼干 2 条` 和 `猫粮 2 碗`，写完把抽屉关上；\n3. 再以**读**的方式拉开同一本册子；同样先检查 —— 打不开就印一行 `找不到这本册子喵` 然后收工；\n4. 一行一行读回来，边读边报：`第 1 行：<那一行>`（**行号从 1 数起**），读完关上抽屉，最后再印一行 `一共 <几> 行`。\n\n注意第 4 步印行的时候**末尾不要再自己加一个换行** —— 读回来的那一行本来就带着一个。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"档案室的门打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 2 条\\n\");\n    fprintf(fp, \"猫粮 2 碗\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"找不到这本册子喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 0;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        n = n + 1;\n        printf(\"第 %d 行：%s\", n, line);\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 行：小鱼干 2 条\n第 2 行：猫粮 2 碗\n一共 2 行",
+      "stdin": null,
+      "explanation": "这道题把「拉开抽屉 → 写 → 关上 → 再拉开读」整套走了一遍喵。四个地方值得盯一眼：\n\n**① `fopen` 喂两样东西：册子的名字和打开方式。** 名字要**加引号**（它是一串字，不是本喵要用的名字）。册子和程序放在同一个地方时，直接写名字就行，不用写一长串路径。**前后两次的名字必须一个字母都不差** —— 差一个字母就是两本册子，第二次会拉开一本空的。\n\n**② `FILE *fp = ...` 叼回来的是「册子的猫爪指向牌」。** `fopen` 干完这件事，把**这本拉开的册子**叼回来，本喵给它起名叫 `fp`。后面 `fprintf`、`fgets`、`fclose` 都拿这张牌子去干活 —— 牌子不装内容，装着「那本册子在哪儿」。\n\n**③ 牌子一定要先检查再用。** 拉开失败的时候叼回来的是一张「什么都没有」的牌子（`NULL`）。不检查就顺着它干活，程序当场倒下。翻译官喵**不会替你检查**：它只管代码写得对不对，管不了那本册子到底在不在。\n\n**④ `fgets` 那三样投喂和那个计数器。**\n\n| 投喂 | 是什么 |\n|---|---|\n| `line` | 一只碗，用来接这一行 |\n| `sizeof(line)` | 这只碗有多大 —— 超了就只接这么多，**不会撑破碗** |\n| `fp` | 从哪本册子上读 |\n\n它每喊一次叼回来一行；**读到册子末尾、再没有下一行的时候，叼回来的就是 `NULL`**，所以绕圈的意思是「只要还叼得回一行，就接着读」。\n\n计数器那只碗开手要装 **0**（到此刻为止还没读到一行），每读一行加一。**`printf(\"第 %d 行：%s\", n, line)` 里没有写 `\\n`** —— 因为 `fgets` 叼回来的那一行**末尾本来就带着一个换行符**，再加一个就多出空行了。\n\n**⑤ 为什么非要经一遍册子？** 因为册子上的字是真真切切写在硬盘上的：关灯、关机、明天再来，它都还在。程序里那些仓库是**用完就拆**的 —— 这就是本课开头那只「一关灯就不见了」的账本和册子的分别。",
+      "templateId": "c-s2-file-write-and-read",
+      "params": {
+        "a": 2,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-10-20T16:31:58.540Z",
+        "hash": "7aedf839b30ba279"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-write-and-read-007",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要在档案室里记两笔账，然后一行行读回来数一数。\n\n请你写一段程序，按这个顺序做四件事：\n\n1. 以**写**的方式拉开一本叫 `zhangben.txt` 的册子；**拉开之后先看看拉没拉开** —— 没拉开就印一行 `档案室的门打不开喵` 然后收工；\n2. 往册子上写**两行**（每行末尾都要有换行）：`小鱼干 3 条` 和 `猫粮 2 碗`，写完把抽屉关上；\n3. 再以**读**的方式拉开同一本册子；同样先检查 —— 打不开就印一行 `找不到这本册子喵` 然后收工；\n4. 一行一行读回来，边读边报：`第 1 行：<那一行>`（**行号从 1 数起**），读完关上抽屉，最后再印一行 `一共 <几> 行`。\n\n注意第 4 步印行的时候**末尾不要再自己加一个换行** —— 读回来的那一行本来就带着一个。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"档案室的门打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 3 条\\n\");\n    fprintf(fp, \"猫粮 2 碗\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"找不到这本册子喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 0;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        n = n + 1;\n        printf(\"第 %d 行：%s\", n, line);\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 行：小鱼干 3 条\n第 2 行：猫粮 2 碗\n一共 2 行",
+      "stdin": null,
+      "explanation": "这道题把「拉开抽屉 → 写 → 关上 → 再拉开读」整套走了一遍喵。四个地方值得盯一眼：\n\n**① `fopen` 喂两样东西：册子的名字和打开方式。** 名字要**加引号**（它是一串字，不是本喵要用的名字）。册子和程序放在同一个地方时，直接写名字就行，不用写一长串路径。**前后两次的名字必须一个字母都不差** —— 差一个字母就是两本册子，第二次会拉开一本空的。\n\n**② `FILE *fp = ...` 叼回来的是「册子的猫爪指向牌」。** `fopen` 干完这件事，把**这本拉开的册子**叼回来，本喵给它起名叫 `fp`。后面 `fprintf`、`fgets`、`fclose` 都拿这张牌子去干活 —— 牌子不装内容，装着「那本册子在哪儿」。\n\n**③ 牌子一定要先检查再用。** 拉开失败的时候叼回来的是一张「什么都没有」的牌子（`NULL`）。不检查就顺着它干活，程序当场倒下。翻译官喵**不会替你检查**：它只管代码写得对不对，管不了那本册子到底在不在。\n\n**④ `fgets` 那三样投喂和那个计数器。**\n\n| 投喂 | 是什么 |\n|---|---|\n| `line` | 一只碗，用来接这一行 |\n| `sizeof(line)` | 这只碗有多大 —— 超了就只接这么多，**不会撑破碗** |\n| `fp` | 从哪本册子上读 |\n\n它每喊一次叼回来一行；**读到册子末尾、再没有下一行的时候，叼回来的就是 `NULL`**，所以绕圈的意思是「只要还叼得回一行，就接着读」。\n\n计数器那只碗开手要装 **0**（到此刻为止还没读到一行），每读一行加一。**`printf(\"第 %d 行：%s\", n, line)` 里没有写 `\\n`** —— 因为 `fgets` 叼回来的那一行**末尾本来就带着一个换行符**，再加一个就多出空行了。\n\n**⑤ 为什么非要经一遍册子？** 因为册子上的字是真真切切写在硬盘上的：关灯、关机、明天再来，它都还在。程序里那些仓库是**用完就拆**的 —— 这就是本课开头那只「一关灯就不见了」的账本和册子的分别。",
+      "templateId": "c-s2-file-write-and-read",
+      "params": {
+        "a": 3,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-10-20T16:32:00.541Z",
+        "hash": "c3fd60007db508b6"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-write-and-read-009",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要在档案室里记两笔账，然后一行行读回来数一数。\n\n请你写一段程序，按这个顺序做四件事：\n\n1. 以**写**的方式拉开一本叫 `zhangben.txt` 的册子；**拉开之后先看看拉没拉开** —— 没拉开就印一行 `档案室的门打不开喵` 然后收工；\n2. 往册子上写**两行**（每行末尾都要有换行）：`小鱼干 4 条` 和 `猫粮 1 碗`，写完把抽屉关上；\n3. 再以**读**的方式拉开同一本册子；同样先检查 —— 打不开就印一行 `找不到这本册子喵` 然后收工；\n4. 一行一行读回来，边读边报：`第 1 行：<那一行>`（**行号从 1 数起**），读完关上抽屉，最后再印一行 `一共 <几> 行`。\n\n注意第 4 步印行的时候**末尾不要再自己加一个换行** —— 读回来的那一行本来就带着一个。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"档案室的门打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 4 条\\n\");\n    fprintf(fp, \"猫粮 1 碗\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"找不到这本册子喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 0;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        n = n + 1;\n        printf(\"第 %d 行：%s\", n, line);\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 行：小鱼干 4 条\n第 2 行：猫粮 1 碗\n一共 2 行",
+      "stdin": null,
+      "explanation": "这道题把「拉开抽屉 → 写 → 关上 → 再拉开读」整套走了一遍喵。四个地方值得盯一眼：\n\n**① `fopen` 喂两样东西：册子的名字和打开方式。** 名字要**加引号**（它是一串字，不是本喵要用的名字）。册子和程序放在同一个地方时，直接写名字就行，不用写一长串路径。**前后两次的名字必须一个字母都不差** —— 差一个字母就是两本册子，第二次会拉开一本空的。\n\n**② `FILE *fp = ...` 叼回来的是「册子的猫爪指向牌」。** `fopen` 干完这件事，把**这本拉开的册子**叼回来，本喵给它起名叫 `fp`。后面 `fprintf`、`fgets`、`fclose` 都拿这张牌子去干活 —— 牌子不装内容，装着「那本册子在哪儿」。\n\n**③ 牌子一定要先检查再用。** 拉开失败的时候叼回来的是一张「什么都没有」的牌子（`NULL`）。不检查就顺着它干活，程序当场倒下。翻译官喵**不会替你检查**：它只管代码写得对不对，管不了那本册子到底在不在。\n\n**④ `fgets` 那三样投喂和那个计数器。**\n\n| 投喂 | 是什么 |\n|---|---|\n| `line` | 一只碗，用来接这一行 |\n| `sizeof(line)` | 这只碗有多大 —— 超了就只接这么多，**不会撑破碗** |\n| `fp` | 从哪本册子上读 |\n\n它每喊一次叼回来一行；**读到册子末尾、再没有下一行的时候，叼回来的就是 `NULL`**，所以绕圈的意思是「只要还叼得回一行，就接着读」。\n\n计数器那只碗开手要装 **0**（到此刻为止还没读到一行），每读一行加一。**`printf(\"第 %d 行：%s\", n, line)` 里没有写 `\\n`** —— 因为 `fgets` 叼回来的那一行**末尾本来就带着一个换行符**，再加一个就多出空行了。\n\n**⑤ 为什么非要经一遍册子？** 因为册子上的字是真真切切写在硬盘上的：关灯、关机、明天再来，它都还在。程序里那些仓库是**用完就拆**的 —— 这就是本课开头那只「一关灯就不见了」的账本和册子的分别。",
+      "templateId": "c-s2-file-write-and-read",
+      "params": {
+        "a": 4,
+        "b": 1
+      },
+      "verified": {
+        "at": "2026-10-20T16:32:02.684Z",
+        "hash": "e8e46b97418fb6d8"
+      }
+    },
+    {
+      "id": "bank-c-s2-file-write-and-read-011",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要在档案室里记两笔账，然后一行行读回来数一数。\n\n请你写一段程序，按这个顺序做四件事：\n\n1. 以**写**的方式拉开一本叫 `zhangben.txt` 的册子；**拉开之后先看看拉没拉开** —— 没拉开就印一行 `档案室的门打不开喵` 然后收工；\n2. 往册子上写**两行**（每行末尾都要有换行）：`小鱼干 4 条` 和 `猫粮 3 碗`，写完把抽屉关上；\n3. 再以**读**的方式拉开同一本册子；同样先检查 —— 打不开就印一行 `找不到这本册子喵` 然后收工；\n4. 一行一行读回来，边读边报：`第 1 行：<那一行>`（**行号从 1 数起**），读完关上抽屉，最后再印一行 `一共 <几> 行`。\n\n注意第 4 步印行的时候**末尾不要再自己加一个换行** —— 读回来的那一行本来就带着一个。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"档案室的门打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 4 条\\n\");\n    fprintf(fp, \"猫粮 3 碗\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"找不到这本册子喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 0;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        n = n + 1;\n        printf(\"第 %d 行：%s\", n, line);\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 行：小鱼干 4 条\n第 2 行：猫粮 3 碗\n一共 2 行",
+      "stdin": null,
+      "explanation": "这道题把「拉开抽屉 → 写 → 关上 → 再拉开读」整套走了一遍喵。四个地方值得盯一眼：\n\n**① `fopen` 喂两样东西：册子的名字和打开方式。** 名字要**加引号**（它是一串字，不是本喵要用的名字）。册子和程序放在同一个地方时，直接写名字就行，不用写一长串路径。**前后两次的名字必须一个字母都不差** —— 差一个字母就是两本册子，第二次会拉开一本空的。\n\n**② `FILE *fp = ...` 叼回来的是「册子的猫爪指向牌」。** `fopen` 干完这件事，把**这本拉开的册子**叼回来，本喵给它起名叫 `fp`。后面 `fprintf`、`fgets`、`fclose` 都拿这张牌子去干活 —— 牌子不装内容，装着「那本册子在哪儿」。\n\n**③ 牌子一定要先检查再用。** 拉开失败的时候叼回来的是一张「什么都没有」的牌子（`NULL`）。不检查就顺着它干活，程序当场倒下。翻译官喵**不会替你检查**：它只管代码写得对不对，管不了那本册子到底在不在。\n\n**④ `fgets` 那三样投喂和那个计数器。**\n\n| 投喂 | 是什么 |\n|---|---|\n| `line` | 一只碗，用来接这一行 |\n| `sizeof(line)` | 这只碗有多大 —— 超了就只接这么多，**不会撑破碗** |\n| `fp` | 从哪本册子上读 |\n\n它每喊一次叼回来一行；**读到册子末尾、再没有下一行的时候，叼回来的就是 `NULL`**，所以绕圈的意思是「只要还叼得回一行，就接着读」。\n\n计数器那只碗开手要装 **0**（到此刻为止还没读到一行），每读一行加一。**`printf(\"第 %d 行：%s\", n, line)` 里没有写 `\\n`** —— 因为 `fgets` 叼回来的那一行**末尾本来就带着一个换行符**，再加一个就多出空行了。\n\n**⑤ 为什么非要经一遍册子？** 因为册子上的字是真真切切写在硬盘上的：关灯、关机、明天再来，它都还在。程序里那些仓库是**用完就拆**的 —— 这就是本课开头那只「一关灯就不见了」的账本和册子的分别。",
+      "templateId": "c-s2-file-write-and-read",
+      "params": {
+        "a": 4,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:38:19.429Z",
+        "hash": "e8cd743be7e03531"
+      }
+    }
+  ]
+}

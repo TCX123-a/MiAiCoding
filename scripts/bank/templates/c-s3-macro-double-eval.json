@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-macro-double-eval",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-11",
+  "type": "codefix",
+  "concept": ["墙上照抄的条子", "投喂在条子上出现两次", "同一个式子被算两遍", "该换成真招式"],
+  "instances": 2,
+  "params": {
+    "v": { "kind": "pick", "values": ["6", "9"] },
+    "w": { "kind": "pick", "values": ["7", "10"] }
+  },
+  "stemTemplate": "本喵鱼缸里原本有 **{v}** 条捞出来的鱼。本喵喊了一句「挑大的那只」：一只投喂是**再捞一条出来数**（捞一条，数就加一），另一只投喂是个固定的 2。\n\n那张条子写的是：\n\n```text\n#define BIGGER(a, b) ((a) > (b) ? (a) : (b))\n```\n\n翻译官喵一声没吭，编译跑得好好的。可印出来的数**不对**：本喵明明只捞了一条，那个数却往上蹦了**两下**。\n\n请你把它改对（`main` 里那句喊话的用法别动）。改好之后该印两行，**两行都是 `{w}`** —— 只捞一条的话，数就该停在这儿，挑出来最大的也是它。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint bowl = {v};\n\nint take_one(void) {\n    bowl = bowl + 1;\n    return bowl;\n}\n\n#define BIGGER(a, b) ((a) > (b) ? (a) : (b))\n\nint main(void) {\n    int biggest = BIGGER(take_one(), 2);\n    printf(\"挑出来的是 %d\\n\", biggest);\n    printf(\"鱼缸里现在是 %d\\n\", bowl);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint bowl = {v};\n\nint take_one(void) {\n    bowl = bowl + 1;\n    return bowl;\n}\n\nint bigger(int a, int b) {\n    return a > b ? a : b;\n}\n\nint main(void) {\n    int biggest = bigger(take_one(), 2);\n    printf(\"挑出来的是 %d\\n\", biggest);\n    printf(\"鱼缸里现在是 %d\\n\", bowl);\n    return 0;\n}\n",
+  "explanationTemplate": "病根是**那张条子把投喂抄了两遍**喵。\n\n`BIGGER(a, b)` 的身子是 `((a) > (b) ? (a) : (b))` —— `a` 在里头出现了**两次**。条子是**照抄**的，所以 `take_one()` 被**喊了两遍**：比大小的时候捞一条，挑的时候又捞一条，鱼缸里原本 `{v}` 条，一下就加了两下。\n\n⚠️ 这里要看清一件事：**这不是括号没穿好的错**。哪怕给投喂穿满括号，`a` 在条子上还是出现两次 —— 喂进去的那下照样会被算两遍。\n\n要「只算一次」，就不能用照抄的条子，得把它换成**真招式**：\n\n```text\nint bigger(int a, int b) {\n    return a > b ? a : b;\n}\n```\n\n名字、投喂、叼回来的东西都照旧，只是**从条子变成了招式**。招式是**先把投喂算好、再进门**的，所以 `take_one()` 只被喊一遍，鱼缸停在 `{w}`，两行印出来就一样了。\n\n往后自己写条子时记住这条：**投喂里别放「算一次就会变一点」的东西**（自增、收输入、喊招式都算）。真要放，就先把它挪出来算好，或者老老实实写成招式喵。"
+}

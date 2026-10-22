@@ -1,0 +1,36 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>E1 page</title>
+<body style="font: 14px monospace; background: #111; color: #0f0">
+<div id="status">boot</div>
+<script>
+  const S = { rafCount: 0, intervalCount: 0, t0: performance.now() };
+  const status = document.getElementById('status');
+  const t = () => ((performance.now() - S.t0) / 1000).toFixed(3);
+  function report(tag, extra) {
+    console.log(
+      'R ' + tag +
+      ' t=' + t() +
+      ' hidden=' + document.hidden +
+      ' vis=' + document.visibilityState +
+      ' raf=' + S.rafCount +
+      ' int=' + S.intervalCount +
+      (extra ? ' ' + extra : '')
+    );
+  }
+  function loop() {
+    S.rafCount++;
+    status.textContent = 't=' + t() + ' hidden=' + document.hidden + ' raf=' + S.rafCount;
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+  setInterval(() => { S.intervalCount++; }, 500);
+  setInterval(() => report('tick'), 500);
+  document.addEventListener('visibilitychange', () => report('visibilitychange'));
+  window.addEventListener('blur', () => report('window.blur'));
+  window.addEventListener('focus', () => report('window.focus'));
+  window.addEventListener('pagehide', () => report('pagehide'));
+  window.addEventListener('pageshow', () => report('pageshow'));
+  report('init');
+</script>
+</body>

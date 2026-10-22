@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-guess-branches-swapped",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-14",
+  "type": "codefix",
+  "concept": ["三条岔路报三句话", "小就报太小、大就报太大", "编得过但报反了"],
+  "instances": 2,
+  "params": {
+    "g1": { "kind": "pick", "values": ["10", "25"] },
+    "target": { "kind": "pick", "values": ["42", "68"] },
+    "g2": { "kind": "pick", "values": ["90", "99"] }
+  },
+  "stemTemplate": "本喵这一招 `check` 管报信：猜的数比心里那个**小**，就报 `太小啦喵`；比它**大**，就报 `太大啦喵`；正好相等，就报 `猜中啦喵`。\n\n可这一回它把信**报反了** —— 猜小了它说太大，猜大了它说太小。翻译官喵一个字都没抱怨（这话编得过），是跑出来才对上号。\n\n你帮本喵把出问题的那一处改好：改完屏幕上要是三行 `太小啦喵`、`太大啦喵`、`猜中啦喵`。那几个数、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstring check(int guess, int target) {\n    if (guess < target) {\n        return \"太大啦喵\";\n    } else if (guess > target) {\n        return \"太小啦喵\";\n    } else {\n        return \"猜中啦喵\";\n    }\n}\n\nint main() {\n    cout << check({g1}, {target}) << endl;\n    cout << check({g2}, {target}) << endl;\n    cout << check({target}, {target}) << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstring check(int guess, int target) {\n    if (guess < target) {\n        return \"太小啦喵\";\n    } else if (guess > target) {\n        return \"太大啦喵\";\n    } else {\n        return \"猜中啦喵\";\n    }\n}\n\nint main() {\n    cout << check({g1}, {target}) << endl;\n    cout << check({g2}, {target}) << endl;\n    cout << check({target}, {target}) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题坏的地方**编得过**，所以屏幕上没有红字 —— 报出来的信却正好反了。\n\n根子在这一对岔路上喵：\n\n- 猜的数比心里那个**小**（`guess < target`），意思是「本喵报的这个数还不够大」→ 该说 `太小啦喵`。\n- 猜的数比心里那个**大**（`guess > target`）→ 该说 `太大啦喵`。\n\n写的时候把两条路上的话换了位置，于是 `check` 照样把话说得漂漂亮亮，只是**反着说**。改法就是把两句话换回来：`guess < target` 那条路交 `太小啦喵`，`guess > target` 那条路交 `太大啦喵`。\n\n（这也正是第九课那条老规矩值钱的地方喵：`check` **只报信、不印字** —— 报的信对不对，跑三句一比就看得见；它要是自己写死了 `cout`，这事就只能靠眼睛盯屏幕了。）"
+}

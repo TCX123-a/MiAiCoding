@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-06-call-as-member",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-06",
+  "type": "codefix",
+  "concept": ["开后门的是外面那一手", "喊法不写那只猫", "报错现场"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 2, "max": 3 },
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "本喵给图纸里写了一行后门，外面那个念账的招式也写好了。\n\n可 `main` 里喊它的那一句，翻译官喵说图纸上根本没有这一手喵。\n\n你帮本喵把那句喊法改对。**图纸两栏、后门那一行、外面那个招式的身子，一个字都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    friend void showAccount(const Cat& c);\n};\n\nvoid showAccount(const Cat& c) {\n    cout << c.name << \" 的账上是 \" << c.fish << \" 条小鱼干喵\" << endl;\n}\n\nint main() {\n    Cat c1(\"{name}\", {fish});\n    c1.showAccount(c1);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    friend void showAccount(const Cat& c);\n};\n\nvoid showAccount(const Cat& c) {\n    cout << c.name << \" 的账上是 \" << c.fish << \" 条小鱼干喵\" << endl;\n}\n\nint main() {\n    Cat c1(\"{name}\", {fish});\n    showAccount(c1);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:19:8: error: 'class Cat' has no member named 'showAccount'`\n\n翻成猫话：**「`Cat` 这张图纸上，没有叫 `showAccount` 的那一格本事喵。」**\n\n根子在这件事上：**后门那一行给的是一张通行证，不是工牌。** 拿到通行证的招式，身份上**还是外面的一手**——它看得见盒子里的一切，可它并没有变成图纸上的招式。\n\n姿势的差别只有一处：\n\n- **图纸上的招式**是「哪只猫 · 招式名」——先说哪只猫，再喊招式名。\n- **开后门的招式**是「招式名(哪只猫)」——前面**不写那只猫**，把猫当料递进去。\n\n所以这一句写成 `showAccount(c1);` 就对了。以后看到 `has no member named`，先想一想：本喵手里这一手，**到底是不是图纸上的招式**喵。"
+}

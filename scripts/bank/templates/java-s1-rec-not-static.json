@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-rec-not-static",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-17",
+  "type": "codefix",
+  "concept": ["static", "编译期拦下", "招式脑袋上少了个记号"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stemTemplate": "本喵写了个自己咬自己尾巴的招式 `sumTo`：喂一个数进去，它把 **1 一路加到那个数**，加出来的总数叼回来。刹车、递推那两格本喵都写对了 —— 喂 {n} 进去，它该叼回 1 加到 {n} 的总数。\n\n可这一份稿子**翻译官喵压根不肯翻**：屏幕上什么都不会有，它只甩回来一句错。\n\n你帮本喵改好：改完跑起来，屏幕上正好是 1 加到 {n} 的总数。**招式身子里的句子一行都不用动**，动的是别处的一个记号喵。",
+  "brokenCodeTemplate": "public class Main {\n    public int sumTo(int n) {\n        if (n == 0) {\n            return 0;\n        }\n        return n + sumTo(n - 1);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(sumTo({n}));\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static int sumTo(int n) {\n        if (n == 0) {\n            return 0;\n        }\n        return n + sumTo(n - 1);\n    }\n\n    public static void main(String[] args) {\n        System.out.println(sumTo({n}));\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `non-static method sumTo(int) cannot be referenced from a static context`，翻成猫话：**「这一招没挂那个记号，站在没挂记号的地方就喊不动它喵。」**\n\n看它是怎么把这一招逼到墙角的：\n\n- `main` 是**站在图纸门口**的那一招（入口那一招天生就挂着那个记号，不用你写）；\n- 门口这一招里喊了一句 `sumTo({n})`；\n- 可 `sumTo` 自己**没挂那个记号** —— 它得先照图纸生出一只真猫、再由那只猫来喊。\n\n门口那一位手里一只猫都没有，这一喊自然喊不动。\n\n⚠️ 注意它卡的是**喊这一下**，**不是「招式不能喊自己」**：招式在身子里面喊自己，脑袋上那个记号是刚才就登记好的，一点都不算没登记。所以这一题修的是**脑袋上少了一个记号**，不是递推写错了。\n\n改法只有一处：给 `sumTo` 打头那一行补上 `static`，跟 `main` 保持一致。补完两边都是「站在图纸门口、不用先造真猫就能喊」的招，喊起来顺顺当当。\n\n**记一条：招式能喊自己，跟它能不能被门口那一招直接喊，是两件不同的事。** 前者看名字有没有登记，后者看那个记号挂没挂。这一题的坑，就是后一件。写自己咬自己尾巴的招式时，脑袋上该挂的记号一个都别落下喵。"
+}

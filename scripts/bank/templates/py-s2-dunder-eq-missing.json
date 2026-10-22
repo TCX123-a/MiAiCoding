@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-dunder-eq-missing",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-08",
+  "type": "codefix",
+  "concept": ["__eq__", "默认只比同一只", "补规矩"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "int", "min": 2, "max": 8 },
+    "n2": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵的碗图纸上已经写好了 `__init__`、`__str__`，还有一招 `__add__` 喵。\n\n现在本喵想比一比「两只碗相等吗」。前两行本喵都心里有数：\n\n- 第二行本来就该是 `False` —— 那两只碗装的数**不一样**（一只 {n1}，一只 {n2}）。\n- 毛病在**第三行**：本喵拿 {n1} 这个数**新造了一只**碗，然后跟第一只比 —— 装的明明一样多，它却印了 `False`。本喵要的是 `True`。\n\n你帮本喵改对。\n\n⚠️ 三行 `print` **一个字都不许改**，已经写好的 `__str__` 和 `__add__` 也不许改 —— 缺的东西**补上**就行。",
+  "brokenCodeTemplate": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __str__(self):\n        return \"装了 \" + str(self.n) + \" 条小鱼干\"\n\n    def __add__(self, other):\n        return Bowl(self.n + other.n)\n\n\na = Bowl({n1})\nb = Bowl({n2})\nprint(a + b)\nprint(a == b)\nprint(a == Bowl({n1}))\n",
+  "referenceFixTemplate": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __str__(self):\n        return \"装了 \" + str(self.n) + \" 条小鱼干\"\n\n    def __add__(self, other):\n        return Bowl(self.n + other.n)\n\n    def __eq__(self, other):\n        return self.n == other.n\n\n\na = Bowl({n1})\nb = Bowl({n2})\nprint(a + b)\nprint(a == b)\nprint(a == Bowl({n1}))\n",
+  "explanationTemplate": "这一处**不报错**，它只是**悄悄给出一个你不想要的答案** —— 这种毛病比报错更难抓喵。\n\n原因在图纸上**少了一招**：`==` 两边摆着两只碗的时候，Python 想喊的是 `__eq__`。图纸上没写这一招，它就搬出**出厂默认的那条规矩**：只看两格是不是**同一只碗**（同一次生出来的那一只），不是同一只就一律 `False`。\n\n- 所以第二行的 `False` 是**对的**（两只碗装的数本来就不一样）。\n- 可第三行翻车了：`Bowl({n1})` 是**新生的另一只**，装的数一样多，但默认规矩不认这个 —— 它说「不是同一只啊」，印出来还是 `False`。\n\n修法就是把这一招补上：`def __eq__(self, other):` 里叼回 `self.n == other.n`。这一句比的是**两个数字**，数字的 `==` Python 天生就认，不会再回头喊 `__eq__`，所以**不会转圈圈**。\n\n⚠️ `__eq__` 要**叼回来** `True` 或 `False`（`return`），不是自己印 —— 和 `__str__` 一个脾气：印出来了不等于叼回来了。\n\n⚠️ 三条要一起记牢：`self` 是 `==` **左边**那只，`other` 是**右边**那只；名字前后**各两条下划线**（写成 `_eq_` 就只是个普通名字，Python 永远不会替你喊，而程序**不报错**）；`__eq__` 补上之后，`a == b` 这种「装的数一样就算相等」才是本喵想要的意思。"
+}

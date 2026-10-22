@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-switch-missing-break",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-06",
+  "type": "codefix",
+  "concept": ["switch", "case", "break 漏了", "一路往下漏"],
+  "instances": 2,
+  "params": {
+    "f1": { "kind": "pick", "values": ["三文鱼", "金枪鱼"] },
+    "f2": { "kind": "pick", "values": ["秋刀鱼", "鲷鱼"] },
+    "f3": { "kind": "pick", "values": ["鳕鱼", "鳗鱼"] }
+  },
+  "stemTemplate": "本喵今天在鱼摊上挂三块牌子，报编号点鱼：1 号是{f1}，2 号是{f2}，3 号是{f3}。\n\n本喵报的是 **2 号**。可这段代码一嗓子喊出来**两条鱼** —— 先把 2 号那条念了，紧跟着又把 3 号那条也念了出来，多出来的那条根本不是本喵点的。\n\n它跑得起来，翻译官喵一句原话都没有，就是印出来的东西不对。你帮本喵改对：报 2 号只许印一行 `本喵要一条{f2}喵`，别的鱼一条都不许多念；1 号、3 号和没挂过的编号，也得各报各的。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 2;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条{f1}喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条{f2}喵\" << endl;\n        case 3:\n            cout << \"本喵要一条{f3}喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int choice = 2;\n\n    switch (choice) {\n        case 1:\n            cout << \"本喵要一条{f1}喵\" << endl;\n            break;\n        case 2:\n            cout << \"本喵要一条{f2}喵\" << endl;\n            break;\n        case 3:\n            cout << \"本喵要一条{f3}喵\" << endl;\n            break;\n        default:\n            cout << \"这个编号本喵不认识喵\" << endl;\n            break;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "`switch` 的念法是**从上往下找牌子，找到了就从那一句开始一路往下念** —— 念到撞上 `break` 才肯停。\n\n所以 `break` 不是「这块牌子的结尾」，它是**「念到这儿打住」的记号**。本喵的 2 号牌子后面漏了 `break`，它念完 2 号那句就顺着往下念，把 3 号那句也念了 —— 一直到撞上 3 号末尾那个 `break` 才刹车。\n\n修法就是补一个：在 `case 2:` 那句 `cout` 的后面加一行 `break;`。\n\n⚠️ 这题最值得记住的是**它一声不吭**：漏个 `break` 不违反任何一条规矩，翻译官喵照常把它翻过去、跑起来也有输出 —— 只是印出来的东西不对。这类毛病只能靠「**盯着印出来的东西**」发现。所以养成一个小习惯：每写完一块牌子，问自己一句「念到这儿该停了吗？该停就补 `break`。」\n\n顺带记牢另一头：`default` 是**所有牌子都对不上**时走的那条路，它平时摆在最下面，**末尾那个 `break` 可写可不写**（底下已经没东西可漏了）喵。"
+}

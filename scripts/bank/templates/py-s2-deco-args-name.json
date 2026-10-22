@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-deco-args-name",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-09",
+  "type": "codewrite",
+  "concept": ["args", "fn.__name__", "原样投喂"],
+  "instances": 6,
+  "params": {
+    "thing": { "kind": "pick", "values": ["小鱼干", "猫粮", "冻干"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 2, "max": 9 },
+  "stemTemplate": "本喵要一层「**记账**」特效喵：壳里在喊里面那一招**之前**，先印两行 ——\n\n1. `喂进来的是 (2, 3)` 这样：把**接住的东西**原样写出来。\n2. `要施展的是 加鱼干` 这样：把**里面那一招的名字**写出来（就是 `fn.__name__`，它不带小括号，因为它是「摆着的一个名字」）。\n\n印完这两行，再照常把里面那一招喊起来、并把它叼回来的战利品**原样叼回去**。\n\n再写一招 `加鱼干(a, b)` —— 把两堆{thing}合起来（两个数相加，叼回它们的和）—— 给它套上这层特效。\n\n最后**读两行整数**（先 `a` 后 `b`），印 `加鱼干(a, b)` 的结果。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "import functools\n\n\ndef 记一笔(fn):\n    @functools.wraps(fn)\n    def 包装(*args, **kwargs):\n        print(\"喂进来的是 \" + str(args))\n        print(\"要施展的是 \" + fn.__name__)\n        return fn(*args, **kwargs)\n\n    return 包装\n\n\n@记一笔\ndef 加鱼干(a, b):\n    return a + b\n\n\na = int(input())\nb = int(input())\nprint(加鱼干(a, b))\n",
+  "explanationTemplate": "三层东西各有各的分工，本喵一层层说喵。\n\n**① `*args` 里装着接住的一整串。** 外面喂进来几个，它就装几个，**按位置排好**。所以第一行印出来是这个样子：`(2, 3)` —— 外面一对小括号、中间用逗号隔开。\n\n⚠️ 想让这一串接到话后面，得先把它**变成字**：`str(args)`。直接写 `\"喂进来的是 \" + args` 会翻脸 —— 话只能跟话接在一起，一串东西得先变成字才行。\n\n**② `fn.__name__` 是「这一招叫什么名字」。** 注意两点：\n\n- 它**不带小括号** —— 它是摆着的一个名字（和 `math.pi` 一样），不是一招，写成了 `fn.__name__()` 就翻脸了。\n- 它问的是**外面投喂进来的那一招**（这里是 `加鱼干`），跟壳自己叫什么名字一点关系都没有。\n\n**③ `return fn(*args, **kwargs)` 才是把战利品叼回来。** 前面两行只是在账本上记了两笔，一个数字都没产生；外面最后那一行 `print` 能印出数，全靠这一句 `return`。**先记账、再干活、最后把战利品交出去** —— 这就是记账这种特效的标准形状。\n\n⚠️ 壳里那两句 `print` 印的是**名字**和**接住的东西**，它们不改动里面的活；本喵原来的 `加鱼干` 一个字都没改，就多了一层特效。"
+}

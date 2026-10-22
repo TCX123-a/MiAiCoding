@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-throw-own-car",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-13",
+  "type": "codewrite",
+  "concept": ["自己造一辆带说明的车", "throw runtime_error", "扔车的和接车的不用是同一层"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["10", "9"] },
+    "b": { "kind": "pick", "values": ["3", "0"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{a}\n{b}\n", "sampleText": "8\n2\n" },
+  "stemTemplate": "投喂口会递进来**两个整数**（一行一个），本喵叫它们 `a` 和 `b`。\n\n请你写**一招**叫 `divide`：接两个整数，**`b` 是 0 的时候**就扔一辆车 —— 车上挂 `runtime_error` 那块牌子，贴的说明是 `除数不能是 0 喵`；`b` 不是 0 就把 `a` 除以 `b` 的结果交回来（整数除法，跟第五课一样）。\n\n然后在招式里（喊它的那一层）把两条路都接好：\n\n```text\n顺利：答案是 X 喵\n翻车：接住了：除数不能是 0 喵\n```\n\n（`X` 是算出来的数；翻车那行的后一半，就是车上贴的那句说明。）\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <stdexcept>\nusing namespace std;\n\nint divide(int a, int b) {\n    if (b == 0) {\n        throw runtime_error(\"除数不能是 0 喵\");\n    }\n    return a / b;\n}\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    try {\n        int result = divide(a, b);\n        cout << \"答案是 \" << result << \" 喵\" << endl;\n    } catch (const runtime_error& e) {\n        cout << \"接住了：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题有**两件**值得记住的事喵。\n\n**第一件：自己造车怎么造。** `throw runtime_error(\"除数不能是 0 喵\");` —— 自己造一辆车、车上贴一句话给接车的人看。`runtime_error` 是「**跑起来以后出的错**」这种牌子；用它得在开头先写一句 `#include <stdexcept>`，把 `stdexcept` 借出来（`stoi` 那种牌子则跟着 `string` 一起进来）。\n\n**第二件：扔车的和接车的不用是同一层。** 你看招式 `divide` 里**一个 `try` 都没有** —— 它只管「这事不对，本喵扔上去」；接车的是喊它的那一层（`main` 里那对 `try` / `catch`）。谁接它，是喊它那位的事。\n\n最后一件事特别要紧喵：为什么本喵要**在动手之前**先看一眼 `b` 是不是 0？因为**整数除以 0 不是异常** —— 那是机器自己烧了保险丝，直接停机，铺多少层 `catch` 都接不住。所以这种翻车**只能提前防**：动手之前先看一眼除数。（`stoi` 料不对、`at` 越界这两种是有猫扔车的，才接得住。）"
+}

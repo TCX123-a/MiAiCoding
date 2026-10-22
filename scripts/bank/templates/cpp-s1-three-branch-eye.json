@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-three-branch-eye",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-06",
+  "type": "codewrite",
+  "concept": ["if", "else if", "三段眼色", "else 兜底"],
+  "instances": 6,
+  "params": {
+    "hi": { "kind": "int", "min": 4, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "冻干块"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 0, "max": 9 },
+  "stemTemplate": "本喵要一眼看出碗里的{unit}够不够吃，**三段眼色**分开走（X 就是碗里那个数）：\n\n- 碗里 **{hi} 条往上**（含 {hi}）→ 印 `{unit}满满，有 X 条喵`\n- 碗里有**一些**（不到 {hi}，但不止 0）→ 印 `快见底啦，只剩 X 条喵`\n- 碗里**空的** → 印 `碗空了，去找大肥鱼要点喵`\n\n请你写个程序：**先从投喂口读进来一个数**（碗里有几条，可能是 0），再照上面的规矩印**一行**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 0;\n    cin >> fish;\n\n    if (fish >= {hi}) {\n        cout << \"{unit}满满，有 \" << fish << \" 条喵\" << endl;\n    } else if (fish > 0) {\n        cout << \"快见底啦，只剩 \" << fish << \" 条喵\" << endl;\n    } else {\n        cout << \"碗空了，去找大肥鱼要点喵\" << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "三段眼色的读法就是**从上往下挨个问，谁先答真就归谁管**：\n\n1. 先问「够 {hi} 条了吗」；答真，印第一句，后面两条路**连问都不问**。\n2. 答假，才轮到 `else if` 接着问「不止 0 吧」；答真，印第二句。\n3. 两条都答假 —— 剩下的可能只有「0 条」这一种 —— 就落到最后的 `else` 兜底。\n\n所以**顺序不能乱**：要是把「不止 0」放到前面，那么 8 条、9 条也会先被它截住，印成「快见底啦」—— 这正是三段眼色最容易出的错。写的时候给自己念一遍：**最严的那条摆最上面**。\n\n最后那个 `else` 是**兜底**：前面都没接住的，全归它管。它让这一眼不用漏 —— 碗里不管是 0 条还是别的什么数，总有一句话管得上喵。"
+}

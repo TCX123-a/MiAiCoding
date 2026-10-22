@@ -1,0 +1,20 @@
+{
+  "templateId": "cpp-s3-sort-insert-no-shift",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-23",
+  "type": "codefix",
+  "concept": ["给小鱼干排排坐", "理牌式", "把大数往后挪", "忘了挪、直接按下去"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["5", "50"] },
+    "b": { "kind": "pick", "values": ["3", "20"] },
+    "c": { "kind": "pick", "values": ["8", "70"] },
+    "d": { "kind": "pick", "values": ["1", "10"] },
+    "e": { "kind": "pick", "values": ["4", "40"] }
+  },
+  "stemTemplate": "本喵手里这五张牌是 **{a}、{b}、{c}、{d}、{e}**，用「**理牌式**」一张一张往左手里插：新牌比左手最后一张小，就把那张往右挤一挤、给自己腾个空位。\n\n可印出来那排里**有两只一样的数，还少了一只**：\n\n```text\n理牌式：{d} {b} {c} {d} {e}\n```\n\n翻译官喵一声没吭，编译跑得好好的。\n\n请你把那一招改对。改好之后该印：\n\n```text\n理牌式：{d} {b} {e} {a} {c}\n```",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n\nvoid insert_card(std::vector<int>& a) {\n    int n = static_cast<int>(a.size());\n    for (int i = 1; i < n; i++) {\n        int key = a[i];\n        int j = i - 1;\n        while (j >= 0 && a[j] > key) {\n            j--;\n        }\n        a[j + 1] = key;\n    }\n}\n\nint main() {\n    std::vector<int> a = {{a}, {b}, {c}, {d}, {e}};\n    insert_card(a);\n\n    std::cout << \"理牌式：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n\nvoid insert_card(std::vector<int>& a) {\n    int n = static_cast<int>(a.size());\n    for (int i = 1; i < n; i++) {\n        int key = a[i];\n        int j = i - 1;\n        while (j >= 0 && a[j] > key) {\n            a[j + 1] = a[j];\n            j--;\n        }\n        a[j + 1] = key;\n    }\n}\n\nint main() {\n    std::vector<int> a = {{a}, {b}, {c}, {d}, {e}};\n    insert_card(a);\n\n    std::cout << \"理牌式：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+  "explanationTemplate": "毛病在那一句**少了的**先：本喵只往前找位子，找到位子就直接按下去 —— 可**中间那几位没往右挪**喵。\n\n插之前得先给新牌腾地方：凡是比 `key` 大的，统统往右挤一格。少了这一句，`a[j + 1] = key;` 按下去的时候就把**原来住在那儿的数给盖住了** —— 那一位没了，新牌和旁边那位就成了一对双胞胎。\n\n要补的就是这一句（写在 `j--` 的前面）：\n\n```text\na[j + 1] = a[j];\n```\n\n念作「**把你往右挪一格，空位留给新牌**」。挪完再往前看下一张，直到左边那张比新牌小、或者左边没牌了，才把新牌按进空位。\n\n⚠️ 少写一句挪动，翻译官喵一个字都不会说：语法全对、跑起来也不摔，它只是**把一只数弄丢了、又弄出一只重复的**。这种「丢东西」的错，只能用你那双看输出的眼睛抓喵。"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-18-half-virtual",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-18",
+  "type": "codefix",
+  "concept": ["只挂了一条路", "共用的底座没人喂料", "第一个错盖住第二个错"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "小P", "小灰"] }
+  },
+  "stemTemplate": "这一段只改了一半喵：左边那条路挂上了那一手，右边那条**忘了**；最外面那张图纸也**没给共用的那份喂料**。\n\n翻译官喵现在报的是**后一个错** —— 它说找不到一个「什么都不用喂」的搭法。你先把眼前这个改掉，然后会发现一件事：**后面还等着一个错**。两个都改好，让它印出这三行：\n\n1. `{who}：喵～`\n2. `{who}：呼噜呼噜～`\n3. `{who}：踩踩踩～`\n\n提示：这一题的两个毛病，正好是这一课那条新规矩的两半 —— 「**两条路都要挂**」和「**共用的那份由最外面那张图纸喂料**」。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"{who}\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass MeowCat {\nprotected:\n    string name;\npublic:\n    MeowCat(const string& n) : name(n) {}\n    void meow() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass Purr : virtual public MeowCat {\npublic:\n    Purr(const string& n) : MeowCat(n) {}\n    void purr() const { cout << name << \"：呼噜呼噜～\" << endl; }\n};\n\nclass Knead : virtual public MeowCat {\npublic:\n    Knead(const string& n) : MeowCat(n) {}\n    void knead() const { cout << name << \"：踩踩踩～\" << endl; }\n};\n\nclass Baby : public Purr, public Knead {\npublic:\n    Baby(const string& n) : MeowCat(n), Purr(n), Knead(n) {}\n};\n\nint main() {\n    Baby b(\"{who}\");\n    b.meow();\n    b.purr();\n    b.knead();\n    return 0;\n}\n",
+  "explanationTemplate": "这一题**两层毛病叠着**，先看到的那层把后面那层盖住了喵：\n\n**第一层（翻译官喵现在报的）**：左边那条路挂了那一手，共用的底座就归**最外面那张图纸**搭了 —— 而 `Baby` 的出生招式里一句话都没喂。它只好去找一个不用喂料的搭法，可底座那张图纸**只有**「喂一个名字」的那种，于是报 `no matching function for call to 'MeowCat::MeowCat()'`。改法是把 `MeowCat(n)` 写进 `Baby` 的出生招式。\n\n**第二层（改完第一层才会露出来）**：右边那条路**没挂**那一手，它自己还带着一份底座。于是肚子里又是两份，`b.meow()` 一喊 —— `ambiguous`（说不清）。改法是把 `virtual` 也挂到 `Knead` 照着底座画的那一行上。\n\n两处都改好，印出来的三行名字才会**一模一样**。\n\n⚠️ 这一题最值钱的地方不是那两个写法，是**报错的先后**：第一层不解决，第二层连露脸的机会都没有。这就跟看病一样 —— 翻译官喵一次只说它最先卡住的那一句，**它不是全说完了**。所以「改完编过了」永远不等于「改完了」，得再跑一遍看输出对不对喵。"
+}

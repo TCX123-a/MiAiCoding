@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-20-stove-shadowed-by-plain",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-20",
+  "type": "codefix",
+  "concept": ["同名图纸撞上小灶", "直接写出来的那份更优先", "小灶排不上号时也不吭声"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "pick", "values": ["7", "9"] }
+  },
+  "stemTemplate": "本喵给「整数」这款料开了一个小灶，可喊话的时候**它没上班** —— 屏幕上印出来的是别人的名字。\n\n小灶一个字都没写错，本喵也不想删它。多出来的那张同名图纸才是问题：它把活抢走了。\n\n请你把多余的那张挪掉，让喊 `pick({n})` 的时候轮到小灶上班。改完跑起来，屏幕上要正好是「整数小灶」这一行喵。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nvoid pick(T x) {\n    cout << \"图纸裁出来的那一份\" << endl;\n}\n\ntemplate <>\nvoid pick<int>(int x) {\n    cout << \"整数小灶\" << endl;\n}\n\nvoid pick(int x) {\n    cout << \"直接写的那一份\" << endl;\n}\n\nint main() {\n    pick({n});\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nvoid pick(T x) {\n    cout << \"图纸裁出来的那一份\" << endl;\n}\n\ntemplate <>\nvoid pick<int>(int x) {\n    cout << \"整数小灶\" << endl;\n}\n\nint main() {\n    pick({n});\n    return 0;\n}\n",
+  "explanationTemplate": "坏的那一块是最下面那张**直接写出来的**同名图纸（收整数、印「直接写的那一份」的那张）。\n\n翻译官喵挑活干的规矩是这样的：先把递进去的料能接住的候选都找出来，其中**直接写出来的那张**和**图纸裁出来的那份**（小灶也算一份）如果一样好，**赢的是直接写出来的那张**。所以 `pick({n})` 印的是「直接写的那一份」，小灶压根排不上号。\n\n怎么改都行，只要把那张多余的挪开：整块删掉，或者给它换个名字。改完再跑一次，小灶立刻上班。\n\n⚠️ 这一题也是**不吭声**的：两段代码都编得过、都跑得完，翻译官喵不会提醒本喵「你这个同名图纸把小灶挡住了」。记牢这条规矩 —— **同一款料上有两份做法，赢的永远是直接写出来的那一份。**"
+}

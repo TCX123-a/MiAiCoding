@@ -1,0 +1,240 @@
+{
+  "lessonId": "java-stage3-10",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-10-book-on-blueprint-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵要的是**一本账**：两只猫记的是**同一本**，母猫最后问它们各自「你手上那本账记了多少」，两行必须**一模一样**，而且得是两只加起来的总数。\n\n可这段代码印出来是两行**不一样的数**：\n\n```text\n小橘手上的账本：3 条\n狸花手上的账本：6 条\n```\n\n你帮本喵改对：改完之后两行都要是**两只加起来**的总数（3 和 6 是两只猫各自要记的笔数，这两处不用动）。\n\n（这一题**不用投喂任何东西**。）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 甲 = new Cat(\"小橘\", 3);\n        Cat 乙 = new Cat(\"狸花\", 6);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(甲.名字 + \"手上的账本：\" + 甲.账本 + \" 条\");\n        System.out.println(乙.名字 + \"手上的账本：\" + 乙.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            记一笔();\n        }\n    }\n\n    synchronized void 记一笔() {\n        账本 = 账本 + 1;\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 甲 = new Cat(\"小橘\", 3);\n        Cat 乙 = new Cat(\"狸花\", 6);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(甲.名字 + \"手上的账本：\" + 甲.账本 + \" 条\");\n        System.out.println(乙.名字 + \"手上的账本：\" + 乙.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            记一笔();\n        }\n    }\n\n    static synchronized void 记一笔() {\n        账本 = 账本 + 1;\n    }\n}\n",
+      "expectedOutput": "小橘手上的账本：9 条\n狸花手上的账本：9 条",
+      "stdin": null,
+      "explanation": "**一、账本那一格该摆在图纸上。** 课文第一节里那句 `static int 账本 = 0;` 读作「**这一格只有一份，照这张图纸长的猫都共用它**」。少了那个 `static`，就变成了**每只猫家里各摆一本** —— 两只猫各记各的，谁也看不见谁那本，所以印出来是 3 和 6 两个不一样的数。\n\n**二、锁也跟着一起掉。** 这一份里 `记一笔()` 前面也少了个 `static`：锁变成了**每一只猫自己那一把**。修的时候两处得一起加回去 —— 课文第三节那个「小心喵」说的就是这件事：`static` 一掉，「看着有锁，其实拦不住谁」。\n\n**三、改法只有两处。** `int 账本 = 0;` 改成 `static int 账本 = 0;`；`synchronized void 记一笔()` 改成 `static synchronized void 记一笔()`。改完两只猫翻开的是同一本，两行会印出**一模一样**的总数。\n\n**四、那个总数为什么是稳的。** `static synchronized` 那一把锁把「记一笔」这段路守在图纸上，一次只放一只猫进去；两只都干完了（`join()` 回来了）母猫才念账，所以每次都一样。",
+      "templateId": "java-s3-10-book-on-blueprint",
+      "params": {
+        "n1": 3,
+        "n2": 6
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:19.535Z",
+        "hash": "620b91459817c585"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-book-on-blueprint-008",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵要的是**一本账**：两只猫记的是**同一本**，母猫最后问它们各自「你手上那本账记了多少」，两行必须**一模一样**，而且得是两只加起来的总数。\n\n可这段代码印出来是两行**不一样的数**：\n\n```text\n小橘手上的账本：5 条\n狸花手上的账本：8 条\n```\n\n你帮本喵改对：改完之后两行都要是**两只加起来**的总数（5 和 8 是两只猫各自要记的笔数，这两处不用动）。\n\n（这一题**不用投喂任何东西**。）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 甲 = new Cat(\"小橘\", 5);\n        Cat 乙 = new Cat(\"狸花\", 8);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(甲.名字 + \"手上的账本：\" + 甲.账本 + \" 条\");\n        System.out.println(乙.名字 + \"手上的账本：\" + 乙.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            记一笔();\n        }\n    }\n\n    synchronized void 记一笔() {\n        账本 = 账本 + 1;\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 甲 = new Cat(\"小橘\", 5);\n        Cat 乙 = new Cat(\"狸花\", 8);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(甲.名字 + \"手上的账本：\" + 甲.账本 + \" 条\");\n        System.out.println(乙.名字 + \"手上的账本：\" + 乙.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            记一笔();\n        }\n    }\n\n    static synchronized void 记一笔() {\n        账本 = 账本 + 1;\n    }\n}\n",
+      "expectedOutput": "小橘手上的账本：13 条\n狸花手上的账本：13 条",
+      "stdin": null,
+      "explanation": "**一、账本那一格该摆在图纸上。** 课文第一节里那句 `static int 账本 = 0;` 读作「**这一格只有一份，照这张图纸长的猫都共用它**」。少了那个 `static`，就变成了**每只猫家里各摆一本** —— 两只猫各记各的，谁也看不见谁那本，所以印出来是 5 和 8 两个不一样的数。\n\n**二、锁也跟着一起掉。** 这一份里 `记一笔()` 前面也少了个 `static`：锁变成了**每一只猫自己那一把**。修的时候两处得一起加回去 —— 课文第三节那个「小心喵」说的就是这件事：`static` 一掉，「看着有锁，其实拦不住谁」。\n\n**三、改法只有两处。** `int 账本 = 0;` 改成 `static int 账本 = 0;`；`synchronized void 记一笔()` 改成 `static synchronized void 记一笔()`。改完两只猫翻开的是同一本，两行会印出**一模一样**的总数。\n\n**四、那个总数为什么是稳的。** `static synchronized` 那一把锁把「记一笔」这段路守在图纸上，一次只放一只猫进去；两只都干完了（`join()` 回来了）母猫才念账，所以每次都一样。",
+      "templateId": "java-s3-10-book-on-blueprint",
+      "params": {
+        "n1": 5,
+        "n2": 8
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:21.141Z",
+        "hash": "e02e855490dfc5eb"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-empty-lock-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵照课文第二节的写法给账本立了个规矩：先派一只猫去记，母猫自己也进同一把锁补记一笔。\n\n可机器一上来就红着脸把整段停了，账本一个字都没记上：\n\n```text\nException in thread \"main\" java.lang.NullPointerException: Cannot enter synchronized block because \"Cat.锁\" is null\n```\n\n你帮本喵看看那把锁是怎么了，把它改好。\n\n这一题**不用投喂任何东西**：小橘要记 2 笔，母猫自己再补记一笔 —— 改好之后该印出这个总数（本喵不在这儿写出那个数，你自己跑出来看）。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"小橘\", 2);\n\n        一只.start();\n        一只.join();\n\n        synchronized (Cat.锁) {\n            Cat.账本 = Cat.账本 + 1;\n        }\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static Object 锁;\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            synchronized (锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"小橘\", 2);\n\n        一只.start();\n        一只.join();\n\n        synchronized (Cat.锁) {\n            Cat.账本 = Cat.账本 + 1;\n        }\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Object 锁 = new Object();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            synchronized (锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "账本：3 条",
+      "stdin": null,
+      "explanation": "**一、锁是光起了名字，没造。** `static Object 锁;` 只是**说了一声「有这么个东西」**，它里面是空的。机器那句 `Cannot enter synchronized block because \"Cat.锁\" is null` 读作「**这个叫 `Cat.锁` 的东西是空的，进不去**」。\n\n**二、造一把锁得写全。** 就是课文第六节那一句：`static final Object 锁 = new Object();` —— `new Object()` 那一下才算真把它造出来。\n\n**三、为什么整段都停了。** 母猫自己也要进同一把锁（就是 `synchronized (Cat.锁)` 那一处）补记一笔，它撞上这堵墙，机器当场把整段停了 —— 所以一个字都没记上。\n\n**四、往后看见 `null` 配上 `synchronized`，就回头看那一把锁怎么写的。** 只摆了名字、没 `new`，就是这一跤 —— 课文第六节那个例子正是它。",
+      "templateId": "java-s3-10-empty-lock",
+      "params": {
+        "n1": "小橘",
+        "c1": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:39:38.344Z",
+        "hash": "6fe2be9a73461788"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-empty-lock-005",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵照课文第二节的写法给账本立了个规矩：先派一只猫去记，母猫自己也进同一把锁补记一笔。\n\n可机器一上来就红着脸把整段停了，账本一个字都没记上：\n\n```text\nException in thread \"main\" java.lang.NullPointerException: Cannot enter synchronized block because \"Cat.锁\" is null\n```\n\n你帮本喵看看那把锁是怎么了，把它改好。\n\n这一题**不用投喂任何东西**：狸花要记 4 笔，母猫自己再补记一笔 —— 改好之后该印出这个总数（本喵不在这儿写出那个数，你自己跑出来看）。",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"狸花\", 4);\n\n        一只.start();\n        一只.join();\n\n        synchronized (Cat.锁) {\n            Cat.账本 = Cat.账本 + 1;\n        }\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static Object 锁;\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            synchronized (锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"狸花\", 4);\n\n        一只.start();\n        一只.join();\n\n        synchronized (Cat.锁) {\n            Cat.账本 = Cat.账本 + 1;\n        }\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Object 锁 = new Object();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            synchronized (锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "账本：5 条",
+      "stdin": null,
+      "explanation": "**一、锁是光起了名字，没造。** `static Object 锁;` 只是**说了一声「有这么个东西」**，它里面是空的。机器那句 `Cannot enter synchronized block because \"Cat.锁\" is null` 读作「**这个叫 `Cat.锁` 的东西是空的，进不去**」。\n\n**二、造一把锁得写全。** 就是课文第六节那一句：`static final Object 锁 = new Object();` —— `new Object()` 那一下才算真把它造出来。\n\n**三、为什么整段都停了。** 母猫自己也要进同一把锁（就是 `synchronized (Cat.锁)` 那一处）补记一笔，它撞上这堵墙，机器当场把整段停了 —— 所以一个字都没记上。\n\n**四、往后看见 `null` 配上 `synchronized`，就回头看那一把锁怎么写的。** 只摆了名字、没 `new`，就是这一跤 —— 课文第六节那个例子正是它。",
+      "templateId": "java-s3-10-empty-lock",
+      "params": {
+        "n1": "狸花",
+        "c1": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:39:39.864Z",
+        "hash": "7cff6153c2501ea9"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-lock-on-method-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要派 **2 只猫**去记账，全部记进**同一本账**。\n\n投喂给程序的是：**第一行一个整数 n**，**后面跟 n 行**，一行一个整数 —— 第 1 只、第 2 只……第 n 只猫各要记多少笔。\n\n请你写个程序，照这个次序做：\n\n1. 图纸上摆**一格大家共用的账**（`static int 账本 = 0;`），再把「**记一笔**」做成图纸上的一个方法：`static synchronized void 记一笔()` —— 锁上在**这件事**上，谁要记都得先经过这儿；\n2. 照投喂进来的数长出 **n 只猫**，每只带一样东西：**自己要记多少笔**；\n3. 每只猫转圈，**一圈喊一次 `记一笔()`**；\n4. 整队一起**派出去**；\n5. **站在门口等整队都回来**；\n6. 回来之后印一行 `账本：X 条`（X 是账上记到的总数）。\n\n比如投喂给程序的是\n\n```text\n2\n9\n6\n```\n\n程序就要叼回\n\n```text\n账本：15 条\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 份数 = new int[n];\n        for (int i = 0; i < n; i++) {\n            份数[i] = sc.nextInt();\n        }\n\n        // 这里往下：长出 n 只猫、整队派出去、整队等回来、念账本\n\n    }\n}\n\nclass Cat extends Thread {\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        // 这里往下：转圈，一圈喊一次「记一笔」\n    }\n\n    // 这里往下：把「记一笔」写成图纸上的一个方法（锁上在它身上）\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 份数 = new int[n];\n        for (int i = 0; i < n; i++) {\n            份数[i] = sc.nextInt();\n        }\n\n        Cat[] 一队 = new Cat[n];\n        for (int i = 0; i < n; i++) {\n            一队[i] = new Cat(份数[i]);\n        }\n        for (int i = 0; i < n; i++) {\n            一队[i].start();\n        }\n        for (int i = 0; i < n; i++) {\n            一队[i].join();\n        }\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            记一笔();\n        }\n    }\n\n    static synchronized void 记一笔() {\n        账本 = 账本 + 1;\n    }\n}\n",
+      "expectedOutput": "账本：17 条",
+      "stdin": "2\n9\n8\n",
+      "explanation": "**一、把锁上在「记一笔」这件事上。** `static synchronized void 记一笔()`：`synchronized` 写在这儿，读作「**这一刻只许一只猫进来**」。\n\n**二、那个 `static` 千万不能漏。** 漏了它就变成**每一只猫自己那一把**（课文第三节那个「小心喵」），看着有锁，其实拦不住谁。带上 `static`，排队排的才是**图纸这一把** —— 2 只猫抢的是同一把。\n\n**三、谁都能喊它。** 「记一笔」做成图纸上的一个方法之后，每只猫转圈时各喊各的，一次只有一只猫在账上落笔 —— 转圈的圈数归各只猫自己，动账的那一下归这把锁管。\n\n**四、整队派出去、整队等回来。** 两句 `for` 转圈：一句 `start()`、一句 `join()`，都别漏。回来之后才念账本，那个总数才是稳的。\n\n**五、几只猫、各记多少都是投喂里读的**（第一行是只数，后面每行一只猫要记的笔数），一行一行读，别写死。",
+      "templateId": "java-s3-10-lock-on-method",
+      "params": {
+        "n": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:35:12.460Z",
+        "hash": "5d0d655ba37b2a8a"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-lock-on-method-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要派 **3 只猫**去记账，全部记进**同一本账**。\n\n投喂给程序的是：**第一行一个整数 n**，**后面跟 n 行**，一行一个整数 —— 第 1 只、第 2 只……第 n 只猫各要记多少笔。\n\n请你写个程序，照这个次序做：\n\n1. 图纸上摆**一格大家共用的账**（`static int 账本 = 0;`），再把「**记一笔**」做成图纸上的一个方法：`static synchronized void 记一笔()` —— 锁上在**这件事**上，谁要记都得先经过这儿；\n2. 照投喂进来的数长出 **n 只猫**，每只带一样东西：**自己要记多少笔**；\n3. 每只猫转圈，**一圈喊一次 `记一笔()`**；\n4. 整队一起**派出去**；\n5. **站在门口等整队都回来**；\n6. 回来之后印一行 `账本：X 条`（X 是账上记到的总数）。\n\n比如投喂给程序的是\n\n```text\n3\n6\n4\n5\n```\n\n程序就要叼回\n\n```text\n账本：15 条\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 份数 = new int[n];\n        for (int i = 0; i < n; i++) {\n            份数[i] = sc.nextInt();\n        }\n\n        // 这里往下：长出 n 只猫、整队派出去、整队等回来、念账本\n\n    }\n}\n\nclass Cat extends Thread {\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        // 这里往下：转圈，一圈喊一次「记一笔」\n    }\n\n    // 这里往下：把「记一笔」写成图纸上的一个方法（锁上在它身上）\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 份数 = new int[n];\n        for (int i = 0; i < n; i++) {\n            份数[i] = sc.nextInt();\n        }\n\n        Cat[] 一队 = new Cat[n];\n        for (int i = 0; i < n; i++) {\n            一队[i] = new Cat(份数[i]);\n        }\n        for (int i = 0; i < n; i++) {\n            一队[i].start();\n        }\n        for (int i = 0; i < n; i++) {\n            一队[i].join();\n        }\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            记一笔();\n        }\n    }\n\n    static synchronized void 记一笔() {\n        账本 = 账本 + 1;\n    }\n}\n",
+      "expectedOutput": "账本：14 条",
+      "stdin": "3\n5\n4\n5\n",
+      "explanation": "**一、把锁上在「记一笔」这件事上。** `static synchronized void 记一笔()`：`synchronized` 写在这儿，读作「**这一刻只许一只猫进来**」。\n\n**二、那个 `static` 千万不能漏。** 漏了它就变成**每一只猫自己那一把**（课文第三节那个「小心喵」），看着有锁，其实拦不住谁。带上 `static`，排队排的才是**图纸这一把** —— 3 只猫抢的是同一把。\n\n**三、谁都能喊它。** 「记一笔」做成图纸上的一个方法之后，每只猫转圈时各喊各的，一次只有一只猫在账上落笔 —— 转圈的圈数归各只猫自己，动账的那一下归这把锁管。\n\n**四、整队派出去、整队等回来。** 两句 `for` 转圈：一句 `start()`、一句 `join()`，都别漏。回来之后才念账本，那个总数才是稳的。\n\n**五、几只猫、各记多少都是投喂里读的**（第一行是只数，后面每行一只猫要记的笔数），一行一行读，别写死。",
+      "templateId": "java-s3-10-lock-on-method",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T11:35:14.110Z",
+        "hash": "49592e64554a6b25"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-locked-ledger-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要两只猫记**同一本账**。\n\n投喂给程序的是**两行**，一行一个整数：第一行是甲要记多少条，第二行是乙要记多少条。\n\n请你写个程序，照这个次序做：\n\n1. 图纸上摆**一格大家共用的账**和**一把大家共用的锁**：`static int 账本 = 0;`、`static final Object 账本锁 = new Object();`；\n2. 照这张图纸长出**两只**猫，每只带一样东西：**自己要记多少条**；\n3. 每只猫转圈记自己那一份 —— **每一圈都要进锁**（`synchronized (账本锁)` 后面那对花括号罩住记的那一下）才许动账本，一次只放一只猫进去；\n4. 把两只猫都**派出去**；\n5. **站在门口等两只都回来**；\n6. 回来之后印一行 `账本：X 条`（X 是账上记到的总数）。\n\n比如投喂给程序的是\n\n```text\n6\n3\n```\n\n程序就要叼回\n\n```text\n账本：9 条\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 甲要记 = sc.nextInt();\n        int 乙要记 = sc.nextInt();\n\n        // 这里往下：长出两只猫、派出去、等回来、念账本\n\n    }\n}\n\nclass Cat extends Thread {\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        // 这里往下：转圈，每圈把「记一笔」罩起来\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 甲要记 = sc.nextInt();\n        int 乙要记 = sc.nextInt();\n\n        Cat 甲 = new Cat(甲要记);\n        Cat 乙 = new Cat(乙要记);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Object 账本锁 = new Object();\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            synchronized (账本锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "账本：18 条",
+      "stdin": "9\n9\n",
+      "explanation": "**一、一格账、一把锁，都摆在图纸上。** `static int 账本 = 0;` 是大家共用的那一格；`static final Object 账本锁 = new Object();` 是大家共用的那一把。两只猫照的是同一张图纸，所以翻开的是**同一本账**、抢的是**同一把锁**（两个 `static` 一个都不能漏）。\n\n**二、`synchronized (账本锁)` 后面那对花括号里，一次只放一只猫进去。** 「记一笔」那三下（读出来、加一、写回去）被罩在里面，另一只猫在门口等 —— 等不是丢下活走了；等到了，它进去记自己那一笔。\n\n**三、两只都回来才念账。** `甲.start(); 乙.start();` 派出去，`甲.join(); 乙.join();` 站在门口等。两句 `join()` 都摆在印账本**前面**：少等一只，念出来的数就是半截的。\n\n**四、数不是本喵写在纸上的。** 两只猫各记多少是从投喂进来的两行里读的 —— 判分喂的是**另一组数**，写死任何数字都会当场露馅。",
+      "templateId": "java-s3-10-locked-ledger",
+      "params": {
+        "unit": "条"
+      },
+      "verified": {
+        "at": "2026-09-16T11:35:08.928Z",
+        "hash": "f76a625afc715ffb"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-locked-ledger-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要两只猫记**同一本账**。\n\n投喂给程序的是**两行**，一行一个整数：第一行是甲要记多少笔，第二行是乙要记多少笔。\n\n请你写个程序，照这个次序做：\n\n1. 图纸上摆**一格大家共用的账**和**一把大家共用的锁**：`static int 账本 = 0;`、`static final Object 账本锁 = new Object();`；\n2. 照这张图纸长出**两只**猫，每只带一样东西：**自己要记多少笔**；\n3. 每只猫转圈记自己那一份 —— **每一圈都要进锁**（`synchronized (账本锁)` 后面那对花括号罩住记的那一下）才许动账本，一次只放一只猫进去；\n4. 把两只猫都**派出去**；\n5. **站在门口等两只都回来**；\n6. 回来之后印一行 `账本：X 笔`（X 是账上记到的总数）。\n\n比如投喂给程序的是\n\n```text\n7\n7\n```\n\n程序就要叼回\n\n```text\n账本：14 笔\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 甲要记 = sc.nextInt();\n        int 乙要记 = sc.nextInt();\n\n        // 这里往下：长出两只猫、派出去、等回来、念账本\n\n    }\n}\n\nclass Cat extends Thread {\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        // 这里往下：转圈，每圈把「记一笔」罩起来\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 甲要记 = sc.nextInt();\n        int 乙要记 = sc.nextInt();\n\n        Cat 甲 = new Cat(甲要记);\n        Cat 乙 = new Cat(乙要记);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 笔\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Object 账本锁 = new Object();\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            synchronized (账本锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "账本：16 笔",
+      "stdin": "7\n9\n",
+      "explanation": "**一、一格账、一把锁，都摆在图纸上。** `static int 账本 = 0;` 是大家共用的那一格；`static final Object 账本锁 = new Object();` 是大家共用的那一把。两只猫照的是同一张图纸，所以翻开的是**同一本账**、抢的是**同一把锁**（两个 `static` 一个都不能漏）。\n\n**二、`synchronized (账本锁)` 后面那对花括号里，一次只放一只猫进去。** 「记一笔」那三下（读出来、加一、写回去）被罩在里面，另一只猫在门口等 —— 等不是丢下活走了；等到了，它进去记自己那一笔。\n\n**三、两只都回来才念账。** `甲.start(); 乙.start();` 派出去，`甲.join(); 乙.join();` 站在门口等。两句 `join()` 都摆在印账本**前面**：少等一只，念出来的数就是半截的。\n\n**四、数不是本喵写在纸上的。** 两只猫各记多少是从投喂进来的两行里读的 —— 判分喂的是**另一组数**，写死任何数字都会当场露馅。",
+      "templateId": "java-s3-10-locked-ledger",
+      "params": {
+        "unit": "笔"
+      },
+      "verified": {
+        "at": "2026-09-16T11:35:10.531Z",
+        "hash": "5419ca2e029e6a93"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-release-without-take-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵照课文第四节那个「自己拿、自己放」的写法，派了一只猫去记账。\n\n它半路就红着脸停下了 —— 猫那边印出来的是：\n\n```text\nException in thread \"Thread-0\" java.lang.IllegalMonitorStateException\n```\n\n（后面那几行是机器指给本喵看的位置，本喵掐了。）而本喵这边的账本只记到 `账本：1 条`：小橘要记 5 笔，一笔都不该落下。\n\n你帮本喵把它改对 —— 改好之后该印出 5 笔那个总数。\n\n（这一题**不用投喂任何东西**。）",
+      "brokenCode": "import java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"小橘\", 5);\n\n        一只.start();\n        一只.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            try {\n                账本 = 账本 + 1;\n            } finally {\n                锁.unlock();\n            }\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"小橘\", 5);\n\n        一只.start();\n        一只.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            锁.lock();\n            try {\n                账本 = 账本 + 1;\n            } finally {\n                锁.unlock();\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "账本：5 条",
+      "stdin": null,
+      "explanation": "**一、猫没先拿锁，就先还了锁。** 转圈里那一句 `锁.unlock();` 是**还锁**，可它上面根本**没有 `锁.lock();`** —— 一只手上没锁的猫去还锁，机器当场把它拦住：`IllegalMonitorStateException`（读作「你手上没这把锁」）。\n\n**二、它停在还锁那一句上，后面全没记。** 第一圈才走到还锁就被拦住，所以账本上只有它进 `try` 之前记的那一笔 —— `账本：1 条`。5 笔里剩下的那些，一笔都没记上。\n\n**三、改法：把 `锁.lock();` 补回 `try` 前面。** 拿和放必须**配对**：转一圈，拿一次、还一次。课文第四节那个形状就是这个道理 —— `锁.lock();` 在 `try` 外面（没拿到手就不进 `try`），`锁.unlock();` 在 `finally` 里（不管顺不顺，收尾都还回去）。",
+      "templateId": "java-s3-10-release-without-take",
+      "params": {
+        "n1": "小橘",
+        "c1": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:41.166Z",
+        "hash": "4bea84ce98498de0"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-release-without-take-005",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵照课文第四节那个「自己拿、自己放」的写法，派了一只猫去记账。\n\n它半路就红着脸停下了 —— 猫那边印出来的是：\n\n```text\nException in thread \"Thread-0\" java.lang.IllegalMonitorStateException\n```\n\n（后面那几行是机器指给本喵看的位置，本喵掐了。）而本喵这边的账本只记到 `账本：1 条`：狸花要记 7 笔，一笔都不该落下。\n\n你帮本喵把它改对 —— 改好之后该印出 7 笔那个总数。\n\n（这一题**不用投喂任何东西**。）",
+      "brokenCode": "import java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"狸花\", 7);\n\n        一只.start();\n        一只.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            try {\n                账本 = 账本 + 1;\n            } finally {\n                锁.unlock();\n            }\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"狸花\", 7);\n\n        一只.start();\n        一只.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            锁.lock();\n            try {\n                账本 = 账本 + 1;\n            } finally {\n                锁.unlock();\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "账本：7 条",
+      "stdin": null,
+      "explanation": "**一、猫没先拿锁，就先还了锁。** 转圈里那一句 `锁.unlock();` 是**还锁**，可它上面根本**没有 `锁.lock();`** —— 一只手上没锁的猫去还锁，机器当场把它拦住：`IllegalMonitorStateException`（读作「你手上没这把锁」）。\n\n**二、它停在还锁那一句上，后面全没记。** 第一圈才走到还锁就被拦住，所以账本上只有它进 `try` 之前记的那一笔 —— `账本：1 条`。7 笔里剩下的那些，一笔都没记上。\n\n**三、改法：把 `锁.lock();` 补回 `try` 前面。** 拿和放必须**配对**：转一圈，拿一次、还一次。课文第四节那个形状就是这个道理 —— `锁.lock();` 在 `try` 外面（没拿到手就不进 `try`），`锁.unlock();` 在 `finally` 里（不管顺不顺，收尾都还回去）。",
+      "templateId": "java-s3-10-release-without-take",
+      "params": {
+        "n1": "狸花",
+        "c1": 7
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:42.768Z",
+        "hash": "6db11b1623e0b9fb"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-take-and-release-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这回要**自己伸手**拿锁：不用 `synchronized` 那个写法，改用一只**手动锁**（自己拿、自己放）。\n\n投喂给程序的是**两行**，一行一个整数：第一行是甲要记多少笔，第二行是乙要记多少笔。\n\n请你写个程序，照这个次序做：\n\n1. 图纸上摆**一格大家共用的账**和**一把大家共用的手动锁**：`static int 账本 = 0;`、`static final Lock 锁 = new ReentrantLock();`（`Lock` 和 `ReentrantLock` 这两样要 `import` 进来）；\n2. 两只猫各自转圈：**拿锁**那一句（`锁.lock();`）摆在 `try` 前面，加数那一段摆在 `try` 里，**还锁**那一句（`锁.unlock();`）摆在 `finally` 里；\n3. 把两只都**派出去**、**站在门口等两只都回来**；\n4. 母猫自己**也拿同一把锁**补记 **1 笔**（同样是拿一次、还一次）；\n5. 最后印一行 `账本：X 条`（X 是账上记到的总数）。\n\n比如投喂给程序的是\n\n```text\n7\n7\n```\n\n程序就要叼回\n\n```text\n账本：15 条\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\nimport java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 甲要记 = sc.nextInt();\n        int 乙要记 = sc.nextInt();\n\n        // 这里往下：两只猫派出去、等回来，母猫自己也拿同一把锁补记\n\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        // 这里往下：转圈，先拿锁、再记、收尾还锁\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\nimport java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 甲要记 = sc.nextInt();\n        int 乙要记 = sc.nextInt();\n\n        Cat 甲 = new Cat(甲要记);\n        Cat 乙 = new Cat(乙要记);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        for (int i = 0; i < 1; i++) {\n            Cat.锁.lock();\n            try {\n                Cat.账本 = Cat.账本 + 1;\n            } finally {\n                Cat.锁.unlock();\n            }\n        }\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            锁.lock();\n            try {\n                账本 = 账本 + 1;\n            } finally {\n                锁.unlock();\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "账本：9 条",
+      "stdin": "5\n3\n",
+      "explanation": "**一、手动锁：自己拿、自己放。** `static final Lock 锁 = new ReentrantLock();` 造出来的是一把要自己伸手的锁：`锁.lock();` 是**拿**（别人拿着就等着，等到拿上为止），`锁.unlock();` 是**还**。\n\n**二、`unlock()` 那一句必须住在 `finally` 里。** `finally` 读作「**不管中间顺不顺，收尾这一下都得做**」—— 加数那一段万一出了岔子，锁照样还回去；写在后面就还不上了，那把锁永远留在自己手里，别的猫再也没机会。拿锁那一句则要摆在 `try` **外面**：没拿到手就不该进 `try`。\n\n**三、母猫也拿同一把。** 两只猫都回来了（两句 `join()`）之后，母猫自己也拿同一把锁补记 1 笔 —— 它用的是 `Cat.锁`、动的是 `Cat.账本`，所以它跟两只猫排的是**同一个队**。\n\n**四、总数 = 两只猫自己那份 + 母猫补的那几笔。** 每次跑都一样：谁先拿到锁由机器定，但「一笔都不许丢」是靠这把锁保证的。",
+      "templateId": "java-s3-10-take-and-release",
+      "params": {
+        "c3": 1
+      },
+      "verified": {
+        "at": "2026-09-16T11:35:15.997Z",
+        "hash": "f79e25a6426ec732"
+      }
+    },
+    {
+      "id": "bank-java-s3-10-take-and-release-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵这回要**自己伸手**拿锁：不用 `synchronized` 那个写法，改用一只**手动锁**（自己拿、自己放）。\n\n投喂给程序的是**两行**，一行一个整数：第一行是甲要记多少笔，第二行是乙要记多少笔。\n\n请你写个程序，照这个次序做：\n\n1. 图纸上摆**一格大家共用的账**和**一把大家共用的手动锁**：`static int 账本 = 0;`、`static final Lock 锁 = new ReentrantLock();`（`Lock` 和 `ReentrantLock` 这两样要 `import` 进来）；\n2. 两只猫各自转圈：**拿锁**那一句（`锁.lock();`）摆在 `try` 前面，加数那一段摆在 `try` 里，**还锁**那一句（`锁.unlock();`）摆在 `finally` 里；\n3. 把两只都**派出去**、**站在门口等两只都回来**；\n4. 母猫自己**也拿同一把锁**补记 **2 笔**（同样是拿一次、还一次）；\n5. 最后印一行 `账本：X 条`（X 是账上记到的总数）。\n\n比如投喂给程序的是\n\n```text\n4\n4\n```\n\n程序就要叼回\n\n```text\n账本：10 条\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\nimport java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 甲要记 = sc.nextInt();\n        int 乙要记 = sc.nextInt();\n\n        // 这里往下：两只猫派出去、等回来，母猫自己也拿同一把锁补记\n\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        // 这里往下：转圈，先拿锁、再记、收尾还锁\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\nimport java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 甲要记 = sc.nextInt();\n        int 乙要记 = sc.nextInt();\n\n        Cat 甲 = new Cat(甲要记);\n        Cat 乙 = new Cat(乙要记);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        for (int i = 0; i < 2; i++) {\n            Cat.锁.lock();\n            try {\n                Cat.账本 = Cat.账本 + 1;\n            } finally {\n                Cat.锁.unlock();\n            }\n        }\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            锁.lock();\n            try {\n                账本 = 账本 + 1;\n            } finally {\n                锁.unlock();\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "账本：11 条",
+      "stdin": "3\n6\n",
+      "explanation": "**一、手动锁：自己拿、自己放。** `static final Lock 锁 = new ReentrantLock();` 造出来的是一把要自己伸手的锁：`锁.lock();` 是**拿**（别人拿着就等着，等到拿上为止），`锁.unlock();` 是**还**。\n\n**二、`unlock()` 那一句必须住在 `finally` 里。** `finally` 读作「**不管中间顺不顺，收尾这一下都得做**」—— 加数那一段万一出了岔子，锁照样还回去；写在后面就还不上了，那把锁永远留在自己手里，别的猫再也没机会。拿锁那一句则要摆在 `try` **外面**：没拿到手就不该进 `try`。\n\n**三、母猫也拿同一把。** 两只猫都回来了（两句 `join()`）之后，母猫自己也拿同一把锁补记 2 笔 —— 它用的是 `Cat.锁`、动的是 `Cat.账本`，所以它跟两只猫排的是**同一个队**。\n\n**四、总数 = 两只猫自己那份 + 母猫补的那几笔。** 每次跑都一样：谁先拿到锁由机器定，但「一笔都不许丢」是靠这把锁保证的。",
+      "templateId": "java-s3-10-take-and-release",
+      "params": {
+        "c3": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:35:17.742Z",
+        "hash": "6cdaee47933e685a"
+      }
+    }
+  ]
+}

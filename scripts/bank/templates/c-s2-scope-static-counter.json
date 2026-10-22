@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-scope-static-counter",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-10",
+  "type": "codewrite",
+  "concept": ["static", "招式自己的固定格子", "初值只算一次", "记得住"],
+  "instances": 6,
+  "params": {
+    "times": { "kind": "int", "min": 3, "max": 4 },
+    "word": { "kind": "pick", "values": ["编号", "号码", "序号"] }
+  },
+  "stemTemplate": "本喵要一招 `next_id`：喊它一次就报一个 `{word}`，**第一次报 1，之后每喊一次就大 1**。\n\n两条要求写死：\n\n1. 这一招**不收任何投喂**；\n2. 记编号的那只碗**不许摆在外面**（外面一只碗都不许放）—— 它得是**这招自己的**，喊完了还记得住。\n\n`main` 里会把 `next_id` 喊 {times} 次，每喊一次印一行 `{word} <编号>`。",
+  "starterTemplate": "#include <stdio.h>\n\nvoid next_id(void) {\n\n}\n\nint main(void) {\n    for (int i = 0; i < {times}; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nvoid next_id(void) {\n    static int id = 0;\n\n    id = id + 1;\n    printf(\"{word} %d\\n\", id);\n}\n\nint main(void) {\n    for (int i = 0; i < {times}; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这题的关键全在那只碗身上喵。\n\n**招式里普通的碗，每次进门都是新发的。** 本喵真跑过一遍对照：写成 `int id = 0;`，喊三回报出来的是三个 1 —— 因为每次进门都新摆一只装了 0 的碗，加完一、印完、出门，那只碗就没了；下一回再来，又是一只新的 0。\n\n**加上 `static` 就换了性质：** 那只碗变成**这一招自己的固定格子**，只在**第一次**喊到这儿的时候准备一次，之后每一次进门用的都还是它。所以初值 `0` 只算一遍，报出来就是 1、2、3……\n\n```c\nstatic int id = 0;\n```\n\n口诀收好：**招式里的 `static` 碗 = 只发一次、永远留着。**\n\n顺便，本喵把那只碗的初值改成 100 真跑过一遍：报出来是 101、102、103、104……（喊几次就往下数几个）—— 看得很清楚，**那句初值只在第一次生效**，后面的每一次都只是接着往下加。"
+}

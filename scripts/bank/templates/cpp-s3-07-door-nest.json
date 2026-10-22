@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-07-door-nest",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-07",
+  "type": "codewrite",
+  "concept": ["作用域就是生命线", "后出生的先走", "圈的尽头自动收摊"],
+  "instances": 6,
+  "params": {
+    "inner": { "kind": "pick", "values": ["里屋", "库房", "地窖"] }
+  },
+  "stemTemplate": "骨架里那块「门」的牌子已经替你写好了喵：它**一被请出来**印 `开 ` 加名字，**死去时**印 `关 ` 加名字。你只要在 `main` 里摆出两个圈来。\n\n请你写 `main`：\n\n1. 先请一块牌子，名字是 `大门`；\n2. 再开一层**花括号**，在里面请一块牌子，名字是 `{inner}`；\n3. 花括号**里头**印一行：`在{inner}翻鱼干`；\n4. 出了那层花括号，印一行：`回到大门`。\n\n别的都不用写（那两句印字的照抄，别改字）。程序要叼回这 6 行：\n\n1. `开 大门`\n2. `开 {inner}`\n3. `在{inner}翻鱼干`\n4. `关 {inner}`\n5. `回到大门`\n6. `关 大门`\n\n盯住第 4 行和第 6 行喵：**谁后出生谁先走** —— 本喵一个字都没写「关」，它们自己就关了。",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"开 \" << who << endl; }\n    ~Door() { cout << \"关 \" << who << endl; }\n};\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Door {\n    string who;\n    Door(string w) : who(w) { cout << \"开 \" << who << endl; }\n    ~Door() { cout << \"关 \" << who << endl; }\n};\n\nint main() {\n    Door a(\"大门\");\n    {\n        Door b(\"{inner}\");\n        cout << \"在{inner}翻鱼干\" << endl;\n    }\n    cout << \"回到大门\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "关键全在那层**花括号**上喵 —— 它就是这条的**作用域**，也就是牌子的生命线：\n\n- 进了花括号，`b` 出生 → `开 {inner}`；\n- 花括号走到头，`b` **死在里面** → `关 {inner}` 印在 `回到大门` **前面**；\n- 最后 `main` 的花括号走到头，`a` 才死 → `关 大门` 收尾。\n\n⚠️ 两处最容易写错：\n\n① 那层花括号没写对（比如把 `b` 请到外面）→ 那两块牌子就一起活到 `main` 结束，`关 {inner}` 会跑到 `回到大门` **后面**去；\n② 把 `Door b(...)` 写在**印字的前面**却忘了那层花括号 → 顺序就散了。\n\n还有一处与本喵无关、但要记住：本喵**一个字都没写过「关」**。还这件事写在 `~Door()` 里，走不走得到出口由花括号说了算 —— 这就是「出门就还」省下来的那点心。"
+}

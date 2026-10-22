@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-17-dp-step-report",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-17",
+  "type": "codewrite",
+  "concept": ["挪牌子要剥一层", "走到头就绕回来", "最后一只碗的后面那一格", "绕鱼干跑圈里喊招式"],
+  "instances": 6,
+  "params": {
+    "row": { "kind": "pick", "values": ["2, 7, 5, 8", "1, 3, 9, 4"] }
+  },
+  "stemTemplate": "本喵要让一张牌在 **4 只碗**上绕圈走：每印一次牌子当前指着的那只碗里的数，就把牌子往后挪一只碗；挪到最后一只碗**后面**，就绕回第一只碗。\n\n四只碗里的数依次是 {row}。`main` 里那六次印法已经写死了，你要写的是 `step` 这一招本体：三份投喂依次是**外面那张牌的门牌号**、第一只碗的门牌号、一共几只碗。\n\n该印 6 行，一行一个数：从第一只碗开始，一只一只往后走，走到头就绕回第一只，转两圈差两只。",
+  "starterTemplate": "#include <stdio.h>\n\n/* 把外面那张牌往后挪一只碗；挪过了最后一只就绕回第一只 */\nvoid step(int **pp, int *base, int count) {\n    /* ↓ 在这儿写：\n       ① 剥一层往里写，让外面那张牌往后跨一只碗\n       ② 跨过了最后一只（也就是走到「第一只再往后 count 只」那一格），就拨回 base */\n}\n\nint main(void) {\n    int bowls[4] = {{row}};\n    int *p = &bowls[0];\n\n    for (int i = 0; i < 6; i++) {\n        printf(\"%d\\n\", *p);\n        step(&p, &bowls[0], 4);\n    }\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* 把外面那张牌往后挪一只碗；挪过了最后一只就绕回第一只 */\nvoid step(int **pp, int *base, int count) {\n    *pp = *pp + 1;\n    if (*pp == base + count) {\n        *pp = base;\n    }\n}\n\nint main(void) {\n    int bowls[4] = {{row}};\n    int *p = &bowls[0];\n\n    for (int i = 0; i < 6; i++) {\n        printf(\"%d\\n\", *p);\n        step(&p, &bowls[0], 4);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一招是两件事喵。\n\n**第一件：挪牌子要用剥一层的写法。**\n\n```text\n*pp = *pp + 1;\n```\n\n`*pp` 才是**外面那张牌**。写成 `pp = pp + 1;` 挪的只是一份复印件 —— 外面一步没挪，翻译官喵还一声不吭（这是这一课最阴的一个坑）。\n\n**第二件：走到头要绕回来。**\n\n```text\nif (*pp == base + count) {\n    *pp = base;\n}\n```\n\n`base` 是第一只碗的门牌号，`base + count` 正好是**最后一只碗的后面那一格** —— 牌子跨到那一格就说明它走过了头，拨回第一只就行。注意判的是「等于最后一只的后面」，不是「等于最后一只」：写成 `base + count - 1` 会让最后那只碗被跳过，印出来的行数照样是 6 行，可数字整个错一圈。\n\n改对之后，6 行会把 {row} 这么一圈一圈转的样子数出来：先走完 4 只，再从头来 2 只喵。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-09-lib-join-count",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-09",
+  "type": "codewrite",
+  "concept": ["把一串接在另一串屁股后面", "接完整串变长了", "数几颗珠子", "strcat 会改掉 dst"],
+  "instances": 6,
+  "params": {
+    "w1": { "kind": "pick", "values": ["fish", "tuna"] },
+    "w2": { "kind": "pick", "values": ["cake", "bonefish"] }
+  },
+  "stemTemplate": "本喵有两个碗：`bowl` 里装着 `{w1}`，`tail` 里装着 `{w2}`。要把 `tail` 这一串**接在 `bowl` 屁股后面**，接完再报一下：**整串现在有几颗珠子**。\n\n你要把 `join_and_count` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 把 `tail` 接上去（箱子里的招式里有一招专门干这个）；\n2. 答回去：接完之后整串有**几颗珠子**（不是碗有多大）。\n\n印出来的格式是写死的（`main` 里那行 `printf` 就是）：\n\n```text\n接起来：接好之后的那一整串，现在 N 颗\n```\n\n⚠️ `bowl` 这个碗能装 **64 颗**，这两个词加起来远远装得下，所以这回不用担心装不下的事喵。",
+  "starterTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 把 tail 接在 bowl 屁股后面，答：接完之后整串有几颗珠子 */\nint join_and_count(char bowl[], const char tail[]) {\n    /* ↓ 自己写：\n       ① 把 tail 接在 bowl 屁股后面（箱子里的招式，接过之后 bowl 就变长了）\n       ② 答回去：接完之后整串有几颗珠子 */\n    return 0;\n}\n\nint main(void) {\n    char bowl[64] = \"{w1}\";\n    char tail[] = \"{w2}\";\n\n    int n = join_and_count(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, n);\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 把 tail 接在 bowl 屁股后面，答：接完之后整串有几颗珠子 */\nint join_and_count(char bowl[], const char tail[]) {\n    strcat(bowl, tail);\n    return (int)strlen(bowl);\n}\n\nint main(void) {\n    char bowl[64] = \"{w1}\";\n    char tail[] = \"{w2}\";\n\n    int n = join_and_count(bowl, tail);\n    printf(\"接起来：%s，现在 %d 颗\\n\", bowl, n);\n    return 0;\n}\n",
+  "explanationTemplate": "这一招就两句话喵：**接**用的是 `strcat(dst, src)` —— 把 `src` 那一串连尾巴上的收尾珠子一起抄到 `dst` 屁股后面，**接完 `dst` 自己就变长了**（不是新造一串）；**数**用的是 `strlen(s)` —— 数的是「实际装着几颗珠子」，不是碗有多大。\n\n```text\nstrcat(bowl, tail);\nreturn (int)strlen(bowl);\n```\n\n两个容易咬人的地方：\n\n- **`strlen` 数的是珠子，不是碗**。稿子里 `bowl` 是 `char bowl[64]`，能装 64 颗；接完是 8 颗，`strlen` 答的就该是 8。\n- **`strcat` 有前有后**：接到谁屁股后面，谁写在**前面**。写成 `strcat(tail, bowl)` 就是把整串接到那么小的一个碗后面去 —— 课文里那个坑就是这么掉进去的（翻译官喵一声不吭，跑起来当场摔）。"
+}

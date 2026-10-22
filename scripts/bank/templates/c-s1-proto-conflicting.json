@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-proto-conflicting",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-13",
+  "type": "codefix",
+  "concept": ["招牌", "declaration", "conflicting types", "编译错误"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵把招式的**招牌**挂在了最上面（挂在那儿，`main` 就能摆在中间、一眼看全流程），招式身体写在最下面喵。\n\n可翻译官喵把招牌和真招式一对照，当场就不干了……\n\n你帮本喵看看哪儿对不上号，把它改好。改好之后，程序应该印出 **{a} 加 {b} 的结果**。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint add(int a, int b);\n\nint main(void) {\n    printf(\"%d\\n\", add({a}, {b}));\n    return 0;\n}\n\nint add(int a, int b, int c) {\n    return a + b + c;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint add(int a, int b);\n\nint main(void) {\n    printf(\"%d\\n\", add({a}, {b}));\n    return 0;\n}\n\nint add(int a, int b) {\n    return a + b;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: conflicting types for 'add'`，底下还跟了一句 `note: previous declaration of 'add' with type 'int(int,  int)'` 喵 —— 它把**招牌上写的**和**真招式摆的**都念了出来，两边一比，对不上号。\n\n`conflicting types` 就是「**对不上号**」：招牌说这招收**两只**碗，真招式却摆了三只。\n\n招牌必须和真招式**一字不差地对上** —— 把真招式改回两只碗就好啦。\n\n为什么本喵非要挂这块招牌？因为顺序：翻译官喵是从上往下念的。`main` 在最上面就喊了 `add`，可那时候真招式还没登场 —— 挂块招牌等于提前打了个招呼：「这招待会儿会来，长这样。」没有招牌，它念到 `add({a}, {b})` 的时候压根不认识这个名字。\n\n⚠️ 招牌上的碗**叫什么名字**其实随便（`int add(int x, int y);` 也能对上），**碗的只数和种类**才必须完全一致。"
+}

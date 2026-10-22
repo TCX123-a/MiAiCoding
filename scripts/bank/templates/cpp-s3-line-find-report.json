@@ -1,0 +1,25 @@
+{
+  "templateId": "cpp-s3-line-find-report",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-25",
+  "type": "codewrite",
+  "concept": ["挨着看", "数比了几次", "读一排进碗里", "没找着答负数"],
+  "instances": 6,
+  "params": {
+    "e1": { "kind": "pick", "values": ["3", "30"] },
+    "e2": { "kind": "pick", "values": ["7", "70"] },
+    "t": { "kind": "pick", "values": ["11", "110"] },
+    "e4": { "kind": "pick", "values": ["15", "150"] },
+    "e5": { "kind": "pick", "values": ["19", "190"] }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "5\n{t}\n{e1}\n{e2}\n{t}\n{e4}\n{e5}\n",
+    "sampleText": "4\n{e2}\n{e1}\n{e2}\n{e4}\n{e5}\n"
+  },
+  "stemTemplate": "本喵要把一排鱼干**一只一只挨着看过去**，数一数**比了几次**。\n\n投喂口里递进来的是：先**一共几只**、再**要找的编号**、然后一只一行。样例输入：\n\n```text\n{sampleInput}\n```\n\n你要把 `line_find` 这一招补完（`main` 已经写在稿子里了，别改它）：\n\n1. 从**第一只**开始，一只一只挨着比过去；\n2. **每比一次**，「比了几次」就加一；\n3. 对上了就把次数**答回去**；一整排都比完还没对上，就答一个**负数**。\n\n印出来的格式是写死的：\n\n- 找着了 → 一行 `挨着看：比了 N 次`（N 就是比了几次，**中了的这一下也算**）；\n- 没找着 → 一行 `挨着看：没找到`。\n\n样例跑出来是这样：\n\n```text\n{sampleOutput}\n```",
+  "starterTemplate": "#include <iostream>\n#include <vector>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(const std::vector<int>& a, int target) {\n    /* ↓ 自己写：\n       ① 从第一只开始，一只一只挨着比过去\n       ② 每比一次，「比了几次」就加一\n       ③ 对上了就把次数答回去；一整排都比完还没对上，就答负数 */\n    return -1;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    int target = 0;\n    std::cin >> target;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    int times = line_find(a, target);\n    if (times < 0) {\n        std::cout << \"挨着看：没找到\\n\";\n    } else {\n        std::cout << \"挨着看：比了 \" << times << \" 次\\n\";\n    }\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <vector>\n\n/* 挨着看：从第一只开始一只只比过去，答「比了几次」；一只都没对上就答负数 */\nint line_find(const std::vector<int>& a, int target) {\n    int tries = 0;\n    for (int i = 0; i < static_cast<int>(a.size()); i++) {\n        tries++;\n        if (a[i] == target) {\n            return tries;\n        }\n    }\n    return -tries;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    int target = 0;\n    std::cin >> target;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    int times = line_find(a, target);\n    if (times < 0) {\n        std::cout << \"挨着看：没找到\\n\";\n    } else {\n        std::cout << \"挨着看：比了 \" << times << \" 次\\n\";\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "挨着看的规矩就三条：**从第一只开始**、**每比一次记一笔**、**对上就收工**喵。\n\n最容易写错的是记账的位置：`tries++` 得放在**比之前**。放到后头的话，中了的这一下就没记进账，答出来的次数会比真实的少一 —— 课文里「找最末尾那只要比一整排」那个数就是这么数出来的。\n\n找不着的时候本喵答的是 `-tries`，一个**负数**；`main` 一看是负的就印「没找到」。为什么不干脆答 `0` 呢？因为**「比了 0 次」也是一种次数**（比如一整排本来就是空的）—— 负数才是「压根没找着」的记号，两件事分得开。"
+}

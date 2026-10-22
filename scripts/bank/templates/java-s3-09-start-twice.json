@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-09-start-twice",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-09",
+  "type": "codefix",
+  "concept": ["一只猫只有一辈子", "干完结束的猫不能重开", "当场红"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "c1": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵派一只猫去捞了一趟，还想让它再捞一趟，就又喊了一句 `一只.start();`。\n\n结果头一趟干得好好的，第二句当场翻了脸：\n\n```text\nException in thread \"main\" java.lang.IllegalThreadStateException\n```\n\n读作「**这只猫的状态不对，不许再派**」—— 它已经干完、结束了。\n\n你帮本喵改一改：想再捞一趟，得**另派一只新的猫**。改好之后该印出：\n\n```text\n{n1}捞到 {c1} 条\n{n1}捞到 {c1} 条\n家什收好了\n```\n\n（这一题**不用投喂任何东西**。）",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"{n1}\", {c1});\n\n        一只.start();\n        一只.join();\n        一只.start();\n\n        System.out.println(\"家什收好了\");\n    }\n}\n\nclass Cat extends Thread {\n    String 名字;\n    int 条数;\n\n    Cat(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n\n    public void run() {\n        System.out.println(名字 + \"捞到 \" + 条数 + \" 条\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"{n1}\", {c1});\n\n        一只.start();\n        一只.join();\n\n        Cat 第二只 = new Cat(\"{n1}\", {c1});\n        第二只.start();\n        第二只.join();\n\n        System.out.println(\"家什收好了\");\n    }\n}\n\nclass Cat extends Thread {\n    String 名字;\n    int 条数;\n\n    Cat(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n\n    public void run() {\n        System.out.println(名字 + \"捞到 \" + 条数 + \" 条\");\n    }\n}\n",
+  "explanationTemplate": "**一、一只猫只有一辈子。** `new` 出来是「还没动」，`start()` 之后「出去干活」，那段 `run()` 跑完它就**结束了** —— 结束了的猫不能重新开跑，这是机器定死的规矩，所以第二次 `start()` 当场红。\n\n**二、它红得早、红得清楚。** 头一趟该印的还是印了，翻脸的是第二次那一句 —— 本课里「不红不响」的坑不少，这一处正好相反：它当场把话说清楚。\n\n**三、想再干一趟，就另画一只。** `new Cat(...)` 之后再 `start()`，新猫干新的一趟；指望叫醒同一只，只会再撞上那句红字。\n\n**四、两行印字的先后为什么是稳的。** 两趟之间都夹着 `join()`：每派一只就站门口等它回来，所以先印哪一行、后印哪一行、最后那句 `家什收好了` 摆在哪儿，都是定死的。"
+}

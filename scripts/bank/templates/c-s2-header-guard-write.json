@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-header-guard-write",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-09",
+  "type": "codewrite",
+  "concept": ["防重复包含", "守卫写给谁", "同一个记号名", "编译报错"],
+  "instances": 6,
+  "params": {
+    "GUARD": { "kind": "pick", "values": ["ADD_H", "SUM_H", "TOOL_H"] },
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵的招牌被抄了两遍，翻译官喵当场翻了脸，说本喵**把 `add` 教了两遍**。\n\n请照课文里的样子，给**每一份**招牌都套上守卫 —— 记号名统一用 `{GUARD}`。\n\n```text\n守 卫 是 招 牌 自 己 带 着 的：\n每次被抄回来，它都会把自己那三行一起带进来，\n所以两份都要套，而且用的是同一个记号名。\n```\n\n补好之后跑起来要印一行 `结果 <两数相加的数>`。",
+  "starterTemplate": "#include <stdio.h>\n\n/* ── 第一份招牌 ── */\n\nint add(int a, int b) {\n    return a + b;\n}\n\n/* ── 第二份：照另一本书抄来的同一份招牌 ── */\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    printf(\"结果 %d\\n\", add({a}, {b}));\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n#ifndef {GUARD}\n#define {GUARD}\n\nint add(int a, int b) {\n    return a + b;\n}\n\n#endif\n\n#ifndef {GUARD}\n#define {GUARD}\n\nint add(int a, int b) {\n    return a + b;\n}\n\n#endif\n\nint main(void) {\n    printf(\"结果 %d\\n\", add({a}, {b}));\n    return 0;\n}\n",
+  "explanationTemplate": "守卫是**跟文件走的**喵 —— 它写在招牌自己身上，所以招牌每被抄回来一次，那三行也跟着来一次。\n\n第一遍抄进来的时候：`{GUARD}` 还没登记过 → `#ifndef` 放行 → `#define {GUARD}` 把它登记上 → 招式被抄进来。\n\n第二遍抄进来的时候：`{GUARD}` **已经**登记过了 → `#ifndef` 一看「登记过了，别进来」→ 整段直接跳过，所以招式只有一份，翻译官喵也就没话说了。\n\n最容易写岔的两个地方，本喵都见过：\n\n- **只给第二份套守卫**（第一份光着不套）—— 那么读到第二份的时候，`{GUARD}` **仍然没登记过**（因为第一份没登记它），守卫照样放行，`#define` 反而是在这一段里才把名字登记上的 —— 招式又抄了一遍，照样重复。**两份都要套**才是对的形状。\n- **两份用了不同的记号名**（一份写 `{GUARD}`、另一份顺手写成别的）—— 那第二个名字是没登记过的，守卫等于不存在，照样报 `redefinition`。\n\n三行的样子再念一遍：`#ifndef` 开问、`#define` 记名、`#endif` 收尾 —— 名字从头到尾得是同一个。"
+}

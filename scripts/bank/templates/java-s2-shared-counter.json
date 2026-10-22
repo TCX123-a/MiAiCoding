@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-shared-counter",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-05",
+  "type": "codewrite",
+  "concept": ["整张图纸共用的计数格", "出生那一手在共用格上加一", "一排猫粮碗", "Scanner"],
+  "instances": 6,
+  "params": {
+    "cat": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 2, "max": 5 },
+  "stemTemplate": "这回本喵要数的是「**一共出生过几只猫**」—— 这个数不属于任何一只猫，得开一格**整张图纸共用**的。\n\n要画的东西：\n\n- 图纸 `Cat`：一格共用的计数格（前面加 `static`，起步的数 `0` 就写在图纸里那一行），一盒自己名字的家当；出生那一手里把名字记下来，**再在那一格共用的上`+ 1`**。\n\n`main` 里这么走：读一个数 `n`（要生几只），按编号生 `n` 只，**名字的规矩是「`{cat}` 后面跟上编号」**（第一只叫 `{cat}1`，第二只叫 `{cat}2`，一路数下去）—— 本喵用一排贴编号的猫粮碗把它们装起来。\n\n生完之后印两行：\n\n1. **`一共出生了 ` + 那一格共用的 + ` 只`** —— 念它要挂图纸名；\n2. **`第一只叫 ` + 第一只的名字** —— 从那一排猫粮碗里按编号取第一只。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\nclass Cat {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Cat {\n    static int count = 0;\n    String name;\n\n    Cat(String name) {\n        this.name = name;\n        count = count + 1;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Cat[] cats = new Cat[n];\n        for (int i = 0; i < n; i++) {\n            cats[i] = new Cat(\"{cat}\" + (i + 1));\n        }\n        System.out.println(\"一共出生了 \" + Cat.count + \" 只\");\n        System.out.println(\"第一只叫 \" + cats[0].name);\n    }\n}\n",
+  "explanationTemplate": "本题练的是「**这个数记在哪只猫头上都不对**」这件事喵。\n\n**一、为什么不能记在某只猫身上。** 要是把计数写在每只猫自己那一格里，每生一只新猫，它那一格都从 `0` 起步 —— 数出来的永远是 `1`。这个数**不属于任何一只猫**，它属于整张图纸：所以它前面加 `static`，全院子一共就这一格。\n\n**二、谁去加一。** 加的那一手在**出生那一手**里：`count = count + 1;`。每生一只猫走一遍，走 `n` 遍就是 `n` —— 这跟「几只猫出生过」正好对上。\n\n**三、念法。** 印的时候本喵写 `Cat.count`：挂图纸名，读代码的人一眼就知道「这不是某只猫的一格，是全院共用的那格」。同理，那一格如果拿某只猫去念（`a.count`），翻译官喵也认，可它印出来还是**全体共用的**那个数，只会让人误会。\n\n**四、它是盖房子式的累加。** `count = count + 1;` 是「在原来那个数上再添一」，不是「把它改成 1」—— 这两句看着像，结果差得远：改成一那种写法，生一百只也只数得出 `1`。共用的格子最怕这一手，因为一处写错，全院子的数全跟着错喵。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-short-circuit-order",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-05",
+  "type": "codewrite",
+  "concept": ["&& 的偷懒", "短路顺序", "除以 0 当场断气"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 0, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{a}\n", "sampleText": "{b}\n" },
+  "stemTemplate": "本喵想知道两件事**是不是同时成立**：\n\n- 「投喂口递进来的那个数**不是 0**」\n- 「10 除以它，结果**大于 1**」\n\n两件都成立就印 `1`，只要有一件不成立就印 `0`。\n\n有一条得先说清楚喵：**递进来的数可能是 0**。要是你让「10 除以它」抢在「它不是 0」前面算，程序会**当场断气** —— 屏幕上什么交代都没有，后面的字一个都不会印出来。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    scanf(\"%d\", &n);\n    printf(\"%d\\n\", n != 0 && 10 / n > 1);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题考的是这一课最机灵的一条规矩喵：**`&&` 和 `||` 会偷懒。**\n\n它们从左往右看，**左边一旦能定下结果，右边就不看了**：\n\n- `n != 0 && 10 / n > 1` —— 先问「n 不是 0」。要是它正好是 0，左边就是假，「同时成立」这件事已经**不可能**了，于是右边那个除法**根本不会被算**，程序平安无事；\n- 反过来写成 `10 / n > 1 && n != 0` —— 它先算除法。`n` 是 0 的时候，**除以 0** 是当场断气的（不是报个错，是当场没气），后面那句再聪明也来不及了。\n\n所以顺序不是「写得好看不好看」的问题，是**活不活得下来**的问题喵。\n\n把这条记成一句话：**先问「安全不安全」，再问「结果对不对」。**\n\n（另外记住：`&&` 和 `||` 给出的答案只有两个 —— 真（1）和假（0）。所以这一整句能直接交给 `printf` 念出来。）"
+}

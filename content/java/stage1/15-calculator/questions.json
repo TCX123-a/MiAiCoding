@@ -1,0 +1,83 @@
+{
+  "lessonId": "java-stage1-15",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "这台计算器的菜单绕圈里，哪一句负责「不再问了、收工」喵？",
+      "options": [
+        "`break;`——它被走到的那一圈，整个圈子当场收工",
+        "`continue;`——它跳过这一圈，圈子接着问下一位",
+        "`while (true)` 的眼色——它自己会变成假，圈子就停了",
+        "印完「收工啦喵～」之后，程序自己就停了"
+      ],
+      "answer": 0,
+      "explanation": "客人报到「收工」那一项时，本喵先印一句告别，紧接着就是 `break;`——**它一被走到，整个圈子当场停下**，后面的句子不跑了，程序接着往下走喵。`continue;` 是「这一圈先不算，圈子接着转」，它收不了工；`while (true)` 的眼色**永远答真**，光靠它自己这个圈一辈子停不下来——这正是本喵非写 `break` 不可的理由；至于印字那一句，它只会印字，印完了程序照样往下跑，能停住圈子的是 `break`，不是它喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`catch (ArithmeticException e)` 这一行里，前面那个 `ArithmeticException` 是干什么用的喵？",
+      "options": [
+        "它说的是「本喵要接住的是哪一种岔子」——只有算术那一种会被接住，别的照旧把程序按停",
+        "它是给接住的那份情报起的名字",
+        "它是 `catch` 后面那个参数的声明类型",
+        "它是一句眼色，答真的时候才会接住"
+      ],
+      "answer": 0,
+      "explanation": "`catch` 小括号里有两样东西，本喵一个一个说喵：**前一样 `ArithmeticException` 是「接哪一种」**——就是刚才那摞红字里「除以零」的大名，只有那种岔子（和它的兄弟们）会被接住，别的照旧把程序按停。**后一样 `e` 才是给接住的那份情报起的名字**，随你起，写 `err` 也行——反正接下来本喵多半只是印一句安慰话，用不上那份情报。它既不是招式名（招式名写在打头那一行），也不是眼色（眼色是 `if` 小括号里那种问真假的式子）喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "纸条上写着 `4 7 2`，本喵的 `share(7, 2)` 会叼回什么喵？",
+      "options": ["`3`", "`3.5`", "`4`", "`2`"],
+      "answer": 0,
+      "explanation": "7 条小鱼干平均分给 2 只猫，本喵这台机器算的是**整条**：每只猫分到 3 条整，剩下那 1 条不分了，所以叼回来的是 `3` 喵。想让零头留下来，得让算式里至少有一边带上小数点（`7 / 2.0` 就得 `3.5`）——那是运算符那一课讲过的老规矩，本喵这台机器先只装整份的。`4` 是把零头往前进了一位，`2` 是猫的只数，两个都不是这一招的答案喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int mul(int a, int b) {\n        return a * b;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(add(2, mul(3, 4)));\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "14",
+      "accept": ["14\n"],
+      "explanation": "本喵是从**最里面那对括号**开始算的：先喊 `mul(3, 4)`，叼回 `12`；这一下算出来的东西当场当成 `add` 的第一样料喂进去，于是 `add(2, mul(3, 4))` 就是「喊 `add(2, 12)`」，叼回 `14`，再被 `println` 印到屏幕上喵。**喊招式的写法跟一个值一样好使**——里层叼回来的战利品，能直接塞进外层当料用，一层一层套着算喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int share(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(\"4 8 2\\n4 9 0\\n0\");\n        while (true) {\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            try {\n                System.out.println(\"结果是 \" + share(a, b));\n            } catch (ArithmeticException e) {\n                System.out.println(\"没有猫来分，这条算不了喵\");\n            }\n        }\n        System.out.println(\"收工啦喵～\");\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "结果是 4\n没有猫来分，这条算不了喵\n收工啦喵～",
+      "accept": ["结果是 4\n没有猫来分，这条算不了喵\n收工啦喵～\n"],
+      "explanation": "纸条上排着三单，本喵一单一单念喵：第一单 `4 8 2`——平均分，8 条分给 2 只猫，`share` 叼回 `4`，印出「结果是 4」；第二单 `4 9 0`——还是平均分，可这回是分给 0 只猫，`share` 里当场闹脾气，被 `catch` 接住，于是印出本喵写好的那句安慰话，**注意圈子没有停**；第三单 `0`——客人报了收工，`break` 把圈子停下，圈外面那句「收工啦喵～」接着印出来。三单对三行，正好喵。"
+    },
+    {
+      "id": "q6",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int share(int a, int b) {\n        return ____;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(add(3, 5));\n        System.out.println(share(7, 2));\n    }\n}",
+      "stem": "本喵把第一步那台计算器里最关键的两招抄了下来：喊 `add(3, 5)` 要印出 8，喊 `share(7, 2)` 要印出 3。**`share` 的身子里缺了一句**——两样料都进了投喂口（招里管它们叫 `a` 和 `b`），这一招要把「分一分」的答案叼回来。这个空补上喵。",
+      "blanks": [
+        { "answer": "a / b", "accept": ["a/b"] }
+      ],
+      "explanation": "空里要写的是「`a` 除以 `b`」，补全了就是 `return a / b;` 喵：`share` 的打头写着 `int`，所以身子里得用 `return` 把算出来的东西叼回去；`/` 这个记号在运算符那一课见过，管的就是平均分。填好之后喊 `share(7, 2)`，7 除以 2 得 `3`（整条鱼干，零头不分），上面那句 `add(3, 5)` 印出 `8`。要是把 `return` 漏了、或者把 `a` 和 `b` 写反了，屏幕上落下来的数就不对了喵。"
+    },
+    {
+      "id": "q7",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.Scanner;\n\npublic class Calculator {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(\"0\");\n        while (____) {\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                ____;\n            }\n        }\n    }\n}",
+      "stem": "菜单绕圈的骨架本喵留了两个空：客人报到「收工」之前，这个圈要一直问下去；报到「收工」的那一圈，就当场停下。纸条上只有一句 `0`——也就是说，第一位客人一开口就喊收工。两个空补上喵。",
+      "blanks": [
+        { "answer": "true" },
+        { "answer": "break" }
+      ],
+      "explanation": "第一个空写 `true`：这个圈的眼色**永远答真**，客人不喊收工就一直问下去喵（`while` 的小括号里要的是一块问真假的牌子，那块牌子只有 `true` 和 `false` 两种，塞数字进去翻译官喵不认）。第二个空写 `break`：它是这台机器的关机键——客人报到 `0` 的那一圈撞上它，**整个圈子当场停下**。填好了跑一遍：纸条上那句 `0` 被读到，屏幕印出「收工啦喵～」，圈子收工喵。"
+    }
+  ]
+}

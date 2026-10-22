@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage3-03",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想往柜子的**最前面**塞一条鱼干，就照老习惯写了一句 `v.push_front(1)` —— 结果翻译官喵当场拦下，说这只柜子**没有这一招**。本喵说的是哪一只柜子？",
+      "options": [
+        "`vector` —— 它的元素连续存放，压根没有从前面插入的函数",
+        "`list` —— 它只会从后面接",
+        "`deque` —— 它只能报编号取货",
+        "三只都没有这一招，鱼干永远只能往后塞"
+      ],
+      "answer": 0,
+      "explanation": "`vector` 的货在屋里是**挨着坐**的：想在最前面腾出一格，身后每一格都得往后挪一次 —— 货越多挪得越累。所以 C++ 干脆不给它这一招，翻译官喵的原话是「没有一位叫 `push_front` 的成员」。而 `list` 和 `deque` 这两只柜子**两只手都能塞**：`push_back` 接后面、`push_front` 接前面，这种活儿交给它们就好喵～"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵在一只链子柜上写了一句 `l[0]`，想让翻译官喵把第一格递过来。会怎样喵？",
+      "options": [
+        "当场编不过 —— 这只柜子没有「报编号取货」这一招",
+        "印出第一格里的货",
+        "印出一个 `0`",
+        "把第一格里的货抽掉"
+      ],
+      "answer": 0,
+      "explanation": "链子柜里的货**不挨着坐**：每格身上只有一张写着「下一格在哪儿」的小牌子，所以「第 3 格在哪儿」这个问题没有一步到位的答案 —— 它压根没有报编号取货这一招，翻译官喵会甩一句 `no match for 'operator[]'`。想要「第几格」得**自己数**：拿爪子从 `l.begin()` 出发，一直走到 `l.end()`，另备一个从 0 起的数，每走完一格加一喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵手上有个活儿：**老要往两头塞货，还要经常按编号取货**。三只柜子里该请哪一只？",
+      "options": [
+        "`deque` —— 两头都能塞，编号也报得了",
+        "`vector` —— 老伙计了，最稳",
+        "`list` —— 它两头都能接",
+        "三只随便挑，反正都装得下"
+      ],
+      "answer": 0,
+      "explanation": "这个活儿要两样本事：**两头塞**和**报编号**。`vector` 报得了编号，却没有从前面塞的那一招；`list` 接得了前面，却报不了编号（`l[0]` 编不过）；只有 `deque` 两样都齐。挑柜子就是挑本事 —— 缺哪一样，活儿都干不顺喵～"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <deque>\nusing namespace std;\n\nint main() {\n    deque<int> d;\n    d.____(3);\n    d.____(1);\n    cout << d[0] << endl;\n    cout << d.size() << endl;\n    return 0;\n}",
+      "stem": "本喵想让这只柜子**从前往后**是 `1`、`3`（也就是最后 `d[0]` 印出 `1`）。代码里两个 `____` 该分别填哪一招？",
+      "blanks": [
+        { "answer": "push_back", "accept": [] },
+        { "answer": "push_front", "accept": [] }
+      ],
+      "explanation": "第一句塞进去的是 `3`，它最后排在**后面** —— 所以那一句是往后面塞的 `push_back` 喵。第二句塞进去的是 `1`，它顶到了**最前面** —— 那是 `push_front`：越晚从前面的塞，越靠前。填好跑一遍，`d[0]` 印 `1`、`d.size()` 印 `2`。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <list>\nusing namespace std;\n\nint main() {\n    list<int> l;\n    l.push_back(4);\n    l.push_front(6);\n    l.push_back(2);\n    for (int x : l) {\n        cout << x << endl;\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？（一行一行照抄）",
+      "answer": "6\n4\n2",
+      "accept": ["6\n4\n2\n"],
+      "explanation": "`l.push_back(4)` 把 `4` 接在**后面**，`l.push_front(6)` 把 `6` 顶到**最前面**，`l.push_back(2)` 再把 `2` 接到最后 —— 所以从前往后是 `6`、`4`、`2`。链子柜虽然不能报编号，但两头塞的本事和 `deque` 一样：**越晚从前面塞的越靠前**喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <deque>\nusing namespace std;\n\nint main() {\n    deque<int> d;\n    d.push_back(4);\n    d.push_front(6);\n    d.push_back(2);\n    cout << d[0] << endl;\n    cout << d[d.size() - 1] << endl;\n    return 0;\n}",
+      "stem": "同一批货、同样的塞法，这回改用**报编号取货**。这段代码的输出是什么？（一行一行照抄）",
+      "answer": "6\n2",
+      "accept": ["6\n2\n"],
+      "explanation": "`d.push_back(4)` 塞后面、`d.push_front(6)` 顶到最前面、`d.push_back(2)` 再塞后面 —— 柜子里从前往后是 `6`、`4`、`2` 喵。所以 `d[0]`（头一格）印 `6`；`d[d.size() - 1]` 是**最后一格**的编号写法：柜子三格，最后一格的编号是 3 减 1 等于 2，印出 `2`。上一题那只链子柜只能一格一格走，这只报个编号就拿到了。"
+    }
+  ]
+}

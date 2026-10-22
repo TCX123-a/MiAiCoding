@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-blueprint-static-call",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-12",
+  "type": "codefix",
+  "concept": ["图纸与真猫", "static", "非静态方法", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵照着图纸喊了一声「喵～」，翻译官喵压根不认：原话里有一句 `cannot be referenced from a static context`，说这一招**站在 `main` 里喊不动**。\n\n你帮本喵按图纸的正路改好：先照图纸生一只真猫、给它挂上名字 `{name}`，再让**这一只**自己喊。\n\n改好之后，屏幕上该是这一行：\n\n```text\n{name}：喵～\n```",
+  "brokenCodeTemplate": "class Cat {\n    String name;\n\n    void meow() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat.meow();\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    String name;\n\n    void meow() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat();\n        c.name = \"{name}\";\n        c.meow();\n    }\n}\n",
+  "explanationTemplate": "原话是 `non-static method meow() cannot be referenced from a static context` —— 「`meow()` 这一招不是 `static` 的，站在 `static` 的地方喊不动它喵。」\n\n两边各有各的道理，凑一块儿就撞：\n\n- `meow()` 画在图纸上、**跟着每一只真猫走** —— 它身子里那句 `name`，动的是「**这一只**猫」的家当。可 `Cat.meow()` 这么喊，连猫都还没生出来，翻译官不知道它要动谁的名字。\n- `main` 前面那个 `static` 是另一层意思：它**不跟着任何一只真猫走**，电脑一开演就从它开始。本喵站的这块地方是 `static` 的，所以喊不动「一只还不存在的猫」的招式。\n\n正路只有一条：**先生一只真猫，再让这只猫自己喊** —— `Cat c = new Cat();` 生猫、`c.name = \"{name}\";` 挂名字、`c.meow();` 让它自己叫。\n\n`c.meow()` 和 `Cat.meow()` 只差一个字，意思差得远：前者是「**{name}**，叫一声」，后者是「**猫这个种类**，叫一声」—— 后者连是谁都没说清喵。"
+}

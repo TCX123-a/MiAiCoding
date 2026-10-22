@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-with-exception",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-02",
+  "type": "codewrite",
+  "concept": ["岔子穿过 with 时照样合门", "with 保证落盘", "自己合门与替我合门"],
+  "instances": 6,
+  "params": {
+    "book": { "kind": "pick", "values": ["账本.txt", "小账本.txt", "喵喵账.txt"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 1, "max": 9 },
+  "stemTemplate": "本喵今天想试试**门里的活干砸了会怎么样**喵。\n\n**外面给的是一行数**（今天收的小鱼干条数）。\n\n请你写个程序：\n\n① 用 `with` 打开册子 `{book}`，方式是**撕掉重写**（就是那个 `w`），先写进去一行 `记一笔 N`（N 就是读进来的那个数，原样用）。\n② **这一行写完、门还没合上**的时候，故意抛一个 `RuntimeError` 出来（那句话后面写什么随你）。\n③ 用 `try` / `except RuntimeError` 把这个岔子接住，接住之后先印一行 `摔了一跤，册子已经合上`。\n④ 最后再开一个 `with` 把册子读回来，印一行 `册子里有：记一笔 N`。\n\n⚠️ **不许自己叫 `close`**。\n\n比如外面给的是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "try:\n    with open(\"{book}\", \"w\", encoding=\"utf-8\") as 册子:\n        册子.write(\"记一笔 \" + input() + \"\\n\")\n        raise RuntimeError(\"手滑了\")\nexcept RuntimeError:\n    print(\"摔了一跤，册子已经合上\")\n\nwith open(\"{book}\", encoding=\"utf-8\") as 册子:\n    print(\"册子里有：\" + 册子.read().strip())\n",
+  "explanationTemplate": "这道题要的就是那**一次实测**喵：门里的活干砸了，门会不会照样合上？\n\n答案是会。`with` 出门那一步**不管门里是怎么出来的**都会跑：正常走到门口也跑，半路摔出来也跑。所以那一行字该落盘的照样落盘 —— 后面那个块读回来，一个字都不少。\n\n⚠️ 这一条值得自己拆开试一次：把 `with` 换成「先 `open`、写完直接抛岔子」，那个负责合门的 `close` 就**永远轮不到跑**了 —— 门一直敞着，字还揣在翻译官喵的兜里没落盘。（本喵实测过：这么写、然后**另开一个门**去读，读回来是空荡荡的。）\n\n**这就是「自己合门」和「替我合门」的分水岭**：自己合门靠的是「记得合」，而岔子一来，`close` 那一行排在后面、根本轮不到它跑；`with` 把这份责任揽到了自己身上，所以写得再乱也漏不掉。\n\n顺带把顺序理一遍：`摔了一跤` 那一行是 `except` 里印的，它**在门合上之后**才出现 —— 门里那声喊得先出了门，外面才接得住。"
+}

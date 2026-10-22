@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-array-off-by-one",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-09",
+  "type": "codefix",
+  "concept": ["编号从 0 起", "最大编号是碗数减一", "越界不报错"],
+  "instances": 2,
+  "params": {
+    "vals": { "kind": "pick", "values": ["10, 20, 30, 40", "12, 22, 32, 42", "8, 16, 24, 32"] }
+  },
+  "stemTemplate": "本喵摆了四只碗，想把它们一只一只报出来：第几只碗、里面有多少条。\n\n可这段代码只报了三只就收工了 —— 最后一只碗一句话都没说。你帮本喵改对：**四只碗都要报到**，格式是一行一只碗，`第 %d 只碗里有 %d 条喵`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[4] = {{vals}};\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只碗里有 %d 条喵\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[4] = {{vals}};\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"第 %d 只碗里有 %d 条喵\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一课的规矩只有一句话，可它偏偏最容易摔：**一只碗一个编号，编号从 0 起，所以最大编号永远是碗数减一**喵。\n\n四只碗的编号是 0、1、2、3；而「有几只碗」数出来是 4。眼色写 `i < 3`，只放行了 0、1、2 —— 3 号那只碗压根没进过圈。\n\n**而且 C 一个字都不会提醒你。** 它既不会说「你少报了一只」，也不会说「这排碗有几只」—— 它只是安安静静地把圈跑完。所以遍历一排碗的时候，眼色写 `i < 碗数` 才是把每一只都走一遍。\n\n⚠️ 反方向也一样危险：写成 `i <= 4`（多走一圈），它会去摸编号 4 的那一格 —— **而那一格根本不属于这排碗**。C 依然一声不响，伸手就摸：摸到的是别人家的东西，印出来是什么谁也说不准，**同一段代码跑两次都可能不一样**。所以报编号之前，在心里数一遍：这排碗有几个格？最大编号是几？\n\n碗数不方便写死的时候，还能让翻译官喵自己量：`sizeof(bowls) / sizeof(bowls[0])` 就是碗的只数。两条路随便走哪条，只要别差那一位喵。"
+}

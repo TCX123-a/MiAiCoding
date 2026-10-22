@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-27-three-steps-write",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-27",
+  "type": "codewrite",
+  "concept": ["三条招式从零就位", "谁被使唤谁先站稳", "相差不用自己量"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "最后一题从**空手**开始喵：工程里要用到三条招式 —— `minWeight`（最轻的那条）、`maxWeight`（最重的那条）、`span`（两者的相差）。三条**都还没就位**，而门房（`main`）已经站在门口等着使唤它们了。\n\n请你把这三条补到 `main` 前面去：**先就位，再进主流程。**（`span` 不用自己从头量 —— 直接使唤前两条就好。）\n\n比如投喂给程序的是：\n\n```text\n{sampleInput}\n```\n\n补好之后就要叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外一组数；`main` 那一段一个字都别动。）",
+  "starterTemplate": "#include <iostream>\n#include <vector>\n\n/* 三条招式都还没有就位：最轻、最重、两者相差 */\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> ws(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> ws[i];\n    }\n    std::cout << \"最轻 \" << minWeight(ws) << \"，最重 \" << maxWeight(ws) << \"，相差 \" << span(ws) << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <vector>\n\nint minWeight(const std::vector<int>& ws) {\n    int best = ws[0];\n    for (int i = 1; i < static_cast<int>(ws.size()); i++) {\n        if (ws[i] < best) {\n            best = ws[i];\n        }\n    }\n    return best;\n}\n\nint maxWeight(const std::vector<int>& ws) {\n    int best = ws[0];\n    for (int i = 1; i < static_cast<int>(ws.size()); i++) {\n        if (ws[i] > best) {\n            best = ws[i];\n        }\n    }\n    return best;\n}\n\nint span(const std::vector<int>& ws) {\n    return maxWeight(ws) - minWeight(ws);\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> ws(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> ws[i];\n    }\n    std::cout << \"最轻 \" << minWeight(ws) << \"，最重 \" << maxWeight(ws) << \"，相差 \" << span(ws) << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "现在的骨架是**会当场翻脸**的：门房里连喊三声 `minWeight`、`maxWeight`、`span`，可这三个名字在它头顶上一个都没报过 —— 翻译官喵从没见过它们（原话 `was not declared in this scope`，念作「**这名字我不认识**」）。\n\n所以要做的第一件事不是「写正文」，而是让主流程**开口之前就见过这三个名字**。最省事的做法：把三条正文**直接写在 `main` 前面** —— 每条正文本身，就是一次「报名 + 交代正文」。\n\n```cpp\nint span(const std::vector<int>& ws) {\n    return maxWeight(ws) - minWeight(ws);\n}\n```\n\n`span` 这条最妙：它自己**不量**，只是把前两条的收成减一减 —— 但这也要求它站的位置**在 `maxWeight` 和 `minWeight` 后面**：前面两位没就位，它张嘴也使唤不动。\n\n顺序对一眼：\n\n1. 谁要被别人使唤，谁就先站稳；\n2. 门房 `main` 永远排最后；\n3. 三条的形态和题面要求逐字对齐（`const` 和 `&` 都在）。\n\n⚠️ 最后记一句本课总纲：**名字先就位，正文跟着名字走，门房排最后。** 真工程的「登记表 + 正文 + 拼装」流水线，就是这三条顺序长大之后的样子喵。"
+}

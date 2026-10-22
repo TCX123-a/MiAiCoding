@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s3-dp-factory-mixed-up",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-14",
+  "type": "codefix",
+  "concept": ["领养处按报的名字挑", "分支和递出去的品种要对得上", "来领猫的地方不知道品种是怎么造的"],
+  "instances": 2,
+  "params": {
+    "v1": { "kind": "pick", "values": ["喵～", "咪～"] },
+    "v2": { "kind": "pick", "values": ["喵嗷", "嗷呜"] },
+    "v3": { "kind": "pick", "values": ["喵呜", "呜喵"] },
+    "f": { "kind": "pick", "values": ["花", "杂毛"] }
+  },
+  "stemTemplate": "本喵开了间领养处，可发出来的猫不对喵：报「橘」的那位，领到的是一只狸花猫。\n\n毛病在**领养处那一段**，你看一眼就明白了。别的都别动（各品种自己的图纸一个字都别碰）。改好之后，程序该印出**三行**，每行写 `花色 -> 叫声`。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "public class Main {\n    static abstract class 小猫 {\n        abstract String 叫声();\n    }\n\n    static class 橘猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v1}\";\n        }\n    }\n\n    static class 狸花猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v2}\";\n        }\n    }\n\n    static class 三花猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v3}\";\n        }\n    }\n\n    static 小猫 领养一只(String 花色) {\n        if (花色.equals(\"橘\")) {\n            return new 狸花猫();\n        }\n        if (花色.equals(\"狸花\")) {\n            return new 狸花猫();\n        }\n        return new 三花猫();\n    }\n\n    public static void main(String[] args) {\n        for (String 花色 : new String[]{\"橘\", \"狸花\", \"{f}\"}) {\n            System.out.println(花色 + \" -> \" + 领养一只(花色).叫声());\n        }\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    static abstract class 小猫 {\n        abstract String 叫声();\n    }\n\n    static class 橘猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v1}\";\n        }\n    }\n\n    static class 狸花猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v2}\";\n        }\n    }\n\n    static class 三花猫 extends 小猫 {\n        @Override\n        String 叫声() {\n            return \"{v3}\";\n        }\n    }\n\n    static 小猫 领养一只(String 花色) {\n        if (花色.equals(\"橘\")) {\n            return new 橘猫();\n        }\n        if (花色.equals(\"狸花\")) {\n            return new 狸花猫();\n        }\n        return new 三花猫();\n    }\n\n    public static void main(String[] args) {\n        for (String 花色 : new String[]{\"橘\", \"狸花\", \"{f}\"}) {\n            System.out.println(花色 + \" -> \" + 领养一只(花色).叫声());\n        }\n    }\n}\n",
+  "explanationTemplate": "坏版本印出来是这样三行喵：\n\n```text\n橘 -> {v2}\n狸花 -> {v2}\n{f} -> {v3}\n```\n\n毛病只有一处：**「橘」那一支递出来的是狸花猫**（`return new 狸花猫();`）—— 分支报的名字和递出去的品种对不上。所以报「橘」的领到的是狸花猫，叫声跟第二行一模一样；只有报「{f}」的那位走了兜底，才是三花猫。\n\n改法就是把那一支换成对得上的：`return new 橘猫();`。\n\n这里把领养处的好处也顺带看一眼：**来领猫的地方一个字都没改**（`main` 里那句还是照花色报，它不知道品种是怎么造的，也不该知道）。这一课的摆法就是这样 —— 要改，只改领养处这一处喵。"
+}

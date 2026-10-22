@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-07-lock-guard",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-07",
+  "type": "codewrite",
+  "concept": ["还藏在析构里", "提前出门也不漏", "配对的事交给牌子"],
+  "instances": 6,
+  "params": {
+    "what": { "kind": "pick", "values": ["鱼干", "鱼汤", "鱼罐头"] }
+  },
+  "stemTemplate": "库房门上挂着锁，本喵有两个老招式：`lock()` 印一行 `锁上`，`unlock()` 印一行 `开锁`。骨架里那个空着的 `Locker` 牌子是留给你的。\n\n请你写这块牌子和招式 `work`：\n\n1. 写一块 `Locker` 牌子 —— **它一出生就上锁**，**死去时开锁**（本喵不想再手写 `unlock()` 了）；\n2. 招式 `work(bool early)` 里：先请出这块牌子，然后印一行 `在屋里翻{what}`；\n3. 要是 `early` 为真，`work` 就**提前出门**（后面的印字跳过）。\n\n`main` 那边已经写好了，你不用动：它先喊一次 `work(false)`、印一行 `---`、再喊一次 `work(true)`、最后印一行 `收工`。\n\n跑起来要叼回这 7 行：\n\n1. `锁上`\n2. `在屋里翻{what}`\n3. `开锁`\n4. `---`\n5. `锁上`\n6. `开锁`\n7. `收工`\n\n盯住第 5、6 行喵：第二趟**什么都没翻就提前出门了**，可锁照样开了 —— 因为「开锁」这件事本喵是写在牌子的**生死**里的。",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nvoid lock() { cout << \"锁上\" << endl; }\nvoid unlock() { cout << \"开锁\" << endl; }\n\nstruct Locker {\n\n};\n\nvoid work(bool early) {\n\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nvoid lock() { cout << \"锁上\" << endl; }\nvoid unlock() { cout << \"开锁\" << endl; }\n\nstruct Locker {\n    Locker() { lock(); }\n    ~Locker() { unlock(); }\n};\n\nvoid work(bool early) {\n    Locker l;\n    if (early) {\n        return;\n    }\n    cout << \"在屋里翻{what}\" << endl;\n}\n\nint main() {\n    work(false);\n    cout << \"---\" << endl;\n    work(true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题是黄金法则最典型的一张脸喵 —— 上锁和开锁**天生是一对**，配对的活儿最适合交给牌子的生死：\n\n- `Locker` 的出生招式里喊 `lock()`（进门就领）；\n- 收尾招式里喊 `unlock()`（出门就还）。\n\n于是 `work` 里只剩一件事要记：**在还锁着的时候把活儿干了**（印 `在屋里翻{what}`）。提前出门那一趟，`return` 把印字跳过去了，可牌子早就在它出生的那片花括号里活着 —— `work` 走到头它就得死，死了就开锁。所以第 5、6 行整整齐齐。\n\n⚠️ 两处容易写歪：\n\n① 忘了写 `~Locker()` 那一半 → 锁只上不开（本喵这门就再也推不开了，而且程序不报错）；\n② 把 `unlock()` 也手写一遍 → 开锁会被喊两次，跟本喵抢着还（牌子会跟手写的那句打架）。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-15-savings-interest",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-15",
+  "type": "codewrite",
+  "concept": ["照着老图纸画一张新的", "新图纸多记一格利率", "利息用整数相除"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要给柜台添一张**储蓄账户**的图纸。投喂口会**先给一个数**（要存几笔），**再一笔一笔给金额**喵。\n\n请你这么办：\n\n1. **画一张账目图纸**（名字你自己起）：两格家底 —— 卡号（一串小鱼干的项链）和余额（整数）；再给外面留一手**存钱**：每存一笔，就印一行 `卡号` + 一个空格 + `存进 ` + 金额 + ` 条，现在 ` + 余额 + ` 条`；\n2. **照着这张图纸再画一张储蓄账户图纸**：自己**多记一格「利率」**（出生的时候喂 10 进去），多留一手**算利息**：余额 × 利率 ÷ 100（两个整数相除，除不尽的小数点后面直接切掉）—— 老图纸那两格和那一手存钱，新图纸一个字都不许重抄；\n3. 读进那个数，再一笔一笔读进金额，**每一笔都当存进来的**（喊存钱那一手）；卡号就叫 `S1`，一开始里面就有 60 条；\n4. 号码走完，最后**再印一行**：`利息 ` + 算出来的数 + ` 条`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Account {\nprotected:\n    string id;\n    int balance;\npublic:\n    Account(string i, int b) : id(i), balance(b) {}\n\n    void save(int amount) {\n        balance = balance + amount;\n        cout << id << \" 存进 \" << amount << \" 条，现在 \" << balance << \" 条\" << endl;\n    }\n};\n\nclass SavingsAccount : public Account {\nprotected:\n    int rate;\npublic:\n    SavingsAccount(string i, int b, int r) : Account(i, b), rate(r) {}\n\n    int interest() {\n        return balance * rate / 100;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    SavingsAccount s(\"S1\", 60, 10);\n\n    for (int i = 0; i < n; i++) {\n        int amount = 0;\n        cin >> amount;\n        s.save(amount);\n    }\n\n    cout << \"利息 \" << s.interest() << \" 条\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n{sampleOutput}\n```\n\n这道题就是这一课的第二条主线：**图纸套图纸，各加一格**。\n\n- **`SavingsAccount` 那张图纸自己只写了一格 `rate` 和一手 `interest()`** —— 卡号、余额、存钱那一手，全是从老图纸那儿接过来的，一个词都没重抄；\n- **存钱那一行是老图纸那一手印的**：新图纸上连 `save` 都没写，喊了照样管用，印出来的格式跟老图纸一模一样；\n- **出生那一手分两步**：先把卡号和余额递回给老图纸那一手（`Account(i, b)` 写在最前面），再管自己多出来的那一格（`rate(r)` 跟在后面）—— 次序颠倒或者忘了递料，翻译官喵当场拦下；\n- **`interest()` 里能直接喊 `balance`**：那一格挂在 `protected:` 下面，照着老图纸画下来的新图纸够得着；\n- **`balance * rate / 100`**：两个整数相除，除不尽的小数点后面直接切掉。比如余额 71、利率 10，就是 `71 * 10 / 100 = 7` 条（不是 7.1）。\n\n⚠️ 三条钉住：\n\n1. **别把老图纸那两格在新图纸上再抄一遍**（写成自己名下新加的格子）。那样写出来的东西编译得过，可老图纸那一手存钱认的是**自己那两格**：本喵真跑过这么一版 —— 存了 40 条之后屏幕上印「现在 100 条」（老图纸那一手动的是老图纸自己那格），紧接着利息却是 `6` 条（新抄回来那格还停在开户当天的 60，存进去的钱它压根没看见）。数字看着像模像样，其实是**两本账**。\n2. **递料写的是图纸名加一对圆括号**（`Account(i, b)`），不是 `id(i)` 这种把老图纸的格子当自己格子写。\n3. **最后那一行印的是算出来的那个数**，不是把余额印一遍。本喵真跑过：余额和利息**是两回事**（余额 71 的时候利息是 7）。"
+}

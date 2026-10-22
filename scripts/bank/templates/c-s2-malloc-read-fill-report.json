@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-malloc-read-fill-report",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-04",
+  "type": "codewrite",
+  "concept": ["malloc", "sizeof", "NULL", "free", "指针"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫罐头", "冻干块"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要开一场猫猫大会喵，来几只猫就发几条{unit}。这次一共要来 {n} 只。\n\n请你写个程序：**先读进来一个数**（就是来几只猫），**再读进来 {n} 行数**（一行一个，是每只猫要几条{unit}）。给这些数**现要现租**一块地方，一间一间装进去；然后从第 0 间开始一间一间报出来；最后再单独报一行总数（所有数加起来）。\n\n用完了记得把租来的地方还回去喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int *rooms = (int *)malloc(sizeof(int) * n);\n    if (rooms == NULL) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &rooms[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 间：%d 条{unit}\\n\", i, rooms[i]);\n        total += rooms[i];\n    }\n    printf(\"一共 %d 条{unit}\\n\", total);\n\n    free(rooms);\n    rooms = NULL;\n    return 0;\n}\n",
+  "explanationTemplate": "这道题正好把这一课的四件事串了一遍喵：\n\n**① 先量一间，再乘间数。** 仓库是论**字节**租的，所以不能只说「本喵要 {n} 间」—— 得让翻译官喵先拿尺子量出一间多大（`sizeof(int)`），再乘上间数。这两个顺序反了，意思就完全不同了。\n\n**② 租完先看一眼是不是空的。** 地方不是随时都有，`malloc` 叼回来的牌子有可能是 `NULL`。空牌子上什么都没有，直接伸手去摸就会摔 —— 所以摸之前先看一眼。\n\n**③ 牌子拿到手，一间一间按编号摸。** `rooms[0]` 是第 0 间、`rooms[1]` 是第 1 间，和贴编号的猫粮碗一模一样；所以「读进来」和「装进去」这两步可以在同一个转圈里做完。\n\n**④ 用完了要还。** `free(rooms)` 把整排仓库还给管理员，再把牌子擦成 `NULL`，免得下次误以为它还能用。\n\n⚠️ 还回去之后那一排就**不是你的**了，别再去摸 —— 这一点下一课串链子的时候会天天用到喵。"
+}

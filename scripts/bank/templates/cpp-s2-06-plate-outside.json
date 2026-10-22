@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-06-plate-outside",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-06",
+  "type": "codefix",
+  "concept": ["盒子扣着盖子", "图纸外面够不着", "公开招式替它说话"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 2, "max": 3 },
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "本喵把图纸上的两栏都收进了带盖的那一档（只有图纸自己的招式够得着），出生招式也写好了。\n\n可 `main` 里那句直接去够盒子里的条数，翻译官喵**不收**——它说那里是私事。\n\n你帮本喵改成能跑的写法：**不要让图纸把盖子掀开**，让盒子里的东西还能被念出来。**出生招式那一行别动，两只碗里的数也一个都不用改。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n};\n\nint main() {\n    Cat c1(\"{name}\", {fish});\n    cout << c1.fish << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    int howMany() const {\n        return fish;\n    }\n};\n\nint main() {\n    Cat c1(\"{name}\", {fish});\n    cout << c1.howMany() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:14:16: error: 'int Cat::fish' is private within this context`\n\n后面还会跟一条 `note: declared private here`，指回图纸上画着那一栏的地方。翻成猫话：**「`Cat` 这张图纸上的 `fish` 那一格是私有的，你站的这个地方够不着喵。」** 它连一行都没让程序跑起来——这是翻译阶段就拦下的错。\n\n这一题的关键是**别掀盖**。有一种改法是把那一栏挪到公开那一档去，那样确实能跑，可本喵前面辛苦扣上的盖子就白扣了——外面谁都能伸手进来改它。\n\n正路是让**图纸自己开一个公开招式替它说话**：添一招 `howMany`，它站在图纸里面，够得到自己那一格；外面喊这一招就行。这一招只把它**读出来**，不给人改的机会——盖子还在。\n\n（本课后面还有另一条路：把后门开给**指名道姓的某一只猫**。两条路都对，区别是「谁都能问」还是「只给信得过的问」。）"
+}

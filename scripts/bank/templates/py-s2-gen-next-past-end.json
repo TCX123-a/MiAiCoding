@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-gen-next-past-end",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-10",
+  "type": "codefix",
+  "concept": ["StopIteration", "try/except", "信号"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["小鱼干", "小银鱼"] },
+    "b": { "kind": "pick", "values": ["猫粮", "鸡肉条"] }
+  },
+  "stemTemplate": "本喵手里这一招只递两样：`{a}`、`{b}` 喵。\n\n本喵想一路 `next` 下去：前两次把两样叼回来，**第三次手上没东西了，就印一句 `碗空啦`，别翻脸**。\n\n可现在这一段跑到第三行就报错了。你帮本喵改对，让它安安静静印出三行：`{a}`、`{b}`、`碗空啦`。\n\n⚠️ 招式里那两样东西、还有 `print(next(it))` 这句写法，都**不许改** —— 要加东西**包住**它，不能把它换掉。",
+  "brokenCodeTemplate": "def 数鱼干():\n    yield \"{a}\"\n    yield \"{b}\"\n\n\nit = iter(数鱼干())\nprint(next(it))\nprint(next(it))\nprint(next(it))\n",
+  "referenceFixTemplate": "def 数鱼干():\n    yield \"{a}\"\n    yield \"{b}\"\n\n\nit = iter(数鱼干())\nprint(next(it))\nprint(next(it))\ntry:\n    print(next(it))\nexcept StopIteration:\n    print(\"碗空啦\")\n",
+  "explanationTemplate": "这一次翻脸**不是程序写坏了**，而是那只手在按规矩办事喵。\n\n这一招只递两样，手走两趟就到底了。第三趟再喊 `next`，手上没有下一条 —— 它就甩出一个叫 `StopIteration` 的东西。这不是「出错」，而是这套机制**故意**留的信号，意思就一句：**「本喵这儿没有下一条了」**。\n\n要接住这个信号，用前面学过的 `try` / `except`：\n\n```text\ntry:\n    print(next(it))\nexcept StopIteration:\n    print(\"碗空啦\")\n```\n\n读作「**先试一手，翻脸了就走另一条路**」：先试着再要一条，要是它扔出 `StopIteration`，本喵就印一句「碗空啦」，不跟它吵。\n\n⚠️ 为什么要用 `try` 包**那一句 `print(next(it))`**，而不是把 `print` 换掉？因为翻脸的是里面的 `next(it)`；外面那一层 `print` 是本喵自己要的 —— 包住它，两种结果（叼到东西 / 收到信号）就各有各的去处。\n\n⚠️ 这也正是 `for` 为什么能安安静静把一排东西走完 —— 它**背后悄悄接住了这个信号**，收到就当作「走完了」收工。本喵自己手写 `next`，这活就得自己干。\n\n⚠️ 注意前两行**一点问题都没有**：手到第三趟才空。所以别去改招式里那两样东西，那里没毛病。"
+}

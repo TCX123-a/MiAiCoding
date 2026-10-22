@@ -1,0 +1,79 @@
+{
+  "lessonId": "python-stage2-07",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想让 `Cat` 这张小图纸照着 `Animal` 那张大图纸画，下面哪一句写对了？",
+      "options": [
+        "`class Cat(Animal):`",
+        "`class Cat: Animal`",
+        "`class Animal(Cat):`",
+        "`class Cat extends Animal:`"
+      ],
+      "answer": 0,
+      "explanation": "照哪张图纸画，写在**图纸名后面那对小括号里**：`class Cat(Animal):` 读作「照 `Animal` 那张图纸，再画一张 `Cat` 图纸」喵。`class Cat: Animal` 把括号挪错了位置，翻译官喵不认；`class Animal(Cat):` 把两张图纸**说反了**——写成照 `Cat` 画 `Animal`，那就成了小猫是大猫的妈妈，越套越乱；`extends` 是别的语言画图纸时的说法，Python 这边只认小括号喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "小图纸自己写了 `__init__` 之后，想请上一层图纸把它那一版先跑一遍、把名字放进仓库，该写哪一句？",
+      "options": [
+        "`super().__init__(name)`",
+        "`self.__init__(name)`",
+        "`Animal.__init__()`",
+        "`Cat.__init__(name)`"
+      ],
+      "answer": 0,
+      "explanation": "小图纸**自己写了** `__init__`，就等于把大图纸那一版盖住了，名字不会自己进仓库——得本喵用 `super()` 把上一层请回来干喵。`super()` 读作「**上一层图纸**」，后面**不用喂 `self`**：本喵正站在哪张小图纸上，Python 自己清楚，它会替本喵把 `self` 递过去。写成 `self.__init__(name)` 等于原地喊自己，转着圈把同一段重跑一遍；写成 `Animal.__init__()` 又把 `self` 漏了，仓库还是建不起来喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵只写了一句 `pet.speak()`，跑起来却是猫就喵、是狗就汪。这靠的是什么？",
+      "options": [
+        "`pet` 名字底下装着一只真猫，Python 照着**那只真猫自己的图纸**去找 `speak`，写代码的人不用管它是谁",
+        "本喵必须先用 `if` 判断它是哪个类的实例，再分别调用不同的函数",
+        "`speak` 会自动把每张图纸上的叫声全都印出来",
+        "只有那一排里的第一只宠物能叫，后面的会被跳过"
+      ],
+      "answer": 0,
+      "explanation": "同一句话各猫各样的道理很朴素：`pet` 这个名字底下**装的是一只真猫**，它自己知道自己是照哪张图纸生的喵。喊 `pet.speak()` 的时候，Python 是照**那只真猫自己的图纸**去找这一招——不是照 `Animal` 大图纸找，也不是照本喵写代码时脑子里想的那张找。所以本喵只管写「喊 `speak`」，具体喵还是汪，交给那只会自己决定；往后添一只鸭子，底下那一行也一个字不用改喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "stem": "下面这段代码里，`Cat` 这张小图纸想照着 `Animal` 那张大图纸画。空里该填什么？",
+      "lang": "python",
+      "code": "class Animal:\n    def speak(self):\n        print(\"……\")\n\nclass Cat(____):\n    def speak(self):\n        print(\"喵～\")\n\nCat().speak()\n",
+      "blanks": [
+        {
+          "answer": "Animal",
+          "accept": ["Animal"]
+        }
+      ],
+      "explanation": "照哪张图纸画，就把那张**大图纸的名字填进图纸名后面的小括号里**，所以空里填 `Animal` 喵。填进去之后，`Animal` 上的说明和招式 `Cat` 天生就会，本喵只需要在小图纸上重写想改的那一招。要是填 `Cat` 自己，那就成了「照着自己画自己」，翻译官喵会当场翻脸喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "class Animal:\n    def speak(self):\n        print(\"……\")\n\nclass Cat(Animal):\n    def speak(self):\n        print(\"喵～\")\n\nclass Dog(Animal):\n    def speak(self):\n        print(\"汪！\")\n\nfor pet in [Cat(), Dog()]:\n    pet.speak()\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "喵～\n汪！",
+      "accept": ["喵～\n汪！\n"],
+      "explanation": "`Cat` 和 `Dog` 都照 `Animal` 画，各自又把 `speak` 重写了一遍，所以猫喊出来是「喵～」、狗喊出来是「汪！」喵。底下那个 `for` 里只有一句 `pet.speak()`，它压根不知道这一圈轮到的是谁——是猫就用 `Cat` 那一版，是狗就用 `Dog` 那一版，Python 照着**那只真猫自己的图纸**去找这一招。只有两句 `print`，所以正好两行输出喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\nclass Cat(Animal):\n    def __init__(self, name, fish):\n        super().__init__(name)\n        self.fish = fish\n\nc = Cat(\"橘猫\", 3)\nprint(c.name)\nprint(c.fish)\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "橘猫\n3",
+      "accept": ["橘猫\n3\n"],
+      "explanation": "`Cat` 给小图纸单独写了一段 `__init__`，一写就把大图纸那一版盖住了，所以名字得靠 `super().__init__(name)` 请上一层先放进去喵。跑一遍看：`Cat(\"橘猫\", 3)` 先喂进去「橘猫」和 `3`，`super()` 把「橘猫」放进 `self.name`，接着 `self.fish = fish` 把 `3` 放进 `self.fish`。最后两行各报一格仓库，自然是先印 `橘猫`、再印 `3`。要是把 `super()` 那一句删掉，`self.name` 这个仓库根本没被建起来，第一行就会当场翻脸喵。"
+    }
+  ]
+}

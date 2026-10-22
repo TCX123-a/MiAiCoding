@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s3-anno-field-hints",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-13",
+  "type": "codewrite",
+  "concept": ["骨头上也能贴纸条", "贴上写的盖过默认值", "没贴纸条的那根要自己算"],
+  "instances": 6,
+  "params": {
+    "f1": { "kind": "pick", "values": ["名字", "绰号"] },
+    "f2": { "kind": "pick", "values": ["小鱼干", "猫粮数"] },
+    "f3": { "kind": "pick", "values": ["体重", "年龄"] },
+    "a1": { "kind": "pick", "values": ["私房", "贴身"] }
+  },
+  "stemTemplate": "本喵手上有一张图纸（代码里那张 `小猫`），图纸上有三根骨头，其中两根贴了纸条：一根两栏都写了，一根只写了 `value` 一栏喵。\n\n要列一张**骨头表**：\n\n1. 三根骨头按 `{f1}`、`{f2}`、`{f3}` 这个顺序，一根一行；\n2. 贴了纸条的那两根写 `骨头名：备注 根数 根`（备注和根数都从纸条上读，中间各留一个空格）；\n3. **没贴纸条的那一根**写 `骨头名：没贴纸条`。\n\n填 `main` 里空着的那一段就行，**图纸和纸条一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "starterTemplate": "import java.lang.annotation.ElementType;\nimport java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.annotation.Target;\nimport java.lang.reflect.Field;\n\npublic class Main {\n    @Retention(RetentionPolicy.RUNTIME)\n    @Target(ElementType.FIELD)\n    @interface 记录 {\n        String value();\n        int 根数() default 1;\n    }\n\n    static class 小猫 {\n        @记录(value = \"{a1}\", 根数 = 3)\n        String {f1} = \"小橘\";\n\n        @记录(value = \"存粮\")\n        int {f2} = 5;\n\n        int {f3} = 4;\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.lang.annotation.ElementType;\nimport java.lang.annotation.Retention;\nimport java.lang.annotation.RetentionPolicy;\nimport java.lang.annotation.Target;\nimport java.lang.reflect.Field;\n\npublic class Main {\n    @Retention(RetentionPolicy.RUNTIME)\n    @Target(ElementType.FIELD)\n    @interface 记录 {\n        String value();\n        int 根数() default 1;\n    }\n\n    static class 小猫 {\n        @记录(value = \"{a1}\", 根数 = 3)\n        String {f1} = \"小橘\";\n\n        @记录(value = \"存粮\")\n        int {f2} = 5;\n\n        int {f3} = 4;\n    }\n\n    public static void main(String[] args) throws Exception {\n        for (String 骨头名 : new String[]{\"{f1}\", \"{f2}\", \"{f3}\"}) {\n            Field 骨头 = 小猫.class.getDeclaredField(骨头名);\n            记录 小纸条 = 骨头.getAnnotation(记录.class);\n            if (小纸条 == null) {\n                System.out.println(骨头名 + \"：没贴纸条\");\n            } else {\n                System.out.println(骨头名 + \"：\" + 小纸条.value() + \" \" + 小纸条.根数() + \" 根\");\n            }\n        }\n    }\n}\n",
+  "explanationTemplate": "这一题把纸条贴到**骨头**上读了一遍喵。\n\n**一、骨头上照样读得到。** `小猫.class.getDeclaredField(骨头名)` 先把那根骨头找出来，再 `骨头.getAnnotation(记录.class)` 把贴在上面的纸条拿回来 —— 跟招式上那一套一模一样。读纸条是读**贴在上面的那行字**，不是读骨头里的值，所以骨头是不是「只给本喵看」都一样读得到。\n\n**二、顺序是本喵自己写死的。** 三根骨头的先后是在那对小括号里写定的（`{f1}`、`{f2}`、`{f3}`），不是光片说了算 —— 光片上的骨头顺序不可靠，这跟第 12 课那张骨头表是同一条规矩。\n\n**三、贴上写的盖过默认值。** 纸条上 `int 根数() default 1;` 留了默认值：只写了 `value` 一栏的那一处照样立得住，读出来就是那根默认的 `1`；两栏都写了的（写的是 `根数 = 3`）读出来是 `3`，默认值根本用不上。\n\n**四、没贴纸条的那根要自己算。** 没贴纸条的时候 `getAnnotation(...)` 给的是 `null`，直接往下读就会当场翻脸 —— 所以先判一下是不是 `null`，是就印 `没贴纸条`喵。"
+}

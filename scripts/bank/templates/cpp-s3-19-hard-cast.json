@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-19-hard-cast",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-19",
+  "type": "codefix",
+  "concept": ["不照光那一手不查屋里住的是谁", "转错了它一声不吭", "改一个词：换成会照光的那一手"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "小P", "小灰"] }
+  },
+  "stemTemplate": "本喵手里这张牌子明明写着「猫」，却硬把它当成橘猫 —— 用的是**不照光**的那一手 `static_cast`。翻译官喵一声没吭，程序也跑完了，它却印了 `照出来了`：屋里住的其实是一只狸花猫喵。\n\n改一个词就够：把那一手换成**会照光**的 `dynamic_cast`，照不到就给空牌子。改完跑一遍，屏幕上只该剩下一行：\n\n1. `照不出来`\n\n这一题的坑不在「会不会写」，在**转错了它不吭声** —— 不照光那一手压根不看屋里住的是谁。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    int weight;\n    OrangeCat(const string& n) : Cat(n), weight(7) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    TabbyCat t(\"{who}\");\n    Cat* p = &t;\n    OrangeCat* a = static_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了\") << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    int weight;\n    OrangeCat(const string& n) : Cat(n), weight(7) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    TabbyCat t(\"{who}\");\n    Cat* p = &t;\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了\") << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "不照光那一手（`static_cast`）是**照着纸面算**的喵：它只看牌子上写的那一栏，照着图纸的布局把地址挪一挪，就把新牌子递过来了 —— 屋里住的是谁，它**一次都不看**。所以本喵拿狸花猫的屋子去硬当橘猫，它照样给牌子、一声不吭，印出来的 `照出来了` 是**假的**。\n\n会照光那一手（`dynamic_cast`）才会在跑起来的时候问一句「这间屋里住的到底是谁」。不是橘猫，它就递一张**空牌子**，所以本喵查 `a == nullptr` 一查就知道，屏幕上老老实实印 `照不出来`。\n\n记死这一组：**不照光 = 不查、不报错、牌子照给**；**照光 = 查、不对就空牌子**。真出事的地方在这儿：本喵要是信了那个假 `照出来了`，接着去读「橘猫才有的那一格」，读到的会是别人身上那一格 —— 屏幕上一点异常都看不出来。"
+}

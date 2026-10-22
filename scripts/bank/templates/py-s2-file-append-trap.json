@@ -1,0 +1,35 @@
+{
+  "templateId": "py-s2-file-append-trap",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-04",
+  "type": "codefix",
+  "concept": [
+    "追加模式",
+    "清空陷阱",
+    "append"
+  ],
+  "instances": 3,
+  "params": {
+    "a": {
+      "kind": "pick",
+      "values": [
+        "小鱼干",
+        "鱼丸",
+        "冻干块"
+      ]
+    },
+    "b": {
+      "kind": "pick",
+      "values": [
+        "猫粮",
+        "罐头",
+        "肉泥"
+      ]
+    }
+  },
+  "stemTemplate": "本喵往档案室里记了一条，过一会儿又想**接着**记第二条喵。\n\n可念出来一看，**第一条不见了** —— 档案里只剩下第二条。\n\n你帮本喵改对，让两条**都在**，念出来的时候一条一行（先记的那条在前面）。\n\n⚠️ 要记的那两句话本身不用动。",
+  "brokenCodeTemplate": "with open(\"note.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(\"{a}\\n\")\n\nwith open(\"note.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(\"{b}\\n\")\n\nwith open(\"note.txt\", encoding=\"utf-8\") as f:\n    print(f.read().strip())\n",
+  "referenceFixTemplate": "with open(\"note.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(\"{a}\\n\")\n\nwith open(\"note.txt\", \"a\", encoding=\"utf-8\") as f:\n    f.write(\"{b}\\n\")\n\nwith open(\"note.txt\", encoding=\"utf-8\") as f:\n    print(f.read().strip())\n",
+  "explanationTemplate": "`open()` 用 `\"w\"` 打开，意思是「**从一份空档案开始写**」—— 已经存在的档案会被**当场清空**，而且**一声不吭**。\n\n第二次写的还是 `\"w\"`，于是第一次写的那条被抹掉了，只剩第二条。\n\n想接着往后写，要用 `\"a\"`。\n\n⚠️ 这个坑**不报错**，东西说没就没 —— 是档案类错误里最伤的一种。**只要你的本意是「加上去」，就不该出现 `\"w\"`。**\n\n⚠️ 还有个细节：`\"a\"` 是「接着末尾写」，所以**你自己要负责把换行补上**。刚才写的最后一行要是没换行结尾，新内容会直接粘在它后面。\n\n⚠️ 另外还有 `\"r+\"` 这种「又能读又能写」的模式，它**不会**清空，但也不会自动跳到末尾 —— 写进去的位置得你自己挪。新手阶段先把 `\"r\"` / `\"w\"` / `\"a\"` 三个分清楚，够用了。"
+}

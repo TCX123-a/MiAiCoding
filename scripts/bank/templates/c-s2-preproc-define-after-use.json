@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-preproc-define-after-use",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-08",
+  "type": "codefix",
+  "concept": ["#define", "从那一行往下才生效", "undeclared", "编译报错"],
+  "instances": 2,
+  "params": {
+    "NAME": { "kind": "pick", "values": ["MAX_FISH", "CAP", "LIMIT"] },
+    "value": { "kind": "int", "min": 20, "max": 40 }
+  },
+  "stemTemplate": "本喵这段代码翻译不过去：翻译官喵说有个名字它**不认得**，可那个名字明明就写在文件里。\n\n你帮本喵看看是哪儿没接上，把它改好：让程序能翻译过去，并且印出一行 `仓容 <本喵定的那个数> 条小鱼干`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    printf(\"仓容 %d 条小鱼干\\n\", {NAME});\n    return 0;\n}\n\n#define {NAME} {value}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define {NAME} {value}\n\nint main(void) {\n    printf(\"仓容 %d 条小鱼干\\n\", {NAME});\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: '{NAME}' undeclared (first use in this function)` —— `undeclared` 就是「没登记过 / 不认识这个名字」喵。\n\n可 `#define {NAME} {value}` 明明就在文件里呀？问题只在**它摆的位置**：那条吩咐是**从它自己那一行往下**才生效的，而用它的那一句在上头。翻译官喵从上往下扫，读到 `printf` 那一行的时候还没见过这条吩咐，当然不认得。\n\n补法只有一件事：**把 `#define` 那一行挪到用它的话前面**。\n\n顺带记牢这条规矩的形状：**`#define` 是写给翻译官喵的「换字吩咐」，它只说给下面的行听。** 摆在使用之后，等于没说。"
+}

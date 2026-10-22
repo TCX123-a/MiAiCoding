@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-count-the-cats",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-03",
+  "type": "codewrite",
+  "concept": ["向上转型", "认亲", "一张牌子装各猫各样", "Scanner"],
+  "instances": 6,
+  "params": {
+    "cat": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "dog": { "kind": "pick", "values": ["大黄", "旺财"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 2, "max": 4 },
+  "stemTemplate": "本喵院子里有一排宠物，牌子一律写 `Animal`。现在本喵想知道：**这一排里到底有几只猫？**\n\n要画的图纸：\n\n- 大图纸 `Animal`：一盒名字家当、出生那一手记名字、一招 `speak` 印 **名字 + `：……`**。\n- 小图纸 `Cat` 套在大图纸上：把 `speak` **盖掉、换上自己那版**（**名字 + `：喵～`**）。\n- 小图纸 `Dog` 套在大图纸上：把 `speak` **盖掉、换上自己那版**（**名字 + `：汪！`**）。\n\n投喂给程序的是**一个数 n**。`main` 里这么走：\n\n1. 读那个数；\n2. 摆一排**够装 n + 1 只**的牌子（牌子一律写 `Animal`）；\n3. 前面 n 个位置各装一只猫（名字用题目给的那个），最后第 n 个位置装一只狗；\n4. 从头到尾挨个喊一声 `speak`；\n5. 最后**用认亲数一数**这一排里有几只猫，印一行：`这一排里有 X 只猫`。\n\n认亲那一句问的是「本喵手里这只**是不是照 `Cat` 那张图纸（或者它的下游）生的**」，数出来几个就是几只喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\nclass Animal {\n\n}\n\nclass Cat extends Animal {\n\n}\n\nclass Dog extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"：……\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Animal[] pets = new Animal[n + 1];\n        for (int i = 0; i < n; i++) {\n            pets[i] = new Cat(\"{cat}\");\n        }\n        pets[n] = new Dog(\"{dog}\");\n        for (Animal pet : pets) {\n            pet.speak();\n        }\n        int cats = 0;\n        for (Animal pet : pets) {\n            if (pet instanceof Cat) {\n                cats++;\n            }\n        }\n        System.out.println(\"这一排里有 \" + cats + \" 只猫\");\n    }\n}\n",
+  "explanationTemplate": "本题的新东西是**认亲能当问题问、也能当数数用**喵。\n\n`pet instanceof Cat` 算出来的是一句「是 / 不是」：\n\n- 本喵手里这只**是照 `Cat` 那张图纸（或者更往下的图纸）生的** → `true`\n- **不是** → `false`\n\n所以把这一句放进圈子里的眼色位置，每对上一次就把计数器加一，走完一圈，数出来的就是**这一排里有几只猫**。狗身上问同样一句得到的是 `false`，它不会被算进去。\n\n另外两处是这一课的老朋友：\n\n**一、牌子写 `Animal`，装进去的却有猫有狗。** 照 `Cat` 生的猫本来也是一只 `Animal`，收得下；这一手的好处是**本喵不需要给猫狗各摆一排**，一排牌子全装下。\n\n**二、喊一声 `speak`，各猫各样。** 圈子里写的是一句 `pet.speak();`，可猫印喵、狗印汪 —— 具体是哪一声，由**底下那只真猫自己的图纸**决定。\n\n摆牌子那一处也别忘了：装了 n 只猫再加一只狗，一共是 **n + 1** 个位置。要是只摆 n 个，最后那只狗就没地方落脚了喵。"
+}

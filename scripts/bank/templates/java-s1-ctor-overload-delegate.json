@@ -1,0 +1,21 @@
+{
+  "templateId": "java-s1-ctor-overload-delegate",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-13",
+  "type": "codewrite",
+  "concept": ["重载构造", "this(...) 转手", "第一句", "Scanner"],
+  "instances": 6,
+  "params": {
+    "def": { "kind": "pick", "values": ["无名氏", "流浪猫"] },
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "name2": { "kind": "pick", "values": ["大胖", "雪球"] },
+    "n": { "kind": "int", "min": 2, "max": 9 },
+    "n2": { "kind": "int", "min": 3, "max": 8 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{name}\n{n}\n", "sampleText": "{name2}\n{n2}\n" },
+  "stemTemplate": "路边捡的猫还没名字，本喵想给它留一手**空手的出生法**喵。图纸 `Cat` 上画两样家当（`String name`、`int fish`）和**两手出生法**：\n\n- 一手收名字和鱼干数，用 `this.` 收进这一只的家当里\n- 一手**空手**（一样料都不收）：一出生就按「`{def}`、0 条」算，而且这手活儿**要转手给上面那一手干**（写 `this(...)`，**必须是身子的第一句**）\n\n再画一招 `void report()`，印一行「名字 有 N 条小鱼干喵」。`main` 里纸条给一个名字和一个数：**两种出生法各生一只**，两只都喊一声 `report()`（先喂料那只，再空手那只）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一个名字、另外一个数**喵。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String who = sc.next();\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Cat {\n    String name;\n    int fish;\n\n    Cat() {\n        this(\"{def}\", 0);\n    }\n\n    Cat(String name, int fish) {\n        this.name = name;\n        this.fish = fish;\n    }\n\n    void report() {\n        System.out.println(this.name + \" 有 \" + this.fish + \" 条小鱼干喵\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String who = sc.next();\n        int n = sc.nextInt();\n\n        Cat c1 = new Cat(who, n);\n        Cat c2 = new Cat();\n        c1.report();\n        c2.report();\n    }\n}\n",
+  "explanationTemplate": "两手出生法**名字都叫 `Cat`**，靠喂料不一样分开 —— 上一课学的挑招规矩在这儿又用上了：`new Cat(who, n)` 喂两样，走收两样料那一手；`new Cat()` 空手，走空手那一手喵。\n\n空手那一手身子里只有一句 `this(\"{def}\", 0);` —— **把这一只的活儿转给另一手干**。这样「挂名字、记鱼干数」这套活儿只写一遍，以后要改也只改一处。\n\n它的死规矩只有一条：**`this(...)` 必须是身子的第一句**。本喵要是先在身子里印一句、再转手，翻译官就会在转手那一行拦下，原话是 `call to this must be first statement in constructor`。不是它小气 —— 「转手」这件事的含义就是「这一只从头按另一手来收拾」，中间夹了别的活儿就说不清了。\n\n还有一处容易漏：两手都叫 `Cat`，可**投喂口必须真的不一样**（一个空手、一个收两样）。要是两手写成一样的料，那就是 `already defined` 的老账喵。"
+}

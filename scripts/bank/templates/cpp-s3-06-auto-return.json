@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-06-auto-return",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-06",
+  "type": "codewrite",
+  "concept": ["提前出门也不漏", "还仓库是出生证上写好的", "一个 delete 都不用写"],
+  "instances": 6,
+  "params": {
+    "x": { "kind": "pick", "values": [4, 6, 8] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{x}\n", "sampleText": "93\n" },
+  "stemTemplate": "本喵要的是：**提前出门那一趟，也不许漏事**喵。\n\n投喂口会给**一个数**。图纸本喵已经替你写进骨架里了：`Fish` 里装着一个整数 `n`；它**一被租下**就印 `领到 ` 加那个数，**被还回去时**印 `还回 ` 加那个数。你不用改它。\n\n请你写招式 `work(int v, bool early)`：\n\n1. **用牌子**（`unique_ptr<Fish>`）租一间仓库装着 `v`；\n2. 要是 `early` 为真，就**提前出门**（直接 `return`，别的什么都不印）；\n3. 否则印**一行**：`用 ` 加那个数。\n\n`main` 那边已经写好了，你不用动：读一个数，然后 `work(x, false)`、印一行 `---`、`work(x, true)`、最后印一行 `收工`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nstruct Fish {\n    int n;\n    Fish(int v) : n(v) { cout << \"领到 \" << n << endl; }\n    ~Fish() { cout << \"还回 \" << n << endl; }\n};\n\nvoid work(int v, bool early) {\n\n}\n\nint main() {\n    int x = 0;\n    cin >> x;\n\n    work(x, false);\n    cout << \"---\" << endl;\n    work(x, true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nstruct Fish {\n    int n;\n    Fish(int v) : n(v) { cout << \"领到 \" << n << endl; }\n    ~Fish() { cout << \"还回 \" << n << endl; }\n};\n\nvoid work(int v, bool early) {\n    unique_ptr<Fish> p = make_unique<Fish>(v);\n    if (early) {\n        return;\n    }\n    cout << \"用 \" << p->n << endl;\n}\n\nint main() {\n    int x = 0;\n    cin >> x;\n\n    work(x, false);\n    cout << \"---\" << endl;\n    work(x, true);\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题是课文第三节那段的重演喵，一眼就能看出牌子比手写 `delete` 强在哪儿：\n\n- `work(x, false)` 那一趟正常走到底 → 印 `领到`、印 `用`，走出花括号时牌子把仓库叼回去 → 印 `还回`；\n- `work(x, true)` 那一趟**中途 `return`** → 后面的印字全跳过，可牌子**照样**把仓库还了。\n\n原因是那句本喵一直念叨的话：**「还仓库」是写在牌子的出生证里的**，它只认一件事 —— 牌子走出它出生的那片花括号。至于本喵是从哪条路出门的（走到底、还是半路 `return`），牌子不管。\n\n⚠️ 所以这一题里**一个 `delete` 都不用写**：手写还仓库的活儿，牌子替你记着了。反过来，要是你请了牌子又自己伸手 `delete`，那是跟它抢着还，翻译官喵会认不出来。\n\n⚠️ 判分喂的数跟样例不一样，别写死。"
+}

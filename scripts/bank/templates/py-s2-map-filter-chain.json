@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s2-map-filter-chain",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-11",
+  "type": "codewrite",
+  "concept": ["filter 接 map", "lambda", "会下一条的手"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "m": { "kind": "pick", "values": [3, 5] },
+    "k": { "kind": "pick", "values": [10, 100] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要一边挑一边变喵。\n\n请你写个程序：\n\n1. **第一行**读进来一个整数 `n` —— 它说后面跟着**几**个数。\n2. **接着读 n 行**，一行一个整数。\n3. 先**只留下比 `{m}` 大的**那些。\n4. 再把留下的**每一个都乘 `{k}`**。\n5. 印的时候分两段：**第一行**印留下的**个数**（就一个数），接着**一行一个**把乘完的数印出来。\n\n本喵想练的是 `filter` 挑完直接喂给 `map` 的写法，请照这个来喵。\n\n比如外面给的是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "n = int(input())\n鱼干 = []\nfor _ in range(n):\n    鱼干.append(int(input()))\n\n留下来的 = filter(lambda x: x > {m}, 鱼干)\n结果 = list(map(lambda x: x * {k}, 留下来的))\n\nprint(len(结果))\nfor 一份 in 结果:\n    print(一份)\n",
+  "explanationTemplate": "这道题是**两只手接在一起**喵：`filter` 先挑，挑出来的直接喂进 `map`，`map` 再一个一个变。\n\n⚠️ 里面那一层要**从里往外读**：最里面是 `filter(lambda x: x > {m}, 鱼干)`，意思是「把这一排里每一样都喂进那招，**点头的留下**」。它叼回来的是一只「会下一条的手」，本喵连收都没收，就把它**整个**塞进了 `map` 的投喂口 —— 这一步就是本课那句「一招当小鱼干递来递去」。\n\n`map(lambda x: x * {k}, ...)` 拿到这只手，也是一条一条往下喊：filter 交出一样，它就算一样。**两只手叠在一起，一直到本喵真去喊它，才一层层动起来** —— 这就是「懒懒的」那件事最直观的样子喵。\n\n⚠️ 那为什么外面还要写 `list(...)`？因为题面要**先印个数**、再一行一个印内容 —— 数得出个数，就得先把整排收进柜子（`len` 只认收好的柜子，对着「手」它数不出来）。收一次就好：手**走过就空了**，收完之后本喵手里拿的是柜子，`len` 和转圈都拿它用，一点问题都没有。\n\n⚠️ 要是本喵偷懒不写 `list(...)`，直接拿那只手去数个数，翻译官喵会**当场翻脸** —— `len` 只认收好的柜子，对着「手」它数不出来。所以这一句 `list(...)` 不是装饰，是这道题非有不可的一步喵。"
+}

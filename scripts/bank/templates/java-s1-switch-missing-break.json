@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-switch-missing-break",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-06",
+  "type": "codefix",
+  "concept": ["switch", "case", "break", "滑到下一格"],
+  "instances": 2,
+  "params": {
+    "k": { "kind": "pick", "values": ["1", "2"] },
+    "k2": { "kind": "pick", "values": ["3", "4"] }
+  },
+  "stemTemplate": "本喵的鱼干碗上装了个报数的小机器喵：纸条上写碗里有几条，它就该念一句。\n\n可它念起来收不住嘴 —— 纸条上明明写着 **{k}** 条，屏幕上却**连着冒出两句**：先念「碗里还剩 {k} 条喵」，紧接着又跟一句「碗里还剩 {k2} 条喵」。本喵一条鱼干都没多，它倒是报得挺热闹。\n\n你帮本喵看看它为什么滑到了下一格，把它改好：改好之后，纸条上写 {k} 就只该印出「碗里还剩 {k} 条喵」这一句。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int bowl = {k};\n\n        switch (bowl) {\n            case {k}:\n                System.out.println(\"碗里还剩 {k} 条喵\");\n            case {k2}:\n                System.out.println(\"碗里还剩 {k2} 条喵\");\n                break;\n            default:\n                System.out.println(\"数不清了喵\");\n        }\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int bowl = {k};\n\n        switch (bowl) {\n            case {k}:\n                System.out.println(\"碗里还剩 {k} 条喵\");\n                break;\n            case {k2}:\n                System.out.println(\"碗里还剩 {k2} 条喵\");\n                break;\n            default:\n                System.out.println(\"数不清了喵\");\n        }\n    }\n}\n",
+  "explanationTemplate": "`switch` 有个脾气：**戳中某一格之后它不会自己停** —— 它会从戳中的那一格开始一路往下**滑**，把下面的格子挨个执行过去，直到撞上 `break` 才刹车喵。\n\n本喵这儿正是这一幕：`case {k}:` 那一格办完事**没写 `break`**，于是它顺腿滑进了 `case {k2}:` 那一格，把人家的话也念了一遍。再往下撞上那格的 `break`，它才停下 —— 所以屏幕上正好是两句。\n\n治法就是把漏掉的那个 `break;` 补回去：**每一格办完事都要收工走人**。\n\n这毛病最费眼神的地方在于：它**一个错都不报**，程序照跑，只是多印了一句。想故意让它滑下去（比如好几格共用同一段活儿）也是可以的，但那就得是你**心里有数**才这么写喵。"
+}

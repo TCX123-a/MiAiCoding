@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-log-with-sign",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-09",
+  "type": "codewrite",
+  "concept": ["不写 format 时本子的默认长相", "级别加署名加消息三段", "记录与结果两行分工"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["木桶", "篮子", "罐头盒"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "本喵的**小本子**上记的东西，这回要印到正文里来，而且本喵想一眼认出「这条是谁记的」喵。\n\n**外面给的是一个数**（一行一个，就是本喵这{unit}里还剩多少条小鱼干）。\n\n请你写个程序，印出**两行**：\n\n① 第一行是**本子上的那段记录**：用 `WARNING` 级别记一句「{unit}里只剩 X 条了」（X 就是外面给的那个数）。\n② 第二行是**给本喵看的结果**：用平常那个印，写「{unit}里还剩 X 条」。\n\n⚠️ 本喵对第一行的长相有讲究：它分成**三段** —— **级别**、**本子的署名**、**那句话**，两处都用**一个英文冒号**隔开，一个多余的字符都不许有。\n\n本喵从没给这个本子起过名字，用它**自带的那份署名**就行。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+  "referenceSolutionTemplate": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout)\n\n条数 = int(sys.stdin.readline())\n\nlogging.warning(\"{unit}里只剩 \" + str(条数) + \" 条了\")\nprint(\"{unit}里还剩 \" + str(条数) + \" 条\")\n",
+  "explanationTemplate": "这道题的坑**不在算错，也不在走错道**，在**本子自带的长相**喵。\n\n先说说长相是谁定的：**你给的那张版式图纸**（`format=`）。写了图纸，本子就照图纸一笔一划地写；**不写图纸，本子就按自带的那套样子写**。\n\n自带的样子是**三段**：`级别`、`本子的署名`、`那句话`，中间各夹**一个英文冒号** —— 也就是 `WARNING:root:...` 这个形状。中间那段是**署名**：本喵从没给这个本子起过名字，它就用自带的那一份，书上给它起的原文是 `root`。\n\n所以这道题只要两样：\n\n① `logging.basicConfig(stream=sys.stdout)` —— 把本子**挪到正文那条渠**。不写它，日志就留在侧渠里，正文里一个字都不会有。⚠️ 本喵这次**故意不写 `format=`** —— 一写图纸，署名那一段就要由图纸说了算；你想留住它，图纸里就得自己把署名那一段写进去。\n\n② `logging.warning(...)` —— `WARNING` 这一档在**默认门槛**之上（不写 `level=` 的时候，门槛就设在 `WARNING`），所以这一句正好过得去。\n\n⚠️ 想改长相就把图纸写出来，这写法后面每次都要用：`format=\"%(levelname)s:%(message)s\"` 只剩两段（署名被丢掉了）；而 `format=\"%(levelname)s:%(name)s:%(message)s\"` 和自带的那份长得一模一样 —— 里面那个 `%(name)s` 就是「把署名填这儿」。\n\n顺带记一笔：这两行**分工不同**。第一行是本子的**记录**，第二行是**给用户的结果**（用平常那个印）。日志比 `print` 强的地方就在这儿：记录可以一直开着，而结果那一行**永远只有一条**，不会混进一堆碎碎念里。"
+}

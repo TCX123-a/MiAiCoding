@@ -1,0 +1,79 @@
+{
+  "lessonId": "java-stage3-03",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下一小截 `x -> x * 2`。箭头左边和右边分别是什么？",
+      "options": [
+        "左边是**投喂进来的**，右边是**要叼回去的** —— 整句读作「给本喵一个 `x`，本喵叼回 `x * 2`」",
+        "左边是要叼回去的，右边是投喂进来的",
+        "左边是这一小截的名字，右边是它照哪份约定",
+        "两边都是投喂进来的，叼回去的写在别处"
+      ],
+      "answer": 0,
+      "explanation": "箭头是「**进去**」和「**出来**」的分界喵：左边那一栏是投喂进来的东西，右边报的是要叼回去的东西。方向搞反了读起来就全拧了。另外这一小截**没有名字**，也没写它照的是哪份约定 —— 那是**从它挂在谁身上**看出来的：挂在哪份一张嘴的约定上，它就照那份约定喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵的约定上写了 `void a();` 和 `void b();` **两张嘴**，翻译稿子时就红了（`is not a functional interface`）。为什么？",
+      "options": [
+        "`() -> ...` 这一小截**只说得清一只手要干什么**；约定上有两张嘴，它填不清自己填的是哪一张",
+        "因为约定上的名字起得不好，改成 `Speaker` 就好了",
+        "因为两张嘴的约定必须用老写法当场造猫，新写法永远用不了",
+        "因为 `b();` 那张嘴没被用到，删掉它就能用新写法了"
+      ],
+      "answer": 0,
+      "explanation": "要点是**说不清**喵：一小截直接写出来的招式，身上没有名字、也没有「我要填哪张」的记号，它**唯一的依据就是「这份约定只有一张嘴」**。有两张嘴，本喵这一截到底填的是 `a` 还是 `b`？翻译官喵猜不出来，也不肯猜，直接退回稿子。把多出来的那张嘴删掉、只留一张，它就能挂上去了喵。（顺带给个提醒：`is not a functional interface` 这句原话里那个词，说的正是「一张嘴的约定」这件事。）"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵想把 `names.forEach(name -> System.out.println(name));` 写成伸手一指的短样子。下面哪一句**指不了**？",
+      "options": [
+        "`name -> System.out.println(\"你好 \" + name)` —— 中间**多加了一手活儿**，投喂进来的东西没有原封不动递过去",
+        "`System.out::println` —— 那位现成的本来就在，东西原封不动递过去",
+        "`System.out::print` —— 那位现成的本来就在，东西原封不动递过去",
+        "其余三句都指得了 —— 没有一句指不了"
+      ],
+      "answer": 0,
+      "explanation": "伸手一指要占住两条喵：**那位现成的本来就在**（不用本喵现写一手），以及**投喂进来的东西原封不动地递给它**。`name -> System.out.println(\"你好 \" + name)` 在中间加了一句「问好」，投喂进来的东西先被改过一道才递出去，两条里第二条就不占了 —— 这种只能老老实实完整写出来。`System.out::println` 和 `System.out::print` 都占住了那两条，所以都指得上喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\ninterface Rule {\n    boolean ok(int x);\n}\n\npublic class Main {\n    static int countIf(List<Integer> box, Rule rule) {\n        int n = 0;\n        for (int x : box) {\n            if (rule.ok(x)) {\n                n++;\n            }\n        }\n        return n;\n    }\n\n    public static void main(String[] args) {\n        List<Integer> box = new ArrayList<>();\n        box.add(4);\n        box.add(7);\n        box.add(2);\n\n        System.out.println(countIf(box, ____));\n    }\n}",
+      "stem": "本喵想把「**不小于 5**」这条规矩递给 `countIf`。空里那一小截该写什么？",
+      "blanks": [
+        {
+          "answer": "x -> x >= 5",
+          "accept": []
+        }
+      ],
+      "explanation": "填 `x -> x >= 5`：左边是投喂进来的那一件，右边报的是「它行不行」喵。这份约定只有一张嘴 `boolean ok(int x)`，所以翻译官喵一眼就认得出来。填好后印出来是 1 —— 柜子里 `4`、`7`、`2` 三件，只有 `7` 够得上 5。这一题也顺带说明了这一步的好处：`countIf` 自己**一个字都没改**，光换那一小截规矩，数出来的结果就不一样了喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "interface Doubler {\n    int twice(int x);\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Doubler a = x -> x + 1;\n        Doubler b = x -> x * x;\n        System.out.println(a.twice(b.twice(3)));\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "10",
+      "accept": ["10\n"],
+      "explanation": "要从**最里面**那一层开始看喵：`b.twice(3)` 里 `b` 那一小截报的是 `x * x`，投喂 3 进去叼回 9；接着这个 9 又投喂给 `a.twice(9)`，而 `a` 报的是 `x + 1`，于是叼回 10。这两小截各自都很短，可它们**是能套起来用的** —— 前一个叼回来的东西，原封不动正好能投喂给后一个，只要牌子对得上就行喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"小橘\");\n        names.add(\"狸花猫\");\n        names.add(\"煤球\");\n\n        names.forEach(name -> System.out.println(name.length()));\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "2\n3\n2",
+      "accept": ["2\n3\n2\n"],
+      "explanation": "`forEach` 会把柜子里的东西**一件一件**投喂给本喵那一小截，每喂一件就跑一遍右边那句话喵。`name.length()` 报的是这一件有几个字：`小橘` 两个字、`狸花猫` 三个字、`煤球` 两个字，所以三行分别是 2、3、2。注意这一小截**被跑了好几遍**，每一遍手里拿到的都是不同的那一件 —— 这就是把一小截当规矩递进去最平常的用法喵。"
+    }
+  ]
+}

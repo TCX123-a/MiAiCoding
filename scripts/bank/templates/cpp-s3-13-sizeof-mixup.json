@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-13-sizeof-mixup",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-13",
+  "type": "codefix",
+  "concept": ["sizeof 问占多大", "sizeof... 问有几样", "印出来的数看着像对的"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["3", "4", "6"] },
+    "w2": { "kind": "pick", "values": ["2", "5", "8"] }
+  },
+  "stemTemplate": "这段代码想报出「**后面还跟着几位**」，可它跑起来**说错了数**：后面明明只跟着两位，它却报了个别的数。\n\n你帮本喵把那一句改对：**印出来的格式一个字都不用动**，就改「这个数是怎么数出来的」。\n\n改好之后，程序要印出两行：先是 `头一个：{w1}`，再是 `后面还有 2 个`。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T, typename... Rest>\nvoid firstThenRest(T first, Rest... rest) {\n    cout << \"头一个：\" << first << endl;\n    cout << \"后面还有 \" << sizeof(first) << \" 个\" << endl;\n}\n\nint main() {\n    firstThenRest({w1}, {w2}, 7);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T, typename... Rest>\nvoid firstThenRest(T first, Rest... rest) {\n    cout << \"头一个：\" << first << endl;\n    cout << \"后面还有 \" << sizeof...(rest) << \" 个\" << endl;\n}\n\nint main() {\n    firstThenRest({w1}, {w2}, 7);\n    return 0;\n}\n",
+  "explanationTemplate": "这一题错在**问错了那句话**喵。\n\n`sizeof(first)` 问的是「**它占多大地方**」—— 喂进去的头一个是整数，在这台机器上一个整数占 4 个字节，所以它报的是 `4`，跟「后面跟着几位」一点关系都没有。（这个数还会随机器和类型变：换成别的形状，它报的数又不一样。）\n\n要问「**包里装了几样**」，那句话得写成 `sizeof...(rest)`：三个点站在**括号里面**，伸进包里数样数。改过来之后，后面跟着两位就报 `2`。\n\n⚠️ 这一类错最阴的地方是**它不报错、也不提醒**：`4` 看上去像个正经数，程序照常跑完。所以看到「数字对不上」，第一件事是分清这句话问的到底是**占多大**还是**有几样** —— 它俩长得像，问的东西完全不一样。\n\n⚠️ 也别顺手把 `first` 换成别的名字：这一题要的是把 `first`（头一个）和 `rest`（剩下的那一包）分清楚，报的是**包里**的样数。"
+}

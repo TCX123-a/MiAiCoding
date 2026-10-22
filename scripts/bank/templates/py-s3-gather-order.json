@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-gather-order",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-05",
+  "type": "codewrite",
+  "concept": ["asyncio.gather", "按投放顺序摆好", "招式里别印东西"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "unit": { "kind": "pick", "values": ["袋", "筐", "盆"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵的渔获要分装过秤喵。\n\n输入是：第一行一个整数 `n`，接下来 `n` 行每行一个整数 —— 每一行的数就是这一{unit}里的条数，**按顺序**给的。\n\n请你写一个完整的程序：\n\n1. 写出一招**不着急的招式** `点数(编号, 条数)`：进去先架上一口锅等一会儿（`await asyncio.sleep(0.05)`），然后把一句话**叼回来** —— 招式里**不许印任何东西**。那句话的样子是 `第 编号 {unit}：条数 条`。\n2. 主招式里读输入，把这 `n` 条**待办小纸条**用 `asyncio.gather(...)` **一口气全架上**；等它们全都回来之后，再**按投放的先后顺序**，一行一句印出来。\n\n一行印出来的样子是 `第 1 {unit}：5 条` —— 「第」后面空一格、编号后面空一格、{unit}后面接**全角冒号**（冒号前后都不空）、条数后面空一格再接「条」。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "import asyncio\n\n\nasync def 点数(编号, 条数):\n    await asyncio.sleep(0.05)\n    return \"第 \" + str(编号) + \" {unit}：\" + str(条数) + \" 条\"\n\n\nasync def 主招式():\n    n = int(input())\n    纸条们 = []\n    for i in range(n):\n        纸条们.append(点数(i + 1, int(input())))\n\n    结果 = await asyncio.gather(*纸条们)\n\n    for 一行 in 结果:\n        print(一行)\n\n\nasyncio.run(主招式())\n",
+  "explanationTemplate": "`asyncio.gather(...)` 干的是「**一口气全架上**」喵：括号里塞进去好几张**待办小纸条**，它会等**全部**都好了再一起回来。\n\n它回来的时候给的是一个**排好队的储物柜**，而且有一条特别贴心的规矩：**谁先回来不重要，战利品一律按你投放的顺序摆好**。所以这道题里，第 1 条永远站在第一个格子里 —— 想按编号印，就按编号投进去，**不用去猜谁快谁慢**。\n\n⚠️ 两个最容易栽的地方：\n\n- **别在招式里印东西。** 招式该干的是**把话叼回来**，印的活留给主招式 —— 由主招式统一印，顺序才是你说得算的。要是在招式里就印了，那就成了「谁先忙完谁先喊」，顺序跟着快慢走，**没法保证**。\n- **`gather` 前面也得写 `await`。** 光写 `asyncio.gather(...)` 只是把纸条交出去，本喵**不会停下来等** —— 接下来那几行会在战利品还没回来的时候就往下跑，自然什么都印不出来。\n\n⚠️ 还有一处小的：编号是从 1 数起的，投喂给招式的也是**从 1 起**的编号；读进来的条数直接原样用，别自己加减喵。"
+}

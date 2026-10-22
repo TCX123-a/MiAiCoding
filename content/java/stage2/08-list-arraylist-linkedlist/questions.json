@@ -1,0 +1,83 @@
+{
+  "lessonId": "java-stage2-08",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵要一个会自己长大的柜子装项链，名分和柜子分开写 —— 下面哪一句写对了？",
+      "options": [
+        "`List<String> bowls = new ArrayList<>();`",
+        "`ArrayList<String> bowls = new List<>();`",
+        "`List<String> bowls = ArrayList<>();`",
+        "`List bowls = new ArrayList<String>();`"
+      ],
+      "answer": 0,
+      "explanation": "左边是**名分**（`List` 这份约定），右边是**实体**（`ArrayList` 这种柜子），`new` 后面那对空尖括号是「和左边一样」的省事写法喵。`new List<>()` 不对 —— 约定的名字不能拿来造柜子，只有实体才行；`List<String> bowls = ArrayList<>();` 少了 `new`，`List bowls = new ArrayList<String>();` 左边没写尖括号、丢了「只装项链」这块牌子喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵要装一串猫，用起来主要是**挨个过一遍**、偶尔按编号取一个。该挑哪种柜子？",
+      "options": [
+        "`ArrayList` —— 编号连号，按编号取飞快，日常最常用",
+        "`LinkedList` —— 两头进出最快，所以什么活都该用它",
+        "两个都行，挑哪个结果都一样",
+        "得自己写第三种柜子"
+      ],
+      "answer": 0,
+      "explanation": "日常「装一堆、挨个过一遍、偶尔按编号取一个」正是 `ArrayList` 最擅长的：碗挨着放，编号一算就知道该看哪一格喵。`LinkedList` 快的只有**两头**进出这一件事，按编号取还得从一头一格一格数过去，反而更慢；两个柜子结果一样，但干活的快慢不一样，量大起来差距很实在喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "柜子里装了 3 格，本喵想摸**最后一格**，`get` 里该写几？",
+      "options": [
+        "`2` —— 编号从 0 起，最后一格的编号是格数减一",
+        "`3` —— 有几格就写几",
+        "`1` —— 编号从 1 起",
+        "`-1` —— 负数从后面数"
+      ],
+      "answer": 0,
+      "explanation": "编号从 0 起，3 格的编号是 0、1、2，所以最后一格是 `2`，也就是 `size() - 1` 喵。写 `3` 是**数过了**，当场炸 `IndexOutOfBoundsException`；编号不是从 1 起的；本喵这里也不认负数下标，写 `-1` 照样炸喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> bowls = new ArrayList<>();\n        bowls.____(\"小橘\");\n        bowls.add(\"狸花\");\n        System.out.println(bowls.____(1));\n        System.out.println(bowls.size());\n    }\n}",
+      "stem": "本喵要先往柜子里加一格，再按编号取出第二格 —— 两个空白处各填哪个招式名？",
+      "blanks": [
+        {
+          "answer": "add",
+          "accept": []
+        },
+        {
+          "answer": "get",
+          "accept": []
+        }
+      ],
+      "explanation": "第一处填 `add`：往柜子最后加一格喵。第二处填 `get`：按编号取，编号从 0 起，所以 `get(1)` 摸到的是第二格 `狸花`。两处都对上之后印出来是 `狸花` 和 `2`喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> bowls = new ArrayList<>();\n        bowls.add(\"小橘\");\n        bowls.add(\"狸花\");\n        bowls.remove(\"小橘\");\n        System.out.println(bowls.size());\n        System.out.println(bowls.get(0));\n        System.out.println(bowls.contains(\"大橘\"));\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "1\n狸花\nfalse",
+      "accept": ["1\n狸花\nfalse\n"],
+      "explanation": "`remove(\"小橘\")` 是按**内容**拿掉那一格，拿掉之后后面的碗**往前挪一格**，所以柜子里只剩 `狸花` 一格喵。`size()` 报 `1`，编号 0 那格就是 `狸花`；柜子里根本没有 `大橘`，`contains` 答 `false`喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> a = new ArrayList<>();\n        List<String> b = new LinkedList<>();\n        a.add(\"小橘\");\n        b.add(\"小橘\");\n        a.add(\"狸花\");\n        b.add(\"狸花\");\n        System.out.println(a);\n        System.out.println(b);\n        System.out.println(a.equals(b));\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "[小橘, 狸花]\n[小橘, 狸花]\ntrue",
+      "accept": ["[小橘, 狸花]\n[小橘, 狸花]\ntrue\n"],
+      "explanation": "两个柜子是两种不同的排法，可**名分一样、装的东西也一样**，所以印出来都是方括号里按编号排的两格喵。最后一行比的是「两边装的东西一不一样」，答案是 `true` —— 这正是「约定一样、柜子可以换」的好处喵。"
+    }
+  ]
+}

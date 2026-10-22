@@ -1,0 +1,23 @@
+{
+  "templateId": "java-s3-hash-put-find",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-23",
+  "type": "codewrite",
+  "concept": ["算门牌号", "撞车往后挪", "空格是没住过的证据", "住和找走同一条路"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stdinSpec": {
+    "kind": "ints",
+    "count": "{n}",
+    "min": 1,
+    "max": 99,
+    "head": "{n}\n"
+  },
+  "stemTemplate": "本喵要开一个**十格**的鱼干仓库，让每一只编号自己算门牌号：**编号除以 10 的余数**，就是它该住的格子号。算出来的格子有人住了（**撞车**），就**往后挪一格**，还撞就再挪，直到找到空位。\n\n投喂口里递进来的是：先**一共几只**、然后一只一行。样例输入：\n\n```text\n{sampleInput}\n```\n\n你要把三招补完（`main` 已经写在稿子里了，别改它）：\n\n1. `slotOf`：算门牌号；\n2. `put`：从算出来的格子开始往后挪，挪到**空格子**就住下，**顺手在 `used` 那一排上记一笔**；\n3. `find`：从**同一个**格子开始，一格一格往后敲（敲一下记一笔）：敲到**空格子**就说明这一只压根没存过，答 `0`；敲到编号对上了，就把**敲的次数**答回去。\n\n`main` 会先把递进来的都存进去，然后把**最后递进来的那一只**再找一遍，最后拿**从来没递进来过的编号 `0`** 试一次。印出来的格式是写死的：\n\n```text\n最后递进来的 43：比了 2 次\n编号 0：没找到\n```\n\n样例跑出来是这样：\n\n```text\n{sampleOutput}\n```",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    static final int SLOTS = 10;\n\n    static int[] shelf = new int[SLOTS];\n    static int[] used = new int[SLOTS];\n\n    // 编号算门牌号：编号除以 10 的余数\n    static int slotOf(int id) {\n        // ↓ 自己写\n        return 0;\n    }\n\n    // 存一只：从算出来的格子开始，有人住了就往后挪一格，还撞就再挪；住下时记一笔\n    static void put(int id) {\n        // ↓ 自己写\n    }\n\n    // 找一只：从算出来的格子开始往后敲，答「敲了几次才找到」；敲到空格子就答 0\n    static int find(int id) {\n        // ↓ 自己写\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] a = new int[64];\n        for (int i = 0; i < n; i++) {\n            a[i] = sc.nextInt();\n        }\n\n        for (int i = 0; i < n; i++) {\n            put(a[i]);\n        }\n\n        int last = a[n - 1];\n        int times = find(last);\n        if (times > 0) {\n            System.out.println(\"最后递进来的 \" + last + \"：比了 \" + times + \" 次\");\n        } else {\n            System.out.println(\"最后递进来的 \" + last + \"：没找到\");\n        }\n\n        if (find(0) > 0) {\n            System.out.println(\"编号 0：找着了\");\n        } else {\n            System.out.println(\"编号 0：没找到\");\n        }\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    static final int SLOTS = 10;\n\n    static int[] shelf = new int[SLOTS];\n    static int[] used = new int[SLOTS];\n\n    // 编号算门牌号：编号除以 10 的余数\n    static int slotOf(int id) {\n        return id % SLOTS;\n    }\n\n    // 存一只：从算出来的格子开始，有人住了就往后挪一格，还撞就再挪；住下时记一笔\n    static void put(int id) {\n        int slot = slotOf(id);\n        while (used[slot] != 0) {\n            slot = (slot + 1) % SLOTS;\n        }\n        shelf[slot] = id;\n        used[slot] = 1;\n    }\n\n    // 找一只：从算出来的格子开始往后敲，答「敲了几次才找到」；敲到空格子就答 0\n    static int find(int id) {\n        int slot = slotOf(id);\n        int tries = 0;\n        while (used[slot] != 0) {\n            tries++;\n            if (shelf[slot] == id) {\n                return tries;\n            }\n            slot = (slot + 1) % SLOTS;\n        }\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] a = new int[64];\n        for (int i = 0; i < n; i++) {\n            a[i] = sc.nextInt();\n        }\n\n        for (int i = 0; i < n; i++) {\n            put(a[i]);\n        }\n\n        int last = a[n - 1];\n        int times = find(last);\n        if (times > 0) {\n            System.out.println(\"最后递进来的 \" + last + \"：比了 \" + times + \" 次\");\n        } else {\n            System.out.println(\"最后递进来的 \" + last + \"：没找到\");\n        }\n\n        if (find(0) > 0) {\n            System.out.println(\"编号 0：找着了\");\n        } else {\n            System.out.println(\"编号 0：没找到\");\n        }\n    }\n}\n",
+  "explanationTemplate": "这一招的关键就一句话：**空格本身就是「这里没有」的证据**喵。\n\n- `put` 从算出来的格子开始，撞了就往**后**挪一格，挪到空格子才住下；住下的同时必须在 `used` 上**记一笔** —— 不记的话，往后谁来找它，看到的都还是「这一格从来没人住过」。\n- `find` 走的是**同一条路**：同一个起点、同一个方向、同样一格一格地挪。敲到空格子就收工答 `0`（证据齐了）；敲到编号对上就给次数。\n\n⚠️ `used` 那一排小格子必须**一开始全是 0**。稿子里把 `shelf` 和 `used` 摆在所有招式**外面**，这样它们天生就是 0；要是搬进 `main` 里又不给初值，里面是些谁也不知道是什么的脏数，第一只存进去就被带跑。\n\n⚠️ 还有一条：**住和找必须走同一条路**。住的时候往后挪、找的时候往前敲，就会出现「刚存进去却找不着」这种怪事喵。"
+}

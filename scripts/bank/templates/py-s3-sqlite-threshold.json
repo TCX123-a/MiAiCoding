@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-sqlite-threshold",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-08",
+  "type": "codewrite",
+  "concept": ["WHERE 投喂口 ?", "只端符合条件的行", "SELECT + ORDER BY"],
+  "instances": 6,
+  "params": {
+    "x1": { "kind": "int", "min": 2, "max": 3 },
+    "x2": { "kind": "int", "min": 5, "max": 6 },
+    "x3": { "kind": "int", "min": 8, "max": 9 }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 4 },
+  "stemTemplate": "本喵的仓库里记着三格货：**原味 {x1} 条、海苔味 {x2} 条、麻辣味 {x3} 条**（照这个记，别改喵）。\n\n现在本喵只想看**还剩得够多**的那几格 —— 门槛从外面给：**外面只给一个数**，就是门槛。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表，两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 把上面那三格货记进去，**盖章**。\n3. 只用**一个投喂口**把门槛递进口令里，把**条数不少于门槛**的那些行挑出来（**一样多也算数**）。\n4. 挑出来的行**从多到少**印，一行一格，格式是 `名字 还有 N 条`。\n\n比如外面给的是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一个数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "import sqlite3\n\n门槛 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", {x1}), (\"海苔味\", {x2}), (\"麻辣味\", {x3})])\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\", (门槛,))\nfor 名字, 条数 in cur:\n    print(名字 + \" 还有 \" + str(条数) + \" 条\")\ncon.close()\n",
+  "explanationTemplate": "这道题的主角是**口令里那个投喂口**喵。\n\n门槛是外面给的，本喵写代码的时候**还不知道它是几**，所以不能把它写死进口令里。办法是在口令里留一个 `?`：\n\n```text\nSELECT 名字, 条数 FROM 库存 WHERE 条数 >= ? ORDER BY 条数 DESC\n```\n\n然后**货从旁边递进去**：`cur.execute(口令, (门槛,))` —— 货放在第二个逗号后面，用一对括号包好。管家会把这一份货填进那个投喂口，剩下的照办。\n\n⚠️ 认准「**不少于**」：口令里写的是 `>=`。写成 `>`（只管多于）的话，**正好等于门槛**的那一格会被漏掉 —— 比如门槛给 5、某格正好 5 条，它就不见了。本喵说「一样多也算数」，指的就是这个符号。\n\n⚠️ 递货那对括号，**只有一个货时逗号也不能少**：`(门槛,)` 对，`(门槛)` 错（那样只是把门槛那串东西原样递过去，管家一拆开数字就会跟你吵）。\n\n⚠️ 还有一条本喵要拎出来讲：**别把门槛缝进口令里**。拿引号把数字拼成一句话，看起来省事，可只要外头给的东西里带了引号（名字、备注、什么都有可能），缝出来的那句话就会被管家**当成真口令**去办 —— 那是要出大事的。从投喂口递进去的货，管家永远只当它是货。\n\n最后 `ORDER BY 条数 DESC` 管的是先后：从多到少。不写它，谁先谁后没人保证喵。"
+}

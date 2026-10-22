@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s1-index-out-of-bounds",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-08",
+  "type": "codefix",
+  "concept": ["编号", "越界", "碗数减一", "跑起来才炸"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 7 },
+    "c": { "kind": "int", "min": 8, "max": 9 }
+  },
+  "stemTemplate": "本喵摆了**三只碗**，编号是 0、1、2 喵。现在想报一报**最后一只碗**里装着几条。\n\n可这程序一跑到那一行就**当场炸了** —— 屏幕上冒出一句「越界」的话，后面的活儿全都不干了。\n\n你帮本喵看看它是按几号去端的碗，把它改好。记着这一课那句老话：**最后一号永远是「碗数减一」**喵。改好之后，印出来的该是最后那只碗里的数。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int[] bowls = { {a}, {b}, {c} };\n\n        System.out.println(\"最后一只碗里有 \" + bowls[bowls.length] + \" 条喵\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int[] bowls = { {a}, {b}, {c} };\n\n        System.out.println(\"最后一只碗里有 \" + bowls[bowls.length - 1] + \" 条喵\");\n    }\n}\n",
+  "explanationTemplate": "一排三只碗，编号是 **0、1、2** —— 所以**「碗数减一」才是最后一号的编号**喵。\n\n本喵写的 `bowls[bowls.length]` 端的是 **3 号碗**：`bowls.length` 是碗数 `3`，可这一排压根没有 3 号碗（它从 0 数起）。治法就是减一个：`bowls[bowls.length - 1]`，正好落到 2 号那只身上。\n\n这个错最要命的地方是**它什么时候发作**：翻译官编译的时候**一句话都不说**，程序照样能编好；非得跑到那一行，它才当场炸掉 —— 屏幕上那句 `ArrayIndexOutOfBoundsException` 念起来就是「**编号越界了，这一排没那么多只碗喵**」，后面的活儿跟着全停。\n\n顺手记两条：\n\n- 报编号的时候，心里先默念一遍 **0 是头一只、碗数减一是最后一只**。\n- 这一课还有一个经典踩雷姿势：绕圈的眼色写成 `i <= bowls.length` —— 那也是一路走到 `bowls.length` 号上去，照样炸。眼色写 `i < bowls.length` 才安全喵。"
+}

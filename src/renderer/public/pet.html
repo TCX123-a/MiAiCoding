@@ -1,0 +1,1418 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<!--
+  大肥鱼桌宠窗（2026-10-06）—— 覆盖整个工作区的**透明哑视图**。
+
+  它是个哑视图：所有"该说什么话、走哪儿、能不能聊"的判定都在主进程
+  （src/main/pet/index.ts），台词全部从 shared/copy.ts 经 IPC 送达。
+  本页面只负责三件事：把精灵画出来、把动作演出来、把点击上报回去。
+  ⚠️ 因此本页**不许出现任何中文文案**（除了注释）—— 写一句就是第二份
+  会漂移的台词真源，静态闸门 pet-static.test.ts 盯着这条。
+
+  内容安全策略（去网络化的机械保障）：default-src 'none' 关死一切网络；
+  img 只认本目录的精灵图（file: 与 'self' 覆盖打包/开发两种加载）；
+  media-src 只认本地 —— 点鱼的"小黄鸭"叫声是 pet/duck-click.wav
+  （主界面 UI 同一份素材的副本，静态闸门对账字节一致）；脚本与样式都是
+  本文件内联的 —— 不写 script-src 的话 default-src 'none' 会把内联脚本
+  一起毙掉，页面直接全黑（同 splash.html 的坑，别拆这两条）。
+
+  运动模型（2026-10-06 第二阶段，主人点名"走路像纸片"）：速度不再直接赋值
+  （x += speed 的硬平移），而是**弹簧阻尼**逼近目标速度（加速快、刹车慢 ——
+  到点刹不住的滑行感），路径叠正弦侧摆走成 S 形，步频/颠簸绑定实际速度。
+
+  坐标体系：窗口铺满工作区，精灵在页面里用 CSS transform 移动（60Hz 的
+  原生 setPosition 会抖，见主进程文件头）。pos 是**脚底中点**，单位 px，
+  相对本窗口。上报给主进程的 x/y 是 0..1 比例（pet.json 里存的形状）。
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: file:; media-src 'self' file:; script-src 'unsafe-inline'; style-src 'unsafe-inline'" />
+<title>MIAI-PET</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; }
+  * { user-select: none; }
+  body { font: 13px/1.6 "Microsoft YaHei", system-ui, sans-serif; }
+
+  /* 精灵。transform 由 rAF 每帧写；两层 <img> 交替做方向切换的交叉淡入 */
+  #fish { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; will-change: transform; }
+  #fish .spr {
+    position: absolute; left: 50%; bottom: 0;
+    transform: translateX(-50%);
+    transform-origin: 50% 100%;
+    opacity: 0; transition: opacity 180ms ease;
+    -webkit-user-drag: none;
+  }
+  /* .on 是唯一可见层，必须显式把命中的门开回来：pointer-events 从 #fish 的
+     none 一路继承 —— 不写 auto 的话整条鱼在浏览器命中测试里根本不存在
+     （摸头/双击/连点/右键全静默失灵），而主进程的命中区又照常把窗口从
+     穿透切回可点，表现成"点了没反应"（2026-10-06 实测抓到的 bug） */
+  #fish .spr.on { opacity: 1; pointer-events: auto; cursor: grab; }
+  #fish .spr.on:active { cursor: grabbing; }
+  /* 脚下的软阴影：让"站在桌面上"这件事成立（没有它鱼像贴纸） */
+  #shadow {
+    position: absolute; left: 50%; bottom: -5px;
+    width: 46%; height: 10px;
+    transform: translateX(-50%);
+    background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,0.34), rgba(0,0,0,0) 70%);
+    pointer-events: none;
+  }
+
+  /* 瞌睡指示：三个往上飘的 'z'（ASCII —— 哑视图不许中文，静夜动画即台词）。
+     位置每帧由 render() 跟着鱼头写，和气泡同一套口径 */
+  #zzz {
+    position: absolute; left: 0; top: 0;
+    display: none; pointer-events: none;
+    font: 700 12px/1 "Segoe UI", system-ui, sans-serif;
+    color: #d7e6ff; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  }
+  #zzz.on { display: block; }
+  #zzz span { position: absolute; left: 0; top: 0; opacity: 0; animation: zfloat 2.7s ease-in-out infinite; }
+  #zzz span:nth-child(1) { font-size: 11px; animation-delay: 0s; }
+  #zzz span:nth-child(2) { font-size: 14px; margin-left: 9px; animation-delay: 0.7s; }
+  #zzz span:nth-child(3) { font-size: 17px; margin-left: 20px; animation-delay: 1.4s; }
+  @keyframes zfloat {
+    0% { transform: translateY(2px); opacity: 0; }
+    22% { opacity: 0.9; }
+    100% { transform: translateY(-18px); opacity: 0; }
+  }
+
+  /* 气泡：跟着鱼头走（位置每帧算），排队播，说够时长自己沉下去 */
+  #bubble {
+    position: absolute; left: 0; top: 0;
+    max-width: 280px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: rgba(13, 20, 33, 0.94);
+    border: 1px solid rgba(122, 170, 255, 0.38);
+    color: #e8f1ff;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    opacity: 0; transform: translate(-50%, 6px);
+    transition: opacity 160ms ease, transform 160ms ease;
+    pointer-events: none;
+    word-break: break-word;
+  }
+  #bubble.show { opacity: 1; transform: translate(-50%, 0); }
+  /* 气泡小尾巴（朝下指向鱼头） */
+  #bubble::after {
+    content: ""; position: absolute; left: 50%; bottom: -6px;
+    width: 10px; height: 10px; margin-left: -5px;
+    background: inherit; border-right: 1px solid rgba(122, 170, 255, 0.38);
+    border-bottom: 1px solid rgba(122, 170, 255, 0.38);
+    transform: rotate(45deg);
+  }
+
+  /* 聊天面板：右下角固定。只有它开着时才进命中区（否则整个窗都是穿透的） */
+  #chat {
+    position: absolute; right: 22px; bottom: 22px;
+    width: 320px; height: 400px;
+    display: none; flex-direction: column;
+    border-radius: 14px;
+    background: rgba(13, 20, 33, 0.95);
+    border: 1px solid rgba(122, 170, 255, 0.38);
+    box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+  }
+  #chat.open { display: flex; }
+  #chat-log { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  #chat-log .m { max-width: 86%; padding: 7px 10px; border-radius: 10px; word-break: break-word; }
+  #chat-log .m.user { align-self: flex-end; background: rgba(64, 110, 190, 0.55); color: #eef5ff; }
+  #chat-log .m.fish { align-self: flex-start; background: rgba(38, 50, 72, 0.9); color: #e8f1ff; }
+  #chat-log .m.typing::after { content: "..."; animation: blink 900ms steps(2, jump-none) infinite; }
+  @keyframes blink { 50% { opacity: 0.25; } }
+  #chat-row { display: flex; gap: 6px; padding: 8px; border-top: 1px solid rgba(122, 170, 255, 0.22); }
+  #chat-input {
+    flex: 1; min-width: 0;
+    background: rgba(9, 14, 24, 0.9);
+    border: 1px solid rgba(122, 170, 255, 0.3);
+    border-radius: 8px; color: #e8f1ff; padding: 7px 9px; font: inherit;
+    outline: none;
+  }
+  #chat-input:focus { border-color: rgba(122, 170, 255, 0.7); }
+  #chat-send, #chat-close {
+    border: 1px solid rgba(122, 170, 255, 0.35);
+    background: rgba(38, 50, 72, 0.9); color: #e8f1ff;
+    border-radius: 8px; padding: 0 11px; font: inherit; cursor: pointer;
+  }
+  #chat-send:disabled { opacity: 0.45; cursor: default; }
+  #chat-close { background: transparent; }
+</style>
+</head>
+<body>
+  <div id="fish">
+    <img class="spr" id="sprA" alt="" draggable="false" />
+    <img class="spr" id="sprB" alt="" draggable="false" />
+    <div id="shadow"></div>
+  </div>
+  <div id="bubble"></div>
+  <div id="zzz"><span>z</span><span>z</span><span>z</span></div>
+  <div id="chat">
+    <div id="chat-log"></div>
+    <div id="chat-row">
+      <input id="chat-input" type="text" placeholder="..." autocomplete="off" />
+      <button id="chat-send">>></button>
+      <button id="chat-close">x</button>
+    </div>
+  </div>
+
+<script>
+/* eslint-disable */
+(function () {
+  'use strict'
+  // preload 桥。浏览器里裸开本页（调试/静态闸门预览）时它是 undefined —— 全部出口都过 guard，页面不崩、只是不动
+  var api = window.miaiPet
+
+  // ---------------------------------------------------------------- 常量
+  // 与 shared/pet.ts 同源，改一边必须改另一边（pet-static.test.ts 逐字对账）
+  var RUA_CLICKS = 5 // 同 PET_RUA_CLICKS
+  var RUA_WINDOW_MS = 3000 // 同 PET_RUA_WINDOW_MS
+  var SPRITE_SIZES = [187, 238, 306]
+  var SIZES = { 187: [187, 140], 238: [238, 178], 306: [306, 229] } // 高 → [高, 前图宽]，宽度按素材 PNG 头实测（front_306 是 229 不是 228）
+  var WALK_SPEED = 96 // px/s（wander）
+  var FOLLOW_SPEED = 150
+  var ALERT_SPEED = 210 // 被叫去报错现场时的赶路速度
+  var WANDER_MIN_H = 96 // 活动范围上边距（留出气泡的地方）
+  var WANDER_BOTTOM = 46
+  var POS_SAVE_MS = 8000 // 位置回写 pet.json 的节流
+  var HIT_REPORT_MS = 180 // 命中区上报节流
+
+  // 运动物理（弹簧阻尼）—— 2026-10-06 第二阶段：硬平移（x += speed）看起来
+  // 是"纸片人"，改成速度**指数逼近**目标速度：tau 小 = 追得紧（起步猛），
+  // tau 大 = 松得慢（刹车滑）。加速用 TAU_GO、减速用 TAU_STOP，一快一慢
+  // 就是"刹不住车"的手感来源。步频（WALK_CYCLE_*）绑定真实速度，停下时
+  // 相位自然变慢 —— 脚步与位移不会各走各的。
+  var TAU_GO = 0.14 // 加速时间常数（s）
+  var TAU_STOP = 0.34 // 减速时间常数 —— 比加速慢得多，滑行+回弹就靠它
+  var ARRIVE_EASE = 64 // 距目标这么远开始收油（px）
+  var SWAY_AMP = 15 // 走路侧摆的横向速度（px/s）—— 轨迹不再是直线
+  var SWAY_PERIOD = 560 // 侧摆周期（ms）
+  var WALK_CYCLE_BASE = 2.0 // 步频基础（rad/s）…
+  var WALK_CYCLE_PER_PX = 1 / 26 // …再加上每走 26px 一步的相位
+  var STEP_EVERY_PX = 52 // 走这么多像素落一脚（脚步音效的节拍）
+  var DRAG_THRESHOLD = 6 // 按下后位移超过它才算拖（px）
+  var THROW_TAU = 0.5 // 拖完甩出去的速度衰减常数（s）
+  var THROW_MAX = 900 // 甩出去的初速上限（px/s）—— 别让鱼飞出天际
+  var GAZE_LEAN = 0.085 // 光标悬浮时的倾角上限（rad）
+  var SETTLE_MS = 620 // 到点后"回弹扎根"的余摆时长
+
+  // 行为大脑（2026-10-06 第三阶段：主人实测"走路这些行为模式还是很呆"）——
+  // 参考 MerZlin/dsh-pet-indesktop 的骨架：活泼 = 帧动画 + **掷骰的行为轮换**。
+  // 帧动画学不来（我们只有单帧 PNG），骨架可以：游走不再是"拣点→走→呆等"，
+  // 而是走/冲刺/坐着歇/伸懒腰/立正听声/连看两眼 轮着演，且不连庄。
+  var BRAIN_GAP_MIN = 900 // 行为之间的空档（最短）
+  var BRAIN_GAP_MAX = 3400
+  var SIT_MS_MIN = 2200 // 坐着歇的时长区间
+  var SIT_MS_MAX = 4400
+  var DASH_MUL = 1.75 // 冲刺限速倍率（起步蹬地 + 到点大刹车才配得上它）
+  var TURN_MS = 300 // 转身小动作（压扁蓄力→翻图→弹回）的时长
+  var LAND_MS = 90 // 每步落地的压实时长
+  var BREATH_GAP_MIN = 6000 // 偶尔来一口深呼吸的间隔（待机生命感的底噪）
+  var BREATH_GAP_MAX = 13000
+
+  // ---------------------------------------------------------------- 元素
+  var fishEl = document.getElementById('fish')
+  var sprA = document.getElementById('sprA')
+  var sprB = document.getElementById('sprB')
+  var bubbleEl = document.getElementById('bubble')
+  var zzzEl = document.getElementById('zzz')
+  var chatEl = document.getElementById('chat')
+  var chatLog = document.getElementById('chat-log')
+  var chatInput = document.getElementById('chat-input')
+  var chatSend = document.getElementById('chat-send')
+  var chatClose = document.getElementById('chat-close')
+
+  // ---------------------------------------------------------------- 状态
+  var vw = window.innerWidth
+  var vh = window.innerHeight
+  var pos = { x: vw * 0.82, y: vh * 0.72 } // 脚底中点（px）
+  var snap = null // 最近一次状态广播
+  var placed = false // 是否已按 snapshot 放好位置（只认第一份快照）
+  var facing = 1 // 1 朝右 / -1 朝左（side 图的镜像）
+  var dir = 'front' // front | side | back
+  var activeSpr = sprA // 当前亮着的那层
+  var idleSpr = sprB
+  var goto = null // { x, y, text, hurry } 去报错现场的移动目标
+  var wanderTarget = null
+  var brainAct = '' // 行为大脑：''|'stroll'|'dash'|'sit'|'stretch'|'look'|'perk'
+  var brainUntil = 0 // 当前行为演到什么时候（到时进空档）
+  var brainNextAt = 0 // 空档结束、掷下一个骰子的时刻
+  var lastBrainAct = '' // 上一次的行为（防连庄：掷出重复的重掷）
+  var dashMul = 1 // 限速倍率（dash 冲刺期间 >1；空档归 1）
+  var lookBurstUntil = 0 // look 行为窗口：张望间隔从 2.8~8s 压到 0.5~1.2s（连看两眼）
+  var sitAmt = 0 // 坐姿强度（松弛变量：进出坐姿都是滑的，不是跳的）
+  var landT0 = 0 // 最近一次落地/起步蹬地（脚步落下那一拍，身体压实一下）
+  var landHeavy = 0 // 那一下的力度（0~1，按速度）
+  var turnT0 = 0 // 转身小动作起点（静止换朝向 / 起步先转头时播，途中不插播）
+  var turnDone = false // 这次转身的"翻图时刻"是否已执行
+  var turnTo = 1 // 翻到哪个 facing
+  var turnDirTo = '' // 翻到哪个 dir
+  var walkTurnT0 = 0 // "起步转身"登记时刻（先转头再走：翻图前不放行位移）
+  var wasMoving = false // 上一帧在不在动（起步蹬地的沿检测）
+  var gazeFaceUntil = 0 // "扭头看光标"的冷却截止
+  var deepBreathT0 = 0 // 这一口深呼吸的起点（0 = 没在吸）
+  var deepBreathNextAt = 2600 + Math.random() * 3000 // 下一口深呼吸的时刻
+  var cursorPos = null // follow 模式的鼠标位置（主进程 100ms 推一次）
+  var spinT0 = 0 // 各整段动作的起点（0 = 没在演）
+  var squasT0 = 0
+  var hopT0 = 0
+  var chompT0 = 0
+  var settleT0 = 0 // 到点停稳后的余摆（惯性回弹）起点
+  var walkPhase = 0 // 走路相位：由**实际速度**推进（步频跟位移绑定）
+  var stepAccum = 0 // 走够 STEP_EVERY_PX 落一脚
+  var lastSqueakAt = 0
+  var lastQuackAt = 0
+  var lastStepAt = 0
+  var soundOn = false
+  var soundVol = 0
+  var ac = null
+  var duckEl = null // 小黄鸭音效（pet/duck-click.wav，与主界面 UI 同一份）
+
+  // 光标感应（"跟随视线"）：只在本页真的收得到 mousemove 时才有值 ——
+  // 鼠标悬在鱼身上时主进程会把窗口切成可点，事件自然到手；离开即失效。
+  // 不需要任何 IPC：穿透策略保证了"事件在 = 光标在鱼上"。
+  var hoverX = 0
+  var hoverY = 0
+  var hoverUntil = 0
+
+  // 拖拽（2026-10-06 主人点名：拖的时候身体要拉伸）。全本地：按下超阈值
+  // 才算拖（否则还是摸头/双击），拖拽中每帧强制重报命中区（否则指针一动
+  // 出界，窗口转回穿透，mousemove 就断了）。松开按采样速度甩出去。
+  var pressed = false
+  var dragging = false
+  var pressX = 0
+  var pressY = 0
+  var grabDX = 0 // 指针到脚底中点的偏移（拖起来不跳位）
+  var grabDY = 0
+  var lastPtrX = 0
+  var lastPtrY = 0
+  var lastPtrAt = 0
+  var throwVX = 0 // 采样出来的指针速度（松手变成鱼的初速）
+  var throwVY = 0
+  var dragSX = 1 // 拖拽拉伸（按运动方向压扁/拉长，松手指数回落）
+  var dragSY = 1
+
+  // 瞌睡（电脑空闲时自己睡着；主进程 powerMonitor 判定后发 idle 指令）
+  var asleep = false
+  var lookHoldUntil = 0 // 原地张望：保持这个朝向到什么时候
+  var nextLookAt = 0 // 下一次张望的时刻
+
+  // 气泡队列（主进程可能连说两句，排队播而不是互相顶掉）
+  var bubbleQueue = []
+  var bubbleUntil = 0
+
+  // 点击/rua（本地数点：5 下之内要瞬间有反应，等一轮 IPC 就"顿"了）
+  //
+  // 【三种点击怎么共存】单击=摸头、双击=开聊天、连点≥5 下=rua。朴素实现
+  // （第二下立刻开聊天）有个致命冲突：想 rua 的人点到第二下时面板弹出来了，
+  // 后三下全被面板挡住 —— rua 永远凑不满。所以判定必须**等连点的意图明朗**：
+  //   · 点到 1 / 3 下停住（320ms 没后续）→ 摸头；
+  //   · 点到 2 下停住（420ms 没后续）→ 开聊天；
+  //   · 一路点到 5 下 → rua（前面排定的动作全被清掉，一次都不补发）。
+  // 代价是单击的反馈晚 320ms —— 换来的是「戳五下」这个主人点名要的手感。
+  var clickTimes = []
+  var patTimer = null
+  var dblTimer = null
+  var lockUntil = 0
+
+  function onFishDown(ev) {
+    if (ev.button !== 0) return
+    ev.preventDefault()
+    ensureAudio()
+    var t = performance.now()
+    if (t < lockUntil) return
+    // 戳一下就醒（睡着的鱼也要有反应）；"嘎"一声紧跟其后 —— 与主界面
+    // 点大肥鱼图标同一份素材，点哪只鱼都是这只鸭叫（主人点名的手感）
+    if (asleep) wakeUp(t)
+    playQuack()
+    // 按下即"Q 弹"一下（参考项目点击路径的 squash：压宽再弹回）—— 声与形
+    // 同一刻到，不用等 320ms 的摸头定时器；戳睡着的鱼时顺便当"扑腾醒"
+    triggerAnim('squash')
+    hoverX = ev.clientX
+    hoverY = ev.clientY
+    hoverUntil = t + 600
+    // 拖拽预备：按下先记账，位移超过阈值才升级成拖（见 onWinMove）。
+    // 升级那一刻会把摸头/双击的定时器全部撤销 —— 拖不是点。
+    pressed = true
+    pressX = ev.clientX
+    pressY = ev.clientY
+    lastPtrX = ev.clientX
+    lastPtrY = ev.clientY
+    lastPtrAt = t
+    throwVX = 0
+    throwVY = 0
+    clickTimes = clickTimes.filter(function (x) {
+      return t - x < RUA_WINDOW_MS
+    })
+    clickTimes.push(t)
+    if (patTimer) {
+      clearTimeout(patTimer)
+      patTimer = null
+    }
+    if (dblTimer) {
+      clearTimeout(dblTimer)
+      dblTimer = null
+    }
+    if (clickTimes.length >= RUA_CLICKS) {
+      // rua！动作与音效本地立刻演（手感），台词走主进程（冷却也在那边）
+      clickTimes = []
+      lockUntil = t + 600
+      playRua()
+      squasT0 = t
+      if (api) api.act({ action: 'rua' }).catch(function () {})
+      return
+    }
+    if (clickTimes.length === 1 || clickTimes.length === 3) {
+      patTimer = setTimeout(function () {
+        patTimer = null
+        // 声音在按下那一刻已经"嘎"过了（小黄鸭，见 playQuack）——这里只补
+        // 蹦一下和上报，不再叠一声合成吱（两声叠在一起像卡带）
+        hopT0 = performance.now()
+        if (api) api.act({ action: 'pat' }).catch(function () {})
+      }, 320)
+    } else if (clickTimes.length === 2) {
+      dblTimer = setTimeout(function () {
+        dblTimer = null
+        clickTimes = []
+        lockUntil = performance.now() + 400
+        openChat()
+        // 开场白（可能是"上次那道题你弄懂了吗喵"）由主进程在下一条
+        // chat-open 指令里带回来 —— 记忆环只有它够得着
+        if (api) api.act({ action: 'chat' }).catch(function () {})
+      }, 420)
+    }
+    // 第 4 下：不上不下，什么都不排 —— 凑到第 5 下是 rua，停下就让窗口自然过期
+  }
+
+  // 上报节流
+  var lastHitsJson = ''
+  var lastHitAt = 0
+  var lastPosSaveAt = 0
+
+  // 聊天面板状态
+  var chatOpen = false
+  var chatBusy = false
+  var chatMessages = [] // {role:'user'|'assistant', content}
+  var chatHelloShown = false
+
+  // ---------------------------------------------------------------- 精灵
+  // 体型：默认最小档（与 shared/pet.ts 的 PET_SIZE_DEFAULT 同源；静态闸门对账），
+  // 真实值由主进程经 init/onState 的快照下发 —— 设置卡选的档位存 pet.json 的
+  // size 字段。旧的 pickSize（按窗口高度二选一）已删：体型现在是用户可调的，
+  // 页面再自作主张换挡，"我在设置里选的大"就会看起来时灵时不灵。
+  var SPR = 187
+  var sprHW = SIZES[SPR]
+
+  function applySize(s) {
+    // 快照带来的体型与当前不同才动（防御未知值：SIZES 里没有就保持现状）。
+    // 换挡 = 换参考图（素材文件名含尺寸，applyDir 重拼 URL）+ 立刻重报命中区
+    // —— 不重报的话，点到的还是旧尺寸那圈空气/多余区。
+    if (SPR === s || !SIZES[s]) return
+    SPR = s
+    sprHW = SIZES[SPR]
+    applyDir()
+    // 变大后原位置可能顶出活动边界（尤其贴边站着的时候），顺手收回界内
+    var b = wanderBounds()
+    pos.x = Math.min(b.x1, Math.max(b.x0, pos.x))
+    pos.y = Math.min(b.y1, Math.max(b.y0, pos.y))
+    reportHits(true)
+  }
+
+  function spriteSrc(kind) {
+    // 文件名与 src/renderer/public/pet/ 下的素材一一对应（inspect_sprites.py 实测）
+    return 'pet/' + kind + '_' + SPR + '.png'
+  }
+
+  function setSprite(url) {
+    // 交叉淡入：把新图放到底下那层，亮起来，再把原来那层灭掉
+    if (activeSpr.getAttribute('src') === url) return
+    idleSpr.src = url
+    idleSpr.classList.add('on')
+    var old = activeSpr
+    activeSpr = idleSpr
+    idleSpr = old
+    setTimeout(function () {
+      old.classList.remove('on')
+    }, 200)
+  }
+
+  function applyDir() {
+    // 方向选择：横着走用 side（镜像分左右），向上走看到的是背影，其余正面。
+    // 移动幅度太小时保持现状（抖动会让图疯狂闪）
+    // ⚠️ side 素材实测**面朝左**（2026-10-06 逐张开图核实）：朝左走（facing=-1）
+    // 用原图，朝右走才镜像。条件写反过一次，表现是两个方向都倒着走
+    //（主人原话："这个倒退步走路有点太反人类了"）
+    var url = spriteSrc(dir)
+    setSprite(url)
+    activeSpr.style.transform =
+      'translateX(-50%)' + (dir === 'side' && facing > 0 ? ' scaleX(-1)' : '')
+  }
+
+  // ---------------------------------------------------------------- 声音（本页自带的极简合成器）
+  // 为什么不用 assets/sounds：那是**主窗**的素材（宠物窗是独立渲染进程、
+  // 权限最小化的沙箱 preload，拿不到主窗的模块）。桌宠的叫声本来也就是
+  // 两三声电子音，现场合成零素材、离线可用。开关/音量跟设置页的音效设置
+  // 走（主进程用 pet:cmd 的 sound 指令同步过来）。
+  function ensureAudio() {
+    if (!ac) {
+      try {
+        ac = new AudioContext()
+      } catch (e) {
+        ac = null
+      }
+    }
+    if (ac && ac.state === 'suspended') ac.resume()
+  }
+  function canSound() {
+    return soundOn && soundVol > 0 && ac !== null
+  }
+  function tone(t0, dur, f0, f1, type, peak) {
+    var o = ac.createOscillator()
+    var g = ac.createGain()
+    o.type = type
+    o.frequency.setValueAtTime(f0, t0)
+    if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t0 + dur)
+    g.gain.setValueAtTime(0.0001, t0)
+    g.gain.exponentialRampToValueAtTime(peak, t0 + 0.012)
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur)
+    o.connect(g)
+    g.connect(ac.destination)
+    o.start(t0)
+    o.stop(t0 + dur + 0.03)
+  }
+  function vol() {
+    return Math.min(1, Math.max(0, soundVol / 100)) * 0.5
+  }
+  function playSqueak() {
+    if (!canSound()) return
+    var now = performance.now()
+    if (now - lastSqueakAt < 120) return // 连点不叠音
+    lastSqueakAt = now
+    var t = ac.currentTime
+    tone(t, 0.09, 1150, 1650, 'triangle', 0.16 * vol())
+  }
+  function playRua() {
+    if (!canSound()) return
+    var t = ac.currentTime
+    tone(t, 0.16, 950, 520, 'sawtooth', 0.14 * vol())
+    tone(t + 0.15, 0.18, 620, 1250, 'sawtooth', 0.14 * vol())
+    tone(t + 0.34, 0.12, 1300, 780, 'triangle', 0.12 * vol())
+  }
+  function playChomp() {
+    if (!canSound()) return
+    var t = ac.currentTime
+    tone(t, 0.07, 240, 160, 'square', 0.16 * vol())
+    tone(t + 0.13, 0.07, 220, 140, 'square', 0.16 * vol())
+    tone(t + 0.28, 0.05, 900, 1300, 'triangle', 0.1 * vol())
+  }
+  /** 戳醒：本地先醒（手感即时），主进程的空闲采样下一拍会跟上下发 idle:false */
+  function wakeUp(t) {
+    asleep = false
+    zzzEl.classList.remove('on')
+    brainAct = '' // 醒了别愣着，下一帧重新掷骰
+    brainNextAt = 0
+    deepBreathNextAt = t + 2500 // 醒来先清醒两秒，别刚睁眼就"呼——"
+    nextLookAt = t + 1200
+  }
+  /**
+   * 小黄鸭叫：pet/duck-click.wav（与主界面点大肥鱼图标放的 quack **同一份
+   * 素材的副本**，静态闸门按字节对账，改一边不动另一边就红）。
+   * 【为什么用 <audio> 元素而不是上面的合成器】合成器能给的是"电子哔"，
+   * 主人点名要的是"和主界面 UI 点击音效保持一致"—— 那就必须是那个文件。
+   * 音量跟设置页的 sfxVolume 走（主进程经 sound 指令同步过来）。
+   */
+  function playQuack() {
+    if (!soundOn || soundVol <= 0) return
+    var now = performance.now()
+    if (now - lastQuackAt < 200) return // 连点不叠成鸭子塘
+    lastQuackAt = now
+    try {
+      if (!duckEl) {
+        duckEl = new Audio('pet/duck-click.wav')
+        duckEl.preload = 'auto'
+      }
+      duckEl.volume = Math.min(1, Math.max(0, soundVol / 100))
+      duckEl.currentTime = 0
+      var p = duckEl.play()
+      if (p && p.catch) p.catch(function () {})
+    } catch (e) {
+      /* 播不出来就静音过去 —— 点击链路（摸头/拖/连点）绝不因为声音被拖垮 */
+    }
+  }
+  /** 脚步：每走 STEP_EVERY_PX 落一声，很轻（0.05 增益）——是"有脚"的底噪。
+      拖拽（悬空）与睡觉时不响；节流兜底防高帧率下叠音。 */
+  function playStep() {
+    if (!canSound()) return
+    var now = performance.now()
+    if (now - lastStepAt < 200) return
+    lastStepAt = now
+    var t = ac.currentTime
+    tone(t, 0.05, 300, 180, 'sine', 0.05 * vol())
+  }
+
+  // ---------------------------------------------------------------- 动作（整段演出，时间驱动）
+  function triggerAnim(name) {
+    var t = performance.now()
+    if (name === 'spin') spinT0 = t
+    else if (name === 'squash') squasT0 = t
+    else if (name === 'hop') hopT0 = t
+    else if (name === 'stretch') squasT0 = t // 伸展复用压缩通道（幅度参数不同）
+    else if (name === 'chomp') {
+      chompT0 = t
+      playChomp()
+    }
+  }
+  function animOffsets(t) {
+    // 返回叠加在精灵上的 transform 片段。走路部分**由实际速度驱动**：
+    // 相位 walkPhase 由位移推进（步频=速度），幅度按速度占比 load 缩放 ——
+    // 起步碎步、全速全幅、收油越来越慢，停下自然静止。硬编码的
+    // sin(t/130) 是"原地踏步的纸片人"的来源，已废弃。
+    var sp = Math.sqrt(velX * velX + velY * velY)
+    var load = Math.min(1, sp / WALK_SPEED)
+    var breathe = 1 + (asleep ? 0.035 : 0.02) * Math.sin(t / (asleep ? 1500 : 900))
+    var sx = 1
+    var sy = breathe
+    var rot = 0
+    var dy = 0
+    if (!dragging && load > 0.05) {
+      rot = 0.08 * load * Math.sin(walkPhase) // 摆尾式左右摇
+      dy = -Math.abs(Math.sin(walkPhase)) * 9 * load // 上下颠（7→9：脚步要有分量）
+    }
+    if (asleep) dy += 2 // 睡着往下沉一点（呼吸更深更慢，见上面的 breathe）
+    // 到点停稳的余摆：像刹车点头一样晃两下就扎住根（"刹不住车"的回弹）。
+    // 第三阶段加大了一档（0.1→0.13 / 2.4→3.2）—— 主人要的惯性感更明显
+    if (settleT0) {
+      var ks = (t - settleT0) / SETTLE_MS
+      if (ks >= 1) settleT0 = 0
+      else {
+        var damp = Math.exp(-ks * 4.2)
+        rot += 0.13 * damp * Math.sin(ks * 12)
+        dy += 3.2 * damp * Math.sin(ks * 13 + 0.8)
+      }
+    }
+    // 每步落地 / 起步蹬地：脚步落下那一拍身体压实一下（脚下"有重量"）
+    if (landT0) {
+      var kl = (t - landT0) / LAND_MS
+      if (kl >= 1) landT0 = 0
+      else {
+        var wl = Math.sin(kl * Math.PI)
+        sy *= 1 - 0.05 * landHeavy * wl
+        sx *= 1 + 0.035 * landHeavy * wl
+      }
+    }
+    // 转身小动作（只在站定时换朝向才播）：压扁蓄力 → 过半翻图（step 里翻）→ 弹回
+    if (turnT0) {
+      var kt = (t - turnT0) / TURN_MS
+      if (kt >= 1) turnT0 = 0
+      else {
+        var wt = Math.sin(kt * Math.PI)
+        sx *= 1 + 0.09 * wt
+        sy *= 1 - 0.11 * wt
+        rot += (kt < 0.5 ? -0.05 : 0.05) * wt
+      }
+    }
+    // 坐着歇：身体压低、左右慢晃（比走路的摇更慢更轻 —— "歇着"与"散步"两种晃动）
+    if (sitAmt > 0.02) {
+      sx *= 1 + 0.05 * sitAmt
+      sy *= 1 - 0.055 * sitAmt
+      rot += 0.022 * sitAmt * Math.sin(t / 640)
+    }
+    // 偶尔来一口深呼吸（待机 6~13 秒一次）：慢吸慢呼 + 微微挺起来 ——
+    // 静止时的"活着"底噪。睡着时不来（睡眠另有更深更慢的呼吸）
+    if (!asleep && t >= deepBreathNextAt) {
+      deepBreathT0 = t
+      deepBreathNextAt = t + BREATH_GAP_MIN + Math.random() * (BREATH_GAP_MAX - BREATH_GAP_MIN)
+    }
+    if (deepBreathT0) {
+      var kdb = (t - deepBreathT0) / 2400
+      if (kdb >= 1) deepBreathT0 = 0
+      else {
+        var wdb = Math.sin(kdb * Math.PI)
+        sy *= 1 + 0.028 * wdb
+        dy -= 1.4 * wdb
+      }
+    }
+    // 光标感应：悬停时朝指针方向倾（"跟着你的视线看"）。很浅，和走路摇叠加
+    if (t < hoverUntil && !dragging && !asleep) {
+      var lean = Math.max(-1, Math.min(1, (hoverX - pos.x) / (sprHW[1] * 0.9)))
+      rot += lean * GAZE_LEAN
+    }
+    // 拖拽拉伸：按运动方向压/拉（横向拖=拉长、纵向拖=拎高），松手指数回正
+    //（dragSX/SY 的衰减在 step() 里按 dt 走）—— 身体对"被拎起来"有回应
+    sx *= dragSX
+    sy *= dragSY
+    if (squasT0) {
+      var k = (t - squasT0) / 420
+      if (k >= 1) squasT0 = 0
+      else {
+        var w = Math.sin(k * Math.PI) // 0→1→0
+        sx = 1 + 0.16 * w
+        sy = breathe * (1 - 0.2 * w)
+        dy += 4 * w
+      }
+    }
+    if (hopT0) {
+      var kh = (t - hopT0) / 360
+      if (kh >= 1) hopT0 = 0
+      else {
+        // 起跳前先沉一下（预备动作）再蹦 —— 直上直下是"抽搐"，有预备才像活物
+        if (kh < 0.12) dy += 5
+        else dy -= Math.sin(((kh - 0.12) / 0.88) * Math.PI) * 26
+      }
+    }
+    if (chompT0) {
+      var kc = (t - chompT0) / 340
+      if (kc >= 1) chompT0 = 0
+      else {
+        sx = 1 + 0.08 * Math.sin(kc * Math.PI * 3)
+        sy = breathe * (1 - 0.08 * Math.sin(kc * Math.PI * 3))
+      }
+    }
+    if (spinT0) {
+      var ks2 = (t - spinT0) / 750
+      if (ks2 >= 1) spinT0 = 0
+      else {
+        rot += ks2 * Math.PI * 2
+        dy -= Math.sin(ks2 * Math.PI) * 10
+      }
+    }
+    return { sx: sx, sy: sy, rot: rot, dy: dy }
+  }
+
+  // ---------------------------------------------------------------- 移动
+  // 【物理模型（2026-10-06 第二阶段重写）】速度是**状态**，不再每帧硬赋值：
+  //   · 追目标：目标速度 = 方向 × 限速（接近时收油），实际速度按指数逼近 ——
+  //     加速快（TAU_GO）、刹车慢（TAU_STOP），于是到点后还会滑一小段再来
+  //     一记回弹余摆（settleT0）—— 主人要的"刹不住车的惯性"就是这两段；
+  //   · 没目标：按 THROW_TAU 惯性衰减（拖拽甩出的初速也走这条路，撞边反弹）；
+  //   · 侧摆：游动时在垂直方向叠正弦速度（SWAY），轨迹是 S 形不是直线；
+  //   · 步频：walkPhase 由**实际位移**推进 —— 脚下节奏与位移绑定，停下即静。
+  var movingNow = false
+  var velX = 0
+  var velY = 0
+
+  function wanderBounds() {
+    return { x0: sprHW[1] / 2 + 8, x1: vw - sprHW[1] / 2 - 8, y0: WANDER_MIN_H, y1: vh - WANDER_BOTTOM }
+  }
+  function pickWanderTarget(far) {
+    var b = wanderBounds()
+    for (var i = 0; i < (far ? 8 : 1); i++) {
+      wanderTarget = {
+        x: b.x0 + Math.random() * (b.x1 - b.x0),
+        y: b.y0 + Math.random() * (b.y1 - b.y0)
+      }
+      // far：冲刺要有个像样的跑道（离当前位置至少 240px），试 8 次不行就随缘
+      if (!far) break
+      var fdx = wanderTarget.x - pos.x
+      var fdy = wanderTarget.y - pos.y
+      if (fdx * fdx + fdy * fdy > 240 * 240) break
+    }
+  }
+
+  // ---------------------------------------------------------------- 行为大脑
+  // 第三阶段（2026-10-06 晚，主人："走路这些行为模式还是很呆"）。参考
+  // MerZlin/dsh-pet-indesktop 的骨架：它的活泼一半来自帧动画，另一半来自
+  // **掷骰的行为轮换** —— 骨架可以程序化复刻，帧动画不能。于是游走从
+  // "拣点→走→呆等"升级成：走 / 冲刺 / 坐着歇 / 伸懒腰 / 连看两眼 / 立正
+  // 听声 轮着演，不连庄。所有花活都叠加在既有的变换通道上（零新素材）。
+  function requestTurn(nf, nd, t) {
+    if (turnT0) return // 上一次转身还没演完
+    if (nf === facing && (!nd || nd === dir)) return // 本来就朝那边
+    turnT0 = t
+    turnDone = false
+    turnTo = nf
+    turnDirTo = nd || dir
+  }
+
+  /** 掷一个行为并开演；返回移动目标（只有 stroll/dash 有）。空档期返回 null。 */
+  function brainStep(t) {
+    // 行为演完 → 收尾 → 空档
+    if (brainAct !== '' && t >= brainUntil) {
+      if (brainAct === 'sit') {
+        playSqueak() // 起立哼一声
+        squasT0 = t // 顺带抻一下（复用压缩通道）
+      }
+      brainAct = ''
+      dashMul = 1
+      brainNextAt = t + BRAIN_GAP_MIN + Math.random() * (BRAIN_GAP_MAX - BRAIN_GAP_MIN)
+    }
+    if (brainAct !== '') return brainAct === 'stroll' || brainAct === 'dash' ? wanderTarget : null
+    if (t < brainNextAt) return null
+    // 掷骰：stroll 权重最高（毕竟是条要走来走去的鱼），花活穿插着来。
+    // 掷到与上次重复的就连重掷（防"连坐两次"的呆板），8 次封顶防死循环
+    var pool = ['stroll', 'stroll', 'stroll', 'dash', 'sit', 'stretch', 'look', 'perk']
+    var pick = ''
+    for (var i = 0; i < 8; i++) {
+      pick = pool[(Math.random() * pool.length) | 0]
+      if (pick !== lastBrainAct) break
+    }
+    lastBrainAct = pick
+    brainAct = pick
+    if (pick === 'stroll') {
+      pickWanderTarget(false)
+      brainUntil = t + 30000 // 走多久由"到达"改写（这里是兜底上限）
+      return wanderTarget
+    }
+    if (pick === 'dash') {
+      pickWanderTarget(true)
+      dashMul = DASH_MUL
+      brainUntil = t + 30000
+      return wanderTarget
+    }
+    if (pick === 'sit') {
+      brainUntil = t + SIT_MS_MIN + Math.random() * (SIT_MS_MAX - SIT_MS_MIN)
+      return null
+    }
+    if (pick === 'stretch') {
+      triggerAnim('stretch')
+      brainUntil = t + 640
+      return null
+    }
+    if (pick === 'perk') {
+      // "听见啥了？"：原地一蹦 + 扭头看一边（side 位转身才有戏，一定看得见）
+      hopT0 = t
+      requestTurn(Math.random() < 0.5 ? -1 : 1, 'side', t)
+      brainUntil = t + 900
+      return null
+    }
+    // look：把接下来的两次张望挤到眼前（连看两眼再恢复慢节奏）
+    lookBurstUntil = t + 2600 + Math.random() * 1600
+    nextLookAt = t
+    lookHoldUntil = 0
+    brainUntil = t + 2800 + Math.random() * 2000
+    return null
+  }
+
+  /** 弹簧逼近：把速度朝 (tx, ty) 拉，时间常数 tau（越小追得越紧） */
+  function approach(dt, tx, ty, tau) {
+    var k = 1 - Math.exp(-dt / tau)
+    velX += (tx - velX) * k
+    velY += (ty - velY) * k
+  }
+
+  function step(dt, t) {
+    // 拖拽中：pos 由指针直接写（onWinMove），物理层不掺和
+    if (dragging) {
+      movingNow = true
+      velX = 0
+      velY = 0
+      return
+    }
+
+    var mode = snap ? snap.mode : 'wander'
+
+    // 转身小动作的"翻图时刻"：过半时真正换朝向（视觉上 = 转到一半翻的面）。
+    // 放在最前：不管这一帧有没有移动目标，转身都得能演完
+    if (turnT0 && !turnDone && t - turnT0 >= TURN_MS * 0.42) {
+      turnDone = true
+      facing = turnTo
+      if (turnDirTo !== dir) dir = turnDirTo
+      applyDir()
+    }
+    // 坐姿强度松弛：目标 = 大脑正在 sit 且没被打断（拖拽/警报/睡着/跟随都算打断）
+    var sitWant = brainAct === 'sit' && !goto && !asleep && mode === 'wander' ? 1 : 0
+    sitAmt += (sitWant - sitAmt) * (1 - Math.exp(-dt / 0.14))
+
+    var target = null
+    var speed = WALK_SPEED * dashMul
+    var tau = TAU_GO
+    var onArrive = null
+
+    // 睡着：不游走、不跟随（原地深睡；点它/来警报才会醒，见 wakeUp）
+    if (!asleep) {
+      if (goto) {
+        target = goto
+        speed = goto.hurry ? ALERT_SPEED : WALK_SPEED
+        tau = TAU_GO * 0.7 // 赶路：追得更紧
+        onArrive = function () {
+          var g = goto
+          goto = null
+          if (g && g.text) say(g.text, true)
+        }
+      } else if (mode === 'follow' && cursorPos) {
+        // 跟着鼠标：别贴脸 —— 停在光标下侧一小段距离
+        target = { x: cursorPos.x, y: cursorPos.y + 26 }
+        speed = FOLLOW_SPEED
+        if (Math.abs(pos.x - target.x) < 46 && Math.abs(pos.y - target.y) < 46) target = null
+      } else if (mode === 'wander') {
+        target = brainStep(t) // 掷骰的行为大脑：走/冲刺/坐着歇/伸懒腰/……（返回目标或 null）
+      }
+    }
+
+    // 困了游慢点（脸色的可见行为之一；脸色本身由主进程算）
+    if (snap && snap.face === 'sleepy') speed *= 0.6
+
+    var sp0 = Math.sqrt(velX * velX + velY * velY)
+
+    if (target) {
+      var dx = target.x - pos.x
+      var dy = target.y - pos.y
+      var d = Math.sqrt(dx * dx + dy * dy)
+      var reach = goto ? 10 : 6
+      if (d <= reach) {
+        // 到点：速度**不清零** —— 余速带着鱼再滑一小段（"刹不住车"），
+        // 由下面的惯性衰减收尾；滑停那一帧补一记回弹余摆（settleT0）。
+        // 例外：goto（去报错现场）要站得准 —— 气泡指向那一行，余速砍到三成
+        if (onArrive) {
+          velX *= 0.3
+          velY *= 0.3
+          onArrive()
+        } else {
+          wanderTarget = null
+          // 到点交给行为大脑收尾（下一帧 finish → 空档 → 掷下一个骰子）
+          if (brainAct === 'stroll' || brainAct === 'dash') brainUntil = t
+        }
+        if (sp0 > 40) settleT0 = t
+      } else {
+        // 先转头再走（参考项目最显眼的一下）：起步时目标在身后 → 先演完一次
+        // 转身（压扁→过半翻图→弹回）再迈步。移动中的朝向是瞬时跟随速度的
+        //（见下面的 facing 赋值），不做这一步，鱼会在起步瞬间"啪"地翻面。
+        // 只在"从静止起步"的游走/冲刺上做（sp0<34）；中途改向、赶路不打断。
+        var wantFace = Math.abs(dx) > 12 ? (dx < 0 ? -1 : 1) : facing
+        var sideMove = Math.abs(dx) >= Math.abs(dy)
+        var wantDir = sideMove ? 'side' : dy <= 0 ? 'back' : 'front'
+        var needTurn =
+          !asleep &&
+          !goto &&
+          sp0 < 34 &&
+          (brainAct === 'stroll' || brainAct === 'dash') &&
+          ((sideMove && wantFace !== facing) || (!sideMove && dir === 'side'))
+        if (needTurn) {
+          if (!turnT0) {
+            requestTurn(wantFace, wantDir, t)
+            walkTurnT0 = t
+            lookHoldUntil = Math.max(lookHoldUntil, t + TURN_MS + 500) // 起步让行：别插回正/张望
+          } else if (!turnDone) {
+            // 撞上别的转身（多是待机回正）：还没翻图就直接改道，翻成要去的方向
+            turnTo = wantFace
+            turnDirTo = wantDir
+            walkTurnT0 = t
+          }
+        }
+        if (walkTurnT0 && t - walkTurnT0 < TURN_MS * 0.42) {
+          // 起步转身还没到翻图时刻：收油站定（不驱动位移），翻完下一帧自然起步
+          approach(dt, 0, 0, TAU_STOP * 0.6)
+        } else {
+          if (walkTurnT0) walkTurnT0 = 0
+          // 收油：距目标 ARRIVE_EASE 内限速线性降 —— 不冲脸不骤停
+          var sp = speed * Math.min(1, d / ARRIVE_EASE)
+          var dirX = dx / d
+          var dirY = dy / d
+          // 侧摆：垂直方向的正弦扰动。离目标太近（<120px）时收小，免得停不准
+          var sway = Math.sin(t / SWAY_PERIOD + 1.7) * SWAY_AMP * Math.min(1, d / 120)
+          var tgtVX = dirX * sp - dirY * sway
+          var tgtVY = dirY * sp + dirX * sway
+          var tgtSp = Math.sqrt(tgtVX * tgtVX + tgtVY * tgtVY)
+          // 一快一慢：目标速度 ≥ 现速 = 加速（tau 小）；否则滑行减速（TAU_STOP）
+          approach(dt, tgtVX, tgtVY, tgtSp >= sp0 ? tau : TAU_STOP)
+        }
+      }
+    } else {
+      // 没目标：惯性滑行（到点的余速、拖拽甩出的初速、跟随松开的残速都在这衰减）
+      var kd = Math.exp(-dt / THROW_TAU)
+      velX *= kd
+      velY *= kd
+    }
+
+    var spNow = Math.sqrt(velX * velX + velY * velY)
+    if (spNow < 1.5) {
+      velX = 0
+      velY = 0
+      spNow = 0
+      // 从"看得见的速度"滑到零的那一帧：补一记回弹余摆（而不是"啪"地钉死）
+      if (sp0 > 40 && t - settleT0 > SETTLE_MS) settleT0 = t
+    }
+    movingNow = spNow > 4
+    if (movingNow && !wasMoving && !asleep) {
+      // 起步蹬地：从静止蹬出去那一下身体压实（落步通道，力度拉满）
+      landT0 = t
+      landHeavy = 1
+    }
+    wasMoving = movingNow
+
+    // 拖拽拉伸指数回正（拖拽中由 onWinMove 直接写，这里不碰）
+    if (dragSX !== 1 || dragSY !== 1) {
+      var kr = 1 - Math.exp(-dt / 0.18)
+      dragSX += (1 - dragSX) * kr
+      dragSY += (1 - dragSY) * kr
+      if (Math.abs(dragSX - 1) < 0.004) dragSX = 1
+      if (Math.abs(dragSY - 1) < 0.004) dragSY = 1
+    }
+
+    if (!movingNow) {
+      // 静止：原地张望（随机看一个方向一两秒再回正）—— 待机也有小动作。
+      // 第三阶段起张望不再瞬间换图，走"转身小动作"（压扁蓄力→过半翻图→弹回）
+      // —— 参考项目里"先转头再看"的那一下；look 行为窗口里连看两眼。
+      if (!asleep && t >= lookHoldUntil && dir !== 'front') {
+        requestTurn(facing, 'front', t)
+        lookHoldUntil = t + 260 // 转身演着，先把回正的检查推后
+      }
+      if (!asleep && t >= nextLookAt && t >= lookHoldUntil) {
+        var r = Math.random()
+        var nd = r < 0.35 ? 'front' : r < 0.65 ? 'back' : 'side'
+        var nf = nd !== 'side' ? (Math.random() < 0.5 ? -1 : 1) : facing
+        requestTurn(nf, nd, t)
+        lookHoldUntil = t + 1100 + Math.random() * 1400
+        nextLookAt =
+          lookHoldUntil +
+          (t < lookBurstUntil ? 500 + Math.random() * 700 : 2800 + Math.random() * 5200)
+      }
+      // 光标划过鱼身：扭头看你（"跟随视线"的转向版；带冷却，不疯狂抖）
+      if (!asleep && t < hoverUntil && t >= gazeFaceUntil && Math.abs(hoverX - pos.x) > 48) {
+        gazeFaceUntil = t + 2200
+        requestTurn(hoverX < pos.x ? -1 : 1, dir, t)
+      }
+      return
+    }
+
+    // 位移 + 活动边界（撞边反弹一次 + 压一下：撞到屏幕边是"物理事件"）
+    pos.x += velX * dt
+    pos.y += velY * dt
+    var b = wanderBounds()
+    var bumped = false
+    if (pos.x < b.x0) {
+      pos.x = b.x0
+      if (velX < 0) {
+        velX = -velX * 0.5
+        bumped = true
+      }
+    } else if (pos.x > b.x1) {
+      pos.x = b.x1
+      if (velX > 0) {
+        velX = -velX * 0.5
+        bumped = true
+      }
+    }
+    if (pos.y < b.y0) {
+      pos.y = b.y0
+      if (velY < 0) {
+        velY = -velY * 0.5
+        bumped = true
+      }
+    } else if (pos.y > b.y1) {
+      pos.y = b.y1
+      if (velY > 0) {
+        velY = -velY * 0.5
+        bumped = true
+      }
+    }
+    if (bumped && squasT0 === 0) squasT0 = t
+
+    // 步频与脚步音：相位由实际位移推进（走得快 → 摆得急 → 脚也密）
+    var stepDist = spNow * dt
+    walkPhase += stepDist * WALK_CYCLE_PER_PX + dt * WALK_CYCLE_BASE * Math.min(1, spNow / WALK_SPEED)
+    stepAccum += stepDist
+    if (stepAccum >= STEP_EVERY_PX) {
+      stepAccum = 0
+      playStep()
+      landT0 = t // 脚步落下那一拍：压实一下（"有重量"）
+      landHeavy = 0.55 + 0.45 * Math.min(1, spNow / WALK_SPEED)
+    }
+
+    // 朝向：横向分量说了算；纯纵向时不翻面（同旧版）
+    if (Math.abs(velX) >= 4) facing = velX < 0 ? -1 : 1
+    // 方向图：横着走 → side；向上走 → back；其余 front
+    var nextDir
+    if (Math.abs(velX) >= Math.abs(velY) && Math.abs(velX) >= 4) nextDir = 'side'
+    else if (velY <= -4) nextDir = 'back'
+    else if (Math.abs(velY) >= 4) nextDir = 'front'
+    else nextDir = dir
+    if (nextDir !== dir) {
+      dir = nextDir
+      applyDir()
+    }
+  }
+
+  // ---------------------------------------------------------------- 渲染
+  function render(t) {
+    var a = animOffsets(t)
+    // pos 按全文件口径就是**脚底中点**（reportHits 命中区 / 气泡挂头顶 / 游走边界都这么用）；
+    // .spr 由 CSS 钉在"底边中点 = #fish 原点"（left:50% + bottom:0 + translateX(-50%)），
+    // 所以原点直接放 pos。再减 (sprHW/2, SPR) 就是双份偏移 —— 整条鱼会画到脚点
+    // 左上 (半宽, SPR)px 处（2026-10-06 G2 实测：落点 = 锚点 − (91.8, 245.2)，分毫不差）
+    fishEl.style.transform = 'translate3d(' + pos.x + 'px,' + pos.y + 'px,0)'
+    activeSpr.style.transform =
+      'translateX(-50%)' +
+      // 同 applyDir：side 素材面朝左，只有朝右走（facing>0）才镜像；写反 = 倒退步
+      (dir === 'side' && facing > 0 ? ' scaleX(-1)' : '') +
+      ' translateY(' + a.dy.toFixed(2) + 'px) rotate(' + a.rot.toFixed(4) + 'rad) scale(' + a.sx.toFixed(3) + ',' + a.sy.toFixed(3) + ')'
+    // 气泡挂在鱼头上方
+    var bx = Math.min(vw - 150, Math.max(150, pos.x))
+    bubbleEl.style.left = bx + 'px'
+    bubbleEl.style.top = Math.max(6, pos.y - SPR - bubbleEl.offsetHeight - 12) + 'px'
+    // 瞌睡 z 跟着鱼头飘（和气泡同口径：钳进窗口里）
+    if (asleep) {
+      zzzEl.style.left = Math.min(vw - 44, Math.max(10, pos.x + sprHW[1] * 0.26)) + 'px'
+      zzzEl.style.top = Math.max(6, pos.y - SPR - 34) + 'px'
+    }
+  }
+
+  // ---------------------------------------------------------------- 气泡
+  function say(text, immediate) {
+    if (!text) return
+    if (immediate) bubbleQueue.unshift(text)
+    else bubbleQueue.push(text)
+    if (bubbleQueue.length > 3) bubbleQueue.splice(0, bubbleQueue.length - 3)
+  }
+  function bubblePump(t) {
+    if (t < bubbleUntil) return
+    if (bubbleEl.classList.contains('show')) {
+      bubbleEl.classList.remove('show')
+      bubbleUntil = t + 180 // 沉下去换气，避免两句连读像一句
+      return
+    }
+    if (bubbleQueue.length === 0) return
+    var text = bubbleQueue.shift()
+    bubbleEl.textContent = text
+    bubbleEl.classList.add('show')
+    // 按长度给时长：短句 3.4s，长句按阅读速度加
+    bubbleUntil = t + Math.max(3400, Math.min(9000, text.length * 130))
+  }
+
+  // ---------------------------------------------------------------- 命中区上报
+  function reportHits(force) {
+    var t = performance.now()
+    if (!force && t - lastHitAt < HIT_REPORT_MS) return
+    lastHitAt = t
+    var rects = []
+    // 精灵本体（脚下锚点四周留一圈手感余量）。拖拽中余量加大到 40px ——
+    // 指针甩得比 60ms 轮询快时，命中区必须仍然黏着指针，否则窗口一瞬
+    // 转回穿透、mousemove 断流，鱼就"脱手"了
+    var pad = dragging ? 40 : 10
+    rects.push({
+      x: pos.x - sprHW[1] / 2 - pad,
+      y: pos.y - SPR - pad,
+      w: sprHW[1] + pad * 2,
+      h: SPR + pad + 6
+    })
+    if (chatOpen) {
+      var r = chatEl.getBoundingClientRect()
+      rects.push({ x: r.left, y: r.top, w: r.width, h: r.height })
+    }
+    var json = JSON.stringify(rects)
+    if (!force && json === lastHitsJson) return
+    lastHitsJson = json
+    if (api) api.hit(rects)
+  }
+
+  // ---------------------------------------------------------------- 位置回写
+  function savePos(force) {
+    var t = performance.now()
+    if (!force && t - lastPosSaveAt < POS_SAVE_MS) return
+    lastPosSaveAt = t
+    if (api && snap && snap.mode !== 'follow') {
+      // follow 模式下位置由鼠标决定，存下来没有意义（下次开机默认位置更自然）
+      api.act({ action: 'pos', x: pos.x / vw, y: pos.y / vh }).catch(function () {})
+    }
+  }
+
+  // ---------------------------------------------------------------- 右键
+  function onFishContext(ev) {
+    ev.preventDefault()
+    ensureAudio()
+    if (api) api.act({ action: 'menu' }).catch(function () {})
+  }
+
+  // ---------------------------------------------------------------- 拖拽（拎起来 & 甩出去）
+  // 【识别】按下不动 = 点（摸头/双击/连点）；按下移动超过 DRAG_THRESHOLD = 拖。
+  // 【为什么全程本地】窗口铺满工作区 + 主进程按命中区切换穿透 —— 指针在鱼
+  // 身上时事件本来就能到手；拖拽中每帧 reportHits(true) 把命中区钉在指针
+  // 之下即可，不需要任何新 IPC。
+  // 【松手在窗外（任务栏那条）怎么办】mouseup 收不到 —— 用 mousemove 的
+  // ev.buttons 兜底：事件回到窗口时若左键已松，立刻补一次收尾（见 onWinMove）。
+  function beginDrag(t) {
+    dragging = true
+    grabDX = lastPtrX - pos.x // 保留抓取偏移：拎起来原地不跳
+    grabDY = lastPtrY - pos.y
+    velX = 0
+    velY = 0
+    // 拖不是点：撤掉所有排队的点击动作（否则松手后还会蹦一下、开个聊天天）
+    if (patTimer) {
+      clearTimeout(patTimer)
+      patTimer = null
+    }
+    if (dblTimer) {
+      clearTimeout(dblTimer)
+      dblTimer = null
+    }
+    clickTimes = []
+    reportHits(true)
+  }
+
+  function onWinMove(ev) {
+    var t = performance.now()
+    // 光标感应（跟随视线）：鼠标在鱼附近时记下位置，render/animOffsets 用它侧倾
+    hoverX = ev.clientX
+    hoverY = ev.clientY
+    hoverUntil = t + 600
+    if (!pressed) return
+    if (!dragging) {
+      var mdx = ev.clientX - pressX
+      var mdy = ev.clientY - pressY
+      if (mdx * mdx + mdy * mdy > DRAG_THRESHOLD * DRAG_THRESHOLD) beginDrag(t)
+      else return
+    }
+    if ((ev.buttons & 1) === 0) {
+      // 松手发生在窗口外（比如任务栏上），mouseup 丢了 —— 事件一回来就补收尾
+      endDrag(t)
+      return
+    }
+    var dtms = Math.max(1, t - lastPtrAt)
+    var ivx = ((ev.clientX - lastPtrX) / dtms) * 1000
+    var ivy = ((ev.clientY - lastPtrY) / dtms) * 1000
+    // 平滑采样：单帧的抖动不该变成脱手飞出去的鱼
+    throwVX = throwVX * 0.72 + ivx * 0.28
+    throwVY = throwVY * 0.72 + ivy * 0.28
+    lastPtrX = ev.clientX
+    lastPtrY = ev.clientY
+    lastPtrAt = t
+    // 鱼挂在指针上（宽松边界：允许拎到窗口任意角落，松手后惯性自己收回来）
+    pos.x = Math.min(vw - 6, Math.max(6, ev.clientX - grabDX))
+    pos.y = Math.min(vh - 6, Math.max(6, ev.clientY - grabDY))
+    // 拉伸：按运动主方向压/拉（横向甩=抻长，拎高=吊长）+ 拖拽中每帧重报命中区
+    var spd = Math.sqrt(throwVX * throwVX + throwVY * throwVY)
+    var st = Math.min(1, spd / 700)
+    if (Math.abs(throwVX) >= Math.abs(throwVY)) {
+      dragSX = 1 + 0.16 * st
+      dragSY = 1 - 0.1 * st
+    } else {
+      dragSX = 1 - 0.1 * st
+      dragSY = 1 + 0.16 * st
+    }
+    reportHits(true)
+  }
+
+  function endDrag(t) {
+    if (!dragging) {
+      pressed = false
+      return
+    }
+    dragging = false
+    pressed = false
+    var spd = Math.sqrt(throwVX * throwVX + throwVY * throwVY)
+    if (spd > THROW_MAX) {
+      var f = THROW_MAX / spd
+      throwVX *= f
+      throwVY *= f
+      spd = THROW_MAX
+    }
+    // 甩出去：采样速度成为初速，之后走 step() 的惯性衰减 + 撞边反弹
+    velX = spd > 60 ? throwVX : 0
+    velY = spd > 60 ? throwVY : 0
+    // 这一按已经从"点"变成了"拖"：松手不许补摸头/双击（锁一小段）
+    lockUntil = t + 260
+    clickTimes = []
+    if (patTimer) {
+      clearTimeout(patTimer)
+      patTimer = null
+    }
+    if (dblTimer) {
+      clearTimeout(dblTimer)
+      dblTimer = null
+    }
+    reportHits(true)
+    savePos(true) // 拖完立刻落盘（不等 8 秒节流：这就是用户当前想放的位置）
+  }
+
+  function onWinUp(ev) {
+    if (ev.button !== 0) return
+    pressed = false
+    if (dragging) endDrag(performance.now())
+  }
+
+  // ---------------------------------------------------------------- 聊天面板
+  function addChat(role, content, typing) {
+    var el = document.createElement('div')
+    el.className = 'm ' + (role === 'user' ? 'user' : 'fish') + (typing ? ' typing' : '')
+    el.textContent = content
+    chatLog.appendChild(el)
+    chatLog.scrollTop = chatLog.scrollHeight
+    return el
+  }
+  function openChat(hello) {
+    ensureAudio()
+    if (!chatOpen) {
+      chatOpen = true
+      chatEl.classList.add('open')
+      reportHits(true)
+    }
+    // 开场白**故意放在 if(!chatOpen) 外面**：双击路径是"面板先在本地开、
+    // 主进程的 chat-open（带 hello）后到"（记忆环只有主进程够得着）。
+    // 嵌在里面的话，后到的 hello 永远进不了这个分支 —— 面板开了、没有鱼话
+    //（2026-10-06 D2 实测抓到的静默丢句）。chatHelloShown 仍防重复。
+    if (hello && !chatHelloShown) {
+      chatHelloShown = true
+      addChat('assistant', hello)
+    }
+    chatInput.focus()
+  }
+  function closeChat() {
+    if (!chatOpen) return
+    chatOpen = false
+    chatEl.classList.remove('open')
+    reportHits(true)
+  }
+  function sendChat() {
+    var text = chatInput.value.trim()
+    if (text === '' || chatBusy) return
+    if (!api) return
+    chatInput.value = ''
+    addChat('user', text)
+    chatMessages.push({ role: 'user', content: text })
+    chatBusy = true
+    chatSend.disabled = true
+    var pending = addChat('fish', '', true)
+    api
+      .chat(chatMessages)
+      .then(function (res) {
+        pending.remove()
+        var out = res && typeof res.text === 'string' && res.text !== '' ? res.text : ''
+        if (out !== '') {
+          addChat('assistant', out)
+          chatMessages.push({ role: 'assistant', content: out })
+        }
+        playSqueak()
+      })
+      .catch(function () {
+        // 桥本身炸了（极早期）——画面上也得有句人话，不能什么都不发生
+        pending.remove()
+        addChat('assistant', '...')
+      })
+      .finally(function () {
+        chatBusy = false
+        chatSend.disabled = false
+        chatInput.focus()
+      })
+  }
+
+  // ---------------------------------------------------------------- 主进程指令 / 状态
+  if (api) {
+    api.onCmd(function (cmd) {
+      if (!cmd || typeof cmd !== 'object') return
+      if (cmd.kind === 'say') say(cmd.text)
+      else if (cmd.kind === 'alert') {
+        // 报错联动：赶去现场，到了再说台词（hurry = 一路小跑）。
+        // 来警报 = 主人正在干活 → 睡着的鱼先醒（主进程的空闲采样同一拍也会推 idle:false）
+        if (asleep) wakeUp(performance.now())
+        goto = { x: cmd.x, y: cmd.y, text: cmd.text, hurry: true }
+      } else if (cmd.kind === 'chat-open') openChat(cmd.hello)
+      else if (cmd.kind === 'cursor') cursorPos = { x: cmd.x, y: cmd.y }
+      else if (cmd.kind === 'anim') triggerAnim(cmd.name)
+      else if (cmd.kind === 'idle') {
+        // 电脑空闲/回来（主进程 powerMonitor 判定）。睡着只影响"要不要自己
+        // 游走"；点它、来警报都会立刻醒（本地先醒，不等下一拍轮询）
+        if (cmd.on === true) {
+          if (!asleep) {
+            asleep = true
+            velX = 0
+            velY = 0
+            zzzEl.classList.add('on')
+          }
+        } else if (asleep) wakeUp(performance.now())
+      } else if (cmd.kind === 'sound') {
+        soundOn = cmd.on === true
+        soundVol = typeof cmd.volume === 'number' ? cmd.volume : 0
+      }
+    })
+    api.onState(function (s) {
+      if (!s || typeof s !== 'object') return
+      snap = s
+      // 体型跟随广播（设置卡改档 → 主进程 commit → 这里换素材+重报命中区）
+      if (SIZES[s.size]) applySize(s.size)
+      if (!placed && typeof s.x === 'number' && typeof s.y === 'number') {
+        placed = true
+        pos.x = Math.min(vw - 60, Math.max(60, s.x * vw))
+        pos.y = Math.min(vh - WANDER_BOTTOM, Math.max(WANDER_MIN_H, s.y * vh))
+      }
+    })
+    // 首帧兜底：推送可能发生在订阅之前（同 wallpaperStateGet 的缝）
+    api
+      .init()
+      .then(function (s) {
+        if (s && !snap) {
+          snap = s
+          if (SIZES[s.size]) applySize(s.size)
+          if (!placed) {
+            placed = true
+            pos.x = Math.min(vw - 60, Math.max(60, s.x * vw))
+            pos.y = Math.min(vh - WANDER_BOTTOM, Math.max(WANDER_MIN_H, s.y * vh))
+          }
+        }
+      })
+      .catch(function () {})
+  }
+
+  // ---------------------------------------------------------------- 事件装配
+  fishEl.addEventListener('mousedown', onFishDown)
+  // 拖拽/悬浮都走 window 级（窗口铺满工作区；事件只在光标压着命中区时才送达
+  // 本页 —— 那个"命中区"由主进程的穿透开关把关，见文件头）
+  window.addEventListener('mousemove', onWinMove)
+  window.addEventListener('mouseup', onWinUp)
+  sprA.addEventListener('contextmenu', onFishContext)
+  sprB.addEventListener('contextmenu', onFishContext)
+  chatSend.addEventListener('click', sendChat)
+  chatClose.addEventListener('click', closeChat)
+  chatInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      sendChat()
+    } else if (e.key === 'Escape') {
+      closeChat()
+    }
+  })
+
+  window.addEventListener('resize', function () {
+    vw = window.innerWidth
+    vh = window.innerHeight
+    pos.x = Math.min(pos.x, vw - 40)
+    pos.y = Math.min(pos.y, vh - 20)
+  })
+  window.addEventListener('beforeunload', function () {
+    savePos(true)
+  })
+
+  // ---------------------------------------------------------------- 主循环
+  var lastT = 0
+  function frame(t) {
+    var dt = lastT === 0 ? 0.016 : Math.min(0.05, (t - lastT) / 1000)
+    lastT = t
+    step(dt, t)
+    render(t)
+    bubblePump(t)
+    reportHits(false)
+    savePos(false)
+    requestAnimationFrame(frame)
+  }
+
+  // 初始方向图 + 预取小黄鸭（第一次点击就不等文件加载）+ 进入主循环
+  applyDir()
+  try {
+    duckEl = new Audio('pet/duck-click.wav')
+    duckEl.preload = 'auto'
+  } catch (e) {
+    duckEl = null
+  }
+
+  // 探针只读口（对齐开屏页 __splashStats 的惯例）：把行为大脑的黑盒开一条缝，
+  // 探针按帧采它才能断言"行为在轮换"（闭包里的变量 CDP 读不到）。只读、零副作用
+  window.__petStats = function () {
+    return {
+      act: brainAct,
+      dashMul: dashMul,
+      sit: Number(sitAmt.toFixed(3)),
+      pos: { x: Number(pos.x.toFixed(1)), y: Number(pos.y.toFixed(1)) },
+      vel: { x: Number(velX.toFixed(1)), y: Number(velY.toFixed(1)) },
+      dir: dir,
+      facing: facing,
+      asleep: asleep,
+      dragging: dragging,
+      settle: settleT0 > 0,
+      turn: turnT0 > 0,
+      // 声音状态（探针 L 臂前置：闹钟没开时"没响"必须能区分"没播"还是"静音"）
+      snd: { on: soundOn, vol: soundVol },
+      last: lastBrainAct
+    }
+  }
+  requestAnimationFrame(frame)
+})()
+</script>
+</body>
+</html>

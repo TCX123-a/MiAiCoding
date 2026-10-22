@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-bit-unsigned-shift",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-17",
+  "type": "codefix",
+  "concept": ["往右挪有两只手，补什么由你写的那只说了算", "`>>` 补最左边那一格原来的样子", "`>>>` 一律补 0，只有负数才看得出差别"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "pick", "values": ["-8", "-16"] },
+    "k": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stemTemplate": "本喵手上有个负数 {n}，想把它那排格子**整体往右挪 {k} 格**：右边挤出去的格子不要了，**左边空出来的格子一律补 0**。\n\n可这段稿子跑出来的结果不对：左边补进来的不是 0，是 1 —— 挪完还是负数，前头那排 1 一格没少。\n\n你帮本喵把该动的那一处改到能跑对为止，让它印出**三行**：\n\n- 第一行 `原来的格子：` 后面接原来那排格子；\n- 第二行 `往右挪 {k} 格之后：` 后面接挪完那排格子；\n- 第三行 `挪完是多少：` 后面接挪完这个数当数字读是多少。\n\n除了那一处，稿子里别的字一个都别改喵。\n\n（这一题**不用投喂任何东西**，数都写在稿子里。）",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = {n};\n        int k = {k};\n\n        System.out.println(\"原来的格子：\" + Integer.toBinaryString(n));\n        System.out.println(\"往右挪 \" + k + \" 格之后：\" + Integer.toBinaryString(n >> k));\n        System.out.println(\"挪完是多少：\" + (n >> k));\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = {n};\n        int k = {k};\n\n        System.out.println(\"原来的格子：\" + Integer.toBinaryString(n));\n        System.out.println(\"往右挪 \" + k + \" 格之后：\" + Integer.toBinaryString(n >>> k));\n        System.out.println(\"挪完是多少：\" + (n >>> k));\n    }\n}\n",
+  "explanationTemplate": "本喵伸错了手：**往右挪有两只手，左边补什么由你写的那只说了算。**\n\n**一、`>>` 往左边补的是「最左边那一格原来的样子」。** 正数最左边是 0，补 0，看着和普通挪位置没两样；可 {n} 是负数，最左边那一格是 1，于是每挪一格就往左边补一个 1 —— 挪完还是负数，前头那排 1 一格没少。\n\n**二、`>>>` 才是不管三七二十一，一律补 0。** 它比 `>>` 多出来的那个小尖角读作「往右挪，左边空出来的一律填 0」。于是 {n} 挪完变成一个很大的正数 —— 原来顶在最左边的那些 1 全被挤出去了，腾出来的位置填的是 0。\n\n**三、这个差别只有负数才看得见。** 正数用哪只手结果都一样，所以两只手混着用的人，在正数上跑一百遍也发现不了。\n\n**四、要数字意义就用 `>>`，要格子形状就用 `>>>`。** 往右挪一格，正数上是「除以 2 扔掉余数」；`>>>` 的结果当数字读已经没有这个意思了 —— 它只是把那排格子搬了个位置。\n\n**五、其他语言不一定有这只手。** C 那边的 `>>` 对负数补什么，标准里没写死，留给各家的翻译官喵自己挑；想「一律补 0」得先把那个数当成不带正负号的那一路。Java 把两只手都摆出来了，用哪只全写在你眼皮底下。\n\n**六、印出来的时候，前头的 0 会不见。** `Integer.toBinaryString` 只给「有意义的那几位」—— {n} 挪完变成正数之后，最左边那几个 0 就不印了，所以第二行看着比第一行短。**这不是算错了**，是印的时候自己省略了。"
+}

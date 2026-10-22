@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-bit-and-eq-parens",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-02",
+  "type": "codefix",
+  "concept": ["&", "==", "优先级", "括号", "warning 不拦路"],
+  "instances": 2,
+  "params": {
+    "x": { "kind": "pick", "values": ["4", "10"] }
+  },
+  "stemTemplate": "本喵写了一小段：给一个数，看它最低那盏灯亮不亮，亮就报奇数、不亮就报偶数。\n\n可这个数明明是**偶数**，它却报了奇数：\n\n```text\n{x} 是奇数\n```\n\n请你把它改好，让它报**偶数**：\n\n```text\n{x} 是偶数\n```\n\n（`x` 就是 {x}，这一行不许改成别的数喵。）",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int x = {x};\n    if (x & 1 == 0) {\n        printf(\"%d 是偶数\\n\", x);\n    } else {\n        printf(\"%d 是奇数\\n\", x);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int x = {x};\n    if ((x & 1) == 0) {\n        printf(\"%d 是偶数\\n\", x);\n    } else {\n        printf(\"%d 是奇数\\n\", x);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一行是被翻译官喵**读岔了**喵。\n\n`==` 的优先级比 `&` **高**，所以 `x & 1 == 0` 在它眼里是：\n\n```text\nx & (1 == 0)\n```\n\n先算 `1 == 0` 得 0（灭），再算 `x & 0` —— 两位都亮才亮，可有一边全是灭的，结果当然是 0，于是走了 `else` 那一支。{x} 明明是偶数，它照样报奇数。\n\n想让它干正事，括号得自己加上：`(x & 1) == 0`。**位运算和比较混在一行时，永远自己给位运算加括号。**\n\n⚠️ 有意思的是：翻译官喵**其实看见了**。本喵真跑时的原话是：\n\n```text\nwarning: suggest parentheses around comparison in operand of '&' [-Wparentheses]\n```\n\n翻过来就是「这地方本喵建议你加括号」。但它**只是警告** —— 编译照样过，程序照跑不误，跑出来的还是**你不想要的那个结果**。加上括号之后本喵又跑了一遍，这一回翻译官喵一声没吭，结果也对了。\n\n所以别指望「翻译官喵会拦住我」：它只负责出声，不负责拦住你喵。"
+}

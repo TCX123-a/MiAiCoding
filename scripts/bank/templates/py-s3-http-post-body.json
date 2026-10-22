@@ -1,0 +1,21 @@
+{
+  "templateId": "py-s3-http-post-body",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-06",
+  "type": "codewrite",
+  "concept": ["HTTP 报文四段：请求行 + 说明牌 + 空行 + 正文", "Content-Length 数的是字节", "客人自己拼报文", "客户端与服务端的分工"],
+  "instances": 6,
+  "params": {
+    "food": { "kind": "pick", "values": ["小鱼干", "猫粮", "毛线球"] },
+    "sampleFood": { "kind": "pick", "values": ["鸡肉冻干", "南瓜泥"] }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "{food}\n",
+    "sampleText": "{sampleFood}\n"
+  },
+  "stemTemplate": "本喵要练一招「把东西装进报文的肚子里送过去」喵：**同一份代码里，一只猫扮摊主守着摊子，另一只猫扮客人上门。**\n\n请写个程序：\n\n1. **先读进来一行文字**（第一行），这是本喵要送过去的那件东西的名字。\n2. 摊主在 `127.0.0.1` 上摆一个小摊（门牌号写 `0`，让系统自己挑一个空闲的，别写死），摊子摆好就一直守着。摊主**只接那种开口就说 `POST` 的客人**（也就是「东西装在肚子里送过来」这一种）：它照着客人报的**长度**，从肚子里把东西原样掏出来，回话的肚子里是 `收到了` 接上掏出来的那件东西，中间不加空格。\n3. 摊主摆好摊之后，客人**自己动手拼一份报文**送过去（用 `socket` 建连，别用现成的客人）：第一段请求行写 `POST /fish HTTP/1.1`，接着几张**说明牌**里要写清肚子里装了几个字节（`Content-Length`），再隔**一个空行**，最后才是那件东西本身。客人收到回话后，只印**肚子那一段**。\n\n印出来只有**一行**：`收到了` 后面直接跟着那件东西的名字。\n\n比如投喂的是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是另外一批东西喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_POST(self):\n        长度 = int(self.headers[\"Content-Length\"])\n        收到的东西 = self.rfile.read(长度).decode(\"utf-8\")\n        回话 = (\"收到了\" + 收到的东西).encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(回话)))\n        self.end_headers()\n        self.wfile.write(回话)\n\n    def log_message(self, *args):\n        pass\n\n\n东西 = input()\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n肚子 = 东西.encode(\"utf-8\")\n报文 = (\n    \"POST /fish HTTP/1.1\\r\\n\"\n    \"Host: 127.0.0.1\\r\\n\"\n    \"Content-Type: text/plain; charset=utf-8\\r\\n\"\n    \"Content-Length: \" + str(len(肚子)) + \"\\r\\n\"\n    \"Connection: close\\r\\n\"\n    \"\\r\\n\"\n).encode(\"utf-8\") + 肚子\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(报文)\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n头, _, 正文 = 回应.partition(b\"\\r\\n\\r\\n\")\nprint(正文.decode(\"utf-8\"))\n",
+  "explanationTemplate": "一份 HTTP 报文就是**四段**拼起来的，顺序不能乱喵：\n\n1. **请求行** —— 怎么要（`POST`）、要哪条路（`/fish`）、按哪一版规矩说话（`HTTP/1.1`）；\n2. **说明牌**（头上那些）—— 一张张「名字冒号值」的小纸条，每张末尾都要跟一个回车加换行。其中 `Content-Length` 那张最要紧：**它说的是肚子里装了几个字节**；\n3. **一个空行** —— 它是「牌子摆完了、后面是肚子」的记号。少了它，摊主会以为本喵还在摆牌子，两边就都站在那儿干等；\n4. **肚子**（正文）—— 真正要送过去的那件东西。\n\n摊主是怎么把东西掏出来的？它先从 `Content-Length` 那张牌上拿到数字，再 `self.rfile.read(长度)` —— 读到的**不多不少**就是这几个字节。\n\n**为什么非得自己报个数**：隔着鱼塘过来的是一截一截的字节，没有任何一截上写着「肚子到此为止」。送东西的人**自己报个数**，收东西的人才能照着数收完。真实世界的 HTTP 也是这么干的喵。\n\n⚠️ 三件容易翻车的事：\n\n1. `Content-Length` 数的是**字节**，不是字数。「小鱼干」三个字，字节数是 **9** —— 报成字数的话摊主会少读一截，剩下那截还赖在门口，把后面的事一起搅乱。\n2. 长度要和**同一次** `encode(\"utf-8\")` 的结果对得上：先把它变成字节，再拿这串字节的个数去报，两处必须是同一个数。\n3. 报文里的换行是**回车加换行**一对儿（写成 `\\r\\n`），不是单独一个换行。拼错了它**大多不报错** —— 本喵量过：全用 `\\n`、或者只有末尾那个空行偷懒写成 `\\n`，摊主照样把整句读出来，回执里正文**一个字都不缺**。可**「不报错」不等于「没事」**：要是换行全写成 `\\r`（少了那个 `\\n`），摊主压根不知道从哪儿下嘴 —— 本喵把等回音的耐心设成八秒，八秒到了它还在那儿干等，最后是被超时掐掉的。这种「不说错了、也不答话」的毛病，就是上面第 3 点说的那个干等喵。"
+}

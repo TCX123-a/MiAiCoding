@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-scanf-f-not-lf",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-04",
+  "type": "codefix",
+  "concept": ["%lf 接小数", "接与念不一样", "尺寸对不上"],
+  "instances": 2,
+  "params": {
+    "p": { "kind": "pick", "values": ["2.5", "3.75", "4.25"] },
+    "q": { "kind": "pick", "values": ["7.5", "8.25"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{p}\n", "sampleText": "{q}\n" },
+  "stemTemplate": "本喵想让程序从投喂口叼一个价钱回来，再报出来。可它报出来的永远是 **0.00** —— 大肥鱼敲的价钱压根没进屋喵。\n\n你帮本喵改对：喂进去多少，就照实报多少（保留两位小数）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    double price = 0;\n    scanf(\"%f\", &price);\n    printf(\"价钱 %.2f 元\\n\", price);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    double price = 0;\n    scanf(\"%lf\", &price);\n    printf(\"价钱 %.2f 元\\n\", price);\n    return 0;\n}\n",
+  "explanationTemplate": "接小数的那只钩子，和念小数的那只**长得不一样** —— 这是 C 里最容易绊一跤的地方喵：\n\n- **念**一个小数（`printf`）用 `%f`；\n- **接**一个小数（`scanf`）要用 `%lf`（前面多一个字母 `l`）。\n\n你拿 `%f` 去接 `double` 那间屋，翻译官喵嘀咕了一句：\n\n```\nwarning: format '%f' expects argument of type 'float *', but argument 2 has type 'double *' [-Wformat=]\n```\n\n它在说「**你要的是短的那种，递过来的是长的那种**」—— 两边**尺寸对不上**，货就装不进去，你那间屋还是原来的 0。\n\n记法可以这样喵：接货要「长一点的钩子」，所以多一个 `l`。\n\n（顺带说一句：本喵这儿只讲「接小数用 `%lf`」这一条就够用了，你不用去纠结短的那种是什么 —— 本喵们一律用 `double` 装小数，够大够稳。）"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s1-try-stoi-catch",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-13",
+  "type": "codewrite",
+  "concept": ["给可能翻车的那几句铺软垫", "stoi 料不对就扔 invalid_argument", "e.what() 是车上的说明"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["42", "喵"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{word}\n", "sampleText": "7\n" },
+  "stemTemplate": "投喂口会递进来**一行字**。本喵**不知道**这行字里装的是不是一个数字 —— 所以要么稳稳读出数字，要么稳稳接住车，两条路都得走得下来。\n\n请这样办：\n\n1. 先把这一行整行读下来（读一整行用哪一招，第四课讲过喵）；\n2. 用 `stoi` 把它读成整数；\n3. **顺利**的话，印一行：`数字是 X 喵`（X 就是读出来的那个整数）；\n4. **翻车**的话（料不是数字），用 `catch (const invalid_argument& e)` 接住，印一行：`这不是数字喵：` 后面接上 `e.what()`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一行字**喵 —— 它可能是数字，也可能不是，所以两条路都得写好～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    string line;\n    getline(cin, line);\n\n    try {\n        int n = stoi(line);\n        cout << \"数字是 \" << n << \" 喵\" << endl;\n    } catch (const invalid_argument& e) {\n        cout << \"这不是数字喵：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题练的是「**软垫铺在真会翻的那几句周围**」喵。\n\n- **顺路**：`stoi(line)` 把那串字读成整数，`cout` 印出来。\n- **翻车路**：那串东西不是数字时，`stoi` 自己就扔出一辆挂着 `invalid_argument` 牌子的车（意思是「你给的料不对」），`try` 里剩下的话全部作废，直接跳到接车的 `catch` 里 —— 所以印出来的是车上那句说明 `e.what()`，而不是数字。\n\n`catch (const invalid_argument& e)` 这串照抄就行：括号里写的正是「本喵接那种挂着 `invalid_argument` 牌子的车」，`const` 和 `&` 是它的标准写法（那个 `&` 就是第十一课那块牌子 —— 别复印，本喵要接住**原车**）。\n\n还有一件事喵：软垫只是备着，**不用最好**。顺利的时候，`catch` 里那句一个字都不会印 —— 它不花你一分钱，所以可以放心给整段活铺上。"
+}

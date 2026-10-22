@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-pet-parade",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-03",
+  "type": "codewrite",
+  "concept": ["一声开饭各猫各样", "只画了一半的图纸", "重写", "Scanner"],
+  "instances": 6,
+  "params": {
+    "cat": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "dog": { "kind": "pick", "values": ["大黄", "旺财"] },
+    "fishName": { "kind": "pick", "values": ["泡泡", "金金"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 1, "max": 2 },
+  "stemTemplate": "本喵院子里站着三只：一只猫、一只狗、一只鱼。**牌子一律写 `Animal`**，三只都装进同一排牌子里，挨个喊它们出声。\n\n四张图纸这么画：\n\n- 大图纸 `Animal` 是**只画了一半的图纸**（头上要写 `abstract`）：一盒名字家当、出生那一手记名字，还有一招 `speak` —— 但它**只有个头、没有身子**，谁往下画谁补。\n- 小图纸 `Cat` / `Dog` / `Fish` 各自套在大图纸上，把 `speak` 补上：猫印 **名字 + `：喵～`**、狗印 **名字 + `：汪！`**、鱼印 **名字 + `：咕噜咕噜`**。\n\n投喂给程序的是**一个数**：喊几圈。每一圈从头到尾把三只挨个喊一遍，一声一行。\n\n本喵只写**一句** `pet.speak();`，写的时候压根不管它是猫是狗 —— 各猫各样，交给它自己决定喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\nabstract class Animal {\n\n}\n\nclass Cat extends Animal {\n\n}\n\nclass Dog extends Animal {\n\n}\n\nclass Fish extends Animal {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nabstract class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    abstract void speak();\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：汪！\");\n    }\n}\n\nclass Fish extends Animal {\n    Fish(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        System.out.println(name + \"：咕噜咕噜\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int rounds = sc.nextInt();\n        Animal[] pets = { new Cat(\"{cat}\"), new Dog(\"{dog}\"), new Fish(\"{fishName}\") };\n        for (int r = 0; r < rounds; r++) {\n            for (Animal pet : pets) {\n                pet.speak();\n            }\n        }\n    }\n}\n",
+  "explanationTemplate": "本题三处关节喵。\n\n**一、`abstract` 的分工。** 大图纸头上写 `abstract`，意思就是「这张图纸**不许直接拿来生**」；那一招 `abstract void speak();` **只有个头、以分号收尾** —— 分号后面**不能再跟一对花括号**，跟上了就成了「有身子的空招式」，意思完全不同。\n\n**二、小图纸必须补上那一招。** 三张小图纸各写一版 `speak`、头上都挂 `@Override`。有哪一张忘了补，翻译官就会说那一句 `... is not abstract and does not override abstract method ...`。\n\n**三、一句顶三句。** `main` 里那个圈子写的是 `pet.speak();` —— 写这一行的人**压根不知道手里这只到底是谁**。Java 会**照着底下那只真猫自己的图纸**去找这一招：是猫就喵、是狗就汪、是鱼就咕噜咕噜。\n\n这份省心就是套图纸最值钱的地方：**往后院里再添一只鸭子，那个圈子一个字都不用改**，只要它照 `Animal` 画、自己补一版 `speak` 就行。\n\n外围那层圈子管的是「喊几圈」，内层管的是「一圈里挨个喊」—— 两层圈子的眼色和收尾都别写错，否则印出来的**行数**就不对了喵。"
+}

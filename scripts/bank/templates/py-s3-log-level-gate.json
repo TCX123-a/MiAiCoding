@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-log-level-gate",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-09",
+  "type": "codefix",
+  "concept": ["日志门槛", "级别有高矮", "门槛把矮的挡在外面"],
+  "instances": 2,
+  "params": {
+    "unit": { "kind": "pick", "values": ["筐", "篮", "箱"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 1, "max": 9 },
+  "stemTemplate": "本喵要写个「到货播报」喵：**外面给一个数**（一行一个，这一批到了几{unit}）。\n\n规矩是：进来先记一条**平常**的日志（级别 `INFO`），再记一条提醒（级别 `WARNING`），最后用正文印一行总共到了几{unit}。\n\n本喵这段跑出来**少了一行** —— 那条 `INFO` 一点影子都没有。你帮本喵看看是哪一步把路堵上了。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n⚠️ 样子别改：日志行开头是**级别**（大写英文），级别和后面那句话之间隔着**一个英文冒号**。\n\n⚠️ 也**不许**把那条 `INFO` 换成别的级别糊弄过去 —— 本喵要的就是屏幕上明明白白写着 `INFO` 两个字。\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+  "brokenCodeTemplate": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.WARNING)\n\n到货 = int(sys.stdin.readline())\n\nlogging.info(\"到了 \" + str(到货) + \" {unit}\")\nlogging.warning(\"底下那{unit}要盯紧一点\")\nprint(\"一共 \" + str(到货) + \" {unit}\")\n",
+  "referenceFixTemplate": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.INFO)\n\n到货 = int(sys.stdin.readline())\n\nlogging.info(\"到了 \" + str(到货) + \" {unit}\")\nlogging.warning(\"底下那{unit}要盯紧一点\")\nprint(\"一共 \" + str(到货) + \" {unit}\")\n",
+  "explanationTemplate": "关键就两个字：**门槛**喵。\n\n本喵开日志的时候写了 `level=logging.WARNING` —— 那是**门槛**，意思是「Warning 这一档**及它以上**的才放行」。而 `INFO` 比 `WARNING` **矮**，卡在门槛底下，于是那条被**拦下**了：它连印都没印出来。\n\n级别是**有高矮的**，从矮到高排过来是：`DEBUG`、`INFO`、`WARNING`、`ERROR`、`CRITICAL`。门槛设在哪一档，就是「哪一档及以上能过」，比它矮的一律拦掉。\n\n所以本喵这次是把门槛抬得太高了，改回 `level=logging.INFO` 就通了（写 `DEBUG` 也通，因为 `DEBUG` 更矮、放行的更多 —— 只是那样会把排查用的碎碎念也一起放出来）。\n\n⚠️ 顺带记一件事：**不写 `level` 那一句的时候，门槛默认就是 `WARNING`** —— 这就是为什么很多人的 `INFO` 日志「明明写了却没出现」。本喵这道题里门槛是**明着写**的，所以毛病一眼能看见；等门槛藏起来的时候，记得回来翻这一条。\n\n还有一点：门槛**只管印不印**。那条日志的代码照样在跑，一个字都不报错 —— 所以「日志不见了」这件事别去代码里找被划掉的行，要去看门槛。"
+}

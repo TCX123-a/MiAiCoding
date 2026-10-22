@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-jdk-nested-count",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-18",
+  "type": "codewrite",
+  "concept": ["Scanner", "包含关系", "括号", "减法"],
+  "instances": 6,
+  "params": {
+    "c": { "kind": "pick", "values": ["越往里越少", "一层比一层少"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 4, "max": 9 },
+  "stemTemplate": "三件套是**一层套一层**的：工具箱（JDK）装得下运行套装（JRE），运行套装里住着念稿员（JVM）—— 越往里的盒子越小，装的家伙什也越少喵。\n\n投喂口会递进来**一个数**：工具箱里家伙什的样数。请你写个程序，数出三层各自的样数，印**四行**：\n\n```text\n工具箱：X 样\n运行套装：Y 样\n念稿员：Z 样\n{c}喵\n```\n\n- X 就是投喂进来的那个数；\n- Y 比 X **少 1**（运行套装在工具箱里面一层）；\n- Z 比 X **少 2**（念稿员在最里面）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int tools = sc.nextInt();\n        System.out.println(\"工具箱：\" + tools + \" 样\");\n        System.out.println(\"运行套装：\" + (tools - 1) + \" 样\");\n        System.out.println(\"念稿员：\" + (tools - 2) + \" 样\");\n        System.out.println(\"{c}喵\");\n    }\n}\n",
+  "explanationTemplate": "这道题最容易栽的地方是**括号**喵。要是把中间那行写成 `\"运行套装：\" + tools - 1 + \" 样\"`，翻译官喵当场翻脸，原话是：\n\n```text\nbad operand types for binary operator '-'\n  first type:  String\n  second type: int\n```\n\n它的意思是：「你想让本喵拿一串字去减 1？本喵不会啊。」—— `+` 在这一串字上干的是**接东西**的活，可一碰到要减的 `-` 就乱了：左边接出来已经是一串字，字减数字，翻译官喵不知道你想干嘛。\n\n所以**先算数、再接字**：写成 `(tools - 1)`，让括号里的减法先出结果，再把这个结果接到项链上；念稿员那行同理，`(tools - 2)`。\n\n（记住这个手感：数字和字混在一行里的时候，**该先算的拿括号圈起来**，别让翻译官喵从左到右一路接下去喵。）"
+}

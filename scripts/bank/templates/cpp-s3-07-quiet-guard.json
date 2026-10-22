@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-07-quiet-guard",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-07",
+  "type": "codewrite",
+  "concept": ["领的是一份状态", "先记住旧值", "出门换回来"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["大肥鱼早", "大肥鱼晚", "大肥鱼好"] }
+  },
+  "stemTemplate": "骨架里已经有一句全局的 `bool loud = true;` 和一个 `say(const char* s)` 招式喵：`loud` 为真时它照说不误，为假时只印一个 `……`。另外那块空着的 `Quiet` 牌子是留给你的。\n\n请你把这 3 行印出来：\n\n1. `{word}`\n2. `……`\n3. `{word}`\n\n守着两条规矩：\n\n- 中间那行必须是在**一层花括号**里说的，靠一块 `Quiet` 牌子把 `loud` 按成 `false` 才印出 `……`；\n- 出了那层花括号要**恢复成原来的样子** —— 所以第三行又是 `{word}`。\n\n而且这块牌子得**自己记着进门前的样子**：本喵不告诉它原来是什么，它自己进门时看一眼、出门时还回去。",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n\n};\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nbool loud = true;\n\nvoid say(const char* s) {\n    if (loud) {\n        cout << s << endl;\n    } else {\n        cout << \"……\" << endl;\n    }\n}\n\nstruct Quiet {\n    bool old;\n    Quiet() : old(loud) {\n        loud = false;\n    }\n    ~Quiet() {\n        loud = old;\n    }\n};\n\nint main() {\n    say(\"{word}\");\n    {\n        Quiet q;\n        say(\"{word}\");\n    }\n    say(\"{word}\");\n    return 0;\n}\n",
+  "explanationTemplate": "这块牌子领的不是仓库、也不是鱼干，而是一份**状态**（`loud` 这会儿是什么）喵 —— 生意的做法一模一样：\n\n- **出生时**（出生招式）：先把进门前的样子记在手心里 `old = loud;`，再把自己要的样子换上 `loud = false;`；\n- **死去时**（收尾招式）：把记着的那个旧样子还回去 `loud = old;`。\n\n两处顺序都是要紧的：出生招式里必须**先记后换**（换完再记就把新值当成旧值了），收尾那一趟必须**还旧值**而不是写死一个「正常说话」（写死的话，套两层牌子就会露馅 —— 那正是另一道题里的坑）。\n\n⚠️ 出门那一下是花括号说了算：本喵的 `main` 里那层花括号走到头，牌子死去，`loud` 自己就回来了。所以第三行又是 `{word}`，本喵一个字都没写「恢复」。"
+}

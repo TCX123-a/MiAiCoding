@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-pipeline-second-line-no-semicolon",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-02",
+  "type": "codefix",
+  "concept": ["一句都不跑", "分号", "整份退回"],
+  "instances": 2,
+  "params": {
+    "file": { "kind": "pick", "values": ["main.c", "hello.c", "prog.c"] }
+  },
+  "stemTemplate": "本喵想让屏幕上出现两行：\n\n`{file} 翻好了`\n`该跑了喵`\n\n可这份稿子**一句都不跑** —— 屏幕上连第一行都没有。你帮本喵把那儿找出来、改对。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    printf(\"{file} 翻好了\\n\");\n    printf(\"该跑了喵\\n\")\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    printf(\"{file} 翻好了\\n\");\n    printf(\"该跑了喵\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "这一处最值得说的是它坏在哪儿喵：出事的是**第二句**，可屏幕上**第一句也没印出来**。\n\n因为 C 的稿子要么**整份翻过去、整份跑**，要么**一点都不跑** —— 中间没有「先跑一半」这回事。翻译官喵是先把整份稿子读完、翻完，确认能翻了，才交给运行那一步。它走到第二句末尾发现少了个分号，就把整份**原样退回**：\n\n```\nerror: expected ';' before 'return'\n```\n\n所以看见屏幕上一片空白，别以为「第一行写错了」—— 多半是**别处**有一句漏了句号。找的顺序也顺便记一下喵：从最后一行往上数，一句一句检查末尾有没有分号。\n\n顺带把这一课的流程再念一遍：稿子 → 预处理 → 编译 → 汇编 → 链接 → 才轮得到运行。**前面卡住一次，后面全都不发生。**"
+}

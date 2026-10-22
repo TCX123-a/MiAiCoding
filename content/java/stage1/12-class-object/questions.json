@@ -1,0 +1,77 @@
+{
+  "lessonId": "java-stage1-12",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下了 `class Cat` 一整块，里面有 `String name;` 和 `int fish;`。这一块干了什么？",
+      "options": [
+        "画了一张叫 `Cat` 的图纸 —— 图纸自己不是猫，不会叫也不会吃鱼干",
+        "生出了一只叫 `Cat` 的真猫，可以直接使唤",
+        "摆下了一块叫 `Cat` 的牌子，装一串字",
+        "调用了一声 `Cat` 的函数"
+      ],
+      "answer": 0,
+      "explanation": "`class Cat` 这一整块是**图纸**，不是猫喵。它只画着「一只猫长什么样」：随身带哪两样家当、会做哪几招。真猫得等本喵照着它去生 —— 那是 `new Cat()` 干的事，生出来的每一只才是能使唤的（让它叫、给它记鱼干数）。图纸画好之后就静静躺在那儿，本喵不 `new`，一只猫都不会出现喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵在 `main` 里写了 `Cat.meow();`，翻译官拦下来说 `non-static method meow() cannot be referenced from a static context`。下面哪种改法是对的？",
+      "options": [
+        "先生一只真猫：`Cat c = new Cat();`，再写 `c.meow();`",
+        "把函数体里那句印字删掉，它就不拦了",
+        "在图纸 `Cat` 前面加一个 `static`",
+        "改成 `meow();`，不要前面的 `Cat.`"
+      ],
+      "answer": 0,
+      "explanation": "`meow()` 这一招前面没有 `static`，它就是**跟着每只真猫走**的：要动的是「**这一只**猫」的名字。`Cat.meow();` 等于「连猫都没有就先喊一声」，翻译官不知道该动谁，当然拦下喵。正路是先 `new` 一只出来、拿牌子挂住，再让这只猫自己喊：`Cat c = new Cat(); c.meow();`。删掉身子里的活没用 —— 翻译官看的是打头那一行和招式挂在哪，不看身子；在图纸前面加 `static` 是改另一件事（而且那不是本喵要的）；写成 `meow();` 更糟，连这一招在哪它都找不到，会撞上认不出名字的那句拦报喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵照图纸生了 `c1`、`c2` 两只真猫，只给 `c1.fish` 记了 3 条。这时候 `c2.fish` 是几？",
+      "options": [
+        "`0` —— 那是它自己那份，本喵没给它记过，刚生出来是默认值",
+        "`3` —— 图纸上的账两只猫共用",
+        "`null` —— 没记过就是什么都没有",
+        "编译当场拦下，因为 `c2` 的账没记过"
+      ],
+      "answer": 0,
+      "explanation": "**图纸只画了一份，随身家当是每只真猫各自带一套**喵：`c1.fish` 和 `c2.fish` 是两块完全不同的牌子，本喵给 `c1` 记 3 条，`c2` 那份一点没动。而一只刚生出来、什么都没记过的猫，装数码的牌子默认是 `0`（装一串字的牌子才是 `null`）—— 所以 `c2.fish` 印出来是 `0`，不是 `3`、也不是 `null`，更不会拦下本喵喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "class Cat {\n    String name;\n    int fish;\n\n    void eat(int n) {\n        fish = fish + n;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c1 = new Cat();\n        c1.name = \"小橘\";\n        Cat c2 = new Cat();\n        c2.name = \"狸花\";\n\n        c1.eat(3);\n        c2.eat(5);\n        c1.eat(4);\n        System.out.println(c1.name + \" \" + c1.fish);\n        System.out.println(c2.name + \" \" + c2.fish);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘 7\n狸花 5",
+      "accept": ["小橘 7\n狸花 5\n"],
+      "explanation": "图纸只有一张，真猫生了两只喵。`eat` 那一招前面没有 `static`，所以它**跟着每只真猫走**：`c1.eat(3)` 和 `c1.eat(4)` 动的是小橘自己那份家当，3 加 4 得 `7`；`c2.eat(5)` 动的是狸花自己那份，得 `5`。两只猫各记各的账，互不打扰，所以印出来是「小橘 7」和「狸花 5」喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "class Cat {\n    String name;\n    int fish;\n\n    void meow() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat();\n        System.out.println(c.fish);\n        System.out.println(c.name);\n        c.name = \"小橘\";\n        c.meow();\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "0\nnull\n小橘：喵～",
+      "accept": ["0\nnull\n小橘：喵～\n"],
+      "explanation": "刚照图纸生出来的真猫，自带的牌子**不是空的**喵：装数码的 `fish` 默认是 `0`，装一串字的 `name` 默认是 `null`（念「呐儿」，意思是里面什么都没有），所以前两行印的是 `0` 和 `null`。第三行给这只猫挂上名字「小橘」，再让它喊一声 —— `meow` 里那句用的是**它自己**的名字，所以印出「小橘：喵～」喵。"
+    },
+    {
+      "id": "q6",
+      "type": "codefill",
+      "lang": "java",
+      "code": "class Cat {\n    String ____;\n\n    void meow() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = ____ Cat();\n        c.name = \"小橘\";\n        c.meow();\n    }\n}",
+      "stem": "本喵这张图纸缺了两处：一处是随身家当的名字，一处是「照着图纸生一只」的动作。补上两个空，让这段代码跑起来、屏幕上印出 `小橘：喵～` 喵 —— 一个空填图纸里那件随身家当的名字（要和招式身子里的那一个一模一样），另一个空填「照图纸生一只」的那个动作。",
+      "blanks": [
+        { "answer": "name" },
+        { "answer": "new" }
+      ],
+      "explanation": "第一个空填 `name` —— 图纸上这件随身家当得和招式身子里那句**名字对得上**，不然招式喊的时候翻译官认不出来喵。第二个空填 `new`：`Cat c = new Cat();` 就是「照图纸生一只真猫，拿牌子 `c` 挂住它」—— 少了 `new`，牌子就一直空着，翻译官会拦下来说「可能还没装东西」喵。生出来之后再挂名字 `c.name = \"小橘\";`，它喊出来就是「小橘：喵～」喵。"
+    }
+  ]
+}

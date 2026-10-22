@@ -1,0 +1,23 @@
+{
+  "templateId": "java-s3-merge-tail-not-copied",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-22",
+  "type": "codefix",
+  "concept": ["合并法", "两摊各自排好", "合起来", "剩下那一截忘了搬"],
+  "instances": 2,
+  "params": {
+    "l1": { "kind": "pick", "values": ["4", "40"] },
+    "l2": { "kind": "pick", "values": ["5", "50"] },
+    "l3": { "kind": "pick", "values": ["8", "80"] },
+    "l4": { "kind": "pick", "values": ["9", "90"] },
+    "r1": { "kind": "pick", "values": ["1", "10"] },
+    "r2": { "kind": "pick", "values": ["2", "20"] },
+    "r3": { "kind": "pick", "values": ["6", "60"] },
+    "r4": { "kind": "pick", "values": ["7", "70"] }
+  },
+  "stemTemplate": "这八只分成**两摊**：左边一摊 **{l1}、{l2}、{l3}、{l4}**（已经从小到大排好），右边一摊 **{r1}、{r2}、{r3}、{r4}**（也排好了）。本喵要把两摊**合起来**：两边的头一只比一比，谁小谁先出去，比完往后挪一位，接着比。\n\n可印出来那排**尾巴上那两只是重复的**，前面还有两只不见了。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**合起来那一招**改对。改好之后该印：\n\n```text\n合并法：{r1} {r2} {l1} {l2} {r3} {r4} {l3} {l4}\n```",
+  "brokenCodeTemplate": "public class Main {\n    static void join(int[] a, int lo, int mid, int hi) {\n        int[] tmp = new int[128];\n        int i = lo;\n        int j = mid + 1;\n        int k = 0;\n\n        while (i <= mid && j <= hi) {\n            if (a[i] <= a[j]) {\n                tmp[k++] = a[i++];\n            } else {\n                tmp[k++] = a[j++];\n            }\n        }\n\n        for (int x = 0; x < k; x++) {\n            a[lo + x] = tmp[x];\n        }\n    }\n\n    public static void main(String[] args) {\n        int[] a = {{l1}, {l2}, {l3}, {l4}, {r1}, {r2}, {r3}, {r4}};\n        join(a, 0, 3, 7);\n\n        System.out.print(\"合并法：\");\n        for (int i = 0; i < 8; i++) {\n            System.out.print(a[i] + \" \");\n        }\n        System.out.println();\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    static void join(int[] a, int lo, int mid, int hi) {\n        int[] tmp = new int[128];\n        int i = lo;\n        int j = mid + 1;\n        int k = 0;\n\n        while (i <= mid && j <= hi) {\n            if (a[i] <= a[j]) {\n                tmp[k++] = a[i++];\n            } else {\n                tmp[k++] = a[j++];\n            }\n        }\n        while (i <= mid) {\n            tmp[k++] = a[i++];\n        }\n        while (j <= hi) {\n            tmp[k++] = a[j++];\n        }\n\n        for (int x = 0; x < k; x++) {\n            a[lo + x] = tmp[x];\n        }\n    }\n\n    public static void main(String[] args) {\n        int[] a = {{l1}, {l2}, {l3}, {l4}, {r1}, {r2}, {r3}, {r4}};\n        join(a, 0, 3, 7);\n\n        System.out.print(\"合并法：\");\n        for (int i = 0; i < 8; i++) {\n            System.out.print(a[i] + \" \");\n        }\n        System.out.println();\n    }\n}\n",
+  "explanationTemplate": "两摊在前面「比一比、谁小谁先出去」那一趟，会在**其中一摊先比完**的时候停下来喵 —— 这时候另一摊可能还剩着几只没出去。\n\n本喵这一版就是**停在这儿不管了**：剩下的那几只还躺在原来的位子上，可 `tmp` 里只装了 `k` 只，往回搬的时候也只搬了 `k` 只 —— 于是那几只被落在外面，原来占着位置的又被搬了一遍，尾巴上就出现了一对双胞胎。\n\n要补的是**两段搬尾**（各管一摊，写在那个 `while` 后面）：\n\n```text\nwhile (i <= mid) {\n    tmp[k++] = a[i++];\n}\nwhile (j <= hi) {\n    tmp[k++] = a[j++];\n}\n```\n\n念作「**左边还剩就全搬、右边还剩也全搬**」。两段都写上才周全：到底哪一摊先比完，得看数长什么样，写代码的时候**两边都要备着**。\n\n⚠️ 翻译官喵不会吭声，跑起来也不摔 —— 它只是把「剩的那一截」丢了，还在尾巴上留一对重复的。**「比完」不等于「搬完」**，这两段就是它们中间差的那一步喵。"
+}

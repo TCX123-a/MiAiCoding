@@ -1,0 +1,264 @@
+{
+  "lessonId": "cpp-stage3-24",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-merge-join-write-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "先讲清楚这道题的场面：读进来的这些数，本喵已经**用上一课那一招把左右两半各自排好了**（底座里那段 `sort_half` 就是），现在要把**两摊各自排好的数合起来**成一摊。\n\n请你把 `join` 补完 —— 两摊的**头一只比一比，谁小谁先出去**，出完那摊的头往后挪一位，接着比；要是有一摊先空了，另一摊**剩下的全搬过来**（这一步千万别漏）。\n\n`a` 里第 `lo` 到第 `mid` 位是左边那一摊，第 `mid + 1` 到第 `hi` 位是右边那一摊；先借一排临时碗（`tmp`）把合好的一个个排进去，最后再整段搬回 `a`（`main` 里会印出来）。\n\n输入先给一个数（一共几个），然后一行一个。样例输入：\n\n```text\n4\n73\n3\n88\n9\n```\n\n该印出来**一行**：`合起来：` 后面跟着合好的数（每个后面一个空格）：\n\n```text\n合起来：3 9 73 88\n```",
+      "starter": "#include <iostream>\n#include <vector>\n\n/* 把 a 里 lo..mid 和 mid+1..hi 两摊各自排好的数，合起来成从小到大的一摊 */\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    /* ① 两边都还有：比一比头一只，谁小谁进 tmp */\n    /* ② 左边还剩：全搬进来 */\n    /* ③ 右边还剩：全搬进来 */\n    /* ④ 把 tmp 里这一整段搬回 a 的 lo 开头那儿 */\n\n}\n\n/* 上一课那一招：把 a 里 lo..hi 这一段排成从小到大 */\nvoid sort_half(std::vector<int>& a, int lo, int hi) {\n    for (int i = lo; i < hi; i++) {\n        for (int j = lo; j < hi - (i - lo); j++) {\n            if (a[j] > a[j + 1]) {\n                std::swap(a[j], a[j + 1]);\n            }\n        }\n    }\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    int mid = (n - 1) / 2;\n    sort_half(a, 0, mid);\n    sort_half(a, mid + 1, n - 1);\n    join(a, 0, mid, n - 1);\n\n    std::cout << \"合起来：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n\n/* 把 a 里 lo..mid 和 mid+1..hi 两摊各自排好的数，合起来成从小到大的一摊 */\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\n/* 上一课那一招：把 a 里 lo..hi 这一段排成从小到大 */\nvoid sort_half(std::vector<int>& a, int lo, int hi) {\n    for (int i = lo; i < hi; i++) {\n        for (int j = lo; j < hi - (i - lo); j++) {\n            if (a[j] > a[j + 1]) {\n                std::swap(a[j], a[j + 1]);\n            }\n        }\n    }\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    int mid = (n - 1) / 2;\n    sort_half(a, 0, mid);\n    sort_half(a, mid + 1, n - 1);\n    join(a, 0, mid, n - 1);\n\n    std::cout << \"合起来：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "合起来：24 33 76 92",
+      "stdin": "4\n92\n24\n76\n33\n",
+      "explanation": "合起来这一招是「**两只手各指一个头，比一比再动手**」喵：\n\n```text\nwhile (i <= mid && j <= hi) {\n    if (a[i] <= a[j]) {\n        tmp.push_back(a[i]);\n        i++;\n    } else {\n        tmp.push_back(a[j]);\n        j++;\n    }\n}\nwhile (i <= mid) {\n    tmp.push_back(a[i]);\n    i++;\n}\nwhile (j <= hi) {\n    tmp.push_back(a[j]);\n    j++;\n}\nfor (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n    a[lo + x] = tmp[x];\n}\n```\n\n三处值得多念两遍：\n\n**① `i` 管左边那一摊、`j` 管右边那一摊。** 谁小谁先进 `tmp`，进去的那只手往后挪一格，另一只手不动 —— 这就是「谁小谁先走」。\n\n**② 两个 `while` 一个都不能少。** 前面那一趟比对，是在「有一摊空了」的时候停下来的，可**停不等于搬完**：另一摊剩下的全是大的，得原样搬进去。只写一个的话，另一半的数据得靠运气才刚好对。\n\n**③ 最后要整段搬回去。** `tmp` 只是暂存，`join` 干完活得让 `a` 的 `lo` 到 `hi` 这一段真的变成合好的样子 —— 一个 `for` 把 `tmp` 里的一只只搬回去，别漏。\n\n本喵给你留一句分头记：**谁小谁先走，走完的搬剩的，最后整段搬回家。**",
+      "templateId": "cpp-s3-merge-join-write",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:27.024Z",
+        "hash": "3f09ea49cf02aef4"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-merge-join-write-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "先讲清楚这道题的场面：读进来的这些数，本喵已经**用上一课那一招把左右两半各自排好了**（底座里那段 `sort_half` 就是），现在要把**两摊各自排好的数合起来**成一摊。\n\n请你把 `join` 补完 —— 两摊的**头一只比一比，谁小谁先出去**，出完那摊的头往后挪一位，接着比；要是有一摊先空了，另一摊**剩下的全搬过来**（这一步千万别漏）。\n\n`a` 里第 `lo` 到第 `mid` 位是左边那一摊，第 `mid + 1` 到第 `hi` 位是右边那一摊；先借一排临时碗（`tmp`）把合好的一个个排进去，最后再整段搬回 `a`（`main` 里会印出来）。\n\n输入先给一个数（一共几个），然后一行一个。样例输入：\n\n```text\n5\n32\n55\n70\n22\n32\n```\n\n该印出来**一行**：`合起来：` 后面跟着合好的数（每个后面一个空格）：\n\n```text\n合起来：22 32 32 55 70\n```",
+      "starter": "#include <iostream>\n#include <vector>\n\n/* 把 a 里 lo..mid 和 mid+1..hi 两摊各自排好的数，合起来成从小到大的一摊 */\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    /* ① 两边都还有：比一比头一只，谁小谁进 tmp */\n    /* ② 左边还剩：全搬进来 */\n    /* ③ 右边还剩：全搬进来 */\n    /* ④ 把 tmp 里这一整段搬回 a 的 lo 开头那儿 */\n\n}\n\n/* 上一课那一招：把 a 里 lo..hi 这一段排成从小到大 */\nvoid sort_half(std::vector<int>& a, int lo, int hi) {\n    for (int i = lo; i < hi; i++) {\n        for (int j = lo; j < hi - (i - lo); j++) {\n            if (a[j] > a[j + 1]) {\n                std::swap(a[j], a[j + 1]);\n            }\n        }\n    }\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    int mid = (n - 1) / 2;\n    sort_half(a, 0, mid);\n    sort_half(a, mid + 1, n - 1);\n    join(a, 0, mid, n - 1);\n\n    std::cout << \"合起来：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n\n/* 把 a 里 lo..mid 和 mid+1..hi 两摊各自排好的数，合起来成从小到大的一摊 */\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\n/* 上一课那一招：把 a 里 lo..hi 这一段排成从小到大 */\nvoid sort_half(std::vector<int>& a, int lo, int hi) {\n    for (int i = lo; i < hi; i++) {\n        for (int j = lo; j < hi - (i - lo); j++) {\n            if (a[j] > a[j + 1]) {\n                std::swap(a[j], a[j + 1]);\n            }\n        }\n    }\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    int mid = (n - 1) / 2;\n    sort_half(a, 0, mid);\n    sort_half(a, mid + 1, n - 1);\n    join(a, 0, mid, n - 1);\n\n    std::cout << \"合起来：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "合起来：10 17 23 50 77",
+      "stdin": "5\n17\n23\n50\n10\n77\n",
+      "explanation": "合起来这一招是「**两只手各指一个头，比一比再动手**」喵：\n\n```text\nwhile (i <= mid && j <= hi) {\n    if (a[i] <= a[j]) {\n        tmp.push_back(a[i]);\n        i++;\n    } else {\n        tmp.push_back(a[j]);\n        j++;\n    }\n}\nwhile (i <= mid) {\n    tmp.push_back(a[i]);\n    i++;\n}\nwhile (j <= hi) {\n    tmp.push_back(a[j]);\n    j++;\n}\nfor (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n    a[lo + x] = tmp[x];\n}\n```\n\n三处值得多念两遍：\n\n**① `i` 管左边那一摊、`j` 管右边那一摊。** 谁小谁先进 `tmp`，进去的那只手往后挪一格，另一只手不动 —— 这就是「谁小谁先走」。\n\n**② 两个 `while` 一个都不能少。** 前面那一趟比对，是在「有一摊空了」的时候停下来的，可**停不等于搬完**：另一摊剩下的全是大的，得原样搬进去。只写一个的话，另一半的数据得靠运气才刚好对。\n\n**③ 最后要整段搬回去。** `tmp` 只是暂存，`join` 干完活得让 `a` 的 `lo` 到 `hi` 这一段真的变成合好的样子 —— 一个 `for` 把 `tmp` 里的一只只搬回去，别漏。\n\n本喵给你留一句分头记：**谁小谁先走，走完的搬剩的，最后整段搬回家。**",
+      "templateId": "cpp-s3-merge-join-write",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:30.119Z",
+        "hash": "a3af98a71b6062e4"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-merge-left-called-twice-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵用「**拆开分头办**」收拾这五只：**30、90、10、60、20** —— 从中间切开，左半自己再办一遍、右半自己再办一遍，两边都办好了再把它们合起来。\n\n可印出来那一排**没排整齐**：前面那几只看着有次序，后面那几只还是乱着的。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**拆开分头办那一招**改对。改好之后该印：\n\n```text\n拆开分头办：10 20 30 60 90\n```",
+      "brokenCode": "#include <iostream>\n#include <vector>\n\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\nvoid merge_sort(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int mid = (lo + hi) / 2;\n    merge_sort(a, lo, mid);\n    merge_sort(a, lo, mid);\n    join(a, lo, mid, hi);\n}\n\nint main() {\n    std::vector<int> a = {30, 90, 10, 60, 20};\n    merge_sort(a, 0, 4);\n\n    std::cout << \"拆开分头办：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\nvoid merge_sort(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int mid = (lo + hi) / 2;\n    merge_sort(a, lo, mid);\n    merge_sort(a, mid + 1, hi);\n    join(a, lo, mid, hi);\n}\n\nint main() {\n    std::vector<int> a = {30, 90, 10, 60, 20};\n    merge_sort(a, 0, 4);\n\n    std::cout << \"拆开分头办：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "拆开分头办：10 20 30 60 90",
+      "stdin": null,
+      "explanation": "本喵这两句写的是**同一半办了两遍**喵：\n\n```text\nmerge_sort(a, lo, mid);\nmerge_sort(a, lo, mid);\n```\n\n第二句本该是**右半**：\n\n```text\nmerge_sort(a, mid + 1, hi);\n```\n\n从 `mid + 1` 到 `hi` 那一截，就是切开之后右边那一半。写成 `(a, lo, mid)` 的话，左边办了两次、右边**一次都没办** —— 等到最后合起来的时候，右边那一截还是乱着的，合出来的当然也不对。\n\n这种错有个特点：**它不摔、也不吭声，跑得还挺快**（左边办两遍，一点没耽误），只有输出会告诉你后面那几只没排好。\n\n本喵给你留一句分头记：**切开之后两半各办一遍，左半从 `lo` 到 `mid`、右半从 `mid + 1` 到 `hi`。**那半边的头是 `mid + 1`，不是 `mid` —— 中间那位已经归左半了，两边不能抢也不能漏喵。",
+      "templateId": "cpp-s3-merge-left-called-twice",
+      "params": {
+        "p1": "30",
+        "p2": "90",
+        "p3": "10",
+        "p4": "60",
+        "p5": "20"
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:32.458Z",
+        "hash": "54e1b429a7de26cb"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-merge-left-called-twice-031",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵用「**拆开分头办**」收拾这五只：**3、9、1、6、2** —— 从中间切开，左半自己再办一遍、右半自己再办一遍，两边都办好了再把它们合起来。\n\n可印出来那一排**没排整齐**：前面那几只看着有次序，后面那几只还是乱着的。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**拆开分头办那一招**改对。改好之后该印：\n\n```text\n拆开分头办：1 2 3 6 9\n```",
+      "brokenCode": "#include <iostream>\n#include <vector>\n\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\nvoid merge_sort(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int mid = (lo + hi) / 2;\n    merge_sort(a, lo, mid);\n    merge_sort(a, lo, mid);\n    join(a, lo, mid, hi);\n}\n\nint main() {\n    std::vector<int> a = {3, 9, 1, 6, 2};\n    merge_sort(a, 0, 4);\n\n    std::cout << \"拆开分头办：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\nvoid merge_sort(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int mid = (lo + hi) / 2;\n    merge_sort(a, lo, mid);\n    merge_sort(a, mid + 1, hi);\n    join(a, lo, mid, hi);\n}\n\nint main() {\n    std::vector<int> a = {3, 9, 1, 6, 2};\n    merge_sort(a, 0, 4);\n\n    std::cout << \"拆开分头办：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "拆开分头办：1 2 3 6 9",
+      "stdin": null,
+      "explanation": "本喵这两句写的是**同一半办了两遍**喵：\n\n```text\nmerge_sort(a, lo, mid);\nmerge_sort(a, lo, mid);\n```\n\n第二句本该是**右半**：\n\n```text\nmerge_sort(a, mid + 1, hi);\n```\n\n从 `mid + 1` 到 `hi` 那一截，就是切开之后右边那一半。写成 `(a, lo, mid)` 的话，左边办了两次、右边**一次都没办** —— 等到最后合起来的时候，右边那一截还是乱着的，合出来的当然也不对。\n\n这种错有个特点：**它不摔、也不吭声，跑得还挺快**（左边办两遍，一点没耽误），只有输出会告诉你后面那几只没排好。\n\n本喵给你留一句分头记：**切开之后两半各办一遍，左半从 `lo` 到 `mid`、右半从 `mid + 1` 到 `hi`。**那半边的头是 `mid + 1`，不是 `mid` —— 中间那位已经归左半了，两边不能抢也不能漏喵。",
+      "templateId": "cpp-s3-merge-left-called-twice",
+      "params": {
+        "p1": "3",
+        "p2": "9",
+        "p3": "1",
+        "p4": "6",
+        "p5": "2"
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:34.823Z",
+        "hash": "92dc31aac09d96cc"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-merge-sort-driver-write-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要的是「**拆开分头办**」那一招：一摊数从中间切开，**左半自己再办一遍、右半自己再办一遍**，两边都办好了再**合起来**。\n\n「合起来」那一招（`join`）已经写好在底座里了，它要求你**两边都排好**、并把「左边那一摊的尾」是哪一位告诉它。请你把 `merge_sort` 补完：\n\n1. **先看要不要收手**：这一段只剩一只、或者压根是空的，就不用了；\n2. 找**正中间**那一位；\n3. 左半和右半**各办一遍**（左半的头是这一段的头、尾是中间那位；右半的头是**中间那位的下一位**、尾是这一段的尾）；\n4. 两半都办好了，把 `join` 喊来，告诉它这一段的头、中间、尾。\n\n输入先给一个数（一共几个），然后一行一个。样例输入：\n\n```text\n5\n25\n44\n94\n33\n12\n```\n\n该印出来**一行**：`拆开分头办：` 后面跟着排好的数（每个后面一个空格）：\n\n```text\n拆开分头办：12 25 33 44 94\n```",
+      "starter": "#include <iostream>\n#include <vector>\n\n/* 合起来：两摊各自排好的数，合成一摊（这个已经给好了） */\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\n/* 拆开分头办：把 a 里 lo..hi 这一段排成从小到大 */\nvoid merge_sort(std::vector<int>& a, int lo, int hi) {\n\n    /* ① 只剩一只（或更少）就收手 */\n    /* ② 找正中间那一位 */\n    /* ③ 左半办一遍、右半办一遍 */\n    /* ④ 两半都办好了，喊 join 把它们合起来 */\n\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    merge_sort(a, 0, n - 1);\n\n    std::cout << \"拆开分头办：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n\n/* 合起来：两摊各自排好的数，合成一摊（这个已经给好了） */\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\n/* 拆开分头办：把 a 里 lo..hi 这一段排成从小到大 */\nvoid merge_sort(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int mid = (lo + hi) / 2;\n    merge_sort(a, lo, mid);\n    merge_sort(a, mid + 1, hi);\n    join(a, lo, mid, hi);\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    merge_sort(a, 0, n - 1);\n\n    std::cout << \"拆开分头办：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "拆开分头办：4 35 50 55 73",
+      "stdin": "5\n55\n35\n73\n50\n4\n",
+      "explanation": "整招只有五句，**每一句都在管事**喵：\n\n```text\nif (lo >= hi) return;\nint mid = (lo + hi) / 2;\nmerge_sort(a, lo, mid);\nmerge_sort(a, mid + 1, hi);\njoin(a, lo, mid, hi);\n```\n\n**① 收手那一句不能省。** 少了它，招式会一直往下切，切到只剩一只还在切 —— 那就是「自己咬自己尾巴」咬过了头：屏幕上一个字都没有、程序当场摔掉。**收手条件是这条命根子。**\n\n**② 中间那位用 `(lo + hi) / 2`。** 左半的尾就是 `mid`，右半的头是 `mid + 1` —— 中间那位归左半，右半从它的下一位起。写成两个 `(a, lo, mid)` 的话，右半一次都没办过。\n\n**③ 先两边都办完，再合。** 顺序不能倒：`join` 的规矩是「两摊各自排好」，先合再办的话，合出来的东西是乱的。\n\n本喵给你留一句分头记：**切到只剩一只就收手；两半各办一遍；办完再合。**",
+      "templateId": "cpp-s3-merge-sort-driver-write",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:38.011Z",
+        "hash": "3000d5cf1896b6b7"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-merge-sort-driver-write-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要的是「**拆开分头办**」那一招：一摊数从中间切开，**左半自己再办一遍、右半自己再办一遍**，两边都办好了再**合起来**。\n\n「合起来」那一招（`join`）已经写好在底座里了，它要求你**两边都排好**、并把「左边那一摊的尾」是哪一位告诉它。请你把 `merge_sort` 补完：\n\n1. **先看要不要收手**：这一段只剩一只、或者压根是空的，就不用了；\n2. 找**正中间**那一位；\n3. 左半和右半**各办一遍**（左半的头是这一段的头、尾是中间那位；右半的头是**中间那位的下一位**、尾是这一段的尾）；\n4. 两半都办好了，把 `join` 喊来，告诉它这一段的头、中间、尾。\n\n输入先给一个数（一共几个），然后一行一个。样例输入：\n\n```text\n6\n26\n91\n95\n21\n43\n19\n```\n\n该印出来**一行**：`拆开分头办：` 后面跟着排好的数（每个后面一个空格）：\n\n```text\n拆开分头办：19 21 26 43 91 95\n```",
+      "starter": "#include <iostream>\n#include <vector>\n\n/* 合起来：两摊各自排好的数，合成一摊（这个已经给好了） */\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\n/* 拆开分头办：把 a 里 lo..hi 这一段排成从小到大 */\nvoid merge_sort(std::vector<int>& a, int lo, int hi) {\n\n    /* ① 只剩一只（或更少）就收手 */\n    /* ② 找正中间那一位 */\n    /* ③ 左半办一遍、右半办一遍 */\n    /* ④ 两半都办好了，喊 join 把它们合起来 */\n\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    merge_sort(a, 0, n - 1);\n\n    std::cout << \"拆开分头办：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n\n/* 合起来：两摊各自排好的数，合成一摊（这个已经给好了） */\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\n/* 拆开分头办：把 a 里 lo..hi 这一段排成从小到大 */\nvoid merge_sort(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int mid = (lo + hi) / 2;\n    merge_sort(a, lo, mid);\n    merge_sort(a, mid + 1, hi);\n    join(a, lo, mid, hi);\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    merge_sort(a, 0, n - 1);\n\n    std::cout << \"拆开分头办：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "拆开分头办：10 13 32 40 40 81",
+      "stdin": "6\n40\n32\n13\n81\n10\n40\n",
+      "explanation": "整招只有五句，**每一句都在管事**喵：\n\n```text\nif (lo >= hi) return;\nint mid = (lo + hi) / 2;\nmerge_sort(a, lo, mid);\nmerge_sort(a, mid + 1, hi);\njoin(a, lo, mid, hi);\n```\n\n**① 收手那一句不能省。** 少了它，招式会一直往下切，切到只剩一只还在切 —— 那就是「自己咬自己尾巴」咬过了头：屏幕上一个字都没有、程序当场摔掉。**收手条件是这条命根子。**\n\n**② 中间那位用 `(lo + hi) / 2`。** 左半的尾就是 `mid`，右半的头是 `mid + 1` —— 中间那位归左半，右半从它的下一位起。写成两个 `(a, lo, mid)` 的话，右半一次都没办过。\n\n**③ 先两边都办完，再合。** 顺序不能倒：`join` 的规矩是「两摊各自排好」，先合再办的话，合出来的东西是乱的。\n\n本喵给你留一句分头记：**切到只剩一只就收手；两半各办一遍；办完再合。**",
+      "templateId": "cpp-s3-merge-sort-driver-write",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:41.083Z",
+        "hash": "f20f75badb7a28f2"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-merge-tail-not-copied-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这八只分成**两摊**：左边一摊 **4、5、8、9**（已经从小到大排好），右边一摊 **1、2、6、7**（也排好了）。本喵要把两摊**合起来**：两边的头一只比一比，谁小谁先出去，比完往后挪一位，接着比。\n\n可印出来那排**尾巴上那两只是重复的**，前面还有两只不见了。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**合起来那一招**改对。改好之后该印：\n\n```text\n合并法：1 2 4 5 6 7 8 9\n```",
+      "brokenCode": "#include <iostream>\n#include <vector>\n\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\nint main() {\n    std::vector<int> a = {4, 5, 8, 9, 1, 2, 6, 7};\n    join(a, 0, 3, 7);\n\n    std::cout << \"合并法：\";\n    for (int i = 0; i < 8; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\nint main() {\n    std::vector<int> a = {4, 5, 8, 9, 1, 2, 6, 7};\n    join(a, 0, 3, 7);\n\n    std::cout << \"合并法：\";\n    for (int i = 0; i < 8; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "合并法：1 2 4 5 6 7 8 9",
+      "stdin": null,
+      "explanation": "两摊在前面「比一比、谁小谁先出去」那一趟，会在**其中一摊先比完**的时候停下来喵 —— 这时候另一摊可能还剩着几只没出去。\n\n本喵这一版就是**停在这儿不管了**：剩下的那几只还躺在原来的位子上，可 `tmp` 里只装了合出来的那几只，往回搬的时候也只搬了那几只 —— 于是那几只被落在外面，原来占着位置的又被搬了一遍，尾巴上就出现了一对双胞胎。\n\n要补的是**两段搬尾**（各管一摊，写在那个 `while` 后面）：\n\n```text\nwhile (i <= mid) {\n    tmp.push_back(a[i]);\n    i++;\n}\nwhile (j <= hi) {\n    tmp.push_back(a[j]);\n    j++;\n}\n```\n\n念作「**左边还剩就全搬、右边还剩也全搬**」。两段都写上才周全：到底哪一摊先比完，得看数长什么样，写代码的时候**两边都要备着**。\n\n⚠️ 翻译官喵不会吭声，跑起来也不摔 —— 它只是把「剩的那一截」丢了，还在尾巴上留一对重复的。**「比完」不等于「搬完」**，这两段就是它们中间差的那一步喵。",
+      "templateId": "cpp-s3-merge-tail-not-copied",
+      "params": {
+        "l1": "4",
+        "l2": "5",
+        "l3": "8",
+        "l4": "9",
+        "r1": "1",
+        "r2": "2",
+        "r3": "6",
+        "r4": "7"
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:43.486Z",
+        "hash": "9112b4e23ac91ccb"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-merge-tail-not-copied-255",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这八只分成**两摊**：左边一摊 **40、50、80、90**（已经从小到大排好），右边一摊 **10、20、60、70**（也排好了）。本喵要把两摊**合起来**：两边的头一只比一比，谁小谁先出去，比完往后挪一位，接着比。\n\n可印出来那排**尾巴上那两只是重复的**，前面还有两只不见了。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**合起来那一招**改对。改好之后该印：\n\n```text\n合并法：10 20 40 50 60 70 80 90\n```",
+      "brokenCode": "#include <iostream>\n#include <vector>\n\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\nint main() {\n    std::vector<int> a = {40, 50, 80, 90, 10, 20, 60, 70};\n    join(a, 0, 3, 7);\n\n    std::cout << \"合并法：\";\n    for (int i = 0; i < 8; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\nint main() {\n    std::vector<int> a = {40, 50, 80, 90, 10, 20, 60, 70};\n    join(a, 0, 3, 7);\n\n    std::cout << \"合并法：\";\n    for (int i = 0; i < 8; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "合并法：10 20 40 50 60 70 80 90",
+      "stdin": null,
+      "explanation": "两摊在前面「比一比、谁小谁先出去」那一趟，会在**其中一摊先比完**的时候停下来喵 —— 这时候另一摊可能还剩着几只没出去。\n\n本喵这一版就是**停在这儿不管了**：剩下的那几只还躺在原来的位子上，可 `tmp` 里只装了合出来的那几只，往回搬的时候也只搬了那几只 —— 于是那几只被落在外面，原来占着位置的又被搬了一遍，尾巴上就出现了一对双胞胎。\n\n要补的是**两段搬尾**（各管一摊，写在那个 `while` 后面）：\n\n```text\nwhile (i <= mid) {\n    tmp.push_back(a[i]);\n    i++;\n}\nwhile (j <= hi) {\n    tmp.push_back(a[j]);\n    j++;\n}\n```\n\n念作「**左边还剩就全搬、右边还剩也全搬**」。两段都写上才周全：到底哪一摊先比完，得看数长什么样，写代码的时候**两边都要备着**。\n\n⚠️ 翻译官喵不会吭声，跑起来也不摔 —— 它只是把「剩的那一截」丢了，还在尾巴上留一对重复的。**「比完」不等于「搬完」**，这两段就是它们中间差的那一步喵。",
+      "templateId": "cpp-s3-merge-tail-not-copied",
+      "params": {
+        "l1": "40",
+        "l2": "50",
+        "l3": "80",
+        "l4": "90",
+        "r1": "10",
+        "r2": "20",
+        "r3": "60",
+        "r4": "70"
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:45.808Z",
+        "hash": "86c0f3fc339fae4b"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-quick-partition-write-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "「**尺子法**」的规矩是这样的：拿这一段**最后一只**当尺子，比它矮的统统换到左边来，比它高的留在右边，最后让**尺子自己站到中间那条线上**（左边全是矮的、右边全是高的），再把尺子站的位子**答回去**。\n\n`quick`（拆开分头办那一招）已经写好在底座里了，它每次都会拿你答回来的位子把这一段切成两半。请你把 `partition` 补完：\n\n1. 先把最后一只的值抄下来当尺子；\n2. 从这一段头上往后看，看见比尺子矮的，就跟**左边那条线的下一位**换个个儿，然后把那条线往右挪一格；\n3. 走完之后，把尺子换到**那条线上**，让尺子站到它该站的位子；\n4. 把这个位子答回去。\n\n输入先给一个数（一共几只），然后一行一只。样例输入：\n\n```text\n5\n7\n18\n83\n47\n50\n```\n\n该印出来**一行**：`尺子法：` 后面跟着排好的数（每只后面一个空格）：\n\n```text\n尺子法：7 18 47 50 83\n```",
+      "starter": "#include <iostream>\n#include <vector>\n\n/* 分堆：拿最后一只当尺子，比它矮的换到左边，比它高的留在右边，尺子站到中线上 */\nint partition(std::vector<int>& a, int lo, int hi) {\n\n    /* ① 把最后一只的值抄下来当尺子（别拿位子，抄值） */\n    /* ② 从 lo 往后看：比尺子矮的，换到左边那条线的下一位，线往右挪一格 */\n    /* ③ 走完之后，把尺子换到那条线上 */\n    /* ④ 把尺子现在站的位子答回去 */\n\n}\n\nvoid quick(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    quick(a, 0, n - 1);\n\n    std::cout << \"尺子法：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n\n/* 分堆：拿最后一只当尺子，比它矮的换到左边，比它高的留在右边，尺子站到中线上 */\nint partition(std::vector<int>& a, int lo, int hi) {\n    int pivot = a[hi];\n    int i = lo;\n\n    for (int j = lo; j < hi; j++) {\n        if (a[j] < pivot) {\n            std::swap(a[i], a[j]);\n            i++;\n        }\n    }\n\n    std::swap(a[i], a[hi]);\n    return i;\n}\n\nvoid quick(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    quick(a, 0, n - 1);\n\n    std::cout << \"尺子法：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "尺子法：18 35 71 74 92",
+      "stdin": "5\n71\n74\n18\n92\n35\n",
+      "explanation": "分堆这一招的骨架是**一条线 + 一趟扫**喵：\n\n```text\nint pivot = a[hi];\nint i = lo;\nfor (int j = lo; j < hi; j++) {\n    if (a[j] < pivot) {\n        std::swap(a[i], a[j]);\n        i++;\n    }\n}\nstd::swap(a[i], a[hi]);\nreturn i;\n```\n\n四处要留意：\n\n**① 尺子抄的是「值」，不是「位子」。** 抄值，换位子的时候尺子不会跟着跑；要是记位子，一路换下来尺子自己都不知道跑哪儿去了。\n\n**② `i` 是「矮的一摊的下一个空位」。** 每收一只矮的，就把它换到 `i` 那一位上，然后 `i` 往右挪一格。走完这一趟，`lo` 到 `i - 1` 全是比尺子矮的。\n\n**③ 最后那一句不能少。** 尺子还杵在最右边，得把它换到 `i` 位上 —— 换完，左边全矮、右边全高，**尺子这一位就算安顿好了**。\n\n**④ 答回去的是 `i`。** `quick` 就是拿这个位子把这一段切成两半的：左边 `lo` 到 `i - 1`、右边 `i + 1` 到 `hi`。答错了位子，两半就会**重叠或者漏掉**，切出来的东西也不对。\n\n本喵给你留一句分头记：**抄值当尺子，扫一趟，尺子归位，答位子。**",
+      "templateId": "cpp-s3-quick-partition-write",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:48.945Z",
+        "hash": "254d0c1122b71163"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-quick-partition-write-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "「**尺子法**」的规矩是这样的：拿这一段**最后一只**当尺子，比它矮的统统换到左边来，比它高的留在右边，最后让**尺子自己站到中间那条线上**（左边全是矮的、右边全是高的），再把尺子站的位子**答回去**。\n\n`quick`（拆开分头办那一招）已经写好在底座里了，它每次都会拿你答回来的位子把这一段切成两半。请你把 `partition` 补完：\n\n1. 先把最后一只的值抄下来当尺子；\n2. 从这一段头上往后看，看见比尺子矮的，就跟**左边那条线的下一位**换个个儿，然后把那条线往右挪一格；\n3. 走完之后，把尺子换到**那条线上**，让尺子站到它该站的位子；\n4. 把这个位子答回去。\n\n输入先给一个数（一共几只），然后一行一只。样例输入：\n\n```text\n6\n34\n60\n41\n56\n49\n40\n```\n\n该印出来**一行**：`尺子法：` 后面跟着排好的数（每只后面一个空格）：\n\n```text\n尺子法：34 40 41 49 56 60\n```",
+      "starter": "#include <iostream>\n#include <vector>\n\n/* 分堆：拿最后一只当尺子，比它矮的换到左边，比它高的留在右边，尺子站到中线上 */\nint partition(std::vector<int>& a, int lo, int hi) {\n\n    /* ① 把最后一只的值抄下来当尺子（别拿位子，抄值） */\n    /* ② 从 lo 往后看：比尺子矮的，换到左边那条线的下一位，线往右挪一格 */\n    /* ③ 走完之后，把尺子换到那条线上 */\n    /* ④ 把尺子现在站的位子答回去 */\n\n}\n\nvoid quick(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    quick(a, 0, n - 1);\n\n    std::cout << \"尺子法：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <vector>\n\n/* 分堆：拿最后一只当尺子，比它矮的换到左边，比它高的留在右边，尺子站到中线上 */\nint partition(std::vector<int>& a, int lo, int hi) {\n    int pivot = a[hi];\n    int i = lo;\n\n    for (int j = lo; j < hi; j++) {\n        if (a[j] < pivot) {\n            std::swap(a[i], a[j]);\n            i++;\n        }\n    }\n\n    std::swap(a[i], a[hi]);\n    return i;\n}\n\nvoid quick(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> a(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> a[i];\n    }\n\n    quick(a, 0, n - 1);\n\n    std::cout << \"尺子法：\";\n    for (int i = 0; i < n; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "尺子法：6 26 37 59 63 87",
+      "stdin": "6\n6\n87\n63\n59\n26\n37\n",
+      "explanation": "分堆这一招的骨架是**一条线 + 一趟扫**喵：\n\n```text\nint pivot = a[hi];\nint i = lo;\nfor (int j = lo; j < hi; j++) {\n    if (a[j] < pivot) {\n        std::swap(a[i], a[j]);\n        i++;\n    }\n}\nstd::swap(a[i], a[hi]);\nreturn i;\n```\n\n四处要留意：\n\n**① 尺子抄的是「值」，不是「位子」。** 抄值，换位子的时候尺子不会跟着跑；要是记位子，一路换下来尺子自己都不知道跑哪儿去了。\n\n**② `i` 是「矮的一摊的下一个空位」。** 每收一只矮的，就把它换到 `i` 那一位上，然后 `i` 往右挪一格。走完这一趟，`lo` 到 `i - 1` 全是比尺子矮的。\n\n**③ 最后那一句不能少。** 尺子还杵在最右边，得把它换到 `i` 位上 —— 换完，左边全矮、右边全高，**尺子这一位就算安顿好了**。\n\n**④ 答回去的是 `i`。** `quick` 就是拿这个位子把这一段切成两半的：左边 `lo` 到 `i - 1`、右边 `i + 1` 到 `hi`。答错了位子，两半就会**重叠或者漏掉**，切出来的东西也不对。\n\n本喵给你留一句分头记：**抄值当尺子，扫一趟，尺子归位，答位子。**",
+      "templateId": "cpp-s3-quick-partition-write",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:51.929Z",
+        "hash": "ece97ba40d81e9ae"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-quick-pivot-not-placed-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵用「**尺子法**」收拾这五只：**30、90、10、60、20** —— 拿最后一只当尺子，比它矮的往左边站、比它高的留在右边，尺子自己站到中间那条线上；然后左右两段各自再办一遍。\n\n可印出来那一排**没排整齐**：前面看着像有点样子了，越往后越乱。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**分堆那一招**改对。改好之后该印：\n\n```text\n尺子法：10 20 30 60 90\n```",
+      "brokenCode": "#include <iostream>\n#include <vector>\n\nint partition(std::vector<int>& a, int lo, int hi) {\n    int pivot = a[hi];\n    int i = lo;\n\n    for (int j = lo; j < hi; j++) {\n        if (a[j] < pivot) {\n            std::swap(a[i], a[j]);\n            i++;\n        }\n    }\n\n    return i;\n}\n\nvoid quick(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main() {\n    std::vector<int> a = {30, 90, 10, 60, 20};\n    quick(a, 0, 4);\n\n    std::cout << \"尺子法：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n\nint partition(std::vector<int>& a, int lo, int hi) {\n    int pivot = a[hi];\n    int i = lo;\n\n    for (int j = lo; j < hi; j++) {\n        if (a[j] < pivot) {\n            std::swap(a[i], a[j]);\n            i++;\n        }\n    }\n\n    std::swap(a[i], a[hi]);\n    return i;\n}\n\nvoid quick(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main() {\n    std::vector<int> a = {30, 90, 10, 60, 20};\n    quick(a, 0, 4);\n\n    std::cout << \"尺子法：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "尺子法：10 20 30 60 90",
+      "stdin": null,
+      "explanation": "本喵这一招少干了**最后一步**：尺子还杵在**最右边**，没搬到中间那条线上喵。\n\n前面那一趟很老实：比尺子矮的，一只一只换到左边来，`i` 一路往后挪 —— 挪完，「比尺子矮的那一摊」已经整整齐齐待在 `lo` 到 `i - 1` 了。可尺子本身还在 `hi` 那一位上，**它两边站的是谁就没人管了**。\n\n要补的就是这一句（写在 `return i;` 前面）：\n\n```text\nstd::swap(a[i], a[hi]);\n```\n\n换完之后，尺子站在第 `i` 位上，它左边全是比它矮的、右边全是比它高的 —— **这一位就算安顿好了**，往后两段各自再办时都不用再管它。答回去的 `i` 就是尺子现在站的位子，`quick` 正是拿它切两段的。\n\n⚠️ 少了这一步，翻译官喵一个字都不会说，跑起来也不摔 —— 只是**每切一刀，切口都是歪的**：前面几刀还能碰巧切对一点，越往后越乱。这种错看着像「我的拆法是不是有问题」，其实问题在**尺子没归位**喵。",
+      "templateId": "cpp-s3-quick-pivot-not-placed",
+      "params": {
+        "p1": "30",
+        "p2": "90",
+        "p3": "10",
+        "p4": "60",
+        "p5": "20"
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:54.195Z",
+        "hash": "3fe057dc9ad12ce4"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-quick-pivot-not-placed-031",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵用「**尺子法**」收拾这五只：**3、9、1、6、2** —— 拿最后一只当尺子，比它矮的往左边站、比它高的留在右边，尺子自己站到中间那条线上；然后左右两段各自再办一遍。\n\n可印出来那一排**没排整齐**：前面看着像有点样子了，越往后越乱。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**分堆那一招**改对。改好之后该印：\n\n```text\n尺子法：1 2 3 6 9\n```",
+      "brokenCode": "#include <iostream>\n#include <vector>\n\nint partition(std::vector<int>& a, int lo, int hi) {\n    int pivot = a[hi];\n    int i = lo;\n\n    for (int j = lo; j < hi; j++) {\n        if (a[j] < pivot) {\n            std::swap(a[i], a[j]);\n            i++;\n        }\n    }\n\n    return i;\n}\n\nvoid quick(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main() {\n    std::vector<int> a = {3, 9, 1, 6, 2};\n    quick(a, 0, 4);\n\n    std::cout << \"尺子法：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <vector>\n\nint partition(std::vector<int>& a, int lo, int hi) {\n    int pivot = a[hi];\n    int i = lo;\n\n    for (int j = lo; j < hi; j++) {\n        if (a[j] < pivot) {\n            std::swap(a[i], a[j]);\n            i++;\n        }\n    }\n\n    std::swap(a[i], a[hi]);\n    return i;\n}\n\nvoid quick(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main() {\n    std::vector<int> a = {3, 9, 1, 6, 2};\n    quick(a, 0, 4);\n\n    std::cout << \"尺子法：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+      "expectedOutput": "尺子法：1 2 3 6 9",
+      "stdin": null,
+      "explanation": "本喵这一招少干了**最后一步**：尺子还杵在**最右边**，没搬到中间那条线上喵。\n\n前面那一趟很老实：比尺子矮的，一只一只换到左边来，`i` 一路往后挪 —— 挪完，「比尺子矮的那一摊」已经整整齐齐待在 `lo` 到 `i - 1` 了。可尺子本身还在 `hi` 那一位上，**它两边站的是谁就没人管了**。\n\n要补的就是这一句（写在 `return i;` 前面）：\n\n```text\nstd::swap(a[i], a[hi]);\n```\n\n换完之后，尺子站在第 `i` 位上，它左边全是比它矮的、右边全是比它高的 —— **这一位就算安顿好了**，往后两段各自再办时都不用再管它。答回去的 `i` 就是尺子现在站的位子，`quick` 正是拿它切两段的。\n\n⚠️ 少了这一步，翻译官喵一个字都不会说，跑起来也不摔 —— 只是**每切一刀，切口都是歪的**：前面几刀还能碰巧切对一点，越往后越乱。这种错看着像「我的拆法是不是有问题」，其实问题在**尺子没归位**喵。",
+      "templateId": "cpp-s3-quick-pivot-not-placed",
+      "params": {
+        "p1": "3",
+        "p2": "9",
+        "p3": "1",
+        "p4": "6",
+        "p5": "2"
+      },
+      "verified": {
+        "at": "2026-09-29T07:35:56.461Z",
+        "hash": "82eb5781aae61f11"
+      }
+    }
+  ]
+}

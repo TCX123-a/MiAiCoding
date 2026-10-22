@@ -1,0 +1,360 @@
+{
+  "lessonId": "c-stage2-02",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s2-ptrarr-champion-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 3 只碗一字排开，碗里各放着几条小鱼干，想看看哪只碗装得最多。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 3 个数（就是每只碗里的数）。\n\n然后**拿一块牌子从第一只碗一路走到最后一只**，边走边比，找出装得最多的那一只，报一行：`最多的是第 i 只，v 条`（`i` 是碗的编号，从 0 数起；`v` 是那只碗里的数）。\n\n**要是两只碗里的数一样多，报编号更靠前的那只**（第 0 只最靠前）。\n\n比如投喂给程序的是\n\n3\n5\n4\n2\n\n程序就要叼回\n\n最多的是第 0 只，5 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *best = bowls;\n    for (int *q = bowls; q < bowls + n; q++) {\n        if (*q > *best) {\n            best = q;\n        }\n    }\n\n    printf(\"最多的是第 %d 只，%d 条\\n\", (int)(best - bowls), *best);\n    return 0;\n}\n",
+      "expectedOutput": "最多的是第 2 只，9 条",
+      "stdin": "3\n5\n4\n9\n",
+      "explanation": "这道题里同时用上了两课的本事喵。\n\n**① 拿牌子走一遍。**\n\n```c\nfor (int *q = bowls; q < bowls + n; q++)\n```\n\n`q` 从第 0 只的门牌号出发，`q < bowls + n` 是「还没走到整排碗末尾再过去一格」，`q++` 一次跨一只碗。\n\n**② 手里另外攒一块「到目前为止最多的那一只」的牌子。** `best` 一开始指着第 0 只，每走到一只碗前面就比一比：`*q > *best` 成立就说明这只更多，把 `best` 挪到它身上。走完一整排，`best` 就钉在最多的那一只上。\n\n**③ 最后要报的是「第几只」** —— 这就是第一课那块「两块牌子相减」的用场：`best - bowls` 的意思是「从第一只走到 `best` 这一只，跨了几只碗」。因为 `bowls` 是第 0 只的门牌号，这个差正好就是**编号**。前面补个 `(int)` 是把话说圆，`%d` 才接得住。\n\n⚠️ 那个比较写成 `>` 不是随手写的：`*q > *best` 只在**严格更多**的时候才换人，所以一样多的两只碗里，**先遇到的那只**会一直留着 —— 这正好就是题里要的「并列时报编号靠前的」。要是手滑写成 `>=`，并列时就换成了后面那只，答案会跟着变喵。",
+      "templateId": "c-s2-ptrarr-champion",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:33.038Z",
+        "hash": "816828977d02427e"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-champion-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 4 只碗一字排开，碗里各放着几条小鱼干，想看看哪只碗装得最多。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 4 个数（就是每只碗里的数）。\n\n然后**拿一块牌子从第一只碗一路走到最后一只**，边走边比，找出装得最多的那一只，报一行：`最多的是第 i 只，v 条`（`i` 是碗的编号，从 0 数起；`v` 是那只碗里的数）。\n\n**要是两只碗里的数一样多，报编号更靠前的那只**（第 0 只最靠前）。\n\n比如投喂给程序的是\n\n4\n5\n1\n9\n7\n\n程序就要叼回\n\n最多的是第 2 只，9 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *best = bowls;\n    for (int *q = bowls; q < bowls + n; q++) {\n        if (*q > *best) {\n            best = q;\n        }\n    }\n\n    printf(\"最多的是第 %d 只，%d 条\\n\", (int)(best - bowls), *best);\n    return 0;\n}\n",
+      "expectedOutput": "最多的是第 0 只，9 条",
+      "stdin": "4\n9\n6\n3\n7\n",
+      "explanation": "这道题里同时用上了两课的本事喵。\n\n**① 拿牌子走一遍。**\n\n```c\nfor (int *q = bowls; q < bowls + n; q++)\n```\n\n`q` 从第 0 只的门牌号出发，`q < bowls + n` 是「还没走到整排碗末尾再过去一格」，`q++` 一次跨一只碗。\n\n**② 手里另外攒一块「到目前为止最多的那一只」的牌子。** `best` 一开始指着第 0 只，每走到一只碗前面就比一比：`*q > *best` 成立就说明这只更多，把 `best` 挪到它身上。走完一整排，`best` 就钉在最多的那一只上。\n\n**③ 最后要报的是「第几只」** —— 这就是第一课那块「两块牌子相减」的用场：`best - bowls` 的意思是「从第一只走到 `best` 这一只，跨了几只碗」。因为 `bowls` 是第 0 只的门牌号，这个差正好就是**编号**。前面补个 `(int)` 是把话说圆，`%d` 才接得住。\n\n⚠️ 那个比较写成 `>` 不是随手写的：`*q > *best` 只在**严格更多**的时候才换人，所以一样多的两只碗里，**先遇到的那只**会一直留着 —— 这正好就是题里要的「并列时报编号靠前的」。要是手滑写成 `>=`，并列时就换成了后面那只，答案会跟着变喵。",
+      "templateId": "c-s2-ptrarr-champion",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:33:57.476Z",
+        "hash": "6de706d342175c62"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-champion-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 5 只碗一字排开，碗里各放着几条小鱼干，想看看哪只碗装得最多。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 5 个数（就是每只碗里的数）。\n\n然后**拿一块牌子从第一只碗一路走到最后一只**，边走边比，找出装得最多的那一只，报一行：`最多的是第 i 只，v 条`（`i` 是碗的编号，从 0 数起；`v` 是那只碗里的数）。\n\n**要是两只碗里的数一样多，报编号更靠前的那只**（第 0 只最靠前）。\n\n比如投喂给程序的是\n\n5\n7\n2\n4\n4\n1\n\n程序就要叼回\n\n最多的是第 0 只，7 条\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *best = bowls;\n    for (int *q = bowls; q < bowls + n; q++) {\n        if (*q > *best) {\n            best = q;\n        }\n    }\n\n    printf(\"最多的是第 %d 只，%d 条\\n\", (int)(best - bowls), *best);\n    return 0;\n}\n",
+      "expectedOutput": "最多的是第 1 只，6 条",
+      "stdin": "5\n5\n6\n5\n5\n2\n",
+      "explanation": "这道题里同时用上了两课的本事喵。\n\n**① 拿牌子走一遍。**\n\n```c\nfor (int *q = bowls; q < bowls + n; q++)\n```\n\n`q` 从第 0 只的门牌号出发，`q < bowls + n` 是「还没走到整排碗末尾再过去一格」，`q++` 一次跨一只碗。\n\n**② 手里另外攒一块「到目前为止最多的那一只」的牌子。** `best` 一开始指着第 0 只，每走到一只碗前面就比一比：`*q > *best` 成立就说明这只更多，把 `best` 挪到它身上。走完一整排，`best` 就钉在最多的那一只上。\n\n**③ 最后要报的是「第几只」** —— 这就是第一课那块「两块牌子相减」的用场：`best - bowls` 的意思是「从第一只走到 `best` 这一只，跨了几只碗」。因为 `bowls` 是第 0 只的门牌号，这个差正好就是**编号**。前面补个 `(int)` 是把话说圆，`%d` 才接得住。\n\n⚠️ 那个比较写成 `>` 不是随手写的：`*q > *best` 只在**严格更多**的时候才换人，所以一样多的两只碗里，**先遇到的那只**会一直留着 —— 这正好就是题里要的「并列时报编号靠前的」。要是手滑写成 `>=`，并列时就换成了后面那只，答案会跟着变喵。",
+      "templateId": "c-s2-ptrarr-champion",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:34.602Z",
+        "hash": "e706b17ffba2f0ed"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-double-in-place-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 3 只碗一字排开，碗里各放着几条小鱼干。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 3 个数（就是每只碗里的数）。\n\n然后：\n\n1. 先报一行 `翻倍前`，接着把 3 只碗从第 0 只起一只一只报一遍，一只一行，格式 `第 i 只：v`；\n2. 喊**一招**，把这排碗里**每一只**的数都翻一倍。这一招头上收两样：一排碗的牌子、这排碗有多长。它**不叼回任何东西**，活干在**原来那排碗上**；\n3. 再报一行 `翻倍后`，同样把 3 只碗从第 0 只起报一遍，格式一样。\n\n比如投喂给程序的是\n\n3\n4\n7\n5\n\n程序就要叼回\n\n翻倍前\n第 0 只：4\n第 1 只：7\n第 2 只：5\n翻倍后\n第 0 只：8\n第 1 只：14\n第 2 只：10\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid twice(int *p, int n) {\n    for (int i = 0; i < n; i++) {\n        p[i] = p[i] * 2;\n    }\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"翻倍前\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n\n    twice(bowls, n);\n\n    printf(\"翻倍后\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "翻倍前\n第 0 只：3\n第 1 只：4\n第 2 只：4\n翻倍后\n第 0 只：6\n第 1 只：8\n第 2 只：8",
+      "stdin": "3\n3\n4\n4\n",
+      "explanation": "这道题专门练「**递牌子 = 改本人**」喵。\n\n那一招头上写的是 `void twice(int *p, int n)` —— 收的是**牌子**，不是一整排碗。牌子上写着那排碗住在哪儿，所以招式里 `p[i] = p[i] * 2;` 摸到的就是 `main` 里那几只**真碗**，不是副本。招式收工时什么也不用往回带（头上的 `void` 就是「这一招不叼战利品」），因为变化已经落在原来那排碗上了。\n\n三个地方值得多看一眼：\n\n- **`p[i] = p[i] * 2;` 是既读又写**：等号右边先把当前这只碗里的数读出来、翻一倍，等号左边再把这笔新数**写回同一只碗**。写成 `p[i] * 2;` 就白算了 —— 翻译官喵会嘀咕一句 `warning:`，但不会拦你。\n- **长度还是得另喂**。招式只知道「从哪只碗开始」，不知道有几只，所以 `main` 里得把 `n` 一起递进去。\n- **`twice(bowls, n)` 里的 `bowls`** 就是一排碗交出去的样子 —— 交出去的是第 0 只的门牌号，正好配得上牌子的长相。\n\n对照着记：招式要是收「一整只东西」（比如上一课那种一只猫），那改的是搬进来的**副本**，外面一动不动。想改到本人，就把牌子递进去喵。",
+      "templateId": "c-s2-ptrarr-double-in-place",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:29.680Z",
+        "hash": "e776df9c81ec5ca3"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-double-in-place-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 4 只碗一字排开，碗里各放着几条小鱼干。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 4 个数（就是每只碗里的数）。\n\n然后：\n\n1. 先报一行 `翻倍前`，接着把 4 只碗从第 0 只起一只一只报一遍，一只一行，格式 `第 i 只：v`；\n2. 喊**一招**，把这排碗里**每一只**的数都翻一倍。这一招头上收两样：一排碗的牌子、这排碗有多长。它**不叼回任何东西**，活干在**原来那排碗上**；\n3. 再报一行 `翻倍后`，同样把 4 只碗从第 0 只起报一遍，格式一样。\n\n比如投喂给程序的是\n\n4\n5\n2\n2\n2\n\n程序就要叼回\n\n翻倍前\n第 0 只：5\n第 1 只：2\n第 2 只：2\n第 3 只：2\n翻倍后\n第 0 只：10\n第 1 只：4\n第 2 只：4\n第 3 只：4\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid twice(int *p, int n) {\n    for (int i = 0; i < n; i++) {\n        p[i] = p[i] * 2;\n    }\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"翻倍前\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n\n    twice(bowls, n);\n\n    printf(\"翻倍后\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "翻倍前\n第 0 只：5\n第 1 只：9\n第 2 只：7\n第 3 只：5\n翻倍后\n第 0 只：10\n第 1 只：18\n第 2 只：14\n第 3 只：10",
+      "stdin": "4\n5\n9\n7\n5\n",
+      "explanation": "这道题专门练「**递牌子 = 改本人**」喵。\n\n那一招头上写的是 `void twice(int *p, int n)` —— 收的是**牌子**，不是一整排碗。牌子上写着那排碗住在哪儿，所以招式里 `p[i] = p[i] * 2;` 摸到的就是 `main` 里那几只**真碗**，不是副本。招式收工时什么也不用往回带（头上的 `void` 就是「这一招不叼战利品」），因为变化已经落在原来那排碗上了。\n\n三个地方值得多看一眼：\n\n- **`p[i] = p[i] * 2;` 是既读又写**：等号右边先把当前这只碗里的数读出来、翻一倍，等号左边再把这笔新数**写回同一只碗**。写成 `p[i] * 2;` 就白算了 —— 翻译官喵会嘀咕一句 `warning:`，但不会拦你。\n- **长度还是得另喂**。招式只知道「从哪只碗开始」，不知道有几只，所以 `main` 里得把 `n` 一起递进去。\n- **`twice(bowls, n)` 里的 `bowls`** 就是一排碗交出去的样子 —— 交出去的是第 0 只的门牌号，正好配得上牌子的长相。\n\n对照着记：招式要是收「一整只东西」（比如上一课那种一只猫），那改的是搬进来的**副本**，外面一动不动。想改到本人，就把牌子递进去喵。",
+      "templateId": "c-s2-ptrarr-double-in-place",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:00.177Z",
+        "hash": "04ae0bac4632984d"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-double-in-place-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 5 只碗一字排开，碗里各放着几条小鱼干。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 5 个数（就是每只碗里的数）。\n\n然后：\n\n1. 先报一行 `翻倍前`，接着把 5 只碗从第 0 只起一只一只报一遍，一只一行，格式 `第 i 只：v`；\n2. 喊**一招**，把这排碗里**每一只**的数都翻一倍。这一招头上收两样：一排碗的牌子、这排碗有多长。它**不叼回任何东西**，活干在**原来那排碗上**；\n3. 再报一行 `翻倍后`，同样把 5 只碗从第 0 只起报一遍，格式一样。\n\n比如投喂给程序的是\n\n5\n1\n8\n3\n4\n9\n\n程序就要叼回\n\n翻倍前\n第 0 只：1\n第 1 只：8\n第 2 只：3\n第 3 只：4\n第 4 只：9\n翻倍后\n第 0 只：2\n第 1 只：16\n第 2 只：6\n第 3 只：8\n第 4 只：18\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid twice(int *p, int n) {\n    for (int i = 0; i < n; i++) {\n        p[i] = p[i] * 2;\n    }\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"翻倍前\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n\n    twice(bowls, n);\n\n    printf(\"翻倍后\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "翻倍前\n第 0 只：4\n第 1 只：3\n第 2 只：9\n第 3 只：7\n第 4 只：1\n翻倍后\n第 0 只：8\n第 1 只：6\n第 2 只：18\n第 3 只：14\n第 4 只：2",
+      "stdin": "5\n4\n3\n9\n7\n1\n",
+      "explanation": "这道题专门练「**递牌子 = 改本人**」喵。\n\n那一招头上写的是 `void twice(int *p, int n)` —— 收的是**牌子**，不是一整排碗。牌子上写着那排碗住在哪儿，所以招式里 `p[i] = p[i] * 2;` 摸到的就是 `main` 里那几只**真碗**，不是副本。招式收工时什么也不用往回带（头上的 `void` 就是「这一招不叼战利品」），因为变化已经落在原来那排碗上了。\n\n三个地方值得多看一眼：\n\n- **`p[i] = p[i] * 2;` 是既读又写**：等号右边先把当前这只碗里的数读出来、翻一倍，等号左边再把这笔新数**写回同一只碗**。写成 `p[i] * 2;` 就白算了 —— 翻译官喵会嘀咕一句 `warning:`，但不会拦你。\n- **长度还是得另喂**。招式只知道「从哪只碗开始」，不知道有几只，所以 `main` 里得把 `n` 一起递进去。\n- **`twice(bowls, n)` 里的 `bowls`** 就是一排碗交出去的样子 —— 交出去的是第 0 只的门牌号，正好配得上牌子的长相。\n\n对照着记：招式要是收「一整只东西」（比如上一课那种一只猫），那改的是搬进来的**副本**，外面一动不动。想改到本人，就把牌子递进去喵。",
+      "templateId": "c-s2-ptrarr-double-in-place",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:31.312Z",
+        "hash": "1d3f8008def20a82"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-fill-skip-first-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵让一招替本喵给一排碗装小鱼干：第 0 只碗装 2 条，往后每只碗都比前一只多装 2 条。也就是第 i 只碗里装 `(i + 1) × 2` 条。\n\n那招头上收两样：一排碗的牌子、还有**这排一共几只**。装完以后，`main` 里把 3 只碗从第 0 只起一只一只报出来，格式 `第 i 只：v`。\n\n招式跑得好好的，翻译官喵一声没吭，可报出来的第 0 只碗不对喵。你帮本喵看看是哪儿写歪了。",
+      "brokenCode": "#include <stdio.h>\n\nvoid fill(int *p, int n) {\n    for (int i = 1; i < n; i++) {\n        p[i] = (i + 1) * 2;\n    }\n}\n\nint main(void) {\n    int bowls[5] = {0};\n    fill(bowls, 3);\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nvoid fill(int *p, int n) {\n    for (int i = 0; i < n; i++) {\n        p[i] = (i + 1) * 2;\n    }\n}\n\nint main(void) {\n    int bowls[5] = {0};\n    fill(bowls, 3);\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 0 只：2\n第 1 只：4\n第 2 只：6",
+      "stdin": null,
+      "explanation": "毛病出在招式里那个绕圈的**起点**：写成了 `i = 1`。\n\n从头数一遍就看出来了：要装的是第 0 只到第 n-1 只，一共 n 只碗。绕圈从 1 起，第 0 只碗**一趟都没进过**这个圈 —— 它还留着出生时那口 0。所以报出来的第 0 只是 0，后面几只倒是对的。\n\n改法就是让它从 0 起：`for (int i = 0; i < n; i++)`。\n\n⚠️ 这种「**少照顾了一只**」的错，翻译官喵是**一个字都不会说**的：`i = 1` 和 `i = 0` 两种写法都完全合法，它看不出你心里的意思。本喵真跑过这一版（`-Wall` 开着），它安安静静把程序交给了本喵，跑起来照样出结果，只有第一个数悄悄错掉。\n\n本课还有一条顺带收下：招式头上那句 `void fill(int *p, int n)` 是**两样投喂** —— 一块牌子、一个长度。一排碗交出去的时候，交的只是「从哪儿开始」，**长度不会自己跟着过去**，所以必须**另外喂一遍**。这就是为什么每回把整排碗交给招式，头上都得再写一个 `n` 喵。",
+      "templateId": "c-s2-ptrarr-fill-skip-first",
+      "params": {
+        "n": 3,
+        "step": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:16.938Z",
+        "hash": "ef263676342626a9"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-fill-skip-first-023",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵让一招替本喵给一排碗装小鱼干：第 0 只碗装 9 条，往后每只碗都比前一只多装 9 条。也就是第 i 只碗里装 `(i + 1) × 9` 条。\n\n那招头上收两样：一排碗的牌子、还有**这排一共几只**。装完以后，`main` 里把 5 只碗从第 0 只起一只一只报出来，格式 `第 i 只：v`。\n\n招式跑得好好的，翻译官喵一声没吭，可报出来的第 0 只碗不对喵。你帮本喵看看是哪儿写歪了。",
+      "brokenCode": "#include <stdio.h>\n\nvoid fill(int *p, int n) {\n    for (int i = 1; i < n; i++) {\n        p[i] = (i + 1) * 9;\n    }\n}\n\nint main(void) {\n    int bowls[5] = {0};\n    fill(bowls, 5);\n\n    for (int i = 0; i < 5; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nvoid fill(int *p, int n) {\n    for (int i = 0; i < n; i++) {\n        p[i] = (i + 1) * 9;\n    }\n}\n\nint main(void) {\n    int bowls[5] = {0};\n    fill(bowls, 5);\n\n    for (int i = 0; i < 5; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 0 只：9\n第 1 只：18\n第 2 只：27\n第 3 只：36\n第 4 只：45",
+      "stdin": null,
+      "explanation": "毛病出在招式里那个绕圈的**起点**：写成了 `i = 1`。\n\n从头数一遍就看出来了：要装的是第 0 只到第 n-1 只，一共 n 只碗。绕圈从 1 起，第 0 只碗**一趟都没进过**这个圈 —— 它还留着出生时那口 0。所以报出来的第 0 只是 0，后面几只倒是对的。\n\n改法就是让它从 0 起：`for (int i = 0; i < n; i++)`。\n\n⚠️ 这种「**少照顾了一只**」的错，翻译官喵是**一个字都不会说**的：`i = 1` 和 `i = 0` 两种写法都完全合法，它看不出你心里的意思。本喵真跑过这一版（`-Wall` 开着），它安安静静把程序交给了本喵，跑起来照样出结果，只有第一个数悄悄错掉。\n\n本课还有一条顺带收下：招式头上那句 `void fill(int *p, int n)` 是**两样投喂** —— 一块牌子、一个长度。一排碗交出去的时候，交的只是「从哪儿开始」，**长度不会自己跟着过去**，所以必须**另外喂一遍**。这就是为什么每回把整排碗交给招式，头上都得再写一个 `n` 喵。",
+      "templateId": "c-s2-ptrarr-fill-skip-first",
+      "params": {
+        "n": 5,
+        "step": 9
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:18.702Z",
+        "hash": "d20eb73c52aab238"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-name-increment-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵在架子上摆了 3 只碗：第 0 只碗里放着 1 条小鱼干，往后每只碗都比前一只多 2 条。\n\n程序想用**一块牌子**从第 0 只碗开始，一只一只往后挪，把三只碗全报出来，格式是 `第 i 只：v`（`i` 是碗的编号，从 0 数起）。\n\n可翻译官喵一瞧见就不干了，把整段代码退了回来。你帮本喵看看它为什么不高兴，把它改好。改好之后程序要把三只碗从第 0 只起报全。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n    int *p = bowls;\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = 1 + i * 2;\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *p);\n        bowls++;\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n    int *p = bowls;\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = 1 + i * 2;\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *p);\n        p++;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 0 只：1\n第 1 只：3\n第 2 只：5",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: lvalue required as increment operand` —— 翻过来就是「**这个 `++` 要加的东西，本喵加不动**」。\n\n为什么加不动？因为 `bowls` 这个名字**不是一只碗**。前面第一课就说过：一排碗的名字单独写出来，等于 `&bowls[0]` —— 它是个**算出来的门牌号**，不是一个能往里装东西的仓库。门牌号算出来就定死了，`++` 想把新门牌号「存回去」，可它没有地方可存，于是翻译官喵当场拦下。\n\n能挪的只有**牌子**：`int *p = bowls;` 之后，`p++` 的意思是「把牌子上写的门牌号加一格，**存回牌子**」。牌子是只仓库，装得下新门牌号，所以它挪得动。所以修法特别朴素：碗名那行留着别动（它本来就指着第 0 只），把 `bowls++` 换成挪牌子就行。\n\n⚠️ 有一条容易记岔的地方，本喵在跑台上真验过：**要是这块牌子长在招式头上**（比如 `void show(int bowls[], int n)` 那种写法），那么在招式里头写 `bowls++` 是**能跑的**。原因是招式头上那种写法本身就已经是一块牌子了，不是那一排碗的名字。所以「挪不动」这条规矩，只对 `main` 里那只碗名成立喵。",
+      "templateId": "c-s2-ptrarr-name-increment",
+      "params": {
+        "base": 1,
+        "step": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:11.806Z",
+        "hash": "01033dad2060028b"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-name-increment-015",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵在架子上摆了 3 只碗：第 0 只碗里放着 4 条小鱼干，往后每只碗都比前一只多 5 条。\n\n程序想用**一块牌子**从第 0 只碗开始，一只一只往后挪，把三只碗全报出来，格式是 `第 i 只：v`（`i` 是碗的编号，从 0 数起）。\n\n可翻译官喵一瞧见就不干了，把整段代码退了回来。你帮本喵看看它为什么不高兴，把它改好。改好之后程序要把三只碗从第 0 只起报全。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n    int *p = bowls;\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = 4 + i * 5;\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *p);\n        bowls++;\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n    int *p = bowls;\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = 4 + i * 5;\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *p);\n        p++;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 0 只：4\n第 1 只：9\n第 2 只：14",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: lvalue required as increment operand` —— 翻过来就是「**这个 `++` 要加的东西，本喵加不动**」。\n\n为什么加不动？因为 `bowls` 这个名字**不是一只碗**。前面第一课就说过：一排碗的名字单独写出来，等于 `&bowls[0]` —— 它是个**算出来的门牌号**，不是一个能往里装东西的仓库。门牌号算出来就定死了，`++` 想把新门牌号「存回去」，可它没有地方可存，于是翻译官喵当场拦下。\n\n能挪的只有**牌子**：`int *p = bowls;` 之后，`p++` 的意思是「把牌子上写的门牌号加一格，**存回牌子**」。牌子是只仓库，装得下新门牌号，所以它挪得动。所以修法特别朴素：碗名那行留着别动（它本来就指着第 0 只），把 `bowls++` 换成挪牌子就行。\n\n⚠️ 有一条容易记岔的地方，本喵在跑台上真验过：**要是这块牌子长在招式头上**（比如 `void show(int bowls[], int n)` 那种写法），那么在招式里头写 `bowls++` 是**能跑的**。原因是招式头上那种写法本身就已经是一块牌子了，不是那一排碗的名字。所以「挪不动」这条规矩，只对 `main` 里那只碗名成立喵。",
+      "templateId": "c-s2-ptrarr-name-increment",
+      "params": {
+        "base": 4,
+        "step": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:13.002Z",
+        "hash": "37249cea0374ff31"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-star-bracket-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵在架子上摆了 3 只碗：第 0 只碗里放着 1 条小鱼干，往后每只碗都比前一只多 2 条。\n\n程序要把三只碗从第 0 只起一只一只报出来，格式是 `第 i 只：v`（`i` 是碗的编号，从 0 数起）。作者想用「**先把编号挪过去、再顺着拿**」的写法，也就是不用方括号的那种。\n\n可翻译官喵一瞧见就不干了，把整段代码退了回来。你帮本喵看看它为什么不高兴，把它改好。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = 1 + i * 2;\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *bowls[i]);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = 1 + i * 2;\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *(bowls + i));\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 0 只：1\n第 1 只：3\n第 2 只：5",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: invalid type argument of unary '*' (have 'int')` —— 翻过来就是「**星号该吃一块牌子，你喂给它的却是一只碗里的数**」。\n\n关键在这一句：**`bowls[i]` 本来就已经是「第 i 只碗里的数」了。** 它和 `*(bowls + i)` 是**同一件事的两种写法** —— 方括号就是「挪过去、再顺着拿」的省字版。所以 `*bowls[i]` 等于「从一只碗里的数上，再顺着拿一次」：数身上没有门牌号，星号无从下手，翻译官喵只能把它退回来。\n\n想用「先挪再拿」的写法，得把方括号**整个换掉**，变成 `*(bowls + i)`：先算 `bowls + i`（第 i 只的门牌号），外面的星号再去吃它。\n\n把这条收进兜里：**`bowls[i]` 和 `*(bowls + i)` 一模一样，一个星号加一对括号，正好换一个方括号。** 认准这一条，以后看见哪种写法都不会慌。",
+      "templateId": "c-s2-ptrarr-star-bracket",
+      "params": {
+        "base": 1,
+        "step": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:14.388Z",
+        "hash": "eda84ef9454fcdd7"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-star-bracket-015",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵在架子上摆了 3 只碗：第 0 只碗里放着 4 条小鱼干，往后每只碗都比前一只多 5 条。\n\n程序要把三只碗从第 0 只起一只一只报出来，格式是 `第 i 只：v`（`i` 是碗的编号，从 0 数起）。作者想用「**先把编号挪过去、再顺着拿**」的写法，也就是不用方括号的那种。\n\n可翻译官喵一瞧见就不干了，把整段代码退了回来。你帮本喵看看它为什么不高兴，把它改好。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = 4 + i * 5;\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *bowls[i]);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = 4 + i * 5;\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 只：%d\\n\", i, *(bowls + i));\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 0 只：4\n第 1 只：9\n第 2 只：14",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: invalid type argument of unary '*' (have 'int')` —— 翻过来就是「**星号该吃一块牌子，你喂给它的却是一只碗里的数**」。\n\n关键在这一句：**`bowls[i]` 本来就已经是「第 i 只碗里的数」了。** 它和 `*(bowls + i)` 是**同一件事的两种写法** —— 方括号就是「挪过去、再顺着拿」的省字版。所以 `*bowls[i]` 等于「从一只碗里的数上，再顺着拿一次」：数身上没有门牌号，星号无从下手，翻译官喵只能把它退回来。\n\n想用「先挪再拿」的写法，得把方括号**整个换掉**，变成 `*(bowls + i)`：先算 `bowls + i`（第 i 只的门牌号），外面的星号再去吃它。\n\n把这条收进兜里：**`bowls[i]` 和 `*(bowls + i)` 一模一样，一个星号加一对括号，正好换一个方括号。** 认准这一条，以后看见哪种写法都不会慌。",
+      "templateId": "c-s2-ptrarr-star-bracket",
+      "params": {
+        "base": 4,
+        "step": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:15.564Z",
+        "hash": "406a6e4d9dfd140b"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-sum-by-walk-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 3 只碗一字排开，碗里各放着几条小鱼干。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 3 个数（就是每只碗里的小鱼干数）。\n\n本喵要你**写一招**，头上收两样东西：**一排碗的牌子**、还有**这排碗有多长**。招式里**拿牌子从第一只一路走到最后一只**，边走边把碗里的数加起来，最后把这笔总数**叼回来**。\n\n`main` 里只管读数和报数，加起来这件事整个交给那一招。最后报一行：`一共 v 条小鱼干`（`v` 是那笔总数）。\n\n比如投喂给程序的是\n\n3\n2\n7\n1\n\n程序就要叼回\n\n一共 10 条小鱼干\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint total(int *p, int n) {\n    int sum = 0;\n    for (int *q = p; q < p + n; q++) {\n        sum = sum + *q;\n    }\n    return sum;\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"一共 %d 条小鱼干\\n\", total(bowls, n));\n    return 0;\n}\n",
+      "expectedOutput": "一共 24 条小鱼干",
+      "stdin": "3\n9\n8\n7\n",
+      "explanation": "这道题把本课最要紧的一句话摆在了明面上喵：\n\n**一排碗交给招式的时候，交出去的只是「从哪儿开始」—— 有多长，招式根本不知道。**\n\n所以招式头上必须写**两样**投喂：`int *p` 是一块牌子（从哪儿开始），`int n` 是长度（有几个）。哪一样漏了都算不出来 —— 少了长度，招式走到头也不知道该停。\n\n招式里那趟「拿牌子走一遍」：\n\n```c\nfor (int *q = p; q < p + n; q++) {\n    sum = sum + *q;\n}\n```\n\n- `q` 是照着 `p` 另起的一块牌子，从第一只碗开始；\n- `q < p + n` 的意思是「还没走到最后一只后面」—— `p + n` 正好是整排碗末尾再过去一格；\n- `q++` 一次跨一整只碗；\n- `*q` 就是当前这只碗里的数。\n\n同一件事写成 `p[i]` 或者 `*(p + i)` 也完全对，那两种是方括号派的写法。\n\n最后 `return sum;` 把这笔总数叼回 `main`，`main` 里接住它、直接塞进那句报数里。这就是「一招只干一件事、干完把战利品带回来」的样子喵。",
+      "templateId": "c-s2-ptrarr-sum-by-walk",
+      "params": {
+        "n": 3,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:26.116Z",
+        "hash": "72cebccb0552dc1d"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-sum-by-walk-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 3 只碗一字排开，碗里各放着几条冻干块。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 3 个数（就是每只碗里的冻干块数）。\n\n本喵要你**写一招**，头上收两样东西：**一排碗的牌子**、还有**这排碗有多长**。招式里**拿牌子从第一只一路走到最后一只**，边走边把碗里的数加起来，最后把这笔总数**叼回来**。\n\n`main` 里只管读数和报数，加起来这件事整个交给那一招。最后报一行：`一共 v 条冻干块`（`v` 是那笔总数）。\n\n比如投喂给程序的是\n\n3\n6\n1\n3\n\n程序就要叼回\n\n一共 10 条冻干块\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint total(int *p, int n) {\n    int sum = 0;\n    for (int *q = p; q < p + n; q++) {\n        sum = sum + *q;\n    }\n    return sum;\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"一共 %d 条冻干块\\n\", total(bowls, n));\n    return 0;\n}\n",
+      "expectedOutput": "一共 11 条冻干块",
+      "stdin": "3\n4\n6\n1\n",
+      "explanation": "这道题把本课最要紧的一句话摆在了明面上喵：\n\n**一排碗交给招式的时候，交出去的只是「从哪儿开始」—— 有多长，招式根本不知道。**\n\n所以招式头上必须写**两样**投喂：`int *p` 是一块牌子（从哪儿开始），`int n` 是长度（有几个）。哪一样漏了都算不出来 —— 少了长度，招式走到头也不知道该停。\n\n招式里那趟「拿牌子走一遍」：\n\n```c\nfor (int *q = p; q < p + n; q++) {\n    sum = sum + *q;\n}\n```\n\n- `q` 是照着 `p` 另起的一块牌子，从第一只碗开始；\n- `q < p + n` 的意思是「还没走到最后一只后面」—— `p + n` 正好是整排碗末尾再过去一格；\n- `q++` 一次跨一整只碗；\n- `*q` 就是当前这只碗里的数。\n\n同一件事写成 `p[i]` 或者 `*(p + i)` 也完全对，那两种是方括号派的写法。\n\n最后 `return sum;` 把这笔总数叼回 `main`，`main` 里接住它、直接塞进那句报数里。这就是「一招只干一件事、干完把战利品带回来」的样子喵。",
+      "templateId": "c-s2-ptrarr-sum-by-walk",
+      "params": {
+        "n": 3,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:02.872Z",
+        "hash": "5cdebf2e71c240fd"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-sum-by-walk-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 4 只碗一字排开，碗里各放着几条小鱼干。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 4 个数（就是每只碗里的小鱼干数）。\n\n本喵要你**写一招**，头上收两样东西：**一排碗的牌子**、还有**这排碗有多长**。招式里**拿牌子从第一只一路走到最后一只**，边走边把碗里的数加起来，最后把这笔总数**叼回来**。\n\n`main` 里只管读数和报数，加起来这件事整个交给那一招。最后报一行：`一共 v 条小鱼干`（`v` 是那笔总数）。\n\n比如投喂给程序的是\n\n4\n1\n7\n6\n7\n\n程序就要叼回\n\n一共 21 条小鱼干\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint total(int *p, int n) {\n    int sum = 0;\n    for (int *q = p; q < p + n; q++) {\n        sum = sum + *q;\n    }\n    return sum;\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"一共 %d 条小鱼干\\n\", total(bowls, n));\n    return 0;\n}\n",
+      "expectedOutput": "一共 8 条小鱼干",
+      "stdin": "4\n1\n2\n4\n1\n",
+      "explanation": "这道题把本课最要紧的一句话摆在了明面上喵：\n\n**一排碗交给招式的时候，交出去的只是「从哪儿开始」—— 有多长，招式根本不知道。**\n\n所以招式头上必须写**两样**投喂：`int *p` 是一块牌子（从哪儿开始），`int n` 是长度（有几个）。哪一样漏了都算不出来 —— 少了长度，招式走到头也不知道该停。\n\n招式里那趟「拿牌子走一遍」：\n\n```c\nfor (int *q = p; q < p + n; q++) {\n    sum = sum + *q;\n}\n```\n\n- `q` 是照着 `p` 另起的一块牌子，从第一只碗开始；\n- `q < p + n` 的意思是「还没走到最后一只后面」—— `p + n` 正好是整排碗末尾再过去一格；\n- `q++` 一次跨一整只碗；\n- `*q` 就是当前这只碗里的数。\n\n同一件事写成 `p[i]` 或者 `*(p + i)` 也完全对，那两种是方括号派的写法。\n\n最后 `return sum;` 把这笔总数叼回 `main`，`main` 里接住它、直接塞进那句报数里。这就是「一招只干一件事、干完把战利品带回来」的样子喵。",
+      "templateId": "c-s2-ptrarr-sum-by-walk",
+      "params": {
+        "n": 4,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:05.834Z",
+        "hash": "17bb441b0bb17995"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-sum-by-walk-005",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 4 只碗一字排开，碗里各放着几条冻干块。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 4 个数（就是每只碗里的冻干块数）。\n\n本喵要你**写一招**，头上收两样东西：**一排碗的牌子**、还有**这排碗有多长**。招式里**拿牌子从第一只一路走到最后一只**，边走边把碗里的数加起来，最后把这笔总数**叼回来**。\n\n`main` 里只管读数和报数，加起来这件事整个交给那一招。最后报一行：`一共 v 条冻干块`（`v` 是那笔总数）。\n\n比如投喂给程序的是\n\n4\n4\n3\n1\n7\n\n程序就要叼回\n\n一共 15 条冻干块\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint total(int *p, int n) {\n    int sum = 0;\n    for (int *q = p; q < p + n; q++) {\n        sum = sum + *q;\n    }\n    return sum;\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"一共 %d 条冻干块\\n\", total(bowls, n));\n    return 0;\n}\n",
+      "expectedOutput": "一共 18 条冻干块",
+      "stdin": "4\n6\n2\n2\n8\n",
+      "explanation": "这道题把本课最要紧的一句话摆在了明面上喵：\n\n**一排碗交给招式的时候，交出去的只是「从哪儿开始」—— 有多长，招式根本不知道。**\n\n所以招式头上必须写**两样**投喂：`int *p` 是一块牌子（从哪儿开始），`int n` 是长度（有几个）。哪一样漏了都算不出来 —— 少了长度，招式走到头也不知道该停。\n\n招式里那趟「拿牌子走一遍」：\n\n```c\nfor (int *q = p; q < p + n; q++) {\n    sum = sum + *q;\n}\n```\n\n- `q` 是照着 `p` 另起的一块牌子，从第一只碗开始；\n- `q < p + n` 的意思是「还没走到最后一只后面」—— `p + n` 正好是整排碗末尾再过去一格；\n- `q++` 一次跨一整只碗；\n- `*q` 就是当前这只碗里的数。\n\n同一件事写成 `p[i]` 或者 `*(p + i)` 也完全对，那两种是方括号派的写法。\n\n最后 `return sum;` 把这笔总数叼回 `main`，`main` 里接住它、直接塞进那句报数里。这就是「一招只干一件事、干完把战利品带回来」的样子喵。",
+      "templateId": "c-s2-ptrarr-sum-by-walk",
+      "params": {
+        "n": 4,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:08.749Z",
+        "hash": "386d569c0af75505"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-sum-by-walk-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 5 只碗一字排开，碗里各放着几条小鱼干。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 5 个数（就是每只碗里的小鱼干数）。\n\n本喵要你**写一招**，头上收两样东西：**一排碗的牌子**、还有**这排碗有多长**。招式里**拿牌子从第一只一路走到最后一只**，边走边把碗里的数加起来，最后把这笔总数**叼回来**。\n\n`main` 里只管读数和报数，加起来这件事整个交给那一招。最后报一行：`一共 v 条小鱼干`（`v` 是那笔总数）。\n\n比如投喂给程序的是\n\n5\n1\n1\n4\n4\n7\n\n程序就要叼回\n\n一共 17 条小鱼干\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint total(int *p, int n) {\n    int sum = 0;\n    for (int *q = p; q < p + n; q++) {\n        sum = sum + *q;\n    }\n    return sum;\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"一共 %d 条小鱼干\\n\", total(bowls, n));\n    return 0;\n}\n",
+      "expectedOutput": "一共 21 条小鱼干",
+      "stdin": "5\n1\n8\n3\n3\n6\n",
+      "explanation": "这道题把本课最要紧的一句话摆在了明面上喵：\n\n**一排碗交给招式的时候，交出去的只是「从哪儿开始」—— 有多长，招式根本不知道。**\n\n所以招式头上必须写**两样**投喂：`int *p` 是一块牌子（从哪儿开始），`int n` 是长度（有几个）。哪一样漏了都算不出来 —— 少了长度，招式走到头也不知道该停。\n\n招式里那趟「拿牌子走一遍」：\n\n```c\nfor (int *q = p; q < p + n; q++) {\n    sum = sum + *q;\n}\n```\n\n- `q` 是照着 `p` 另起的一块牌子，从第一只碗开始；\n- `q < p + n` 的意思是「还没走到最后一只后面」—— `p + n` 正好是整排碗末尾再过去一格；\n- `q++` 一次跨一整只碗；\n- `*q` 就是当前这只碗里的数。\n\n同一件事写成 `p[i]` 或者 `*(p + i)` 也完全对，那两种是方括号派的写法。\n\n最后 `return sum;` 把这笔总数叼回 `main`，`main` 里接住它、直接塞进那句报数里。这就是「一招只干一件事、干完把战利品带回来」的样子喵。",
+      "templateId": "c-s2-ptrarr-sum-by-walk",
+      "params": {
+        "n": 5,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T16:34:11.656Z",
+        "hash": "163a86279e2d8570"
+      }
+    },
+    {
+      "id": "bank-c-s2-ptrarr-sum-by-walk-008",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵把 5 只碗一字排开，碗里各放着几条冻干块。\n\n请你写个程序：先读进来一个数（碗的只数），再一行一个读进来 5 个数（就是每只碗里的冻干块数）。\n\n本喵要你**写一招**，头上收两样东西：**一排碗的牌子**、还有**这排碗有多长**。招式里**拿牌子从第一只一路走到最后一只**，边走边把碗里的数加起来，最后把这笔总数**叼回来**。\n\n`main` 里只管读数和报数，加起来这件事整个交给那一招。最后报一行：`一共 v 条冻干块`（`v` 是那笔总数）。\n\n比如投喂给程序的是\n\n5\n8\n1\n2\n2\n6\n\n程序就要叼回\n\n一共 19 条冻干块\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint total(int *p, int n) {\n    int sum = 0;\n    for (int *q = p; q < p + n; q++) {\n        sum = sum + *q;\n    }\n    return sum;\n}\n\nint main(void) {\n    int bowls[8];\n    int n;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    printf(\"一共 %d 条冻干块\\n\", total(bowls, n));\n    return 0;\n}\n",
+      "expectedOutput": "一共 33 条冻干块",
+      "stdin": "5\n8\n7\n5\n6\n7\n",
+      "explanation": "这道题把本课最要紧的一句话摆在了明面上喵：\n\n**一排碗交给招式的时候，交出去的只是「从哪儿开始」—— 有多长，招式根本不知道。**\n\n所以招式头上必须写**两样**投喂：`int *p` 是一块牌子（从哪儿开始），`int n` 是长度（有几个）。哪一样漏了都算不出来 —— 少了长度，招式走到头也不知道该停。\n\n招式里那趟「拿牌子走一遍」：\n\n```c\nfor (int *q = p; q < p + n; q++) {\n    sum = sum + *q;\n}\n```\n\n- `q` 是照着 `p` 另起的一块牌子，从第一只碗开始；\n- `q < p + n` 的意思是「还没走到最后一只后面」—— `p + n` 正好是整排碗末尾再过去一格；\n- `q++` 一次跨一整只碗；\n- `*q` 就是当前这只碗里的数。\n\n同一件事写成 `p[i]` 或者 `*(p + i)` 也完全对，那两种是方括号派的写法。\n\n最后 `return sum;` 把这笔总数叼回 `main`，`main` 里接住它、直接塞进那句报数里。这就是「一招只干一件事、干完把战利品带回来」的样子喵。",
+      "templateId": "c-s2-ptrarr-sum-by-walk",
+      "params": {
+        "n": 5,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:27.805Z",
+        "hash": "5df3db091f1b0895"
+      }
+    }
+  ]
+}

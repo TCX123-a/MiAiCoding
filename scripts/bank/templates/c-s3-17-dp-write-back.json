@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-17-dp-write-back",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-17",
+  "type": "codefix",
+  "concept": ["要改的原件是一张牌", "递牌的门牌号", "剥一层往里写", "复印件改不动原件"],
+  "instances": 2,
+  "params": {
+    "row": { "kind": "pick", "values": ["4, 9, 6", "12, 5, 20"] }
+  },
+  "stemTemplate": "本喵在架子上摆了 **3 只碗**，里面的数分别是 {row}。现在要挑出**最大**的那只碗，把它的门牌号挂到外面那张牌上，再印一行「最大的那只碗里：几」。\n\n`pick_biggest` 这一招里，挑最大那只的绕鱼干跑圈写得一点没错，可印出来的是**第一只碗**里的数 —— 外面那张牌压根没被换掉。翻译官喵一声没吭，跑起来也不摔。\n\n请你把这一招改对（`main` 里那几行别动）。改好之后该印一行：「最大的那只碗里：」后面跟着 {row} 里最大那个数。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n/* 挑出最大那只碗，把它的门牌号挂到外面那张牌上 */\nvoid pick_biggest(int *bowls, int n, int *out) {\n    int best = 0;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] > bowls[best]) {\n            best = i;\n        }\n    }\n    out = &bowls[best];\n}\n\nint main(void) {\n    int bowls[3] = {{row}};\n    int *p = &bowls[0];\n\n    pick_biggest(bowls, 3, p);\n    printf(\"最大的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n/* 挑出最大那只碗，把它的门牌号挂到外面那张牌上 */\nvoid pick_biggest(int *bowls, int n, int **out) {\n    int best = 0;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] > bowls[best]) {\n            best = i;\n        }\n    }\n    *out = &bowls[best];\n}\n\nint main(void) {\n    int bowls[3] = {{row}};\n    int *p = &bowls[0];\n\n    pick_biggest(bowls, 3, &p);\n    printf(\"最大的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+  "explanationTemplate": "毛病在**接料格收的是什么**喵：`int *out` 收下的只是外面那张牌的一张**复印件**，招式里那句 `out = &bowls[best];` 动的就是这份复印件，招式一收工它就没了 —— 外面那张牌一步没挪，还牢牢指着第一只碗，所以印出来的**永远是第一只碗里的数**。\n\n规矩是：**要改的原件是一张牌，就得递这张牌的门牌号**。所以接料格写成 `int **out`，喊它的时候递 `&p`，招式里剥一层往里写：\n\n```text\n*out = &bowls[best];\n```\n\n`*out` 读作「外面那张牌」，右边是最大那只碗的门牌号。这一行和「只写 `out = ...`」差一颗星，屏幕上差的是一整只碗。改对之后该印出来的是 {row} 里最大那个数喵。\n\n⚠️ 顺带记牢：这两个写法**翻译官喵都不拦** —— 一个改复印件、一个改真牌，一声不吭，只有印出来的东西不一样。"
+}

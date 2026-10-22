@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-09-stale-capture",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-09",
+  "type": "codefix",
+  "concept": ["揣一份是装小招式那一刻的副本", "后改的门槛要共用才跟得上", "小招式活得比改动久"],
+  "instances": 2,
+  "params": {
+    "final": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stemTemplate": "本喵这回是**先把小招式装好**（存进那个叫 `ok` 的盒子），之后才把门槛抬高，最后拿它去数。\n\n毛病出在这儿：数出来的个数还是**按老门槛**算的 —— 小招式里看到的门槛没跟着抬。\n\n你帮本喵改对（只动方括号那一截，别的地方一个字都别碰）。\n\n改好之后印一行：`门槛 {final} 以上有 N 个`（那个 N 由程序自己数出来）。要数的这一排是 `3, 1, 4, 1, 5`。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 2;\n\n    auto ok = [limit](int x) {\n        return x > limit;\n    };\n\n    limit = {final};\n\n    int n = count_if(v.begin(), v.end(), ok);\n    cout << \"门槛 \" << limit << \" 以上有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {3, 1, 4, 1, 5};\n    int limit = 2;\n\n    auto ok = [&limit](int x) {\n        return x > limit;\n    };\n\n    limit = {final};\n\n    int n = count_if(v.begin(), v.end(), ok);\n    cout << \"门槛 \" << limit << \" 以上有 \" << n << \" 个\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题里那两种带法的差别露了脸喵 —— 因为本喵是**先装小招式、后改门槛**的：\n\n- `[limit]` 是**揣一份**：装小招式的那一刻，本喵就把当时的门槛抄了一份带走。之后外面怎么改，小招式手里那份**永远是老的那个** —— 它还在拿 `2` 当门槛，数出来的个数跟同一行印出来的门槛对不上；\n- `[&limit]` 是**共用同一个**：小招式每次跑都去看外面那个门槛现在是多少，抬过之后它就用新的。\n\n判据还是课文第四节那一句：**「我要改它吗？」** 这一题的门槛后面确实会变，所以得共用。\n\n⚠️ 平时本喵老说「揣一份最省心」，可这一题正好相反：**小招式活得比那次改动久**（它是先装好、后用的），这时候再揣一份，揣到的就是过期的那个。"
+}

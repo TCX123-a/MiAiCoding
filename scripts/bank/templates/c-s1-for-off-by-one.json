@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-for-off-by-one",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-07",
+  "type": "codefix",
+  "concept": ["for", "小于还是小于等于", "差一位"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stemTemplate": "本喵要用跑圈求 **1 到 {n}** 的和：小碗先洗成 0，每一圈把当前的数加进去。\n\n可这段代码跑完报出来的数不对 —— 它**少加了一次**。你帮本喵改对：1 到 {n} 加起来该是多少，就印多少。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int total = 0;\n\n    for (int i = 1; i < {n}; i++) {\n        total = total + i;\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int total = 0;\n\n    for (int i = 1; i <= {n}; i++) {\n        total = total + i;\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n    return 0;\n}\n",
+  "explanationTemplate": "跑圈的三件家当挤在小括号里，最容易摔的就是**眼色里那个边界**喵。\n\n眼色写 `i < {n}`，意思是「{n} 这一圈压根不进」。于是 `i` 只领到 1 到 {n} 减一，最后一个数白白漏掉了 —— **而且它一个错都不报**，只是安安静静给你一个偏小的数。\n\n想把 1 到 {n} 一个不落地走一遍，眼色要写 `i <= {n}`（小于**或等于**）。这两行只差一个字符，结果差一个数，所以写完 `for` 本喵的习惯是**在心里数一遍**：起点是谁？眼色什么时候变假？最后一圈 `i` 是几？\n\n顺带说一句：这种「差一位」的摔法在数碗的时候更凶险 —— 下一课你会看到，**C 连越界都不拦你**喵。"
+}

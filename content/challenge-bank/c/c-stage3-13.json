@@ -1,0 +1,430 @@
+{
+  "lessonId": "c-stage3-13",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-gdb-caller-frees-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "上一课的「谁租谁还」有个变体喵：这一回的招式租完**不**自己留着用，而是把牌子**叼出来交给喊它的人** —— 那这一间该谁来还？规矩是：**牌子在谁手里，谁负责还**。本喵这份稿子里，牌子交到了 `main` 手上，所以该 `main` 用完就还。\n\n请你把两处补完：\n\n1. `rent_one`：租一间够放一个整数的仓库，把投喂 `v` 放进去，把牌子叼回去（租不到就叼 `NULL` 回去）；\n2. `main`：先喊 `rent_one(5)`，喊完把**租的账**记一笔，把它叼回来的那个数印成一行「`第 1 间放的是 V`」，然后**由 `main` 把这一间还回去**、把**还的账**也记一笔；再对着 `7` 照做一遍（编号换成 `2`）。\n\n末尾那几行（印两本账、还有按账下的结论）本喵已经写好了，别动它们 —— 改好之后该印：两行「第 k 间放的是 V」、一行「`账：租 2 间，还 2 间`」，最后一行「对上了」。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint *rent_one(int v) {\n    /* ↓ 在这儿写：租一间够放一个整数的仓库，把 v 放进去，把牌子叼回去 */\n\n    return NULL;\n}\n\nint main(void) {\n    int rented = 0;\n    int returned = 0;\n\n    /* ↓ 在这儿写：喊两回 rent_one，各印一行；用完由你把每一间还回去；两本账各记一笔 */\n\n    printf(\"账：租 %d 间，还 %d 间\\n\", rented, returned);\n    if (rented == returned) {\n        printf(\"对上了\\n\");\n    } else {\n        printf(\"漏了 %d 间\\n\", rented - returned);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint *rent_one(int v) {\n    int *p = malloc(sizeof(int));\n    if (p == NULL) {\n        return NULL;\n    }\n    *p = v;\n    return p;\n}\n\nint main(void) {\n    int rented = 0;\n    int returned = 0;\n\n    int *p = rent_one(5);\n    rented++;\n    printf(\"第 1 间放的是 %d\\n\", *p);\n    free(p);\n    returned++;\n\n    p = rent_one(7);\n    rented++;\n    printf(\"第 2 间放的是 %d\\n\", *p);\n    free(p);\n    returned++;\n\n    printf(\"账：租 %d 间，还 %d 间\\n\", rented, returned);\n    if (rented == returned) {\n        printf(\"对上了\\n\");\n    } else {\n        printf(\"漏了 %d 间\\n\", rented - returned);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 1 间放的是 5\n第 2 间放的是 7\n账：租 2 间，还 2 间\n对上了",
+      "stdin": null,
+      "explanation": "「配对」讲的是**每一处租都要有对应的一处还**喵。本题的配对**跨了招式**：租写在 `rent_one` 里，还却写在 `main` 里 —— 凭什么？因为**牌子叼出来交到谁手里，谁就是还的人**：这一回牌子上的地址只在 `main` 手上（招式自己一退出就把牌子弄丢了），所以还的活儿归 `main`。\n\n反过来，要是那一间**压根没打算交出去**（在招式里用完就完了），那就该**在招式里当场还掉**。总之每一处 `malloc` 都得有人认领它的 `free`，谁认领都行，**不能没人认领**。\n\n末尾那句结论为什么信得过：两本账一本记租、一本记还，都是**写稿子的人自己记的**（跟课文里那句「编号对账」一个道理）。你要是漏了还，账上立刻差出数来 —— 稿子自己就会说「漏了喵」。",
+      "templateId": "c-s3-gdb-caller-frees-write",
+      "params": {
+        "x": "5",
+        "y": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:22.723Z",
+        "hash": "df61c1c6a0eb40c8"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-caller-frees-write-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "上一课的「谁租谁还」有个变体喵：这一回的招式租完**不**自己留着用，而是把牌子**叼出来交给喊它的人** —— 那这一间该谁来还？规矩是：**牌子在谁手里，谁负责还**。本喵这份稿子里，牌子交到了 `main` 手上，所以该 `main` 用完就还。\n\n请你把两处补完：\n\n1. `rent_one`：租一间够放一个整数的仓库，把投喂 `v` 放进去，把牌子叼回去（租不到就叼 `NULL` 回去）；\n2. `main`：先喊 `rent_one(5)`，喊完把**租的账**记一笔，把它叼回来的那个数印成一行「`第 1 间放的是 V`」，然后**由 `main` 把这一间还回去**、把**还的账**也记一笔；再对着 `9` 照做一遍（编号换成 `2`）。\n\n末尾那几行（印两本账、还有按账下的结论）本喵已经写好了，别动它们 —— 改好之后该印：两行「第 k 间放的是 V」、一行「`账：租 2 间，还 2 间`」，最后一行「对上了」。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint *rent_one(int v) {\n    /* ↓ 在这儿写：租一间够放一个整数的仓库，把 v 放进去，把牌子叼回去 */\n\n    return NULL;\n}\n\nint main(void) {\n    int rented = 0;\n    int returned = 0;\n\n    /* ↓ 在这儿写：喊两回 rent_one，各印一行；用完由你把每一间还回去；两本账各记一笔 */\n\n    printf(\"账：租 %d 间，还 %d 间\\n\", rented, returned);\n    if (rented == returned) {\n        printf(\"对上了\\n\");\n    } else {\n        printf(\"漏了 %d 间\\n\", rented - returned);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint *rent_one(int v) {\n    int *p = malloc(sizeof(int));\n    if (p == NULL) {\n        return NULL;\n    }\n    *p = v;\n    return p;\n}\n\nint main(void) {\n    int rented = 0;\n    int returned = 0;\n\n    int *p = rent_one(5);\n    rented++;\n    printf(\"第 1 间放的是 %d\\n\", *p);\n    free(p);\n    returned++;\n\n    p = rent_one(9);\n    rented++;\n    printf(\"第 2 间放的是 %d\\n\", *p);\n    free(p);\n    returned++;\n\n    printf(\"账：租 %d 间，还 %d 间\\n\", rented, returned);\n    if (rented == returned) {\n        printf(\"对上了\\n\");\n    } else {\n        printf(\"漏了 %d 间\\n\", rented - returned);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 1 间放的是 5\n第 2 间放的是 9\n账：租 2 间，还 2 间\n对上了",
+      "stdin": null,
+      "explanation": "「配对」讲的是**每一处租都要有对应的一处还**喵。本题的配对**跨了招式**：租写在 `rent_one` 里，还却写在 `main` 里 —— 凭什么？因为**牌子叼出来交到谁手里，谁就是还的人**：这一回牌子上的地址只在 `main` 手上（招式自己一退出就把牌子弄丢了），所以还的活儿归 `main`。\n\n反过来，要是那一间**压根没打算交出去**（在招式里用完就完了），那就该**在招式里当场还掉**。总之每一处 `malloc` 都得有人认领它的 `free`，谁认领都行，**不能没人认领**。\n\n末尾那句结论为什么信得过：两本账一本记租、一本记还，都是**写稿子的人自己记的**（跟课文里那句「编号对账」一个道理）。你要是漏了还，账上立刻差出数来 —— 稿子自己就会说「漏了喵」。",
+      "templateId": "c-s3-gdb-caller-frees-write",
+      "params": {
+        "x": "5",
+        "y": "9"
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:40.126Z",
+        "hash": "c74ce4dcda725c28"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-caller-frees-write-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "上一课的「谁租谁还」有个变体喵：这一回的招式租完**不**自己留着用，而是把牌子**叼出来交给喊它的人** —— 那这一间该谁来还？规矩是：**牌子在谁手里，谁负责还**。本喵这份稿子里，牌子交到了 `main` 手上，所以该 `main` 用完就还。\n\n请你把两处补完：\n\n1. `rent_one`：租一间够放一个整数的仓库，把投喂 `v` 放进去，把牌子叼回去（租不到就叼 `NULL` 回去）；\n2. `main`：先喊 `rent_one(2)`，喊完把**租的账**记一笔，把它叼回来的那个数印成一行「`第 1 间放的是 V`」，然后**由 `main` 把这一间还回去**、把**还的账**也记一笔；再对着 `7` 照做一遍（编号换成 `2`）。\n\n末尾那几行（印两本账、还有按账下的结论）本喵已经写好了，别动它们 —— 改好之后该印：两行「第 k 间放的是 V」、一行「`账：租 2 间，还 2 间`」，最后一行「对上了」。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint *rent_one(int v) {\n    /* ↓ 在这儿写：租一间够放一个整数的仓库，把 v 放进去，把牌子叼回去 */\n\n    return NULL;\n}\n\nint main(void) {\n    int rented = 0;\n    int returned = 0;\n\n    /* ↓ 在这儿写：喊两回 rent_one，各印一行；用完由你把每一间还回去；两本账各记一笔 */\n\n    printf(\"账：租 %d 间，还 %d 间\\n\", rented, returned);\n    if (rented == returned) {\n        printf(\"对上了\\n\");\n    } else {\n        printf(\"漏了 %d 间\\n\", rented - returned);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint *rent_one(int v) {\n    int *p = malloc(sizeof(int));\n    if (p == NULL) {\n        return NULL;\n    }\n    *p = v;\n    return p;\n}\n\nint main(void) {\n    int rented = 0;\n    int returned = 0;\n\n    int *p = rent_one(2);\n    rented++;\n    printf(\"第 1 间放的是 %d\\n\", *p);\n    free(p);\n    returned++;\n\n    p = rent_one(7);\n    rented++;\n    printf(\"第 2 间放的是 %d\\n\", *p);\n    free(p);\n    returned++;\n\n    printf(\"账：租 %d 间，还 %d 间\\n\", rented, returned);\n    if (rented == returned) {\n        printf(\"对上了\\n\");\n    } else {\n        printf(\"漏了 %d 间\\n\", rented - returned);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 1 间放的是 2\n第 2 间放的是 7\n账：租 2 间，还 2 间\n对上了",
+      "stdin": null,
+      "explanation": "「配对」讲的是**每一处租都要有对应的一处还**喵。本题的配对**跨了招式**：租写在 `rent_one` 里，还却写在 `main` 里 —— 凭什么？因为**牌子叼出来交到谁手里，谁就是还的人**：这一回牌子上的地址只在 `main` 手上（招式自己一退出就把牌子弄丢了），所以还的活儿归 `main`。\n\n反过来，要是那一间**压根没打算交出去**（在招式里用完就完了），那就该**在招式里当场还掉**。总之每一处 `malloc` 都得有人认领它的 `free`，谁认领都行，**不能没人认领**。\n\n末尾那句结论为什么信得过：两本账一本记租、一本记还，都是**写稿子的人自己记的**（跟课文里那句「编号对账」一个道理）。你要是漏了还，账上立刻差出数来 —— 稿子自己就会说「漏了喵」。",
+      "templateId": "c-s3-gdb-caller-frees-write",
+      "params": {
+        "x": "2",
+        "y": "7"
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:42.433Z",
+        "hash": "5a8064848c1853e4"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-caller-frees-write-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "上一课的「谁租谁还」有个变体喵：这一回的招式租完**不**自己留着用，而是把牌子**叼出来交给喊它的人** —— 那这一间该谁来还？规矩是：**牌子在谁手里，谁负责还**。本喵这份稿子里，牌子交到了 `main` 手上，所以该 `main` 用完就还。\n\n请你把两处补完：\n\n1. `rent_one`：租一间够放一个整数的仓库，把投喂 `v` 放进去，把牌子叼回去（租不到就叼 `NULL` 回去）；\n2. `main`：先喊 `rent_one(2)`，喊完把**租的账**记一笔，把它叼回来的那个数印成一行「`第 1 间放的是 V`」，然后**由 `main` 把这一间还回去**、把**还的账**也记一笔；再对着 `9` 照做一遍（编号换成 `2`）。\n\n末尾那几行（印两本账、还有按账下的结论）本喵已经写好了，别动它们 —— 改好之后该印：两行「第 k 间放的是 V」、一行「`账：租 2 间，还 2 间`」，最后一行「对上了」。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint *rent_one(int v) {\n    /* ↓ 在这儿写：租一间够放一个整数的仓库，把 v 放进去，把牌子叼回去 */\n\n    return NULL;\n}\n\nint main(void) {\n    int rented = 0;\n    int returned = 0;\n\n    /* ↓ 在这儿写：喊两回 rent_one，各印一行；用完由你把每一间还回去；两本账各记一笔 */\n\n    printf(\"账：租 %d 间，还 %d 间\\n\", rented, returned);\n    if (rented == returned) {\n        printf(\"对上了\\n\");\n    } else {\n        printf(\"漏了 %d 间\\n\", rented - returned);\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint *rent_one(int v) {\n    int *p = malloc(sizeof(int));\n    if (p == NULL) {\n        return NULL;\n    }\n    *p = v;\n    return p;\n}\n\nint main(void) {\n    int rented = 0;\n    int returned = 0;\n\n    int *p = rent_one(2);\n    rented++;\n    printf(\"第 1 间放的是 %d\\n\", *p);\n    free(p);\n    returned++;\n\n    p = rent_one(9);\n    rented++;\n    printf(\"第 2 间放的是 %d\\n\", *p);\n    free(p);\n    returned++;\n\n    printf(\"账：租 %d 间，还 %d 间\\n\", rented, returned);\n    if (rented == returned) {\n        printf(\"对上了\\n\");\n    } else {\n        printf(\"漏了 %d 间\\n\", rented - returned);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 1 间放的是 2\n第 2 间放的是 9\n账：租 2 间，还 2 间\n对上了",
+      "stdin": null,
+      "explanation": "「配对」讲的是**每一处租都要有对应的一处还**喵。本题的配对**跨了招式**：租写在 `rent_one` 里，还却写在 `main` 里 —— 凭什么？因为**牌子叼出来交到谁手里，谁就是还的人**：这一回牌子上的地址只在 `main` 手上（招式自己一退出就把牌子弄丢了），所以还的活儿归 `main`。\n\n反过来，要是那一间**压根没打算交出去**（在招式里用完就完了），那就该**在招式里当场还掉**。总之每一处 `malloc` 都得有人认领它的 `free`，谁认领都行，**不能没人认领**。\n\n末尾那句结论为什么信得过：两本账一本记租、一本记还，都是**写稿子的人自己记的**（跟课文里那句「编号对账」一个道理）。你要是漏了还，账上立刻差出数来 —— 稿子自己就会说「漏了喵」。",
+      "templateId": "c-s3-gdb-caller-frees-write",
+      "params": {
+        "x": "2",
+        "y": "9"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:23.892Z",
+        "hash": "7d371291460314ad"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-leak-pair-fix-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这段稿子数全对、跑得也顺，可它**只租不还**喵 —— 跑一趟看不出毛病，跑一万趟机器就喘了。\n\n本喵教你一只笨办法：给每一次「租」和每一次「还」各配一句**带编号的打印**，跑一遍把两串编号对一对，差几个号就是漏了几间。现在这段稿子里，租的那串印了好几行，还的那串**只有一行** —— 一眼就知道对不上。\n\n请你把病治好：让每一间租来的仓库**用完当场就还**，并且照本喵的办法，还的时候也印一行「`[还] 第 N 回`」，编号跟这一轮的租对上。每一轮都是**先印租、紧接着印还**。`main` 里别的东西别动 —— 改好之后，3 行租和 3 行还该一一对上，最后再印一行 `收工`。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *bowl = NULL;\n    for (int i = 0; i < 3; i++) {\n        bowl = malloc(4 * sizeof(int));\n        if (bowl == NULL) {\n            return 1;\n        }\n        bowl[0] = i;\n        printf(\"[租] 第 %d 回\\n\", i + 1);\n    }\n    printf(\"[还] 第 1 回\\n\");\n    free(bowl);\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *bowl = NULL;\n    for (int i = 0; i < 3; i++) {\n        bowl = malloc(4 * sizeof(int));\n        if (bowl == NULL) {\n            return 1;\n        }\n        bowl[0] = i;\n        printf(\"[租] 第 %d 回\\n\", i + 1);\n        printf(\"[还] 第 %d 回\\n\", i + 1);\n        free(bowl);\n    }\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "[租] 第 1 回\n[还] 第 1 回\n[租] 第 2 回\n[还] 第 2 回\n[租] 第 3 回\n[还] 第 3 回\n收工",
+      "stdin": null,
+      "explanation": "`bowl` 这张猫爪指向牌只有**一张**喵。每一圈开头那句 `bowl = malloc(...)` 都往牌子上写一个新地址，上一间的地址就被**顶掉**了 —— 想还也找不着，那一间就一直挂在账上。\n\n改法就是**每圈用完当场还**：先把这一间还掉，再印这一轮的编号。编号是**对账用的**：租的那串是 1、2、3……，还的那串照着写 —— 两串一样长，就说明一间不欠。\n\n这类「绕圈里租、圈外只还一回」的形状，漏掉的间数正好是**圈数减一**。记住它，下次一眼就能认出来。",
+      "templateId": "c-s3-gdb-leak-pair-fix",
+      "params": {
+        "n": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:10.684Z",
+        "hash": "7df1912a37767f83"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-leak-pair-fix-001",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这段稿子数全对、跑得也顺，可它**只租不还**喵 —— 跑一趟看不出毛病，跑一万趟机器就喘了。\n\n本喵教你一只笨办法：给每一次「租」和每一次「还」各配一句**带编号的打印**，跑一遍把两串编号对一对，差几个号就是漏了几间。现在这段稿子里，租的那串印了好几行，还的那串**只有一行** —— 一眼就知道对不上。\n\n请你把病治好：让每一间租来的仓库**用完当场就还**，并且照本喵的办法，还的时候也印一行「`[还] 第 N 回`」，编号跟这一轮的租对上。每一轮都是**先印租、紧接着印还**。`main` 里别的东西别动 —— 改好之后，4 行租和 4 行还该一一对上，最后再印一行 `收工`。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *bowl = NULL;\n    for (int i = 0; i < 4; i++) {\n        bowl = malloc(4 * sizeof(int));\n        if (bowl == NULL) {\n            return 1;\n        }\n        bowl[0] = i;\n        printf(\"[租] 第 %d 回\\n\", i + 1);\n    }\n    printf(\"[还] 第 1 回\\n\");\n    free(bowl);\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *bowl = NULL;\n    for (int i = 0; i < 4; i++) {\n        bowl = malloc(4 * sizeof(int));\n        if (bowl == NULL) {\n            return 1;\n        }\n        bowl[0] = i;\n        printf(\"[租] 第 %d 回\\n\", i + 1);\n        printf(\"[还] 第 %d 回\\n\", i + 1);\n        free(bowl);\n    }\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "[租] 第 1 回\n[还] 第 1 回\n[租] 第 2 回\n[还] 第 2 回\n[租] 第 3 回\n[还] 第 3 回\n[租] 第 4 回\n[还] 第 4 回\n收工",
+      "stdin": null,
+      "explanation": "`bowl` 这张猫爪指向牌只有**一张**喵。每一圈开头那句 `bowl = malloc(...)` 都往牌子上写一个新地址，上一间的地址就被**顶掉**了 —— 想还也找不着，那一间就一直挂在账上。\n\n改法就是**每圈用完当场还**：先把这一间还掉，再印这一轮的编号。编号是**对账用的**：租的那串是 1、2、3……，还的那串照着写 —— 两串一样长，就说明一间不欠。\n\n这类「绕圈里租、圈外只还一回」的形状，漏掉的间数正好是**圈数减一**。记住它，下次一眼就能认出来。",
+      "templateId": "c-s3-gdb-leak-pair-fix",
+      "params": {
+        "n": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:12.352Z",
+        "hash": "f245aa8d0904d89e"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-observe-position-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这一句报数是本喵特意加的，想让稿子**自己说话**：每加完一碗，就报一声这会儿加起来是多少。可它**摆错了地方**喵 —— 印出来的数永远慢一步，本喵照着它去对账，把方向对歪了。\n\n请你把这一行挪个位置：让每一圈**先把这碗加进去，再报数**（报出来的才是「加完这碗之后」的合计）。别的一个字都别动。一排碗是 3、1、4、1 —— 改好之后，第一行报的该是 3，最后一行报的该是四碗的总和。",
+      "brokenCode": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        printf(\"第 %d 轮：sum = %d\\n\", i + 1, sum);\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { 3, 1, 4, 1 };\n    printf(\"总数是 %d\\n\", sum_from(fish, 0, 4));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        sum += fish[i];\n        printf(\"第 %d 轮：sum = %d\\n\", i + 1, sum);\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { 3, 1, 4, 1 };\n    printf(\"总数是 %d\\n\", sum_from(fish, 0, 4));\n    return 0;\n}\n",
+      "expectedOutput": "第 1 轮：sum = 3\n第 2 轮：sum = 4\n第 3 轮：sum = 8\n第 4 轮：sum = 9\n总数是 9",
+      "stdin": null,
+      "explanation": "报数摆在**哪一步**，看到的就是**哪一步**的数喵。摆在累加之前，报的是「还没加这碗」的合计 —— 每一圈都晚一步，最后一轮报的更是上一轮的数，照着它去对账只会越对越歪。\n\n挪到累加之后，报的就是「加完这碗」的合计：头一轮报 3，末一轮报的正好是四碗的总和。\n\n这就是「让稿子自己说话」的讲究：话要问对，更要**问在点子上**。看守（`gdb`）里那个一步一步走的办法也是同一个道理 —— 停在哪儿，才看得到哪儿的数。",
+      "templateId": "c-s3-gdb-observe-position",
+      "params": {
+        "a": "3",
+        "b": "1",
+        "c": "4",
+        "d": "1"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:14.212Z",
+        "hash": "ceb56b0c70993c77"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-observe-position-015",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这一句报数是本喵特意加的，想让稿子**自己说话**：每加完一碗，就报一声这会儿加起来是多少。可它**摆错了地方**喵 —— 印出来的数永远慢一步，本喵照着它去对账，把方向对歪了。\n\n请你把这一行挪个位置：让每一圈**先把这碗加进去，再报数**（报出来的才是「加完这碗之后」的合计）。别的一个字都别动。一排碗是 2、5、4、3 —— 改好之后，第一行报的该是 2，最后一行报的该是四碗的总和。",
+      "brokenCode": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        printf(\"第 %d 轮：sum = %d\\n\", i + 1, sum);\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { 2, 5, 4, 3 };\n    printf(\"总数是 %d\\n\", sum_from(fish, 0, 4));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        sum += fish[i];\n        printf(\"第 %d 轮：sum = %d\\n\", i + 1, sum);\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { 2, 5, 4, 3 };\n    printf(\"总数是 %d\\n\", sum_from(fish, 0, 4));\n    return 0;\n}\n",
+      "expectedOutput": "第 1 轮：sum = 2\n第 2 轮：sum = 7\n第 3 轮：sum = 11\n第 4 轮：sum = 14\n总数是 14",
+      "stdin": null,
+      "explanation": "报数摆在**哪一步**，看到的就是**哪一步**的数喵。摆在累加之前，报的是「还没加这碗」的合计 —— 每一圈都晚一步，最后一轮报的更是上一轮的数，照着它去对账只会越对越歪。\n\n挪到累加之后，报的就是「加完这碗」的合计：头一轮报 2，末一轮报的正好是四碗的总和。\n\n这就是「让稿子自己说话」的讲究：话要问对，更要**问在点子上**。看守（`gdb`）里那个一步一步走的办法也是同一个道理 —— 停在哪儿，才看得到哪儿的数。",
+      "templateId": "c-s3-gdb-observe-position",
+      "params": {
+        "a": "2",
+        "b": "5",
+        "c": "4",
+        "d": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:15.742Z",
+        "hash": "9381bad51674eb41"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-paddle-row-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要**一次开着好几间**仓库（每间各放一份小鱼干），全部用完，再一间一间还回去。这就得靠**一排猫爪指向牌**喵：每间一张，插在 `room` 这一排的格子里 —— 牌子要是只留一张，第二间租下来就把第一间的地址顶掉了，那第一间就再也找不回来。\n\n请你把 `main` 里那两段补完：\n\n1. **先租齐**：从第 `1` 间数到第 3 间，一间一间租（每间够放一个整数就成），把牌子插进这一排的格子里；第 `k` 间里放 `k × 2`；租好一间就印一行「`[租] 第 k 间，放了 V`」；\n2. **再还清**：从头把每一间过一遍，印一行「`[还] 第 k 间，里头是 V`」，然后把那一间还回去。\n\n改好之后该印 3 行「租」、3 行「还」，最后再印一行 `收工`。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *room[3];\n\n    /* ↓ 在这儿写：先一间一间租下来、把牌子插进这一排的格子里；全部用完再一间一间还回去 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *room[3];\n\n    for (int i = 0; i < 3; i++) {\n        room[i] = malloc(sizeof(int));\n        if (room[i] == NULL) {\n            return 1;\n        }\n        *room[i] = (i + 1) * 2;\n        printf(\"[租] 第 %d 间，放了 %d\\n\", i + 1, *room[i]);\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"[还] 第 %d 间，里头是 %d\\n\", i + 1, *room[i]);\n        free(room[i]);\n    }\n\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "[租] 第 1 间，放了 2\n[租] 第 2 间，放了 4\n[租] 第 3 间，放了 6\n[还] 第 1 间，里头是 2\n[还] 第 2 间，里头是 4\n[还] 第 3 间，里头是 6\n收工",
+      "stdin": null,
+      "explanation": "`room` 这一排的每一格里，各插着**一张**牌子喵 —— 第 `i` 格那张写着「第 `i` 间仓库在哪儿」。所以「先租齐、再还清」的写法，必须把租来的每一张牌子都**留着**：留了，后头才找得到每一间。\n\n这也正是课文里那段漏水的病根：牌子只留了一张，租第二间的时候就把第一间的地址顶掉了。两种改法都成 —— ① 像本题这样**把牌子留成一排**；② 每圈**用完当场还**。挑一种，但一定要说得出「每一间都有人记得它在哪儿」这句话。\n\n还有一处要留神：还回去之后那间仓库就**不是你的**了，别再进去翻 —— 这一间里那个数要印出来，就得**还之前**先印（本题的次序就是这个道理）。",
+      "templateId": "c-s3-gdb-paddle-row-write",
+      "params": {
+        "n": "3",
+        "s": "2"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:17.717Z",
+        "hash": "55cbcdfe3a570c76"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-paddle-row-write-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要**一次开着好几间**仓库（每间各放一份小鱼干），全部用完，再一间一间还回去。这就得靠**一排猫爪指向牌**喵：每间一张，插在 `room` 这一排的格子里 —— 牌子要是只留一张，第二间租下来就把第一间的地址顶掉了，那第一间就再也找不回来。\n\n请你把 `main` 里那两段补完：\n\n1. **先租齐**：从第 `1` 间数到第 3 间，一间一间租（每间够放一个整数就成），把牌子插进这一排的格子里；第 `k` 间里放 `k × 3`；租好一间就印一行「`[租] 第 k 间，放了 V`」；\n2. **再还清**：从头把每一间过一遍，印一行「`[还] 第 k 间，里头是 V`」，然后把那一间还回去。\n\n改好之后该印 3 行「租」、3 行「还」，最后再印一行 `收工`。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *room[3];\n\n    /* ↓ 在这儿写：先一间一间租下来、把牌子插进这一排的格子里；全部用完再一间一间还回去 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *room[3];\n\n    for (int i = 0; i < 3; i++) {\n        room[i] = malloc(sizeof(int));\n        if (room[i] == NULL) {\n            return 1;\n        }\n        *room[i] = (i + 1) * 3;\n        printf(\"[租] 第 %d 间，放了 %d\\n\", i + 1, *room[i]);\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"[还] 第 %d 间，里头是 %d\\n\", i + 1, *room[i]);\n        free(room[i]);\n    }\n\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "[租] 第 1 间，放了 3\n[租] 第 2 间，放了 6\n[租] 第 3 间，放了 9\n[还] 第 1 间，里头是 3\n[还] 第 2 间，里头是 6\n[还] 第 3 间，里头是 9\n收工",
+      "stdin": null,
+      "explanation": "`room` 这一排的每一格里，各插着**一张**牌子喵 —— 第 `i` 格那张写着「第 `i` 间仓库在哪儿」。所以「先租齐、再还清」的写法，必须把租来的每一张牌子都**留着**：留了，后头才找得到每一间。\n\n这也正是课文里那段漏水的病根：牌子只留了一张，租第二间的时候就把第一间的地址顶掉了。两种改法都成 —— ① 像本题这样**把牌子留成一排**；② 每圈**用完当场还**。挑一种，但一定要说得出「每一间都有人记得它在哪儿」这句话。\n\n还有一处要留神：还回去之后那间仓库就**不是你的**了，别再进去翻 —— 这一间里那个数要印出来，就得**还之前**先印（本题的次序就是这个道理）。",
+      "templateId": "c-s3-gdb-paddle-row-write",
+      "params": {
+        "n": "3",
+        "s": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:44.653Z",
+        "hash": "1de444dfa5ff2202"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-paddle-row-write-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要**一次开着好几间**仓库（每间各放一份小鱼干），全部用完，再一间一间还回去。这就得靠**一排猫爪指向牌**喵：每间一张，插在 `room` 这一排的格子里 —— 牌子要是只留一张，第二间租下来就把第一间的地址顶掉了，那第一间就再也找不回来。\n\n请你把 `main` 里那两段补完：\n\n1. **先租齐**：从第 `1` 间数到第 4 间，一间一间租（每间够放一个整数就成），把牌子插进这一排的格子里；第 `k` 间里放 `k × 2`；租好一间就印一行「`[租] 第 k 间，放了 V`」；\n2. **再还清**：从头把每一间过一遍，印一行「`[还] 第 k 间，里头是 V`」，然后把那一间还回去。\n\n改好之后该印 4 行「租」、4 行「还」，最后再印一行 `收工`。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *room[4];\n\n    /* ↓ 在这儿写：先一间一间租下来、把牌子插进这一排的格子里；全部用完再一间一间还回去 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *room[4];\n\n    for (int i = 0; i < 4; i++) {\n        room[i] = malloc(sizeof(int));\n        if (room[i] == NULL) {\n            return 1;\n        }\n        *room[i] = (i + 1) * 2;\n        printf(\"[租] 第 %d 间，放了 %d\\n\", i + 1, *room[i]);\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"[还] 第 %d 间，里头是 %d\\n\", i + 1, *room[i]);\n        free(room[i]);\n    }\n\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "[租] 第 1 间，放了 2\n[租] 第 2 间，放了 4\n[租] 第 3 间，放了 6\n[租] 第 4 间，放了 8\n[还] 第 1 间，里头是 2\n[还] 第 2 间，里头是 4\n[还] 第 3 间，里头是 6\n[还] 第 4 间，里头是 8\n收工",
+      "stdin": null,
+      "explanation": "`room` 这一排的每一格里，各插着**一张**牌子喵 —— 第 `i` 格那张写着「第 `i` 间仓库在哪儿」。所以「先租齐、再还清」的写法，必须把租来的每一张牌子都**留着**：留了，后头才找得到每一间。\n\n这也正是课文里那段漏水的病根：牌子只留了一张，租第二间的时候就把第一间的地址顶掉了。两种改法都成 —— ① 像本题这样**把牌子留成一排**；② 每圈**用完当场还**。挑一种，但一定要说得出「每一间都有人记得它在哪儿」这句话。\n\n还有一处要留神：还回去之后那间仓库就**不是你的**了，别再进去翻 —— 这一间里那个数要印出来，就得**还之前**先印（本题的次序就是这个道理）。",
+      "templateId": "c-s3-gdb-paddle-row-write",
+      "params": {
+        "n": "4",
+        "s": "2"
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:46.906Z",
+        "hash": "40277182eed6c75f"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-paddle-row-write-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要**一次开着好几间**仓库（每间各放一份小鱼干），全部用完，再一间一间还回去。这就得靠**一排猫爪指向牌**喵：每间一张，插在 `room` 这一排的格子里 —— 牌子要是只留一张，第二间租下来就把第一间的地址顶掉了，那第一间就再也找不回来。\n\n请你把 `main` 里那两段补完：\n\n1. **先租齐**：从第 `1` 间数到第 4 间，一间一间租（每间够放一个整数就成），把牌子插进这一排的格子里；第 `k` 间里放 `k × 3`；租好一间就印一行「`[租] 第 k 间，放了 V`」；\n2. **再还清**：从头把每一间过一遍，印一行「`[还] 第 k 间，里头是 V`」，然后把那一间还回去。\n\n改好之后该印 4 行「租」、4 行「还」，最后再印一行 `收工`。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *room[4];\n\n    /* ↓ 在这儿写：先一间一间租下来、把牌子插进这一排的格子里；全部用完再一间一间还回去 */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *room[4];\n\n    for (int i = 0; i < 4; i++) {\n        room[i] = malloc(sizeof(int));\n        if (room[i] == NULL) {\n            return 1;\n        }\n        *room[i] = (i + 1) * 3;\n        printf(\"[租] 第 %d 间，放了 %d\\n\", i + 1, *room[i]);\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"[还] 第 %d 间，里头是 %d\\n\", i + 1, *room[i]);\n        free(room[i]);\n    }\n\n    printf(\"收工\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "[租] 第 1 间，放了 3\n[租] 第 2 间，放了 6\n[租] 第 3 间，放了 9\n[租] 第 4 间，放了 12\n[还] 第 1 间，里头是 3\n[还] 第 2 间，里头是 6\n[还] 第 3 间，里头是 9\n[还] 第 4 间，里头是 12\n收工",
+      "stdin": null,
+      "explanation": "`room` 这一排的每一格里，各插着**一张**牌子喵 —— 第 `i` 格那张写着「第 `i` 间仓库在哪儿」。所以「先租齐、再还清」的写法，必须把租来的每一张牌子都**留着**：留了，后头才找得到每一间。\n\n这也正是课文里那段漏水的病根：牌子只留了一张，租第二间的时候就把第一间的地址顶掉了。两种改法都成 —— ① 像本题这样**把牌子留成一排**；② 每圈**用完当场还**。挑一种，但一定要说得出「每一间都有人记得它在哪儿」这句话。\n\n还有一处要留神：还回去之后那间仓库就**不是你的**了，别再进去翻 —— 这一间里那个数要印出来，就得**还之前**先印（本题的次序就是这个道理）。",
+      "templateId": "c-s3-gdb-paddle-row-write",
+      "params": {
+        "n": "4",
+        "s": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:18.884Z",
+        "hash": "9246bc44eb39b41e"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-start-offbyone-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这份稿子跑得起来、印得出数，屏幕上却**一句提示都没有** —— 数就是不对喵。本喵把看守（`gdb`）请了来，让稿子停在 `sum_from` 这招的门口，把递进来的东西一件一件翻出来看，病根已经抓着了：**绕鱼干跑圈的起点不对**，排在最前头那碗压根没进过圈。\n\n这招本身没错，病在**喊它的那一句**上。一排碗里放着 3、1、4、1 四条小鱼干，请你把病治好 —— 改好之后该印出这**四碗全都加起来**的数。",
+      "brokenCode": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { 3, 1, 4, 1 };\n    int sum = sum_from(fish, 1, 4);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { 3, 1, 4, 1 };\n    int sum = sum_from(fish, 0, 4);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "expectedOutput": "总数是 9",
+      "stdin": null,
+      "explanation": "看守停在招式门口的时候，`print start` 翻出来的是 `1`喵 —— 跑圈从第二碗开始，排在最前头那碗（里头是 3）压根没进过圈，所以印出来的数正好**少了 3**。\n\n改法就是把起点换成 `0`：`0` 是从头数的第一位，这一圈才把四碗全算上。\n\n记一句：**别猜**。本喵要是不请看守、只盯着稿子看，说不定就去改招式里那个跑圈的范围了 —— 而病压根不在这儿。",
+      "templateId": "c-s3-gdb-start-offbyone",
+      "params": {
+        "a": "3",
+        "b": "1",
+        "c": "4",
+        "d": "1"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:07.289Z",
+        "hash": "1b7126984d6c31ec"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-start-offbyone-015",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这份稿子跑得起来、印得出数，屏幕上却**一句提示都没有** —— 数就是不对喵。本喵把看守（`gdb`）请了来，让稿子停在 `sum_from` 这招的门口，把递进来的东西一件一件翻出来看，病根已经抓着了：**绕鱼干跑圈的起点不对**，排在最前头那碗压根没进过圈。\n\n这招本身没错，病在**喊它的那一句**上。一排碗里放着 5、2、6、3 四条小鱼干，请你把病治好 —— 改好之后该印出这**四碗全都加起来**的数。",
+      "brokenCode": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { 5, 2, 6, 3 };\n    int sum = sum_from(fish, 1, 4);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[4] = { 5, 2, 6, 3 };\n    int sum = sum_from(fish, 0, 4);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "expectedOutput": "总数是 16",
+      "stdin": null,
+      "explanation": "看守停在招式门口的时候，`print start` 翻出来的是 `1`喵 —— 跑圈从第二碗开始，排在最前头那碗（里头是 5）压根没进过圈，所以印出来的数正好**少了 5**。\n\n改法就是把起点换成 `0`：`0` 是从头数的第一位，这一圈才把四碗全算上。\n\n记一句：**别猜**。本喵要是不请看守、只盯着稿子看，说不定就去改招式里那个跑圈的范围了 —— 而病压根不在这儿。",
+      "templateId": "c-s3-gdb-start-offbyone",
+      "params": {
+        "a": "5",
+        "b": "2",
+        "c": "6",
+        "d": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:08.803Z",
+        "hash": "8f2ec548f5b34873"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-two-level-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "课文里那摞猫粮碗（`backtrace`）最上头是「现在停住的那层」，底下是「谁喊了它」喵。本喵想让你亲手搭出**两层**来：`main` 喊 `sum_from`，`sum_from` 自己在里头跑圈。\n\n请你把这招写对。规矩是「**从第 `start` 只碗开始**，往后一共数 `count` 只碗，把它们全加起来，把总和叼回去」。要留神两件事：\n\n- 碗的编号是**从 0 数起**的 —— `start` 是 `0` 的时候，排在最前头那只碗也得算上；\n- `count` 是**要数的碗数**，一只都不能漏在外头。\n\n`main` 里那几行别动。一排碗是 3、1、4、1、5，写对之后该印出**五碗全加起来**的数。",
+      "starter": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    /* ↓ 在这儿写：从第 start 只碗开始，往后一共数 count 只碗，把它们全加起来叼回去 */\n\n    return 0;\n}\n\nint main(void) {\n    int fish[5] = { 3, 1, 4, 1, 5 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < start + count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[5] = { 3, 1, 4, 1, 5 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "expectedOutput": "总数是 14",
+      "stdin": null,
+      "explanation": "跑圈就三件事喵：**从哪儿起**（`start`，不是 `1`，也不是 `start + 1`）、**到哪儿收**（从起点往后数够 `count` 只）、**每圈把那一碗加进去**。本题起点传的是 `0`、碗数传的是 `5`，所以五只碗一只都不能漏。\n\n课文里那个「数不对」的病，错的就是这里：起点写成了 `1`，排在最前头那碗没进圈。当时的看守一眼就给出证据 —— `backtrace` 那摞碗的 `#0` 那行里，`start=1` 明明白白摆着。\n\n写对之后，`main` 和这招就是**两层**了：看守的 `backtrace` 会连 `#0`（招式里）带 `#1`（`main` 里）一起印出来，正好对上课文那摞碗的样子。",
+      "templateId": "c-s3-gdb-two-level-write",
+      "params": {
+        "a": "3",
+        "b": "1",
+        "c": "4",
+        "d": "1",
+        "e": "5"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:20.272Z",
+        "hash": "edcb647bb3f71274"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-two-level-write-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "课文里那摞猫粮碗（`backtrace`）最上头是「现在停住的那层」，底下是「谁喊了它」喵。本喵想让你亲手搭出**两层**来：`main` 喊 `sum_from`，`sum_from` 自己在里头跑圈。\n\n请你把这招写对。规矩是「**从第 `start` 只碗开始**，往后一共数 `count` 只碗，把它们全加起来，把总和叼回去」。要留神两件事：\n\n- 碗的编号是**从 0 数起**的 —— `start` 是 `0` 的时候，排在最前头那只碗也得算上；\n- `count` 是**要数的碗数**，一只都不能漏在外头。\n\n`main` 里那几行别动。一排碗是 3、1、6、3、5，写对之后该印出**五碗全加起来**的数。",
+      "starter": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    /* ↓ 在这儿写：从第 start 只碗开始，往后一共数 count 只碗，把它们全加起来叼回去 */\n\n    return 0;\n}\n\nint main(void) {\n    int fish[5] = { 3, 1, 6, 3, 5 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < start + count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[5] = { 3, 1, 6, 3, 5 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "expectedOutput": "总数是 18",
+      "stdin": null,
+      "explanation": "跑圈就三件事喵：**从哪儿起**（`start`，不是 `1`，也不是 `start + 1`）、**到哪儿收**（从起点往后数够 `count` 只）、**每圈把那一碗加进去**。本题起点传的是 `0`、碗数传的是 `5`，所以五只碗一只都不能漏。\n\n课文里那个「数不对」的病，错的就是这里：起点写成了 `1`，排在最前头那碗没进圈。当时的看守一眼就给出证据 —— `backtrace` 那摞碗的 `#0` 那行里，`start=1` 明明白白摆着。\n\n写对之后，`main` 和这招就是**两层**了：看守的 `backtrace` 会连 `#0`（招式里）带 `#1`（`main` 里）一起印出来，正好对上课文那摞碗的样子。",
+      "templateId": "c-s3-gdb-two-level-write",
+      "params": {
+        "a": "3",
+        "b": "1",
+        "c": "6",
+        "d": "3",
+        "e": "5"
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:49.109Z",
+        "hash": "99595dd29825f44c"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-two-level-write-012",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "课文里那摞猫粮碗（`backtrace`）最上头是「现在停住的那层」，底下是「谁喊了它」喵。本喵想让你亲手搭出**两层**来：`main` 喊 `sum_from`，`sum_from` 自己在里头跑圈。\n\n请你把这招写对。规矩是「**从第 `start` 只碗开始**，往后一共数 `count` 只碗，把它们全加起来，把总和叼回去」。要留神两件事：\n\n- 碗的编号是**从 0 数起**的 —— `start` 是 `0` 的时候，排在最前头那只碗也得算上；\n- `count` 是**要数的碗数**，一只都不能漏在外头。\n\n`main` 里那几行别动。一排碗是 3、2、6、1、5，写对之后该印出**五碗全加起来**的数。",
+      "starter": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    /* ↓ 在这儿写：从第 start 只碗开始，往后一共数 count 只碗，把它们全加起来叼回去 */\n\n    return 0;\n}\n\nint main(void) {\n    int fish[5] = { 3, 2, 6, 1, 5 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < start + count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[5] = { 3, 2, 6, 1, 5 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "expectedOutput": "总数是 17",
+      "stdin": null,
+      "explanation": "跑圈就三件事喵：**从哪儿起**（`start`，不是 `1`，也不是 `start + 1`）、**到哪儿收**（从起点往后数够 `count` 只）、**每圈把那一碗加进去**。本题起点传的是 `0`、碗数传的是 `5`，所以五只碗一只都不能漏。\n\n课文里那个「数不对」的病，错的就是这里：起点写成了 `1`，排在最前头那碗没进圈。当时的看守一眼就给出证据 —— `backtrace` 那摞碗的 `#0` 那行里，`start=1` 明明白白摆着。\n\n写对之后，`main` 和这招就是**两层**了：看守的 `backtrace` 会连 `#0`（招式里）带 `#1`（`main` 里）一起印出来，正好对上课文那摞碗的样子。",
+      "templateId": "c-s3-gdb-two-level-write",
+      "params": {
+        "a": "3",
+        "b": "2",
+        "c": "6",
+        "d": "1",
+        "e": "5"
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:51.219Z",
+        "hash": "3af14d91c38b19f3"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-two-level-write-019",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "课文里那摞猫粮碗（`backtrace`）最上头是「现在停住的那层」，底下是「谁喊了它」喵。本喵想让你亲手搭出**两层**来：`main` 喊 `sum_from`，`sum_from` 自己在里头跑圈。\n\n请你把这招写对。规矩是「**从第 `start` 只碗开始**，往后一共数 `count` 只碗，把它们全加起来，把总和叼回去」。要留神两件事：\n\n- 碗的编号是**从 0 数起**的 —— `start` 是 `0` 的时候，排在最前头那只碗也得算上；\n- `count` 是**要数的碗数**，一只都不能漏在外头。\n\n`main` 里那几行别动。一排碗是 5、1、4、3、1，写对之后该印出**五碗全加起来**的数。",
+      "starter": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    /* ↓ 在这儿写：从第 start 只碗开始，往后一共数 count 只碗，把它们全加起来叼回去 */\n\n    return 0;\n}\n\nint main(void) {\n    int fish[5] = { 5, 1, 4, 3, 1 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < start + count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[5] = { 5, 1, 4, 3, 1 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "expectedOutput": "总数是 14",
+      "stdin": null,
+      "explanation": "跑圈就三件事喵：**从哪儿起**（`start`，不是 `1`，也不是 `start + 1`）、**到哪儿收**（从起点往后数够 `count` 只）、**每圈把那一碗加进去**。本题起点传的是 `0`、碗数传的是 `5`，所以五只碗一只都不能漏。\n\n课文里那个「数不对」的病，错的就是这里：起点写成了 `1`，排在最前头那碗没进圈。当时的看守一眼就给出证据 —— `backtrace` 那摞碗的 `#0` 那行里，`start=1` 明明白白摆着。\n\n写对之后，`main` 和这招就是**两层**了：看守的 `backtrace` 会连 `#0`（招式里）带 `#1`（`main` 里）一起印出来，正好对上课文那摞碗的样子。",
+      "templateId": "c-s3-gdb-two-level-write",
+      "params": {
+        "a": "5",
+        "b": "1",
+        "c": "4",
+        "d": "3",
+        "e": "1"
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:53.374Z",
+        "hash": "306b723f7667b388"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-two-level-write-025",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "课文里那摞猫粮碗（`backtrace`）最上头是「现在停住的那层」，底下是「谁喊了它」喵。本喵想让你亲手搭出**两层**来：`main` 喊 `sum_from`，`sum_from` 自己在里头跑圈。\n\n请你把这招写对。规矩是「**从第 `start` 只碗开始**，往后一共数 `count` 只碗，把它们全加起来，把总和叼回去」。要留神两件事：\n\n- 碗的编号是**从 0 数起**的 —— `start` 是 `0` 的时候，排在最前头那只碗也得算上；\n- `count` 是**要数的碗数**，一只都不能漏在外头。\n\n`main` 里那几行别动。一排碗是 5、2、4、1、1，写对之后该印出**五碗全加起来**的数。",
+      "starter": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    /* ↓ 在这儿写：从第 start 只碗开始，往后一共数 count 只碗，把它们全加起来叼回去 */\n\n    return 0;\n}\n\nint main(void) {\n    int fish[5] = { 5, 2, 4, 1, 1 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < start + count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[5] = { 5, 2, 4, 1, 1 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "expectedOutput": "总数是 13",
+      "stdin": null,
+      "explanation": "跑圈就三件事喵：**从哪儿起**（`start`，不是 `1`，也不是 `start + 1`）、**到哪儿收**（从起点往后数够 `count` 只）、**每圈把那一碗加进去**。本题起点传的是 `0`、碗数传的是 `5`，所以五只碗一只都不能漏。\n\n课文里那个「数不对」的病，错的就是这里：起点写成了 `1`，排在最前头那碗没进圈。当时的看守一眼就给出证据 —— `backtrace` 那摞碗的 `#0` 那行里，`start=1` 明明白白摆着。\n\n写对之后，`main` 和这招就是**两层**了：看守的 `backtrace` 会连 `#0`（招式里）带 `#1`（`main` 里）一起印出来，正好对上课文那摞碗的样子。",
+      "templateId": "c-s3-gdb-two-level-write",
+      "params": {
+        "a": "5",
+        "b": "2",
+        "c": "4",
+        "d": "1",
+        "e": "1"
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:55.460Z",
+        "hash": "7359d326e438bf87"
+      }
+    },
+    {
+      "id": "bank-c-s3-gdb-two-level-write-031",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "课文里那摞猫粮碗（`backtrace`）最上头是「现在停住的那层」，底下是「谁喊了它」喵。本喵想让你亲手搭出**两层**来：`main` 喊 `sum_from`，`sum_from` 自己在里头跑圈。\n\n请你把这招写对。规矩是「**从第 `start` 只碗开始**，往后一共数 `count` 只碗，把它们全加起来，把总和叼回去」。要留神两件事：\n\n- 碗的编号是**从 0 数起**的 —— `start` 是 `0` 的时候，排在最前头那只碗也得算上；\n- `count` 是**要数的碗数**，一只都不能漏在外头。\n\n`main` 里那几行别动。一排碗是 5、2、6、3、1，写对之后该印出**五碗全加起来**的数。",
+      "starter": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    /* ↓ 在这儿写：从第 start 只碗开始，往后一共数 count 只碗，把它们全加起来叼回去 */\n\n    return 0;\n}\n\nint main(void) {\n    int fish[5] = { 5, 2, 6, 3, 1 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < start + count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[5] = { 5, 2, 6, 3, 1 };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+      "expectedOutput": "总数是 17",
+      "stdin": null,
+      "explanation": "跑圈就三件事喵：**从哪儿起**（`start`，不是 `1`，也不是 `start + 1`）、**到哪儿收**（从起点往后数够 `count` 只）、**每圈把那一碗加进去**。本题起点传的是 `0`、碗数传的是 `5`，所以五只碗一只都不能漏。\n\n课文里那个「数不对」的病，错的就是这里：起点写成了 `1`，排在最前头那碗没进圈。当时的看守一眼就给出证据 —— `backtrace` 那摞碗的 `#0` 那行里，`start=1` 明明白白摆着。\n\n写对之后，`main` 和这招就是**两层**了：看守的 `backtrace` 会连 `#0`（招式里）带 `#1`（`main` 里）一起印出来，正好对上课文那摞碗的样子。",
+      "templateId": "c-s3-gdb-two-level-write",
+      "params": {
+        "a": "5",
+        "b": "2",
+        "c": "6",
+        "d": "3",
+        "e": "1"
+      },
+      "verified": {
+        "at": "2026-09-16T11:19:21.352Z",
+        "hash": "1a926fce37b5c581"
+      }
+    }
+  ]
+}

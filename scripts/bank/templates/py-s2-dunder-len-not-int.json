@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-dunder-len-not-int",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-08",
+  "type": "codefix",
+  "concept": ["__len__", "整数", "往下取整"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵的碗里装了 {n} 条小鱼干，想把它们**两条一捆**扎起来喵。\n\n本喵想让 `len(这只碗)` 报出**能扎成几捆** —— 扎不满一捆的零头**不算**。\n\n可这一段一跑就报错。你帮本喵改对，让它印出捆数。\n\n⚠️ 碗里装几条这件事（`__init__` 那一段）**不许改**，`print(len(a))` 那一行也不许改。",
+  "brokenCodeTemplate": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __len__(self):\n        return self.n / 2\n\n\na = Bowl({n})\nprint(len(a))\n",
+  "referenceFixTemplate": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __len__(self):\n        return self.n // 2\n\n\na = Bowl({n})\nprint(len(a))\n",
+  "explanationTemplate": "毛病有两层，一层比一层深喵。\n\n**第一层：`/` 给的是小数，`//` 给的才是整数。** 这一招叼回来的是 `{n} / 2` 算出来的东西，那是个小数（比如 `4.5`），不是整数。\n\n**第二层（这一课真正的点）：`__len__` 叼回来的必须是——一个不小于 0 的整数。** Python 拿到你叼回来的东西，是要拿去**数「有几样」**的，小数它数不了，于是当场翻脸：叼回来的不是整数。\n\n所以修法就是把 `/` 换成 `//`（往下取整，零头砍掉）——正好就是题目要的「扎不满一捆的不算」。\n\n⚠️ 顺便记住 `len(...)` 这个时刻：写在图纸上的那一招不是自己喊的，是 `len(...)` 套上来的时候 Python 替你喊的。和 `__str__` 一个脾气。\n\n⚠️ 还有两条边界要顺手记住：碗里**一条都没有**时报 `0` 是可以的（0 也不小于 0）；可要是算出来是**负数**，Python 一样翻脸 —— 这一招里叼回来的东西得是「一个不小于 0 的整数」，两头都算数。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-12-split-halves",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-12",
+  "type": "codewrite",
+  "concept": ["把一份活对半分给两位帮手", "每人一半各放各的碗", "都接回来之后再汇总"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "投喂口会**先给一个数**（表示接下来还有几个数，给的正好是偶数个），**再一个一个给 {n} 个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来，再把这 {n} 个数一个一个先收好、别急着加；\n2. 把这一串数**对半分**：前一半交给第一位帮手，后一半交给第二位帮手 —— 每位把自己那一半加起来，放进**它自己的碗**（各用各的碗，谁也不用等谁）；\n3. 两位**都接回来之后**，才按顺序印三行：先 `前半 X`、再 `后半 Y`、最后 `一共 Z`（Z 是两半加起来）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint nums[20];\nint n = 0;\nint front = 0;\nint back = 0;\n\nvoid addFront() {\n    // 在这儿写：把前一半加起来，放进 front\n\n}\n\nvoid addBack() {\n    // 在这儿写：把后一半加起来，放进 back\n\n}\n\nint main() {\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> nums[i];\n\n    // 在这儿写：喊两位帮手，都接回来之后按顺序印三行\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <thread>\nusing namespace std;\n\nint nums[20];\nint n = 0;\nint front = 0;\nint back = 0;\n\nvoid addFront() {\n    int s = 0;\n    for (int i = 0; i < n / 2; i++) s = s + nums[i];\n    front = s;\n}\n\nvoid addBack() {\n    int s = 0;\n    for (int i = n / 2; i < n; i++) s = s + nums[i];\n    back = s;\n}\n\nint main() {\n    cin >> n;\n    for (int i = 0; i < n; i++) cin >> nums[i];\n\n    thread t1(addFront);\n    thread t2(addBack);\n    t1.join();\n    t2.join();\n\n    cout << \"前半 \" << front << endl;\n    cout << \"后半 \" << back << endl;\n    cout << \"一共 \" << front + back << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题是**把一份活对半分**喵，几件事各有各的道理：\n\n- **数先收好再分**：那一串数得先进到一个大家都看得见的地方（`nums`），两位帮手才找得着。要是边读边加，读的那只手只有一只，帮手就没活干了。\n- **对半分**：前半是头 `n / 2` 个，后半是剩下的 `n / 2` 个（给的是偶数个，正好分得匀）。两位帮手各认自己那一段。\n- **各放各的碗**：一位往 `front` 里放，一位往 `back` 里放，谁也不碰谁的东西 —— 所以这一题**不用加锁**。\n- **都接回来再汇总**：三行印在两句 `join` 后面，主猫把两个碗加起来才是 `一共`。顺序也就钉死了，每次跑都是这三行。\n\n⚠️ 印出来的是**分片的结果**（前半、后半各是多少），所以两个碗**必须真的分头算过**才算数 —— 不过说句实话：判分只看印出来的字，你要是偷懒让主猫一个人从头加到尾、照着分片印三行，机器也看不出来。可那样就白喊帮手了喵。\n\n⚠️ 两位帮手都是「伸手拿、不放下」：它们只从 `nums` 里读，从来不往里面写 —— 所以两个人一起读同一串数，谁也碍不着谁。"
+}

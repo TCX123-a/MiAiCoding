@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-parse-int-necklace",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-06",
+  "type": "codefix",
+  "concept": ["装数字的图纸", "项链接成数字", "parseInt", "编译错误"],
+  "instances": 2,
+  "params": {
+    "k": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 1, "max": 9 },
+  "stemTemplate": "纸条上读进来的永远是**一串项链**。本喵想把这串项链**直接塞进口袋**，翻译官喵把爪子拍下来了，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出**读进来的那个数再加上 {k}**，一行一个数：\n\n```text\n（读进来的数 + {k}）\n```\n\n只有塞进口袋那一行有问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        Integer boxed = s;\n        System.out.println(boxed + {k});\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String s = sc.next();\n        Integer boxed = Integer.parseInt(s);\n        System.out.println(boxed + {k});\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 **`incompatible types: String cannot be converted to Integer`** —— 「这串项链接不成一只装数字的口袋」。\n\n要看破一个常见的误会：**装箱只认光溜溜的数字**。`Integer boxed = 3;` 能过，是因为右边那是个光溜溜的 `3`，翻译官顺手照图纸生一只口袋把它装进去。可右边要是**一串项链**，那就不一样了 —— 项链里头是**一颗一颗排好的**，它不知道本喵想要的是数字还是就想要那串项链本身，所以**不敢替本喵做主**，直接拦下来。\n\n正路是**先把项链接成数字**：\n\n```java\nInteger boxed = Integer.parseInt(s);\n```\n\n`Integer.parseInt(...)` 就是把一串按数字排好的项链变成光溜溜的数字。变成数字之后，再递给 `Integer` 那一边，装箱就是水到渠成的事了。\n\n这一招往后天天用：**纸条上读进来、账本里取出来的东西，往往都是项链，想算就得先接成数字**。\n\n顺手记：`boxed + {k}` 那一行本身没毛病 —— 算式只认光溜溜的数字，所以它会**先拆箱再算**，一路都顺喵。"
+}

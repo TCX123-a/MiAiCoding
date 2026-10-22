@@ -1,0 +1,77 @@
+{
+  "lessonId": "c-stage2-08",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写了一句 `#define MAX_FISH 100;` —— 名字后面手滑多打了一个分号。翻译官喵登记的「换成的样子」是什么？",
+      "options": [
+        "`100;` —— 分号也一起登记进去了，用它的地方当场翻译不过",
+        "`100` —— 分号会被编译器自动忽略",
+        "`100;;` —— 它会替本喵再补一个分号上去",
+        "这一行直接作废，`MAX_FISH` 等于没登记"
+      ],
+      "answer": 0,
+      "explanation": "宏登记的是**名字后面那一整段字**，分号也是字喵。本喵真跑过：登记成 `100;` 之后，`printf` 那一行替换完变成 `printf(\"%d\\n\", 100;);` —— 括号还没闭上先撞上一个分号，翻译官喵当场拦下（原话是 `expected ')' before ';' token`）。所以写吩咐的时候，屁股后面什么都别加。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵的宏写成了 `#define SQUARE(x) x * x`，接着去跑 `SQUARE(1 + 2)`。翻译官喵给本喵的答案是几？",
+      "options": [
+        "`5` —— 它把 `1 + 2` 原样塞进去，先乘后加",
+        "`9` —— 它先把 `1 + 2` 算成 3，再乘一次",
+        "`6` —— 它只填了一次，另一个 `x` 空着",
+        "编译器会当场拦下，说这个宏的写法不对"
+      ],
+      "answer": 0,
+      "explanation": "宏只是换字：`SQUARE(1 + 2)` 被原样铺成 `1 + 2 * 1 + 2`，先乘后加得到 5 喵。真招式会先把你投喂的小鱼干算好再进门，宏不会 —— 所以每个 `x` 都得自己套括号，写成 `((x) * (x))` 之后才是 `9`。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵在一段代码里写了 `#ifdef DEBUG`，可整篇都没登记过 `DEBUG` 这个记号。跑起来那段话会怎样？",
+      "options": [
+        "整段话在开工前就被丢掉了，连翻译都轮不到它",
+        "留在那儿，但跑的时候会被跳过不执行",
+        "跑起来当场报错，说 `DEBUG` 没登记过",
+        "编译器会自己帮本喵把 `DEBUG` 登记上"
+      ],
+      "answer": 0,
+      "explanation": "`#ifdef` 问的是「这个记号登记过没有」，没登记就把这一段整段丢掉喵。本喵真跑过：往那段里塞一句不成样子的东西，翻译官喵照样把程序交了出来 —— 因为它压根没读到那段。要注意它**只问登记过没有、不问登记的是什么**：写成 `#define DEBUG 0`，那段话照样留着。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define MAX_FISH 60\n#define DEBUG 1\n\nint main(void) {\n    printf(\"最多囤 %d 条\\n\", ____);\n#ifdef DEBUG\n    printf(\"本喵还在抓虫\\n\");\n____\n    printf(\"收工\\n\");\n    return 0;\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出），补上之后它会把三句话按顺序印出来喵。",
+      "blanks": [
+        { "answer": "MAX_FISH", "accept": [] },
+        { "answer": "#endif", "accept": [] }
+      ],
+      "explanation": "第一处要用**登记好的那个名字**：直接写 `60` 虽然也能印出来，可那就白登记了 —— 宏的意思就是「以后要改，只改那一行」喵。第二处是关门的那句：`#ifdef` 开了门就一定得配一个 `#endif`，少了它翻译官喵会说 `unterminated #ifdef`，停在那儿不知道剩下的话该留到哪儿。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define SHOW(n) printf(\"有 %d 条小鱼干\\n\", (n))\n\nint main(void) {\n    SHOW(6);\n    SHOW(6 + 1);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "有 6 条小鱼干\n有 7 条小鱼干",
+      "accept": ["有 6 条小鱼干\n有 7 条小鱼干\n"],
+      "explanation": "宏收下的是一段字喵：`SHOW(6 + 1)` 被铺成 `printf(\"有 %d 条小鱼干\\n\", (6 + 1))` —— 括号是那串字里本来就写好的，所以算的是 7。要是那一串里忘了写括号，`6 + 1` 就会和后面的东西黏在一起算，跟上一题一个道理。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define SQUARE(x) x * x\n\nint main(void) {\n    printf(\"%d\\n\", SQUARE(1 + 2));\n    printf(\"%d\\n\", SQUARE(4));\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "5\n16",
+      "accept": ["5\n16\n"],
+      "explanation": "`SQUARE(1 + 2)` 被原样铺成 `1 + 2 * 1 + 2`，先乘后加是 5 喵；第二行 `SQUARE(4)` 铺成 `4 * 4`，正好是 16。同一句话，投喂的东西不一样，结果差得离谱 —— 这就是宏不替你套括号的后果。"
+    }
+  ]
+}

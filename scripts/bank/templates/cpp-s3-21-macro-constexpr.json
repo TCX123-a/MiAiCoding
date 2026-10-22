@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-21-macro-constexpr",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-21",
+  "type": "codewrite",
+  "concept": ["宏 vs 常驻招式", "投喂只算一遍", "练同一件事的两种写法"],
+  "instances": 6,
+  "params": {
+    "add": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "本喵要用两种写法各算一遍**同一件事**，好让你看清它们的差别喵。\n\n投喂口会喂进来一个数（下面就管它叫 `n`）。请你写个程序印两行：\n\n- 第一行先印 `条子算的：`，紧接着印用一张条子（宏）`SQ_M(x)` 算出来的 **（n + {add}）的平方**；\n- 第二行先印 `常驻招式算的：`，紧接着印用一招常驻招式算出来的**同一个数** —— 那一招写成 `constexpr int sq_c(int x)`，身子就是 `return x * x;`。\n\n条子那边记得套括号，两处都套喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\n#define SQ_M(x) ((x) * (x))\n\nconstexpr int sq_c(int x) {\n    return x * x;\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    cout << \"条子算的：\" << SQ_M(n + {add}) << endl;\n    cout << \"常驻招式算的：\" << sq_c(n + {add}) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "两行印出来是同一个数，可这两样东西**根本不是一回事**喵。\n\n**条子（宏）换的是字。** 本喵写 `SQ_M(n + {add})`，翻译官喵换完是 `((n + {add}) * (n + {add}))` —— 那句 `n + {add}` 被**抄了两遍**。这里 `n` 是个现成的数，抄两遍看不出来；可要是喂进去的是一句**会自己动一下的话**（比如喊一次就加一的 `next()`），它就会被**真的喊两遍**：你只想让它动一次，它偏动了两次。\n\n**常驻招式是真招式。** `sq_c(n + {add})` 会先把投喂进来的东西算成**一个数**，再进门 —— 那句话只算一遍；而且它收的是 `int`，塞个别的形状进去，翻译官喵当场就拦下来，不会闷头换完了事。\n\n还有两件看不见的好处：\n\n- 它**有类型**：`sq_c(2.5)` 不会像条子那样照字换出一个说不清的东西；\n- 它**有自己的地方**：写在哪个角落里就只在哪儿管用；条子是从那一行往下一路管到底，连你给小鱼干仓库起名字都要插一手。\n\n那宏还留着干嘛？管**该由开工前的准备来判的事** —— 下一课要学的「按记号挑段落」就是它正经的用场喵。"
+}

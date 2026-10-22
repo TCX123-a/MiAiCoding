@@ -1,0 +1,610 @@
+{
+  "lessonId": "c-stage3-18",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-challenge-chain-sum-001",
+      "type": "codefix",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵最近迷上了**链子**：一节一节接起来，每节挂一条小鱼干。今天的接法是**每读到一节就接在最前面**，接完整串从头清点一遍。\n\n投喂口先给一个数（要接几节），再一节一节给数（每节挂几条）。清点的结果要印两行：`链子上有 %d 只喵` 和 `一共 %d 条喵`。\n\n可是清点出了岔子：**每次都少算一节** —— 明明接了好几节，报出来的节数总差一喵，总数也跟着少一截。你帮本喵把这一趟清点改对。\n\n比如投喂给程序的是\n\n5\n21\n23\n15\n25\n22\n\n修好之后就要叼回\n\n链子上有 5 只喵\n一共 106 条喵",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct node {\n    int fish;\n    struct node *next;\n};\n\nint main(void) {\n    struct node *head = NULL;\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        struct node *fresh = malloc(sizeof(struct node));\n        if (fresh == NULL) {\n            return 1;\n        }\n        fresh->fish = x;\n        fresh->next = head;\n        head = fresh;\n    }\n\n    int count = 0;\n    int total = 0;\n    struct node *p = head;\n    while (p->next != NULL) {\n        count = count + 1;\n        total = total + p->fish;\n        p = p->next;\n    }\n\n    printf(\"链子上有 %d 只喵\\n\", count);\n    printf(\"一共 %d 条喵\\n\", total);\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct node {\n    int fish;\n    struct node *next;\n};\n\nint main(void) {\n    struct node *head = NULL;\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        if (scanf(\"%d\", &x) != 1) {\n            return 1;\n        }\n        struct node *fresh = malloc(sizeof(struct node));\n        if (fresh == NULL) {\n            return 1;\n        }\n        fresh->fish = x;\n        fresh->next = head;\n        head = fresh;\n    }\n\n    int count = 0;\n    int total = 0;\n    struct node *p = head;\n    while (p != NULL) {\n        count = count + 1;\n        total = total + p->fish;\n        p = p->next;\n    }\n\n    printf(\"链子上有 %d 只喵\\n\", count);\n    printf(\"一共 %d 条喵\\n\", total);\n\n    return 0;\n}\n",
+      "expectedOutput": "链子上有 5 只喵\n一共 84 条喵",
+      "stdin": "5\n16\n17\n7\n16\n28\n",
+      "explanation": "漏掉的那一节，正是**走到的最后一节** —— 病根在那一趟清点的**问法**上喵。\n\n`while (p->next != NULL)` 这句问的是：**「下一节还在吗？」** 可圈里干的事是「把**当前这一节**记上一笔，然后往前走」。轮到最后一节时，它老老实实问了一句「你后面还有吗」—— 没有，于是圈不进去，**这一节自己就从头到尾没被记上过**。\n\n看出来了吗：问的是「后面」，记的是「自己」，两者差了半拍。改法很直接，把问法换成\n\n```c\nwhile (p != NULL)\n```\n\n意思是「**我这一节还在吗**？还在就记一笔、再往前走」。这样每一节都会被记上，走到「我自己是空的」才收工 —— 一圈不多、一圈不少。\n\n顺带记个规律喵：顺着链子清点时，圈的问法要**盯住当前这一节**，别盯下一节 —— 盯下一节的写法，必丢最后一节。",
+      "templateId": "c-s3-challenge-chain-sum",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-30T12:36:58.610Z",
+        "hash": "625dfb6ce09e7d6c"
+      }
+    },
+    {
+      "id": "bank-c-s3-challenge-sort-dedupe-000",
+      "type": "codewrite",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵今天收到的数准备**摆一排碗**，想干两件事喵：\n\n1. **先让碗从小到大排好队**（本喵最爱的「两两比一比，左边的大就换位」那一套）；\n2. 再把**不一样的值一共有几档**数出来 —— 比如排好是 `1 1 3 5`，不一样的值有 3 档（1、3、5）。\n\n印法：排好之后，**一只碗一行**，从小到大一只一只印；最后再补一行 `不同的一共 %d 种喵`。\n\n投喂口先给一个数（今天有几只碗），再一只一只给数。本喵最多只摆 64 只碗。\n\n比如投喂给程序的是\n\n4\n3\n1\n6\n2\n\n程序就要叼回\n\n1\n2\n3\n6\n不同的一共 4 种喵\n\n（判分喂的是**另外一组数**喵。排队的活儿要本喵自己写的招式来干，别去找现成的。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bowls[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    for (int round = 0; round < n - 1; round++) {\n        for (int i = 0; i < n - 1 - round; i++) {\n            if (bowls[i] > bowls[i + 1]) {\n                int t = bowls[i];\n                bowls[i] = bowls[i + 1];\n                bowls[i + 1] = t;\n            }\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        printf(\"%d\\n\", bowls[i]);\n    }\n\n    int kinds = 1;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] != bowls[i - 1]) {\n            kinds = kinds + 1;\n        }\n    }\n    printf(\"不同的一共 %d 种喵\\n\", kinds);\n\n    return 0;\n}\n",
+      "expectedOutput": "1\n3\n5\n7\n不同的一共 4 种喵",
+      "stdin": "4\n5\n7\n1\n3\n",
+      "explanation": "两件事分开做，思路就清楚了喵。\n\n**一、排排坐。** 冒泡的走法是：从头到尾两两比一比，**左边比右边大就换位置**；走一趟下来，最大的一只一定被顶到最末尾。下一趟只需要走到「倒数第二只」为止 —— 所以圈的范围一趟比一趟短（内圈终点写 `n - 1 - round`）。总共走 `n - 1` 趟，整排就从小到大了。\n\n**二、数几档。** 排好之后有个大便宜：**相同的数一定挨在一起**。于是「换了一档」就等价于「这一只和上一只不一样」—— 从头数一遍，看见 `bowls[i] != bowls[i - 1]` 就加一笔。第一只碗前面没有「上一只」，所以从**第二只碗**开始数，而且计数器**从 1 起步**（总数至少有一档）。\n\n两个最容易踩的点：冒泡内圈的终点要随着趟数缩短（不缩短也能排对，但白跑很多趟）；数档时别从第 0 只碗开始比（它没有上一只，会读到界外去）。",
+      "templateId": "c-s3-challenge-sort-dedupe",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:01.025Z",
+        "hash": "57360d0e81863ebe"
+      }
+    },
+    {
+      "id": "bank-c-s3-challenge-sort-dedupe-001",
+      "type": "codewrite",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵今天收到的数准备**摆一排碗**，想干两件事喵：\n\n1. **先让碗从小到大排好队**（本喵最爱的「两两比一比，左边的大就换位」那一套）；\n2. 再把**不一样的值一共有几档**数出来 —— 比如排好是 `1 1 3 5`，不一样的值有 3 档（1、3、5）。\n\n印法：排好之后，**一只碗一行**，从小到大一只一只印；最后再补一行 `不同的一共 %d 种喵`。\n\n投喂口先给一个数（今天有几只碗），再一只一只给数。本喵最多只摆 64 只碗。\n\n比如投喂给程序的是\n\n5\n3\n6\n4\n3\n5\n\n程序就要叼回\n\n3\n3\n4\n5\n6\n不同的一共 4 种喵\n\n（判分喂的是**另外一组数**喵。排队的活儿要本喵自己写的招式来干，别去找现成的。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bowls[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    for (int round = 0; round < n - 1; round++) {\n        for (int i = 0; i < n - 1 - round; i++) {\n            if (bowls[i] > bowls[i + 1]) {\n                int t = bowls[i];\n                bowls[i] = bowls[i + 1];\n                bowls[i + 1] = t;\n            }\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        printf(\"%d\\n\", bowls[i]);\n    }\n\n    int kinds = 1;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] != bowls[i - 1]) {\n            kinds = kinds + 1;\n        }\n    }\n    printf(\"不同的一共 %d 种喵\\n\", kinds);\n\n    return 0;\n}\n",
+      "expectedOutput": "1\n2\n2\n3\n6\n不同的一共 4 种喵",
+      "stdin": "5\n1\n2\n6\n3\n2\n",
+      "explanation": "两件事分开做，思路就清楚了喵。\n\n**一、排排坐。** 冒泡的走法是：从头到尾两两比一比，**左边比右边大就换位置**；走一趟下来，最大的一只一定被顶到最末尾。下一趟只需要走到「倒数第二只」为止 —— 所以圈的范围一趟比一趟短（内圈终点写 `n - 1 - round`）。总共走 `n - 1` 趟，整排就从小到大了。\n\n**二、数几档。** 排好之后有个大便宜：**相同的数一定挨在一起**。于是「换了一档」就等价于「这一只和上一只不一样」—— 从头数一遍，看见 `bowls[i] != bowls[i - 1]` 就加一笔。第一只碗前面没有「上一只」，所以从**第二只碗**开始数，而且计数器**从 1 起步**（总数至少有一档）。\n\n两个最容易踩的点：冒泡内圈的终点要随着趟数缩短（不缩短也能排对，但白跑很多趟）；数档时别从第 0 只碗开始比（它没有上一只，会读到界外去）。",
+      "templateId": "c-s3-challenge-sort-dedupe",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-30T12:37:01.277Z",
+        "hash": "8aa9770f7aad043a"
+      }
+    },
+    {
+      "id": "bank-c-s3-challenge-sort-dedupe-002",
+      "type": "codewrite",
+      "lang": "c",
+      "difficulty": "challenge",
+      "stem": "本喵今天收到的数准备**摆一排碗**，想干两件事喵：\n\n1. **先让碗从小到大排好队**（本喵最爱的「两两比一比，左边的大就换位」那一套）；\n2. 再把**不一样的值一共有几档**数出来 —— 比如排好是 `1 1 3 5`，不一样的值有 3 档（1、3、5）。\n\n印法：排好之后，**一只碗一行**，从小到大一只一只印；最后再补一行 `不同的一共 %d 种喵`。\n\n投喂口先给一个数（今天有几只碗），再一只一只给数。本喵最多只摆 64 只碗。\n\n比如投喂给程序的是\n\n6\n7\n4\n1\n8\n1\n6\n\n程序就要叼回\n\n1\n1\n4\n6\n7\n8\n不同的一共 5 种喵\n\n（判分喂的是**另外一组数**喵。排队的活儿要本喵自己写的招式来干，别去找现成的。）",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bowls[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    for (int round = 0; round < n - 1; round++) {\n        for (int i = 0; i < n - 1 - round; i++) {\n            if (bowls[i] > bowls[i + 1]) {\n                int t = bowls[i];\n                bowls[i] = bowls[i + 1];\n                bowls[i + 1] = t;\n            }\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        printf(\"%d\\n\", bowls[i]);\n    }\n\n    int kinds = 1;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] != bowls[i - 1]) {\n            kinds = kinds + 1;\n        }\n    }\n    printf(\"不同的一共 %d 种喵\\n\", kinds);\n\n    return 0;\n}\n",
+      "expectedOutput": "2\n3\n3\n4\n6\n6\n不同的一共 4 种喵",
+      "stdin": "6\n4\n3\n2\n6\n6\n3\n",
+      "explanation": "两件事分开做，思路就清楚了喵。\n\n**一、排排坐。** 冒泡的走法是：从头到尾两两比一比，**左边比右边大就换位置**；走一趟下来，最大的一只一定被顶到最末尾。下一趟只需要走到「倒数第二只」为止 —— 所以圈的范围一趟比一趟短（内圈终点写 `n - 1 - round`）。总共走 `n - 1` 趟，整排就从小到大了。\n\n**二、数几档。** 排好之后有个大便宜：**相同的数一定挨在一起**。于是「换了一档」就等价于「这一只和上一只不一样」—— 从头数一遍，看见 `bowls[i] != bowls[i - 1]` 就加一笔。第一只碗前面没有「上一只」，所以从**第二只碗**开始数，而且计数器**从 1 起步**（总数至少有一档）。\n\n两个最容易踩的点：冒泡内圈的终点要随着趟数缩短（不缩短也能排对，但白跑很多趟）；数档时别从第 0 只碗开始比（它没有上一只，会读到界外去）。",
+      "templateId": "c-s3-challenge-sort-dedupe",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-20T16:38:04.096Z",
+        "hash": "0de21e7b90911ff0"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-empty-count-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要摆一排 **3 格**的牌子，可手上只有 阿花 和 大肥鱼 两个名字 —— 前两格插上这两张**正经牌子**，剩下的格子**统统插空牌子**。然后走一圈，一格一格看过来：\n\n· 碰上正经牌子，印 `第 %d 张：名字`，并且**数一个**；\n· 碰上空牌子，印 `第 %d 张：空`，这一格**不算数**。\n\n走完再补一行 `能用的牌子：%d 张`（`%d` 就是刚才数出来的那个数）。\n\n这一题练的是「空牌子把**不能走**写在了牌面上」：走每一格之前先看一眼牌面，绝不照着一张空牌子走过去。输出要逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[2][16] = {\"阿花\", \"大肥鱼\"};\n    char *row[3];\n\n    for (int i = 0; i < 3; i++) {\n        if (i < 2) {\n            row[i] = names[i];\n        } else {\n            row[i] = NULL;\n        }\n    }\n\n    int count = 0;\n    for (int i = 0; i < 3; i++) {\n        if (row[i] == NULL) {\n            printf(\"第 %d 张：空\\n\", i);\n        } else {\n            printf(\"第 %d 张：%s\\n\", i, row[i]);\n            count++;\n        }\n    }\n    printf(\"能用的牌子：%d 张\\n\", count);\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：阿花\n第 1 张：大肥鱼\n第 2 张：空\n能用的牌子：2 张",
+      "stdin": null,
+      "explanation": "这一题的全部意思就一句话：**走每一格之前，先看一眼牌面**。\n\n那道关卡是 `row[i] == NULL`：是空牌子就整格跳过去（`continue`），连「念」这一步都不给它。少了它，照着空牌子念出来的东西**不是这门语言保证的** —— 本喵这台机器上可能客客气气地印出 `(null)`，换台机器同一句就可能当场断气。\n\n还有一处容易混喵：空牌子上那一行「空」两个字，是**你自己写的那一行在印**，不是照着空牌子念出来的。印「空」是安全的；照着一张空牌子念，才是危险的那件事。\n\n本喵真跑过：能用的牌子**永远是 2 张**，印「空」的行数是 3 减去 2 —— 3 是 3 的时候屏幕上四行（两张名字、一行「空」、一行「能用的牌子：2 张」），3 是 4 的时候五 行。",
+      "templateId": "c-s3-ptr-row-empty-count",
+      "params": {
+        "n": 3,
+        "a": "阿花",
+        "b": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:48.570Z",
+        "hash": "776748326e8aa9b0"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-empty-count-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要摆一排 **3 格**的牌子，可手上只有 阿花 和 煤球 两个名字 —— 前两格插上这两张**正经牌子**，剩下的格子**统统插空牌子**。然后走一圈，一格一格看过来：\n\n· 碰上正经牌子，印 `第 %d 张：名字`，并且**数一个**；\n· 碰上空牌子，印 `第 %d 张：空`，这一格**不算数**。\n\n走完再补一行 `能用的牌子：%d 张`（`%d` 就是刚才数出来的那个数）。\n\n这一题练的是「空牌子把**不能走**写在了牌面上」：走每一格之前先看一眼牌面，绝不照着一张空牌子走过去。输出要逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[2][16] = {\"阿花\", \"煤球\"};\n    char *row[3];\n\n    for (int i = 0; i < 3; i++) {\n        if (i < 2) {\n            row[i] = names[i];\n        } else {\n            row[i] = NULL;\n        }\n    }\n\n    int count = 0;\n    for (int i = 0; i < 3; i++) {\n        if (row[i] == NULL) {\n            printf(\"第 %d 张：空\\n\", i);\n        } else {\n            printf(\"第 %d 张：%s\\n\", i, row[i]);\n            count++;\n        }\n    }\n    printf(\"能用的牌子：%d 张\\n\", count);\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：阿花\n第 1 张：煤球\n第 2 张：空\n能用的牌子：2 张",
+      "stdin": null,
+      "explanation": "这一题的全部意思就一句话：**走每一格之前，先看一眼牌面**。\n\n那道关卡是 `row[i] == NULL`：是空牌子就整格跳过去（`continue`），连「念」这一步都不给它。少了它，照着空牌子念出来的东西**不是这门语言保证的** —— 本喵这台机器上可能客客气气地印出 `(null)`，换台机器同一句就可能当场断气。\n\n还有一处容易混喵：空牌子上那一行「空」两个字，是**你自己写的那一行在印**，不是照着空牌子念出来的。印「空」是安全的；照着一张空牌子念，才是危险的那件事。\n\n本喵真跑过：能用的牌子**永远是 2 张**，印「空」的行数是 3 减去 2 —— 3 是 3 的时候屏幕上四行（两张名字、一行「空」、一行「能用的牌子：2 张」），3 是 4 的时候五 行。",
+      "templateId": "c-s3-ptr-row-empty-count",
+      "params": {
+        "n": 3,
+        "a": "阿花",
+        "b": "煤球"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:42.271Z",
+        "hash": "a2cfc332f52b39f4"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-empty-count-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要摆一排 **3 格**的牌子，可手上只有 小橘 和 煤球 两个名字 —— 前两格插上这两张**正经牌子**，剩下的格子**统统插空牌子**。然后走一圈，一格一格看过来：\n\n· 碰上正经牌子，印 `第 %d 张：名字`，并且**数一个**；\n· 碰上空牌子，印 `第 %d 张：空`，这一格**不算数**。\n\n走完再补一行 `能用的牌子：%d 张`（`%d` 就是刚才数出来的那个数）。\n\n这一题练的是「空牌子把**不能走**写在了牌面上」：走每一格之前先看一眼牌面，绝不照着一张空牌子走过去。输出要逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[2][16] = {\"小橘\", \"煤球\"};\n    char *row[3];\n\n    for (int i = 0; i < 3; i++) {\n        if (i < 2) {\n            row[i] = names[i];\n        } else {\n            row[i] = NULL;\n        }\n    }\n\n    int count = 0;\n    for (int i = 0; i < 3; i++) {\n        if (row[i] == NULL) {\n            printf(\"第 %d 张：空\\n\", i);\n        } else {\n            printf(\"第 %d 张：%s\\n\", i, row[i]);\n            count++;\n        }\n    }\n    printf(\"能用的牌子：%d 张\\n\", count);\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：小橘\n第 1 张：煤球\n第 2 张：空\n能用的牌子：2 张",
+      "stdin": null,
+      "explanation": "这一题的全部意思就一句话：**走每一格之前，先看一眼牌面**。\n\n那道关卡是 `row[i] == NULL`：是空牌子就整格跳过去（`continue`），连「念」这一步都不给它。少了它，照着空牌子念出来的东西**不是这门语言保证的** —— 本喵这台机器上可能客客气气地印出 `(null)`，换台机器同一句就可能当场断气。\n\n还有一处容易混喵：空牌子上那一行「空」两个字，是**你自己写的那一行在印**，不是照着空牌子念出来的。印「空」是安全的；照着一张空牌子念，才是危险的那件事。\n\n本喵真跑过：能用的牌子**永远是 2 张**，印「空」的行数是 3 减去 2 —— 3 是 3 的时候屏幕上四行（两张名字、一行「空」、一行「能用的牌子：2 张」），3 是 4 的时候五 行。",
+      "templateId": "c-s3-ptr-row-empty-count",
+      "params": {
+        "n": 3,
+        "a": "小橘",
+        "b": "煤球"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:43.812Z",
+        "hash": "f464d7d34650ca6e"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-empty-count-004",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要摆一排 **4 格**的牌子，可手上只有 阿花 和 大肥鱼 两个名字 —— 前两格插上这两张**正经牌子**，剩下的格子**统统插空牌子**。然后走一圈，一格一格看过来：\n\n· 碰上正经牌子，印 `第 %d 张：名字`，并且**数一个**；\n· 碰上空牌子，印 `第 %d 张：空`，这一格**不算数**。\n\n走完再补一行 `能用的牌子：%d 张`（`%d` 就是刚才数出来的那个数）。\n\n这一题练的是「空牌子把**不能走**写在了牌面上」：走每一格之前先看一眼牌面，绝不照着一张空牌子走过去。输出要逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[2][16] = {\"阿花\", \"大肥鱼\"};\n    char *row[4];\n\n    for (int i = 0; i < 4; i++) {\n        if (i < 2) {\n            row[i] = names[i];\n        } else {\n            row[i] = NULL;\n        }\n    }\n\n    int count = 0;\n    for (int i = 0; i < 4; i++) {\n        if (row[i] == NULL) {\n            printf(\"第 %d 张：空\\n\", i);\n        } else {\n            printf(\"第 %d 张：%s\\n\", i, row[i]);\n            count++;\n        }\n    }\n    printf(\"能用的牌子：%d 张\\n\", count);\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：阿花\n第 1 张：大肥鱼\n第 2 张：空\n第 3 张：空\n能用的牌子：2 张",
+      "stdin": null,
+      "explanation": "这一题的全部意思就一句话：**走每一格之前，先看一眼牌面**。\n\n那道关卡是 `row[i] == NULL`：是空牌子就整格跳过去（`continue`），连「念」这一步都不给它。少了它，照着空牌子念出来的东西**不是这门语言保证的** —— 本喵这台机器上可能客客气气地印出 `(null)`，换台机器同一句就可能当场断气。\n\n还有一处容易混喵：空牌子上那一行「空」两个字，是**你自己写的那一行在印**，不是照着空牌子念出来的。印「空」是安全的；照着一张空牌子念，才是危险的那件事。\n\n本喵真跑过：能用的牌子**永远是 2 张**，印「空」的行数是 4 减去 2 —— 4 是 3 的时候屏幕上四行（两张名字、一行「空」、一行「能用的牌子：2 张」），4 是 4 的时候五 行。",
+      "templateId": "c-s3-ptr-row-empty-count",
+      "params": {
+        "n": 4,
+        "a": "阿花",
+        "b": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:45.348Z",
+        "hash": "ad8071379b7cdabe"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-empty-count-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要摆一排 **4 格**的牌子，可手上只有 小橘 和 大肥鱼 两个名字 —— 前两格插上这两张**正经牌子**，剩下的格子**统统插空牌子**。然后走一圈，一格一格看过来：\n\n· 碰上正经牌子，印 `第 %d 张：名字`，并且**数一个**；\n· 碰上空牌子，印 `第 %d 张：空`，这一格**不算数**。\n\n走完再补一行 `能用的牌子：%d 张`（`%d` 就是刚才数出来的那个数）。\n\n这一题练的是「空牌子把**不能走**写在了牌面上」：走每一格之前先看一眼牌面，绝不照着一张空牌子走过去。输出要逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[2][16] = {\"小橘\", \"大肥鱼\"};\n    char *row[4];\n\n    for (int i = 0; i < 4; i++) {\n        if (i < 2) {\n            row[i] = names[i];\n        } else {\n            row[i] = NULL;\n        }\n    }\n\n    int count = 0;\n    for (int i = 0; i < 4; i++) {\n        if (row[i] == NULL) {\n            printf(\"第 %d 张：空\\n\", i);\n        } else {\n            printf(\"第 %d 张：%s\\n\", i, row[i]);\n            count++;\n        }\n    }\n    printf(\"能用的牌子：%d 张\\n\", count);\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：小橘\n第 1 张：大肥鱼\n第 2 张：空\n第 3 张：空\n能用的牌子：2 张",
+      "stdin": null,
+      "explanation": "这一题的全部意思就一句话：**走每一格之前，先看一眼牌面**。\n\n那道关卡是 `row[i] == NULL`：是空牌子就整格跳过去（`continue`），连「念」这一步都不给它。少了它，照着空牌子念出来的东西**不是这门语言保证的** —— 本喵这台机器上可能客客气气地印出 `(null)`，换台机器同一句就可能当场断气。\n\n还有一处容易混喵：空牌子上那一行「空」两个字，是**你自己写的那一行在印**，不是照着空牌子念出来的。印「空」是安全的；照着一张空牌子念，才是危险的那件事。\n\n本喵真跑过：能用的牌子**永远是 2 张**，印「空」的行数是 4 减去 2 —— 4 是 3 的时候屏幕上四行（两张名字、一行「空」、一行「能用的牌子：2 张」），4 是 4 的时候五 行。",
+      "templateId": "c-s3-ptr-row-empty-count",
+      "params": {
+        "n": 4,
+        "a": "小橘",
+        "b": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:46.753Z",
+        "hash": "d917d0955b0b9faa"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-empty-count-007",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要摆一排 **4 格**的牌子，可手上只有 小橘 和 煤球 两个名字 —— 前两格插上这两张**正经牌子**，剩下的格子**统统插空牌子**。然后走一圈，一格一格看过来：\n\n· 碰上正经牌子，印 `第 %d 张：名字`，并且**数一个**；\n· 碰上空牌子，印 `第 %d 张：空`，这一格**不算数**。\n\n走完再补一行 `能用的牌子：%d 张`（`%d` 就是刚才数出来的那个数）。\n\n这一题练的是「空牌子把**不能走**写在了牌面上」：走每一格之前先看一眼牌面，绝不照着一张空牌子走过去。输出要逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[2][16] = {\"小橘\", \"煤球\"};\n    char *row[4];\n\n    for (int i = 0; i < 4; i++) {\n        if (i < 2) {\n            row[i] = names[i];\n        } else {\n            row[i] = NULL;\n        }\n    }\n\n    int count = 0;\n    for (int i = 0; i < 4; i++) {\n        if (row[i] == NULL) {\n            printf(\"第 %d 张：空\\n\", i);\n        } else {\n            printf(\"第 %d 张：%s\\n\", i, row[i]);\n            count++;\n        }\n    }\n    printf(\"能用的牌子：%d 张\\n\", count);\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：小橘\n第 1 张：煤球\n第 2 张：空\n第 3 张：空\n能用的牌子：2 张",
+      "stdin": null,
+      "explanation": "这一题的全部意思就一句话：**走每一格之前，先看一眼牌面**。\n\n那道关卡是 `row[i] == NULL`：是空牌子就整格跳过去（`continue`），连「念」这一步都不给它。少了它，照着空牌子念出来的东西**不是这门语言保证的** —— 本喵这台机器上可能客客气气地印出 `(null)`，换台机器同一句就可能当场断气。\n\n还有一处容易混喵：空牌子上那一行「空」两个字，是**你自己写的那一行在印**，不是照着空牌子念出来的。印「空」是安全的；照着一张空牌子念，才是危险的那件事。\n\n本喵真跑过：能用的牌子**永远是 2 张**，印「空」的行数是 4 减去 2 —— 4 是 3 的时候屏幕上四行（两张名字、一行「空」、一行「能用的牌子：2 张」），4 是 4 的时候五 行。",
+      "templateId": "c-s3-ptr-row-empty-count",
+      "params": {
+        "n": 4,
+        "a": "小橘",
+        "b": "煤球"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:49.404Z",
+        "hash": "12f49cd1bcdc9488"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-fill-print-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这儿有四排猫粮碗，装着 阿花、大肥鱼、豆豆、芝麻 四个名字。这一题不给骨架，从零写起喵 —— 一共三件事：\n\n1. 先准备一排 **3 格**的空牌子 `row`，再走一圈，把前 3 格**一格一张**插到前 3 排猫粮碗上（第 `0` 格指第一排名字）；\n2. 再走一圈，按格子顺序把名字念出来，格式是 `第 %d 张：%s` —— 一共 3 行；\n3. 最后补一行 `最后一张：%s`。这一行**不许再写一遍格子号**，要用「牌子起点 + 数格子」的形状 `*(row + 3 - 1)` 把最后那张牌子取出来。\n\n屏幕上该有 3 + 1 行。冒号用**全角**的「：」，空格一个都不能少 —— 这一题的输出是**逐字对上**的喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"阿花\", \"大肥鱼\", \"豆豆\", \"芝麻\"};\n    char *row[4];\n\n    for (int i = 0; i < 3; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    printf(\"最后一张：%s\\n\", *(row + 3 - 1));\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：阿花\n第 1 张：大肥鱼\n第 2 张：豆豆\n最后一张：豆豆",
+      "stdin": null,
+      "explanation": "两圈的分工要拎清喵：头一圈是**插牌子**（`row[i] = names[i];`），后一圈是**照着念**（`printf`）。两圈都得走满 3 圈 —— 少转一圈就留下一格没写过，那种格子上留着的东西谁都不认识。\n\n最后那一行是这一题真正想让你记住的：`*(row + 3 - 1)` 里的 `row` 是**整排的起点**，`+ 3 - 1` 是从起点往后数 3 - 1 格；先看右边、再看左边，落到的正好是最后一张牌子。它和 `row[3 - 1]` 取到的是同一张，只是把「先找起点、再数格子」这件事写在了明面上。\n\n⚠️ 两处最容易踩的：① 头一圈要是也只转 3 - 1 圈，最后那一行就会照着一张**没写过**的牌子念；② 最后一行写成 `row[3]` 就越过了整排的尾巴 —— 越界的那一格不归你管，它上面的东西谁都不保证。",
+      "templateId": "c-s3-ptr-row-fill-print",
+      "params": {
+        "n": 3,
+        "a": "阿花",
+        "b": "大肥鱼",
+        "c": "豆豆",
+        "d": "芝麻"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:50.258Z",
+        "hash": "a3fc7d7ae2161df7"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-fill-print-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这儿有四排猫粮碗，装着 阿花、煤球、团子、芝麻 四个名字。这一题不给骨架，从零写起喵 —— 一共三件事：\n\n1. 先准备一排 **3 格**的空牌子 `row`，再走一圈，把前 3 格**一格一张**插到前 3 排猫粮碗上（第 `0` 格指第一排名字）；\n2. 再走一圈，按格子顺序把名字念出来，格式是 `第 %d 张：%s` —— 一共 3 行；\n3. 最后补一行 `最后一张：%s`。这一行**不许再写一遍格子号**，要用「牌子起点 + 数格子」的形状 `*(row + 3 - 1)` 把最后那张牌子取出来。\n\n屏幕上该有 3 + 1 行。冒号用**全角**的「：」，空格一个都不能少 —— 这一题的输出是**逐字对上**的喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"阿花\", \"煤球\", \"团子\", \"芝麻\"};\n    char *row[4];\n\n    for (int i = 0; i < 3; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    printf(\"最后一张：%s\\n\", *(row + 3 - 1));\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：阿花\n第 1 张：煤球\n第 2 张：团子\n最后一张：团子",
+      "stdin": null,
+      "explanation": "两圈的分工要拎清喵：头一圈是**插牌子**（`row[i] = names[i];`），后一圈是**照着念**（`printf`）。两圈都得走满 3 圈 —— 少转一圈就留下一格没写过，那种格子上留着的东西谁都不认识。\n\n最后那一行是这一题真正想让你记住的：`*(row + 3 - 1)` 里的 `row` 是**整排的起点**，`+ 3 - 1` 是从起点往后数 3 - 1 格；先看右边、再看左边，落到的正好是最后一张牌子。它和 `row[3 - 1]` 取到的是同一张，只是把「先找起点、再数格子」这件事写在了明面上。\n\n⚠️ 两处最容易踩的：① 头一圈要是也只转 3 - 1 圈，最后那一行就会照着一张**没写过**的牌子念；② 最后一行写成 `row[3]` 就越过了整排的尾巴 —— 越界的那一格不归你管，它上面的东西谁都不保证。",
+      "templateId": "c-s3-ptr-row-fill-print",
+      "params": {
+        "n": 3,
+        "a": "阿花",
+        "b": "煤球",
+        "c": "团子",
+        "d": "芝麻"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:48.239Z",
+        "hash": "ef5e602ff1b77c15"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-fill-print-012",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这儿有四排猫粮碗，装着 小橘、煤球、豆豆、芝麻 四个名字。这一题不给骨架，从零写起喵 —— 一共三件事：\n\n1. 先准备一排 **3 格**的空牌子 `row`，再走一圈，把前 3 格**一格一张**插到前 3 排猫粮碗上（第 `0` 格指第一排名字）；\n2. 再走一圈，按格子顺序把名字念出来，格式是 `第 %d 张：%s` —— 一共 3 行；\n3. 最后补一行 `最后一张：%s`。这一行**不许再写一遍格子号**，要用「牌子起点 + 数格子」的形状 `*(row + 3 - 1)` 把最后那张牌子取出来。\n\n屏幕上该有 3 + 1 行。冒号用**全角**的「：」，空格一个都不能少 —— 这一题的输出是**逐字对上**的喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"小橘\", \"煤球\", \"豆豆\", \"芝麻\"};\n    char *row[4];\n\n    for (int i = 0; i < 3; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    printf(\"最后一张：%s\\n\", *(row + 3 - 1));\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：小橘\n第 1 张：煤球\n第 2 张：豆豆\n最后一张：豆豆",
+      "stdin": null,
+      "explanation": "两圈的分工要拎清喵：头一圈是**插牌子**（`row[i] = names[i];`），后一圈是**照着念**（`printf`）。两圈都得走满 3 圈 —— 少转一圈就留下一格没写过，那种格子上留着的东西谁都不认识。\n\n最后那一行是这一题真正想让你记住的：`*(row + 3 - 1)` 里的 `row` 是**整排的起点**，`+ 3 - 1` 是从起点往后数 3 - 1 格；先看右边、再看左边，落到的正好是最后一张牌子。它和 `row[3 - 1]` 取到的是同一张，只是把「先找起点、再数格子」这件事写在了明面上。\n\n⚠️ 两处最容易踩的：① 头一圈要是也只转 3 - 1 圈，最后那一行就会照着一张**没写过**的牌子念；② 最后一行写成 `row[3]` 就越过了整排的尾巴 —— 越界的那一格不归你管，它上面的东西谁都不保证。",
+      "templateId": "c-s3-ptr-row-fill-print",
+      "params": {
+        "n": 3,
+        "a": "小橘",
+        "b": "煤球",
+        "c": "豆豆",
+        "d": "芝麻"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:49.717Z",
+        "hash": "8030e60f91534669"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-fill-print-019",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这儿有四排猫粮碗，装着 阿花、大肥鱼、团子、雪球 四个名字。这一题不给骨架，从零写起喵 —— 一共三件事：\n\n1. 先准备一排 **4 格**的空牌子 `row`，再走一圈，把前 4 格**一格一张**插到前 4 排猫粮碗上（第 `0` 格指第一排名字）；\n2. 再走一圈，按格子顺序把名字念出来，格式是 `第 %d 张：%s` —— 一共 4 行；\n3. 最后补一行 `最后一张：%s`。这一行**不许再写一遍格子号**，要用「牌子起点 + 数格子」的形状 `*(row + 4 - 1)` 把最后那张牌子取出来。\n\n屏幕上该有 4 + 1 行。冒号用**全角**的「：」，空格一个都不能少 —— 这一题的输出是**逐字对上**的喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"阿花\", \"大肥鱼\", \"团子\", \"雪球\"};\n    char *row[4];\n\n    for (int i = 0; i < 4; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    printf(\"最后一张：%s\\n\", *(row + 4 - 1));\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：阿花\n第 1 张：大肥鱼\n第 2 张：团子\n第 3 张：雪球\n最后一张：雪球",
+      "stdin": null,
+      "explanation": "两圈的分工要拎清喵：头一圈是**插牌子**（`row[i] = names[i];`），后一圈是**照着念**（`printf`）。两圈都得走满 4 圈 —— 少转一圈就留下一格没写过，那种格子上留着的东西谁都不认识。\n\n最后那一行是这一题真正想让你记住的：`*(row + 4 - 1)` 里的 `row` 是**整排的起点**，`+ 4 - 1` 是从起点往后数 4 - 1 格；先看右边、再看左边，落到的正好是最后一张牌子。它和 `row[4 - 1]` 取到的是同一张，只是把「先找起点、再数格子」这件事写在了明面上。\n\n⚠️ 两处最容易踩的：① 头一圈要是也只转 4 - 1 圈，最后那一行就会照着一张**没写过**的牌子念；② 最后一行写成 `row[4]` 就越过了整排的尾巴 —— 越界的那一格不归你管，它上面的东西谁都不保证。",
+      "templateId": "c-s3-ptr-row-fill-print",
+      "params": {
+        "n": 4,
+        "a": "阿花",
+        "b": "大肥鱼",
+        "c": "团子",
+        "d": "雪球"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:51.222Z",
+        "hash": "53fd896752241378"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-fill-print-025",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这儿有四排猫粮碗，装着 小橘、大肥鱼、豆豆、雪球 四个名字。这一题不给骨架，从零写起喵 —— 一共三件事：\n\n1. 先准备一排 **4 格**的空牌子 `row`，再走一圈，把前 4 格**一格一张**插到前 4 排猫粮碗上（第 `0` 格指第一排名字）；\n2. 再走一圈，按格子顺序把名字念出来，格式是 `第 %d 张：%s` —— 一共 4 行；\n3. 最后补一行 `最后一张：%s`。这一行**不许再写一遍格子号**，要用「牌子起点 + 数格子」的形状 `*(row + 4 - 1)` 把最后那张牌子取出来。\n\n屏幕上该有 4 + 1 行。冒号用**全角**的「：」，空格一个都不能少 —— 这一题的输出是**逐字对上**的喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"小橘\", \"大肥鱼\", \"豆豆\", \"雪球\"};\n    char *row[4];\n\n    for (int i = 0; i < 4; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    printf(\"最后一张：%s\\n\", *(row + 4 - 1));\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：小橘\n第 1 张：大肥鱼\n第 2 张：豆豆\n第 3 张：雪球\n最后一张：雪球",
+      "stdin": null,
+      "explanation": "两圈的分工要拎清喵：头一圈是**插牌子**（`row[i] = names[i];`），后一圈是**照着念**（`printf`）。两圈都得走满 4 圈 —— 少转一圈就留下一格没写过，那种格子上留着的东西谁都不认识。\n\n最后那一行是这一题真正想让你记住的：`*(row + 4 - 1)` 里的 `row` 是**整排的起点**，`+ 4 - 1` 是从起点往后数 4 - 1 格；先看右边、再看左边，落到的正好是最后一张牌子。它和 `row[4 - 1]` 取到的是同一张，只是把「先找起点、再数格子」这件事写在了明面上。\n\n⚠️ 两处最容易踩的：① 头一圈要是也只转 4 - 1 圈，最后那一行就会照着一张**没写过**的牌子念；② 最后一行写成 `row[4]` 就越过了整排的尾巴 —— 越界的那一格不归你管，它上面的东西谁都不保证。",
+      "templateId": "c-s3-ptr-row-fill-print",
+      "params": {
+        "n": 4,
+        "a": "小橘",
+        "b": "大肥鱼",
+        "c": "豆豆",
+        "d": "雪球"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:52.761Z",
+        "hash": "11e0f8dc2d77e31c"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-fill-print-031",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这儿有四排猫粮碗，装着 小橘、煤球、团子、雪球 四个名字。这一题不给骨架，从零写起喵 —— 一共三件事：\n\n1. 先准备一排 **4 格**的空牌子 `row`，再走一圈，把前 4 格**一格一张**插到前 4 排猫粮碗上（第 `0` 格指第一排名字）；\n2. 再走一圈，按格子顺序把名字念出来，格式是 `第 %d 张：%s` —— 一共 4 行；\n3. 最后补一行 `最后一张：%s`。这一行**不许再写一遍格子号**，要用「牌子起点 + 数格子」的形状 `*(row + 4 - 1)` 把最后那张牌子取出来。\n\n屏幕上该有 4 + 1 行。冒号用**全角**的「：」，空格一个都不能少 —— 这一题的输出是**逐字对上**的喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"小橘\", \"煤球\", \"团子\", \"雪球\"};\n    char *row[4];\n\n    for (int i = 0; i < 4; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    printf(\"最后一张：%s\\n\", *(row + 4 - 1));\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：小橘\n第 1 张：煤球\n第 2 张：团子\n第 3 张：雪球\n最后一张：雪球",
+      "stdin": null,
+      "explanation": "两圈的分工要拎清喵：头一圈是**插牌子**（`row[i] = names[i];`），后一圈是**照着念**（`printf`）。两圈都得走满 4 圈 —— 少转一圈就留下一格没写过，那种格子上留着的东西谁都不认识。\n\n最后那一行是这一题真正想让你记住的：`*(row + 4 - 1)` 里的 `row` 是**整排的起点**，`+ 4 - 1` 是从起点往后数 4 - 1 格；先看右边、再看左边，落到的正好是最后一张牌子。它和 `row[4 - 1]` 取到的是同一张，只是把「先找起点、再数格子」这件事写在了明面上。\n\n⚠️ 两处最容易踩的：① 头一圈要是也只转 4 - 1 圈，最后那一行就会照着一张**没写过**的牌子念；② 最后一行写成 `row[4]` 就越过了整排的尾巴 —— 越界的那一格不归你管，它上面的东西谁都不保证。",
+      "templateId": "c-s3-ptr-row-fill-print",
+      "params": {
+        "n": 4,
+        "a": "小橘",
+        "b": "煤球",
+        "c": "团子",
+        "d": "雪球"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:51.060Z",
+        "hash": "ebf96daec2eacf52"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-missing-plate-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这排牌子一共四格，要把 `names` 里那四排猫粮碗一个一个指过去，最后按格子顺序印出来。跑起来**不崩、也没报错**，可最后那一行印出来的是一串莫名其妙的字喵 —— 四排碗里的名字明明都在。\n\n病在**插牌子那一段**：有一格从头到尾没人写过，牌面上留着的是上一只猫用过的垃圾。请你把这一处治好，让四行老老实实印出 阿花、大肥鱼、豆豆、芝麻。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"阿花\", \"大肥鱼\", \"豆豆\", \"芝麻\"};\n    char *row[4];\n\n    for (int i = 0; i < 3; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"阿花\", \"大肥鱼\", \"豆豆\", \"芝麻\"};\n    char *row[4];\n\n    for (int i = 0; i < 4; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "0: 阿花\n1: 大肥鱼\n2: 豆豆\n3: 芝麻",
+      "stdin": null,
+      "explanation": "插牌子那一段只转了 **3 圈**（`i < 3`）：第 0、1、2 格各插好一张，第 3 格**从头到尾没人写过** —— 牌面上留着的是上一只猫用完这一格没擦干净的东西。\n\n印的时候是四圈，第四圈照着这张没写过的牌子走过去，拿回来的就是一段谁都不认识的东西。本喵在这台机器上连跑五次，五次都印出同一串乱码（进程没崩、退出码 0）；可**别把它当成承诺** —— 那串字是碰巧落在那儿的，换台机器、换一次编译，同样的写法也可能当场断气。\n\n改法很小喵：把插牌子那一段也走满四圈（`i < 4`）。记一句：**要照着一排牌子走，就得保证每一格都先写过 —— 没得指的那格，也要插一张空牌子。**",
+      "templateId": "c-s3-ptr-row-missing-plate",
+      "params": {
+        "a": "阿花",
+        "b": "大肥鱼",
+        "c": "豆豆",
+        "d": "芝麻"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:51.984Z",
+        "hash": "5d84e855f0460c2d"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-missing-plate-015",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这排牌子一共四格，要把 `names` 里那四排猫粮碗一个一个指过去，最后按格子顺序印出来。跑起来**不崩、也没报错**，可最后那一行印出来的是一串莫名其妙的字喵 —— 四排碗里的名字明明都在。\n\n病在**插牌子那一段**：有一格从头到尾没人写过，牌面上留着的是上一只猫用过的垃圾。请你把这一处治好，让四行老老实实印出 小橘、煤球、团子、雪球。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"小橘\", \"煤球\", \"团子\", \"雪球\"};\n    char *row[4];\n\n    for (int i = 0; i < 3; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char names[4][16] = {\"小橘\", \"煤球\", \"团子\", \"雪球\"};\n    char *row[4];\n\n    for (int i = 0; i < 4; i++) {\n        row[i] = names[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "0: 小橘\n1: 煤球\n2: 团子\n3: 雪球",
+      "stdin": null,
+      "explanation": "插牌子那一段只转了 **3 圈**（`i < 3`）：第 0、1、2 格各插好一张，第 3 格**从头到尾没人写过** —— 牌面上留着的是上一只猫用完这一格没擦干净的东西。\n\n印的时候是四圈，第四圈照着这张没写过的牌子走过去，拿回来的就是一段谁都不认识的东西。本喵在这台机器上连跑五次，五次都印出同一串乱码（进程没崩、退出码 0）；可**别把它当成承诺** —— 那串字是碰巧落在那儿的，换台机器、换一次编译，同样的写法也可能当场断气。\n\n改法很小喵：把插牌子那一段也走满四圈（`i < 4`）。记一句：**要照着一排牌子走，就得保证每一格都先写过 —— 没得指的那格，也要插一张空牌子。**",
+      "templateId": "c-s3-ptr-row-missing-plate",
+      "params": {
+        "a": "小橘",
+        "b": "煤球",
+        "c": "团子",
+        "d": "雪球"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:53.364Z",
+        "hash": "3711935927a1e0d7"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-no-null-guard-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这排三张牌子里，中间那一格插的是**空牌子**（牌面上写着「哪儿都不指」）。本喵没细看就照着走了一圈，中间那行印出来的东西明显不对喵 —— 本喵这台机器上它印的是 `(null)`，换一台机器同样这一句也可能当场断气。\n\n请你给这一圈**加一道先看一眼的关卡**：碰上空牌子就整格跳过、什么都不印；有东西的两格照原样印出来。改好之后屏幕上只剩两行 —— 阿花 和 大肥鱼。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"阿花\", NULL, \"大肥鱼\"};\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"阿花\", NULL, \"大肥鱼\"};\n\n    for (int i = 0; i < 3; i++) {\n        if (row[i] == NULL) {\n            continue;\n        }\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "0: 阿花\n2: 大肥鱼",
+      "stdin": null,
+      "explanation": "照着空牌子走过去会怎么样，本喵真跑过：这台机器上它把 `(null)` 几个字印了出来，看着还挺温柔。可那几个字母**不是这门语言保证的**，是这套运行环境顺手帮的忙 —— 换一套环境，同一句就可能当场断气。\n\n所以这事不能靠运气，得靠**关卡**：走一格之前先看一眼牌面（`row[i] == NULL`），是空的就整格跳过去（`continue`），压根不碰它指的地方。\n\n改完前后的行数也不一样喵：原来印三行（中间那行是 `(null)`，或者干脆断气），改完只剩**两行** —— 第 `0` 格和第 `2` 格。",
+      "templateId": "c-s3-ptr-row-no-null-guard",
+      "params": {
+        "a": "阿花",
+        "b": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:55.695Z",
+        "hash": "b82f387d4c850f35"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-no-null-guard-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这排三张牌子里，中间那一格插的是**空牌子**（牌面上写着「哪儿都不指」）。本喵没细看就照着走了一圈，中间那行印出来的东西明显不对喵 —— 本喵这台机器上它印的是 `(null)`，换一台机器同样这一句也可能当场断气。\n\n请你给这一圈**加一道先看一眼的关卡**：碰上空牌子就整格跳过、什么都不印；有东西的两格照原样印出来。改好之后屏幕上只剩两行 —— 小橘 和 煤球。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"小橘\", NULL, \"煤球\"};\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"小橘\", NULL, \"煤球\"};\n\n    for (int i = 0; i < 3; i++) {\n        if (row[i] == NULL) {\n            continue;\n        }\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "0: 小橘\n2: 煤球",
+      "stdin": null,
+      "explanation": "照着空牌子走过去会怎么样，本喵真跑过：这台机器上它把 `(null)` 几个字印了出来，看着还挺温柔。可那几个字母**不是这门语言保证的**，是这套运行环境顺手帮的忙 —— 换一套环境，同一句就可能当场断气。\n\n所以这事不能靠运气，得靠**关卡**：走一格之前先看一眼牌面（`row[i] == NULL`），是空的就整格跳过去（`continue`），压根不碰它指的地方。\n\n改完前后的行数也不一样喵：原来印三行（中间那行是 `(null)`，或者干脆断气），改完只剩**两行** —— 第 `0` 格和第 `2` 格。",
+      "templateId": "c-s3-ptr-row-no-null-guard",
+      "params": {
+        "a": "小橘",
+        "b": "煤球"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:56.988Z",
+        "hash": "1aeeab78c5f370c9"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-swap-two-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这排三张牌子上插着 阿花、大肥鱼、豆豆。现在要把第 `0` 格和第 1 格**换个位置**，**剩下的格子一个字都不许动**。\n\n做法是借一张**临时的牌子** `tmp` 当中转：先把 `row[0]` 收进 `tmp`，再把 `row[1]` 挪进 `row[0]`，最后把 `tmp` 放回 `row[1]`。\n\n换完按格子顺序印三行，格式 `第 %d 张：名字`（`0` 开头）。输出逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"阿花\", \"大肥鱼\", \"豆豆\"};\n\n    char *tmp = row[0];\n    row[0] = row[1];\n    row[1] = tmp;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：大肥鱼\n第 1 张：阿花\n第 2 张：豆豆",
+      "stdin": null,
+      "explanation": "为什么换位置要借一张临时的牌子？因为直接一句 `row[0] = row[1];` 会把第 `0` 格原来的名字**冲掉** —— 那张牌子还在牌面上，可名字已经找不回来了，那一格变成了一个谁都不指的位置。\n\n`tmp` 干的就是「先把这张牌子攥进爪子里」这件事：先把第 `0` 格收进 `tmp`，再让第 `0` 格去接第 1 格的，最后把爪子里那张放回第 1 格。三步走完，两张牌子上的名字正好对调。\n\n本喵真跑过：不管 1 是 1 还是 2，屏幕上都是三行 —— 第 `0` 格和第 1 格上的名字换了位置，**剩下的那一格一个字没动**。这也说明这一排牌子的每一格都是**各自独立**的：换第 `0` 格，别格纹丝不动。",
+      "templateId": "c-s3-ptr-row-swap-two",
+      "params": {
+        "k": 1,
+        "a": "阿花",
+        "b": "大肥鱼",
+        "c": "豆豆"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:58.402Z",
+        "hash": "9ca59dbe1d01340f"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-swap-two-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这排三张牌子上插着 阿花、煤球、团子。现在要把第 `0` 格和第 1 格**换个位置**，**剩下的格子一个字都不许动**。\n\n做法是借一张**临时的牌子** `tmp` 当中转：先把 `row[0]` 收进 `tmp`，再把 `row[1]` 挪进 `row[0]`，最后把 `tmp` 放回 `row[1]`。\n\n换完按格子顺序印三行，格式 `第 %d 张：名字`（`0` 开头）。输出逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"阿花\", \"煤球\", \"团子\"};\n\n    char *tmp = row[0];\n    row[0] = row[1];\n    row[1] = tmp;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：煤球\n第 1 张：阿花\n第 2 张：团子",
+      "stdin": null,
+      "explanation": "为什么换位置要借一张临时的牌子？因为直接一句 `row[0] = row[1];` 会把第 `0` 格原来的名字**冲掉** —— 那张牌子还在牌面上，可名字已经找不回来了，那一格变成了一个谁都不指的位置。\n\n`tmp` 干的就是「先把这张牌子攥进爪子里」这件事：先把第 `0` 格收进 `tmp`，再让第 `0` 格去接第 1 格的，最后把爪子里那张放回第 1 格。三步走完，两张牌子上的名字正好对调。\n\n本喵真跑过：不管 1 是 1 还是 2，屏幕上都是三行 —— 第 `0` 格和第 1 格上的名字换了位置，**剩下的那一格一个字没动**。这也说明这一排牌子的每一格都是**各自独立**的：换第 `0` 格，别格纹丝不动。",
+      "templateId": "c-s3-ptr-row-swap-two",
+      "params": {
+        "k": 1,
+        "a": "阿花",
+        "b": "煤球",
+        "c": "团子"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:54.270Z",
+        "hash": "e7729b7459d799c0"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-swap-two-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这排三张牌子上插着 小橘、煤球、豆豆。现在要把第 `0` 格和第 1 格**换个位置**，**剩下的格子一个字都不许动**。\n\n做法是借一张**临时的牌子** `tmp` 当中转：先把 `row[0]` 收进 `tmp`，再把 `row[1]` 挪进 `row[0]`，最后把 `tmp` 放回 `row[1]`。\n\n换完按格子顺序印三行，格式 `第 %d 张：名字`（`0` 开头）。输出逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"小橘\", \"煤球\", \"豆豆\"};\n\n    char *tmp = row[0];\n    row[0] = row[1];\n    row[1] = tmp;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：煤球\n第 1 张：小橘\n第 2 张：豆豆",
+      "stdin": null,
+      "explanation": "为什么换位置要借一张临时的牌子？因为直接一句 `row[0] = row[1];` 会把第 `0` 格原来的名字**冲掉** —— 那张牌子还在牌面上，可名字已经找不回来了，那一格变成了一个谁都不指的位置。\n\n`tmp` 干的就是「先把这张牌子攥进爪子里」这件事：先把第 `0` 格收进 `tmp`，再让第 `0` 格去接第 1 格的，最后把爪子里那张放回第 1 格。三步走完，两张牌子上的名字正好对调。\n\n本喵真跑过：不管 1 是 1 还是 2，屏幕上都是三行 —— 第 `0` 格和第 1 格上的名字换了位置，**剩下的那一格一个字没动**。这也说明这一排牌子的每一格都是**各自独立**的：换第 `0` 格，别格纹丝不动。",
+      "templateId": "c-s3-ptr-row-swap-two",
+      "params": {
+        "k": 1,
+        "a": "小橘",
+        "b": "煤球",
+        "c": "豆豆"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:55.761Z",
+        "hash": "b8f56e67733a8fdf"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-swap-two-009",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这排三张牌子上插着 阿花、大肥鱼、团子。现在要把第 `0` 格和第 2 格**换个位置**，**剩下的格子一个字都不许动**。\n\n做法是借一张**临时的牌子** `tmp` 当中转：先把 `row[0]` 收进 `tmp`，再把 `row[2]` 挪进 `row[0]`，最后把 `tmp` 放回 `row[2]`。\n\n换完按格子顺序印三行，格式 `第 %d 张：名字`（`0` 开头）。输出逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"阿花\", \"大肥鱼\", \"团子\"};\n\n    char *tmp = row[0];\n    row[0] = row[2];\n    row[2] = tmp;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：团子\n第 1 张：大肥鱼\n第 2 张：阿花",
+      "stdin": null,
+      "explanation": "为什么换位置要借一张临时的牌子？因为直接一句 `row[0] = row[2];` 会把第 `0` 格原来的名字**冲掉** —— 那张牌子还在牌面上，可名字已经找不回来了，那一格变成了一个谁都不指的位置。\n\n`tmp` 干的就是「先把这张牌子攥进爪子里」这件事：先把第 `0` 格收进 `tmp`，再让第 `0` 格去接第 2 格的，最后把爪子里那张放回第 2 格。三步走完，两张牌子上的名字正好对调。\n\n本喵真跑过：不管 2 是 1 还是 2，屏幕上都是三行 —— 第 `0` 格和第 2 格上的名字换了位置，**剩下的那一格一个字没动**。这也说明这一排牌子的每一格都是**各自独立**的：换第 `0` 格，别格纹丝不动。",
+      "templateId": "c-s3-ptr-row-swap-two",
+      "params": {
+        "k": 2,
+        "a": "阿花",
+        "b": "大肥鱼",
+        "c": "团子"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:57.222Z",
+        "hash": "24a51b73f5c91dd9"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-swap-two-012",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这排三张牌子上插着 小橘、大肥鱼、豆豆。现在要把第 `0` 格和第 2 格**换个位置**，**剩下的格子一个字都不许动**。\n\n做法是借一张**临时的牌子** `tmp` 当中转：先把 `row[0]` 收进 `tmp`，再把 `row[2]` 挪进 `row[0]`，最后把 `tmp` 放回 `row[2]`。\n\n换完按格子顺序印三行，格式 `第 %d 张：名字`（`0` 开头）。输出逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"小橘\", \"大肥鱼\", \"豆豆\"};\n\n    char *tmp = row[0];\n    row[0] = row[2];\n    row[2] = tmp;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：豆豆\n第 1 张：大肥鱼\n第 2 张：小橘",
+      "stdin": null,
+      "explanation": "为什么换位置要借一张临时的牌子？因为直接一句 `row[0] = row[2];` 会把第 `0` 格原来的名字**冲掉** —— 那张牌子还在牌面上，可名字已经找不回来了，那一格变成了一个谁都不指的位置。\n\n`tmp` 干的就是「先把这张牌子攥进爪子里」这件事：先把第 `0` 格收进 `tmp`，再让第 `0` 格去接第 2 格的，最后把爪子里那张放回第 2 格。三步走完，两张牌子上的名字正好对调。\n\n本喵真跑过：不管 2 是 1 还是 2，屏幕上都是三行 —— 第 `0` 格和第 2 格上的名字换了位置，**剩下的那一格一个字没动**。这也说明这一排牌子的每一格都是**各自独立**的：换第 `0` 格，别格纹丝不动。",
+      "templateId": "c-s3-ptr-row-swap-two",
+      "params": {
+        "k": 2,
+        "a": "小橘",
+        "b": "大肥鱼",
+        "c": "豆豆"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:58.691Z",
+        "hash": "a459cb0501cbb096"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-swap-two-015",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵这排三张牌子上插着 小橘、煤球、团子。现在要把第 `0` 格和第 2 格**换个位置**，**剩下的格子一个字都不许动**。\n\n做法是借一张**临时的牌子** `tmp` 当中转：先把 `row[0]` 收进 `tmp`，再把 `row[2]` 挪进 `row[0]`，最后把 `tmp` 放回 `row[2]`。\n\n换完按格子顺序印三行，格式 `第 %d 张：名字`（`0` 开头）。输出逐字对上喵。",
+      "starter": null,
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"小橘\", \"煤球\", \"团子\"};\n\n    char *tmp = row[0];\n    row[0] = row[2];\n    row[2] = tmp;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "第 0 张：团子\n第 1 张：煤球\n第 2 张：小橘",
+      "stdin": null,
+      "explanation": "为什么换位置要借一张临时的牌子？因为直接一句 `row[0] = row[2];` 会把第 `0` 格原来的名字**冲掉** —— 那张牌子还在牌面上，可名字已经找不回来了，那一格变成了一个谁都不指的位置。\n\n`tmp` 干的就是「先把这张牌子攥进爪子里」这件事：先把第 `0` 格收进 `tmp`，再让第 `0` 格去接第 2 格的，最后把爪子里那张放回第 2 格。三步走完，两张牌子上的名字正好对调。\n\n本喵真跑过：不管 2 是 1 还是 2，屏幕上都是三行 —— 第 `0` 格和第 2 格上的名字换了位置，**剩下的那一格一个字没动**。这也说明这一排牌子的每一格都是**各自独立**的：换第 `0` 格，别格纹丝不动。",
+      "templateId": "c-s3-ptr-row-swap-two",
+      "params": {
+        "k": 2,
+        "a": "小橘",
+        "b": "煤球",
+        "c": "团子"
+      },
+      "verified": {
+        "at": "2026-09-20T11:24:59.275Z",
+        "hash": "033a6e1cf7469b73"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-whole-copy-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵手上摆着两排牌子：`row` 这排先插着甲、乙、丙、丁，`other` 那排插着 阿花、大肥鱼、豆豆、芝麻。本喵想偷个懒，一句话把 `other` 那四张**整排搬**到 `row` 里，再走一圈印出来 —— 结果翻译官喵当场停手，一个字都不肯翻。\n\n请你换个**一格一格来**的写法，让它能编出来，并且印出 `0: 阿花`、`1: 大肥鱼`、`2: 豆豆`、`3: 芝麻` 这四行。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char *row[4] = {\"甲\", \"乙\", \"丙\", \"丁\"};\n    char *other[4] = {\"阿花\", \"大肥鱼\", \"豆豆\", \"芝麻\"};\n\n    row = other;\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char *row[4] = {\"甲\", \"乙\", \"丙\", \"丁\"};\n    char *other[4] = {\"阿花\", \"大肥鱼\", \"豆豆\", \"芝麻\"};\n\n    for (int i = 0; i < 4; i++) {\n        row[i] = other[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "0: 阿花\n1: 大肥鱼\n2: 豆豆\n3: 芝麻",
+      "stdin": null,
+      "explanation": "`row = other;` 这一句，翻译官喵的原话里有这几个字：`assignment to expression with array type` —— 意思是「一排东西不能整个换掉」。\n\n为什么不能？因为在它眼里，`row` 这个名字压根**不是一格**，而是**整排的门牌号**：它认的是那一排本身，不是「装着这一排的那张牌」。所以整排要换内容，只能**一格一格抄** —— 本题就是一圈 `row[i] = other[i];`。\n\n记一句喵：**一整排换不掉，单张的牌子随时能换。** 以后看到那串原话，先想一件事：我是不是把一整排当成一格在用了？",
+      "templateId": "c-s3-ptr-row-whole-copy",
+      "params": {
+        "a": "阿花",
+        "b": "大肥鱼",
+        "c": "豆豆",
+        "d": "芝麻"
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:00.127Z",
+        "hash": "6b8d6a46324699c8"
+      }
+    },
+    {
+      "id": "bank-c-s3-ptr-row-whole-copy-015",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵手上摆着两排牌子：`row` 这排先插着甲、乙、丙、丁，`other` 那排插着 小橘、煤球、团子、雪球。本喵想偷个懒，一句话把 `other` 那四张**整排搬**到 `row` 里，再走一圈印出来 —— 结果翻译官喵当场停手，一个字都不肯翻。\n\n请你换个**一格一格来**的写法，让它能编出来，并且印出 `0: 小橘`、`1: 煤球`、`2: 团子`、`3: 雪球` 这四行。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    char *row[4] = {\"甲\", \"乙\", \"丙\", \"丁\"};\n    char *other[4] = {\"小橘\", \"煤球\", \"团子\", \"雪球\"};\n\n    row = other;\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    char *row[4] = {\"甲\", \"乙\", \"丙\", \"丁\"};\n    char *other[4] = {\"小橘\", \"煤球\", \"团子\", \"雪球\"};\n\n    for (int i = 0; i < 4; i++) {\n        row[i] = other[i];\n    }\n\n    for (int i = 0; i < 4; i++) {\n        printf(\"%d: %s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "0: 小橘\n1: 煤球\n2: 团子\n3: 雪球",
+      "stdin": null,
+      "explanation": "`row = other;` 这一句，翻译官喵的原话里有这几个字：`assignment to expression with array type` —— 意思是「一排东西不能整个换掉」。\n\n为什么不能？因为在它眼里，`row` 这个名字压根**不是一格**，而是**整排的门牌号**：它认的是那一排本身，不是「装着这一排的那张牌」。所以整排要换内容，只能**一格一格抄** —— 本题就是一圈 `row[i] = other[i];`。\n\n记一句喵：**一整排换不掉，单张的牌子随时能换。** 以后看到那串原话，先想一件事：我是不是把一整排当成一格在用了？",
+      "templateId": "c-s3-ptr-row-whole-copy",
+      "params": {
+        "a": "小橘",
+        "b": "煤球",
+        "c": "团子",
+        "d": "雪球"
+      },
+      "verified": {
+        "at": "2026-09-20T11:25:01.176Z",
+        "hash": "ded7f0b09646fbbd"
+      }
+    }
+  ]
+}

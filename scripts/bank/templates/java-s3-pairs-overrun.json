@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-pairs-overrun",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-16",
+  "type": "codefix",
+  "concept": ["圈数的边界", "每一对只数一次", "多绕的那一圈会踩空"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 7, "max": 8 },
+    "word": { "kind": "pick", "values": ["本喵数完啦", "本喵算好啦"] }
+  },
+  "stemTemplate": "本喵摆了 {n} 只猫粮碗，1 号碗里 1 条小鱼干、2 号碗里 2 条……一直摆到 {n} 号碗。现在想数一数：**有几对碗，合起来正好等于「最小那一只加上最大那一只」**。\n\n数法就是「每一对都试一遍」：外面那只碗挨个按下去，里面那只从它的**下一位**开始往后试。可这段稿子一跑到里面那一层就**当场没了**，一串数都没印出来。\n\n你帮本喵修好它：只改那一处眼色，别动别的。翻好的稿子跑起来，该印出一行 —— {word}，再加上数出来的对数喵。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = {n};\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int want = n + 1;\n        int pairs = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j <= n; j++) {\n                if (bowls[i] + bowls[j] == want) {\n                    pairs++;\n                }\n            }\n        }\n        System.out.println(\"{word}：\" + pairs + \" 对\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = {n};\n        int[] bowls = new int[n];\n        for (int i = 0; i < n; i++) {\n            bowls[i] = i + 1;\n        }\n        int want = n + 1;\n        int pairs = 0;\n        for (int i = 0; i < n; i++) {\n            for (int j = i + 1; j < n; j++) {\n                if (bowls[i] + bowls[j] == want) {\n                    pairs++;\n                }\n            }\n        }\n        System.out.println(\"{word}：\" + pairs + \" 对\");\n    }\n}\n",
+  "explanationTemplate": "坏的那一处是里面那层绕圈的眼色：`j <= n` 多算了一格。\n\n这一排碗的编号是 **0 到 n - 1** —— 一共 {n} 只，最后一只的编号就是 n - 1。眼色写成 `<= n`，最后那一趟就会去端 **n 号碗**：那一只压根不在这一排上，当场炸掉 —— 屏幕上那句 `ArrayIndexOutOfBoundsException` 念出来就是「**报的这个编号，这一排没那么多只碗**」，后面的活儿跟着全停。\n\n治法就是把那一格收回来：`j < n`。\n\n⚠️ 这一题最该记住的是**它跟「圈数」的关系**：眼色松一格，里面那层就**多绕一圈**，而多出来的那一圈往往就是踩空的那一脚。反过来也一样值钱 —— 判「每一对只数一次」靠的正是那个起点 `j = i + 1`：\n\n- 起点写成 `i`，每一对会被数两遍，还多出「自己跟自己」的那些圈；\n- 起点写成 `0`，同一对会在两个方向各出现一次，圈数直接翻倍；\n- 只有 `i + 1` 才是「一对只数一次」—— 圈数正好是 `n × (n - 1) ÷ 2`。\n\n顺着这条线往下想：**圈数不是数出来的，是边界写出来的。** 边界写对，账自然对得上喵。"
+}

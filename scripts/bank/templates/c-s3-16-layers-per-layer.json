@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-16-layers-per-layer",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-16",
+  "type": "codefix",
+  "concept": ["数圈数", "一路砍半", "每层过的都是整本", "层数只有 log n 那么多"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "pick", "values": ["1024", "2048"] }
+  },
+  "stemTemplate": "本子上摆着 **{n} 只碗**，本喵用「**一路砍半**」这一招数圈数：每一层都把整本的碗从头到尾过一遍，过完就把本子砍成一半，一直砍到只剩一只碗为止。\n\n可这一招报出来的数**小得离谱**：它每一层只把「还没砍掉的那几只」算了进去，越往后算得越少。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `layers` 这一招改对（`main` 里那几行别动）。改好之后该印一行，只有一个数：**每一层过的都是一整本**，一层一层过下来一共过了多少下。\n\n拿个小本子验一下：本子只有 **8 只碗**的时候该印\n\n```text\n24\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n/* 一路砍半：每层把整本过一遍，数一共过了多少下 */\nlong long layers(int n) {\n    long long rounds = 0;\n    int size = n;\n    while (size > 1) {\n        rounds = rounds + size;\n        size = size / 2;\n    }\n    return rounds;\n}\n\nint main(void) {\n    printf(\"%lld\\n\", layers({n}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n/* 一路砍半：每层把整本过一遍，数一共过了多少下 */\nlong long layers(int n) {\n    long long rounds = 0;\n    int size = n;\n    while (size > 1) {\n        rounds = rounds + n;\n        size = size / 2;\n    }\n    return rounds;\n}\n\nint main(void) {\n    printf(\"%lld\\n\", layers({n}));\n    return 0;\n}\n",
+  "explanationTemplate": "毛病在**每一层加多少**喵：`rounds + size` 加的是「本子**剩下**的那几只」—— 第一层是 {n}，第二层就只剩一半，越往后越少，一路加起来只有该有的两成上下。\n\n规矩是**每一层都把整本 {n} 只碗从头过到尾**：砍小的是**下一层**的本子，这一层要过的还是整本。\n\n```text\nwhile (size > 1) {\n    rounds = rounds + n;    /* 每层过的都是整本，不是剩下的那几只 */\n    size = size / 2;\n}\n```\n\n改完之后是 `{n} × 层数` 下。这一招的脾气是：**层数只有 log n 那么多，可每一层都是实打实的一整排** —— 那就是大 O 记号里 `O(n log n)` 这一档的样子，也是课文里第二个锚点的来历。"
+}

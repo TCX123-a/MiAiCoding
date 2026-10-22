@@ -1,0 +1,20 @@
+{
+  "templateId": "cpp-s3-merge-left-called-twice",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-24",
+  "type": "codefix",
+  "concept": ["拆开分头办", "两半各办一遍", "自己咬自己尾巴的招式", "两遍都办了左边"],
+  "instances": 2,
+  "params": {
+    "p1": { "kind": "pick", "values": ["30", "3"] },
+    "p2": { "kind": "pick", "values": ["90", "9"] },
+    "p3": { "kind": "pick", "values": ["10", "1"] },
+    "p4": { "kind": "pick", "values": ["60", "6"] },
+    "p5": { "kind": "pick", "values": ["20", "2"] }
+  },
+  "stemTemplate": "本喵用「**拆开分头办**」收拾这五只：**{p1}、{p2}、{p3}、{p4}、{p5}** —— 从中间切开，左半自己再办一遍、右半自己再办一遍，两边都办好了再把它们合起来。\n\n可印出来那一排**没排整齐**：前面那几只看着有次序，后面那几只还是乱着的。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**拆开分头办那一招**改对。改好之后该印：\n\n```text\n拆开分头办：{p3} {p5} {p1} {p4} {p2}\n```",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\nvoid merge_sort(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int mid = (lo + hi) / 2;\n    merge_sort(a, lo, mid);\n    merge_sort(a, lo, mid);\n    join(a, lo, mid, hi);\n}\n\nint main() {\n    std::vector<int> a = {{p1}, {p2}, {p3}, {p4}, {p5}};\n    merge_sort(a, 0, 4);\n\n    std::cout << \"拆开分头办：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n\nvoid join(std::vector<int>& a, int lo, int mid, int hi) {\n    std::vector<int> tmp;\n    int i = lo;\n    int j = mid + 1;\n\n    while (i <= mid && j <= hi) {\n        if (a[i] <= a[j]) {\n            tmp.push_back(a[i]);\n            i++;\n        } else {\n            tmp.push_back(a[j]);\n            j++;\n        }\n    }\n    while (i <= mid) {\n        tmp.push_back(a[i]);\n        i++;\n    }\n    while (j <= hi) {\n        tmp.push_back(a[j]);\n        j++;\n    }\n\n    for (int x = 0; x < static_cast<int>(tmp.size()); x++) {\n        a[lo + x] = tmp[x];\n    }\n}\n\nvoid merge_sort(std::vector<int>& a, int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int mid = (lo + hi) / 2;\n    merge_sort(a, lo, mid);\n    merge_sort(a, mid + 1, hi);\n    join(a, lo, mid, hi);\n}\n\nint main() {\n    std::vector<int> a = {{p1}, {p2}, {p3}, {p4}, {p5}};\n    merge_sort(a, 0, 4);\n\n    std::cout << \"拆开分头办：\";\n    for (int i = 0; i < 5; i++) {\n        std::cout << a[i] << \" \";\n    }\n    std::cout << \"\\n\";\n    return 0;\n}\n",
+  "explanationTemplate": "本喵这两句写的是**同一半办了两遍**喵：\n\n```text\nmerge_sort(a, lo, mid);\nmerge_sort(a, lo, mid);\n```\n\n第二句本该是**右半**：\n\n```text\nmerge_sort(a, mid + 1, hi);\n```\n\n从 `mid + 1` 到 `hi` 那一截，就是切开之后右边那一半。写成 `(a, lo, mid)` 的话，左边办了两次、右边**一次都没办** —— 等到最后合起来的时候，右边那一截还是乱着的，合出来的当然也不对。\n\n这种错有个特点：**它不摔、也不吭声，跑得还挺快**（左边办两遍，一点没耽误），只有输出会告诉你后面那几只没排好。\n\n本喵给你留一句分头记：**切开之后两半各办一遍，左半从 `lo` 到 `mid`、右半从 `mid + 1` 到 `hi`。**那半边的头是 `mid + 1`，不是 `mid` —— 中间那位已经归左半了，两边不能抢也不能漏喵。"
+}

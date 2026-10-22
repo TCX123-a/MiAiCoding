@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-varargs-no-stdarg",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-12",
+  "type": "codefix",
+  "concept": ["不限量投喂的四件工具", "工具房 stdarg.h", "缺头文件", "implicit declaration"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["2", "4"] },
+    "b": { "kind": "pick", "values": ["3", "5"] },
+    "c": { "kind": "pick", "values": ["4", "6"] }
+  },
+  "stemTemplate": "稿子翻译到一半就停了 —— 翻译官喵说它压根**不认识** `va_list`、`va_start` 这几个名字喵。这几件工具不是 C 语言自带的语法字，它们住在一座现成的工具房里。\n\n请你把缺的那一行补上（`main` 里那几个数别动）。改好之后该印出 `{a}`、`{b}`、`{c}` 三份加起来的总和。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint fish_total(int count, ...) {\n    va_list list;\n    va_start(list, count);\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum += va_arg(list, int);\n    }\n    va_end(list);\n    return sum;\n}\n\nint main(void) {\n    printf(\"%d\\n\", fish_total(3, {a}, {b}, {c}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nint fish_total(int count, ...) {\n    va_list list;\n    va_start(list, count);\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum += va_arg(list, int);\n    }\n    va_end(list);\n    return sum;\n}\n\nint main(void) {\n    printf(\"%d\\n\", fish_total(3, {a}, {b}, {c}));\n    return 0;\n}\n",
+  "explanationTemplate": "`va_list`、`va_start`、`va_arg`、`va_end` 这四件工具**不是** C 语言自带的语法字，它们都住在一座现成的工具房里：`stdarg.h`喵。少了 `#include <stdarg.h>` 这一行，翻译官喵压根不认识它们，只当是没听过的新招式名字，一路 `implicit declaration` 报下去（课文里那个报错演示就是这个样子）。\n\n补上这一行之后，`{a}`、`{b}`、`{c}` 三份就能一份一份被叼出来相加了。\n\n记一句：以后看见 `implicit declaration`，先摸一摸是不是**忘了带工具房那一行** —— 不限量投喂这一族工具，全靠它才能用喵。"
+}

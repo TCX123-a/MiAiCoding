@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-12-bowl-shadowed",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-12",
+  "type": "codefix",
+  "concept": ["大家共用的碗要造在外面", "肚里同名的小碗会把大碗挡住", "白干一场印出 0"],
+  "instances": 2,
+  "params": {
+    "times": { "kind": "pick", "values": ["600", "900"] },
+    "unit": { "kind": "pick", "values": ["次", "下"] }
+  },
+  "stemTemplate": "本喵喊了三只帮手一起往**同一个碗**里加数：每位加 {times} {unit}，动手前还都规规矩矩地上了锁。\n\n可跑出来是 `一共 0 {unit}` 喵 —— 三只帮手全白干了。你帮本喵找出错在哪儿：**加的次数、那把锁、最后印的那一行都不用动**，让这个碗真的是大家共用的那一个。\n\n改好之后，程序要印出 `一共 ` 后面跟**三倍的 {times}**（也就是三只帮手加起来一共加了多少{unit}）。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    int total = 0;\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, {times});\n    thread t2(addMany, {times});\n    thread t3(addMany, {times});\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" {unit}\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <thread>\n#include <mutex>\nusing namespace std;\n\nint total = 0;\nmutex mtx;\n\nvoid addMany(int times) {\n    for (int i = 0; i < times; i++) {\n        lock_guard<mutex> guard(mtx);\n        total = total + 1;\n    }\n}\n\nint main() {\n    thread t1(addMany, {times});\n    thread t2(addMany, {times});\n    thread t3(addMany, {times});\n    t1.join();\n    t2.join();\n    t3.join();\n    cout << \"一共 \" << total << \" {unit}\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的毛病是**每只帮手肚里又摆了一个也叫 `total` 的小碗**喵。\n\n外面确实有一个大家共用的大碗，可帮手一进门就自己造了一个同名的 —— 后面的 `total = total + 1` 认的都是**离它最近的那个**，也就是它自己肚里的小碗。三只帮忙活了一场，各自把小碗加到 {times}，然后连人带碗一起走了；外面那个大碗从头到尾没人碰过，所以印出来是 `一共 0 {unit}`。\n\n修法就是把肚里那一句挪掉 —— 让 `total = total + 1` 看见的是外面那个大家共用的大碗。锁和次数都不用动。\n\n⚠️ 这一类错**不会报错**：同名的小碗和大碗都是正经东西，代码从头到尾跑得顺顺当当，只有一个数字不对。所以看到「帮手们明明干了活、账上却是 0」，第一件事就是数一数**这个碗到底是在哪儿摆的**。\n\n⚠️ 顺带说一句：这一题里那把锁是**本来就有**的。可帮手们被小碗挡住的时候，锁根本拦不住这件事 —— 每个帮手加的都是自己肚里的东西，谁也碍不着谁，锁一点用场都派不上。碗没共用，锁就是白上的。"
+}

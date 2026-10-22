@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-todo-load-loses-done",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-14",
+  "type": "codefix",
+  "concept": ["存的是什么读回来就该是什么", "竖线左边是记号右边是内容", "标记得真读不能写死"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["zhi.txt", "biji.txt"] },
+    "a": { "kind": "pick", "values": ["喂鱼", "洗猫窝"] },
+    "b": { "kind": "pick", "values": ["铲屎", "晒鱼干"] }
+  },
+  "stemTemplate": "本喵按课里那个格式把两条记录写进册子（一行一条、`办完了没|内容`，其中**第二行**存的是办完的记号 `1`），再一条条读回来。可读回来的样子不对：\n\n```text\n[ ] {a}\n[ ] {b}\n```\n\n应该是：\n\n```text\n[ ] {a}\n[x] {b}\n```\n\n毛病在**切完那根竖线之后**那几句里。这稿子编得过、也跑得起来，册子上的字一个都没写错喵。",
+  "brokenCodeTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"0|{a}\\n\");\n            w.write(\"1|{b}\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                int cut = hang.indexOf(\"|\");\n                String what = hang.substring(cut + 1);\n                System.out.println(\"[ ] \" + what);\n                hang = r.readLine();\n            }\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"0|{a}\\n\");\n            w.write(\"1|{b}\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                int cut = hang.indexOf(\"|\");\n                String flag = hang.substring(0, cut);\n                String what = hang.substring(cut + 1);\n                System.out.println((flag.equals(\"1\") ? \"[x] \" : \"[ ] \") + what);\n                hang = r.readLine();\n            }\n        }\n    }\n}\n",
+  "explanationTemplate": "这题考的是一条硬规矩：**存的是什么，读回来就该是什么。**\n\n册子上那两行长这样：\n\n```text\n0|{a}\n1|{b}\n```\n\n竖线**左边**那一截是「办完了没」的记号，右边那一截才是内容。坏稿子只把右边那截切下来用了（`substring(cut + 1)`），**左边那截切完就扔了** —— 于是不管册子上写的是 `0` 还是 `1`，印出来一律是 `[ ] `。本喵真跑过坏的那版：两行全成了 `[ ] `，`1` 那个记号白记了。\n\n补法是把左边那截也接住，再照它选：\n\n```java\nString flag = hang.substring(0, cut);\nString what = hang.substring(cut + 1);\nSystem.out.println((flag.equals(\"1\") ? \"[x] \" : \"[ ] \") + what);\n```\n\n`substring(0, cut)` 是从头切到竖线**前面**；`substring(cut + 1)` 是从竖线**后面一格**切到底 —— **加一那一下是为了把竖线本身跳过去**。两个切的起点差着竖线那一格，别写串了。\n\n顺带说一句为什么这题值得单出一道喵：这类毛病**不冒红字、也不缺行**，屏幕上就是少了一个勾。清单越用越久、攒的记录越多，这种「记号白记」的错就越难被人发现 —— 所以判分那两道题里本喵把内容换过了，光把答案抄一遍过不了，得真去读那个记号。"
+}

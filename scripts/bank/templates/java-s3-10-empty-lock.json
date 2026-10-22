@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-10-empty-lock",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-10",
+  "type": "codefix",
+  "concept": ["锁只摆了名字、没造出来", "空着的东西不能当锁用", "母猫也进同一把锁才红得出来"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "c1": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵照课文第二节的写法给账本立了个规矩：先派一只猫去记，母猫自己也进同一把锁补记一笔。\n\n可机器一上来就红着脸把整段停了，账本一个字都没记上：\n\n```text\nException in thread \"main\" java.lang.NullPointerException: Cannot enter synchronized block because \"Cat.锁\" is null\n```\n\n你帮本喵看看那把锁是怎么了，把它改好。\n\n这一题**不用投喂任何东西**：{n1}要记 {c1} 笔，母猫自己再补记一笔 —— 改好之后该印出这个总数（本喵不在这儿写出那个数，你自己跑出来看）。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"{n1}\", {c1});\n\n        一只.start();\n        一只.join();\n\n        synchronized (Cat.锁) {\n            Cat.账本 = Cat.账本 + 1;\n        }\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static Object 锁;\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            synchronized (锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"{n1}\", {c1});\n\n        一只.start();\n        一只.join();\n\n        synchronized (Cat.锁) {\n            Cat.账本 = Cat.账本 + 1;\n        }\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Object 锁 = new Object();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            synchronized (锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}\n",
+  "explanationTemplate": "**一、锁是光起了名字，没造。** `static Object 锁;` 只是**说了一声「有这么个东西」**，它里面是空的。机器那句 `Cannot enter synchronized block because \"Cat.锁\" is null` 读作「**这个叫 `Cat.锁` 的东西是空的，进不去**」。\n\n**二、造一把锁得写全。** 就是课文第六节那一句：`static final Object 锁 = new Object();` —— `new Object()` 那一下才算真把它造出来。\n\n**三、为什么整段都停了。** 母猫自己也要进同一把锁（就是 `synchronized (Cat.锁)` 那一处）补记一笔，它撞上这堵墙，机器当场把整段停了 —— 所以一个字都没记上。\n\n**四、往后看见 `null` 配上 `synchronized`，就回头看那一把锁怎么写的。** 只摆了名字、没 `new`，就是这一跤 —— 课文第六节那个例子正是它。"
+}

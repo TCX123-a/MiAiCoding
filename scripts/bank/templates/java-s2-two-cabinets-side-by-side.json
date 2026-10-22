@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-two-cabinets-side-by-side",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-08",
+  "type": "codewrite",
+  "concept": ["约定一样柜子不同", "set 换掉一格", "remove 按编号拿掉", "直接印柜子"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["小橘", "大橘"] },
+    "b": { "kind": "pick", "values": ["狸花", "花卷"] },
+    "w": { "kind": "pick", "values": ["大胖", "小黄"] }
+  },
+  "stemTemplate": "本喵要**把两种柜子并排摆着跑一遍**，看看同一个名分底下的柜子是不是好使一样喵。\n\n`main` 里这么走：\n\n1. 拿两个 `List<String>` 的名分，一只实给**挨着排**的那种柜子（`ArrayList`），一只实给**用猫爪指向牌连起来**的那种（`LinkedList`）；\n2. 两只柜子**都按同样顺序**放两只进去：先 `{a}`、再 `{b}`；\n3. 挨着排那只：把**编号 0** 那一格**换掉**，换成 `{w}`；\n4. 指向牌那只：**按编号拿掉编号 1** 那一格；\n5. 印三行：\n   - 先印挨着排那只（直接就印，别自己拼）；\n   - 再印指向牌那只；\n   - 最后印两边的格数，**中间空一格**，格式是 `X Y`（第一只的格数在前）。\n\n这一题**不用投喂任何东西**，程序自己就能跑。",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.LinkedList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        String a = \"{a}\";\n        String b = \"{b}\";\n        List<String> arr = new ArrayList<>();\n        List<String> lnk = new LinkedList<>();\n        arr.add(a);\n        arr.add(b);\n        lnk.add(a);\n        lnk.add(b);\n        arr.set(0, \"{w}\");\n        lnk.remove(1);\n        System.out.println(arr);\n        System.out.println(lnk);\n        System.out.println(arr.size() + \" \" + lnk.size());\n    }\n}\n",
+  "explanationTemplate": "这题的重点不在「算出了什么」，而在**两边的名分一模一样、招式也几乎一模一样，可底下的柜子不是同一种**喵。\n\n**一、两边名分都是 `List`。** 本喵写 `List<String> arr = new ArrayList<>()` 和 `List<String> lnk = new LinkedList<>()` —— 左边那份约定一个字没差，差的全在 `new` 后面。这正是课上说的**名分和实体分开**：哪天发现挨着排的不合用，只把右边一换，别处的代码一行都不用动。\n\n**二、`set(0, ...)` 是「换掉」。** 挨着排的柜子干这个飞快：编号算一算位置，直接改那一格。注意它是**换**，不是加 —— 格数一点没变。\n\n**三、`remove(1)` 是「按编号拿掉」。** 这一招两个柜子都会，可干活的方式不一样：挨着排的柜子拿掉中间一格，**后面的碗全得往前挪**；用指向牌连起来的柜子只要把前后两只碗的指向牌改一改。\n\n**四、小心 `remove` 的两个意思。** 递进去的是**编号**，它按编号拿掉；递进去的是**项链**，它按内容拿掉。类型不同，做的事也不同 —— 这题递的是 `1`，所以是按编号。\n\n**五、为什么结果看着没差。** 两只柜子印出来长得一样、招式也几乎一样，本喵这么小的数据量根本看不出快慢。课上给的那条经验就够用了：**日常一律用挨着排的那种**；只有东西总在**两头进进出出**的时候，才轮到用指向牌连起来的那种。\n\n最后一行的 `arr.size() + \" \" + lnk.size()` 就是把两个数拿一串空格拼起来印 —— 数字接项链，翻译官喵会自己把数字念成字。"
+}

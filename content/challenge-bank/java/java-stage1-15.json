@@ -1,0 +1,538 @@
+{
+  "lessonId": "java-stage1-15",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s1-calc-break-outside-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这台计算器**只算一单就收工了**喵 —— 菜单问过一句、算完一单，圈子就停了，第二位客人再也等不到人问。\n\n翻译官一声没吭（这处**不报错**），是本喵自己看出来的。你帮本喵把圈子收拾好，让它**一直问下去**，直到客人报 `0` 才收工。\n\n规矩是这样：每单先印一遍菜单 `1 加法 0 收工`；报 `0` 就印 `收工啦喵～` 然后收工；不然读两个数、印 `结果是 X`，接着问下一单。\n\n比如投喂给程序的是\n\n1 8 5\n0\n\n程序就要叼回\n\n1 加法 0 收工\n结果是 13\n1 加法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵。）",
+      "brokenCode": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n            break;\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 0 收工\n结果是 7\n1 加法 0 收工\n收工啦喵～",
+      "stdin": "1 2 5\n0\n",
+      "explanation": "这一处坑的可怕之处是**一个错都不报**喵：圈子写得好好的，`break` 那一句也是真的，可它**站错了地方** —— 站在 `if` 的花括号**外面**，也就是**每一单算完都会走到它**。于是第一位客人算完，圈子当场收工，后面的客人再也等不到人问。\n\n改法就是把 `break;` 挪进 `if` 的花括号**里面**，让只有客人报了 `0` 才走得到它：\n\n```java\nif (choice == 0) {\n    System.out.println(\"收工啦喵～\");\n    break;\n}\n```\n\n这也是第二步那句死规矩：`while (true)` 是**永远答真**的眼色，圈子停不停全看那句 `break` —— 所以写完一定要回头问自己一句：**这句 `break` 真的走得到吗？**\n\n（顺说：还有一处同样安静的错法 —— 眼色写反。比如写成 `choice != 0`，第一位客人一报选项，圈子就收工了。两种都不报错，只能从屏幕上少印了什么看出来喵。）",
+      "templateId": "java-s1-calc-break-outside",
+      "params": {
+        "a": 2,
+        "b": 5,
+        "a2": 8,
+        "b2": 5
+      },
+      "verified": {
+        "at": "2026-09-16T07:57:47.203Z",
+        "hash": "4fbf78837c628764"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-break-outside-149",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这台计算器**只算一单就收工了**喵 —— 菜单问过一句、算完一单，圈子就停了，第二位客人再也等不到人问。\n\n翻译官一声没吭（这处**不报错**），是本喵自己看出来的。你帮本喵把圈子收拾好，让它**一直问下去**，直到客人报 `0` 才收工。\n\n规矩是这样：每单先印一遍菜单 `1 加法 0 收工`；报 `0` 就印 `收工啦喵～` 然后收工；不然读两个数、印 `结果是 X`，接着问下一单。\n\n比如投喂给程序的是\n\n1 9 9\n0\n\n程序就要叼回\n\n1 加法 0 收工\n结果是 18\n1 加法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵。）",
+      "brokenCode": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n            break;\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 0 收工\n结果是 13\n1 加法 0 收工\n收工啦喵～",
+      "stdin": "1 4 9\n0\n",
+      "explanation": "这一处坑的可怕之处是**一个错都不报**喵：圈子写得好好的，`break` 那一句也是真的，可它**站错了地方** —— 站在 `if` 的花括号**外面**，也就是**每一单算完都会走到它**。于是第一位客人算完，圈子当场收工，后面的客人再也等不到人问。\n\n改法就是把 `break;` 挪进 `if` 的花括号**里面**，让只有客人报了 `0` 才走得到它：\n\n```java\nif (choice == 0) {\n    System.out.println(\"收工啦喵～\");\n    break;\n}\n```\n\n这也是第二步那句死规矩：`while (true)` 是**永远答真**的眼色，圈子停不停全看那句 `break` —— 所以写完一定要回头问自己一句：**这句 `break` 真的走得到吗？**\n\n（顺说：还有一处同样安静的错法 —— 眼色写反。比如写成 `choice != 0`，第一位客人一报选项，圈子就收工了。两种都不报错，只能从屏幕上少印了什么看出来喵。）",
+      "templateId": "java-s1-calc-break-outside",
+      "params": {
+        "a": 4,
+        "b": 9,
+        "a2": 9,
+        "b2": 9
+      },
+      "verified": {
+        "at": "2026-09-16T07:57:49.942Z",
+        "hash": "beb637c053dbed1a"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-four-methods-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给大肥鱼的小摊造**第一步的零件**了喵：四则运算各拆成一招 ——\n\n- `add`：两样相加\n- `sub`：前一样减后一样\n- `mul`：两样相乘\n- `share`：**平均分**，也就是两个数相除（只算整条，零头不要）\n\n四招都是「喂两样料、叼回一个数」。`main` 里纸条给两个数，四招**各喊一次**并印出来，顺序是：加法、减法、乘法、平均分（一行一招，一共四行）。\n\n比如投喂给程序的是\n\n7\n4\n\n程序就要叼回\n\n11 条\n3 条\n28 条\n1 条\n\n（判分用的是**另外两个数**喵。顺说：平均分只算整条 —— `7` 分给 `2` 只猫，叼回来的是 `3`。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static int mul(int a, int b) {\n        return a * b;\n    }\n\n    public static int share(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        System.out.println(add(a, b) + \" 条\");\n        System.out.println(sub(a, b) + \" 条\");\n        System.out.println(mul(a, b) + \" 条\");\n        System.out.println(share(a, b) + \" 条\");\n    }\n}\n",
+      "expectedOutput": "7 条\n-3 条\n10 条\n0 条",
+      "stdin": "2\n5\n",
+      "explanation": "四招长得一模一样，都是「打头写清楚喂几样料、叼回什么料，身子里算一句就叼回来」喵。三处盯一眼：\n\n- **打头那一截 `static int` 不能丢**：`int` 是本喵许下的**诺** —— 这一招一定交回一个整数，身子里就得有 `return`。只算出来不交回去，就是 `missing return statement`。\n- **`share` 用的是 `/`，只算整条**：`7 / 2` 得 `3`，零头直接扔掉。想让零头留下来，得让算式里至少有一边带上小数点（`7 / 2.0` 得 `3.5`）—— 那是运算符那一课的老规矩，这台机器先只装整份的。\n- **喊的时候名字写全**：`add(a, b)`、`share(a, b)` —— 挑哪一招是电脑按喂了几样料自己挑的。\n\n为什么要拆成四招，不在一堆里顺着写？**谁叫什么名字、干什么活，一眼就看完**：过两天想改平均分的算盘，去动 `share` 就行，碰不到 `add` 一根毫毛喵。",
+      "templateId": "java-s1-calc-four-methods",
+      "params": {
+        "tail": "条"
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:04.590Z",
+        "hash": "d067e3e1f6115718"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-four-methods-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给大肥鱼的小摊造**第一步的零件**了喵：四则运算各拆成一招 ——\n\n- `add`：两样相加\n- `sub`：前一样减后一样\n- `mul`：两样相乘\n- `share`：**平均分**，也就是两个数相除（只算整条，零头不要）\n\n四招都是「喂两样料、叼回一个数」。`main` 里纸条给两个数，四招**各喊一次**并印出来，顺序是：加法、减法、乘法、平均分（一行一招，一共四行）。\n\n比如投喂给程序的是\n\n8\n4\n\n程序就要叼回\n\n12 条小鱼干\n4 条小鱼干\n32 条小鱼干\n2 条小鱼干\n\n（判分用的是**另外两个数**喵。顺说：平均分只算整条 —— `7` 分给 `2` 只猫，叼回来的是 `3`。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static int mul(int a, int b) {\n        return a * b;\n    }\n\n    public static int share(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        System.out.println(add(a, b) + \" 条小鱼干\");\n        System.out.println(sub(a, b) + \" 条小鱼干\");\n        System.out.println(mul(a, b) + \" 条小鱼干\");\n        System.out.println(share(a, b) + \" 条小鱼干\");\n    }\n}\n",
+      "expectedOutput": "5 条小鱼干\n-1 条小鱼干\n6 条小鱼干\n0 条小鱼干",
+      "stdin": "2\n3\n",
+      "explanation": "四招长得一模一样，都是「打头写清楚喂几样料、叼回什么料，身子里算一句就叼回来」喵。三处盯一眼：\n\n- **打头那一截 `static int` 不能丢**：`int` 是本喵许下的**诺** —— 这一招一定交回一个整数，身子里就得有 `return`。只算出来不交回去，就是 `missing return statement`。\n- **`share` 用的是 `/`，只算整条**：`7 / 2` 得 `3`，零头直接扔掉。想让零头留下来，得让算式里至少有一边带上小数点（`7 / 2.0` 得 `3.5`）—— 那是运算符那一课的老规矩，这台机器先只装整份的。\n- **喊的时候名字写全**：`add(a, b)`、`share(a, b)` —— 挑哪一招是电脑按喂了几样料自己挑的。\n\n为什么要拆成四招，不在一堆里顺着写？**谁叫什么名字、干什么活，一眼就看完**：过两天想改平均分的算盘，去动 `share` 就行，碰不到 `add` 一根毫毛喵。",
+      "templateId": "java-s1-calc-four-methods",
+      "params": {
+        "tail": "条小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:06.671Z",
+        "hash": "10fad03ed45d44a9"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-full-machine-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "这是本阶段的**毕业作品**喵：把三步拼成一台真机器 —— **四招运算 ＋ 菜单绕圈 ＋ 接住分不了的账**。\n\n零件清单：\n\n- 四招：`add`、`sub`、`mul`、`share`（每招喂两样料、叼回一个数；`share` 只算整条）\n- 每一单先印一遍菜单：`1 加法 2 减法 3 乘法 4 平均分 0 收工`\n- 报 `0`：印 `收工啦喵～`，然后收工\n- 认得出的选项：印 `结果是 X`\n- **认不出的选项**（菜单上没有的数）：印 `本喵还不认识这个数喵`\n- **分不了的账**（平均分遇上 `0`）：印 `没有猫来分，这条算不了喵`，**机器不许断气**，接着问下一位\n\n纸条上每一单都排着「选项 + 两个数」三样，一单一单往下排；最后那句 `0` 是客人说收工。\n\n比如投喂给程序的是\n\n1 6 8\n4 7 2\n9 1 1\n0\n\n程序就要叼回\n\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 14\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 3\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 里面也会有分不了的账、也会有不认识的数。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static int mul(int a, int b) {\n        return a * b;\n    }\n\n    public static int share(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 3 乘法 4 平均分 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            try {\n                if (choice == 1) {\n                    System.out.println(\"结果是 \" + add(a, b));\n                } else if (choice == 2) {\n                    System.out.println(\"结果是 \" + sub(a, b));\n                } else if (choice == 3) {\n                    System.out.println(\"结果是 \" + mul(a, b));\n                } else if (choice == 4) {\n                    System.out.println(\"结果是 \" + share(a, b));\n                } else {\n                    System.out.println(\"本喵还不认识这个数喵\");\n                }\n            } catch (ArithmeticException e) {\n                System.out.println(\"没有猫来分，这条算不了喵\");\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 6\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n没有猫来分，这条算不了喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～",
+      "stdin": "1 2 4\n4 7 0\n9 1 1\n0\n",
+      "explanation": "这一台机器，是第一阶段攒下来的全部家当喵 —— 从上往下读一遍，正好是三步：**招式拆开 → 菜单绕圈 → 岔子接住**。\n\n几处最容易摔的地方：\n\n- **`try` 写在圈子里面**，不是外面。所以「分不了的那一单」被接住之后，**圈子还在转**，下一位客人接着来。挪到圈子外面去，第一单出了岔子，整台机器跟着一起停。\n- **`catch (ArithmeticException e)`** —— 平均分遇上 `0`，翻的就是「算数算不成」这一路。名字写错了等于没接，机器照样断气。\n- **最后那条 `else` 兜底**：认不出的选项要有一句回话，不然客人报了怪数字，机器装聋作哑（不报错，只是少说一句）。\n- **四招都要有 `return`**：打头许的诺（`int`）必须兑现。\n\n能写出「一直问、出错也不死」的机器，就是从单句走向小程序的第一次：**先把活拆成招，再用一个圈把「一直问」串起来，最后想清楚哪一步可能出岔子、出了怎么办。** 大肥鱼的小摊从今天起账目清楚了喵～",
+      "templateId": "java-s1-calc-full-machine",
+      "params": {
+        "a": 2,
+        "b": 4,
+        "a2": 6,
+        "b2": 8
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:13.425Z",
+        "hash": "ba3c5fbbd714983e"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-full-machine-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "这是本阶段的**毕业作品**喵：把三步拼成一台真机器 —— **四招运算 ＋ 菜单绕圈 ＋ 接住分不了的账**。\n\n零件清单：\n\n- 四招：`add`、`sub`、`mul`、`share`（每招喂两样料、叼回一个数；`share` 只算整条）\n- 每一单先印一遍菜单：`1 加法 2 减法 3 乘法 4 平均分 0 收工`\n- 报 `0`：印 `收工啦喵～`，然后收工\n- 认得出的选项：印 `结果是 X`\n- **认不出的选项**（菜单上没有的数）：印 `本喵还不认识这个数喵`\n- **分不了的账**（平均分遇上 `0`）：印 `没有猫来分，这条算不了喵`，**机器不许断气**，接着问下一位\n\n纸条上每一单都排着「选项 + 两个数」三样，一单一单往下排；最后那句 `0` 是客人说收工。\n\n比如投喂给程序的是\n\n1 7 9\n4 7 2\n9 1 1\n0\n\n程序就要叼回\n\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 16\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 3\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 里面也会有分不了的账、也会有不认识的数。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static int mul(int a, int b) {\n        return a * b;\n    }\n\n    public static int share(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 3 乘法 4 平均分 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            try {\n                if (choice == 1) {\n                    System.out.println(\"结果是 \" + add(a, b));\n                } else if (choice == 2) {\n                    System.out.println(\"结果是 \" + sub(a, b));\n                } else if (choice == 3) {\n                    System.out.println(\"结果是 \" + mul(a, b));\n                } else if (choice == 4) {\n                    System.out.println(\"结果是 \" + share(a, b));\n                } else {\n                    System.out.println(\"本喵还不认识这个数喵\");\n                }\n            } catch (ArithmeticException e) {\n                System.out.println(\"没有猫来分，这条算不了喵\");\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 6\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n没有猫来分，这条算不了喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～",
+      "stdin": "1 2 4\n4 7 0\n9 1 1\n0\n",
+      "explanation": "这一台机器，是第一阶段攒下来的全部家当喵 —— 从上往下读一遍，正好是三步：**招式拆开 → 菜单绕圈 → 岔子接住**。\n\n几处最容易摔的地方：\n\n- **`try` 写在圈子里面**，不是外面。所以「分不了的那一单」被接住之后，**圈子还在转**，下一位客人接着来。挪到圈子外面去，第一单出了岔子，整台机器跟着一起停。\n- **`catch (ArithmeticException e)`** —— 平均分遇上 `0`，翻的就是「算数算不成」这一路。名字写错了等于没接，机器照样断气。\n- **最后那条 `else` 兜底**：认不出的选项要有一句回话，不然客人报了怪数字，机器装聋作哑（不报错，只是少说一句）。\n- **四招都要有 `return`**：打头许的诺（`int`）必须兑现。\n\n能写出「一直问、出错也不死」的机器，就是从单句走向小程序的第一次：**先把活拆成招，再用一个圈把「一直问」串起来，最后想清楚哪一步可能出岔子、出了怎么办。** 大肥鱼的小摊从今天起账目清楚了喵～",
+      "templateId": "java-s1-calc-full-machine",
+      "params": {
+        "a": 2,
+        "b": 4,
+        "a2": 7,
+        "b2": 9
+      },
+      "verified": {
+        "at": "2026-10-20T17:05:07.347Z",
+        "hash": "ce878ba99329365b"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-full-machine-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "这是本阶段的**毕业作品**喵：把三步拼成一台真机器 —— **四招运算 ＋ 菜单绕圈 ＋ 接住分不了的账**。\n\n零件清单：\n\n- 四招：`add`、`sub`、`mul`、`share`（每招喂两样料、叼回一个数；`share` 只算整条）\n- 每一单先印一遍菜单：`1 加法 2 减法 3 乘法 4 平均分 0 收工`\n- 报 `0`：印 `收工啦喵～`，然后收工\n- 认得出的选项：印 `结果是 X`\n- **认不出的选项**（菜单上没有的数）：印 `本喵还不认识这个数喵`\n- **分不了的账**（平均分遇上 `0`）：印 `没有猫来分，这条算不了喵`，**机器不许断气**，接着问下一位\n\n纸条上每一单都排着「选项 + 两个数」三样，一单一单往下排；最后那句 `0` 是客人说收工。\n\n比如投喂给程序的是\n\n1 7 8\n4 7 2\n9 1 1\n0\n\n程序就要叼回\n\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 15\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 3\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 里面也会有分不了的账、也会有不认识的数。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static int mul(int a, int b) {\n        return a * b;\n    }\n\n    public static int share(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 3 乘法 4 平均分 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            try {\n                if (choice == 1) {\n                    System.out.println(\"结果是 \" + add(a, b));\n                } else if (choice == 2) {\n                    System.out.println(\"结果是 \" + sub(a, b));\n                } else if (choice == 3) {\n                    System.out.println(\"结果是 \" + mul(a, b));\n                } else if (choice == 4) {\n                    System.out.println(\"结果是 \" + share(a, b));\n                } else {\n                    System.out.println(\"本喵还不认识这个数喵\");\n                }\n            } catch (ArithmeticException e) {\n                System.out.println(\"没有猫来分，这条算不了喵\");\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 7\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n没有猫来分，这条算不了喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～",
+      "stdin": "1 2 5\n4 7 0\n9 1 1\n0\n",
+      "explanation": "这一台机器，是第一阶段攒下来的全部家当喵 —— 从上往下读一遍，正好是三步：**招式拆开 → 菜单绕圈 → 岔子接住**。\n\n几处最容易摔的地方：\n\n- **`try` 写在圈子里面**，不是外面。所以「分不了的那一单」被接住之后，**圈子还在转**，下一位客人接着来。挪到圈子外面去，第一单出了岔子，整台机器跟着一起停。\n- **`catch (ArithmeticException e)`** —— 平均分遇上 `0`，翻的就是「算数算不成」这一路。名字写错了等于没接，机器照样断气。\n- **最后那条 `else` 兜底**：认不出的选项要有一句回话，不然客人报了怪数字，机器装聋作哑（不报错，只是少说一句）。\n- **四招都要有 `return`**：打头许的诺（`int`）必须兑现。\n\n能写出「一直问、出错也不死」的机器，就是从单句走向小程序的第一次：**先把活拆成招，再用一个圈把「一直问」串起来，最后想清楚哪一步可能出岔子、出了怎么办。** 大肥鱼的小摊从今天起账目清楚了喵～",
+      "templateId": "java-s1-calc-full-machine",
+      "params": {
+        "a": 2,
+        "b": 5,
+        "a2": 7,
+        "b2": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:05:10.645Z",
+        "hash": "65a1ea70bc0991a2"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-full-machine-009",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "这是本阶段的**毕业作品**喵：把三步拼成一台真机器 —— **四招运算 ＋ 菜单绕圈 ＋ 接住分不了的账**。\n\n零件清单：\n\n- 四招：`add`、`sub`、`mul`、`share`（每招喂两样料、叼回一个数；`share` 只算整条）\n- 每一单先印一遍菜单：`1 加法 2 减法 3 乘法 4 平均分 0 收工`\n- 报 `0`：印 `收工啦喵～`，然后收工\n- 认得出的选项：印 `结果是 X`\n- **认不出的选项**（菜单上没有的数）：印 `本喵还不认识这个数喵`\n- **分不了的账**（平均分遇上 `0`）：印 `没有猫来分，这条算不了喵`，**机器不许断气**，接着问下一位\n\n纸条上每一单都排着「选项 + 两个数」三样，一单一单往下排；最后那句 `0` 是客人说收工。\n\n比如投喂给程序的是\n\n1 6 9\n4 7 2\n9 1 1\n0\n\n程序就要叼回\n\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 15\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 3\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 里面也会有分不了的账、也会有不认识的数。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static int mul(int a, int b) {\n        return a * b;\n    }\n\n    public static int share(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 3 乘法 4 平均分 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            try {\n                if (choice == 1) {\n                    System.out.println(\"结果是 \" + add(a, b));\n                } else if (choice == 2) {\n                    System.out.println(\"结果是 \" + sub(a, b));\n                } else if (choice == 3) {\n                    System.out.println(\"结果是 \" + mul(a, b));\n                } else if (choice == 4) {\n                    System.out.println(\"结果是 \" + share(a, b));\n                } else {\n                    System.out.println(\"本喵还不认识这个数喵\");\n                }\n            } catch (ArithmeticException e) {\n                System.out.println(\"没有猫来分，这条算不了喵\");\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 7\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n没有猫来分，这条算不了喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～",
+      "stdin": "1 3 4\n4 7 0\n9 1 1\n0\n",
+      "explanation": "这一台机器，是第一阶段攒下来的全部家当喵 —— 从上往下读一遍，正好是三步：**招式拆开 → 菜单绕圈 → 岔子接住**。\n\n几处最容易摔的地方：\n\n- **`try` 写在圈子里面**，不是外面。所以「分不了的那一单」被接住之后，**圈子还在转**，下一位客人接着来。挪到圈子外面去，第一单出了岔子，整台机器跟着一起停。\n- **`catch (ArithmeticException e)`** —— 平均分遇上 `0`，翻的就是「算数算不成」这一路。名字写错了等于没接，机器照样断气。\n- **最后那条 `else` 兜底**：认不出的选项要有一句回话，不然客人报了怪数字，机器装聋作哑（不报错，只是少说一句）。\n- **四招都要有 `return`**：打头许的诺（`int`）必须兑现。\n\n能写出「一直问、出错也不死」的机器，就是从单句走向小程序的第一次：**先把活拆成招，再用一个圈把「一直问」串起来，最后想清楚哪一步可能出岔子、出了怎么办。** 大肥鱼的小摊从今天起账目清楚了喵～",
+      "templateId": "java-s1-calc-full-machine",
+      "params": {
+        "a": 3,
+        "b": 4,
+        "a2": 6,
+        "b2": 9
+      },
+      "verified": {
+        "at": "2026-10-20T17:05:13.900Z",
+        "hash": "433e317f7c396b1e"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-full-machine-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "这是本阶段的**毕业作品**喵：把三步拼成一台真机器 —— **四招运算 ＋ 菜单绕圈 ＋ 接住分不了的账**。\n\n零件清单：\n\n- 四招：`add`、`sub`、`mul`、`share`（每招喂两样料、叼回一个数；`share` 只算整条）\n- 每一单先印一遍菜单：`1 加法 2 减法 3 乘法 4 平均分 0 收工`\n- 报 `0`：印 `收工啦喵～`，然后收工\n- 认得出的选项：印 `结果是 X`\n- **认不出的选项**（菜单上没有的数）：印 `本喵还不认识这个数喵`\n- **分不了的账**（平均分遇上 `0`）：印 `没有猫来分，这条算不了喵`，**机器不许断气**，接着问下一位\n\n纸条上每一单都排着「选项 + 两个数」三样，一单一单往下排；最后那句 `0` 是客人说收工。\n\n比如投喂给程序的是\n\n1 6 8\n4 7 2\n9 1 1\n0\n\n程序就要叼回\n\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 14\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 3\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 里面也会有分不了的账、也会有不认识的数。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static int mul(int a, int b) {\n        return a * b;\n    }\n\n    public static int share(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 3 乘法 4 平均分 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            try {\n                if (choice == 1) {\n                    System.out.println(\"结果是 \" + add(a, b));\n                } else if (choice == 2) {\n                    System.out.println(\"结果是 \" + sub(a, b));\n                } else if (choice == 3) {\n                    System.out.println(\"结果是 \" + mul(a, b));\n                } else if (choice == 4) {\n                    System.out.println(\"结果是 \" + share(a, b));\n                } else {\n                    System.out.println(\"本喵还不认识这个数喵\");\n                }\n            } catch (ArithmeticException e) {\n                System.out.println(\"没有猫来分，这条算不了喵\");\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 8\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n没有猫来分，这条算不了喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～",
+      "stdin": "1 3 5\n4 7 0\n9 1 1\n0\n",
+      "explanation": "这一台机器，是第一阶段攒下来的全部家当喵 —— 从上往下读一遍，正好是三步：**招式拆开 → 菜单绕圈 → 岔子接住**。\n\n几处最容易摔的地方：\n\n- **`try` 写在圈子里面**，不是外面。所以「分不了的那一单」被接住之后，**圈子还在转**，下一位客人接着来。挪到圈子外面去，第一单出了岔子，整台机器跟着一起停。\n- **`catch (ArithmeticException e)`** —— 平均分遇上 `0`，翻的就是「算数算不成」这一路。名字写错了等于没接，机器照样断气。\n- **最后那条 `else` 兜底**：认不出的选项要有一句回话，不然客人报了怪数字，机器装聋作哑（不报错，只是少说一句）。\n- **四招都要有 `return`**：打头许的诺（`int`）必须兑现。\n\n能写出「一直问、出错也不死」的机器，就是从单句走向小程序的第一次：**先把活拆成招，再用一个圈把「一直问」串起来，最后想清楚哪一步可能出岔子、出了怎么办。** 大肥鱼的小摊从今天起账目清楚了喵～",
+      "templateId": "java-s1-calc-full-machine",
+      "params": {
+        "a": 3,
+        "b": 5,
+        "a2": 6,
+        "b2": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:05:17.190Z",
+        "hash": "b81189f93279dc16"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-full-machine-015",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "这是本阶段的**毕业作品**喵：把三步拼成一台真机器 —— **四招运算 ＋ 菜单绕圈 ＋ 接住分不了的账**。\n\n零件清单：\n\n- 四招：`add`、`sub`、`mul`、`share`（每招喂两样料、叼回一个数；`share` 只算整条）\n- 每一单先印一遍菜单：`1 加法 2 减法 3 乘法 4 平均分 0 收工`\n- 报 `0`：印 `收工啦喵～`，然后收工\n- 认得出的选项：印 `结果是 X`\n- **认不出的选项**（菜单上没有的数）：印 `本喵还不认识这个数喵`\n- **分不了的账**（平均分遇上 `0`）：印 `没有猫来分，这条算不了喵`，**机器不许断气**，接着问下一位\n\n纸条上每一单都排着「选项 + 两个数」三样，一单一单往下排；最后那句 `0` 是客人说收工。\n\n比如投喂给程序的是\n\n1 7 9\n4 7 2\n9 1 1\n0\n\n程序就要叼回\n\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 16\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 3\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 里面也会有分不了的账、也会有不认识的数。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static int mul(int a, int b) {\n        return a * b;\n    }\n\n    public static int share(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 3 乘法 4 平均分 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            try {\n                if (choice == 1) {\n                    System.out.println(\"结果是 \" + add(a, b));\n                } else if (choice == 2) {\n                    System.out.println(\"结果是 \" + sub(a, b));\n                } else if (choice == 3) {\n                    System.out.println(\"结果是 \" + mul(a, b));\n                } else if (choice == 4) {\n                    System.out.println(\"结果是 \" + share(a, b));\n                } else {\n                    System.out.println(\"本喵还不认识这个数喵\");\n                }\n            } catch (ArithmeticException e) {\n                System.out.println(\"没有猫来分，这条算不了喵\");\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 2 减法 3 乘法 4 平均分 0 收工\n结果是 8\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n没有猫来分，这条算不了喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 3 乘法 4 平均分 0 收工\n收工啦喵～",
+      "stdin": "1 3 5\n4 7 0\n9 1 1\n0\n",
+      "explanation": "这一台机器，是第一阶段攒下来的全部家当喵 —— 从上往下读一遍，正好是三步：**招式拆开 → 菜单绕圈 → 岔子接住**。\n\n几处最容易摔的地方：\n\n- **`try` 写在圈子里面**，不是外面。所以「分不了的那一单」被接住之后，**圈子还在转**，下一位客人接着来。挪到圈子外面去，第一单出了岔子，整台机器跟着一起停。\n- **`catch (ArithmeticException e)`** —— 平均分遇上 `0`，翻的就是「算数算不成」这一路。名字写错了等于没接，机器照样断气。\n- **最后那条 `else` 兜底**：认不出的选项要有一句回话，不然客人报了怪数字，机器装聋作哑（不报错，只是少说一句）。\n- **四招都要有 `return`**：打头许的诺（`int`）必须兑现。\n\n能写出「一直问、出错也不死」的机器，就是从单句走向小程序的第一次：**先把活拆成招，再用一个圈把「一直问」串起来，最后想清楚哪一步可能出岔子、出了怎么办。** 大肥鱼的小摊从今天起账目清楚了喵～",
+      "templateId": "java-s1-calc-full-machine",
+      "params": {
+        "a": 3,
+        "b": 5,
+        "a2": 7,
+        "b2": 9
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:15.584Z",
+        "hash": "f724817fbffef0e2"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-menu-loop-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要做**第二步**了喵：让它算完一单，接着问下一单。规矩四条，一条都别少：\n\n1. 圈子一开始**先印一遍菜单**：`1 加法 0 收工`\n2. 读客人报的选项\n3. 报的是 `0`：印 `收工啦喵～`，然后**收工**（圈子当场停）\n4. 不然就是普通一单：再读两个数、印 `结果是 X`（用加法那一招算）\n\n纸条上一单一单排着，最后那句 `0` 是客人说「不用了，收工」。\n\n比如投喂给程序的是\n\n1 10 12\n0\n\n程序就要叼回\n\n1 加法 0 收工\n结果是 22\n1 加法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 可能两单，也可能更多。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 0 收工\n结果是 6\n1 加法 0 收工\n结果是 14\n1 加法 0 收工\n收工啦喵～",
+      "stdin": "1 2 4\n1 6 8\n0\n",
+      "explanation": "这一段就是**菜单绕圈**：四步转一圈，算完一单接着问下一单喵。要紧的三处：\n\n- **圈子写成 `while (true)`**：这是**永远答真**的眼色 —— 光靠它自己，圈子一辈子停不下来。敢这么写，唯一的理由是圈里有一句**真的会被走到**的 `break;`。\n- **那句 `break;` 必须待在 `if (choice == 0)` 的花括号里面**：挪到外面，第一位客人算完圈子就收工了 —— 菜单再也不问第二句，而且**一个错都不报**。\n- **菜单那句摆在圈子里、读选项之前**：摆在圈子外面就成了「开张印一次」，后面的客人看不见选项。\n\n写完回头问自己一句：**这句 `break` 真的走得到吗？** 这一步过了，大肥鱼的机器就「能用一整天」了喵。",
+      "templateId": "java-s1-calc-menu-loop",
+      "params": {
+        "a": 2,
+        "b": 4,
+        "c": 6,
+        "d": 8,
+        "a2": 10,
+        "b2": 12
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:08.996Z",
+        "hash": "0a5772cd1ece320a"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-menu-loop-013",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要做**第二步**了喵：让它算完一单，接着问下一单。规矩四条，一条都别少：\n\n1. 圈子一开始**先印一遍菜单**：`1 加法 0 收工`\n2. 读客人报的选项\n3. 报的是 `0`：印 `收工啦喵～`，然后**收工**（圈子当场停）\n4. 不然就是普通一单：再读两个数、印 `结果是 X`（用加法那一招算）\n\n纸条上一单一单排着，最后那句 `0` 是客人说「不用了，收工」。\n\n比如投喂给程序的是\n\n1 10 13\n0\n\n程序就要叼回\n\n1 加法 0 收工\n结果是 23\n1 加法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 可能两单，也可能更多。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 0 收工\n结果是 6\n1 加法 0 收工\n结果是 16\n1 加法 0 收工\n收工啦喵～",
+      "stdin": "1 2 4\n1 7 9\n0\n",
+      "explanation": "这一段就是**菜单绕圈**：四步转一圈，算完一单接着问下一单喵。要紧的三处：\n\n- **圈子写成 `while (true)`**：这是**永远答真**的眼色 —— 光靠它自己，圈子一辈子停不下来。敢这么写，唯一的理由是圈里有一句**真的会被走到**的 `break;`。\n- **那句 `break;` 必须待在 `if (choice == 0)` 的花括号里面**：挪到外面，第一位客人算完圈子就收工了 —— 菜单再也不问第二句，而且**一个错都不报**。\n- **菜单那句摆在圈子里、读选项之前**：摆在圈子外面就成了「开张印一次」，后面的客人看不见选项。\n\n写完回头问自己一句：**这句 `break` 真的走得到吗？** 这一步过了，大肥鱼的机器就「能用一整天」了喵。",
+      "templateId": "java-s1-calc-menu-loop",
+      "params": {
+        "a": 2,
+        "b": 4,
+        "c": 7,
+        "d": 9,
+        "a2": 10,
+        "b2": 13
+      },
+      "verified": {
+        "at": "2026-10-20T17:05:20.394Z",
+        "hash": "f7c0cd7082391deb"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-menu-loop-025",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要做**第二步**了喵：让它算完一单，接着问下一单。规矩四条，一条都别少：\n\n1. 圈子一开始**先印一遍菜单**：`1 加法 0 收工`\n2. 读客人报的选项\n3. 报的是 `0`：印 `收工啦喵～`，然后**收工**（圈子当场停）\n4. 不然就是普通一单：再读两个数、印 `结果是 X`（用加法那一招算）\n\n纸条上一单一单排着，最后那句 `0` 是客人说「不用了，收工」。\n\n比如投喂给程序的是\n\n1 10 13\n0\n\n程序就要叼回\n\n1 加法 0 收工\n结果是 23\n1 加法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 可能两单，也可能更多。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 0 收工\n结果是 7\n1 加法 0 收工\n结果是 15\n1 加法 0 收工\n收工啦喵～",
+      "stdin": "1 2 5\n1 7 8\n0\n",
+      "explanation": "这一段就是**菜单绕圈**：四步转一圈，算完一单接着问下一单喵。要紧的三处：\n\n- **圈子写成 `while (true)`**：这是**永远答真**的眼色 —— 光靠它自己，圈子一辈子停不下来。敢这么写，唯一的理由是圈里有一句**真的会被走到**的 `break;`。\n- **那句 `break;` 必须待在 `if (choice == 0)` 的花括号里面**：挪到外面，第一位客人算完圈子就收工了 —— 菜单再也不问第二句，而且**一个错都不报**。\n- **菜单那句摆在圈子里、读选项之前**：摆在圈子外面就成了「开张印一次」，后面的客人看不见选项。\n\n写完回头问自己一句：**这句 `break` 真的走得到吗？** 这一步过了，大肥鱼的机器就「能用一整天」了喵。",
+      "templateId": "java-s1-calc-menu-loop",
+      "params": {
+        "a": 2,
+        "b": 5,
+        "c": 7,
+        "d": 8,
+        "a2": 10,
+        "b2": 13
+      },
+      "verified": {
+        "at": "2026-10-20T17:05:23.515Z",
+        "hash": "148f27665bccb813"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-menu-loop-038",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要做**第二步**了喵：让它算完一单，接着问下一单。规矩四条，一条都别少：\n\n1. 圈子一开始**先印一遍菜单**：`1 加法 0 收工`\n2. 读客人报的选项\n3. 报的是 `0`：印 `收工啦喵～`，然后**收工**（圈子当场停）\n4. 不然就是普通一单：再读两个数、印 `结果是 X`（用加法那一招算）\n\n纸条上一单一单排着，最后那句 `0` 是客人说「不用了，收工」。\n\n比如投喂给程序的是\n\n1 11 12\n0\n\n程序就要叼回\n\n1 加法 0 收工\n结果是 23\n1 加法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 可能两单，也可能更多。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 0 收工\n结果是 7\n1 加法 0 收工\n结果是 15\n1 加法 0 收工\n收工啦喵～",
+      "stdin": "1 3 4\n1 6 9\n0\n",
+      "explanation": "这一段就是**菜单绕圈**：四步转一圈，算完一单接着问下一单喵。要紧的三处：\n\n- **圈子写成 `while (true)`**：这是**永远答真**的眼色 —— 光靠它自己，圈子一辈子停不下来。敢这么写，唯一的理由是圈里有一句**真的会被走到**的 `break;`。\n- **那句 `break;` 必须待在 `if (choice == 0)` 的花括号里面**：挪到外面，第一位客人算完圈子就收工了 —— 菜单再也不问第二句，而且**一个错都不报**。\n- **菜单那句摆在圈子里、读选项之前**：摆在圈子外面就成了「开张印一次」，后面的客人看不见选项。\n\n写完回头问自己一句：**这句 `break` 真的走得到吗？** 这一步过了，大肥鱼的机器就「能用一整天」了喵。",
+      "templateId": "java-s1-calc-menu-loop",
+      "params": {
+        "a": 3,
+        "b": 4,
+        "c": 6,
+        "d": 9,
+        "a2": 11,
+        "b2": 12
+      },
+      "verified": {
+        "at": "2026-10-20T17:05:26.799Z",
+        "hash": "fe1dad8ae14ca146"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-menu-loop-050",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要做**第二步**了喵：让它算完一单，接着问下一单。规矩四条，一条都别少：\n\n1. 圈子一开始**先印一遍菜单**：`1 加法 0 收工`\n2. 读客人报的选项\n3. 报的是 `0`：印 `收工啦喵～`，然后**收工**（圈子当场停）\n4. 不然就是普通一单：再读两个数、印 `结果是 X`（用加法那一招算）\n\n纸条上一单一单排着，最后那句 `0` 是客人说「不用了，收工」。\n\n比如投喂给程序的是\n\n1 11 12\n0\n\n程序就要叼回\n\n1 加法 0 收工\n结果是 23\n1 加法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 可能两单，也可能更多。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 0 收工\n结果是 8\n1 加法 0 收工\n结果是 14\n1 加法 0 收工\n收工啦喵～",
+      "stdin": "1 3 5\n1 6 8\n0\n",
+      "explanation": "这一段就是**菜单绕圈**：四步转一圈，算完一单接着问下一单喵。要紧的三处：\n\n- **圈子写成 `while (true)`**：这是**永远答真**的眼色 —— 光靠它自己，圈子一辈子停不下来。敢这么写，唯一的理由是圈里有一句**真的会被走到**的 `break;`。\n- **那句 `break;` 必须待在 `if (choice == 0)` 的花括号里面**：挪到外面，第一位客人算完圈子就收工了 —— 菜单再也不问第二句，而且**一个错都不报**。\n- **菜单那句摆在圈子里、读选项之前**：摆在圈子外面就成了「开张印一次」，后面的客人看不见选项。\n\n写完回头问自己一句：**这句 `break` 真的走得到吗？** 这一步过了，大肥鱼的机器就「能用一整天」了喵。",
+      "templateId": "java-s1-calc-menu-loop",
+      "params": {
+        "a": 3,
+        "b": 5,
+        "c": 6,
+        "d": 8,
+        "a2": 11,
+        "b2": 12
+      },
+      "verified": {
+        "at": "2026-10-20T17:05:30.038Z",
+        "hash": "6639f20739f5cdea"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-menu-loop-063",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要做**第二步**了喵：让它算完一单，接着问下一单。规矩四条，一条都别少：\n\n1. 圈子一开始**先印一遍菜单**：`1 加法 0 收工`\n2. 读客人报的选项\n3. 报的是 `0`：印 `收工啦喵～`，然后**收工**（圈子当场停）\n4. 不然就是普通一单：再读两个数、印 `结果是 X`（用加法那一招算）\n\n纸条上一单一单排着，最后那句 `0` 是客人说「不用了，收工」。\n\n比如投喂给程序的是\n\n1 11 13\n0\n\n程序就要叼回\n\n1 加法 0 收工\n结果是 24\n1 加法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵 —— 可能两单，也可能更多。）",
+      "starter": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 0 收工\n结果是 8\n1 加法 0 收工\n结果是 16\n1 加法 0 收工\n收工啦喵～",
+      "stdin": "1 3 5\n1 7 9\n0\n",
+      "explanation": "这一段就是**菜单绕圈**：四步转一圈，算完一单接着问下一单喵。要紧的三处：\n\n- **圈子写成 `while (true)`**：这是**永远答真**的眼色 —— 光靠它自己，圈子一辈子停不下来。敢这么写，唯一的理由是圈里有一句**真的会被走到**的 `break;`。\n- **那句 `break;` 必须待在 `if (choice == 0)` 的花括号里面**：挪到外面，第一位客人算完圈子就收工了 —— 菜单再也不问第二句，而且**一个错都不报**。\n- **菜单那句摆在圈子里、读选项之前**：摆在圈子外面就成了「开张印一次」，后面的客人看不见选项。\n\n写完回头问自己一句：**这句 `break` 真的走得到吗？** 这一步过了，大肥鱼的机器就「能用一整天」了喵。",
+      "templateId": "java-s1-calc-menu-loop",
+      "params": {
+        "a": 3,
+        "b": 5,
+        "c": 7,
+        "d": 9,
+        "a2": 11,
+        "b2": 13
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:11.085Z",
+        "hash": "13cbfcebacb8973d"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-menu-outside-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这台计算器的**菜单只印了一次**喵 —— 第一位客人看得见选项，往后每一位都得自己猜。\n\n翻译官一声没吭（这处**不报错**）：圈子转得好好的，就是那句话站错了地方。你帮本喵把菜单挪到它该在的位置，让**每一单**都先印一遍菜单再问。\n\n规矩还是那四条：先印菜单 `1 加法 0 收工`；读客人报的选项；报 `0` 就印 `收工啦喵～` 收工；不然读两个数、印 `结果是 X`，接着问下一单。\n\n比如投喂给程序的是\n\n1 9 2\n0\n\n程序就要叼回\n\n1 加法 0 收工\n结果是 11\n1 加法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵。）",
+      "brokenCode": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1 加法 0 收工\");\n        while (true) {\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 0 收工\n结果是 7\n1 加法 0 收工\n结果是 10\n1 加法 0 收工\n收工啦喵～",
+      "stdin": "1 2 5\n1 7 3\n0\n",
+      "explanation": "第二步那四步里，第一步就是**先印菜单**：每一单开始都印一次，客人一抬头就看得见有哪些选项喵。本喵把那一句说到**圈子外面**去了 —— 它只在开张的时候印过一次，往后圈子里转的只有「读选项、算一单」，客人自然再也看不见菜单。\n\n改法就是把它挪进圈子里，摆在**读选项之前**：\n\n```java\nwhile (true) {\n    System.out.println(\"1 加法 0 收工\");\n    int choice = sc.nextInt();\n}\n```\n\n位置这件事在这一课特别值得盯：**同一句话，摆在圈子里和摆在圈子外面，干的事完全不同** —— 里面是「每单都干一次」，外面是「开张干一次」。上一题那个 `break` 站错地方、这一题菜单站错地方，是同一个道理的两个方向，而且**两个都不报错**，只能靠屏幕上少印了什么看出来喵。",
+      "templateId": "java-s1-calc-menu-outside",
+      "params": {
+        "a": 2,
+        "b": 5,
+        "c": 7,
+        "d": 3,
+        "a2": 9,
+        "b2": 2
+      },
+      "verified": {
+        "at": "2026-09-16T07:57:52.985Z",
+        "hash": "42c218096e8174fd"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-menu-outside-095",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这台计算器的**菜单只印了一次**喵 —— 第一位客人看得见选项，往后每一位都得自己猜。\n\n翻译官一声没吭（这处**不报错**）：圈子转得好好的，就是那句话站错了地方。你帮本喵把菜单挪到它该在的位置，让**每一单**都先印一遍菜单再问。\n\n规矩还是那四条：先印菜单 `1 加法 0 收工`；读客人报的选项；报 `0` 就印 `收工啦喵～` 收工；不然读两个数、印 `结果是 X`，接着问下一单。\n\n比如投喂给程序的是\n\n1 10 3\n0\n\n程序就要叼回\n\n1 加法 0 收工\n结果是 13\n1 加法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵。）",
+      "brokenCode": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1 加法 0 收工\");\n        while (true) {\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 0 收工\n结果是 10\n1 加法 0 收工\n结果是 12\n1 加法 0 收工\n收工啦喵～",
+      "stdin": "1 4 6\n1 8 4\n0\n",
+      "explanation": "第二步那四步里，第一步就是**先印菜单**：每一单开始都印一次，客人一抬头就看得见有哪些选项喵。本喵把那一句说到**圈子外面**去了 —— 它只在开张的时候印过一次，往后圈子里转的只有「读选项、算一单」，客人自然再也看不见菜单。\n\n改法就是把它挪进圈子里，摆在**读选项之前**：\n\n```java\nwhile (true) {\n    System.out.println(\"1 加法 0 收工\");\n    int choice = sc.nextInt();\n}\n```\n\n位置这件事在这一课特别值得盯：**同一句话，摆在圈子里和摆在圈子外面，干的事完全不同** —— 里面是「每单都干一次」，外面是「开张干一次」。上一题那个 `break` 站错地方、这一题菜单站错地方，是同一个道理的两个方向，而且**两个都不报错**，只能靠屏幕上少印了什么看出来喵。",
+      "templateId": "java-s1-calc-menu-outside",
+      "params": {
+        "a": 4,
+        "b": 6,
+        "c": 8,
+        "d": 4,
+        "a2": 10,
+        "b2": 3
+      },
+      "verified": {
+        "at": "2026-09-16T07:57:55.702Z",
+        "hash": "3de252b2945bbf90"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-unknown-silent-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这台计算器只认 `1`（加法）和 `2`（减法），`0` 是收工喵。麻烦在这儿：**客人报了一个菜单上没有的数**，机器一声不吭 —— 圈子照转，可那一单就像没发生过。\n\n翻译官不报错，是本喵自己发现的。你帮本喵给**最后那条岔路**补上话：认不出的数，就印 `本喵还不认识这个数喵`。\n\n（纸条上每一单都排着「选项 + 两个数」三样，认不出的那一单也不例外。）\n\n比如投喂给程序的是\n\n9 10 12\n0\n\n程序就要叼回\n\n1 加法 2 减法 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵，里面也会报一个菜单上没有的数。）",
+      "brokenCode": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            if (choice == 1) {\n                System.out.println(\"结果是 \" + add(a, b));\n            } else if (choice == 2) {\n                System.out.println(\"结果是 \" + sub(a, b));\n            }\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            if (choice == 1) {\n                System.out.println(\"结果是 \" + add(a, b));\n            } else if (choice == 2) {\n                System.out.println(\"结果是 \" + sub(a, b));\n            } else {\n                System.out.println(\"本喵还不认识这个数喵\");\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 2 减法 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 0 收工\n结果是 -2\n1 加法 2 减法 0 收工\n收工啦喵～",
+      "stdin": "9 2 4\n2 6 8\n0\n",
+      "explanation": "本喵那串 `if / else if` 只写了「是 `1` 怎么办」「是 `2` 怎么办」，**没有最后那条兜底的 `else`** 喵。于是报 `9` 的那一单：每一条都不成立，链条从头走到尾，**一句也没跑** —— 程序不报错，只是安静地少说了一句话；接着读下两个数、圈子转回菜单，就像那一单没来过。\n\n补的就是最后那一条：\n\n```java\n} else {\n    System.out.println(\"本喵还不认识这个数喵\");\n}\n```\n\n这一步在第三步里也是同一个形状：`if / else if` 管**认识的选择**，最后那条 `else` 管**兜底**（认识不了的那种）。整台机器就是三样拼起来的：**招式拆开 → 菜单绕圈 → 岔子接住**。少一条兜底，客人报了怪数字，机器就装聋作哑喵。",
+      "templateId": "java-s1-calc-unknown-silent",
+      "params": {
+        "a": 2,
+        "b": 4,
+        "c": 6,
+        "d": 8,
+        "a2": 10,
+        "b2": 12
+      },
+      "verified": {
+        "at": "2026-09-16T07:57:58.801Z",
+        "hash": "dc935ec1551e62ea"
+      }
+    },
+    {
+      "id": "bank-java-s1-calc-unknown-silent-063",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这台计算器只认 `1`（加法）和 `2`（减法），`0` 是收工喵。麻烦在这儿：**客人报了一个菜单上没有的数**，机器一声不吭 —— 圈子照转，可那一单就像没发生过。\n\n翻译官不报错，是本喵自己发现的。你帮本喵给**最后那条岔路**补上话：认不出的数，就印 `本喵还不认识这个数喵`。\n\n（纸条上每一单都排着「选项 + 两个数」三样，认不出的那一单也不例外。）\n\n比如投喂给程序的是\n\n9 11 13\n0\n\n程序就要叼回\n\n1 加法 2 减法 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 0 收工\n收工啦喵～\n\n（判分给的是**另外几单**喵，里面也会报一个菜单上没有的数。）",
+      "brokenCode": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            if (choice == 1) {\n                System.out.println(\"结果是 \" + add(a, b));\n            } else if (choice == 2) {\n                System.out.println(\"结果是 \" + sub(a, b));\n            }\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            if (choice == 1) {\n                System.out.println(\"结果是 \" + add(a, b));\n            } else if (choice == 2) {\n                System.out.println(\"结果是 \" + sub(a, b));\n            } else {\n                System.out.println(\"本喵还不认识这个数喵\");\n            }\n        }\n    }\n}\n",
+      "expectedOutput": "1 加法 2 减法 0 收工\n本喵还不认识这个数喵\n1 加法 2 减法 0 收工\n结果是 -2\n1 加法 2 减法 0 收工\n收工啦喵～",
+      "stdin": "9 3 5\n2 7 9\n0\n",
+      "explanation": "本喵那串 `if / else if` 只写了「是 `1` 怎么办」「是 `2` 怎么办」，**没有最后那条兜底的 `else`** 喵。于是报 `9` 的那一单：每一条都不成立，链条从头走到尾，**一句也没跑** —— 程序不报错，只是安静地少说了一句话；接着读下两个数、圈子转回菜单，就像那一单没来过。\n\n补的就是最后那一条：\n\n```java\n} else {\n    System.out.println(\"本喵还不认识这个数喵\");\n}\n```\n\n这一步在第三步里也是同一个形状：`if / else if` 管**认识的选择**，最后那条 `else` 管**兜底**（认识不了的那种）。整台机器就是三样拼起来的：**招式拆开 → 菜单绕圈 → 岔子接住**。少一条兜底，客人报了怪数字，机器就装聋作哑喵。",
+      "templateId": "java-s1-calc-unknown-silent",
+      "params": {
+        "a": 3,
+        "b": 5,
+        "c": 7,
+        "d": 9,
+        "a2": 11,
+        "b2": 13
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:01.526Z",
+        "hash": "410c3eda6aaab955"
+      }
+    },
+    {
+      "id": "bank-java-s1-challenge-backwards-tally-000",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵今天收到的账要**倒着念**：最新的先念、最老的最后念，而且每念一个就报一次**到这会儿为止攒了多少**喵。\n\n投喂口先给一个数（今天收了几笔），再一笔一笔给数。请你写个程序：\n\n1. 先把账一笔不漏地收进**一排贴编号的猫粮碗**里（第 0 只碗装第一笔……）；\n2. 从**最后一只碗**开始往前走，一边走一边念：`第 X 号收 %d 条，累计 %d 条喵`（X 是第几笔，从 1 数起；累计是**从开始念到现在**加起来的合计）；\n3. 念完最后一行报总账：`一共 %d 条喵`。\n\n比如投喂给程序的是\n\n4\n14\n4\n3\n24\n\n程序就要叼回\n\n第 4 号收 24 条，累计 24 条喵\n第 3 号收 3 条，累计 27 条喵\n第 2 号收 4 条，累计 31 条喵\n第 1 号收 14 条，累计 45 条喵\n一共 45 条喵\n\n（判分喂的是**另外一组数**喵。碗的编号从 0 数起，可本喵嘴里念的是「第 1 笔」—— 这个差一位别弄丢。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        // 收账、倒着念、边念边累计\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        int[] bills = new int[n];\n        for (int i = 0; i < n; i++) {\n            bills[i] = sc.nextInt();\n        }\n\n        int running = 0;\n        for (int i = n - 1; i >= 0; i--) {\n            running = running + bills[i];\n            System.out.println(\"第 \" + (i + 1) + \" 号收 \" + bills[i] + \" 条，累计 \" + running + \" 条喵\");\n        }\n        System.out.println(\"一共 \" + running + \" 条喵\");\n    }\n}\n",
+      "expectedOutput": "第 4 号收 27 条，累计 27 条喵\n第 3 号收 21 条，累计 48 条喵\n第 2 号收 12 条，累计 60 条喵\n第 1 号收 24 条，累计 84 条喵\n一共 84 条喵",
+      "stdin": "4\n24\n12\n21\n27\n",
+      "explanation": "这一题把「正着收、倒着念」和「边走边攒」叠在了一起喵。\n\n**一、收账那一趟**：`i` 从 0 走到 n 减 1，让「第几笔」和「第几只碗」一一对上，第 0 只碗装第一笔。\n\n**二、念账那一趟**：`i` 从 `n - 1` 出发，每念一笔就 `i--`，一直念到 `i` 变成负数为止 —— 所以圈的条件是 `i >= 0`，不是 `i > 0`（写成 `i > 0` 会把第 0 只碗漏掉，那可是最老的一笔）。\n\n**三、累计**：它和总账其实是**同一个数**。边走边加：先 `running = running + bills[i]`，再印这一行 —— 这样印出来的「累计」天然是「念到目前」的合计；等念完最后一笔，`running` 正好就是总数，最后一行直接印它，不用再算第二遍。\n\n**四、差一位**：碗从 0 号数起，嘴里念的却是「第几笔」—— 从 1 数起，所以印的时候要 `i + 1`。\n\n小提醒喵：累加要**先加再印**，顺序反了累计就会少自己那笔。",
+      "templateId": "java-s1-challenge-backwards-tally",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T17:05:33.233Z",
+        "hash": "5475132e8e1f1d91"
+      }
+    },
+    {
+      "id": "bank-java-s1-challenge-backwards-tally-001",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵今天收到的账要**倒着念**：最新的先念、最老的最后念，而且每念一个就报一次**到这会儿为止攒了多少**喵。\n\n投喂口先给一个数（今天收了几笔），再一笔一笔给数。请你写个程序：\n\n1. 先把账一笔不漏地收进**一排贴编号的猫粮碗**里（第 0 只碗装第一笔……）；\n2. 从**最后一只碗**开始往前走，一边走一边念：`第 X 号收 %d 条，累计 %d 条喵`（X 是第几笔，从 1 数起；累计是**从开始念到现在**加起来的合计）；\n3. 念完最后一行报总账：`一共 %d 条喵`。\n\n比如投喂给程序的是\n\n5\n3\n17\n30\n18\n30\n\n程序就要叼回\n\n第 5 号收 30 条，累计 30 条喵\n第 4 号收 18 条，累计 48 条喵\n第 3 号收 30 条，累计 78 条喵\n第 2 号收 17 条，累计 95 条喵\n第 1 号收 3 条，累计 98 条喵\n一共 98 条喵\n\n（判分喂的是**另外一组数**喵。碗的编号从 0 数起，可本喵嘴里念的是「第 1 笔」—— 这个差一位别弄丢。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        // 收账、倒着念、边念边累计\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        int[] bills = new int[n];\n        for (int i = 0; i < n; i++) {\n            bills[i] = sc.nextInt();\n        }\n\n        int running = 0;\n        for (int i = n - 1; i >= 0; i--) {\n            running = running + bills[i];\n            System.out.println(\"第 \" + (i + 1) + \" 号收 \" + bills[i] + \" 条，累计 \" + running + \" 条喵\");\n        }\n        System.out.println(\"一共 \" + running + \" 条喵\");\n    }\n}\n",
+      "expectedOutput": "第 5 号收 12 条，累计 12 条喵\n第 4 号收 22 条，累计 34 条喵\n第 3 号收 2 条，累计 36 条喵\n第 2 号收 18 条，累计 54 条喵\n第 1 号收 16 条，累计 70 条喵\n一共 70 条喵",
+      "stdin": "5\n16\n18\n2\n22\n12\n",
+      "explanation": "这一题把「正着收、倒着念」和「边走边攒」叠在了一起喵。\n\n**一、收账那一趟**：`i` 从 0 走到 n 减 1，让「第几笔」和「第几只碗」一一对上，第 0 只碗装第一笔。\n\n**二、念账那一趟**：`i` 从 `n - 1` 出发，每念一笔就 `i--`，一直念到 `i` 变成负数为止 —— 所以圈的条件是 `i >= 0`，不是 `i > 0`（写成 `i > 0` 会把第 0 只碗漏掉，那可是最老的一笔）。\n\n**三、累计**：它和总账其实是**同一个数**。边走边加：先 `running = running + bills[i]`，再印这一行 —— 这样印出来的「累计」天然是「念到目前」的合计；等念完最后一笔，`running` 正好就是总数，最后一行直接印它，不用再算第二遍。\n\n**四、差一位**：碗从 0 号数起，嘴里念的却是「第几笔」—— 从 1 数起，所以印的时候要 `i + 1`。\n\n小提醒喵：累加要**先加再印**，顺序反了累计就会少自己那笔。",
+      "templateId": "java-s1-challenge-backwards-tally",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-30T12:37:25.150Z",
+        "hash": "dacb51fd45535d38"
+      }
+    },
+    {
+      "id": "bank-java-s1-challenge-backwards-tally-002",
+      "type": "codewrite",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵今天收到的账要**倒着念**：最新的先念、最老的最后念，而且每念一个就报一次**到这会儿为止攒了多少**喵。\n\n投喂口先给一个数（今天收了几笔），再一笔一笔给数。请你写个程序：\n\n1. 先把账一笔不漏地收进**一排贴编号的猫粮碗**里（第 0 只碗装第一笔……）；\n2. 从**最后一只碗**开始往前走，一边走一边念：`第 X 号收 %d 条，累计 %d 条喵`（X 是第几笔，从 1 数起；累计是**从开始念到现在**加起来的合计）；\n3. 念完最后一行报总账：`一共 %d 条喵`。\n\n比如投喂给程序的是\n\n6\n2\n23\n5\n11\n11\n29\n\n程序就要叼回\n\n第 6 号收 29 条，累计 29 条喵\n第 5 号收 11 条，累计 40 条喵\n第 4 号收 11 条，累计 51 条喵\n第 3 号收 5 条，累计 56 条喵\n第 2 号收 23 条，累计 79 条喵\n第 1 号收 2 条，累计 81 条喵\n一共 81 条喵\n\n（判分喂的是**另外一组数**喵。碗的编号从 0 数起，可本喵嘴里念的是「第 1 笔」—— 这个差一位别弄丢。）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        // 收账、倒着念、边念边累计\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        int[] bills = new int[n];\n        for (int i = 0; i < n; i++) {\n            bills[i] = sc.nextInt();\n        }\n\n        int running = 0;\n        for (int i = n - 1; i >= 0; i--) {\n            running = running + bills[i];\n            System.out.println(\"第 \" + (i + 1) + \" 号收 \" + bills[i] + \" 条，累计 \" + running + \" 条喵\");\n        }\n        System.out.println(\"一共 \" + running + \" 条喵\");\n    }\n}\n",
+      "expectedOutput": "第 6 号收 19 条，累计 19 条喵\n第 5 号收 16 条，累计 35 条喵\n第 4 号收 3 条，累计 38 条喵\n第 3 号收 15 条，累计 53 条喵\n第 2 号收 20 条，累计 73 条喵\n第 1 号收 8 条，累计 81 条喵\n一共 81 条喵",
+      "stdin": "6\n8\n20\n15\n3\n16\n19\n",
+      "explanation": "这一题把「正着收、倒着念」和「边走边攒」叠在了一起喵。\n\n**一、收账那一趟**：`i` 从 0 走到 n 减 1，让「第几笔」和「第几只碗」一一对上，第 0 只碗装第一笔。\n\n**二、念账那一趟**：`i` 从 `n - 1` 出发，每念一笔就 `i--`，一直念到 `i` 变成负数为止 —— 所以圈的条件是 `i >= 0`，不是 `i > 0`（写成 `i > 0` 会把第 0 只碗漏掉，那可是最老的一笔）。\n\n**三、累计**：它和总账其实是**同一个数**。边走边加：先 `running = running + bills[i]`，再印这一行 —— 这样印出来的「累计」天然是「念到目前」的合计；等念完最后一笔，`running` 正好就是总数，最后一行直接印它，不用再算第二遍。\n\n**四、差一位**：碗从 0 号数起，嘴里念的却是「第几笔」—— 从 1 数起，所以印的时候要 `i + 1`。\n\n小提醒喵：累加要**先加再印**，顺序反了累计就会少自己那笔。",
+      "templateId": "java-s1-challenge-backwards-tally",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:05:36.478Z",
+        "hash": "fab6bbf80a5b2197"
+      }
+    },
+    {
+      "id": "bank-java-s1-challenge-calc-fallthrough-000",
+      "type": "codefix",
+      "lang": "java",
+      "difficulty": "challenge",
+      "stem": "本喵的计算器只认两个暗号喵：`1` 是加法，`2` 是减法；别的暗号就报一句「这个暗号本喵不认识喵」。\n\n用法：投喂口先给暗号，再给两个数。可现在它**对加法太热情了** —— 报完加法，又顺手把减法也报了一遍……\n\n比如投喂 `1`、`7`、`4`，它印的是\n\n```\n7 + 4 = 11 喵\n7 - 4 = 3 喵\n```\n\n第二行是多余的：本喵只要加法那一行。你帮本喵把它改对。（判分用的暗号也是 `1`，只是数字换了一组。）",
+      "brokenCode": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int op = sc.nextInt();\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n\n        switch (op) {\n            case 1:\n                System.out.println(a + \" + \" + b + \" = \" + (a + b) + \" 喵\");\n            case 2:\n                System.out.println(a + \" - \" + b + \" = \" + (a - b) + \" 喵\");\n                break;\n            default:\n                System.out.println(\"这个暗号本喵不认识喵\");\n        }\n    }\n}\n",
+      "referenceFix": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int op = sc.nextInt();\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n\n        switch (op) {\n            case 1:\n                System.out.println(a + \" + \" + b + \" = \" + (a + b) + \" 喵\");\n                break;\n            case 2:\n                System.out.println(a + \" - \" + b + \" = \" + (a - b) + \" 喵\");\n                break;\n            default:\n                System.out.println(\"这个暗号本喵不认识喵\");\n        }\n    }\n}\n",
+      "expectedOutput": "9 + 4 = 13 喵",
+      "stdin": "1\n9\n4\n",
+      "explanation": "这是「暗号表」最经典的一跤：**办完不亮收工牌**喵。\n\n`switch` 的规矩是：从对上的那一格**开始往下走，走一步看一步** —— 除非碰到一句 `break`，不然**下面那一格的活它也顺手干掉**。加法那一路干完自己的事没亮收工牌，于是脚一滑踩进减法那一格，把减法也报了；再往下碰到减法的 `break` 才停住。\n\n改法：在加法那一路的末尾补一句：\n\n```java\nbreak;\n```\n\n补上之后：暗号 `1` 报完加法就收工；暗号 `2` 照旧只报减法；别的暗号报那句不认识。\n\n记两句喵：\n\n1. `break` 是**收工牌** —— 它的意思不是「跳过剩下的」，而是「**这一格办完，从整张暗号表里退出**」；\n2. 这种「顺着往下滑」的错**不报错、不红脸**，只是多印了几行。写完暗号表，习惯性给每一路把收工牌都点上，最稳。",
+      "templateId": "java-s1-challenge-calc-fallthrough",
+      "params": {},
+      "verified": {
+        "at": "2026-09-30T12:37:27.816Z",
+        "hash": "59fc13345c848a0f"
+      }
+    }
+  ]
+}

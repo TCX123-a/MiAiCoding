@@ -1,0 +1,84 @@
+{
+  "lessonId": "cpp-stage1-08",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵开了一排三格的碗：`int fish[3] = {3, 5, 2};`。那 `fish[2]` 拿到的是哪个数？",
+      "options": ["5", "2", "3", "这一格不存在，会报错"],
+      "answer": 1,
+      "explanation": "编号是从 0 起数的，所以 `fish[0]` 是第一格（3），`fish[1]` 是第二格（5），`fish[2]` 才是第三格（2）。三格的碗，最后一格永远是 `fish[2]` 喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵开了一排说好三格的碗，现在想往里塞第 4 条鱼干。下面哪种说法对？",
+      "options": [
+        "重新开一排更大的碗，再把旧的货一格格搬过去",
+        "直接写 `fish[3]` 那一格塞进去，它会自己长大一格",
+        "塞第 4 格的时候它会当场报错提醒我",
+        "把方括号里的 3 改成 4，那一排碗就自动多出一格"
+      ],
+      "answer": 0,
+      "explanation": "开店时说几格，它就**永远**几格 —— 不会自己长大，也不会缩。想多装，唯一的办法是重新开一排更大的碗，再把旧的货一格格搬过去。往格子外面写那一笔，翻译官喵一样**不报错**（本喵拿 `-Wall` 真跑过，一声不吭）；可它比「摸」那一脚更野 —— 本喵那台机器上程序印完字就整个摔下去了（应用里会弹一张「程序撞到墙上了喵」的卡片），摸出来的数还是谁也说不准，这种错比当场报错更难查喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "下面四种写法，哪一句翻译官喵会拦下来？",
+      "options": [
+        "`cout << \"三文鱼\" + \"秋刀鱼\" << endl;`",
+        "`string tail = \"秋刀鱼\"; cout << \"三文鱼\" + tail << endl;`",
+        "`cout << \"三文鱼\" << \"秋刀鱼\" << endl;`",
+        "`string a = \"三文鱼\"; a = a + \"秋刀鱼\"; cout << a << endl;`"
+      ],
+      "answer": 0,
+      "explanation": "规矩是「`+` 的两边至少得有一边是真项链」。`cout << \"三文鱼\" + \"秋刀鱼\" << endl;` 两边都是光溜溜夹在双引号里的字，翻译官喵连它们各占几格都还没定，`+` 就不认，会报 `invalid operands`。`string tail = \"秋刀鱼\"; cout << \"三文鱼\" + tail << endl;` 右边已经装进项链了，所以能拼；`cout << \"三文鱼\" << \"秋刀鱼\" << endl;` 只是挨着印，压根没用 `+`，也没事喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "stem": "把下面的 C++ 代码补全，让它把那一排碗里的数一格一个印出来（`3`、`5`、`2`）：",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish[3] = {3, 5, 2};\n    for (int i = 0; i < ____; i++) {\n        cout << fish[____] << endl;\n    }\n    return 0;\n}",
+      "blanks": [
+        { "answer": "3" },
+        { "answer": "i" }
+      ],
+      "explanation": "第一个空填 `3`：眼色得拿**格数**卡死。三格的碗，编号只到 2，`i` 走到 3 就该收工；写成 `i <= 3` 就多跑一圈，摸到格子外面去了。第二个空填 `i`：格子编号正好就是圈里那个 `i`，所以 `fish[i]` 会一格一格走完整排，印出 3、5、2 喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "cpp",
+      "stem": "下面这段想印出「大肥鱼喵」。把缺的两样补上：",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    ____ a = \"大肥鱼\";\n    string b = \"喵\";\n    cout << a ____ b << endl;\n    return 0;\n}",
+      "blanks": [
+        { "answer": "string" },
+        { "answer": "+" }
+      ],
+      "explanation": "第一个空填 `string`：这种柜子装的是字，所以前面得写这个名字；写成装数的那个名字，「大肥鱼」就放不进去了。第二个空填 `+`：两根项链拿 `+` 接到一起，印出来就是「大肥鱼喵」。别忘了最上头那两行开机咒，第二行正是为它念的喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish[3] = {3, 5, 2};\n    fish[0] = 4;\n    for (int i = 0; i < 3; i++) {\n        cout << fish[i] << endl;\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "4\n5\n2",
+      "accept": [],
+      "explanation": "`fish[0] = 4;` 把**第一格**（编号 0 那一格）的 3 换成了 4，另外两格一动不动。跑圈从编号 0 走到 2，一格一格印出来就是 4、5、2 喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    int fish[3] = {3, 5, 2};\n    string name = \"大肥鱼\";\n    int total = 0;\n\n    for (int one : fish) {\n        total = total + one;\n    }\n    cout << total << endl;\n    cout << name.size() << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "10\n9",
+      "accept": [],
+      "explanation": "第一个圈挨个走那排碗，把 3、5、2 一条条加进小碗 `total` 里，加起来是 10。第二句问项链 `.size()`：它数的是「占了几格」不是「几个字」，一个中文字要占好几格，所以「大肥鱼」三个字问出来是 9 喵。"
+    }
+  ]
+}

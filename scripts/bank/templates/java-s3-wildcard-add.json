@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-wildcard-add",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-01",
+  "type": "codefix",
+  "concept": ["往外叼的问号塞不进东西", "往里塞的写 super", "翻译稿子时就拦下"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["3", "4"] },
+    "b": { "kind": "pick", "values": ["7", "9"] }
+  },
+  "stemTemplate": "本喵写了一个招式，专门往柜子里塞两件东西喵。\n\n可它**连翻译那一关都没过**，红字里还夹着一个本喵没见过的词 `CAP#1` —— 程序一次都没跑起来过。\n\n你帮本喵看看招式名后面那对尖括号里的问号是怎么写的、这一招又在对柜子做什么，把它改好。改好之后它该印出两行：第一行报柜子里有几件，第二行报**第一件**是什么。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。那两件东西是固定死的，别去改它们。）",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    static void fill(List<? extends Number> box) {\n        box.add({a});\n        box.add({b});\n    }\n\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        fill(nums);\n        System.out.println(\"柜子里装了 \" + nums.size() + \" 件\");\n        System.out.println(\"第一件是 \" + nums.get(0));\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    static void fill(List<? super Integer> box) {\n        box.add({a});\n        box.add({b});\n    }\n\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        fill(nums);\n        System.out.println(\"柜子里装了 \" + nums.size() + \" 件\");\n        System.out.println(\"第一件是 \" + nums.get(0));\n    }\n}\n",
+  "explanationTemplate": "红字里那个 `CAP#1` 是本喵故意留在那儿的记号，它把问题指得很准：**问号后面跟 `extends` 的柜子，只准往外叼，不准往里塞。**\n\n**一、为什么塞不进去。** `? extends Number` 的意思是「里面装着 `Number` 这一家**往下**的某一种」，具体是 `Integer` 还是 `Double`，**这一招并不知道**。不知道尺码就不知道你塞的这件东西对不对得上尺寸 —— 所以翻译官喵干脆不许塞。它把那个「不知道是哪种」当场抓阄定了个临时名字，就是 `CAP#1`（capture，抓到的意思），然后告诉你：`int` 塞进 `CAP#1` 不行。\n\n**二、这一招想做的事，正好是「往里塞」。** 招式里只有两句 `box.add(...)`，全是往里放，一件都不往外叼。那把问号写成 `extends` 就是**方向反了** —— 该写成「往里塞」的那种。\n\n**三、改成 `? super Integer` 就对了。** 它读作「一只**至少装得下 `Integer`** 的柜子」，意思是尺码只要是整数的某一代长辈都行（`Integer`、`Number`、`Object`……）。塞进去的整数一定对得上尺寸，所以翻译官喵放行。\n\n**四、这一改为什么还能收下 `List<Integer>`。** 递进来的柜子尺码正好是 `Integer` 自己，当然「至少装得下 `Integer`」—— 收下它完全合法，所以 `fill(nums)` 这一句一个字都不用动。\n\n一句话收尾：**往外叼的问号写 `extends`，往里塞的问号写 `super`** —— 这一招只有往里塞，所以它要的是 `super` 喵。"
+}

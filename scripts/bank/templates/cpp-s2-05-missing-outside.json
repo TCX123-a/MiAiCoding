@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-05-missing-outside",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-05",
+  "type": "codefix",
+  "concept": ["整张图纸共用的一格", "图纸外面那一行", "拼装那一刻才报的错"],
+  "instances": 2,
+  "params": {
+    "nameA": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "nameB": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stemTemplate": "本喵图纸上有一格共用的东西：每生一只猫就加一，喊 `Cat::howMany()` 就能把「一共出生了几只」问出来。图纸里该写的本喵都写了，可程序就是跑不起来 —— 翻译官喵是在**很晚的那一关**才把本喵拦下的。\n\n你帮本喵补上**一处**，让它跑起来、印出这两行：先一行 `一共出生了 2 只`，再一行 `第一只叫 XX`（`XX` 是第一只猫的名字）。**图纸里面那几行一个字都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int count;\n    string name;\n\n    Cat(string n) : name(n) {\n        count = count + 1;\n    }\n\n    static int howMany() {\n        return count;\n    }\n};\n\nint main() {\n    Cat a(\"{nameA}\");\n    Cat b(\"{nameB}\");\n    cout << \"一共出生了 \" << Cat::howMany() << \" 只\" << endl;\n    cout << \"第一只叫 \" << a.name << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int count;\n    string name;\n\n    Cat(string n) : name(n) {\n        count = count + 1;\n    }\n\n    static int howMany() {\n        return count;\n    }\n};\n\nint Cat::count = 0;\n\nint main() {\n    Cat a(\"{nameA}\");\n    Cat b(\"{nameB}\");\n    cout << \"一共出生了 \" << Cat::howMany() << \" 只\" << endl;\n    cout << \"第一只叫 \" << a.name << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话，最末一行是：\n\n`collect2.exe: error: ld returned 1 exit status`\n\n这一行上面还有一行，里面写着 `undefined reference` 和 `Cat::count`（那一行开头是一长串临时小路，每次跑都不一样，本喵就不整行抄了）。意思很直白：**「`count` 这个名字本喵认得，可它落地的地方没找着。」**\n\n为什么它来得那么晚：图纸里那句 `static int count;` **只是报个名字** —— 有这么一格、它是整张图纸共用的。每只猫自己那两格是跟着真猫一起被造出来的，共用的这一格没有这份待遇，得**在图纸外面亲手写一行**给它落地、给它一个起步的数：`int Cat::count = 0;`\n\n补上这一行，程序立刻顺着跑。所以往后看到那句 `collect2.exe: error: ld returned 1 exit status`，先回头数一数是不是有哪个共用的格子忘了在图纸外面写那一行。"
+}

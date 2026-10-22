@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage3-15",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "图书角里按编号找东西的那一句 `find`，交回来的是**架子上那件的坐标**（`Item*`），而不是一只 `Item`。为什么非得这样？",
+      "options": [
+        "因为照着坐标改，改的才是架子上那件真东西；复印一份改，架子上那件一动不动",
+        "因为交回来两只比一只快",
+        "因为复制一份要花时间",
+        "因为 `Item` 这种图纸不许被复印"
+      ],
+      "answer": 0,
+      "explanation": "`find` 交回来的是架子上那件的**坐标**（`Item*`），不是复印的一份。`borrow` 拿到坐标之后写的 `it->out = true;`，改的是**架子上那件真东西** —— 所以后面 `list` 的时候它才是「借出」。\n\n⚠️ 要是贪省事让 `find` 交回一只 `Item`（少写那个 `*`），借出去这件事只会发生在**复印的那一份**身上：架子上那件还是「在架」。程序不报错、不提醒，账却永远对不上。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`save` 写小本本的时候少写了最后那一栏（借出去没有），`load` 却照旧读四样。会怎么样？",
+      "options": [
+        "架子上会**一件都不剩**，而程序不报错（`load` 还照样回一句「读回来了」）",
+        "编译器当场拦下，程序编不过",
+        "少的那一栏会自动补成「在架」",
+        "只丢最后一件，前面几件都在"
+      ],
+      "answer": 0,
+      "explanation": "存的时候写三样、读的时候等四样，两边**对不上**喵：读的那一步凑不齐四样就卡住，前面读到的也不算数，架子上于是**一件都不剩** —— 屏幕上只剩空空的架子，一个字都不印。\n\n⚠️ 最坏的地方是它**不报错**：`load` 照样回一句「读回来了」，程序也照常跑完。所以这一课的规矩里写「存四栏、读四栏」，两处必须一起改。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "`load` 把小本本读回来的时候，为什么要**看名字接生**？",
+      "options": [
+        "因为读回来的东西得按小本本上写的接生，不然杂志会变成书、可借天数也跟着变",
+        "因为不看名字就会读到一半卡住",
+        "因为名字里可能有空格",
+        "因为那样读起来更快"
+      ],
+      "answer": 0,
+      "explanation": "小本本上第二栏记的就是「这是哪一种东西」喵。`load` 读回来的时候照着它接生：写着「杂志」就用杂志那张图纸接生，写着「书」就用书那张。\n\n⚠️ 要是图省事一律按书接生，程序照样编得过、跑得起来，可杂志会**悄悄变成书**：印出来是「书，可借 14 天」—— 天数从 3 变成了 14，而且不报错。读回来和存下去，两边接生的规矩得**同一条**。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <memory>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Item {\npublic:\n    Item(int id, const string& name) : id(id), name(name) {}\n    int id;\n    string name;\n    bool out = false;\n};\n\nclass Library {\npublic:\n    void add(int id, const string& name) { shelf.push_back(make_unique<Item>(id, name)); }\n\n    bool borrow(int id) {\n        Item* ____ = find(id);\n        if (!it || ____) return false;\n        it->out = true;\n        return true;\n    }\n\nprivate:\n    Item* find(int id) {\n        for (auto& it : shelf) if (it->id == id) return it.get();\n        return nullptr;\n    }\n    vector<unique_ptr<Item>> shelf;\n};\n\nint main() {\n    Library lib;\n    lib.add(1, \"鱼干小百科\");\n    cout << (lib.borrow(1) ? \"办好了\" : \"办不了\") << endl;\n    cout << (lib.borrow(1) ? \"办好了\" : \"办不了\") << endl;\n    cout << (lib.borrow(9) ? \"办好了\" : \"办不了\") << endl;\n    return 0;\n}",
+      "stem": "这是图书角里挑出来的一小块：借东西那句 `borrow` 有两个空位（用 `____` 标出）。填对了，三行答复才合规矩。两个空位该填什么？",
+      "blanks": [
+        { "answer": "it", "accept": [] },
+        { "answer": "it->out", "accept": ["it -> out"] }
+      ],
+      "explanation": "第一个空位是 `it` 喵：`find` 交回来的是架子上那件的坐标，得先拿个名字接住它，后面才照着它看、照着它改。\n\n第二个空位是 `it->out`：借的时候要看**借出去没有** —— 已经借出去的，不能再借（`return false`，答复就是「办不了」）。\n\n填对之后三行是：头一次 `borrow(1)` 印「办好了」（本来在架，借走了）；第二次同样的编号印「办不了」（已经借出去了）；`borrow(9)` 也印「办不了」—— 架上根本没有编号 9 那件（找不着，坐标是空的）。\n\n⚠️ 第二个空位要是漏了，头两行都会印「办好了」：同一件东西被借出去两次，而程序一声不吭。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <memory>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Item {\npublic:\n    Item(int id, const string& name) : id(id), name(name) {}\n    virtual ~Item() = default;\n    virtual string kind() const { return \"东西\"; }\n    virtual int keepDays() const { return 7; }\n    int id;\n    string name;\n    bool out = false;\n};\n\nclass Book : public Item {\npublic:\n    Book(int id, const string& name) : Item(id, name) {}\n    string kind() const override { return \"书\"; }\n    int keepDays() const override { return 14; }\n};\n\nclass Magazine : public Item {\npublic:\n    Magazine(int id, const string& name) : Item(id, name) {}\n    string kind() const override { return \"杂志\"; }\n    int keepDays() const override { return 3; }\n};\n\nint main() {\n    vector<unique_ptr<Item>> shelf;\n    shelf.push_back(make_unique<Book>(1, \"鱼干小百科\"));\n    shelf.push_back(make_unique<Magazine>(2, \"猫粮月报\"));\n    shelf.push_back(make_unique<Book>(3, \"大肥鱼自传\"));\n    shelf[1]->out = true;\n\n    for (const auto& it : shelf) {\n        cout << it->id << \" \" << it->name << \"（\" << it->kind() << \"，可借 \" << it->keepDays() << \" 天）\"\n             << (it->out ? \" 借出\" : \" 在架\") << endl;\n    }\n    return 0;\n}",
+      "stem": "这段代码摆了三件东西在架子上，然后把**第二件**标成了借出去。它印出来的三行是什么？（一行一行照抄）",
+      "answer": "1 鱼干小百科（书，可借 14 天） 在架\n2 猫粮月报（杂志，可借 3 天） 借出\n3 大肥鱼自传（书，可借 14 天） 在架",
+      "accept": ["1 鱼干小百科（书，可借 14 天） 在架\n2 猫粮月报（杂志，可借 3 天） 借出\n3 大肥鱼自传（书，可借 14 天） 在架\n"],
+      "explanation": "架子是一排碗，碗里装的分别是书、杂志、书喵。印的时候那句 `it->kind()` 和 `it->keepDays()` 是**走到谁面前才念谁那句**的：\n\n- 第一件是 `Book` → 印「书，可借 14 天」；\n- 第二件是 `Magazine` → 印「杂志，可借 3 天」（**注意天数不一样**）；\n- 第三件又是 `Book` → 还是「书，可借 14 天」。\n\n最后那一截 `(it->out ? \" 借出\" : \" 在架\")` 是看借出去没有：只有第二件被标过（`shelf[1]->out = true;`），所以只有它印「借出」，另外两件印「在架」。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <algorithm>\n#include <iostream>\n#include <memory>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Item {\npublic:\n    Item(int id, const string& name) : id(id), name(name) {}\n    int id;\n    string name;\n    bool out = false;\n};\n\nclass Library {\npublic:\n    static Library& getInstance() {\n        static Library only;\n        return only;\n    }\n    void add(int id, const string& name) { shelf.push_back(make_unique<Item>(id, name)); }\n\n    bool borrow(int id) {\n        Item* it = find(id);\n        if (!it || it->out) return false;\n        it->out = true;\n        return true;\n    }\n\n    bool giveBack(int id) {\n        Item* it = find(id);\n        if (!it || !it->out) return false;\n        it->out = false;\n        return true;\n    }\n\n    int outCount() const {\n        return count_if(shelf.begin(), shelf.end(), [](const unique_ptr<Item>& p) { return p->out; });\n    }\n\nprivate:\n    Item* find(int id) {\n        for (auto& it : shelf) if (it->id == id) return it.get();\n        return nullptr;\n    }\n    Library() = default;\n    vector<unique_ptr<Item>> shelf;\n};\n\nint main() {\n    Library& lib = Library::getInstance();\n    lib.add(1, \"鱼干小百科\");\n    lib.add(2, \"猫粮月报\");\n\n    cout << (lib.borrow(2) ? \"办好了\" : \"办不了\") << \" 2\" << endl;\n    cout << (lib.borrow(2) ? \"办好了\" : \"办不了\") << \" 2\" << endl;\n    cout << (lib.giveBack(2) ? \"办好了\" : \"办不了\") << \" 2\" << endl;\n    cout << (lib.giveBack(1) ? \"办好了\" : \"办不了\") << \" 1\" << endl;\n    cout << \"借出去 \" << lib.outCount() << \" 件\" << endl;\n    return 0;\n}",
+      "stem": "这段代码是图书角的一小块：借要按规矩借，还也要按规矩还。它印出来的五行是什么？（一行一行照抄）",
+      "answer": "办好了 2\n办不了 2\n办好了 2\n办不了 1\n借出去 0 件",
+      "accept": ["办好了 2\n办不了 2\n办好了 2\n办不了 1\n借出去 0 件\n"],
+      "explanation": "借还的规矩就写在两句里喵：`borrow` 要看「找到了没有」**和**「已经借出去没有」；`giveBack` 要看「找到了没有」**和**「本来借出去没有」。\n\n- `borrow(2)` 头一次：编号 2 在架 → 「办好了 2」；\n- `borrow(2)` 第二次：它已经借出去了 → 「办不了 2」；\n- `giveBack(2)`：它确实是借出去的 → 「办好了 2」，又回到在架；\n- `giveBack(1)`：编号 1 **从来没借出去过** → 「办不了 1」（没借出去的东西谈不上「还」）；\n- 最后 `outCount()` 挨个问一遍「借出去了吗」，此刻一件都没借出去 → 「借出去 0 件」。\n\n⚠️ 这两句里的两个条件缺一不可：只写「找到了没有」，同一件东西能被借出去无数次，而程序一声不吭。"
+    }
+  ]
+}

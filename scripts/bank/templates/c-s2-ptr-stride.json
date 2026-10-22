@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-ptr-stride",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-01",
+  "type": "codewrite",
+  "concept": ["指针算术", "步长", "指针遍历"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 5, "max": 6 },
+    "step": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n{step}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵把 {n} 只碗一字排开，碗里各放着几条小鱼干。\n\n请你写个程序：\n\n1. 先读进来**两个数**，一个占一行 —— 第一个是碗的只数，第二个是**每次往后跨几只**；\n2. 再一行一个读进来 {n} 个数，就是每只碗里的数；\n3. 然后从第 0 只碗开始，**每跨那么多只报一只**，一直报到这排碗的末尾为止（跨出去就停）。报的格式是 `第 i 只：v`（`i` 是碗的编号，从 0 数起；`v` 是那只碗里的数），一只一行。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[8];\n    int n, step;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &step) != 1) {\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int *p = bowls;\n    for (int i = 0; i < n; i = i + step) {\n        printf(\"第 %d 只：%d\\n\", i, *p);\n        p = p + step;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这道题的关键只有一句：**编号和牌子要同步跨**喵。\n\n- 编号那边：`i = i + step`，所以 `i` 走的是 0、step、2×step……\n- 牌子那边：`p = p + step`，所以 `p` 指的也是第 0 只、第 step 只、第 2×step 只……\n\n两边跨的**必须一样多**。要是编号加了 step、牌子只加 1（或者反过来），报出来的编号和碗里的数当场就对不上 —— 这种错翻译官喵一个字都不会说，只能靠你自己数清楚。\n\n什么时候停？看编号：`i < n` 不成立就收工。所以 n 只碗、每次跨 {step} 只，最后一趟跨出去就自然停住，不会多报也不会漏报。\n\n参考解里就用一个绕圈同时管这两件事，写起来最短；你要是想用两个分开的绕圈也行，只要两边跨的步数一样喵。"
+}

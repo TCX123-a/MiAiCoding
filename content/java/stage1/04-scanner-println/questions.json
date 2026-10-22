@@ -1,0 +1,76 @@
+{
+  "lessonId": "java-stage1-04",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵连着用了两句 `print`（都没换行），最后才来一句 `println`。屏幕上会是什么样？",
+      "options": [
+        "两句 `print` 挤成一行，`println` 那句另起一行",
+        "三行，一句一行",
+        "全部挤在一行里，一行到底",
+        "报错：`print` 不能和 `println` 混着用"
+      ],
+      "answer": 0,
+      "explanation": "`print` 念完**不换行**，所以两句挤在同一行里拼成一串；`println` 念完才顺手换一行喵。想只换行不念字，写空着括号的 `println()` 最干脆。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵用 `sc.nextInt()` 读完数字，紧接着用 `sc.nextLine()` 读名字，结果名字读到了一个空行。该补上什么？",
+      "options": [
+        "在两句中间补一句没有名字的 `sc.nextLine();`，把剩下的换行吃掉",
+        "把 `sc.nextLine()` 换成 `sc.nextInt()`",
+        "把 `Scanner` 的名字从 `sc` 改短一点",
+        "什么都不用补，这是练习台的毛病"
+      ],
+      "answer": 0,
+      "explanation": "`nextInt()` 只把数字叼走，**后面那个换行还留在原地**，`nextLine()` 一伸手就摸到了它，于是汇报「这行是空的」喵。在两句中间补一句没名字的 `sc.nextLine();`，专门把那口换行吃掉，下一句才读得到真名字。这个坑不报错、只给你一个看着很正常的结果，最难查喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "想在 Java 里请出 `Scanner` 小帮手，文件最上面必须先写哪一行？",
+      "options": [
+        "`import java.util.Scanner;`",
+        "`Scanner sc = new Scanner;`",
+        "`use java.util.Scanner;`",
+        "`Scanner sc;`"
+      ],
+      "answer": 0,
+      "explanation": "`Scanner` 住在 `java.util` 那间厢房里，**不写 `import` 点名，它不会自己冒出来**喵。漏了这一行，翻译官喵翻稿子时就报 `cannot find symbol`（不认识这个名字），压根轮不到运行。口诀：先 `import` 点名，再 `new Scanner` 请人，两步缺一不可。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        System.out.print(\"小鱼干\");\n        System.out.print(\"在碗里\");\n        System.out.println();\n        System.out.println(\"开饭啦喵！\");\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小鱼干在碗里\n开饭啦喵！",
+      "accept": ["小鱼干在碗里\n开饭啦喵！\n"],
+      "explanation": "两句 `print` 都不换行，所以 `小鱼干` 和 `在碗里` 挤在同一行里拼成 `小鱼干在碗里`喵；空括号的 `println()` 只把车头调回行首；最后那句 `println` 念完自己换了一行。所以屏幕上正好两行。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(\"5\\n大肥鱼\");\n        int n = sc.nextInt();\n        String name = sc.nextLine();\n        System.out.println(\"名字是[\" + name + \"]\");\n    }\n}",
+      "stem": "这段代码的输出是什么？（方括号是本喵特意加的，就为了让你看清读到的是空是满）",
+      "answer": "名字是[]",
+      "accept": ["名字是[]\n"],
+      "explanation": "`nextInt()` 把 `5` 叼走之后，**后面那个换行还留在纸条上**喵；`nextLine()` 伸手一摸，摸到的就是那口换行，于是老老实实汇报：「这行读完了，内容是空的。」所以方括号里什么也没有——这正是那个经典坑的样子。"
+    },
+    {
+      "id": "q6",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(\"5\\n大肥鱼\");\n        int n = sc.nextInt();\n        ____;\n        String name = sc.nextLine();\n        System.out.println(\"名字是[\" + name + \"]\");\n    }\n}",
+      "stem": "本喵想让方括号里读到 `大肥鱼`，`____` 里该补哪一句？（提示：先读数字再读整行，中间得收拾一下）",
+      "blanks": [
+        { "answer": "sc.nextLine()", "accept": ["sc.nextLine();"] }
+      ],
+      "explanation": "补一句没有名字的 `sc.nextLine();`，专门去**把剩下的那口换行吃掉**喵——它什么也不接住，任务就是把纸条上残留的换行清干净。这样下一句 `sc.nextLine()` 才读得到真正的名字，方括号里就变成 `[大肥鱼]` 了。"
+    }
+  ]
+}

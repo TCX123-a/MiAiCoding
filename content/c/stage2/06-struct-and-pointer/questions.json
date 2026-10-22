@@ -1,0 +1,77 @@
+{
+  "lessonId": "c-stage2-06",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写了一张收牌子的招式 `void feed(struct Cat *c, int n)`，在 `main` 里递的是 `feed(&a, 5);`。招式里那一句把 `c->fish` 改掉之后，外面那只 `a` 会跟着变吗？",
+      "options": [
+        "会变 —— 递进去的是牌子，顺着牌子改的正是外面那只本猫",
+        "不会变 —— 函数拿到的永远是外部变量的副本",
+        "只在函数里面变，一出函数就还原",
+        "要看函数里有没有写 `free`"
+      ],
+      "answer": 0,
+      "explanation": "招式头上那半句写的是 `struct Cat *c`，收的是**牌子**而不是整只猫，所以 `main` 里要递 `&a` 进去。顺着牌子进去改，改的就是外面那只本猫喵。上一课那种「收一整只猫」的招式拿到的才是副本 —— **递牌子 = 改本人，递整只 = 改副本**，这一对差别往后天天要用。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵已经用 `cats[0]` 这种写法把第一只猫**拿出来了**，这会儿想进它的 `fish` 那一格，该用箭头还是点号？",
+      "options": [
+        "点号 —— 拿出来的是真猫，进真猫的格用点号",
+        "箭头 —— 只要跟一排猫打交道就得用箭头",
+        "两种写法随便用，编译器都认",
+        "要看这只猫是不是现要现租来的"
+      ],
+      "answer": 0,
+      "explanation": "`cats[0]` 这一步已经把第一只猫**本身**拿在手上了，手上是只真猫，进门当然用点号喵（课文里那两句就是 `cats[0].fish` / `cats[1].fish`）。箭头是留给牌子的：手上捏的是牌子，才用 `->`。**箭头配牌子，点号配真猫** —— 这条应验过好几回了。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵手滑写成 `*p.fish`，翻译官喵报的是 `'p' is a pointer; did you mean to use '->'?`。它凭什么猜到本喵想写的是箭头？",
+      "options": [
+        "因为点号排在星星前面，这一句会被读成先取 `p.fish` —— 可牌子身上没有那一格",
+        "因为它看见本喵上一行忘了写分号",
+        "因为这块牌子还没指任何地方",
+        "因为 `malloc` 前面少了那半句补写种类的写法"
+      ],
+      "answer": 0,
+      "explanation": "C 的排队规矩里**点号排在星星前面**，所以 `*p.fish` 会被读成「先取 `p.fish`、再给结果加颗星」喵。可 `p` 是一块牌子，牌子身上根本没有 `fish` 那一格 —— 翻译官喵于是就猜：你其实是想顺着牌子进那一格吧？它还顺手在底下把 `->` 指给你看。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat *p = (struct Cat *)____(sizeof(struct Cat));\n\n    if (p == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 1;\n    }\n    p->____ = 7;\n    printf(\"%d\\n\", p->fish);\n    free(p);\n    p = NULL;\n    return 0;\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出），补上之后它会印出 `7` 喵。",
+      "blanks": [
+        { "answer": "malloc", "accept": [] },
+        { "answer": "fish", "accept": [] }
+      ],
+      "explanation": "第一处是伸手租仓库的那一招，先拿尺子量一张图纸多大（`sizeof(struct Cat)`）再租这么多格喵。第二处：本喵要往这只租来的猫身上填鱼干数，填的是 `fish` 那一格，所以底下那句才读得出来 7。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nvoid feed(struct Cat *c, int n) {\n    c->fish = c->fish + n;\n}\n\nint main(void) {\n    struct Cat a = {\"小橘\", 3};\n\n    feed(&a, 5);\n    printf(\"%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘 吃了 8 条喵",
+      "accept": ["小橘 吃了 8 条喵\n"],
+      "explanation": "招式收的是牌子，`main` 里递的是 `&a`，所以招式里那句 `c->fish = c->fish + n;` 改到的正是外面那只小橘喵。3 加上 5 就是 8 —— 递牌子改的是本人，改完再回头念 `a.fish`，读到的是改过之后的值。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat cats[3] = {\n        {\"小橘\", 3},\n        {\"狸花\", 5},\n        {\"大肥鱼\", 9}\n    };\n    struct Cat *p = cats;\n    int total = 0;\n\n    for (int i = 0; i < 3; i++) {\n        total = total + p->fish;\n        p++;\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "一共 17 条喵",
+      "accept": ["一共 17 条喵\n"],
+      "explanation": "一排猫的名字交出来的时候，交的就是**第一只猫的门牌号**，所以牌子一生出来就指着第一只喵。`p++` 让牌子往后挪，挪的距离是一整只猫那么宽，三趟正好把三只都走过一遍；`total` 一路加的是 3、5、9，加起来 17。"
+    }
+  ]
+}

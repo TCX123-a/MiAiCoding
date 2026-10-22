@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-concat-uncaught",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-07",
+  "type": "codefix",
+  "concept": ["项链焊死了", "concat 叼回新项链", "没接住", "不报错的错"],
+  "instances": 2,
+  "params": {
+    "head": { "kind": "pick", "values": ["小鱼干", "小橘"] },
+    "tail": { "kind": "pick", "values": ["喵", "汪汪喵"] }
+  },
+  "stemTemplate": "本喵想让项链接长一点 —— 程序**跑起来了**，屏幕上连一行红字都没有，可印出来的还是原来那一条，接上去的那段**不知去向**。\n\n规矩是这样的：项链生出来就**焊死了**，`concat` 这种接一段的招式**碰都不碰原来那条**，它叼回来的是一条**新项链**。本喵没接住，那条新项链就在窝里躺着没人管。\n\n请你帮本喵改好，规矩是：**让下面印出来的 `s` 真的变成接长之后的那一条**。\n\n改好之后，程序该印出两行：\n\n1. 第一行是接上 `{tail}` 之后的**整条**项链；\n2. 第二行是这条项链的**颗数**。\n\n只有接项链那一行的问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        String s = \"{head}\";\n        s.concat(\"{tail}\");\n        System.out.println(s);\n        System.out.println(s.length());\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        String s = \"{head}\";\n        s = s.concat(\"{tail}\");\n        System.out.println(s);\n        System.out.println(s.length());\n    }\n}\n",
+  "explanationTemplate": "这一题是本课**最阴**的那一类：**翻译官喵一个字都没说。**\n\n它跟上一题正好是一对：上一题稿子都过不了关，这一题**跑得顺顺当当**，两行输出照印不误 —— 只不过印的是**错的那个答案**。这种错没有红字替你报警，只能靠本喵自己盯住。\n\n错在哪？`s.concat(\"{tail}\")` 这一句确实干完了活：它**串出了一条新项链**，上面是 `{head}` 接上 `{tail}`。可这条新项链**谁也没接着**，它被当场丢在窝里；`s` 这个名字还牢牢指着**原来那条**。所以下面两行印的是老样子。\n\n正路是把叼回来的新项链**接住**：\n\n```java\ns = s.concat(\"{tail}\");\n```\n\n右半边先算，串出新项链；再把 `s` 这个名字挪过去指它。\n\n（另一种同样对的写法是压根不换名字，直接把 `s.concat(\"{tail}\")` 塞进要用的地方，比如拼在 `System.out.println` 里面 —— 只要**把叼回来的那条真用上**就行。）\n\n记住这条：**项链上的 `concat` / `substring` / `toUpperCase` 都是「叼一条新的回来」，不是「就地改」。** 叼回来的东西不接住，就等于白喊了一声。"
+}

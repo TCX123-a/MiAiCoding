@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-led-commit-missing",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-15",
+  "type": "codefix",
+  "concept": ["commit 拍板", "没拍板就白塞", "程序不报错"],
+  "instances": 2,
+  "params": {
+    "item": { "kind": "pick", "values": ["小鱼干", "猫罐头"] },
+    "amt": { "kind": "pick", "values": ["12.5", "7.5"] }
+  },
+  "stemTemplate": "本喵往小账柜里塞了一笔账（`{item}`，{amt} 元），然后把柜子关掉、**重新打开**再看一眼。\n\n结果柜子是空的：\n\n```text\n重新打开，柜子里有 0 笔\n```\n\n程序**一点错都没报**，安安静静就跑完了。本喵明明塞进去了啊？\n\n你补上缺的那一句。改好以后该印：\n\n```text\n重新打开，柜子里有 1 笔\n```\n\n（「重新打开」那几行不许动 —— 本喵要的是**关了再开还在**，不是在同一次连接里自己看自己。）",
+  "brokenCodeTemplate": "import os, sqlite3, tempfile\n\n路径 = os.path.join(tempfile.mkdtemp(), \"账本.db\")\n\n连接 = sqlite3.connect(路径)\n连接.execute(\"CREATE TABLE 账本 (项目 TEXT, 金额 REAL)\")\n连接.execute(\"INSERT INTO 账本 VALUES (?, ?)\", (\"{item}\", {amt}))\n连接.close()\n\n再看 = sqlite3.connect(路径)\n几笔 = 再看.execute(\"SELECT COUNT(*) FROM 账本\").fetchone()[0]\nprint(\"重新打开，柜子里有\", 几笔, \"笔\")\n再看.close()\n",
+  "referenceFixTemplate": "import os, sqlite3, tempfile\n\n路径 = os.path.join(tempfile.mkdtemp(), \"账本.db\")\n\n连接 = sqlite3.connect(路径)\n连接.execute(\"CREATE TABLE 账本 (项目 TEXT, 金额 REAL)\")\n连接.execute(\"INSERT INTO 账本 VALUES (?, ?)\", (\"{item}\", {amt}))\n连接.commit()\n连接.close()\n\n再看 = sqlite3.connect(路径)\n几笔 = 再看.execute(\"SELECT COUNT(*) FROM 账本\").fetchone()[0]\nprint(\"重新打开，柜子里有\", 几笔, \"笔\")\n再看.close()\n",
+  "explanationTemplate": "缺的就是那句**拍板**：\n\n```text\n连接.commit()\n```\n\n本喵把「塞一行」和「拍板」这两步讲清楚喵：`INSERT` 那一句只是把这一行**摆在桌上**了 —— 同桌的（同一次连接里的）能看见，可它还没**落定**。到 `commit()` 那一句才算真的落定，写进柜子本体里。\n\n⚠️ 最关键的一点：**漏了它，程序不会报错**。\n\n它安安静静跑完，你只会觉得「本喵明明记过啊」。而且更坑的是：**在同一次连接里自己看自己，那笔账是看得见的** —— 因为摆桌上的东西自己当然看得见。要发现它，你得**关了再打开**。本喵这一题特意写成「重新打开」，就是为了逼出真相喵。\n\n所以记法就一句：**塞完就拍板**。这一课的两条路都一样 —— 小账柜这边是 `commit()`，写成一页纸那边是那个 `with open(...)` 说完就关，关上就算数。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-08-channel-roundtrip",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-08",
+  "type": "codewrite",
+  "concept": ["管子灌字节", "货舱装字节", "拨书签再念"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "c1": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵要用**管子 + 货舱**这套家什，把 `{n1} {c1} 条` 这串字搬进文件、再搬回来念。\n\n请你写个程序，照这个次序做：\n\n1. 撕一张门牌（文件叫 `鱼塘.txt`）；\n2. 开一根**往里灌**的管子：文件不在就建一个（`CREATE`）、这一头是灌的（`WRITE`）；\n3. 把那串字按 UTF-8 变成字节、糊一只货舱，整趟灌进去，然后**收工**；\n4. 换一根**往外拉**的管子（`READ`）：先照它的 `size()` 备一只正好装得下的货舱，把字节拉进来，再把**书签拨回第一格**；\n5. 印一行 `念到：` 后面接拼回来的那串字 —— 从书签现在的位置起、取还剩的那些字节、按 UTF-8 拼回一串字。\n\n跑完屏幕上该是 `念到：{n1} {c1} 条` 喵。\n\n（这一题**不用投喂任何东西**：开门、灌、拉、念都在程序里一次做完。）",
+  "starterTemplate": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"{n1} {c1} 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+  "explanationTemplate": "**一、管子得自己开自己收，货舱得自己备。** `FileChannel.open(门牌, 规矩...)` 开管子，后面那串是**开门的规矩**：`CREATE`（不在就建）、`WRITE`（这一头往里灌）、`READ`（这一头往外拉）。管子不是「一口气」那一路的家什，所以本喵**必须自己 `close()` 收工**。\n\n**二、管子里走的是字节，所以中间要过一道字典。** `\"{n1} {c1} 条\".getBytes(StandardCharsets.UTF_8)` 把一串字变成字节们，`ByteBuffer.wrap(字节们)` 拿它糊一只货舱 —— 灌的那一头就备好了。\n\n**三、书签是这套家什最容易翻车的地方。** 拉完字节，书签停在末尾（意思是「本喵写到这儿了」）；要念，就得 `flip()` 把它**拨回第一格**，这时候 `position()` 是 `0`、`remaining()` 是刚拉进来的那一整排。本喵那句长长的拼字读作「从书签现在的位置起，取还剩的这些字节，按 UTF-8 拼回一串字」—— 记住**念之前先拨**，这一脚就不会摔。\n\n**四、备货舱照 `入口.size()` 最省事。** `size()` 报管子里那头一共几个字节，照它 `allocate` 一只**正好装得下**的货舱，一趟就能拉完，不多不少。"
+}

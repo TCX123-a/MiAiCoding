@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-led-json-not-serializable",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-15",
+  "type": "codefix",
+  "concept": ["json 只认简单东西", "摆成能进纸的样子", "图纸不给删"],
+  "instances": 2,
+  "params": {
+    "item": { "kind": "pick", "values": ["小鱼干", "冻干"] },
+    "amt": { "kind": "pick", "values": ["12.5", "7.5"] }
+  },
+  "stemTemplate": "本喵要把一笔账写进一页纸里，结果程序当场躺下，报的是「**这种东西本喵摆不进纸里**」。\n\n你把它改成「**先把这一笔账摆成能进纸的样子，再递给它**」。\n\n⚠️ 两条规矩：\n\n- 图纸那张**不许删**（本喵还要用它记别的账），也不许改成别的样子。\n- 递进去的样子是**一行、一对中括号**：中括号里先放项目那串字（**带引号**），再放金额，中间一个逗号，跟下面这行一模一样：\n\n```text\n[\"{item}\", {amt}]\n```",
+  "brokenCodeTemplate": "import json\n\n\nclass 一笔账:\n    def __init__(self, 项目, 金额):\n        self.项目 = 项目\n        self.金额 = 金额\n\n\nprint(json.dumps(一笔账(\"{item}\", {amt})))\n",
+  "referenceFixTemplate": "import json\n\n\nclass 一笔账:\n    def __init__(self, 项目, 金额):\n        self.项目 = 项目\n        self.金额 = 金额\n\n\n账 = 一笔账(\"{item}\", {amt})\nprint(json.dumps([账.项目, 账.金额], ensure_ascii=False))\n",
+  "explanationTemplate": "一页纸只认**简简单单的东西**：一串字、一个数、真/假、空的记号，以及由它们一层层摞起来的摞和格子。照图纸生出来的真猫它不认，所以当场回你一句：\n\n```text\nTypeError: Object of type 一笔账 is not JSON serializable\n```\n\n念作「**这种东西本喵摆不进纸里**」。注意它不是说「你没有权限」或者「柜子坏了」—— 是这一样东西**根本不在它认得的名单上**。\n\n改法分两步：**先把这一笔账拆成它认得的两样，再递进去**。\n\n```text\n账 = 一笔账(\"{item}\", {amt})\njson.dumps([账.项目, 账.金额])\n```\n\n拆出来的两样，一样是那串字、一样是那个数，都在名单上，于是顺顺当当进了纸里。\n\n本喵把这条经验留给你：**要存的东西越简单越稳**。一笔一笔的账本来就是「一串字 + 一个数」，那就照这个样子存；**别把带着一堆本事的真猫整只塞进去** —— 就算哪天能塞了，读回来的也不再是原来那只喵。"
+}

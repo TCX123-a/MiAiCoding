@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-guarded-ledger",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-01",
+  "type": "codewrite",
+  "concept": ["带盖的小鱼干盒", "小窗", "门口的规矩", "Scanner"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": -4, "max": 9 },
+  "stemTemplate": "本喵要一张**带盖子的鱼干盒图纸**喵。家当只留两样：名字、账上的鱼干数。\n\n盖子扣好，只开两扇小窗：一扇读名字，一扇读账上的数。**另有一扇写的小窗**，规矩写死在窗口：\n\n- 递进来的数**小于 0** → 不收，只印一句 `鱼干数不能是负的喵`，账本上**一个数都不许动**\n- 别的数 → 照收\n\n投喂给程序的纸上：**第一个数是「后面还有几笔」**，接着正好那么多行，一行一个数。每一笔都从写的那扇小窗递进去。\n\n所有笔都过完，最后印一行账：**名字**、` 有 `、**账上最后记着的那个数**、` 条小鱼干喵`，拼起来。\n\n家当一定要**盖上盖子**，里面那两个数只许小窗进、只许小窗出喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\nclass Cat {\n\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass Cat {\n    private String name;\n    private int fish;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n\n    public int getFish() {\n        return fish;\n    }\n\n    public void setFish(int fish) {\n        if (fish < 0) {\n            System.out.println(\"鱼干数不能是负的喵\");\n            return;\n        }\n        this.fish = fish;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        Cat c = new Cat(\"{name}\");\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            c.setFish(sc.nextInt());\n        }\n        System.out.println(c.getName() + \" 有 \" + c.getFish() + \" 条小鱼干喵\");\n    }\n}\n",
+  "explanationTemplate": "这题考的就是本课那句话：**外面碰不到里面的数，一切走小窗**喵。\n\n图纸分三段：\n\n1. **家当**：`private String name;` 和 `private int fish;` —— 两个都盖着盖子。盖子的意思是「只有这张图纸里的招式伸得进手」，`main` 在外面，它碰不到。\n2. **出生那一手**：把名字记下来，账上的数自己不写，天然就是 0。\n3. **三扇小窗**：读名字的 `getName`、读账的 `getFish`、记账的 `setFish`。前两扇只管把数递出去，第三扇才是关键 —— 它既是「入口」也是「关口」。\n\n`setFish` 里那三步是本题的关节：\n\n- `if (fish < 0)` 先看一眼递进来的数；\n- 撞上负数就印牌子、然后 `return;` —— **这个 `return` 让这条招式当场收工**，下面那行记账的话根本轮不到执行；少写它，牌子印了、坏账照样进来，等于白立牌子喵；\n- 剩下的数才轮到 `this.fish = fish;`。\n\n`main` 那边就三件事：先读第一个数当笔数，再让圈子跑那么多趟、每趟读一个数从小窗递进去，最后把名字和账拼起来印一行。\n\n顺手记：**账本上最后记着的是「最后一笔收下的数」** —— 这扇小窗是「改写成新的数」，不是往上面添。想添的话，得在招式里写 `fish = fish + n;` 那样的话喵。"
+}

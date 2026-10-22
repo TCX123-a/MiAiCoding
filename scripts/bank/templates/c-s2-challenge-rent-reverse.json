@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-challenge-rent-reverse",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-15",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "现要现租的仓库", "用多少租多少", "倒着念"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 2, "max": 30 },
+  "stemTemplate": "本喵这次不提前摆碗了，改用**现要现租的仓库**喵：说要几格就临时租几格，用完了还回去。\n\n投喂口先给一个数（要租几格），再一格一格给数。请你写个程序：\n\n1. 按投喂的格数**现租**一个仓库 —— 租多大由那个数说了算，一格不多、一格不少；\n2. 把数一格一格收进去；\n3. 从**最后一格**开始倒着念：`第 X 号收 %d 条喵`（X 是格子号，从 1 数起）；\n4. 念完报总数 `一共 %d 条喵`；\n5. 收工前**把仓库还回去**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。租仓库、还仓库这两步一个都不能少 —— 少一步本喵下次就租不到了。）",
+  "starterTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int *fish = malloc(sizeof(int) * n);\n    if (fish == NULL) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &fish[i]) != 1) {\n            free(fish);\n            return 1;\n        }\n    }\n\n    int total = 0;\n    for (int i = n - 1; i >= 0; i--) {\n        printf(\"第 %d 号收 %d 条喵\\n\", i + 1, fish[i]);\n        total = total + fish[i];\n    }\n    printf(\"一共 %d 条喵\\n\", total);\n\n    free(fish);\n    return 0;\n}\n",
+  "explanationTemplate": "这题把「现要现租的仓库」的三步都走了一遍喵：**租 → 用 → 还**。\n\n**一、租。** `malloc(sizeof(int) * n)` 的意思是：本喵要连着 n 格、每格都放得下一个整数的地皮。它还给本喵一个牌子（就是那块地的**第 0 格的牌子**）—— 之后拿牌子加下标就能摸到任何一格：`fish[i]`。牌子本身类型要写对：装整数地皮的牌子上写的是 `int *`。\n\n**二、用。** 收数和念数跟普通的一排碗一模一样，区别只是这排碗是租来的。注意 `fish == NULL` 那一问不是客套：地皮要不到的时候它真的会给回一个「空牌子」，拿空牌子去写东西会当场塌方。\n\n**三、还。** `free(fish)` 只需要还一次 —— 还的是那块地的**开头**。租来的地**不会自己飞回去**，程序结束前不还，就等于一直占着。\n\n还有一处小讲究：倒着念的时候 `i` 从 `n - 1` 走到 0，圈的条件写 `i >= 0`（写成 `i > 0` 会漏掉第 0 格）。"
+}

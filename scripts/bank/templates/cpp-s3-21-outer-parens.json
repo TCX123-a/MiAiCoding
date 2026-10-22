@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-21-outer-parens",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-21",
+  "type": "codefix",
+  "concept": ["整个身子外面那一层括号", "内层套了不代表外层套了", "被旁边的运算抢走"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stemTemplate": "本喵给翻译官喵递了张条子（宏）：`#define PLUS_ONE(x) (x) + 1` —— 意思是「喂它一个数，它把那个数加一」。\n\n本喵想的是「**先加一、再乘二**」，可第一行印出来的**小了一截**。第二行倒是看着没错。\n\n它跑得起来，翻译官喵一句抱怨都没有 —— 条子上该套的地方看着都套了，可**外面还缺一层**。\n\n你帮本喵把条子改好：改完跑起来，第一行要正好是（{n} + 1）乘 2，第二行要正好是 {n} + 1 喵。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\n#define PLUS_ONE(x) (x) + 1\n\nint main() {\n    cout << PLUS_ONE({n}) * 2 << endl;\n    cout << PLUS_ONE({n}) << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\n#define PLUS_ONE(x) ((x) + 1)\n\nint main() {\n    cout << PLUS_ONE({n}) * 2 << endl;\n    cout << PLUS_ONE({n}) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "条子上写的是 `(x) + 1` —— 本喵把 `x` 那一层套上了，可**整个身子外面那一层忘了套**。\n\n换字之后第一行长这样：\n\n```\n({n}) + 1 * 2\n```\n\n先乘后加：`1 * 2` 先算成 2，然后才轮到加 —— 于是第一行印出来的是 {n} 加 2 那个数，而本喵心里那个是「{n} 加 1 之后再乘 2」。第二行为什么看着没错？因为它后面没有跟着别的运算，缺的那层括号还没轮到出场。\n\n改法：**整个身子外面再套一层。**\n\n```\n#define PLUS_ONE(x) ((x) + 1)\n```\n\n一句话记牢喵：**投喂口各一层，身子再一层。** 少了外面那层，条子换完之后会被旁边的运算「抢走」，而当时屏幕上那两行看着都挺正常 —— 这种错最需要你自己盯住。"
+}

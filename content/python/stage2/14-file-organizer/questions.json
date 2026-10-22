@@ -1,0 +1,83 @@
+{
+  "lessonId": "python-stage2-14",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "拼一样东西的完整位置时，本喵该用 `os.path.join(抽屉, 名字)`，而不是自己拿加号拼 —— 为什么？",
+      "options": [
+        "它会按当前这台机器的脾气自动用对的分隔号，本喵不用去记到底是哪种斜杠",
+        "加号拼不了两段字，写了会当场报错",
+        "`os.path.join` 会顺手检查那样东西在不在",
+        "它会自动帮名字补上后缀"
+      ],
+      "answer": 0,
+      "explanation": "不同的系统分隔号长得不一样，自己拿加号拼就得**先知道对面是哪台机器**，拼错了本喵还未必看得出来喵。`os.path.join(抽屉, 名字)` 把这件事揽过去了：本喵只管把要拼的几段交出去，它按本机的脾气拼好。它**不检查东西在不在**（那是 `os.path.exists` 的活），也**不会补后缀**。至于说「加号拼不了字」，那是记岔了 —— 加号能拼，只是拼出来的分隔号不一定对喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`os.path.splitext(\"猫1.txt\")` 会交出什么？",
+      "options": [
+        "一对东西：主体 `'猫1'` 和后缀 `'.txt'`",
+        "一段字：`'猫1'`",
+        "一个数字：这个名字一共有几个字",
+        "一对东西：`'猫1.txt'` 和 `'.txt'`"
+      ],
+      "answer": 0,
+      "explanation": "它交出的**永远是一对**：前面是主体 —— 名字里去掉后缀的那一段；后面是后缀 —— 带着那个小数点，所以是 `'.txt'` 不是 `'txt'`喵。这样拆开，本喵就能「只改主体、后缀原样接回去」，改名之后东西还是能被别的程序认得。要是名字本身就没有后缀（比如「鱼干」），后半截会是一个**空的一段**，本喵拿它当「这东西没后缀」的记号喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "整理抽屉时，本喵在搬每一样东西之前先问一句 `os.path.isfile(完整路径)`，不是东西就 `continue`。这一关是为了挡住什么？",
+      "options": [
+        "挡住那些小抽屉：它们也躺在抽屉里，可它们不是文件，跟着一起搬会越弄越乱",
+        "挡住名字太长、系统存不下的东西",
+        "挡住后缀不是 `.jpg` 的东西",
+        "挡住本喵自己没有权限去动的东西"
+      ],
+      "answer": 0,
+      "explanation": "按名字报一圈的时候，**子抽屉也会被报出来**，它和文件长得一样都是个名字喵。可抽屉不是东西：把抽屉也「搬」进分类小抽屉里，里面装的东西**跟着一起挪窝**，本喵再逛一遍就全乱了。`os.path.isfile` 问的正是「你是一样**东西**吗」，答不是的就 `continue` 跳过。至于按后缀挑（那是 `endswith` 的活）、名字长短、有没有权限，都是另外的事喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "stem": "这段代码要把抽屉里的东西都改名成 `鱼干01.txt` 这种样子。两个空该分别填什么？",
+      "lang": "python",
+      "code": "import os, shutil\n\n工作台 = \"小工作台\"\nif os.path.exists(工作台):\n    shutil.rmtree(工作台)\nos.makedirs(工作台)\nfor 名字 in [\"a.txt\", \"b.txt\"]:\n    with open(os.path.join(工作台, 名字), \"w\", encoding=\"utf-8\") as 档案:\n        档案.write(\"x\")\n\n序号 = 0\nfor 名字 in sorted(os.listdir(工作台)):\n    序号 = 序号 + 1\n    主体, 后缀 = os.path.____(名字)\n    os.____(os.path.join(工作台, 名字), os.path.join(工作台, f\"鱼干{序号:02d}{后缀}\"))\n\nprint(sorted(os.listdir(工作台)))\n",
+      "blanks": [
+        {
+          "answer": "splitext",
+          "accept": ["splitext"]
+        },
+        {
+          "answer": "rename",
+          "accept": ["rename"]
+        }
+      ],
+      "explanation": "第一个空要把名字**拆成主体和后缀两样**，用的是 `os.path.splitext` —— 拆开之后后缀单独揣在手里，拼新名字的时候才能原样接回去，东西不至于打不开喵。第二个空是**搬家兼改名**的动作，用的是 `os.rename`：老位置、新位置两样喂进去。填好之后跑出来是 `['鱼干01.txt', '鱼干02.txt']` —— 先是报数、再拆后缀、最后搬家，顺序一步都不能少喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "import os\nprint(os.path.splitext(\"猫1.txt\"))\nprint(os.path.splitext(\"鱼干\"))\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "('猫1', '.txt')\n('鱼干', '')",
+      "accept": ["('猫1', '.txt')\n('鱼干', '')\n"],
+      "explanation": "`os.path.splitext` 每次都交出一对东西，所以两行都印成一个**带圆括号的一对**喵。第一对是主体 `'猫1'` 和后缀 `'.txt'` —— 注意后缀**带着那个小数点**。第二个名字「鱼干」没有后缀，后半截就是一个**空的一段**，印出来是 `''`（一对空引号，里面什么都没有）。认住这个空的一段：它就是在说「这东西没后缀」喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "import os, shutil\n\n工作台 = \"小工作台\"\nif os.path.exists(工作台):\n    shutil.rmtree(工作台)\nos.makedirs(工作台)\nfor 名字 in [\"猫1.txt\", \"猫2.txt\"]:\n    with open(os.path.join(工作台, 名字), \"w\", encoding=\"utf-8\") as 档案:\n        档案.write(\"x\")\n\n序号 = 0\nfor 名字 in sorted(os.listdir(工作台)):\n    序号 = 序号 + 1\n    主体, 后缀 = os.path.splitext(名字)\n    os.rename(os.path.join(工作台, 名字), os.path.join(工作台, f\"鱼干{序号:02d}{后缀}\"))\n\nprint(sorted(os.listdir(工作台)))\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "['鱼干01.txt', '鱼干02.txt']",
+      "accept": ["['鱼干01.txt', '鱼干02.txt']\n"],
+      "explanation": "开头先把演示用的小抽屉**清干净重搭**（这就是为什么本喵每次跑都看到一样的结果），再铺两个东西进去喵。接着按名字排排坐，一个一个来：`猫1.txt` 第一个轮到，序号变 1，主体是「猫1」、后缀是「.txt」，新名字拼出来是 `鱼干01.txt`；第二个同理变成 `鱼干02.txt`。注意 `{序号:02d}` 让 1 补成了 `01` —— 这正是为了排排坐时顺序不乱喵。最后报一圈名字，就是这两个新名字。"
+    }
+  ]
+}

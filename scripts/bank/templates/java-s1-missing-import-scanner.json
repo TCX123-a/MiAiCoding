@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s1-missing-import-scanner",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-16",
+  "type": "codefix",
+  "concept": ["import", "java.util", "Scanner", "编译错误"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫罐头", "冻干块"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵写了个小程序，想读一读外面投喂进来的数喵。可翻译官喵一脸茫然，丢下一句 `cannot find symbol`（找不到这个符号）就走开了……\n\n你帮本喵看看它为什么找不到，把它改好。改好之后，程序应该把读进来的那 {n} 个数加起来，印出一共多少条{unit}。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵～）",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        for (int i = 0; i < n; i++) {\n            total += sc.nextInt();\n        }\n        System.out.println(\"一共 \" + total + \" 条{unit}\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int total = 0;\n        for (int i = 0; i < n; i++) {\n            total += sc.nextInt();\n        }\n        System.out.println(\"一共 \" + total + \" 条{unit}\");\n    }\n}\n",
+  "explanationTemplate": "`cannot find symbol` 翻过来就是「**本喵找不到这个符号**」喵。\n\n翻译官喵自带的图纸成千上万张，可它们是**按箱子分开放的**。它不会挨只箱子替你翻 —— 你得明确告诉它：去这只箱子拿。`Scanner` 住在 `java.util` 这只外卖箱里，所以要请它出场，就得在文件最上面写一行 `import java.util.Scanner;`。\n\n⚠️ 这里有个特别坑的地方：**报错指的那一行，是你「用」它的那一行，不是你漏写的那一行。** 看到「找不到这个符号」，眼光要往**文件最上面**跑，看看是不是压根没请。\n\n不写 `import` 也行喵 —— 每次都写全名 `java.util.Scanner` 照样跑得欢，`import` 只负责省字。（另外还有一只箱子叫 `java.lang`，那是贴身箱子，里面的东西永远不用打招呼。）"
+}

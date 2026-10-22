@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-20-argv-guard-missing",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-20",
+  "type": "codefix",
+  "concept": ["伸手之前先数递了几样", "一个词都没递就够了个空", "没递词照默认目标办", "argc 连名字自己一起数"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["build", "clean"] },
+    "d": { "kind": "pick", "values": ["all", "tidy"] }
+  },
+  "stemTemplate": "按图纸上的规矩，这个小工头要从**命令行**屁股后头收一个词（这趟要干什么活），收到就照着分活。问题出在：**一个词都没递**的时候，它看也不看就伸手去够那个词 —— 够了个空，当场摔在台上：**程序崩了，一个字都没印出来**。\n\n本喵的规矩：伸手之前先数**递了几样**（`argc`）—— 连名字自己一共只递了一样（小于 `2`），就说明一个词都没多，先别伸手：老老实实照**默认目标**办。请你把这道守卫补上（别的都别动）。改好之后该印一行：没递词，照默认的来：{d}。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 规矩：递了词就照着分活；一个词都没递，照默认目标办。 */\nint main(int argc, char *argv[]) {\n    /* 看也不看就伸手去够这个词 */\n    if (strcmp(argv[1], \"{w}\") == 0) {\n        printf(\"{w}：这就动手\\n\");\n    } else {\n        printf(\"%s：照别的来\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 规矩：递了词就照着分活；一个词都没递，照默认目标办。 */\nint main(int argc, char *argv[]) {\n    /* 伸手之前先数递了几样 */\n    if (argc < 2) {\n        printf(\"没递词，照默认的来：{d}\\n\");\n        return 0;\n    }\n    if (strcmp(argv[1], \"{w}\") == 0) {\n        printf(\"{w}：这就动手\\n\");\n    } else {\n        printf(\"%s：照别的来\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "空着手的时候伸手，够到的是一个**空位**喵 —— `argv[1]` 那里什么都没有，机器一碰就当场摔了，一个字都没来得及印。\n\n规矩是：**伸手之前先数数**。`argc` 这个数连名字自己一起算：只有名字一样，就是 `1`；屁股后面跟了一个词，就是 `2`。所以先问一句「够不够 `2`」——不够，就是一个词都没递：\n\n```text\nif (argc < 2) {\n    /* 没递词：照默认目标办，然后交代顺利 */\n    return 0;\n}\n```\n\n顺一遍图纸思维喵：这就是一条**规矩**——「条件：递没递词」对「动作：没递就报默认目标」。图纸上那张单子一条一条读下来，读的顺序就是干活的顺序；守卫写在前头，后面的分活才能安心伸手。\n\n再记一件事：没递词本身**不算出错**——人家只是没说话，小工头该照默认的办、然后交代顺利（`return 0`）；把「没递词」当成「出事了」，图纸就得停。"
+}

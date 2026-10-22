@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-ut-float-eq",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-20",
+  "type": "codefix",
+  "concept": ["两个小数不能拿等号硬比", "判据该问「近到可以当一样吗」", "先取差的大小，再和允许的误差比"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "pick", "values": ["两条加起来", "两笔加起来"] }
+  },
+  "stemTemplate": "本喵这只体检台给小数准备了一条判据，可它一跑就印了个「红」字 —— `0.1 + 0.2` 和 `0.3` 本该算相等，它偏说不等喵。\n\n毛病就在判据那一行的写法上：它拿**等号**去比两个小数了。请你把它改到印出**一行**：\n\n```text\n绿 {n}\n```\n\n- 那一行报的是**这一项的名字**（本喵写在门口那行调用里了）；\n- 判据收的三样东西（名字、叼回来的、该是的）一个都别动，门口那行调用也别动。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "public class Main {\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        if (叼回来 == 该是) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            System.out.println(\"红 \" + 名字);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"{n}\", 0.1 + 0.2, 0.3);\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    static void 查接近(String 名字, double 叼回来, double 该是) {\n        if (Math.abs(叼回来 - 该是) < 1e-9) {\n            System.out.println(\"绿 \" + 名字);\n        } else {\n            System.out.println(\"红 \" + 名字);\n        }\n    }\n\n    public static void main(String[] args) {\n        查接近(\"{n}\", 0.1 + 0.2, 0.3);\n    }\n}\n",
+  "explanationTemplate": "**一、为什么拿等号比不成立。** `0.1 + 0.2` 叼回来的其实是 `0.30000000000000004` —— 小数在机器里存不成精确的比例，末尾会多出一丁点喵。等号问的是「**一模一样吗**」，差着那一丁点，答案就是「不」。\n\n**二、判据真正该问的。** 不是「一模一样吗」，是「**近到可以当一样吗**」。所以那一行不该写等号，该写「两边差得够不够小」：先拿 `Math.abs` 把差的大小取出来（差有正负，判据只关心远近），再和本喵允许的那一点误差 `1e-9` 比。\n\n**三、改完真跑过。** 屏幕上印的是「绿 」接这一项的名字 —— 那一丁点误差被放行了。\n\n一句话记住：**凡是两个小数，先问一句「本喵允许差多少」，把这句话写进那一行。**"
+}

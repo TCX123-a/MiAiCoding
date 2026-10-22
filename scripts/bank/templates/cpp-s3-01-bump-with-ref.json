@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-01-bump-with-ref",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-01",
+  "type": "codewrite",
+  "concept": ["要改柜子得拿到那一格本人", "名字前面加 &", "先全改完再印"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "k": { "kind": "pick", "values": [3, 5] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要给柜子里的货**每一格都加上 {k}** 喵。投喂口会**先给一个数**（要跟着几个数），**再一只一只给 {n} 个数**。\n\n请你写个程序：\n\n1. 把这 {n} 个数**一格一个**塞进柜子；\n2. 再走一圈，**给每一格都加上 {k}** —— 走完这一圈，柜子里的货就该变了（不是只把加出来的数印一下）；\n3. 最后走一圈，**一格印一行**（印的是加完之后柜子里的货）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<int> v;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        v.push_back(x);\n    }\n\n    for (int &x : v) {\n        x = x + {k};\n    }\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的重点是**要改柜子，就得拿到那一格本人**喵。\n\n改货那一圈里，那个名字前面必须有一个 `&`：\n\n`for (int &x : v)`\n\n那个 `&` 的意思是「**这个名字就是柜子里那一格本人**」。少了它（写成 `for (int x : v)`），拿到的是**从柜子里捞出来的一份副本** —— 改副本地上的货，柜子里那一份纹丝不动，而**翻译官喵一个字都不说**：编得过、跑得完，只是白改一圈。\n\n⚠️ 这一题要求**改和印分两趟**：先把每一格都改完，再从头走一圈印出来。要是边改边印，印出来的虽然也对得上，但那是「改到哪印到哪」的写法 —— 题目要的是「全改完之后柜子里的样子」，两趟写最稳，也最好读。\n\n⚠️ 加的是 **{k}**，别多加也别少加；判分喂的那组数跟样例不一样。"
+}

@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s2-student-two-blueprints",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-15",
+  "type": "codewrite",
+  "concept": ["大图纸与小图纸", "extends 认亲与 super(...)", "盖掉那一招再请它出手", "一个柜子收两样东西"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["大肥鱼", "小黑"] },
+    "b": { "kind": "pick", "values": ["小橘", "小虎"] },
+    "s1": { "kind": "pick", "values": ["92", "86"] },
+    "c": { "kind": "pick", "values": ["狸花", "花花"] },
+    "s2": { "kind": "pick", "values": ["78", "90"] }
+  },
+  "stemTemplate": "本喵要给鱼塘学校画两张图纸，再把名单收进一个柜子印出来。要办的事：\n\n1. **大图纸 `Person`**：一格家当「名字」关起来（`private`）、生的时候喂进来；一招 `intro()` 把话串好叼回来 —— `本喵叫 名字`；\n2. **小图纸 `Student`**：**套在大图纸上**（`extends`），另外多一格家当「分数」（也关起来）；出生那一手的第一句先请大图纸把名字收下，再装自己的分数；\n3. 小图纸把 `intro()` **盖掉**：先请大图纸把 `本喵叫 名字` 串一遍，再把 `，考了 分数 分` 接上去（别自己重写名字那半句）；\n4. `main` 里照名单收进一个柜子：先一只 `Person`、再两只 `Student`；\n5. 从第 `1` 条起印 `编号. 自我介绍`；最后印一行 `名单上一共 3 只`。\n\n要印成：\n\n```text\n1. 本喵叫 {a}\n2. 本喵叫 {b}，考了 {s1} 分\n3. 本喵叫 {c}，考了 {s2} 分\n名单上一共 3 只\n```\n\n（判分那两份名单里，名字和分数都是**另外一套**喵，别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\nclass Person {\n    // 大图纸：名字 + intro()\n}\n\nclass Student extends Person {\n    // 小图纸：套上去、多一格分数、把 intro() 盖掉\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Person> mingdan = new ArrayList<>();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\nclass Person {\n    private String name;\n\n    Person(String name) {\n        this.name = name;\n    }\n\n    String intro() {\n        return \"本喵叫 \" + name;\n    }\n}\n\nclass Student extends Person {\n    private int score;\n\n    Student(String name, int score) {\n        super(name);\n        this.score = score;\n    }\n\n    int getScore() { return score; }\n\n    @Override\n    String intro() {\n        return super.intro() + \"，考了 \" + score + \" 分\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Person> mingdan = new ArrayList<>();\n        mingdan.add(new Person(\"{a}\"));\n        mingdan.add(new Student(\"{b}\", {s1}));\n        mingdan.add(new Student(\"{c}\", {s2}));\n        for (int i = 0; i < mingdan.size(); i++) {\n            System.out.println((i + 1) + \". \" + mingdan.get(i).intro());\n        }\n        System.out.println(\"名单上一共 \" + mingdan.size() + \" 只\");\n    }\n}\n",
+  "explanationTemplate": "这一题把「图纸套图纸」那套关节全走了一遍。\n\n**一、大图纸只管所有东西都有的那部分。** 名字谁都有，所以名字这一格、`intro()` 这一招画在大图纸上。`intro()` 里是 `return \"本喵叫 \" + name;` —— **把话串好叼回来，不自己印**，这样用的人想印就印、想接在别的字后面也行。\n\n**二、小图纸一句话认亲，多带一格自己的家当。** `class Student extends Person` 之后，大图纸上画着的招式、家当小图纸上就都有了（所以 `getName()` 这种没在小图纸上写过的招式，学员也喊得动）。多出来的分数那一格自己装着：\n\n```java\nStudent(String name, int score) {\n    super(name);\n    this.score = score;\n}\n```\n\n**第一句必须是 `super(name)`** —— 大图纸的出生那一手不会自己跑，得点名请它（第二课那条）。\n\n**三、盖掉那一招，再把老的那半句请回来。** 小图纸上写 `@Override String intro()`，身子第一句是 `super.intro()`：先请大图纸把「本喵叫 {a}」串好，再添自己这半句。本喵把这一句拆掉真跑过：印出来变成光秃秃的 `，考了 {s1} 分`，开头那半句没了（**编得过、跑得起来，就是不冒红字**，这类坏法最难自己发现）。\n\n**四、一个柜子收两样东西。** `List<Person>` 里既装 `Person` 也装 `Student` —— 学员**也是一只**，牌子写大图纸名收得下。印的时候喊的还是同一句 `mingdan.get(i).intro()`，**各猫各样**：本喵那条走大图纸那一版，学员那两条走小图纸盖过的那一版。\n\n判分那两份名单名字和分数都不一样，所以「只写死本喵这一套」的稿子过不了喵。"
+}

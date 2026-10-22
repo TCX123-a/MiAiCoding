@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-08-two-ways",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-08",
+  "type": "codewrite",
+  "concept": ["两条路各走一次", "打招呼才走搬家", "搬过的名字空了"],
+  "instances": 6,
+  "params": {
+    "goods": { "kind": "pick", "values": ["鱼干", "鱼汤", "鱼丸"] }
+  },
+  "stemTemplate": "骨架里那张图纸**两条路都画好了**喵：装货时印 `装好 `、抄一份印 `拷贝一份 `、搬过去印 `搬走 `（后面都跟着货名）。你只要写 `main`，把两条路**各走一次**。\n\n请你写 `main`：\n\n1. 装一块货，内容是 `{goods}`；\n2. 把这块货**抄**一份给第二个盒子（第一个盒子本喵还要用）；\n3. 再把第一个盒子**搬**给第三个盒子（本喵打了招呼：这份不要了）；\n4. 印一行：第二个盒子里的货、三个字符的斜杠箭头、第三个盒子里的货 —— 就是 `第二 / 第三` 这个样子；\n5. 最后印一行：**第一个盒子**里的货还剩几个字。\n\n程序要叼回这 6 行：\n\n1. `装好 {goods}`\n2. `拷贝一份 {goods}`\n3. `搬走 {goods}`\n4. `{goods} / {goods}`\n5. `0`\n\n盯住第 2 行和第 3 行喵：一次是抄、一次是搬，本喵用的是**同一个图纸** —— 差别只在有没有打招呼。",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Box {\n    string goods;\n    Box(string g) : goods(g) { cout << \"装好 \" << goods << endl; }\n    Box(const Box& other) : goods(other.goods) { cout << \"拷贝一份 \" << goods << endl; }\n    Box(Box&& other) : goods(move(other.goods)) { cout << \"搬走 \" << goods << endl; }\n};\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Box {\n    string goods;\n    Box(string g) : goods(g) { cout << \"装好 \" << goods << endl; }\n    Box(const Box& other) : goods(other.goods) { cout << \"拷贝一份 \" << goods << endl; }\n    Box(Box&& other) : goods(move(other.goods)) { cout << \"搬走 \" << goods << endl; }\n};\n\nint main() {\n    Box a(\"{goods}\");\n    Box b = a;\n    Box c = move(a);\n    cout << b.goods << \" / \" << c.goods << endl;\n    cout << a.goods.size() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "两次过货，走的是**图纸上不同的两行**喵：\n\n- `Box b = a;` —— `a` 是活着的名字（本喵后面还要拿它印字数），所以只能走「抄一份」那条路，印 `拷贝一份 {goods}`；\n- `Box c = move(a);` —— 本喵打了招呼「这份不要了」，于是走「搬过去」那条近路，印 `搬走 {goods}`，一个字节都没抄。\n\n最后一行那个 `0` 是把两件事对上：**货搬到第三个盒子里去了，第一个盒子空了** —— 从第一个盒子上的货名去数字数（`a.goods.size()`），数出来是 0。\n\n⚠️ 两处最容易写错：\n\n① 把第二行也写成 `move` —— 那 `a` 就被搬空了，后面的印字全乱；\n② 最后一行写成第一个盒子**没装过货** —— 那它会一直是空的，这一题就白跑了：本喵要的是「**本来装着、搬完之后空了**」这个对比。"
+}

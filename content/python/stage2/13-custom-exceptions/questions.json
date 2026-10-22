@@ -1,0 +1,83 @@
+{
+  "lessonId": "python-stage2-13",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵碰到了 `ValueError`、`ZeroDivisionError`、`KeyError` 这几张不同的纸条。它们之间是什么关系？",
+      "options": [
+        "它们都是从 `Exception` 这张大图纸底下生出来的，喊一声 `issubclass` 问，答案都是「是」",
+        "它们各管各的，互不相干，接住一个不会顺带接住另一个",
+        "它们其实是同一张纸条，只是名字不一样",
+        "只有 `ValueError` 是从大图纸生出来的，别的都是另起炉灶"
+      ],
+      "answer": 0,
+      "explanation": "这几张纸条看着各是各的，其实**全是 `Exception` 的后代**喵 —— `issubclass(ZeroDivisionError, Exception)` 问一句「你是不是它的后代」，回来的是 `True`。这条家谱很实用：`except Exception:` 之所以能**一网打尽**，靠的就是「是它、或者是它的后代，都算接住」这条规矩。说它们「互不相干」是记岔了，接住一个的时候，**它的后代**也会跟着被接住，这也是为什么具体的要写前面喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵在 `try` 后面写了好几个 `except`，其中一个是笼统的 `except Exception:`。它应该摆在哪里？",
+      "options": [
+        "摆在**最后**：接住的规矩是从上往下一条条比，先对上的先接住，笼统的摆前面会把后面全抢走",
+        "摆在最前面：越笼统越要先兜住，免得漏掉",
+        "摆在哪儿都一样，反正最后都会走到",
+        "不能和具体的 `except` 写在同一个 `try` 里"
+      ],
+      "answer": 0,
+      "explanation": "好几个 `except` 是**从上往下一条条比**的，**先对上的那条先接住**，后面的连看都不看喵。笼统的那条能把所有后代一网打尽，摆在前面就等于把所有纸条都抢走了 —— 后面那些具体的 `except` 一辈子轮不到，本喵还以为自己写了精细的分工。所以要「具体的写前面、笼统的写最后」。它们完全可以写在同一个 `try` 里，这正是常见写法喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵想画一张专属自己的毛病图纸，名字叫 `鱼干不够`。哪一句画对了？",
+      "options": [
+        "`class 鱼干不够(Exception):` —— 套着大图纸才有「后代」这层身份",
+        "`class 鱼干不够:` —— 不套也行，反正名字是本喵自己起的",
+        "`def 鱼干不够(Exception):` —— 图纸都用 `def` 画",
+        "`class 鱼干不够(e):` —— 括号里填接住它的那个名字"
+      ],
+      "answer": 0,
+      "explanation": "画图纸要写 `class 名字(Exception):`，括号里那个 `Exception` 是关键：它告诉本喵「**这张新图纸是从大图纸底下生出来的**」，有了这层身份，`except Exception:` 才接得住它喵。不套大图纸（写成 `class 鱼干不够:`）也能过，但它就成了孤零零一张，甩出来的时候**没人接得住**，程序照样断气。`def` 是画招式的写法，不是画图纸的；括号里填的也不该是 `e`（那是接过纸条之后才起的名字，画图纸的时候还没有呢）喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "stem": "这段代码想在份数不合法时主动翻脸，再由外面接住。两个空该分别填什么？",
+      "lang": "python",
+      "code": "def 分鱼干(份数):\n    if 份数 <= 0:\n        ____ ValueError(\"份数得是正数喵\")\n    return \"每份 1 条\"\n\ntry:\n    分鱼干(0)\nexcept ____ as e:\n    print(\"抓到啦：\", e)\n",
+      "blanks": [
+        {
+          "answer": "raise",
+          "accept": ["raise"]
+        },
+        {
+          "answer": "ValueError",
+          "accept": ["ValueError"]
+        }
+      ],
+      "explanation": "第一个空要的是**主动翻脸**的动作，写 `raise` —— 它把纸条甩出去，后面那行 `return` 就再也轮不到了喵。第二个空要填**接哪一张纸条**：上面甩出来的是 `ValueError`，所以这里也得写 `ValueError`，两个名字必须对上，写岔了外面就接不住、程序当场断气。`as e` 是把接到的纸条取个名字拿在手里，`print(e)` 印出来的就是纸条上写的那句话「份数得是正数喵」喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "class 鱼干不够(Exception):\n    pass\n\ntry:\n    raise 鱼干不够(\"碗空了喵\")\nexcept 鱼干不够 as e:\n    print(\"自己画的毛病：\", e)\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "自己画的毛病： 碗空了喵",
+      "accept": ["自己画的毛病： 碗空了喵\n"],
+      "explanation": "第一行画出图纸 `鱼干不够`，它是 `Exception` 的后代；底下那句 `pass` 是「先占个位，别的先不加」喵。`raise 鱼干不够(\"碗空了喵\")` 把这张纸条甩出去，`except 鱼干不够 as e` 正好接住 —— 名字对得上，接得稳稳的。然后把接到的纸条交给 `e`，`print(\"自己画的毛病：\", e)` 印出逗号后面那个逗号会自动补一个空格，所以是「自己画的毛病： 碗空了喵」。要是画图纸的时候括号里没套 `Exception`，这张纸条就没人接得住，程序会在这儿断气喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "try:\n    print(10 / 0)\nexcept ValueError:\n    print(\"数值不对喵\")\nexcept Exception as e:\n    print(\"别的毛病：\", type(e).__name__)\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "别的毛病： ZeroDivisionError",
+      "accept": ["别的毛病： ZeroDivisionError\n"],
+      "explanation": "`10 / 0` 甩出来的是「除以 0」那张纸条喵。几条 `except` 从上往下比：第一条 `except ValueError` 一看**不是自家的后代**，放它过去；第二条 `except Exception` 能一网打尽，就把它接住了。所以**第一个分支一个字都没印**。`type(e).__name__` 是从纸条上取**名字**的写法，取出来是 `ZeroDivisionError`，于是印出「别的毛病： ZeroDivisionError」。要是把两条 `except` 上下调个个儿，那就全被笼统的那条抢走了，所以具体的要写前面喵。"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-19-star-or-not",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-19",
+  "type": "codefix",
+  "concept": ["问的是牌子还是屋里那一位", "一个星号之差", "比图纸别比名字"],
+  "instances": 2,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "小P"] }
+  },
+  "stemTemplate": "本喵用问「是不是同一张图纸」的笨办法辨认屋里那一位，可它**问错猫**了喵：写的是 `typeid(p)`，问的是**牌子自己**是哪一张，不是屋里住的那一位。\n\n屋里住的明明是橘猫，程序却印 `不是橘猫图纸`。补一个字符就够：让这一手问的是屋里那一位。\n\n改完跑一遍，应该只有一行：\n\n1. `是橘猫图纸`",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"{who}\");\n    Cat* p = &o;\n    cout << (typeid(p) == typeid(OrangeCat) ? \"是橘猫图纸\" : \"不是橘猫图纸\") << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"{who}\");\n    Cat* p = &o;\n    cout << (typeid(*p) == typeid(OrangeCat) ? \"是橘猫图纸\" : \"不是橘猫图纸\") << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一手问的是「这是哪一张图纸」，而它**问谁**，全看本喵在小括号里写的是什么喵：\n\n- 写 `typeid(p)`：`p` 就是**牌子上写的那一栏**，永远是「猫的牌子」，拿它去跟「橘猫图纸」比，两个压根不是一回事，于是印 `不是橘猫图纸`；\n- 写 `typeid(*p)`：`*p` 顺着牌子找进屋，问的是**屋里那一位** —— 这才是本喵想知道的。\n\n所以差的就是那个星号，别的都没变。还有一条别记错：这一手能认出屋里住的是谁，靠的也是底座上挂了招牌（`virtual`）的那一手；一手招牌都没有的底座，它就只会照着牌面上写的那一栏回答喵。另外，判断「是不是同一张图纸」永远用 `typeid(*p) == typeid(OrangeCat)` 这么比，**别去比名字** —— 名字是翻译官喵自己改写的，换个翻译官喵就换一套写法。"
+}

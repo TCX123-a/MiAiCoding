@@ -1,0 +1,90 @@
+{
+  "lessonId": "cpp-stage3-19",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "大肥鱼手里只有一张写着「猫」的牌子，牌子上一个字都没写屋里住的是谁。`dynamic_cast` 和 `typeid` 能照出来，靠的是哪一栏喵？",
+      "options": [
+        "动态类型：牌子指着的那只猫，真跑起来是照哪张图纸做出来的",
+        "静态类型：牌子上写死的那一栏 —— 翻译官喵读代码时看到的就是它",
+        "招牌的名字：哪一手挂了 virtual，就照那一手的名字",
+        "牌子的地址：顺着地址找过去，看它落在哪块地方"
+      ],
+      "answer": 0,
+      "explanation": "纸面上那一栏叫**静态类型**，屋里那一位叫**动态类型**喵。牌子上写死的永远是 `Cat`，翻译官喵读代码时看到的就是它 —— 所以光看牌子，本喵永远认不出屋里住的是谁。照光这两手要认的是**动态类型**：真跑起来那一刻，这间屋里实际住着的那只猫。再记一条：`dynamic_cast` 和 `typeid` 认的是**同一份记录**，而那份记录是挂了招牌（`virtual`）的那一手带来的 —— 这就是下一节那道硬门槛的由来：底座上一手挂招牌的都没有，照光根本照不动喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写 `dynamic_cast<TabbyCat&>(*p)` 去照一只其实是橘猫的猫。照不出来的时候，它会怎么办喵？",
+      "options": [
+        "抛出 std::bad_cast：本喵得先用 try / catch 接住，不然程序当场停在那儿",
+        "给一个空引用：查一查 `== nullptr` 就知道没照出来",
+        "返回一份照着底座新搭的临时对象，让本喵接着往下用",
+        "翻译官喵当场拦下来：照不出来的写法不许出现在代码里，编不过"
+      ],
+      "answer": 0,
+      "explanation": "引用这一边**没有「空」这个状态**，所以它没法像指针那样递一张空牌子 —— 只剩下「当场抛出来」这一条路，抛出来的东西类型是 `std::bad_cast`（`e.what()` 报出来的字正是 `std::bad_cast`）。对比着记：照**指针**（`dynamic_cast<TabbyCat*>(p)`）失败 → 给 `nullptr`，不抛；照**引用**失败 → 抛 `std::bad_cast`，不给空。第一行那个 `try` / `catch` 不是可写可不写的礼貌话：接不住的话，程序当场就停在那儿了喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵问 `typeid(*p).name()`，本机印出来是 `9OrangeCat`。关于这串字，哪种说法站得住喵？",
+      "options": [
+        "它是实现定义的名字：本机 g++ 报成这样，换个编译器可能是别的写法；要做判断得写 `typeid(*p) == typeid(OrangeCat)`",
+        "它是标准定死的：换哪台机器、哪个翻译官喵，报出来都是这串字",
+        "它印的是那块地方的门牌号：有了这个号就能一路找回去",
+        "它前面那个数字是随机的：同一只猫每跑一次都可能换一个数"
+      ],
+      "answer": 0,
+      "explanation": "`name()` 报出来的这串字是**实现定义**的喵 —— 本机 g++ 报 `9OrangeCat`（前面那个 9 是名字长度），换个编译器可能换一套写法，可能连数字都不带。所以别把「它一定印出图纸原来的名字」记成规律，也别拿名字去比。它只适合给人看：要判断就写 `typeid(*p) == typeid(OrangeCat)`，问的是「两张图纸是不是同一张」，跟名字被改写成什么样没关系，换个编译器照样对。还有一处也别记错：写 `*p` 问的是屋里那一位，写 `p` 问的是牌子本身（那会报 `P3Cat`）喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    ____ ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"小橘\");\n    Cat* p = &o;\n    OrangeCat* a = ____(p);\n    cout << (a == nullptr ? \"没照出来\" : a->name) << endl;\n    return 0;\n}",
+      "stem": "这段程序少了**照光的硬门槛**那一手，翻译官喵当场不编。两个空补上：一处给底座带上「我是谁」的记录，一处把那张牌子照出来 —— 照完立刻查空牌子喵。",
+      "blanks": [
+        {
+          "answer": "virtual"
+        },
+        {
+          "answer": "dynamic_cast<OrangeCat*>",
+          "accept": [
+            "dynamic_cast<OrangeCat *>",
+            "dynamic_cast <OrangeCat*>",
+            "dynamic_cast <OrangeCat *>"
+          ]
+        }
+      ],
+      "explanation": "两个空是**照光的门槛**和**照光的写法**喵。第一个空是 `virtual`：照光得知道屋里住的是谁，而这份记录是挂了招牌的那一手带来的 —— 一手挂招牌的都没有时，翻译官喵的原话是 `cannot 'dynamic_cast' ... (source type is not polymorphic)`，程序**根本编不出来**（这是好事：它当场拦人，不是安安静静地错）。第二个空是 `dynamic_cast<OrangeCat*>`：尖括号里写「想照成哪张图纸」，括号里是手上那张牌子。照成功给新牌子、照不出来给空牌子，所以下一行立刻查 `a == nullptr` —— 不查就用，才是真会出事的。补好跑一遍，屏幕上印出来的是 `小橘`。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {};\nclass TabbyCat : public Cat {};\n\nint main() {\n    OrangeCat o;\n    TabbyCat t;\n    Cat* p = &o;\n    cout << typeid(*p).name() << endl;\n    cout << (dynamic_cast<TabbyCat*>(p) == nullptr ? \"没照出来\" : \"照出来了\") << endl;\n    p = &t;\n    cout << (dynamic_cast<TabbyCat*>(p) == nullptr ? \"没照出来\" : \"照出来了\") << endl;\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？三行都要看清楚 —— 第二行和第三行之间，牌子换人了。",
+      "answer": "9OrangeCat\n没照出来\n照出来了",
+      "accept": [
+        "9OrangeCat\n没照出来\n照出来了\n"
+      ],
+      "explanation": "第一行是 `9OrangeCat` 喵 —— `typeid(*p).name()` 问的是屋里那一位，前面那个 9 是名字长度（**本机读数**，换个翻译官喵会变）。后两行只差一件事：屋里住的一直是橘猫，拿 `TabbyCat*` 去照 → 照不出来，给的是空牌子，所以印「没照出来」；中间那句 `p = &t;` 把牌子换成指着真狸花猫之后，再照同一张图纸 → 照上了，印「照出来了」。顺带看一眼：**照光从来不改牌子**，是牌子自己先换的人喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    int weight;\n    OrangeCat() : weight(7) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    int stripes;\n    TabbyCat() : stripes(13) {}\n};\n\nint main() {\n    TabbyCat t;\n    Cat* p = &t;\n    OrangeCat* hard = static_cast<OrangeCat*>(p);\n    OrangeCat* soft = dynamic_cast<OrangeCat*>(p);\n    cout << (hard == nullptr ? \"牌子是空的\" : \"牌子有货\") << endl;\n    cout << (soft == nullptr ? \"牌子是空的\" : \"牌子有货\") << endl;\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？屋里住的**不是**橘猫 —— 一行一行算清楚，两行都可能和直觉反着来。",
+      "answer": "牌子有货\n牌子是空的",
+      "accept": [
+        "牌子有货\n牌子是空的\n"
+      ],
+      "explanation": "两行摆在一起，就是这一节最值钱的那组对比喵。屋里住的明明是狸花猫，可 `static_cast` **不照光**：它压根不看屋里住的是谁，在纸上就把地址算好了，于是照样递给本喵一张写着「橘猫」的牌子，**一个错都不报** —— 第一行印「牌子有货」。`dynamic_cast` 照了光，照实回答「不是橘猫」，给的是空牌子 —— 第二行印「牌子是空的」。**转错了不报错、也不给空牌子**，这就是不照光那一手最贵的地方：等本喵拿着那张错牌子去读「橘猫的体重」时，读到的会是别人身上那一格，屏幕上还看不出哪里不对喵。"
+    }
+  ]
+}

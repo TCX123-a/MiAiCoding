@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-mp-slot-per-child",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-04",
+  "type": "codewrite",
+  "concept": ["multiprocessing", "Process", "Array", "join", "固定次序输出"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵读进来 {n} 个数（**一行一个**，一共 {n} 行），想让每一个都**翻一倍**（×2）。\n\n请你给**每一个数**都派一只小猫：第 i 只猫管**第 i 行**那个数，把翻倍的结果放进**第 i 个位子**。等**所有**小猫都干完了，再由本喵**按位子的次序**一行一个念出来。\n\n比如外面给的是\n\n{sampleInput}\n\n就要印出\n\n{sampleOutput}\n\n⚠️ 印出来的次序要跟报给你的次序**一模一样** —— 不许谁先干完谁先印喵。\n\n（判分用的是另外一组数，别把答案写死～）",
+  "referenceSolutionTemplate": "import multiprocessing as mp\n\n\ndef 翻倍(位子, 下标, 数):\n    位子[下标] = 数 * 2\n\n\nif __name__ == '__main__':\n    n = {n}\n    起点 = []\n    for _ in range(n):\n        起点.append(int(input()))\n    位子 = mp.Array('i', n)\n    孩子们 = []\n    for i in range(n):\n        p = mp.Process(target=翻倍, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(n):\n        print(位子[i])\n",
+  "explanationTemplate": "这道题把多进程的**两件正经事**凑在了一起喵：**共享位子**、**等齐再印**。\n\n**① 位子得是「真的只有一份」的。** 普通的储物柜，每个孩子拿到的是**复制品**（本喵前面那道改错题就是栽在这儿）。所以这里要用 `mp.Array('i', n)` —— 那是本喵和每一只猫**共用的一块板**，上面排着 n 个位子，谁写第几个都是写在同一块板上。孩子写完了，本喵念出来才是它写的那个数。\n\n**② `p.join()` 一个都不能少。** 孩子们是**同时在跑**的，谁先干完说不准。本喵要是没等齐就念，念到的可能是还没填上的空位子 —— 而且**每次跑出来的还不一样**。挨个 `join()` 就是「等这只猫回来，再等下一只」，等齐了才往下走，结果就定死了。\n\n**③ 印的时候按位子次序印。** 位子本来就是排好号的，本喵从第 0 个念到最后一个，念一百遍都是同样几行 —— 这就叫**不看谁先跑完，只看位子**。\n\n⚠️ 本喵为什么非要费这么大劲把次序钉死？因为多进程天生就是「谁快谁先」的。真程序里要是靠「谁先跑完谁先印」，屏幕上就会出现**乱七八糟、每次都不同**的输出 —— 而这种输出**没法判对错**，所以本喵的题都要求你先把次序摆正再印喵。"
+}

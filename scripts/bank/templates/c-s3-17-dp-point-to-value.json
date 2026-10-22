@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-17-dp-point-to-value",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-17",
+  "type": "codefix",
+  "concept": ["剥一层改牌子", "剥两层改数", "写回去那一行少一颗星", "看着像成功其实是巧合"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 5, "max": 6 },
+    "bone": { "kind": "int", "min": 9, "max": 10 }
+  },
+  "stemTemplate": "本喵摆了两只碗：一只装着 {fish} 条小鱼干，一只装着 {bone} 条。外面那张牌一开始指着**第一只碗**，现在要把它改成指着**第二只碗**，然后印两行：第一行报「牌子换过去了吗：1」或者「：0」，第二行报牌子现在指着的那只碗里有多少。\n\n`point_to` 这一招的意图写在注释里了：把外面那张牌改成指着 `target` 那只碗。可跑完第一行报的是 **0** —— 牌子没换过去，而且第一只碗里的数还被动了。翻译官喵一声没吭，跑起来也不摔。\n\n请你把这一招改对（`main` 里那几行别动）。改好之后第一行该报 `1`，第二行该报 {bone}。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n/* 把外面那张牌改成指着 target 那只碗 */\nvoid point_to(int **pp, int *target) {\n    **pp = *target;\n}\n\nint main(void) {\n    int fish = {fish};\n    int bone = {bone};\n    int *p = &fish;\n\n    point_to(&p, &bone);\n    printf(\"牌子换过去了吗：%d\\n\", p == &bone);\n    printf(\"牌子指着的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n/* 把外面那张牌改成指着 target 那只碗 */\nvoid point_to(int **pp, int *target) {\n    *pp = target;\n}\n\nint main(void) {\n    int fish = {fish};\n    int bone = {bone};\n    int *p = &fish;\n\n    point_to(&p, &bone);\n    printf(\"牌子换过去了吗：%d\\n\", p == &bone);\n    printf(\"牌子指着的那只碗里：%d\\n\", *p);\n    return 0;\n}\n",
+  "explanationTemplate": "毛病在**剥了几层**喵：`**pp = *target;` 剥的是**两层**，落点是最里面那只碗**本身** —— 于是它把 `target` 那只碗里的数**抄进了**外面那张牌指着的那只碗里。牌子一步没挪（所以第一行报 `0`），可碗里的数被改了（所以第二行照样印出了 {bone}，看着倒像成功了，其实是巧合）。\n\n要改的是**牌子指着哪只碗**，那就只剥一层、把门牌号写进去：\n\n```text\n*pp = target;\n```\n\n左边剥一层 = 外面那张牌本人；右边 `target` 是一只碗的门牌号 —— 类型正好对上。这一行和原来那行**差的是一颗星的位置**，屏幕上差的可是一整件事：一个是换牌子，一个是改数。课文第二节那两句背下来就够用了 —— **剥一层改牌子，剥两层改数**喵。\n\n⚠️ 自己验的时候有个笨办法很好用：多问一句「**牌子到底动了没有**」—— 印一行 `p == &bone` 看看它是 `1` 还是 `0`，比盯着第二行猜靠谱得多。"
+}

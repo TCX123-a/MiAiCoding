@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-08-move-not-called",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-08",
+  "type": "codefix",
+  "concept": ["打招呼才走搬家那条路", "没打招呼就退回拷贝", "图纸上有近路也要有人走"],
+  "instances": 2,
+  "params": {
+    "goods": { "kind": "pick", "values": ["鱼干", "鱼汤", "鱼丸"] }
+  },
+  "stemTemplate": "这张图纸上**两条路都画好了**：抄一份印 `拷贝一份`，搬过去印 `搬走`。\n\n本喵想搬货，可程序跑出来印的是 `拷贝一份` ——「这份货本喵不要了」这个意思，本喵压根没说出口。你帮本喵改对（图纸不用动，`main` 里改一处就够）。\n\n改好之后要印出这些行，顺序就是事情发生的顺序：\n\n1. `装好 {goods}`\n2. `搬走 {goods}`\n3. `{goods}`",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Box {\n    string goods;\n    Box(string g) : goods(g) { cout << \"装好 \" << goods << endl; }\n    Box(const Box& other) : goods(other.goods) { cout << \"拷贝一份 \" << goods << endl; }\n    Box(Box&& other) : goods(move(other.goods)) { cout << \"搬走 \" << goods << endl; }\n};\n\nint main() {\n    Box a(\"{goods}\");\n    Box b = a;\n    cout << b.goods << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Box {\n    string goods;\n    Box(string g) : goods(g) { cout << \"装好 \" << goods << endl; }\n    Box(const Box& other) : goods(other.goods) { cout << \"拷贝一份 \" << goods << endl; }\n    Box(Box&& other) : goods(move(other.goods)) { cout << \"搬走 \" << goods << endl; }\n};\n\nint main() {\n    Box a(\"{goods}\");\n    Box b = move(a);\n    cout << b.goods << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "图纸上那两条路本喵都没写错，错在**本喵没说出口**喵：`Box b = a;` 里的 `a` 是个**活着的名字**，程序只能认为本喵还要用它，于是老老实实走了「抄一份」那条路。\n\n改法就是打招呼：`Box b = move(a);`。这句本身一个字节都不搬，它只是把 `a` 的名分改成「马上要扔」—— 有了这个招呼，上面那条 `Box(Box&& other)` 的近路才走得上去。\n\n⚠️ 这一题最值得记住的是它的**安静**：走错了路程序照样跑、结果也照样对（`b` 里的货是一样的），只是**白白抄了一份**出来。货小的时候看不出来，货大的时候这一份就是一大笔。所以本喵的检查习惯是 —— 图纸上既然画了搬家的路，用的时候就要问自己一句：**这句到底走的是哪条路？**"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-16-half-step",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-16",
+  "type": "codefix",
+  "concept": ["一刀砍一半", "每一步走多快", "轮数差一个量级"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 8, "max": 10 }
+  },
+  "stemTemplate": "本喵要数「一层层合并」一共分了几层：每一轮都**把条数砍掉一半**，砍到只剩一条为止，数一共砍了几轮喵。\n\n喂 {n} 条进去，这段代码数出来的轮数**每次都偏大**。\n\n它跑得起来，翻译官喵一句原话都没有。坏的不是「砍几轮」这件事，是那格**每一轮往前走多少** —— 它一格一格地挪，而「砍一半」要的是**几步就窜上去**的那种走法喵。\n\n你帮本喵改好：改完跑起来，屏幕上要正好是「{n} 条砍到只剩一条」的轮数。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    const int n = {n};\n    int levels = 0;\n    for (int width = 1; width < n; width = width + 1) {\n        levels = levels + 1;\n    }\n    cout << levels << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    const int n = {n};\n    int levels = 0;\n    for (int width = 1; width < n; width = width * 2) {\n        levels = levels + 1;\n    }\n    cout << levels << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "坏的那一格是 `width = width + 1` —— 一格一格往前走喵。\n\n把「每一轮砍掉一半」反过来看就是「**每一轮翻一倍**」：1、2、4、8……这么窜上去，几步就够到 {n} 了。写成 `+ 1`，等于把「一刀砍一半」写成了「一次只砍掉一条」，轮数从「几步」涨成「{n} 减 1 步」。\n\n自己验一遍：{n} 一路除以 2（除不尽就往上取整），除到 1 为止，数数除了几次 —— 改完该跟这个数一样喵。\n\n⚠️ 这一题最该记住的是：**「翻一倍」和「加一」看着只差一点，圈数差的是一整个量级**。前者是「几步」，后者是「{n} 减 1 步」；条数越大，这两者差得越离谱 —— 课文里那张对照表上「每次把范围砍一半」那一行的脾气正是这样：**条数翻一倍，它也只多走一步**。"
+}

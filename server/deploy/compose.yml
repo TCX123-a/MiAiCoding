@@ -1,0 +1,93 @@
+# /opt/miai/compose.yml —— miai 正式三件套（caddy + api + db），S7 部署件。
+#
+# 【本模板是仓库副本】源文件在本仓库 server/deploy/compose.yml；现场 install 到 /opt/miai/compose.yml。
+#   现场改动以 /opt/miai/compose.yml 为准（改完记得把差异带回仓库副本，下个部署窗口先 diff 再合并，别直接覆盖现场）。
+# 【冻结】B2 证书续期观察达标前不得 up/重建 caddy（LE 配额 1/5，一次重签就烧掉；观察口径见服务器线交接文档）。
+# 【窗口纪律】任何时刻都不要裸跑 `docker compose up -d`（会连带重建 caddy）；一律点名服务：
+#   up -d db / up -d api / up -d caddy。`docker compose down` 与 `down -v` 全线禁止（卷里有用户数据与证书）。
+#
+# 本文件 = 两个现场实测文件合并：db 块照搬 S4 的 compose-db-test.yml（含行内注释），
+#   caddy 块照搬 S6 的 compose-tls-test.yml（含行内注释）；api 块新写；networks 段为 S7 新增（钉死网段）。
+#   caddy 的占位 respond 处理在 Caddyfile（挂载点 ./conf/），并入步骤见 deploy/README.md 步骤 4。
+name: miai
+
+services:
+  caddy:
+    image: caddy:2.11.4        # 现役 S6 实测在跑版本（2026-10-12 复核：Up 4 days）；沿用不换版=零变量（证书/续期链已在此版本验证）
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      # 不发布 443/udp：h3 已在 Caddyfile 全局显式关闭（servers{protocols h1 h2}），云侧/ufw 也不放 UDP 443
+    volumes:
+      - ./conf:/etc/caddy:ro     # 目录挂载（不要改成挂单文件：官方镜像文档明确警告，reload 会静默用旧配置）
+      - caddy_data:/data         # ACME 账号与证书；绝不当缓存清
+      - caddy_config:/config
+
+  api:
+    image: miai-api:${API_TAG}   # API_TAG 在 /opt/miai/.env（deploy.sh 构建后写新值，回滚时写回旧值）
+    build:
+      context: ./releases/current/server   # current 软链 → releases/<sha>；发布包必须带 server/ 前缀
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      # 【全仓最易静默发生的部署失败】src/config.ts 的 HOST 默认 127.0.0.1 = 容器内回环 ⇒ Caddy 反代必 502。
+      # compose 的 environment 优先级高于 env_file ⇒ 现场 .env 即使抄了 .env.example 的 HOST=127.0.0.1 也会被这里覆盖。
+      HOST: "0.0.0.0"
+    expose:
+      - "8787"                   # 只暴露给本项目网络；绝不许发布宿主端口（四向越权必败的前提，docs/22 §5.5）
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      # node:24-bookworm-slim 镜像内没有 curl / wget ⇒ 只能借 node 自带 fetch 做存活探针（一个进程一拍即退）。
+      # /v1/health 是存活语义（DB 挂了也返回 200、带 schemaVer 字段），适合做容器健康；响应体判据在脚本侧。
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: miai
+      POSTGRES_USER: miai
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - effective_cache_size=768MB
+      - -c
+      - work_mem=8MB
+      - -c
+      - maintenance_work_mem=64MB
+      - -c
+      - max_connections=40
+    volumes:
+      - pgdata:/var/lib/postgresql     # PG18+ 的挂载点是 /var/lib/postgresql（不是 .../data 子目录；写错会拒绝启动=保护）
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U miai -d miai"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  # 卷名与工程名（name: miai）必须与 S4/S6 实测保持一致，否则卷名变化 = 数据/证书「搬家」丢失；down -v 禁止
+  pgdata:
+  caddy_data:
+  caddy_config:
+
+networks:
+  # 【为什么故意不写 ipam（钉死网段）】docs/22 §5.5 要求 trustProxy 只信「compose 固定网段」——但 2026-10-12 E3b 实测：
+  #   现役 miai_default 是 S4 时期按「无 networks 段」的空定义创建的（网络 label config-hash=83008073…）；
+  #   本文件若声明 ipam，compose 会认为网络定义变了 ⇒ dry-run 计划 = 先停 db 容器、再整体重建网络（踩「PG 绝不重启」红线）。
+  #   实验 B/C 已证：删 ipam、留空 default 节点 ⇒ 计划纯 no-op（Container miai-db-1 Running）。
+  #   ⇒ 网段稳定性靠「不重建网络」保证（现役实占 172.18.0.0/16，docker network inspect miai_default 可复核）。
+  # deploy.sh 0d 闸门 = 用 docker network inspect 的实况子网与 .env 的 TRUST_PROXY_CIDR 逐字对账。
+  # 网络名用 default：现场既有网络就叫 miai_default ⇒ 服务块无需再写 networks 键（db/caddy 块得以逐字照搬）。
+  default:

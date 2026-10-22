@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-lib-draw-not-imported",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-13",
+  "type": "codefix",
+  "concept": ["画笔没请进来", "NameError", "一次请两样"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": [120, 160] },
+    "h": { "kind": "pick", "values": [60, 80] },
+    "box": { "kind": "pick", "values": ["10, 10, 110, 50", "20, 20, 140, 60"] }
+  },
+  "stemTemplate": "下面这段程序要造一块 {w} 宽、{h} 高的画布，再画一块金色的方块，然后报一声「画好了喵」。\n\n它在**画方块那一行**躺下了，报的是「**这个名字本喵不认识**」。\n\n你改开头那一行，把它需要的东西一并请进来。改好以后该印**一行**：\n\n```text\n画好了喵，尺寸： ({w}, {h})\n```\n\n（造画布、画方块、报尺寸那几行都不用动。）",
+  "brokenCodeTemplate": "from PIL import Image\n\n画布 = Image.new(\"RGB\", ({w}, {h}), \"skyblue\")\n笔 = ImageDraw.Draw(画布)\n笔.rectangle([{box}], fill=\"gold\")\n\nprint(\"画好了喵，尺寸：\", 画布.size)\n",
+  "referenceFixTemplate": "from PIL import Image, ImageDraw\n\n画布 = Image.new(\"RGB\", ({w}, {h}), \"skyblue\")\n笔 = ImageDraw.Draw(画布)\n笔.rectangle([{box}], fill=\"gold\")\n\nprint(\"画好了喵，尺寸：\", 画布.size)\n",
+  "explanationTemplate": "报错那句念作「**本喵不认识 `ImageDraw` 这个名字**」。\n\n注意它报的是**名字不认识**，不是「画布有问题」—— 画布好端端地造出来了，出问题的是本喵伸手去够 `ImageDraw` 的时候，手上是空的。\n\n为什么空？因为本喵开头只写了一句：\n\n```text\nfrom PIL import Image\n```\n\n这一句只把 `Image` 请了进来。画布是 `Image` 管的，所以造画布没事；可**画笔是 `ImageDraw` 管的**，它压根没被请进来，本喵却直接喊了它的名字。\n\n改法是把两样一起请：\n\n```text\nfrom PIL import Image, ImageDraw\n```\n\n逗号念作「还有」，一句话请两样，两样都住在那只窝里。\n\n本喵把这条记法留给你：**报「名字不认识」的时候，先回头看你请了几样**。这个错八成不是名字拼错了，而是**东西没请进来** —— 跟上一题「请回来了但喊错了名字」正好是反面喵。"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-08-copy-missing-amp",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-08",
+  "type": "codefix",
+  "concept": ["照抄招式的料", "不必还的名字不能省", "报错现场"],
+  "instances": 2,
+  "params": {
+    "v": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵给会租仓库的盒子自己写了一份照抄招式，里面那一句 `new` 也没漏。\n\n可翻译官喵说这份照抄招式写坏了，还顺手把正确写法写给本喵看了。\n\n你帮本喵改到能跑起来（圈里装 {v} 条，照抄一只、把抄出来那只的条数印出来）。**其他地方一个字都不改。**",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a({v});\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a({v});\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:9:5: error: invalid constructor; you probably meant 'FishBox (const FishBox&)'`\n\n**报错里那句「你大概想要的」就是正确答案** —— 本喵漏掉的正是料前面那个 `&`，翻译官喵直接补给它看了。\n\n为什么这个 `&` 非有不可？想一想链条：照抄招式塞进来的料要是**按值**的，翻译官喵就得**先替本喵造一份这个料的复印件**；可造复印件这件事，又要去叫一次照抄招式……**没完没了。** 所以它干脆在翻译阶段就把这事拦下来。\n\n这个 `&` 的读法是「**不必还的名字**」：本喵只是借看一下对方那只盒子，不要为它再造一只 —— 照抄的时候本来就只是「看原件、造新件」，原件不用被复制一份。\n\n⚠️ 顺带把这一行的另外两处也说清：`const` 放在最前面，意思是本喵只读对方、不改它；招式名和图纸同名，这正是「照抄招式」的身份标志。三样凑齐才是本喵要的那一份喵。"
+}

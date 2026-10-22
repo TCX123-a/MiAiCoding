@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-gdb-caller-frees-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-13",
+  "type": "codewrite",
+  "concept": ["配对跨了招式：牌子交给谁、谁负责还", "两本账一份记租一份记还", "没打算交出去的就在招式里当场还"],
+  "instances": 6,
+  "params": {
+    "x": { "kind": "pick", "values": ["5", "2"] },
+    "y": { "kind": "pick", "values": ["7", "9"] }
+  },
+  "stemTemplate": "上一课的「谁租谁还」有个变体喵：这一回的招式租完**不**自己留着用，而是把牌子**叼出来交给喊它的人** —— 那这一间该谁来还？规矩是：**牌子在谁手里，谁负责还**。本喵这份稿子里，牌子交到了 `main` 手上，所以该 `main` 用完就还。\n\n请你把两处补完：\n\n1. `rent_one`：租一间够放一个整数的仓库，把投喂 `v` 放进去，把牌子叼回去（租不到就叼 `NULL` 回去）；\n2. `main`：先喊 `rent_one({x})`，喊完把**租的账**记一笔，把它叼回来的那个数印成一行「`第 1 间放的是 V`」，然后**由 `main` 把这一间还回去**、把**还的账**也记一笔；再对着 `{y}` 照做一遍（编号换成 `2`）。\n\n末尾那几行（印两本账、还有按账下的结论）本喵已经写好了，别动它们 —— 改好之后该印：两行「第 k 间放的是 V」、一行「`账：租 2 间，还 2 间`」，最后一行「对上了」。",
+  "starterTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint *rent_one(int v) {\n    /* ↓ 在这儿写：租一间够放一个整数的仓库，把 v 放进去，把牌子叼回去 */\n\n    return NULL;\n}\n\nint main(void) {\n    int rented = 0;\n    int returned = 0;\n\n    /* ↓ 在这儿写：喊两回 rent_one，各印一行；用完由你把每一间还回去；两本账各记一笔 */\n\n    printf(\"账：租 %d 间，还 %d 间\\n\", rented, returned);\n    if (rented == returned) {\n        printf(\"对上了\\n\");\n    } else {\n        printf(\"漏了 %d 间\\n\", rented - returned);\n    }\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint *rent_one(int v) {\n    int *p = malloc(sizeof(int));\n    if (p == NULL) {\n        return NULL;\n    }\n    *p = v;\n    return p;\n}\n\nint main(void) {\n    int rented = 0;\n    int returned = 0;\n\n    int *p = rent_one({x});\n    rented++;\n    printf(\"第 1 间放的是 %d\\n\", *p);\n    free(p);\n    returned++;\n\n    p = rent_one({y});\n    rented++;\n    printf(\"第 2 间放的是 %d\\n\", *p);\n    free(p);\n    returned++;\n\n    printf(\"账：租 %d 间，还 %d 间\\n\", rented, returned);\n    if (rented == returned) {\n        printf(\"对上了\\n\");\n    } else {\n        printf(\"漏了 %d 间\\n\", rented - returned);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "「配对」讲的是**每一处租都要有对应的一处还**喵。本题的配对**跨了招式**：租写在 `rent_one` 里，还却写在 `main` 里 —— 凭什么？因为**牌子叼出来交到谁手里，谁就是还的人**：这一回牌子上的地址只在 `main` 手上（招式自己一退出就把牌子弄丢了），所以还的活儿归 `main`。\n\n反过来，要是那一间**压根没打算交出去**（在招式里用完就完了），那就该**在招式里当场还掉**。总之每一处 `malloc` 都得有人认领它的 `free`，谁认领都行，**不能没人认领**。\n\n末尾那句结论为什么信得过：两本账一本记租、一本记还，都是**写稿子的人自己记的**（跟课文里那句「编号对账」一个道理）。你要是漏了还，账上立刻差出数来 —— 稿子自己就会说「漏了喵」。"
+}

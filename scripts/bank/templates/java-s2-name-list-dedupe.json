@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-name-list-dedupe",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-09",
+  "type": "codewrite",
+  "concept": ["只要名字的名单", "同样的塞两遍只留一件", "contains", "Scanner"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 5 },
+    "k": { "kind": "pick", "values": ["1", "2", "3"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 3 },
+  "stemTemplate": "本喵要记一份「**今天来过的都有谁**」的名单喵：同一只来三趟，名单上也只能算一只。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。请把它们一个不漏地塞进名单，然后印三行：\n\n```text\n名单上一共 M 只\n一共投喂了 N 次\n去过的名字里有 {k} 吗：在不在\n```\n\n- `M` 是名单上**有几个名字**（重复的只算一只）；\n- `N` 就是投喂的总次数；\n- 最后一行问的是 `{k}` 这个名字**在不在名单上**，在就印 `true`、不在就印 `false`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.HashSet;\nimport java.util.Scanner;\nimport java.util.Set;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Set<String> names = new HashSet<>();\n        for (int i = 0; i < n; i++) {\n            names.add(sc.next());\n        }\n        System.out.println(\"名单上一共 \" + names.size() + \" 只\");\n        System.out.println(\"一共投喂了 \" + n + \" 次\");\n        System.out.println(\"去过的名字里有 {k} 吗：\" + names.contains(\"{k}\"));\n    }\n}\n",
+  "explanationTemplate": "这题的重点是**「来过几趟」和「都有谁来」是两回事**喵。\n\n**一、名单天生就会去重。** `names.add(sc.next())` 连塞 n 遍，同样的名字**只留一件** —— 所以 `size()` 报的是**有几个不同的名字**，而不是投喂了几次。投喂的次数得另记（这题直接用投喂进来的那个 n 就行）。\n\n这正是课上那句话的用法：小橘来了三趟，名单上它只能算**一只**。要是本喵拿上一课那种**按编号排队的柜子**来装，来几趟就记几行，`size()` 报出来的就是**投喂的次数**，跟第一行要的「有几个名字」压根不是一回事 —— 那种错**没有红字**，只能靠自己选对装法。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，所以**必然有重名** —— 这题不给「碰巧没重名」留后门，不写去重就一定会被抓住喵。）\n\n**二、问在不在用 `contains`。** 名单问在不在就是 `contains`；账本问在不在是 `containsKey`（因为账本一行里有两半，得说清问的是哪一半）。这两样别记混。\n\n**三、`true` / `false` 拼进项链里就是那串字。** 最后一行把问出来的结果直接接在项链后面 —— 它印出来就是 `true` 或者 `false`，不用本喵自己写 `if` 转一道。\n\n**四、顺序不保证。** 名单跟账本一样，是按名字算出来的座位号摆的，**不按本喵塞进去的先后摆**。本喵这题印的三行**都跟顺序无关**（个数、次数、在不在），所以结果永远是稳的。要按顺序看，得另喊一招已经自己排好的那种名单，往后再说喵。"
+}

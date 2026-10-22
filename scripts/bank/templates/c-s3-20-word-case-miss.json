@@ -1,0 +1,22 @@
+{
+  "templateId": "c-s3-20-word-case-miss",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-20",
+  "type": "codefix",
+  "concept": ["认词比的是一个字符一个字符全一样", "名单大小写对不齐：活一次都没轮到", "不崩不报错，安静走错岔路", "名单要照着将来会送来的摸样写"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["build", "clean"] },
+    "s": { "kind": "pick", "values": ["喂猫", "遛弯"] },
+    "a": { "kind": "pick", "values": ["备料", "和面"] },
+    "b": { "kind": "pick", "values": ["码砖", "上瓦"] },
+    "c": { "kind": "pick", "values": ["擦桌子", "拾掇"] },
+    "d": { "kind": "pick", "values": ["拖地", "晾干"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{w}\n", "sampleText": "{s}\n" },
+  "stemTemplate": "这份稿子是流水线上**认词分活**的活喵：投喂口送来一个词，名单上有的就照着干，名单外的就回一句「认不得」。毛病出在**名单上写的字**：名单写成了首字母大写（`Build`、`Clean`），可送来的词全是小写 —— 两下一比，一个都对不上：名单里的活一次都没轮到，回回都掉进「认不得」那条岔路。\n\n请你把名单上的字改成跟送来的一模一样（别的都别动）。样例喂进去的词故意不在名单里，走的就是「认不得」那条岔路：\n\n```text\n{sampleInput}\n```\n\n该印出来的是：\n\n```text\n{sampleOutput}\n```\n\n判分喂的是名单里的词（比如 {w}），修好之后它会走名单里对应的那一支。\n\n（顺一句：这种坑真出过 —— 人写的名单和机器送来的词，大小写对不齐，整条流水线照跑不误，就是活全没干。）",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 认词分活：名单上写着 Build / Clean */\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n    if (strcmp(word, \"Build\") == 0) {\n        printf(\"{a}\\n\");\n        printf(\"{b}\\n\");\n    } else if (strcmp(word, \"Clean\") == 0) {\n        printf(\"{c}\\n\");\n        printf(\"{d}\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <string.h>\n\n/* 认词分活：名单改成跟送来的词一模一样 */\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n    if (strcmp(word, \"build\") == 0) {\n        printf(\"{a}\\n\");\n        printf(\"{b}\\n\");\n    } else if (strcmp(word, \"clean\") == 0) {\n        printf(\"{c}\\n\");\n        printf(\"{d}\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "认词这一步，比的是**一个字符一个字符全一样**喵 —— `Build` 和 `build` 在它眼里是完完全全两个词。名单上随手写成大写开头，送来的又是小写，两条就永远对不上：名单里的活一次都没轮到，回回都掉进「认不得」。\n\n- 修法是**照着将来会送来的写**：名单上的字改成跟送来的词一模一样（`build`、`clean`）；\n- 反过来改「送来的词」不归你管 —— 送词的规矩不是你定的，所以老老实实改名单；\n- 这类「就差一点」的坑不崩不报错，就是安安静静走错岔路，跟课文里「命令打错一个字」那种闷亏是一个家族。\n\n顺一遍图纸思维喵：名册对号是图纸上最常见的一条**规矩**（词 = build 干什么、词 = clean 干什么），对号这一步每一个字都算数；名单写成什么样子，就该跟**将来真会送来**的一模一样 —— 这正是「认词分活」要盯的第一处。"
+}

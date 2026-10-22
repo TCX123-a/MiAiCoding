@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-sort-insert-card-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-06",
+  "type": "codewrite",
+  "concept": ["给小鱼干排排坐", "理牌式", "腾空位", "往右挤一挤"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 5, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "这次用「**理牌式**」：左手已经理好的一叠，右手一张一张摸新牌 —— 新牌比左手最后一张小，就把那张**往右挤一挤**，一直挤到左边那张比新牌小（或者左边没牌了），再把新牌**插进空出来的位子**。\n\n请你把 `insert_card` 这一招补完：\n\n1. 从第二张牌开始，一张一张摸（第 0 张自己一个人就算理好了）；\n2. 先把新牌的值抄下来存着，再从它左边一位开始往左看；\n3. 左边那张比新牌大，就把左边那张**往右挪一格**，接着往左看；\n4. 停下来的时候（左边那张比新牌小，或者左边没牌了），把新牌**按进那个空位**。\n\n输入先给一个数（一共几张），然后一行一张。样例输入：\n\n```text\n{sampleInput}\n```\n\n该印出来**一行**：`理牌式：` 后面跟着排好的牌（每张后面一个空格）：\n\n```text\n{sampleOutput}\n```",
+  "starterTemplate": "#include <stdio.h>\n\n/* 理牌式：一张一张摸进来，往左找位子，路上把大牌往右挤 */\nvoid insert_card(int a[], int n) {\n\n    /* ① 从第二张开始一张一张摸 */\n    /* ② 把新牌存起来，从它左边一位往左看 */\n    /* ③ 左边那张比新牌大：把它往右挪一格 */\n    /* ④ 停下来：把新牌按进空位 */\n\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    insert_card(a, n);\n\n    printf(\"理牌式：\");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", a[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* 理牌式：一张一张摸进来，往左找位子，路上把大牌往右挤 */\nvoid insert_card(int a[], int n) {\n    for (int i = 1; i < n; i++) {\n        int key = a[i];\n        int j = i - 1;\n        while (j >= 0 && a[j] > key) {\n            a[j + 1] = a[j];\n            j--;\n        }\n        a[j + 1] = key;\n    }\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    int a[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &a[i]) != 1) {\n            return 1;\n        }\n    }\n\n    insert_card(a, n);\n\n    printf(\"理牌式：\");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", a[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "这一招的骨架是：**摸一张 → 往后挤 → 按进空位**喵。\n\n```text\nint key = a[i];\nint j = i - 1;\nwhile (j >= 0 && a[j] > key) {\n    a[j + 1] = a[j];\n    j--;\n}\na[j + 1] = key;\n```\n\n三处要留意：\n\n**① 先把新牌的值抄下来。** 不抄的话，挤的路上原来那张牌就被别人盖掉了 —— `key` 就是我们手里捏着的那张，别丢。\n\n**② `a[j + 1] = a[j];` 是「往右挤一格」。** 方向别写反：往右挤是**大的那张挪到后面**去，不是把新牌往左塞。\n\n**③ 停下来之后是 `a[j + 1] = key;`，不是 `a[j]`。** 停下来的那一刻，`j` 指的是**比新牌小的那张**（或者 `-1`，说明左边没牌了），空位在它**右边一格** —— 所以是 `j + 1`。这个 `+ 1` 是个老坑：写成 `a[j]` 会把左边那张好的牌盖掉，还可能在没牌的时候往左边越界。\n\n本喵给你留一句分头记：**摸一张，往右挤，按进空位。**"
+}

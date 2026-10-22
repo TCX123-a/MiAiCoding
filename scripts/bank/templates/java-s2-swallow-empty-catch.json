@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-swallow-empty-catch",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-12",
+  "type": "codefix",
+  "concept": ["别吞", "编得过、跑得起来、就是少一行", "接住的那一只带着口信"],
+  "instances": 2,
+  "params": {
+    "msg": { "kind": "pick", "values": ["仓库空了喵", "碗底朝天了喵"] },
+    "n": { "kind": "pick", "values": ["0", "-1"] }
+  },
+  "stemTemplate": "本喵接住了一只出事的东西 —— 可接住的那一对花括号里**空着**，什么都没干。这稿子**编得过、也跑得起来**，就是屏幕上少了一行。\n\n请你把它补好，让程序印出：\n\n```text\n仓库空了：{msg}\n取到 0 条\n```\n\n要求：第一行那句口信，得是**从那只会出事的东西身上叼出来的**（用它自己的本事），别把这句字抄一遍。别的本喵都没写错喵。",
+  "brokenCodeTemplate": "public class Main {\n    static int takeFish(int n) {\n        if (n <= 0) {\n            throw new RuntimeException(\"{msg}\");\n        }\n        return n;\n    }\n\n    public static void main(String[] args) {\n        int got = 0;\n        try {\n            got = takeFish({n});\n        } catch (RuntimeException e) {\n        }\n        System.out.println(\"取到 \" + got + \" 条\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    static int takeFish(int n) {\n        if (n <= 0) {\n            throw new RuntimeException(\"{msg}\");\n        }\n        return n;\n    }\n\n    public static void main(String[] args) {\n        int got = 0;\n        try {\n            got = takeFish({n});\n        } catch (RuntimeException e) {\n            System.out.println(\"仓库空了：\" + e.getMessage());\n        }\n        System.out.println(\"取到 \" + got + \" 条\");\n    }\n}\n",
+  "explanationTemplate": "这题是**编得过、跑得起来、却静悄悄少了一行**的那一类 —— 不像别的坏法是冒红字，它是**一声不吭**的。\n\n本喵真跑过：接住的括号里空着，稿子**编得过**，程序**照常往下走**，翻译官喵**一个字都不说**。它不觉得这写法有错 —— 只是出事的那一格脚印从此断在这儿，等以后真出问题的时候，本喵连「它是在哪儿丢的」都找不着。这就是课里「**别吞**」那一条。\n\n补的就是那句「接住了怎么办」：\n\n```java\n} catch (RuntimeException e) {\n    System.out.println(\"仓库空了：\" + e.getMessage());\n}\n```\n\n`e` 是**接住的那一只**，`e.getMessage()` 是它带来的口信 —— 本喵在 `throw new RuntimeException(\"{msg}\")` 里写的那串字，就是从这儿叼回来的。\n\n还有一处值得盯一眼：**`取到 0 条` 里的 `0` 不是本喵写死的。** `got` 一开始就是 `0`，而 `got = takeFish({n})` 这一句**根本没走完** —— 出事的地方在 `takeFish` 的身子里，那句赋值还没来得及把结果放回去，出事的那一只就飞出来了，所以 `got` 一直停在 `0`。**出了事的那一句，后面的活全都不干** —— 这也正是为什么接住之后本喵还能接着往下印喵。"
+}

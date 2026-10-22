@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-16-last-tries",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-16",
+  "type": "codefix",
+  "concept": ["数圈数", "挨着看", "记账的位置", "最坏情况跑满一整排"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 6, "max": 7 }
+  },
+  "stemTemplate": "本子上摆着 **8 只碗**，编号 `1` 到 `8` 从小到大挨着摆好。本喵要从第一只开始**挨着看**，找编号 **{n}** —— 它正好坐在前 {n} 只碗里的**最后一只**上。\n\n可这一段报出来的「看了几下」**永远是 1**。翻译官喵一声没吭，跑起来也不摔。\n\n请你把 `seen` 这一招改对（`main` 里那几行别动）。改好之后该印一行，只有一个数：**看过的每一只碗都得记账** —— 中了的这一下也算。\n\n拿个小本子验一下：本子只有 **4 只碗**、要找的是最末尾那只的时候，该印\n\n```text\n4\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint bowl[8] = {1, 2, 3, 4, 5, 6, 7, 8};\n\n/* 挨着看：从第一只开始一只只比过去，答「一共看了几下」 */\nint seen(int n, int want) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        if (bowl[i] == want) {\n            tries = tries + 1;\n            return tries;\n        }\n    }\n    return tries;\n}\n\nint main(void) {\n    printf(\"%d\\n\", seen({n}, {n}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint bowl[8] = {1, 2, 3, 4, 5, 6, 7, 8};\n\n/* 挨着看：从第一只开始一只只比过去，答「一共看了几下」 */\nint seen(int n, int want) {\n    int tries = 0;\n    for (int i = 0; i < n; i++) {\n        tries = tries + 1;\n        if (bowl[i] == want) {\n            return tries;\n        }\n    }\n    return tries;\n}\n\nint main(void) {\n    printf(\"%d\\n\", seen({n}, {n}));\n    return 0;\n}\n",
+  "explanationTemplate": "毛病在**记账的位置**喵：`tries` 加一的动作被关在 `if` **里面**，只有「对上了」的那一只才记得上账。可**看过的每一只碗都出了力** —— 前面那些没对上的，本喵照样一只一只看过去了，这些圈数不能凭空消失。\n\n```text\nfor (int i = 0; i < n; i++) {\n    tries = tries + 1;      /* 先记账，再看这一只 */\n    if (bowl[i] == want) {\n        return tries;\n    }\n}\n```\n\n**每比一次就记一笔，中了的这一下也算**，所以看最末尾那一只要记满一整排。\n\n这就是课文第五节说的**最坏情况**：同一个本子、同一段代码，要找的摆在头一只就只记 1 下，摆在最末尾就得记满 {n} 下。本喵报大 O 的时候按**最满的那一头**报，就是不想被运气骗了。"
+}

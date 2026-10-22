@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-http-missing-body",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-06",
+  "type": "codefix",
+  "concept": ["服务端的分工：收下 → 备好 → 真的递出去", "send_response 与 wfile.write 各管什么", "end_headers 才把头送出去", "Content-Length 数的是字节"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["小鱼干", "猫粮", "小虾米"] }
+  },
+  "stemTemplate": "本喵摆了个小摊守着鱼塘，又派了只客人去要一份吃食。\n\n两边都跑得起来，摊主也回话了（**状态行是对的**），可客人**手里是空的** —— 正文一个字都没接到，本喵数出来是 **0** 个字。\n\n改好之后，客人要印出**两行**：\n\n- 第一行：摊主回话的**状态行**，一个字不改地原样印出来；\n- 第二行：摊主递过来的**正文一共有几个字**（正文是空的就是 0）。\n\n（摊主那段有问题喵，不是客人的错。）",
+  "brokenCodeTemplate": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        正文 = \"{word}已送达\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n文本 = 回应.decode(\"utf-8\")\n头, _, 正文 = 文本.partition(\"\\r\\n\\r\\n\")\nprint(头.split(\"\\r\\n\")[0])\nprint(len(正文))\n",
+  "referenceFixTemplate": "import http.server\nimport socket\nimport threading\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    def do_GET(self):\n        正文 = \"{word}已送达\"\n        身子 = 正文.encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(身子)))\n        self.end_headers()\n        self.wfile.write(身子)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\n端口 = 摊.server_address[1]\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\n客 = socket.create_connection((\"127.0.0.1\", 端口))\n客.sendall(\"GET /fish HTTP/1.1\\r\\nHost: 127.0.0.1\\r\\nConnection: close\\r\\n\\r\\n\".encode(\"utf-8\"))\n\n回应 = b\"\"\nwhile True:\n    一小块 = 客.recv(4096)\n    if not 一小块:\n        break\n    回应 += 一小块\n客.close()\n摊.shutdown()\n\n文本 = 回应.decode(\"utf-8\")\n头, _, 正文 = 文本.partition(\"\\r\\n\\r\\n\")\nprint(头.split(\"\\r\\n\")[0])\nprint(len(正文))\n",
+  "explanationTemplate": "客人拿到了**状态行**，却一个字正文都没接到 —— 这说明摊主把回话的**开头**送出去了，「要递的东西」却没送出去喵。\n\n回话是**分两步**走的：\n\n1. `send_response` 和 `send_header` 只是把几张**说明牌**（状态行加上各种头）先摆好，它们会一直攒着，等 `end_headers()` 那一下才真的过鱼塘；\n2. 牌子送出去之后，**正文还得自己动手送** —— `self.wfile.write(身子)` 那一句，才是那份吃食真正过鱼塘的动作。\n\n少了第 2 步，客人拿到的就是一份「说好有多少字节、结果一个字都没有」的回话：说明书上写着有东西，袋子里是空的。这正是本题要你数出来的那个数（数出来是 0，因为正文那串字一个字都没到）。\n\n⚠️ 顺带记住两件事：\n\n1. `Content-Length` 数的是**字节**，不是字数。同一句话里只要带中文，这两个数就不一样（本喵这份吃食，字节数差不多是字数的三倍）。\n2. **摊主那段代码是「说」和「递」分开写的** —— 说完了不等于递出去了。真隔着一片鱼塘的时候，你觉得最不该忘的那一步，恰恰是最容易整段漏掉的喵。"
+}

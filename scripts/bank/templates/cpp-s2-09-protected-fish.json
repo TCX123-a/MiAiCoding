@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-09-protected-fish",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-09",
+  "type": "codewrite",
+  "concept": ["盖子的三种身份", "protected 给照着画的图纸", "妈妈给一个公开招式"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "这一题要本喵把**两种盖子**摆明白：有一格连小猫都碰不得，有一格小猫够得着、外面够不着。投喂口会递进来**一个数**（一开始有几条）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：\n   - 一栏 `name`（一串字）**扣着盖子**（只有老图纸自己的招式够得着）；\n   - 一栏 `fish`（一个整数）挂上**「只有老图纸自己 + 照着它画下来的图纸」都够得着**的那一档；\n   - 一个出生招式，把这两样料填进去；\n   - 一个公开招式 `showName`，印一行 `本喵是X喵`。\n2. **让新图纸照它画下来**：叫 `Kitten`，出生招式先把两样料交给妈妈，再添一手 `eat` —— 里面把鱼干数**加一条**，印一行 `吃了一条，现在 N 条`。\n3. 在 `main` 里：读进那个数 → 照 `Kitten` 生一只小猫（名字叫 `{name}`）→ **先喊 `showName`、再喊 `eat`**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\nprotected:\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    void showName() const {\n        cout << \"本喵是\" << name << \"喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    int f = 0;\n    cin >> f;\n\n    Kitten k(\"{name}\", f);\n    k.showName();\n    k.eat();\n    return 0;\n}\n",
+  "explanationTemplate": "这一题里两格的身份是故意写得不一样的，对着看一遍就分得清了喵：\n\n| 标签 | 谁够得着 | 这一题里对应哪一格 |\n|---|---|---|\n| `private:` | **只有图纸自己的招式** | `name` —— 所以小猫里那句印名字**走的是妈妈的公开招式 `showName`**，它自己碰不到那一格 |\n| `protected:` | 图纸自己的招式 + **照着它画下来的图纸** | `fish` —— 所以小猫的 `eat` 里能直接写 `fish = fish + 1;` |\n| `public:` | 谁都够得着 | 出生招式和 `showName` |\n\n一句话抓住 `protected` 的用处：**它是专门给「妈妈 + 照着画的图纸」这一对开的** —— 外面的 `main` 照样够不着（盖子没白扣）。\n\n⚠️ 要是把 `fish` 那一格也扣成 `private:`，本喵真跑过那一段，翻译官喵会说：\n\n```text\nmain.cpp:16:9: error: 'int Cat::fish' is private within this context\n```\n\n意思是「私有，你现在站的这个地方够不着」。**小猫图纸不是老图纸自己** —— 老图纸扣上盖子的格子，连亲生孩子都碰不得。\n\n⚠️ 另外那个出生招式里的交代 `: Cat(n, f)` 也别漏：小猫自己这一半跑起来的时候，**妈妈那一半已经先搭好了**，所以 `name` 和 `fish` 里都已经有数了。"
+}

@@ -1,0 +1,364 @@
+{
+  "lessonId": "java-stage3-07",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-07-buffered-ledger-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把 **3 只猫**今天吃的条数记进一本账（文件名就叫 `账本.txt`）。\n\n投喂给程序的是：**第一行一个整数 n**，**后面跟 n 行**，一行一个整数，就是第 1 只、第 2 只……第 n 只猫吃的条数。\n\n请你写个程序，照这个次序做：\n\n1. 把这 n 笔账**写进文件**：第 k 只写成一行 `第 k 只：x 条`（k 从 1 数起，x 是投喂进来那个数）—— 用**套了篮子的写法**，写完记得**收工**；\n2. 再把同一份文件**一行一行念回来**，每行**原样印出来**；\n3. 最后印一行：`一共 n 行`。\n\n比如投喂给程序的是\n\n```text\n3\n4\n3\n4\n```\n\n程序就要叼回\n\n```text\n第 1 只：4 条\n第 2 只：3 条\n第 3 只：4 条\n一共 3 行\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"账本.txt\"));\n        for (int i = 0; i < n; i++) {\n            笔.write(\"第 \" + (i + 1) + \" 只：\" + 条数们[i] + \" 条\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"账本.txt\"));\n        String 行;\n        int 行数 = 0;\n        while ((行 = 眼.readLine()) != null) {\n            System.out.println(行);\n            行数 = 行数 + 1;\n        }\n        眼.close();\n\n        System.out.println(\"一共 \" + 行数 + \" 行\");\n    }\n}\n",
+      "expectedOutput": "第 1 只：6 条\n第 2 只：9 条\n第 3 只：7 条\n一共 3 行",
+      "stdin": "3\n6\n9\n7\n",
+      "explanation": "**一、写的那一半：套篮子 + 收工。** `new BufferedWriter(new FileWriter(\"账本.txt\"))` 开管子；每一笔 `write(...)` 是往篮子里塞字，塞完的一句 `newLine()` 是「这一行到此为止」（它会照着本喵系统的规矩补上换行）；n 笔全塞完，一声 `笔.close();` 把篮子倒干净、收工。\n\n**二、收工为什么不能忘。** 忘了它，文件里可能一个字都没有 —— 而程序**一个字都不会红**。本课里那只「念回来是 `null`」的错，就是这么来的。\n\n**三、念的那一半：一次吞一行。**\n\n```java\nString 行;\nwhile ((行 = 眼.readLine()) != null) {\n    System.out.println(行);\n    行数 = 行数 + 1;\n}\n```\n\n`行数` 这个格子摆在绕圈**外面**（不然每转一圈都被重新按回 0），身子里一边印一边加一。念完的时候它正好是文件里真正的行数 —— 也就是最后印出去的「一共几行」。\n\n**四、写和念为什么要分开两趟。** 写字和念字各有一套自己的眼睛，本喵这边是「先写完全部、收工，再从头开一只眼睛念」。要是边写边念，很容易念到自己还没倒出去的那半篮子，白忙一场。\n\n**五、两个小坑。** ① `第 \" + (i + 1) + \" 只` 这里括号不能省：少了它，`i` 会先跟前面那串字粘成一句，数就乱了（`i + 1` 要先算出来）；② 最后那句「一共几行」要印在**念完收工之后**，不是写完就印 —— 数的得是**真的念回来**的。",
+      "templateId": "java-s3-07-buffered-ledger",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:48.034Z",
+        "hash": "e0c8083423dace32"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-buffered-ledger-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把 **4 只猫**今天吃的条数记进一本账（文件名就叫 `账本.txt`）。\n\n投喂给程序的是：**第一行一个整数 n**，**后面跟 n 行**，一行一个整数，就是第 1 只、第 2 只……第 n 只猫吃的条数。\n\n请你写个程序，照这个次序做：\n\n1. 把这 n 笔账**写进文件**：第 k 只写成一行 `第 k 只：x 条`（k 从 1 数起，x 是投喂进来那个数）—— 用**套了篮子的写法**，写完记得**收工**；\n2. 再把同一份文件**一行一行念回来**，每行**原样印出来**；\n3. 最后印一行：`一共 n 行`。\n\n比如投喂给程序的是\n\n```text\n4\n6\n5\n1\n2\n```\n\n程序就要叼回\n\n```text\n第 1 只：6 条\n第 2 只：5 条\n第 3 只：1 条\n第 4 只：2 条\n一共 4 行\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"账本.txt\"));\n        for (int i = 0; i < n; i++) {\n            笔.write(\"第 \" + (i + 1) + \" 只：\" + 条数们[i] + \" 条\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"账本.txt\"));\n        String 行;\n        int 行数 = 0;\n        while ((行 = 眼.readLine()) != null) {\n            System.out.println(行);\n            行数 = 行数 + 1;\n        }\n        眼.close();\n\n        System.out.println(\"一共 \" + 行数 + \" 行\");\n    }\n}\n",
+      "expectedOutput": "第 1 只：5 条\n第 2 只：6 条\n第 3 只：2 条\n第 4 只：3 条\n一共 4 行",
+      "stdin": "4\n5\n6\n2\n3\n",
+      "explanation": "**一、写的那一半：套篮子 + 收工。** `new BufferedWriter(new FileWriter(\"账本.txt\"))` 开管子；每一笔 `write(...)` 是往篮子里塞字，塞完的一句 `newLine()` 是「这一行到此为止」（它会照着本喵系统的规矩补上换行）；n 笔全塞完，一声 `笔.close();` 把篮子倒干净、收工。\n\n**二、收工为什么不能忘。** 忘了它，文件里可能一个字都没有 —— 而程序**一个字都不会红**。本课里那只「念回来是 `null`」的错，就是这么来的。\n\n**三、念的那一半：一次吞一行。**\n\n```java\nString 行;\nwhile ((行 = 眼.readLine()) != null) {\n    System.out.println(行);\n    行数 = 行数 + 1;\n}\n```\n\n`行数` 这个格子摆在绕圈**外面**（不然每转一圈都被重新按回 0），身子里一边印一边加一。念完的时候它正好是文件里真正的行数 —— 也就是最后印出去的「一共几行」。\n\n**四、写和念为什么要分开两趟。** 写字和念字各有一套自己的眼睛，本喵这边是「先写完全部、收工，再从头开一只眼睛念」。要是边写边念，很容易念到自己还没倒出去的那半篮子，白忙一场。\n\n**五、两个小坑。** ① `第 \" + (i + 1) + \" 只` 这里括号不能省：少了它，`i` 会先跟前面那串字粘成一句，数就乱了（`i + 1` 要先算出来）；② 最后那句「一共几行」要印在**念完收工之后**，不是写完就印 —— 数的得是**真的念回来**的。",
+      "templateId": "java-s3-07-buffered-ledger",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:49.688Z",
+        "hash": "8bde12a9019de4f7"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-flush-missing-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一段小代码：把一个名字和条数记进账本文件，紧接着立刻念回来看看。\n\n可它念回来的不是那笔账，而是一行 `念到：null` —— 而且**一个字都不红**。\n\n你帮本喵看看：那些字到底跑哪儿去了？把它改好，让它念回来的是本喵刚写进去的那一笔（像 `念到：小橘 2 条` 这样）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"账本.txt\"));\n        笔.write(\"小橘 2 条\");\n        笔.newLine();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"账本.txt\"));\n        System.out.println(\"念到：\" + 眼.readLine());\n        眼.close();\n    }\n}\n",
+      "referenceFix": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"账本.txt\"));\n        笔.write(\"小橘 2 条\");\n        笔.newLine();\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"账本.txt\"));\n        System.out.println(\"念到：\" + 眼.readLine());\n        眼.close();\n    }\n}\n",
+      "expectedOutput": "念到：小橘 2 条",
+      "stdin": null,
+      "explanation": "那些字没丢，它们还**躺在篮子里**喵。\n\n**一、套了篮子之后，塞字塞的是篮子，不是文件。** `笔.write(...)` 把字扔进那只大篮子，篮子要等**满了**、或者本喵喊一声倒，才会整趟搬进文件。这段代码写完就跑了，一声都没喊。\n\n**二、`close()` 就是「先把篮子倒干净、再收工」那一声。** 收工之前它一定会把篮子倒空，所以补上 `笔.close();`，文件里才会真的有那一笔。\n\n**三、为什么念回来是 `null` 而不是报错。** 文件在开管子的时候就建好了（只是空的），所以念它一点都不算错 —— `readLine()` 念一个空文件，规规矩矩地回一句「没有了」，也就是 `null`。本喵那句「念到：」拼上一个 `null`，印出来就是 `念到：null`。\n\n**四、这一脚最坑的地方：一个字都不红。** 程序跑完了、文件也在、什么报错都没有 —— 只有本喵去念的时候才发现账是空的。这种错只能靠习惯挡：**写了就收工**。\n\n**五、`flush()` 和 `close()` 的分工。** `flush()` 是「把篮子里的**现在**就倒出去」，倒完篮子还在手上，可以接着写；`close()` 是「倒干净、收工」。这道题只要念一遍就完事，直接 `close()` 最省事；要是本喵还想接着往这份文件里添东西、又想让别人现在就能念到，那就先 `flush()` 一趟。",
+      "templateId": "java-s3-07-flush-missing",
+      "params": {
+        "n1": "小橘",
+        "c1": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:37.692Z",
+        "hash": "84239946007693f4"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-flush-missing-015",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写了一段小代码：把一个名字和条数记进账本文件，紧接着立刻念回来看看。\n\n可它念回来的不是那笔账，而是一行 `念到：null` —— 而且**一个字都不红**。\n\n你帮本喵看看：那些字到底跑哪儿去了？把它改好，让它念回来的是本喵刚写进去的那一笔（像 `念到：狸花 9 条` 这样）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"账本.txt\"));\n        笔.write(\"狸花 9 条\");\n        笔.newLine();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"账本.txt\"));\n        System.out.println(\"念到：\" + 眼.readLine());\n        眼.close();\n    }\n}\n",
+      "referenceFix": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"账本.txt\"));\n        笔.write(\"狸花 9 条\");\n        笔.newLine();\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"账本.txt\"));\n        System.out.println(\"念到：\" + 眼.readLine());\n        眼.close();\n    }\n}\n",
+      "expectedOutput": "念到：狸花 9 条",
+      "stdin": null,
+      "explanation": "那些字没丢，它们还**躺在篮子里**喵。\n\n**一、套了篮子之后，塞字塞的是篮子，不是文件。** `笔.write(...)` 把字扔进那只大篮子，篮子要等**满了**、或者本喵喊一声倒，才会整趟搬进文件。这段代码写完就跑了，一声都没喊。\n\n**二、`close()` 就是「先把篮子倒干净、再收工」那一声。** 收工之前它一定会把篮子倒空，所以补上 `笔.close();`，文件里才会真的有那一笔。\n\n**三、为什么念回来是 `null` 而不是报错。** 文件在开管子的时候就建好了（只是空的），所以念它一点都不算错 —— `readLine()` 念一个空文件，规规矩矩地回一句「没有了」，也就是 `null`。本喵那句「念到：」拼上一个 `null`，印出来就是 `念到：null`。\n\n**四、这一脚最坑的地方：一个字都不红。** 程序跑完了、文件也在、什么报错都没有 —— 只有本喵去念的时候才发现账是空的。这种错只能靠习惯挡：**写了就收工**。\n\n**五、`flush()` 和 `close()` 的分工。** `flush()` 是「把篮子里的**现在**就倒出去」，倒完篮子还在手上，可以接着写；`close()` 是「倒干净、收工」。这道题只要念一遍就完事，直接 `close()` 最省事；要是本喵还想接着往这份文件里添东西、又想让别人现在就能念到，那就先 `flush()` 一趟。",
+      "templateId": "java-s3-07-flush-missing",
+      "params": {
+        "n1": "狸花",
+        "c1": 9
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:39.145Z",
+        "hash": "842b0ddbb07b9ac6"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-flush-then-more-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵想看看「倒一趟」和「收工」到底差在哪儿。\n\n请你写个程序，照这个次序做（文件名叫 `两趟.txt`，用**套了篮子的写法**）：\n\n1. 先往篮子里写 **2 行**：编号从 1 数起，第 k 行就写 `第 k 行`；\n2. 喊一声 `flush()` —— **倒一趟，但先不收工**；\n3. 这时候把 `两趟.txt` 念一遍，数出**念到几行**，印一行 `第一次念到 X 行`；\n4. 接着往**同一只篮子**里再写 **1 行**：编号接着往下数（上一趟数到 2，这一趟就从它后面接着来），每行照样写 `第 k 行`；\n5. 喊一声 `close()` 收工；\n6. 再把 `两趟.txt` 念一遍，数出念到几行，印一行 `第二次念到 Y 行`。\n\n两行都印成 `第一次念到 2 行`、`第二次念到 3 行` 这个样子。\n\n（这一题**不用投喂任何东西**：写和念都在程序里一次做完。）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"两趟.txt\"));\n\n        for (int i = 1; i <= 2; i++) {\n            笔.write(\"第 \" + i + \" 行\");\n            笔.newLine();\n        }\n        笔.flush();\n\n        BufferedReader 眼一 = new BufferedReader(new FileReader(\"两趟.txt\"));\n        int 一 = 0;\n        while (眼一.readLine() != null) {\n            一 = 一 + 1;\n        }\n        眼一.close();\n        System.out.println(\"第一次念到 \" + 一 + \" 行\");\n\n        for (int i = 2 + 1; i <= 2 + 1; i++) {\n            笔.write(\"第 \" + i + \" 行\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼二 = new BufferedReader(new FileReader(\"两趟.txt\"));\n        int 二 = 0;\n        while (眼二.readLine() != null) {\n            二 = 二 + 1;\n        }\n        眼二.close();\n        System.out.println(\"第二次念到 \" + 二 + \" 行\");\n    }\n}\n",
+      "expectedOutput": "第一次念到 2 行\n第二次念到 3 行",
+      "stdin": null,
+      "explanation": "**一、两次念到的数为什么不一样。** 第一趟念的是 **2 行**，第二趟念的是 **2 + 1 行**。\n\n**二、`flush()` 说的是「现在就把篮子里的倒出去」。** 倒完，篮子还在本喵手上 —— 文件里已经躺着先写的那 2 行，所以这时候念得到它们；可它**没有收工**，本喵还能接着往同一只篮子塞字。\n\n**三、`close()` 说的是「倒干净、收工」。** 后面那 1 行也是在篮子里攒着，一声 `close()` 才被倒进文件，所以第二趟念的时候，2 + 1 行全在。\n\n**四、这里最容易踩的两个坑。**\n\n① **两声喊反了**：要是第 2 步直接写成 `close()`，篮子就收工了，第 4 步那句 `笔.write(...)` 会当场翻脸 —— 收工的工具不许再写。\n\n② **一声都不喊**：既不 `flush()` 也不 `close()`，那**两趟念出来的都是 0 行** —— 字全留在篮子里，跟没写过一样。本课那道「念回来是 `null`」的题，坏的就是这一脚。\n\n**五、念的时候要开新眼睛。** 每一趟念都新开一只 `BufferedReader`，念完 `close()` 收工。同一只眼睛不要跨着两次写去用 —— 它记着自己念到哪儿了，跨着用会数漏。",
+      "templateId": "java-s3-07-flush-then-more",
+      "params": {
+        "a": 2,
+        "b": 1
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:53.492Z",
+        "hash": "f84f7f96f633f433"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-flush-then-more-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵想看看「倒一趟」和「收工」到底差在哪儿。\n\n请你写个程序，照这个次序做（文件名叫 `两趟.txt`，用**套了篮子的写法**）：\n\n1. 先往篮子里写 **2 行**：编号从 1 数起，第 k 行就写 `第 k 行`；\n2. 喊一声 `flush()` —— **倒一趟，但先不收工**；\n3. 这时候把 `两趟.txt` 念一遍，数出**念到几行**，印一行 `第一次念到 X 行`；\n4. 接着往**同一只篮子**里再写 **2 行**：编号接着往下数（上一趟数到 2，这一趟就从它后面接着来），每行照样写 `第 k 行`；\n5. 喊一声 `close()` 收工；\n6. 再把 `两趟.txt` 念一遍，数出念到几行，印一行 `第二次念到 Y 行`。\n\n两行都印成 `第一次念到 2 行`、`第二次念到 3 行` 这个样子。\n\n（这一题**不用投喂任何东西**：写和念都在程序里一次做完。）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"两趟.txt\"));\n\n        for (int i = 1; i <= 2; i++) {\n            笔.write(\"第 \" + i + \" 行\");\n            笔.newLine();\n        }\n        笔.flush();\n\n        BufferedReader 眼一 = new BufferedReader(new FileReader(\"两趟.txt\"));\n        int 一 = 0;\n        while (眼一.readLine() != null) {\n            一 = 一 + 1;\n        }\n        眼一.close();\n        System.out.println(\"第一次念到 \" + 一 + \" 行\");\n\n        for (int i = 2 + 1; i <= 2 + 2; i++) {\n            笔.write(\"第 \" + i + \" 行\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼二 = new BufferedReader(new FileReader(\"两趟.txt\"));\n        int 二 = 0;\n        while (眼二.readLine() != null) {\n            二 = 二 + 1;\n        }\n        眼二.close();\n        System.out.println(\"第二次念到 \" + 二 + \" 行\");\n    }\n}\n",
+      "expectedOutput": "第一次念到 2 行\n第二次念到 4 行",
+      "stdin": null,
+      "explanation": "**一、两次念到的数为什么不一样。** 第一趟念的是 **2 行**，第二趟念的是 **2 + 2 行**。\n\n**二、`flush()` 说的是「现在就把篮子里的倒出去」。** 倒完，篮子还在本喵手上 —— 文件里已经躺着先写的那 2 行，所以这时候念得到它们；可它**没有收工**，本喵还能接着往同一只篮子塞字。\n\n**三、`close()` 说的是「倒干净、收工」。** 后面那 2 行也是在篮子里攒着，一声 `close()` 才被倒进文件，所以第二趟念的时候，2 + 2 行全在。\n\n**四、这里最容易踩的两个坑。**\n\n① **两声喊反了**：要是第 2 步直接写成 `close()`，篮子就收工了，第 4 步那句 `笔.write(...)` 会当场翻脸 —— 收工的工具不许再写。\n\n② **一声都不喊**：既不 `flush()` 也不 `close()`，那**两趟念出来的都是 0 行** —— 字全留在篮子里，跟没写过一样。本课那道「念回来是 `null`」的题，坏的就是这一脚。\n\n**五、念的时候要开新眼睛。** 每一趟念都新开一只 `BufferedReader`，念完 `close()` 收工。同一只眼睛不要跨着两次写去用 —— 它记着自己念到哪儿了，跨着用会数漏。",
+      "templateId": "java-s3-07-flush-then-more",
+      "params": {
+        "a": 2,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:33.343Z",
+        "hash": "eadcd07c44e0fb0e"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-flush-then-more-002",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵想看看「倒一趟」和「收工」到底差在哪儿。\n\n请你写个程序，照这个次序做（文件名叫 `两趟.txt`，用**套了篮子的写法**）：\n\n1. 先往篮子里写 **3 行**：编号从 1 数起，第 k 行就写 `第 k 行`；\n2. 喊一声 `flush()` —— **倒一趟，但先不收工**；\n3. 这时候把 `两趟.txt` 念一遍，数出**念到几行**，印一行 `第一次念到 X 行`；\n4. 接着往**同一只篮子**里再写 **1 行**：编号接着往下数（上一趟数到 3，这一趟就从它后面接着来），每行照样写 `第 k 行`；\n5. 喊一声 `close()` 收工；\n6. 再把 `两趟.txt` 念一遍，数出念到几行，印一行 `第二次念到 Y 行`。\n\n两行都印成 `第一次念到 2 行`、`第二次念到 3 行` 这个样子。\n\n（这一题**不用投喂任何东西**：写和念都在程序里一次做完。）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"两趟.txt\"));\n\n        for (int i = 1; i <= 3; i++) {\n            笔.write(\"第 \" + i + \" 行\");\n            笔.newLine();\n        }\n        笔.flush();\n\n        BufferedReader 眼一 = new BufferedReader(new FileReader(\"两趟.txt\"));\n        int 一 = 0;\n        while (眼一.readLine() != null) {\n            一 = 一 + 1;\n        }\n        眼一.close();\n        System.out.println(\"第一次念到 \" + 一 + \" 行\");\n\n        for (int i = 3 + 1; i <= 3 + 1; i++) {\n            笔.write(\"第 \" + i + \" 行\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼二 = new BufferedReader(new FileReader(\"两趟.txt\"));\n        int 二 = 0;\n        while (眼二.readLine() != null) {\n            二 = 二 + 1;\n        }\n        眼二.close();\n        System.out.println(\"第二次念到 \" + 二 + \" 行\");\n    }\n}\n",
+      "expectedOutput": "第一次念到 3 行\n第二次念到 4 行",
+      "stdin": null,
+      "explanation": "**一、两次念到的数为什么不一样。** 第一趟念的是 **3 行**，第二趟念的是 **3 + 1 行**。\n\n**二、`flush()` 说的是「现在就把篮子里的倒出去」。** 倒完，篮子还在本喵手上 —— 文件里已经躺着先写的那 3 行，所以这时候念得到它们；可它**没有收工**，本喵还能接着往同一只篮子塞字。\n\n**三、`close()` 说的是「倒干净、收工」。** 后面那 1 行也是在篮子里攒着，一声 `close()` 才被倒进文件，所以第二趟念的时候，3 + 1 行全在。\n\n**四、这里最容易踩的两个坑。**\n\n① **两声喊反了**：要是第 2 步直接写成 `close()`，篮子就收工了，第 4 步那句 `笔.write(...)` 会当场翻脸 —— 收工的工具不许再写。\n\n② **一声都不喊**：既不 `flush()` 也不 `close()`，那**两趟念出来的都是 0 行** —— 字全留在篮子里，跟没写过一样。本课那道「念回来是 `null`」的题，坏的就是这一脚。\n\n**五、念的时候要开新眼睛。** 每一趟念都新开一只 `BufferedReader`，念完 `close()` 收工。同一只眼睛不要跨着两次写去用 —— 它记着自己念到哪儿了，跨着用会数漏。",
+      "templateId": "java-s3-07-flush-then-more",
+      "params": {
+        "a": 3,
+        "b": 1
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:35.374Z",
+        "hash": "1e970174f369d285"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-flush-then-more-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵想看看「倒一趟」和「收工」到底差在哪儿。\n\n请你写个程序，照这个次序做（文件名叫 `两趟.txt`，用**套了篮子的写法**）：\n\n1. 先往篮子里写 **3 行**：编号从 1 数起，第 k 行就写 `第 k 行`；\n2. 喊一声 `flush()` —— **倒一趟，但先不收工**；\n3. 这时候把 `两趟.txt` 念一遍，数出**念到几行**，印一行 `第一次念到 X 行`；\n4. 接着往**同一只篮子**里再写 **2 行**：编号接着往下数（上一趟数到 3，这一趟就从它后面接着来），每行照样写 `第 k 行`；\n5. 喊一声 `close()` 收工；\n6. 再把 `两趟.txt` 念一遍，数出念到几行，印一行 `第二次念到 Y 行`。\n\n两行都印成 `第一次念到 2 行`、`第二次念到 3 行` 这个样子。\n\n（这一题**不用投喂任何东西**：写和念都在程序里一次做完。）",
+      "starter": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"两趟.txt\"));\n\n        for (int i = 1; i <= 3; i++) {\n            笔.write(\"第 \" + i + \" 行\");\n            笔.newLine();\n        }\n        笔.flush();\n\n        BufferedReader 眼一 = new BufferedReader(new FileReader(\"两趟.txt\"));\n        int 一 = 0;\n        while (眼一.readLine() != null) {\n            一 = 一 + 1;\n        }\n        眼一.close();\n        System.out.println(\"第一次念到 \" + 一 + \" 行\");\n\n        for (int i = 3 + 1; i <= 3 + 2; i++) {\n            笔.write(\"第 \" + i + \" 行\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼二 = new BufferedReader(new FileReader(\"两趟.txt\"));\n        int 二 = 0;\n        while (眼二.readLine() != null) {\n            二 = 二 + 1;\n        }\n        眼二.close();\n        System.out.println(\"第二次念到 \" + 二 + \" 行\");\n    }\n}\n",
+      "expectedOutput": "第一次念到 3 行\n第二次念到 5 行",
+      "stdin": null,
+      "explanation": "**一、两次念到的数为什么不一样。** 第一趟念的是 **3 行**，第二趟念的是 **3 + 2 行**。\n\n**二、`flush()` 说的是「现在就把篮子里的倒出去」。** 倒完，篮子还在本喵手上 —— 文件里已经躺着先写的那 3 行，所以这时候念得到它们；可它**没有收工**，本喵还能接着往同一只篮子塞字。\n\n**三、`close()` 说的是「倒干净、收工」。** 后面那 2 行也是在篮子里攒着，一声 `close()` 才被倒进文件，所以第二趟念的时候，3 + 2 行全在。\n\n**四、这里最容易踩的两个坑。**\n\n① **两声喊反了**：要是第 2 步直接写成 `close()`，篮子就收工了，第 4 步那句 `笔.write(...)` 会当场翻脸 —— 收工的工具不许再写。\n\n② **一声都不喊**：既不 `flush()` 也不 `close()`，那**两趟念出来的都是 0 行** —— 字全留在篮子里，跟没写过一样。本课那道「念回来是 `null`」的题，坏的就是这一脚。\n\n**五、念的时候要开新眼睛。** 每一趟念都新开一只 `BufferedReader`，念完 `close()` 收工。同一只眼睛不要跨着两次写去用 —— 它记着自己念到哪儿了，跨着用会数漏。",
+      "templateId": "java-s3-07-flush-then-more",
+      "params": {
+        "a": 3,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:54.506Z",
+        "hash": "335a28f809f97a56"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-freeze-thaw-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把**一整只猫**冻成字节存进文件，再解冻回来看看它还在不在。\n\n请你写个程序，照这个次序做：\n\n1. 画一张叫 `Fish` 的图纸，上面两格：一格叫 `名字`（装字），一格叫 `条数`（装整数）；图纸名字后面**挂上「可以冻」的牌子**；\n2. 图纸上再多一格 `备注`（装字），**戴 `transient` 牌子** —— 哪一格不想跟着冻走，就戴这个；\n3. 照这张图纸生一只猫：名字叫 `小橘`，条数 2；\n4. 把它**冻进**文件 `猫.bin`；\n5. 再从那个文件**解冻回来** —— 解冻那一手叼回来的东西，得自己交代一句它原来是哪种猫；\n6. 最后印三行，长这样：\n\n```text\n名字：这只猫的名字\n条数：一个整数\n备注：那一格解冻回来是什么样\n```\n\n（这一题**不用投喂任何东西**，画图纸、生猫、冻、解冻都在程序里一次做完。）",
+      "starter": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass Fish implements Serializable {\n    String 名字;\n    int 条数;\n    transient String 备注 = \"本喵的私房话\";\n\n    Fish(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Fish 猫 = new Fish(\"小橘\", 2);\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        ObjectInputStream 入口 = new ObjectInputStream(new FileInputStream(\"猫.bin\"));\n        Fish 回来的 = (Fish) 入口.readObject();\n        入口.close();\n\n        System.out.println(\"名字：\" + 回来的.名字);\n        System.out.println(\"条数：\" + 回来的.条数);\n        System.out.println(\"备注：\" + 回来的.备注);\n    }\n}\n",
+      "expectedOutput": "名字：小橘\n条数：2\n备注：null",
+      "stdin": null,
+      "explanation": "**一、冻那一头。** `new ObjectOutputStream(new FileOutputStream(\"猫.bin\"))`：管子照旧是那份文件，外面再套一层「会冻东西」的家什。`出口.writeObject(猫)` 把整只猫（哪张图纸、每格装了什么）一股脑变成字节写进去，收尾照样是 `close()`。\n\n**二、解冻那一头。** `new ObjectInputStream(new FileInputStream(\"猫.bin\"))` 配 `入口.readObject()`。有一处跟念字不一样：`readObject()` 叼回来的东西**在它眼里只是一坨「东西」**，本喵得自己交代一句 `(Fish)`，读作「照 `Fish` 那张图纸把它填回来」—— 少了这一句 `javac` 就红。\n\n**三、`transient` 那一格回来是 `null`。** 冻的时候它**根本没被装上车**。所以解冻出来的猫，`备注` 那一格是**新图纸刚生出来时的样子** —— 本喵这里给的是 `null`。\n\n注意一个容易想歪的地方：解冻**不会**把这只猫重新「生」一遍，那张图纸上写的「新猫出生就有的东西」（比如 `备注` 一开始赋的那句话）**也不会再执行一次**。它做的就是照着字节把格子一个个填回去，没被冻上去的格子，只能是新的、空的。\n\n**四、`名字` 和 `条数` 为什么原样回来了。** 这两格没戴 `transient`，跟着字节走了一趟，解冻的时候被填回原来的值 —— 这正是「冻」想要的效果：**过了一趟文件还认得它**。\n\n**五、动手时的两个小坑。** ① 图纸和 `Main` 摆在**同一个文件**里时，只有 `Main` 前面写 `public`，图纸不写（一个文件里只许有一个 `public` 的那张）；② 出场顺序有讲究 —— **先写完整只猫、收工，再开解冻那一头**。要是先开了解冻的头、猫还没冻进去，文件还是空的，解冻当场翻脸。",
+      "templateId": "java-s3-07-freeze-thaw",
+      "params": {
+        "n1": "小橘",
+        "c1": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:51.035Z",
+        "hash": "2e04e2f1db34f15a"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-freeze-thaw-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把**一整只猫**冻成字节存进文件，再解冻回来看看它还在不在。\n\n请你写个程序，照这个次序做：\n\n1. 画一张叫 `Fish` 的图纸，上面两格：一格叫 `名字`（装字），一格叫 `条数`（装整数）；图纸名字后面**挂上「可以冻」的牌子**；\n2. 图纸上再多一格 `备注`（装字），**戴 `transient` 牌子** —— 哪一格不想跟着冻走，就戴这个；\n3. 照这张图纸生一只猫：名字叫 `小橘`，条数 5；\n4. 把它**冻进**文件 `猫.bin`；\n5. 再从那个文件**解冻回来** —— 解冻那一手叼回来的东西，得自己交代一句它原来是哪种猫；\n6. 最后印三行，长这样：\n\n```text\n名字：这只猫的名字\n条数：一个整数\n备注：那一格解冻回来是什么样\n```\n\n（这一题**不用投喂任何东西**，画图纸、生猫、冻、解冻都在程序里一次做完。）",
+      "starter": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass Fish implements Serializable {\n    String 名字;\n    int 条数;\n    transient String 备注 = \"本喵的私房话\";\n\n    Fish(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Fish 猫 = new Fish(\"小橘\", 5);\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        ObjectInputStream 入口 = new ObjectInputStream(new FileInputStream(\"猫.bin\"));\n        Fish 回来的 = (Fish) 入口.readObject();\n        入口.close();\n\n        System.out.println(\"名字：\" + 回来的.名字);\n        System.out.println(\"条数：\" + 回来的.条数);\n        System.out.println(\"备注：\" + 回来的.备注);\n    }\n}\n",
+      "expectedOutput": "名字：小橘\n条数：5\n备注：null",
+      "stdin": null,
+      "explanation": "**一、冻那一头。** `new ObjectOutputStream(new FileOutputStream(\"猫.bin\"))`：管子照旧是那份文件，外面再套一层「会冻东西」的家什。`出口.writeObject(猫)` 把整只猫（哪张图纸、每格装了什么）一股脑变成字节写进去，收尾照样是 `close()`。\n\n**二、解冻那一头。** `new ObjectInputStream(new FileInputStream(\"猫.bin\"))` 配 `入口.readObject()`。有一处跟念字不一样：`readObject()` 叼回来的东西**在它眼里只是一坨「东西」**，本喵得自己交代一句 `(Fish)`，读作「照 `Fish` 那张图纸把它填回来」—— 少了这一句 `javac` 就红。\n\n**三、`transient` 那一格回来是 `null`。** 冻的时候它**根本没被装上车**。所以解冻出来的猫，`备注` 那一格是**新图纸刚生出来时的样子** —— 本喵这里给的是 `null`。\n\n注意一个容易想歪的地方：解冻**不会**把这只猫重新「生」一遍，那张图纸上写的「新猫出生就有的东西」（比如 `备注` 一开始赋的那句话）**也不会再执行一次**。它做的就是照着字节把格子一个个填回去，没被冻上去的格子，只能是新的、空的。\n\n**四、`名字` 和 `条数` 为什么原样回来了。** 这两格没戴 `transient`，跟着字节走了一趟，解冻的时候被填回原来的值 —— 这正是「冻」想要的效果：**过了一趟文件还认得它**。\n\n**五、动手时的两个小坑。** ① 图纸和 `Main` 摆在**同一个文件**里时，只有 `Main` 前面写 `public`，图纸不写（一个文件里只许有一个 `public` 的那张）；② 出场顺序有讲究 —— **先写完整只猫、收工，再开解冻那一头**。要是先开了解冻的头、猫还没冻进去，文件还是空的，解冻当场翻脸。",
+      "templateId": "java-s3-07-freeze-thaw",
+      "params": {
+        "n1": "小橘",
+        "c1": 5
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:37.485Z",
+        "hash": "182f343bdb431467"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-freeze-thaw-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把**一整只猫**冻成字节存进文件，再解冻回来看看它还在不在。\n\n请你写个程序，照这个次序做：\n\n1. 画一张叫 `Fish` 的图纸，上面两格：一格叫 `名字`（装字），一格叫 `条数`（装整数）；图纸名字后面**挂上「可以冻」的牌子**；\n2. 图纸上再多一格 `备注`（装字），**戴 `transient` 牌子** —— 哪一格不想跟着冻走，就戴这个；\n3. 照这张图纸生一只猫：名字叫 `小橘`，条数 8；\n4. 把它**冻进**文件 `猫.bin`；\n5. 再从那个文件**解冻回来** —— 解冻那一手叼回来的东西，得自己交代一句它原来是哪种猫；\n6. 最后印三行，长这样：\n\n```text\n名字：这只猫的名字\n条数：一个整数\n备注：那一格解冻回来是什么样\n```\n\n（这一题**不用投喂任何东西**，画图纸、生猫、冻、解冻都在程序里一次做完。）",
+      "starter": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass Fish implements Serializable {\n    String 名字;\n    int 条数;\n    transient String 备注 = \"本喵的私房话\";\n\n    Fish(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Fish 猫 = new Fish(\"小橘\", 8);\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        ObjectInputStream 入口 = new ObjectInputStream(new FileInputStream(\"猫.bin\"));\n        Fish 回来的 = (Fish) 入口.readObject();\n        入口.close();\n\n        System.out.println(\"名字：\" + 回来的.名字);\n        System.out.println(\"条数：\" + 回来的.条数);\n        System.out.println(\"备注：\" + 回来的.备注);\n    }\n}\n",
+      "expectedOutput": "名字：小橘\n条数：8\n备注：null",
+      "stdin": null,
+      "explanation": "**一、冻那一头。** `new ObjectOutputStream(new FileOutputStream(\"猫.bin\"))`：管子照旧是那份文件，外面再套一层「会冻东西」的家什。`出口.writeObject(猫)` 把整只猫（哪张图纸、每格装了什么）一股脑变成字节写进去，收尾照样是 `close()`。\n\n**二、解冻那一头。** `new ObjectInputStream(new FileInputStream(\"猫.bin\"))` 配 `入口.readObject()`。有一处跟念字不一样：`readObject()` 叼回来的东西**在它眼里只是一坨「东西」**，本喵得自己交代一句 `(Fish)`，读作「照 `Fish` 那张图纸把它填回来」—— 少了这一句 `javac` 就红。\n\n**三、`transient` 那一格回来是 `null`。** 冻的时候它**根本没被装上车**。所以解冻出来的猫，`备注` 那一格是**新图纸刚生出来时的样子** —— 本喵这里给的是 `null`。\n\n注意一个容易想歪的地方：解冻**不会**把这只猫重新「生」一遍，那张图纸上写的「新猫出生就有的东西」（比如 `备注` 一开始赋的那句话）**也不会再执行一次**。它做的就是照着字节把格子一个个填回去，没被冻上去的格子，只能是新的、空的。\n\n**四、`名字` 和 `条数` 为什么原样回来了。** 这两格没戴 `transient`，跟着字节走了一趟，解冻的时候被填回原来的值 —— 这正是「冻」想要的效果：**过了一趟文件还认得它**。\n\n**五、动手时的两个小坑。** ① 图纸和 `Main` 摆在**同一个文件**里时，只有 `Main` 前面写 `public`，图纸不写（一个文件里只许有一个 `public` 的那张）；② 出场顺序有讲究 —— **先写完整只猫、收工，再开解冻那一头**。要是先开了解冻的头、猫还没冻进去，文件还是空的，解冻当场翻脸。",
+      "templateId": "java-s3-07-freeze-thaw",
+      "params": {
+        "n1": "小橘",
+        "c1": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:39.605Z",
+        "hash": "9b59decf5d8b844f"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-freeze-thaw-009",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把**一整只猫**冻成字节存进文件，再解冻回来看看它还在不在。\n\n请你写个程序，照这个次序做：\n\n1. 画一张叫 `Fish` 的图纸，上面两格：一格叫 `名字`（装字），一格叫 `条数`（装整数）；图纸名字后面**挂上「可以冻」的牌子**；\n2. 图纸上再多一格 `备注`（装字），**戴 `transient` 牌子** —— 哪一格不想跟着冻走，就戴这个；\n3. 照这张图纸生一只猫：名字叫 `狸花`，条数 3；\n4. 把它**冻进**文件 `猫.bin`；\n5. 再从那个文件**解冻回来** —— 解冻那一手叼回来的东西，得自己交代一句它原来是哪种猫；\n6. 最后印三行，长这样：\n\n```text\n名字：这只猫的名字\n条数：一个整数\n备注：那一格解冻回来是什么样\n```\n\n（这一题**不用投喂任何东西**，画图纸、生猫、冻、解冻都在程序里一次做完。）",
+      "starter": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass Fish implements Serializable {\n    String 名字;\n    int 条数;\n    transient String 备注 = \"本喵的私房话\";\n\n    Fish(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Fish 猫 = new Fish(\"狸花\", 3);\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        ObjectInputStream 入口 = new ObjectInputStream(new FileInputStream(\"猫.bin\"));\n        Fish 回来的 = (Fish) 入口.readObject();\n        入口.close();\n\n        System.out.println(\"名字：\" + 回来的.名字);\n        System.out.println(\"条数：\" + 回来的.条数);\n        System.out.println(\"备注：\" + 回来的.备注);\n    }\n}\n",
+      "expectedOutput": "名字：狸花\n条数：3\n备注：null",
+      "stdin": null,
+      "explanation": "**一、冻那一头。** `new ObjectOutputStream(new FileOutputStream(\"猫.bin\"))`：管子照旧是那份文件，外面再套一层「会冻东西」的家什。`出口.writeObject(猫)` 把整只猫（哪张图纸、每格装了什么）一股脑变成字节写进去，收尾照样是 `close()`。\n\n**二、解冻那一头。** `new ObjectInputStream(new FileInputStream(\"猫.bin\"))` 配 `入口.readObject()`。有一处跟念字不一样：`readObject()` 叼回来的东西**在它眼里只是一坨「东西」**，本喵得自己交代一句 `(Fish)`，读作「照 `Fish` 那张图纸把它填回来」—— 少了这一句 `javac` 就红。\n\n**三、`transient` 那一格回来是 `null`。** 冻的时候它**根本没被装上车**。所以解冻出来的猫，`备注` 那一格是**新图纸刚生出来时的样子** —— 本喵这里给的是 `null`。\n\n注意一个容易想歪的地方：解冻**不会**把这只猫重新「生」一遍，那张图纸上写的「新猫出生就有的东西」（比如 `备注` 一开始赋的那句话）**也不会再执行一次**。它做的就是照着字节把格子一个个填回去，没被冻上去的格子，只能是新的、空的。\n\n**四、`名字` 和 `条数` 为什么原样回来了。** 这两格没戴 `transient`，跟着字节走了一趟，解冻的时候被填回原来的值 —— 这正是「冻」想要的效果：**过了一趟文件还认得它**。\n\n**五、动手时的两个小坑。** ① 图纸和 `Main` 摆在**同一个文件**里时，只有 `Main` 前面写 `public`，图纸不写（一个文件里只许有一个 `public` 的那张）；② 出场顺序有讲究 —— **先写完整只猫、收工，再开解冻那一头**。要是先开了解冻的头、猫还没冻进去，文件还是空的，解冻当场翻脸。",
+      "templateId": "java-s3-07-freeze-thaw",
+      "params": {
+        "n1": "狸花",
+        "c1": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:41.780Z",
+        "hash": "85c3b8ba1a357789"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-freeze-thaw-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把**一整只猫**冻成字节存进文件，再解冻回来看看它还在不在。\n\n请你写个程序，照这个次序做：\n\n1. 画一张叫 `Fish` 的图纸，上面两格：一格叫 `名字`（装字），一格叫 `条数`（装整数）；图纸名字后面**挂上「可以冻」的牌子**；\n2. 图纸上再多一格 `备注`（装字），**戴 `transient` 牌子** —— 哪一格不想跟着冻走，就戴这个；\n3. 照这张图纸生一只猫：名字叫 `狸花`，条数 6；\n4. 把它**冻进**文件 `猫.bin`；\n5. 再从那个文件**解冻回来** —— 解冻那一手叼回来的东西，得自己交代一句它原来是哪种猫；\n6. 最后印三行，长这样：\n\n```text\n名字：这只猫的名字\n条数：一个整数\n备注：那一格解冻回来是什么样\n```\n\n（这一题**不用投喂任何东西**，画图纸、生猫、冻、解冻都在程序里一次做完。）",
+      "starter": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass Fish implements Serializable {\n    String 名字;\n    int 条数;\n    transient String 备注 = \"本喵的私房话\";\n\n    Fish(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Fish 猫 = new Fish(\"狸花\", 6);\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        ObjectInputStream 入口 = new ObjectInputStream(new FileInputStream(\"猫.bin\"));\n        Fish 回来的 = (Fish) 入口.readObject();\n        入口.close();\n\n        System.out.println(\"名字：\" + 回来的.名字);\n        System.out.println(\"条数：\" + 回来的.条数);\n        System.out.println(\"备注：\" + 回来的.备注);\n    }\n}\n",
+      "expectedOutput": "名字：狸花\n条数：6\n备注：null",
+      "stdin": null,
+      "explanation": "**一、冻那一头。** `new ObjectOutputStream(new FileOutputStream(\"猫.bin\"))`：管子照旧是那份文件，外面再套一层「会冻东西」的家什。`出口.writeObject(猫)` 把整只猫（哪张图纸、每格装了什么）一股脑变成字节写进去，收尾照样是 `close()`。\n\n**二、解冻那一头。** `new ObjectInputStream(new FileInputStream(\"猫.bin\"))` 配 `入口.readObject()`。有一处跟念字不一样：`readObject()` 叼回来的东西**在它眼里只是一坨「东西」**，本喵得自己交代一句 `(Fish)`，读作「照 `Fish` 那张图纸把它填回来」—— 少了这一句 `javac` 就红。\n\n**三、`transient` 那一格回来是 `null`。** 冻的时候它**根本没被装上车**。所以解冻出来的猫，`备注` 那一格是**新图纸刚生出来时的样子** —— 本喵这里给的是 `null`。\n\n注意一个容易想歪的地方：解冻**不会**把这只猫重新「生」一遍，那张图纸上写的「新猫出生就有的东西」（比如 `备注` 一开始赋的那句话）**也不会再执行一次**。它做的就是照着字节把格子一个个填回去，没被冻上去的格子，只能是新的、空的。\n\n**四、`名字` 和 `条数` 为什么原样回来了。** 这两格没戴 `transient`，跟着字节走了一趟，解冻的时候被填回原来的值 —— 这正是「冻」想要的效果：**过了一趟文件还认得它**。\n\n**五、动手时的两个小坑。** ① 图纸和 `Main` 摆在**同一个文件**里时，只有 `Main` 前面写 `public`，图纸不写（一个文件里只许有一个 `public` 的那张）；② 出场顺序有讲究 —— **先写完整只猫、收工，再开解冻那一头**。要是先开了解冻的头、猫还没冻进去，文件还是空的，解冻当场翻脸。",
+      "templateId": "java-s3-07-freeze-thaw",
+      "params": {
+        "n1": "狸花",
+        "c1": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:43.893Z",
+        "hash": "3c8bab896b2905bd"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-freeze-thaw-015",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把**一整只猫**冻成字节存进文件，再解冻回来看看它还在不在。\n\n请你写个程序，照这个次序做：\n\n1. 画一张叫 `Fish` 的图纸，上面两格：一格叫 `名字`（装字），一格叫 `条数`（装整数）；图纸名字后面**挂上「可以冻」的牌子**；\n2. 图纸上再多一格 `备注`（装字），**戴 `transient` 牌子** —— 哪一格不想跟着冻走，就戴这个；\n3. 照这张图纸生一只猫：名字叫 `狸花`，条数 9；\n4. 把它**冻进**文件 `猫.bin`；\n5. 再从那个文件**解冻回来** —— 解冻那一手叼回来的东西，得自己交代一句它原来是哪种猫；\n6. 最后印三行，长这样：\n\n```text\n名字：这只猫的名字\n条数：一个整数\n备注：那一格解冻回来是什么样\n```\n\n（这一题**不用投喂任何东西**，画图纸、生猫、冻、解冻都在程序里一次做完。）",
+      "starter": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.io.FileInputStream;\nimport java.io.FileOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass Fish implements Serializable {\n    String 名字;\n    int 条数;\n    transient String 备注 = \"本喵的私房话\";\n\n    Fish(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Fish 猫 = new Fish(\"狸花\", 9);\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        ObjectInputStream 入口 = new ObjectInputStream(new FileInputStream(\"猫.bin\"));\n        Fish 回来的 = (Fish) 入口.readObject();\n        入口.close();\n\n        System.out.println(\"名字：\" + 回来的.名字);\n        System.out.println(\"条数：\" + 回来的.条数);\n        System.out.println(\"备注：\" + 回来的.备注);\n    }\n}\n",
+      "expectedOutput": "名字：狸花\n条数：9\n备注：null",
+      "stdin": null,
+      "explanation": "**一、冻那一头。** `new ObjectOutputStream(new FileOutputStream(\"猫.bin\"))`：管子照旧是那份文件，外面再套一层「会冻东西」的家什。`出口.writeObject(猫)` 把整只猫（哪张图纸、每格装了什么）一股脑变成字节写进去，收尾照样是 `close()`。\n\n**二、解冻那一头。** `new ObjectInputStream(new FileInputStream(\"猫.bin\"))` 配 `入口.readObject()`。有一处跟念字不一样：`readObject()` 叼回来的东西**在它眼里只是一坨「东西」**，本喵得自己交代一句 `(Fish)`，读作「照 `Fish` 那张图纸把它填回来」—— 少了这一句 `javac` 就红。\n\n**三、`transient` 那一格回来是 `null`。** 冻的时候它**根本没被装上车**。所以解冻出来的猫，`备注` 那一格是**新图纸刚生出来时的样子** —— 本喵这里给的是 `null`。\n\n注意一个容易想歪的地方：解冻**不会**把这只猫重新「生」一遍，那张图纸上写的「新猫出生就有的东西」（比如 `备注` 一开始赋的那句话）**也不会再执行一次**。它做的就是照着字节把格子一个个填回去，没被冻上去的格子，只能是新的、空的。\n\n**四、`名字` 和 `条数` 为什么原样回来了。** 这两格没戴 `transient`，跟着字节走了一趟，解冻的时候被填回原来的值 —— 这正是「冻」想要的效果：**过了一趟文件还认得它**。\n\n**五、动手时的两个小坑。** ① 图纸和 `Main` 摆在**同一个文件**里时，只有 `Main` 前面写 `public`，图纸不写（一个文件里只许有一个 `public` 的那张）；② 出场顺序有讲究 —— **先写完整只猫、收工，再开解冻那一头**。要是先开了解冻的头、猫还没冻进去，文件还是空的，解冻当场翻脸。",
+      "templateId": "java-s3-07-freeze-thaw",
+      "params": {
+        "n1": "狸花",
+        "c1": 9
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:52.214Z",
+        "hash": "7c0b6d3bc8889f74"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-not-serializable-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想把**一整只猫**冻成字节存进文件。\n\n可它**跑起来的那一刻当场翻脸**（`javac` 那一步一声都不响），连「存好了」都没印出来。\n\n你帮本喵看看：这只猫的图纸上少了什么？把它补上。\n\n改好之后，程序该印一行 `存好了`。\n\n（这一题**不用投喂任何东西**。）",
+      "brokenCode": "import java.io.FileOutputStream;\nimport java.io.ObjectOutputStream;\n\nclass Fish {\n    String 名字;\n    int 条数;\n\n    Fish(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Fish 猫 = new Fish(\"小橘\", 3);\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        System.out.println(\"存好了\");\n    }\n}\n",
+      "referenceFix": "import java.io.FileOutputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass Fish implements Serializable {\n    String 名字;\n    int 条数;\n\n    Fish(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Fish 猫 = new Fish(\"小橘\", 3);\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        System.out.println(\"存好了\");\n    }\n}\n",
+      "expectedOutput": "存好了",
+      "stdin": null,
+      "explanation": "**一、冻猫的家什只肯冻挂过牌子的猫。** 牌子就是图纸名字后面那半句 `implements Serializable`，读作「本喵这只可以冻」。`ObjectOutputStream` 的 `writeObject(...)` 把人家的猫接过去以后，会先摸一遍**这只猫属于哪张图纸**，发现图纸没挂牌子，当场撂挑子。\n\n**二、这一脚为什么 `javac` 不管。** 语法上一点毛病都没有：图纸是完整的、生猫那一句也写对了 —— 缺的是一条**只有跑起来才知道**的约定。所以本喵看到的是「编译通过、跑起来摔」，报错原话是\n\n```text\nException in thread \"main\" java.io.NotSerializableException: Fish\n```\n\n冒号后面那几个字母就是**这只猫的图纸名字**（本喵这一窝跑出来的正是 `Fish`）。\n\n**三、牌子为什么非得挂。** 冻下去的是**字节**，解冻的时候要照着同一张图纸把格子一个个填回来。挂上牌子，等于跟本喵说好：「照这张图纸填格子是安全的」；没挂，就说明这张图纸上的格子（比如管子、跟别的猫绑在一起的东西）**没法照抄**，那就不冻为妙 —— 与其解冻出一只残缺的猫，不如当场翻脸。\n\n**四、动手改的时候注意两件小事。** ① 牌子那半句写在**图纸名字后面**，不是写在某一行格子上；② 顺手 `import java.io.Serializable;` 一句，不然 `javac` 才真的要红了。",
+      "templateId": "java-s3-07-not-serializable",
+      "params": {
+        "cls": "Fish",
+        "n1": "小橘",
+        "c1": 3
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:44.324Z",
+        "hash": "3eba4bde8abef08f"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-not-serializable-015",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想把**一整只猫**冻成字节存进文件。\n\n可它**跑起来的那一刻当场翻脸**（`javac` 那一步一声都不响），连「存好了」都没印出来。\n\n你帮本喵看看：这只猫的图纸上少了什么？把它补上。\n\n改好之后，程序该印一行 `存好了`。\n\n（这一题**不用投喂任何东西**。）",
+      "brokenCode": "import java.io.FileOutputStream;\nimport java.io.ObjectOutputStream;\n\nclass Cat {\n    String 名字;\n    int 条数;\n\n    Cat(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 猫 = new Cat(\"团子\", 6);\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        System.out.println(\"存好了\");\n    }\n}\n",
+      "referenceFix": "import java.io.FileOutputStream;\nimport java.io.ObjectOutputStream;\nimport java.io.Serializable;\n\nclass Cat implements Serializable {\n    String 名字;\n    int 条数;\n\n    Cat(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 猫 = new Cat(\"团子\", 6);\n\n        ObjectOutputStream 出口 = new ObjectOutputStream(new FileOutputStream(\"猫.bin\"));\n        出口.writeObject(猫);\n        出口.close();\n\n        System.out.println(\"存好了\");\n    }\n}\n",
+      "expectedOutput": "存好了",
+      "stdin": null,
+      "explanation": "**一、冻猫的家什只肯冻挂过牌子的猫。** 牌子就是图纸名字后面那半句 `implements Serializable`，读作「本喵这只可以冻」。`ObjectOutputStream` 的 `writeObject(...)` 把人家的猫接过去以后，会先摸一遍**这只猫属于哪张图纸**，发现图纸没挂牌子，当场撂挑子。\n\n**二、这一脚为什么 `javac` 不管。** 语法上一点毛病都没有：图纸是完整的、生猫那一句也写对了 —— 缺的是一条**只有跑起来才知道**的约定。所以本喵看到的是「编译通过、跑起来摔」，报错原话是\n\n```text\nException in thread \"main\" java.io.NotSerializableException: Cat\n```\n\n冒号后面那几个字母就是**这只猫的图纸名字**（本喵这一窝跑出来的正是 `Cat`）。\n\n**三、牌子为什么非得挂。** 冻下去的是**字节**，解冻的时候要照着同一张图纸把格子一个个填回来。挂上牌子，等于跟本喵说好：「照这张图纸填格子是安全的」；没挂，就说明这张图纸上的格子（比如管子、跟别的猫绑在一起的东西）**没法照抄**，那就不冻为妙 —— 与其解冻出一只残缺的猫，不如当场翻脸。\n\n**四、动手改的时候注意两件小事。** ① 牌子那半句写在**图纸名字后面**，不是写在某一行格子上；② 顺手 `import java.io.Serializable;` 一句，不然 `javac` 才真的要红了。",
+      "templateId": "java-s3-07-not-serializable",
+      "params": {
+        "cls": "Cat",
+        "n1": "团子",
+        "c1": 6
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:45.750Z",
+        "hash": "84a7105b009d28c3"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-readline-twice-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵先把 3 条记进名单文件，再一行一行念回来印出去。\n\n可它印出来的东西**少了一半**，末尾还多印了一行 `null`。\n\n你帮本喵看看念法哪里不对，把它改好 —— 改好之后应该从 `第 1 条` 一直到 `第 3 条`，一行不少、一行不多。\n\n（这一题**不用投喂任何东西**：名单是程序自己先写好、再念的。）",
+      "brokenCode": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"名单.txt\"));\n        for (int i = 1; i <= 3; i++) {\n            笔.write(\"第 \" + i + \" 条\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"名单.txt\"));\n        while (眼.readLine() != null) {\n            System.out.println(眼.readLine());\n        }\n        眼.close();\n    }\n}\n",
+      "referenceFix": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"名单.txt\"));\n        for (int i = 1; i <= 3; i++) {\n            笔.write(\"第 \" + i + \" 条\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"名单.txt\"));\n        String 行;\n        while ((行 = 眼.readLine()) != null) {\n            System.out.println(行);\n        }\n        眼.close();\n    }\n}\n",
+      "expectedOutput": "第 1 条\n第 2 条\n第 3 条",
+      "stdin": null,
+      "explanation": "`readLine()` 每喊一次就**吞掉一整行**、眼睛往前挪一格喵。\n\n**一、这个绕圈里喊了两次。** 条件里喊一次（吞掉的是第 1 行，只拿来比了一下「是不是没有了」），身子里又喊一次（吞掉第 2 行，印出来的也是第 2 行）。于是每转一圈就有一行被白白吞掉 —— 印出来就只剩一半。\n\n**二、`null` 是哪儿来的。** 转到最后，条件里那一喊正好把最后一行吞了，可它非 `null`，所以绕圈还得再转一圈；这一圈身子里又喊一次，这时候眼睛后面已经什么都没有了，叼回来的就是 `null`，本喵那句印的就是它。\n\n**三、修法就是本课那个形状：念一次、存进一个名字，条件跟身子都用那一个名字。**\n\n```java\nString 行;\nwhile ((行 = 眼.readLine()) != null) {\n    System.out.println(行);\n}\n```\n\n外面先摆一个 `行`，条件里「喊一次、存进 `行`、再拿 `行` 比 `null`」，身子里印的就是同一个 `行`。一次吞一行，一行都不漏。\n\n**四、往后自己写的时候盯住这一条**：`readLine()` 这个动作**本身就把行吃掉了**，所以它在一个绕圈里最好只出现一次 —— 出现两次，坏的不是「快一点」，是**丢数据**。",
+      "templateId": "java-s3-07-readline-twice",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:40.941Z",
+        "hash": "2cbb064a4d932b9b"
+      }
+    },
+    {
+      "id": "bank-java-s3-07-readline-twice-002",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵先把 5 条记进名单文件，再一行一行念回来印出去。\n\n可它印出来的东西**少了一半**，末尾还多印了一行 `null`。\n\n你帮本喵看看念法哪里不对，把它改好 —— 改好之后应该从 `第 1 条` 一直到 `第 5 条`，一行不少、一行不多。\n\n（这一题**不用投喂任何东西**：名单是程序自己先写好、再念的。）",
+      "brokenCode": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"名单.txt\"));\n        for (int i = 1; i <= 5; i++) {\n            笔.write(\"第 \" + i + \" 条\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"名单.txt\"));\n        while (眼.readLine() != null) {\n            System.out.println(眼.readLine());\n        }\n        眼.close();\n    }\n}\n",
+      "referenceFix": "import java.io.BufferedReader;\nimport java.io.BufferedWriter;\nimport java.io.FileReader;\nimport java.io.FileWriter;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        BufferedWriter 笔 = new BufferedWriter(new FileWriter(\"名单.txt\"));\n        for (int i = 1; i <= 5; i++) {\n            笔.write(\"第 \" + i + \" 条\");\n            笔.newLine();\n        }\n        笔.close();\n\n        BufferedReader 眼 = new BufferedReader(new FileReader(\"名单.txt\"));\n        String 行;\n        while ((行 = 眼.readLine()) != null) {\n            System.out.println(行);\n        }\n        眼.close();\n    }\n}\n",
+      "expectedOutput": "第 1 条\n第 2 条\n第 3 条\n第 4 条\n第 5 条",
+      "stdin": null,
+      "explanation": "`readLine()` 每喊一次就**吞掉一整行**、眼睛往前挪一格喵。\n\n**一、这个绕圈里喊了两次。** 条件里喊一次（吞掉的是第 1 行，只拿来比了一下「是不是没有了」），身子里又喊一次（吞掉第 2 行，印出来的也是第 2 行）。于是每转一圈就有一行被白白吞掉 —— 印出来就只剩一半。\n\n**二、`null` 是哪儿来的。** 转到最后，条件里那一喊正好把最后一行吞了，可它非 `null`，所以绕圈还得再转一圈；这一圈身子里又喊一次，这时候眼睛后面已经什么都没有了，叼回来的就是 `null`，本喵那句印的就是它。\n\n**三、修法就是本课那个形状：念一次、存进一个名字，条件跟身子都用那一个名字。**\n\n```java\nString 行;\nwhile ((行 = 眼.readLine()) != null) {\n    System.out.println(行);\n}\n```\n\n外面先摆一个 `行`，条件里「喊一次、存进 `行`、再拿 `行` 比 `null`」，身子里印的就是同一个 `行`。一次吞一行，一行都不漏。\n\n**四、往后自己写的时候盯住这一条**：`readLine()` 这个动作**本身就把行吃掉了**，所以它在一个绕圈里最好只出现一次 —— 出现两次，坏的不是「快一点」，是**丢数据**。",
+      "templateId": "java-s3-07-readline-twice",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:03:42.541Z",
+        "hash": "8c572833112f91d6"
+      }
+    }
+  ]
+}

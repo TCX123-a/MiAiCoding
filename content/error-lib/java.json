@@ -1,0 +1,222 @@
+{
+  "version": 1,
+  "note": "Java 错误库（javac / java，Temurin 21）。rule 形如 { pattern: '正则（可用 {1} 占位符）', flags: 'i', title, explain, fixHint }。M7 继续填充。\n\n⚠️ 三条约定：\n① pattern 按书写顺序匹配，先命中先用 —— 更具体的必须排在更笼统的前面（比如 `symbol:   variable x` 要排在 `cannot find symbol` 前面）。\n② 想匹配 . ( ) { } + ? 这些符号本身时用 [.] [(] [)] 字符类；要匹配「一个或多个空格」写 [ ]+ 而不是反斜杠 s。\n③ 报错必须是**英文**的才匹配得上 —— 中文 Windows 上 javac 默认吐中文（「错误: 需要';'」）。运行器已经用 -Duser.language=en 钉死了，见 runner.ts。 ｜ 顺序即优先级：unclosed string/character literal 必须排在 reached end of file 之前——没闭合的引号会让 javac 一路读到文件末尾，两条同时出现，先命中的那条才算数。",
+  "rules": [
+    {
+      "pattern": "symbol:[ ]+class[ ]+([A-Za-z_$][A-Za-z0-9_$]*)",
+      "title": "`{1}` 这张猫猫图纸还没请进来喵",
+      "explain": "你用了 `{1}` 这个名字，但 javac 不知道它是什么喵。\n\nJava 里除了 `java.lang` 这个包里自带的（`String`、`System`、`Math` 这些），别的猫猫图纸**都得先 `import` 一下**才能用喵。\n\n最常见的两个：用了 `Scanner` 要 `import java.util.Scanner;`；用了 `ArrayList` 要 `import java.util.ArrayList;`喵。",
+      "fixHint": "在文件最上面（class 那行之前）加一句 `import java.util.{1};`，如果它不在 java.util 里就查一下正确的包名喵"
+    },
+    {
+      "pattern": "symbol:[ ]+variable[ ]+([A-Za-z_$][A-Za-z0-9_$]*)",
+      "title": "「{1}」这个小鱼干仓库还不存在喵",
+      "explain": "你用了「{1}」，但 javac 在这个位置没见过它喵。\n\n三种可能：① 名字**拼错了**（Java 区分大小写，`count` 和 `Count` 是两个东西）；② 忘了先声明类型（Java 要求写 `int {1} = 0;` 这样，不能像 Python 那样直接用）；③ 它是在别的大括号里定义的，你在外面用喵。",
+      "fixHint": "检查「{1}」的拼写，以及有没有在前面用 `类型 名字 = 值;` 声明过它喵"
+    },
+    {
+      "pattern": "symbol:[ ]+method[ ]+([A-Za-z_$][A-Za-z0-9_$]*)",
+      "title": "「{1}」这个招式名对不上喵",
+      "explain": "你施展了一个叫「{1}」的招式，但 javac 没找到喵。\n\nJava **区分大小写**，招式名拼错一个字母就找不到喵。另外括号里的**投喂小鱼干的类型**也要对得上——比如要给 `String` 的地方给了数字，也照样算找不到喵。",
+      "fixHint": "检查「{1}」的拼写和大小写，再看看括号里给的投喂小鱼干的类型对不对喵"
+    },
+    {
+      "pattern": "error: cannot find symbol",
+      "title": "有个名字 javac 不认识喵",
+      "explain": "报错里提到的那个名字，javac 在这个位置没见过喵。\n\n三种可能：① **拼错了**（Java 严格区分大小写）；② 忘了 `import`（用别的包里的猫猫图纸要先请进来）；③ 忘了声明小鱼干仓库喵。\n\n看下面 `symbol:` 那一行，它会告诉你不认识的是**小鱼干仓库**、**招式**还是**猫猫图纸**，那是最关键的线索喵。",
+      "fixHint": "把报错里那个名字，对着你自己写的那几行逐个字母比一比喵"
+    },
+    {
+      "pattern": "error: ';' expected",
+      "title": "这里少了一个分号喵",
+      "explain": "Java 规定**每条语句末尾必须有分号**，少一个翻译官喵就读不下去了喵。\n\n它报的行号一般是**出问题那行的下一行**——因为翻译官喵是读到下一行才发现「上一行怎么没结束」的喵。所以要去上一行的末尾找喵。",
+      "fixHint": "往上看一行，在那一行的末尾补一个 `;` 喵"
+    },
+    {
+      "pattern": "class ([A-Za-z_$][A-Za-z0-9_$]*) is public, should be declared in a file named",
+      "title": "文件名的名字要跟 class 一模一样喵",
+      "explain": "Java 有个硬规定：**带 `public` 的猫猫图纸，名字必须和文件名完全相同**（包括大小写）喵。\n\n你写的是 `public class {1}`，那这个文件就必须叫 `{1}.java`喵。\n\n（在你这个练习场里，文件名是自动按 class 名生成的，一般不会撞上这个错；但在自己电脑上写 Java 的时候，这是最常见的第一道坎喵。）",
+      "fixHint": "把这个文件改名叫 `{1}.java`，注意大小写要一模一样喵"
+    },
+    {
+      "pattern": "error: unclosed string literal",
+      "title": "这句文字没有收尾喵",
+      "explain": "你开了一个双引号，但这一行结束了都没把它关上喵。\n\n还有一种隐蔽的：引号**确实关了**，但那句话里本身有个双引号，比如 `\"他说\"你好\"\"`——中间那个被当成了收尾喵。",
+      "fixHint": "检查这一行的双引号是不是成对；文字里本来就有双引号的话，用反斜杠转义或者改用单引号喵"
+    },
+    {
+      "pattern": "error: unclosed character literal",
+      "title": "这个字符没有收尾喵",
+      "explain": "单引号 `'` 在 Java 里是**包一个字符**用的（双引号 `\"` 才是包一句话）喵。你开了一个单引号但没关上喵。\n\n顺便记一下：`'a'` 是一个字符，`\"a\"` 是一句话——两个不一样，别混用喵。",
+      "fixHint": "检查单引号是不是成对；要表示的是一句话的话，换成双引号喵"
+    },
+    {
+      "pattern": "reached end of file while parsing",
+      "title": "少了几个右花括号喵",
+      "explain": "javac 一路读到了文件结尾，还在等着 `}` 把前面开的 `{` 关上喵。\n\nJava 里 `{` 和 `}` 是**成对**的，而且一层套一层：class 一层、招式一层、if/for 再来一层喵。少关一个，翻译官喵就一路找到文件末尾去了喵。\n\n实用小技巧：写 `{` 的时候**顺手把 `}` 也打出来**，再往中间填内容喵。",
+      "fixHint": "从下往上数一数 `{` 和 `}` 是不是一样多喵"
+    },
+    {
+      "pattern": "error: illegal character",
+      "title": "这里混进了中文标点或者奇怪的字符喵",
+      "explain": "javac 在代码里发现了一个它不认识的字符喵。\n\n九成是**中文输入法没切回来**：`；` `（` `）` `，` `“”` 这些全角标点在电脑眼里是**完全不同的字符**，Java 只认英文的半角标点喵。写代码的时候记得把输入法切成英文喵。",
+      "fixHint": "把光标移到报错指的位置，看看是不是中文标点，换回英文重打一遍喵"
+    },
+    {
+      "pattern": "error: '[)]' expected",
+      "title": "这里少了一个右括号喵",
+      "explain": "javac 读到这儿，发现前面有个 `(` 一直没等到配对的 `)`喵。\n\n括号是**成对**的，开一个就得关一个喵。行里内容一多特别容易漏，尤其是招式投喂的小鱼干特别长的时候喵。",
+      "fixHint": "数一数这一段的 `(` 和 `)` 是不是一样多喵"
+    },
+    {
+      "pattern": "error: '}' expected",
+      "title": "这里少了一个右花括号喵",
+      "explain": "javac 在这儿等着一个 `}`，没等到喵。\n\n大部分时候是**上面某个 `{` 没关**，编译到这一行才发现不对。也有时候是这一行自己多打了一个 `}` 导致的连锁反应喵。",
+      "fixHint": "从这一行往上看，检查 `{` 和 `}` 的配对喵"
+    },
+    {
+      "pattern": "error: illegal start of expression",
+      "title": "这一句的开头 javac 读不懂喵",
+      "explain": "javac 在这一行的开头就卡住了，它觉得这儿不该是这么开始的喵。\n\n这条报错**只说「读不懂」，不说是哪儿错了**。最常撞的三种：\n① 上面某一行**少了分号**，导致两行被连起来读；\n② 多打了一个符号（比如 `;;`）；\n③ 少了一个 `}`喵。",
+      "fixHint": "先看这一行**上面**那一行的末尾，是不是少了分号喵"
+    },
+    {
+      "pattern": "error: not a statement",
+      "title": "这一行不是一句完整的命令喵",
+      "explain": "javac 读到这里，觉得这句话**说不通**——它不是一个完整的命令喵。\n\n最经典的一个：**把 `==` 写成了 `=`**，或者反过来。`if (a = 5)` 是错的（那是在赋值），要比较得写 `if (a == 5)`喵。",
+      "fixHint": "检查这一行的等号，比较用的是两个等号 `==` 喵"
+    },
+    {
+      "pattern": "error: 'else' without 'if'",
+      "title": "这个 `else` 找不到它的 `if` 喵",
+      "explain": "`else` 的意思是「**上面的 if 不成立时，就做这个**」，所以它必须紧跟在 `if` 那一块的后面喵。\n\n常撞的原因：`if` 那块的大括号提前关上了，或者中间被别的语句隔开了喵。",
+      "fixHint": "检查这个 `else` 上面，`if` 的大括号是不是提前关上了喵"
+    },
+    {
+      "pattern": "incompatible types: possible lossy conversion from double to int",
+      "title": "小数不能直接塞进整数里喵",
+      "explain": "你有一段小数（`double`），想把它装进一个整数（`int`）的盒子里喵。\n\nJava 不让这么干，因为**小数变成整数会丢掉小数点后面的部分**（`3.9` 会变成 `3`，不是四舍五入）——翻译官喵觉得这个损失太大，必须你自己明确说「我知道，就这么办」喵。",
+      "fixHint": "写成 `int x = (int) 那个小数;`，前面加个 `(int)` 就是在说「我知道要舍掉小数」喵"
+    },
+    {
+      "pattern": "incompatible types: ([A-Za-z_$][A-Za-z0-9_$.<>\\[\\]]*) cannot be converted to ([A-Za-z_$][A-Za-z0-9_$.<>\\[\\]]*)",
+      "title": "`{1}` 装不进 `{2}` 里喵",
+      "explain": "你手上的东西是 `{1}` 类型的，但这个位置要的是 `{2}` 类型喵。\n\nJava 是**强类型**的：每种盒子只装对应的东西，类型对不上就直接拦下来，不会偷偷帮你转喵。\n\n常撞的场景：一串小鱼干的项链和数字互相赋值（`String` 和 `int` 是两个世界的东西）、或者小数和整数互转喵。",
+      "fixHint": "用 `Integer.parseInt(文字)` 把文字转成整数、用 `String.valueOf(数字)` 把数字转成文字喵"
+    },
+    {
+      "pattern": "error: missing return statement",
+      "title": "这个招式说好要交东西，可它有路走不到头喵",
+      "explain": "招式声明了要返回一个值（比如 `int`），但 javac 发现有**某一条路走完没有 `return`** 喵。\n\n最常撞的是 `if / else if` 系列：你把每个情况都写了 `return`，但**漏了所有条件都不成立时该怎么办**喵。",
+      "fixHint": "在招式最后补一句 `return 一个值;`，或者在末尾补上 `else` 分支喵"
+    },
+    {
+      "pattern": "non-static (variable|method) ([A-Za-z_$][A-Za-z0-9_$]*) cannot be referenced from a static context",
+      "title": "`main` 里面不能直接用「{2}」喵",
+      "explain": "`main` 招式是 `static` 的（意思是它**不依赖某只具体的真猫**就能跑），而「{2}」不是 static 的——它得先有只真猫才能用喵。\n\n打个比方：`static` 像是贴在公告栏上的说明，谁来都能看；不带 static 的像是**某个人口袋里的东西**，你得先找到那个人才能拿喵。而 `main` 里还没有「那个人」喵。\n\n刚开始学的时候，**最简单的办法就是给「{2}」也加上 `static`**喵。",
+      "fixHint": "在「{2}」的声明前面加上 `static` 喵"
+    },
+    {
+      "pattern": "error: variable ([A-Za-z_$][A-Za-z0-9_$]*) might not have been initialized",
+      "title": "「{1}」还没装东西就要用喵",
+      "explain": "Java 要求**招式里的仓库必须先赋值才能用**喵——它不像有些语言会自动给个默认值喵。\n\n所以 `int {1};` 这么写完之后不能直接用，得先 `{1} = 0;` 或者一句写全 `int {1} = 0;`喵。\n\n（这是 Java 特意设计的：与其让你拿到一个不知道是什么的数字，不如直接拦下来喵。）",
+      "fixHint": "在声明的时候直接给个初始值，写成 `int {1} = 0;` 喵"
+    },
+    {
+      "pattern": "error: package ([A-Za-z0-9_.]+) does not exist",
+      "title": "没有 `{1}` 这个包喵",
+      "explain": "你 `import` 了 `{1}`，但 javac 找不到这个包喵。\n\n基本是**名字拼错了**喵。比如 `import java.util.Scanner;` 里少了个 `java.`，或者把 `util` 写成了 `utils`喵。",
+      "fixHint": "检查「{1}」的拼写，常见的标准包是 `java.util` 和 `java.io`喵"
+    },
+    {
+      "pattern": "method ([A-Za-z_$][A-Za-z0-9_$]*) in class ([A-Za-z_$][A-Za-z0-9_$]*) cannot be applied to given types",
+      "title": "「{2}」里的「{1}」不吃你给的东西喵",
+      "explain": "招式「{1}」是找到了，但你括号里给的**投喂小鱼干的类型或个数**对不上喵。\n\n常撞的：`substring` 要整数你给了别的；或者投喂小鱼干的顺序反了；或者个数不对喵。",
+      "fixHint": "看下面 `required:` 和 `found:` 那两行，它会写清楚「要的是什么」和「你给的是什么」喵"
+    },
+    {
+      "pattern": "error: no suitable method found for",
+      "title": "没有哪个版本的招式对得上喵",
+      "explain": "你调用的这个招式有好几个版本（投喂的小鱼干不同），但你给的东西**哪个版本都套不上**喵。",
+      "fixHint": "看下面的 `required:` 和 `found:` 两行，把给的投喂的小鱼干改成它要的类型喵"
+    },
+    {
+      "pattern": "error: (?:[A-Za-z_$][A-Za-z0-9_$]* )?([A-Za-z_$][A-Za-z0-9_$]*) is already defined",
+      "title": "「{1}」被定义了两次喵",
+      "explain": "同一个名字「{1}」，你在同一个范围内定义了两次喵。\n\n常见的是复制粘贴之后**忘了改名字**喵。",
+      "fixHint": "把其中一个改个名字喵"
+    },
+    {
+      "pattern": "bad operand types for binary operator '([^']+)'",
+      "title": "`{1}` 两边的东西不能这么算喵",
+      "explain": "运算符 `{1}` 两边的类型配不上喵。\n\nJava 里 `+` 对数字是做加法、对一串小鱼干的项链是**接起来**，但不能一边一串小鱼干的项链一边数字喵。\n\n想拼接的话，**保证其中至少一边是一串小鱼干的项链**就行——Java 会自动把另一边也变成一串小鱼干的项链喵。比如 `\"年龄：\" + 18` 是可以的，但 `18 + \"岁\"` 结果也一样没问题，而 `\"a\" + 1 + 2` 和 `1 + 2 + \"a\"` 结果完全不同（前者是 `a12`，后者是 `3a`）喵。",
+      "fixHint": "检查两边类型，想拼接的话用 `String.valueOf(...)` 先把数字变成文字喵"
+    },
+    {
+      "pattern": "error: array required, but ([A-Za-z_$][A-Za-z0-9_$.<>\\[\\]]*) found",
+      "title": "这不是一排贴编号的猫粮碗，不能用方括号取喵",
+      "explain": "你写了 `[格子号]` 的取法，但那个东西是 `{1}` 类型，**不是一排贴编号的猫粮碗**喵。\n\n常撞的两种情况：① 想取字符却写成了 `s[0]`（Java 的一串小鱼干的项链要用 `s.charAt(0)`）；② 想取会自己长大的储物柜里的东西却用了 `[]`（`ArrayList` 要用 `.get(0)`）喵。",
+      "fixHint": "一串小鱼干的项链取字符用 `.charAt(格子号)`，会自己长大的储物柜取值用 `.get(格子号)`喵"
+    },
+    {
+      "pattern": "error: no suitable constructor found for|error: constructor .* cannot be applied to given types",
+      "title": "new 的时候给的东西对不上喵",
+      "explain": "你在 `new` 一只真猫，但括号里给的投喂的小鱼干跟这张图纸要的对不上喵。",
+      "fixHint": "看下面的 `required:` 和 `found:` 两行，按它要的类型给喵"
+    },
+    {
+      "pattern": "Main method not found in class|error: missing method body",
+      "title": "程序找不到从哪里开始跑喵",
+      "explain": "Java 程序永远从 `main` 招式开始跑，而且它的写法**一个字都不能差**喵：\n\n`public static void main(String[] args)`\n\n少个 `static`、`String` 拼错、或者括号里写成了 `()`，Java 都找不到起点喵。",
+      "fixHint": "把 main 那一行改成 `public static void main(String[] args) {`喵"
+    },
+    {
+      "pattern": "java[.]lang[.]ArithmeticException: / by zero",
+      "title": "不能除以零喵",
+      "explain": "数学上「除以 0」是没有答案的，Java 也一样，一撞上就直接停下喵。\n\n对刚开始写代码的人来说，这个错通常**不是故意写 `1/0`**，而是分母是个小鱼干仓库、那个仓库恰好是 0 喵——最常见的就是「求平均值」的时候，人数是 0喵。\n\n注意：**整数相除**的时候才会报这个错。如果两边有一个是小数（`double`），除出来会是 `Infinity`，不报错但结果一样不对喵。",
+      "fixHint": "相除之前先判断分母是不是 0 喵"
+    },
+    {
+      "pattern": "java[.]lang[.]ArrayIndexOutOfBoundsException: Index ([0-9]+[^\\n]*)",
+      "title": "这个格子号超出范围了喵",
+      "explain": "你去取第 `{1}`，但猫粮碗没有那么多格喵。\n\n有个新手一定会踩的坑：**格子号是从 0 开始数的**喵。一个长度 3 的一排贴编号的猫粮碗，格子是第 0、1、2 号——你去拿第 3 号就没有了喵。\n\n还有个 Java 特有的坑：`String` 的 `length()` 带括号，一排贴编号的猫粮碗的 `length` **不带括号**，写错了就取不到正确的长度喵。",
+      "fixHint": "记住最大的格子号是「长度 − 1」，绕圈的条件别写成 `<=` 喵"
+    },
+    {
+      "pattern": "java[.]lang[.]NullPointerException",
+      "title": "拿到的是个「空」，不是真东西喵",
+      "explain": "你的小鱼干仓库里装的是 `null`（**空，什么都没指**），你却对它做了操作喵。\n\n最常见的三种来源：\n① 一排贴编号的猫粮碗里声明了但**每格都还没放东西**（`new String[5]` 之后每格都是 null，得自己一个个赋值）；\n② 调用了某个招式，它返回了 null；\n③ 装项链的仓库声明了却没赋值就用 `.length()`喵。\n\n`null` 的意思是「这个盒子存在，但里面是空的」——空盒子里当然取不出东西喵。",
+      "fixHint": "在使用之前先判断 `if (小鱼干仓库 != null)`，或者检查它是不是根本没赋过值喵"
+    },
+    {
+      "pattern": "java[.]lang[.]NumberFormatException: For input string: \"([^\"]*)\"",
+      "title": "「{1}」不是个数字喵",
+      "explain": "你在用 `Integer.parseInt(...)` 想把一段文字变成整数，但它的内容根本不是数字喵。\n\n最常见的场景：用 `Scanner` 或输入框拿用户输入，然后直接转数字——可用户可能输入了文字、或者**按了回车什么都没输**喵。\n\n注意：`\" 12\"`（前面有空格）也会失败喵。",
+      "fixHint": "先检查输入的内容，或者用 `.trim()` 去掉两头的空格再转喵"
+    },
+    {
+      "pattern": "java[.]util[.]InputMismatchException",
+      "title": "你说的类型跟输入的东西对不上喵",
+      "explain": "你用 `sc.nextInt()` 想要一个整数，但输入框里放的不是整数喵。\n\n比如要填数字的地方，填了「你好」或者「3.5」喵。\n\n（顺便记一下：想要小数得用 `sc.nextDouble()`，`nextInt()` 只认整数喵。）",
+      "fixHint": "在「程序要你输入什么」那个框里，按程序要的类型填对喵"
+    },
+    {
+      "pattern": "java[.]util[.]NoSuchElementException",
+      "title": "程序还在等输入，可是没有东西可输了喵",
+      "explain": "程序用 `Scanner` 想跟你要一个东西，但输入已经用完了喵。\n\n两种可能：① 程序里问的次数**比输入框里准备的内容多**（比如绕鱼干跑圈里问了好几遍，但输入框只填了一行）；② 就是忘了在输入框里填东西喵。",
+      "fixHint": "看看程序一共要问几次，在输入框里按顺序把每次的答案都填上喵"
+    },
+    {
+      "pattern": "java[.]lang[.]StackOverflowError",
+      "title": "绕圈绕得停不下来了喵",
+      "explain": "招式「自己叫自己」叫得太深，把内存里放「还没做完的事」的那块地方塞满了喵。\n\n对新手来说，这个错几乎总是在说同一件事：**你忘了写「什么时候停下来」的条件**喵。就像那个著名的说法——「想知道什么是「自己咬自己尾巴的招式」，得先知道什么是「自己咬自己尾巴的招式」」，少了停下来的那一句，它就永远绕下去了喵。",
+      "fixHint": "检查这个招式里，有没有一条能让它不再调用自己的分支喵"
+    },
+    {
+      "pattern": "error: <identifier> expected",
+      "title": "这里应该有个名字喵",
+      "explain": "javac 在这个位置等着一个名字（仓库名、招式名），结果读到了别的东西喵。\n\n常撞的是**多打了一个分号或逗号**——特别是在 class 里面不小心多写了个 `;`喵。\n\n或者：把类型名写错了（比如 `Strng` 而不是 `String`），javac 就会把它当成「名字」然后发现后面又跟了个名字，于是报这个错喵。",
+      "fixHint": "检查这一行是不是多了符号，或者类型名有没有拼错喵"
+    }
+  ]
+}

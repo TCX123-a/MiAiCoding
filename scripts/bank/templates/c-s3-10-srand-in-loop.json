@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-10-srand-in-loop",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-10",
+  "type": "codefix",
+  "concept": ["种子定起点", "起点只在开场前定一次", "圈圈里只管摇", "同一个数印了一整排"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stemTemplate": "本喵要摇 {n} 把骰子，每把 1 到 6，印成一行：先是 `掷 {n} 把：`，后面跟着每一把的数，**每个数后面跟一个空格**。\n\n可它印出来的**几把长得一模一样** —— 同一个数从头重复到尾，像是骰子卡住了。翻译官喵一声没吭，跑起来也不摔。\n\n请你把它改对（`main` 里那几行骨架别动）。改好之后，这几把就是**一把一把摇出来的**了。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    printf(\"掷 {n} 把：\");\n    for (int i = 0; i < {n}; i++) {\n        srand(7);\n        printf(\"%d \", rand() % 6 + 1);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand(7);\n    printf(\"掷 {n} 把：\");\n    for (int i = 0; i < {n}; i++) {\n        printf(\"%d \", rand() % 6 + 1);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "骰子的规矩是：**种子一样，摇出来的那一串就一模一样**喵。`srand(种子)` 干的活是给骰子**定一个起点**；起点定好之后，`rand()` 才一把一把往下摇新的数。\n\n本喵把 `srand` 放进了摇骰子那个圈圈的**里面**：每摇一把，都先把骰子**拨回起点**再摇 —— 拨回起点摇出来的当然还是同一个数，于是几把全长一个样。\n\n```text\nsrand(7);                          /* 起点：开场前定一次 */\nfor (int i = 0; i < n; i++) {\n    printf(\"%d \", rand() % 6 + 1);  /* 圈圈里只管摇 */\n}\n```\n\n一句话记住：**`srand` 是开场前的事，`rand` 才是圈圈里的事**。谁被摆进圈圈里，谁就会一遍一遍地重来。\n\n顺带说：这里种子写成常数 `7` 是有意的 —— 内容里的标准答案是本机真跑算出来的，种子写死了，**每次跑都是同一串**，答案才定得下来。"
+}

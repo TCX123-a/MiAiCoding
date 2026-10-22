@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-ref-not-initialized",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-10",
+  "type": "codefix",
+  "concept": ["名字出生就得绑好", "declared as reference but not initialized"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵要让 `r` 当 `fish` 那只碗的**第二个名字**，然后印两行 —— 两行都该是 {n}（同一个数）。\n\n可这段代码**翻不过去** —— 翻译官喵在这一行把它拦下了，一行都没跑。\n\n你帮本喵把缺的那一小截补上，让它翻得过去、跑起来，印出来正好两行 {n}。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = {n};\n    int& r;\n\n    cout << r << endl;\n    cout << fish << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = {n};\n    int& r = fish;\n\n    cout << r << endl;\n    cout << fish << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: 'r' declared as reference but not initialized`，翻成猫话：**「`r` 名字是挂了，可它是哪只碗的名字，你没写。」**\n\n关键就在这儿：**别名从一出生就得绑好** —— `int& r = fish;` 是一口气写完的：挂名字**和**指碗是同一步。只写 `int& r;`，等于举着一块牌子站着，牌子上**什么都没写**，翻译官喵当然不知道该怎么办。\n\n为什么它这么严？因为别名**不是一只独立的碗**，它一出生就得指着某只碗。不能「先摆着，待会儿再说」。\n\n⚠️ 对照着记这两个（很容易混）：\n\n- **普通的碗**可以先摆好、以后再装：`int x;` 然后 `x = 3;` 完全没问题。\n- **挂了名字的碗**不行：`int& r;` 会当场被拦下 —— 它必须写成 `int& r = fish;`。\n\n顺带一句：`r` 绑上 `fish` 之后，**再改 `r` 不会改绑到别的碗上** —— 它一辈子就认 `fish` 那一只。写 `r = other;` 的意思是「**把 `other` 里的数装进 `fish`**」，不是让 `r` 改认 `other` 喵。"
+}

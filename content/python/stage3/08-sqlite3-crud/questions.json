@@ -1,0 +1,87 @@
+{
+  "lessonId": "python-stage3-08",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵往表里添了一行货，可**忘了**写 `con.commit()`，程序就跑完关掉了。会发生什么？",
+      "options": [
+        "那行货没进仓库：另开一根线去查看不见它；程序一关，它更是彻底没了",
+        "程序会当场报错，提醒本喵忘了盖章",
+        "货已经进仓库了，只是下次打开会慢一点",
+        "货进去了，只是只有本喵这台机器看得见，换台机器就没了"
+      ],
+      "answer": 0,
+      "explanation": "管家是先把本喵递过去的口令记在**随身的小本子**上，等本喵说「盖章」才真的写进仓库喵。没盖章就散场，那批改动整批作废——本喵自己那根线上去查还看得见它（因为那只是小本子上的字），可另开一根线去看，看到的就是空空的仓库。有一点最骗人：它**不会报错**，程序跑完一切正常，只是仓库里什么也没多。至于「慢一点」「只有这台机器看得见」都不对——仓库文件在哪个盘上才是跟机器有关的事，跟盖不盖章没关系喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "为什么本喵要把货从 `?` 投喂口递进去，而不是用 f-string 把名字**缝**进口令里？",
+      "options": [
+        "缝进去的话，那串值会被管家当成口令的一部分读：带个撇号就当场报错，被人塞进半截假口令还可能被真的执行",
+        "投喂口写法跑得更快，缝进去的写法慢一些",
+        "缝进去的写法只能用在查货上，添货改货必须用投喂口",
+        "投喂口写法会顺手帮本喵把值变成数字，缝进去的写法不会"
+      ],
+      "answer": 0,
+      "explanation": "差别全在**管家怎么看那串值**喵：从 `?` 递进去的货，管家永远只把它当货，里头有什么符号都原样收下；缝进口令里的话，它就跟着口令一起被读——撇号配错对，当场甩一份 `sqlite3.OperationalError`（课文里那段真跑出来的报错就是这个）；有人往名字里塞半截假口令，它还会照着做，仓库被清空而本喵只是「查了个名字」。另外三条都不对：投喂口哪种口令都能用，也不负责把值变数字，更没有谁快谁慢这回事喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵写了 `cur.execute(\"SELECT * FROM 库存\")`，**没有**写 `ORDER BY`。那印出来的时候，行的先后顺序靠得住吗？",
+      "options": [
+        "靠不住：不写 `ORDER BY`，管家按什么顺序给是不保证的；要固定顺序得自己写清楚",
+        "靠得住：一定是按本喵添货的先后给的",
+        "靠得住：一定是按名字的字头给的",
+        "靠不住，而且程序会当场报错，提醒本喵补上 `ORDER BY`"
+      ],
+      "answer": 0,
+      "explanation": "那些行在后头怎么摆，是管家自己的事——它今天可能碰巧按进货的先后给本喵，换台机器、换个版本就可能是别的样子，而**代码一个字都没改**，印出来的东西却变了喵。所以要印好几行，就得自己把顺序写死（`ORDER BY`），或者在 Python 里自己摆好（`sorted(行们)`）。它**不会报错**；同样地，它也绝不保证按添货先后、更不会按名字的字头给——「一定是按本喵添货的先后给的」和「一定是按名字的字头给的」都是想当然喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "stem": "这段代码往仓库里添一行货，再把它的数量查回来。两个空该分别填什么？",
+      "lang": "python",
+      "code": "import sqlite3\n\ncon = sqlite3.connect(\"仓库.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 数量 INTEGER)\")\ncur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (\"原味\", 3))\ncon.____()\n\ncur.execute(\"SELECT 数量 FROM 库存 WHERE 名字 = ____\", (\"原味\",))\nprint(cur.fetchone()[0])\n",
+      "blanks": [
+        {
+          "answer": "commit",
+          "accept": []
+        },
+        {
+          "answer": "?",
+          "accept": []
+        }
+      ],
+      "explanation": "第一个空填 `commit`：添完货得**盖个章**，这一行才算真进了仓库——不盖章的话，另开一根线去查是看不见它的。第二个空填 `?`：这一格要按 `名字` 挑货，货就从**投喂口**递进去，口令里写 `?`，值放在第二个逗号后面用括号包好，位置一格对一格。两处填对了，最后会印出 `3`——正是原味那行的数量喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "import sqlite3\n\ncon = sqlite3.connect(\"仓库.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 数量 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncon.commit()\n\ncur.execute(\"SELECT 名字 FROM 库存 ORDER BY 数量 DESC\")\nfor 行 in cur:\n    print(行[0])\ncon.close()\n",
+      "stem": "这段代码的输出是什么？（一行一条，按印出来的顺序写）",
+      "answer": "海苔味\n麻辣味\n原味",
+      "accept": [
+        "海苔味\n麻辣味\n原味\n"
+      ],
+      "explanation": "`ORDER BY 数量 DESC` 是按数量**从大到小**摆，所以先印海苔味（7 条）、再麻辣味（5 条）、最后原味（3 条）喵。那几行是叼一行、印一行地拿回来的，`行[0]` 就是这一行的第一格——口令里只点了 `名字` 一道菜，所以叼回来的每一行也就只有一格，印出来干干净净只有名字喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "import sqlite3\n\ncon = sqlite3.connect(\"仓库.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 数量 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7)])\ncon.commit()\n\ncur.execute(\"UPDATE 库存 SET 数量 = ? WHERE 名字 = ?\", (10, \"原味\"))\ncur.execute(\"SELECT * FROM 库存 ORDER BY 数量\")\nprint(cur.fetchall())\ncon.close()\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "[('海苔味', 7), ('原味', 10)]",
+      "accept": [
+        "[('海苔味', 7), ('原味', 10)]\n"
+      ],
+      "explanation": "`UPDATE ... SET 数量 = ? WHERE 名字 = ?` 把原味那行的数量从 3 改成了 10——它比海苔味的 7 大了，所以 `ORDER BY 数量` 从小到大摆的时候，海苔味排在前面、原味排在后面喵。`fetchall()` 是把整盘行一口气端走，所以最外头有方括号；每一行是括号包着的小组，格子顺序还是建表时写下的 `名字`、`数量`，没有变喵。"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "templateId": "cpp-s3-20-two-ways-dispatch",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-20",
+  "type": "codewrite",
+  "concept": ["三份做法同时在场挑谁", "直接写出来的那份更优先", "点名才轮得到小灶"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "pick", "values": ["7", "9"] }
+  },
+  "stemTemplate": "本喵要让同一款料上**三份做法**同时在场，看看喊话的时候翻译官喵挑谁。三份都叫 `pick`：\n\n1. 一张通用图纸：印一行 `图纸裁出来的那一份`；\n2. 给整数单开的那份（头上挂空的尖括号那种写法）：印一行 `整数小灶`；\n3. 一张**直接写出来的**同名图纸：收整数，印一行 `直接写的那一份`。\n\n`main` 里按顺序喊三次：\n\n1. `pick({n})`；\n2. `pick<>({n})`；\n3. `pick(2.5)`。\n\n屏幕上是三行。至于哪一行是谁印的 —— 本喵先不告诉你，跑完自己看喵。",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nvoid pick(T x) {\n    cout << \"图纸裁出来的那一份\" << endl;\n}\n\ntemplate <>\nvoid pick<int>(int x) {\n    cout << \"整数小灶\" << endl;\n}\n\nvoid pick(int x) {\n    cout << \"直接写的那一份\" << endl;\n}\n\nint main() {\n    pick({n});\n    pick<>({n});\n    pick(2.5);\n    return 0;\n}\n",
+  "explanationTemplate": "三行依次是「直接写的那一份」「整数小灶」「图纸裁出来的那一份」喵。一行一行说：\n\n1. `pick({n})` —— 递的是整数。「直接写出来的那张」和「整数小灶」两边都接得住，一样好。这时候规矩是 **直接写出来的那张赢**，所以第一行走它。\n2. `pick<>({n})` —— 尖括号里一个都不写，但**把那对尖括号写出来了**，等于点名要图纸裁出来的那份。于是整数小灶上班，第二行是它。\n3. `pick(2.5)` —— 小数。小灶只认整数，直接写出来的那张也只收整数，两边都接不住，只剩通用那份，第三行走它。\n\n⚠️ 这一题最该带走的是第一条：**同一款料上有两份做法的时候，小灶是排不上号的**。平时喊话不会写那对空尖括号，所以「开了小灶却一直没上班」是个很常见的错觉 —— 而且它**不报错、不提醒**，屏幕上看着一切正常。"
+}

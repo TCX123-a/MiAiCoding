@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-14-cat-factory-write",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-14",
+  "type": "codewrite",
+  "concept": ["接生图纸按名字挑猫", "底图纸那一句要挂牌子", "兜底那条路的安静"],
+  "instances": 6,
+  "params": {
+    "w": { "kind": "pick", "values": ["2", "3"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "{w}", "min": 1, "max": 3 },
+  "stemTemplate": "投喂口还会给 `{w}` 个数（一行一个）喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 写**一张底图纸** `Cat`：会一句 `speak`，这一句要**各猫各样**（牌子别忘挂）；\n2. 写**两张岔路图纸**：小鱼干猫那一句是 `小鱼干喵！`，毛线球猫那一句是 `毛线球喵！`；\n3. 写**一张接生图纸** `makeCat(int kind)`：读到 `1` 就接生小鱼干猫，别的数都兜底接生毛线球猫；\n4. 主猫一个一个读投喂口给的数，**每读到一个就接生一只**，印一行 `第 i 只：` 加上它自己那句话（`i` 从 `1` 数起）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外几个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\n// 在这儿写底图纸 Cat、两张岔路图纸，还有接生图纸 makeCat\n\nint main() {\n    int k = 0;\n    for (int i = 0; i < {w}; i++) {\n        cin >> k;\n\n        // 在这儿写：按读到的数接生一只，印一行\n\n    }\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    virtual string speak() const { return \"……\"; }\n    virtual ~Cat() = default;\n};\n\nclass FishCat : public Cat {\npublic:\n    string speak() const override { return \"小鱼干喵！\"; }\n};\n\nclass BallCat : public Cat {\npublic:\n    string speak() const override { return \"毛线球喵！\"; }\n};\n\nunique_ptr<Cat> makeCat(int kind) {\n    if (kind == 1) return make_unique<FishCat>();\n    return make_unique<BallCat>();\n}\n\nint main() {\n    int k = 0;\n    for (int i = 0; i < {w}; i++) {\n        cin >> k;\n        auto cat = makeCat(k);\n        cout << \"第 \" << i + 1 << \" 只：\" << cat->speak() << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题把**接生图纸**那张形状走了一遍喵：\n\n- 底图纸 `Cat` 里那句 `speak` 挂着 `virtual` 这块牌子，意思是「**这一句各猫各样，走到谁面前就念谁那句**」；两张岔路图纸各自把那一句换成自己的话；\n- 接生图纸 `makeCat` 里那条岔路：`kind` 是 `1` 就接生小鱼干猫，别的数全走兜底；\n- 主猫只报数，**不知道每一种猫怎么造** —— 造猫的事全在接生图纸肚子里。\n\n所以读到 `1` 的那一行印 `小鱼干喵！`，读到别的数的那一行印 `毛线球喵！`；投喂口给了 `{w}` 个数，就印 `{w}` 行。\n\n⚠️ 忘了挂牌子的话，程序**照样编得过、跑得起来**（岔路那边也别写 `override`），只是每一行都念底图纸那句「……」—— 一个「看着好像对」的结果。\n\n⚠️ 兜底那条路也有它的安静：报错了一个数**不会有谁提醒你**，它照样给你一只毛线球猫。每只猫自己报一句自己的话，正好能看出到底是哪只出来了 —— 这也是本喵让它印 `第 i 只：` 的缘故。"
+}

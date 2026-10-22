@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-16-half-levels",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-16",
+  "type": "codewrite",
+  "concept": ["一刀砍一半", "砍到只剩一条", "涨得慢的量级"],
+  "instances": 6,
+  "params": {
+    "greet": { "kind": "pick", "values": ["本喵数刀数：", "砍几刀呢："] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 8, "max": 64 },
+  "stemTemplate": "投喂口会给**一个数**：小鱼干的条数喵。\n\n请你写个程序，把那个数读进来，再印出**两行**：\n\n1. 第一行：`{greet}`（照抄）；\n2. 第二行：`要砍 K 次`，`K` 是把这一堆**一层层合并**要砍的刀数 —— 每一刀都让条数**只剩一半**（除不尽就往上取整），一刀一刀砍下去，直到只剩一条。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int rest = n;\n    int levels = 0;\n    while (rest > 1) {\n        rest = (rest + 1) / 2;\n        levels = levels + 1;\n    }\n\n    cout << \"{greet}\" << endl;\n    cout << \"要砍 \" << levels << \" 次\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "数刀数的那几行是这道题的正主喵：\n\n- 起手：`rest` 是现在的条数，`levels` 是「已经砍了几刀」。\n- 只要 `rest` **还不止一条**（`rest > 1`），就再砍一刀：条数只剩一半、刀数加一。\n- 砍到只剩一条就收工 —— 所以那一句**不是** `rest > 0`。写成 `rest > 0` 会多砍一刀，而多出来的那一刀一点都不显眼。\n\n⚠️ `(rest + 1) / 2` 这一格就是「除不尽往上取整」：`rest` 是奇数的时候，多出来的那一条也得算进下一轮，别把它丢了。\n\n⚠️ 这一题的刀数**是条数说了算，不是你说了算**：条数 8 要砍 3 刀，条数 64 要砍 6 刀 —— 条数涨了 8 倍，刀数才多 3 刀。这就是「一刀砍一半」的量级：**涨得慢得离谱**，也正是它比「两两比一遍」值钱的地方。\n\n⚠️ 判分喂的数跟样例不一样，别把样例里那个刀数写死喵。"
+}

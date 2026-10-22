@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-13-pass-pack-dots",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-13",
+  "type": "codefix",
+  "concept": ["把一包东西原样递出去也要带三个点", "parameter packs not expanded with '...'", "编不过"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["5", "8"] },
+    "w2": { "kind": "pick", "values": ["1", "2", "3"] }
+  },
+  "stemTemplate": "本喵写了两张图纸：一张数一包里有几样，一张把**头一个**单独拿出来、剩下的**原样递给**第一张去数。\n\n可这段代码**编不过**喵 —— 翻译官喵抱怨说，有个包没被摊开。你帮本喵改对：**两张图纸的分工、主猫喂进去的那几样，都不用动**。\n\n改好之后，程序要印出一行：`{w1}` 加上 `2` 的结果。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename... Args>\nint countAll(Args... args) {\n    return sizeof...(args);\n}\n\ntemplate <typename T, typename... Rest>\nint firstPlusCount(T first, Rest... rest) {\n    return first + countAll(rest);\n}\n\nint main() {\n    cout << firstPlusCount({w1}, {w2}, 4) << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename... Args>\nint countAll(Args... args) {\n    return sizeof...(args);\n}\n\ntemplate <typename T, typename... Rest>\nint firstPlusCount(T first, Rest... rest) {\n    return first + countAll(rest...);\n}\n\nint main() {\n    cout << firstPlusCount({w1}, {w2}, 4) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题漏的是**递包时的那三个点**喵。\n\n`countAll(rest)` 里的 `rest` 是一**包**东西，不是一个东西 —— 直接把它名字写上去，翻译官喵只看见一个没摊开的包，于是当场拦下：\n\n`error: parameter packs not expanded with '...':`\n\n念作「**这个包没被摊开**」。写成 `countAll(rest...)`，包里的东西就一样一样摊开、原样递了进去 —— 递进去两样，「数一包里有几样」就给回 `2`，所以印出来是 `{w1}` 加 `2` 的结果。\n\n⚠️ 这句抱怨和「数样数时忘了点」是**同一句抱怨**：翻译官喵认得的是「有个包没摊开」，它不会告诉你该在哪一行补。看到它，就把这一行里出现的**包名**挨个看一遍 —— 名字后面该带三个点的地方，是不是漏了。\n\n⚠️ 还要记住递出去的是**整包**：`countAll(rest...)` 是把包里每一样都递过去。要是手滑只递了某一样（比如写 `countAll(4)`），程序**编得过、也不报错**，只是数出来的样数永远少一位 —— 所以「能编过」不等于「传对了」。"
+}

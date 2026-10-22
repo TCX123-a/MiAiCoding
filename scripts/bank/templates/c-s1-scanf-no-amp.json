@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-scanf-no-amp",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-04",
+  "type": "codefix",
+  "concept": ["scanf 的门牌", "&", "能跑但错"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 1, "max": 4 },
+    "n2": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{n}\n", "sampleText": "{n2}\n" },
+  "stemTemplate": "本喵想让程序从投喂口叼一个整数回来，再原样报出来。可它报出来的永远是 **0** —— 大肥鱼敲进去的那个数，压根没进屋喵。\n\n你帮本喵改对：喂进去多少，就报多少。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    scanf(\"%d\", n);\n    printf(\"叼回来的是 %d\\n\", n);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    scanf(\"%d\", &n);\n    printf(\"叼回来的是 %d\\n\", n);\n    return 0;\n}\n",
+  "explanationTemplate": "投喂口那一招要的不是货，是**那间屋的门牌** —— 它得知道往哪儿放喵。\n\n你写 `scanf(\"%d\", n)`，递过去的是屋里**装着的东西**（0），不是门牌。它不知道往哪儿放，你那间屋当然一动不动 —— 报出来还是原来的 0。\n\n门牌怎么写？在屋名前加一个 `&`：\n\n```c\nscanf(\"%d\", &n);\n```\n\n`&n` 念作「`n` 那间屋的门牌」。**投喂口那一招要的永远是门牌。**\n\n这件事 C 其实嘀咕过一句：\n\n```\nwarning: format '%d' expects argument of type 'int *', but argument 2 has type 'int' [-Wformat=]\n```\n\n`int *`（带星星的写法）在它的账本里就是「门牌」，`int` 是「屋里的东西」—— 这句话是在说「**你要的是门牌，递过来的是东西**」。\n\n可它只是嘀咕，**拦不住你**：稿子照翻、程序照跑、屏幕上照出字 —— 只是那个数是错的。翻译官喵的嘀咕一定要看，这是这一课最想让你养成的习惯喵。"
+}

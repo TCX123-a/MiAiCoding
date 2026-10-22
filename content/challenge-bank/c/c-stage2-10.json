@@ -1,0 +1,448 @@
+{
+  "lessonId": "c-stage2-10",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s2-scope-bowl-out-of-block-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这段代码翻译不过去：翻译官喵说有个名字它**没见过**，可那个名字在本喵眼里明明就写在上面。\n\n你帮本喵把它改好，让程序印出两行 —— 第一行 `里头 <数>`，第二行 `外头 <数>`（两行是同一个数）。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    {\n        int bonus = 2;\n        printf(\"里头 %d\\n\", bonus);\n    }\n\n    printf(\"外头 %d\\n\", bonus);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    int bonus = 2;\n\n    {\n        printf(\"里头 %d\\n\", bonus);\n    }\n\n    printf(\"外头 %d\\n\", bonus);\n    return 0;\n}\n",
+      "expectedOutput": "里头 2\n外头 2",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: 'bonus' undeclared (first use in this function)` —— `undeclared` 就是「没宣告过 / 不认识这个名字」喵。\n\n它这么说是**讲道理的**：那只叫 `bonus` 的碗摆在花括号**里面**，而花括号是一道**地盘线**。碗摆在圈里，就只有圈里看得见；读出圈的那一句站在圈外面，当然不认得它。\n\n补法就是把碗挪到圈外面去 —— **要让两处都看得见，就得把它摆在外面的地盘上**：\n\n```c\nint bonus = 2;\n```\n\n挪出来之后，圈里圈外用的是**同一只碗**，两行印出来也就是同一个数。\n\n顺带把这条规矩的形状收好：**花括号画地盘，出了圈就不算数**。往后你会天天用到它 —— 圈里的临时碗用完就扔，外面的碗大家一起用，正是靠这道线分清楚的。",
+      "templateId": "c-s2-scope-bowl-out-of-block",
+      "params": {
+        "n": 2,
+        "inner": "里头",
+        "outer": "外头"
+      },
+      "verified": {
+        "at": "2026-09-16T09:02:13.714Z",
+        "hash": "aadba70a7b0e654e"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-bowl-out-of-block-031",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这段代码翻译不过去：翻译官喵说有个名字它**没见过**，可那个名字在本喵眼里明明就写在上面。\n\n你帮本喵把它改好，让程序印出两行 —— 第一行 `碗里 <数>`，第二行 `出了圈 <数>`（两行是同一个数）。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    {\n        int bonus = 9;\n        printf(\"碗里 %d\\n\", bonus);\n    }\n\n    printf(\"出了圈 %d\\n\", bonus);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    int bonus = 9;\n\n    {\n        printf(\"碗里 %d\\n\", bonus);\n    }\n\n    printf(\"出了圈 %d\\n\", bonus);\n    return 0;\n}\n",
+      "expectedOutput": "碗里 9\n出了圈 9",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是 `error: 'bonus' undeclared (first use in this function)` —— `undeclared` 就是「没宣告过 / 不认识这个名字」喵。\n\n它这么说是**讲道理的**：那只叫 `bonus` 的碗摆在花括号**里面**，而花括号是一道**地盘线**。碗摆在圈里，就只有圈里看得见；读出圈的那一句站在圈外面，当然不认得它。\n\n补法就是把碗挪到圈外面去 —— **要让两处都看得见，就得把它摆在外面的地盘上**：\n\n```c\nint bonus = 9;\n```\n\n挪出来之后，圈里圈外用的是**同一只碗**，两行印出来也就是同一个数。\n\n顺带把这条规矩的形状收好：**花括号画地盘，出了圈就不算数**。往后你会天天用到它 —— 圈里的临时碗用完就扔，外面的碗大家一起用，正是靠这道线分清楚的。",
+      "templateId": "c-s2-scope-bowl-out-of-block",
+      "params": {
+        "n": 9,
+        "inner": "碗里",
+        "outer": "出了圈"
+      },
+      "verified": {
+        "at": "2026-09-16T09:02:15.057Z",
+        "hash": "319a6cbd23d20696"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-extern-empty-promise-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这段代码翻译不过去 —— 更气人的是：翻译的过程一句毛病都没有，是**最后把几份东西拼起来那一步**才翻的脸，说本喵说的那只碗它怎么也找不到。\n\n你帮本喵改好：让程序跑起来，并且印出一行 `仓容 <数> 条`。",
+      "brokenCode": "#include <stdio.h>\n\nextern int cap;\n\nint main(void) {\n    printf(\"仓容 %d 条\\n\", cap);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint cap = 20;\n\nint main(void) {\n    printf(\"仓容 %d 条\\n\", cap);\n    return 0;\n}\n",
+      "expectedOutput": "仓容 20 条",
+      "stdin": null,
+      "explanation": "翻译官喵最后那一句原话是 `collect2.exe: error: ld returned 1 exit status`（那是它收尾拼装失败时的收场白）喵，往前翻一行还能看到它在念叨的那个名字：`undefined reference to`，后面跟着 `cap` —— 「本喵只看到一块牌子，缸呢？」\n\n毛病在 `extern int cap;` 这一行身上：它不是一只碗，它是一块**牌子** —— 「有这么一只叫 `cap` 的碗，缸摆在别处的纸上」。牌子本身写得没毛病，所以翻译的过程一声不吭；可到了收尾那一步要把它跟别处拼起来的时候，**谁那儿都没有这只缸**，它就只好停下来。\n\n改法就是**真的摆一只缸**（本喵这个改法）：\n\n```c\nint cap = 20;\n```\n\n去掉 `extern`、写上等号和值 —— 这就从「有这么一只碗」变成了「这只碗在这儿，装着 20」。\n\n顺带记一条形状：`extern` 不是坏东西，它是**第九课那种「只挂宣告、身子在别处」的老熟人** —— 招式那一行宣告说「有这么一招」，牌子说「有这么一只碗」。所以「牌子 + 别处的缸」是正经用法，**错的是只挂牌子、缸一直没人摆**。",
+      "templateId": "c-s2-scope-extern-empty-promise",
+      "params": {
+        "n": 20
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:04.868Z",
+        "hash": "59fe621ae2d58ec8"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-extern-empty-promise-009",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这段代码翻译不过去 —— 更气人的是：翻译的过程一句毛病都没有，是**最后把几份东西拼起来那一步**才翻的脸，说本喵说的那只碗它怎么也找不到。\n\n你帮本喵改好：让程序跑起来，并且印出一行 `仓容 <数> 条`。",
+      "brokenCode": "#include <stdio.h>\n\nextern int cap;\n\nint main(void) {\n    printf(\"仓容 %d 条\\n\", cap);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint cap = 29;\n\nint main(void) {\n    printf(\"仓容 %d 条\\n\", cap);\n    return 0;\n}\n",
+      "expectedOutput": "仓容 29 条",
+      "stdin": null,
+      "explanation": "翻译官喵最后那一句原话是 `collect2.exe: error: ld returned 1 exit status`（那是它收尾拼装失败时的收场白）喵，往前翻一行还能看到它在念叨的那个名字：`undefined reference to`，后面跟着 `cap` —— 「本喵只看到一块牌子，缸呢？」\n\n毛病在 `extern int cap;` 这一行身上：它不是一只碗，它是一块**牌子** —— 「有这么一只叫 `cap` 的碗，缸摆在别处的纸上」。牌子本身写得没毛病，所以翻译的过程一声不吭；可到了收尾那一步要把它跟别处拼起来的时候，**谁那儿都没有这只缸**，它就只好停下来。\n\n改法就是**真的摆一只缸**（本喵这个改法）：\n\n```c\nint cap = 29;\n```\n\n去掉 `extern`、写上等号和值 —— 这就从「有这么一只碗」变成了「这只碗在这儿，装着 29」。\n\n顺带记一条形状：`extern` 不是坏东西，它是**第九课那种「只挂宣告、身子在别处」的老熟人** —— 招式那一行宣告说「有这么一招」，牌子说「有这么一只碗」。所以「牌子 + 别处的缸」是正经用法，**错的是只挂牌子、缸一直没人摆**。",
+      "templateId": "c-s2-scope-extern-empty-promise",
+      "params": {
+        "n": 29
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:06.443Z",
+        "hash": "57a9abc8b75286b3"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-inner-wins-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "同一只叫 `cap` 的碗，本喵在两层地盘上已经摆好了：**最外面那层地盘的**、**招式里的**。现在请你**自己画一个花括号的圈**，在圈里再摆一只同名的碗（装 3），然后让程序印三行：\n\n1. `圈里 <圈里那只碗装的数>`\n2. `出圈之后 <出了圈以后这个名字指的那只碗装的数>`\n3. `外面地盘 <最外面那只碗装的数>`（这一行本喵已经写好了）\n\n三行的顺序不能乱。第二行是本喵特意盯着的 —— 出了圈以后，那个名字到底指回哪一只，你自己想清楚喵。",
+      "starter": "#include <stdio.h>\n\nint cap = 20;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 30;    /* ── 招式里的碗 ── */\n\n    /* ── 请在这儿自己画一个花括号的圈：圈里再摆一只同名的碗（装 3），\n          在圈里印一行 `圈里 <那只碗装的数>`，出了圈再印一行\n          `出圈之后 <这一层那只碗装的数>` ── */\n\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint cap = 20;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 30;    /* ── 招式里的碗 ── */\n\n    {\n        int cap = 3;\n        printf(\"圈里 %d\\n\", cap);\n    }\n\n    printf(\"出圈之后 %d\\n\", cap);\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "expectedOutput": "圈里 3\n出圈之后 30\n外面地盘 20",
+      "stdin": null,
+      "explanation": "规矩只有一条：**叫一个名字的时候，取「离你最近的那一层」**喵。\n\n- 圈里那一句站在圈里，最近的是圈里那只 → 印 3；\n- 出了圈以后，圈里那只**已经没了**，最近的就退回招式里那只 → 第二行该印 30，**不是** 3，也**不是**最外面那 20；\n- 最外面那一句站在招式外面（招式里的 30 他看不见），落到最外面那只 → 印 20。\n\n最容易写岔的地方有两处，都栽在「摆的位置」上：\n\n- **圈里那只碗摆到圈外面去**（跟招式里那只摆在同一层）—— 那第二行就会印出 3：因为那个名字从头到尾指的都是同一只碗，根本没有「退回来」这回事；\n- **圈里那一行印话写在花括号外面** —— 这时候名字已经不指圈里那只了，印出来也是 30，等于「圈里」那三个字白写了。\n\n一个圈 = 一层地盘，一份保质期。摆在哪一层、印在哪一层，都得对上。",
+      "templateId": "c-s2-scope-inner-wins",
+      "params": {
+        "g": 20,
+        "m": 30,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:12.289Z",
+        "hash": "7508c90a24140010"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-inner-wins-140",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "同一只叫 `cap` 的碗，本喵在两层地盘上已经摆好了：**最外面那层地盘的**、**招式里的**。现在请你**自己画一个花括号的圈**，在圈里再摆一只同名的碗（装 3），然后让程序印三行：\n\n1. `圈里 <圈里那只碗装的数>`\n2. `出圈之后 <出了圈以后这个名字指的那只碗装的数>`\n3. `外面地盘 <最外面那只碗装的数>`（这一行本喵已经写好了）\n\n三行的顺序不能乱。第二行是本喵特意盯着的 —— 出了圈以后，那个名字到底指回哪一只，你自己想清楚喵。",
+      "starter": "#include <stdio.h>\n\nint cap = 22;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 30;    /* ── 招式里的碗 ── */\n\n    /* ── 请在这儿自己画一个花括号的圈：圈里再摆一只同名的碗（装 3），\n          在圈里印一行 `圈里 <那只碗装的数>`，出了圈再印一行\n          `出圈之后 <这一层那只碗装的数>` ── */\n\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint cap = 22;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 30;    /* ── 招式里的碗 ── */\n\n    {\n        int cap = 3;\n        printf(\"圈里 %d\\n\", cap);\n    }\n\n    printf(\"出圈之后 %d\\n\", cap);\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "expectedOutput": "圈里 3\n出圈之后 30\n外面地盘 22",
+      "stdin": null,
+      "explanation": "规矩只有一条：**叫一个名字的时候，取「离你最近的那一层」**喵。\n\n- 圈里那一句站在圈里，最近的是圈里那只 → 印 3；\n- 出了圈以后，圈里那只**已经没了**，最近的就退回招式里那只 → 第二行该印 30，**不是** 3，也**不是**最外面那 22；\n- 最外面那一句站在招式外面（招式里的 30 他看不见），落到最外面那只 → 印 22。\n\n最容易写岔的地方有两处，都栽在「摆的位置」上：\n\n- **圈里那只碗摆到圈外面去**（跟招式里那只摆在同一层）—— 那第二行就会印出 3：因为那个名字从头到尾指的都是同一只碗，根本没有「退回来」这回事；\n- **圈里那一行印话写在花括号外面** —— 这时候名字已经不指圈里那只了，印出来也是 30，等于「圈里」那三个字白写了。\n\n一个圈 = 一层地盘，一份保质期。摆在哪一层、印在哪一层，都得对上。",
+      "templateId": "c-s2-scope-inner-wins",
+      "params": {
+        "g": 22,
+        "m": 30,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:03.230Z",
+        "hash": "37bdf21bafb76b3d"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-inner-wins-280",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "同一只叫 `cap` 的碗，本喵在两层地盘上已经摆好了：**最外面那层地盘的**、**招式里的**。现在请你**自己画一个花括号的圈**，在圈里再摆一只同名的碗（装 3），然后让程序印三行：\n\n1. `圈里 <圈里那只碗装的数>`\n2. `出圈之后 <出了圈以后这个名字指的那只碗装的数>`\n3. `外面地盘 <最外面那只碗装的数>`（这一行本喵已经写好了）\n\n三行的顺序不能乱。第二行是本喵特意盯着的 —— 出了圈以后，那个名字到底指回哪一只，你自己想清楚喵。",
+      "starter": "#include <stdio.h>\n\nint cap = 24;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 30;    /* ── 招式里的碗 ── */\n\n    /* ── 请在这儿自己画一个花括号的圈：圈里再摆一只同名的碗（装 3），\n          在圈里印一行 `圈里 <那只碗装的数>`，出了圈再印一行\n          `出圈之后 <这一层那只碗装的数>` ── */\n\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint cap = 24;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 30;    /* ── 招式里的碗 ── */\n\n    {\n        int cap = 3;\n        printf(\"圈里 %d\\n\", cap);\n    }\n\n    printf(\"出圈之后 %d\\n\", cap);\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "expectedOutput": "圈里 3\n出圈之后 30\n外面地盘 24",
+      "stdin": null,
+      "explanation": "规矩只有一条：**叫一个名字的时候，取「离你最近的那一层」**喵。\n\n- 圈里那一句站在圈里，最近的是圈里那只 → 印 3；\n- 出了圈以后，圈里那只**已经没了**，最近的就退回招式里那只 → 第二行该印 30，**不是** 3，也**不是**最外面那 24；\n- 最外面那一句站在招式外面（招式里的 30 他看不见），落到最外面那只 → 印 24。\n\n最容易写岔的地方有两处，都栽在「摆的位置」上：\n\n- **圈里那只碗摆到圈外面去**（跟招式里那只摆在同一层）—— 那第二行就会印出 3：因为那个名字从头到尾指的都是同一只碗，根本没有「退回来」这回事；\n- **圈里那一行印话写在花括号外面** —— 这时候名字已经不指圈里那只了，印出来也是 30，等于「圈里」那三个字白写了。\n\n一个圈 = 一层地盘，一份保质期。摆在哪一层、印在哪一层，都得对上。",
+      "templateId": "c-s2-scope-inner-wins",
+      "params": {
+        "g": 24,
+        "m": 30,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:05.332Z",
+        "hash": "6f7d072e478fb4bd"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-inner-wins-419",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "同一只叫 `cap` 的碗，本喵在两层地盘上已经摆好了：**最外面那层地盘的**、**招式里的**。现在请你**自己画一个花括号的圈**，在圈里再摆一只同名的碗（装 9），然后让程序印三行：\n\n1. `圈里 <圈里那只碗装的数>`\n2. `出圈之后 <出了圈以后这个名字指的那只碗装的数>`\n3. `外面地盘 <最外面那只碗装的数>`（这一行本喵已经写好了）\n\n三行的顺序不能乱。第二行是本喵特意盯着的 —— 出了圈以后，那个名字到底指回哪一只，你自己想清楚喵。",
+      "starter": "#include <stdio.h>\n\nint cap = 25;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 39;    /* ── 招式里的碗 ── */\n\n    /* ── 请在这儿自己画一个花括号的圈：圈里再摆一只同名的碗（装 9），\n          在圈里印一行 `圈里 <那只碗装的数>`，出了圈再印一行\n          `出圈之后 <这一层那只碗装的数>` ── */\n\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint cap = 25;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 39;    /* ── 招式里的碗 ── */\n\n    {\n        int cap = 9;\n        printf(\"圈里 %d\\n\", cap);\n    }\n\n    printf(\"出圈之后 %d\\n\", cap);\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "expectedOutput": "圈里 9\n出圈之后 39\n外面地盘 25",
+      "stdin": null,
+      "explanation": "规矩只有一条：**叫一个名字的时候，取「离你最近的那一层」**喵。\n\n- 圈里那一句站在圈里，最近的是圈里那只 → 印 9；\n- 出了圈以后，圈里那只**已经没了**，最近的就退回招式里那只 → 第二行该印 39，**不是** 9，也**不是**最外面那 25；\n- 最外面那一句站在招式外面（招式里的 39 他看不见），落到最外面那只 → 印 25。\n\n最容易写岔的地方有两处，都栽在「摆的位置」上：\n\n- **圈里那只碗摆到圈外面去**（跟招式里那只摆在同一层）—— 那第二行就会印出 9：因为那个名字从头到尾指的都是同一只碗，根本没有「退回来」这回事；\n- **圈里那一行印话写在花括号外面** —— 这时候名字已经不指圈里那只了，印出来也是 39，等于「圈里」那三个字白写了。\n\n一个圈 = 一层地盘，一份保质期。摆在哪一层、印在哪一层，都得对上。",
+      "templateId": "c-s2-scope-inner-wins",
+      "params": {
+        "g": 25,
+        "m": 39,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:07.475Z",
+        "hash": "a4c4f13961f337b5"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-inner-wins-559",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "同一只叫 `cap` 的碗，本喵在两层地盘上已经摆好了：**最外面那层地盘的**、**招式里的**。现在请你**自己画一个花括号的圈**，在圈里再摆一只同名的碗（装 9），然后让程序印三行：\n\n1. `圈里 <圈里那只碗装的数>`\n2. `出圈之后 <出了圈以后这个名字指的那只碗装的数>`\n3. `外面地盘 <最外面那只碗装的数>`（这一行本喵已经写好了）\n\n三行的顺序不能乱。第二行是本喵特意盯着的 —— 出了圈以后，那个名字到底指回哪一只，你自己想清楚喵。",
+      "starter": "#include <stdio.h>\n\nint cap = 27;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 39;    /* ── 招式里的碗 ── */\n\n    /* ── 请在这儿自己画一个花括号的圈：圈里再摆一只同名的碗（装 9），\n          在圈里印一行 `圈里 <那只碗装的数>`，出了圈再印一行\n          `出圈之后 <这一层那只碗装的数>` ── */\n\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint cap = 27;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 39;    /* ── 招式里的碗 ── */\n\n    {\n        int cap = 9;\n        printf(\"圈里 %d\\n\", cap);\n    }\n\n    printf(\"出圈之后 %d\\n\", cap);\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "expectedOutput": "圈里 9\n出圈之后 39\n外面地盘 27",
+      "stdin": null,
+      "explanation": "规矩只有一条：**叫一个名字的时候，取「离你最近的那一层」**喵。\n\n- 圈里那一句站在圈里，最近的是圈里那只 → 印 9；\n- 出了圈以后，圈里那只**已经没了**，最近的就退回招式里那只 → 第二行该印 39，**不是** 9，也**不是**最外面那 27；\n- 最外面那一句站在招式外面（招式里的 39 他看不见），落到最外面那只 → 印 27。\n\n最容易写岔的地方有两处，都栽在「摆的位置」上：\n\n- **圈里那只碗摆到圈外面去**（跟招式里那只摆在同一层）—— 那第二行就会印出 9：因为那个名字从头到尾指的都是同一只碗，根本没有「退回来」这回事；\n- **圈里那一行印话写在花括号外面** —— 这时候名字已经不指圈里那只了，印出来也是 39，等于「圈里」那三个字白写了。\n\n一个圈 = 一层地盘，一份保质期。摆在哪一层、印在哪一层，都得对上。",
+      "templateId": "c-s2-scope-inner-wins",
+      "params": {
+        "g": 27,
+        "m": 39,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:09.527Z",
+        "hash": "1a280acb68b355f7"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-inner-wins-699",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "同一只叫 `cap` 的碗，本喵在两层地盘上已经摆好了：**最外面那层地盘的**、**招式里的**。现在请你**自己画一个花括号的圈**，在圈里再摆一只同名的碗（装 9），然后让程序印三行：\n\n1. `圈里 <圈里那只碗装的数>`\n2. `出圈之后 <出了圈以后这个名字指的那只碗装的数>`\n3. `外面地盘 <最外面那只碗装的数>`（这一行本喵已经写好了）\n\n三行的顺序不能乱。第二行是本喵特意盯着的 —— 出了圈以后，那个名字到底指回哪一只，你自己想清楚喵。",
+      "starter": "#include <stdio.h>\n\nint cap = 29;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 39;    /* ── 招式里的碗 ── */\n\n    /* ── 请在这儿自己画一个花括号的圈：圈里再摆一只同名的碗（装 9），\n          在圈里印一行 `圈里 <那只碗装的数>`，出了圈再印一行\n          `出圈之后 <这一层那只碗装的数>` ── */\n\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint cap = 29;        /* ── 最外面那层地盘上的碗 ── */\n\nvoid report(void) {\n    int cap = 39;    /* ── 招式里的碗 ── */\n\n    {\n        int cap = 9;\n        printf(\"圈里 %d\\n\", cap);\n    }\n\n    printf(\"出圈之后 %d\\n\", cap);\n}\n\nint main(void) {\n    report();\n    printf(\"外面地盘 %d\\n\", cap);\n    return 0;\n}\n",
+      "expectedOutput": "圈里 9\n出圈之后 39\n外面地盘 29",
+      "stdin": null,
+      "explanation": "规矩只有一条：**叫一个名字的时候，取「离你最近的那一层」**喵。\n\n- 圈里那一句站在圈里，最近的是圈里那只 → 印 9；\n- 出了圈以后，圈里那只**已经没了**，最近的就退回招式里那只 → 第二行该印 39，**不是** 9，也**不是**最外面那 29；\n- 最外面那一句站在招式外面（招式里的 39 他看不见），落到最外面那只 → 印 29。\n\n最容易写岔的地方有两处，都栽在「摆的位置」上：\n\n- **圈里那只碗摆到圈外面去**（跟招式里那只摆在同一层）—— 那第二行就会印出 9：因为那个名字从头到尾指的都是同一只碗，根本没有「退回来」这回事；\n- **圈里那一行印话写在花括号外面** —— 这时候名字已经不指圈里那只了，印出来也是 39，等于「圈里」那三个字白写了。\n\n一个圈 = 一层地盘，一份保质期。摆在哪一层、印在哪一层，都得对上。",
+      "templateId": "c-s2-scope-inner-wins",
+      "params": {
+        "g": 29,
+        "m": 39,
+        "b": 9
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:13.504Z",
+        "hash": "b6349d67055af281"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-running-sum-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要转 3 圈（`i` 从 1 数到 3），每转一圈就把这一圈的数**加进一只碗**，然后把这只碗印一眼。\n\n要求印出 3 行，而且**行行都比上一行大**：第 1 行是 1，第 2 行是 1 加 2，第 3 行是 1 加 2 加 3 …… 也就是每一行都是「**从 1 加到这一圈**」的和。\n\n本喵只把绕圈的骨架摆好了，那只碗该摆在哪一层，你自己拿主意喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    for (int i = 1; i <= 3; i = i + 1) {\n        /* ── 在这儿写出「把这一圈的数加进一只碗、再把这只碗印一行」的活 ── */\n    }\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int total = 0;\n\n    for (int i = 1; i <= 3; i = i + 1) {\n        total = total + i;\n        printf(\"%d\\n\", total);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "1\n3\n6",
+      "stdin": null,
+      "explanation": "这一题真正要拿的主意只有一个：**那只碗摆在圈外面。**\n\n摆在圈外面（本喵这个写法），那只碗从第一圈之前就在，一直用到最后一圈 —— 每一圈往里加一点，所以印出来是 1、3、6、10…… 行行都在变大。\n\n摆在圈**里面**呢？花括号是一道地盘线，圈里摆的碗**每转一圈都是新发的一只**：进门一只装着 0 的新碗，加上这一圈的数，印出来，出门它就没了 —— 于是下一圈又是从零开始。印出来的会是 1、2、3、4…… 也就是**这一圈的数本身**，一行都没攒住。\n\n所以这一题的形状是：**要「一直记得住」的碗，摆到圈外面去；只在圈里用一下就扔的碗，才摆在圈里。** 摆错地方它照样能跑、一个字都不报错，只是行行都长一样大。",
+      "templateId": "c-s2-scope-running-sum",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:14.969Z",
+        "hash": "db6bf62eba6a707c"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-running-sum-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要转 4 圈（`i` 从 1 数到 4），每转一圈就把这一圈的数**加进一只碗**，然后把这只碗印一眼。\n\n要求印出 4 行，而且**行行都比上一行大**：第 1 行是 1，第 2 行是 1 加 2，第 3 行是 1 加 2 加 3 …… 也就是每一行都是「**从 1 加到这一圈**」的和。\n\n本喵只把绕圈的骨架摆好了，那只碗该摆在哪一层，你自己拿主意喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    for (int i = 1; i <= 4; i = i + 1) {\n        /* ── 在这儿写出「把这一圈的数加进一只碗、再把这只碗印一行」的活 ── */\n    }\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int total = 0;\n\n    for (int i = 1; i <= 4; i = i + 1) {\n        total = total + i;\n        printf(\"%d\\n\", total);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "1\n3\n6\n10",
+      "stdin": null,
+      "explanation": "这一题真正要拿的主意只有一个：**那只碗摆在圈外面。**\n\n摆在圈外面（本喵这个写法），那只碗从第一圈之前就在，一直用到最后一圈 —— 每一圈往里加一点，所以印出来是 1、3、6、10…… 行行都在变大。\n\n摆在圈**里面**呢？花括号是一道地盘线，圈里摆的碗**每转一圈都是新发的一只**：进门一只装着 0 的新碗，加上这一圈的数，印出来，出门它就没了 —— 于是下一圈又是从零开始。印出来的会是 1、2、3、4…… 也就是**这一圈的数本身**，一行都没攒住。\n\n所以这一题的形状是：**要「一直记得住」的碗，摆到圈外面去；只在圈里用一下就扔的碗，才摆在圈里。** 摆错地方它照样能跑、一个字都不报错，只是行行都长一样大。",
+      "templateId": "c-s2-scope-running-sum",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:11.653Z",
+        "hash": "99030707ea551e7c"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-running-sum-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要转 5 圈（`i` 从 1 数到 5），每转一圈就把这一圈的数**加进一只碗**，然后把这只碗印一眼。\n\n要求印出 5 行，而且**行行都比上一行大**：第 1 行是 1，第 2 行是 1 加 2，第 3 行是 1 加 2 加 3 …… 也就是每一行都是「**从 1 加到这一圈**」的和。\n\n本喵只把绕圈的骨架摆好了，那只碗该摆在哪一层，你自己拿主意喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    for (int i = 1; i <= 5; i = i + 1) {\n        /* ── 在这儿写出「把这一圈的数加进一只碗、再把这只碗印一行」的活 ── */\n    }\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int total = 0;\n\n    for (int i = 1; i <= 5; i = i + 1) {\n        total = total + i;\n        printf(\"%d\\n\", total);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "1\n3\n6\n10\n15",
+      "stdin": null,
+      "explanation": "这一题真正要拿的主意只有一个：**那只碗摆在圈外面。**\n\n摆在圈外面（本喵这个写法），那只碗从第一圈之前就在，一直用到最后一圈 —— 每一圈往里加一点，所以印出来是 1、3、6、10…… 行行都在变大。\n\n摆在圈**里面**呢？花括号是一道地盘线，圈里摆的碗**每转一圈都是新发的一只**：进门一只装着 0 的新碗，加上这一圈的数，印出来，出门它就没了 —— 于是下一圈又是从零开始。印出来的会是 1、2、3、4…… 也就是**这一圈的数本身**，一行都没攒住。\n\n所以这一题的形状是：**要「一直记得住」的碗，摆到圈外面去；只在圈里用一下就扔的碗，才摆在圈里。** 摆错地方它照样能跑、一个字都不报错，只是行行都长一样大。",
+      "templateId": "c-s2-scope-running-sum",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:13.806Z",
+        "hash": "27b065650f79488b"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-running-sum-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要转 6 圈（`i` 从 1 数到 6），每转一圈就把这一圈的数**加进一只碗**，然后把这只碗印一眼。\n\n要求印出 6 行，而且**行行都比上一行大**：第 1 行是 1，第 2 行是 1 加 2，第 3 行是 1 加 2 加 3 …… 也就是每一行都是「**从 1 加到这一圈**」的和。\n\n本喵只把绕圈的骨架摆好了，那只碗该摆在哪一层，你自己拿主意喵。",
+      "starter": "#include <stdio.h>\n\nint main(void) {\n    for (int i = 1; i <= 6; i = i + 1) {\n        /* ── 在这儿写出「把这一圈的数加进一只碗、再把这只碗印一行」的活 ── */\n    }\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nint main(void) {\n    int total = 0;\n\n    for (int i = 1; i <= 6; i = i + 1) {\n        total = total + i;\n        printf(\"%d\\n\", total);\n    }\n\n    return 0;\n}\n",
+      "expectedOutput": "1\n3\n6\n10\n15\n21",
+      "stdin": null,
+      "explanation": "这一题真正要拿的主意只有一个：**那只碗摆在圈外面。**\n\n摆在圈外面（本喵这个写法），那只碗从第一圈之前就在，一直用到最后一圈 —— 每一圈往里加一点，所以印出来是 1、3、6、10…… 行行都在变大。\n\n摆在圈**里面**呢？花括号是一道地盘线，圈里摆的碗**每转一圈都是新发的一只**：进门一只装着 0 的新碗，加上这一圈的数，印出来，出门它就没了 —— 于是下一圈又是从零开始。印出来的会是 1、2、3、4…… 也就是**这一圈的数本身**，一行都没攒住。\n\n所以这一题的形状是：**要「一直记得住」的碗，摆到圈外面去；只在圈里用一下就扔的碗，才摆在圈里。** 摆错地方它照样能跑、一个字都不报错，只是行行都长一样大。",
+      "templateId": "c-s2-scope-running-sum",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:16.193Z",
+        "hash": "bdc8c28626eb1a5a"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-static-counter-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要一招 `next_id`：喊它一次就报一个 `编号`，**第一次报 1，之后每喊一次就大 1**。\n\n两条要求写死：\n\n1. 这一招**不收任何投喂**；\n2. 记编号的那只碗**不许摆在外面**（外面一只碗都不许放）—— 它得是**这招自己的**，喊完了还记得住。\n\n`main` 里会把 `next_id` 喊 3 次，每喊一次印一行 `编号 <编号>`。",
+      "starter": "#include <stdio.h>\n\nvoid next_id(void) {\n\n}\n\nint main(void) {\n    for (int i = 0; i < 3; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid next_id(void) {\n    static int id = 0;\n\n    id = id + 1;\n    printf(\"编号 %d\\n\", id);\n}\n\nint main(void) {\n    for (int i = 0; i < 3; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "编号 1\n编号 2\n编号 3",
+      "stdin": null,
+      "explanation": "这题的关键全在那只碗身上喵。\n\n**招式里普通的碗，每次进门都是新发的。** 本喵真跑过一遍对照：写成 `int id = 0;`，喊三回报出来的是三个 1 —— 因为每次进门都新摆一只装了 0 的碗，加完一、印完、出门，那只碗就没了；下一回再来，又是一只新的 0。\n\n**加上 `static` 就换了性质：** 那只碗变成**这一招自己的固定格子**，只在**第一次**喊到这儿的时候准备一次，之后每一次进门用的都还是它。所以初值 `0` 只算一遍，报出来就是 1、2、3……\n\n```c\nstatic int id = 0;\n```\n\n口诀收好：**招式里的 `static` 碗 = 只发一次、永远留着。**\n\n顺便，本喵把那只碗的初值改成 100 真跑过一遍：报出来是 101、102、103、104……（喊几次就往下数几个）—— 看得很清楚，**那句初值只在第一次生效**，后面的每一次都只是接着往下加。",
+      "templateId": "c-s2-scope-static-counter",
+      "params": {
+        "times": 3,
+        "word": "编号"
+      },
+      "verified": {
+        "at": "2026-09-16T09:02:22.925Z",
+        "hash": "f388ff2f2533d081"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-static-counter-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要一招 `next_id`：喊它一次就报一个 `号码`，**第一次报 1，之后每喊一次就大 1**。\n\n两条要求写死：\n\n1. 这一招**不收任何投喂**；\n2. 记编号的那只碗**不许摆在外面**（外面一只碗都不许放）—— 它得是**这招自己的**，喊完了还记得住。\n\n`main` 里会把 `next_id` 喊 3 次，每喊一次印一行 `号码 <编号>`。",
+      "starter": "#include <stdio.h>\n\nvoid next_id(void) {\n\n}\n\nint main(void) {\n    for (int i = 0; i < 3; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid next_id(void) {\n    static int id = 0;\n\n    id = id + 1;\n    printf(\"号码 %d\\n\", id);\n}\n\nint main(void) {\n    for (int i = 0; i < 3; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "号码 1\n号码 2\n号码 3",
+      "stdin": null,
+      "explanation": "这题的关键全在那只碗身上喵。\n\n**招式里普通的碗，每次进门都是新发的。** 本喵真跑过一遍对照：写成 `int id = 0;`，喊三回报出来的是三个 1 —— 因为每次进门都新摆一只装了 0 的碗，加完一、印完、出门，那只碗就没了；下一回再来，又是一只新的 0。\n\n**加上 `static` 就换了性质：** 那只碗变成**这一招自己的固定格子**，只在**第一次**喊到这儿的时候准备一次，之后每一次进门用的都还是它。所以初值 `0` 只算一遍，报出来就是 1、2、3……\n\n```c\nstatic int id = 0;\n```\n\n口诀收好：**招式里的 `static` 碗 = 只发一次、永远留着。**\n\n顺便，本喵把那只碗的初值改成 100 真跑过一遍：报出来是 101、102、103、104……（喊几次就往下数几个）—— 看得很清楚，**那句初值只在第一次生效**，后面的每一次都只是接着往下加。",
+      "templateId": "c-s2-scope-static-counter",
+      "params": {
+        "times": 3,
+        "word": "号码"
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:16.129Z",
+        "hash": "8567d40889195669"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-static-counter-002",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要一招 `next_id`：喊它一次就报一个 `序号`，**第一次报 1，之后每喊一次就大 1**。\n\n两条要求写死：\n\n1. 这一招**不收任何投喂**；\n2. 记编号的那只碗**不许摆在外面**（外面一只碗都不许放）—— 它得是**这招自己的**，喊完了还记得住。\n\n`main` 里会把 `next_id` 喊 3 次，每喊一次印一行 `序号 <编号>`。",
+      "starter": "#include <stdio.h>\n\nvoid next_id(void) {\n\n}\n\nint main(void) {\n    for (int i = 0; i < 3; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid next_id(void) {\n    static int id = 0;\n\n    id = id + 1;\n    printf(\"序号 %d\\n\", id);\n}\n\nint main(void) {\n    for (int i = 0; i < 3; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "序号 1\n序号 2\n序号 3",
+      "stdin": null,
+      "explanation": "这题的关键全在那只碗身上喵。\n\n**招式里普通的碗，每次进门都是新发的。** 本喵真跑过一遍对照：写成 `int id = 0;`，喊三回报出来的是三个 1 —— 因为每次进门都新摆一只装了 0 的碗，加完一、印完、出门，那只碗就没了；下一回再来，又是一只新的 0。\n\n**加上 `static` 就换了性质：** 那只碗变成**这一招自己的固定格子**，只在**第一次**喊到这儿的时候准备一次，之后每一次进门用的都还是它。所以初值 `0` 只算一遍，报出来就是 1、2、3……\n\n```c\nstatic int id = 0;\n```\n\n口诀收好：**招式里的 `static` 碗 = 只发一次、永远留着。**\n\n顺便，本喵把那只碗的初值改成 100 真跑过一遍：报出来是 101、102、103、104……（喊几次就往下数几个）—— 看得很清楚，**那句初值只在第一次生效**，后面的每一次都只是接着往下加。",
+      "templateId": "c-s2-scope-static-counter",
+      "params": {
+        "times": 3,
+        "word": "序号"
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:18.378Z",
+        "hash": "3fa27d1dc7762388"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-static-counter-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要一招 `next_id`：喊它一次就报一个 `编号`，**第一次报 1，之后每喊一次就大 1**。\n\n两条要求写死：\n\n1. 这一招**不收任何投喂**；\n2. 记编号的那只碗**不许摆在外面**（外面一只碗都不许放）—— 它得是**这招自己的**，喊完了还记得住。\n\n`main` 里会把 `next_id` 喊 4 次，每喊一次印一行 `编号 <编号>`。",
+      "starter": "#include <stdio.h>\n\nvoid next_id(void) {\n\n}\n\nint main(void) {\n    for (int i = 0; i < 4; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid next_id(void) {\n    static int id = 0;\n\n    id = id + 1;\n    printf(\"编号 %d\\n\", id);\n}\n\nint main(void) {\n    for (int i = 0; i < 4; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "编号 1\n编号 2\n编号 3\n编号 4",
+      "stdin": null,
+      "explanation": "这题的关键全在那只碗身上喵。\n\n**招式里普通的碗，每次进门都是新发的。** 本喵真跑过一遍对照：写成 `int id = 0;`，喊三回报出来的是三个 1 —— 因为每次进门都新摆一只装了 0 的碗，加完一、印完、出门，那只碗就没了；下一回再来，又是一只新的 0。\n\n**加上 `static` 就换了性质：** 那只碗变成**这一招自己的固定格子**，只在**第一次**喊到这儿的时候准备一次，之后每一次进门用的都还是它。所以初值 `0` 只算一遍，报出来就是 1、2、3……\n\n```c\nstatic int id = 0;\n```\n\n口诀收好：**招式里的 `static` 碗 = 只发一次、永远留着。**\n\n顺便，本喵把那只碗的初值改成 100 真跑过一遍：报出来是 101、102、103、104……（喊几次就往下数几个）—— 看得很清楚，**那句初值只在第一次生效**，后面的每一次都只是接着往下加。",
+      "templateId": "c-s2-scope-static-counter",
+      "params": {
+        "times": 4,
+        "word": "编号"
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:20.508Z",
+        "hash": "568993f9869f2a1f"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-static-counter-004",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要一招 `next_id`：喊它一次就报一个 `号码`，**第一次报 1，之后每喊一次就大 1**。\n\n两条要求写死：\n\n1. 这一招**不收任何投喂**；\n2. 记编号的那只碗**不许摆在外面**（外面一只碗都不许放）—— 它得是**这招自己的**，喊完了还记得住。\n\n`main` 里会把 `next_id` 喊 4 次，每喊一次印一行 `号码 <编号>`。",
+      "starter": "#include <stdio.h>\n\nvoid next_id(void) {\n\n}\n\nint main(void) {\n    for (int i = 0; i < 4; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid next_id(void) {\n    static int id = 0;\n\n    id = id + 1;\n    printf(\"号码 %d\\n\", id);\n}\n\nint main(void) {\n    for (int i = 0; i < 4; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "号码 1\n号码 2\n号码 3\n号码 4",
+      "stdin": null,
+      "explanation": "这题的关键全在那只碗身上喵。\n\n**招式里普通的碗，每次进门都是新发的。** 本喵真跑过一遍对照：写成 `int id = 0;`，喊三回报出来的是三个 1 —— 因为每次进门都新摆一只装了 0 的碗，加完一、印完、出门，那只碗就没了；下一回再来，又是一只新的 0。\n\n**加上 `static` 就换了性质：** 那只碗变成**这一招自己的固定格子**，只在**第一次**喊到这儿的时候准备一次，之后每一次进门用的都还是它。所以初值 `0` 只算一遍，报出来就是 1、2、3……\n\n```c\nstatic int id = 0;\n```\n\n口诀收好：**招式里的 `static` 碗 = 只发一次、永远留着。**\n\n顺便，本喵把那只碗的初值改成 100 真跑过一遍：报出来是 101、102、103、104……（喊几次就往下数几个）—— 看得很清楚，**那句初值只在第一次生效**，后面的每一次都只是接着往下加。",
+      "templateId": "c-s2-scope-static-counter",
+      "params": {
+        "times": 4,
+        "word": "号码"
+      },
+      "verified": {
+        "at": "2026-10-20T16:35:22.594Z",
+        "hash": "8f31c3654160c075"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-static-counter-005",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要一招 `next_id`：喊它一次就报一个 `序号`，**第一次报 1，之后每喊一次就大 1**。\n\n两条要求写死：\n\n1. 这一招**不收任何投喂**；\n2. 记编号的那只碗**不许摆在外面**（外面一只碗都不许放）—— 它得是**这招自己的**，喊完了还记得住。\n\n`main` 里会把 `next_id` 喊 4 次，每喊一次印一行 `序号 <编号>`。",
+      "starter": "#include <stdio.h>\n\nvoid next_id(void) {\n\n}\n\nint main(void) {\n    for (int i = 0; i < 4; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\nvoid next_id(void) {\n    static int id = 0;\n\n    id = id + 1;\n    printf(\"序号 %d\\n\", id);\n}\n\nint main(void) {\n    for (int i = 0; i < 4; i = i + 1) {\n        next_id();\n    }\n    return 0;\n}\n",
+      "expectedOutput": "序号 1\n序号 2\n序号 3\n序号 4",
+      "stdin": null,
+      "explanation": "这题的关键全在那只碗身上喵。\n\n**招式里普通的碗，每次进门都是新发的。** 本喵真跑过一遍对照：写成 `int id = 0;`，喊三回报出来的是三个 1 —— 因为每次进门都新摆一只装了 0 的碗，加完一、印完、出门，那只碗就没了；下一回再来，又是一只新的 0。\n\n**加上 `static` 就换了性质：** 那只碗变成**这一招自己的固定格子**，只在**第一次**喊到这儿的时候准备一次，之后每一次进门用的都还是它。所以初值 `0` 只算一遍，报出来就是 1、2、3……\n\n```c\nstatic int id = 0;\n```\n\n口诀收好：**招式里的 `static` 碗 = 只发一次、永远留着。**\n\n顺便，本喵把那只碗的初值改成 100 真跑过一遍：报出来是 101、102、103、104……（喊几次就往下数几个）—— 看得很清楚，**那句初值只在第一次生效**，后面的每一次都只是接着往下加。",
+      "templateId": "c-s2-scope-static-counter",
+      "params": {
+        "times": 4,
+        "word": "序号"
+      },
+      "verified": {
+        "at": "2026-09-16T09:02:24.228Z",
+        "hash": "c76762e3bcda6dad"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-static-stale-sum-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这一招是算「从 1 加到 n」的和，喊两回。第一回没毛病，第二回的数却**大得离谱** —— 因为那只攒数的碗跨着两次喊话活着，把上一回的余数也一起加进去了。\n\n你帮本喵把它改回「每次都从零算」，让两行印出来的数各自都对。",
+      "brokenCode": "#include <stdio.h>\n\nint sumTo(int n) {\n    static int total = 0;\n\n    for (int i = 1; i <= n; i++) {\n        total = total + i;\n    }\n\n    return total;\n}\n\nint main(void) {\n    printf(\"%d\\n\", sumTo(2));\n    printf(\"%d\\n\", sumTo(5));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint sumTo(int n) {\n    int total = 0;\n\n    for (int i = 1; i <= n; i++) {\n        total = total + i;\n    }\n\n    return total;\n}\n\nint main(void) {\n    printf(\"%d\\n\", sumTo(2));\n    printf(\"%d\\n\", sumTo(5));\n    return 0;\n}\n",
+      "expectedOutput": "3\n15",
+      "stdin": null,
+      "explanation": "这一题最阴的地方是：**它不报错，只是数不对**喵。\n\n那只攒数的碗加了 `static`，于是它变成了**这一招自己的固定格子** —— 只在第一次喊到那一行的时候准备一次，之后每一回进门用的都还是它。所以第二回喊的时候，碗里还留着上一回攒下的数，接着往上加。\n\n本喵真跑过一组给你看形状：喊 `sumTo(3)` 报 6（对），接着喊 `sumTo(5)` 报的**不是 15，是 21** —— 多出来的正是上一回那 6。这一回你手上这组也一样：第二行印出来的数里，混着第一行的和。\n\n改法就是把那个 `static` 去掉：\n\n```c\nint total = 0;\n```\n\n普通碗**每次进门都是新发的**：进门一只装着 0 的新碗，加完、印完、出门就没了，下一回再来又是新的一只 —— 这才叫「每次都从零算」。\n\n顺带把这条规矩收好：`static` 的本事是**记得住**，所以只有「这一招本来就该记着上一次」的时候才加它（比如报编号那一招）。**该从零开始的碗加了它，算出来的数就是错的，而且一句提示都没有。**",
+      "templateId": "c-s2-scope-static-stale-sum",
+      "params": {
+        "n1": 2,
+        "n2": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:08.352Z",
+        "hash": "a798f1d9fe8b2512"
+      }
+    },
+    {
+      "id": "bank-c-s2-scope-static-stale-sum-008",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这一招是算「从 1 加到 n」的和，喊两回。第一回没毛病，第二回的数却**大得离谱** —— 因为那只攒数的碗跨着两次喊话活着，把上一回的余数也一起加进去了。\n\n你帮本喵把它改回「每次都从零算」，让两行印出来的数各自都对。",
+      "brokenCode": "#include <stdio.h>\n\nint sumTo(int n) {\n    static int total = 0;\n\n    for (int i = 1; i <= n; i++) {\n        total = total + i;\n    }\n\n    return total;\n}\n\nint main(void) {\n    printf(\"%d\\n\", sumTo(4));\n    printf(\"%d\\n\", sumTo(7));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint sumTo(int n) {\n    int total = 0;\n\n    for (int i = 1; i <= n; i++) {\n        total = total + i;\n    }\n\n    return total;\n}\n\nint main(void) {\n    printf(\"%d\\n\", sumTo(4));\n    printf(\"%d\\n\", sumTo(7));\n    return 0;\n}\n",
+      "expectedOutput": "10\n28",
+      "stdin": null,
+      "explanation": "这一题最阴的地方是：**它不报错，只是数不对**喵。\n\n那只攒数的碗加了 `static`，于是它变成了**这一招自己的固定格子** —— 只在第一次喊到那一行的时候准备一次，之后每一回进门用的都还是它。所以第二回喊的时候，碗里还留着上一回攒下的数，接着往上加。\n\n本喵真跑过一组给你看形状：喊 `sumTo(3)` 报 6（对），接着喊 `sumTo(5)` 报的**不是 15，是 21** —— 多出来的正是上一回那 6。这一回你手上这组也一样：第二行印出来的数里，混着第一行的和。\n\n改法就是把那个 `static` 去掉：\n\n```c\nint total = 0;\n```\n\n普通碗**每次进门都是新发的**：进门一只装着 0 的新碗，加完、印完、出门就没了，下一回再来又是新的一只 —— 这才叫「每次都从零算」。\n\n顺带把这条规矩收好：`static` 的本事是**记得住**，所以只有「这一招本来就该记着上一次」的时候才加它（比如报编号那一招）。**该从零开始的碗加了它，算出来的数就是错的，而且一句提示都没有。**",
+      "templateId": "c-s2-scope-static-stale-sum",
+      "params": {
+        "n1": 4,
+        "n2": 7
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:10.132Z",
+        "hash": "5be427a1963a61fc"
+      }
+    }
+  ]
+}

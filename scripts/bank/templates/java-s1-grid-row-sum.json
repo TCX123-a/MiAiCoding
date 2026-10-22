@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-grid-row-sum",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-08",
+  "type": "codewrite",
+  "concept": ["一排碗里摆碗", "两层编号", "圈里套圈", "Scanner"],
+  "instances": 6,
+  "params": {
+    "r": { "kind": "pick", "values": ["1", "2"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 4, "min": 1, "max": 9 },
+  "stemTemplate": "本喵把四只碗摆成一个 **2 排 2 只**的格子喵：前两只算第 1 排，后两只算第 2 排，排头那只都是这一排的 0 号。\n\n纸条上按「第 1 排第 1 只、第 1 排第 2 只、第 2 排第 1 只、第 2 排第 2 只」的顺序写着四个数，一行一个，正好四行。\n\n请你写个程序：先把这四个数按上面的顺序**摆进格子里**，再算一算**第 {r} 排**那两只碗一共几条，印**一行**：\n\n```text\n第 {r} 排一共 X 条喵\n```\n\n这一课新学的两层写法正对胃口：`int[][] grid = new int[2][2];` 就是「一排大碗，每只大碗里还摆着一排小碗」。**方括号里的编号从左往右一层层往里走** —— 先找第几排，再找这一排里的第几只。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n        int[][] grid = new int[2][2];\n        for (int i = 0; i < 2; i++) {\n            for (int j = 0; j < 2; j++) {\n                grid[i][j] = sc.nextInt();\n            }\n        }\n\n        int total = 0;\n        for (int j = 0; j < 2; j++) {\n            total = total + grid[{r} - 1][j];\n        }\n\n        System.out.println(\"第 {r} 排一共 \" + total + \" 条喵\");\n    }\n}\n",
+  "explanationTemplate": "这题练的是**两层编号**喵。摆格子这件事本身就是上一课「圈里套圈」的翻版：外圈管**第几排**（`i`），里圈管**这一排里的第几只**（`j`），一圈走完正好把四个数按顺序摆进去 —— **里圈跑完一整轮，外圈才往前挪一步**。\n\n要报第 {r} 排，方括号就得按这个顺序写：**先给排号，再给只号** —— `grid[{r} - 1][j]`。前一个方括号里是 `{r} - 1`，因为排号是从 **0** 数起的：第 1 排是 0 号，第 2 排是 1 号。后一个方括号里 `j` 从 `0` 走到 `1`，正好把这一排的两只碗都走一遍。\n\n两处最容易写岔：\n\n- **两个编号写反**（写成先只号再排号）：程序**不报错也不炸**，只是端回来别处的数，最费眼神。\n- **忘了减一**：第 2 排直接写 `grid[2][j]`，那就**越界**了 —— 两排的排号只有 0 和 1，一跑到那行就当场炸。\n\n另外那四个数是按「先这一排的两只、再下一排的两只」的顺序递进来的，所以摆的时候**照原样顺序往里放**就行，千万别自己在读的时候先调个次序喵。"
+}

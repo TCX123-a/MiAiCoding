@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-fptr-each-callback",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-12",
+  "type": "codewrite",
+  "concept": ["回调", "回头喊你一声", "void牌子"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要写一套「**每一只碗都过一遍**」的框架，至于过的时候干什么，**由递进来的牌子说了算**。\n\n请你写四样东西：\n\n1. 一招 `show`：收一个整数，印一行 `碗里是 <那个数>`；\n2. 一招 `show_double`：收一个整数，印一行 `翻倍是 <那个数乘 2>`；\n3. 一招 `each`：头上收**一排碗**、**一共几只**、还有**一张牌子** —— 牌子上写的是「收一个整数、什么都不交回」。招式里用绕圈从排头走到排尾，**每走到一只碗前面，就回头喊一声牌子上写的那一招**，把碗里的数喂给它；\n4. `main`：准备好一排刚好 n 只的碗，把数读进来（一行一个），然后**先用 `show` 过一遍、再用 `show_double` 过一遍**。\n\n同一段框架、换一张牌子就换一套活 —— 一共印两趟，第一趟是 `碗里是`，第二趟是 `翻倍是`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nvoid show(int x) {\n    printf(\"碗里是 %d\\n\", x);\n}\n\nvoid show_double(int x) {\n    printf(\"翻倍是 %d\\n\", x * 2);\n}\n\nvoid each(int a[], int n, void (*visit)(int)) {\n    for (int i = 0; i < n; i++) {\n        visit(a[i]);\n    }\n}\n\nint main(void) {\n    int bowl[{n}];\n\n    for (int i = 0; i < {n}; i++) {\n        if (scanf(\"%d\", &bowl[i]) != 1) {\n            return 1;\n        }\n    }\n\n    each(bowl, {n}, show);\n    each(bowl, {n}, show_double);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题练的是**回调**喵 —— 先递一张牌子过去，等合适的时机到了，它**回头喊你一声**。\n\n**① `each` 头上第三样投喂是牌子。**\n\n```c\nvoid (*visit)(int)\n```\n\n还是从里往外念：最右边 `(int)` 是「收一个整数」，最左边 `void` 是「什么都不交回」，中间 `(*visit)` 是那只碗。**注意最左边写的是 `void`** —— 因为 `show` 和 `show_double` 干完活什么都不交回来，只负责印。牌子上的长相得跟它们对得上。\n\n**② 框架里怎么用牌子？** `visit(a[i]);` —— 走到第 i 只碗前面，照着牌子喊一声，把碗里的数喂进去。`each` 自己**完全不知道**喊出来的是「印一遍」还是「印两遍」，那是牌子的事。\n\n**③ 喊的时候直接写招式名。** `each(bowl, {n}, show);` —— 招式名单独写出来就等于那张牌子，不用写 `&show`。（写了也对，翻译官喵两种都认。）\n\n**④ 回调跟上一课的自己咬自己尾巴不一样在哪儿？** 长得像，劲头不同：上一课的 `countdown` 喊的是**自己**；今天的 `each` 喊的是**别人递进来的牌子**。前者是「同一道题小一圈」，后者是「同一套框架、换一种活法」。\n\n**为什么这个形状值钱？** 因为 `each` **只写一遍**。想怎么处理每只碗，就换一张牌子递进来 —— 不用把 `each` 抄成两份、三份。这在真实代码里到处都是：框架是别人写好的，你只负责递一小张「规矩」进去。\n\n（还有个小地方：`main` 里那两个绕圈是**分开的两趟** —— 先把所有碗按 `show` 报一遍，再按 `show_double` 报一遍。别把两张牌子混在同一趟里。）"
+}

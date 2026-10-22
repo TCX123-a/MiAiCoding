@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-printf-missing-arg",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-04",
+  "type": "codefix",
+  "concept": ["位子与货", "占了位子不给货", "说不准的数"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 7 }
+  },
+  "stemTemplate": "本喵想让它报一句加法：「{a} 加 {b} 等于」再加上那两个数的和。\n\n可它**翻得过去、跑得起来**，屏幕上第三个数却是个谁也不认识的怪东西 —— 换个机器、换个日子，那个数还会变成别的喵。你帮本喵改对：屏幕上第三个数要是那两个数**加起来**的结果。\n\n（题目里那两个数本喵是知道的，可这个和得让程序**自己算** —— 别把答案写死喵。）",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    printf(\"%d 加 %d 等于 %d\\n\", {a}, {b});\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    printf(\"%d 加 %d 等于 %d\\n\", {a}, {b}, {a} + {b});\n    return 0;\n}\n",
+  "explanationTemplate": "**位子有几个，货就得递几件。** 这句念话里有三只 `%d`，也就是三个位子；你只递了两件货，第三个位子**空着**喵。\n\n空着的位子不会印空白 —— 它会去读一个**不该它读的地方**，念出来的东西谁也说不准：本喵这台跑出来是某个数，换台机器、换一天再跑，又换一个。所以你手上这道题的「坏答案」每次跑都可能不一样，这正是它坏得厉害的地方。\n\n翻译官喵其实嘀咕了，只是语气很轻：\n\n```\nwarning: format '%d' expects a matching 'int' argument [-Wformat=]\n```\n\n`a matching 'int' argument` 就是**「还差一件货」**。它只是嘀咕，拦不住你 —— 于是屏幕上照样有字，就是个错的。\n\n改法有两种喵，都对：把第三件货补上，\n\n```c\nprintf(\"%d 加 %d 等于 %d\\n\", {a}, {b}, {a} + {b});\n```\n\n或者把最后那只 `%d` 删掉，改成两句念话。**不管哪种，位子数和货数一定要对上。**"
+}

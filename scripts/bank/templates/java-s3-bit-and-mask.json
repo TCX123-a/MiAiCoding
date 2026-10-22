@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-bit-and-mask",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-17",
+  "type": "codefix",
+  "concept": ["`|` 是点亮，`& ~` 才是关掉", "格子纸 = `1 << k` 再加一次 `~`", "配错了照样跑得起来，只是白干一趟"],
+  "instances": 2,
+  "params": {
+    "nb": { "kind": "pick", "values": ["00001110", "00011110"] },
+    "k": { "kind": "int", "min": 1, "max": 3 }
+  },
+  "stemTemplate": "本喵手上有一排 8 个格子，这个数是 `0b{nb}`。本喵想**把第 {k} 位关掉** —— 那一格不管是 1 还是 0，动完手都该是 0，别的格子一格都不许动。\n\n可这段稿子跑出来的结果不对：最后一行印的那排格子跟上一次一模一样，第 {k} 位压根没被关掉。\n\n你帮本喵把该动的那一处改到能跑对为止，让它印出**三行**：\n\n- 第一行 `原来这排：` 后面接原来那排格子；\n- 第二行 `第 {k} 位是 ` 后面接那一格现在是几；\n- 第三行 `关掉第 {k} 位：` 后面接**动完手之后**那排格子。\n\n除了那一处，稿子里别的字一个都别改喵。\n\n（这一题**不用投喂任何东西**，数都写在稿子里。）",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b{nb};\n        int k = {k};\n\n        System.out.println(\"原来这排：\" + bits(n));\n        System.out.println(\"第 \" + k + \" 位是 \" + (n >> k & 1));\n        System.out.println(\"关掉第 \" + k + \" 位：\" + bits(n | (1 << k)));\n    }\n\n    static String bits(int n) {\n        String s = Integer.toBinaryString(n & 0xFF);\n        while (s.length() < 8) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int n = 0b{nb};\n        int k = {k};\n\n        System.out.println(\"原来这排：\" + bits(n));\n        System.out.println(\"第 \" + k + \" 位是 \" + (n >> k & 1));\n        System.out.println(\"关掉第 \" + k + \" 位：\" + bits(n & ~(1 << k)));\n    }\n\n    static String bits(int n) {\n        String s = Integer.toBinaryString(n & 0xFF);\n        while (s.length() < 8) {\n            s = \"0\" + s;\n        }\n        return s;\n    }\n}\n",
+  "explanationTemplate": "本喵这一处栽在**「关掉」和「点亮」是两只不同的手**上。\n\n**一、`|` 是点亮、不是关掉。** 它对着两排格子逐位看：**只要有一位是 1，结果那一位就是 1**。所以拿它配一张「只有第 {k} 位是 1」的格子纸（`1 << {k}`）盖上去，本来就是 1 的那一格**还是 1**，一格都没被关掉 —— 最后一行印得跟原来一字不差，正是这个原因。\n\n**二、关掉一格要两只手配合。** 先用 `1 << {k}` 做出「只有第 {k} 位是 1」的格子纸，再把它每一位反过来（`~`），得到「只有第 {k} 位是 0、别处全是 1」的纸；然后拿 `&` 盖上去 —— `&` 的规矩是**两位都是 1 才留 1**，于是别处照抄原样，只有第 {k} 位被按成 0。一句话：`n & ~(1 << {k})`。\n\n**三、四只手各管什么，背下来就不容易错。** `&` 关灯、`|` 开灯、`^` 翻灯、`~` 整排反过来。本喵这次想关灯，却伸了开灯那只手。\n\n**四、最阴的地方在于它不报错。** 稿子照样跑得起来、一个字都不红，印出来的东西还「像那么回事」—— 只是白干一趟。所以这一类毛病要**盯着结果对不对**，而不是盯着有没有报错。"
+}

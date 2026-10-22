@@ -1,0 +1,87 @@
+{
+  "lessonId": "cpp-stage2-13",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下一句 `Box<int> a(3);`，尖括号里那个 `int` 是干什么用的？",
+      "options": [
+        "是**本喵自己点名**：这只盒子要整数款 —— 图纸上那个空位就按整数裁",
+        "是把图纸上的空位**永久改成**整数，这张图纸以后只能裁整数了",
+        "是给这只盒子起个名字叫 `int`",
+        "是叫编译器这一句先别看"
+      ],
+      "answer": 0,
+      "explanation": "点名是**用**的那一下点的喵：图纸上那个空位照样空着 —— 本喵换成 `Box<string> b(...)`，同一张图纸就裁出了装名字牌的盒子。要是把图纸上的空位改掉，那就等于把图纸画死成一款了，下一款料还得再画一张。上一课的招式图纸是本喵**不点名**、让翻译官喵按料猜；这一课是**本喵自己点名**，两下正好相反喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵端了两只碗：`vector<int> a(3);` 和 `vector<int> b{3};`。两只碗里分别是什么？",
+      "options": [
+        "`a` 里是 **3 个 `0`**（先摆好 3 个空位）；`b` 里是**一只 `3`**（放进去一只）",
+        "两只一模一样，都是 3 个 `0`",
+        "`a` 里是空的；`b` 里有 3 只 `3`",
+        "两句都编不过，编译器会把本喵拦下"
+      ],
+      "answer": 0,
+      "explanation": "本喵在本机真跑过这一对：`a.size()` 印 `3`、`b.size()` 印 `1`。**圆括号是「先摆好这么多个空位」，花括号是「放进去这一只」。** 两种都编得过、跑得完，而且**一声不吭** —— 端错了不会有谁提醒本喵，只能自己盯着屏幕喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵对着一只**空碗**写了 `v.size() - 1`，屏幕上会印出什么？",
+      "options": [
+        "`18446744073709551615`",
+        "`-1`",
+        "`0`",
+        "编译器当场拦下，编不过"
+      ],
+      "answer": 0,
+      "explanation": "碗里那个「个数」**只会往正数长、不会变负**：`0` 再减 `1`，它不往回绕成 `-1`，而是绕到了这一款能表示的**最大值**去 —— 屏幕上就是那一长串数字。**这一路一个错都不报**，本喵在本机真跑过，程序安安静静就跑完了，光看「跑没跑起来」发现不了。要防它，动手减之前先问一句 `v.empty()`喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nclass Box {\npublic:\n    Box(T x) : v(x) {}\n    T get();\nprivate:\n    T v;\n};\n\n____\nT Box<T>::get() {\n    return v;\n}\n\nint main() {\n    Box<int> a(7);\n    cout << a.get() << endl;\n    return 0;\n}",
+      "stem": "本喵把一手画到了**图纸外面**，结果漏了一行（用 `____` 标出）。补上之后，屏幕上要印出 `7` 喵。",
+      "blanks": [
+        { "answer": "template <typename T>", "accept": ["template<typename T>", "template <class T>"] }
+      ],
+      "explanation": "补的是 `template <typename T>` 那一行 —— **图纸里面写招式，本喵站在图纸上，`T` 看得见；跑到图纸外面来写，立空位那一行就得重新写一遍**喵。不补它，翻译官喵报的原话是 `error: 'T' does not name a type`（本喵真跑过，屏幕上就这一行）；补上之后它才认得 `T` 是那个空位，`a.get()` 印出 `7`喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n____\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back(3);\n    v.push_back(5);\n    cout << v.size() << endl;\n    return 0;\n}",
+      "stem": "这一段里的碗端不上桌 —— 最上面**漏了一行**（用 `____` 标出）。补上之后，屏幕上要印出 `2` 喵。",
+      "blanks": [
+        { "answer": "#include <vector>", "accept": ["#include<vector>"] }
+      ],
+      "explanation": "补的是 `#include <vector>` —— 端碗上桌的那一行喵。不补它，翻译官喵报的原话是 `error: 'vector' was not declared in this scope`，后面还跟一句 `note`，把该添的那一行原样念出来（本喵真跑过）。补上之后，`v.push_back(3);` 和 `v.push_back(5);` 才立得住，碗里两只，`v.size()` 印 `2`喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\ntemplate <typename T>\nclass Pouch {\npublic:\n    void put(T x) { goods.push_back(x); }\n    int count() { return goods.size(); }\n    T at(int i) { return goods[i]; }\nprivate:\n    vector<T> goods;\n};\n\nint main() {\n    Pouch<int> p;\n    p.put(4);\n    p.put(6);\n    cout << p.count() << endl;\n    cout << p.at(1) << endl;\n    Pouch<double> q;\n    q.put(1.5);\n    cout << q.count() << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "2\n6\n1",
+      "accept": ["2\n6\n1\n"],
+      "explanation": "`p` 是一只**整数窝**：放进去 `4` 和 `6` 两只，`p.count()` 印 `2`；`p.at(1)` 要的是**第 1 格**（格子从 0 数起），所以拿到的是第二只 `6`喵。`q` 是**同一张图纸裁出来的小数窝**，只放了一只 `1.5`，`q.count()` 印 `1`。**同一张图纸、两款料、两只各自的窝** —— 碗里装什么、`put` 收什么、`at` 叼回什么，全是同一个空位喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back(2);\n    v.push_back(4);\n    v.push_back(6);\n    cout << v.size() << endl;\n    v.pop_back();\n    cout << v.back() << endl;\n    cout << v.empty() << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "3\n4\n0",
+      "accept": ["3\n4\n0\n"],
+      "explanation": "放进去三只（`2`、`4`、`6`），`v.size()` 印 `3`喵。接着 `v.pop_back()` 把**最后那只** `6` 拿走了，剩下的最后一只就是 `4`，所以 `v.back()` 印 `4`。碗里还有东西，`v.empty()` 印的是 `0` —— **「空不空」这件事，翻译官喵是用 `0` 和 `1` 回答本喵的**：`0` 是不空、`1` 才是空喵。"
+    }
+  ]
+}

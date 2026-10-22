@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-27-two-rooms-write",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-27",
+  "type": "codewrite",
+  "concept": ["两间屋两条招式", "登记表先报名", "名字对上对号才通"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "本喵这套工程分两间屋子：一条招式**数大条**（满 50 克才算一条，就叫 `countBig`），一条招式**算总重**（`sumAll`）。两间屋子的**登记表**都立好了 —— 名字都报上了，可**正文一个字还没人写**。\n\n请你把两条正文补上。补好之后，流水线对号时两头的名字才能接上，整套工程才拼得起来喵。\n\n比如投喂给程序的是：\n\n```text\n{sampleInput}\n```\n\n补好之后就要叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外一组数；`main` 那一段一个字都别动。）",
+  "starterTemplate": "#include <iostream>\n#include <vector>\n\n/* 两间屋子的登记表：名字先报上，正文还没有人写 */\nint countBig(const std::vector<int>& ws);\n\nint sumAll(const std::vector<int>& ws);\n\n/* ① 把 countBig 的正文补完：满 50 克才算大条，数一数有几条 */\n/* ② 把 sumAll 的正文补完：一条条加起来 */\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> ws(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> ws[i];\n    }\n    std::cout << \"大条 \" << countBig(ws) << \" 尾，合计 \" << sumAll(ws) << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <vector>\n\n/* 两间屋子的登记表：名字先报上，正文还没有人写 */\nint countBig(const std::vector<int>& ws);\n\nint sumAll(const std::vector<int>& ws);\n\nint countBig(const std::vector<int>& ws) {\n    int c = 0;\n    for (int i = 0; i < static_cast<int>(ws.size()); i++) {\n        if (ws[i] >= 50) {\n            c++;\n        }\n    }\n    return c;\n}\n\nint sumAll(const std::vector<int>& ws) {\n    int s = 0;\n    for (int i = 0; i < static_cast<int>(ws.size()); i++) {\n        s += ws[i];\n    }\n    return s;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> ws(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> ws[i];\n    }\n    std::cout << \"大条 \" << countBig(ws) << \" 尾，合计 \" << sumAll(ws) << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "两条正文都是一圈走一遍的活儿（本课练过几十遍的套路），这题真正想让你体会的是**报名和正文成对**：登记表上那两行报名已经写好了，正文补上去之后，**两边名字逐字对上**，对号才接得住。\n\n```cpp\nint countBig(const std::vector<int>& ws) {\n    int c = 0;\n    for (int i = 0; i < static_cast<int>(ws.size()); i++) {\n        if (ws[i] >= 50) {\n            c++;\n        }\n    }\n    return c;\n}\n```\n\n数大条这一条，比算总重多一道小小的「这算不算」：**满 50 克** 才 `c++` 一下。另一条就是老朋友，一圈加起来。两条的形态要和登记表上报名的那行**逐字一致** —— 登记表怎么报的，正文就怎么写（`const` 和 `&` 一个字都别少）。\n\n⚠️ 顺便认清一张典型的脸：**只报名、忘了写正文**（或者正文写成了别的名字），对号时都是 `undefined reference` —— 名到、人没到，流水线就停在那儿。改的时候记得：**名字是唯一的接头暗号喵。**"
+}

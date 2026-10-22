@@ -1,0 +1,392 @@
+/* M3-01：markdown 正文排版（markdown-body 作用域）+ 代码块 + 提示容器。
+   设计令牌见 tokens.css；代码块语法色由本文件自己写两套（浅色 / 深色），
+   见下面「代码着色」那一段的说明。 */
+
+.markdown-body {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--mi-text);
+  word-break: break-word;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  font-family: var(--mi-font-title);
+  color: var(--mi-text);
+  margin: 22px 0 10px;
+  line-height: 1.5;
+  /* 批⑥（2026-10-16）：标题换行尽量两头均衡，别留一个孤字掉到第二行。
+     只给标题 —— 长正文上 balance 开销大且没用，正文交给自然的断行。 */
+  text-wrap: balance;
+}
+.markdown-body h1 {
+  font-size: 22px;
+}
+.markdown-body h2 {
+  font-size: 18px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--mi-border);
+}
+.markdown-body h3 {
+  font-size: 16px;
+}
+.markdown-body h4 {
+  font-size: 15px;
+}
+.markdown-body p {
+  margin: 8px 0;
+}
+.markdown-body ul,
+.markdown-body ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+.markdown-body li {
+  margin: 4px 0;
+}
+.markdown-body blockquote {
+  margin: 10px 0;
+  padding: 6px 14px;
+  border-left: 3px solid var(--mi-blue-deep);
+  background: var(--mi-blue-light);
+  border-radius: 0 var(--mi-radius-sm) var(--mi-radius-sm) 0;
+  color: var(--mi-text-2);
+}
+.markdown-body a {
+  /* 文字档，不是按钮档：--mi-blue-deep 当字只有 2.29，链接会看不出是链接 */
+  color: var(--mi-blue-ink);
+  text-decoration: none;
+}
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+.markdown-body strong {
+  font-weight: 700;
+}
+.markdown-body code:not(.hljs) {
+  font-family: var(--mi-code);
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--mi-blue-light);
+  /* 原先是写死的 #3b5b8a。它压的底正是 --mi-blue-light，而 --mi-blue-ink
+     就是**为这块底挑的**（浅色 4.53 / 深色同样过线），换成令牌即自动跟主题走。 */
+  color: var(--mi-blue-ink);
+}
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--mi-border);
+  margin: 16px 0;
+}
+
+/* 表格 */
+.markdown-body table {
+  border-collapse: collapse;
+  margin: 10px 0;
+  width: 100%;
+  font-size: 13px;
+}
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid var(--mi-border);
+  padding: 7px 12px;
+  text-align: left;
+}
+.markdown-body th {
+  background: var(--mi-blue-light);
+  font-weight: 600;
+}
+.markdown-body tr:nth-child(even) td {
+  /* 原为 --mi-card —— 2026-09-14 起 --mi-card 与正文纸同色，斑马纹会整条消失，改用专用令牌 */
+  background: var(--mi-zebra);
+}
+
+/* 代码块 */
+.markdown-body .code-block {
+  margin: 10px 0;
+  /* 原先是写死的 #fafbfd —— 一个不跟主题走的硬编码值（见 tokens.css 里 --mi-code-bg 那段） */
+  background: var(--mi-code-bg);
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-sm);
+  overflow: hidden;
+}
+.markdown-body .code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px;
+  background: var(--mi-card);
+  border-bottom: 1px solid var(--mi-border);
+}
+.markdown-body .code-lang {
+  font-family: var(--mi-code);
+  font-size: 11px;
+  color: var(--mi-text-3);
+  text-transform: uppercase;
+}
+.markdown-body .code-copy {
+  font-family: var(--mi-font);
+  font-size: 11px;
+  padding: 2px 10px;
+  border: 1px solid var(--mi-border);
+  border-radius: 999px;
+  background: var(--mi-bg);
+  color: var(--mi-text-2);
+  cursor: var(--mi-cursor, pointer);
+  /* 批⑥（2026-10-16）：原先 `transition: all .15s ease`；hover 只有底与字色两变 */
+  transition:
+    background var(--mi-dur-fast) var(--mi-ease),
+    color var(--mi-dur-fast) var(--mi-ease);
+}
+.markdown-body .code-copy:hover {
+  background: var(--mi-blue);
+  color: var(--mi-text);
+}
+.markdown-body .code-block code.hljs {
+  display: block;
+  padding: 12px 14px;
+  overflow-x: auto;
+  background: transparent;
+  font-family: var(--mi-code);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* 代码着色（highlight.js 打出来的 hljs-* 类名）
+ *
+ * ⚠️ 这一整段曾经是**缺失**的：代码块上确实生成了 class="hljs-keyword" 这些名字，
+ * 但全仓没有一条规则给它们上色，课文里的代码一直是黑白的。
+ * （M3-01「代码高亮」只做了一半，2026-09-13 补齐。）
+ *
+ * 色值以 lib/editor-setup.ts 的 MI_TOKEN_COLORS 为准——课文里看到的颜色
+ * 和练习场编辑器的颜色是同一套，认知不用重新建立。改配色时两处一起改。
+ *
+ * 说明：highlight.js 和 CodeMirror 是两个不同的解析器，同样的代码不一定
+ * 打得出一模一样的标签（比如 printf 在 hljs 里是 built_in、在 CodeMirror 里
+ * 是普通函数名）。目标不是逐像素一致，而是「同一套色板 + 同一套语义直觉」。
+ *
+ * 下面的类名以 C/C++/Java/Python 实际会吐出来的为主（实测过，不是照抄通用主题），
+ * 另外留了几条通用规则（regexp / doctag / selector-tag 等），
+ * 因为课文里偶尔会夹一小段别的语言片段，不该到那儿就变黑白。
+ * 哪条真的用不上，由 code-color.test.ts 盯着。
+ *
+ * ─────────────────────────────────────────────────────────────────────────
+ * 【2026-09-20 改：去掉 @import，改成自己写两套】—— 夜间模式
+ *
+ * 原先在这段之外还挂着 `@import 'highlight.js/styles/atom-one-light.css'`，
+ * 它管着 md.css 没写的另外 10 个类（hljs-name / hljs-selector-* / hljs-deletion …）。
+ * 那个 import 有两个毛病：
+ *   ① **闸门看不见它**。code-color.test.ts 只读 md.css 里的十六进制，
+ *      import 进来那 32 个类到底是什么色，它一个都验不到 —— 等于开着口子。
+ *   ② **它是单主题的**。夜间模式下这 10 个类会保留浅色主题的深色值压在深底上，
+ *      就是主人明令不许出现的「浅色残块」。
+ * 现在两份都自己写：浅色一份、深色一份，同一个类名两边都必须有，
+ * code-color.test.ts 分主题逐个核对，缺一个就红。
+ *
+ * 【作用域：为什么去掉了 .markdown-body】—— 顺带修掉一处「两套色」
+ * 原先规则全挂在 `.markdown-body` 底下。可是答题页的代码阅读题用的是 `.code-view`
+ * （QuizCode.vue / QuizCodeFill.vue），**不在** .markdown-body 里 ——
+ * 也就是说答题页代码的语法色一直是上面那个 @import 在管，**和课文根本是两套配色**。
+ * （code-color.test.ts 里那句「课文和练习场颜色不该各调各的」说的正是这件事，
+ *   但它的作用域一直看不见这半边。）去掉 import 之后若继续挂在 .markdown-body 下，
+ * 答题页的代码会**整片变黑白**，等于把没坏的地方做坏了。
+ * 所以改成不挂作用域：`hljs-*` 这个前缀只有 highlight.js 会吐，
+ * 而全仓吐它的只有 lib/md.ts 的 highlightCode()，挂全局不会误伤别处
+ * （第三方 hljs 主题自己也是全局写的，这是这个类名前缀的常规用法）。
+ * ───────────────────────────────────────────────────────────────────────── */
+
+/* ══ 与主题无关的几条：用令牌，深浅两套自动都对 ══ */
+
+/* hljs 容器本身。原先由 atom-one-light 的 `.hljs{color:#383a42;background:#fafafa}` 管，
+   去掉那个 import 之后必须自己给一个：底色由 .code-block / .code-view 各自铺，
+   这里只要透明 + 正文色 —— 否则「没被任何 hljs-* 类包住」的那部分文字会掉回继承色，
+   在深底上就是一行看不清的字。 */
+.hljs {
+  color: var(--mi-text);
+  background: transparent;
+}
+/* 删除行（diff 用）。借错误色而不是塞进某个语法色里 —— 它表达的是「这行没了」，
+   不是「这是个数字」。写成 var() 就不必在深浅两块里各来一遍。 */
+.hljs-deletion {
+  color: var(--mi-error-deep);
+}
+/* 链接 / URL 字面量 */
+.hljs-link {
+  color: var(--mi-blue-deep);
+}
+/* 公式（LaTeX）。按次要文字处理，不抢眼 */
+.hljs-formula {
+  color: var(--mi-text-2);
+}
+/* 强调与加粗：只改字形不上色。hljs 只在 markdown 语言里吐这两个，
+   但课文里贴一小段 markdown 也不是没可能，给个字形总比裸着强。 */
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: 700;
+}
+
+/* ══ 浅色语法色 ══ */
+
+/* 关键字：int / if / for / class / def / import ...，以及 HTML 标签名 */
+.hljs-keyword,
+.hljs-doctag,
+.hljs-selector-tag,
+.hljs-name {
+  color: #8b47b5;
+}
+/* 字符串 */
+.hljs-string,
+.hljs-regexp,
+.hljs-addition {
+  color: #257b54;
+}
+/* 数字，以及 true / false / null / None 这类字面量 */
+.hljs-number,
+.hljs-literal,
+.hljs-symbol,
+.hljs-bullet {
+  color: #9a6024;
+}
+/* 注释 */
+.hljs-comment,
+.hljs-quote {
+  color: #5d6f84;
+  font-style: italic;
+}
+/* 函数名 */
+.hljs-title,
+.hljs-title.function_,
+.hljs-section {
+  color: #296fb6;
+}
+/* 类型名：类名、结构体名、int/char/String 之类，以及 print/printf/len 这类内置；
+   CSS 的 .class / #id / [attr] / :hover 也归这儿（都是「名字」） */
+.hljs-title.class_,
+.hljs-type,
+.hljs-built_in,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id,
+.hljs-selector-pseudo {
+  color: #0d797b;
+}
+/* 变量与参数写正文色。不染蓝是故意的：Python 里几乎每个词都是变量，
+   全染成蓝的会糊成一片，反而看不出结构 */
+.hljs-variable,
+.hljs-params,
+.hljs-template-variable {
+  color: #2d3a4a;
+}
+/* 属性名（obj.field 里的 field） */
+.hljs-attr,
+.hljs-attribute,
+.hljs-property {
+  color: #296fb6;
+}
+/* 运算符与标点，含 Python f-string 里的 {} 插值口 */
+.hljs-operator,
+.hljs-punctuation,
+.hljs-subst {
+  color: #505b69;
+}
+/* 预处理指令（#include / #define）与装饰器——整条一律灰蓝，
+   连里面的 include 和 <stdio.h> 一起，让「这是一整条指令」看得出来 */
+.hljs-meta,
+.hljs-meta .hljs-keyword,
+.hljs-meta .hljs-string {
+  color: #5d6f84;
+}
+
+/* ══ 深色语法色 ══
+ *
+ * 前缀写 `:root[data-theme='dark']`（0-2-0）而不是 `[data-theme='dark']`（0-1-0）：
+ * 后者和上面那些裸类名是**同分**，谁赢只取决于源码里谁在后面 —— 那样太脆，
+ * 以后有人在文件末尾追加一段浅色规则就会把深色悄悄顶掉。
+ *
+ * 【深色这套不是把浅色反过来】浅紫 #8b47b5 压在 --mi-code-bg #0e131a 上
+ * 只有 1.9:1，等于看不见。深色必须换**另一支提亮的紫**：色相语义保持
+ * （紫=关键字、绿=字符串、黄=数字…），明度提到深底上够看的位置。
+ * 每条后面标的两个数是 `_verify-contrast.mjs` 算的实测对比度（浅色底 / 深色底）。 */
+:root[data-theme='dark'] .hljs-keyword,
+:root[data-theme='dark'] .hljs-doctag,
+:root[data-theme='dark'] .hljs-selector-tag,
+:root[data-theme='dark'] .hljs-name {
+  color: #c792ea; /* 9.10 */
+}
+:root[data-theme='dark'] .hljs-string,
+:root[data-theme='dark'] .hljs-regexp,
+:root[data-theme='dark'] .hljs-addition {
+  color: #7fd6a3; /* 8.09 */
+}
+:root[data-theme='dark'] .hljs-number,
+:root[data-theme='dark'] .hljs-literal,
+:root[data-theme='dark'] .hljs-symbol,
+:root[data-theme='dark'] .hljs-bullet {
+  color: #e5b567; /* 7.48 */
+}
+:root[data-theme='dark'] .hljs-comment,
+:root[data-theme='dark'] .hljs-quote {
+  color: #8b9cb3; /* 5.04 */
+  font-style: italic;
+}
+:root[data-theme='dark'] .hljs-title,
+:root[data-theme='dark'] .hljs-title.function_,
+:root[data-theme='dark'] .hljs-section {
+  color: #7cb4f5; /* 6.52 */
+}
+:root[data-theme='dark'] .hljs-title.class_,
+:root[data-theme='dark'] .hljs-type,
+:root[data-theme='dark'] .hljs-built_in,
+:root[data-theme='dark'] .hljs-selector-attr,
+:root[data-theme='dark'] .hljs-selector-class,
+:root[data-theme='dark'] .hljs-selector-id,
+:root[data-theme='dark'] .hljs-selector-pseudo {
+  color: #5fd0d2; /* 7.68 */
+}
+:root[data-theme='dark'] .hljs-variable,
+:root[data-theme='dark'] .hljs-params,
+:root[data-theme='dark'] .hljs-template-variable {
+  color: #dde6f1; /* 11.19 */
+}
+:root[data-theme='dark'] .hljs-attr,
+:root[data-theme='dark'] .hljs-attribute,
+:root[data-theme='dark'] .hljs-property {
+  color: #7cb4f5; /* 6.52 —— 与函数同色，和浅色那边一样是故意的 */
+}
+:root[data-theme='dark'] .hljs-operator,
+:root[data-theme='dark'] .hljs-punctuation,
+:root[data-theme='dark'] .hljs-subst {
+  color: #a9b6c6; /* 6.85 —— 特意和注释拉开 */
+}
+:root[data-theme='dark'] .hljs-meta,
+:root[data-theme='dark'] .hljs-meta .hljs-keyword,
+:root[data-theme='dark'] .hljs-meta .hljs-string {
+  color: #8b9cb3; /* 5.04 —— 与 comment 同色，#include 整条当注释看 */
+}
+
+/* 提示容器（::: tip / ::: warn） */
+.markdown-body .mi-admonition {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-radius: var(--mi-radius-sm);
+  border-left: 4px solid var(--mi-blue-deep);
+  background: var(--mi-blue-light);
+}
+.markdown-body .mi-admonition.mi-warn {
+  /* 原先是写死的 #f5b33d / #fff7e6 —— 夜间模式下会变成深色课文里一个亮黄块 */
+  border-left-color: var(--mi-warn-edge);
+  background: var(--mi-warn-fill);
+}
+.markdown-body .mi-admonition-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--mi-text);
+}
+.markdown-body .mi-admonition p {
+  margin: 4px 0;
+  font-size: 13px;
+}

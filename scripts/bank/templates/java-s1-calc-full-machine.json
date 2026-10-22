@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s1-calc-full-machine",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-15",
+  "type": "codewrite",
+  "concept": ["综合", "菜单绕圈", "try catch", "else 兜底"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 3 },
+    "b": { "kind": "int", "min": 4, "max": 5 },
+    "a2": { "kind": "int", "min": 6, "max": 7 },
+    "b2": { "kind": "int", "min": 8, "max": 9 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "1 {a} {b}\n4 7 0\n9 1 1\n0\n", "sampleText": "1 {a2} {b2}\n4 7 2\n9 1 1\n0\n" },
+  "stemTemplate": "这是本阶段的**毕业作品**喵：把三步拼成一台真机器 —— **四招运算 ＋ 菜单绕圈 ＋ 接住分不了的账**。\n\n零件清单：\n\n- 四招：`add`、`sub`、`mul`、`share`（每招喂两样料、叼回一个数；`share` 只算整条）\n- 每一单先印一遍菜单：`1 加法 2 减法 3 乘法 4 平均分 0 收工`\n- 报 `0`：印 `收工啦喵～`，然后收工\n- 认得出的选项：印 `结果是 X`\n- **认不出的选项**（菜单上没有的数）：印 `本喵还不认识这个数喵`\n- **分不了的账**（平均分遇上 `0`）：印 `没有猫来分，这条算不了喵`，**机器不许断气**，接着问下一位\n\n纸条上每一单都排着「选项 + 两个数」三样，一单一单往下排；最后那句 `0` 是客人说收工。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分给的是**另外几单**喵 —— 里面也会有分不了的账、也会有不认识的数。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static int sub(int a, int b) {\n        return a - b;\n    }\n\n    public static int mul(int a, int b) {\n        return a * b;\n    }\n\n    public static int share(int a, int b) {\n        return a / b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 2 减法 3 乘法 4 平均分 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            try {\n                if (choice == 1) {\n                    System.out.println(\"结果是 \" + add(a, b));\n                } else if (choice == 2) {\n                    System.out.println(\"结果是 \" + sub(a, b));\n                } else if (choice == 3) {\n                    System.out.println(\"结果是 \" + mul(a, b));\n                } else if (choice == 4) {\n                    System.out.println(\"结果是 \" + share(a, b));\n                } else {\n                    System.out.println(\"本喵还不认识这个数喵\");\n                }\n            } catch (ArithmeticException e) {\n                System.out.println(\"没有猫来分，这条算不了喵\");\n            }\n        }\n    }\n}\n",
+  "explanationTemplate": "这一台机器，是第一阶段攒下来的全部家当喵 —— 从上往下读一遍，正好是三步：**招式拆开 → 菜单绕圈 → 岔子接住**。\n\n几处最容易摔的地方：\n\n- **`try` 写在圈子里面**，不是外面。所以「分不了的那一单」被接住之后，**圈子还在转**，下一位客人接着来。挪到圈子外面去，第一单出了岔子，整台机器跟着一起停。\n- **`catch (ArithmeticException e)`** —— 平均分遇上 `0`，翻的就是「算数算不成」这一路。名字写错了等于没接，机器照样断气。\n- **最后那条 `else` 兜底**：认不出的选项要有一句回话，不然客人报了怪数字，机器装聋作哑（不报错，只是少说一句）。\n- **四招都要有 `return`**：打头许的诺（`int`）必须兑现。\n\n能写出「一直问、出错也不死」的机器，就是从单句走向小程序的第一次：**先把活拆成招，再用一个圈把「一直问」串起来，最后想清楚哪一步可能出岔子、出了怎么办。** 大肥鱼的小摊从今天起账目清楚了喵～"
+}

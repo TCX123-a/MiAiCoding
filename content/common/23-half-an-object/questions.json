@@ -1,0 +1,94 @@
+{
+  "lessonId": "common-23",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想给学员图纸配一招「报分数」，顺手把它写进了 `struct` 的花括号里。翻译官喵的反应会是哪一句喵？",
+      "options": [
+        "图纸里只准摆一格一格的数据，招式得写到图纸外面去",
+        "没问题，招式本来就能写在图纸里，换哪门语言都一样",
+        "可以写，但要先在图纸里加一行 `public:` 标签",
+        "可以写，但这一招必须起名叫 `main`"
+      ],
+      "answer": 0,
+      "explanation": "C 的图纸里只摆数据，招式一只都进不去，只能站在外面 —— 本课那三招 `add_student` / `find_by_name` / `print_all` 全是在图纸外头另起一段的喵。所以要再记一样东西，回图纸加一格就行；可要让「会什么」也跟格子住同一张纸，C 的图纸给不了，这正是它欠的那半。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "交换生的需求下来了：记录要多记一样「来自哪个学堂」，印名册时交换生要多印一行。照本课那份名册，最少要动几处喵？",
+      "options": [
+        "三处：图纸加一格、入住那一招、印名册那一招",
+        "一处：只改图纸加一格就够，招式自己会跟上",
+        "零处：招式拿到的数据变了，它自己会适应",
+        "两处：图纸和印名册那一招，入住那一招不用动"
+      ],
+      "answer": 0,
+      "explanation": "一处都躲不掉喵：图纸要腾出新的一格；`add_student` 得多收一份投喂、多写一行；`print_all` 要长出岔路分辨两种学员。选项里那句「招式自己会跟上」，是本课最想拆掉的错觉 —— 图纸和招式站在两边，谁也不知道对方改了没有；数据一动，碰过它的每一处都得靠本喵自己记着回去改，漏一处就静悄悄印错一行。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "下面哪一句说得**不对**喵？",
+      "options": [
+        "把招式搬进图纸里，就算把差的那一半补上了",
+        "C 的图纸里只有数据，招式住在图纸外面",
+        "招式收下的是整只抄的一份，改完得叼回来装回原处",
+        "加一样新数据，碰过它的招式都得挨个去看一眼"
+      ],
+      "answer": 0,
+      "explanation": "「把招式搬进图纸里，就算把差的那一半补上了」是错觉喵。把招式搬进图纸，只是让「长什么样」和「会什么」住到了同一张纸上；算不算数还得过本喵的判据句 —— 封装＝藏数据、露行为。数据还敞着口子任人伸手掏，这一关就没过。另外三句都是本课亲手数过的账，句句是真的。"
+    },
+    {
+      "id": "q4",
+      "type": "fill",
+      "stem": "本喵量「那半张图纸补上了没有」的判据句是：**封装＝藏数据、____**。（填三个字）",
+      "answer": "露行为",
+      "accept": ["露行为"],
+      "explanation": "判据句就是**封装＝藏数据、露行为**喵：把数据藏起来（别让人伸手乱掏），把行为露出来（要用它就走本喵留好的口子）。C 的图纸两样都够不着 —— 数据敞开着一排给人掏，招式还站在图纸外面，所以本课叫它「只写了一半」。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\ntypedef struct {\n    char name[20];\n    int score;\n} Student;\n\nStudent list[100];\nint count = 0;\n\nvoid add_student(char name[], int score) {\n    strcpy(list[count].____, name);\n    list[count].score = score;\n    ____ = count + 1;\n}\n\nint main(void) {\n    add_student(\"小橘\", 95);\n    printf(\"%s %d\\n\", list[0].name, list[0].score);\n    return 0;\n}",
+      "stem": "把入住那一招补完整：名字要一颗一颗搬进名字格，装完人数也要跟着长。两个空分别填哪个名字喵？",
+      "blanks": [
+        {
+          "answer": "name",
+          "accept": []
+        },
+        {
+          "answer": "count",
+          "accept": []
+        }
+      ],
+      "explanation": "第一个空是 `name` —— 学员记录里那一格就叫 `name`，`strcpy` 把名字一颗一颗搬进去（名字是一排字符碗，不能整个换）。第二个空是 `count` —— 装完一个人，人数自己长一，写 `count = count + 1;`，下一位才排得上号喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\ntypedef struct {\n    char name[20];\n    int score;\n} Student;\n\nStudent add_points(Student s, int n) {\n    s.score = s.score + n;\n    return s;\n}\n\nint main(void) {\n    Student a;\n    strcpy(a.name, \"小橘\");\n    a.score = 60;\n    add_points(a, 5);\n    printf(\"%d\\n\", a.score);\n    return 0;\n}",
+      "stem": "这段程序印出来的数是多少喵？",
+      "answer": "60",
+      "accept": ["60\n"],
+      "explanation": "印的是 **60** 喵。`add_points` 收下的是整只抄的一份 —— 招式在抄件上加到了 65，可抄件没人接住，抬手就扔了；名册上那只 `a` 从头到尾没被碰过，还是 60。想让它变 65，得写 `a = add_points(a, 5);` —— 那个 `a =` 就是「把改好的那份叼回来、装回原处」。"
+    },
+    {
+      "id": "q7",
+      "type": "choice",
+      "stem": "「印名册那一招要长出岔路」—— 这件事最麻烦的地方在哪儿喵？",
+      "options": [
+        "每多一种学员，都得回到这一招里再岔一次，它会越来越长",
+        "岔路会让程序跑得慢一倍",
+        "岔路写多了，翻译官喵会拒绝翻译",
+        "岔路会让名册里的数据被抄走一份"
+      ],
+      "answer": 0,
+      "explanation": "麻烦不在那一次修改，在**它会一直长**喵：`print_all` 里那句「你是哪一种」是长在招式身上的，每加一种学员就得回来再岔一次。数据变了，招式要跟着变 —— 这正是本课那股欠账味最重的地方。这条尾巴下回有专门一课来收拾。"
+    }
+  ]
+}

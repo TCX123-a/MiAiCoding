@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-27-mian-typo",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-27",
+  "type": "codefix",
+  "concept": ["大门只有一个名字", "拼装最后一步", "WinMain 是唬人的"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "本喵这套流水线里，前面几条工序全绿 —— 两间屋子各自都好好的，偏偏最后一道**拼装**卡住了：翻遍两间屋子，也找不着那扇写着 `main` 的大门。\n\n翻译官喵的原话里居然夹着一个怪名字 `WinMain`，念作「**系统翻箱倒柜，连隔壁工程的口令都念叨出来了**」—— 其实只是本喵把大门的名字敲错了：`mian`。\n\n你帮本喵把它改对。比如投喂给程序的是：\n\n```text\n{sampleInput}\n```\n\n改好之后就要叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外一组数喵。）",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n\nint biggest(const std::vector<int>& ws) {\n    int best = ws[0];\n    for (int i = 1; i < static_cast<int>(ws.size()); i++) {\n        if (ws[i] > best) {\n            best = ws[i];\n        }\n    }\n    return best;\n}\n\nint mian() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> ws(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> ws[i];\n    }\n    std::cout << \"最大的那条：\" << biggest(ws) << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n\nint biggest(const std::vector<int>& ws) {\n    int best = ws[0];\n    for (int i = 1; i < static_cast<int>(ws.size()); i++) {\n        if (ws[i] > best) {\n            best = ws[i];\n        }\n    }\n    return best;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    std::vector<int> ws(n);\n    for (int i = 0; i < n; i++) {\n        std::cin >> ws[i];\n    }\n    std::cout << \"最大的那条：\" << biggest(ws) << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "`int mian()` 本身完全合规矩：在「每一句写得对不对」那几道工序眼里，它就是一间**名叫 `mian` 的普通屋子**。卡死的是最后一道**拼装** —— 它要给整个程序找一扇**进门的大门**，而这扇门在全世界的流水线上只有一个公认的名字：`main`。\n\n它把两间屋子翻完，没找着。走投无路的时候，原话里带出了 `WinMain` 这个名字 —— 那是隔壁「带窗口的工程」用的大门名，跟本喵没关系的秘密暗号被它一并念了出来；看着吓人，其实只是「**找不到 main，我连备用方案都试过了**」。\n\n改法就一个字母：\n\n```cpp\nint main() {\n    ...\n}\n```\n\n⚠️ 这一课特别值得记：**大门的名字是流水线定死的，不是你起的昵称。** `mian`、`miann`、`Main`、`start`，在前面几道工序眼里都只是普通屋子 —— 只有拼装那一步会因为你没交出真正的 `main` 而卡死，而它报出来的话（`undefined reference`、`WinMain`）能把没经验的人吓得去查杀毒软件。记住这一课，以后就不会被它唬住喵。"
+}

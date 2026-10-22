@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-mem-extra-static",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-01",
+  "type": "codefix",
+  "concept": ["static 多写了", "每次进门重新摆", "碗摞", "记性的代价"],
+  "instances": 2,
+  "params": {
+    "rounds": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stemTemplate": "本喵写了一个招式 `count_fish`：喊一声就从**头**数一遍，每次都要印 `第 1 条`。\n\n`main` 里连喊了 **{rounds}** 遍，每遍里喊两声。可印出来的号**一直往上爬**，没有一遍是从头数起的（下头是喊两遍时的样子）：\n\n```text\n第 1 遍：\n第 1 条\n第 2 条\n第 2 遍：\n第 3 条\n第 4 条\n```\n\n请你把它改好 —— **每一遍里的两行都该是 `第 1 条`**。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nvoid count_fish(void) {\n    static int seen = 0;\n    seen++;\n    printf(\"第 %d 条\\n\", seen);\n}\n\nint main(void) {\n    for (int round = 1; round <= {rounds}; round++) {\n        printf(\"第 %d 遍：\\n\", round);\n        count_fish();\n        count_fish();\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nvoid count_fish(void) {\n    int seen = 0;\n    seen++;\n    printf(\"第 %d 条\\n\", seen);\n}\n\nint main(void) {\n    for (int round = 1; round <= {rounds}; round++) {\n        printf(\"第 %d 遍：\\n\", round);\n        count_fish();\n        count_fish();\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "毛病是**多写了两个字**喵：\n\n```text\nstatic int seen = 0;\n```\n\n`static` 会把仓库从碗摞**搬进固定柜** —— 搬过去它就有了记性：只此一份，从头活到尾。可这一招恰恰**不需要**记性：每进一次门都该是**新的一摞碗**，「从头数一遍」这件事每次都得从 1 开始。把 `static` 去掉，仓库回到碗摞上，毛病当场就没了。\n\n本喵两边都真跑过：**去掉**之后，每一遍里那两行都是 `第 1 条`；**留着**它，就是「第 1 条、第 2 条」一路爬到第 4 条。\n\n⚠️ 这一处翻译官喵也**不会吭声** —— 多写这两个字既不报错也不警告，它只会**答错**。本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有。\n\n所以别看 `static` 只有两个字，它是**有代价的**：它买来「记性」的同时，也**丢掉了**「每次进门都是新的」这层保障。什么时候该有记性、什么时候该忘干净，得你自己说了算喵。"
+}

@@ -1,0 +1,324 @@
+{
+  "lessonId": "cpp-stage1-11",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s1-ptr-deref-plain-bowl-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵要把一只装着 4 的碗里的数印出来。\n\n可翻译官喵当场就把稿子退回来了，屏幕上连一个字都没有。\n\n你帮本喵把它改好：改完要能印出那只碗里的数。碗里装的数、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 4;\n    cout << *fish << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 4;\n    cout << fish << endl;\n    return 0;\n}\n",
+      "expectedOutput": "4",
+      "stdin": null,
+      "explanation": "翻译官喵这一回的原话是：\n\n`error: invalid type argument of unary '*' (have 'int')`\n\n翻成人话：**这颗星用错地方了** —— 你给本喵的是个 `int`，不是牌子。\n\n顺着走的前提是**它得是块牌子**喵。`fish` 是一只装整数的碗，`*fish` 等于拿着一个数字去敲门：门牌号都没有，翻译官喵当然不认。\n\n改法有两种，本喵都给你摆出来：\n\n- **直接印碗** —— 把 `cout << *fish << endl;` 写成 `cout << fish << endl;`。这只碗里的数本来就能直接印，压根用不着牌子。\n- **真想顺牌子**，就先开一块真牌子指着它：先写 `int* p = &fish;`，再写 `cout << *p << endl;`。\n\n记住这条分界线喵：**`*` 只管牌子，碗就写碗自己的名字。**",
+      "templateId": "cpp-s1-ptr-deref-plain-bowl",
+      "params": {
+        "fish": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T07:57:53.908Z",
+        "hash": "2acca7c032c397f5"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-deref-plain-bowl-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵要把一只装着 6 的碗里的数印出来。\n\n可翻译官喵当场就把稿子退回来了，屏幕上连一个字都没有。\n\n你帮本喵把它改好：改完要能印出那只碗里的数。碗里装的数、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 6;\n    cout << *fish << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 6;\n    cout << fish << endl;\n    return 0;\n}\n",
+      "expectedOutput": "6",
+      "stdin": null,
+      "explanation": "翻译官喵这一回的原话是：\n\n`error: invalid type argument of unary '*' (have 'int')`\n\n翻成人话：**这颗星用错地方了** —— 你给本喵的是个 `int`，不是牌子。\n\n顺着走的前提是**它得是块牌子**喵。`fish` 是一只装整数的碗，`*fish` 等于拿着一个数字去敲门：门牌号都没有，翻译官喵当然不认。\n\n改法有两种，本喵都给你摆出来：\n\n- **直接印碗** —— 把 `cout << *fish << endl;` 写成 `cout << fish << endl;`。这只碗里的数本来就能直接印，压根用不着牌子。\n- **真想顺牌子**，就先开一块真牌子指着它：先写 `int* p = &fish;`，再写 `cout << *p << endl;`。\n\n记住这条分界线喵：**`*` 只管牌子，碗就写碗自己的名字。**",
+      "templateId": "cpp-s1-ptr-deref-plain-bowl",
+      "params": {
+        "fish": "6"
+      },
+      "verified": {
+        "at": "2026-09-16T07:57:56.712Z",
+        "hash": "4fda1be2dbb541d2"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-double-through-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要写**一招**：它接一块**指向装整数的碗**的牌子，把那只碗里的数**翻一倍**。\n\n投喂口会递进来一个整数，本喵把它装进一只碗里，喊这一招上来把它翻倍，最后把那只碗里的数印出来。\n\n印**一行**就行（X 是算出来的数）：\n\n```text\nX\n```\n\n比如投喂给程序的是\n\n4\n\n程序就要叼回\n\n8\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\n\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nvoid doubleIt(int* p) {\n    *p = *p * 2;\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    doubleIt(&n);\n    cout << n << endl;\n    return 0;\n}\n",
+      "expectedOutput": "6",
+      "stdin": "3\n",
+      "explanation": "这一题要把上一课的温柔版换成牌子版，两个关键处喵：\n\n**第一处：招式那一头怎么接料。** `void doubleIt(int* p)` —— `int* p` 是「一块指向装整数的碗的牌子」。招式里要改外面那只碗，就得写 `*p = *p * 2;`：顺着牌子把数**拿出来**、翻倍、再**放回去**。放回去这一步是关键 —— 外面那只碗真的被改了。\n\n**第二处：喊它那一头怎么递料。** 温柔版直接递名字就行，牌子版得把**门牌号**递过去：`doubleIt(&n)`。那个 `&` 别忘了 —— 忘了它就等于把碗里的数（一个 `int`）递给一块牌子，翻译官喵会回你 `invalid conversion from 'int' to 'int*'`（本课第五节摔法二）。\n\n看到招式里改完、外面的 `n` 跟着变了，你就把上一课留的那条尾巴接上了：招式改得动外面的碗，靠的不是什么特殊照顾，是**门牌号交了出去**。",
+      "templateId": "cpp-s1-ptr-double-through",
+      "params": {
+        "n": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:08.080Z",
+        "hash": "48c89efbb11967b3"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-double-through-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要写**一招**：它接一块**指向装整数的碗**的牌子，把那只碗里的数**翻一倍**。\n\n投喂口会递进来一个整数，本喵把它装进一只碗里，喊这一招上来把它翻倍，最后把那只碗里的数印出来。\n\n印**一行**就行（X 是算出来的数）：\n\n```text\nX\n```\n\n比如投喂给程序的是\n\n4\n\n程序就要叼回\n\n8\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\n\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nvoid doubleIt(int* p) {\n    *p = *p * 2;\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    doubleIt(&n);\n    cout << n << endl;\n    return 0;\n}\n",
+      "expectedOutput": "10",
+      "stdin": "5\n",
+      "explanation": "这一题要把上一课的温柔版换成牌子版，两个关键处喵：\n\n**第一处：招式那一头怎么接料。** `void doubleIt(int* p)` —— `int* p` 是「一块指向装整数的碗的牌子」。招式里要改外面那只碗，就得写 `*p = *p * 2;`：顺着牌子把数**拿出来**、翻倍、再**放回去**。放回去这一步是关键 —— 外面那只碗真的被改了。\n\n**第二处：喊它那一头怎么递料。** 温柔版直接递名字就行，牌子版得把**门牌号**递过去：`doubleIt(&n)`。那个 `&` 别忘了 —— 忘了它就等于把碗里的数（一个 `int`）递给一块牌子，翻译官喵会回你 `invalid conversion from 'int' to 'int*'`（本课第五节摔法二）。\n\n看到招式里改完、外面的 `n` 跟着变了，你就把上一课留的那条尾巴接上了：招式改得动外面的碗，靠的不是什么特殊照顾，是**门牌号交了出去**。",
+      "templateId": "cpp-s1-ptr-double-through",
+      "params": {
+        "n": "5"
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:11.527Z",
+        "hash": "ee97f90d76e1a620"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-missing-amp-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵想把装着 5 的那只碗的**门牌号**记到一块牌子上，再顺着牌子把碗里的数印出来。\n\n可翻译官喵当场就把稿子退回来了 —— 这一回它还格外贴心，把改法直接写在下面一行。\n\n你帮本喵把它改好：改完要能印出那只碗里的数。碗里装的数、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 5;\n    int* p = fish;\n    cout << *p << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 5;\n    int* p = &fish;\n    cout << *p << endl;\n    return 0;\n}\n",
+      "expectedOutput": "5",
+      "stdin": null,
+      "explanation": "翻译官喵这一回给了两行，第二行就是答案喵：\n\n`error: invalid conversion from 'int' to 'int*' [-fpermissive]`\n\n`note: possible fix: take the address with '&'`\n\n翻成人话：**左手要的是门牌号，右手给的是一只碗里的数**（这里是 5），两边对不上号 —— `invalid conversion from 'int' to 'int*'` 就是「从『一个整数』换不成『一块牌子』」。下面那行 `possible fix: take the address with '&'` 是它在说：「补个 `&` **取门牌号**试试。」\n\n改法只有一处：把 `int* p = fish;` 写成 `int* p = &fish;`。\n\n区分清楚这两样东西喵：`fish` 是**碗里的数**，`&fish` 才是**碗在哪儿**。招牌子（`int* p`）要的是后者。往后看见 `invalid conversion from 'int' to 'int*'`，先去那只碗前面补一个 `&`。",
+      "templateId": "cpp-s1-ptr-missing-amp",
+      "params": {
+        "fish": "5"
+      },
+      "verified": {
+        "at": "2026-09-16T07:57:47.832Z",
+        "hash": "afc7e20b48694885"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-missing-amp-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵想把装着 7 的那只碗的**门牌号**记到一块牌子上，再顺着牌子把碗里的数印出来。\n\n可翻译官喵当场就把稿子退回来了 —— 这一回它还格外贴心，把改法直接写在下面一行。\n\n你帮本喵把它改好：改完要能印出那只碗里的数。碗里装的数、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 7;\n    int* p = fish;\n    cout << *p << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 7;\n    int* p = &fish;\n    cout << *p << endl;\n    return 0;\n}\n",
+      "expectedOutput": "7",
+      "stdin": null,
+      "explanation": "翻译官喵这一回给了两行，第二行就是答案喵：\n\n`error: invalid conversion from 'int' to 'int*' [-fpermissive]`\n\n`note: possible fix: take the address with '&'`\n\n翻成人话：**左手要的是门牌号，右手给的是一只碗里的数**（这里是 7），两边对不上号 —— `invalid conversion from 'int' to 'int*'` 就是「从『一个整数』换不成『一块牌子』」。下面那行 `possible fix: take the address with '&'` 是它在说：「补个 `&` **取门牌号**试试。」\n\n改法只有一处：把 `int* p = fish;` 写成 `int* p = &fish;`。\n\n区分清楚这两样东西喵：`fish` 是**碗里的数**，`&fish` 才是**碗在哪儿**。招牌子（`int* p`）要的是后者。往后看见 `invalid conversion from 'int' to 'int*'`，先去那只碗前面补一个 `&`。",
+      "templateId": "cpp-s1-ptr-missing-amp",
+      "params": {
+        "fish": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T07:57:50.653Z",
+        "hash": "d9ed70d7520b9907"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-new-house-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一回先别开碗 —— 本喵要**现租一间屋子**来装这个数。\n\n投喂口会递进来一个整数。请按这个顺序办：\n\n1. **现租**一间装整数的屋子，把递进来的那个数先摆进去；\n2. 顺着牌子把里面的数**翻一倍**；\n3. 把翻完的数印出来（**一行**）；\n4. **把屋子还回去**（借了要还喵）。\n\n印出来的就是一行（X 是算出来的数）：\n\n```text\nX\n```\n\n比如投喂给程序的是\n\n9\n\n程序就要叼回\n\n18\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int* p = new int(n);\n    *p = *p * 2;\n    cout << *p << endl;\n    delete p;\n    return 0;\n}\n",
+      "expectedOutput": "10",
+      "stdin": "5\n",
+      "explanation": "四步一句一句对喵：\n\n- **`int* p = new int(n);`** —— 现租一间装整数的屋子，里面先摆上 `n`，开门的牌子交给 `p`。注意这一句里**没有 `&`**：屋子是新租的，门牌号不用向谁去问。\n- **`*p = *p * 2;`** —— 顺着牌子把里面的数拿出来、翻一倍、放回去。\n- **`cout << *p << endl;`** —— 顺着牌子把翻完的印出来。\n- **`delete p;`** —— **把租来的屋子还回去。** 这一句少不得：借了要还，这是租仓库的规矩。\n\n再念一遍本课那三条规矩喵：**借了要还；还了就不能再顺着进去；没指过任何地方的牌子，绝对不许顺。** 这三条里只有第一条能靠「看代码」发现少了 —— 另外两条都安静得很，正因为安静才最坏。",
+      "templateId": "cpp-s1-ptr-new-house",
+      "params": {
+        "n": "5"
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:15.276Z",
+        "hash": "1b42d85553e70e85"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-new-house-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一回先别开碗 —— 本喵要**现租一间屋子**来装这个数。\n\n投喂口会递进来一个整数。请按这个顺序办：\n\n1. **现租**一间装整数的屋子，把递进来的那个数先摆进去；\n2. 顺着牌子把里面的数**翻一倍**；\n3. 把翻完的数印出来（**一行**）；\n4. **把屋子还回去**（借了要还喵）。\n\n印出来的就是一行（X 是算出来的数）：\n\n```text\nX\n```\n\n比如投喂给程序的是\n\n9\n\n程序就要叼回\n\n18\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int* p = new int(n);\n    *p = *p * 2;\n    cout << *p << endl;\n    delete p;\n    return 0;\n}\n",
+      "expectedOutput": "14",
+      "stdin": "7\n",
+      "explanation": "四步一句一句对喵：\n\n- **`int* p = new int(n);`** —— 现租一间装整数的屋子，里面先摆上 `n`，开门的牌子交给 `p`。注意这一句里**没有 `&`**：屋子是新租的，门牌号不用向谁去问。\n- **`*p = *p * 2;`** —— 顺着牌子把里面的数拿出来、翻一倍、放回去。\n- **`cout << *p << endl;`** —— 顺着牌子把翻完的印出来。\n- **`delete p;`** —— **把租来的屋子还回去。** 这一句少不得：借了要还，这是租仓库的规矩。\n\n再念一遍本课那三条规矩喵：**借了要还；还了就不能再顺着进去；没指过任何地方的牌子，绝对不许顺。** 这三条里只有第一条能靠「看代码」发现少了 —— 另外两条都安静得很，正因为安静才最坏。",
+      "templateId": "cpp-s1-ptr-new-house",
+      "params": {
+        "n": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:18.637Z",
+        "hash": "994a34875ca80998"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-repoint-not-write-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵想让 `a` 碗里的数**变成 `b` 碗里的数**（`b` 自己别动）。\n\n目前 `a` 里是 3，`b` 里是 5。\n\n这一回翻译官喵**收下了稿子**（它一个字都没抱怨），可跑出来印的还是 3 —— 那不对喵。\n\n你帮本喵把出问题的那一处改好：改完印出来的要是 `b` 碗里的那个数。两只碗里装的数、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 3;\n    int b = 5;\n    int* p = &a;\n\n    p = &b;\n    cout << a << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 3;\n    int b = 5;\n    int* p = &a;\n\n    *p = b;\n    cout << a << endl;\n    return 0;\n}\n",
+      "expectedOutput": "5",
+      "stdin": null,
+      "explanation": "这一题坏的地方**编得过**，所以在屏幕上一点提示都没有 —— 这正是它最值得记住的地方喵。\n\n出问题的是 `p = &b;` 这一句。它干的事情是「**换门牌号**」：从那以后 `p` 指着 `b` 那只碗了。可要说的事情是「**把 `a` 碗里的数换成 `b` 里的数**」—— 换的是碗里的**货**，不是牌子指哪儿。\n\n改法就是把它写成**顺着牌子放东西**：\n\n- `*p = b;` —— 顺着 `p` 走到它指的那只碗（也就是 `a`）跟前，把 `b` 里的数放进去。`a` 真的被改了，`b` 一点没动。\n\n对照着记这一对喵：`p = &b;` 改的是**牌子**（指向哪儿），`*p = b;` 改的是**碗**（里面装着几）。两句话长得像，干的事差了十万八千里 —— 上一课那句 `r = b;` 和温柔版的关系也是这么个别扭处。",
+      "templateId": "cpp-s1-ptr-repoint-not-write",
+      "params": {
+        "a": "3",
+        "b": "5"
+      },
+      "verified": {
+        "at": "2026-09-16T07:57:59.828Z",
+        "hash": "c0c6005f95cfa541"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-repoint-not-write-003",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵想让 `a` 碗里的数**变成 `b` 碗里的数**（`b` 自己别动）。\n\n目前 `a` 里是 6，`b` 里是 9。\n\n这一回翻译官喵**收下了稿子**（它一个字都没抱怨），可跑出来印的还是 6 —— 那不对喵。\n\n你帮本喵把出问题的那一处改好：改完印出来的要是 `b` 碗里的那个数。两只碗里装的数、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 6;\n    int b = 9;\n    int* p = &a;\n\n    p = &b;\n    cout << a << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a = 6;\n    int b = 9;\n    int* p = &a;\n\n    *p = b;\n    cout << a << endl;\n    return 0;\n}\n",
+      "expectedOutput": "9",
+      "stdin": null,
+      "explanation": "这一题坏的地方**编得过**，所以在屏幕上一点提示都没有 —— 这正是它最值得记住的地方喵。\n\n出问题的是 `p = &b;` 这一句。它干的事情是「**换门牌号**」：从那以后 `p` 指着 `b` 那只碗了。可要说的事情是「**把 `a` 碗里的数换成 `b` 里的数**」—— 换的是碗里的**货**，不是牌子指哪儿。\n\n改法就是把它写成**顺着牌子放东西**：\n\n- `*p = b;` —— 顺着 `p` 走到它指的那只碗（也就是 `a`）跟前，把 `b` 里的数放进去。`a` 真的被改了，`b` 一点没动。\n\n对照着记这一对喵：`p = &b;` 改的是**牌子**（指向哪儿），`*p = b;` 改的是**碗**（里面装着几）。两句话长得像，干的事差了十万八千里 —— 上一课那句 `r = b;` 和温柔版的关系也是这么个别扭处。",
+      "templateId": "cpp-s1-ptr-repoint-not-write",
+      "params": {
+        "a": "6",
+        "b": "9"
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:03.249Z",
+        "hash": "b11ea07d28bf54df"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-walk-row-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会递进来**三个**整数（一行一个）。请按读进来的先后，把它们装进**一排三格**的碗里。\n\n然后开一块牌子 `p`，让它指着这排碗的**第一格**。\n\n要印的是这排碗 —— 可是要**倒着**印，一行一格：先印第三格，再印第二格，最后印第一格。\n\n```text\n第三格里的数\n第二格里的数\n第一格里的数\n```\n\n牌子的三种写法（`*p`、`*(p + 1)`、带方括号的那一种）本喵想都看到一遍喵。\n\n比如投喂给程序的是\n\n7\n1\n9\n\n程序就要叼回\n\n9\n1\n7\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish[3] = {0, 0, 0};\n    cin >> fish[0] >> fish[1] >> fish[2];\n\n    int* p = fish;\n    cout << p[2] << endl;\n    cout << *(p + 1) << endl;\n    cout << *p << endl;\n    return 0;\n}\n",
+      "expectedOutput": "2\n5\n3",
+      "stdin": "3\n5\n2\n",
+      "explanation": "这一题的钥匙只有一句喵：**一整排碗的名字，自己就充当了第一格的门牌号。**\n\n所以 `int* p = fish;` 这一句右边**不用写 `&`** —— `fish` 交出去的就是第一格在哪儿。有了它，三格就有三种喊法：\n\n- **`*p`** —— 第一格。\n- **`*(p + 1)`** —— 顺着牌子往前走一格，第二格。\n- **`p[2]`** —— 第三格。牌子也能用方括号，`p[2]` 和 `fish[2]` 拿到的是同一格。\n\n倒着印，就是把这三句调个顺序：先 `p[2]`，再 `*(p + 1)`，最后 `*p`。\n\n顺手记牢一件事喵：**牌子只装得下一个门牌号**，它只记得「这一排从哪儿开始」。这一排有几格，它不知道 —— 得你自己记着。这就是为什么上一课那句「一整排碗天生不复印」成立：交出去的是**第一格的门牌号**，不是那一排本身。",
+      "templateId": "cpp-s1-ptr-walk-row",
+      "params": {
+        "x": "3",
+        "y": "5",
+        "z": "2"
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:21.993Z",
+        "hash": "49f3771e55ddfe08"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-walk-row-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会递进来**三个**整数（一行一个）。请按读进来的先后，把它们装进**一排三格**的碗里。\n\n然后开一块牌子 `p`，让它指着这排碗的**第一格**。\n\n要印的是这排碗 —— 可是要**倒着**印，一行一格：先印第三格，再印第二格，最后印第一格。\n\n```text\n第三格里的数\n第二格里的数\n第一格里的数\n```\n\n牌子的三种写法（`*p`、`*(p + 1)`、带方括号的那一种）本喵想都看到一遍喵。\n\n比如投喂给程序的是\n\n7\n1\n9\n\n程序就要叼回\n\n9\n1\n7\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish[3] = {0, 0, 0};\n    cin >> fish[0] >> fish[1] >> fish[2];\n\n    int* p = fish;\n    cout << p[2] << endl;\n    cout << *(p + 1) << endl;\n    cout << *p << endl;\n    return 0;\n}\n",
+      "expectedOutput": "4\n5\n3",
+      "stdin": "3\n5\n4\n",
+      "explanation": "这一题的钥匙只有一句喵：**一整排碗的名字，自己就充当了第一格的门牌号。**\n\n所以 `int* p = fish;` 这一句右边**不用写 `&`** —— `fish` 交出去的就是第一格在哪儿。有了它，三格就有三种喊法：\n\n- **`*p`** —— 第一格。\n- **`*(p + 1)`** —— 顺着牌子往前走一格，第二格。\n- **`p[2]`** —— 第三格。牌子也能用方括号，`p[2]` 和 `fish[2]` 拿到的是同一格。\n\n倒着印，就是把这三句调个顺序：先 `p[2]`，再 `*(p + 1)`，最后 `*p`。\n\n顺手记牢一件事喵：**牌子只装得下一个门牌号**，它只记得「这一排从哪儿开始」。这一排有几格，它不知道 —— 得你自己记着。这就是为什么上一课那句「一整排碗天生不复印」成立：交出去的是**第一格的门牌号**，不是那一排本身。",
+      "templateId": "cpp-s1-ptr-walk-row",
+      "params": {
+        "x": "3",
+        "y": "5",
+        "z": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T16:46:39.759Z",
+        "hash": "3286d6cdf8191ec4"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-walk-row-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会递进来**三个**整数（一行一个）。请按读进来的先后，把它们装进**一排三格**的碗里。\n\n然后开一块牌子 `p`，让它指着这排碗的**第一格**。\n\n要印的是这排碗 —— 可是要**倒着**印，一行一格：先印第三格，再印第二格，最后印第一格。\n\n```text\n第三格里的数\n第二格里的数\n第一格里的数\n```\n\n牌子的三种写法（`*p`、`*(p + 1)`、带方括号的那一种）本喵想都看到一遍喵。\n\n比如投喂给程序的是\n\n7\n1\n9\n\n程序就要叼回\n\n9\n1\n7\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish[3] = {0, 0, 0};\n    cin >> fish[0] >> fish[1] >> fish[2];\n\n    int* p = fish;\n    cout << p[2] << endl;\n    cout << *(p + 1) << endl;\n    cout << *p << endl;\n    return 0;\n}\n",
+      "expectedOutput": "4\n8\n3",
+      "stdin": "3\n8\n4\n",
+      "explanation": "这一题的钥匙只有一句喵：**一整排碗的名字，自己就充当了第一格的门牌号。**\n\n所以 `int* p = fish;` 这一句右边**不用写 `&`** —— `fish` 交出去的就是第一格在哪儿。有了它，三格就有三种喊法：\n\n- **`*p`** —— 第一格。\n- **`*(p + 1)`** —— 顺着牌子往前走一格，第二格。\n- **`p[2]`** —— 第三格。牌子也能用方括号，`p[2]` 和 `fish[2]` 拿到的是同一格。\n\n倒着印，就是把这三句调个顺序：先 `p[2]`，再 `*(p + 1)`，最后 `*p`。\n\n顺手记牢一件事喵：**牌子只装得下一个门牌号**，它只记得「这一排从哪儿开始」。这一排有几格，它不知道 —— 得你自己记着。这就是为什么上一课那句「一整排碗天生不复印」成立：交出去的是**第一格的门牌号**，不是那一排本身。",
+      "templateId": "cpp-s1-ptr-walk-row",
+      "params": {
+        "x": "3",
+        "y": "8",
+        "z": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T16:46:44.091Z",
+        "hash": "8cbbd192d1d7dd23"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-walk-row-004",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会递进来**三个**整数（一行一个）。请按读进来的先后，把它们装进**一排三格**的碗里。\n\n然后开一块牌子 `p`，让它指着这排碗的**第一格**。\n\n要印的是这排碗 —— 可是要**倒着**印，一行一格：先印第三格，再印第二格，最后印第一格。\n\n```text\n第三格里的数\n第二格里的数\n第一格里的数\n```\n\n牌子的三种写法（`*p`、`*(p + 1)`、带方括号的那一种）本喵想都看到一遍喵。\n\n比如投喂给程序的是\n\n7\n1\n9\n\n程序就要叼回\n\n9\n1\n7\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish[3] = {0, 0, 0};\n    cin >> fish[0] >> fish[1] >> fish[2];\n\n    int* p = fish;\n    cout << p[2] << endl;\n    cout << *(p + 1) << endl;\n    cout << *p << endl;\n    return 0;\n}\n",
+      "expectedOutput": "2\n5\n6",
+      "stdin": "6\n5\n2\n",
+      "explanation": "这一题的钥匙只有一句喵：**一整排碗的名字，自己就充当了第一格的门牌号。**\n\n所以 `int* p = fish;` 这一句右边**不用写 `&`** —— `fish` 交出去的就是第一格在哪儿。有了它，三格就有三种喊法：\n\n- **`*p`** —— 第一格。\n- **`*(p + 1)`** —— 顺着牌子往前走一格，第二格。\n- **`p[2]`** —— 第三格。牌子也能用方括号，`p[2]` 和 `fish[2]` 拿到的是同一格。\n\n倒着印，就是把这三句调个顺序：先 `p[2]`，再 `*(p + 1)`，最后 `*p`。\n\n顺手记牢一件事喵：**牌子只装得下一个门牌号**，它只记得「这一排从哪儿开始」。这一排有几格，它不知道 —— 得你自己记着。这就是为什么上一课那句「一整排碗天生不复印」成立：交出去的是**第一格的门牌号**，不是那一排本身。",
+      "templateId": "cpp-s1-ptr-walk-row",
+      "params": {
+        "x": "6",
+        "y": "5",
+        "z": "2"
+      },
+      "verified": {
+        "at": "2026-10-20T16:46:48.562Z",
+        "hash": "ffd43c27d2edd531"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-walk-row-006",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会递进来**三个**整数（一行一个）。请按读进来的先后，把它们装进**一排三格**的碗里。\n\n然后开一块牌子 `p`，让它指着这排碗的**第一格**。\n\n要印的是这排碗 —— 可是要**倒着**印，一行一格：先印第三格，再印第二格，最后印第一格。\n\n```text\n第三格里的数\n第二格里的数\n第一格里的数\n```\n\n牌子的三种写法（`*p`、`*(p + 1)`、带方括号的那一种）本喵想都看到一遍喵。\n\n比如投喂给程序的是\n\n7\n1\n9\n\n程序就要叼回\n\n9\n1\n7\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish[3] = {0, 0, 0};\n    cin >> fish[0] >> fish[1] >> fish[2];\n\n    int* p = fish;\n    cout << p[2] << endl;\n    cout << *(p + 1) << endl;\n    cout << *p << endl;\n    return 0;\n}\n",
+      "expectedOutput": "2\n8\n6",
+      "stdin": "6\n8\n2\n",
+      "explanation": "这一题的钥匙只有一句喵：**一整排碗的名字，自己就充当了第一格的门牌号。**\n\n所以 `int* p = fish;` 这一句右边**不用写 `&`** —— `fish` 交出去的就是第一格在哪儿。有了它，三格就有三种喊法：\n\n- **`*p`** —— 第一格。\n- **`*(p + 1)`** —— 顺着牌子往前走一格，第二格。\n- **`p[2]`** —— 第三格。牌子也能用方括号，`p[2]` 和 `fish[2]` 拿到的是同一格。\n\n倒着印，就是把这三句调个顺序：先 `p[2]`，再 `*(p + 1)`，最后 `*p`。\n\n顺手记牢一件事喵：**牌子只装得下一个门牌号**，它只记得「这一排从哪儿开始」。这一排有几格，它不知道 —— 得你自己记着。这就是为什么上一课那句「一整排碗天生不复印」成立：交出去的是**第一格的门牌号**，不是那一排本身。",
+      "templateId": "cpp-s1-ptr-walk-row",
+      "params": {
+        "x": "6",
+        "y": "8",
+        "z": "2"
+      },
+      "verified": {
+        "at": "2026-10-20T16:46:53.079Z",
+        "hash": "349a3beec17b75cb"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ptr-walk-row-007",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会递进来**三个**整数（一行一个）。请按读进来的先后，把它们装进**一排三格**的碗里。\n\n然后开一块牌子 `p`，让它指着这排碗的**第一格**。\n\n要印的是这排碗 —— 可是要**倒着**印，一行一格：先印第三格，再印第二格，最后印第一格。\n\n```text\n第三格里的数\n第二格里的数\n第一格里的数\n```\n\n牌子的三种写法（`*p`、`*(p + 1)`、带方括号的那一种）本喵想都看到一遍喵。\n\n比如投喂给程序的是\n\n7\n1\n9\n\n程序就要叼回\n\n9\n1\n7\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish[3] = {0, 0, 0};\n    cin >> fish[0] >> fish[1] >> fish[2];\n\n    int* p = fish;\n    cout << p[2] << endl;\n    cout << *(p + 1) << endl;\n    cout << *p << endl;\n    return 0;\n}\n",
+      "expectedOutput": "4\n8\n6",
+      "stdin": "6\n8\n4\n",
+      "explanation": "这一题的钥匙只有一句喵：**一整排碗的名字，自己就充当了第一格的门牌号。**\n\n所以 `int* p = fish;` 这一句右边**不用写 `&`** —— `fish` 交出去的就是第一格在哪儿。有了它，三格就有三种喊法：\n\n- **`*p`** —— 第一格。\n- **`*(p + 1)`** —— 顺着牌子往前走一格，第二格。\n- **`p[2]`** —— 第三格。牌子也能用方括号，`p[2]` 和 `fish[2]` 拿到的是同一格。\n\n倒着印，就是把这三句调个顺序：先 `p[2]`，再 `*(p + 1)`，最后 `*p`。\n\n顺手记牢一件事喵：**牌子只装得下一个门牌号**，它只记得「这一排从哪儿开始」。这一排有几格，它不知道 —— 得你自己记着。这就是为什么上一课那句「一整排碗天生不复印」成立：交出去的是**第一格的门牌号**，不是那一排本身。",
+      "templateId": "cpp-s1-ptr-walk-row",
+      "params": {
+        "x": "6",
+        "y": "8",
+        "z": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T07:58:25.067Z",
+        "hash": "6ff2ba12824819a8"
+      }
+    }
+  ]
+}

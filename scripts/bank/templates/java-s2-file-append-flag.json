@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-file-append-flag",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-13",
+  "type": "codefix",
+  "concept": ["擦干净不是删册子", "名字后面喂 true 才是接着写", "编得过跑得起来就是少一行"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["dangan.txt", "zhangben.txt"] },
+    "old": { "kind": "pick", "values": ["第一天：3 条", "星期一：2 条"] },
+    "fresh": { "kind": "pick", "values": ["第二天：5 条", "星期二：7 条"] }
+  },
+  "stemTemplate": "本喵往册子上添新记录 —— 可这稿子跑出来，**先前那条不见了**：\n\n```text\n档案里有：{fresh}\n```\n\n请你把它补好，让程序印出：\n\n```text\n档案里有：{old}\n档案里有：{fresh}\n```\n\n毛病在**第二回拉开抽屉**那一下。这稿子编得过、也跑得起来，翻译官喵一个字都不说，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"{old}\\n\");\n        }\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"{fresh}\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"{old}\\n\");\n        }\n        try (FileWriter w = new FileWriter(\"{name}\", true)) {\n            w.write(\"{fresh}\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n    }\n}\n",
+  "explanationTemplate": "这题考的是课上那条分界线：**想留住原来的字，名字后面喂 `true`；想从白纸开始写，就别喂。**\n\n坏稿子的第二回是这么拉开的：\n\n```java\nnew FileWriter(\"{name}\")\n```\n\n**拉开抽屉的那一刻，册子上原来的字就被全擦干净了** —— 所以念册子的时候只剩后来写的那一条。注意两件事喵：\n\n- **册子并没有被删掉，是被擦干净了**（名字还在、册子还在，就是一片空白）。本喵真跑过：先写 `{old}`、再用不喂 `true` 的写法写 `{fresh}`，念出来只剩 `档案里有：{fresh}`。\n- **这稿子编得过、也跑得起来，翻译官喵一个字都不说。** 屏幕上只是**平白少了一行** —— 这类「不冒红字的坏法」最难发现，所以判分那两道题里前一条记录的内容本喵是特意换过的，光把答案抄一遍过不了。\n\n补法只动第二回那两个字：\n\n```java\nnew FileWriter(\"{name}\", true)\n```\n\n喂的 `true` 意思是「**接着往下写**」：保留原来的字，在本喵上次停笔的地方续上。\n\n顺带说一句：**第一回其实一直是对的。** 册子本来就该从 `{old}` 这一条开始，那一回用「擦干净重来」的写法完全合适 —— 分界线管的是**你想不想留住原来的字**，不是「哪种写法更正宗」喵。"
+}

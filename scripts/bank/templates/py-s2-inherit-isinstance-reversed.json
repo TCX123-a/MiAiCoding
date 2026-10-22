@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-inherit-isinstance-reversed",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-07",
+  "type": "codefix",
+  "concept": ["isinstance", "认亲方向", "TypeError"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["橘猫", "狸花猫"] }
+  },
+  "stemTemplate": "本喵画了两张图纸：`Animal` 大图纸，和照着它画的 `Cat` 小图纸。\n\n现在本喵想确认一件事：**照 `Cat` 生的这只，是不是也算一只 `Animal`**。可写出来这一句一跑就报错喵。\n\n你帮本喵**把用错的那一处改过来**，让它印出 `True`。\n\n⚠️ 本喵问的就是「这只猫算不算动物」这一件事，**别改成问别的**。",
+  "brokenCodeTemplate": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Cat(Animal):\n    pass\n\n\nc = Cat(\"{name}\")\nprint(isinstance(Animal, c))\n",
+  "referenceFixTemplate": "class Animal:\n    def __init__(self, name):\n        self.name = name\n\n\nclass Cat(Animal):\n    pass\n\n\nc = Cat(\"{name}\")\nprint(isinstance(c, Animal))\n",
+  "explanationTemplate": "毛病是**两格东西放反了**喵。\n\n`isinstance(...)` 的两个格有自己的分工，读法是固定的：\n\n1. **第一格：要认的那一只**（一只已经生出来的真猫）\n2. **第二格：拿着比对的图纸**（图纸的名字）\n\n本喵写成了 `isinstance(Animal, c)` —— 把图纸放第一格、把猫放第二格，等于拿着图纸去认猫。翻译官喵第二格收不到一张图纸，只好翻脸：第二格必须是图纸（或者一排图纸）。\n\n⚠️ 认亲的结论是**从上往下认，不往上看**：`Cat` 是套在 `Animal` 上画的，所以照 `Cat` 生的那只**也**算 `Animal`（叼回 `True`）；反过来，照 `Animal` 直接生的那只**不是** `Cat`（叼回 `False`）。\n\n⚠️ 顺便记一句：这个 `isinstance(...)` 叼回来的是 `True` 或者 `False`，`print` 出来就是这两个词本身 —— 别自己手写一个 `True` 交差，那样什么都没验证。"
+}

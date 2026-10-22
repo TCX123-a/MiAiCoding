@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-pep8-name-styles",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-23",
+  "type": "codewrite",
+  "concept": ["常量全大写", "招式名小写下划线", "两行空行分段"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 5 },
+    "cap": { "kind": "pick", "values": [6, 8] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要把一筐鱼干清点成一张小报表喵。这一趟有一条**规矩**：**单碗上限 {cap} 条**——这个数要在程序里起个名字放好。\n\n**外面给的数分两段**：第一行是一个数（报了几碗）；后面**每一行一个数**（那一碗有几条）。\n\n请你写个程序，叼回三行：\n\n① `总共 X 条`——所有碗加起来；\n② `平均 Z 条`——每碗平均几条，**只留整数**（除不尽的零头切掉）；\n③ 最后一行说句公道话：**只要有一碗超过上限**就印 `有碗超限了`，全都规规矩矩的才印 `碗都在限内`。\n\n组织这段程序的时候，按本课的公约来喵：\n\n- 上限那个数写成**常量**，放在**最前头、单独立着**，名字**全大写、下划线分词**（名字你自己起）；\n- 「加总」「查超限」各写成一个**招式**，名字**全小写、下划线分词**（名字也你自己起）；\n- 招式和下面的正文之间、招式与招式之间，**各空两行**；\n- 每层缩进**四格**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，别把答案写死～）",
+  "referenceSolutionTemplate": "BOWL_LIMIT = {cap}\n\n\ndef count_total(nums):\n    total = 0\n    for amount in nums:\n        total = total + amount\n    return total\n\n\ndef has_over(nums):\n    for amount in nums:\n        if amount > BOWL_LIMIT:\n            return True\n    return False\n\n\nn = int(input())\nnums = []\nfor i in range(n):\n    nums.append(int(input()))\ntotal = count_total(nums)\naverage = total // n\nprint(\"总共\", total, \"条\")\nprint(\"平均\", average, \"条\")\nif has_over(nums):\n    print(\"有碗超限了\")\nelse:\n    print(\"碗都在限内\")\n",
+  "explanationTemplate": "给你看一眼本喵自己交的答案，三条规矩条条有出处喵：\n\n**一、常量。** 上限是全程序共用的一条规矩，本喵给它起名 `BOWL_LIMIT`——**全大写、下划线分词**，而且放**最前头**。这样任何人一眼都能看出「这不是随手写的数，是一条要守的线」；哪天要改，也只改一处。\n\n**二、招式名。** `count_total`、`has_over` 都是**全小写加下划线**。公约对招式名和普通名字的要求是同一条：小写字母，词与词之间下划线。名字还要**念得出来在干什么**——`count_total`（数总数）、`has_over`（有没有超）过一遍嘴就懂，比 `f1`、`g2` 这种强得多。\n\n**三、空行与缩进。** 招式与招式之间、招式与正文之间**各空两行**——像给每一段本事前后留出一格过道，眼睛扫过去就知道「这是一整段」；缩进**一级四格**，同一层对齐。\n\n正文里还有两件小事：\n\n- `average = total // n` 里的 `//` 是「**零头切掉**」的除法：23 条分 4 碗，得 5（而不是 5.75）——正好是题面要的「只留整数」。\n- `has_over` 里，一旦撞见超限的碗就 `return True` **当场收工**；全查完没撞见，才轮到最后的 `return False`。\n\n最后留一个小片段自己跑着玩（改改方括号里的数，看它翻脸不翻脸）：\n\n```python\nBOWL_LIMIT = 6\n\n\ndef has_over(nums):\n    for amount in nums:\n        if amount > BOWL_LIMIT:\n            return True\n    return False\n\n\nprint(has_over([2, 5, 3]))\nprint(has_over([2, 8, 3]))\n```\n\n第一个印 `False`（全在限内），第二个印 `True`（8 超了）喵。"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-softpad-misplaced",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-13",
+  "type": "codefix",
+  "concept": ["软垫要铺在真会翻的那几句周围", "站在软垫外面的话不归它管", "开演前没错、开演后才翻"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["喵", "呜"] }
+  },
+  "stemTemplate": "本喵拿到的料是这串字 `{word}` —— 它**根本不是数字**，所以 `stoi` 一定会扔车。本喵在地上铺了一张接 `invalid_argument` 的软垫，打算接住之后印**一行**：先是那串字本身，接着 ` 这串字不是数字喵：`，再接上车上那句说明（`e.what()`）。\n\n这一回翻译官喵**收下了稿子**（这一句在开演时一点错都没有），可一跑起来程序当场就停了。\n\n你帮本喵把出问题的那一处改好：改完那一行要能印出来。那串字、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    string word = \"{word}\";\n    int n = stoi(word);\n    try {\n        cout << \"挖到的数字是 \" << n << \" 喵\" << endl;\n    } catch (const invalid_argument& e) {\n        cout << word << \" 这串字不是数字喵：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    string word = \"{word}\";\n    try {\n        int n = stoi(word);\n        cout << \"挖到的数字是 \" << n << \" 喵\" << endl;\n    } catch (const invalid_argument& e) {\n        cout << word << \" 这串字不是数字喵：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题错的地方**特别隐身**：软垫铺了、牌子也写对了，可它圈错了地方 —— 那句真会翻车的话（`stoi(word)`）**站在软垫外面**。\n\n站在软垫外面的句子不归它管喵：车是从软垫外面扔出去的，地上那张垫子张着嘴也接不着，机器只好丢下一句 `terminate called after throwing an instance of 'std::invalid_argument'` 就地停下。\n\n改法：把 `stoi` 那一句（还有接它结果的那一只碗）**搬进 `try` 里面** —— 要盯着跑的，是**真会翻的那几句**：\n\n- 搬进去之后，`int n = stoi(word);` 翻车时，`catch` 就在同一个软垫上等着接；\n- 接住之后印出 `那串字 这串字不是数字喵：` 接上 `e.what()`。\n\n（顺带记一条：这就是为什么本课那条提醒说「**别把一大段活全塞进一个 `try`**，也别把该管的句子漏在外头」—— 软垫要铺在你真会翻的那几句**周围**。）"
+}

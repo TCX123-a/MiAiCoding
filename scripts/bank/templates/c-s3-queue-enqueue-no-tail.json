@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-queue-enqueue-no-tail",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-04",
+  "type": "codefix",
+  "concept": ["一条队伍", "tail", "站好要往后挪", "编译不吭声"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["10", "40"] },
+    "b": { "kind": "pick", "values": ["20", "50"] },
+    "c": { "kind": "pick", "values": ["30", "60"] }
+  },
+  "stemTemplate": "本喵往队伍里塞了三只猫（{a}、{b}、{c}），结果**一只都领不出来**：\n\n```text\n队伍里有 0 只猫\n```\n\n后头连一行「领到」都没有。翻译官喵一声没吭，编译跑得好好的。\n\n请你把缺的那一句补上。改好之后该印**四行**：先报队伍里有几只，再按先来后到领三只：\n\n```text\n队伍里有 3 只猫\n领到 {a}\n领到 {b}\n领到 {c}\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue({a});\n    enqueue({b});\n    enqueue({c});\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue({a});\n    enqueue({b});\n    enqueue({c});\n    printf(\"队伍里有 %d 只猫\\n\", tail - head);\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "缺的是**站好之后把接客的口子往后挪一格**：\n\n```text\ntail++;\n```\n\n三只猫其实**都站上去了** —— 只不过每一次都站在**同一格**（`line[0]`）上，前一只被后一只盖掉了。更麻烦的是 `tail` 一直停在 0：它既不知道队伍长到哪儿了，也一直跟 `head` 站在同一个位子上。\n\n所以后面每件事都跟着歪：\n\n- `tail - head` 是 0，报「队伍里有 0 只猫」；\n- `dequeue` 一进门先问「空了吗」—— 判据正是 `head == tail`，两个都还是 0，答「空了」，于是**一只都领不出来**。\n\n补上 `tail++` 之后，接客的口子就正常往后挪了：三个人站在三格里，数得清、也领得出来。\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`。** 接客的这一头不光要「让人站下」，还得**把口子往后挪**喵。\n\n⚠️ 顺带记一笔：这一处翻译官喵也**不会吭声** —— 本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有。队伍空不空、站没站上人，全看那两个下标的数对不对，翻译官喵看不出喵。"
+}

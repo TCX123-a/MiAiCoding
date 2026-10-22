@@ -1,0 +1,20 @@
+{
+  "templateId": "cpp-s2-14-kitten-two-rows",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-14",
+  "type": "codewrite",
+  "concept": ["照着老图纸画一张新图纸", "小猫出生时先把料递回去", "新图纸多出来的一格和一手"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 3 },
+    "name": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "kname": { "kind": "pick", "values": ["棉花", "芝麻"] },
+    "d": { "kind": "pick", "values": [20, 35] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵的托儿所里**成年猫和小猫分开记**。投喂口会**先给一个数**（要跟着几只成年猫的岁数），**再一只一只给 {n} 个数**喵。\n\n请你这么办：\n\n1. **画一张猫猫图纸**（名字你自己起）：记两格 —— 名字牌和岁数；给外面留一手**喵一声**（印 `我是` + 名字 + `，今年 ` + 岁数 + ` 岁喵`）；\n2. **再画一张小猫图纸**：**照着猫猫那张画下来**（那一小段 `public` 不能少），自己多记一格「出生多少天」、多留一手**报天数**（印 名字 + ` 出生 ` + 天数 + ` 天啦`）。小猫出生的时候，**先把名字和岁数递回给老图纸那一手**，再管自己那一格；\n3. 读进那个数，再一只一只读进后面那些数，**每一只都当成年猫的岁数**，名字都叫 **{name}**；每读一只就放进名册（会自己变长的碗）；\n4. 名册念完之后，**单独生一只小猫**：名字 **{kname}**、岁数 `1`、出生 **{d}** 天；让它先喵一声，再报一次天数。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    string getName() { return name; }\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\nprotected:\n    int days;\npublic:\n    Kitten(string n, int a, int d) : Cat(n, a), days(d) {}\n    void showDays() {\n        cout << name << \" 出生 \" << days << \" 天啦\" << endl;\n    }\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    vector<Cat> roster;\n    for (int i = 0; i < n; i++) {\n        int a = 0;\n        cin >> a;\n        roster.push_back(Cat(\"{name}\", a));\n    }\n    for (Cat& c : roster) {\n        c.greet();\n    }\n\n    Kitten k(\"{kname}\", 1, {d});\n    k.greet();\n    k.showDays();\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题，屏幕上印的是：\n\n```text\n{sampleOutput}\n```\n\n- **`class Kitten : public Cat`** —— 小猫那张图纸是**照着猫猫那张画下来**的：`name`、`age` 两格和 `greet()` 那一手它一个字都没重抄；\n- **`Kitten(string n, int a, int d) : Cat(n, a), days(d)`** —— 出生的时候**先把名字和岁数递回给老图纸那一手**，再管自己多出来的那一格。次序不能颠倒：妈妈先出生、小猫后出生；\n- **名册里只放成年猫**（`vector<Cat>`），小猫是**单独生出来的那一只**；\n- **`k.greet()` 印出来后跟着 `k.showDays()`** —— 前面那一行是小猫从老图纸接过来的手，后面那一行才是它自己多出来的手。\n\n⚠️ 三条钉住：\n\n1. **`public` 那一小段不能少。** 少了它等于把老图纸整张扣上盖子，外面连 `k.greet()` 都够不着（课文摔法二那一对）。\n2. **小猫那两格得让新图纸够得着。** 本喵把 `name`、`age` 挂在 `protected:` 上，所以 `showDays()` 里能直接喊 `name`。\n3. **名册里那几只都是成年猫。** 这一版的碗点名要的就是猫猫款，小猫没往里塞 —— 本喵真跑过，塞进去也会出事喵。"
+}

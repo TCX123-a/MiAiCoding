@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s3-04-tally-three-names",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-04",
+  "type": "codewrite",
+  "concept": ["拿名字当钥匙的柜子", "每见一个就把那一格加一", "柜子自己排好队"],
+  "instances": 6,
+  "params": {
+    "w1": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "w2": { "kind": "pick", "values": ["狸花", "三花"] },
+    "w3": { "kind": "pick", "values": ["小橘", "大胖"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{w1} {w2} {w3}\n", "sampleText": "猫粮 冻干 猫粮\n" },
+  "stemTemplate": "投喂口会递进来**三个名字**（一行，中间用空格隔开，**可能有重复**）喵。\n\n请你写个程序：\n\n1. 把这些名字交给一只**拿名字当钥匙的柜子** —— **每见到一个，就把那一格的数加 1**；\n2. 走一圈，一行印一格：`名字 空格 数`（按**柜子自己的顺序**印就行，不用你排）；\n3. 最后再印**一行**：柜子里**一共有几格**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外三个名字**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n    string a = \"\";\n    string b = \"\";\n    string c = \"\";\n    cin >> a >> b >> c;\n\n    map<string, int> tally;\n    tally[a] += 1;\n    tally[b] += 1;\n    tally[c] += 1;\n\n    for (auto p : tally) {\n        cout << p.first << \" \" << p.second << endl;\n    }\n    cout << tally.size() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的重点是**数数要用「加」**喵。\n\n`tally[a] += 1;` 念作「在那一格**原来的数上**加 1」。要是写成 `tally[a] = 1;`，同一个名字出现几回都还是 1 —— 而且**翻译官喵一个字都不说**，编得过、跑得完，只是数悄悄不对。\n\n还有一个白送的好处：某个名字**第一次**出现时，那一格其实还没开出来 —— 用 `+=` 它会**先开成 0** 再加 1，所以不用本喵提前铺 0。\n\n⚠️ 走一圈的顺序**不是**本喵放进去的顺序：这只柜子会按名字**排排坐**（同一个名字只会占一格），所以别拿「投喂的顺序」去猜印出来的顺序。\n\n⚠️ 最后一行要的是「**有几格**」，用 `size()` 问；重复的名字**只占一格**，所以那个数可能比投喂进来的名字少。"
+}

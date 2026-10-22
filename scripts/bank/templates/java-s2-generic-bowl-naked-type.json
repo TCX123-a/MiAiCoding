@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-generic-bowl-naked-type",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-10",
+  "type": "codefix",
+  "concept": ["量体裁衣的图纸", "尖括号里只认真猫", "装数字的那张图纸", "过不了稿子"],
+  "instances": 2,
+  "params": {
+    "v": { "kind": "int", "min": 6, "max": 8 }
+  },
+  "stemTemplate": "本喵照着自己画的图纸量了一只柜子，尺码想填「装数字的」—— 可翻译官喵把稿子退回来了，一个字都没让跑，连红字指着的地方都是本喵写尺码的那一处。\n\n请你帮本喵改好，规矩是：**只改那对尖括号里填的尺码**，别的地方一个字都不许动。\n\n改好之后，程序该印出这一行：\n\n```text\n柜子里是 {v}\n```\n\n尖括号里那一块该填什么，是这一课的一条硬规矩喵。",
+  "brokenCodeTemplate": "class Bowl<T> {\n    private T thing;\n\n    void put(T thing) {\n        this.thing = thing;\n    }\n\n    T take() {\n        return thing;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Bowl<int> num = new Bowl<>();\n        num.put({v});\n        System.out.println(\"柜子里是 \" + num.take());\n    }\n}\n",
+  "referenceFixTemplate": "class Bowl<T> {\n    private T thing;\n\n    void put(T thing) {\n        this.thing = thing;\n    }\n\n    T take() {\n        return thing;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Bowl<Integer> num = new Bowl<>();\n        num.put({v});\n        System.out.println(\"柜子里是 \" + num.take());\n    }\n}\n",
+  "explanationTemplate": "这一题属于**过不了稿子那一关**，而且翻译官喵指的位置特别准 —— 就是尖括号里那块尺码：\n\n```text\nunexpected type\n  required: reference\n  found:    int\n```\n\n念起来是：**「尖括号里要的是『真猫那种』的名分，你填了一块光溜溜的家当，这儿填不进去喵。」**\n\n那两行提示里，`required: reference` 说的是**这儿要的是一个真猫的名分**，`found: int` 说的是**你给的是一块光溜溜的家当**。两边对不上，所以翻译官喵只说了 `unexpected type`（「这儿放的不是本喵要的那类东西」）。\n\n这就是课上那条硬规矩：\n\n> **尖括号里只能填「真猫那种」**（图纸、项链、装数字的图纸……），**不能填光溜溜的家当。**\n\n光溜溜的 `int` 装不进尖括号，得填**装数字的那张图纸** `Integer`：\n\n```java\nBowl<Integer> num = new Bowl<>();\n```\n\n**为什么尖括号里非认真猫不可？** 想想本课最后一件事就明白了：尺码是给**翻译官喵在翻稿子的时候**看的，翻完就被**擦掉**。擦掉之后，柜子自己**不记得**里面装的是什么 —— 而光溜溜的家当是**不能空着**的，它必须有个实实在在的数。一件「必须有数」的东西，撑不起一块会在翻完之后被擦掉的尺码，所以尖括号只好只认真猫。\n\n顺带记一句：**尺码填了 `Integer` 之后，`put` 收什么、`take` 叼回什么就都跟着这块尺码走** —— 这一题里 `num.put({v})` 塞进去的光溜溜的数字，翻译官喵会顺手照图纸生一只口袋把它装进去（上一课的装箱），`take` 叼回来的那只口袋里就是它喵。"
+}

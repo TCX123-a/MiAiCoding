@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-continue-vs-break",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-08",
+  "type": "codefix",
+  "concept": ["continue 与 break", "收工还是跳过", "只认自己那一层"],
+  "instances": 2,
+  "params": {
+    "limit": { "kind": "int", "min": 7, "max": 8 },
+    "stop": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stemTemplate": "本喵要从 1 数到 {limit}。可这次有个新规矩：**数到 {stop} 就收工** —— 它自己不算，它后面的圈数也全都不算数。\n\n可这段代码偏偏差那么一点：它只是把 {stop} 这一个数跳过去了，后面的数照样一个不落地数完。你帮本喵改对：让它在 {stop} 那里收工，最后印一行 `收工喵`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    for (int i = 1; i <= {limit}; i++) {\n        if (i == {stop}) {\n            continue;\n        }\n        printf(\"%d\\n\", i);\n    }\n    printf(\"收工喵\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    for (int i = 1; i <= {limit}; i++) {\n        if (i == {stop}) {\n            break;\n        }\n        printf(\"%d\\n\", i);\n    }\n    printf(\"收工喵\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "`continue` 和 `break` 长得像，做的事却完全不同喵：\n\n- **`continue`** = 「这一圈剩下的活儿不干了，**圈还在转**」—— 所以它只把 {stop} 这个数跳了过去，{stop} 后面的数照跑不误。\n- **`break`** = 「圈**停了**」—— 这一圈剩下的活儿不干，后面的圈数**全部作废**，程序直接跳到圈外接着往下跑。\n\n拿不准的时候问自己一句：**本喵是想让圈从此不再转，还是只想让这一圈少干点活？** 想让圈不再转，那就得请 `break` 出场。\n\n顺带记住它俩的另一个脾气：**都只认自己住的那一层。** 内层的 `break` 退不掉外层的圈；上一课 `switch` 里那个 `break` 也是同一个词、同一件事 —— 把当前这一层跳出去喵。"
+}

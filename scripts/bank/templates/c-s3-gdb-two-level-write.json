@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s3-gdb-two-level-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-13",
+  "type": "codewrite",
+  "concept": ["两层招式：看守那摞碗能看见两层", "起点从 0 数起", "碗数一只都不能漏"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["3", "5"] },
+    "b": { "kind": "pick", "values": ["1", "2"] },
+    "c": { "kind": "pick", "values": ["4", "6"] },
+    "d": { "kind": "pick", "values": ["1", "3"] },
+    "e": { "kind": "pick", "values": ["5", "1"] }
+  },
+  "stemTemplate": "课文里那摞猫粮碗（`backtrace`）最上头是「现在停住的那层」，底下是「谁喊了它」喵。本喵想让你亲手搭出**两层**来：`main` 喊 `sum_from`，`sum_from` 自己在里头跑圈。\n\n请你把这招写对。规矩是「**从第 `start` 只碗开始**，往后一共数 `count` 只碗，把它们全加起来，把总和叼回去」。要留神两件事：\n\n- 碗的编号是**从 0 数起**的 —— `start` 是 `0` 的时候，排在最前头那只碗也得算上；\n- `count` 是**要数的碗数**，一只都不能漏在外头。\n\n`main` 里那几行别动。一排碗是 {a}、{b}、{c}、{d}、{e}，写对之后该印出**五碗全加起来**的数。",
+  "starterTemplate": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    /* ↓ 在这儿写：从第 start 只碗开始，往后一共数 count 只碗，把它们全加起来叼回去 */\n\n    return 0;\n}\n\nint main(void) {\n    int fish[5] = { {a}, {b}, {c}, {d}, {e} };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint sum_from(int fish[], int start, int count) {\n    int sum = 0;\n    for (int i = start; i < start + count; i++) {\n        sum += fish[i];\n    }\n    return sum;\n}\n\nint main(void) {\n    int fish[5] = { {a}, {b}, {c}, {d}, {e} };\n    int sum = sum_from(fish, 0, 5);\n    printf(\"总数是 %d\\n\", sum);\n    return 0;\n}\n",
+  "explanationTemplate": "跑圈就三件事喵：**从哪儿起**（`start`，不是 `1`，也不是 `start + 1`）、**到哪儿收**（从起点往后数够 `count` 只）、**每圈把那一碗加进去**。本题起点传的是 `0`、碗数传的是 `5`，所以五只碗一只都不能漏。\n\n课文里那个「数不对」的病，错的就是这里：起点写成了 `1`，排在最前头那碗没进圈。当时的看守一眼就给出证据 —— `backtrace` 那摞碗的 `#0` 那行里，`start=1` 明明白白摆着。\n\n写对之后，`main` 和这招就是**两层**了：看守的 `backtrace` 会连 `#0`（招式里）带 `#1`（`main` 里）一起印出来，正好对上课文那摞碗的样子。"
+}

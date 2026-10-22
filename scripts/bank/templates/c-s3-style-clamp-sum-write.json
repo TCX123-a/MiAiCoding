@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-style-clamp-sum-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-21",
+  "type": "codewrite",
+  "concept": ["给写死的数穿名字", "宏名全大写当招牌", "超了的部分按限额算", "函数名小写加下划线"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["6", "3"] },
+    "b": { "kind": "pick", "values": ["2", "5"] },
+    "c": { "kind": "pick", "values": ["7", "4"] },
+    "lim": { "kind": "pick", "values": ["4", "3"] }
+  },
+  "stemTemplate": "盘点升级了喵：**每一碗超过限额的部分先削掉，再把剩下的加起来**。\n\n限额和碗数这回都起了名字 —— `FISH_LIMIT` 和 `BOWL_COUNT`。你看这俩名字：一出生就不许再变的数，穿的就是这种**全大写**的衣裳。\n\n请你把 `clamp_sum` 这招写完：每一碗要是**严格超过** `FISH_LIMIT`，就按 `FISH_LIMIT` 算；没超的照原样。`main` 里那几行别动。\n\n三碗分别是 {a}、{b}、{c} 条，限额 {lim} 条 —— 改好之后该印两行：第一行是**原样**的合计，第二行是**削平之后**的合计。",
+  "starterTemplate": "#include <stdio.h>\n\n#define FISH_LIMIT {lim}\n#define BOWL_COUNT 3\n\nint clamp_sum(int fish[], int count) {\n    /* ↓ 在这儿写：每一碗先跟 FISH_LIMIT 比 —— 超了按限额算，没超照原样 */\n\n    return 0;\n}\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    int total = fish[0] + fish[1] + fish[2];\n    printf(\"原样合计 %d 条\\n\", total);\n    printf(\"削平之后 %d 条喵\\n\", clamp_sum(fish, BOWL_COUNT));\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* 限额：一碗最多认这么多条，多的不进账。 */\n#define FISH_LIMIT {lim}\n#define BOWL_COUNT 3\n\n/* 把一排碗削平之后加起来：超限额的按限额算，没超的照原样。 */\nint clamp_sum(int fish[], int count) {\n    int total = 0;\n    for (int i = 0; i < count; i++) {\n        if (fish[i] > FISH_LIMIT) {\n            total += FISH_LIMIT;\n        } else {\n            total += fish[i];\n        }\n    }\n    return total;\n}\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    int total = fish[0] + fish[1] + fish[2];\n    printf(\"原样合计 %d 条\\n\", total);\n    printf(\"削平之后 %d 条喵\\n\", clamp_sum(fish, BOWL_COUNT));\n    return 0;\n}\n",
+  "explanationTemplate": "这招的诀窍：算进总账之前，先让每一碗过一道**闸**喵：\n\n```c\nif (fish[i] > FISH_LIMIT) {\n    total += FISH_LIMIT;\n} else {\n    total += fish[i];\n}\n```\n\n闸的规矩是**严格超过**：正好等于 `FISH_LIMIT` 的照原样进（它没超）。\n\n命名上顺带记两条：\n\n- `FISH_LIMIT`、`BOWL_COUNT` —— **全大写带下划线**：一出生就不许再变的数穿这套衣裳，读到的人一眼知道「这是个定死的规矩」；\n- `clamp_sum`、`total`、`count` —— 招式名和小鱼干仓库们的名字是**小写加下划线**、词与词下划线分家：`clamp` 是「削平」、`sum` 是「合计」，这招的名字一眼说清它把什么削平了算进哪里。\n\n两个 `total +=` 的区别，就是「超了的部分认不认账」—— 本喵只认限额内的账。参考解里第一行印原样、第二行印认账的那本，两个数摆在一起，一道闸削掉多少，一眼就看出来。"
+}

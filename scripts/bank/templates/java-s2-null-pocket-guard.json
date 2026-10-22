@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-null-pocket-guard",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-06",
+  "type": "codewrite",
+  "concept": ["空口袋", "兜底", "equals", "Scanner"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 200, "max": 201 },
+    "b": { "kind": "int", "min": 200, "max": 201 }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 0, "max": 9 },
+  "stemTemplate": "本喵今天要办两件事喵。\n\n**第一件：替空口袋兜底。** 投喂给程序一个数 —— **读到 0 就当口袋是空的**（`null`），读到别的数就把那个数**装进口袋**。然后按规矩掏出来：**空口袋算 0 条**，印一行 `今天有 X 条小鱼干喵`（X 就是掏出来的那个数）。\n\n（掏口袋这一处**别用 `if` 分开写两遍**，试试那种「只走一边」的写法，一行就够。）\n\n**第二件：比数字要用对的问法。** 再摆两只口袋，一只装 {a}、一只装 {b}，印一行 `两只口袋里的数一样吗：` 后面接上比较的结果。本喵要问的是「**口袋里的数字一不一样**」，不是「**是不是同一只口袋**」喵。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Integer boxed;\n        if (n == 0) {\n            boxed = null;\n        } else {\n            boxed = n;\n        }\n        int raw = boxed == null ? 0 : boxed;\n        System.out.println(\"今天有 \" + raw + \" 条小鱼干喵\");\n        Integer a = {a};\n        Integer b = {b};\n        System.out.println(\"两只口袋里的数一样吗：\" + a.equals(b));\n    }\n}\n",
+  "explanationTemplate": "这题把本课最会咬人的两处拧在一起喵。\n\n**一、掏口袋之前先看一眼。** `Integer` 那一边**可以是空的**，`int` 不行。所以本喵不能拎起口袋就掏 —— 空口袋上掏一下，就是那一段 `NullPointerException` 的红字。\n\n题面要的那一行写法是这样的：\n\n```java\nint raw = boxed == null ? 0 : boxed;\n```\n\n它的读法是「**空口袋就取 0，不空就把数字掏出来**」。`?` 这种写法**只走一边**：口袋空的时候，右边那个 `boxed` 压根不会被掏，所以炸不了。要是拆成两个分支写两遍 `raw = ...`，也对，只是多写了两行。\n\n**二、比数字别用 `==`。** 本喵特意让 {a} 和 {b} 落在**备货范围之外** —— 这两个数每次装箱都会**现画一只新口袋**，哪怕里面装的数一模一样，那也是两只不同的口袋。所以：\n\n- `a == b` 问的是「**是不是同一只口袋**」，答案会是 `false`；\n- `a.equals(b)` 问的是「**口袋里的数字一不一样**」，答案才是本喵想要的。\n\n这就是课上那件怪事：两个一样的小数字用 `==` 比说 `true`，两个一样的大数字用 `==` 比说 `false` —— **同一句代码，结果看数字的大小**。所以一律用 `.equals(...)`，别用 `==` 喵。"
+}

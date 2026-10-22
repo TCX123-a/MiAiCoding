@@ -1,0 +1,354 @@
+{
+  "lessonId": "cpp-stage3-10",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-10-act-before-check-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这一段是**先动账、后检查**的：先把货从仓库里减掉，减完才发现减多了。程序没崩（那句「不够了」被接住了），可仓库那笔账被减成了**负数** —— 这就是留了个烂摊子。\n\n请你改成课文第三节那套：**检查在前，动账在后** —— 先看清楚够不够，够了才动账。\n\n改好之后印 2 行：\n\n1. `接住：不够了`\n2. `仓库里还是 8`\n\n（`main` 一个字都别动，要改的只有 `take` 里那两句话的**顺序**。）",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 8;\n\nvoid take(int n) {\n    stock -= n;\n    if (stock < 0) {\n        throw string(\"不够了\");\n    }\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(stock + 5);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 8;\n\nvoid take(int n) {\n    if (n > stock) {\n        throw string(\"不够了\");\n    }\n    stock -= n;\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(stock + 5);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "expectedOutput": "接住：不够了\n仓库里还是 8",
+      "stdin": null,
+      "explanation": "毛病就出在顺序上喵：减账那一句排在检查**前面**，于是账先减了、后来才发现不够 —— 那句「不够了」扔出来的时候，仓库已经被减成负数了（真跑出来是 `仓库里还是 -5`）。\n\n改法就是课文第三节那句口诀：**检查在前，动账在后**。先把「够不够」看明白，不够就直接扔出去 —— 这时候**外面的账一点没动**；够了才动手减。于是没领成的那一次，仓库里还是 8。\n\n⚠️ 这一题是个**安静**的错：程序不崩、网也接住了，印出来的头一行看着也没什么不对，只有最后那一行数能看出账被动了。所以本喵每次写下「动账」那一句之前，都会先问自己一句：**该检查的，都检查完了吗？**",
+      "templateId": "cpp-s3-10-act-before-check",
+      "params": {
+        "s": 8
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:25.750Z",
+        "hash": "7f2eafdd3cfe181e"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-act-before-check-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这一段是**先动账、后检查**的：先把货从仓库里减掉，减完才发现减多了。程序没崩（那句「不够了」被接住了），可仓库那笔账被减成了**负数** —— 这就是留了个烂摊子。\n\n请你改成课文第三节那套：**检查在前，动账在后** —— 先看清楚够不够，够了才动账。\n\n改好之后印 2 行：\n\n1. `接住：不够了`\n2. `仓库里还是 10`\n\n（`main` 一个字都别动，要改的只有 `take` 里那两句话的**顺序**。）",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 10;\n\nvoid take(int n) {\n    stock -= n;\n    if (stock < 0) {\n        throw string(\"不够了\");\n    }\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(stock + 5);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 10;\n\nvoid take(int n) {\n    if (n > stock) {\n        throw string(\"不够了\");\n    }\n    stock -= n;\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(stock + 5);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "expectedOutput": "接住：不够了\n仓库里还是 10",
+      "stdin": null,
+      "explanation": "毛病就出在顺序上喵：减账那一句排在检查**前面**，于是账先减了、后来才发现不够 —— 那句「不够了」扔出来的时候，仓库已经被减成负数了（真跑出来是 `仓库里还是 -5`）。\n\n改法就是课文第三节那句口诀：**检查在前，动账在后**。先把「够不够」看明白，不够就直接扔出去 —— 这时候**外面的账一点没动**；够了才动手减。于是没领成的那一次，仓库里还是 10。\n\n⚠️ 这一题是个**安静**的错：程序不崩、网也接住了，印出来的头一行看着也没什么不对，只有最后那一行数能看出账被动了。所以本喵每次写下「动账」那一句之前，都会先问自己一句：**该检查的，都检查完了吗？**",
+      "templateId": "cpp-s3-10-act-before-check",
+      "params": {
+        "s": 10
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:28.707Z",
+        "hash": "d4e163cb1e94b156"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-catch-mismatch-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵扔出去的那句话**没被接住** —— 程序当场停了。毛病是网收的那个口子跟扔出来的那种话**对不上**。\n\n请你把网改对（只动接住那一处的口子，扔出去那句话一个字都别改）。\n\n改好之后印 2 行：\n\n1. `接住：门口摔了一跤`\n2. `收工`",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    try {\n        throw string(\"门口摔了一跤\");\n    } catch (int e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    try {\n        throw string(\"门口摔了一跤\");\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "接住：门口摔了一跤\n收工",
+      "stdin": null,
+      "explanation": "网是有**口子**的喵：扔出来的那种话跟网口对不上，它就**穿网而过**。课文第一节里本喵见过「扔出去的话一路往上飘」，这一题它飘到最顶上也没人接得住 —— 程序只好当场停下（真跑出来那行是 `terminate called …`，看着挺吓人，其实只是没人接）。\n\n这一题扔出来的一句话是 `string`，而网口写的是 `int`，两种话对不上；把口子改成 `string` 就对上了，于是印「接住：门口摔了一跤」，接着往下走印「收工」。\n\n⚠️ 记住一句话：**接住的那一处，要跟扔出来的那种话对得上**，对不上等于没支网。这也是「出事之后程序还走不走得下去」最常见的岔子。",
+      "templateId": "cpp-s3-10-catch-mismatch",
+      "params": {
+        "msg": "门口摔了一跤"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:31.918Z",
+        "hash": "00209945cbfd0b20"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-catch-mismatch-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵扔出去的那句话**没被接住** —— 程序当场停了。毛病是网收的那个口子跟扔出来的那种话**对不上**。\n\n请你把网改对（只动接住那一处的口子，扔出去那句话一个字都别改）。\n\n改好之后印 2 行：\n\n1. `接住：货撒了`\n2. `收工`",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    try {\n        throw string(\"货撒了\");\n    } catch (int e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    try {\n        throw string(\"货撒了\");\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "接住：货撒了\n收工",
+      "stdin": null,
+      "explanation": "网是有**口子**的喵：扔出来的那种话跟网口对不上，它就**穿网而过**。课文第一节里本喵见过「扔出去的话一路往上飘」，这一题它飘到最顶上也没人接得住 —— 程序只好当场停下（真跑出来那行是 `terminate called …`，看着挺吓人，其实只是没人接）。\n\n这一题扔出来的一句话是 `string`，而网口写的是 `int`，两种话对不上；把口子改成 `string` 就对上了，于是印「接住：货撒了」，接着往下走印「收工」。\n\n⚠️ 记住一句话：**接住的那一处，要跟扔出来的那种话对得上**，对不上等于没支网。这也是「出事之后程序还走不走得下去」最常见的岔子。",
+      "templateId": "cpp-s3-10-catch-mismatch",
+      "params": {
+        "msg": "货撒了"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:34.821Z",
+        "hash": "f32a878194978ccb"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-check-first-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题请你把 `take` 这个招式写出来：仓库里现有的货就摆在外面，本喵要按课文第三节那句口诀来 —— **检查在前，动账在后**。\n\n请你写 `take`：\n\n1. **先看清楚**：要的比现有的**多**，就把 `不够了` 这句话扔出去 —— 注意这时候**外面的账一点都不能动**；\n2. 够的话才动账：把要的从现有的里减掉；\n3. 动完账印一行：`领走 ` 加上要的数、再跟上一句 `，还剩 `、再跟上现有的数。\n\n`main` 本喵在骨架里已经写好了（它会叫这个招式两次，第二次要的货比仓库里多得多），你只要补上 `take`。\n\n程序要叼回 3 行：第一次领货那一行、`接住：不够了`、还有最后那句 `仓库里还是 …`。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 8;\n\nvoid take(int n) {\n\n    /* ① 先看清楚：要的比现有的多，就扔出「不够了」这句话（这时候账一步都不能动） */\n    /* ② 够了才动账：把要的从现有的里减掉 */\n    /* ③ 印一行：领走 N，还剩 M */\n\n}\n\nint main() {\n    try {\n        take(2);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 8;\n\nvoid take(int n) {\n    if (n > stock) {\n        throw string(\"不够了\");\n    }\n    stock -= n;\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(2);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领走 2，还剩 6\n接住：不够了\n仓库里还是 6",
+      "stdin": null,
+      "explanation": "`take` 里那两步的**顺序**就是这一题的全部喵：\n\n- **先检查**：要的比现有的多，当场扔出「不够了」。扔的这一下，外面的账**还没动**，所以仓库安然无恙；\n- **再动账**：够的话才从现有的里减掉，接着印那一行。\n\n所以最后一句是「仓库里还是 …」—— 第二次要的那么多、明明没领成，账却一步没挪。要是把检查挪到动账**后面**，账先减、货没领成，仓库会凭空少一笔（这一课的另一道题里本喵就是这么写坏的）。\n\n⚠️ 判据不是「有没有扔出去」，而是「**扔出去的时候，账动了没有**」。",
+      "templateId": "cpp-s3-10-check-first",
+      "params": {
+        "s": 8,
+        "k": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:42.036Z",
+        "hash": "adc4d8423f1fb5cb"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-check-first-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题请你把 `take` 这个招式写出来：仓库里现有的货就摆在外面，本喵要按课文第三节那句口诀来 —— **检查在前，动账在后**。\n\n请你写 `take`：\n\n1. **先看清楚**：要的比现有的**多**，就把 `不够了` 这句话扔出去 —— 注意这时候**外面的账一点都不能动**；\n2. 够的话才动账：把要的从现有的里减掉；\n3. 动完账印一行：`领走 ` 加上要的数、再跟上一句 `，还剩 `、再跟上现有的数。\n\n`main` 本喵在骨架里已经写好了（它会叫这个招式两次，第二次要的货比仓库里多得多），你只要补上 `take`。\n\n程序要叼回 3 行：第一次领货那一行、`接住：不够了`、还有最后那句 `仓库里还是 …`。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 8;\n\nvoid take(int n) {\n\n    /* ① 先看清楚：要的比现有的多，就扔出「不够了」这句话（这时候账一步都不能动） */\n    /* ② 够了才动账：把要的从现有的里减掉 */\n    /* ③ 印一行：领走 N，还剩 M */\n\n}\n\nint main() {\n    try {\n        take(4);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 8;\n\nvoid take(int n) {\n    if (n > stock) {\n        throw string(\"不够了\");\n    }\n    stock -= n;\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(4);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领走 4，还剩 4\n接住：不够了\n仓库里还是 4",
+      "stdin": null,
+      "explanation": "`take` 里那两步的**顺序**就是这一题的全部喵：\n\n- **先检查**：要的比现有的多，当场扔出「不够了」。扔的这一下，外面的账**还没动**，所以仓库安然无恙；\n- **再动账**：够的话才从现有的里减掉，接着印那一行。\n\n所以最后一句是「仓库里还是 …」—— 第二次要的那么多、明明没领成，账却一步没挪。要是把检查挪到动账**后面**，账先减、货没领成，仓库会凭空少一笔（这一课的另一道题里本喵就是这么写坏的）。\n\n⚠️ 判据不是「有没有扔出去」，而是「**扔出去的时候，账动了没有**」。",
+      "templateId": "cpp-s3-10-check-first",
+      "params": {
+        "s": 8,
+        "k": 4
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:55.281Z",
+        "hash": "3456f265d7befd48"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-check-first-004",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题请你把 `take` 这个招式写出来：仓库里现有的货就摆在外面，本喵要按课文第三节那句口诀来 —— **检查在前，动账在后**。\n\n请你写 `take`：\n\n1. **先看清楚**：要的比现有的**多**，就把 `不够了` 这句话扔出去 —— 注意这时候**外面的账一点都不能动**；\n2. 够的话才动账：把要的从现有的里减掉；\n3. 动完账印一行：`领走 ` 加上要的数、再跟上一句 `，还剩 `、再跟上现有的数。\n\n`main` 本喵在骨架里已经写好了（它会叫这个招式两次，第二次要的货比仓库里多得多），你只要补上 `take`。\n\n程序要叼回 3 行：第一次领货那一行、`接住：不够了`、还有最后那句 `仓库里还是 …`。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 9;\n\nvoid take(int n) {\n\n    /* ① 先看清楚：要的比现有的多，就扔出「不够了」这句话（这时候账一步都不能动） */\n    /* ② 够了才动账：把要的从现有的里减掉 */\n    /* ③ 印一行：领走 N，还剩 M */\n\n}\n\nint main() {\n    try {\n        take(2);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 9;\n\nvoid take(int n) {\n    if (n > stock) {\n        throw string(\"不够了\");\n    }\n    stock -= n;\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(2);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领走 2，还剩 7\n接住：不够了\n仓库里还是 7",
+      "stdin": null,
+      "explanation": "`take` 里那两步的**顺序**就是这一题的全部喵：\n\n- **先检查**：要的比现有的多，当场扔出「不够了」。扔的这一下，外面的账**还没动**，所以仓库安然无恙；\n- **再动账**：够的话才从现有的里减掉，接着印那一行。\n\n所以最后一句是「仓库里还是 …」—— 第二次要的那么多、明明没领成，账却一步没挪。要是把检查挪到动账**后面**，账先减、货没领成，仓库会凭空少一笔（这一课的另一道题里本喵就是这么写坏的）。\n\n⚠️ 判据不是「有没有扔出去」，而是「**扔出去的时候，账动了没有**」。",
+      "templateId": "cpp-s3-10-check-first",
+      "params": {
+        "s": 9,
+        "k": 2
+      },
+      "verified": {
+        "at": "2026-10-20T16:59:58.704Z",
+        "hash": "09a58b3f8ce75194"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-check-first-007",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题请你把 `take` 这个招式写出来：仓库里现有的货就摆在外面，本喵要按课文第三节那句口诀来 —— **检查在前，动账在后**。\n\n请你写 `take`：\n\n1. **先看清楚**：要的比现有的**多**，就把 `不够了` 这句话扔出去 —— 注意这时候**外面的账一点都不能动**；\n2. 够的话才动账：把要的从现有的里减掉；\n3. 动完账印一行：`领走 ` 加上要的数、再跟上一句 `，还剩 `、再跟上现有的数。\n\n`main` 本喵在骨架里已经写好了（它会叫这个招式两次，第二次要的货比仓库里多得多），你只要补上 `take`。\n\n程序要叼回 3 行：第一次领货那一行、`接住：不够了`、还有最后那句 `仓库里还是 …`。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 9;\n\nvoid take(int n) {\n\n    /* ① 先看清楚：要的比现有的多，就扔出「不够了」这句话（这时候账一步都不能动） */\n    /* ② 够了才动账：把要的从现有的里减掉 */\n    /* ③ 印一行：领走 N，还剩 M */\n\n}\n\nint main() {\n    try {\n        take(5);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 9;\n\nvoid take(int n) {\n    if (n > stock) {\n        throw string(\"不够了\");\n    }\n    stock -= n;\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(5);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领走 5，还剩 4\n接住：不够了\n仓库里还是 4",
+      "stdin": null,
+      "explanation": "`take` 里那两步的**顺序**就是这一题的全部喵：\n\n- **先检查**：要的比现有的多，当场扔出「不够了」。扔的这一下，外面的账**还没动**，所以仓库安然无恙；\n- **再动账**：够的话才从现有的里减掉，接着印那一行。\n\n所以最后一句是「仓库里还是 …」—— 第二次要的那么多、明明没领成，账却一步没挪。要是把检查挪到动账**后面**，账先减、货没领成，仓库会凭空少一笔（这一课的另一道题里本喵就是这么写坏的）。\n\n⚠️ 判据不是「有没有扔出去」，而是「**扔出去的时候，账动了没有**」。",
+      "templateId": "cpp-s3-10-check-first",
+      "params": {
+        "s": 9,
+        "k": 5
+      },
+      "verified": {
+        "at": "2026-10-20T17:00:02.094Z",
+        "hash": "e56ad16ef9a211cf"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-check-first-009",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题请你把 `take` 这个招式写出来：仓库里现有的货就摆在外面，本喵要按课文第三节那句口诀来 —— **检查在前，动账在后**。\n\n请你写 `take`：\n\n1. **先看清楚**：要的比现有的**多**，就把 `不够了` 这句话扔出去 —— 注意这时候**外面的账一点都不能动**；\n2. 够的话才动账：把要的从现有的里减掉；\n3. 动完账印一行：`领走 ` 加上要的数、再跟上一句 `，还剩 `、再跟上现有的数。\n\n`main` 本喵在骨架里已经写好了（它会叫这个招式两次，第二次要的货比仓库里多得多），你只要补上 `take`。\n\n程序要叼回 3 行：第一次领货那一行、`接住：不够了`、还有最后那句 `仓库里还是 …`。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 10;\n\nvoid take(int n) {\n\n    /* ① 先看清楚：要的比现有的多，就扔出「不够了」这句话（这时候账一步都不能动） */\n    /* ② 够了才动账：把要的从现有的里减掉 */\n    /* ③ 印一行：领走 N，还剩 M */\n\n}\n\nint main() {\n    try {\n        take(3);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 10;\n\nvoid take(int n) {\n    if (n > stock) {\n        throw string(\"不够了\");\n    }\n    stock -= n;\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(3);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领走 3，还剩 7\n接住：不够了\n仓库里还是 7",
+      "stdin": null,
+      "explanation": "`take` 里那两步的**顺序**就是这一题的全部喵：\n\n- **先检查**：要的比现有的多，当场扔出「不够了」。扔的这一下，外面的账**还没动**，所以仓库安然无恙；\n- **再动账**：够的话才从现有的里减掉，接着印那一行。\n\n所以最后一句是「仓库里还是 …」—— 第二次要的那么多、明明没领成，账却一步没挪。要是把检查挪到动账**后面**，账先减、货没领成，仓库会凭空少一笔（这一课的另一道题里本喵就是这么写坏的）。\n\n⚠️ 判据不是「有没有扔出去」，而是「**扔出去的时候，账动了没有**」。",
+      "templateId": "cpp-s3-10-check-first",
+      "params": {
+        "s": 10,
+        "k": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:00:05.513Z",
+        "hash": "c59a0b3d0bc9f3b1"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-check-first-011",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题请你把 `take` 这个招式写出来：仓库里现有的货就摆在外面，本喵要按课文第三节那句口诀来 —— **检查在前，动账在后**。\n\n请你写 `take`：\n\n1. **先看清楚**：要的比现有的**多**，就把 `不够了` 这句话扔出去 —— 注意这时候**外面的账一点都不能动**；\n2. 够的话才动账：把要的从现有的里减掉；\n3. 动完账印一行：`领走 ` 加上要的数、再跟上一句 `，还剩 `、再跟上现有的数。\n\n`main` 本喵在骨架里已经写好了（它会叫这个招式两次，第二次要的货比仓库里多得多），你只要补上 `take`。\n\n程序要叼回 3 行：第一次领货那一行、`接住：不够了`、还有最后那句 `仓库里还是 …`。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 10;\n\nvoid take(int n) {\n\n    /* ① 先看清楚：要的比现有的多，就扔出「不够了」这句话（这时候账一步都不能动） */\n    /* ② 够了才动账：把要的从现有的里减掉 */\n    /* ③ 印一行：领走 N，还剩 M */\n\n}\n\nint main() {\n    try {\n        take(5);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = 10;\n\nvoid take(int n) {\n    if (n > stock) {\n        throw string(\"不够了\");\n    }\n    stock -= n;\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(5);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    try {\n        take(100);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领走 5，还剩 5\n接住：不够了\n仓库里还是 5",
+      "stdin": null,
+      "explanation": "`take` 里那两步的**顺序**就是这一题的全部喵：\n\n- **先检查**：要的比现有的多，当场扔出「不够了」。扔的这一下，外面的账**还没动**，所以仓库安然无恙；\n- **再动账**：够的话才从现有的里减掉，接着印那一行。\n\n所以最后一句是「仓库里还是 …」—— 第二次要的那么多、明明没领成，账却一步没挪。要是把检查挪到动账**后面**，账先减、货没领成，仓库会凭空少一笔（这一课的另一道题里本喵就是这么写坏的）。\n\n⚠️ 判据不是「有没有扔出去」，而是「**扔出去的时候，账动了没有**」。",
+      "templateId": "cpp-s3-10-check-first",
+      "params": {
+        "s": 10,
+        "k": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:43.960Z",
+        "hash": "611fbf5fc5113a61"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-cleanup-skipped-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这段程序是**手写收尾**的：领到货印一行，还回货印一行。可它半路出了事，那行「还回」**压根没跑**。\n\n请你按课文第二节那套办法改：让这份货**由一只守卫看着** —— 出生招式印 `领到 大肥鱼`，收尾招式印 `还回 大肥鱼`。`work` 里那两行手写的活儿可以不要了，货交给守卫看着就行。\n\n改好之后印 3 行：\n\n1. `领到 大肥鱼`\n2. `还回 大肥鱼`\n3. `接住：半路出事`",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid work() {\n    cout << \"领到 大肥鱼\" << endl;\n    throw string(\"半路出事\");\n    cout << \"还回 大肥鱼\" << endl;\n}\n\nint main() {\n    try {\n        work();\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nvoid work() {\n    Guard g(\"大肥鱼\");\n    throw string(\"半路出事\");\n}\n\nint main() {\n    try {\n        work();\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "领到 大肥鱼\n还回 大肥鱼\n接住：半路出事",
+      "stdin": null,
+      "explanation": "手写的收尾在出事的路上是**漏的**喵：那一扔会让程序直接蹦到最近的那张网，`work` 里排在它后面的行一句都不跑 —— 印「还回」那一行正好排在那儿，所以它没了。\n\n改法就是课文第二节那套：把货交给一只**守卫**看着 —— 出生招式印「领到」，收尾招式印「还回」。守卫一出生货就到手，守卫一死货就还回去。出事的路上，本喵掐得掉 `work` 后面剩下的行，**掐不掉「这只守卫生出来过、所以它一定要死」**这件事。\n\n⚠️ 顺序别写反：真跑出来是 `领到` → `还回` → `接住`。**先还账、再接住** —— 收尾是在往外蹦的那条路上跑的，比网里那一段早。",
+      "templateId": "cpp-s3-10-cleanup-skipped",
+      "params": {
+        "goods": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:19.413Z",
+        "hash": "aa23705fd0075790"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-cleanup-skipped-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这段程序是**手写收尾**的：领到货印一行，还回货印一行。可它半路出了事，那行「还回」**压根没跑**。\n\n请你按课文第二节那套办法改：让这份货**由一只守卫看着** —— 出生招式印 `领到 鱼罐头`，收尾招式印 `还回 鱼罐头`。`work` 里那两行手写的活儿可以不要了，货交给守卫看着就行。\n\n改好之后印 3 行：\n\n1. `领到 鱼罐头`\n2. `还回 鱼罐头`\n3. `接住：半路出事`",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid work() {\n    cout << \"领到 鱼罐头\" << endl;\n    throw string(\"半路出事\");\n    cout << \"还回 鱼罐头\" << endl;\n}\n\nint main() {\n    try {\n        work();\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nvoid work() {\n    Guard g(\"鱼罐头\");\n    throw string(\"半路出事\");\n}\n\nint main() {\n    try {\n        work();\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "领到 鱼罐头\n还回 鱼罐头\n接住：半路出事",
+      "stdin": null,
+      "explanation": "手写的收尾在出事的路上是**漏的**喵：那一扔会让程序直接蹦到最近的那张网，`work` 里排在它后面的行一句都不跑 —— 印「还回」那一行正好排在那儿，所以它没了。\n\n改法就是课文第二节那套：把货交给一只**守卫**看着 —— 出生招式印「领到」，收尾招式印「还回」。守卫一出生货就到手，守卫一死货就还回去。出事的路上，本喵掐得掉 `work` 后面剩下的行，**掐不掉「这只守卫生出来过、所以它一定要死」**这件事。\n\n⚠️ 顺序别写反：真跑出来是 `领到` → `还回` → `接住`。**先还账、再接住** —— 收尾是在往外蹦的那条路上跑的，比网里那一段早。",
+      "templateId": "cpp-s3-10-cleanup-skipped",
+      "params": {
+        "goods": "鱼罐头"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:22.359Z",
+        "hash": "f37f5d62b8d27937"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-guard-write-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这次的守卫本喵已经给你备在骨架里了：出生招式印 `领到`、收尾招式印 `还回`。请你写 `main`，让这份货**半路出事也照样还回去**。\n\n请你写 `main`：\n\n1. 支一张网（就是那对 `try` / `catch`）；\n2. 网里让一只守卫看着这份货，货名是 `大肥鱼`；\n3. 网里紧接着把 `半路出事` 这句话**扔出去**；\n4. 网上接住，印 `接住：` 加上接住的那句话；\n5. 网**外面**再印一行 `收工`。\n\n程序要叼回 4 行：\n\n1. `领到 大肥鱼`\n2. `还回 大肥鱼`\n3. `接住：半路出事`\n4. `收工`\n\n盯住第 2 行喵：出事的那条路上，它照样得印出来。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    try {\n        Guard g(\"大肥鱼\");\n        throw string(\"半路出事\");\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领到 大肥鱼\n还回 大肥鱼\n接住：半路出事\n收工",
+      "stdin": null,
+      "explanation": "四行是这么来的喵：`领到 大肥鱼` 是守卫的出生招式印的，`还回 大肥鱼` 是它的收尾招式印的 —— 中间那句 `throw` 把活儿掐断了，**却掐不断「守卫已经生出来了」这件事**，所以收尾照样跑，而且排在「接住」**前面**（先还账、再接住）。\n\n⚠️ 两处最容易写错：\n\n① 把守卫写在网**外面** —— 那样它就不在出事的那段路上，本喵要的「出事也照样还」无从谈起；\n② 把货抓在自己手里、手写「领到」「还回」两行 —— 那正是课文第一节漏掉收尾的那种写法。\n\n这一题的重点不是「会不会写网」，而是**把东西交给谁看着**：交对了，出事那条路上就不用本喵操心。",
+      "templateId": "cpp-s3-10-guard-write",
+      "params": {
+        "goods": "大肥鱼"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:37.893Z",
+        "hash": "83382c0789163393"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-guard-write-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这次的守卫本喵已经给你备在骨架里了：出生招式印 `领到`、收尾招式印 `还回`。请你写 `main`，让这份货**半路出事也照样还回去**。\n\n请你写 `main`：\n\n1. 支一张网（就是那对 `try` / `catch`）；\n2. 网里让一只守卫看着这份货，货名是 `鱼干`；\n3. 网里紧接着把 `半路出事` 这句话**扔出去**；\n4. 网上接住，印 `接住：` 加上接住的那句话；\n5. 网**外面**再印一行 `收工`。\n\n程序要叼回 4 行：\n\n1. `领到 鱼干`\n2. `还回 鱼干`\n3. `接住：半路出事`\n4. `收工`\n\n盯住第 2 行喵：出事的那条路上，它照样得印出来。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    try {\n        Guard g(\"鱼干\");\n        throw string(\"半路出事\");\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领到 鱼干\n还回 鱼干\n接住：半路出事\n收工",
+      "stdin": null,
+      "explanation": "四行是这么来的喵：`领到 鱼干` 是守卫的出生招式印的，`还回 鱼干` 是它的收尾招式印的 —— 中间那句 `throw` 把活儿掐断了，**却掐不断「守卫已经生出来了」这件事**，所以收尾照样跑，而且排在「接住」**前面**（先还账、再接住）。\n\n⚠️ 两处最容易写错：\n\n① 把守卫写在网**外面** —— 那样它就不在出事的那段路上，本喵要的「出事也照样还」无从谈起；\n② 把货抓在自己手里、手写「领到」「还回」两行 —— 那正是课文第一节漏掉收尾的那种写法。\n\n这一题的重点不是「会不会写网」，而是**把东西交给谁看着**：交对了，出事那条路上就不用本喵操心。",
+      "templateId": "cpp-s3-10-guard-write",
+      "params": {
+        "goods": "鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:00:08.865Z",
+        "hash": "5301de4f2d5f6b0b"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-guard-write-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这次的守卫本喵已经给你备在骨架里了：出生招式印 `领到`、收尾招式印 `还回`。请你写 `main`，让这份货**半路出事也照样还回去**。\n\n请你写 `main`：\n\n1. 支一张网（就是那对 `try` / `catch`）；\n2. 网里让一只守卫看着这份货，货名是 `鱼罐头`；\n3. 网里紧接着把 `半路出事` 这句话**扔出去**；\n4. 网上接住，印 `接住：` 加上接住的那句话；\n5. 网**外面**再印一行 `收工`。\n\n程序要叼回 4 行：\n\n1. `领到 鱼罐头`\n2. `还回 鱼罐头`\n3. `接住：半路出事`\n4. `收工`\n\n盯住第 2 行喵：出事的那条路上，它照样得印出来。",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    try {\n        Guard g(\"鱼罐头\");\n        throw string(\"半路出事\");\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "领到 鱼罐头\n还回 鱼罐头\n接住：半路出事\n收工",
+      "stdin": null,
+      "explanation": "四行是这么来的喵：`领到 鱼罐头` 是守卫的出生招式印的，`还回 鱼罐头` 是它的收尾招式印的 —— 中间那句 `throw` 把活儿掐断了，**却掐不断「守卫已经生出来了」这件事**，所以收尾照样跑，而且排在「接住」**前面**（先还账、再接住）。\n\n⚠️ 两处最容易写错：\n\n① 把守卫写在网**外面** —— 那样它就不在出事的那段路上，本喵要的「出事也照样还」无从谈起；\n② 把货抓在自己手里、手写「领到」「还回」两行 —— 那正是课文第一节漏掉收尾的那种写法。\n\n这一题的重点不是「会不会写网」，而是**把东西交给谁看着**：交对了，出事那条路上就不用本喵操心。",
+      "templateId": "cpp-s3-10-guard-write",
+      "params": {
+        "goods": "鱼罐头"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:39.826Z",
+        "hash": "c40b343f7ed527ca"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-noexcept-ticket-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "请你写两个招式，再写 `main` 去问它们各自**那张票**打没打：\n\n1. `pour` —— 本喵**拍着胸脯打了包票**的那个招式，它印一行 `倒鱼汤`；\n2. `shake` —— 没打包票的那个招式，它印一行 `摇一摇`；\n3. `main` 里先叫它们各一次，再印两行：`pour 那张票：` 跟上 `pour` 那张票的数，`shake 那张票：` 跟上 `shake` 那张票的数。\n\n程序要叼回 4 行：\n\n1. `倒鱼汤`\n2. `摇一摇`\n3. `pour 那张票：1`\n4. `shake 那张票：0`\n\n问票的那两行，本喵在课文第四节里写过一模一样的写法，照抄就行。",
+      "starter": "#include <iostream>\nusing namespace std;\n\n/* ① pour：拍着胸脯打包票的那个 —— 印一行「倒…」 */\n\n/* ② shake：没打包票的那个 —— 印一行「摇一摇」 */\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nvoid pour() noexcept {\n    cout << \"倒鱼汤\" << endl;\n}\n\nvoid shake() {\n    cout << \"摇一摇\" << endl;\n}\n\nint main() {\n    pour();\n    shake();\n    cout << \"pour 那张票：\" << noexcept(pour()) << endl;\n    cout << \"shake 那张票：\" << noexcept(shake()) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "倒鱼汤\n摇一摇\npour 那张票：1\nshake 那张票：0",
+      "stdin": null,
+      "explanation": "那两个数就是「**这张票打没打**」喵：`pour` 那一行后面带了记号，于是问一句票数答 `1`；`shake` 没带，答 `0`。\n\n打包票是**本喵许下的保证**，不是翻译官喵送的保险 —— 既然是本喵说了「它不会扔东西出来」，那么它里边真扔出来的时候，程序**不会去找网**，而是当场停下。所以本喵敢打包票的只有两类：收尾那一路的活儿（守卫的收尾招式、搬家那条近路），和自己看得清清楚楚、只做几个不会摔跤的小动作的招式。\n\n⚠️ 记号写在招式的**定义**那一行（投喂口后面），不是写在问话那一句里：问话那一句只是**问**，什么也不改变 —— 这一题里两处都出现了，别写串。",
+      "templateId": "cpp-s3-10-noexcept-ticket",
+      "params": {
+        "word": "鱼汤"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:46.036Z",
+        "hash": "be02d9c501ca67a2"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-noexcept-ticket-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "请你写两个招式，再写 `main` 去问它们各自**那张票**打没打：\n\n1. `pour` —— 本喵**拍着胸脯打了包票**的那个招式，它印一行 `倒鱼干`；\n2. `shake` —— 没打包票的那个招式，它印一行 `摇一摇`；\n3. `main` 里先叫它们各一次，再印两行：`pour 那张票：` 跟上 `pour` 那张票的数，`shake 那张票：` 跟上 `shake` 那张票的数。\n\n程序要叼回 4 行：\n\n1. `倒鱼干`\n2. `摇一摇`\n3. `pour 那张票：1`\n4. `shake 那张票：0`\n\n问票的那两行，本喵在课文第四节里写过一模一样的写法，照抄就行。",
+      "starter": "#include <iostream>\nusing namespace std;\n\n/* ① pour：拍着胸脯打包票的那个 —— 印一行「倒…」 */\n\n/* ② shake：没打包票的那个 —— 印一行「摇一摇」 */\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nvoid pour() noexcept {\n    cout << \"倒鱼干\" << endl;\n}\n\nvoid shake() {\n    cout << \"摇一摇\" << endl;\n}\n\nint main() {\n    pour();\n    shake();\n    cout << \"pour 那张票：\" << noexcept(pour()) << endl;\n    cout << \"shake 那张票：\" << noexcept(shake()) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "倒鱼干\n摇一摇\npour 那张票：1\nshake 那张票：0",
+      "stdin": null,
+      "explanation": "那两个数就是「**这张票打没打**」喵：`pour` 那一行后面带了记号，于是问一句票数答 `1`；`shake` 没带，答 `0`。\n\n打包票是**本喵许下的保证**，不是翻译官喵送的保险 —— 既然是本喵说了「它不会扔东西出来」，那么它里边真扔出来的时候，程序**不会去找网**，而是当场停下。所以本喵敢打包票的只有两类：收尾那一路的活儿（守卫的收尾招式、搬家那条近路），和自己看得清清楚楚、只做几个不会摔跤的小动作的招式。\n\n⚠️ 记号写在招式的**定义**那一行（投喂口后面），不是写在问话那一句里：问话那一句只是**问**，什么也不改变 —— 这一题里两处都出现了，别写串。",
+      "templateId": "cpp-s3-10-noexcept-ticket",
+      "params": {
+        "word": "鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:00:12.026Z",
+        "hash": "29407c996b6f6091"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-10-noexcept-ticket-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "请你写两个招式，再写 `main` 去问它们各自**那张票**打没打：\n\n1. `pour` —— 本喵**拍着胸脯打了包票**的那个招式，它印一行 `倒鱼丸`；\n2. `shake` —— 没打包票的那个招式，它印一行 `摇一摇`；\n3. `main` 里先叫它们各一次，再印两行：`pour 那张票：` 跟上 `pour` 那张票的数，`shake 那张票：` 跟上 `shake` 那张票的数。\n\n程序要叼回 4 行：\n\n1. `倒鱼丸`\n2. `摇一摇`\n3. `pour 那张票：1`\n4. `shake 那张票：0`\n\n问票的那两行，本喵在课文第四节里写过一模一样的写法，照抄就行。",
+      "starter": "#include <iostream>\nusing namespace std;\n\n/* ① pour：拍着胸脯打包票的那个 —— 印一行「倒…」 */\n\n/* ② shake：没打包票的那个 —— 印一行「摇一摇」 */\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nvoid pour() noexcept {\n    cout << \"倒鱼丸\" << endl;\n}\n\nvoid shake() {\n    cout << \"摇一摇\" << endl;\n}\n\nint main() {\n    pour();\n    shake();\n    cout << \"pour 那张票：\" << noexcept(pour()) << endl;\n    cout << \"shake 那张票：\" << noexcept(shake()) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "倒鱼丸\n摇一摇\npour 那张票：1\nshake 那张票：0",
+      "stdin": null,
+      "explanation": "那两个数就是「**这张票打没打**」喵：`pour` 那一行后面带了记号，于是问一句票数答 `1`；`shake` 没带，答 `0`。\n\n打包票是**本喵许下的保证**，不是翻译官喵送的保险 —— 既然是本喵说了「它不会扔东西出来」，那么它里边真扔出来的时候，程序**不会去找网**，而是当场停下。所以本喵敢打包票的只有两类：收尾那一路的活儿（守卫的收尾招式、搬家那条近路），和自己看得清清楚楚、只做几个不会摔跤的小动作的招式。\n\n⚠️ 记号写在招式的**定义**那一行（投喂口后面），不是写在问话那一句里：问话那一句只是**问**，什么也不改变 —— 这一题里两处都出现了，别写串。",
+      "templateId": "cpp-s3-10-noexcept-ticket",
+      "params": {
+        "word": "鱼丸"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:47.858Z",
+        "hash": "f367cab6e63939ec"
+      }
+    }
+  ]
+}

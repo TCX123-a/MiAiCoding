@@ -1,0 +1,22 @@
+{
+  "templateId": "py-s3-json-loads-not-dumps",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-07",
+  "type": "codefix",
+  "concept": ["json.loads", "json.dumps", "装箱与拆箱"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小鱼干", "冻干块", "鱼丸"] },
+    "n": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "{\"名字\": \"{name}\", \"数量\": {n}}\n",
+    "sampleText": "{\"名字\": \"冻干块\", \"数量\": 25}\n"
+  },
+  "stemTemplate": "鱼塘那头的猫递过来**一张纸条**（JSON）喵 —— 整张纸条**连成一行**，中间没有换行：一对大括号里装着两格，名牌 `\"名字\"` 配一个名字、名牌 `\"数量\"` 配一个整数，两格中间一个逗号。\n\n本喵要做的正好相反：把这张纸条**拆箱**，再把那一格的「数量」念出来。\n\n可这段代码一跑就摔，翻译官喵说本喵拿着一个名牌去问**一张纸条**要东西。你帮本喵改好它。\n\n改好之后要印出**一个整数**（纸条上那个数量），一行。\n\n（比如本喵手里这份样例，跑出来就该是这样：）\n\n```text\n{sampleOutput}\n```\n\n（判分用的是**另外一张纸条**喵，名字和数量都不一样，所以别把答案写死～）",
+  "brokenCodeTemplate": "import json\n\n纸条 = input()\n格子柜 = json.dumps(纸条)\nprint(格子柜[\"数量\"])\n",
+  "referenceFixTemplate": "import json\n\n纸条 = input()\n格子柜 = json.loads(纸条)\nprint(格子柜[\"数量\"])\n",
+  "explanationTemplate": "`json.dumps` 和 `json.loads` 是一对**方向正好相反**的招式，用反了就是这个下场喵：\n\n- `dumps`（**装箱**）：格子柜 → 纸条。交回来的是一张纸条。\n- `loads`（**拆箱**）：纸条 → 格子柜。交回来的才是能按名牌喊名字的格子柜。\n\n坏代码写的是 `json.dumps(纸条)`：纸条本来就已经是一张纸条了，再装一次箱，交回来的**还是一张纸条** —— 只不过外面多套了一层引号。所以下一行 `格子柜[\"数量\"]` 就成了「拿名牌去问纸条要东西」。纸条不认名牌，当场摔，原话一个字不差是 `TypeError: string indices must be integers, not 'str'` —— 前半句说「问纸条只能报编号」，尾巴那半句 `not 'str'` 就是它补的一句「你给的是名字（字符串）啊」，正好把本喵这句话坐实了：**问纸条只能报编号，不能报名字**。\n\n改法就是把那一招换成 `json.loads(纸条)`。\n\n⚠️ 两句一起记：**带 s 的对纸条** —— `dumps` / `loads` 干的都是纸条那一头的活；方向则由**开头那个字母**定：`d` 是装箱（**放**进去），`l` 是拆箱（**拿**出来）。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-log-side-channel",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-09",
+  "type": "codefix",
+  "concept": ["logging 默认走侧渠", "basicConfig 的 stream 把日志指回正文", "日志格式是 级别:消息"],
+  "instances": 2,
+  "params": {
+    "room": { "kind": "pick", "values": ["仓库", "小冰柜", "储物间"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 1, "max": 9 },
+  "stemTemplate": "本喵的{room}里还剩多少条小鱼干，本喵想一边记进日志、一边报给本喵看喵。\n\n**外面给的是一个数**（一行一个，就是剩下的条数）。\n\n本喵写好的这段，跑是跑得起来，正文那行也在 —— 可是**日志那一行没落在正文里**，它跑到旁边那条道上去了。你帮本喵把它请回正文来。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n⚠️ 两行的样子有讲究：日志那行的开头是**级别**（大写英文，这里是 `WARNING`），级别和后面那句话之间隔着**一个英文冒号**，一个多余的字符都不许有。\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+  "brokenCodeTemplate": "import sys\nimport logging\n\n条数 = int(sys.stdin.readline())\n\nlogging.warning(\"{room}只剩 \" + str(条数) + \" 条了\")\nprint(\"{room}还剩 \" + str(条数) + \" 条\")\n",
+  "referenceFixTemplate": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\")\n\n条数 = int(sys.stdin.readline())\n\nlogging.warning(\"{room}只剩 \" + str(条数) + \" 条了\")\nprint(\"{room}还剩 \" + str(条数) + \" 条\")\n",
+  "explanationTemplate": "本喵这次的毛病不在算错，在**走错了道**喵。\n\n`logging` 印出来的字默认**不走正文**（正文就是程序平常印东西的那条道），它走旁边那条叫「侧渠」的道。所以那行日志其实**出来了** —— 只是没落在本喵要的地方。这个分工以前不容易被注意到，是因为跑失败的时候两道会一起给你看。\n\n把它请回正文的办法，是开日志的时候**把道指过来**：\n\n`logging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\")`\n\n这三样各管一件事，缺一样本喵就不认：\n\n① `stream=sys.stdout` —— 道指到正文上来。**不写它就回侧渠**，这正是这道题的毛病。\n② `format` —— 本喵要的样子是「级别 + 英文冒号 + 那句话」。不写它的话，中间还会多插一个名字出来（那是记日志那只猫的名字），样子就不对了。\n③ 级别用的是大写的 `WARNING`，它在**默认门槛**之上（不写 `level` 那一句的时候，门槛就是 `WARNING`），所以正好过得去。\n\n⚠️ 这一句要写在**任何一条日志之前**。它是「开张」的那一句：要是有哪条日志先跑过了，后面再写这套设置就**什么也不做**了 —— 开张这件事只算第一次。\n\n顺带记住：这套设置**一次就够**，写在开头，后面所有日志都按它来。"
+}

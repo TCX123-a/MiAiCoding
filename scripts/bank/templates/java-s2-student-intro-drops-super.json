@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-student-intro-drops-super",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-15",
+  "type": "codefix",
+  "concept": ["super 请上一层出手", "盖掉那一招之后还能把老的请回来", "编得过跑得起来也会少半句"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["小橘", "小虎"] },
+    "s": { "kind": "pick", "values": ["92", "86"] }
+  },
+  "stemTemplate": "小图纸把大图纸那一招盖掉的时候，本喵想「**先请大图纸串一遍，再添上自己那半句**」。可这稿子添的时候把老的那半句丢了 —— 它编得过、也跑得起来，只是印出来短了一截：\n\n```text\n，考了 {s} 分\n```\n\n请你把它补好，让程序印出：\n\n```text\n本喵叫 {a}，考了 {s} 分\n```\n\n毛病只在**小图纸那一招的身子**里（就一行），别的地方本喵都没写错喵。",
+  "brokenCodeTemplate": "class Person {\n    private String name;\n\n    Person(String name) {\n        this.name = name;\n    }\n\n    String intro() {\n        return \"本喵叫 \" + name;\n    }\n}\n\nclass Student extends Person {\n    private int score;\n\n    Student(String name, int score) {\n        super(name);\n        this.score = score;\n    }\n\n    @Override\n    String intro() {\n        return \"，考了 \" + score + \" 分\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Student b = new Student(\"{a}\", {s});\n        System.out.println(b.intro());\n    }\n}\n",
+  "referenceFixTemplate": "class Person {\n    private String name;\n\n    Person(String name) {\n        this.name = name;\n    }\n\n    String intro() {\n        return \"本喵叫 \" + name;\n    }\n}\n\nclass Student extends Person {\n    private int score;\n\n    Student(String name, int score) {\n        super(name);\n        this.score = score;\n    }\n\n    @Override\n    String intro() {\n        return super.intro() + \"，考了 \" + score + \" 分\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Student b = new Student(\"{a}\", {s});\n        System.out.println(b.intro());\n    }\n}\n",
+  "explanationTemplate": "这题缺的那一样东西是 **`super.intro()`**：\n\n```java\nreturn super.intro() + \"，考了 \" + score + \" 分\";\n```\n\n`super.` 读作「**请上一层那张图纸**把它那一版跑一遍」—— 本喵现在站在小图纸上，上一层就是大图纸，于是它把「本喵叫 {a}」串好叼回来，本喵再把「，考了 {s} 分」接上去。本喵真跑过这一对：坏的那版印 `，考了 {s} 分`（开头那半句没了），补上之后才是 `本喵叫 {a}，考了 {s} 分`。\n\n三个容易想歪的地方喵：\n\n- **这不是「编不过」，是「印错」。** 少一半话的稿子名字对、圈数对，翻译官一个字都不说 —— 屏幕上只是短了一截。这类坏法最难自己发现，所以判分那两道题里本喵把名字和分数都换过了，光把答案抄一遍过不了。\n- **也不能写成 `this.intro()`。** 那是「喊本喵自己这一招」，可本喵现在站的地方**就是**这一招 —— 它会原地打转，转到兜塞不下、当场断气（本喵真跑过那一版，报的是 `StackOverflowError`）。想请上一层出手，只有 `super.` 这一条路。\n- **大图纸那一招并没有被删掉。** 盖掉的是「本喵喊 `intro()` 时先念哪一版」，大图纸上那一版还好端端画着，随时能用 `super.` 请出来。"
+}

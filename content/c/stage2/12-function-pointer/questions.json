@@ -1,0 +1,76 @@
+{
+  "lessonId": "c-stage2-12",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下 `int (*op)(int, int) = add;`。这句话里**最前面**那个 `int` 说的是什么喵？",
+      "options": [
+        "这个函数返回值是一个整数",
+        "这招要投喂两个整数",
+        "`op` 这只碗里装着整数张牌子",
+        "这招的名字叫 `int`"
+      ],
+      "answer": 0,
+      "explanation": "拆成三段念：最右边的 `(int, int)` 是**投喂清单**（两个整数），中间包起来的 `(*op)` 是「这只碗叫 `op`、装的是牌子」，最左边那个 `int` 就是**叼回来的战利品**是什么喵。要是写成 `double (*op)(int, int)`，那就变成「投喂两个整数、叼回一个小数」了喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "第一节那段里，先喊了一次 `op(7, 2)`，接着写了一句 `op = sub;`，又喊了一次 `op(7, 2)`。这两次分别跑来哪一招喵？",
+      "options": [
+        "第一次跑 `add`、第二次跑 `sub` —— 碗没换，换的是碗里的牌子",
+        "第一次跑 `add`、第二次跑 `sub` —— 连碗也一起换掉了",
+        "两次都跑 `add`，因为函数是写死在代码里的",
+        "编译器会拦下第二次，说同一个变量不能声明成两种类型"
+      ],
+      "answer": 0,
+      "explanation": "碗一直是那只碗，**换的是碗里的牌子**喵 —— 所以两回印出来是 9 和 5。这也是这一课全部本事的种子：同一只碗、同一个写法，换张牌子就换了一套活喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵喊 `apply(add, 3, 4)` 和 `apply(mul, 3, 4)`，`apply` 里面那句 `return op(a, b);` 到底干了加法还是乘法，是谁说了算喵？",
+      "options": [
+        "递进来的那张牌子说了算 —— `apply` 自己并不知道进来的是哪一招",
+        "`apply` 自己说了算，它在代码里写死了",
+        "编译器读代码的时候挑一个",
+        "两边谁先写好的就听谁的"
+      ],
+      "answer": 0,
+      "explanation": "`apply` 只管照着牌子干活喵：递进来的牌子上写着「加」，它就算加法；写着「乘」，它就算乘法。同一段代码能有两种活法，靠的全是牌子 —— 这就是「把怎么干，从什么时候干里拆出来」的意思喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint apply(____, int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    printf(\"%d\\n\", apply(add, 3, 4));\n    return 0;\n}",
+      "stem": "本喵要把「一张牌子」当第一样投喂递给 `apply`，可头上的那一格空着。空里该填什么喵？",
+      "blanks": [
+        { "answer": "int (*op)(int, int)", "accept": ["int (*op)(int,int)", "int (* op)(int, int)", "int (* op)(int,int)"] }
+      ],
+      "explanation": "空里要写的是「**一只装牌子的碗**」：`int (*op)(int, int)` 喵。从里往外念 —— `op` 是碗名，包着它的那对小括号一个都不能省；最右边 `(int, int)` 是投喂清单（两个整数）；最左边 `int` 是叼回来的战利品。为什么碗名非得叫 `op`？因为下面那句 `return op(a, b);` 就是拿着这只碗去喊牌子上的招式，两个名字得对得上喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint main(void) {\n    int (*op)(int, int) = add;\n    printf(\"%d\\n\", op(7, 2));\n    op = sub;\n    printf(\"%d\\n\", op(7, 2));\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？",
+      "answer": "9\n5",
+      "accept": ["9\n5\n"],
+      "explanation": "第一回 `op` 里装的是「加」的牌子，7 加 2 得 9；`op = sub;` 换上「减」的牌子之后，7 减 2 得 5 喵。两次都是同一只碗、同一个写法，变的只有牌子喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nvoid show(int x) {\n    printf(\"碗里是 %d\\n\", x);\n}\n\nvoid show_double(int x) {\n    printf(\"翻倍是 %d\\n\", x * 2);\n}\n\nvoid each(int a[], int n, void (*visit)(int)) {\n    for (int i = 0; i < n; i++) {\n        visit(a[i]);\n    }\n}\n\nint main(void) {\n    int bowl[3] = {3, 5, 7};\n    each(bowl, 3, show);\n    each(bowl, 3, show_double);\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？",
+      "answer": "碗里是 3\n碗里是 5\n碗里是 7\n翻倍是 6\n翻倍是 10\n翻倍是 14",
+      "accept": ["碗里是 3\n碗里是 5\n碗里是 7\n翻倍是 6\n翻倍是 10\n翻倍是 14\n"],
+      "explanation": "`each` 走到每个碗前面，就**回头喊一声牌子上写的招式**，把碗里的数喂进去喵。第一趟递的是「印一遍」的牌子，所以先印三行「碗里是」；第二趟递的是「印两遍」的牌子，于是翻倍之后印出 6、10、14。`each` 自己一直没变，变的只是递进去的牌子喵。"
+    }
+  ]
+}

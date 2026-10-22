@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-19-calc-only-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-19",
+  "type": "codewrite",
+  "concept": ["招牌先应声，身子可以躺门口后面", "只准算不许印：说话是门口的事", "绕圈从头到尾一只碗都不漏", "只差身子时错要等到缝一起才炸"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "pick", "values": ["4", "6"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 2, "max": 9 },
+  "stemTemplate": "这次玩**分身**喵：`main`（门口）和招牌都已经写好了，身子还没落地 —— 本喵要你把 `fish_total` 的身子写进 `main` 后面那块**空地**上。\n\n这招的活：收进来一整排碗和碗数，把每一碗里的条数**从头到尾兜一圈**累起来，最后一口叼回去。两条铁规矩：\n\n1. **只准算，一个字都不许印** —— 说话是门口的事（印东西的手一旦伸进这招里，台面上的行数当场就对不上）；\n2. 从头走到尾，**一只碗都不能漏**。\n\n`main` 把印法写死了（两行：`整排合计 X 条`、`头一只碗 Y 条`），别动它。样例喂进去的是：\n\n```text\n{sampleInput}\n```\n\n该印出来的是：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外几只碗的数喵 —— 你那边的数跟样例对不上是正常的，规矩是一样的。）",
+  "starterTemplate": "#include <stdio.h>\n\n/* 招牌已经挂好（就当它是从招牌本上拼进来的） */\nint fish_total(int bowl[], int count);\n\nint main(void) {\n    int count;\n    if (scanf(\"%d\", &count) != 1) {\n        return 1;\n    }\n    int bowl[100];\n    for (int i = 0; i < count; i++) {\n        if (scanf(\"%d\", &bowl[i]) != 1) {\n            return 1;\n        }\n    }\n    printf(\"整排合计 %d 条\\n\", fish_total(bowl, count));\n    printf(\"头一只碗 %d 条\\n\", bowl[0]);\n    return 0;\n}\n\n/* ===== 身子区：main 后面这块空地 =====\n   把 fish_total 的身子写在这儿：从第 0 只碗一路走到最后一只，\n   把条数累起来，最后一口叼回去。\n   只准算，一个字都不许印 —— 说话是门口（main）的事。 */\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* 招牌已经挂好（就当它是从招牌本上拼进来的） */\nint fish_total(int bowl[], int count);\n\nint main(void) {\n    int count;\n    if (scanf(\"%d\", &count) != 1) {\n        return 1;\n    }\n    int bowl[100];\n    for (int i = 0; i < count; i++) {\n        if (scanf(\"%d\", &bowl[i]) != 1) {\n            return 1;\n        }\n    }\n    printf(\"整排合计 %d 条\\n\", fish_total(bowl, count));\n    printf(\"头一只碗 %d 条\\n\", bowl[0]);\n    return 0;\n}\n\n/* ===== 身子区：main 后面这块空地 ===== */\nint fish_total(int bowl[], int count) {\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum = sum + bowl[i];\n    }\n    return sum;\n}\n",
+  "explanationTemplate": "为什么身子能躺在门口**后面**：招牌先应了声喵。翻译官喵从上面读下来，在 `main` 里撞见 `fish_total(bowl, count)` 的时候，招牌早见过了 —— 它知道这招存在、收什么还什么；身子躺在下面哪一行，一路读下去自然会碰到。\n\n这就是「招牌本 / 干活本」拆开之前的**纸上预演**：等哪天本子分了家，招牌跟着 `#include` 拼到门口手里，身子留在干活本里，缝一起的时候两边对账。\n\n这一招的身子就三件事：\n\n1. 先备一只累加的小仓库，从 `0` 出发；\n2. 拿绕圈从头到尾走一遍，每走到一只碗，就把里面的条数加进去；\n3. 走完把仓库里的数叼回去。\n\n那句「只准算、不许印」是**分工**喵：门口是唯一说话的地方，两行印成什么样全归它管；身子擅自多印一句，台面上的行数当场就多出来 —— 而错的人还以为自己对了。真工程里，同一招会被好几个地方使唤，谁都不希望每次捎回来一串多余的废话。"
+}

@@ -1,0 +1,76 @@
+{
+  "lessonId": "java-stage2-12",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵自己画一张「仓库空了」的出事图纸时，**认谁当师父**（`extends` 后面跟谁）决定了什么？",
+      "options": [
+        "这张图纸归「要表态的」那一档，还是归「编得过、当场炸」那一档",
+        "出事的时候印出来的那串脚印长什么样",
+        "接住它的猫能不能用 `e.getMessage()` 读到口信",
+        "这张图纸上能存几格家当"
+      ],
+      "answer": 0,
+      "explanation": "课里那张图纸写的是 `extends Exception`，所以它跟师父一样归**「要表态的」那一档** —— 用它的招式头上必须写 `throws`，或者当场接住，少一样翻译官喵就把稿子退回来。要是换成 `extends RuntimeException`，它就归「编得过、当场炸」那一档，连 `throws` 都不用写。脚印长什么样、`getMessage()` 读不读得到口信，都由**出生那一手怎么处理口信**决定（本喵写的 `super(msg)` 就是把口信往上交给师父），跟认谁当师父是两件事；能存几格家当说的是图纸身子里写了几格，也跟师父无关喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵接住了一只出事的东西，可花括号里**什么都不写**。会发生什么？",
+      "options": [
+        "程序当场断气，把出事那一只的名字和口信印出来",
+        "程序照常往下走，编译器一个字都不说，出事的那格脚印断在这儿",
+        "编译器把代码退回来，说接住的括号里不能空着",
+        "出事的那一行会自动重跑一遍"
+      ],
+      "answer": 1,
+      "explanation": "这是课里「别吞」那一条。本喵真跑过：接住的括号里空着，稿子**编得过**，程序**照常往下走**，而且翻译官喵**一个字都不说** —— 它不觉得这是错的，只是那格脚印从此断在这儿，以后真出问题的时候，本喵连「它是在哪儿丢的」都找不着。当场断气是**没人接**的时候才发生的事；接住的括号里空着也不是规矩上的错，是**做法上的错**喵。"
+    },
+    {
+      "id": "q3",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"开始\");\n        try {\n            int[] fish = new int[2];\n            fish[5] = 1;\n            System.out.println(\"放好了\");\n        } catch (ArrayIndexOutOfBoundsException e) {\n            System.out.println(\"接住了：\" + e.getMessage());\n        } finally {\n            System.out.println(\"收摊\");\n        }\n        System.out.println(\"结束\");\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "开始\n接住了：Index 5 out of bounds for length 2\n收摊\n结束",
+      "accept": ["开始\n接住了：Index 5 out of bounds for length 2\n收摊\n结束\n"],
+      "explanation": "四行，一行都不能少。`开始` 印完之后进了 `try`：`fish[5]` 是个**下标越界**（那串小鱼干只有 2 格，编号 0 和 1），出事的那一行往后就不跑了 —— 所以 `放好了` 那句**一个字都没印**。接着 `catch` 接住了这一只，`e.getMessage()` 叼回它自己的口信 `Index 5 out of bounds for length 2`（这是翻译官喵自带的说法，原样印出）。然后轮到 `finally` 里的 `收摊` —— **不管出没出事它都要跑**。最后才走到 `try` 后面那句 `结束` 喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "class FishEmptyException extends Exception {\n    FishEmptyException(String msg) {\n        super(msg);\n    }\n}\n\npublic class Main {\n    static void takeFish(int n) throws FishEmptyException {\n        if (n <= 0) {\n            throw new FishEmptyException(\"仓库空了喵\");\n        }\n        System.out.println(\"拿到 \" + n + \" 条\");\n    }\n\n    public static void main(String[] args) {\n        try {\n            takeFish(3);\n            takeFish(0);\n            takeFish(1);\n        } catch (FishEmptyException e) {\n            System.out.println(\"接住了：\" + e.getMessage());\n        }\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "拿到 3 条\n接住了：仓库空了喵",
+      "accept": ["拿到 3 条\n接住了：仓库空了喵\n"],
+      "explanation": "只有**两行**，第三行「拿到 1 条」不会出现 —— 这是这道题最要紧的地方。`takeFish(3)` 顺顺当当，印出 `拿到 3 条`；接着 `takeFish(0)` 在招式里**当场喊了一声**，那一只 `FishEmptyException` 从招式里飞出来，落进 `main` 的 `catch` 里，口信被 `e.getMessage()` 原样叼回来，印出 `接住了：仓库空了喵`。**出事之后，飞出去的那一路上剩下的活儿全都不干了** —— 所以 `takeFish(1)` 压根没被喊到过（它就在 `takeFish(0)` 后面那一行，可 `try` 里出事那行往后的都不跑了）。这也正是课里那句：`try` 里出事的那一行之后不跑，`try` 里剩下的行也不跑喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "java",
+      "code": "class FishEmptyException extends ____ {\n    FishEmptyException(String msg) {\n        ____(msg);\n    }\n}\n\npublic class Main {\n    static void takeFish(int n) ____ FishEmptyException {\n        if (n <= 0) {\n            ____ new FishEmptyException(\"仓库空了喵\");\n        }\n        System.out.println(\"拿到 \" + n + \" 条\");\n    }\n\n    public static void main(String[] args) throws FishEmptyException {\n        takeFish(2);\n    }\n}",
+      "stem": "本喵画了一张专门报「仓库空了」的出事图纸，头一件就是让它认师父。请把四个空补上，让这段代码编得过、跑得动。",
+      "blanks": [
+        { "answer": "Exception", "accept": [] },
+        { "answer": "super", "accept": [] },
+        { "answer": "throws", "accept": [] },
+        { "answer": "throw", "accept": [] }
+      ],
+      "explanation": "第一空填 `Exception` —— **认谁当师父**决定了这张图纸归哪一档；认了 `Exception`，它就跟师父一样归「要表态的」那一档，所以下面凡是用到它的地方都得交代清楚。第二空填 `super` —— 出生那一手把别人递进来的口信**往上交给师父**，交上去之后 `e.getMessage()` 才叼得回那句话；不交，就是一只空口信的猫。第三空填 `throws` —— 招式头上这句是**本喵自己先声明**：「这招可能出事，出了事本喵不在这儿处理」，所以 `main` 那边也老老实实跟着声明了一句。第四空填 `throw` —— 真正**把出事那一只往外扔**的就是这个词。注意它俩长得像、活儿完全不同：`throws` 写在**招式头上**是声明，`throw` 写在**招式身子里**才是真扔喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    static int peek() {\n        try {\n            return 1;\n        } finally {\n            System.out.println(\"finally 还是跑了\");\n        }\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"结果 \" + peek());\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "finally 还是跑了\n结果 1",
+      "accept": ["finally 还是跑了\n结果 1\n"],
+      "explanation": "留意**顺序**：`finally 还是跑了` **先**印出来，`结果 1` 才在后面。`peek()` 在 `try` 里就喊了 `return 1`，可 `finally` 里那句「不管出没出事都要干的活」**得先干完才准走** —— 所以它是先跑的，等它跑完了，`peek()` 才把 `1` 叼回给外面那句打印。这也正是「用完的管子要在 `finally` 里关掉」靠得住的原因：**连提前 `return` 都拦不住它**喵。"
+    }
+  ]
+}

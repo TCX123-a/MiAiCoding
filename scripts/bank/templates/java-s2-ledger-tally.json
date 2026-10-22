@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-ledger-tally",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-09",
+  "type": "codewrite",
+  "concept": ["账本", "getOrDefault 加账", "keySet 挨个摸", "size"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "want": { "kind": "pick", "values": ["1", "2"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 2 },
+  "stemTemplate": "本喵要拿账本记一笔「每只猫来了几趟」喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 行**，每行是**一个名字**（就是投喂进来的那串字本身，别去接成数字）。同一只猫可能来好几趟。\n\n请用账本一行一行记下来 —— 记的时候**别写 `if` 分开判断「在不在」**，用那种「**带着兜底值去取、加一、再写回去**」的一行写法 —— 然后印三行：\n\n```text\n账本上有 M 个名字\n把所有名字的趟数加起来是 S\n{want} 来了 C 趟\n```\n\n- `M` 是账本上**有几个名字**；\n- `S` 是把**每个名字的趟数挨个加起来**的总数（当心：这里得先把名字拢成一串再挨个摸）；\n- 最后一行问的名字就是 `{want}`，**它可能压根没来过** —— 那就当它来了 0 趟。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.HashMap;\nimport java.util.Map;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Map<String, Integer> book = new HashMap<>();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.HashMap;\nimport java.util.Map;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        Map<String, Integer> book = new HashMap<>();\n        for (int i = 0; i < n; i++) {\n            String name = sc.next();\n            book.put(name, book.getOrDefault(name, 0) + 1);\n        }\n        System.out.println(\"账本上有 \" + book.size() + \" 个名字\");\n        int total = 0;\n        for (String name : book.keySet()) {\n            total = total + book.get(name);\n        }\n        System.out.println(\"把所有名字的趟数加起来是 \" + total);\n        System.out.println(\"{want} 来了 \" + book.getOrDefault(\"{want}\", 0) + \" 趟\");\n    }\n}\n",
+  "explanationTemplate": "这题是账本最经典的用法：**「这个月来了几趟」全靠一行代码**喵。\n\n**一、那行「加账」的话掰开看。**\n\n```java\nbook.put(name, book.getOrDefault(name, 0) + 1);\n```\n\n右半边先算：**名字在就用它现在的趟数、不在就用 0**，然后加一。左半边把算出来的数**再写回同一个名字**上。要是名字已经在了，这一写就是**改写那一行**，不是加一行 —— 所以同一个名字来几趟都只占一行，`size()` 报的才是**有几个名字**。\n\n**二、为什么不能用 `get` 直接取。** 名字第一次来的时候账本上没这一行，`get` 叼回来的是**空口袋**。空口袋拿去加一（拆箱）就是那串红字了。`getOrDefault` 就是为这个场面生的。\n\n（顺带说一句这题的判分输入：名字都落在**很小的一段号**里，而来的人比这段号多，所以**必然有重名** —— 这题不给「碰巧人人不同」留后门，只写 `put(name, 1)`、忘了把趟数加上去的人，第二行一定会露馅喵。）\n\n**三、挨个摸之前得先把名字拢成一串。** 账本不像柜子那样有编号可以数着摸 —— 它的招式是 `book.keySet()`：**把所有名字拢成一串**，然后就能用「挨个过一遍」的写法走了，走的时候 `book.get(name)` 拿那一行右边的数。\n\n**四、为什么这个总数是稳的。** 账本按名字算出来的座位号摆，**不按本喵写进去的先后摆**，所以挨个摸出来的顺序看着乱七八糟 —— 那不是出 bug 了。本喵做的这件事（把所有数加起来）**跟顺序无关**，所以结果永远是稳的。这也是课里那句话：挨个过一遍的时候，只做跟顺序无关的事。\n\n**五、记一笔的另一种稳妥写法。** 万一名字真的不在、本喵又不想给兜底值，那就先 `containsKey` 问一句再动手 —— 两种都行，本喵自己挑顺手的那种喵。"
+}

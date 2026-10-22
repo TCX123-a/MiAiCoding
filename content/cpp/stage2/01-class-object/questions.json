@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage2-01",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵画完图纸，忘了在大括号后面写那个分号，翻译官喵报的原话是 `expected ';' after class definition`。看到这一句，该先去哪儿找问题？",
+      "options": [
+        "先看图纸大括号**后面**那一个字符",
+        "把图纸里每一行从头到尾逐行查一遍",
+        "先看 `main` 里生猫那一句",
+        "先看 `public:` 那一行是不是漏了"
+      ],
+      "answer": 0,
+      "explanation": "翻译官喵那句里 `after class definition` 说的是「图纸画完**之后**」—— 它等的那个分号站在大括号**外面**。所以别急着逐行读图纸，先看大括号后面那一个字符喵。`public:` 漏了会报「够不着那一格」，`main` 里写错会直接点 `main` 的行号，都不是这一句。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵在一张纸上画好了一张叫 `Cat` 的图纸，图纸里写着一格 `string name;`，画完就停手了 —— 一句猫也没生。这会儿碗边站着几只猫？",
+      "options": [
+        "一只都没有 —— 图纸画了不等于生了猫",
+        "一只，名字那一格是空的",
+        "图纸里有几格就站几只",
+        "两只，`name` 那一格自己算一只"
+      ],
+      "answer": 0,
+      "explanation": "图纸画的只是「凡是照它生出来的猫长什么样、会什么」，它自己不占任何一格，也不会叫、不会吃鱼干喵。真正让世界多一只猫的，是 `Cat c1;` 那一句。只画图纸不写这一句，碗边一只猫都没有。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "`c1` 和 `c2` 是照同一张图纸生出来的两只猫。本喵只给 `c1` 的鱼干那格里加了 2 条，`c2` 会跟着变吗？",
+      "options": [
+        "不会 —— 格子是每只猫各带一份的",
+        "会 —— 它俩照的是同一张图纸",
+        "会 —— 图纸上那一格被本喵改掉了",
+        "不会 —— 因为 `c2` 那一格还没放过东西"
+      ],
+      "answer": 0,
+      "explanation": "图纸只有一张，画完就那样，生多少只猫都不会把它用旧；但**格子是每只猫各带一份的** —— 生一只就带一套自己的 `name` 和 `fish`，跟别的猫谁也不碰谁喵。所以加 `c1` 那一格，`c2` 半点都不动（它变不变跟放没放过东西没关系，那是另一回事）。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    void meow() {\n        cout << \"本喵是\" << ____ << \"，今天吃了 \" << fish << \" 条小鱼干喵\" << endl;\n    }\n};\n\nint main() {\n    Cat c1;\n    c1.name = \"小橘\";\n    c1.fish = 3;\n    c1.____();\n    return 0;\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出），补上之后它会印出「本喵是小橘，今天吃了 3 条小鱼干喵」喵。",
+      "blanks": [
+        { "answer": "name", "accept": [] },
+        { "answer": "meow", "accept": [] }
+      ],
+      "explanation": "第一处在图纸画的那一招里面 —— 招式里直接写 `name`，说的就是**本喵自己**那一格，不用加任何前缀喵。第二处是把招式喊出来的写法：先说哪只猫、再喊招式名，所以那一格填的是招式名 `meow`，连起来念作「让 `c1` 这一只施展 `meow`」。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n};\n\nint main() {\n    Cat c1;\n    Cat c2;\n    c1.name = \"小橘\";\n    c1.fish = 3;\n    c2.name = \"狸花\";\n    c2.fish = 1;\n    c1.fish = c1.fish + 4;\n    cout << c1.name << \" 的账上是 \" << c1.fish << \" 条\" << endl;\n    cout << c2.name << \" 的账上是 \" << c2.fish << \" 条\" << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘 的账上是 7 条\n狸花 的账上是 1 条",
+      "accept": ["小橘 的账上是 7 条\n狸花 的账上是 1 条\n"],
+      "explanation": "小橘原本 3 条，加上 4 条就是 7 条；狸花那格从头到尾没人碰过，还是它自己那 1 条喵。两只猫照的是同一张图纸，可格子各带各的 —— 所以改一只，另一只一点没跟着变。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    void meow() {\n        cout << name << \" 说：本喵有 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Cat c1;\n    c1.name = \"大胖\";\n    c1.fish = 5;\n    c1.meow();\n    c1.fish = 2;\n    c1.meow();\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "大胖 说：本喵有 5 条\n大胖 说：本喵有 2 条",
+      "accept": ["大胖 说：本喵有 5 条\n大胖 说：本喵有 2 条\n"],
+      "explanation": "那一招里念的两个名字，读的都是**这一只自己**那两格，所以两次喊的都是大胖喵。第一次喊的时候那格装着 5；中间那句把 2 装了进去，第二次喊读到的自然就是 2 —— 招式不记旧账，每次念的都是格子里**当下**装着的东西。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-mod-on-decimal",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-05",
+  "type": "codefix",
+  "concept": ["% 的门规", "整条才收", "invalid operands"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 22, "max": 24 },
+    "cats": { "kind": "int", "min": 5, "max": 6 }
+  },
+  "stemTemplate": "本喵想算 {fish} 条小鱼干分给 {cats} 只猫之后还剩几条。\n\n可这一段**连翻都翻不过去** —— 翻译官喵冲那个求零头的记号发了火。你帮本喵改好：改完跑起来，屏幕上要印出剩下那几条。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    printf(\"还剩 %d 条\\n\", {fish}.0 % {cats});\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    printf(\"还剩 %d 条\\n\", {fish} % {cats});\n    return 0;\n}\n",
+  "explanationTemplate": "这处错的根源是一道**门规**喵：`%`（求零头那个记号）**只跟整条的东西打交道**。\n\n你把 {fish} 写成了 `{fish}.0`（带小数点的样子），它就成了一件小数的货 —— 一个「小数」和一个「整数」放在 `%` 两边，翻译官喵没见过这种阵仗，当场停活：\n\n```\nerror: invalid operands to binary % (have 'double' and 'int')\n```\n\n`invalid operands to binary %` 就是**「求零头这个记号，这两样货它不接」**（`double` 是小数那种，`int` 是整数那种）。\n\n改法很简单喵：把那个 `.0` 去掉，让它回到整条的样子：\n\n```c\nprintf(\"还剩 %d 条\\n\", {fish} % {cats});\n```\n\n顺便回头看一眼上一道「用 `/` 求零头」的题：两处栽的跟头其实是一家的 —— **记号要挑对，货也要挑对。** `/` 和 `%` 这两个记号，两边都只认整条的东西。"
+}

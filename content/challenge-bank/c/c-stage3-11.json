@@ -1,0 +1,416 @@
+{
+  "lessonId": "c-stage3-11",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-macro-brace-else-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "墙上那张 `REPORT` 条子，一次要印**两句**字。本喵让它顶在 `if` 后面单占一行，稿子翻译到一半就停了 —— 翻译官喵指着那个 `else` 说它「**没有主**」喵。\n\n那条子的身子是**一对花括号**裹着两句话。请你把**条子本身**修好（`main` 里那几行的用法一个字都别动）：往后把它顶在谁后面，都不许再散架。\n\n改好之后，`fish` 比 3 大就印两行 —— 先 `收货：小鱼干`、再 `记账完毕`；不比它大就只印一行 `今天没收到`。",
+      "brokenCode": "#include <stdio.h>\n\n#define REPORT(msg) { printf(\"收货：%s\\n\", msg); printf(\"记账完毕\\n\"); }\n\nint main(void) {\n    int fish = 7;\n    if (fish > 3)\n        REPORT(\"小鱼干\");\n    else\n        printf(\"今天没收到\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define REPORT(msg) \\\n    do { \\\n        printf(\"收货：%s\\n\", msg); \\\n        printf(\"记账完毕\\n\"); \\\n    } while (0)\n\nint main(void) {\n    int fish = 7;\n    if (fish > 3)\n        REPORT(\"小鱼干\");\n    else\n        printf(\"今天没收到\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "收货：小鱼干\n记账完毕",
+      "stdin": null,
+      "explanation": "那条条子的身子是**一对花括号**，里头两句。它被抄到 `if` 后面的时候，抄出来是这个形状：`if` 带上**一整块**，块后面还跟着本喵写的那个分号 —— 那个分号把 `if` 的话**收了尾**，下一行的 `else` 就成了没主的孤儿。翻译官喵当场停下：\n\n```text\nmain.c: In function 'main':\nmain.c:9:5: error: 'else' without a previous 'if'\n```\n\n（这两行报错是本喵照着上面那份稿子真跑出来的，行号数下来正落在 `else` 那行。）\n\n课文里给的解法是**跑一次的圈**：\n\n```text\n#define REPORT(msg) \\\n    do { \\\n        printf(\"收货：%s\\n\", msg); \\\n        printf(\"记账完毕\\n\"); \\\n    } while (0)\n```\n\n`do` 加上这一对花括号，整个人就**是一句话**了 —— 末尾那个分号落在它身上，跟 `if` 不打架，`else` 也就有了主；尾巴上的 `while (0)` 保证只印一次，绝不真绕圈。\n\n往后写这种「一次要干好几下」的条子，**只认这个形状**喵：光用一对花括号、或者把尾巴写成 `while (1)`，都会出岔子。",
+      "templateId": "c-s3-macro-brace-else",
+      "params": {
+        "v": "7",
+        "t": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:44.675Z",
+        "hash": "ae605311e97e1c9e"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-brace-else-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "墙上那张 `REPORT` 条子，一次要印**两句**字。本喵让它顶在 `if` 后面单占一行，稿子翻译到一半就停了 —— 翻译官喵指着那个 `else` 说它「**没有主**」喵。\n\n那条子的身子是**一对花括号**裹着两句话。请你把**条子本身**修好（`main` 里那几行的用法一个字都别动）：往后把它顶在谁后面，都不许再散架。\n\n改好之后，`fish` 比 9 大就印两行 —— 先 `收货：小鱼干`、再 `记账完毕`；不比它大就只印一行 `今天没收到`。",
+      "brokenCode": "#include <stdio.h>\n\n#define REPORT(msg) { printf(\"收货：%s\\n\", msg); printf(\"记账完毕\\n\"); }\n\nint main(void) {\n    int fish = 2;\n    if (fish > 9)\n        REPORT(\"小鱼干\");\n    else\n        printf(\"今天没收到\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define REPORT(msg) \\\n    do { \\\n        printf(\"收货：%s\\n\", msg); \\\n        printf(\"记账完毕\\n\"); \\\n    } while (0)\n\nint main(void) {\n    int fish = 2;\n    if (fish > 9)\n        REPORT(\"小鱼干\");\n    else\n        printf(\"今天没收到\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "今天没收到",
+      "stdin": null,
+      "explanation": "那条条子的身子是**一对花括号**，里头两句。它被抄到 `if` 后面的时候，抄出来是这个形状：`if` 带上**一整块**，块后面还跟着本喵写的那个分号 —— 那个分号把 `if` 的话**收了尾**，下一行的 `else` 就成了没主的孤儿。翻译官喵当场停下：\n\n```text\nmain.c: In function 'main':\nmain.c:9:5: error: 'else' without a previous 'if'\n```\n\n（这两行报错是本喵照着上面那份稿子真跑出来的，行号数下来正落在 `else` 那行。）\n\n课文里给的解法是**跑一次的圈**：\n\n```text\n#define REPORT(msg) \\\n    do { \\\n        printf(\"收货：%s\\n\", msg); \\\n        printf(\"记账完毕\\n\"); \\\n    } while (0)\n```\n\n`do` 加上这一对花括号，整个人就**是一句话**了 —— 末尾那个分号落在它身上，跟 `if` 不打架，`else` 也就有了主；尾巴上的 `while (0)` 保证只印一次，绝不真绕圈。\n\n往后写这种「一次要干好几下」的条子，**只认这个形状**喵：光用一对花括号、或者把尾巴写成 `while (1)`，都会出岔子。",
+      "templateId": "c-s3-macro-brace-else",
+      "params": {
+        "v": "2",
+        "t": "9"
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:45.908Z",
+        "hash": "4b1a7241ee59a77f"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-debug-switch-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "稿子开头贴着一张开关卡 `DEBUG`，写的是 `0`。本喵的规矩是：**`DEBUG` 是 `1` 的时候**，那行抓虫用的字跟着账目一起印出来；**是 `0` 的时候**，屏幕上一个字都不许多 —— 只留账目那一行。\n\n请你把抓虫那一行**包起来**，要用课文那张小表上**判值**的那个岔路口（`#if` 判值、`#ifdef` 判有没有）。改完之后：\n\n- `DEBUG` 是 `1` → 印**两行**：先 `[抓虫] 每只猫 2 条`，再账目那一行；\n- `DEBUG` 是 `0` → 只印**账目那一行**。\n\n抓虫那行的形状是 `[抓虫] 每只猫 %d 条`；稿子里现在是一句占位的 `[抓虫] 待补`，把它换成真正的那句，再包进岔路口里。别用 `if` 那种跑起来才判的做法喵 —— 本喵要的是**翻译之前**就把它扔掉。",
+      "starter": "#include <stdio.h>\n\n#define DEBUG 0\n#define FISH_PER_CAT 2\n\nint main(void) {\n    int cats = 3;\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来；先拿占位那句顶着 */\n    printf(\"[抓虫] 待补\\n\");\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define DEBUG 0\n#define FISH_PER_CAT 2\n\nint main(void) {\n    int cats = 3;\n#if DEBUG\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来 */\n    printf(\"[抓虫] 每只猫 %d 条\\n\", FISH_PER_CAT);\n#endif\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "expectedOutput": "3 只猫一共 6 条",
+      "stdin": null,
+      "explanation": "两处是一对喵：门上写 `#if DEBUG`，收尾写 `#endif`，夹在中间那一行归它们管。少了收尾那句，翻译官喵当场就翻不下去。\n\n关键是**挑哪个岔路口**：\n\n- `#if DEBUG` 看的是**值**。这张卡现在写的是 `0`：写 `1`，这一行留下来；写 `0`，它**在翻译之前就被扔掉**，屏幕上一个字都不多。\n- `#ifdef DEBUG` 看的是**有没有贴过这张卡**。这张卡**贴了**（不管写的是 0 还是 1），所以换成它，`DEBUG` 写成 `0` 那行**照样会印出来** —— 开关根本关不上。\n\n本喵把两种写法都真跑过一遍，差别就是上面这样。\n\n还有一条：稿子里的抓虫行现在是占位的 `[抓虫] 待补`，要换成照 `printf` 那句原本的形状（`[抓虫] 每只猫 %d 条`）**再包进门里** —— 只删不包，`DEBUG` 拨到 `1` 的稿子就印不出抓虫那行了喵。",
+      "templateId": "c-s3-macro-debug-switch-write",
+      "params": {
+        "d": "0",
+        "k": "2",
+        "n": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T18:39:19.324Z",
+        "hash": "9fbfc500fb64c9e9"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-debug-switch-write-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "稿子开头贴着一张开关卡 `DEBUG`，写的是 `0`。本喵的规矩是：**`DEBUG` 是 `1` 的时候**，那行抓虫用的字跟着账目一起印出来；**是 `0` 的时候**，屏幕上一个字都不许多 —— 只留账目那一行。\n\n请你把抓虫那一行**包起来**，要用课文那张小表上**判值**的那个岔路口（`#if` 判值、`#ifdef` 判有没有）。改完之后：\n\n- `DEBUG` 是 `1` → 印**两行**：先 `[抓虫] 每只猫 2 条`，再账目那一行；\n- `DEBUG` 是 `0` → 只印**账目那一行**。\n\n抓虫那行的形状是 `[抓虫] 每只猫 %d 条`；稿子里现在是一句占位的 `[抓虫] 待补`，把它换成真正的那句，再包进岔路口里。别用 `if` 那种跑起来才判的做法喵 —— 本喵要的是**翻译之前**就把它扔掉。",
+      "starter": "#include <stdio.h>\n\n#define DEBUG 0\n#define FISH_PER_CAT 2\n\nint main(void) {\n    int cats = 4;\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来；先拿占位那句顶着 */\n    printf(\"[抓虫] 待补\\n\");\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define DEBUG 0\n#define FISH_PER_CAT 2\n\nint main(void) {\n    int cats = 4;\n#if DEBUG\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来 */\n    printf(\"[抓虫] 每只猫 %d 条\\n\", FISH_PER_CAT);\n#endif\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "expectedOutput": "4 只猫一共 8 条",
+      "stdin": null,
+      "explanation": "两处是一对喵：门上写 `#if DEBUG`，收尾写 `#endif`，夹在中间那一行归它们管。少了收尾那句，翻译官喵当场就翻不下去。\n\n关键是**挑哪个岔路口**：\n\n- `#if DEBUG` 看的是**值**。这张卡现在写的是 `0`：写 `1`，这一行留下来；写 `0`，它**在翻译之前就被扔掉**，屏幕上一个字都不多。\n- `#ifdef DEBUG` 看的是**有没有贴过这张卡**。这张卡**贴了**（不管写的是 0 还是 1），所以换成它，`DEBUG` 写成 `0` 那行**照样会印出来** —— 开关根本关不上。\n\n本喵把两种写法都真跑过一遍，差别就是上面这样。\n\n还有一条：稿子里的抓虫行现在是占位的 `[抓虫] 待补`，要换成照 `printf` 那句原本的形状（`[抓虫] 每只猫 %d 条`）**再包进门里** —— 只删不包，`DEBUG` 拨到 `1` 的稿子就印不出抓虫那行了喵。",
+      "templateId": "c-s3-macro-debug-switch-write",
+      "params": {
+        "d": "0",
+        "k": "2",
+        "n": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T18:39:21.471Z",
+        "hash": "1f9e42edce07f7a4"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-debug-switch-write-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "稿子开头贴着一张开关卡 `DEBUG`，写的是 `0`。本喵的规矩是：**`DEBUG` 是 `1` 的时候**，那行抓虫用的字跟着账目一起印出来；**是 `0` 的时候**，屏幕上一个字都不许多 —— 只留账目那一行。\n\n请你把抓虫那一行**包起来**，要用课文那张小表上**判值**的那个岔路口（`#if` 判值、`#ifdef` 判有没有）。改完之后：\n\n- `DEBUG` 是 `1` → 印**两行**：先 `[抓虫] 每只猫 5 条`，再账目那一行；\n- `DEBUG` 是 `0` → 只印**账目那一行**。\n\n抓虫那行的形状是 `[抓虫] 每只猫 %d 条`；稿子里现在是一句占位的 `[抓虫] 待补`，把它换成真正的那句，再包进岔路口里。别用 `if` 那种跑起来才判的做法喵 —— 本喵要的是**翻译之前**就把它扔掉。",
+      "starter": "#include <stdio.h>\n\n#define DEBUG 0\n#define FISH_PER_CAT 5\n\nint main(void) {\n    int cats = 4;\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来；先拿占位那句顶着 */\n    printf(\"[抓虫] 待补\\n\");\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define DEBUG 0\n#define FISH_PER_CAT 5\n\nint main(void) {\n    int cats = 4;\n#if DEBUG\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来 */\n    printf(\"[抓虫] 每只猫 %d 条\\n\", FISH_PER_CAT);\n#endif\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "expectedOutput": "4 只猫一共 20 条",
+      "stdin": null,
+      "explanation": "两处是一对喵：门上写 `#if DEBUG`，收尾写 `#endif`，夹在中间那一行归它们管。少了收尾那句，翻译官喵当场就翻不下去。\n\n关键是**挑哪个岔路口**：\n\n- `#if DEBUG` 看的是**值**。这张卡现在写的是 `0`：写 `1`，这一行留下来；写 `0`，它**在翻译之前就被扔掉**，屏幕上一个字都不多。\n- `#ifdef DEBUG` 看的是**有没有贴过这张卡**。这张卡**贴了**（不管写的是 0 还是 1），所以换成它，`DEBUG` 写成 `0` 那行**照样会印出来** —— 开关根本关不上。\n\n本喵把两种写法都真跑过一遍，差别就是上面这样。\n\n还有一条：稿子里的抓虫行现在是占位的 `[抓虫] 待补`，要换成照 `printf` 那句原本的形状（`[抓虫] 每只猫 %d 条`）**再包进门里** —— 只删不包，`DEBUG` 拨到 `1` 的稿子就印不出抓虫那行了喵。",
+      "templateId": "c-s3-macro-debug-switch-write",
+      "params": {
+        "d": "0",
+        "k": "5",
+        "n": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T18:39:23.708Z",
+        "hash": "199a26b1e1cc428b"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-debug-switch-write-004",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "稿子开头贴着一张开关卡 `DEBUG`，写的是 `1`。本喵的规矩是：**`DEBUG` 是 `1` 的时候**，那行抓虫用的字跟着账目一起印出来；**是 `0` 的时候**，屏幕上一个字都不许多 —— 只留账目那一行。\n\n请你把抓虫那一行**包起来**，要用课文那张小表上**判值**的那个岔路口（`#if` 判值、`#ifdef` 判有没有）。改完之后：\n\n- `DEBUG` 是 `1` → 印**两行**：先 `[抓虫] 每只猫 2 条`，再账目那一行；\n- `DEBUG` 是 `0` → 只印**账目那一行**。\n\n抓虫那行的形状是 `[抓虫] 每只猫 %d 条`；稿子里现在是一句占位的 `[抓虫] 待补`，把它换成真正的那句，再包进岔路口里。别用 `if` 那种跑起来才判的做法喵 —— 本喵要的是**翻译之前**就把它扔掉。",
+      "starter": "#include <stdio.h>\n\n#define DEBUG 1\n#define FISH_PER_CAT 2\n\nint main(void) {\n    int cats = 3;\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来；先拿占位那句顶着 */\n    printf(\"[抓虫] 待补\\n\");\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define DEBUG 1\n#define FISH_PER_CAT 2\n\nint main(void) {\n    int cats = 3;\n#if DEBUG\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来 */\n    printf(\"[抓虫] 每只猫 %d 条\\n\", FISH_PER_CAT);\n#endif\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "expectedOutput": "[抓虫] 每只猫 2 条\n3 只猫一共 6 条",
+      "stdin": null,
+      "explanation": "两处是一对喵：门上写 `#if DEBUG`，收尾写 `#endif`，夹在中间那一行归它们管。少了收尾那句，翻译官喵当场就翻不下去。\n\n关键是**挑哪个岔路口**：\n\n- `#if DEBUG` 看的是**值**。这张卡现在写的是 `1`：写 `1`，这一行留下来；写 `0`，它**在翻译之前就被扔掉**，屏幕上一个字都不多。\n- `#ifdef DEBUG` 看的是**有没有贴过这张卡**。这张卡**贴了**（不管写的是 0 还是 1），所以换成它，`DEBUG` 写成 `0` 那行**照样会印出来** —— 开关根本关不上。\n\n本喵把两种写法都真跑过一遍，差别就是上面这样。\n\n还有一条：稿子里的抓虫行现在是占位的 `[抓虫] 待补`，要换成照 `printf` 那句原本的形状（`[抓虫] 每只猫 %d 条`）**再包进门里** —— 只删不包，`DEBUG` 拨到 `1` 的稿子就印不出抓虫那行了喵。",
+      "templateId": "c-s3-macro-debug-switch-write",
+      "params": {
+        "d": "1",
+        "k": "2",
+        "n": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T18:39:25.917Z",
+        "hash": "975fc3d74551f2de"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-debug-switch-write-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "稿子开头贴着一张开关卡 `DEBUG`，写的是 `1`。本喵的规矩是：**`DEBUG` 是 `1` 的时候**，那行抓虫用的字跟着账目一起印出来；**是 `0` 的时候**，屏幕上一个字都不许多 —— 只留账目那一行。\n\n请你把抓虫那一行**包起来**，要用课文那张小表上**判值**的那个岔路口（`#if` 判值、`#ifdef` 判有没有）。改完之后：\n\n- `DEBUG` 是 `1` → 印**两行**：先 `[抓虫] 每只猫 5 条`，再账目那一行；\n- `DEBUG` 是 `0` → 只印**账目那一行**。\n\n抓虫那行的形状是 `[抓虫] 每只猫 %d 条`；稿子里现在是一句占位的 `[抓虫] 待补`，把它换成真正的那句，再包进岔路口里。别用 `if` 那种跑起来才判的做法喵 —— 本喵要的是**翻译之前**就把它扔掉。",
+      "starter": "#include <stdio.h>\n\n#define DEBUG 1\n#define FISH_PER_CAT 5\n\nint main(void) {\n    int cats = 3;\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来；先拿占位那句顶着 */\n    printf(\"[抓虫] 待补\\n\");\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define DEBUG 1\n#define FISH_PER_CAT 5\n\nint main(void) {\n    int cats = 3;\n#if DEBUG\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来 */\n    printf(\"[抓虫] 每只猫 %d 条\\n\", FISH_PER_CAT);\n#endif\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "expectedOutput": "[抓虫] 每只猫 5 条\n3 只猫一共 15 条",
+      "stdin": null,
+      "explanation": "两处是一对喵：门上写 `#if DEBUG`，收尾写 `#endif`，夹在中间那一行归它们管。少了收尾那句，翻译官喵当场就翻不下去。\n\n关键是**挑哪个岔路口**：\n\n- `#if DEBUG` 看的是**值**。这张卡现在写的是 `1`：写 `1`，这一行留下来；写 `0`，它**在翻译之前就被扔掉**，屏幕上一个字都不多。\n- `#ifdef DEBUG` 看的是**有没有贴过这张卡**。这张卡**贴了**（不管写的是 0 还是 1），所以换成它，`DEBUG` 写成 `0` 那行**照样会印出来** —— 开关根本关不上。\n\n本喵把两种写法都真跑过一遍，差别就是上面这样。\n\n还有一条：稿子里的抓虫行现在是占位的 `[抓虫] 待补`，要换成照 `printf` 那句原本的形状（`[抓虫] 每只猫 %d 条`）**再包进门里** —— 只删不包，`DEBUG` 拨到 `1` 的稿子就印不出抓虫那行了喵。",
+      "templateId": "c-s3-macro-debug-switch-write",
+      "params": {
+        "d": "1",
+        "k": "5",
+        "n": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T18:39:28.145Z",
+        "hash": "5a5f609991d2608c"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-debug-switch-write-007",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "稿子开头贴着一张开关卡 `DEBUG`，写的是 `1`。本喵的规矩是：**`DEBUG` 是 `1` 的时候**，那行抓虫用的字跟着账目一起印出来；**是 `0` 的时候**，屏幕上一个字都不许多 —— 只留账目那一行。\n\n请你把抓虫那一行**包起来**，要用课文那张小表上**判值**的那个岔路口（`#if` 判值、`#ifdef` 判有没有）。改完之后：\n\n- `DEBUG` 是 `1` → 印**两行**：先 `[抓虫] 每只猫 5 条`，再账目那一行；\n- `DEBUG` 是 `0` → 只印**账目那一行**。\n\n抓虫那行的形状是 `[抓虫] 每只猫 %d 条`；稿子里现在是一句占位的 `[抓虫] 待补`，把它换成真正的那句，再包进岔路口里。别用 `if` 那种跑起来才判的做法喵 —— 本喵要的是**翻译之前**就把它扔掉。",
+      "starter": "#include <stdio.h>\n\n#define DEBUG 1\n#define FISH_PER_CAT 5\n\nint main(void) {\n    int cats = 4;\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来；先拿占位那句顶着 */\n    printf(\"[抓虫] 待补\\n\");\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define DEBUG 1\n#define FISH_PER_CAT 5\n\nint main(void) {\n    int cats = 4;\n#if DEBUG\n    /* ↓ 这一行只在 DEBUG 是真的时候才该印出来 */\n    printf(\"[抓虫] 每只猫 %d 条\\n\", FISH_PER_CAT);\n#endif\n    printf(\"%d 只猫一共 %d 条\\n\", cats, cats * FISH_PER_CAT);\n    return 0;\n}\n",
+      "expectedOutput": "[抓虫] 每只猫 5 条\n4 只猫一共 20 条",
+      "stdin": null,
+      "explanation": "两处是一对喵：门上写 `#if DEBUG`，收尾写 `#endif`，夹在中间那一行归它们管。少了收尾那句，翻译官喵当场就翻不下去。\n\n关键是**挑哪个岔路口**：\n\n- `#if DEBUG` 看的是**值**。这张卡现在写的是 `1`：写 `1`，这一行留下来；写 `0`，它**在翻译之前就被扔掉**，屏幕上一个字都不多。\n- `#ifdef DEBUG` 看的是**有没有贴过这张卡**。这张卡**贴了**（不管写的是 0 还是 1），所以换成它，`DEBUG` 写成 `0` 那行**照样会印出来** —— 开关根本关不上。\n\n本喵把两种写法都真跑过一遍，差别就是上面这样。\n\n还有一条：稿子里的抓虫行现在是占位的 `[抓虫] 待补`，要换成照 `printf` 那句原本的形状（`[抓虫] 每只猫 %d 条`）**再包进门里** —— 只删不包，`DEBUG` 拨到 `1` 的稿子就印不出抓虫那行了喵。",
+      "templateId": "c-s3-macro-debug-switch-write",
+      "params": {
+        "d": "1",
+        "k": "5",
+        "n": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T18:39:30.389Z",
+        "hash": "d422bce1592db8ef"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-double-eval-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵鱼缸里原本有 **6** 条捞出来的鱼。本喵喊了一句「挑大的那只」：一只投喂是**再捞一条出来数**（捞一条，数就加一），另一只投喂是个固定的 2。\n\n那张条子写的是：\n\n```text\n#define BIGGER(a, b) ((a) > (b) ? (a) : (b))\n```\n\n翻译官喵一声没吭，编译跑得好好的。可印出来的数**不对**：本喵明明只捞了一条，那个数却往上蹦了**两下**。\n\n请你把它改对（`main` 里那句喊话的用法别动）。改好之后该印两行，**两行都是 `7`** —— 只捞一条的话，数就该停在这儿，挑出来最大的也是它。",
+      "brokenCode": "#include <stdio.h>\n\nint bowl = 6;\n\nint take_one(void) {\n    bowl = bowl + 1;\n    return bowl;\n}\n\n#define BIGGER(a, b) ((a) > (b) ? (a) : (b))\n\nint main(void) {\n    int biggest = BIGGER(take_one(), 2);\n    printf(\"挑出来的是 %d\\n\", biggest);\n    printf(\"鱼缸里现在是 %d\\n\", bowl);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint bowl = 6;\n\nint take_one(void) {\n    bowl = bowl + 1;\n    return bowl;\n}\n\nint bigger(int a, int b) {\n    return a > b ? a : b;\n}\n\nint main(void) {\n    int biggest = bigger(take_one(), 2);\n    printf(\"挑出来的是 %d\\n\", biggest);\n    printf(\"鱼缸里现在是 %d\\n\", bowl);\n    return 0;\n}\n",
+      "expectedOutput": "挑出来的是 7\n鱼缸里现在是 7",
+      "stdin": null,
+      "explanation": "病根是**那张条子把投喂抄了两遍**喵。\n\n`BIGGER(a, b)` 的身子是 `((a) > (b) ? (a) : (b))` —— `a` 在里头出现了**两次**。条子是**照抄**的，所以 `take_one()` 被**喊了两遍**：比大小的时候捞一条，挑的时候又捞一条，鱼缸里原本 `6` 条，一下就加了两下。\n\n⚠️ 这里要看清一件事：**这不是括号没穿好的错**。哪怕给投喂穿满括号，`a` 在条子上还是出现两次 —— 喂进去的那下照样会被算两遍。\n\n要「只算一次」，就不能用照抄的条子，得把它换成**真招式**：\n\n```text\nint bigger(int a, int b) {\n    return a > b ? a : b;\n}\n```\n\n名字、投喂、叼回来的东西都照旧，只是**从条子变成了招式**。招式是**先把投喂算好、再进门**的，所以 `take_one()` 只被喊一遍，鱼缸停在 `7`，两行印出来就一样了。\n\n往后自己写条子时记住这条：**投喂里别放「算一次就会变一点」的东西**（自增、收输入、喊招式都算）。真要放，就先把它挪出来算好，或者老老实实写成招式喵。",
+      "templateId": "c-s3-macro-double-eval",
+      "params": {
+        "v": "6",
+        "w": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:36.227Z",
+        "hash": "65d6a35447268e31"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-double-eval-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵鱼缸里原本有 **9** 条捞出来的鱼。本喵喊了一句「挑大的那只」：一只投喂是**再捞一条出来数**（捞一条，数就加一），另一只投喂是个固定的 2。\n\n那张条子写的是：\n\n```text\n#define BIGGER(a, b) ((a) > (b) ? (a) : (b))\n```\n\n翻译官喵一声没吭，编译跑得好好的。可印出来的数**不对**：本喵明明只捞了一条，那个数却往上蹦了**两下**。\n\n请你把它改对（`main` 里那句喊话的用法别动）。改好之后该印两行，**两行都是 `10`** —— 只捞一条的话，数就该停在这儿，挑出来最大的也是它。",
+      "brokenCode": "#include <stdio.h>\n\nint bowl = 9;\n\nint take_one(void) {\n    bowl = bowl + 1;\n    return bowl;\n}\n\n#define BIGGER(a, b) ((a) > (b) ? (a) : (b))\n\nint main(void) {\n    int biggest = BIGGER(take_one(), 2);\n    printf(\"挑出来的是 %d\\n\", biggest);\n    printf(\"鱼缸里现在是 %d\\n\", bowl);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint bowl = 9;\n\nint take_one(void) {\n    bowl = bowl + 1;\n    return bowl;\n}\n\nint bigger(int a, int b) {\n    return a > b ? a : b;\n}\n\nint main(void) {\n    int biggest = bigger(take_one(), 2);\n    printf(\"挑出来的是 %d\\n\", biggest);\n    printf(\"鱼缸里现在是 %d\\n\", bowl);\n    return 0;\n}\n",
+      "expectedOutput": "挑出来的是 10\n鱼缸里现在是 10",
+      "stdin": null,
+      "explanation": "病根是**那张条子把投喂抄了两遍**喵。\n\n`BIGGER(a, b)` 的身子是 `((a) > (b) ? (a) : (b))` —— `a` 在里头出现了**两次**。条子是**照抄**的，所以 `take_one()` 被**喊了两遍**：比大小的时候捞一条，挑的时候又捞一条，鱼缸里原本 `9` 条，一下就加了两下。\n\n⚠️ 这里要看清一件事：**这不是括号没穿好的错**。哪怕给投喂穿满括号，`a` 在条子上还是出现两次 —— 喂进去的那下照样会被算两遍。\n\n要「只算一次」，就不能用照抄的条子，得把它换成**真招式**：\n\n```text\nint bigger(int a, int b) {\n    return a > b ? a : b;\n}\n```\n\n名字、投喂、叼回来的东西都照旧，只是**从条子变成了招式**。招式是**先把投喂算好、再进门**的，所以 `take_one()` 只被喊一遍，鱼缸停在 `10`，两行印出来就一样了。\n\n往后自己写条子时记住这条：**投喂里别放「算一次就会变一点」的东西**（自增、收输入、喊招式都算）。真要放，就先把它挪出来算好，或者老老实实写成招式喵。",
+      "templateId": "c-s3-macro-double-eval",
+      "params": {
+        "v": "9",
+        "w": "10"
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:37.959Z",
+        "hash": "2b0c2f3a31f7cfc3"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-mode-value-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "稿子开头贴着一张**档位卡**：要么是 `#define MODE 0`，要么是 `#define MODE 1`。本喵要按它的**值**挑一档印出来：\n\n- 值是 `1` → 印一行 `花哨版开饭`；\n- 值是 `0` → 印一行 `朴素版开饭`。\n\n**一行就够了，两行都印算错。**\n\n小心这两个词不一样：`#if MODE` 看的是**值**，`#ifdef MODE` 看的是**有没有贴过这张卡**。这张卡是**贴了的** —— 所以这回得用**看值**的那个，别让值是 `0` 的时候也走花哨那档。\n\n把挑档的几句写进 `main` 里。稿子现在印的是一句占位的 `待挑档`，把它换成按值挑档的两句 —— `花哨版开饭` 和 `朴素版开饭` 都你自己写。",
+      "starter": "#include <stdio.h>\n\n#define MODE 0\n\nint main(void) {\n    /* ↓ 按档位的值挑一句印出来，一行就够；先拿占位那句顶着 */\n    printf(\"待挑档\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MODE 0\n\nint main(void) {\n#if MODE\n    printf(\"花哨版开饭\\n\");\n#else\n    printf(\"朴素版开饭\\n\");\n#endif\n    return 0;\n}\n",
+      "expectedOutput": "朴素版开饭",
+      "stdin": null,
+      "explanation": "这张卡是**贴了的**，值可能是 `0` —— 所以只能用看值的 `#if MODE`，不能用看「有没有贴」的 `#ifdef MODE` 喵。\n\n- `#if MODE` 判下来是 `0` 就是假：走 `#else` 那一档，印 `朴素版开饭`；是 `1` 就是真：印 `花哨版开饭`。\n- `#ifdef MODE` 判的是「有没有贴过这张卡」：`#define MODE 0` 在它眼里照样算贴过，于是**值是 `0` 也会走花哨那档**，两档就白分了。\n\n本喵把这两种写法都真跑了一遍，差别就是上面这个。\n\n稿子里那句 `待挑档` 只是占位，最后要换成上面那两句之一（哪一句由档位的值决定）喵。\n\n顺带记一句：写成 `#if MODE == 1` 也是看值，一样能用；真正要躲开的是 `#ifdef` 和 `#if defined(...)` —— 那两种都是看有没有贴。",
+      "templateId": "c-s3-macro-mode-value-write",
+      "params": {
+        "m": "#define MODE 0"
+      },
+      "verified": {
+        "at": "2026-10-20T18:39:14.375Z",
+        "hash": "b1b4c5b3505ea4da"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-mode-value-write-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "稿子开头贴着一张**档位卡**：要么是 `#define MODE 0`，要么是 `#define MODE 1`。本喵要按它的**值**挑一档印出来：\n\n- 值是 `1` → 印一行 `花哨版开饭`；\n- 值是 `0` → 印一行 `朴素版开饭`。\n\n**一行就够了，两行都印算错。**\n\n小心这两个词不一样：`#if MODE` 看的是**值**，`#ifdef MODE` 看的是**有没有贴过这张卡**。这张卡是**贴了的** —— 所以这回得用**看值**的那个，别让值是 `0` 的时候也走花哨那档。\n\n把挑档的几句写进 `main` 里。稿子现在印的是一句占位的 `待挑档`，把它换成按值挑档的两句 —— `花哨版开饭` 和 `朴素版开饭` 都你自己写。",
+      "starter": "#include <stdio.h>\n\n#define MODE 1\n\nint main(void) {\n    /* ↓ 按档位的值挑一句印出来，一行就够；先拿占位那句顶着 */\n    printf(\"待挑档\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n#define MODE 1\n\nint main(void) {\n#if MODE\n    printf(\"花哨版开饭\\n\");\n#else\n    printf(\"朴素版开饭\\n\");\n#endif\n    return 0;\n}\n",
+      "expectedOutput": "花哨版开饭",
+      "stdin": null,
+      "explanation": "这张卡是**贴了的**，值可能是 `0` —— 所以只能用看值的 `#if MODE`，不能用看「有没有贴」的 `#ifdef MODE` 喵。\n\n- `#if MODE` 判下来是 `0` 就是假：走 `#else` 那一档，印 `朴素版开饭`；是 `1` 就是真：印 `花哨版开饭`。\n- `#ifdef MODE` 判的是「有没有贴过这张卡」：`#define MODE 0` 在它眼里照样算贴过，于是**值是 `0` 也会走花哨那档**，两档就白分了。\n\n本喵把这两种写法都真跑了一遍，差别就是上面这个。\n\n稿子里那句 `待挑档` 只是占位，最后要换成上面那两句之一（哪一句由档位的值决定）喵。\n\n顺带记一句：写成 `#if MODE == 1` 也是看值，一样能用；真正要躲开的是 `#ifdef` 和 `#if defined(...)` —— 那两种都是看有没有贴。",
+      "templateId": "c-s3-macro-mode-value-write",
+      "params": {
+        "m": "#define MODE 1"
+      },
+      "verified": {
+        "at": "2026-10-20T18:39:16.465Z",
+        "hash": "92b5c3297fbdd388"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-parens-stdin-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这张条子写着「翻一倍」，喂给它的是**两只数加起来**那个式子：\n\n```text\n#define DOUBLE_BAD(x) x * 2\n```\n\n翻译官喵照着抄，跑起来一声没吭，可第二行的数**不对** —— 它只把后面那只数翻了一倍，前面那只原封不动地加了进去。\n\n请你把它改好，规矩照课文里那条：**喂进来的式子先穿一层括号，整个结果再穿一层**。改好之后该印两行：第一行是两只数**加起来**，第二行是**加起来以后再翻一倍**。\n\n样例喂进去的两只数是\n\n```text\n21\n32\n```\n\n该印出来的是\n\n```text\n加起来是 53\n翻一倍是 106\n```\n\n（判分喂的是另外两只数喵，所以你那份印出来的数跟样例不一样，规矩是一样的。）",
+      "brokenCode": "#include <stdio.h>\n\n#define DOUBLE_BAD(x) x * 2\n\nint main(void) {\n    int x, y;\n    if (scanf(\"%d %d\", &x, &y) != 2) {\n        return 1;\n    }\n    printf(\"加起来是 %d\\n\", x + y);\n    printf(\"翻一倍是 %d\\n\", DOUBLE_BAD(x + y));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define DOUBLE_BAD(x) ((x) * 2)\n\nint main(void) {\n    int x, y;\n    if (scanf(\"%d %d\", &x, &y) != 2) {\n        return 1;\n    }\n    printf(\"加起来是 %d\\n\", x + y);\n    printf(\"翻一倍是 %d\\n\", DOUBLE_BAD(x + y));\n    return 0;\n}\n",
+      "expectedOutput": "加起来是 6\n翻一倍是 12",
+      "stdin": "1\n5\n",
+      "explanation": "病根是**条子少穿了一层括号**喵。\n\n墙上那张条子是**照抄**的：`DOUBLE_BAD(x + y)` 抄出来成了 `x + y * 2` —— 乘号先算，再把 `x` 加上去。于是只有后面那只数被翻了一倍，前面那只**原样**混在里面。\n\n课文里 `HALF_BAD(4)` 栽的是同一个坑：`100 / HALF_BAD(4)` 抄成了 `100 / 4 / 2`，除号从左往右一路算下去，印出来 12，而本喵想要的是 50。\n\n两层括号各管一件事：\n\n- **投喂那层 `(x)`**：管住喂进来的式子别被扯开 —— 少了它，`x + y` 会被 `* 2` 只粘住一半。\n- **整体那层**：管住整个结果别被外面的运算吃掉 —— 这张条子哪天被塞进一个更大的算式里（比如 `100 / DOUBLE_BAD(n)`），少了它，外面的除号就会跟条子里的乘号先凑一对。\n\n两层都穿好之后，抄出来是 `((x + y) * 2)`：先加后乘，第二行才对得上。\n\n> 顺一句：括号是给**照抄的条子**穿的。招式里进门的东西本来就会先算好，不用操心这个喵。",
+      "templateId": "c-s3-macro-parens-stdin",
+      "params": {
+        "a": "1",
+        "b": "5"
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:40.474Z",
+        "hash": "ac1b05f00b6e5a31"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-parens-stdin-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这张条子写着「翻一倍」，喂给它的是**两只数加起来**那个式子：\n\n```text\n#define DOUBLE_BAD(x) x * 2\n```\n\n翻译官喵照着抄，跑起来一声没吭，可第二行的数**不对** —— 它只把后面那只数翻了一倍，前面那只原封不动地加了进去。\n\n请你把它改好，规矩照课文里那条：**喂进来的式子先穿一层括号，整个结果再穿一层**。改好之后该印两行：第一行是两只数**加起来**，第二行是**加起来以后再翻一倍**。\n\n样例喂进去的两只数是\n\n```text\n21\n32\n```\n\n该印出来的是\n\n```text\n加起来是 53\n翻一倍是 106\n```\n\n（判分喂的是另外两只数喵，所以你那份印出来的数跟样例不一样，规矩是一样的。）",
+      "brokenCode": "#include <stdio.h>\n\n#define DOUBLE_BAD(x) x * 2\n\nint main(void) {\n    int x, y;\n    if (scanf(\"%d %d\", &x, &y) != 2) {\n        return 1;\n    }\n    printf(\"加起来是 %d\\n\", x + y);\n    printf(\"翻一倍是 %d\\n\", DOUBLE_BAD(x + y));\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\n#define DOUBLE_BAD(x) ((x) * 2)\n\nint main(void) {\n    int x, y;\n    if (scanf(\"%d %d\", &x, &y) != 2) {\n        return 1;\n    }\n    printf(\"加起来是 %d\\n\", x + y);\n    printf(\"翻一倍是 %d\\n\", DOUBLE_BAD(x + y));\n    return 0;\n}\n",
+      "expectedOutput": "加起来是 8\n翻一倍是 16",
+      "stdin": "2\n6\n",
+      "explanation": "病根是**条子少穿了一层括号**喵。\n\n墙上那张条子是**照抄**的：`DOUBLE_BAD(x + y)` 抄出来成了 `x + y * 2` —— 乘号先算，再把 `x` 加上去。于是只有后面那只数被翻了一倍，前面那只**原样**混在里面。\n\n课文里 `HALF_BAD(4)` 栽的是同一个坑：`100 / HALF_BAD(4)` 抄成了 `100 / 4 / 2`，除号从左往右一路算下去，印出来 12，而本喵想要的是 50。\n\n两层括号各管一件事：\n\n- **投喂那层 `(x)`**：管住喂进来的式子别被扯开 —— 少了它，`x + y` 会被 `* 2` 只粘住一半。\n- **整体那层**：管住整个结果别被外面的运算吃掉 —— 这张条子哪天被塞进一个更大的算式里（比如 `100 / DOUBLE_BAD(n)`），少了它，外面的除号就会跟条子里的乘号先凑一对。\n\n两层都穿好之后，抄出来是 `((x + y) * 2)`：先加后乘，第二行才对得上。\n\n> 顺一句：括号是给**照抄的条子**穿的。招式里进门的东西本来就会先算好，不用操心这个喵。",
+      "templateId": "c-s3-macro-parens-stdin",
+      "params": {
+        "a": "2",
+        "b": "6"
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:42.748Z",
+        "hash": "ccd4a49ae455b1b1"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-share-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有 `6` 条小鱼干，要按 `2` 只猫**平均分**；分完还想看看「100 条能装满几个这样的盆」。\n\n请写这么一张条子：名字叫 `SHARE`，喂进去**总数**和**只数**两项，叼回来**平均分到几条**（整数）。稿子里已经在用它了，用法长这样：\n\n```text\nSHARE(total + 4, cats)\n```\n\n注意两件事喵：\n\n- 喂进去的第一项是个**加法式子**，条子照抄之后得先把它加起来；\n- 这张条子还被塞进了 `100 / ...` 这样的算式里，**整个结果也得是完整的一份**，不能被外面的除号吃掉一截。\n\n按课文里的规矩（**投喂穿一层、整体再穿一层**）把 `SHARE` 写在稿子上留的那一行，`main` 里那几行一个字都别动。该印两行：`每只猫分到 ` 加上均分的整数、再跟一个 ` 条`；`100 条能装满 ` 加上盆数、再跟一个 ` 个盆`。",
+      "starter": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) (total)\n\nint main(void) {\n    int total = 6;\n    int cats = 2;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 4, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 4, cats));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) ((total) / (cats))\n\nint main(void) {\n    int total = 6;\n    int cats = 2;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 4, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 4, cats));\n    return 0;\n}\n",
+      "expectedOutput": "每只猫分到 5 条\n100 条能装满 20 个盆",
+      "stdin": null,
+      "explanation": "条子的身子要写成 `((total) / (cats))` 喵 —— **两层括号都要**：\n\n- **投喂那层**：喂进来的是 `total + 4` 这样的**式子**。少了它，照抄出来成了 `total + 4 / cats`，加号后面的东西被拆得只剩一半。\n- **整体那层**：这张条子被塞进了 `100 / SHARE(...)` 里。少了它，抄出来是 `100 / total / cats` —— 除号从左往右先算 `100 / total`，答案就全歪了。\n\n两层的分工记一句就够了：**里层护投喂、外层护自己**。\n\n本喵把两种写法都真跑过：少一层括号就少一截数，样例里两行全都不一样。这条规矩往后越写越长的稿子里最容易被忘掉，趁现在记牢喵。",
+      "templateId": "c-s3-macro-share-write",
+      "params": {
+        "a": "6",
+        "b": "2",
+        "c": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:48.952Z",
+        "hash": "6e55035d75d64a18"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-share-write-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有 `6` 条小鱼干，要按 `2` 只猫**平均分**；分完还想看看「100 条能装满几个这样的盆」。\n\n请写这么一张条子：名字叫 `SHARE`，喂进去**总数**和**只数**两项，叼回来**平均分到几条**（整数）。稿子里已经在用它了，用法长这样：\n\n```text\nSHARE(total + 6, cats)\n```\n\n注意两件事喵：\n\n- 喂进去的第一项是个**加法式子**，条子照抄之后得先把它加起来；\n- 这张条子还被塞进了 `100 / ...` 这样的算式里，**整个结果也得是完整的一份**，不能被外面的除号吃掉一截。\n\n按课文里的规矩（**投喂穿一层、整体再穿一层**）把 `SHARE` 写在稿子上留的那一行，`main` 里那几行一个字都别动。该印两行：`每只猫分到 ` 加上均分的整数、再跟一个 ` 条`；`100 条能装满 ` 加上盆数、再跟一个 ` 个盆`。",
+      "starter": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) (total)\n\nint main(void) {\n    int total = 6;\n    int cats = 2;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 6, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 6, cats));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) ((total) / (cats))\n\nint main(void) {\n    int total = 6;\n    int cats = 2;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 6, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 6, cats));\n    return 0;\n}\n",
+      "expectedOutput": "每只猫分到 6 条\n100 条能装满 16 个盆",
+      "stdin": null,
+      "explanation": "条子的身子要写成 `((total) / (cats))` 喵 —— **两层括号都要**：\n\n- **投喂那层**：喂进来的是 `total + 6` 这样的**式子**。少了它，照抄出来成了 `total + 6 / cats`，加号后面的东西被拆得只剩一半。\n- **整体那层**：这张条子被塞进了 `100 / SHARE(...)` 里。少了它，抄出来是 `100 / total / cats` —— 除号从左往右先算 `100 / total`，答案就全歪了。\n\n两层的分工记一句就够了：**里层护投喂、外层护自己**。\n\n本喵把两种写法都真跑过：少一层括号就少一截数，样例里两行全都不一样。这条规矩往后越写越长的稿子里最容易被忘掉，趁现在记牢喵。",
+      "templateId": "c-s3-macro-share-write",
+      "params": {
+        "a": "6",
+        "b": "2",
+        "c": "6"
+      },
+      "verified": {
+        "at": "2026-10-20T16:39:56.578Z",
+        "hash": "5e1dc9f70e761c51"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-share-write-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有 `6` 条小鱼干，要按 `4` 只猫**平均分**；分完还想看看「100 条能装满几个这样的盆」。\n\n请写这么一张条子：名字叫 `SHARE`，喂进去**总数**和**只数**两项，叼回来**平均分到几条**（整数）。稿子里已经在用它了，用法长这样：\n\n```text\nSHARE(total + 6, cats)\n```\n\n注意两件事喵：\n\n- 喂进去的第一项是个**加法式子**，条子照抄之后得先把它加起来；\n- 这张条子还被塞进了 `100 / ...` 这样的算式里，**整个结果也得是完整的一份**，不能被外面的除号吃掉一截。\n\n按课文里的规矩（**投喂穿一层、整体再穿一层**）把 `SHARE` 写在稿子上留的那一行，`main` 里那几行一个字都别动。该印两行：`每只猫分到 ` 加上均分的整数、再跟一个 ` 条`；`100 条能装满 ` 加上盆数、再跟一个 ` 个盆`。",
+      "starter": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) (total)\n\nint main(void) {\n    int total = 6;\n    int cats = 4;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 6, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 6, cats));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) ((total) / (cats))\n\nint main(void) {\n    int total = 6;\n    int cats = 4;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 6, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 6, cats));\n    return 0;\n}\n",
+      "expectedOutput": "每只猫分到 3 条\n100 条能装满 33 个盆",
+      "stdin": null,
+      "explanation": "条子的身子要写成 `((total) / (cats))` 喵 —— **两层括号都要**：\n\n- **投喂那层**：喂进来的是 `total + 6` 这样的**式子**。少了它，照抄出来成了 `total + 6 / cats`，加号后面的东西被拆得只剩一半。\n- **整体那层**：这张条子被塞进了 `100 / SHARE(...)` 里。少了它，抄出来是 `100 / total / cats` —— 除号从左往右先算 `100 / total`，答案就全歪了。\n\n两层的分工记一句就够了：**里层护投喂、外层护自己**。\n\n本喵把两种写法都真跑过：少一层括号就少一截数，样例里两行全都不一样。这条规矩往后越写越长的稿子里最容易被忘掉，趁现在记牢喵。",
+      "templateId": "c-s3-macro-share-write",
+      "params": {
+        "a": "6",
+        "b": "4",
+        "c": "6"
+      },
+      "verified": {
+        "at": "2026-10-20T16:39:58.845Z",
+        "hash": "d5f598fef12ad853"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-share-write-004",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有 `8` 条小鱼干，要按 `2` 只猫**平均分**；分完还想看看「100 条能装满几个这样的盆」。\n\n请写这么一张条子：名字叫 `SHARE`，喂进去**总数**和**只数**两项，叼回来**平均分到几条**（整数）。稿子里已经在用它了，用法长这样：\n\n```text\nSHARE(total + 4, cats)\n```\n\n注意两件事喵：\n\n- 喂进去的第一项是个**加法式子**，条子照抄之后得先把它加起来；\n- 这张条子还被塞进了 `100 / ...` 这样的算式里，**整个结果也得是完整的一份**，不能被外面的除号吃掉一截。\n\n按课文里的规矩（**投喂穿一层、整体再穿一层**）把 `SHARE` 写在稿子上留的那一行，`main` 里那几行一个字都别动。该印两行：`每只猫分到 ` 加上均分的整数、再跟一个 ` 条`；`100 条能装满 ` 加上盆数、再跟一个 ` 个盆`。",
+      "starter": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) (total)\n\nint main(void) {\n    int total = 8;\n    int cats = 2;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 4, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 4, cats));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) ((total) / (cats))\n\nint main(void) {\n    int total = 8;\n    int cats = 2;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 4, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 4, cats));\n    return 0;\n}\n",
+      "expectedOutput": "每只猫分到 6 条\n100 条能装满 16 个盆",
+      "stdin": null,
+      "explanation": "条子的身子要写成 `((total) / (cats))` 喵 —— **两层括号都要**：\n\n- **投喂那层**：喂进来的是 `total + 4` 这样的**式子**。少了它，照抄出来成了 `total + 4 / cats`，加号后面的东西被拆得只剩一半。\n- **整体那层**：这张条子被塞进了 `100 / SHARE(...)` 里。少了它，抄出来是 `100 / total / cats` —— 除号从左往右先算 `100 / total`，答案就全歪了。\n\n两层的分工记一句就够了：**里层护投喂、外层护自己**。\n\n本喵把两种写法都真跑过：少一层括号就少一截数，样例里两行全都不一样。这条规矩往后越写越长的稿子里最容易被忘掉，趁现在记牢喵。",
+      "templateId": "c-s3-macro-share-write",
+      "params": {
+        "a": "8",
+        "b": "2",
+        "c": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:01.048Z",
+        "hash": "995234d00716c73d"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-share-write-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有 `8` 条小鱼干，要按 `4` 只猫**平均分**；分完还想看看「100 条能装满几个这样的盆」。\n\n请写这么一张条子：名字叫 `SHARE`，喂进去**总数**和**只数**两项，叼回来**平均分到几条**（整数）。稿子里已经在用它了，用法长这样：\n\n```text\nSHARE(total + 4, cats)\n```\n\n注意两件事喵：\n\n- 喂进去的第一项是个**加法式子**，条子照抄之后得先把它加起来；\n- 这张条子还被塞进了 `100 / ...` 这样的算式里，**整个结果也得是完整的一份**，不能被外面的除号吃掉一截。\n\n按课文里的规矩（**投喂穿一层、整体再穿一层**）把 `SHARE` 写在稿子上留的那一行，`main` 里那几行一个字都别动。该印两行：`每只猫分到 ` 加上均分的整数、再跟一个 ` 条`；`100 条能装满 ` 加上盆数、再跟一个 ` 个盆`。",
+      "starter": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) (total)\n\nint main(void) {\n    int total = 8;\n    int cats = 4;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 4, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 4, cats));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) ((total) / (cats))\n\nint main(void) {\n    int total = 8;\n    int cats = 4;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 4, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 4, cats));\n    return 0;\n}\n",
+      "expectedOutput": "每只猫分到 3 条\n100 条能装满 33 个盆",
+      "stdin": null,
+      "explanation": "条子的身子要写成 `((total) / (cats))` 喵 —— **两层括号都要**：\n\n- **投喂那层**：喂进来的是 `total + 4` 这样的**式子**。少了它，照抄出来成了 `total + 4 / cats`，加号后面的东西被拆得只剩一半。\n- **整体那层**：这张条子被塞进了 `100 / SHARE(...)` 里。少了它，抄出来是 `100 / total / cats` —— 除号从左往右先算 `100 / total`，答案就全歪了。\n\n两层的分工记一句就够了：**里层护投喂、外层护自己**。\n\n本喵把两种写法都真跑过：少一层括号就少一截数，样例里两行全都不一样。这条规矩往后越写越长的稿子里最容易被忘掉，趁现在记牢喵。",
+      "templateId": "c-s3-macro-share-write",
+      "params": {
+        "a": "8",
+        "b": "4",
+        "c": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:03.339Z",
+        "hash": "60ddf661936a55b4"
+      }
+    },
+    {
+      "id": "bank-c-s3-macro-share-write-007",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵有 `8` 条小鱼干，要按 `4` 只猫**平均分**；分完还想看看「100 条能装满几个这样的盆」。\n\n请写这么一张条子：名字叫 `SHARE`，喂进去**总数**和**只数**两项，叼回来**平均分到几条**（整数）。稿子里已经在用它了，用法长这样：\n\n```text\nSHARE(total + 6, cats)\n```\n\n注意两件事喵：\n\n- 喂进去的第一项是个**加法式子**，条子照抄之后得先把它加起来；\n- 这张条子还被塞进了 `100 / ...` 这样的算式里，**整个结果也得是完整的一份**，不能被外面的除号吃掉一截。\n\n按课文里的规矩（**投喂穿一层、整体再穿一层**）把 `SHARE` 写在稿子上留的那一行，`main` 里那几行一个字都别动。该印两行：`每只猫分到 ` 加上均分的整数、再跟一个 ` 条`；`100 条能装满 ` 加上盆数、再跟一个 ` 个盆`。",
+      "starter": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) (total)\n\nint main(void) {\n    int total = 8;\n    int cats = 4;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 6, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 6, cats));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* ↓ 本喵要的「平均分」条子，写在这一行下面 */\n#define SHARE(total, cats) ((total) / (cats))\n\nint main(void) {\n    int total = 8;\n    int cats = 4;\n    printf(\"每只猫分到 %d 条\\n\", SHARE(total + 6, cats));\n    printf(\"100 条能装满 %d 个盆\\n\", 100 / SHARE(total + 6, cats));\n    return 0;\n}\n",
+      "expectedOutput": "每只猫分到 3 条\n100 条能装满 33 个盆",
+      "stdin": null,
+      "explanation": "条子的身子要写成 `((total) / (cats))` 喵 —— **两层括号都要**：\n\n- **投喂那层**：喂进来的是 `total + 6` 这样的**式子**。少了它，照抄出来成了 `total + 6 / cats`，加号后面的东西被拆得只剩一半。\n- **整体那层**：这张条子被塞进了 `100 / SHARE(...)` 里。少了它，抄出来是 `100 / total / cats` —— 除号从左往右先算 `100 / total`，答案就全歪了。\n\n两层的分工记一句就够了：**里层护投喂、外层护自己**。\n\n本喵把两种写法都真跑过：少一层括号就少一截数，样例里两行全都不一样。这条规矩往后越写越长的稿子里最容易被忘掉，趁现在记牢喵。",
+      "templateId": "c-s3-macro-share-write",
+      "params": {
+        "a": "8",
+        "b": "4",
+        "c": "6"
+      },
+      "verified": {
+        "at": "2026-09-16T11:06:50.058Z",
+        "hash": "5fff6cf60baed5e9"
+      }
+    }
+  ]
+}

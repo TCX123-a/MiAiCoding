@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s2-enum-lookup-report",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-11",
+  "type": "codewrite",
+  "concept": ["values() 挨个叼出来", "name()", "位次从 0 起", "Scanner"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "pick", "values": ["3", "4"] },
+    "listName": { "kind": "pick", "values": ["Day", "Season"] },
+    "items": { "kind": "pick", "values": ["MON, TUE, WED, THU, FRI, SAT, SUN", "SPRING, SUMMER, AUTUMN, WINTER"] },
+    "total": { "kind": "pick", "values": ["7", "4"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "{n}", "min": 0, "max": 3, "head": "{n}\n" },
+  "stemTemplate": "本喵要按位次点清单上的项。\n\n投喂给程序的纸上：**第一个数是「后面还有几笔」**，接着正好那么多行，一行一个位次（位次从 `0` 起，`0` 就是清单上的第一项）。每一笔印一行 `位次 k 是 项名` —— 那个 `k` 就是读到的那一位；所有笔过完，最后印一行 `清单上一共 … 项`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    enum {listName} { {items} }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    enum {listName} { {items} }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            System.out.println(\"位次 \" + k + \" 是 \" + {listName}.values()[k].name());\n        }\n        System.out.println(\"清单上一共 \" + {listName}.values().length + \" 项\");\n    }\n}\n",
+  "explanationTemplate": "这题练的是清单上那两个本事：**把每一项挨个叼出来**（`values()`）和**把项名叼回来**（`name()`）。\n\n- `{listName}.values()` 把清单上每一项挨个叼出来一遍，排成一个有先后次序的长队；后面那对中括号里写几，就取第几个。**位次从 `0` 起**，所以第一位是 `values()[0]`。\n- 取出来的东西是**一项本身** —— 不是它在清单里排第几，也不是项名那串字。想印项名，得再喊一句 `name()`。换成 `ordinal()` 会印出一串数：本喵把参考解里那一处真换掉跑过一遍，`位次 0 是 MON` 当场变成 `位次 0 是 0`。\n- `values().length` 是「清单上一共几项」。**先把每一项叼出来、再数** —— 本喵不用自己记着写了几项，往后加一项它自己就跟着变。\n\n`main` 那边：先读第一个数当笔数，再绕圈读后面的位次。每一笔从纸上叼进来的是一个光溜溜的数，拿它当中括号里的位次正合适。\n\n清单写在 `main` 外面（在 `Main` 这张图纸里），`main` 里就喊得到它 —— 清单也是图纸的一种，跟别的图纸一样摆在外面用喵。"
+}

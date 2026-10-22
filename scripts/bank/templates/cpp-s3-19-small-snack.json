@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-19-small-snack",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-19",
+  "type": "codewrite",
+  "concept": ["底座够不着的东西照到了才够得着", "只有橘猫才有的一手", "照不到就老实说没有小灶"],
+  "instances": 6,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "小P"] },
+    "other": { "kind": "pick", "values": ["狸花", "小灰"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 1, "max": 2 },
+  "stemTemplate": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n这一题是这一课最实用的那一场：**只有橘猫才有的一手**（`eatSnack`，开小灶）。手上只有一张写着「猫」的牌子，骨架里已经让每只猫先喊过一声了（`p->speak()`），你要补的是后面半场：\n\n1. 先照光，把橘猫那一张照出来；\n2. 照到了，就喊那一手 `eatSnack()`；\n3. 照不到，就印一行：它的名字接上 `：没有小灶，喵～`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n    virtual void speak() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是橘猫，喵喵喵！\" << endl; }\n    void eatSnack() const { cout << name << \"：这条小鱼干归本喵！\" << endl; }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是狸花猫，喵呜～\" << endl; }\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"{who}\");\n    TabbyCat t(\"{other}\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    p->speak();\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n    virtual void speak() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是橘猫，喵喵喵！\" << endl; }\n    void eatSnack() const { cout << name << \"：这条小鱼干归本喵！\" << endl; }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是狸花猫，喵呜～\" << endl; }\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"{who}\");\n    TabbyCat t(\"{other}\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    p->speak();\n\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    if (a != nullptr) {\n        a->eatSnack();\n    } else {\n        cout << p->name << \"：没有小灶，喵～\" << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题练的是照光最常用的那个姿势：**底座够不着的东西，照到了才够得着**喵。\n\n- `speak()` 是底座上就有的那一手（挂了招牌，`virtual`），所以拿着「猫」牌子直接喊 `p->speak()` 就行，一声开饭、各猫各样；\n- `eatSnack()` 是**橘猫自己那张图纸上才有的**，底座上根本没有这一格 —— 所以只能用「猫」牌子照出橘猫牌，`a->eatSnack()` 才喊得动。照不到（`a == nullptr`）就老实印它没有小灶。\n\n两处细节别写反：**先照、先查空，再去喊那一手**；照不到那一支里印名字用的是 `p->name` —— 那一格底座上就有，照样够得着。"
+}

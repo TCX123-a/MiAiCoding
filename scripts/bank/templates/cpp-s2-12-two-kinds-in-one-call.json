@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-12-two-kinds-in-one-call",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-12",
+  "type": "codefix",
+  "concept": ["两处料凑不到同一个空位", "翻译官喵当场拦下", "把料写成同一款"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [2, 5] },
+    "b": { "kind": "pick", "values": [7, 9] }
+  },
+  "stemTemplate": "本喵把两处料一起递进这张加法图纸：一处是整数、一处带小数。翻译官喵**当场拦下了本喵**，一个字都不肯算。\n\n你帮本喵**把两处料凑成同一款** —— 图纸一个字不用动，`main` 里那一声喊话的形状也不用动，只把递进去的料改一改，让这一行能印出来。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nT add(T a, T b) {\n    return a + b;\n}\n\nint main() {\n    cout << add({a}, {b}.5) << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nT add(T a, T b) {\n    return a + b;\n}\n\nint main() {\n    cout << add({a}.0, {b}.5) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`error: no matching function for call to 'add(int, double)'`\n\n念作：**「这一声 `add` 要的是同一种料，可你一手递的是整数、一手递的带小数 —— 本喵不知道它该裁成哪一款喵。」** 后面还跟着一串 `candidate` 和 `template argument deduction/substitution failed`，说的都是同一件事：**照这张图纸裁不出这么一个版本。**\n\n根子在于：那张图纸上「两处塞料」和「回来的那一款」用的是**同一个空位**。同一个空位，几处就得凑成**同一款**；凑不成，翻译官喵不会替本喵硬凑。\n\n修法就是把两处料写成同一款：\n\n```text\nadd({a}.0, {b}.5)\n```\n\n本喵真跑过修好之后的版本：翻译官喵不拦了，屏幕上只剩一行 —— 就是 {a} 与 {b}.5 加起来的那个数。\n\n⚠️ 两条路都通，但只走一条：\n\n1. **把料写成同一款**（本喵这一题的修法）。\n2. **本喵自己点名**：`add<double>({a}, {b}.5)` —— 尖括号里写死要哪一款，翻译官喵就照着它把两处料都塞进那一款里。这一手很硬气，本喵在课文里写过的那个「点名之后料被悄悄改小」的坑，说的就是它。"
+}

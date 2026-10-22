@@ -1,0 +1,31 @@
+{
+  "templateId": "py-s1-rec-no-brake",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-16",
+  "type": "codefix",
+  "concept": [
+    "停车那一句",
+    "停不下来的自己咬自己",
+    "跑到一半才撞墙"
+  ],
+  "instances": 2,
+  "params": {
+    "n": {
+      "kind": "int",
+      "min": 3,
+      "max": 4
+    },
+    "stop": {
+      "kind": "pick",
+      "values": [
+        "到站喵",
+        "到底啦喵"
+      ]
+    }
+  },
+  "stemTemplate": "本喵写了个自己咬自己尾巴的招式 `count_down`：喂一个数进去，它要**从那个数一路往下报到 1**，最后再喊一句 `{stop}` 收工。\n\n可这份稿子**收不了场** —— 屏幕上数字一路往下滚、滚个没完，最后甩了本喵一句错回来。\n\n你帮本喵改好：改完跑起来，喂 `{n}` 进去，屏幕上要**正好**是这些行 —— 先是 {n} 一路往下数到 1（每个数一行），最后一行是 `{stop}`。一行都不能少、也不能多喵。",
+  "brokenCodeTemplate": "def count_down(n):\n    print(n)\n    count_down(n - 1)\n\ncount_down({n})\n",
+  "referenceFixTemplate": "def count_down(n):\n    if n == 0:\n        print(\"{stop}\")\n        return\n    print(n)\n    count_down(n - 1)\n\ncount_down({n})\n",
+  "explanationTemplate": "这份稿子坏在一件事上：**它从头到尾没有一句「什么时候停」**喵。\n\n它每喊一次自己就往下多钻一层，可永远没人喊停 —— 于是那一摞「记着待会儿要回到哪儿」的小碗越摞越高，一直摞到 Python 划的那条线，就被整个掀了。本喵真跑过，最后甩出来的是这一句：\n\n```\nRecursionError: maximum recursion depth exceeded\n```\n\n翻译成猫话：「**往下喊的层数超过上限了。**」\n\n改法只有一处：在招式最前面补上停车的那一句 —— 喂进来的数到了 0，就印一句 `{stop}`、当场收工，**不再往下喊自己**。补上之后，数字就会老老实实从 {n} 数到 1，最后补上那句收工的话。\n\n⚠️ 这一题最该记住的是：**它跑得起来**。这份稿子里没有一处写法上的错，所以没人会提前拦你 —— 它是**跑到一半撞墙**才喊出来的，而报错出现的位置离你写漏的那一句已经很远了。写自己咬自己尾巴的招式，第一件事永远是先想清楚「什么时候停」。"
+}

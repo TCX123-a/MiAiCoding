@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-scope-static-stale-sum",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-10",
+  "type": "codefix",
+  "concept": ["static 记得住", "跨着两次喊话活着", "攒数的碗别加 static", "不报错只算错"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "int", "min": 2, "max": 4 },
+    "n2": { "kind": "int", "min": 5, "max": 7 }
+  },
+  "stemTemplate": "本喵这一招是算「从 1 加到 n」的和，喊两回。第一回没毛病，第二回的数却**大得离谱** —— 因为那只攒数的碗跨着两次喊话活着，把上一回的余数也一起加进去了。\n\n你帮本喵把它改回「每次都从零算」，让两行印出来的数各自都对。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint sumTo(int n) {\n    static int total = 0;\n\n    for (int i = 1; i <= n; i++) {\n        total = total + i;\n    }\n\n    return total;\n}\n\nint main(void) {\n    printf(\"%d\\n\", sumTo({n1}));\n    printf(\"%d\\n\", sumTo({n2}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint sumTo(int n) {\n    int total = 0;\n\n    for (int i = 1; i <= n; i++) {\n        total = total + i;\n    }\n\n    return total;\n}\n\nint main(void) {\n    printf(\"%d\\n\", sumTo({n1}));\n    printf(\"%d\\n\", sumTo({n2}));\n    return 0;\n}\n",
+  "explanationTemplate": "这一题最阴的地方是：**它不报错，只是数不对**喵。\n\n那只攒数的碗加了 `static`，于是它变成了**这一招自己的固定格子** —— 只在第一次喊到那一行的时候准备一次，之后每一回进门用的都还是它。所以第二回喊的时候，碗里还留着上一回攒下的数，接着往上加。\n\n本喵真跑过一组给你看形状：喊 `sumTo(3)` 报 6（对），接着喊 `sumTo(5)` 报的**不是 15，是 21** —— 多出来的正是上一回那 6。这一回你手上这组也一样：第二行印出来的数里，混着第一行的和。\n\n改法就是把那个 `static` 去掉：\n\n```c\nint total = 0;\n```\n\n普通碗**每次进门都是新发的**：进门一只装着 0 的新碗，加完、印完、出门就没了，下一回再来又是新的一只 —— 这才叫「每次都从零算」。\n\n顺带把这条规矩收好：`static` 的本事是**记得住**，所以只有「这一招本来就该记着上一次」的时候才加它（比如报编号那一招）。**该从零开始的碗加了它，算出来的数就是错的，而且一句提示都没有。**"
+}

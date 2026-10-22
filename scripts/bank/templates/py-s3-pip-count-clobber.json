@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s3-pip-count-clobber",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-21",
+  "type": "codefix",
+  "concept": ["攒数要一圈加一次", "被一圈一圈盖掉的攒数仓库", "是/否记号不是只数"],
+  "instances": 2,
+  "params": {
+    "pre": { "kind": "pick", "values": ["cat", "fish"] }
+  },
+  "stemTemplate": "本喵的清单里躺着四只已装的包：`catbox`、`fishnet`、`catnip`、`whisker`。本喵想数出来：**名字以 `{pre}` 开头**的有几只，好跟外面的行情对账。\n\n规矩：数出来印成 `挑出 X 个` 的样子（X 就是只数）。\n\n本喵这套代码跑出来印的却是 `挑出 False 个`——好好要数的只数，输出成了 `True`/`False` 这种记号喵！\n\n你帮本喵把该攒的数**老老实实攒起来**，改好它。\n\n⚠️ 清单本身一个字不许动，也别把 `{pre}` 换成别的字——要修的是数数的那几行。",
+  "brokenCodeTemplate": "已装 = [\"catbox\", \"fishnet\", \"catnip\", \"whisker\"]\n前缀 = \"{pre}\"\n\n命中 = 0\nfor 名字 in 已装:\n    命中 = 名字.startswith(前缀)\n\nprint(\"挑出\", 命中, \"个\")\n",
+  "referenceFixTemplate": "已装 = [\"catbox\", \"fishnet\", \"catnip\", \"whisker\"]\n前缀 = \"{pre}\"\n\n命中 = 0\nfor 名字 in 已装:\n    if 名字.startswith(前缀):\n        命中 = 命中 + 1\n\nprint(\"挑出\", 命中, \"个\")\n",
+  "explanationTemplate": "先认这只坏在哪：`命中 = 名字.startswith(前缀)` 这一行**每绕一圈都会把手里那只攒数的仓库整个盖掉**——盖上去的不是「累到现在的只数」，而是这一只的检查结果。`startswith` 吐出来的东西只有两种：「是」和「否」（`True` / `False`），**它从来不是只数**。\n\n所以绕完四只，手里剩的不是别的，就是**最后一只**的「是/否」：`whisker` 这个名字不以 `{pre}` 开头，记号是 `False`——前头数对的几只，全被一圈一圈盖没了。\n\n要数数，得**攒**：一只对上就 +1，对不上就 +0（原样不动）。改法是把加一的动作请进 `if 名字.startswith(前缀):` 的里面——对上的那只才把这行跑一遍；对不上的那只手不动，之前攒的数一个不丢。\n\n⚠️ 这只坑还有一处阴的：要是清单最后一只**恰好对上**了，程序会印出一个 `True`，粗看还像「对上了、有货」，其实你要的只数压根没攒起来。所以数数的活就一句口诀：**每圈加一次，别拿攒数的仓库当每圈的托盘**。"
+}

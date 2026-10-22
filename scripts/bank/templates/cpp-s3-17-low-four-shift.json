@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-17-low-four-shift",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-17",
+  "type": "codefix",
+  "concept": ["取最低几格", "筛不是挪", "掩码的写法"],
+  "instances": 2,
+  "params": {
+    "x": { "kind": "pick", "values": [182, 205, 111] }
+  },
+  "stemTemplate": "本喵手里这个数是 {x}，想把它**最低那 4 格**单独取出来印一遍。\n\n可这段代码取出来的**不是最低那 4 格** —— 它跑得起来、翻译官喵一句原话都没有，只是印出来的那个数默默不对。\n\n你帮本喵把那一处改对：改完跑起来，屏幕上 `low =` 那一行要是**最低 4 格**的读数，多一格少一格都不行喵。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned int x = {x};\n    unsigned int low = x >> 4;\n    cout << \"x   = \" << bitset<8>(x) << endl;\n    cout << \"low = \" << low << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <bitset>\nusing namespace std;\n\nint main() {\n    unsigned int x = {x};\n    unsigned int low = x & 15;\n    cout << \"x   = \" << bitset<8>(x) << endl;\n    cout << \"low = \" << low << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "坏的那一处是挪格子用的那个 `4` 喵。\n\n`>>` 做的是**整排一起往右挪**：最右边挪出去的那几格**丢了**，左边空出来的补 0。拿 {x} 来说，它最低那 4 格被整排挪走了 —— 挪回来的那 4 格是**高处**的那几格，正是本喵不想要的那几格。\n\n要「只留下最低 4 格」该用哪一招？**拿一块筛子去筛**：`15` 的那串格子是 `00001111`（最低 4 格全亮、上面全灭），拿去和原来的数一「与」，上面那些格被 0 灭掉、底下 4 格原样留下。所以那一处该写成 `x & 15`。\n\n⚠️ 这一题最该记住的是：**「取最低几格」是筛（`&`），不是挪（`>>`）**。两者都能让屏幕上的数变小，看起来都像「取出来了」—— 可一个取的是最低那几格，另一个取的是挪下来的那几格，取的根本不是同一批格子喵。\n\n⚠️ 还有一层：这题**改错了也不喊疼**。写成 `>>` 翻译官喵一句原话都不说，只是印出来的数默默不对 —— 往后最费时间的坑，几乎全是这种安安静静错掉的。"
+}

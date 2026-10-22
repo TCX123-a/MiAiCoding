@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-04-key-not-found",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-04",
+  "type": "codefix",
+  "concept": ["中括号会顺手开一格", "问在不在要用只数不改的招", "柜子悄悄长大"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "w2": { "kind": "pick", "values": ["狸花", "三花"] },
+    "w3": { "kind": "pick", "values": ["雪球", "布偶"] }
+  },
+  "stemTemplate": "本喵想看一眼某个名字**在不在柜子里**：在就印「有喵」，不在就印「没有喵」；最后再印一行**柜子里有几格**喵。\n\n可现在那个名字明明不在柜子里，柜子却**莫名其妙多出了一格**。你帮本喵把它改对：**问「在不在」的时候，柜子一格都不许动**。印字那几句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n    map<string, int> fish;\n    fish[\"{w1}\"] = 3;\n    fish[\"{w2}\"] = 5;\n\n    if (fish[\"{w3}\"] > 0) {\n        cout << \"有喵\" << endl;\n    } else {\n        cout << \"没有喵\" << endl;\n    }\n    cout << fish.size() << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n    map<string, int> fish;\n    fish[\"{w1}\"] = 3;\n    fish[\"{w2}\"] = 5;\n\n    if (fish.count(\"{w3}\") > 0) {\n        cout << \"有喵\" << endl;\n    } else {\n        cout << \"没有喵\" << endl;\n    }\n    cout << fish.size() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的坑是：**中括号会顺手开一格**喵。\n\n`fish[\"雪球\"]` 这个写法其实是**两个动作**：先看柜子里有没有「雪球」这一格 —— 有就把那一格的货叼出来；**没有就当场开一格新的**（货是 0），再叼出来。\n\n所以拿中括号去问「在不在」，**问一次柜子就长一格**。更要命的是：新开那格的货正好是 0，于是「在不在」这句看着还答对了 —— 坑被藏住了，唯一的证据是最后那个格数。\n\n要问「在不在」，得用**只数不改**的那一招：\n\n`fish.count(\"雪球\")`\n\n它叼回来的是**这一格里有几份货**（在的格子是 1，不在是 0），问多少遍都**一格都不会变**。\n\n⚠️ 两句话分清：`count` 是「**问在不在**」，中括号是「**要那一格**」—— 后者会顺手开格子。⚠️ 这一题翻译官喵一个字都不说：编得过、跑得完，柜子悄悄长大，全靠你自己盯着格数。"
+}

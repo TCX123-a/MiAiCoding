@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s2-01-two-cats-own-books",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-01",
+  "type": "codewrite",
+  "concept": ["一张图纸生两只", "格子各带各的", "改一只不动另一只"],
+  "instances": 6,
+  "params": {
+    "nameA": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "nameB": { "kind": "pick", "values": ["狸花", "三花"] },
+    "k": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 1, "max": 6 },
+  "stemTemplate": "本喵要拿**同一张图纸**生两只猫，看看它俩的账会不会串。投喂口会递进来**两个数**（一行一个）：先是第一只的条数，再是第二只的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字，`fish` 装一个整数；\n2. **照同一张图纸生两只真猫**，第一只叫 `{nameA}`、第二只叫 `{nameB}`（名字直接写死在代码里就行），条数用投喂口递进来的那两个；\n3. 只给**第一只**的条数加上 {k} 条（第二只一点都不动）；\n4. 印**两行**：\n\n```text\nXX 的账上是 N 条\n```\n\n（第一只一行、第二只一行，按这个先后顺序）\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1;\n    Cat c2;\n    c1.name = \"{nameA}\";\n    c1.fish = a;\n    c2.name = \"{nameB}\";\n    c2.fish = b;\n\n    c1.fish = c1.fish + {k};\n\n    cout << c1.name << \" 的账上是 \" << c1.fish << \" 条\" << endl;\n    cout << c2.name << \" 的账上是 \" << c2.fish << \" 条\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题要你亲眼看清一件事：**图纸只有一张，格子是每只猫各带一份的。**\n\n- `Cat c1;` 和 `Cat c2;` 是照**同一张**图纸生出来的两只真猫。图纸画完就那样，生多少只都不会把它用旧。\n- 每生一只，它就**带着自己那一套** `name` 和 `fish`——两只谁也不碰谁。\n- 所以 `c1.fish = c1.fish + {k};` 动的是**第一只那一格**，第二只半点关系都没有。这就是为什么屏幕上两行数不一样。\n\n⚠️ 最容易摔的是**把两笔账写成一笔**：如果只生了一只猫（或者两只共用了同一格），你会看到两行数字一起变——那说明你动的不是「某一只的格子」，而是「大家共用的那一格」。\n\n另一个手感：`c1.name` 和 `c2.name` 虽然写着同一个 `name`，可它们**是两只猫各自的那一格** —— 点号前面的那只猫是谁，就够到谁的那一格喵。"
+}

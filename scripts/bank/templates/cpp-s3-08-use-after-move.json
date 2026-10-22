@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-08-use-after-move",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-08",
+  "type": "codefix",
+  "concept": ["搬过的名字只剩空壳", "别拿它取货", "要用就重新装货"],
+  "instances": 2,
+  "params": {
+    "goods": { "kind": "pick", "values": ["鱼干", "鱼汤", "鱼丸"] }
+  },
+  "stemTemplate": "本喵把一份货搬给了新名字，然后又回头拿**老名字**取货 —— 印出来是**一个空行**。\n\n你帮本喵改对：老名字不是不能碰，**重新装一次货**就能接着用。改好之后要印出这些行：\n\n1. `{goods}`\n2. `{goods}`\n\n两行的内容要**一样**：第一行是搬过去的新名字里的货，第二行是老名字重新装货之后的货。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string a = \"{goods}\";\n    string b = move(a);\n    cout << b << endl;\n    cout << a << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string a = \"{goods}\";\n    string b = move(a);\n    cout << b << endl;\n    a = \"{goods}\";\n    cout << a << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "坏在第二行印的是 `a` 喵 —— 而 `a` 刚刚被搬空了。第二行印出来是一个**空行**，不是报错：搬过的名字没有坏，它只是**里面没东西了**（本喵在课文第二节真跑过 `a 还剩几个字：0`）。\n\n改法是**重新装一次货**：`a = \"{goods}\";`，然后才能拿它取货。名字本身是好好的，随时可以再装 —— 这就是「搬过的名字当它已经空了」这句话的实际用法：不是「从此不许碰」，而是「**碰之前先装货**」。\n\n⚠️ 这一题最该防的是**猜**：本喵这台机器上搬完的 `string` 是空的，可换个类型、换台机器都不一定。所以别去猜「它里面还剩什么」—— 一律当它空着处理，要用就先装。"
+}

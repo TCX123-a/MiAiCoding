@@ -1,0 +1,94 @@
+{
+  "lessonId": "c-stage3-06",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "冒泡法里挨着的两只比一比，**什么情况**下要请它们换个个儿喵？",
+      "options": [
+        "左边那只比右边那只长的时候",
+        "左边那只比右边那只短的时候",
+        "两只一样长的时候",
+        "每一趟的最后两只"
+      ],
+      "answer": 0,
+      "explanation": "冒泡法的目标是「从短到长」喵：短的要站在前面。所以挨着比的时候，只要发现**左边那只比右边长**，就说明顺序反了，请它俩换个位子；左边本来就短、或者两只一样长，都原地不动。这样一路比下去，最长的那只会被一路换到最末尾 —— 一趟只送走一只，下一趟再来。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "「挑最短法」一轮里，扫完剩下的这些鱼干之后要做什么喵？",
+      "options": [
+        "请最短的那一只和最前面的那一只换个位子",
+        "把比它长的都挨个往后挪一格",
+        "把最短的那只抱走放到一边，剩下的继续扫",
+        "再从头扫一遍确认一下"
+      ],
+      "answer": 0,
+      "explanation": "挑最短法一轮只干一件事：先记住最短的那一只在**哪个位子**（`shortest`），扫完之后请它和第 `i` 只换个位子。换完之后，从 `i` 往前的那些都已经站好了，下一轮从 `i + 1` 接着挑。它和理牌法的区别就在这儿：理牌法是「往后挪」，挑最短法是「一次换到位」——所以它换位子的次数特别少，一轮最多换一次喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "理牌法里那句 `while (j >= 0 && fish[j] > hold)`，前半截 `j >= 0` 是干什么用的喵？",
+      "options": [
+        "收手条件：一路比到最前面就停下",
+        "检查这一只鱼干是不是本来就最短",
+        "保证每只鱼干都比两遍",
+        "用来数已经挪了多少只"
+      ],
+      "answer": 0,
+      "explanation": "手里捧着的那一只要一直往前比，比到哪儿停呢？比到**摊子最前面**就得停，`j` 退到 -1 时前半截就不成立了。少了它，爪子会伸到摊子外面去，读到不属于你的东西喵。后半截 `fish[j] > hold` 管的是「还没找到该停的位子」——两半合起来才是完整的收手条件。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nvoid bubble_sort(int fish[], int n) {\n    for (int i = 0; i < n - 1; i++) {\n        for (int j = 0; j < n - 1 - i; j++) {\n            if (fish[j] > fish[j + 1]) {\n                int t = fish[____];\n                fish[____] = fish[j + 1];\n                fish[j + 1] = ____;\n            }\n        }\n    }\n}\n\nint main(void) {\n    int fish[6] = {5, 2, 9, 1, 8, 6};\n    bubble_sort(fish, 6);\n    for (int i = 0; i < 6; i++) {\n        printf(\"%d \", fish[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}",
+      "stem": "冒泡法换位子的那三句，本喵把三处挖空了。补完之后这段程序该把 `1 2 5 6 8 9` 印出来喵～",
+      "blanks": [
+        { "answer": "j" },
+        { "answer": "j" },
+        { "answer": "t" }
+      ],
+      "explanation": "换位子要用一只手喵：`int t = fish[j];` 先把左边那只**捧在手上**，再把右边那只挪到左边那个位子上，最后把手上这只放回右边。这两只为什么能换过来？全靠 `t` 记住了原来左边那只的值 —— 所以第三空填 `t`。要是三句里省了捧在手上这一句，一执行完两只就变成同一个值了，原来的那只找不回来。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nvoid insertion_sort(int fish[], int n) {\n    for (int i = 1; i < n; i++) {\n        int hold = fish[i];\n        int j = i - 1;\n        while (j >= 0 && fish[j] > hold) {\n            fish[____] = fish[j];\n            j--;\n        }\n        fish[j + 1] = ____;\n    }\n}\n\nint main(void) {\n    int fish[5] = {6, 1, 8, 2, 5};\n    insertion_sort(fish, 5);\n    for (int i = 0; i < 5; i++) {\n        printf(\"%d \", fish[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}",
+      "stem": "理牌法里「往后挪一格」和「放下手上这只」各有半句被本喵挖掉了。补完之后它会印出 `1 2 5 6 8` 喵～",
+      "blanks": [
+        { "answer": "j + 1" },
+        { "answer": "hold" }
+      ],
+      "explanation": "前半截：比手上这只长的那一位（第 `j` 位）**往后挪一格**，挪到 `j + 1` 去，空出来的第 `j` 位留给更前面那些接着比。后半截：一圈比完，`j` 停在「比手上这只短」的位子上，那它该站的地方就是 `j + 1` —— 把手上的 `hold` 放在那儿喵。两处都是 `j + 1` 打头，但意思完全相反：一个是**搬走**，一个是**安置**。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nvoid bubble_sort(int fish[], int n) {\n    for (int i = 0; i < n - 1; i++) {\n        for (int j = 0; j < n - 1 - i; j++) {\n            if (fish[j] > fish[j + 1]) {\n                int t = fish[j];\n                fish[j] = fish[j + 1];\n                fish[j + 1] = t;\n            }\n        }\n    }\n}\n\nint main(void) {\n    int fish[5] = {4, 9, 2, 7, 1};\n    bubble_sort(fish, 5);\n    printf(\"排排坐：\");\n    for (int i = 0; i < 5; i++) {\n        printf(\"%d \", fish[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "排排坐：1 2 4 7 9",
+      "accept": [
+        "排排坐：1 2 4 7 9\n"
+      ],
+      "explanation": "把 `4 9 2 7 1` 交给冒泡法，结果是从短到长：`1 2 4 7 9` 喵。前面那句 `排排坐：` 是原样印出来的，后面每只鱼干印一个数加一个空格，最后补一个换行。冒泡法不会「猜」，它就是一趟一趟挨着比、该换就换 —— 所以你按这个规矩从头推一遍，得到的一定是这一串。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nvoid insertion_sort(int fish[], int n) {\n    for (int i = 1; i < n; i++) {\n        int hold = fish[i];\n        int j = i - 1;\n        while (j >= 0 && fish[j] > hold) {\n            fish[j + 1] = fish[j];\n            j--;\n        }\n        fish[j + 1] = hold;\n    }\n}\n\nint main(void) {\n    int fish[5] = {5, 1, 4, 2, 8};\n    insertion_sort(fish, 5);\n    printf(\"理牌式：\");\n    for (int i = 0; i < 5; i++) {\n        printf(\"%d \", fish[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "理牌式：1 2 4 5 8",
+      "accept": [
+        "理牌式：1 2 4 5 8\n"
+      ],
+      "explanation": "理牌法的结果也是从短到长：`1 2 4 5 8` 喵。它的过程和冒泡完全不一样 —— 摸起一张就往前面已经理好的那一小段里插：摸到 1 时插到 5 前面，摸到 4 时插到 5 前面、1 后面……一圈一圈插完，整摊就齐了。前面那句 `理牌式：` 原样印出，后面每只印一个数加一个空格。"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-list-abstract-new",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-08",
+  "type": "codefix",
+  "concept": ["名分和实体分开", "与猫的约定", "ArrayList", "过不了稿子"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] }
+  },
+  "stemTemplate": "本喵照着前一节的样子写了一句「要一个装项链的柜子」，可翻译官喵把稿子退了回来，一行输出都没有。\n\n左边那份**名分**本喵写得没错，就是 `List`；问题出在右边 `new` 后面**实给的那只柜子**上。\n\n请你帮本喵改好，规矩是：\n\n1. **左边那份名分一个字都不许动**（还得是 `List`）；\n2. 右边实给的柜子换成那个**挨着排**的、日常最常用的那种；\n3. 该带进来的东西记得带进来。\n\n改好之后，程序该印出这一行：\n\n```text\n[{name}]\n```\n\n只有右边实柜子那一处（外加它该带的头）有问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "import java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> bowls = new List<>();\n        bowls.add(\"{name}\");\n        System.out.println(bowls);\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> bowls = new ArrayList<>();\n        bowls.add(\"{name}\");\n        System.out.println(bowls);\n    }\n}\n",
+  "explanationTemplate": "这一题属于**过不了稿子那一关**，翻译官喵的话是这样的：\n\n```text\nList is abstract; cannot be instantiated\n```\n\n念起来是：**「`List` 是个约定，不是一只能生的柜子，本喵生不出来喵。」** 这话里那个 `abstract` 本喵往后还会正式认它（下一课就要见），今天先记住它在这儿的含义就行：**约定只说要会哪几招，不负责长什么样。**\n\n再把这个写法掰开看一遍：\n\n```java\nList<String> bowls = new ArrayList<>();\n```\n\n- **左边**那份名分是 `List` —— 它说的是「本喵要一份 `List` 的约定，装的是项链」。这一半本喵原来就写对了。\n- **右边** `new` 后面那只，才是**实给的一只具体柜子**。约定生不出来，实体才生得出来。把 `List` 拿去 `new`，就等于「照着一份约定去生一只柜子」—— 生生生不出来。\n\n正路就是把右边换成实体，再把它该带的头带上：\n\n```java\nimport java.util.ArrayList;\n\nList<String> bowls = new ArrayList<>();\n```\n\n那对**空尖括号** `<>` 是省事写法，意思是「跟左边一样，装项链」—— 左边写什么它就跟着写什么，不用再抄一遍。\n\n为什么要费这个劲把两边分开写？因为**将来换柜子只动右边一处**：哪天发现挨着排的不合用，把它换成另一种柜子就行，**左边那行名分不用改，别处的代码一行都不用动**。这题把 `List` 留在左边不动，练的就是这一点。\n\n（另外注意：柜子**直接印出来**就能看 —— `System.out.println(bowls)` 印出的是方括号里按编号排好的一串，这是它自带的方便，不用本喵自己拼。）"
+}

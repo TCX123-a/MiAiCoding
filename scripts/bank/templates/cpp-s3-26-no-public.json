@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-26-no-public",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-26",
+  "type": "codefix",
+  "concept": ["一篮子货", "图纸不挂牌一律自留地", "对外营业要开门"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "本喵这篮子（`Bag`）画了图纸：往里放一条、算合计，两条招式的正文都写在图纸里头了。\n\n可**编不过** —— 翻译官喵把外头的 `b.put(w)` 和 `b.total()` 全拦了，原话是 `is private within this context`，念作「**这是宅子里关起门的家伙什，外人动不得**」。\n\n奇怪的是：本喵明明一条正文都没缺喵。你帮本喵找找，到底漏了什么。比如投喂给程序的是：\n\n```text\n{sampleInput}\n```\n\n改好之后就要叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外一组数喵。）",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n\nclass Bag {\n    std::vector<int> items;\n\n    void put(int w) {\n        items.push_back(w);\n    }\n\n    int total() const {\n        int s = 0;\n        for (int i = 0; i < static_cast<int>(items.size()); i++) {\n            s += items[i];\n        }\n        return s;\n    }\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    Bag b;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        b.put(w);\n    }\n    std::cout << \"合计：\" << b.total() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n\nclass Bag {\npublic:\n    void put(int w) {\n        items.push_back(w);\n    }\n\n    int total() const {\n        int s = 0;\n        for (int i = 0; i < static_cast<int>(items.size()); i++) {\n            s += items[i];\n        }\n        return s;\n    }\n\nprivate:\n    std::vector<int> items;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    Bag b;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        b.put(w);\n    }\n    std::cout << \"合计：\" << b.total() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "谜底在图纸的**规矩**上：本宅的图纸**没挂牌子的时候，写进去的东西全部默认关起门** —— 自家人在屋里走动没事，外头的人（比如门房 `main`）一概碰不得。\n\n所以哪怕正文一条不缺，`b.put(w)` 那一句在翻译官喵眼里也是「伸手去摸人家的自留地」，原话 `is private within this context`。两条招式要**对外营业**，就得在图纸里挂一块牌子。\n\n```cpp\nclass Bag {\npublic:\n    void put(int w);\n\n    int total() const;\n\nprivate:\n    std::vector<int> items;\n};\n```\n\n挂完牌子（`public:`）记得把自留地再关回去（`private:`）—— 本喵的改法就是这样：**开门迎客两条招式，存东西的那排格子继续关着门**。\n\n⚠️ 一句顺口溜记牢：**图纸不挂牌，一律当自留地。** 什么时候看见 `is private` 堵门，先低头找「牌子是不是没挂」。"
+}

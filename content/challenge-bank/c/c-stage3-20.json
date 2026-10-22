@@ -1,0 +1,542 @@
+{
+  "lessonId": "c-stage3-20",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-20-argv-guard-missing-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "按图纸上的规矩，这个小工头要从**命令行**屁股后头收一个词（这趟要干什么活），收到就照着分活。问题出在：**一个词都没递**的时候，它看也不看就伸手去够那个词 —— 够了个空，当场摔在台上：**程序崩了，一个字都没印出来**。\n\n本喵的规矩：伸手之前先数**递了几样**（`argc`）—— 连名字自己一共只递了一样（小于 `2`），就说明一个词都没多，先别伸手：老老实实照**默认目标**办。请你把这道守卫补上（别的都别动）。改好之后该印一行：没递词，照默认的来：all。",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n/* 规矩：递了词就照着分活；一个词都没递，照默认目标办。 */\nint main(int argc, char *argv[]) {\n    /* 看也不看就伸手去够这个词 */\n    if (strcmp(argv[1], \"build\") == 0) {\n        printf(\"build：这就动手\\n\");\n    } else {\n        printf(\"%s：照别的来\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n/* 规矩：递了词就照着分活；一个词都没递，照默认目标办。 */\nint main(int argc, char *argv[]) {\n    /* 伸手之前先数递了几样 */\n    if (argc < 2) {\n        printf(\"没递词，照默认的来：all\\n\");\n        return 0;\n    }\n    if (strcmp(argv[1], \"build\") == 0) {\n        printf(\"build：这就动手\\n\");\n    } else {\n        printf(\"%s：照别的来\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "没递词，照默认的来：all",
+      "stdin": null,
+      "explanation": "空着手的时候伸手，够到的是一个**空位**喵 —— `argv[1]` 那里什么都没有，机器一碰就当场摔了，一个字都没来得及印。\n\n规矩是：**伸手之前先数数**。`argc` 这个数连名字自己一起算：只有名字一样，就是 `1`；屁股后面跟了一个词，就是 `2`。所以先问一句「够不够 `2`」——不够，就是一个词都没递：\n\n```text\nif (argc < 2) {\n    /* 没递词：照默认目标办，然后交代顺利 */\n    return 0;\n}\n```\n\n顺一遍图纸思维喵：这就是一条**规矩**——「条件：递没递词」对「动作：没递就报默认目标」。图纸上那张单子一条一条读下来，读的顺序就是干活的顺序；守卫写在前头，后面的分活才能安心伸手。\n\n再记一件事：没递词本身**不算出错**——人家只是没说话，小工头该照默认的办、然后交代顺利（`return 0`）；把「没递词」当成「出事了」，图纸就得停。",
+      "templateId": "c-s3-20-argv-guard-missing",
+      "params": {
+        "w": "build",
+        "d": "all"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:03.992Z",
+        "hash": "70a745e0b6a1d4da"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-argv-guard-missing-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "按图纸上的规矩，这个小工头要从**命令行**屁股后头收一个词（这趟要干什么活），收到就照着分活。问题出在：**一个词都没递**的时候，它看也不看就伸手去够那个词 —— 够了个空，当场摔在台上：**程序崩了，一个字都没印出来**。\n\n本喵的规矩：伸手之前先数**递了几样**（`argc`）—— 连名字自己一共只递了一样（小于 `2`），就说明一个词都没多，先别伸手：老老实实照**默认目标**办。请你把这道守卫补上（别的都别动）。改好之后该印一行：没递词，照默认的来：tidy。",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n/* 规矩：递了词就照着分活；一个词都没递，照默认目标办。 */\nint main(int argc, char *argv[]) {\n    /* 看也不看就伸手去够这个词 */\n    if (strcmp(argv[1], \"clean\") == 0) {\n        printf(\"clean：这就动手\\n\");\n    } else {\n        printf(\"%s：照别的来\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n/* 规矩：递了词就照着分活；一个词都没递，照默认目标办。 */\nint main(int argc, char *argv[]) {\n    /* 伸手之前先数递了几样 */\n    if (argc < 2) {\n        printf(\"没递词，照默认的来：tidy\\n\");\n        return 0;\n    }\n    if (strcmp(argv[1], \"clean\") == 0) {\n        printf(\"clean：这就动手\\n\");\n    } else {\n        printf(\"%s：照别的来\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "没递词，照默认的来：tidy",
+      "stdin": null,
+      "explanation": "空着手的时候伸手，够到的是一个**空位**喵 —— `argv[1]` 那里什么都没有，机器一碰就当场摔了，一个字都没来得及印。\n\n规矩是：**伸手之前先数数**。`argc` 这个数连名字自己一起算：只有名字一样，就是 `1`；屁股后面跟了一个词，就是 `2`。所以先问一句「够不够 `2`」——不够，就是一个词都没递：\n\n```text\nif (argc < 2) {\n    /* 没递词：照默认目标办，然后交代顺利 */\n    return 0;\n}\n```\n\n顺一遍图纸思维喵：这就是一条**规矩**——「条件：递没递词」对「动作：没递就报默认目标」。图纸上那张单子一条一条读下来，读的顺序就是干活的顺序；守卫写在前头，后面的分活才能安心伸手。\n\n再记一件事：没递词本身**不算出错**——人家只是没说话，小工头该照默认的办、然后交代顺利（`return 0`）；把「没递词」当成「出事了」，图纸就得停。",
+      "templateId": "c-s3-20-argv-guard-missing",
+      "params": {
+        "w": "clean",
+        "d": "tidy"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:06.115Z",
+        "hash": "0be0f0045be2cf9f"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-default-target-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一关喵：**光杆儿跑**。图纸上第一条规矩是**默认目标** —— 你敲 `mingw32-make` 不带任何词，它就走第一条。本喵要你给这个小工头写 `main`，规矩照稿子里注释来：\n\n- 一个词都没递（光杆儿跑）→ 照默认目标办：印两行；\n- 递的词对得上 → 印一行；\n- 别的词 → 印「认不得」带上原样的词。\n\n跑台跑这条的时候，**不会替你敲任何词** —— 走的就是「光杆儿跑」那一路：该印两行，先「备料」、再「码砖」。`argc` 是几，先算清楚再落笔。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main =====\n   规矩（照图纸的写法）：\n   · 一个词都没递 → 印两行：备料、码砖；\n   · 递的词是 clean → 印一行：擦桌子；\n   · 递了别的词 → 印一行：认不得：<原样的词>。\n   递了几个词看 argc（连名字自己一起数），词本身在 argv[1] 里。 */\n\nint main(int argc, char *argv[]) {\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main ===== */\nint main(int argc, char *argv[]) {\n    if (argc < 2) {\n        printf(\"备料\\n\");\n        printf(\"码砖\\n\");\n        return 0;\n    }\n    if (strcmp(argv[1], \"clean\") == 0) {\n        printf(\"擦桌子\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "备料\n码砖",
+      "stdin": null,
+      "explanation": "`mingw32-make` 不带词的时候走**默认目标**，这不是巧合喵 —— 图纸上没别的话，流水线就从第一条规矩开工；「光杆儿跑」是绝大多数人最常用的那条路。\n\n写 `main` 的手感跟真题里一样：\n\n- `argc` 连名字自己一起数：光杆儿跑 → `1`，屁股后头带一个词 → `2`；\n- 先拿 `argc < 2` 挡一道：没词就照默认目标办（印那两行），然后交代顺利；\n- 有词的时候再看 `argv[1]`，对号的分活，对不上的回「认不得」。\n\n顺一遍图纸思维：这四行规矩就是「默认目标 + 认词分活」的纸上版；等接上真图纸，这些规矩就从 `main` 里搬到 `Makefile` 上 —— 写法不同，思路一模一样：**光杆儿跑有交代，认不得的词有兜底**。\n\n（真图纸里 `mingw32-make`、`mingw32-make clean` 就是你刚写的两路喵。）",
+      "templateId": "c-s3-20-default-target-write",
+      "params": {
+        "w": "clean",
+        "a": "备料",
+        "b": "码砖",
+        "c": "擦桌子"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:08.341Z",
+        "hash": "af4fac78d513c916"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-default-target-write-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一关喵：**光杆儿跑**。图纸上第一条规矩是**默认目标** —— 你敲 `mingw32-make` 不带任何词，它就走第一条。本喵要你给这个小工头写 `main`，规矩照稿子里注释来：\n\n- 一个词都没递（光杆儿跑）→ 照默认目标办：印两行；\n- 递的词对得上 → 印一行；\n- 别的词 → 印「认不得」带上原样的词。\n\n跑台跑这条的时候，**不会替你敲任何词** —— 走的就是「光杆儿跑」那一路：该印两行，先「备料」、再「上瓦」。`argc` 是几，先算清楚再落笔。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main =====\n   规矩（照图纸的写法）：\n   · 一个词都没递 → 印两行：备料、上瓦；\n   · 递的词是 clean → 印一行：拾掇；\n   · 递了别的词 → 印一行：认不得：<原样的词>。\n   递了几个词看 argc（连名字自己一起数），词本身在 argv[1] 里。 */\n\nint main(int argc, char *argv[]) {\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main ===== */\nint main(int argc, char *argv[]) {\n    if (argc < 2) {\n        printf(\"备料\\n\");\n        printf(\"上瓦\\n\");\n        return 0;\n    }\n    if (strcmp(argv[1], \"clean\") == 0) {\n        printf(\"拾掇\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "备料\n上瓦",
+      "stdin": null,
+      "explanation": "`mingw32-make` 不带词的时候走**默认目标**，这不是巧合喵 —— 图纸上没别的话，流水线就从第一条规矩开工；「光杆儿跑」是绝大多数人最常用的那条路。\n\n写 `main` 的手感跟真题里一样：\n\n- `argc` 连名字自己一起数：光杆儿跑 → `1`，屁股后头带一个词 → `2`；\n- 先拿 `argc < 2` 挡一道：没词就照默认目标办（印那两行），然后交代顺利；\n- 有词的时候再看 `argv[1]`，对号的分活，对不上的回「认不得」。\n\n顺一遍图纸思维：这四行规矩就是「默认目标 + 认词分活」的纸上版；等接上真图纸，这些规矩就从 `main` 里搬到 `Makefile` 上 —— 写法不同，思路一模一样：**光杆儿跑有交代，认不得的词有兜底**。\n\n（真图纸里 `mingw32-make`、`mingw32-make clean` 就是你刚写的两路喵。）",
+      "templateId": "c-s3-20-default-target-write",
+      "params": {
+        "w": "clean",
+        "a": "备料",
+        "b": "上瓦",
+        "c": "拾掇"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:25.349Z",
+        "hash": "76a8b0982de62c56"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-default-target-write-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一关喵：**光杆儿跑**。图纸上第一条规矩是**默认目标** —— 你敲 `mingw32-make` 不带任何词，它就走第一条。本喵要你给这个小工头写 `main`，规矩照稿子里注释来：\n\n- 一个词都没递（光杆儿跑）→ 照默认目标办：印两行；\n- 递的词对得上 → 印一行；\n- 别的词 → 印「认不得」带上原样的词。\n\n跑台跑这条的时候，**不会替你敲任何词** —— 走的就是「光杆儿跑」那一路：该印两行，先「和面」、再「上瓦」。`argc` 是几，先算清楚再落笔。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main =====\n   规矩（照图纸的写法）：\n   · 一个词都没递 → 印两行：和面、上瓦；\n   · 递的词是 clean → 印一行：擦桌子；\n   · 递了别的词 → 印一行：认不得：<原样的词>。\n   递了几个词看 argc（连名字自己一起数），词本身在 argv[1] 里。 */\n\nint main(int argc, char *argv[]) {\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main ===== */\nint main(int argc, char *argv[]) {\n    if (argc < 2) {\n        printf(\"和面\\n\");\n        printf(\"上瓦\\n\");\n        return 0;\n    }\n    if (strcmp(argv[1], \"clean\") == 0) {\n        printf(\"擦桌子\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "和面\n上瓦",
+      "stdin": null,
+      "explanation": "`mingw32-make` 不带词的时候走**默认目标**，这不是巧合喵 —— 图纸上没别的话，流水线就从第一条规矩开工；「光杆儿跑」是绝大多数人最常用的那条路。\n\n写 `main` 的手感跟真题里一样：\n\n- `argc` 连名字自己一起数：光杆儿跑 → `1`，屁股后头带一个词 → `2`；\n- 先拿 `argc < 2` 挡一道：没词就照默认目标办（印那两行），然后交代顺利；\n- 有词的时候再看 `argv[1]`，对号的分活，对不上的回「认不得」。\n\n顺一遍图纸思维：这四行规矩就是「默认目标 + 认词分活」的纸上版；等接上真图纸，这些规矩就从 `main` 里搬到 `Makefile` 上 —— 写法不同，思路一模一样：**光杆儿跑有交代，认不得的词有兜底**。\n\n（真图纸里 `mingw32-make`、`mingw32-make clean` 就是你刚写的两路喵。）",
+      "templateId": "c-s3-20-default-target-write",
+      "params": {
+        "w": "clean",
+        "a": "和面",
+        "b": "上瓦",
+        "c": "擦桌子"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:27.546Z",
+        "hash": "3ea1676c2488baec"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-default-target-write-009",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一关喵：**光杆儿跑**。图纸上第一条规矩是**默认目标** —— 你敲 `mingw32-make` 不带任何词，它就走第一条。本喵要你给这个小工头写 `main`，规矩照稿子里注释来：\n\n- 一个词都没递（光杆儿跑）→ 照默认目标办：印两行；\n- 递的词对得上 → 印一行；\n- 别的词 → 印「认不得」带上原样的词。\n\n跑台跑这条的时候，**不会替你敲任何词** —— 走的就是「光杆儿跑」那一路：该印两行，先「备料」、再「码砖」。`argc` 是几，先算清楚再落笔。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main =====\n   规矩（照图纸的写法）：\n   · 一个词都没递 → 印两行：备料、码砖；\n   · 递的词是 tidy → 印一行：拾掇；\n   · 递了别的词 → 印一行：认不得：<原样的词>。\n   递了几个词看 argc（连名字自己一起数），词本身在 argv[1] 里。 */\n\nint main(int argc, char *argv[]) {\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main ===== */\nint main(int argc, char *argv[]) {\n    if (argc < 2) {\n        printf(\"备料\\n\");\n        printf(\"码砖\\n\");\n        return 0;\n    }\n    if (strcmp(argv[1], \"tidy\") == 0) {\n        printf(\"拾掇\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "备料\n码砖",
+      "stdin": null,
+      "explanation": "`mingw32-make` 不带词的时候走**默认目标**，这不是巧合喵 —— 图纸上没别的话，流水线就从第一条规矩开工；「光杆儿跑」是绝大多数人最常用的那条路。\n\n写 `main` 的手感跟真题里一样：\n\n- `argc` 连名字自己一起数：光杆儿跑 → `1`，屁股后头带一个词 → `2`；\n- 先拿 `argc < 2` 挡一道：没词就照默认目标办（印那两行），然后交代顺利；\n- 有词的时候再看 `argv[1]`，对号的分活，对不上的回「认不得」。\n\n顺一遍图纸思维：这四行规矩就是「默认目标 + 认词分活」的纸上版；等接上真图纸，这些规矩就从 `main` 里搬到 `Makefile` 上 —— 写法不同，思路一模一样：**光杆儿跑有交代，认不得的词有兜底**。\n\n（真图纸里 `mingw32-make`、`mingw32-make clean` 就是你刚写的两路喵。）",
+      "templateId": "c-s3-20-default-target-write",
+      "params": {
+        "w": "tidy",
+        "a": "备料",
+        "b": "码砖",
+        "c": "拾掇"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:29.839Z",
+        "hash": "7b3a8d00aced4391"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-default-target-write-012",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一关喵：**光杆儿跑**。图纸上第一条规矩是**默认目标** —— 你敲 `mingw32-make` 不带任何词，它就走第一条。本喵要你给这个小工头写 `main`，规矩照稿子里注释来：\n\n- 一个词都没递（光杆儿跑）→ 照默认目标办：印两行；\n- 递的词对得上 → 印一行；\n- 别的词 → 印「认不得」带上原样的词。\n\n跑台跑这条的时候，**不会替你敲任何词** —— 走的就是「光杆儿跑」那一路：该印两行，先「和面」、再「码砖」。`argc` 是几，先算清楚再落笔。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main =====\n   规矩（照图纸的写法）：\n   · 一个词都没递 → 印两行：和面、码砖；\n   · 递的词是 tidy → 印一行：擦桌子；\n   · 递了别的词 → 印一行：认不得：<原样的词>。\n   递了几个词看 argc（连名字自己一起数），词本身在 argv[1] 里。 */\n\nint main(int argc, char *argv[]) {\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main ===== */\nint main(int argc, char *argv[]) {\n    if (argc < 2) {\n        printf(\"和面\\n\");\n        printf(\"码砖\\n\");\n        return 0;\n    }\n    if (strcmp(argv[1], \"tidy\") == 0) {\n        printf(\"擦桌子\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "和面\n码砖",
+      "stdin": null,
+      "explanation": "`mingw32-make` 不带词的时候走**默认目标**，这不是巧合喵 —— 图纸上没别的话，流水线就从第一条规矩开工；「光杆儿跑」是绝大多数人最常用的那条路。\n\n写 `main` 的手感跟真题里一样：\n\n- `argc` 连名字自己一起数：光杆儿跑 → `1`，屁股后头带一个词 → `2`；\n- 先拿 `argc < 2` 挡一道：没词就照默认目标办（印那两行），然后交代顺利；\n- 有词的时候再看 `argv[1]`，对号的分活，对不上的回「认不得」。\n\n顺一遍图纸思维：这四行规矩就是「默认目标 + 认词分活」的纸上版；等接上真图纸，这些规矩就从 `main` 里搬到 `Makefile` 上 —— 写法不同，思路一模一样：**光杆儿跑有交代，认不得的词有兜底**。\n\n（真图纸里 `mingw32-make`、`mingw32-make clean` 就是你刚写的两路喵。）",
+      "templateId": "c-s3-20-default-target-write",
+      "params": {
+        "w": "tidy",
+        "a": "和面",
+        "b": "码砖",
+        "c": "擦桌子"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:32.155Z",
+        "hash": "5dfd38e2c831671c"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-default-target-write-015",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一关喵：**光杆儿跑**。图纸上第一条规矩是**默认目标** —— 你敲 `mingw32-make` 不带任何词，它就走第一条。本喵要你给这个小工头写 `main`，规矩照稿子里注释来：\n\n- 一个词都没递（光杆儿跑）→ 照默认目标办：印两行；\n- 递的词对得上 → 印一行；\n- 别的词 → 印「认不得」带上原样的词。\n\n跑台跑这条的时候，**不会替你敲任何词** —— 走的就是「光杆儿跑」那一路：该印两行，先「和面」、再「上瓦」。`argc` 是几，先算清楚再落笔。",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main =====\n   规矩（照图纸的写法）：\n   · 一个词都没递 → 印两行：和面、上瓦；\n   · 递的词是 tidy → 印一行：拾掇；\n   · 递了别的词 → 印一行：认不得：<原样的词>。\n   递了几个词看 argc（连名字自己一起数），词本身在 argv[1] 里。 */\n\nint main(int argc, char *argv[]) {\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\n/* ===== 开工区：按注释里的规矩写 main ===== */\nint main(int argc, char *argv[]) {\n    if (argc < 2) {\n        printf(\"和面\\n\");\n        printf(\"上瓦\\n\");\n        return 0;\n    }\n    if (strcmp(argv[1], \"tidy\") == 0) {\n        printf(\"拾掇\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", argv[1]);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "和面\n上瓦",
+      "stdin": null,
+      "explanation": "`mingw32-make` 不带词的时候走**默认目标**，这不是巧合喵 —— 图纸上没别的话，流水线就从第一条规矩开工；「光杆儿跑」是绝大多数人最常用的那条路。\n\n写 `main` 的手感跟真题里一样：\n\n- `argc` 连名字自己一起数：光杆儿跑 → `1`，屁股后头带一个词 → `2`；\n- 先拿 `argc < 2` 挡一道：没词就照默认目标办（印那两行），然后交代顺利；\n- 有词的时候再看 `argv[1]`，对号的分活，对不上的回「认不得」。\n\n顺一遍图纸思维：这四行规矩就是「默认目标 + 认词分活」的纸上版；等接上真图纸，这些规矩就从 `main` 里搬到 `Makefile` 上 —— 写法不同，思路一模一样：**光杆儿跑有交代，认不得的词有兜底**。\n\n（真图纸里 `mingw32-make`、`mingw32-make clean` 就是你刚写的两路喵。）",
+      "templateId": "c-s3-20-default-target-write",
+      "params": {
+        "w": "tidy",
+        "a": "和面",
+        "b": "上瓦",
+        "c": "拾掇"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:10.443Z",
+        "hash": "4fa8db90baf9a16d"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dep-chain-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "图纸思维里，一条规矩的**依赖链**长这样喵：前一步的战利品，是后一步的投喂 —— 一条链子从头串到尾，断一环整条就废。\n\n三步手艺都已经写好了（备料、揉、烤），`main` 也写好了；就差 `fish_bake` 的身子还在偷懒（直接还 0）。请你把三步**按顺序串起来**：上一环的收成喂给下一环，最后把收成叼回给 `main`。\n\n（三个数的脾气都在稿子里摆着呢：备料加 1、揉乘 2、烤减 2。）改好之后该印一行 `成品 X 条` —— X 就是把三步串一遍得出的数，一步都不能少、也不能倒。",
+      "starter": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 1;\n}\n\nint fish_knead(int x) {\n    return x * 2;\n}\n\nint fish_burn(int x) {\n    return x - 2;\n}\n\n/* ===== 身子区：fish_bake 的身子 =====\n   把三步按顺序串起来：先备料、再揉、后烤；\n   前一步的收成喂给后一步，最后一口叼回去。\n   现在这身子在偷懒（还 0），把它换成真的活。 */\nint fish_bake(int raw) {\n    return 0;\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(2));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 1;\n}\n\nint fish_knead(int x) {\n    return x * 2;\n}\n\nint fish_burn(int x) {\n    return x - 2;\n}\n\n/* ===== 身子区：fish_bake 的身子 ===== */\nint fish_bake(int raw) {\n    int prepared = fish_prep(raw);\n    int kneaded = fish_knead(prepared);\n    return fish_burn(kneaded);\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(2));\n    return 0;\n}\n",
+      "expectedOutput": "成品 4 条",
+      "stdin": null,
+      "explanation": "依赖链就一句话喵：**前一步的收成，是后一步的投喂**。这条链子三步：备料 → 揉 → 烤。\n\n```text\nint prepared = fish_prep(raw);\nint kneaded = fish_knead(prepared);\nreturn fish_burn(kneaded);\n```\n\n- 顺序不能倒：先「揉」后「备料」，揉的时候就不知道自己在揉什么；\n- 中间的收成要有地方接住（本喵用的是小仓库），接住了才能喂给下一环；\n- 最后一环的收成，就是整条链子的成品 —— 一口叼回去。\n\n顺一遍图纸思维：真图纸里写一条规矩，本质上就是写这条链子 —— 「目标 X 依赖 Y，Y 依赖 Z」；每一环只管自己的活，收成往下一递，谁都不多管闲事。这就是课文里「认词分活」的分工感：**每环管好自己，链子自己会走通**。\n\n再补一句反例的痛：链子要是断了（某一环的收成没人接、或者顺序倒了），台面上不红不崩，出来的就是安心说胡话的假数 —— 和「递反袋子」那根坑同一个家族。",
+      "templateId": "c-s3-20-dep-chain-write",
+      "params": {
+        "raw": "2",
+        "p": "1",
+        "k": "2",
+        "l": "2"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:12.462Z",
+        "hash": "bc894ce3436bcbf2"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dep-chain-write-003",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "图纸思维里，一条规矩的**依赖链**长这样喵：前一步的战利品，是后一步的投喂 —— 一条链子从头串到尾，断一环整条就废。\n\n三步手艺都已经写好了（备料、揉、烤），`main` 也写好了；就差 `fish_bake` 的身子还在偷懒（直接还 0）。请你把三步**按顺序串起来**：上一环的收成喂给下一环，最后把收成叼回给 `main`。\n\n（三个数的脾气都在稿子里摆着呢：备料加 1、揉乘 4、烤减 1。）改好之后该印一行 `成品 X 条` —— X 就是把三步串一遍得出的数，一步都不能少、也不能倒。",
+      "starter": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 1;\n}\n\nint fish_knead(int x) {\n    return x * 4;\n}\n\nint fish_burn(int x) {\n    return x - 1;\n}\n\n/* ===== 身子区：fish_bake 的身子 =====\n   把三步按顺序串起来：先备料、再揉、后烤；\n   前一步的收成喂给后一步，最后一口叼回去。\n   现在这身子在偷懒（还 0），把它换成真的活。 */\nint fish_bake(int raw) {\n    return 0;\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(2));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 1;\n}\n\nint fish_knead(int x) {\n    return x * 4;\n}\n\nint fish_burn(int x) {\n    return x - 1;\n}\n\n/* ===== 身子区：fish_bake 的身子 ===== */\nint fish_bake(int raw) {\n    int prepared = fish_prep(raw);\n    int kneaded = fish_knead(prepared);\n    return fish_burn(kneaded);\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(2));\n    return 0;\n}\n",
+      "expectedOutput": "成品 11 条",
+      "stdin": null,
+      "explanation": "依赖链就一句话喵：**前一步的收成，是后一步的投喂**。这条链子三步：备料 → 揉 → 烤。\n\n```text\nint prepared = fish_prep(raw);\nint kneaded = fish_knead(prepared);\nreturn fish_burn(kneaded);\n```\n\n- 顺序不能倒：先「揉」后「备料」，揉的时候就不知道自己在揉什么；\n- 中间的收成要有地方接住（本喵用的是小仓库），接住了才能喂给下一环；\n- 最后一环的收成，就是整条链子的成品 —— 一口叼回去。\n\n顺一遍图纸思维：真图纸里写一条规矩，本质上就是写这条链子 —— 「目标 X 依赖 Y，Y 依赖 Z」；每一环只管自己的活，收成往下一递，谁都不多管闲事。这就是课文里「认词分活」的分工感：**每环管好自己，链子自己会走通**。\n\n再补一句反例的痛：链子要是断了（某一环的收成没人接、或者顺序倒了），台面上不红不崩，出来的就是安心说胡话的假数 —— 和「递反袋子」那根坑同一个家族。",
+      "templateId": "c-s3-20-dep-chain-write",
+      "params": {
+        "raw": "2",
+        "p": "1",
+        "k": "4",
+        "l": "1"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:34.430Z",
+        "hash": "c3371e0c212980dc"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dep-chain-write-006",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "图纸思维里，一条规矩的**依赖链**长这样喵：前一步的战利品，是后一步的投喂 —— 一条链子从头串到尾，断一环整条就废。\n\n三步手艺都已经写好了（备料、揉、烤），`main` 也写好了；就差 `fish_bake` 的身子还在偷懒（直接还 0）。请你把三步**按顺序串起来**：上一环的收成喂给下一环，最后把收成叼回给 `main`。\n\n（三个数的脾气都在稿子里摆着呢：备料加 3、揉乘 4、烤减 2。）改好之后该印一行 `成品 X 条` —— X 就是把三步串一遍得出的数，一步都不能少、也不能倒。",
+      "starter": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 3;\n}\n\nint fish_knead(int x) {\n    return x * 4;\n}\n\nint fish_burn(int x) {\n    return x - 2;\n}\n\n/* ===== 身子区：fish_bake 的身子 =====\n   把三步按顺序串起来：先备料、再揉、后烤；\n   前一步的收成喂给后一步，最后一口叼回去。\n   现在这身子在偷懒（还 0），把它换成真的活。 */\nint fish_bake(int raw) {\n    return 0;\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(2));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 3;\n}\n\nint fish_knead(int x) {\n    return x * 4;\n}\n\nint fish_burn(int x) {\n    return x - 2;\n}\n\n/* ===== 身子区：fish_bake 的身子 ===== */\nint fish_bake(int raw) {\n    int prepared = fish_prep(raw);\n    int kneaded = fish_knead(prepared);\n    return fish_burn(kneaded);\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(2));\n    return 0;\n}\n",
+      "expectedOutput": "成品 18 条",
+      "stdin": null,
+      "explanation": "依赖链就一句话喵：**前一步的收成，是后一步的投喂**。这条链子三步：备料 → 揉 → 烤。\n\n```text\nint prepared = fish_prep(raw);\nint kneaded = fish_knead(prepared);\nreturn fish_burn(kneaded);\n```\n\n- 顺序不能倒：先「揉」后「备料」，揉的时候就不知道自己在揉什么；\n- 中间的收成要有地方接住（本喵用的是小仓库），接住了才能喂给下一环；\n- 最后一环的收成，就是整条链子的成品 —— 一口叼回去。\n\n顺一遍图纸思维：真图纸里写一条规矩，本质上就是写这条链子 —— 「目标 X 依赖 Y，Y 依赖 Z」；每一环只管自己的活，收成往下一递，谁都不多管闲事。这就是课文里「认词分活」的分工感：**每环管好自己，链子自己会走通**。\n\n再补一句反例的痛：链子要是断了（某一环的收成没人接、或者顺序倒了），台面上不红不崩，出来的就是安心说胡话的假数 —— 和「递反袋子」那根坑同一个家族。",
+      "templateId": "c-s3-20-dep-chain-write",
+      "params": {
+        "raw": "2",
+        "p": "3",
+        "k": "4",
+        "l": "2"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:36.648Z",
+        "hash": "af420ca0ec67301d"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dep-chain-write-009",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "图纸思维里，一条规矩的**依赖链**长这样喵：前一步的战利品，是后一步的投喂 —— 一条链子从头串到尾，断一环整条就废。\n\n三步手艺都已经写好了（备料、揉、烤），`main` 也写好了；就差 `fish_bake` 的身子还在偷懒（直接还 0）。请你把三步**按顺序串起来**：上一环的收成喂给下一环，最后把收成叼回给 `main`。\n\n（三个数的脾气都在稿子里摆着呢：备料加 1、揉乘 2、烤减 1。）改好之后该印一行 `成品 X 条` —— X 就是把三步串一遍得出的数，一步都不能少、也不能倒。",
+      "starter": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 1;\n}\n\nint fish_knead(int x) {\n    return x * 2;\n}\n\nint fish_burn(int x) {\n    return x - 1;\n}\n\n/* ===== 身子区：fish_bake 的身子 =====\n   把三步按顺序串起来：先备料、再揉、后烤；\n   前一步的收成喂给后一步，最后一口叼回去。\n   现在这身子在偷懒（还 0），把它换成真的活。 */\nint fish_bake(int raw) {\n    return 0;\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(5));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 1;\n}\n\nint fish_knead(int x) {\n    return x * 2;\n}\n\nint fish_burn(int x) {\n    return x - 1;\n}\n\n/* ===== 身子区：fish_bake 的身子 ===== */\nint fish_bake(int raw) {\n    int prepared = fish_prep(raw);\n    int kneaded = fish_knead(prepared);\n    return fish_burn(kneaded);\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(5));\n    return 0;\n}\n",
+      "expectedOutput": "成品 11 条",
+      "stdin": null,
+      "explanation": "依赖链就一句话喵：**前一步的收成，是后一步的投喂**。这条链子三步：备料 → 揉 → 烤。\n\n```text\nint prepared = fish_prep(raw);\nint kneaded = fish_knead(prepared);\nreturn fish_burn(kneaded);\n```\n\n- 顺序不能倒：先「揉」后「备料」，揉的时候就不知道自己在揉什么；\n- 中间的收成要有地方接住（本喵用的是小仓库），接住了才能喂给下一环；\n- 最后一环的收成，就是整条链子的成品 —— 一口叼回去。\n\n顺一遍图纸思维：真图纸里写一条规矩，本质上就是写这条链子 —— 「目标 X 依赖 Y，Y 依赖 Z」；每一环只管自己的活，收成往下一递，谁都不多管闲事。这就是课文里「认词分活」的分工感：**每环管好自己，链子自己会走通**。\n\n再补一句反例的痛：链子要是断了（某一环的收成没人接、或者顺序倒了），台面上不红不崩，出来的就是安心说胡话的假数 —— 和「递反袋子」那根坑同一个家族。",
+      "templateId": "c-s3-20-dep-chain-write",
+      "params": {
+        "raw": "5",
+        "p": "1",
+        "k": "2",
+        "l": "1"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:38.933Z",
+        "hash": "d00b2dfa3d019a1e"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dep-chain-write-012",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "图纸思维里，一条规矩的**依赖链**长这样喵：前一步的战利品，是后一步的投喂 —— 一条链子从头串到尾，断一环整条就废。\n\n三步手艺都已经写好了（备料、揉、烤），`main` 也写好了；就差 `fish_bake` 的身子还在偷懒（直接还 0）。请你把三步**按顺序串起来**：上一环的收成喂给下一环，最后把收成叼回给 `main`。\n\n（三个数的脾气都在稿子里摆着呢：备料加 3、揉乘 2、烤减 2。）改好之后该印一行 `成品 X 条` —— X 就是把三步串一遍得出的数，一步都不能少、也不能倒。",
+      "starter": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 3;\n}\n\nint fish_knead(int x) {\n    return x * 2;\n}\n\nint fish_burn(int x) {\n    return x - 2;\n}\n\n/* ===== 身子区：fish_bake 的身子 =====\n   把三步按顺序串起来：先备料、再揉、后烤；\n   前一步的收成喂给后一步，最后一口叼回去。\n   现在这身子在偷懒（还 0），把它换成真的活。 */\nint fish_bake(int raw) {\n    return 0;\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(5));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 3;\n}\n\nint fish_knead(int x) {\n    return x * 2;\n}\n\nint fish_burn(int x) {\n    return x - 2;\n}\n\n/* ===== 身子区：fish_bake 的身子 ===== */\nint fish_bake(int raw) {\n    int prepared = fish_prep(raw);\n    int kneaded = fish_knead(prepared);\n    return fish_burn(kneaded);\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(5));\n    return 0;\n}\n",
+      "expectedOutput": "成品 14 条",
+      "stdin": null,
+      "explanation": "依赖链就一句话喵：**前一步的收成，是后一步的投喂**。这条链子三步：备料 → 揉 → 烤。\n\n```text\nint prepared = fish_prep(raw);\nint kneaded = fish_knead(prepared);\nreturn fish_burn(kneaded);\n```\n\n- 顺序不能倒：先「揉」后「备料」，揉的时候就不知道自己在揉什么；\n- 中间的收成要有地方接住（本喵用的是小仓库），接住了才能喂给下一环；\n- 最后一环的收成，就是整条链子的成品 —— 一口叼回去。\n\n顺一遍图纸思维：真图纸里写一条规矩，本质上就是写这条链子 —— 「目标 X 依赖 Y，Y 依赖 Z」；每一环只管自己的活，收成往下一递，谁都不多管闲事。这就是课文里「认词分活」的分工感：**每环管好自己，链子自己会走通**。\n\n再补一句反例的痛：链子要是断了（某一环的收成没人接、或者顺序倒了），台面上不红不崩，出来的就是安心说胡话的假数 —— 和「递反袋子」那根坑同一个家族。",
+      "templateId": "c-s3-20-dep-chain-write",
+      "params": {
+        "raw": "5",
+        "p": "3",
+        "k": "2",
+        "l": "2"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:41.279Z",
+        "hash": "7581d06c2903d992"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dep-chain-write-015",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "图纸思维里，一条规矩的**依赖链**长这样喵：前一步的战利品，是后一步的投喂 —— 一条链子从头串到尾，断一环整条就废。\n\n三步手艺都已经写好了（备料、揉、烤），`main` 也写好了；就差 `fish_bake` 的身子还在偷懒（直接还 0）。请你把三步**按顺序串起来**：上一环的收成喂给下一环，最后把收成叼回给 `main`。\n\n（三个数的脾气都在稿子里摆着呢：备料加 3、揉乘 4、烤减 1。）改好之后该印一行 `成品 X 条` —— X 就是把三步串一遍得出的数，一步都不能少、也不能倒。",
+      "starter": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 3;\n}\n\nint fish_knead(int x) {\n    return x * 4;\n}\n\nint fish_burn(int x) {\n    return x - 1;\n}\n\n/* ===== 身子区：fish_bake 的身子 =====\n   把三步按顺序串起来：先备料、再揉、后烤；\n   前一步的收成喂给后一步，最后一口叼回去。\n   现在这身子在偷懒（还 0），把它换成真的活。 */\nint fish_bake(int raw) {\n    return 0;\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(5));\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n\n/* 三步手艺已经写好了，别动 */\nint fish_prep(int raw) {\n    return raw + 3;\n}\n\nint fish_knead(int x) {\n    return x * 4;\n}\n\nint fish_burn(int x) {\n    return x - 1;\n}\n\n/* ===== 身子区：fish_bake 的身子 ===== */\nint fish_bake(int raw) {\n    int prepared = fish_prep(raw);\n    int kneaded = fish_knead(prepared);\n    return fish_burn(kneaded);\n}\n\nint main(void) {\n    printf(\"成品 %d 条\\n\", fish_bake(5));\n    return 0;\n}\n",
+      "expectedOutput": "成品 31 条",
+      "stdin": null,
+      "explanation": "依赖链就一句话喵：**前一步的收成，是后一步的投喂**。这条链子三步：备料 → 揉 → 烤。\n\n```text\nint prepared = fish_prep(raw);\nint kneaded = fish_knead(prepared);\nreturn fish_burn(kneaded);\n```\n\n- 顺序不能倒：先「揉」后「备料」，揉的时候就不知道自己在揉什么；\n- 中间的收成要有地方接住（本喵用的是小仓库），接住了才能喂给下一环；\n- 最后一环的收成，就是整条链子的成品 —— 一口叼回去。\n\n顺一遍图纸思维：真图纸里写一条规矩，本质上就是写这条链子 —— 「目标 X 依赖 Y，Y 依赖 Z」；每一环只管自己的活，收成往下一递，谁都不多管闲事。这就是课文里「认词分活」的分工感：**每环管好自己，链子自己会走通**。\n\n再补一句反例的痛：链子要是断了（某一环的收成没人接、或者顺序倒了），台面上不红不崩，出来的就是安心说胡话的假数 —— 和「递反袋子」那根坑同一个家族。",
+      "templateId": "c-s3-20-dep-chain-write",
+      "params": {
+        "raw": "5",
+        "p": "3",
+        "k": "4",
+        "l": "1"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:14.513Z",
+        "hash": "4c8aaef21fe9a16c"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dispatch-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这次的活整块归你写喵：外面那层（接词、守卫）本喵已经搭好了，缺的是**认词分活的那一串** —— 词收到 `word` 里之后，照着名单往下分：\n\n- 递来 `build` → 印两行；\n- 递来 `clean` → 印两行；\n- 递来 `tidy` → 印一行；\n- 别的词 → 印一行「认不得：」带上那个词**原样**的样子。\n\n该印什么字，稿子里注释写得清清楚楚，照着来。样例喂进去的是：\n\n```text\ntidy\n```\n\n该印出来的是：\n\n```text\n拾掇\n```\n\n（判分喂的是词单里另外的词喵 —— 每一支岔路都得讲义气，一条都不能落。）",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    /* ===== 认词分活区：就这一块要你写 =====\n       词已经在 word 里了，照着名单往下分：\n       · build → 印两行：备料、码砖\n       · clean → 印两行：擦桌子、拖地\n       · tidy  → 印一行：拾掇\n       · 别的词 → 印一行：认不得：<原样的词> */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    if (strcmp(word, \"build\") == 0) {\n        printf(\"备料\\n\");\n        printf(\"码砖\\n\");\n    } else if (strcmp(word, \"clean\") == 0) {\n        printf(\"擦桌子\\n\");\n        printf(\"拖地\\n\");\n    } else if (strcmp(word, \"tidy\") == 0) {\n        printf(\"拾掇\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "备料\n码砖",
+      "stdin": "build\n",
+      "explanation": "认词分活的一串，其实就是图纸上那几行**规矩**的纸上版喵：一条一条往下排，谁先对号谁先干，全都不对号，就落到最后那条兜底。\n\n几句经验：\n\n- 比词用 `strcmp(...) == 0`，对号才算数；比的时候一个字符都不能差（大写小写、拼写都算）；\n- 每一支该印几行、印什么字，先数清楚再落笔 —— 落错一支，台面上的行数就对不上；\n- 末尾那条「认不得」是**兜底**：把原样的词带出去，主人一看就知道递错了哪个词，比闷声不响强。\n\n顺一遍图纸思维：真实图纸里这种「一个目标名对一串活」的规矩最常见（`build`、`clean` 就是大名鼎鼎的 make 目标名喵）；`main` 里这串写完，往后接上真图纸的时候，就是同一种手感。\n\n（样例喂的 `tidy` 走的是一行的岔路；判分的词走的是两行的岔路 —— 别只顾一条。）",
+      "templateId": "c-s3-20-dispatch-write",
+      "params": {
+        "w": "build",
+        "a": "备料",
+        "b": "码砖",
+        "c": "擦桌子",
+        "d": "拖地",
+        "e": "拾掇"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:17.156Z",
+        "hash": "17da6c373c71fbbc"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dispatch-write-013",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这次的活整块归你写喵：外面那层（接词、守卫）本喵已经搭好了，缺的是**认词分活的那一串** —— 词收到 `word` 里之后，照着名单往下分：\n\n- 递来 `build` → 印两行；\n- 递来 `clean` → 印两行；\n- 递来 `tidy` → 印一行；\n- 别的词 → 印一行「认不得：」带上那个词**原样**的样子。\n\n该印什么字，稿子里注释写得清清楚楚，照着来。样例喂进去的是：\n\n```text\ntidy\n```\n\n该印出来的是：\n\n```text\n摆整齐\n```\n\n（判分喂的是词单里另外的词喵 —— 每一支岔路都得讲义气，一条都不能落。）",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    /* ===== 认词分活区：就这一块要你写 =====\n       词已经在 word 里了，照着名单往下分：\n       · build → 印两行：备料、上瓦\n       · clean → 印两行：拾掇、拖地\n       · tidy  → 印一行：摆整齐\n       · 别的词 → 印一行：认不得：<原样的词> */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    if (strcmp(word, \"build\") == 0) {\n        printf(\"备料\\n\");\n        printf(\"上瓦\\n\");\n    } else if (strcmp(word, \"clean\") == 0) {\n        printf(\"拾掇\\n\");\n        printf(\"拖地\\n\");\n    } else if (strcmp(word, \"tidy\") == 0) {\n        printf(\"摆整齐\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "备料\n上瓦",
+      "stdin": "build\n",
+      "explanation": "认词分活的一串，其实就是图纸上那几行**规矩**的纸上版喵：一条一条往下排，谁先对号谁先干，全都不对号，就落到最后那条兜底。\n\n几句经验：\n\n- 比词用 `strcmp(...) == 0`，对号才算数；比的时候一个字符都不能差（大写小写、拼写都算）；\n- 每一支该印几行、印什么字，先数清楚再落笔 —— 落错一支，台面上的行数就对不上；\n- 末尾那条「认不得」是**兜底**：把原样的词带出去，主人一看就知道递错了哪个词，比闷声不响强。\n\n顺一遍图纸思维：真实图纸里这种「一个目标名对一串活」的规矩最常见（`build`、`clean` 就是大名鼎鼎的 make 目标名喵）；`main` 里这串写完，往后接上真图纸的时候，就是同一种手感。\n\n（样例喂的 `tidy` 走的是一行的岔路；判分的词走的是两行的岔路 —— 别只顾一条。）",
+      "templateId": "c-s3-20-dispatch-write",
+      "params": {
+        "w": "build",
+        "a": "备料",
+        "b": "上瓦",
+        "c": "拾掇",
+        "d": "拖地",
+        "e": "摆整齐"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:44.399Z",
+        "hash": "fe6708e740031dc3"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dispatch-write-025",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这次的活整块归你写喵：外面那层（接词、守卫）本喵已经搭好了，缺的是**认词分活的那一串** —— 词收到 `word` 里之后，照着名单往下分：\n\n- 递来 `build` → 印两行；\n- 递来 `clean` → 印两行；\n- 递来 `tidy` → 印一行；\n- 别的词 → 印一行「认不得：」带上那个词**原样**的样子。\n\n该印什么字，稿子里注释写得清清楚楚，照着来。样例喂进去的是：\n\n```text\ntidy\n```\n\n该印出来的是：\n\n```text\n摆整齐\n```\n\n（判分喂的是词单里另外的词喵 —— 每一支岔路都得讲义气，一条都不能落。）",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    /* ===== 认词分活区：就这一块要你写 =====\n       词已经在 word 里了，照着名单往下分：\n       · build → 印两行：和面、上瓦\n       · clean → 印两行：擦桌子、拖地\n       · tidy  → 印一行：摆整齐\n       · 别的词 → 印一行：认不得：<原样的词> */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    if (strcmp(word, \"build\") == 0) {\n        printf(\"和面\\n\");\n        printf(\"上瓦\\n\");\n    } else if (strcmp(word, \"clean\") == 0) {\n        printf(\"擦桌子\\n\");\n        printf(\"拖地\\n\");\n    } else if (strcmp(word, \"tidy\") == 0) {\n        printf(\"摆整齐\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "和面\n上瓦",
+      "stdin": "build\n",
+      "explanation": "认词分活的一串，其实就是图纸上那几行**规矩**的纸上版喵：一条一条往下排，谁先对号谁先干，全都不对号，就落到最后那条兜底。\n\n几句经验：\n\n- 比词用 `strcmp(...) == 0`，对号才算数；比的时候一个字符都不能差（大写小写、拼写都算）；\n- 每一支该印几行、印什么字，先数清楚再落笔 —— 落错一支，台面上的行数就对不上；\n- 末尾那条「认不得」是**兜底**：把原样的词带出去，主人一看就知道递错了哪个词，比闷声不响强。\n\n顺一遍图纸思维：真实图纸里这种「一个目标名对一串活」的规矩最常见（`build`、`clean` 就是大名鼎鼎的 make 目标名喵）；`main` 里这串写完，往后接上真图纸的时候，就是同一种手感。\n\n（样例喂的 `tidy` 走的是一行的岔路；判分的词走的是两行的岔路 —— 别只顾一条。）",
+      "templateId": "c-s3-20-dispatch-write",
+      "params": {
+        "w": "build",
+        "a": "和面",
+        "b": "上瓦",
+        "c": "擦桌子",
+        "d": "拖地",
+        "e": "摆整齐"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:47.434Z",
+        "hash": "2ff20375087c3f4d"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dispatch-write-038",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这次的活整块归你写喵：外面那层（接词、守卫）本喵已经搭好了，缺的是**认词分活的那一串** —— 词收到 `word` 里之后，照着名单往下分：\n\n- 递来 `build` → 印两行；\n- 递来 `clean` → 印两行；\n- 递来 `tidy` → 印一行；\n- 别的词 → 印一行「认不得：」带上那个词**原样**的样子。\n\n该印什么字，稿子里注释写得清清楚楚，照着来。样例喂进去的是：\n\n```text\ntidy\n```\n\n该印出来的是：\n\n```text\n拾掇\n```\n\n（判分喂的是词单里另外的词喵 —— 每一支岔路都得讲义气，一条都不能落。）",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    /* ===== 认词分活区：就这一块要你写 =====\n       词已经在 word 里了，照着名单往下分：\n       · build → 印两行：备料、码砖\n       · clean → 印两行：拾掇、晾干\n       · tidy  → 印一行：拾掇\n       · 别的词 → 印一行：认不得：<原样的词> */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    if (strcmp(word, \"build\") == 0) {\n        printf(\"备料\\n\");\n        printf(\"码砖\\n\");\n    } else if (strcmp(word, \"clean\") == 0) {\n        printf(\"拾掇\\n\");\n        printf(\"晾干\\n\");\n    } else if (strcmp(word, \"tidy\") == 0) {\n        printf(\"拾掇\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "拾掇\n晾干",
+      "stdin": "clean\n",
+      "explanation": "认词分活的一串，其实就是图纸上那几行**规矩**的纸上版喵：一条一条往下排，谁先对号谁先干，全都不对号，就落到最后那条兜底。\n\n几句经验：\n\n- 比词用 `strcmp(...) == 0`，对号才算数；比的时候一个字符都不能差（大写小写、拼写都算）；\n- 每一支该印几行、印什么字，先数清楚再落笔 —— 落错一支，台面上的行数就对不上；\n- 末尾那条「认不得」是**兜底**：把原样的词带出去，主人一看就知道递错了哪个词，比闷声不响强。\n\n顺一遍图纸思维：真实图纸里这种「一个目标名对一串活」的规矩最常见（`build`、`clean` 就是大名鼎鼎的 make 目标名喵）；`main` 里这串写完，往后接上真图纸的时候，就是同一种手感。\n\n（样例喂的 `tidy` 走的是一行的岔路；判分的词走的是两行的岔路 —— 别只顾一条。）",
+      "templateId": "c-s3-20-dispatch-write",
+      "params": {
+        "w": "clean",
+        "a": "备料",
+        "b": "码砖",
+        "c": "拾掇",
+        "d": "晾干",
+        "e": "拾掇"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:50.470Z",
+        "hash": "e2e66feac16e7279"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dispatch-write-050",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这次的活整块归你写喵：外面那层（接词、守卫）本喵已经搭好了，缺的是**认词分活的那一串** —— 词收到 `word` 里之后，照着名单往下分：\n\n- 递来 `build` → 印两行；\n- 递来 `clean` → 印两行；\n- 递来 `tidy` → 印一行；\n- 别的词 → 印一行「认不得：」带上那个词**原样**的样子。\n\n该印什么字，稿子里注释写得清清楚楚，照着来。样例喂进去的是：\n\n```text\ntidy\n```\n\n该印出来的是：\n\n```text\n拾掇\n```\n\n（判分喂的是词单里另外的词喵 —— 每一支岔路都得讲义气，一条都不能落。）",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    /* ===== 认词分活区：就这一块要你写 =====\n       词已经在 word 里了，照着名单往下分：\n       · build → 印两行：和面、码砖\n       · clean → 印两行：擦桌子、晾干\n       · tidy  → 印一行：拾掇\n       · 别的词 → 印一行：认不得：<原样的词> */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    if (strcmp(word, \"build\") == 0) {\n        printf(\"和面\\n\");\n        printf(\"码砖\\n\");\n    } else if (strcmp(word, \"clean\") == 0) {\n        printf(\"擦桌子\\n\");\n        printf(\"晾干\\n\");\n    } else if (strcmp(word, \"tidy\") == 0) {\n        printf(\"拾掇\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "擦桌子\n晾干",
+      "stdin": "clean\n",
+      "explanation": "认词分活的一串，其实就是图纸上那几行**规矩**的纸上版喵：一条一条往下排，谁先对号谁先干，全都不对号，就落到最后那条兜底。\n\n几句经验：\n\n- 比词用 `strcmp(...) == 0`，对号才算数；比的时候一个字符都不能差（大写小写、拼写都算）；\n- 每一支该印几行、印什么字，先数清楚再落笔 —— 落错一支，台面上的行数就对不上；\n- 末尾那条「认不得」是**兜底**：把原样的词带出去，主人一看就知道递错了哪个词，比闷声不响强。\n\n顺一遍图纸思维：真实图纸里这种「一个目标名对一串活」的规矩最常见（`build`、`clean` 就是大名鼎鼎的 make 目标名喵）；`main` 里这串写完，往后接上真图纸的时候，就是同一种手感。\n\n（样例喂的 `tidy` 走的是一行的岔路；判分的词走的是两行的岔路 —— 别只顾一条。）",
+      "templateId": "c-s3-20-dispatch-write",
+      "params": {
+        "w": "clean",
+        "a": "和面",
+        "b": "码砖",
+        "c": "擦桌子",
+        "d": "晾干",
+        "e": "拾掇"
+      },
+      "verified": {
+        "at": "2026-10-20T16:37:53.479Z",
+        "hash": "56f33ea9fb0c76a2"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-dispatch-write-063",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这次的活整块归你写喵：外面那层（接词、守卫）本喵已经搭好了，缺的是**认词分活的那一串** —— 词收到 `word` 里之后，照着名单往下分：\n\n- 递来 `build` → 印两行；\n- 递来 `clean` → 印两行；\n- 递来 `tidy` → 印一行；\n- 别的词 → 印一行「认不得：」带上那个词**原样**的样子。\n\n该印什么字，稿子里注释写得清清楚楚，照着来。样例喂进去的是：\n\n```text\ntidy\n```\n\n该印出来的是：\n\n```text\n摆整齐\n```\n\n（判分喂的是词单里另外的词喵 —— 每一支岔路都得讲义气，一条都不能落。）",
+      "starter": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    /* ===== 认词分活区：就这一块要你写 =====\n       词已经在 word 里了，照着名单往下分：\n       · build → 印两行：和面、上瓦\n       · clean → 印两行：拾掇、晾干\n       · tidy  → 印一行：摆整齐\n       · 别的词 → 印一行：认不得：<原样的词> */\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n\n    if (strcmp(word, \"build\") == 0) {\n        printf(\"和面\\n\");\n        printf(\"上瓦\\n\");\n    } else if (strcmp(word, \"clean\") == 0) {\n        printf(\"拾掇\\n\");\n        printf(\"晾干\\n\");\n    } else if (strcmp(word, \"tidy\") == 0) {\n        printf(\"摆整齐\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "拾掇\n晾干",
+      "stdin": "clean\n",
+      "explanation": "认词分活的一串，其实就是图纸上那几行**规矩**的纸上版喵：一条一条往下排，谁先对号谁先干，全都不对号，就落到最后那条兜底。\n\n几句经验：\n\n- 比词用 `strcmp(...) == 0`，对号才算数；比的时候一个字符都不能差（大写小写、拼写都算）；\n- 每一支该印几行、印什么字，先数清楚再落笔 —— 落错一支，台面上的行数就对不上；\n- 末尾那条「认不得」是**兜底**：把原样的词带出去，主人一看就知道递错了哪个词，比闷声不响强。\n\n顺一遍图纸思维：真实图纸里这种「一个目标名对一串活」的规矩最常见（`build`、`clean` 就是大名鼎鼎的 make 目标名喵）；`main` 里这串写完，往后接上真图纸的时候，就是同一种手感。\n\n（样例喂的 `tidy` 走的是一行的岔路；判分的词走的是两行的岔路 —— 别只顾一条。）",
+      "templateId": "c-s3-20-dispatch-write",
+      "params": {
+        "w": "clean",
+        "a": "和面",
+        "b": "上瓦",
+        "c": "拾掇",
+        "d": "晾干",
+        "e": "摆整齐"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:19.911Z",
+        "hash": "5873f3d56d302f1c"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-exit-code-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这段稿子把活全干完了、话也说全了喵 —— 三行印得齐齐整整。可它**收尾交代的那一声**是「不顺利」：稿子最后一句是 `return 1;`。流水线每跑完一条规矩都竖着耳朵听这一声：听见不顺利，当场收摊，后面排的活一条都不跑 —— 明明是办成了的事，却被当成办砸了。\n\n本喵的规矩：**顺顺当当走完，就交代 `0`**（`0` = 顺利）；`return 1` 那一串，是「出事了」的暗号。请把收尾那一声改对（别的都别动）。改好之后该印三行：先「备料」、再「码砖」、末尾「都齐了」—— 一个字都不改，改的是**那一声**。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    printf(\"备料\\n\");\n    printf(\"码砖\\n\");\n    printf(\"都齐了\\n\");\n    /* 收尾交代的是「不顺利」 */\n    return 1;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    printf(\"备料\\n\");\n    printf(\"码砖\\n\");\n    printf(\"都齐了\\n\");\n    /* 顺顺当当走完，交代 0 */\n    return 0;\n}\n",
+      "expectedOutput": "备料\n码砖\n都齐了",
+      "stdin": null,
+      "explanation": "三行一个字没差，差的是**收尾那一声**喵。\n\n- `return 0;` = 「顺顺当当，活干完了」；\n- `return 1;`（别的非零数也一样）= 「出事啦」；\n\n图纸上那套流水线每跑完一条规矩都要看这一声：看见不顺，立刻收摊，后面排的活一条都不跑。所以「办成了事却交代不顺」比办砸了还冤 —— 明明每行都干对了，流水线却当你摔了跤。\n\n这也是课文里「手敲命令」背后那一根线喵：你敲完一条命令，台下的机器就在等这个数 —— 它不看你话印得多漂亮，只看那一声是 `0` 还是不是。这一条里 `return 0;` 就写在最后一行；别的一行都别动，动了别的，数就对不上了。",
+      "templateId": "c-s3-20-exit-code",
+      "params": {
+        "a": "备料",
+        "b": "码砖"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:21.990Z",
+        "hash": "b2d2ca99de9381a5"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-exit-code-003",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这段稿子把活全干完了、话也说全了喵 —— 三行印得齐齐整整。可它**收尾交代的那一声**是「不顺利」：稿子最后一句是 `return 1;`。流水线每跑完一条规矩都竖着耳朵听这一声：听见不顺利，当场收摊，后面排的活一条都不跑 —— 明明是办成了的事，却被当成办砸了。\n\n本喵的规矩：**顺顺当当走完，就交代 `0`**（`0` = 顺利）；`return 1` 那一串，是「出事了」的暗号。请把收尾那一声改对（别的都别动）。改好之后该印三行：先「和面」、再「上瓦」、末尾「都齐了」—— 一个字都不改，改的是**那一声**。",
+      "brokenCode": "#include <stdio.h>\n\nint main(void) {\n    printf(\"和面\\n\");\n    printf(\"上瓦\\n\");\n    printf(\"都齐了\\n\");\n    /* 收尾交代的是「不顺利」 */\n    return 1;\n}\n",
+      "referenceFix": "#include <stdio.h>\n\nint main(void) {\n    printf(\"和面\\n\");\n    printf(\"上瓦\\n\");\n    printf(\"都齐了\\n\");\n    /* 顺顺当当走完，交代 0 */\n    return 0;\n}\n",
+      "expectedOutput": "和面\n上瓦\n都齐了",
+      "stdin": null,
+      "explanation": "三行一个字没差，差的是**收尾那一声**喵。\n\n- `return 0;` = 「顺顺当当，活干完了」；\n- `return 1;`（别的非零数也一样）= 「出事啦」；\n\n图纸上那套流水线每跑完一条规矩都要看这一声：看见不顺，立刻收摊，后面排的活一条都不跑。所以「办成了事却交代不顺」比办砸了还冤 —— 明明每行都干对了，流水线却当你摔了跤。\n\n这也是课文里「手敲命令」背后那一根线喵：你敲完一条命令，台下的机器就在等这个数 —— 它不看你话印得多漂亮，只看那一声是 `0` 还是不是。这一条里 `return 0;` 就写在最后一行；别的一行都别动，动了别的，数就对不上了。",
+      "templateId": "c-s3-20-exit-code",
+      "params": {
+        "a": "和面",
+        "b": "上瓦"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:24.074Z",
+        "hash": "d4952a55030cbb39"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-word-case-miss-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这份稿子是流水线上**认词分活**的活喵：投喂口送来一个词，名单上有的就照着干，名单外的就回一句「认不得」。毛病出在**名单上写的字**：名单写成了首字母大写（`Build`、`Clean`），可送来的词全是小写 —— 两下一比，一个都对不上：名单里的活一次都没轮到，回回都掉进「认不得」那条岔路。\n\n请你把名单上的字改成跟送来的一模一样（别的都别动）。样例喂进去的词故意不在名单里，走的就是「认不得」那条岔路：\n\n```text\n喂猫\n```\n\n该印出来的是：\n\n```text\n认不得：喂猫\n```\n\n判分喂的是名单里的词（比如 build），修好之后它会走名单里对应的那一支。\n\n（顺一句：这种坑真出过 —— 人写的名单和机器送来的词，大小写对不齐，整条流水线照跑不误，就是活全没干。）",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n/* 认词分活：名单上写着 Build / Clean */\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n    if (strcmp(word, \"Build\") == 0) {\n        printf(\"备料\\n\");\n        printf(\"码砖\\n\");\n    } else if (strcmp(word, \"Clean\") == 0) {\n        printf(\"擦桌子\\n\");\n        printf(\"拖地\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n/* 认词分活：名单改成跟送来的词一模一样 */\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n    if (strcmp(word, \"build\") == 0) {\n        printf(\"备料\\n\");\n        printf(\"码砖\\n\");\n    } else if (strcmp(word, \"clean\") == 0) {\n        printf(\"擦桌子\\n\");\n        printf(\"拖地\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "备料\n码砖",
+      "stdin": "build\n",
+      "explanation": "认词这一步，比的是**一个字符一个字符全一样**喵 —— `Build` 和 `build` 在它眼里是完完全全两个词。名单上随手写成大写开头，送来的又是小写，两条就永远对不上：名单里的活一次都没轮到，回回都掉进「认不得」。\n\n- 修法是**照着将来会送来的写**：名单上的字改成跟送来的词一模一样（`build`、`clean`）；\n- 反过来改「送来的词」不归你管 —— 送词的规矩不是你定的，所以老老实实改名单；\n- 这类「就差一点」的坑不崩不报错，就是安安静静走错岔路，跟课文里「命令打错一个字」那种闷亏是一个家族。\n\n顺一遍图纸思维喵：名册对号是图纸上最常见的一条**规矩**（词 = build 干什么、词 = clean 干什么），对号这一步每一个字都算数；名单写成什么样子，就该跟**将来真会送来**的一模一样 —— 这正是「认词分活」要盯的第一处。",
+      "templateId": "c-s3-20-word-case-miss",
+      "params": {
+        "w": "build",
+        "s": "喂猫",
+        "a": "备料",
+        "b": "码砖",
+        "c": "擦桌子",
+        "d": "拖地"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:26.885Z",
+        "hash": "92c1cd8cf06f8412"
+      }
+    },
+    {
+      "id": "bank-c-s3-20-word-case-miss-063",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "这份稿子是流水线上**认词分活**的活喵：投喂口送来一个词，名单上有的就照着干，名单外的就回一句「认不得」。毛病出在**名单上写的字**：名单写成了首字母大写（`Build`、`Clean`），可送来的词全是小写 —— 两下一比，一个都对不上：名单里的活一次都没轮到，回回都掉进「认不得」那条岔路。\n\n请你把名单上的字改成跟送来的一模一样（别的都别动）。样例喂进去的词故意不在名单里，走的就是「认不得」那条岔路：\n\n```text\n遛弯\n```\n\n该印出来的是：\n\n```text\n认不得：遛弯\n```\n\n判分喂的是名单里的词（比如 clean），修好之后它会走名单里对应的那一支。\n\n（顺一句：这种坑真出过 —— 人写的名单和机器送来的词，大小写对不齐，整条流水线照跑不误，就是活全没干。）",
+      "brokenCode": "#include <stdio.h>\n#include <string.h>\n\n/* 认词分活：名单上写着 Build / Clean */\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n    if (strcmp(word, \"Build\") == 0) {\n        printf(\"和面\\n\");\n        printf(\"上瓦\\n\");\n    } else if (strcmp(word, \"Clean\") == 0) {\n        printf(\"拾掇\\n\");\n        printf(\"晾干\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <string.h>\n\n/* 认词分活：名单改成跟送来的词一模一样 */\nint main(void) {\n    char word[32];\n    if (scanf(\"%31s\", word) != 1) {\n        printf(\"没接到词\\n\");\n        return 1;\n    }\n    if (strcmp(word, \"build\") == 0) {\n        printf(\"和面\\n\");\n        printf(\"上瓦\\n\");\n    } else if (strcmp(word, \"clean\") == 0) {\n        printf(\"拾掇\\n\");\n        printf(\"晾干\\n\");\n    } else {\n        printf(\"认不得：%s\\n\", word);\n    }\n    return 0;\n}\n",
+      "expectedOutput": "拾掇\n晾干",
+      "stdin": "clean\n",
+      "explanation": "认词这一步，比的是**一个字符一个字符全一样**喵 —— `Build` 和 `build` 在它眼里是完完全全两个词。名单上随手写成大写开头，送来的又是小写，两条就永远对不上：名单里的活一次都没轮到，回回都掉进「认不得」。\n\n- 修法是**照着将来会送来的写**：名单上的字改成跟送来的词一模一样（`build`、`clean`）；\n- 反过来改「送来的词」不归你管 —— 送词的规矩不是你定的，所以老老实实改名单；\n- 这类「就差一点」的坑不崩不报错，就是安安静静走错岔路，跟课文里「命令打错一个字」那种闷亏是一个家族。\n\n顺一遍图纸思维喵：名册对号是图纸上最常见的一条**规矩**（词 = build 干什么、词 = clean 干什么），对号这一步每一个字都算数；名单写成什么样子，就该跟**将来真会送来**的一模一样 —— 这正是「认词分活」要盯的第一处。",
+      "templateId": "c-s3-20-word-case-miss",
+      "params": {
+        "w": "clean",
+        "s": "遛弯",
+        "a": "和面",
+        "b": "上瓦",
+        "c": "拾掇",
+        "d": "晾干"
+      },
+      "verified": {
+        "at": "2026-10-11T16:58:29.780Z",
+        "hash": "c9de461b65a381e0"
+      }
+    }
+  ]
+}

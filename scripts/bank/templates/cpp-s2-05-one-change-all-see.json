@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s2-05-one-change-all-see",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-05",
+  "type": "codewrite",
+  "concept": ["改共用的那一份", "自己那一格纹丝不动", "从图纸上改"],
+  "instances": 6,
+  "params": {
+    "nameA": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "nameB": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 3, "min": 1, "max": 8 },
+  "stemTemplate": "本喵要做个实验：把**共用的那一份**从图纸上直接改掉，再看看两只猫**自己那一格**有没有跟着动。投喂口会递进来**三个数**（一行一个）：第一只的条数、第二只的条数、要把共用那本账**改成**的数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，三样家常 —— 一本共用的账 `static int total`、`name` 装一串字、`fish` 装一个整数；\n2. 写一个**出生招式**（名字和条数两样都收）：用出生清单把两样装好，并把这**条数加进那本共用的总账**；\n3. 再写**两招**：`int getFish() const`（取自己那一格）和 `static int getTotal()`（取共用那本）；\n4. **图纸外面**记得给总账落地、给个起步的数；\n5. `main` 里生**两只**猫（名字是 `{nameA}` 和 `{nameB}`）；然后**从图纸上**把那本共用的账改成**第三个数**（写成 `Cat::total = 第三个数;` 这种形状）；\n6. 最后印**三行**，一行一行来：\n   - `共用那本账是 N 条`（N 从共用那本问出来）；\n   - `XX M 条`（第一只自己那一格，`XX` 是它的名字）；\n   - `YY K 条`（第二只自己那一格）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int total;\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {\n        total = total + f;\n    }\n\n    int getFish() const {\n        return fish;\n    }\n\n    static int getTotal() {\n        return total;\n    }\n};\n\nint Cat::total = 0;\n\nint main() {\n    int a = 0;\n    int b = 0;\n    int t = 0;\n    cin >> a >> b >> t;\n\n    Cat c1(\"{nameA}\", a);\n    Cat c2(\"{nameB}\", b);\n    Cat::total = t;\n    cout << \"共用那本账是 \" << Cat::getTotal() << \" 条\" << endl;\n    cout << c1.name << \" \" << c1.getFish() << \" 条\" << endl;\n    cout << c2.name << \" \" << c2.getFish() << \" 条\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的关键一句是 `Cat::total = t;`：**从图纸上**把共用的那一份整个改掉喵。\n\n- 那本账只有一份，所以改完之后再用 `Cat::getTotal()` 去问，拿到的就是**改过之后**的数（第三个数的结果），跟前面两只猫出生时记的账**完全无关** —— 记账的过程早就结束了，这是后来的一次改写；\n- 每只猫自己的 `fish` 是**自己那一格**，跟那本共用的账是两回事：总账被改掉了，两只猫自己那一格还是各自的 `a` 和 `b`，一点没动；\n- 改它的写法是「图纸名 + 格子名」：`Cat::total`。共用的那一份用图纸名去念，读代码的人一眼就知道这不是某只猫自己的东西。\n\n⚠️ 印的三行里，第一行是**第三个数**（总账），第二、三行是**前两个数**（各自那一格）—— 这两组数长得像但不是一回事，别写混。"
+}

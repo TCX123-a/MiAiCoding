@@ -1,0 +1,22 @@
+{
+  "templateId": "java-s1-calc-menu-outside",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-15",
+  "type": "codefix",
+  "concept": ["菜单绕圈", "位置", "不报错只少干活"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 6 },
+    "c": { "kind": "int", "min": 7, "max": 8 },
+    "d": { "kind": "int", "min": 3, "max": 4 },
+    "a2": { "kind": "int", "min": 9, "max": 10 },
+    "b2": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "1 {a} {b}\n1 {c} {d}\n0\n", "sampleText": "1 {a2} {b2}\n0\n" },
+  "stemTemplate": "本喵这台计算器的**菜单只印了一次**喵 —— 第一位客人看得见选项，往后每一位都得自己猜。\n\n翻译官一声没吭（这处**不报错**）：圈子转得好好的，就是那句话站错了地方。你帮本喵把菜单挪到它该在的位置，让**每一单**都先印一遍菜单再问。\n\n规矩还是那四条：先印菜单 `1 加法 0 收工`；读客人报的选项；报 `0` 就印 `收工啦喵～` 收工；不然读两个数、印 `结果是 X`，接着问下一单。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分给的是**另外几单**喵。）",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.println(\"1 加法 0 收工\");\n        while (true) {\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        while (true) {\n            System.out.println(\"1 加法 0 收工\");\n            int choice = sc.nextInt();\n            if (choice == 0) {\n                System.out.println(\"收工啦喵～\");\n                break;\n            }\n            int a = sc.nextInt();\n            int b = sc.nextInt();\n            System.out.println(\"结果是 \" + add(a, b));\n        }\n    }\n}\n",
+  "explanationTemplate": "第二步那四步里，第一步就是**先印菜单**：每一单开始都印一次，客人一抬头就看得见有哪些选项喵。本喵把那一句说到**圈子外面**去了 —— 它只在开张的时候印过一次，往后圈子里转的只有「读选项、算一单」，客人自然再也看不见菜单。\n\n改法就是把它挪进圈子里，摆在**读选项之前**：\n\n```java\nwhile (true) {\n    System.out.println(\"1 加法 0 收工\");\n    int choice = sc.nextInt();\n}\n```\n\n位置这件事在这一课特别值得盯：**同一句话，摆在圈子里和摆在圈子外面，干的事完全不同** —— 里面是「每单都干一次」，外面是「开张干一次」。上一题那个 `break` 站错地方、这一题菜单站错地方，是同一个道理的两个方向，而且**两个都不报错**，只能靠屏幕上少印了什么看出来喵。"
+}

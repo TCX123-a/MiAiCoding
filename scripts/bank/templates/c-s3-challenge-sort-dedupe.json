@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-challenge-sort-dedupe",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-18",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["排排坐", "从小到大的队列", "相同的挨在一起", "数几档"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵今天收到的数准备**摆一排碗**，想干两件事喵：\n\n1. **先让碗从小到大排好队**（本喵最爱的「两两比一比，左边的大就换位」那一套）；\n2. 再把**不一样的值一共有几档**数出来 —— 比如排好是 `1 1 3 5`，不一样的值有 3 档（1、3、5）。\n\n印法：排好之后，**一只碗一行**，从小到大一只一只印；最后再补一行 `不同的一共 %d 种喵`。\n\n投喂口先给一个数（今天有几只碗），再一只一只给数。本喵最多只摆 64 只碗。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。排队的活儿要本喵自己写的招式来干，别去找现成的。）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int n = 0;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    int bowls[64];\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    for (int round = 0; round < n - 1; round++) {\n        for (int i = 0; i < n - 1 - round; i++) {\n            if (bowls[i] > bowls[i + 1]) {\n                int t = bowls[i];\n                bowls[i] = bowls[i + 1];\n                bowls[i + 1] = t;\n            }\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        printf(\"%d\\n\", bowls[i]);\n    }\n\n    int kinds = 1;\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] != bowls[i - 1]) {\n            kinds = kinds + 1;\n        }\n    }\n    printf(\"不同的一共 %d 种喵\\n\", kinds);\n\n    return 0;\n}\n",
+  "explanationTemplate": "两件事分开做，思路就清楚了喵。\n\n**一、排排坐。** 冒泡的走法是：从头到尾两两比一比，**左边比右边大就换位置**；走一趟下来，最大的一只一定被顶到最末尾。下一趟只需要走到「倒数第二只」为止 —— 所以圈的范围一趟比一趟短（内圈终点写 `n - 1 - round`）。总共走 `n - 1` 趟，整排就从小到大了。\n\n**二、数几档。** 排好之后有个大便宜：**相同的数一定挨在一起**。于是「换了一档」就等价于「这一只和上一只不一样」—— 从头数一遍，看见 `bowls[i] != bowls[i - 1]` 就加一笔。第一只碗前面没有「上一只」，所以从**第二只碗**开始数，而且计数器**从 1 起步**（总数至少有一档）。\n\n两个最容易踩的点：冒泡内圈的终点要随着趟数缩短（不缩短也能排对，但白跑很多趟）；数档时别从第 0 只碗开始比（它没有上一只，会读到界外去）。"
+}

@@ -1,0 +1,15 @@
+{
+  "templateId": "py-s2-challenge-book-default",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-15",
+  "type": "codefix",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "招式头上别放会变的东西", "每喊一次拿一只新的", "黏在一起的本子"],
+  "instances": 1,
+  "params": {},
+  "stemTemplate": "本喵有一招 `add_fish` 喵：给它一个名字，它往**本子**上记一笔，再把本子递回来。本子可以不传 —— **不传的时候，它应该现拿一本崭新的空本子**。\n\n可现在出了怪事：**第二次喊它的时候，第一次记的那笔还在**，两本本子还黏在一起了……\n\n喊两次之后，本喵想要的是：\n\n```\n第一次拿到的本子： ['大肥鱼']\n第二次拿到的本子： ['小橘猫']\n两本一共记了 2 笔喵\n```\n\n你帮本喵看看病根。",
+  "brokenCodeTemplate": "def add_fish(name, book=[]):\n    book.append(name)\n    return book\n\nfirst = add_fish(\"大肥鱼\")\nsecond = add_fish(\"小橘猫\")\n\nprint(\"第一次拿到的本子：\", first)\nprint(\"第二次拿到的本子：\", second)\nprint(\"两本一共记了\", len(first) + len(second), \"笔喵\")\n",
+  "referenceFixTemplate": "def add_fish(name, book=None):\n    if book is None:\n        book = []\n    book.append(name)\n    return book\n\nfirst = add_fish(\"大肥鱼\")\nsecond = add_fish(\"小橘猫\")\n\nprint(\"第一次拿到的本子：\", first)\nprint(\"第二次拿到的本子：\", second)\nprint(\"两本一共记了\", len(first) + len(second), \"笔喵\")\n",
+  "explanationTemplate": "病根在招式头上的那个 `book=[]` 喵。\n\n**本子不是每喊一次新做一只，而是在「招式写完的那一刻」就做了唯一的一只。** 之后每次喊它、每次没带本子，用的都是**同一只**。第一次记完，那只本子上已经有一笔了；第二次接着往上添，当然还带着旧的那笔。更巧的是两边的名字都拴在同一只本子上，所以印出来两只「本子」一模一样。\n\n要每喊一次拿一只新的，得把「做新本子」挪进招式**里面**，而且用一句**只在没带本子时才跑**的写法：\n\n```python\ndef add_fish(name, book=None):\n    if book is None:\n        book = []\n    book.append(name)\n    return book\n```\n\n`None` 是「**什么都没拿**」的记号：带了本子就用带的，没带就现做一只。\n\n为什么不直接在招式里写 `book = []`？那样会把**递进来的本子扔掉**：真想借自己的本子来记的时候，记的就不是他那本了。所以规矩是喵：**招式头上别放会变的东西；用「什么都没拿」的记号开头，进了招式再做新的。**"
+}

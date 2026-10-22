@@ -1,0 +1,236 @@
+{
+  "lessonId": "java-stage3-25",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-maven-build-stops-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "管家跑构建有个脾气：一关一关按顺序过，**哪一关栽了当场停住**，后面的关看都不看。本喵照着这个脾气写个小程序：\n\n1. 读第一行的 `n`——一共有几关；\n2. 再一行一个、接着读进来 `n` 个数——每个数是一关的结果：`0` 表示这一关过得去，`1` 表示栽了（跟真管家的习惯一致：零就是好）；\n3. 一关一关按顺序查看，第 k 关印一行：过得去印 `第 k 关：过`；栽了就印 `第 k 关：没过`，并且**从这里起不再往下查看**；\n4. 收尾那行：从头到尾都过得去，印 `构建成功`；要是中途栽了，紧跟着栽的那行再印 `构建失败，停在第 k 关`（k 就是栽掉的那一关）。\n\n比如投喂这几行：\n\n```text\n4\n1\n1\n1\n0\n```\n\n程序就叼回：\n\n```text\n第 1 关：没过\n构建失败，停在第 1 关\n```\n\n（判分的时候喂的是另一组数喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int 栽在第几关 = 0;\n        for (int k = 1; k <= n; k++) {\n            int 结果 = sc.nextInt();\n            if (结果 == 1) {\n                System.out.println(\"第 \" + k + \" 关：没过\");\n                栽在第几关 = k;\n                break;\n            }\n            System.out.println(\"第 \" + k + \" 关：过\");\n        }\n        if (栽在第几关 == 0) {\n            System.out.println(\"构建成功\");\n        } else {\n            System.out.println(\"构建失败，停在第 \" + 栽在第几关 + \" 关\");\n        }\n    }\n}\n",
+      "expectedOutput": "第 1 关：过\n第 2 关：过\n第 3 关：过\n第 4 关：没过\n构建失败，停在第 4 关",
+      "stdin": "4\n0\n0\n0\n1\n",
+      "explanation": "**一、为什么「栽了就停」**\n\n管家构建是一串一关接一关的活儿：前面的关栽了，后面的关做出来也没意义，不如**当场停**、把力气省下来、把红字摆在你眼前。真管家跑起来就是这个脾气：某一关失败，屏幕上最后一行告诉你停在哪，后面的步骤一律不动。\n\n**二、怎么把「停」写出来**\n\n看一眼那关的结果：是 `0` 就印「过」、接着看下一关；是 `1` 就先印「没过」，再**当机立断**从绕圈里跳出去——这就是「当场停」的写法。跳出来之后还得回头看一眼「刚才到底栽没栽」（本喵记了个「栽在第几关」的数：还是 0 就说明一路平安），这才能决定收尾那行写「成功」还是「停在第几关」。\n\n**三、剩下没看的关**\n\n投喂进去的数里，栽点后面可能还排着好几关——程序一停，它们原样留在那里没人碰。这不是漏读，是**故意不读**：「停止」这件事，本来就包含「剩下的不做」。\n\n**四、一句话记住**\n\n一关一关看、栽了当场停、收尾看中途栽没栽。",
+      "templateId": "java-s3-maven-build-stops",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:32.795Z",
+        "hash": "7f62524a1557e4de"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-build-stops-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "管家跑构建有个脾气：一关一关按顺序过，**哪一关栽了当场停住**，后面的关看都不看。本喵照着这个脾气写个小程序：\n\n1. 读第一行的 `n`——一共有几关；\n2. 再一行一个、接着读进来 `n` 个数——每个数是一关的结果：`0` 表示这一关过得去，`1` 表示栽了（跟真管家的习惯一致：零就是好）；\n3. 一关一关按顺序查看，第 k 关印一行：过得去印 `第 k 关：过`；栽了就印 `第 k 关：没过`，并且**从这里起不再往下查看**；\n4. 收尾那行：从头到尾都过得去，印 `构建成功`；要是中途栽了，紧跟着栽的那行再印 `构建失败，停在第 k 关`（k 就是栽掉的那一关）。\n\n比如投喂这几行：\n\n```text\n5\n1\n1\n0\n1\n1\n```\n\n程序就叼回：\n\n```text\n第 1 关：没过\n构建失败，停在第 1 关\n```\n\n（判分的时候喂的是另一组数喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int 栽在第几关 = 0;\n        for (int k = 1; k <= n; k++) {\n            int 结果 = sc.nextInt();\n            if (结果 == 1) {\n                System.out.println(\"第 \" + k + \" 关：没过\");\n                栽在第几关 = k;\n                break;\n            }\n            System.out.println(\"第 \" + k + \" 关：过\");\n        }\n        if (栽在第几关 == 0) {\n            System.out.println(\"构建成功\");\n        } else {\n            System.out.println(\"构建失败，停在第 \" + 栽在第几关 + \" 关\");\n        }\n    }\n}\n",
+      "expectedOutput": "第 1 关：没过\n构建失败，停在第 1 关",
+      "stdin": "5\n1\n1\n0\n0\n0\n",
+      "explanation": "**一、为什么「栽了就停」**\n\n管家构建是一串一关接一关的活儿：前面的关栽了，后面的关做出来也没意义，不如**当场停**、把力气省下来、把红字摆在你眼前。真管家跑起来就是这个脾气：某一关失败，屏幕上最后一行告诉你停在哪，后面的步骤一律不动。\n\n**二、怎么把「停」写出来**\n\n看一眼那关的结果：是 `0` 就印「过」、接着看下一关；是 `1` 就先印「没过」，再**当机立断**从绕圈里跳出去——这就是「当场停」的写法。跳出来之后还得回头看一眼「刚才到底栽没栽」（本喵记了个「栽在第几关」的数：还是 0 就说明一路平安），这才能决定收尾那行写「成功」还是「停在第几关」。\n\n**三、剩下没看的关**\n\n投喂进去的数里，栽点后面可能还排着好几关——程序一停，它们原样留在那里没人碰。这不是漏读，是**故意不读**：「停止」这件事，本来就包含「剩下的不做」。\n\n**四、一句话记住**\n\n一关一关看、栽了当场停、收尾看中途栽没栽。",
+      "templateId": "java-s3-maven-build-stops",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:35.890Z",
+        "hash": "a3991e0189978b01"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-cabinet-report-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要开张「先报名字、再用货」的练习：\n\n1. 读第一行的 `n`；再一行一个、接着读进来 `n` 个数，把这些数都装进一只**会自己长大的储物柜**里（就用 `java.util` 里那位 `ArrayList`）；\n2. 收完以后数一数、加一加，印两行：\n   - 第一行 `柜子里装了 n 件`\n   - 第二行 `合计 S`（S 是所有数加起来）\n\n顶上该报的名字别忘了——翻译官喵只认报过名字的东西喵。\n\n比如投喂这几行：\n\n```text\n3\n2\n2\n5\n```\n\n程序就叼回：\n\n```text\n柜子里装了 3 件\n合计 9\n```\n\n（判分的时候喂的是另一组数喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        ArrayList<Integer> 柜子 = new ArrayList<>();\n        int 合计 = 0;\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            柜子.add(x);\n            合计 = 合计 + x;\n        }\n        System.out.println(\"柜子里装了 \" + 柜子.size() + \" 件\");\n        System.out.println(\"合计 \" + 合计);\n    }\n}\n",
+      "expectedOutput": "柜子里装了 3 件\n合计 14",
+      "stdin": "3\n1\n7\n6\n",
+      "explanation": "**一、会自己长大的储物柜**\n\n一排贴编号的碗（`int[]`）得先量好做多大再开工；储物柜不一样：`add` 一件它就大一点，爱装多少装多少，`size()` 就是现在装着几件。数进来多少就装多少——储物柜都接得住。\n\n**二、先报名字**\n\n`ArrayList` 和读数据用的 `Scanner` 都不是本页自己画的图纸，是 `java.util` 那一柜子里的现成货——所以顶上要用两行 `import` 把它们登记进来。跟「用谁先把谁报到明面上」那条根是一回事；管家清单解决的正是同一个问题，只不过这里规模小。\n\n**三、边收边记账**\n\n本喵的写法是：每收一件，储物柜里放一件（`柜子.add(x)`），合计那格顺手加一笔（`合计 = 合计 + x`）——一个绕圈里两件事一起做。等收完直接报数，不用再翻一遍柜子。当然，先全收完再回头加一遍，结果也一样，随你顺手。\n\n**四、一句话记住**\n\n储物柜管「有多少件」，顺手那格管「一共多少」；两样都在一遍里顾上。",
+      "templateId": "java-s3-maven-cabinet-report",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:38.939Z",
+        "hash": "b194c1d2c72a956a"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-cabinet-report-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要开张「先报名字、再用货」的练习：\n\n1. 读第一行的 `n`；再一行一个、接着读进来 `n` 个数，把这些数都装进一只**会自己长大的储物柜**里（就用 `java.util` 里那位 `ArrayList`）；\n2. 收完以后数一数、加一加，印两行：\n   - 第一行 `柜子里装了 n 件`\n   - 第二行 `合计 S`（S 是所有数加起来）\n\n顶上该报的名字别忘了——翻译官喵只认报过名字的东西喵。\n\n比如投喂这几行：\n\n```text\n4\n6\n6\n8\n5\n```\n\n程序就叼回：\n\n```text\n柜子里装了 4 件\n合计 25\n```\n\n（判分的时候喂的是另一组数喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        ArrayList<Integer> 柜子 = new ArrayList<>();\n        int 合计 = 0;\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            柜子.add(x);\n            合计 = 合计 + x;\n        }\n        System.out.println(\"柜子里装了 \" + 柜子.size() + \" 件\");\n        System.out.println(\"合计 \" + 合计);\n    }\n}\n",
+      "expectedOutput": "柜子里装了 4 件\n合计 25",
+      "stdin": "4\n7\n8\n4\n6\n",
+      "explanation": "**一、会自己长大的储物柜**\n\n一排贴编号的碗（`int[]`）得先量好做多大再开工；储物柜不一样：`add` 一件它就大一点，爱装多少装多少，`size()` 就是现在装着几件。数进来多少就装多少——储物柜都接得住。\n\n**二、先报名字**\n\n`ArrayList` 和读数据用的 `Scanner` 都不是本页自己画的图纸，是 `java.util` 那一柜子里的现成货——所以顶上要用两行 `import` 把它们登记进来。跟「用谁先把谁报到明面上」那条根是一回事；管家清单解决的正是同一个问题，只不过这里规模小。\n\n**三、边收边记账**\n\n本喵的写法是：每收一件，储物柜里放一件（`柜子.add(x)`），合计那格顺手加一笔（`合计 = 合计 + x`）——一个绕圈里两件事一起做。等收完直接报数，不用再翻一遍柜子。当然，先全收完再回头加一遍，结果也一样，随你顺手。\n\n**四、一句话记住**\n\n储物柜管「有多少件」，顺手那格管「一共多少」；两样都在一遍里顾上。",
+      "templateId": "java-s3-maven-cabinet-report",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:42.034Z",
+        "hash": "4a38d4bc8e14c28c"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-main-case-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写的这一小段，翻译官喵翻稿子的时候**一声没吭**——全绿。\n\n可一按运行就弹了红字：说这页里**找不到入口**。\n\n入口本喵明明写了呀，就在图纸 `Main` 里头。要求：让它跑得起来，印出这两行：\n\n```text\n管家备齐了：3 件货\n开跑！\n```\n\n两条都要照办：\n1. 数字 `3` 和两行话都不许改；\n2. 除了入口那一处的写法，别的一笔都别动。\n\n（这一题不用投喂任何东西喵。）",
+      "brokenCode": "public class Main {\n    public static void Main(String[] args) {\n        int 件数 = 3;\n        System.out.println(\"管家备齐了：\" + 件数 + \" 件货\");\n        System.out.println(\"开跑！\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int 件数 = 3;\n        System.out.println(\"管家备齐了：\" + 件数 + \" 件货\");\n        System.out.println(\"开跑！\");\n    }\n}\n",
+      "expectedOutput": "管家备齐了：3 件货\n开跑！",
+      "stdin": null,
+      "explanation": "**一、红字怎么念**\n\n运行时报的是 `Error: Main method not found in class Main, please define the main method as: …`（后头跟着入口该有的样子）——「`Main` 这页里找不到那个 `main`」。\n\n**二、为什么翻稿子全绿、跑起来才红**\n\n在翻译官喵眼里，大写 `M` 的 `Main` 只是本页一张**普普通通的招式**：语法没毛病，只是没人喊它而已。可运行的时候，机器是照着入口的固定样子敲门的——名字必须是 `main`，开头必须是 `public static`，收的必须是一排字——差一样它就说「没人开门」，大小写也算差。\n\n**三、这就是「构建」和「跑起来」的分界**\n\n管家把一关关过完（翻稿子全绿）只说明稿子说得通；入口对不对、连得上连不上，得真跑一步才算数。IDEA 里其实有提示：入口正正经经写对的那一行，行号旁边会有个绿色小三角，点它就能跑；没有小三角，八成就是这一处写歪了。\n\n**四、一句话记住**\n\n翻稿子全绿 ≠ 跑得起来；找不到入口，先盯入口那一行的写法。",
+      "templateId": "java-s3-maven-main-case",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:44.210Z",
+        "hash": "65f84716a34a4c00"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-main-case-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵写的这一小段，翻译官喵翻稿子的时候**一声没吭**——全绿。\n\n可一按运行就弹了红字：说这页里**找不到入口**。\n\n入口本喵明明写了呀，就在图纸 `Main` 里头。要求：让它跑得起来，印出这两行：\n\n```text\n管家备齐了：4 件货\n开跑！\n```\n\n两条都要照办：\n1. 数字 `4` 和两行话都不许改；\n2. 除了入口那一处的写法，别的一笔都别动。\n\n（这一题不用投喂任何东西喵。）",
+      "brokenCode": "public class Main {\n    public static void Main(String[] args) {\n        int 件数 = 4;\n        System.out.println(\"管家备齐了：\" + 件数 + \" 件货\");\n        System.out.println(\"开跑！\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    public static void main(String[] args) {\n        int 件数 = 4;\n        System.out.println(\"管家备齐了：\" + 件数 + \" 件货\");\n        System.out.println(\"开跑！\");\n    }\n}\n",
+      "expectedOutput": "管家备齐了：4 件货\n开跑！",
+      "stdin": null,
+      "explanation": "**一、红字怎么念**\n\n运行时报的是 `Error: Main method not found in class Main, please define the main method as: …`（后头跟着入口该有的样子）——「`Main` 这页里找不到那个 `main`」。\n\n**二、为什么翻稿子全绿、跑起来才红**\n\n在翻译官喵眼里，大写 `M` 的 `Main` 只是本页一张**普普通通的招式**：语法没毛病，只是没人喊它而已。可运行的时候，机器是照着入口的固定样子敲门的——名字必须是 `main`，开头必须是 `public static`，收的必须是一排字——差一样它就说「没人开门」，大小写也算差。\n\n**三、这就是「构建」和「跑起来」的分界**\n\n管家把一关关过完（翻稿子全绿）只说明稿子说得通；入口对不对、连得上连不上，得真跑一步才算数。IDEA 里其实有提示：入口正正经经写对的那一行，行号旁边会有个绿色小三角，点它就能跑；没有小三角，八成就是这一处写歪了。\n\n**四、一句话记住**\n\n翻稿子全绿 ≠ 跑得起来；找不到入口，先盯入口那一行的写法。",
+      "templateId": "java-s3-maven-main-case",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:46.246Z",
+        "hash": "35ad6019d3e18307"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-missing-import-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想用「会自己长大的储物柜」那一家的 `ArrayList`：先往单子上摞几样货，最后数一数摞了几样。\n\n可翻译官喵翻稿子就红了，说找不到 `ArrayList`。本喵明明把名字写得一字不差呀？\n\n要求：让它顺顺当当翻过去、跑起来，印出一行 `单子上有 N 样货`。\n\n三条都要照办：\n1. 数字 `3` 和「第 N 样货」的说法都不许改；\n2. 印出来的那行话不许改；\n3. 只许往顶上**补一两行**，别处一笔都别动。\n\n（这一题不用投喂任何东西喵。）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        ArrayList<String> 采购单 = new ArrayList<>();\n        for (int i = 1; i <= 3; i++) {\n            采购单.add(\"第 \" + i + \" 样货\");\n        }\n        System.out.println(\"单子上有 \" + 采购单.size() + \" 样货\");\n    }\n}\n",
+      "referenceFix": "import java.util.ArrayList;\n\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<String> 采购单 = new ArrayList<>();\n        for (int i = 1; i <= 3; i++) {\n            采购单.add(\"第 \" + i + \" 样货\");\n        }\n        System.out.println(\"单子上有 \" + 采购单.size() + \" 样货\");\n    }\n}\n",
+      "expectedOutput": "单子上有 3 样货",
+      "stdin": null,
+      "explanation": "**一、红字怎么念**\n\n翻译官喵的原话是 `cannot find symbol`，底下点名 `symbol: class ArrayList`——「我不认识叫 `ArrayList` 的东西」。\n\n**二、名字写得对，也得报过名字**\n\n翻稿子的时候，翻译官喵手边只认两种名字：本页自己写出来的（比如 `Main`），和**顶上报过来路的**。`java.util` 那一柜子里装着 `ArrayList`、`Scanner` 这些现成的好东西——可你不报名字，翻译官就不知道你说的是哪一件。也就是说：「世界上有这件货」和「这一页认得这件货」是两件事，中间隔着一行 `import`。\n\n**三、跟管家清单是同一条根**\n\n管家 Maven 手里那份清单干的也是这件事：光念叨「我要用那个会自己长大的柜子」没用，清单上得把人家的名字和住址写清楚，管家才认得、才去搬。这一页的一小步（一行 `import`）和整个工程的一大步（一份清单），做的是同一个动作：**用谁，先把谁报到明面上。**\n\n**四、一句话记住**\n\n见着 `cannot find symbol` 先别怀疑手滑——先看看顶上，是不是把谁的来路给漏报了。",
+      "templateId": "java-s3-maven-missing-import",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:48.356Z",
+        "hash": "9e265f393ca479d4"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-missing-import-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想用「会自己长大的储物柜」那一家的 `ArrayList`：先往单子上摞几样货，最后数一数摞了几样。\n\n可翻译官喵翻稿子就红了，说找不到 `ArrayList`。本喵明明把名字写得一字不差呀？\n\n要求：让它顺顺当当翻过去、跑起来，印出一行 `单子上有 N 样货`。\n\n三条都要照办：\n1. 数字 `4` 和「第 N 样货」的说法都不许改；\n2. 印出来的那行话不许改；\n3. 只许往顶上**补一两行**，别处一笔都别动。\n\n（这一题不用投喂任何东西喵。）",
+      "brokenCode": "public class Main {\n    public static void main(String[] args) {\n        ArrayList<String> 采购单 = new ArrayList<>();\n        for (int i = 1; i <= 4; i++) {\n            采购单.add(\"第 \" + i + \" 样货\");\n        }\n        System.out.println(\"单子上有 \" + 采购单.size() + \" 样货\");\n    }\n}\n",
+      "referenceFix": "import java.util.ArrayList;\n\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<String> 采购单 = new ArrayList<>();\n        for (int i = 1; i <= 4; i++) {\n            采购单.add(\"第 \" + i + \" 样货\");\n        }\n        System.out.println(\"单子上有 \" + 采购单.size() + \" 样货\");\n    }\n}\n",
+      "expectedOutput": "单子上有 4 样货",
+      "stdin": null,
+      "explanation": "**一、红字怎么念**\n\n翻译官喵的原话是 `cannot find symbol`，底下点名 `symbol: class ArrayList`——「我不认识叫 `ArrayList` 的东西」。\n\n**二、名字写得对，也得报过名字**\n\n翻稿子的时候，翻译官喵手边只认两种名字：本页自己写出来的（比如 `Main`），和**顶上报过来路的**。`java.util` 那一柜子里装着 `ArrayList`、`Scanner` 这些现成的好东西——可你不报名字，翻译官就不知道你说的是哪一件。也就是说：「世界上有这件货」和「这一页认得这件货」是两件事，中间隔着一行 `import`。\n\n**三、跟管家清单是同一条根**\n\n管家 Maven 手里那份清单干的也是这件事：光念叨「我要用那个会自己长大的柜子」没用，清单上得把人家的名字和住址写清楚，管家才认得、才去搬。这一页的一小步（一行 `import`）和整个工程的一大步（一份清单），做的是同一个动作：**用谁，先把谁报到明面上。**\n\n**四、一句话记住**\n\n见着 `cannot find symbol` 先别怀疑手滑——先看看顶上，是不是把谁的来路给漏报了。",
+      "templateId": "java-s3-maven-missing-import",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:50.386Z",
+        "hash": "14131f6ab9c46f1f"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-two-warehouses-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵来演一遍管家的采买日常：第一回见到的货要去**中央仓库**搬，之后同样的货就躺在**本地仓库**里，直接从手边拿。\n\n1. 读第一行的 `n`；再一行一个、接着读进来 `n` 个数，每个数是一件货的**货号**；\n2. 一件一件按顺序处理，第 k 件（k 从 1 数起）印一行：\n   - 这个货号**头一回出现**：`第 k 件：去中央仓库搬`\n   - 之前已经出现过：`第 k 件：从本地仓库拿`\n3. 最后印一行：`一共去了中央仓库 S 趟`——S 是去中央仓库的总次数。\n\n比如投喂这几行：\n\n```text\n4\n9\n5\n1\n1\n```\n\n程序就叼回：\n\n```text\n第 1 件：去中央仓库搬\n第 2 件：去中央仓库搬\n第 3 件：去中央仓库搬\n第 4 件：从本地仓库拿\n一共去了中央仓库 3 趟\n```\n\n（判分的时候喂的是另一组数喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        ArrayList<Integer> 本地仓库 = new ArrayList<>();\n        int 去仓次数 = 0;\n        for (int k = 1; k <= n; k++) {\n            int 货号 = sc.nextInt();\n            boolean 见过 = false;\n            for (int i = 0; i < 本地仓库.size(); i++) {\n                if (本地仓库.get(i) == 货号) {\n                    见过 = true;\n                }\n            }\n            if (见过) {\n                System.out.println(\"第 \" + k + \" 件：从本地仓库拿\");\n            } else {\n                本地仓库.add(货号);\n                去仓次数 = 去仓次数 + 1;\n                System.out.println(\"第 \" + k + \" 件：去中央仓库搬\");\n            }\n        }\n        System.out.println(\"一共去了中央仓库 \" + 去仓次数 + \" 趟\");\n    }\n}\n",
+      "expectedOutput": "第 1 件：去中央仓库搬\n第 2 件：从本地仓库拿\n第 3 件：去中央仓库搬\n第 4 件：从本地仓库拿\n一共去了中央仓库 2 趟",
+      "stdin": "4\n3\n3\n1\n3\n",
+      "explanation": "**一、本地仓库的意义**\n\n「第一回才出远门」就是这个程序的全部秘密：搬回来一件，就顺手记进本地仓库；下一回同号的货再来，翻一眼本地仓库——在，就不用再跑一趟。管家 Maven 就是这么过日子的：中央仓库在很远的地方（网上），本地仓库就在自己家里，取过一次的货都有存货，第二次眨眼就到。\n\n**二、怎么记「见过」**\n\n本喵用的是最直白的办法：每来一件，把本地仓库从头到尾翻一遍，看到同号的就把小旗子一竖（`见过 = true`）。货不多的时候这办法好懂又好写；等仓库大起来，还可以换成更快的翻法——先把这道做对，快的事慢慢来。\n\n**三、最后一趟数的是什么**\n\n`S` 数的是**去中央仓库的趟数**，不是件数：同一件货来三次，只有头一回算一趟。所以本喵只在「搬」那条岔路里给计数加一——从本地拿的岔路，一次都不加。\n\n**四、一句话记住**\n\n头一回出远门、往后家里拿；最后一行的数的是出门的趟数。",
+      "templateId": "java-s3-maven-two-warehouses",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:53.270Z",
+        "hash": "33fea47d55398fc6"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-two-warehouses-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵来演一遍管家的采买日常：第一回见到的货要去**中央仓库**搬，之后同样的货就躺在**本地仓库**里，直接从手边拿。\n\n1. 读第一行的 `n`；再一行一个、接着读进来 `n` 个数，每个数是一件货的**货号**；\n2. 一件一件按顺序处理，第 k 件（k 从 1 数起）印一行：\n   - 这个货号**头一回出现**：`第 k 件：去中央仓库搬`\n   - 之前已经出现过：`第 k 件：从本地仓库拿`\n3. 最后印一行：`一共去了中央仓库 S 趟`——S 是去中央仓库的总次数。\n\n比如投喂这几行：\n\n```text\n5\n9\n7\n5\n4\n6\n```\n\n程序就叼回：\n\n```text\n第 1 件：去中央仓库搬\n第 2 件：去中央仓库搬\n第 3 件：去中央仓库搬\n第 4 件：去中央仓库搬\n第 5 件：去中央仓库搬\n一共去了中央仓库 5 趟\n```\n\n（判分的时候喂的是另一组数喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        ArrayList<Integer> 本地仓库 = new ArrayList<>();\n        int 去仓次数 = 0;\n        for (int k = 1; k <= n; k++) {\n            int 货号 = sc.nextInt();\n            boolean 见过 = false;\n            for (int i = 0; i < 本地仓库.size(); i++) {\n                if (本地仓库.get(i) == 货号) {\n                    见过 = true;\n                }\n            }\n            if (见过) {\n                System.out.println(\"第 \" + k + \" 件：从本地仓库拿\");\n            } else {\n                本地仓库.add(货号);\n                去仓次数 = 去仓次数 + 1;\n                System.out.println(\"第 \" + k + \" 件：去中央仓库搬\");\n            }\n        }\n        System.out.println(\"一共去了中央仓库 \" + 去仓次数 + \" 趟\");\n    }\n}\n",
+      "expectedOutput": "第 1 件：去中央仓库搬\n第 2 件：去中央仓库搬\n第 3 件：去中央仓库搬\n第 4 件：从本地仓库拿\n第 5 件：从本地仓库拿\n一共去了中央仓库 3 趟",
+      "stdin": "5\n6\n1\n7\n6\n6\n",
+      "explanation": "**一、本地仓库的意义**\n\n「第一回才出远门」就是这个程序的全部秘密：搬回来一件，就顺手记进本地仓库；下一回同号的货再来，翻一眼本地仓库——在，就不用再跑一趟。管家 Maven 就是这么过日子的：中央仓库在很远的地方（网上），本地仓库就在自己家里，取过一次的货都有存货，第二次眨眼就到。\n\n**二、怎么记「见过」**\n\n本喵用的是最直白的办法：每来一件，把本地仓库从头到尾翻一遍，看到同号的就把小旗子一竖（`见过 = true`）。货不多的时候这办法好懂又好写；等仓库大起来，还可以换成更快的翻法——先把这道做对，快的事慢慢来。\n\n**三、最后一趟数的是什么**\n\n`S` 数的是**去中央仓库的趟数**，不是件数：同一件货来三次，只有头一回算一趟。所以本喵只在「搬」那条岔路里给计数加一——从本地拿的岔路，一次都不加。\n\n**四、一句话记住**\n\n头一回出远门、往后家里拿；最后一行的数的是出门的趟数。",
+      "templateId": "java-s3-maven-two-warehouses",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:56.413Z",
+        "hash": "3c7124ba732246ff"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-type-shape-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这一页有个招式 `装车`：收**一排贴编号的碗**（`int[]`），把里面的数挨个加起来交回来。\n\n本喵这次要装的两件货是 `2` 条和 `4` 条；可递货的时候手一快，把「货」写成了一句话。翻译官喵翻稿子当场就红了：`incompatible types`。\n\n要求：把递货那一步改成它收得下的形状，让程序印出一行 `装车完成：共 N 条`。\n\n三条都要照办：\n1. 两件货的数（`2`、`4`）一个都不许改；\n2. 印出来的那行话不许改；\n3. 招式那头的收法（`int[] 货`）不许改——要迁就的是递货的这头。\n\n（这一题不用投喂任何东西喵。）",
+      "brokenCode": "public class Main {\n    static int 装车(int[] 货) {\n        int 合计 = 0;\n        for (int x : 货) {\n            合计 = 合计 + x;\n        }\n        return 合计;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"装车完成：共 \" + 装车(\"一车 2 条，一筐 4 条\") + \" 条\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    static int 装车(int[] 货) {\n        int 合计 = 0;\n        for (int x : 货) {\n            合计 = 合计 + x;\n        }\n        return 合计;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"装车完成：共 \" + 装车(new int[]{2, 4}) + \" 条\");\n    }\n}\n",
+      "expectedOutput": "装车完成：共 6 条",
+      "stdin": null,
+      "explanation": "**一、红字怎么念**\n\n原话是 `incompatible types: String cannot be converted to int[]`——「一句话」和「一排碗」两种形状对不上，翻译不过去。\n\n**二、名字对上还不够，形状也要对上**\n\n翻译官喵收到一句喊话时，会同时翻两本账：\n\n1. **名字**：被喊的那一招在不在本页？（对不上就是 `cannot find symbol`）\n2. **形状**：递过去的东西，跟人家声明要收的那种对得上吗？（对不上就是 `incompatible types`）\n\n本喵喊的是 `装车`，名字没毛病；坏在递了一串字进去，而人家张开手等着的是一排碗。这类红**翻稿子时当场就出**——不用等运行。\n\n**三、跟清单有什么关系**\n\n管家 Maven 的清单上写「我要哪家的哪件货、哪一版」，写全三样坐标，图的就是取回来的东西**既对得上名字、也对得上形状**。现实里常见的一种翻车，就是清单上写的版本跟代码里照着写的对不上——同一件货，旧版新版收的形状可能不一样，跟这题的红是同一类：名字、形状，缺一不可。\n\n**四、一句话记住**\n\n`incompatible types` 念作「形状不对」：回去看人家声明里张开的手，和本喵递过去的东西。",
+      "templateId": "java-s3-maven-type-shape",
+      "params": {
+        "a": 2,
+        "b": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:02:58.644Z",
+        "hash": "a4f562c52102d3e6"
+      }
+    },
+    {
+      "id": "bank-java-s3-maven-type-shape-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵这一页有个招式 `装车`：收**一排贴编号的碗**（`int[]`），把里面的数挨个加起来交回来。\n\n本喵这次要装的两件货是 `3` 条和 `5` 条；可递货的时候手一快，把「货」写成了一句话。翻译官喵翻稿子当场就红了：`incompatible types`。\n\n要求：把递货那一步改成它收得下的形状，让程序印出一行 `装车完成：共 N 条`。\n\n三条都要照办：\n1. 两件货的数（`3`、`5`）一个都不许改；\n2. 印出来的那行话不许改；\n3. 招式那头的收法（`int[] 货`）不许改——要迁就的是递货的这头。\n\n（这一题不用投喂任何东西喵。）",
+      "brokenCode": "public class Main {\n    static int 装车(int[] 货) {\n        int 合计 = 0;\n        for (int x : 货) {\n            合计 = 合计 + x;\n        }\n        return 合计;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"装车完成：共 \" + 装车(\"一车 3 条，一筐 5 条\") + \" 条\");\n    }\n}\n",
+      "referenceFix": "public class Main {\n    static int 装车(int[] 货) {\n        int 合计 = 0;\n        for (int x : 货) {\n            合计 = 合计 + x;\n        }\n        return 合计;\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"装车完成：共 \" + 装车(new int[]{3, 5}) + \" 条\");\n    }\n}\n",
+      "expectedOutput": "装车完成：共 8 条",
+      "stdin": null,
+      "explanation": "**一、红字怎么念**\n\n原话是 `incompatible types: String cannot be converted to int[]`——「一句话」和「一排碗」两种形状对不上，翻译不过去。\n\n**二、名字对上还不够，形状也要对上**\n\n翻译官喵收到一句喊话时，会同时翻两本账：\n\n1. **名字**：被喊的那一招在不在本页？（对不上就是 `cannot find symbol`）\n2. **形状**：递过去的东西，跟人家声明要收的那种对得上吗？（对不上就是 `incompatible types`）\n\n本喵喊的是 `装车`，名字没毛病；坏在递了一串字进去，而人家张开手等着的是一排碗。这类红**翻稿子时当场就出**——不用等运行。\n\n**三、跟清单有什么关系**\n\n管家 Maven 的清单上写「我要哪家的哪件货、哪一版」，写全三样坐标，图的就是取回来的东西**既对得上名字、也对得上形状**。现实里常见的一种翻车，就是清单上写的版本跟代码里照着写的对不上——同一件货，旧版新版收的形状可能不一样，跟这题的红是同一类：名字、形状，缺一不可。\n\n**四、一句话记住**\n\n`incompatible types` 念作「形状不对」：回去看人家声明里张开的手，和本喵递过去的东西。",
+      "templateId": "java-s3-maven-type-shape",
+      "params": {
+        "a": 3,
+        "b": 5
+      },
+      "verified": {
+        "at": "2026-10-11T17:03:00.541Z",
+        "hash": "ce5b9397099ae0f4"
+      }
+    }
+  ]
+}

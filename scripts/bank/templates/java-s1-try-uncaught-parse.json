@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s1-try-uncaught-parse",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-14",
+  "type": "codefix",
+  "concept": ["翻车", "断气", "try", "catch"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["喵", "三只猫"] },
+    "word2": { "kind": "pick", "values": ["鱼干", "一打小鱼干"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{word}\n", "sampleText": "{word2}\n" },
+  "stemTemplate": "纸条上递来的**不是数字**，本喵却拿它去变数字喵 —— 程序当场**断气**，最后那句「记账结束喵」一个字都没印出来。\n\n你帮本喵把这一路车接住：变了不成就印一句 `这串字变不成数字喵`，然后**照常**把 `记账结束喵` 印出来。\n\n比如纸条上递来的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一串字**喵，也一样不是数字。）",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String word = sc.next();\n        int n = Integer.parseInt(word);\n        System.out.println(\"读到了 \" + n + \" 条喵\");\n        System.out.println(\"记账结束喵\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String word = sc.next();\n        try {\n            int n = Integer.parseInt(word);\n            System.out.println(\"读到了 \" + n + \" 条喵\");\n        } catch (NumberFormatException e) {\n            System.out.println(\"这串字变不成数字喵\");\n        }\n        System.out.println(\"记账结束喵\");\n    }\n}\n",
+  "explanationTemplate": "断气那一行的原话是：\n\n```text\nException in thread \"main\" java.lang.NumberFormatException: For input string: \"{word}\"\n```\n\n念起来是「在 `main` 里翻了一路车：**一串字变不成数**，惹事的就是这个字喵」。没人接住它，程序当场断气 —— 后面那句「记账结束喵」全撂了。\n\n正路就是把没底的活儿放进 `try`、翻车之后怎么办写进 `catch`：\n\n```java\nString word = sc.next();\ntry {\n    int n = Integer.parseInt(word);\n    System.out.println(\"读到了 \" + n + \" 条喵\");\n} catch (NumberFormatException e) {\n    System.out.println(\"这串字变不成数字喵\");\n}\nSystem.out.println(\"记账结束喵\");\n```\n\n三处要看清：\n\n- **`catch` 括号里的名字，必须是它真翻的那一路**（这儿是 `NumberFormatException` ——「一串字变不成数」这一路）；\n- **「读到了 ...」那句也得进 `try`**：翻了车，`try` 里**后面**的句子全都跳过，不会印出半句话来；\n- **最后那句摆在 `try` / `catch` 外面**：所以不管翻没翻车它都照跑 —— 这就是接住翻车的全部意义喵。"
+}

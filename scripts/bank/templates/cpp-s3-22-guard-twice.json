@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-22-guard-twice",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-22",
+  "type": "codefix",
+  "concept": ["同一张图纸进两回", "门口写「这份进过了」", "第二次整段被扔掉"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵这张「猫」的图纸要**被塞进稿子两回**（稿子里现在就是这么写的：同一段字原样抄了两遍，谁让两处都要用它呢）喵。\n\n可它现在**编不过** —— 翻译官喵的原话是 `redefinition`，说这张图纸被定义了第二回。它不是在挑刺：同一张图纸进两回，以哪一份为准谁都说不清。\n\n你要做的不是删掉第二份（那只是把这段字变短，回头真有两份文件的时候照样会撞上），而是**给两份各包一道门**：门上写「这份进过了」，于是第二次进来时整段被扔掉，等于只进了一回。\n\n改完跑起来，屏幕上要正好是 `这只猫分到 {fish} 条小鱼干` 喵。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nstruct Cat {\n    int fish;\n};\n\nstruct Cat {\n    int fish;\n};\n\nint main() {\n    Cat c;\n    c.fish = {fish};\n    cout << \"这只猫分到 \" << c.fish << \" 条小鱼干\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\n#ifndef CAT_H\n#define CAT_H\nstruct Cat {\n    int fish;\n};\n#endif\n\n#ifndef CAT_H\n#define CAT_H\nstruct Cat {\n    int fish;\n};\n#endif\n\nint main() {\n    Cat c;\n    c.fish = {fish};\n    cout << \"这只猫分到 \" << c.fish << \" 条小鱼干\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "门上那三行是有分工的，缺哪一行都不成喵：\n\n1. `#ifndef CAT_H` —— 问的是「`CAT_H` 这张卡**没贴过**吗」。第一回进来时确实没贴过，里面照进；\n2. `#define CAT_H` —— 进门第一件事就是**把这张卡贴上**；\n3. `#endif` —— 门到此为止。\n\n于是第二回再进来，第 1 行判假，**整份到 `#endif` 全被扔掉**。同一段字还是抄了两遍，这一回翻译官喵一句话都没多说 —— 图纸实际只进了一回。\n\n⚠️ 卫士的名字要**成套**：`#ifndef` 和 `#define` 里必须是同一个名字。名字本身随便取，习惯上照着文件名写成大写加下划线（这张图纸叫 `Cat`，所以取 `CAT_H`）。\n\n⚠️ 顺手记住它唯一那个坑：**名字撞车是不响的**。要是两份**不同**的图纸都被贴上同一个名字，第一份进来就把名字占了，第二份门口一判是假，**整份静悄悄地没了** —— 不报错、不警告、也不崩，等到有人喊那份图纸里的名字时才发现。所以一份图纸一个名字喵。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-11-word-split",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-11",
+  "type": "codefix",
+  "concept": ["读一整行要用 getline", "尖角号遇到空格就停", "拆词"],
+  "instances": 2,
+  "params": {
+    "p1": { "kind": "pick", "values": ["大肥鱼 的小鱼干", "橘猫 的猫粮"] },
+    "p2": { "kind": "pick", "values": ["狸花猫 的毛线球", "小奶猫 的毯子"] }
+  },
+  "stemTemplate": "本喵往小本本里写了两句话，每句话中间**带着一个空格**；写完再翻开本子读回来，想把它们原样印出来。\n\n可它跑起来**印出来的东西不对**喵：每句话都被切成了两半。你帮本喵把它改对 —— 让两句话**各自原样印成一行**。写进本子那几句不用动。\n\n改好之后，程序要印出两行：先是 `{p1}`，再是 `{p2}`。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <fstream>\n#include <string>\nusing namespace std;\n\nint main() {\n    ofstream out(\"note.txt\");\n    out << \"{p1}\" << endl;\n    out << \"{p2}\" << endl;\n    out.close();\n\n    ifstream in(\"note.txt\");\n    string line;\n    while (in >> line) {\n        cout << line << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <fstream>\n#include <string>\nusing namespace std;\n\nint main() {\n    ofstream out(\"note.txt\");\n    out << \"{p1}\" << endl;\n    out << \"{p2}\" << endl;\n    out.close();\n\n    ifstream in(\"note.txt\");\n    string line;\n    while (getline(in, line)) {\n        cout << line << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题错在**用错了叼东西的姿势**喵。\n\n从本子里往外叼，有两种吃法，认的东西不一样：\n\n- `getline(in, line)` 认的是「**一整行**」—— 空格、标点都算这一行的一部分，一口气叼到行尾才停。\n- `in >> line` 认的是「**一样东西**」—— 一碰到空格就停嘴，剩下的留在本子里等下一次。\n\n本喵肚子里写的是后面那种，于是那句带空格的话被**当成了两样东西**：空格左边一段、右边一段，各印一行。本子里的字一个都没少，是**读的姿势**把它们切开了。\n\n⚠️ 想原样读回一整句话，就用 `getline`；想从一串数里挨个叼，才用 `in >> x`。这两个姿势挑错了，程序**不报错、照跑**，只是印出来的东西变了样 —— 这才是它难查的地方。\n\n⚠️ 改完之后注意：`getline` 也要写在 `while` 的圆括号里当条件，叼不动了它自己就停。"
+}

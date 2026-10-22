@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-scope-count-evens",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-10",
+  "type": "codewrite",
+  "concept": ["地盘", "作用域", "块", "Scanner"],
+  "instances": 6,
+  "params": {
+    "mark": { "kind": "pick", "values": ["是双数喵", "成双啦喵"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 3, "max": 9 },
+  "stemTemplate": "纸条上给一个数 `n`。本喵要从 `1` 一直数到 `n`，碰上**双数**就单独报一声，最后再报一句「双数一共几个」喵。三行样子长这样（里面的数和句子跟着纸条走）：\n\n```text\n第 2 圈{mark}\n第 4 圈{mark}\n双数一共 2 圈喵\n```\n\n有一条死规矩：**记「一共有几个双数」的那只碗，得摆在圈外面** —— 摆在圈里，出了圈就喊不着它了。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一个数**喵。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int evens = 0;\n        for (int i = 1; i <= n; i++) {\n            if (i % 2 == 0) {\n                System.out.println(\"第 \" + i + \" 圈{mark}\");\n                evens = evens + 1;\n            }\n        }\n        System.out.println(\"双数一共 \" + evens + \" 圈喵\");\n    }\n}\n",
+  "explanationTemplate": "这只记数的碗是本课下半场的正题喵：`evens` 摆在**圈外面**（`main` 的花括号里、`for` 的外面），圈里每撞上一个双数就给它加一；圈跑完了它还活着，最后那句才报得出总数。\n\n要是把它摆进圈里（`int evens = 0;` 写在 `for` 的花括号**里面**），会出两件麻烦：\n\n- 每转一圈，圈里都**现摆一套崭新的碗**，上一圈记的数全没了 —— 跑完永远是 1（或者 0）；\n- 更糟的是最后那句「双数一共」站在圈外面喊它，直接就撞 `cannot find symbol` —— 翻译官说这个名字它没登记过。\n\n**花括号就是地盘的边界**：里面摆的碗，出了这块地方就喊不着。想让一个数从头记到尾，就把它摆在外层那块地盘上。\n\n顺一句：判双数用的是 `i % 2 == 0`（`%` 是取余数的记号）—— 余数是 0，说明能被 2 整除，那就是双数喵。"
+}

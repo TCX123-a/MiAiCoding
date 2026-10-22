@@ -1,0 +1,341 @@
+{
+  "lessonId": "cpp-stage2-03",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s2-03-const-object-call-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵画了一张叫 `Cat` 的图纸，上面那一招只是印一行字，一个格子都没碰。`main` 里本喵生了一只**带封印的猫**，喊它印那行字 —— 可信封递进去，翻译官喵当场拦下喵。\n\n你帮本喵改一处，让它跑起来、把那行字印出来。**`main` 里那两句一个都不用动。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void show() {\n        cout << name << \" 蹲在这儿喵\" << endl;\n    }\n};\n\nint main() {\n    const Cat c1(\"小橘\");\n    c1.show();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void show() const {\n        cout << name << \" 蹲在这儿喵\" << endl;\n    }\n};\n\nint main() {\n    const Cat c1(\"小橘\");\n    c1.show();\n    return 0;\n}\n",
+      "expectedOutput": "小橘 蹲在这儿喵",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:18:12: error: passing 'const Cat' as 'this' argument discards qualifiers [-fpermissive]`\n\n翻成猫话：**「你递进来的是一只带封印的猫，可这一招没说自己只看看 —— 封印不能丢，所以这活它接不了。」**\n\n这句话里有个熟面孔：`this`。每喊一次招式，翻译官喵都会悄悄把**喊它的那只猫**递进去；可带封印的猫递不出一个「随便你改」的自己，而这一招（尾巴上没写 `const`）又没承诺过不动手，两边谈不拢，它就当场拦下。\n\n改法是在这一招的尾巴上补一颗 `const`：`void show() const`。\n\n⚠️ 补之前先想清楚：**这一招真的只是看看吗？** 要是它本来就要往格子里写东西，那该拿掉的就不是这颗 `const`，而是那只猫身上的封印喵。",
+      "templateId": "cpp-s2-03-const-object-call",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:46.201Z",
+        "hash": "33b4e321e31c675a"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-const-object-call-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵画了一张叫 `Cat` 的图纸，上面那一招只是印一行字，一个格子都没碰。`main` 里本喵生了一只**带封印的猫**，喊它印那行字 —— 可信封递进去，翻译官喵当场拦下喵。\n\n你帮本喵改一处，让它跑起来、把那行字印出来。**`main` 里那两句一个都不用动。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void show() {\n        cout << name << \" 蹲在这儿喵\" << endl;\n    }\n};\n\nint main() {\n    const Cat c1(\"三花\");\n    c1.show();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void show() const {\n        cout << name << \" 蹲在这儿喵\" << endl;\n    }\n};\n\nint main() {\n    const Cat c1(\"三花\");\n    c1.show();\n    return 0;\n}\n",
+      "expectedOutput": "三花 蹲在这儿喵",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:18:12: error: passing 'const Cat' as 'this' argument discards qualifiers [-fpermissive]`\n\n翻成猫话：**「你递进来的是一只带封印的猫，可这一招没说自己只看看 —— 封印不能丢，所以这活它接不了。」**\n\n这句话里有个熟面孔：`this`。每喊一次招式，翻译官喵都会悄悄把**喊它的那只猫**递进去；可带封印的猫递不出一个「随便你改」的自己，而这一招（尾巴上没写 `const`）又没承诺过不动手，两边谈不拢，它就当场拦下。\n\n改法是在这一招的尾巴上补一颗 `const`：`void show() const`。\n\n⚠️ 补之前先想清楚：**这一招真的只是看看吗？** 要是它本来就要往格子里写东西，那该拿掉的就不是这颗 `const`，而是那只猫身上的封印喵。",
+      "templateId": "cpp-s2-03-const-object-call",
+      "params": {
+        "name": "三花"
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:48.528Z",
+        "hash": "3ddf266d0a739da4"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-const-reader-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想看清楚**只看看的招式**和**要动格子的招式**有什么区别。投喂口会递进来**两个数**（一行一个）：第一只猫的条数、第二只猫的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；写一个**出生招式**，用出生清单把两样装好；\n2. 图上写**两招**：\n   - `show`：印一行 `XX 有 N 条`，尾巴上带 `const`（它只看看，一格都不碰）；\n   - `eat`：把条数加一，并印一行 `XX 吃掉了一条`，尾巴上**不带** `const`；\n3. `main` 里的顺序是：\n   - 生一只**普通的**猫叫 `小橘`，条数用**第一个数**；喊 `show`、再喊 `eat`、再喊 `show`；\n   - 再生一只**带封印的**猫叫 `狸花`，条数用**第二个数**；只喊一次 `show`。\n\n比如投喂给程序的是\n\n5\n2\n\n程序就要叼回\n\n小橘 有 5 条\n小橘 吃掉了一条\n小橘 有 6 条\n狸花 有 2 条\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void show() const {\n        cout << name << \" 有 \" << fish << \" 条\" << endl;\n    }\n\n    void eat() {\n        fish = fish + 1;\n        cout << name << \" 吃掉了一条\" << endl;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1(\"小橘\", a);\n    c1.show();\n    c1.eat();\n    c1.show();\n\n    const Cat c2(\"狸花\", b);\n    c2.show();\n    return 0;\n}\n",
+      "expectedOutput": "小橘 有 3 条\n小橘 吃掉了一条\n小橘 有 4 条\n狸花 有 4 条",
+      "stdin": "3\n4\n",
+      "explanation": "带封印的猫（`const Cat`）身上**每一格都不许改**，所以它只喊得动**尾巴上带 `const` 的招式**喵。\n\n- `show` 的尾巴上有 `const`，等于立了张字据「本喵只看看，一格不动」—— 带封印的猫递得出一个「不打算改你」的自己，这一招就接得了这活。\n- `eat` 的尾巴上没有 `const`，它要往格子里写东西 —— 带封印的猫接不了。**这一步不用试**：翻译官喵在你看不到的那道关上就把它拦下了（它会说 `discards qualifiers`）。\n\n另外注意 `show` 喊了**两次**：第一次是吃之前，第二次是吃之后。第二次印出来的条数比第一次多一 —— 因为 `eat` 真的把格子改掉了。\n\n⚠️ 别给 `eat` 也补上 `const`：它要动格子，补了当场编不过。`const` 是**承诺**，不是装饰喵。",
+      "templateId": "cpp-s2-03-const-reader",
+      "params": {
+        "nameA": "小橘",
+        "nameB": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:39.056Z",
+        "hash": "b3d8d0eec7d130f6"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-const-reader-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想看清楚**只看看的招式**和**要动格子的招式**有什么区别。投喂口会递进来**两个数**（一行一个）：第一只猫的条数、第二只猫的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；写一个**出生招式**，用出生清单把两样装好；\n2. 图上写**两招**：\n   - `show`：印一行 `XX 有 N 条`，尾巴上带 `const`（它只看看，一格都不碰）；\n   - `eat`：把条数加一，并印一行 `XX 吃掉了一条`，尾巴上**不带** `const`；\n3. `main` 里的顺序是：\n   - 生一只**普通的**猫叫 `小橘`，条数用**第一个数**；喊 `show`、再喊 `eat`、再喊 `show`；\n   - 再生一只**带封印的**猫叫 `三花`，条数用**第二个数**；只喊一次 `show`。\n\n比如投喂给程序的是\n\n4\n3\n\n程序就要叼回\n\n小橘 有 4 条\n小橘 吃掉了一条\n小橘 有 5 条\n三花 有 3 条\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void show() const {\n        cout << name << \" 有 \" << fish << \" 条\" << endl;\n    }\n\n    void eat() {\n        fish = fish + 1;\n        cout << name << \" 吃掉了一条\" << endl;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1(\"小橘\", a);\n    c1.show();\n    c1.eat();\n    c1.show();\n\n    const Cat c2(\"三花\", b);\n    c2.show();\n    return 0;\n}\n",
+      "expectedOutput": "小橘 有 1 条\n小橘 吃掉了一条\n小橘 有 2 条\n三花 有 3 条",
+      "stdin": "1\n3\n",
+      "explanation": "带封印的猫（`const Cat`）身上**每一格都不许改**，所以它只喊得动**尾巴上带 `const` 的招式**喵。\n\n- `show` 的尾巴上有 `const`，等于立了张字据「本喵只看看，一格不动」—— 带封印的猫递得出一个「不打算改你」的自己，这一招就接得了这活。\n- `eat` 的尾巴上没有 `const`，它要往格子里写东西 —— 带封印的猫接不了。**这一步不用试**：翻译官喵在你看不到的那道关上就把它拦下了（它会说 `discards qualifiers`）。\n\n另外注意 `show` 喊了**两次**：第一次是吃之前，第二次是吃之后。第二次印出来的条数比第一次多一 —— 因为 `eat` 真的把格子改掉了。\n\n⚠️ 别给 `eat` 也补上 `const`：它要动格子，补了当场编不过。`const` 是**承诺**，不是装饰喵。",
+      "templateId": "cpp-s2-03-const-reader",
+      "params": {
+        "nameA": "小橘",
+        "nameB": "三花"
+      },
+      "verified": {
+        "at": "2026-10-20T16:51:44.664Z",
+        "hash": "3e63ba1f45471e60"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-const-reader-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想看清楚**只看看的招式**和**要动格子的招式**有什么区别。投喂口会递进来**两个数**（一行一个）：第一只猫的条数、第二只猫的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；写一个**出生招式**，用出生清单把两样装好；\n2. 图上写**两招**：\n   - `show`：印一行 `XX 有 N 条`，尾巴上带 `const`（它只看看，一格都不碰）；\n   - `eat`：把条数加一，并印一行 `XX 吃掉了一条`，尾巴上**不带** `const`；\n3. `main` 里的顺序是：\n   - 生一只**普通的**猫叫 `大胖`，条数用**第一个数**；喊 `show`、再喊 `eat`、再喊 `show`；\n   - 再生一只**带封印的**猫叫 `狸花`，条数用**第二个数**；只喊一次 `show`。\n\n比如投喂给程序的是\n\n5\n5\n\n程序就要叼回\n\n大胖 有 5 条\n大胖 吃掉了一条\n大胖 有 6 条\n狸花 有 5 条\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void show() const {\n        cout << name << \" 有 \" << fish << \" 条\" << endl;\n    }\n\n    void eat() {\n        fish = fish + 1;\n        cout << name << \" 吃掉了一条\" << endl;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1(\"大胖\", a);\n    c1.show();\n    c1.eat();\n    c1.show();\n\n    const Cat c2(\"狸花\", b);\n    c2.show();\n    return 0;\n}\n",
+      "expectedOutput": "大胖 有 3 条\n大胖 吃掉了一条\n大胖 有 4 条\n狸花 有 2 条",
+      "stdin": "3\n2\n",
+      "explanation": "带封印的猫（`const Cat`）身上**每一格都不许改**，所以它只喊得动**尾巴上带 `const` 的招式**喵。\n\n- `show` 的尾巴上有 `const`，等于立了张字据「本喵只看看，一格不动」—— 带封印的猫递得出一个「不打算改你」的自己，这一招就接得了这活。\n- `eat` 的尾巴上没有 `const`，它要往格子里写东西 —— 带封印的猫接不了。**这一步不用试**：翻译官喵在你看不到的那道关上就把它拦下了（它会说 `discards qualifiers`）。\n\n另外注意 `show` 喊了**两次**：第一次是吃之前，第二次是吃之后。第二次印出来的条数比第一次多一 —— 因为 `eat` 真的把格子改掉了。\n\n⚠️ 别给 `eat` 也补上 `const`：它要动格子，补了当场编不过。`const` 是**承诺**，不是装饰喵。",
+      "templateId": "cpp-s2-03-const-reader",
+      "params": {
+        "nameA": "大胖",
+        "nameB": "狸花"
+      },
+      "verified": {
+        "at": "2026-10-20T16:51:49.159Z",
+        "hash": "fd593dcaccc79162"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-const-reader-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想看清楚**只看看的招式**和**要动格子的招式**有什么区别。投喂口会递进来**两个数**（一行一个）：第一只猫的条数、第二只猫的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；写一个**出生招式**，用出生清单把两样装好；\n2. 图上写**两招**：\n   - `show`：印一行 `XX 有 N 条`，尾巴上带 `const`（它只看看，一格都不碰）；\n   - `eat`：把条数加一，并印一行 `XX 吃掉了一条`，尾巴上**不带** `const`；\n3. `main` 里的顺序是：\n   - 生一只**普通的**猫叫 `大胖`，条数用**第一个数**；喊 `show`、再喊 `eat`、再喊 `show`；\n   - 再生一只**带封印的**猫叫 `三花`，条数用**第二个数**；只喊一次 `show`。\n\n比如投喂给程序的是\n\n2\n3\n\n程序就要叼回\n\n大胖 有 2 条\n大胖 吃掉了一条\n大胖 有 3 条\n三花 有 3 条\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void show() const {\n        cout << name << \" 有 \" << fish << \" 条\" << endl;\n    }\n\n    void eat() {\n        fish = fish + 1;\n        cout << name << \" 吃掉了一条\" << endl;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1(\"大胖\", a);\n    c1.show();\n    c1.eat();\n    c1.show();\n\n    const Cat c2(\"三花\", b);\n    c2.show();\n    return 0;\n}\n",
+      "expectedOutput": "大胖 有 1 条\n大胖 吃掉了一条\n大胖 有 2 条\n三花 有 5 条",
+      "stdin": "1\n5\n",
+      "explanation": "带封印的猫（`const Cat`）身上**每一格都不许改**，所以它只喊得动**尾巴上带 `const` 的招式**喵。\n\n- `show` 的尾巴上有 `const`，等于立了张字据「本喵只看看，一格不动」—— 带封印的猫递得出一个「不打算改你」的自己，这一招就接得了这活。\n- `eat` 的尾巴上没有 `const`，它要往格子里写东西 —— 带封印的猫接不了。**这一步不用试**：翻译官喵在你看不到的那道关上就把它拦下了（它会说 `discards qualifiers`）。\n\n另外注意 `show` 喊了**两次**：第一次是吃之前，第二次是吃之后。第二次印出来的条数比第一次多一 —— 因为 `eat` 真的把格子改掉了。\n\n⚠️ 别给 `eat` 也补上 `const`：它要动格子，补了当场编不过。`const` 是**承诺**，不是装饰喵。",
+      "templateId": "cpp-s2-03-const-reader",
+      "params": {
+        "nameA": "大胖",
+        "nameB": "三花"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:41.913Z",
+        "hash": "155505857f24ced2"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-missing-class-scope-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵想把招式 `show` 的肚子写在图纸外面，省得图纸太长 —— 图纸里也留好了只报名字的那一行。\n\n可信封递进去，翻译官喵当场拦下，一行都不让跑喵。\n\n你帮本喵改一处，让它跑起来、把那一行印对。**肚子里那几行和 `main` 里那几句一个都不用动。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void show() const;\n};\n\nvoid show() const {\n    cout << name << \" 有 \" << fish << \" 条\" << endl;\n}\n\nint main() {\n    Cat c1(\"小橘\", 3);\n    c1.show();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void show() const;\n};\n\nvoid Cat::show() const {\n    cout << name << \" 有 \" << fish << \" 条\" << endl;\n}\n\nint main() {\n    Cat c1(\"小橘\", 3);\n    c1.show();\n    return 0;\n}\n",
+      "expectedOutput": "小橘 有 3 条",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:14:13: error: non-member function 'void show()' cannot have cv-qualifier`\n\n翻成猫话：**「这不是哪张图纸上的招式，它凭什么叫自己只读？」** 底下还会跟着两句，说 `name`、`fish` 这两个名字「没见过」—— 因为离开图纸之后，翻译官喵压根不知道进哪张图纸去找那几格。\n\n根子在这儿：**肚子写在图纸外面时，招式名前面必须挂上「这是哪张图纸上的」那一小段** —— 在本课里就是 `Cat::`。挂上它，翻译官喵才把外面这一招认回图纸里去；没挂，它就只当门口来了个谁也不认识的野招式。\n\n改法就是那一小段：`void Cat::show() const`。\n\n以后看到 `non-member function`，第一件事就是检查招式名前面是不是漏了它喵。",
+      "templateId": "cpp-s2-03-missing-class-scope",
+      "params": {
+        "name": "小橘",
+        "fish": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:14.125Z",
+        "hash": "b100d4f7648db51c"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-missing-class-scope-005",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵想把招式 `show` 的肚子写在图纸外面，省得图纸太长 —— 图纸里也留好了只报名字的那一行。\n\n可信封递进去，翻译官喵当场拦下，一行都不让跑喵。\n\n你帮本喵改一处，让它跑起来、把那一行印对。**肚子里那几行和 `main` 里那几句一个都不用动。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void show() const;\n};\n\nvoid show() const {\n    cout << name << \" 有 \" << fish << \" 条\" << endl;\n}\n\nint main() {\n    Cat c1(\"大胖\", 4);\n    c1.show();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void show() const;\n};\n\nvoid Cat::show() const {\n    cout << name << \" 有 \" << fish << \" 条\" << endl;\n}\n\nint main() {\n    Cat c1(\"大胖\", 4);\n    c1.show();\n    return 0;\n}\n",
+      "expectedOutput": "大胖 有 4 条",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:14:13: error: non-member function 'void show()' cannot have cv-qualifier`\n\n翻成猫话：**「这不是哪张图纸上的招式，它凭什么叫自己只读？」** 底下还会跟着两句，说 `name`、`fish` 这两个名字「没见过」—— 因为离开图纸之后，翻译官喵压根不知道进哪张图纸去找那几格。\n\n根子在这儿：**肚子写在图纸外面时，招式名前面必须挂上「这是哪张图纸上的」那一小段** —— 在本课里就是 `Cat::`。挂上它，翻译官喵才把外面这一招认回图纸里去；没挂，它就只当门口来了个谁也不认识的野招式。\n\n改法就是那一小段：`void Cat::show() const`。\n\n以后看到 `non-member function`，第一件事就是检查招式名前面是不是漏了它喵。",
+      "templateId": "cpp-s2-03-missing-class-scope",
+      "params": {
+        "name": "大胖",
+        "fish": 4
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:16.378Z",
+        "hash": "07c9771fe5e9bdd5"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-outside-rename-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想把两招的**肚子都写在图纸外面**，省得图纸长得没边。投喂口会递进来**一个数**（一行）：这只猫的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；图纸上写一个**出生招式**（两样都收，用出生清单装好）；\n2. 图纸里**只报名字**地写下两招（末尾带上分号）：一招 `rename`，收一串字；一招 `show`，尾巴上带 `const`；\n3. 这两招的**肚子都写在图纸外面** —— 名字前面记得挂上「这是哪张图纸上的」那一小段。`rename` 的肚子里要**指名道姓**地把格子改成投喂进来的那个名字；\n4. `main` 里生一只叫 `小橘` 的猫，条数用投喂口递进来的那个数；把它**改名**成 `狸花`；\n5. 最后喊一次 `show`，印**一行**：`XX 有 N 条`。\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\n狸花 有 2 条\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void rename(string name);\n    void show() const;\n};\n\nvoid Cat::rename(string name) {\n    this->name = name;\n}\n\nvoid Cat::show() const {\n    cout << name << \" 有 \" << fish << \" 条\" << endl;\n}\n\nint main() {\n    int a = 0;\n    cin >> a;\n\n    Cat c1(\"小橘\", a);\n    c1.rename(\"狸花\");\n    c1.show();\n    return 0;\n}\n",
+      "expectedOutput": "狸花 有 5 条",
+      "stdin": "5\n",
+      "explanation": "这一题的重点是**招式住在哪儿**喵。\n\n图纸里那两行 `void rename(string name);` 和 `void show() const;` **只报名字、不带肚子**，末尾的分号也别丢 —— 它是在跟翻译官喵打个招呼：「有这么两招，肚子回头再写。」\n\n真正的肚子写在图纸外面，**招式名前面必须挂上 `Cat::`**，念作「这是 `Cat` 这张图纸上的」。少了它，翻译官喵就不认识这两招了（它会说 `non-member function`）。\n\n改名那一招还有个小机关：投喂口也叫 `name`，和格子同名，所以碰格子必须**指名道姓**写 `this->name` —— 光写 `name` 改的只是投喂口自己，名字一点都不会变，而且**不会报错**。\n\n⚠️ 印那一行的时候，`name` 那两格里装的是**改过之后**的新名字喵。",
+      "templateId": "cpp-s2-03-outside-rename",
+      "params": {
+        "oldName": "小橘",
+        "newName": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:03.681Z",
+        "hash": "c41b1b84431622d4"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-outside-rename-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想把两招的**肚子都写在图纸外面**，省得图纸长得没边。投喂口会递进来**一个数**（一行）：这只猫的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；图纸上写一个**出生招式**（两样都收，用出生清单装好）；\n2. 图纸里**只报名字**地写下两招（末尾带上分号）：一招 `rename`，收一串字；一招 `show`，尾巴上带 `const`；\n3. 这两招的**肚子都写在图纸外面** —— 名字前面记得挂上「这是哪张图纸上的」那一小段。`rename` 的肚子里要**指名道姓**地把格子改成投喂进来的那个名字；\n4. `main` 里生一只叫 `小橘` 的猫，条数用投喂口递进来的那个数；把它**改名**成 `三花`；\n5. 最后喊一次 `show`，印**一行**：`XX 有 N 条`。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n三花 有 3 条\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void rename(string name);\n    void show() const;\n};\n\nvoid Cat::rename(string name) {\n    this->name = name;\n}\n\nvoid Cat::show() const {\n    cout << name << \" 有 \" << fish << \" 条\" << endl;\n}\n\nint main() {\n    int a = 0;\n    cin >> a;\n\n    Cat c1(\"小橘\", a);\n    c1.rename(\"三花\");\n    c1.show();\n    return 0;\n}\n",
+      "expectedOutput": "三花 有 6 条",
+      "stdin": "6\n",
+      "explanation": "这一题的重点是**招式住在哪儿**喵。\n\n图纸里那两行 `void rename(string name);` 和 `void show() const;` **只报名字、不带肚子**，末尾的分号也别丢 —— 它是在跟翻译官喵打个招呼：「有这么两招，肚子回头再写。」\n\n真正的肚子写在图纸外面，**招式名前面必须挂上 `Cat::`**，念作「这是 `Cat` 这张图纸上的」。少了它，翻译官喵就不认识这两招了（它会说 `non-member function`）。\n\n改名那一招还有个小机关：投喂口也叫 `name`，和格子同名，所以碰格子必须**指名道姓**写 `this->name` —— 光写 `name` 改的只是投喂口自己，名字一点都不会变，而且**不会报错**。\n\n⚠️ 印那一行的时候，`name` 那两格里装的是**改过之后**的新名字喵。",
+      "templateId": "cpp-s2-03-outside-rename",
+      "params": {
+        "oldName": "小橘",
+        "newName": "三花"
+      },
+      "verified": {
+        "at": "2026-10-20T16:51:53.808Z",
+        "hash": "0eec7ecdacad5591"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-outside-rename-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想把两招的**肚子都写在图纸外面**，省得图纸长得没边。投喂口会递进来**一个数**（一行）：这只猫的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；图纸上写一个**出生招式**（两样都收，用出生清单装好）；\n2. 图纸里**只报名字**地写下两招（末尾带上分号）：一招 `rename`，收一串字；一招 `show`，尾巴上带 `const`；\n3. 这两招的**肚子都写在图纸外面** —— 名字前面记得挂上「这是哪张图纸上的」那一小段。`rename` 的肚子里要**指名道姓**地把格子改成投喂进来的那个名字；\n4. `main` 里生一只叫 `大胖` 的猫，条数用投喂口递进来的那个数；把它**改名**成 `狸花`；\n5. 最后喊一次 `show`，印**一行**：`XX 有 N 条`。\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\n狸花 有 2 条\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void rename(string name);\n    void show() const;\n};\n\nvoid Cat::rename(string name) {\n    this->name = name;\n}\n\nvoid Cat::show() const {\n    cout << name << \" 有 \" << fish << \" 条\" << endl;\n}\n\nint main() {\n    int a = 0;\n    cin >> a;\n\n    Cat c1(\"大胖\", a);\n    c1.rename(\"狸花\");\n    c1.show();\n    return 0;\n}\n",
+      "expectedOutput": "狸花 有 9 条",
+      "stdin": "9\n",
+      "explanation": "这一题的重点是**招式住在哪儿**喵。\n\n图纸里那两行 `void rename(string name);` 和 `void show() const;` **只报名字、不带肚子**，末尾的分号也别丢 —— 它是在跟翻译官喵打个招呼：「有这么两招，肚子回头再写。」\n\n真正的肚子写在图纸外面，**招式名前面必须挂上 `Cat::`**，念作「这是 `Cat` 这张图纸上的」。少了它，翻译官喵就不认识这两招了（它会说 `non-member function`）。\n\n改名那一招还有个小机关：投喂口也叫 `name`，和格子同名，所以碰格子必须**指名道姓**写 `this->name` —— 光写 `name` 改的只是投喂口自己，名字一点都不会变，而且**不会报错**。\n\n⚠️ 印那一行的时候，`name` 那两格里装的是**改过之后**的新名字喵。",
+      "templateId": "cpp-s2-03-outside-rename",
+      "params": {
+        "oldName": "大胖",
+        "newName": "狸花"
+      },
+      "verified": {
+        "at": "2026-10-20T16:51:58.392Z",
+        "hash": "420adf8a2cf1ab92"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-outside-rename-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想把两招的**肚子都写在图纸外面**，省得图纸长得没边。投喂口会递进来**一个数**（一行）：这只猫的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；图纸上写一个**出生招式**（两样都收，用出生清单装好）；\n2. 图纸里**只报名字**地写下两招（末尾带上分号）：一招 `rename`，收一串字；一招 `show`，尾巴上带 `const`；\n3. 这两招的**肚子都写在图纸外面** —— 名字前面记得挂上「这是哪张图纸上的」那一小段。`rename` 的肚子里要**指名道姓**地把格子改成投喂进来的那个名字；\n4. `main` 里生一只叫 `大胖` 的猫，条数用投喂口递进来的那个数；把它**改名**成 `三花`；\n5. 最后喊一次 `show`，印**一行**：`XX 有 N 条`。\n\n比如投喂给程序的是\n\n6\n\n程序就要叼回\n\n三花 有 6 条\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n    void rename(string name);\n    void show() const;\n};\n\nvoid Cat::rename(string name) {\n    this->name = name;\n}\n\nvoid Cat::show() const {\n    cout << name << \" 有 \" << fish << \" 条\" << endl;\n}\n\nint main() {\n    int a = 0;\n    cin >> a;\n\n    Cat c1(\"大胖\", a);\n    c1.rename(\"三花\");\n    c1.show();\n    return 0;\n}\n",
+      "expectedOutput": "三花 有 9 条",
+      "stdin": "9\n",
+      "explanation": "这一题的重点是**招式住在哪儿**喵。\n\n图纸里那两行 `void rename(string name);` 和 `void show() const;` **只报名字、不带肚子**，末尾的分号也别丢 —— 它是在跟翻译官喵打个招呼：「有这么两招，肚子回头再写。」\n\n真正的肚子写在图纸外面，**招式名前面必须挂上 `Cat::`**，念作「这是 `Cat` 这张图纸上的」。少了它，翻译官喵就不认识这两招了（它会说 `non-member function`）。\n\n改名那一招还有个小机关：投喂口也叫 `name`，和格子同名，所以碰格子必须**指名道姓**写 `this->name` —— 光写 `name` 改的只是投喂口自己，名字一点都不会变，而且**不会报错**。\n\n⚠️ 印那一行的时候，`name` 那两格里装的是**改过之后**的新名字喵。",
+      "templateId": "cpp-s2-03-outside-rename",
+      "params": {
+        "oldName": "大胖",
+        "newName": "三花"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:06.606Z",
+        "hash": "9b4cbbf0d6d1175f"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-this-namesake-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想给图纸添一招 `eat`，让猫吃一顿、条数往上加。投喂口会递进来**两个数**（一行一个）：这只猫一出生带的条数、这一顿吃掉的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；写一个**出生招式** `Cat(string n, int f)`，用出生清单把两样装好；\n2. 再写一招 `void eat(int fish)` —— 它的投喂口**也叫 `fish`**（本喵就是要练这个同名的情形）：把**格子**里的条数加上投喂进来的那个数；\n3. `main` 里生一只叫 `小橘` 的猫，条数用**第一个数**；喊一次 `eat`（吃掉的量是**第二个数**）；\n4. 最后印**一行**：`XX 现在有 N 条`。\n\n比如投喂给程序的是\n\n4\n2\n\n程序就要叼回\n\n小橘 现在有 6 条\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void eat(int fish) {\n        this->fish = this->fish + fish;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1(\"小橘\", a);\n    c1.eat(b);\n    cout << c1.name << \" 现在有 \" << c1.fish << \" 条\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "小橘 现在有 4 条",
+      "stdin": "3\n1\n",
+      "explanation": "这一题专门练**同名**喵：招式 `eat` 的肚子里站着两个 `fish` —— 一个是投喂口，一个是格子。\n\n规矩是「**近的那个赢**」：光写 `fish` 指的是投喂口。所以碰格子必须指名道姓：\n\n`this->fish = this->fish + fish;`\n\n念作「**本喵自己那一格 `fish`，加上投喂口那个 `fish`，再装回本喵自己那一格**」。\n\n要是漏掉 `this->`，写成 `fish = fish + fish;`（或者 `fish = fish + 1;`），改的只是投喂口自己 —— **格子纹丝不动**，而且这套写法**不会报错、不会警告**，只是印出来的数悄悄不对。这正是本课最该带走的手感。\n\n⚠️ 印那一行的时候，用的是**加过之后**的条数。另外那两个数是从投喂口递进来的，判分喂的量和题面示例不一样，别写死喵。",
+      "templateId": "cpp-s2-03-this-namesake",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:22.630Z",
+        "hash": "7a9767b96006d7fd"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-this-namesake-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想给图纸添一招 `eat`，让猫吃一顿、条数往上加。投喂口会递进来**两个数**（一行一个）：这只猫一出生带的条数、这一顿吃掉的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；写一个**出生招式** `Cat(string n, int f)`，用出生清单把两样装好；\n2. 再写一招 `void eat(int fish)` —— 它的投喂口**也叫 `fish`**（本喵就是要练这个同名的情形）：把**格子**里的条数加上投喂进来的那个数；\n3. `main` 里生一只叫 `狸花` 的猫，条数用**第一个数**；喊一次 `eat`（吃掉的量是**第二个数**）；\n4. 最后印**一行**：`XX 现在有 N 条`。\n\n比如投喂给程序的是\n\n1\n4\n\n程序就要叼回\n\n狸花 现在有 5 条\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void eat(int fish) {\n        this->fish = this->fish + fish;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1(\"狸花\", a);\n    c1.eat(b);\n    cout << c1.name << \" 现在有 \" << c1.fish << \" 条\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "狸花 现在有 4 条",
+      "stdin": "1\n3\n",
+      "explanation": "这一题专门练**同名**喵：招式 `eat` 的肚子里站着两个 `fish` —— 一个是投喂口，一个是格子。\n\n规矩是「**近的那个赢**」：光写 `fish` 指的是投喂口。所以碰格子必须指名道姓：\n\n`this->fish = this->fish + fish;`\n\n念作「**本喵自己那一格 `fish`，加上投喂口那个 `fish`，再装回本喵自己那一格**」。\n\n要是漏掉 `this->`，写成 `fish = fish + fish;`（或者 `fish = fish + 1;`），改的只是投喂口自己 —— **格子纹丝不动**，而且这套写法**不会报错、不会警告**，只是印出来的数悄悄不对。这正是本课最该带走的手感。\n\n⚠️ 印那一行的时候，用的是**加过之后**的条数。另外那两个数是从投喂口递进来的，判分喂的量和题面示例不一样，别写死喵。",
+      "templateId": "cpp-s2-03-this-namesake",
+      "params": {
+        "name": "狸花"
+      },
+      "verified": {
+        "at": "2026-10-20T16:52:03.001Z",
+        "hash": "79e9685e85e05d07"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-this-namesake-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵想给图纸添一招 `eat`，让猫吃一顿、条数往上加。投喂口会递进来**两个数**（一行一个）：这只猫一出生带的条数、这一顿吃掉的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；写一个**出生招式** `Cat(string n, int f)`，用出生清单把两样装好；\n2. 再写一招 `void eat(int fish)` —— 它的投喂口**也叫 `fish`**（本喵就是要练这个同名的情形）：把**格子**里的条数加上投喂进来的那个数；\n3. `main` 里生一只叫 `大胖` 的猫，条数用**第一个数**；喊一次 `eat`（吃掉的量是**第二个数**）；\n4. 最后印**一行**：`XX 现在有 N 条`。\n\n比如投喂给程序的是\n\n3\n2\n\n程序就要叼回\n\n大胖 现在有 5 条\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void eat(int fish) {\n        this->fish = this->fish + fish;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1(\"大胖\", a);\n    c1.eat(b);\n    cout << c1.name << \" 现在有 \" << c1.fish << \" 条\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "大胖 现在有 6 条",
+      "stdin": "4\n2\n",
+      "explanation": "这一题专门练**同名**喵：招式 `eat` 的肚子里站着两个 `fish` —— 一个是投喂口，一个是格子。\n\n规矩是「**近的那个赢**」：光写 `fish` 指的是投喂口。所以碰格子必须指名道姓：\n\n`this->fish = this->fish + fish;`\n\n念作「**本喵自己那一格 `fish`，加上投喂口那个 `fish`，再装回本喵自己那一格**」。\n\n要是漏掉 `this->`，写成 `fish = fish + fish;`（或者 `fish = fish + 1;`），改的只是投喂口自己 —— **格子纹丝不动**，而且这套写法**不会报错、不会警告**，只是印出来的数悄悄不对。这正是本课最该带走的手感。\n\n⚠️ 印那一行的时候，用的是**加过之后**的条数。另外那两个数是从投喂口递进来的，判分喂的量和题面示例不一样，别写死喵。",
+      "templateId": "cpp-s2-03-this-namesake",
+      "params": {
+        "name": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:25.433Z",
+        "hash": "32219bd0578e19a5"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-this-shadow-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵画了一张叫 `Cat` 的图纸，上面有一招 `rename`，用来给猫改名字 —— 投喂口本喵图省事也叫 `name`。\n\n`main` 里喊的是「改名」，可印出来还是老名字喵：**它跑得成功、也没报错，就是活干歪了。**\n\n你帮本喵改一处，让它真的把名字改掉。**`main` 里那几句和图纸上别的地方都不用动。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void rename(string name) {\n        name = name;\n    }\n};\n\nint main() {\n    Cat c1(\"小橘\");\n    c1.rename(\"大胖\");\n    cout << \"现在叫 \" << c1.name << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void rename(string name) {\n        this->name = name;\n    }\n};\n\nint main() {\n    Cat c1(\"小橘\");\n    c1.rename(\"大胖\");\n    cout << \"现在叫 \" << c1.name << endl;\n    return 0;\n}\n",
+      "expectedOutput": "现在叫 大胖",
+      "stdin": null,
+      "explanation": "这一题**没有报错**喵 —— 翻译官喵放它一路跑到底，屏幕上安安静静（本喵拿最啰嗦的那档念叨真跑过，它一个字都没说）。\n\n问题在肚子里那一句 `name = name;`：招式里站着**两个 `name`**，一个是投喂口，一个是格子，而规矩是「**近的那个赢**」—— 所以这一句念作「把投喂口装进投喂口里」，格子从头到尾没被碰过。喊「改名叫大胖」，名字格里装着的还是原来那个。\n\n改法是指名道姓：\n\n`this->name = name;`\n\n`this` 是每喊一次招式时悄悄递进来的**那只猫**，`this->name` 就是「本喵自己那一格 `name`」。\n\n⚠️ 这一类错最值得记住的不是怎么改，而是它**不吵不闹**：没有报错、没有警告，只有印出来的结果悄悄不对。所以自己写招式时，只要投喂口和格子同名，格子那一侧就必须写 `this->`。",
+      "templateId": "cpp-s2-03-this-shadow",
+      "params": {
+        "name": "小橘",
+        "newName": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:29.404Z",
+        "hash": "afac1c26de99af70"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-03-this-shadow-003",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵画了一张叫 `Cat` 的图纸，上面有一招 `rename`，用来给猫改名字 —— 投喂口本喵图省事也叫 `name`。\n\n`main` 里喊的是「改名」，可印出来还是老名字喵：**它跑得成功、也没报错，就是活干歪了。**\n\n你帮本喵改一处，让它真的把名字改掉。**`main` 里那几句和图纸上别的地方都不用动。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void rename(string name) {\n        name = name;\n    }\n};\n\nint main() {\n    Cat c1(\"三花\");\n    c1.rename(\"狸花\");\n    cout << \"现在叫 \" << c1.name << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {}\n\n    void rename(string name) {\n        this->name = name;\n    }\n};\n\nint main() {\n    Cat c1(\"三花\");\n    c1.rename(\"狸花\");\n    cout << \"现在叫 \" << c1.name << endl;\n    return 0;\n}\n",
+      "expectedOutput": "现在叫 狸花",
+      "stdin": null,
+      "explanation": "这一题**没有报错**喵 —— 翻译官喵放它一路跑到底，屏幕上安安静静（本喵拿最啰嗦的那档念叨真跑过，它一个字都没说）。\n\n问题在肚子里那一句 `name = name;`：招式里站着**两个 `name`**，一个是投喂口，一个是格子，而规矩是「**近的那个赢**」—— 所以这一句念作「把投喂口装进投喂口里」，格子从头到尾没被碰过。喊「改名叫大胖」，名字格里装着的还是原来那个。\n\n改法是指名道姓：\n\n`this->name = name;`\n\n`this` 是每喊一次招式时悄悄递进来的**那只猫**，`this->name` 就是「本喵自己那一格 `name`」。\n\n⚠️ 这一类错最值得记住的不是怎么改，而是它**不吵不闹**：没有报错、没有警告，只有印出来的结果悄悄不对。所以自己写招式时，只要投喂口和格子同名，格子那一侧就必须写 `this->`。",
+      "templateId": "cpp-s2-03-this-shadow",
+      "params": {
+        "name": "三花",
+        "newName": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:32.520Z",
+        "hash": "08a40025b979f2f6"
+      }
+    }
+  ]
+}

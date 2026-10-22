@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-organize-isfile-skip",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-14",
+  "type": "codefix",
+  "concept": ["os.path.isfile", "抽屉要挑出来", "continue"],
+  "instances": 2,
+  "params": {
+    "d": { "kind": "pick", "values": ["里屋", "小仓库"] },
+    "x": { "kind": "pick", "values": ["jpg", "png"] }
+  },
+  "stemTemplate": "本喵这个抽屉里，除了两样东西，还**躺着一个抽屉**（程序里已经搭好了）。\n\n这一段要给东西重新编号：鱼干加两位号，后缀原样接回去。它**跑得顺顺的、一句错都不报**，可印出来一看，**那个抽屉被当成东西一起改了名**，现在它混在东西堆里，本喵再想往里头放点什么都找不到门了。\n\n你帮本喵改对喵。要求：\n\n1. **只动东西**：抽屉的名字要**原样**留在印出来的那一行里。\n2. **只许加一处把关的**（一处就够，加在绕圈开头），别处一个字都不许改。\n3. 编号的排法（从 1 起、两位、不够补 0）不许改 —— 编号**只数真正的那些东西**。",
+  "brokenCodeTemplate": "import os\n\n工作台 = \"小工作台\"\nos.makedirs(os.path.join(工作台, \"{d}\"), exist_ok=True)\nfor 名字 in [\"猫1.txt\", \"鱼.{x}\"]:\n    with open(os.path.join(工作台, 名字), \"w\", encoding=\"utf-8\") as 档案:\n        档案.write(\"x\")\n\n序号 = 0\nfor 名字 in sorted(os.listdir(工作台)):\n    序号 = 序号 + 1\n    主体, 后缀 = os.path.splitext(名字)\n    os.rename(os.path.join(工作台, 名字), os.path.join(工作台, f\"鱼干{序号:02d}{后缀}\"))\n\nprint(sorted(os.listdir(工作台)))\n",
+  "referenceFixTemplate": "import os\n\n工作台 = \"小工作台\"\nos.makedirs(os.path.join(工作台, \"{d}\"), exist_ok=True)\nfor 名字 in [\"猫1.txt\", \"鱼.{x}\"]:\n    with open(os.path.join(工作台, 名字), \"w\", encoding=\"utf-8\") as 档案:\n        档案.write(\"x\")\n\n序号 = 0\nfor 名字 in sorted(os.listdir(工作台)):\n    完整路径 = os.path.join(工作台, 名字)\n    if not os.path.isfile(完整路径):\n        continue\n    序号 = 序号 + 1\n    主体, 后缀 = os.path.splitext(名字)\n    os.rename(完整路径, os.path.join(工作台, f\"鱼干{序号:02d}{后缀}\"))\n\nprint(sorted(os.listdir(工作台)))\n",
+  "explanationTemplate": "`os.listdir(抽屉)` 报出来的是这一层**所有的名字**，里头**既有东西、也有抽屉** —— 它不替本喵分这个，所以本喵得**自己问一句**喵。\n\n开头的把关就是干这个的：`os.path.isfile(完整路径)` 是「**它是东西，还是抽屉**」。是抽屉就 `continue` —— 这一圈到此为止，名字不动，编号也不加，直接走下一圈。少了这一句，抽屉就跟着东西一起被改了名，而且**改得还挺顺**（给抽屉改名一点也不报错），等本喵发现的时候它已经混进东西堆里了。\n\n⚠️ 那个 `序号 = 序号 + 1` 的位置很讲究：它得摆在把关**后面**。摆在前面的话，抽屉也会占掉一个号 —— 东西的编号就跳号了（本喵这里会从 02 起跳，而不是 01）。\n\n⚠️ 还有一条顺手的好习惯：把关的那一句先算出**完整路径**，后面搬家的时候**直接用这一个**。同一件事算两遍，早晚会有一遍写歪 —— 而这里写歪的后果是「问的是这个、动的是那个」，跑起来不报错，但动的跟你以为的不是同一样东西喵。"
+}

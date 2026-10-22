@@ -1,0 +1,94 @@
+{
+  "lessonId": "c-stage3-03",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "`typedef` 对那张图纸做了什么喵？",
+      "options": [
+        "给它挂了个更好念的外号，图纸本身一点没变",
+        "凭空造出了一张全新的图纸",
+        "把类里的成员从整数改成了小数",
+        "让链子在插入新环时能自动变长"
+      ],
+      "answer": 0,
+      "explanation": "`typedef` 只是挂外号喵：`struct Node` 这串全名以后可以简写成 `Node`，翻译官喵干活时照旧按原来的图纸认。图纸还是那张图纸，外号不会凭空造出任何新东西；链子能变长是因为环是现要现租来的，跟外号没关系。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "图纸里面为什么必须写 `struct Node *next;`，不能直接写 `Node *next;` 喵？",
+      "options": [
+        "因为外号 `Node` 要等整张图纸画完才生效，图纸里面只认得全名",
+        "因为图纸里面不允许出现爪子",
+        "因为 `next` 这个名字只能用来装小数",
+        "因为写成全名能让链子更短"
+      ],
+      "answer": 0,
+      "explanation": "读那一行的时候，外号还没挂上去呢，翻译官喵只认识图纸标签，所以里面得写全名 `struct Node *`喵；等整张图纸读完、外号生效了，图纸外面才能写 `Node *head;`。本喵试过偷懒写 `Node *next;`，翻译官喵当场就回了一句不认识这个外号。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "造一只新环的时候，`malloc` 的括号里该填什么喵？",
+      "options": [
+        "`sizeof(Node)`",
+        "`sizeof(head)`",
+        "`4`",
+        "`0`"
+      ],
+      "answer": 0,
+      "explanation": "要让翻译官喵去量**一整只环**有多大，所以填 `sizeof(Node)`喵。`sizeof(head)` 量出来的只是那张牌子自己的大小（本喵机器上是 8），租这么点地方装不下一只环；写死 `4` 也不对，环里除了一条小鱼干还挂着一只爪子；填 `0` 等于没租到地方，一取用就摔。"
+    },
+    {
+      "id": "q4",
+      "type": "fill",
+      "stem": "从头走到尾的时候，往下一只环迈一步的那句是 `cur = cur->____;`。",
+      "answer": "next",
+      "accept": [],
+      "explanation": "每只环的下一只都存在 `next` 里喵，所以迈步就是 `cur = cur->next;`，走一步牌子就挪到下一只环上。等 `cur` 变成 `NULL`，说明已经走到空爪子那里，整条链子摸完了。"
+    },
+    {
+      "id": "q5",
+      "type": "fill",
+      "stem": "新造出来的环，爪子要先空着，也就是写 `p->next = ____;`。",
+      "answer": "NULL",
+      "accept": [],
+      "explanation": "刚租来的环谁都不认识，先把爪子设成 `NULL`，它就安安静静当尾巴喵。要是忘了这一句，爪子会指向不知道哪来的地方，顺着链子走下去就会摔——链子最后一只的爪子牵 `NULL`，也正是「走到头了」的信号呀。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nint main() {\n    Node *head = NULL;\n\n    for (int i = 3; i >= 1; i--) {\n        Node *p = (Node *)malloc(sizeof(Node));\n        p->x = i;\n        p->next = head;\n        head = p;\n    }\n\n    for (Node *cur = head; cur != NULL; cur = cur->next) {\n        printf(\"%d\\n\", cur->x);\n    }\n\n    while (head != NULL) {\n        Node *next = head->next;\n        free(head);\n        head = next;\n    }\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "1\n2\n3",
+      "accept": ["1\n2\n3\n"],
+      "explanation": "新环每次都挂到最前面，所以 3 先挂进去反而排到最后，链子最后长成 1 -> 2 -> 3喵。从头走到尾打印出来就是 1、2、3 三行；最后还链子时先记牢下一环再放掉当前这只，才不会把链子牵断。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nint main() {\n    Node *head = NULL;\n\n    for (int i = 1; i <= 3; i++) {\n        Node *p = (Node *)malloc(sizeof(Node));\n        p->x = i * 10;\n        p->next = head;\n        head = p;\n    }\n\n    Node *old = head;\n    head = head->next;\n    free(old);\n\n    printf(\"%d\\n\", head->x);\n\n    while (head != NULL) {\n        Node *next = head->next;\n        free(head);\n        head = next;\n    }\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "20",
+      "accept": ["20\n"],
+      "explanation": "编号依次挂到最前面，链子长成 30 -> 20 -> 10喵；摘掉第一环就是让牌子往下挪一格，捏在手里的变成 20 那一只，所以打印 20。这正是「摘头环」那个边界：前面没有上一只可以跨过去，只能把头环的牌子挪到下一只身上。"
+    },
+    {
+      "id": "q8",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int x;\n    struct Node *next;\n} Node;\n\nint main(void) {\n    Node *head = NULL;\n\n    for (int i = 1; i <= 3; i++) {\n        Node *p = (Node *)malloc(sizeof(Node));\n        p->x = i * 10;\n        p->next = head;\n        head = p;\n    }\n\n    for (Node *cur = ____; cur != ____; cur = cur->next) {\n        printf(\"%d\\n\", cur->x);\n    }\n\n    while (head != NULL) {\n        Node *next = head->next;\n        ____(head);\n        head = next;\n    }\n    return 0;\n}",
+      "stem": "这段程序会依次打印 `30`、`20`、`10`。把三个空补完整喵～",
+      "blanks": [
+        { "answer": "head" },
+        { "answer": "NULL" },
+        { "answer": "free" }
+      ],
+      "explanation": "`head` 是整串猫爪的**头环**，走链子当然从它开始；`cur != NULL` 是「手里还捏着东西」的意思，`NULL` 就是链子到头了的信号，走到那儿就该停。最后那圈是**归还**：每摘下一环都要 `free` 掉，不然它占着的那块内存就一直没人还，程序跑得越久漏得越多喵。"
+    }
+  ]
+}

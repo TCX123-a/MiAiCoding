@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-header-guard-missing-define",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-09",
+  "type": "codefix",
+  "concept": ["防重复包含", "守卫三行", "少写 #define", "编译报错"],
+  "instances": 2,
+  "params": {
+    "GUARD": { "kind": "pick", "values": ["ADD_H", "SUM_H", "TOOL_H"] },
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵把同一份招式抄了两遍（真实工程里，同一本招牌被抄回来两次是常事）。这回本喵记得给**两份都套上了守卫**，可翻译官喵还是把整段退了回来，说本喵**把 `add` 教了两遍**。\n\n你帮本喵看看守卫里漏了哪一句，把它补好（记号名就用 `{GUARD}`）：让程序能翻译过去，并且印出一行 `结果 <两数相加的数>`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#ifndef {GUARD}\n\nint add(int a, int b) {\n    return a + b;\n}\n\n#endif\n\n#ifndef {GUARD}\n\nint add(int a, int b) {\n    return a + b;\n}\n\n#endif\n\nint main(void) {\n    printf(\"结果 %d\\n\", add({a}, {b}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#ifndef {GUARD}\n#define {GUARD}\n\nint add(int a, int b) {\n    return a + b;\n}\n\n#endif\n\n#ifndef {GUARD}\n#define {GUARD}\n\nint add(int a, int b) {\n    return a + b;\n}\n\n#endif\n\nint main(void) {\n    printf(\"结果 %d\\n\", add({a}, {b}));\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: redefinition of 'add'`（`redefinition` = 又定义了一遍）喵。\n\n守卫一共三行，**缺一不可**：\n\n- `#ifndef {GUARD}` —— 「`{GUARD}` 这个记号**没**登记过的话，就从这儿往下读」\n- `#define {GUARD}` —— 「现在登记上，下次再来就拦住你」\n- `#endif` —— 「读到这儿为止」\n\n本喵这次头和尾都写了（两份都写了），**中间那句 `#define {GUARD}` 忘了**。少了这一句，`{GUARD}` 就**永远没登记过** —— 第二遍走到 `#ifndef` 跟前问「登记了没」，它照样回「没登记，进来吧」，那份招式就又被读了一遍，翻译官喵当然要拦。\n\n**看一眼就明白的对照：** 只有「登记」这件事是省不掉的 —— `#ifndef` 负责问、`#endif` 负责收，可**回答「登记了」的那一句正是 `#define` 自己**。少了它，守卫就是一对空门框，看着像有，谁也拦不住。\n\n守卫最阴的地方也在这儿：**少一句，程序看着还有模有样**（只抄一份的话它一点毛病都没有），非要等到有人第二次抄同一份招牌才炸给你看。所以抄完守卫，习惯性地数一眼：`#ifndef`、`#define`、`#endif`，三行齐了没有。\n\n补的时候还有个讲究：**登记那一句得补在头一份里** —— 补在第二份里不管用（读到第二份的时候，那份招式已经先抄进去了），补在头一份、或者两份都补，都行。"
+}

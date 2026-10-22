@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-maven-two-warehouses",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-25",
+  "type": "codewrite",
+  "concept": ["头一回才出远门", "第二回从本地仓库拿", "最后数的是出门趟数"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵来演一遍管家的采买日常：第一回见到的货要去**中央仓库**搬，之后同样的货就躺在**本地仓库**里，直接从手边拿。\n\n1. 读第一行的 `n`；再一行一个、接着读进来 `n` 个数，每个数是一件货的**货号**；\n2. 一件一件按顺序处理，第 k 件（k 从 1 数起）印一行：\n   - 这个货号**头一回出现**：`第 k 件：去中央仓库搬`\n   - 之前已经出现过：`第 k 件：从本地仓库拿`\n3. 最后印一行：`一共去了中央仓库 S 趟`——S 是去中央仓库的总次数。\n\n比如投喂这几行：\n\n```text\n{sampleInput}\n```\n\n程序就叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分的时候喂的是另一组数喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        ArrayList<Integer> 本地仓库 = new ArrayList<>();\n        int 去仓次数 = 0;\n        for (int k = 1; k <= n; k++) {\n            int 货号 = sc.nextInt();\n            boolean 见过 = false;\n            for (int i = 0; i < 本地仓库.size(); i++) {\n                if (本地仓库.get(i) == 货号) {\n                    见过 = true;\n                }\n            }\n            if (见过) {\n                System.out.println(\"第 \" + k + \" 件：从本地仓库拿\");\n            } else {\n                本地仓库.add(货号);\n                去仓次数 = 去仓次数 + 1;\n                System.out.println(\"第 \" + k + \" 件：去中央仓库搬\");\n            }\n        }\n        System.out.println(\"一共去了中央仓库 \" + 去仓次数 + \" 趟\");\n    }\n}\n",
+  "explanationTemplate": "**一、本地仓库的意义**\n\n「第一回才出远门」就是这个程序的全部秘密：搬回来一件，就顺手记进本地仓库；下一回同号的货再来，翻一眼本地仓库——在，就不用再跑一趟。管家 Maven 就是这么过日子的：中央仓库在很远的地方（网上），本地仓库就在自己家里，取过一次的货都有存货，第二次眨眼就到。\n\n**二、怎么记「见过」**\n\n本喵用的是最直白的办法：每来一件，把本地仓库从头到尾翻一遍，看到同号的就把小旗子一竖（`见过 = true`）。货不多的时候这办法好懂又好写；等仓库大起来，还可以换成更快的翻法——先把这道做对，快的事慢慢来。\n\n**三、最后一趟数的是什么**\n\n`S` 数的是**去中央仓库的趟数**，不是件数：同一件货来三次，只有头一回算一趟。所以本喵只在「搬」那条岔路里给计数加一——从本地拿的岔路，一次都不加。\n\n**四、一句话记住**\n\n头一回出远门、往后家里拿；最后一行的数的是出门的趟数。"
+}

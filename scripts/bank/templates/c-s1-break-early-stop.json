@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-break-early-stop",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-08",
+  "type": "codewrite",
+  "concept": ["break", "收工", "圈外的活照样干"],
+  "instances": 6,
+  "params": {
+    "limit": { "kind": "int", "min": 5, "max": 6 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫粮"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{limit}\n", "count": 1, "min": 2, "max": 4 },
+  "stemTemplate": "本喵要从 1 数到 {limit}（数到几是我说了算的 {limit}）。可这次有个新规矩：**读进来的那个数一出现，就立刻收工** —— 剩下的圈数全不算数。\n\n请你写个程序：**先从投喂口读进来两个数**，第一个是数到几为止（就是 {limit}），第二个是**一数到它就收工**的那个数（它自己**不印**出来）。一个数一行往下印，收工之后印一行 `收工喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int limit = 0;\n    int stop = 0;\n\n    if (scanf(\"%d\", &limit) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &stop) != 1) {\n        return 1;\n    }\n\n    for (int i = 1; i <= limit; i++) {\n        if (i == stop) {\n            break;\n        }\n        printf(\"%d\\n\", i);\n    }\n    printf(\"收工喵\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "这一课的第一个词是 `break`：**撞上它就收工** —— 这一圈剩下的活儿不干了，后面的圈数**全部作废**，程序直接跳到圈外接着往下跑喵。\n\n放到这道题里就是：`i` 一走到读进来的那个数，`break` 立刻把圈停掉，那个数自己**连印都没印**（因为 `break` 站在印字那句前面）—— 这正是「收工」和「跳过」的分界：\n\n- **收工**：圈没了，后面的圈数全作废。\n- **跳过**（下一题的主角）：圈还在转，只是这一圈剩下的活不干了。\n\n还有个细节值得看一眼：**圈外那句「收工喵」照样会印。** `break` 只把「圈」这一层跳出去，圈后面的活儿一句都不少 —— 它不像别的一些语言那样顺手把整段都带走喵。"
+}

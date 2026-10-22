@@ -1,0 +1,77 @@
+{
+  "lessonId": "c-stage2-13",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写下了一句 `fopen(\"dangan.txt\", \"r\")`，它叼回来的东西本喵起名叫 `fp`。**接下来第一件事**该干什么喵？",
+      "options": [
+        "先看看 `fp` 是不是 `NULL` —— 拉不开抽屉的时候叼回来的就是它",
+        "直接 `fprintf(fp, ...)` 往上写，反正写坏了大不了重来",
+        "先 `fclose(fp)` 关一下，再重新打开",
+        "什么都不用管，编译器会替本喵检查册子在不在"
+      ],
+      "answer": 0,
+      "explanation": "拉不开抽屉的时候（册子不在、名字写错、打开方式不认），`fopen` 叼回来的是一张「什么都没有」的牌子 `NULL`喵。不检查就往下用，等于拿着一块空牌子去干活。**翻译官喵不会替你查这件事** —— 它只管代码写得对不对，管不了那本册子到底在不在喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵想往账本末尾**再添一条**，前面写的那些要留着。第二次拉开抽屉该用哪个打开方式喵？",
+      "options": [
+        "`\"a\"` —— 保留原来的字，在停笔的地方接着写",
+        "`\"w\"` —— 拉开就重写，反正内容差不多",
+        "`\"rw\"` —— 又能读又能写，肯定更好",
+        "`\"r\"` —— 先读出来再写回去"
+      ],
+      "answer": 0,
+      "explanation": "`\"a\"` 才是「接着写」喵。`\"w\"` 是**撕掉重写**：拉开的那一刻，册子上原来的字全被擦干净 —— 本喵在第二节真跑给你看过，第二次用 `\"w\"`，第一天那条就没了。`\"rw\"` 听着合理，可翻译官喵根本不认这种写法，叼回来的是 `NULL`喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "第三节那句 `while (fgets(line, sizeof(line), fp) != NULL)` 里的 `NULL`，说明什么喵？",
+      "options": [
+        "册子读到末尾了，再没有下一行",
+        "这一行是空行",
+        "这本册子打不开",
+        "这一行太长，碗装不下"
+      ],
+      "answer": 0,
+      "explanation": "`fgets` 每喊一次叼回来一行；**读到册子末尾、再没有下一行的时候，叼回来的就是 `NULL`**喵。所以这个绕圈的意思是「只要还叼得回一行，就接着读」。它**不是**「读到空行」—— 空行也是一行，照样叼得回来（末尾带着一个换行符）；也不是「打不开」，打不开在 `fopen` 那一步就已经是 `NULL` 了喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"shu.txt\", \"w\");\n    fprintf(fp, \"3 5\\n7 2\\n\");\n    fclose(fp);\n\n    fp = fopen(\"shu.txt\", \"r\");\n    int a, b;\n    while (fscanf(fp, \"%d %d\", ____, ____) == 2) {\n        printf(\"%d\\n\", a + b);\n    }\n    fclose(fp);\n    return 0;\n}",
+      "stem": "本喵想让 `fscanf` 把读到的两个数送进那两只碗里。两格空里分别该填什么喵？",
+      "blanks": [
+        { "answer": "&a" },
+        { "answer": "&b" }
+      ],
+      "explanation": "填 `&a` 和 `&b` 喵。`fscanf` 要干的是**把读到的数送进碗里**，所以它要的不是碗里的东西，而是**碗在哪儿** —— 那个 `&` 就是「住在哪儿」的意思。这是老朋友了：`scanf` 也是这个脾气，忘了 `&` 是新手最经典的一跤（这一课里 `fscanf` 照样如此）。顺序也得对上：先读到的进 `a`、后读到的进 `b`喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"dangan.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"档案室的门打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 3 条\\n\");\n    fprintf(fp, \"猫粮 1 碗\\n\");\n    fclose(fp);\n\n    fp = fopen(\"dangan.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"找不到这本册子喵\\n\");\n        return 0;\n    }\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"读到：%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？",
+      "answer": "读到：小鱼干 3 条\n读到：猫粮 1 碗",
+      "accept": ["读到：小鱼干 3 条\n读到：猫粮 1 碗\n"],
+      "explanation": "先用 `\"w\"` 把两行写进册子、`fclose` 关上，再用 `\"r\"` 拉开、一行一行读出来喵。`fprintf` 写的时候那一行末尾本来就写了 `\\n`，`fgets` 读回来时连着换行符一起接住，所以 `printf(\"读到：%s\", line)` 里不用再加 `\\n`，两行正好一行一个喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"dangan.txt\", \"w\");\n    fprintf(fp, \"第一行\\n第二行\\n\");\n    fclose(fp);\n\n    fp = fopen(\"dangan.txt\", \"r\");\n    char line[64];\n    int n = 0;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        n = n + 1;\n        printf(\"第 %d 行：%s\", n, line);\n    }\n    fclose(fp);\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}",
+      "stem": "这段代码印出什么喵？",
+      "answer": "第 1 行：第一行\n第 2 行：第二行\n一共 2 行",
+      "accept": ["第 1 行：第一行\n第 2 行：第二行\n一共 2 行\n"],
+      "explanation": "册子上写着两行，`fgets` 一喊一次叼一行回来，绕圈跑两趟；第三趟读到末尾叼回 `NULL`，绕圈收工，`n` 停在 2 喵。注意印出来的每一行**只换了一次行**：换行符是 `fgets` 连着那行字一起叼回来的，所以 `printf` 里没再写 `\\n`；最后那句「一共 2 行」是绕圈之外单独印的喵。"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-ptrarr-fill-skip-first",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-02",
+  "type": "codefix",
+  "concept": ["指针传参", "长度要另喂", "绕圈起点", "差一位"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "step": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵让一招替本喵给一排碗装小鱼干：第 0 只碗装 {step} 条，往后每只碗都比前一只多装 {step} 条。也就是第 i 只碗里装 `(i + 1) × {step}` 条。\n\n那招头上收两样：一排碗的牌子、还有**这排一共几只**。装完以后，`main` 里把 {n} 只碗从第 0 只起一只一只报出来，格式 `第 i 只：v`。\n\n招式跑得好好的，翻译官喵一声没吭，可报出来的第 0 只碗不对喵。你帮本喵看看是哪儿写歪了。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nvoid fill(int *p, int n) {\n    for (int i = 1; i < n; i++) {\n        p[i] = (i + 1) * {step};\n    }\n}\n\nint main(void) {\n    int bowls[5] = {0};\n    fill(bowls, {n});\n\n    for (int i = 0; i < {n}; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nvoid fill(int *p, int n) {\n    for (int i = 0; i < n; i++) {\n        p[i] = (i + 1) * {step};\n    }\n}\n\nint main(void) {\n    int bowls[5] = {0};\n    fill(bowls, {n});\n\n    for (int i = 0; i < {n}; i++) {\n        printf(\"第 %d 只：%d\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "毛病出在招式里那个绕圈的**起点**：写成了 `i = 1`。\n\n从头数一遍就看出来了：要装的是第 0 只到第 n-1 只，一共 n 只碗。绕圈从 1 起，第 0 只碗**一趟都没进过**这个圈 —— 它还留着出生时那口 0。所以报出来的第 0 只是 0，后面几只倒是对的。\n\n改法就是让它从 0 起：`for (int i = 0; i < n; i++)`。\n\n⚠️ 这种「**少照顾了一只**」的错，翻译官喵是**一个字都不会说**的：`i = 1` 和 `i = 0` 两种写法都完全合法，它看不出你心里的意思。本喵真跑过这一版（`-Wall` 开着），它安安静静把程序交给了本喵，跑起来照样出结果，只有第一个数悄悄错掉。\n\n本课还有一条顺带收下：招式头上那句 `void fill(int *p, int n)` 是**两样投喂** —— 一块牌子、一个长度。一排碗交出去的时候，交的只是「从哪儿开始」，**长度不会自己跟着过去**，所以必须**另外喂一遍**。这就是为什么每回把整排碗交给招式，头上都得再写一个 `n` 喵。"
+}

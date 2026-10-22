@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-21-area-macro-calc",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-21",
+  "type": "codewrite",
+  "concept": ["自己写一张带投喂的条子", "两处括号都要套", "宏不挑类型也不挑写法"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["宏算的", "条子算的"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 1, "max": 9 },
+  "stemTemplate": "本喵要你写一张条子（宏）：`AREA(w, h)` —— 喂两个数进去，把它们相乘的那个数叼回来。**每个投喂口各套一层括号，整个身子再套一层**，一层都不许省。\n\n投喂口会喂进来两个数（一行一个）。请你写个程序：读进来这两个数（下面就管它们叫 `a` 和 `b`），然后印两行 ——\n\n- 第一行先印 `{word}：`，紧接着印**（a + 1）乘（b + 2）**那个数；\n- 第二行印 **a 乘 b** 那个数。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\n#define AREA(w, h) ((w) * (h))\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a;\n    cin >> b;\n\n    cout << \"{word}：\" << AREA(a + 1, b + 2) << endl;\n    cout << AREA(a, b) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这张条子要同时扛住两种喂法：干干净净的数（`AREA(a, b)`）和一整坨式子（`AREA(a + 1, b + 2)`）喵。\n\n**两处括号缺一不可**：\n\n- `w` 和 `h` 各套一层 —— 管的是「塞进来的是一整坨式子」：不套，`a + 1` 就会和后面的乘法先算到一起；\n- 整个身子再套一层 —— 管的是「换完之后别被旁边的运算抢走」：这张条子现在是站在 `cout <<` 后面，可它哪天进了别的式子里，缺了这层就要翻车。\n\n```\n#define AREA(w, h) ((w) * (h))\n```\n\n读的时候可以这么念：**先把每一坨投喂进来的东西各自包好，再把整张条子包好。** 宏只照着字换，这两步它一步都不会替你做。\n\n⚠️ 顺带钉一句：条子能换的只是**字**，换完是「什么样」它不管。所以往后要是想算「先加一再相乘」这种**要算完再用**的东西，写一招常驻招式（`constexpr`）比递条子稳当得多 —— 它会先把投喂进来的东西算好再进门，也不挑三拣四地照字换。"
+}

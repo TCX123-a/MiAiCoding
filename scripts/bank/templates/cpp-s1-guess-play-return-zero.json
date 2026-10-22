@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-guess-play-return-zero",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-14",
+  "type": "codefix",
+  "concept": ["猜中了把次数叼回来", "return i 比 break 还干脆", "每条路都得有战利品"],
+  "instances": 2,
+  "params": {
+    "target": { "kind": "pick", "values": ["42", "68"] }
+  },
+  "stemTemplate": "本喵这台机器把一局折成了一招 `play`：替身一格一格往下报，**猜中了就收工**，顺手把「一共猜了几次」叼回来。\n\n可这一回它印出来的次数是 **0** —— 明明报了好几格才猜到。翻译官喵一个字都没抱怨（这话编得过），是跑出来才对上号。\n\n你帮本喵把出问题的那一处改好：改完那个次数要是真猜的几回。替身那一排、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstring check(int guess, int target) {\n    if (guess < target) {\n        return \"太小啦喵\";\n    } else if (guess > target) {\n        return \"太大啦喵\";\n    } else {\n        return \"猜中啦喵\";\n    }\n}\n\nint play(int target, int picks[], int n) {\n    int i = 0;\n    while (i < n) {\n        int guess = picks[i];\n        i = i + 1;\n\n        cout << \"本喵报 \" << guess << \"：\" << check(guess, target) << endl;\n\n        if (guess == target) {\n            return 0;\n        }\n    }\n    return 0;\n}\n\nint main() {\n    int target = {target};\n    int picks[4] = {10, 42, 68, 90};\n\n    int used = play(target, picks, 4);\n    cout << \"答案是 \" << target << \"，一共猜了 \" << used << \" 次喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstring check(int guess, int target) {\n    if (guess < target) {\n        return \"太小啦喵\";\n    } else if (guess > target) {\n        return \"太大啦喵\";\n    } else {\n        return \"猜中啦喵\";\n    }\n}\n\nint play(int target, int picks[], int n) {\n    int i = 0;\n    while (i < n) {\n        int guess = picks[i];\n        i = i + 1;\n\n        cout << \"本喵报 \" << guess << \"：\" << check(guess, target) << endl;\n\n        if (guess == target) {\n            return i;\n        }\n    }\n    return 0;\n}\n\nint main() {\n    int target = {target};\n    int picks[4] = {10, 42, 68, 90};\n\n    int used = play(target, picks, 4);\n    cout << \"答案是 \" << target << \"，一共猜了 \" << used << \" 次喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题坏的地方**编得过**，所以屏幕上只有数字不对：次数印成了 0。\n\n跟本课第五节对一对喵：猜中了那一条路该交的是 **`return i;`** —— 战利品是「猜了几次」。细看 `i` 的走法就明白为什么是它：\n\n- `int guess = picks[i];` 先取第 `i` 格；\n- 取完 `i = i + 1;` —— 报完一格，编号往后挪一格；\n- 猜中的时候 `i` 正好是「**一共报了几格**」（报第 1 格时 `i` 变成 1，报第 2 格时变成 2……）。\n\n所以猜中那条路上要交 `i`。本喵写成了 `return 0;`，于是不管猜几次，交回来都是 0。\n\n⚠️ 别误会那个 0：招式最后那句兜底的 `return 0;` 是**另外一条路**用的 —— 替身报完了还没猜中，就交个 0 表示「一次也没猜中」。**招式每一条路都得有战利品叼回来**，一条都不能漏；漏了的那条路，就是你后来查半天的那只鬼。"
+}

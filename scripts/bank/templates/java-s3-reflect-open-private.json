@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-reflect-open-private",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-12",
+  "type": "codewrite",
+  "concept": ["别人家的私房骨头从外面够不着", "掀盖子才伸得进去", "读—改—再读"],
+  "instances": 6,
+  "params": {
+    "f": { "kind": "pick", "values": ["名字", "绰号"] },
+    "v1": { "kind": "pick", "values": ["小橘", "煤球"] },
+    "v2": { "kind": "pick", "values": ["大橘", "墨点"] }
+  },
+  "stemTemplate": "本喵手里有一张**别人家**的图纸 `Kitty`（就写在下面），那根 `{f}` 骨头上贴着「只给本喵看」的标签。本喵要在**一个字都不碰图纸**的前提下，把这根骨头**读出来、改掉、再读一遍**喵。\n\n程序该印出**两行**：\n\n- 第一行 `照之前：` 后面跟着它**原来**那串字（图纸上写着的那个）；\n- 第二行 `照之后：` 后面跟着**改完**那串字 —— 改成 `{v2}`。\n\n只填 `Main` 里空着的那一段，**图纸一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "starterTemplate": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n    }\n}\n\nclass Kitty {\n    private String {f} = \"{v1}\";\n}\n",
+  "referenceSolutionTemplate": "import java.lang.reflect.Field;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Kitty 橘 = new Kitty();\n\n        Field 骨头 = Kitty.class.getDeclaredField(\"{f}\");\n        骨头.setAccessible(true);\n        System.out.println(\"照之前：\" + 骨头.get(橘));\n        骨头.set(橘, \"{v2}\");\n        System.out.println(\"照之后：\" + 骨头.get(橘));\n    }\n}\n\nclass Kitty {\n    private String {f} = \"{v1}\";\n}\n",
+  "explanationTemplate": "这一题最关键的一句是 `骨头.setAccessible(true)` —— **少了它，这题根本做不出来**喵。\n\n**一、从外面够不着。** `Kitty` 是**别人家**的图纸（它和 `Main` 是两张平着摆的图纸），骨头上贴着「只给本喵看」的标签。所以直写 `橘.{f}` 这一手**连翻译那一关都过不了** —— 外面的人根本没资格念这根骨头的名字。想够着它，只剩照 X 光这一条路。\n\n**二、光有光片还不够，得掀盖子。** 就算拿到了骨头牌，不掀盖子去读，跑起来就是这一句：\n\n```text\nException in thread \"main\" java.lang.IllegalAccessException: class Main cannot access a member of class Kitty with modifiers \"private\"\n```\n\n念法是：「**本喵站在 `Main` 这张图上，伸手去摸 `Kitty` 那张图上的私房骨头的，摸不着。**」`setAccessible(true)` 这一句就是掀盖子 —— 掀完，本喵**自己**担这个责任，后面的 `get` / `set` 才伸得进去。\n\n**三、读、改、再读。** `骨头.get(橘)` 是读，`骨头.set(橘, \"{v2}\")` 是改（改的是**这只真猫身上**的那根骨头，不是图纸），最后再 `get` 一次，两行就凑齐了。\n\n**四、名字得一模一样。** `getDeclaredField(\"{f}\")` 括号里那串字是照着名字找的，差一个字就是 `NoSuchFieldException` 喵。"
+}

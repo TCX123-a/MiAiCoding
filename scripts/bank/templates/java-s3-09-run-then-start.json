@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-09-run-then-start",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-09",
+  "type": "codefix",
+  "concept": ["直接喊 run 是母猫自己动手", "start 才是派猫", "看名字认出谁在干"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "c1": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵只打算派**一只**猫去捞一趟，结果纸上印了**两行一模一样的话**：\n\n```text\n{n1}捞到 {c1} 条（这一路是：main）\n{n1}捞到 {c1} 条（这一路是：Thread-0）\n家什收好了\n```\n\n本喵自己这一路叫 `main`；一只猫出去干了活，报出来的该是 `Thread-0`。\n\n你帮本喵看看**哪一句是多余的**，把它去掉 —— 去掉之后该印出：\n\n```text\n{n1}捞到 {c1} 条（这一路是：Thread-0）\n家什收好了\n```\n\n（这一题**不用投喂任何东西**。）",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"{n1}\", {c1});\n\n        一只.run();\n        一只.start();\n        一只.join();\n\n        System.out.println(\"家什收好了\");\n    }\n}\n\nclass Cat extends Thread {\n    String 名字;\n    int 条数;\n\n    Cat(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n\n    public void run() {\n        System.out.println(名字 + \"捞到 \" + 条数 + \" 条（这一路是：\" + Thread.currentThread().getName() + \"）\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 一只 = new Cat(\"{n1}\", {c1});\n\n        一只.start();\n        一只.join();\n\n        System.out.println(\"家什收好了\");\n    }\n}\n\nclass Cat extends Thread {\n    String 名字;\n    int 条数;\n\n    Cat(String 名字, int 条数) {\n        this.名字 = 名字;\n        this.条数 = 条数;\n    }\n\n    public void run() {\n        System.out.println(名字 + \"捞到 \" + 条数 + \" 条（这一路是：\" + Thread.currentThread().getName() + \"）\");\n    }\n}\n",
+  "explanationTemplate": "**一、`run()` 是那段活本身，`start()` 才是派猫。** 两个都写，这段活就干了两趟：头一趟是母猫照着图纸**自己动手**（所以报 `main`），第二趟才是那只猫干的（所以报 `Thread-0`）。\n\n**二、头一趟也一个字都不红。** 直接喊 `run()` 不红不响、活照干 —— 这正是它坑人的地方：本喵以为自己派了猫，其实只是在原地自己动手。\n\n**三、改法就是去掉 `一只.run();` 那一句。** 留下 `一只.start();` 和 `一只.join();` 才是「派一只猫去干、站门口等它回来」；要是留错了那一句（只留 `run()`），纸上就只有 `main` 那一行，名字对不上。\n\n**四、名字是认人的钩子。** `Thread.currentThread().getName()` 问的是「现在这一句是谁在干」：本喵自己报 `main`，派出去的猫报 `Thread-0`。往后想确认「到底派出去没有」，就看这一处。"
+}

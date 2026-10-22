@@ -1,0 +1,104 @@
+{
+  "lessonId": "common-26",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "有人说：「`new` 嘛，就是 `malloc` 换了个名字。」这么想，漏了最关键的一点。漏的是什么喵？",
+      "options": [
+        "`malloc` 只管租地方；`new` 还会把图纸上的「出生那一招」叫来跑 —— C 里这件事得手写（`cat_init`），C++ 里是自动的",
+        "名字不一样：一个叫 `malloc`，一个叫 `new`，念法不同",
+        "`new` 跑得更快，所以 C++ 里不用 `malloc`",
+        "`malloc` 是给整数用的，`new` 是给猫用的"
+      ],
+      "answer": 0,
+      "explanation": "换名字只是表面喵：`malloc` 只做一件事 —— 租一块地方，叼回一张没写牌面的万能牌，尺寸要你自己拿 `sizeof` 量、牌面要你自己补（强转）；`new` 做两件事 —— 租地方（尺寸它自己知道、牌面本来就是 `Cat*`）**再**把出生那一招叫来跑。至于「哪个快」「哪个给谁用」，课文里都没这回事 —— 编程里更常见的问题是「谁替你做了什么、你欠了谁的账」，今天这道分水岭量的就是它。"
+    },
+    {
+      "id": "q2",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) {\n        name = n;\n        fish = f;\n        cout << name << \"：本喵出生啦\" << endl;\n    }\n\n    void say() {\n        cout << name << \"：本喵有 \" << fish << \" 条小鱼干\" << endl;\n    }\n};\n\nint main() {\n    Cat* p = new Cat(\"小橘\", 3);\n    p->say();\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？（留意：本喵故意没写 `delete`。）",
+      "answer": "小橘：本喵出生啦\n小橘：本喵有 3 条小鱼干",
+      "accept": ["小橘：本喵出生啦\n小橘：本喵有 3 条小鱼干\n"],
+      "explanation": "`new Cat(\"小橘\", 3)` 那一句里，出生那一招当场就被 `new` 叫来跑了一次 —— 屏幕第一行就是它打的（这一步 `malloc` 不会做）；随后 `p->say()` 报数，第二行。**本喵故意没写 `delete`**：回窝那一招要等 `delete` 才会被叫 —— 少写这一句，那一行永远不会来，地方也一直不还（借了仓库不还）喵。"
+    },
+    {
+      "id": "q3",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) {\n        name = n;\n        cout << name << \"：本喵出生啦\" << endl;\n    }\n\n    ~Cat() {\n        cout << name << \"：本喵回窝啦\" << endl;\n    }\n};\n\nint main() {\n    Cat* p = new Cat(\"小橘\");\n    Cat* q = new Cat(\"狸花\");\n    delete p;\n    delete q;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？顺序也要对喵。",
+      "answer": "小橘：本喵出生啦\n狸花：本喵出生啦\n小橘：本喵回窝啦\n狸花：本喵回窝啦",
+      "accept": ["小橘：本喵出生啦\n狸花：本喵出生啦\n小橘：本喵回窝啦\n狸花：本喵回窝啦\n"],
+      "explanation": "一句一句数喵：第一句 `new Cat(\"小橘\")` —— 小橘出生；第二句 `new Cat(\"狸花\")` —— 狸花出生；`delete p;` —— 小橘回窝；`delete q;` —— 狸花回窝。**谁先出生、谁先回窝，全按本喵写的先后**：和 C 那边 `cat_init` / `free` 的先后是一个道理，只是这两声都是招式**自己**跑出来的，本喵一句都没喊。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) {\n        name = n;\n        fish = f;\n    }\n\n    void say() {\n        cout << name << \"：本喵有 \" << fish << \" 条小鱼干\" << endl;\n    }\n};\n\nint main() {\n    Cat* p = ____ Cat(\"小橘\", 3);\n    p->say();\n    ____ p;\n    return 0;\n}",
+      "stem": "本喵把 C 那边「租仓库、手动请猫、还仓库」的老办法，改写成 C++ 的写法。两个空各填一个口令（都小写）喵。",
+      "blanks": [
+        {
+          "answer": "new",
+          "accept": []
+        },
+        {
+          "answer": "delete",
+          "accept": []
+        }
+      ],
+      "explanation": "第一个空是 `new`：照图纸请猫入住 —— 量尺寸、租地方、叫出生那一招，一句办完；第二个空是 `delete`：先送猫回窝（回窝那一招自己跑），再把地方还回去。配对着记：`malloc` 配 `free`、`new` 配 `delete` —— 两套是各自的搭档，**别混着搭**（`new` 出来的拿 `free` 还、`malloc` 出来的拿 `delete` 还，账都对不上）喵。"
+    },
+    {
+      "id": "q5",
+      "type": "choice",
+      "stem": "本喵这回要的是一排三间：`int* box = new int[3];`。还的时候，下面哪一句才对喵？",
+      "options": [
+        "`delete[] box;`",
+        "`delete box;`",
+        "`free(box);`",
+        "不用还 —— `new` 出来的东西会自己收回去"
+      ],
+      "answer": 0,
+      "explanation": "租一排还一排：`new int[3]` 配 `delete[] box;`，**后面那对方括号别丢**；租一间（`new int(7)`、`new Cat(...)`）才用光板的 `delete`。还有一条配对的账：`new` 出来的别拿 `free` 还、`malloc` 出来的别拿 `delete` 还 —— 两边是一套一套的，混着搭账就对不上。「不用还 —— `new` 出来的东西会自己收回去」是 Java/Python 那边的规矩，C++ 里还的活是你的喵。"
+    },
+    {
+      "id": "q6",
+      "type": "choice",
+      "stem": "本喵把同一只猫搬到 Java 那条线：`Cat c = new Cat(\"小橘\", 3);` —— 写完之后左看右看，**没有 `free`，也没有 `delete`**。这是为什么喵？",
+      "options": [
+        "Java 那边养着自动铲屎官（内存回收 / GC）：没人要的猫它自己来收，还的活不用你写",
+        "Java 里的猫都不用住仓库，直接住在纸上",
+        "忘写了而已，每段 Java 代码最后都应该补一句 `free`",
+        "Java 的 `new` 是假的，其实不占地方"
+      ],
+      "answer": 0,
+      "explanation": "`new` 这个口令 Java 也有（出生那一招照样自己跑），可「还」这道工序不归你写：院子里养着**自动铲屎官**（内存回收 / GC）—— 谁没人要了，它自己来扫（那条线的详情在 java-stage3-18）。Python 更省：连 `new` 都不写，喊一声 `Cat(\"小橘\", 3)`，出生那一招自己跑，也没有还的活。**C 与 C++ 里，还的活是你的**（`free` / `delete`），这是它们和 Java/Python 最扎眼的差别之一喵。"
+    },
+    {
+      "id": "q7",
+      "type": "fill",
+      "stem": "`malloc` 叼回来的牌子，牌面上没写「指着什么」，行话里管这种万能牌叫 `____ *`。所以 C 里得自己用 `(Cat *)` 那一笔把牌面补清楚。（一个英文单词，小写）",
+      "answer": "void",
+      "accept": ["void", "void*", "void *"],
+      "explanation": "`malloc` 只数格子、不认图纸，叼回来的是一张牌面空白的万能牌 —— `void *`。想把它当「指着装 `Cat` 的仓库」的牌子使，就得自己补牌面：`(Cat *)` 那一笔强转。`new` 不用这一笔 —— 它回来时牌面（`Cat*`）已经写好了喵。"
+    },
+    {
+      "id": "q8",
+      "type": "choice",
+      "stem": "有个朋友写了这么两行：`Cat* p = (Cat*)malloc(sizeof(Cat));` 接一句 `p->say();`。编译那关放行了，可这份代码从根上就是错的。错在哪喵？",
+      "options": [
+        "猫根本没出生过 —— `malloc` 只租了地方，出生那一招一次没跑，两格里还是上任租客留下的东西；该改成 `Cat* p = new Cat(\"小橘\", 3);` 再喊招式",
+        "`->` 写错了，顺着牌子喊招式应该写 `p.say()`",
+        "`malloc` 不能用在 C++ 里，编译器早晚会拦",
+        "`sizeof(Cat)` 不对，应该写成 `sizeof(p)`"
+      ],
+      "answer": 0,
+      "explanation": "编译放行不等于猫在喵。`malloc` 只办「租地方」这一件：两格从来没装过，「出生那一招」一次也没跑过 —— 这时候喊 `p->say()`，等于对着一块空地念名字。改法很简单：请猫用 `new`。另外两个说法也一并纠正：顺着牌子喊招式用的是 `->`（`p.say()` 是普通名字的写法）；`sizeof(p)` 量的是**牌子自己**的大小，不是猫该占的地方 —— 这两条都要记牢喵。"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "lessonId": "c-stage3-11",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写了 `#define DOUBLE_BAD(x) x * 2`，那么 `DOUBLE_BAD(1 + 2)` 印出来是多少喵？",
+      "options": ["5", "6", "9", "3"],
+      "answer": 0,
+      "explanation": "墙上那张条子是**照抄**的：`DOUBLE_BAD(1 + 2)` 抄出来成了 `1 + 2 * 2`，乘号先算，于是 `1 + 4 = 5` —— 不是本喵想要的 `(1 + 2) * 2 = 6` 喵。要 6 就得给投喂穿一层括号、整体再穿一层（写成 `((x) * 2)`）：投喂那层管住「喂进来的式子别被扯开」，整体那层管住「整个结果别被外面的运算吃掉」，两层缺一不可。这一段课文里两版摆在一起跑过，印出来的就是 5 和 6。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵喊了一句 `int biggest = BIGGER(take_one(), 3);`（`BIGGER` 就是那张挑大的条子）。跑完以后，鱼缸里的数是多少喵？",
+      "options": [
+        "7 —— 喂进去的那下被算了两次",
+        "6 —— 喂进去的那下只算了一次",
+        "5 —— 压根没算",
+        "3 —— 只算了后面那个数"
+      ],
+      "answer": 0,
+      "explanation": "条子上 `a` 出现了两次，照抄之后 `take_one()` 就被喊了**两遍**喵：鱼缸 5 → 6 → 7，`biggest` 拿到的是第二遍叼回来的 7。换成真招式就不一样了 —— 招式是**先把喂进来的算好再进门**，只算一次，本喵那段招式版跑出来鱼缸停在 6。所以带投喂的条子里，投喂别放「算一次就会变一点」的东西（自增、收输入、喊招式都算）喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "开关卡写成 `#define DEBUG 0`，可稿子里那一句写的是 `#ifdef DEBUG`。跑起来会怎样喵？",
+      "options": [
+        "照样印出调试那行 —— 它判的是「有没有贴过这张卡」",
+        "一个字都不印 —— 值写成 0 就是关",
+        "编译器会停下来报错",
+        "只印那一行的前一半字"
+      ],
+      "answer": 0,
+      "explanation": "`#ifdef` 判的是**有没有定义过**，压根不看值喵：`#define DEBUG 0` 在它眼里照样算「贴过这张卡」，所以开关关不掉。本喵真跑过这个形状，抓虫那行照样印了出来。想按值关，就得写 `#if DEBUG` —— 值是 0 才算关。记住这张小表：`#if` 判值、`#ifdef` 判有没有。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define DOUBLE_GOOD(x) ____\n\nint main(void) {\n    printf(\"%d\\n\", DOUBLE_GOOD(1 + 2));\n    return 0;\n}",
+      "stem": "本喵这张条子少写了身子：喂进去的是个式子时它也得答对。按课文教的规矩，**投喂和整体都把括号穿好**，补完之后这段该印出 6 喵～",
+      "blanks": [{ "answer": "((x) * 2)" }],
+      "explanation": "要**两层**括号喵：投喂那层 `(x)` 管住「喂进来的式子别被扯开」，整体那层 `( ... )` 管住「整个结果别被外面的运算吃掉」。穿好之后 `DOUBLE_GOOD(1 + 2)` 抄出来是 `((1 + 2) * 2)`，算出来 6，正是本喵要的。只穿一层也不算写坏，可这个条子往后的日子长着呢 —— 哪天它被塞进一个更大的算式里，少掉的那层括号就会翻车（课文里 `HALF_BAD` 就是这么栽的）喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define DEBUG 0\n\nint main(void) {\n____ DEBUG\n    printf(\"[抓虫] 碗里的数是 %d\\n\", 7);\n____\n    printf(\"开饭啦\\n\");\n    return 0;\n}",
+      "stem": "本喵的抓虫开关关着（`DEBUG` 是 `0`），可抓虫那行忘了包起来。把两处空补上：开关关着时它一个字都不印，改天把值调成 `1` 它才回来喵～",
+      "blanks": [{ "answer": "#if" }, { "answer": "#endif" }],
+      "explanation": "两处空是**一对**喵：`#if DEBUG` 是岔路口的门，`#endif` 是它的收尾 —— 少了后面那句，翻译官喵当场就翻不下去。开关是 `0` 时，夹在中间那行**在翻译之前就被扔掉了**，所以屏幕上一点影子都不留；值改成 `1` 它才回来。这个场合是「按值开关」，所以用 `#if` 而不是 `#ifdef` —— `#ifdef` 判的是有没有贴过这张卡，`DEBUG` 写成 `0` 它也照样算贴过喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define SHOUT(msg) do { printf(\"开饭：%s\\n\", msg); printf(\"都来吃\\n\"); } while (0)\n\nint main(void) {\n    int fish = 2;\n    if (fish > 1)\n        SHOUT(\"小鱼干\");\n    else\n        printf(\"再等等\\n\");\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "开饭：小鱼干\n都来吃",
+      "accept": ["开饭：小鱼干\n都来吃\n"],
+      "explanation": "`do { ... } while (0)` 把两句话绑成了**一句**，所以它能老老实实顶在 `if` 后面，不会散架喵。鱼缸里是 2 条，2 大于 1，于是那句 `SHOUT` 被抄了进来：两行一起印。要是把这对「跑一次的圈」去掉、只留花括号，`if` 后面那个分号就会把话收尾，`else` 立刻没了主 —— 课文里那个报错演示就是这么来的喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\n#define DEBUG 1\n#define FISH_PER_CAT 3\n\nint main(void) {\n#if DEBUG\n    printf(\"[抓虫] 每只猫 %d 条\\n\", FISH_PER_CAT);\n#endif\n    printf(\"%d 只猫要 %d 条\\n\", 2, 2 * FISH_PER_CAT);\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "[抓虫] 每只猫 3 条\n2 只猫要 6 条",
+      "accept": ["[抓虫] 每只猫 3 条\n2 只猫要 6 条\n"],
+      "explanation": "两张条子都在开工前被照抄出去了喵：`FISH_PER_CAT` 抄成 `3`，所以两处用到它的地方写出来就是 `3` 和 `2 * 3`；`#if DEBUG` 判的是值，`DEBUG` 是 `1`，夹在中间那行留下了，所以先印一行抓虫的字。把开关改成 `0`，那一行**在翻译之前就没了** —— 不是「跑了不印」，是压根没进稿子喵。"
+    }
+  ]
+}

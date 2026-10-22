@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-10-guard-write",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-10",
+  "type": "codewrite",
+  "concept": ["把货交给守卫看着", "出事也照样还回去", "收尾排在接住前面"],
+  "instances": 6,
+  "params": {
+    "goods": { "kind": "pick", "values": ["大肥鱼", "鱼干", "鱼罐头"] }
+  },
+  "stemTemplate": "这次的守卫本喵已经给你备在骨架里了：出生招式印 `领到`、收尾招式印 `还回`。请你写 `main`，让这份货**半路出事也照样还回去**。\n\n请你写 `main`：\n\n1. 支一张网（就是那对 `try` / `catch`）；\n2. 网里让一只守卫看着这份货，货名是 `{goods}`；\n3. 网里紧接着把 `半路出事` 这句话**扔出去**；\n4. 网上接住，印 `接住：` 加上接住的那句话；\n5. 网**外面**再印一行 `收工`。\n\n程序要叼回 4 行：\n\n1. `领到 {goods}`\n2. `还回 {goods}`\n3. `接住：半路出事`\n4. `收工`\n\n盯住第 2 行喵：出事的那条路上，它照样得印出来。",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    try {\n        Guard g(\"{goods}\");\n        throw string(\"半路出事\");\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "四行是这么来的喵：`领到 {goods}` 是守卫的出生招式印的，`还回 {goods}` 是它的收尾招式印的 —— 中间那句 `throw` 把活儿掐断了，**却掐不断「守卫已经生出来了」这件事**，所以收尾照样跑，而且排在「接住」**前面**（先还账、再接住）。\n\n⚠️ 两处最容易写错：\n\n① 把守卫写在网**外面** —— 那样它就不在出事的那段路上，本喵要的「出事也照样还」无从谈起；\n② 把货抓在自己手里、手写「领到」「还回」两行 —— 那正是课文第一节漏掉收尾的那种写法。\n\n这一题的重点不是「会不会写网」，而是**把东西交给谁看着**：交对了，出事那条路上就不用本喵操心。"
+}

@@ -1,0 +1,20 @@
+{
+  "templateId": "cpp-s1-ledger-add-record",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-15",
+  "type": "codewrite",
+  "concept": ["记一笔的招式", "温柔版的小记号 int& count", "账本末尾放新卡片"],
+  "instances": 6,
+  "params": {
+    "n1": { "kind": "pick", "values": ["猫粮", "猫窝"] },
+    "a1": { "kind": "pick", "values": ["30", "50"] },
+    "n2": { "kind": "pick", "values": ["小鱼干", "猫薄荷"] },
+    "a2": { "kind": "pick", "values": ["12", "20"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{n1}\n{a1}\n{n2}\n{a2}\n", "sampleText": "猫爬架\n7\n逗猫棒\n9\n" },
+  "stemTemplate": "这一回要能**往里记**：每记一笔，就是往账本那一排的末尾放一张新卡片。\n\n投喂口会递进来**两笔账**（四样料，一行一样）：第一笔的名字、第一笔的数目、第二笔的名字、第二笔的数目。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排 8 格的空位**当账本，再开一只 `count` 从 **0** 起（记了几笔，它说了算）；\n3. 写**一招** `addRecord`：收那一排卡片、收 `count`、收一笔的名字和数目 —— 把这一笔放在**第 `count` 格**上（两栏都填），然后**把 `count` 加 1**；\n4. 喊它**两次**（两笔各一次），然后把账本印出来：一笔一行 `名字 数目`，最后再印一行 `一共记了 X 笔喵`。\n\n⚠️ `count` 那一头要写**温柔版的小记号**（`int& count`）—— 不写的话，招式里 `count` 加得再欢，外面那本账也一动不动。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两笔账**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    string n1;\n    string n2;\n    int a1 = 0;\n    int a2 = 0;\n    cin >> n1 >> a1 >> n2 >> a2;\n\n    addRecord(book, count, n1, a1);\n    addRecord(book, count, n2, a2);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一招把前面十几课的东西全串上了喵，两个关键处：\n\n**一、`int& count` 那个温柔版的小记号。** 为什么这里非用它不可？因为 `count` 得**改**：每记一笔就加 1。要是写成 `int count`，那只是一份**复印件** —— 招式里加得再欢，外面那位还是 0，下一笔又会盖在 0 号格上，账全被吃光（第十课那块牌子讲的就是这件事）。\n\n**二、`count = count + 1;` 这一句别漏。** 「把卡片放进去」（那两句赋值）和「把编号往后挪一格」（这一句）是**两件事**：光放不挪，三笔全盖在第 0 格上；光挪不放，格子空空。它俩合起来才叫「记了一笔」。\n\n再看 `book[count].name = name;` 这一行喵：名字一样（都是 `name`），但**左边是卡片上的那一栏**、**右边是招式收到的那样料** —— 分不清的时候看它前面有没有点号。\n\n最后一句：账本开的是 8 格空位，可走的时候圈子写的是 `i < count` —— 只走**真记过的**那几张，后面没填过的空卡片一张都不碰。"
+}

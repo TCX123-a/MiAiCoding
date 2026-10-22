@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-pkg-replace-swapped",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-19",
+  "type": "codefix",
+  "concept": ["replace", "点变斜杠", "投喂顺序", "包名换算"],
+  "instances": 2,
+  "params": {
+    "p": { "kind": "pick", "values": ["com.fish.tank", "cn.miao.cat", "org.rice.pond"] }
+  },
+  "stemTemplate": "包名要换成目录，就是把**点换成斜杠**喵：形如 `com.fish.tank` 换成 `com/fish/tank`。\n\n本喵用 `replace` 写了这段换算，可跑出来目录跟包名**一模一样**，点没换成斜杠。翻译官喵不报错，账是错的。你帮本喵把这一句改对。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        String pkg = \"{p}\";\n        String dir = pkg.replace('/', '.');\n        System.out.println(\"包名：\" + pkg);\n        System.out.println(\"目录：\" + dir);\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        String pkg = \"{p}\";\n        String dir = pkg.replace('.', '/');\n        System.out.println(\"包名：\" + pkg);\n        System.out.println(\"目录：\" + dir);\n    }\n}\n",
+  "explanationTemplate": "`replace` 这只锅铲的用法是 `一串字.replace(要找的, 换成啥)` —— 括号里**先说要换掉的，再说换成什么**。本喵把要找的和换成啥**站反了**：写成了 `replace('/', '.')`，意思是「把斜杠换成点」。可这一串里压根没有斜杠，它找了一圈没找着，就**原样端回来了** —— 于是目录和包名长得一模一样。\n\n翻译官喵为什么不拦？因为这句话语法上完全合法，只是**要换的和被换的掉了个个儿**。这类「跑去问了、没人报错、结果原地不动」的错，最好的自查办法就是先问自己一句：**我要换掉的是谁？** 包名换目录，要换掉的是**点**，所以要找的写 `'.'`，换成啥写 `'/'`。\n\n（顺带一个好消息：`replace` 是**一次全换** —— `{p}` 里所有的点，一铲子下去全变成斜杠，不用自己转着圈数喵。）"
+}

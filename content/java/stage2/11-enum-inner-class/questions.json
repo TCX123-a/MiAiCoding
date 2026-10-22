@@ -1,0 +1,74 @@
+{
+  "lessonId": "java-stage2-11",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "把「只有固定几种」的东西列成一张 `enum` 清单，最值钱的地方是什么？",
+      "options": [
+        "清单之外的名字，在翻稿子那一关就被拦下了",
+        "程序跑起来会快很多",
+        "清单比整数装得下更多东西",
+        "清单上的项可以随时改名"
+      ],
+      "answer": 0,
+      "explanation": "课里那个 `int day = 8` 翻译官喵一个字都没说 —— 它只认「是不是整数」，管不了「8 号是哪一天」。换成清单之后，`Day.MONDY` 这种清单上根本没有的名字**在编稿子那一关就被退回来**，压根跑不到出错那一步喵。它管的是「写法合不合法」，跟跑得快不快、装得多不多都没关系；清单上的项名是写稿子的时候定死的，程序跑起来之后改不了喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "清单上的一项，比如 `Day.WED`，它到底是什么？",
+      "options": [
+        "一个整数 2",
+        "照这张清单生出来的一只真猫，自带 `name()` 和 `ordinal()` 两个本事",
+        "一张图纸本身",
+        "一串字符组成的字符串"
+      ],
+      "answer": 1,
+      "explanation": "清单也是图纸的一种：**清单上写几项，就有几只真猫**，`Day.WED` 是其中一只。所以它带得出 `name()`（本喵给它起的名字）和 `ordinal()`（它排第几个）这两个本事喵。它**不是**整数 2 —— 2 只是它排的位次，`ordinal()` 才会把那个位次叼回来；它也不是图纸本身（图纸是 `Day` 那一整张），更不是项链喵。"
+    },
+    {
+      "id": "q3",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    enum Season {\n        SPRING, SUMMER, AUTUMN, WINTER\n    }\n\n    public static void main(String[] args) {\n        System.out.println(Season.values().length);\n        System.out.println(Season.WINTER.ordinal());\n        System.out.println(Season.AUTUMN.name());\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "4\n3\nAUTUMN",
+      "accept": ["4\n3\nAUTUMN\n"],
+      "explanation": "`values()` 把清单上每一项挨个叼给本喵一遍，所以 `Season.values().length` 是清单上一共几项 —— SPRING、SUMMER、AUTUMN、WINTER，一共 `4` 喵。`ordinal()` 报的是排第几个，而它是**从 0 开始数**的：SPRING 是 0、SUMMER 是 1、AUTUMN 是 2、WINTER 是 3，所以第二行是 `3`。`name()` 叼回来的是本喵起的项名，原样印出来就是 `AUTUMN` 喵。"
+    },
+    {
+      "id": "q4",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    interface Greeter {\n        void greet();\n    }\n\n    public static void main(String[] args) {\n        Greeter g = new Greeter() {\n            @Override\n            public void greet() {\n                System.out.println(\"喵～\");\n            }\n        };\n        g.greet();\n        g.greet();\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "喵～\n喵～",
+      "accept": ["喵～\n喵～\n"],
+      "explanation": "中间那一大段是**在用的那一行当场画的一张没有名字的图纸**：`new Greeter()` 后面紧跟的一对花括号里，写清了 `greet()` 具体干什么 —— 就是印一句「喵～」喵。画完之后这只真猫被接在了名字 `g` 上，所以本喵喊了两次 `g.greet()`，它就跑了两趟，印出**两行**一模一样的话。末尾那个分号也别漏，那一段整个是一句赋值喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    enum Day {\n        MON, TUE, WED\n    }\n\n    public static void main(String[] args) {\n        for (Day d : Day.____()) {\n            System.out.println(d.name() + \" 排第 \" + d.____());\n        }\n    }\n}",
+      "stem": "本喵想把清单上的每一项挨个走一遍，并印出它的名字和位次。请把两个空补上。",
+      "blanks": [
+        { "answer": "values", "accept": [] },
+        { "answer": "ordinal", "accept": [] }
+      ],
+      "explanation": "把清单上每一项**挨个叼出来一遍**的那个本事叫 `values()`，所以第一空填 `values` 喵。第二个空要的是「排第几个」——那是 `ordinal()`，注意它是**从 0 开始数**的，所以跑出来 MON 排第 0、TUE 排第 1、WED 排第 2，别指望看到 1、2、3 喵。`name()` 叼回来的是本喵自己起的项名，所以前面那个名字是原样印出来的 `MON` / `TUE` / `WED` 喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    enum Day {\n        MON, TUE, WED, THU, FRI, SAT, SUN\n    }\n\n    static boolean isRest(Day d) {\n        switch (d) {\n            case SAT:\n            case SUN:\n                return true;\n            default:\n                return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        System.out.println(isRest(Day.SAT));\n        System.out.println(isRest(Day.WED));\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "true\nfalse",
+      "accept": ["true\nfalse\n"],
+      "explanation": "看鱼干眼色行事那一套里，`switch` 的括号里直接就能放清单上的一项喵。`Day.SAT` 落在 `case SAT:` 这一格上，这一格和下面那格共用同一个身子，所以把 `true` 叼了回来；`Day.WED` 哪一格都没对上，走 `default`，叼回来的是 `false`。两行合起来就是 `true` 和 `false` 喵。"
+    }
+  ]
+}

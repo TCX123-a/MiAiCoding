@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-10-cleanup-skipped",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-10",
+  "type": "codefix",
+  "concept": ["手写的收尾在出事路上会漏", "把东西交给守卫看着", "收尾排在接住前面"],
+  "instances": 2,
+  "params": {
+    "goods": { "kind": "pick", "values": ["大肥鱼", "鱼干", "鱼罐头"] }
+  },
+  "stemTemplate": "这段程序是**手写收尾**的：领到货印一行，还回货印一行。可它半路出了事，那行「还回」**压根没跑**。\n\n请你按课文第二节那套办法改：让这份货**由一只守卫看着** —— 出生招式印 `领到 {goods}`，收尾招式印 `还回 {goods}`。`work` 里那两行手写的活儿可以不要了，货交给守卫看着就行。\n\n改好之后印 3 行：\n\n1. `领到 {goods}`\n2. `还回 {goods}`\n3. `接住：半路出事`",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid work() {\n    cout << \"领到 {goods}\" << endl;\n    throw string(\"半路出事\");\n    cout << \"还回 {goods}\" << endl;\n}\n\nint main() {\n    try {\n        work();\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Guard {\n    string name;\n    Guard(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Guard() { cout << \"还回 \" << name << endl; }\n};\n\nvoid work() {\n    Guard g(\"{goods}\");\n    throw string(\"半路出事\");\n}\n\nint main() {\n    try {\n        work();\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "手写的收尾在出事的路上是**漏的**喵：那一扔会让程序直接蹦到最近的那张网，`work` 里排在它后面的行一句都不跑 —— 印「还回」那一行正好排在那儿，所以它没了。\n\n改法就是课文第二节那套：把货交给一只**守卫**看着 —— 出生招式印「领到」，收尾招式印「还回」。守卫一出生货就到手，守卫一死货就还回去。出事的路上，本喵掐得掉 `work` 后面剩下的行，**掐不掉「这只守卫生出来过、所以它一定要死」**这件事。\n\n⚠️ 顺序别写反：真跑出来是 `领到` → `还回` → `接住`。**先还账、再接住** —— 收尾是在往外蹦的那条路上跑的，比网里那一段早。"
+}

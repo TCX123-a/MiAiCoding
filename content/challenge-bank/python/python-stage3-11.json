@@ -1,0 +1,498 @@
+{
+  "lessonId": "python-stage3-11",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-py-s3-ut-assert-family-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "判据不止 `assertEqual` 一条喵。本喵这次要你**四条判据各用一遍**。\n\n招式「平分」已经在文件里（不许改）：正常分整数商，猫数是 0 的时候抛 `ValueError`。\n\n请你写一张体检单，叫 `平分体检`，里面写**四个**项目（名字都要以 `test` 开头）：\n\n1. `test_相等` —— 用 `assertEqual` 查：`平分(7, 2)` 等于 `7 // 2`\n2. `test_为真` —— 用 `assertTrue` 查：`平分(7, 2)` 比 0 大\n3. `test_找得到` —— 用 `assertIn` 查：`小鱼干` 出现在 `一筐小鱼干` 里\n4. `test_该拒绝就拒绝` —— 用 `assertRaises` 查：拿 `7` 份和 **0 只猫**去喂，它该抛 `ValueError`\n\n跑的时候开一本体检本子（`unittest.TestResult()`），最后印**三行**：\n\n- 第一行：`体检了 ` 加项目数加 ` 项`\n- 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n- 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 四个项目的体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_相等(self):\n        self.assertEqual(平分(7, 2), 7 // 2)\n    def test_为真(self):\n        self.assertTrue(平分(7, 2) > 0)\n    def test_找得到(self):\n        self.assertIn(\"小鱼干\", \"一筐小鱼干\")\n    def test_该拒绝就拒绝(self):\n        self.assertRaises(ValueError, 平分, 7, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 4 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "四条判据，本喵按「什么时候该请谁出场」给你排一遍喵：\n\n- **`assertEqual(甲, 乙)`** —— 最常用的一条：要求两样相等。它红了会**把两个数并排摆给你看**（真跑出来的 `!=` 该是的），信息量最大。**能写它就写它**，别偷懒。\n- **`assertTrue(某句话)`** —— 要求这句话为真。它比 `assertEqual` 含糊：红了只说「不成立」，**不告诉你差多少**。适合「只要它比 0 大就行」这种没有精确标准答案的场合。\n- **`assertIn(小东西, 一大串)`** —— 要求小东西出现在那一大串里。查一串字里有没有某个部件时特别好用；红了会说「在某某里找不到某某」。\n- **`assertRaises(该炸的错, 招式, 喂进去的…)`** —— **要求它炸**。有些招式在特定投喂下本来就该拒绝干活，这条就是拿这种「该拒绝」当判据的。\n\n⚠️ 四条里最容易被写歪的是最后一条：它喂东西的姿势是**分开排队**的 —— 先写该炸的错、再写招式名，然后一样一样把要喂的东西排在后面。**千万别顺手给招式加上一对括号**，那等于当场把它喊起来，毛病就当场炸在判据外头了。\n\n还有一条本喵得念两遍：**红了的常常不是招式，是你自己把标准答案记错了。** 把「该是多少」写死，好处正是写错了当场露馅喵。",
+      "templateId": "py-s3-ut-assert-family",
+      "params": {
+        "a": 7,
+        "b": 2,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T08:16:00.751Z",
+        "hash": "aa3129c7b493d42f"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-assert-family-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "判据不止 `assertEqual` 一条喵。本喵这次要你**四条判据各用一遍**。\n\n招式「平分」已经在文件里（不许改）：正常分整数商，猫数是 0 的时候抛 `ValueError`。\n\n请你写一张体检单，叫 `平分体检`，里面写**四个**项目（名字都要以 `test` 开头）：\n\n1. `test_相等` —— 用 `assertEqual` 查：`平分(7, 3)` 等于 `7 // 3`\n2. `test_为真` —— 用 `assertTrue` 查：`平分(7, 3)` 比 0 大\n3. `test_找得到` —— 用 `assertIn` 查：`小鱼干` 出现在 `一筐小鱼干` 里\n4. `test_该拒绝就拒绝` —— 用 `assertRaises` 查：拿 `7` 份和 **0 只猫**去喂，它该抛 `ValueError`\n\n跑的时候开一本体检本子（`unittest.TestResult()`），最后印**三行**：\n\n- 第一行：`体检了 ` 加项目数加 ` 项`\n- 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n- 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 四个项目的体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_相等(self):\n        self.assertEqual(平分(7, 3), 7 // 3)\n    def test_为真(self):\n        self.assertTrue(平分(7, 3) > 0)\n    def test_找得到(self):\n        self.assertIn(\"小鱼干\", \"一筐小鱼干\")\n    def test_该拒绝就拒绝(self):\n        self.assertRaises(ValueError, 平分, 7, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 4 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "四条判据，本喵按「什么时候该请谁出场」给你排一遍喵：\n\n- **`assertEqual(甲, 乙)`** —— 最常用的一条：要求两样相等。它红了会**把两个数并排摆给你看**（真跑出来的 `!=` 该是的），信息量最大。**能写它就写它**，别偷懒。\n- **`assertTrue(某句话)`** —— 要求这句话为真。它比 `assertEqual` 含糊：红了只说「不成立」，**不告诉你差多少**。适合「只要它比 0 大就行」这种没有精确标准答案的场合。\n- **`assertIn(小东西, 一大串)`** —— 要求小东西出现在那一大串里。查一串字里有没有某个部件时特别好用；红了会说「在某某里找不到某某」。\n- **`assertRaises(该炸的错, 招式, 喂进去的…)`** —— **要求它炸**。有些招式在特定投喂下本来就该拒绝干活，这条就是拿这种「该拒绝」当判据的。\n\n⚠️ 四条里最容易被写歪的是最后一条：它喂东西的姿势是**分开排队**的 —— 先写该炸的错、再写招式名，然后一样一样把要喂的东西排在后面。**千万别顺手给招式加上一对括号**，那等于当场把它喊起来，毛病就当场炸在判据外头了。\n\n还有一条本喵得念两遍：**红了的常常不是招式，是你自己把标准答案记错了。** 把「该是多少」写死，好处正是写错了当场露馅喵。",
+      "templateId": "py-s3-ut-assert-family",
+      "params": {
+        "a": 7,
+        "b": 3,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:55.446Z",
+        "hash": "36b24851c89de400"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-assert-family-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "判据不止 `assertEqual` 一条喵。本喵这次要你**四条判据各用一遍**。\n\n招式「平分」已经在文件里（不许改）：正常分整数商，猫数是 0 的时候抛 `ValueError`。\n\n请你写一张体检单，叫 `平分体检`，里面写**四个**项目（名字都要以 `test` 开头）：\n\n1. `test_相等` —— 用 `assertEqual` 查：`平分(8, 2)` 等于 `8 // 2`\n2. `test_为真` —— 用 `assertTrue` 查：`平分(8, 2)` 比 0 大\n3. `test_找得到` —— 用 `assertIn` 查：`猫罐头` 出现在 `一筐猫罐头` 里\n4. `test_该拒绝就拒绝` —— 用 `assertRaises` 查：拿 `8` 份和 **0 只猫**去喂，它该抛 `ValueError`\n\n跑的时候开一本体检本子（`unittest.TestResult()`），最后印**三行**：\n\n- 第一行：`体检了 ` 加项目数加 ` 项`\n- 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n- 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 四个项目的体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_相等(self):\n        self.assertEqual(平分(8, 2), 8 // 2)\n    def test_为真(self):\n        self.assertTrue(平分(8, 2) > 0)\n    def test_找得到(self):\n        self.assertIn(\"猫罐头\", \"一筐猫罐头\")\n    def test_该拒绝就拒绝(self):\n        self.assertRaises(ValueError, 平分, 8, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 4 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "四条判据，本喵按「什么时候该请谁出场」给你排一遍喵：\n\n- **`assertEqual(甲, 乙)`** —— 最常用的一条：要求两样相等。它红了会**把两个数并排摆给你看**（真跑出来的 `!=` 该是的），信息量最大。**能写它就写它**，别偷懒。\n- **`assertTrue(某句话)`** —— 要求这句话为真。它比 `assertEqual` 含糊：红了只说「不成立」，**不告诉你差多少**。适合「只要它比 0 大就行」这种没有精确标准答案的场合。\n- **`assertIn(小东西, 一大串)`** —— 要求小东西出现在那一大串里。查一串字里有没有某个部件时特别好用；红了会说「在某某里找不到某某」。\n- **`assertRaises(该炸的错, 招式, 喂进去的…)`** —— **要求它炸**。有些招式在特定投喂下本来就该拒绝干活，这条就是拿这种「该拒绝」当判据的。\n\n⚠️ 四条里最容易被写歪的是最后一条：它喂东西的姿势是**分开排队**的 —— 先写该炸的错、再写招式名，然后一样一样把要喂的东西排在后面。**千万别顺手给招式加上一对括号**，那等于当场把它喊起来，毛病就当场炸在判据外头了。\n\n还有一条本喵得念两遍：**红了的常常不是招式，是你自己把标准答案记错了。** 把「该是多少」写死，好处正是写错了当场露馅喵。",
+      "templateId": "py-s3-ut-assert-family",
+      "params": {
+        "a": 8,
+        "b": 2,
+        "unit": "猫罐头"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:55.955Z",
+        "hash": "1472edc97333d050"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-assert-family-010",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "判据不止 `assertEqual` 一条喵。本喵这次要你**四条判据各用一遍**。\n\n招式「平分」已经在文件里（不许改）：正常分整数商，猫数是 0 的时候抛 `ValueError`。\n\n请你写一张体检单，叫 `平分体检`，里面写**四个**项目（名字都要以 `test` 开头）：\n\n1. `test_相等` —— 用 `assertEqual` 查：`平分(8, 3)` 等于 `8 // 3`\n2. `test_为真` —— 用 `assertTrue` 查：`平分(8, 3)` 比 0 大\n3. `test_找得到` —— 用 `assertIn` 查：`猫罐头` 出现在 `一筐猫罐头` 里\n4. `test_该拒绝就拒绝` —— 用 `assertRaises` 查：拿 `8` 份和 **0 只猫**去喂，它该抛 `ValueError`\n\n跑的时候开一本体检本子（`unittest.TestResult()`），最后印**三行**：\n\n- 第一行：`体检了 ` 加项目数加 ` 项`\n- 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n- 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 四个项目的体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_相等(self):\n        self.assertEqual(平分(8, 3), 8 // 3)\n    def test_为真(self):\n        self.assertTrue(平分(8, 3) > 0)\n    def test_找得到(self):\n        self.assertIn(\"猫罐头\", \"一筐猫罐头\")\n    def test_该拒绝就拒绝(self):\n        self.assertRaises(ValueError, 平分, 8, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 4 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "四条判据，本喵按「什么时候该请谁出场」给你排一遍喵：\n\n- **`assertEqual(甲, 乙)`** —— 最常用的一条：要求两样相等。它红了会**把两个数并排摆给你看**（真跑出来的 `!=` 该是的），信息量最大。**能写它就写它**，别偷懒。\n- **`assertTrue(某句话)`** —— 要求这句话为真。它比 `assertEqual` 含糊：红了只说「不成立」，**不告诉你差多少**。适合「只要它比 0 大就行」这种没有精确标准答案的场合。\n- **`assertIn(小东西, 一大串)`** —— 要求小东西出现在那一大串里。查一串字里有没有某个部件时特别好用；红了会说「在某某里找不到某某」。\n- **`assertRaises(该炸的错, 招式, 喂进去的…)`** —— **要求它炸**。有些招式在特定投喂下本来就该拒绝干活，这条就是拿这种「该拒绝」当判据的。\n\n⚠️ 四条里最容易被写歪的是最后一条：它喂东西的姿势是**分开排队**的 —— 先写该炸的错、再写招式名，然后一样一样把要喂的东西排在后面。**千万别顺手给招式加上一对括号**，那等于当场把它喊起来，毛病就当场炸在判据外头了。\n\n还有一条本喵得念两遍：**红了的常常不是招式，是你自己把标准答案记错了。** 把「该是多少」写死，好处正是写错了当场露馅喵。",
+      "templateId": "py-s3-ut-assert-family",
+      "params": {
+        "a": 8,
+        "b": 3,
+        "unit": "猫罐头"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:56.465Z",
+        "hash": "016ca6950ef4c19e"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-assert-family-014",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "判据不止 `assertEqual` 一条喵。本喵这次要你**四条判据各用一遍**。\n\n招式「平分」已经在文件里（不许改）：正常分整数商，猫数是 0 的时候抛 `ValueError`。\n\n请你写一张体检单，叫 `平分体检`，里面写**四个**项目（名字都要以 `test` 开头）：\n\n1. `test_相等` —— 用 `assertEqual` 查：`平分(9, 2)` 等于 `9 // 2`\n2. `test_为真` —— 用 `assertTrue` 查：`平分(9, 2)` 比 0 大\n3. `test_找得到` —— 用 `assertIn` 查：`冻干块` 出现在 `一筐冻干块` 里\n4. `test_该拒绝就拒绝` —— 用 `assertRaises` 查：拿 `9` 份和 **0 只猫**去喂，它该抛 `ValueError`\n\n跑的时候开一本体检本子（`unittest.TestResult()`），最后印**三行**：\n\n- 第一行：`体检了 ` 加项目数加 ` 项`\n- 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n- 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 四个项目的体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_相等(self):\n        self.assertEqual(平分(9, 2), 9 // 2)\n    def test_为真(self):\n        self.assertTrue(平分(9, 2) > 0)\n    def test_找得到(self):\n        self.assertIn(\"冻干块\", \"一筐冻干块\")\n    def test_该拒绝就拒绝(self):\n        self.assertRaises(ValueError, 平分, 9, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 4 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "四条判据，本喵按「什么时候该请谁出场」给你排一遍喵：\n\n- **`assertEqual(甲, 乙)`** —— 最常用的一条：要求两样相等。它红了会**把两个数并排摆给你看**（真跑出来的 `!=` 该是的），信息量最大。**能写它就写它**，别偷懒。\n- **`assertTrue(某句话)`** —— 要求这句话为真。它比 `assertEqual` 含糊：红了只说「不成立」，**不告诉你差多少**。适合「只要它比 0 大就行」这种没有精确标准答案的场合。\n- **`assertIn(小东西, 一大串)`** —— 要求小东西出现在那一大串里。查一串字里有没有某个部件时特别好用；红了会说「在某某里找不到某某」。\n- **`assertRaises(该炸的错, 招式, 喂进去的…)`** —— **要求它炸**。有些招式在特定投喂下本来就该拒绝干活，这条就是拿这种「该拒绝」当判据的。\n\n⚠️ 四条里最容易被写歪的是最后一条：它喂东西的姿势是**分开排队**的 —— 先写该炸的错、再写招式名，然后一样一样把要喂的东西排在后面。**千万别顺手给招式加上一对括号**，那等于当场把它喊起来，毛病就当场炸在判据外头了。\n\n还有一条本喵得念两遍：**红了的常常不是招式，是你自己把标准答案记错了。** 把「该是多少」写死，好处正是写错了当场露馅喵。",
+      "templateId": "py-s3-ut-assert-family",
+      "params": {
+        "a": 9,
+        "b": 2,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:56.982Z",
+        "hash": "9633b06ad43fb4af"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-assert-family-017",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "判据不止 `assertEqual` 一条喵。本喵这次要你**四条判据各用一遍**。\n\n招式「平分」已经在文件里（不许改）：正常分整数商，猫数是 0 的时候抛 `ValueError`。\n\n请你写一张体检单，叫 `平分体检`，里面写**四个**项目（名字都要以 `test` 开头）：\n\n1. `test_相等` —— 用 `assertEqual` 查：`平分(9, 3)` 等于 `9 // 3`\n2. `test_为真` —— 用 `assertTrue` 查：`平分(9, 3)` 比 0 大\n3. `test_找得到` —— 用 `assertIn` 查：`冻干块` 出现在 `一筐冻干块` 里\n4. `test_该拒绝就拒绝` —— 用 `assertRaises` 查：拿 `9` 份和 **0 只猫**去喂，它该抛 `ValueError`\n\n跑的时候开一本体检本子（`unittest.TestResult()`），最后印**三行**：\n\n- 第一行：`体检了 ` 加项目数加 ` 项`\n- 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n- 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 四个项目的体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_相等(self):\n        self.assertEqual(平分(9, 3), 9 // 3)\n    def test_为真(self):\n        self.assertTrue(平分(9, 3) > 0)\n    def test_找得到(self):\n        self.assertIn(\"冻干块\", \"一筐冻干块\")\n    def test_该拒绝就拒绝(self):\n        self.assertRaises(ValueError, 平分, 9, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 4 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "四条判据，本喵按「什么时候该请谁出场」给你排一遍喵：\n\n- **`assertEqual(甲, 乙)`** —— 最常用的一条：要求两样相等。它红了会**把两个数并排摆给你看**（真跑出来的 `!=` 该是的），信息量最大。**能写它就写它**，别偷懒。\n- **`assertTrue(某句话)`** —— 要求这句话为真。它比 `assertEqual` 含糊：红了只说「不成立」，**不告诉你差多少**。适合「只要它比 0 大就行」这种没有精确标准答案的场合。\n- **`assertIn(小东西, 一大串)`** —— 要求小东西出现在那一大串里。查一串字里有没有某个部件时特别好用；红了会说「在某某里找不到某某」。\n- **`assertRaises(该炸的错, 招式, 喂进去的…)`** —— **要求它炸**。有些招式在特定投喂下本来就该拒绝干活，这条就是拿这种「该拒绝」当判据的。\n\n⚠️ 四条里最容易被写歪的是最后一条：它喂东西的姿势是**分开排队**的 —— 先写该炸的错、再写招式名，然后一样一样把要喂的东西排在后面。**千万别顺手给招式加上一对括号**，那等于当场把它喊起来，毛病就当场炸在判据外头了。\n\n还有一条本喵得念两遍：**红了的常常不是招式，是你自己把标准答案记错了。** 把「该是多少」写死，好处正是写错了当场露馅喵。",
+      "templateId": "py-s3-ut-assert-family",
+      "params": {
+        "a": 9,
+        "b": 3,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T08:16:00.984Z",
+        "hash": "c6737a00d27095ef"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-assertraises-eager-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "「平分」这招有个规矩：**没有猫的时候它该拒绝干活**（本喵在招式里写好了，猫数是 0 就抛 `ValueError`）喵。\n\n本喵想给这条规矩写一张体检单：拿 3 份小鱼干、0 只猫去喂它，看它到底拒不拒绝。\n\n结果这张单子**红了**：体检了 **1 项**、红了 **1 项**。\n\n你帮本喵看看问题出在哪儿，改好它。改好之后：体检了 **1 项**、红了 **0 项**、全绿。\n\n⚠️ 招式里那两行（`if 猫数 <= 0` 和那句 `raise`）一个字都不许动喵 —— 要改的是体检单这一边。",
+      "brokenCode": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分(3, 0))\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "referenceFix": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分, 3, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 1 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "`assertRaises` 要的是「**等会儿**它炸一下」，所以它得自己挑时候去喂 —— 招式名和你投喂的东西是**分开排队**的：先写招式名，再一样一样把你准备喂进去的东西排在后面。\n\n现在这行写成 `平分(3, 0)` 加了括号，念作「**当场把它喊起来**」。于是还没等到判据开口，3 份小鱼干分给 0 只猫这件事就先炸了 —— 这一炸发生在判据之外，所以在体检本子上记成「这一项**出错了**」，而不是「这一项红在数值不对」。\n\n一条判据红了说「结果不对」，出错说「它根本没能跑完」，两句话不一样，但你点运行只会看到一个「有红的喵」。\n\n改法是把那对括号拿掉：\n\n```text\nself.assertRaises(ValueError, 平分, 3, 0)\n```\n\n读作「**它**要是拿 3 份和 0 只猫去干活，就该抛 `ValueError`」—— 喂进去的动作交给判据自己做，这才是这条判据的本意。",
+      "templateId": "py-s3-ut-assertraises-eager",
+      "params": {
+        "a": 3,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T08:15:58.444Z",
+        "hash": "daf51e597f2033bc"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-assertraises-eager-008",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "「平分」这招有个规矩：**没有猫的时候它该拒绝干活**（本喵在招式里写好了，猫数是 0 就抛 `ValueError`）喵。\n\n本喵想给这条规矩写一张体检单：拿 5 份冻干块、0 只猫去喂它，看它到底拒不拒绝。\n\n结果这张单子**红了**：体检了 **1 项**、红了 **1 项**。\n\n你帮本喵看看问题出在哪儿，改好它。改好之后：体检了 **1 项**、红了 **0 项**、全绿。\n\n⚠️ 招式里那两行（`if 猫数 <= 0` 和那句 `raise`）一个字都不许动喵 —— 要改的是体检单这一边。",
+      "brokenCode": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分(5, 0))\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "referenceFix": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分, 5, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 1 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "`assertRaises` 要的是「**等会儿**它炸一下」，所以它得自己挑时候去喂 —— 招式名和你投喂的东西是**分开排队**的：先写招式名，再一样一样把你准备喂进去的东西排在后面。\n\n现在这行写成 `平分(5, 0)` 加了括号，念作「**当场把它喊起来**」。于是还没等到判据开口，5 份冻干块分给 0 只猫这件事就先炸了 —— 这一炸发生在判据之外，所以在体检本子上记成「这一项**出错了**」，而不是「这一项红在数值不对」。\n\n一条判据红了说「结果不对」，出错说「它根本没能跑完」，两句话不一样，但你点运行只会看到一个「有红的喵」。\n\n改法是把那对括号拿掉：\n\n```text\nself.assertRaises(ValueError, 平分, 5, 0)\n```\n\n读作「**它**要是拿 5 份和 0 只猫去干活，就该抛 `ValueError`」—— 喂进去的动作交给判据自己做，这才是这条判据的本意。",
+      "templateId": "py-s3-ut-assertraises-eager",
+      "params": {
+        "a": 5,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T08:15:58.822Z",
+        "hash": "1fd52502f014ab93"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-catch-bad-floor-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式里藏着一个毛病，**那两行一个字都不许改**喵 —— 本喵要看的不是你能不能修它，是**你的体检单能不能把它抓出来**。\n\n请你写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张图纸画。\n2. 里面写**一个**项目，叫 `test_除不尽`（名字必须以 `test` 开头，不然它压根不跑）。\n3. 判据用 `assertEqual`：**5 份平分给 2 只猫，结果该是 `5 // 2`**。\n4. 跑完印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：**挂掉的原因那一句** —— 本子把整段说明记在 `本子.failures[0][1]` 里，取它的最后一行，就是那句 `AssertionError: ...`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）\n\n⚠️ 这一项**该红**。要是它绿了，说明你的判据没咬住这个毛病喵。",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\n# 体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分(5, 2), 5 // 2)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(本子.failures[0][1].strip().splitlines()[-1])\n",
+      "expectedOutput": "体检了 1 项\n红了 1 项\nAssertionError: 2.5 != 2",
+      "stdin": null,
+      "explanation": "这一项**本来就该红** —— 体检单的活不是把毛病藏起来，是把它拽到明面上喵。\n\n招式里那条算式算出的是带小数的商，判据要的是整数商，两个一摆，`assertEqual` 当场就炸。它炸的时候会留下一句最值钱的话：**真跑出来的**和**该是的**并排摆着，中间一个 `!=`。本喵把这句话印出来，就是想让你养成一个习惯 —— 红了先读这一行，别急着改代码。\n\n⚠️ 还得挑对喂进去的数。要是换一组除得尽的（比如 6 份给 2 只猫），带小数的商算出来是 `3.0`，而 `3.0` 和 `3` 在 Python 里是**相等**的 —— 这一项会绿过去，毛病就从你眼皮底下溜走了。**咬得住毛病的那一组数，往往是除不尽的那一组。**\n\n这也是本喵写体检单的意义：它跟人眼不一样，它**不会**觉得「看着差不多」就放过。",
+      "templateId": "py-s3-ut-catch-bad-floor",
+      "params": {
+        "a": 5,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:16:00.092Z",
+        "hash": "105b3e15adb65da8"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-catch-bad-floor-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式里藏着一个毛病，**那两行一个字都不许改**喵 —— 本喵要看的不是你能不能修它，是**你的体检单能不能把它抓出来**。\n\n请你写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张图纸画。\n2. 里面写**一个**项目，叫 `test_除不尽`（名字必须以 `test` 开头，不然它压根不跑）。\n3. 判据用 `assertEqual`：**5 份平分给 4 只猫，结果该是 `5 // 4`**。\n4. 跑完印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：**挂掉的原因那一句** —— 本子把整段说明记在 `本子.failures[0][1]` 里，取它的最后一行，就是那句 `AssertionError: ...`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）\n\n⚠️ 这一项**该红**。要是它绿了，说明你的判据没咬住这个毛病喵。",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\n# 体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分(5, 4), 5 // 4)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(本子.failures[0][1].strip().splitlines()[-1])\n",
+      "expectedOutput": "体检了 1 项\n红了 1 项\nAssertionError: 1.25 != 1",
+      "stdin": null,
+      "explanation": "这一项**本来就该红** —— 体检单的活不是把毛病藏起来，是把它拽到明面上喵。\n\n招式里那条算式算出的是带小数的商，判据要的是整数商，两个一摆，`assertEqual` 当场就炸。它炸的时候会留下一句最值钱的话：**真跑出来的**和**该是的**并排摆着，中间一个 `!=`。本喵把这句话印出来，就是想让你养成一个习惯 —— 红了先读这一行，别急着改代码。\n\n⚠️ 还得挑对喂进去的数。要是换一组除得尽的（比如 6 份给 2 只猫），带小数的商算出来是 `3.0`，而 `3.0` 和 `3` 在 Python 里是**相等**的 —— 这一项会绿过去，毛病就从你眼皮底下溜走了。**咬得住毛病的那一组数，往往是除不尽的那一组。**\n\n这也是本喵写体检单的意义：它跟人眼不一样，它**不会**觉得「看着差不多」就放过。",
+      "templateId": "py-s3-ut-catch-bad-floor",
+      "params": {
+        "a": 5,
+        "b": 4
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:57.489Z",
+        "hash": "0f23706be40bb39a"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-catch-bad-floor-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式里藏着一个毛病，**那两行一个字都不许改**喵 —— 本喵要看的不是你能不能修它，是**你的体检单能不能把它抓出来**。\n\n请你写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张图纸画。\n2. 里面写**一个**项目，叫 `test_除不尽`（名字必须以 `test` 开头，不然它压根不跑）。\n3. 判据用 `assertEqual`：**7 份平分给 2 只猫，结果该是 `7 // 2`**。\n4. 跑完印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：**挂掉的原因那一句** —— 本子把整段说明记在 `本子.failures[0][1]` 里，取它的最后一行，就是那句 `AssertionError: ...`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）\n\n⚠️ 这一项**该红**。要是它绿了，说明你的判据没咬住这个毛病喵。",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\n# 体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分(7, 2), 7 // 2)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(本子.failures[0][1].strip().splitlines()[-1])\n",
+      "expectedOutput": "体检了 1 项\n红了 1 项\nAssertionError: 3.5 != 3",
+      "stdin": null,
+      "explanation": "这一项**本来就该红** —— 体检单的活不是把毛病藏起来，是把它拽到明面上喵。\n\n招式里那条算式算出的是带小数的商，判据要的是整数商，两个一摆，`assertEqual` 当场就炸。它炸的时候会留下一句最值钱的话：**真跑出来的**和**该是的**并排摆着，中间一个 `!=`。本喵把这句话印出来，就是想让你养成一个习惯 —— 红了先读这一行，别急着改代码。\n\n⚠️ 还得挑对喂进去的数。要是换一组除得尽的（比如 6 份给 2 只猫），带小数的商算出来是 `3.0`，而 `3.0` 和 `3` 在 Python 里是**相等**的 —— 这一项会绿过去，毛病就从你眼皮底下溜走了。**咬得住毛病的那一组数，往往是除不尽的那一组。**\n\n这也是本喵写体检单的意义：它跟人眼不一样，它**不会**觉得「看着差不多」就放过。",
+      "templateId": "py-s3-ut-catch-bad-floor",
+      "params": {
+        "a": 7,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:57.995Z",
+        "hash": "7b1e80332543fb69"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-catch-bad-floor-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式里藏着一个毛病，**那两行一个字都不许改**喵 —— 本喵要看的不是你能不能修它，是**你的体检单能不能把它抓出来**。\n\n请你写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张图纸画。\n2. 里面写**一个**项目，叫 `test_除不尽`（名字必须以 `test` 开头，不然它压根不跑）。\n3. 判据用 `assertEqual`：**7 份平分给 4 只猫，结果该是 `7 // 4`**。\n4. 跑完印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：**挂掉的原因那一句** —— 本子把整段说明记在 `本子.failures[0][1]` 里，取它的最后一行，就是那句 `AssertionError: ...`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）\n\n⚠️ 这一项**该红**。要是它绿了，说明你的判据没咬住这个毛病喵。",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\n# 体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分(7, 4), 7 // 4)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(本子.failures[0][1].strip().splitlines()[-1])\n",
+      "expectedOutput": "体检了 1 项\n红了 1 项\nAssertionError: 1.75 != 1",
+      "stdin": null,
+      "explanation": "这一项**本来就该红** —— 体检单的活不是把毛病藏起来，是把它拽到明面上喵。\n\n招式里那条算式算出的是带小数的商，判据要的是整数商，两个一摆，`assertEqual` 当场就炸。它炸的时候会留下一句最值钱的话：**真跑出来的**和**该是的**并排摆着，中间一个 `!=`。本喵把这句话印出来，就是想让你养成一个习惯 —— 红了先读这一行，别急着改代码。\n\n⚠️ 还得挑对喂进去的数。要是换一组除得尽的（比如 6 份给 2 只猫），带小数的商算出来是 `3.0`，而 `3.0` 和 `3` 在 Python 里是**相等**的 —— 这一项会绿过去，毛病就从你眼皮底下溜走了。**咬得住毛病的那一组数，往往是除不尽的那一组。**\n\n这也是本喵写体检单的意义：它跟人眼不一样，它**不会**觉得「看着差不多」就放过。",
+      "templateId": "py-s3-ut-catch-bad-floor",
+      "params": {
+        "a": 7,
+        "b": 4
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:58.520Z",
+        "hash": "385c1be1f48852fa"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-catch-bad-floor-004",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式里藏着一个毛病，**那两行一个字都不许改**喵 —— 本喵要看的不是你能不能修它，是**你的体检单能不能把它抓出来**。\n\n请你写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张图纸画。\n2. 里面写**一个**项目，叫 `test_除不尽`（名字必须以 `test` 开头，不然它压根不跑）。\n3. 判据用 `assertEqual`：**9 份平分给 2 只猫，结果该是 `9 // 2`**。\n4. 跑完印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：**挂掉的原因那一句** —— 本子把整段说明记在 `本子.failures[0][1]` 里，取它的最后一行，就是那句 `AssertionError: ...`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）\n\n⚠️ 这一项**该红**。要是它绿了，说明你的判据没咬住这个毛病喵。",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\n# 体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分(9, 2), 9 // 2)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(本子.failures[0][1].strip().splitlines()[-1])\n",
+      "expectedOutput": "体检了 1 项\n红了 1 项\nAssertionError: 4.5 != 4",
+      "stdin": null,
+      "explanation": "这一项**本来就该红** —— 体检单的活不是把毛病藏起来，是把它拽到明面上喵。\n\n招式里那条算式算出的是带小数的商，判据要的是整数商，两个一摆，`assertEqual` 当场就炸。它炸的时候会留下一句最值钱的话：**真跑出来的**和**该是的**并排摆着，中间一个 `!=`。本喵把这句话印出来，就是想让你养成一个习惯 —— 红了先读这一行，别急着改代码。\n\n⚠️ 还得挑对喂进去的数。要是换一组除得尽的（比如 6 份给 2 只猫），带小数的商算出来是 `3.0`，而 `3.0` 和 `3` 在 Python 里是**相等**的 —— 这一项会绿过去，毛病就从你眼皮底下溜走了。**咬得住毛病的那一组数，往往是除不尽的那一组。**\n\n这也是本喵写体检单的意义：它跟人眼不一样，它**不会**觉得「看着差不多」就放过。",
+      "templateId": "py-s3-ut-catch-bad-floor",
+      "params": {
+        "a": 9,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:59.063Z",
+        "hash": "514144f80dba33f2"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-catch-bad-floor-005",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式里藏着一个毛病，**那两行一个字都不许改**喵 —— 本喵要看的不是你能不能修它，是**你的体检单能不能把它抓出来**。\n\n请你写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张图纸画。\n2. 里面写**一个**项目，叫 `test_除不尽`（名字必须以 `test` 开头，不然它压根不跑）。\n3. 判据用 `assertEqual`：**9 份平分给 4 只猫，结果该是 `9 // 4`**。\n4. 跑完印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：**挂掉的原因那一句** —— 本子把整段说明记在 `本子.failures[0][1]` 里，取它的最后一行，就是那句 `AssertionError: ...`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）\n\n⚠️ 这一项**该红**。要是它绿了，说明你的判据没咬住这个毛病喵。",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\n# 体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分(9, 4), 9 // 4)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(本子.failures[0][1].strip().splitlines()[-1])\n",
+      "expectedOutput": "体检了 1 项\n红了 1 项\nAssertionError: 2.25 != 2",
+      "stdin": null,
+      "explanation": "这一项**本来就该红** —— 体检单的活不是把毛病藏起来，是把它拽到明面上喵。\n\n招式里那条算式算出的是带小数的商，判据要的是整数商，两个一摆，`assertEqual` 当场就炸。它炸的时候会留下一句最值钱的话：**真跑出来的**和**该是的**并排摆着，中间一个 `!=`。本喵把这句话印出来，就是想让你养成一个习惯 —— 红了先读这一行，别急着改代码。\n\n⚠️ 还得挑对喂进去的数。要是换一组除得尽的（比如 6 份给 2 只猫），带小数的商算出来是 `3.0`，而 `3.0` 和 `3` 在 Python 里是**相等**的 —— 这一项会绿过去，毛病就从你眼皮底下溜走了。**咬得住毛病的那一组数，往往是除不尽的那一组。**\n\n这也是本喵写体检单的意义：它跟人眼不一样，它**不会**觉得「看着差不多」就放过。",
+      "templateId": "py-s3-ut-catch-bad-floor",
+      "params": {
+        "a": 9,
+        "b": 4
+      },
+      "verified": {
+        "at": "2026-09-16T08:16:00.320Z",
+        "hash": "3554f8ba428a7ac5"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-floor-div-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵给「平分」这招留了一张体检单，两个项目，本喵觉得写得挺对的喵。\n\n跑完却红了。体检本子上写着体检了 **2 项**、红了 **2 项**，一句「有红的喵」。\n\n你帮本喵看看是哪儿不对，改好它。改好之后两个项目都该过：体检了 **2 项**、红了 **0 项**、全绿。\n\n（两个项目查的是：5 份平分给 2 只猫，每只得 5 除以 2 的整数商；再多来 2 份，每只就再多拿 1 份。）\n\n⚠️ 体检单上那**两个项目一个字都不许改** —— 红的不是判据，是招式。",
+      "brokenCode": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分(5, 2), 5 // 2)\n    def test_再多一份(self):\n        self.assertEqual(平分(5 + 2, 2), 5 // 2 + 1)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "referenceFix": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分(5, 2), 5 // 2)\n    def test_再多一份(self):\n        self.assertEqual(平分(5 + 2, 2), 5 // 2 + 1)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 2 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "招式里那一行是 `/`，它算出的是**带小数的商**；判据要的是**整数商**（除不尽的先放着，半份小鱼干不存在）喵。\n\n所以真跑出来是 `5` 除以 `2` 的小数，标准答案却是整除的结果，两个并排一摆，`assertEqual` 当场就红了。\n\n⚠️ 这里有个特别值得记住的细节：**不是每一项都会红。** 要是你换一组除得尽的数（比如 6 份给 2 只猫），`6 / 2` 算出 `3.0`，而 `3.0 == 3` 在 Python 里是**真**的 —— 那一项会一路绿过去。真正咬住这个毛病的，是那一组**除不尽**的数。\n\n本喵把这条写进体检单的意思就是：只写「正常情况」的体检单等于没体检，能抓住毛病的往往是边界喵。\n\n改法只有一个字：把 `/` 换回 `//`——`//` 只留整个的，除不尽的先放着。",
+      "templateId": "py-s3-ut-floor-div",
+      "params": {
+        "a": 5,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:15:57.468Z",
+        "hash": "97b98b82ececcd51"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-floor-div-005",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵给「平分」这招留了一张体检单，两个项目，本喵觉得写得挺对的喵。\n\n跑完却红了。体检本子上写着体检了 **2 项**、红了 **2 项**，一句「有红的喵」。\n\n你帮本喵看看是哪儿不对，改好它。改好之后两个项目都该过：体检了 **2 项**、红了 **0 项**、全绿。\n\n（两个项目查的是：9 份平分给 4 只猫，每只得 9 除以 4 的整数商；再多来 4 份，每只就再多拿 1 份。）\n\n⚠️ 体检单上那**两个项目一个字都不许改** —— 红的不是判据，是招式。",
+      "brokenCode": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 / 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分(9, 4), 9 // 4)\n    def test_再多一份(self):\n        self.assertEqual(平分(9 + 4, 4), 9 // 4 + 1)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "referenceFix": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_除不尽(self):\n        self.assertEqual(平分(9, 4), 9 // 4)\n    def test_再多一份(self):\n        self.assertEqual(平分(9 + 4, 4), 9 // 4 + 1)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 2 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "招式里那一行是 `/`，它算出的是**带小数的商**；判据要的是**整数商**（除不尽的先放着，半份小鱼干不存在）喵。\n\n所以真跑出来是 `9` 除以 `4` 的小数，标准答案却是整除的结果，两个并排一摆，`assertEqual` 当场就红了。\n\n⚠️ 这里有个特别值得记住的细节：**不是每一项都会红。** 要是你换一组除得尽的数（比如 6 份给 2 只猫），`6 / 2` 算出 `3.0`，而 `3.0 == 3` 在 Python 里是**真**的 —— 那一项会一路绿过去。真正咬住这个毛病的，是那一组**除不尽**的数。\n\n本喵把这条写进体检单的意思就是：只写「正常情况」的体检单等于没体检，能抓住毛病的往往是边界喵。\n\n改法只有一个字：把 `/` 换回 `//`——`//` 只留整个的，除不尽的先放着。",
+      "templateId": "py-s3-ut-floor-div",
+      "params": {
+        "a": 9,
+        "b": 4
+      },
+      "verified": {
+        "at": "2026-09-16T08:15:57.844Z",
+        "hash": "330082c3e485dc5a"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-name-must-be-test-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵给「平分小鱼干」这招写了一张体检单，上面**明明白白写了一个项目**喵。\n\n可是跑完之后，体检本子上记的是：**一项都没体检**。程序既不报错，也不提醒 —— 它只是安安静静地什么都没干。\n\n你帮本喵看看这张单子哪里不对，改好它。改好之后，本子上应该记着体检了 **1 项**、红了 **0 项**、全绿。\n\n（那个项目要检查的是：6 份小鱼干平分给 2 只猫，每只得 6 份。）",
+      "brokenCode": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def 检查平分(self):\n        self.assertEqual(平分(6 * 2, 2), 6)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "referenceFix": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_平分(self):\n        self.assertEqual(平分(6 * 2, 2), 6)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 1 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "翻译官喵拎体检项目的时候，**只认一种名字**：以 `test` 开头的那种喵。\n\n`def 检查平分(self):` 这个名字起得很通顺，可它开头不是 `test` —— 于是在翻译官喵眼里，它跟一张单子角落里随手写的备注没区别，扫过去就完事了。**它没有被跳过，它是压根没被认出来。**\n\n最阴的地方在这儿：跑完的账是**干净**的。一项都没跑，自然一项都没红，`wasSuccessful()` 老老实实答「我成功了」——本子上于是写着「体检了 0 项」和一句「全绿喵」。你要是不看第一行那个数字，根本发现不了这张单子其实是空的。\n\n改法就一个字的事：把项目名改成以 `test` 开头的，比如 `test_平分`。项目名起清楚一点只有好处 —— 报告里念的就是这个名字，将来红了，你一眼知道挂的是哪一项。",
+      "templateId": "py-s3-ut-name-must-be-test",
+      "params": {
+        "unit": "小鱼干",
+        "a": 6
+      },
+      "verified": {
+        "at": "2026-09-16T08:14:59.418Z",
+        "hash": "ab825e5341c63972"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-name-must-be-test-008",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵给「平分冻干块」这招写了一张体检单，上面**明明白白写了一个项目**喵。\n\n可是跑完之后，体检本子上记的是：**一项都没体检**。程序既不报错，也不提醒 —— 它只是安安静静地什么都没干。\n\n你帮本喵看看这张单子哪里不对，改好它。改好之后，本子上应该记着体检了 **1 项**、红了 **0 项**、全绿。\n\n（那个项目要检查的是：8 份冻干块平分给 2 只猫，每只得 8 份。）",
+      "brokenCode": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def 检查平分(self):\n        self.assertEqual(平分(8 * 2, 2), 8)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "referenceFix": "import unittest\n\n\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_平分(self):\n        self.assertEqual(平分(8 * 2, 2), 8)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 1 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "翻译官喵拎体检项目的时候，**只认一种名字**：以 `test` 开头的那种喵。\n\n`def 检查平分(self):` 这个名字起得很通顺，可它开头不是 `test` —— 于是在翻译官喵眼里，它跟一张单子角落里随手写的备注没区别，扫过去就完事了。**它没有被跳过，它是压根没被认出来。**\n\n最阴的地方在这儿：跑完的账是**干净**的。一项都没跑，自然一项都没红，`wasSuccessful()` 老老实实答「我成功了」——本子上于是写着「体检了 0 项」和一句「全绿喵」。你要是不看第一行那个数字，根本发现不了这张单子其实是空的。\n\n改法就一个字的事：把项目名改成以 `test` 开头的，比如 `test_平分`。项目名起清楚一点只有好处 —— 报告里念的就是这个名字，将来红了，你一眼知道挂的是哪一项。",
+      "templateId": "py-s3-ut-name-must-be-test",
+      "params": {
+        "unit": "冻干块",
+        "a": 8
+      },
+      "verified": {
+        "at": "2026-09-16T08:14:59.779Z",
+        "hash": "a1dbf5ac21fb8b3f"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-two-cases-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式已经在文件里了（**一个字都不许改**）：正常的分整数商，**猫数是 0 的时候它会抛 `ValueError`**。\n\n请你给它写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张前辈猫画好的图纸来画。\n2. 里面写**两个**项目，名字都以 `test` 开头：\n   - 一个查**正常值**：`平分(6, 2)` 该等于 `6 // 2`；\n   - 一个查**边界**：拿 `6` 份小鱼干和 **0 只猫**去喂它，它该拒绝干活（用 `assertRaises(ValueError, 平分, 6, 0)`）。\n3. 跑的时候开一本体检本子（`unittest.TestResult()`），用它把 `平分体检` 跑一遍。\n4. 最后印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 下面这张体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_正常(self):\n        self.assertEqual(平分(6, 2), 6 // 2)\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分, 6, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 2 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "这张单子要的三件事，一件比一件值钱喵。\n\n**① 单子照图纸画。** 括号里那个 `unittest.TestCase` 不是投喂的东西，它的意思是「本喵照这张图纸画」。照它画出来的单子自带一整套家伙事：怎么跑项目、怎么记成绩、怎么印报告 —— 你只管写判据。\n\n**② 项目名以 `test` 开头，不然它压根不跑。** 这不是风格建议，是筛选的规矩：翻译官喵扫单子的时候只拎 `test` 开头的那种，别的它不认。\n\n**③ 正常值和边界值各一张。** 这是这次体检单的重点：只写「正常情况」的话，招式坏在边界上你永远发现不了。本喵这次就是被「没有猫」那一项救回来的 —— 它逼着你想清楚「猫数是 0 的时候，本喵到底要它怎么办」。你想的答案是「拒绝干活」，于是用 `assertRaises` 把这句话写成了可判的。\n\n最后那个体检本子（`TestResult()`）是报告底下的账房：跑完以后 `testsRun` 是跑了几个项目、`failures` 和 `errors` 是挂掉的清单、`wasSuccessful()` 一句话告诉你全不全绿。",
+      "templateId": "py-s3-ut-two-cases",
+      "params": {
+        "a": 6,
+        "b": 2,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T08:15:59.386Z",
+        "hash": "9ee6ae5d4fd8358b"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-two-cases-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式已经在文件里了（**一个字都不许改**）：正常的分整数商，**猫数是 0 的时候它会抛 `ValueError`**。\n\n请你给它写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张前辈猫画好的图纸来画。\n2. 里面写**两个**项目，名字都以 `test` 开头：\n   - 一个查**正常值**：`平分(6, 3)` 该等于 `6 // 3`；\n   - 一个查**边界**：拿 `6` 份小鱼干和 **0 只猫**去喂它，它该拒绝干活（用 `assertRaises(ValueError, 平分, 6, 0)`）。\n3. 跑的时候开一本体检本子（`unittest.TestResult()`），用它把 `平分体检` 跑一遍。\n4. 最后印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 下面这张体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_正常(self):\n        self.assertEqual(平分(6, 3), 6 // 3)\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分, 6, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 2 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "这张单子要的三件事，一件比一件值钱喵。\n\n**① 单子照图纸画。** 括号里那个 `unittest.TestCase` 不是投喂的东西，它的意思是「本喵照这张图纸画」。照它画出来的单子自带一整套家伙事：怎么跑项目、怎么记成绩、怎么印报告 —— 你只管写判据。\n\n**② 项目名以 `test` 开头，不然它压根不跑。** 这不是风格建议，是筛选的规矩：翻译官喵扫单子的时候只拎 `test` 开头的那种，别的它不认。\n\n**③ 正常值和边界值各一张。** 这是这次体检单的重点：只写「正常情况」的话，招式坏在边界上你永远发现不了。本喵这次就是被「没有猫」那一项救回来的 —— 它逼着你想清楚「猫数是 0 的时候，本喵到底要它怎么办」。你想的答案是「拒绝干活」，于是用 `assertRaises` 把这句话写成了可判的。\n\n最后那个体检本子（`TestResult()`）是报告底下的账房：跑完以后 `testsRun` 是跑了几个项目、`failures` 和 `errors` 是挂掉的清单、`wasSuccessful()` 一句话告诉你全不全绿。",
+      "templateId": "py-s3-ut-two-cases",
+      "params": {
+        "a": 6,
+        "b": 3,
+        "unit": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:59.566Z",
+        "hash": "1c3b6c3ce322a8da"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-two-cases-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式已经在文件里了（**一个字都不许改**）：正常的分整数商，**猫数是 0 的时候它会抛 `ValueError`**。\n\n请你给它写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张前辈猫画好的图纸来画。\n2. 里面写**两个**项目，名字都以 `test` 开头：\n   - 一个查**正常值**：`平分(7, 2)` 该等于 `7 // 2`；\n   - 一个查**边界**：拿 `7` 份猫罐头和 **0 只猫**去喂它，它该拒绝干活（用 `assertRaises(ValueError, 平分, 7, 0)`）。\n3. 跑的时候开一本体检本子（`unittest.TestResult()`），用它把 `平分体检` 跑一遍。\n4. 最后印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 下面这张体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_正常(self):\n        self.assertEqual(平分(7, 2), 7 // 2)\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分, 7, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 2 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "这张单子要的三件事，一件比一件值钱喵。\n\n**① 单子照图纸画。** 括号里那个 `unittest.TestCase` 不是投喂的东西，它的意思是「本喵照这张图纸画」。照它画出来的单子自带一整套家伙事：怎么跑项目、怎么记成绩、怎么印报告 —— 你只管写判据。\n\n**② 项目名以 `test` 开头，不然它压根不跑。** 这不是风格建议，是筛选的规矩：翻译官喵扫单子的时候只拎 `test` 开头的那种，别的它不认。\n\n**③ 正常值和边界值各一张。** 这是这次体检单的重点：只写「正常情况」的话，招式坏在边界上你永远发现不了。本喵这次就是被「没有猫」那一项救回来的 —— 它逼着你想清楚「猫数是 0 的时候，本喵到底要它怎么办」。你想的答案是「拒绝干活」，于是用 `assertRaises` 把这句话写成了可判的。\n\n最后那个体检本子（`TestResult()`）是报告底下的账房：跑完以后 `testsRun` 是跑了几个项目、`failures` 和 `errors` 是挂掉的清单、`wasSuccessful()` 一句话告诉你全不全绿。",
+      "templateId": "py-s3-ut-two-cases",
+      "params": {
+        "a": 7,
+        "b": 2,
+        "unit": "猫罐头"
+      },
+      "verified": {
+        "at": "2026-10-20T17:29:00.070Z",
+        "hash": "03fff7766612d33c"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-two-cases-010",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式已经在文件里了（**一个字都不许改**）：正常的分整数商，**猫数是 0 的时候它会抛 `ValueError`**。\n\n请你给它写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张前辈猫画好的图纸来画。\n2. 里面写**两个**项目，名字都以 `test` 开头：\n   - 一个查**正常值**：`平分(7, 3)` 该等于 `7 // 3`；\n   - 一个查**边界**：拿 `7` 份猫罐头和 **0 只猫**去喂它，它该拒绝干活（用 `assertRaises(ValueError, 平分, 7, 0)`）。\n3. 跑的时候开一本体检本子（`unittest.TestResult()`），用它把 `平分体检` 跑一遍。\n4. 最后印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 下面这张体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_正常(self):\n        self.assertEqual(平分(7, 3), 7 // 3)\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分, 7, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 2 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "这张单子要的三件事，一件比一件值钱喵。\n\n**① 单子照图纸画。** 括号里那个 `unittest.TestCase` 不是投喂的东西，它的意思是「本喵照这张图纸画」。照它画出来的单子自带一整套家伙事：怎么跑项目、怎么记成绩、怎么印报告 —— 你只管写判据。\n\n**② 项目名以 `test` 开头，不然它压根不跑。** 这不是风格建议，是筛选的规矩：翻译官喵扫单子的时候只拎 `test` 开头的那种，别的它不认。\n\n**③ 正常值和边界值各一张。** 这是这次体检单的重点：只写「正常情况」的话，招式坏在边界上你永远发现不了。本喵这次就是被「没有猫」那一项救回来的 —— 它逼着你想清楚「猫数是 0 的时候，本喵到底要它怎么办」。你想的答案是「拒绝干活」，于是用 `assertRaises` 把这句话写成了可判的。\n\n最后那个体检本子（`TestResult()`）是报告底下的账房：跑完以后 `testsRun` 是跑了几个项目、`failures` 和 `errors` 是挂掉的清单、`wasSuccessful()` 一句话告诉你全不全绿。",
+      "templateId": "py-s3-ut-two-cases",
+      "params": {
+        "a": 7,
+        "b": 3,
+        "unit": "猫罐头"
+      },
+      "verified": {
+        "at": "2026-10-20T17:29:00.570Z",
+        "hash": "eda65b91db72c2aa"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-two-cases-014",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式已经在文件里了（**一个字都不许改**）：正常的分整数商，**猫数是 0 的时候它会抛 `ValueError`**。\n\n请你给它写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张前辈猫画好的图纸来画。\n2. 里面写**两个**项目，名字都以 `test` 开头：\n   - 一个查**正常值**：`平分(8, 2)` 该等于 `8 // 2`；\n   - 一个查**边界**：拿 `8` 份冻干块和 **0 只猫**去喂它，它该拒绝干活（用 `assertRaises(ValueError, 平分, 8, 0)`）。\n3. 跑的时候开一本体检本子（`unittest.TestResult()`），用它把 `平分体检` 跑一遍。\n4. 最后印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 下面这张体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_正常(self):\n        self.assertEqual(平分(8, 2), 8 // 2)\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分, 8, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 2 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "这张单子要的三件事，一件比一件值钱喵。\n\n**① 单子照图纸画。** 括号里那个 `unittest.TestCase` 不是投喂的东西，它的意思是「本喵照这张图纸画」。照它画出来的单子自带一整套家伙事：怎么跑项目、怎么记成绩、怎么印报告 —— 你只管写判据。\n\n**② 项目名以 `test` 开头，不然它压根不跑。** 这不是风格建议，是筛选的规矩：翻译官喵扫单子的时候只拎 `test` 开头的那种，别的它不认。\n\n**③ 正常值和边界值各一张。** 这是这次体检单的重点：只写「正常情况」的话，招式坏在边界上你永远发现不了。本喵这次就是被「没有猫」那一项救回来的 —— 它逼着你想清楚「猫数是 0 的时候，本喵到底要它怎么办」。你想的答案是「拒绝干活」，于是用 `assertRaises` 把这句话写成了可判的。\n\n最后那个体检本子（`TestResult()`）是报告底下的账房：跑完以后 `testsRun` 是跑了几个项目、`failures` 和 `errors` 是挂掉的清单、`wasSuccessful()` 一句话告诉你全不全绿。",
+      "templateId": "py-s3-ut-two-cases",
+      "params": {
+        "a": 8,
+        "b": 2,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-10-20T17:29:01.073Z",
+        "hash": "1fff55329cb3a852"
+      }
+    },
+    {
+      "id": "bank-py-s3-ut-two-cases-017",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵的「平分」招式已经在文件里了（**一个字都不许改**）：正常的分整数商，**猫数是 0 的时候它会抛 `ValueError`**。\n\n请你给它写一张体检单：\n\n1. 单子叫 `平分体检`，照 `unittest.TestCase` 这张前辈猫画好的图纸来画。\n2. 里面写**两个**项目，名字都以 `test` 开头：\n   - 一个查**正常值**：`平分(8, 3)` 该等于 `8 // 3`；\n   - 一个查**边界**：拿 `8` 份冻干块和 **0 只猫**去喂它，它该拒绝干活（用 `assertRaises(ValueError, 平分, 8, 0)`）。\n3. 跑的时候开一本体检本子（`unittest.TestResult()`），用它把 `平分体检` 跑一遍。\n4. 最后印**三行**：\n   - 第一行：`体检了 ` 加项目数加 ` 项`\n   - 第二行：`红了 ` 加挂掉的项目数加 ` 项`\n   - 第三行：全绿印 `全绿喵`，有红的印 `有红的喵`\n\n（挂掉的项目数 = `len(本子.failures) + len(本子.errors)`。）",
+      "starter": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\n# 下面这张体检单和跑它的那几行，交给你喵\n",
+      "referenceSolution": "import unittest\n\n\ndef 平分(总数, 猫数):\n    if 猫数 <= 0:\n        raise ValueError(\"没有猫，分不了喵\")\n    return 总数 // 猫数\n\n\nclass 平分体检(unittest.TestCase):\n    def test_正常(self):\n        self.assertEqual(平分(8, 3), 8 // 3)\n    def test_没有猫(self):\n        self.assertRaises(ValueError, 平分, 8, 0)\n\n\n本子 = unittest.TestResult()\nunittest.defaultTestLoader.loadTestsFromTestCase(平分体检).run(本子)\nprint(\"体检了\", 本子.testsRun, \"项\")\nprint(\"红了\", len(本子.failures) + len(本子.errors), \"项\")\nprint(\"全绿喵\" if 本子.wasSuccessful() else \"有红的喵\")\n",
+      "expectedOutput": "体检了 2 项\n红了 0 项\n全绿喵",
+      "stdin": null,
+      "explanation": "这张单子要的三件事，一件比一件值钱喵。\n\n**① 单子照图纸画。** 括号里那个 `unittest.TestCase` 不是投喂的东西，它的意思是「本喵照这张图纸画」。照它画出来的单子自带一整套家伙事：怎么跑项目、怎么记成绩、怎么印报告 —— 你只管写判据。\n\n**② 项目名以 `test` 开头，不然它压根不跑。** 这不是风格建议，是筛选的规矩：翻译官喵扫单子的时候只拎 `test` 开头的那种，别的它不认。\n\n**③ 正常值和边界值各一张。** 这是这次体检单的重点：只写「正常情况」的话，招式坏在边界上你永远发现不了。本喵这次就是被「没有猫」那一项救回来的 —— 它逼着你想清楚「猫数是 0 的时候，本喵到底要它怎么办」。你想的答案是「拒绝干活」，于是用 `assertRaises` 把这句话写成了可判的。\n\n最后那个体检本子（`TestResult()`）是报告底下的账房：跑完以后 `testsRun` 是跑了几个项目、`failures` 和 `errors` 是挂掉的清单、`wasSuccessful()` 一句话告诉你全不全绿。",
+      "templateId": "py-s3-ut-two-cases",
+      "params": {
+        "a": 8,
+        "b": 3,
+        "unit": "冻干块"
+      },
+      "verified": {
+        "at": "2026-09-16T08:15:59.642Z",
+        "hash": "b74ff38ee8a1e494"
+      }
+    }
+  ]
+}

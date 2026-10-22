@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-file-exists-check",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-13",
+  "type": "codewrite",
+  "concept": ["名牌不是册子", "exists 与 createNewFile", "length 数的是字节", "一个中文字三个字节"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["dangan.txt", "zhangben.txt"] },
+    "a": { "kind": "pick", "values": ["小鱼干 3 条", "小鱼干 12 条"] },
+    "b": { "kind": "pick", "values": ["猫粮 1 碗", "猫粮 20 碗"] }
+  },
+  "stemTemplate": "本喵要给册子做一次**例行查岗**。册子名字叫 `{name}`，程序**从头到尾不用读任何投喂**，照着下面做就行：\n\n1. 照名字生一个**名牌**，问一句「此刻册子在不在」，印 `一开始在不在：` 接上问出来的答案；\n2. 不在就当场新建一本，印 `新建成功了没：` 接上它的答复；\n3. 再问一次在不在，印 `现在在不在：` 接上答案；\n4. 印 `册子叫什么：` 接上牌子上的名字；\n5. 往册子上写两行字：第一行 `{a}`、第二行 `{b}`（每行末尾自己补换行）；\n6. 最后印 `册子有 N 字节` —— 那个 `N` 要**拿名牌问出来**，别自己数。\n\n（判分那一道的册子名字和两行内容跟这里不一样喵，所以别把答案写死。）",
+  "starterTemplate": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"{name}\");\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.io.File;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"{name}\");\n        System.out.println(\"一开始在不在：\" + f.exists());\n        System.out.println(\"新建成功了没：\" + f.createNewFile());\n        System.out.println(\"现在在不在：\" + f.exists());\n        System.out.println(\"册子叫什么：\" + f.getName());\n        try (FileWriter w = new FileWriter(f)) {\n            w.write(\"{a}\\n\");\n            w.write(\"{b}\\n\");\n        }\n        System.out.println(\"册子有 \" + f.length() + \" 字节\");\n    }\n}\n",
+  "explanationTemplate": "这题的考点是课上第一节那句话：**`File` 是名牌，不是册子本身。**\n\n**一、第一行那个 `false`。** `new File(\"{name}\")` 只是照图纸生了一个名牌，**它不碰硬盘** —— 册子到底在不在，得**拿着牌子去问**（`f.exists()`）。本喵这边每趟都是干干净净的机器，所以问出来的头一个答案永远是「不在」。\n\n**二、`f.createNewFile()` 的答复。** 它当场新建一本**空册子**，建成了叼回 `true`；要是本来就有，它叼回 `false` 而且**不会把原来那本撕掉**。本项目里还顺带看到了第三行：建完再问一次，`f.exists()` 就变 `true` 了 —— 同一张牌子，问的时机不一样，答案就不一样。\n\n**三、牌子能当名字用。** `new FileWriter(f)` 括号里喂的是**那张牌子**（喂名字那串字也一样，两种写法都收）。本喵真跑过：把参考解里那句 `f.createNewFile()` 连它印的那一行一起拆掉，「新建成功了没」那一行当场没了，而且第三行从 `true` 变回 `false` —— 说明新建这一步是真的在做事的。\n\n**四、最后那个数不是本喵数的。** `f.length()` 数的是**字节**，不是「几个字」：一个中文字在 UTF-8 里占 **3 个字节**，所以 `小鱼干 3 条` 加一个换行是 **16 字节**（九个字节的字 + 两个空格 + 一个数字 + 一个「条」 + 一个换行）。写的是两行，那个总数就是两行各自的字节加起来。判分那一道的内容跟这里不一样，**字节数也跟着变** —— 所以那个数只能问出来，抄不了喵。"
+}

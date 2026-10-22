@@ -1,0 +1,21 @@
+{
+  "templateId": "java-s2-student-average",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-15",
+  "type": "codewrite",
+  "concept": ["一句话喊出去各猫各样", "先认亲再换牌子", "只给学员攒分数与人头", "整数相除"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["大肥鱼", "小黑"] },
+    "b": { "kind": "pick", "values": ["小橘", "小虎"] },
+    "s1": { "kind": "pick", "values": ["92", "86"] },
+    "c": { "kind": "pick", "values": ["狸花", "花花"] },
+    "s2": { "kind": "pick", "values": ["78", "90"] },
+    "avg": { "kind": "pick", "values": ["85", "88"] }
+  },
+  "stemTemplate": "本喵这份名单上坐着三只：一只不是学员（{a}），两只是（{b} 和 {c}）。要办的事：\n\n1. 照课里那两张图纸画好（大图纸 `Person`：名字 + `intro()`；小图纸 `Student`：套上去、多一格分数、把 `intro()` 盖掉）；\n2. 三只收进一个柜子（牌子写大图纸名）；\n3. 绕一圈把每只的自我介绍印出来（喊的都是同一句 `intro()`）；\n4. **再绕一圈**算学员的平均分：**先认亲、再换牌子** —— 认准了才去喊 `getScore()`，只加学员的分数、只数学员的人头；\n5. 最后印一行 `学生 N 只，平均 平均分 分`。\n\n要印成：\n\n```text\n本喵叫 {a}\n本喵叫 {b}，考了 {s1} 分\n本喵叫 {c}，考了 {s2} 分\n学生 2 只，平均 {avg} 分\n```\n\n（判分那份名单里，名字和分数都是**另外一套**喵，别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\nclass Person {\n    // 大图纸：名字 + intro()\n}\n\nclass Student extends Person {\n    // 小图纸：套上去、多一格分数、把 intro() 盖掉\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Person> mingdan = new ArrayList<>();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\nclass Person {\n    private String name;\n\n    Person(String name) {\n        this.name = name;\n    }\n\n    String intro() {\n        return \"本喵叫 \" + name;\n    }\n}\n\nclass Student extends Person {\n    private int score;\n\n    Student(String name, int score) {\n        super(name);\n        this.score = score;\n    }\n\n    int getScore() { return score; }\n\n    @Override\n    String intro() {\n        return super.intro() + \"，考了 \" + score + \" 分\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Person> mingdan = new ArrayList<>();\n        mingdan.add(new Person(\"{a}\"));\n        mingdan.add(new Student(\"{b}\", {s1}));\n        mingdan.add(new Student(\"{c}\", {s2}));\n        for (Person p : mingdan) {\n            System.out.println(p.intro());\n        }\n        int sum = 0;\n        int n = 0;\n        for (Person p : mingdan) {\n            if (p instanceof Student) {\n                Student s = (Student) p;\n                sum += s.getScore();\n                n++;\n            }\n        }\n        System.out.println(\"学生 \" + n + \" 只，平均 \" + (sum / n) + \" 分\");\n    }\n}\n",
+  "explanationTemplate": "这一题的两圈**各干各的活**，本喵分开说喵。\n\n**第一圈：一句话喊出去，各猫各样。** 柜子的牌子写 `Person`，绕圈里喊的也是同一句 `p.intro()` —— 可印出来不一样：{a} 那条走的是**大图纸那一版**（`本喵叫 {a}`），{b} 和 {c} 走的是**小图纸盖过的那一版**（先 `super.intro()` 串名字、再添分数）。记那条老规矩：**喊的是哪一招看名字，念的是哪一版看真猫。**\n\n**第二圈：先认亲，再换牌子。** 分数那一格只画在小图纸上，所以绕圈里直接喊 `p.getScore()` 连编都编不过（牌子写的是 `Person`）。正路是：\n\n```java\nif (p instanceof Student) {\n    Student s = (Student) p;\n    sum += s.getScore();\n    n++;\n}\n```\n\n**认亲那一问同时就是「谁有分数」的判据**：{a} 那一问没过，所以它不加分数、也不占人头 —— `sum` 加的是 `{s1} + {s2}`、`n` 是 `2`，除出来才是 `{avg}`。本喵真跑过：把认亲那一句拆掉直接换牌子，第一只头上就当场断气（`ClassCastException`）。\n\n**顺带一句整数相除的老脾气喵**：`sum / n` 的小数点后面会**直接扔掉**（不是四舍五入）。本喵这份名单的分数加起来正好除得整整齐齐，所以看起来没什么；你换成一组加起来是单数的分数跑跑看，就会发现平均分「低」了那么一点 —— 那是另一个值得记下来的坑。"
+}

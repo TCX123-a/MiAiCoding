@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s1-ns-same-name-two-rooms",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-12",
+  "type": "codewrite",
+  "concept": ["两间各一只同名的碗", "带分区名喊它就不打架", "分区里的碗照常能改"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["9", "8"] },
+    "b": { "kind": "pick", "values": ["2", "4"] },
+    "borrow": { "kind": "pick", "values": ["3", "5"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{borrow}\n", "sampleText": "1\n" },
+  "stemTemplate": "本喵要开两间分区，各养一只**同名**的碗：\n\n- `kitchen` 那一间里放一只 `fish`，先摆上 {a} 条；\n- `pond` 那一间里也放一只 `fish`，先摆上 {b} 条。\n\n投喂口会递进来一个整数，表示本喵要从 `kitchen` 那间**借**多少条给 `pond` 那间（借完两边都要跟着变）。\n\n借完之后印**两行**（X、Y 都是算出来的数）：\n\n```text\nkitchen 还剩 X 条喵\npond 现在有 Y 条喵\n```\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nnamespace kitchen {\n    int fish = {a};\n}\n\nnamespace pond {\n    int fish = {b};\n}\n\nint main() {\n    int borrow = 0;\n    cin >> borrow;\n\n    kitchen::fish = kitchen::fish - borrow;\n    pond::fish = pond::fish + borrow;\n\n    cout << \"kitchen 还剩 \" << kitchen::fish << \" 条喵\" << endl;\n    cout << \"pond 现在有 \" << pond::fish << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的看点是：**两间里各有一只同名的碗，一点不打架。**\n\n两张碗的真名写出来，事情就清楚了喵：一间里头那只叫 `kitchen::fish`，另一间里那只叫 `pond::fish` —— **名字带了分区名，翻译官喵就不会认错**。所以减的是 `kitchen::fish`、加的是 `pond::fish`，两句话都是带分区名的全名，一句都不会跑到另一间去。\n\n拿样例数一遍：`kitchen` 那间 {a} 条借出去 {borrow} 条，剩 {a} - {borrow}；`pond` 那间 {b} 条收到 {borrow} 条，变成 {b} + {borrow}。\n\n⚠️ 别忘了分区里的碗**照常能改** —— 「借出去」这件事落到实处就是两句赋值。分区不是玻璃柜，只是给名字分了房间。"
+}

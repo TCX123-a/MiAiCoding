@@ -1,0 +1,488 @@
+{
+  "lessonId": "python-stage1-08",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-py-s1-break-vs-continue-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵想从 1 数到 5，但**数到 2 就收工**喵。\n\n可这段代码明明数到 2 了，却又接着往下数……你帮本喵改对：让它打印完 2 之前的数就停下来。",
+      "brokenCode": "for i in range(1, 6):\n    if i == 2:\n        continue\n    print(i)\n",
+      "referenceFix": "for i in range(1, 6):\n    if i == 2:\n        break\n    print(i)\n",
+      "expectedOutput": "1",
+      "stdin": null,
+      "explanation": "`continue` 和 `break` 长得像，做的事完全不同喵：\n\n`continue` = 「这一圈不算，**下一圈接着跑**」—— 所以它只跳过了 2 这一个数，后面的照跑不误。\n`break` = 「整个圈**不跑了**」—— 跑圈到这里直接结束。\n\n（本喵要的是「收工」，那就得用 `break`。判断该用哪个其实很简单，问一句就行：**后面还有没有圈要跑？** 有，用 `continue`；没有，用 `break`。）",
+      "templateId": "py-s1-break-vs-continue",
+      "params": {
+        "stop": 2
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:22.313Z",
+        "hash": "798b16e27bc07722"
+      }
+    },
+    {
+      "id": "bank-py-s1-break-vs-continue-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵想从 1 数到 5，但**数到 4 就收工**喵。\n\n可这段代码明明数到 4 了，却又接着往下数……你帮本喵改对：让它打印完 4 之前的数就停下来。",
+      "brokenCode": "for i in range(1, 6):\n    if i == 4:\n        continue\n    print(i)\n",
+      "referenceFix": "for i in range(1, 6):\n    if i == 4:\n        break\n    print(i)\n",
+      "expectedOutput": "1\n2\n3",
+      "stdin": null,
+      "explanation": "`continue` 和 `break` 长得像，做的事完全不同喵：\n\n`continue` = 「这一圈不算，**下一圈接着跑**」—— 所以它只跳过了 4 这一个数，后面的照跑不误。\n`break` = 「整个圈**不跑了**」—— 跑圈到这里直接结束。\n\n（本喵要的是「收工」，那就得用 `break`。判断该用哪个其实很简单，问一句就行：**后面还有没有圈要跑？** 有，用 `continue`；没有，用 `break`。）",
+      "templateId": "py-s1-break-vs-continue",
+      "params": {
+        "stop": 4
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:22.464Z",
+        "hash": "22b8984d4bfb4460"
+      }
+    },
+    {
+      "id": "bank-py-s1-loop-off-by-one-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "这段代码本来是要算总和的：**先读一个数 `n`，再读 `n` 个数**，把它们加起来。\n\n可是它跑出来的结果**总是少加了一个数**喵……翻译官喵一个字都没抱怨，是本喵自己写错了。\n\n你帮本喵把它改好。",
+      "brokenCode": "n = int(input())\ntotal = 0\nfor i in range(n - 1):\n    total += int(input())\nprint(total)\n",
+      "referenceFix": "n = int(input())\ntotal = 0\nfor i in range(n):\n    total += int(input())\nprint(total)\n",
+      "expectedOutput": "38",
+      "stdin": "5\n8\n8\n8\n9\n5\n",
+      "explanation": "`range(n - 1)` 只转 **n-1 圈**喵 —— 最后一个数还躺在管道里没人读，自然就没加进去。改成 `range(n)` 就对了。\n\n这种「程序不报错、翻译官喵一声不吭、可结果就是不对」的毛病叫**逻辑错误**，机器帮不了你，只能自己盯着数字看喵～",
+      "templateId": "py-s1-loop-off-by-one",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:28.890Z",
+        "hash": "b5abe0fc8900bdcc"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-evens-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这回的规矩变一下喵：**第一行是一个数 `n`**，告诉你后面还有几个数；接下来那 `n` 行才是要处理的数。\n\n请你写个程序：把这 `n` 个数里**是偶数的**挑出来，把它们**加起来**打印总数。\n\n比如输入是\n\n4\n9\n5\n7\n8\n\n就要输出\n\n8\n\n（判分用的是另外一组数喵～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\ntotal = 0\nfor _ in range(n):\n    x = int(input())\n    if x % 2 == 0:\n        total += x\nprint(total)\n",
+      "expectedOutput": "2",
+      "stdin": "4\n2\n1\n1\n5\n",
+      "explanation": "先读走第一行的 `n`，再转 `n` 圈喵。每一圈读到 `x` 之后先问一句 `x % 2 == 0` —— `%` 是取余数，偶数除以 2 余 0，所以这句成立就说明它是偶数，这时才加进小碗里。\n\n一个偶数都没有的时候，小碗还是 0，打印 `0` 就对啦。",
+      "templateId": "py-s1-sum-evens",
+      "params": {
+        "n": 4,
+        "thing": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:32.296Z",
+        "hash": "fc2fcb8024b66a04"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-evens-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这回的规矩变一下喵：**第一行是一个数 `n`**，告诉你后面还有几个数；接下来那 `n` 行才是要处理的数。\n\n请你写个程序：把这 `n` 个数里**是偶数的**挑出来，把它们**加起来**打印总数。\n\n比如输入是\n\n4\n6\n6\n5\n5\n\n就要输出\n\n12\n\n（判分用的是另外一组数喵～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\ntotal = 0\nfor _ in range(n):\n    x = int(input())\n    if x % 2 == 0:\n        total += x\nprint(total)\n",
+      "expectedOutput": "8",
+      "stdin": "4\n9\n8\n7\n7\n",
+      "explanation": "先读走第一行的 `n`，再转 `n` 圈喵。每一圈读到 `x` 之后先问一句 `x % 2 == 0` —— `%` 是取余数，偶数除以 2 余 0，所以这句成立就说明它是偶数，这时才加进小碗里。\n\n一个偶数都没有的时候，小碗还是 0，打印 `0` 就对啦。",
+      "templateId": "py-s1-sum-evens",
+      "params": {
+        "n": 4,
+        "thing": "毛线球"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:46.555Z",
+        "hash": "97f27c784b6621e9"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-evens-004",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这回的规矩变一下喵：**第一行是一个数 `n`**，告诉你后面还有几个数；接下来那 `n` 行才是要处理的数。\n\n请你写个程序：把这 `n` 个数里**是偶数的**挑出来，把它们**加起来**打印总数。\n\n比如输入是\n\n5\n9\n9\n2\n9\n3\n\n就要输出\n\n2\n\n（判分用的是另外一组数喵～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\ntotal = 0\nfor _ in range(n):\n    x = int(input())\n    if x % 2 == 0:\n        total += x\nprint(total)\n",
+      "expectedOutput": "10",
+      "stdin": "5\n9\n3\n8\n2\n5\n",
+      "explanation": "先读走第一行的 `n`，再转 `n` 圈喵。每一圈读到 `x` 之后先问一句 `x % 2 == 0` —— `%` 是取余数，偶数除以 2 余 0，所以这句成立就说明它是偶数，这时才加进小碗里。\n\n一个偶数都没有的时候，小碗还是 0，打印 `0` 就对啦。",
+      "templateId": "py-s1-sum-evens",
+      "params": {
+        "n": 5,
+        "thing": "猫粮"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:46.754Z",
+        "hash": "03b6ef2a70885171"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-evens-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这回的规矩变一下喵：**第一行是一个数 `n`**，告诉你后面还有几个数；接下来那 `n` 行才是要处理的数。\n\n请你写个程序：把这 `n` 个数里**是偶数的**挑出来，把它们**加起来**打印总数。\n\n比如输入是\n\n6\n5\n6\n3\n8\n7\n2\n\n就要输出\n\n16\n\n（判分用的是另外一组数喵～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\ntotal = 0\nfor _ in range(n):\n    x = int(input())\n    if x % 2 == 0:\n        total += x\nprint(total)\n",
+      "expectedOutput": "30",
+      "stdin": "6\n6\n2\n8\n2\n6\n6\n",
+      "explanation": "先读走第一行的 `n`，再转 `n` 圈喵。每一圈读到 `x` 之后先问一句 `x % 2 == 0` —— `%` 是取余数，偶数除以 2 余 0，所以这句成立就说明它是偶数，这时才加进小碗里。\n\n一个偶数都没有的时候，小碗还是 0，打印 `0` 就对啦。",
+      "templateId": "py-s1-sum-evens",
+      "params": {
+        "n": 6,
+        "thing": "猫粮"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:46.941Z",
+        "hash": "531602118f444fac"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-evens-009",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这回的规矩变一下喵：**第一行是一个数 `n`**，告诉你后面还有几个数；接下来那 `n` 行才是要处理的数。\n\n请你写个程序：把这 `n` 个数里**是偶数的**挑出来，把它们**加起来**打印总数。\n\n比如输入是\n\n7\n3\n3\n6\n9\n5\n8\n4\n\n就要输出\n\n18\n\n（判分用的是另外一组数喵～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\ntotal = 0\nfor _ in range(n):\n    x = int(input())\n    if x % 2 == 0:\n        total += x\nprint(total)\n",
+      "expectedOutput": "20",
+      "stdin": "7\n5\n4\n8\n5\n4\n2\n2\n",
+      "explanation": "先读走第一行的 `n`，再转 `n` 圈喵。每一圈读到 `x` 之后先问一句 `x % 2 == 0` —— `%` 是取余数，偶数除以 2 余 0，所以这句成立就说明它是偶数，这时才加进小碗里。\n\n一个偶数都没有的时候，小碗还是 0，打印 `0` 就对啦。",
+      "templateId": "py-s1-sum-evens",
+      "params": {
+        "n": 7,
+        "thing": "小鱼干"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:47.131Z",
+        "hash": "c14a129a46e08631"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-evens-011",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这回的规矩变一下喵：**第一行是一个数 `n`**，告诉你后面还有几个数；接下来那 `n` 行才是要处理的数。\n\n请你写个程序：把这 `n` 个数里**是偶数的**挑出来，把它们**加起来**打印总数。\n\n比如输入是\n\n7\n7\n4\n5\n2\n4\n6\n7\n\n就要输出\n\n16\n\n（判分用的是另外一组数喵～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\ntotal = 0\nfor _ in range(n):\n    x = int(input())\n    if x % 2 == 0:\n        total += x\nprint(total)\n",
+      "expectedOutput": "18",
+      "stdin": "7\n6\n3\n6\n5\n1\n9\n6\n",
+      "explanation": "先读走第一行的 `n`，再转 `n` 圈喵。每一圈读到 `x` 之后先问一句 `x % 2 == 0` —— `%` 是取余数，偶数除以 2 余 0，所以这句成立就说明它是偶数，这时才加进小碗里。\n\n一个偶数都没有的时候，小碗还是 0，打印 `0` 就对啦。",
+      "templateId": "py-s1-sum-evens",
+      "params": {
+        "n": 7,
+        "thing": "毛线球"
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:32.451Z",
+        "hash": "cb487d13a4d10121"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-loop-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天捞到了 3 筐条小鱼干喵～\n\n请你写个程序：**读入 3 个整数**（每行一个），把它们**加起来的总数**打印出来。\n\n比如输入是\n\n3\n3\n6\n\n就要输出\n\n12\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "total = 0\nfor _ in range(3):\n    total += int(input())\nprint(total)\n",
+      "expectedOutput": "14",
+      "stdin": "5\n8\n1\n",
+      "explanation": "3 个数就转 3 圈喵～累加要有一个**从 0 开始的小碗**：先写 `total = 0`，每读进来一个数就往碗里加，最后把它打印出来。",
+      "templateId": "py-s1-sum-loop",
+      "params": {
+        "n": 3,
+        "unit": "条小鱼干",
+        "verb": "捞"
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:32.609Z",
+        "hash": "d83851fd08f4eead"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-loop-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天叼到了 3 筐个毛线球喵～\n\n请你写个程序：**读入 3 个整数**（每行一个），把它们**加起来的总数**打印出来。\n\n比如输入是\n\n3\n5\n2\n\n就要输出\n\n10\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "total = 0\nfor _ in range(3):\n    total += int(input())\nprint(total)\n",
+      "expectedOutput": "11",
+      "stdin": "5\n5\n1\n",
+      "explanation": "3 个数就转 3 圈喵～累加要有一个**从 0 开始的小碗**：先写 `total = 0`，每读进来一个数就往碗里加，最后把它打印出来。",
+      "templateId": "py-s1-sum-loop",
+      "params": {
+        "n": 3,
+        "unit": "个毛线球",
+        "verb": "叼"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:47.331Z",
+        "hash": "3061a3ab981f37bb"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-loop-014",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天囤到了 4 筐颗猫粮喵～\n\n请你写个程序：**读入 4 个整数**（每行一个），把它们**加起来的总数**打印出来。\n\n比如输入是\n\n9\n7\n8\n5\n\n就要输出\n\n29\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "total = 0\nfor _ in range(4):\n    total += int(input())\nprint(total)\n",
+      "expectedOutput": "19",
+      "stdin": "4\n9\n1\n5\n",
+      "explanation": "4 个数就转 4 圈喵～累加要有一个**从 0 开始的小碗**：先写 `total = 0`，每读进来一个数就往碗里加，最后把它打印出来。",
+      "templateId": "py-s1-sum-loop",
+      "params": {
+        "n": 4,
+        "unit": "颗猫粮",
+        "verb": "囤"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:47.518Z",
+        "hash": "3c4a052654ddd9ed"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-loop-018",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天捞到了 5 筐条小鱼干喵～\n\n请你写个程序：**读入 5 个整数**（每行一个），把它们**加起来的总数**打印出来。\n\n比如输入是\n\n8\n5\n2\n3\n4\n\n就要输出\n\n22\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "total = 0\nfor _ in range(5):\n    total += int(input())\nprint(total)\n",
+      "expectedOutput": "19",
+      "stdin": "9\n1\n3\n2\n4\n",
+      "explanation": "5 个数就转 5 圈喵～累加要有一个**从 0 开始的小碗**：先写 `total = 0`，每读进来一个数就往碗里加，最后把它打印出来。",
+      "templateId": "py-s1-sum-loop",
+      "params": {
+        "n": 5,
+        "unit": "条小鱼干",
+        "verb": "捞"
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:32.758Z",
+        "hash": "417f3fbedc7dfacc"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-loop-021",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天捞到了 5 筐颗猫粮喵～\n\n请你写个程序：**读入 5 个整数**（每行一个），把它们**加起来的总数**打印出来。\n\n比如输入是\n\n9\n4\n3\n9\n2\n\n就要输出\n\n27\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "total = 0\nfor _ in range(5):\n    total += int(input())\nprint(total)\n",
+      "expectedOutput": "32",
+      "stdin": "5\n9\n1\n8\n9\n",
+      "explanation": "5 个数就转 5 圈喵～累加要有一个**从 0 开始的小碗**：先写 `total = 0`，每读进来一个数就往碗里加，最后把它打印出来。",
+      "templateId": "py-s1-sum-loop",
+      "params": {
+        "n": 5,
+        "unit": "颗猫粮",
+        "verb": "捞"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:47.712Z",
+        "hash": "990e2db21a3428d3"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-loop-028",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天叼到了 6 筐条小鱼干喵～\n\n请你写个程序：**读入 6 个整数**（每行一个），把它们**加起来的总数**打印出来。\n\n比如输入是\n\n9\n9\n3\n4\n6\n4\n\n就要输出\n\n35\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "total = 0\nfor _ in range(6):\n    total += int(input())\nprint(total)\n",
+      "expectedOutput": "33",
+      "stdin": "4\n2\n7\n5\n9\n6\n",
+      "explanation": "6 个数就转 6 圈喵～累加要有一个**从 0 开始的小碗**：先写 `total = 0`，每读进来一个数就往碗里加，最后把它打印出来。",
+      "templateId": "py-s1-sum-loop",
+      "params": {
+        "n": 6,
+        "unit": "条小鱼干",
+        "verb": "叼"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:47.900Z",
+        "hash": "7b9515c4bc8449ab"
+      }
+    },
+    {
+      "id": "bank-py-s1-sum-loop-035",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵今天囤到了 6 筐个毛线球喵～\n\n请你写个程序：**读入 6 个整数**（每行一个），把它们**加起来的总数**打印出来。\n\n比如输入是\n\n8\n7\n4\n7\n5\n6\n\n就要输出\n\n37\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "total = 0\nfor _ in range(6):\n    total += int(input())\nprint(total)\n",
+      "expectedOutput": "26",
+      "stdin": "1\n4\n8\n1\n3\n9\n",
+      "explanation": "6 个数就转 6 圈喵～累加要有一个**从 0 开始的小碗**：先写 `total = 0`，每读进来一个数就往碗里加，最后把它打印出来。",
+      "templateId": "py-s1-sum-loop",
+      "params": {
+        "n": 6,
+        "unit": "个毛线球",
+        "verb": "囤"
+      },
+      "verified": {
+        "at": "2026-09-16T00:24:32.909Z",
+        "hash": "10222b31efe8e7e7"
+      }
+    },
+    {
+      "id": "bank-py-s1-while-condition-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的规矩是「**碗里还有，就接着发**」喵：碗里现在有 2 条小鱼干，每发一条就少一条，**发到 0 为止**，最后再印一句「发完啦」。\n\n每发一条印一行，一行是「碗里还有 几条 条喵」—— 先印这句话、空一格、条数、空一格、再印「条喵」。\n\n可它一条都没发出去……你帮本喵改对。",
+      "brokenCode": "fish = 2\nwhile fish < 0:\n    print(\"碗里还有\", fish, \"条喵\")\n    fish = fish - 1\nprint(\"发完啦\")\n",
+      "referenceFix": "fish = 2\nwhile fish > 0:\n    print(\"碗里还有\", fish, \"条喵\")\n    fish = fish - 1\nprint(\"发完啦\")\n",
+      "expectedOutput": "碗里还有 2 条喵\n碗里还有 1 条喵\n发完啦",
+      "stdin": null,
+      "explanation": "`while` 是**先看眼色、再做活儿**喵：每跑一圈之前，先瞄一眼 `while` 后面那句问话 —— 答「真」才继续跑。\n\n这次的问话问的是「比 0 **小**吗」。碗里明明是 2 条、比 0 大，第一次瞄眼色就答了假，于是**一圈都没跑**，程序直接轮到圈外那句，屏幕上只剩下最后那句「发完啦」。\n\n把它反过来问「比 0 **大**吗」，就能一圈一圈发下去了。\n\n（顺带盯一眼圈里那句 `fish = fish - 1` —— 它负责让眼色**早晚有一天变成假**，可别丢。丢了它，`fish` 永远不变，这个圈就停不下来了。）",
+      "templateId": "py-s1-while-condition",
+      "params": {
+        "n": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:55:07.740Z",
+        "hash": "f384dd39a6c80191"
+      }
+    },
+    {
+      "id": "bank-py-s1-while-condition-003",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵的规矩是「**碗里还有，就接着发**」喵：碗里现在有 5 条小鱼干，每发一条就少一条，**发到 0 为止**，最后再印一句「发完啦」。\n\n每发一条印一行，一行是「碗里还有 几条 条喵」—— 先印这句话、空一格、条数、空一格、再印「条喵」。\n\n可它一条都没发出去……你帮本喵改对。",
+      "brokenCode": "fish = 5\nwhile fish < 0:\n    print(\"碗里还有\", fish, \"条喵\")\n    fish = fish - 1\nprint(\"发完啦\")\n",
+      "referenceFix": "fish = 5\nwhile fish > 0:\n    print(\"碗里还有\", fish, \"条喵\")\n    fish = fish - 1\nprint(\"发完啦\")\n",
+      "expectedOutput": "碗里还有 5 条喵\n碗里还有 4 条喵\n碗里还有 3 条喵\n碗里还有 2 条喵\n碗里还有 1 条喵\n发完啦",
+      "stdin": null,
+      "explanation": "`while` 是**先看眼色、再做活儿**喵：每跑一圈之前，先瞄一眼 `while` 后面那句问话 —— 答「真」才继续跑。\n\n这次的问话问的是「比 0 **小**吗」。碗里明明是 5 条、比 0 大，第一次瞄眼色就答了假，于是**一圈都没跑**，程序直接轮到圈外那句，屏幕上只剩下最后那句「发完啦」。\n\n把它反过来问「比 0 **大**吗」，就能一圈一圈发下去了。\n\n（顺带盯一眼圈里那句 `fish = fish - 1` —— 它负责让眼色**早晚有一天变成假**，可别丢。丢了它，`fish` 永远不变，这个圈就停不下来了。）",
+      "templateId": "py-s1-while-condition",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:55:07.954Z",
+        "hash": "462cd801cac75582"
+      }
+    },
+    {
+      "id": "bank-py-s1-while-countdown-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要写一段「**数完就停**」的代码喵：读入一个整数（一行），从它开始往下数，**每印一个数就减一**，一直数到 1；数完之后，最后再印一行「数完啦喵」。\n\n屏幕上从上往下是这样：先一行一个数（从大往小），最后一行才是收工那句。\n\n比如输入是\n\n6\n\n就要输出\n\n6\n5\n4\n3\n2\n1\n数完啦喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\nwhile n > 0:\n    print(n)\n    n = n - 1\nprint(\"数完啦喵\")\n",
+      "expectedOutput": "2\n1\n数完啦喵",
+      "stdin": "2\n",
+      "explanation": "这种「**只能凭眼色停**」的活儿，用 `while` 最顺手喵：它的读法是**每跑一圈之前先瞄一眼眼色**，答真才继续跑。\n\n- 圈里有两件事：印一个数、再把它减一。**「减一」那一句最要紧** —— 它每跑一圈就把数往前挪一格，让眼色早晚有一天变成假；漏了它，数永远不变，**圈就停不下来了** —— 一路跑到你硬把窗口按掉为止。\n- 「数完啦喵」那一句顶着**行首**写，是**圈外**的话：圈跑完了才轮到它，所以它只印一遍。手一滑把它让进圈里，它就会跟着每圈都印一次。\n\n（写完任何一个圈，都停下来问自己一句：**圈里有没有一句代码，能让那个眼色早晚变成假？**）",
+      "templateId": "py-s1-while-countdown",
+      "params": {
+        "n": 2,
+        "sample": 6
+      },
+      "verified": {
+        "at": "2026-09-16T11:56:42.891Z",
+        "hash": "a30b832606e10005"
+      }
+    },
+    {
+      "id": "bank-py-s1-while-countdown-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要写一段「**数完就停**」的代码喵：读入一个整数（一行），从它开始往下数，**每印一个数就减一**，一直数到 1；数完之后，最后再印一行「数完啦喵」。\n\n屏幕上从上往下是这样：先一行一个数（从大往小），最后一行才是收工那句。\n\n比如输入是\n\n8\n\n就要输出\n\n8\n7\n6\n5\n4\n3\n2\n1\n数完啦喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\nwhile n > 0:\n    print(n)\n    n = n - 1\nprint(\"数完啦喵\")\n",
+      "expectedOutput": "2\n1\n数完啦喵",
+      "stdin": "2\n",
+      "explanation": "这种「**只能凭眼色停**」的活儿，用 `while` 最顺手喵：它的读法是**每跑一圈之前先瞄一眼眼色**，答真才继续跑。\n\n- 圈里有两件事：印一个数、再把它减一。**「减一」那一句最要紧** —— 它每跑一圈就把数往前挪一格，让眼色早晚有一天变成假；漏了它，数永远不变，**圈就停不下来了** —— 一路跑到你硬把窗口按掉为止。\n- 「数完啦喵」那一句顶着**行首**写，是**圈外**的话：圈跑完了才轮到它，所以它只印一遍。手一滑把它让进圈里，它就会跟着每圈都印一次。\n\n（写完任何一个圈，都停下来问自己一句：**圈里有没有一句代码，能让那个眼色早晚变成假？**）",
+      "templateId": "py-s1-while-countdown",
+      "params": {
+        "n": 2,
+        "sample": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:52.839Z",
+        "hash": "e7fc6cef688b6f67"
+      }
+    },
+    {
+      "id": "bank-py-s1-while-countdown-004",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要写一段「**数完就停**」的代码喵：读入一个整数（一行），从它开始往下数，**每印一个数就减一**，一直数到 1；数完之后，最后再印一行「数完啦喵」。\n\n屏幕上从上往下是这样：先一行一个数（从大往小），最后一行才是收工那句。\n\n比如输入是\n\n7\n\n就要输出\n\n7\n6\n5\n4\n3\n2\n1\n数完啦喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\nwhile n > 0:\n    print(n)\n    n = n - 1\nprint(\"数完啦喵\")\n",
+      "expectedOutput": "3\n2\n1\n数完啦喵",
+      "stdin": "3\n",
+      "explanation": "这种「**只能凭眼色停**」的活儿，用 `while` 最顺手喵：它的读法是**每跑一圈之前先瞄一眼眼色**，答真才继续跑。\n\n- 圈里有两件事：印一个数、再把它减一。**「减一」那一句最要紧** —— 它每跑一圈就把数往前挪一格，让眼色早晚有一天变成假；漏了它，数永远不变，**圈就停不下来了** —— 一路跑到你硬把窗口按掉为止。\n- 「数完啦喵」那一句顶着**行首**写，是**圈外**的话：圈跑完了才轮到它，所以它只印一遍。手一滑把它让进圈里，它就会跟着每圈都印一次。\n\n（写完任何一个圈，都停下来问自己一句：**圈里有没有一句代码，能让那个眼色早晚变成假？**）",
+      "templateId": "py-s1-while-countdown",
+      "params": {
+        "n": 3,
+        "sample": 7
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:53.029Z",
+        "hash": "c5c9f07a0f5a70e9"
+      }
+    },
+    {
+      "id": "bank-py-s1-while-countdown-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要写一段「**数完就停**」的代码喵：读入一个整数（一行），从它开始往下数，**每印一个数就减一**，一直数到 1；数完之后，最后再印一行「数完啦喵」。\n\n屏幕上从上往下是这样：先一行一个数（从大往小），最后一行才是收工那句。\n\n比如输入是\n\n7\n\n就要输出\n\n7\n6\n5\n4\n3\n2\n1\n数完啦喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\nwhile n > 0:\n    print(n)\n    n = n - 1\nprint(\"数完啦喵\")\n",
+      "expectedOutput": "4\n3\n2\n1\n数完啦喵",
+      "stdin": "4\n",
+      "explanation": "这种「**只能凭眼色停**」的活儿，用 `while` 最顺手喵：它的读法是**每跑一圈之前先瞄一眼眼色**，答真才继续跑。\n\n- 圈里有两件事：印一个数、再把它减一。**「减一」那一句最要紧** —— 它每跑一圈就把数往前挪一格，让眼色早晚有一天变成假；漏了它，数永远不变，**圈就停不下来了** —— 一路跑到你硬把窗口按掉为止。\n- 「数完啦喵」那一句顶着**行首**写，是**圈外**的话：圈跑完了才轮到它，所以它只印一遍。手一滑把它让进圈里，它就会跟着每圈都印一次。\n\n（写完任何一个圈，都停下来问自己一句：**圈里有没有一句代码，能让那个眼色早晚变成假？**）",
+      "templateId": "py-s1-while-countdown",
+      "params": {
+        "n": 4,
+        "sample": 7
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:53.218Z",
+        "hash": "28b0db9662ea5fb2"
+      }
+    },
+    {
+      "id": "bank-py-s1-while-countdown-009",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要写一段「**数完就停**」的代码喵：读入一个整数（一行），从它开始往下数，**每印一个数就减一**，一直数到 1；数完之后，最后再印一行「数完啦喵」。\n\n屏幕上从上往下是这样：先一行一个数（从大往小），最后一行才是收工那句。\n\n比如输入是\n\n6\n\n就要输出\n\n6\n5\n4\n3\n2\n1\n数完啦喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\nwhile n > 0:\n    print(n)\n    n = n - 1\nprint(\"数完啦喵\")\n",
+      "expectedOutput": "5\n4\n3\n2\n1\n数完啦喵",
+      "stdin": "5\n",
+      "explanation": "这种「**只能凭眼色停**」的活儿，用 `while` 最顺手喵：它的读法是**每跑一圈之前先瞄一眼眼色**，答真才继续跑。\n\n- 圈里有两件事：印一个数、再把它减一。**「减一」那一句最要紧** —— 它每跑一圈就把数往前挪一格，让眼色早晚有一天变成假；漏了它，数永远不变，**圈就停不下来了** —— 一路跑到你硬把窗口按掉为止。\n- 「数完啦喵」那一句顶着**行首**写，是**圈外**的话：圈跑完了才轮到它，所以它只印一遍。手一滑把它让进圈里，它就会跟着每圈都印一次。\n\n（写完任何一个圈，都停下来问自己一句：**圈里有没有一句代码，能让那个眼色早晚变成假？**）",
+      "templateId": "py-s1-while-countdown",
+      "params": {
+        "n": 5,
+        "sample": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:53.405Z",
+        "hash": "dcf181352875f1f3"
+      }
+    },
+    {
+      "id": "bank-py-s1-while-countdown-011",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要写一段「**数完就停**」的代码喵：读入一个整数（一行），从它开始往下数，**每印一个数就减一**，一直数到 1；数完之后，最后再印一行「数完啦喵」。\n\n屏幕上从上往下是这样：先一行一个数（从大往小），最后一行才是收工那句。\n\n比如输入是\n\n8\n\n就要输出\n\n8\n7\n6\n5\n4\n3\n2\n1\n数完啦喵\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "n = int(input())\nwhile n > 0:\n    print(n)\n    n = n - 1\nprint(\"数完啦喵\")\n",
+      "expectedOutput": "5\n4\n3\n2\n1\n数完啦喵",
+      "stdin": "5\n",
+      "explanation": "这种「**只能凭眼色停**」的活儿，用 `while` 最顺手喵：它的读法是**每跑一圈之前先瞄一眼眼色**，答真才继续跑。\n\n- 圈里有两件事：印一个数、再把它减一。**「减一」那一句最要紧** —— 它每跑一圈就把数往前挪一格，让眼色早晚有一天变成假；漏了它，数永远不变，**圈就停不下来了** —— 一路跑到你硬把窗口按掉为止。\n- 「数完啦喵」那一句顶着**行首**写，是**圈外**的话：圈跑完了才轮到它，所以它只印一遍。手一滑把它让进圈里，它就会跟着每圈都印一次。\n\n（写完任何一个圈，都停下来问自己一句：**圈里有没有一句代码，能让那个眼色早晚变成假？**）",
+      "templateId": "py-s1-while-countdown",
+      "params": {
+        "n": 5,
+        "sample": 8
+      },
+      "verified": {
+        "at": "2026-09-16T11:56:43.077Z",
+        "hash": "4337b81f67f99a1f"
+      }
+    }
+  ]
+}

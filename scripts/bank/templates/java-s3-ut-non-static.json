@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-ut-non-static",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-20",
+  "type": "codefix",
+  "concept": ["门口喊招式，招式得是整张图纸共用的", "挂在某一只猫身上的招式，门口喊不到它", "补上那个词就过去了"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "煤球"] },
+    "n2": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stemTemplate": "本喵写了一只小体检台：有一只小碗记「查了几项」，每查过一项就往上加一笔喵。可那条记数的招式**漏了一个词**，门口喊不到它 —— 翻译官喵把稿子退了回来，红字里写着 `non-static method 数一项(String) cannot be referenced from a static context`。\n\n请你把它改到能跑完、印出**三行**：\n\n```text\n这项查过：...\n这项查过：...\n一共查了 2 项\n```\n\n- 头两行报的是**这一项的名字**（本喵写在门口那两行调用里了）；\n- 最后那一行报的是**一共查了几项**；\n- 那只小碗、门口那两行调用、两个名字，一个都别动。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "public class Main {\n    static int 查了几项 = 0;\n\n    void 数一项(String 名字) {\n        查了几项++;\n        System.out.println(\"这项查过：\" + 名字);\n    }\n\n    public static void main(String[] args) {\n        数一项(\"{n1}\");\n        数一项(\"{n2}\");\n        System.out.println(\"一共查了 \" + 查了几项 + \" 项\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    static int 查了几项 = 0;\n\n    static void 数一项(String 名字) {\n        查了几项++;\n        System.out.println(\"这项查过：\" + 名字);\n    }\n\n    public static void main(String[] args) {\n        数一项(\"{n1}\");\n        数一项(\"{n2}\");\n        System.out.println(\"一共查了 \" + 查了几项 + \" 项\");\n    }\n}\n",
+  "explanationTemplate": "**一、红字怎么念。** `non-static method 数一项(String) cannot be referenced from a static context` 说的是「**从门口喊，可这条招式是挂在某一只猫身上的**」喵。\n\n**二、门口和招式的区别在哪。** `main` 是**整张图纸共用的门口**，它喊出来的名字也得是整张图纸共用的那一份。那条招式前面少了 `static`，它就成了「挂在某一只猫身上」的那种 —— 门口手上根本没有那只猫，自然喊不出口。注意红字报的**不是**招式写错了，是**喊它的那一行**喊不到它。\n\n**三、改法：补一个词。** 在那条招式前面加上 `static`，它就从「某一只猫的」变成「整张图纸共用的」。本喵改完真跑过，屏幕上就是那三行：两行「这项查过：……」加一行「一共查了 2 项」。\n\n**四、为什么 `main` 自己也有那个词。** 因为 `main` 就是门口 —— 它被喊起来的时候，外面还没有任何一只猫。可以顺手记一句：**门口要喊得到的招式，前面都得有那个词。**"
+}

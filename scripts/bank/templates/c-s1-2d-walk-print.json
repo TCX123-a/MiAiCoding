@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-2d-walk-print",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-10",
+  "type": "codewrite",
+  "concept": ["碗排表", "圈里套圈", "让翻译官喵自己量"],
+  "instances": 6,
+  "params": {
+    "table": { "kind": "pick", "values": ["{1, 2, 3}, {4, 5, 6}, {7, 8, 9}", "{2, 4, 6}, {1, 3, 5}, {9, 7, 8}", "{3, 1, 2}, {6, 5, 4}", "{8, 9, 7}, {2, 3, 1}"] }
+  },
+  "stemTemplate": "起手代码里已经摆好一张碗排表 —— 方括号里第一个空着，翻译官喵自己数了有几行。\n\n请你写个程序：把这张表**一行一行念出来** —— 同一行里格子之间空一格，一行念完换个行。\n\n（几行几格**别写死**：让翻译官喵自己量。上一课量一排碗的那个招式，多量一步就能量出碗排表喵。）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n    int grid[][3] = {{table}};\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int grid[][3] = {{table}};\n\n    int rows = (int)(sizeof(grid) / sizeof(grid[0]));\n    int cols = (int)(sizeof(grid[0]) / sizeof(grid[0][0]));\n\n    for (int i = 0; i < rows; i++) {\n        for (int j = 0; j < cols; j++) {\n            printf(\"%d \", grid[i][j]);\n        }\n        printf(\"\\n\");\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "一张碗排表要用**圈里再套一个圈**走一遍喵：\n\n- **外层**走行号，**内层**走这一行里的格号；报编号要报两次（`grid[i][j]`），两个编号都从 0 起。\n- **换行那一步站在内层圈外** —— 它归外层管，所以每**一行**走完才换一次行，不是每格都换。\n\n至于「几行几格」，这一课教了两步量法：\n\n- 整张表占多少格 ÷ **一整行**占多少格 → **行数**\n- 一整行占多少格 ÷ **单个格子**占多少格 → **每行几格**\n\n为什么非要让翻译官喵自己量？因为**行数一变，写死的眼色就不对了** —— 而 C 不会提醒你：写少了就少念一行，写多了就伸手去摸表外面的地方，摸回来的是什么谁也说不准。\n\n还有第一行那个空着的方括号：**只有你同时把每一行的内容都写出来，它才敢空着** —— 翻译官喵会自己数你写了几行。要是像上一课那样先摆表、之后才一格格填，第一个方括号里就必须写出行数喵。"
+}

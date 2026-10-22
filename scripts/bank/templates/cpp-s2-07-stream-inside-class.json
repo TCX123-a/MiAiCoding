@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-07-stream-inside-class",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-07",
+  "type": "codefix",
+  "concept": ["流运算符必须写在图纸外面", "位置站反了", "报错现场"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 9 }
+  },
+  "stemTemplate": "本喵想让 `cout << a` 直接印出袋子里的条数（袋子装着 {n} 条），就把定制 `<<` 的那一手写进了图纸里面。\n\n结果翻译官喵说找不到能用的 `<<`。\n\n你帮本喵改成能跑的写法，让那一行**印出袋子里的条数**。**`main` 里那一行一个字都不用改。**",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBag {\n    int count;\npublic:\n    FishBag(int c) : count(c) {}\n    void operator<<(ostream& os) const {\n        os << count;\n    }\n};\n\nint main() {\n    FishBag a({n});\n    cout << a << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishBag {\n    int count;\npublic:\n    FishBag(int c) : count(c) {}\n    friend ostream& operator<<(ostream& os, const FishBag& bag);\n};\n\nostream& operator<<(ostream& os, const FishBag& bag) {\n    os << bag.count;\n    return os;\n}\n\nint main() {\n    FishBag a({n});\n    cout << a << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:15:10: error: no match for 'operator<<' (operand types are 'std::ostream' ... and 'FishBag')`\n\n（原话里 `std::ostream` 后面还跟着一小截注解，说的是「也就是哪一种 ostream」那种话；那一截本喵用 `...` 省掉了，别的一个字没改。）\n\n注意它的用词是 **`no match`（找不到能用的）**，不是「你写错了」。翻成猫话：**「左边是 `cout`、右边是袋子，这个组合谁也接不住喵。」**\n\n根子不在「本喵没写」，而在**位置站反了**：\n\n- 本喵写进图纸里的那一手，规矩是「**袋子坐左边**」（`void operator<<(ostream& os) const` —— 左边是自己这只袋子，右边塞进 `os`）。\n- 可 `cout << a` 这一句里，**坐左边的是 `cout`，坐右边的是袋子** —— 正好反了。翻译官喵拿着「袋子坐左边」的规矩，去接一个「左边是 cout」的式子，当然接不住。\n\n所以正路是**把这一手挪到图纸外面去**，左右两边都当塞进来的料：`ostream& operator<<(ostream& os, const FishBag& bag)`。\n\n挪出去之后还有两件事要办：\n\n1. **要读到带盖的 `count`，得先开门**：在图纸里补一行 `friend ostream& operator<<(...);`。（这一手接的正是上一课那一手。）\n2. **`return os;` 不能省**：左边那只 `cout` 得原样传下去，`<<` 才能一路接着写。\n\n（另一种同样对的改法是**不给后门、改给袋子配一个公开招式**读条数，外面那一手用 `bag.howMany()`。两种都对，本喵这里挑了开门那一种。）"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-dowhile-missing-semicolon",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-07",
+  "type": "codefix",
+  "concept": ["do-while", "收尾的分号", "expected ';'"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵想从 0 开始一条一条发鱼干：**不管碗里几条，先发一条再说**，只要还没发到 {n} 条就接着发。\n\n可这段代码翻译官喵压根不肯收，把整段退了回来 —— 它说在本喵等着一个分号的地方，冒出来的是别的东西。你帮本喵看看它为什么不肯收，把它改好。改好之后，程序应该从第 1 条一条一条印到第 {n} 条，最后再印一行 `喂饱啦`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish = 0;\n    do {\n        fish = fish + 1;\n        printf(\"喂第 %d 条喵\\n\", fish);\n    } while (fish < {n})\n    printf(\"喂饱啦\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish = 0;\n    do {\n        fish = fish + 1;\n        printf(\"喂第 %d 条喵\\n\", fish);\n    } while (fish < {n});\n    printf(\"喂饱啦\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.c:8:23: error: expected ';' before 'printf'`\n\n翻过来就是：**在本喵等着一个分号的地方，冒出来的是 `printf`。**\n\n挨骂的是第 8 行的 `printf`，可真正漏掉的东西**在它上面那一行** —— `} while (fish < {n})` 的尾巴上少了一个分号喵。`while` 平时是独自开场的那一行（末尾不带分号），可在 `do-while` 里它是**收尾**，末尾那个分号千万不能丢。\n\n所以看到 `expected ';'`，第一条规矩是：**先去前一行末尾找那个漏掉的分号**，别瞪着挨骂的那一行看。\n\n顺带把 `do-while` 的脾气认全：`do` 的下面是大括号，圈里的活写在里面；收尾那一行是 `} while (眼色);` —— **先干一圈，再看眼色决定要不要来第二圈**。所以它的圈至少会跑一遍，`while` 和 `for` 都可能一圈都不跑喵。"
+}

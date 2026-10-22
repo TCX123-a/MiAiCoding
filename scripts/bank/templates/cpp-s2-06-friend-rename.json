@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s2-06-friend-rename",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-06",
+  "type": "codewrite",
+  "concept": ["后门能读也能写", "两扇门一读一写", "改完再看一遍"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花", "大胖"] },
+    "newName": { "kind": "pick", "values": ["大胖", "三花"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 2, "max": 9 },
+  "stemTemplate": "上一题那扇后门只**看**账，这回本喵要它**动**账。投喂口会递进来**一个数**（条数）。\n\n请你这么办：\n\n1. **画图纸** `Cat`：两栏都扣着盖子 —— `name` 装一串字，`fish` 装一个整数，再画一个出生招式把两栏填上。\n2. **在图纸里开两扇后门**（写两行 `friend`）：\n   - 一招叫 `showAccount`，接进来一只猫，印**一行**：\n\n```text\nXX 账上 N 条喵\n```\n\n   - 一招叫 `rename`，接进来一只猫和**一串新名字**，把猫的名字那一格**改成**新名字（这一招**不印东西**）。\n\n3. 在 `main` 里生一只猫：名字叫 `{name}`，条数从投喂口读。然后**按顺序**做三件事：喊 `showAccount` 看一遍账、喊 `rename` 把它改叫 `{newName}`、**再喊一次 `showAccount`** 看一遍账。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    friend void showAccount(const Cat& c);\n    friend void rename(Cat& c, string newName);\n};\n\nvoid showAccount(const Cat& c) {\n    cout << c.name << \" 账上 \" << c.fish << \" 条喵\" << endl;\n}\n\nvoid rename(Cat& c, string newName) {\n    c.name = newName;\n}\n\nint main() {\n    int fish = 0;\n    cin >> fish;\n\n    Cat c1(\"{name}\", fish);\n    showAccount(c1);\n    rename(c1, \"{newName}\");\n    showAccount(c1);\n    return 0;\n}\n",
+  "explanationTemplate": "这一题要把「**后门给的是一整把钥匙**」看明白喵。\n\n通行证不是「借你看一眼」——它让这两招**够得到盒子里的一切**，读得到，**也写得进去**。所以 `rename` 那一句 `c.name = newName;` 是合法的：它站在门里面，改的是这只猫自己那一格。\n\n屏幕上的两行就是证据：\n\n- 第一行是改之前念的账，名字还是 `{name}`；\n- 第二行是改之后念的，名字已经变成 `{newName}`；\n- **条数两行一模一样**——`rename` 只碰了名字那一格，别的什么都没动。\n\n两扇门的料写得不完全一样，这个差别也要看清：\n\n- `showAccount` 要的是 `const Cat&` —— 前面带 `const`，意思是**只看不改**，所以它进得来却动不了；\n- `rename` 要的是 `Cat&` —— 没有 `const`，意思是**这一手会改到这只猫**（`c1` 传进去之后，`c1` 本人变了）。\n\n⚠️ 别忘了这两行 `friend` 各管各的：本喵写了两行，两招才都进得来。只写一行的话，另一招照样会被翻译官喵拦下。"
+}

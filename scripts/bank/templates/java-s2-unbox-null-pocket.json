@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-unbox-null-pocket",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-06",
+  "type": "codefix",
+  "concept": ["装数字的图纸", "拆箱", "空口袋", "运行期翻车"],
+  "instances": 2,
+  "params": {
+    "k": { "kind": "int", "min": 0, "max": 1 }
+  },
+  "stemTemplate": "本喵伸手去掏真猫的口袋 —— 可这只口袋**是空的**。翻译官喵没拦着，程序也跑起来了，可屏幕上冒出来的不是数字，是**一大段红字**。\n\n请你帮本喵改好，规矩是：**口袋空的时候就当成 {k} 条**。\n\n改好之后，程序该印出这一行：\n\n```text\n今天有 {k} 条小鱼干喵\n```\n\n只有掏口袋那一行的问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        Integer boxed = null;\n        int raw = boxed;\n        System.out.println(\"今天有 \" + raw + \" 条小鱼干喵\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        Integer boxed = null;\n        int raw = boxed == null ? {k} : boxed;\n        System.out.println(\"今天有 \" + raw + \" 条小鱼干喵\");\n    }\n}\n",
+  "explanationTemplate": "这一题是**两段式的翻车**，本喵要分清楚：\n\n- **翻稿子那一关它过得去**。`int raw = boxed;` 这一句翻译官一个字都没说 —— 因为它确实是一句合法的「拆箱」。\n- **跑到这一句才炸**。屏幕上头一段是 `Exception in thread \"main\" java.lang.NullPointerException`，后面还跟着一句说得明明白白的：本喵要喊的那一嗓子 `intValue()`，**落在一只空口袋上**。\n\n道理就在这儿：**拆箱说到底就是偷偷喊了一声 `intValue()`**。光溜溜的家当装不进「空」，可照图纸生的真猫**可以是空口袋**（`null`）—— 口袋里什么都没有，硬要伸手，就只能炸。\n\n所以正路是**掏之前先看一眼**，给空口袋留个兜底的值：\n\n```java\nint raw = boxed == null ? {k} : boxed;\n```\n\n这句话的读法是「**空口袋就取 {k}，不空就从口袋里掏出数字**」。三元这种写法**只走一边**：空的时候，右边那个 `boxed` 压根不会被掏，所以不会炸。\n\n顺手记一条往后天天要用的：**从储物柜、从账本里取出来的数字，都可能是空口袋。** 要么先问一句「它在不在」，要么给个兜底的值，别直接拆喵。"
+}

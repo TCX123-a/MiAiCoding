@@ -1,0 +1,258 @@
+{
+  "lessonId": "c-stage3-05",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-tree-count-height-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "架子搭好了，本喵还想让这架架子**报两个数**：架子上到底挂了**几个接头**、从最下面一层到最上面一层一共**几层高**。\n\n请你补两招：\n\n1. `count_nodes(Node *root)`：数一数这架架子（连它底下两只叉）一共挂了几个接头。\n2. `tree_height(Node *root)`：报这架架子的**层高** —— 从最下面那一层数到最上面那一层，一共几层。\n\n**规矩**：「空叉算 0」—— 一只接头都没有的架子，接头数答 0、层高也答 0；挂着一只接头的架子，接头数答 1、层高答 1。\n\n搭架子两招、报数那招（`inorder`）和 `main` 都写在底座里了。`中序` 那一行是留给你**对照**的：数出来的接头数，得跟那一行里有几个数对得上。\n\n输入先给一个数（一共几个），然后一行一个数。样例输入：\n\n```text\n5\n16\n35\n17\n10\n12\n```\n\n该印出来**三行**：\n\n```text\n挂了 5 个接头\n这架架子有 3 层高\n中序：10 12 16 17 35\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint count_nodes(Node *root) {\n    /* ① 空叉算 0；不然就是自己那一个，加上两只叉各自的数 */\n\n}\n\nint tree_height(Node *root) {\n    /* ② 空叉算 0；不然就是两只叉里高的那个再加一层 */\n\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"挂了 %d 个接头\\n\", count_nodes(root));\n    printf(\"这架架子有 %d 层高\\n\", tree_height(root));\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint count_nodes(Node *root) {\n    if (root == NULL) {\n        return 0;\n    }\n    return 1 + count_nodes(root->left) + count_nodes(root->right);\n}\n\nint tree_height(Node *root) {\n    if (root == NULL) {\n        return 0;\n    }\n    int lh = tree_height(root->left);\n    int rh = tree_height(root->right);\n    return 1 + (lh > rh ? lh : rh);\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"挂了 %d 个接头\\n\", count_nodes(root));\n    printf(\"这架架子有 %d 层高\\n\", tree_height(root));\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "挂了 5 个接头\n这架架子有 4 层高\n中序：17 57 62 63 75",
+      "stdin": "5\n63\n62\n57\n75\n17\n",
+      "explanation": "这两招都是「**自己 + 两只叉 → 合成一个答案**」的路子喵，而且开头都得先问一句「是不是空叉」：**空叉算 0** —— 这两招的答案都是「个数」，一只接头都没有当然是 0。\n\n**① 数接头。** 自己算 1 个，再把左边那只叉里的接头数、右边那只叉里的接头数各要一份，三份加起来：\n\n```text\nreturn 1 + count_nodes(root->left) + count_nodes(root->right);\n```\n\n**② 数层高。** 这个比数接头绕一点：自己这一层当然要算，但底下那两只叉**不用加起来，只要高的那一个** —— 一架架子有多高，取决于**最长的那条路**走了几层。所以先分别问两只叉各自多高，取大的那个，再加自己这一层：\n\n```text\nint lh = tree_height(root->left);\nint rh = tree_height(root->right);\nreturn 1 + (lh > rh ? lh : rh);\n```\n\n注意 `1 +` 的位置和那个「取大的」：本喵见过有猫把两只叉的高度**加起来**，那样数的其实不是层高，而是「整架架子一共分了多少岔」。\n\n本喵给你留一句分头记：**一人加两只叉，加起来；一层看最长那条路，加一。**",
+      "templateId": "c-s3-tree-count-height",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:12.142Z",
+        "hash": "0180f7db43c60c6a"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-count-height-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "架子搭好了，本喵还想让这架架子**报两个数**：架子上到底挂了**几个接头**、从最下面一层到最上面一层一共**几层高**。\n\n请你补两招：\n\n1. `count_nodes(Node *root)`：数一数这架架子（连它底下两只叉）一共挂了几个接头。\n2. `tree_height(Node *root)`：报这架架子的**层高** —— 从最下面那一层数到最上面那一层，一共几层。\n\n**规矩**：「空叉算 0」—— 一只接头都没有的架子，接头数答 0、层高也答 0；挂着一只接头的架子，接头数答 1、层高答 1。\n\n搭架子两招、报数那招（`inorder`）和 `main` 都写在底座里了。`中序` 那一行是留给你**对照**的：数出来的接头数，得跟那一行里有几个数对得上。\n\n输入先给一个数（一共几个），然后一行一个数。样例输入：\n\n```text\n6\n5\n43\n73\n87\n15\n54\n```\n\n该印出来**三行**：\n\n```text\n挂了 6 个接头\n这架架子有 4 层高\n中序：5 15 43 54 73 87\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint count_nodes(Node *root) {\n    /* ① 空叉算 0；不然就是自己那一个，加上两只叉各自的数 */\n\n}\n\nint tree_height(Node *root) {\n    /* ② 空叉算 0；不然就是两只叉里高的那个再加一层 */\n\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"挂了 %d 个接头\\n\", count_nodes(root));\n    printf(\"这架架子有 %d 层高\\n\", tree_height(root));\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint count_nodes(Node *root) {\n    if (root == NULL) {\n        return 0;\n    }\n    return 1 + count_nodes(root->left) + count_nodes(root->right);\n}\n\nint tree_height(Node *root) {\n    if (root == NULL) {\n        return 0;\n    }\n    int lh = tree_height(root->left);\n    int rh = tree_height(root->right);\n    return 1 + (lh > rh ? lh : rh);\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"挂了 %d 个接头\\n\", count_nodes(root));\n    printf(\"这架架子有 %d 层高\\n\", tree_height(root));\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "挂了 5 个接头\n这架架子有 4 层高\n中序：41 49 55 61 74",
+      "stdin": "6\n49\n74\n55\n61\n49\n41\n",
+      "explanation": "这两招都是「**自己 + 两只叉 → 合成一个答案**」的路子喵，而且开头都得先问一句「是不是空叉」：**空叉算 0** —— 这两招的答案都是「个数」，一只接头都没有当然是 0。\n\n**① 数接头。** 自己算 1 个，再把左边那只叉里的接头数、右边那只叉里的接头数各要一份，三份加起来：\n\n```text\nreturn 1 + count_nodes(root->left) + count_nodes(root->right);\n```\n\n**② 数层高。** 这个比数接头绕一点：自己这一层当然要算，但底下那两只叉**不用加起来，只要高的那一个** —— 一架架子有多高，取决于**最长的那条路**走了几层。所以先分别问两只叉各自多高，取大的那个，再加自己这一层：\n\n```text\nint lh = tree_height(root->left);\nint rh = tree_height(root->right);\nreturn 1 + (lh > rh ? lh : rh);\n```\n\n注意 `1 +` 的位置和那个「取大的」：本喵见过有猫把两只叉的高度**加起来**，那样数的其实不是层高，而是「整架架子一共分了多少岔」。\n\n本喵给你留一句分头记：**一人加两只叉，加起来；一层看最长那条路，加一。**",
+      "templateId": "c-s3-tree-count-height",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:13.902Z",
+        "hash": "9b94241a19f1691d"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-flip-compare-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把 **5、3、8、1、4** 这五个数按这个次序挂到猫爬架上，然后**中序**报一遍 —— 照规矩该是**从小到大**。\n\n可它报出来的正好**倒过来**，从大到小：\n\n```text\n中序：8 5 4 3 1\n```\n\n请你看看**挂东西那一招**里哪句话反了，把它改好。改好之后该印：\n\n```text\n中序：1 3 4 5 8\n```",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value > root->value) {\n        root->left = insert(root->left, value);\n    } else if (value < root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {5, 3, 8, 1, 4};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {5, 3, 8, 1, 4};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "中序：1 3 4 5 8",
+      "stdin": null,
+      "explanation": "问题出在**两只叉的规矩正好被对调了**喵。\n\n本喵那一版写的是：\n\n```text\nif (value > root->value) {\n    root->left = insert(root->left, value);\n} else if (value < root->value) {\n    root->right = insert(root->right, value);\n}\n```\n\n比这一层**大**的数被交给了**左边**，比这一层**小**的数被交给了右边 —— 这就是「怎么爬都是歪的」的根源：整架架子**每一层都反着长**。\n\n改法就是把两只牌子换回来：比这一层**小**的交给左边（`value < root->value` 走 `left`），**大**的交给右边。正好跟本课那句口诀对上：**小的往左、大的往右**。\n\n为什么中序会「倒过来」？因为中序是「先左边、再自己、最后右边」，而左边那一叉里装的偏偏都是**比这一层大**的数 —— 左右一换，报出来的次序就整整齐齐倒了个头。这也正是本喵拿「从小到大」当下判据的原因：\n\n**中序那一行是不是从小到大，就是这架架子有没有歪的照妖镜喵。**\n\n⚠️ 顺一句：这个错翻译官喵也**不会吭声** —— 本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，五个数一个不少、次序全反，它看不出来。",
+      "templateId": "c-s3-tree-flip-compare",
+      "params": {
+        "a": "5",
+        "b": "3",
+        "c": "8",
+        "d": "1",
+        "e": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:00.124Z",
+        "hash": "05f6e0991d06c17b"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-flip-compare-031",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把 **50、20、70、10、40** 这五个数按这个次序挂到猫爬架上，然后**中序**报一遍 —— 照规矩该是**从小到大**。\n\n可它报出来的正好**倒过来**，从大到小：\n\n```text\n中序：70 50 40 20 10\n```\n\n请你看看**挂东西那一招**里哪句话反了，把它改好。改好之后该印：\n\n```text\n中序：10 20 40 50 70\n```",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value > root->value) {\n        root->left = insert(root->left, value);\n    } else if (value < root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {50, 20, 70, 10, 40};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {50, 20, 70, 10, 40};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "中序：10 20 40 50 70",
+      "stdin": null,
+      "explanation": "问题出在**两只叉的规矩正好被对调了**喵。\n\n本喵那一版写的是：\n\n```text\nif (value > root->value) {\n    root->left = insert(root->left, value);\n} else if (value < root->value) {\n    root->right = insert(root->right, value);\n}\n```\n\n比这一层**大**的数被交给了**左边**，比这一层**小**的数被交给了右边 —— 这就是「怎么爬都是歪的」的根源：整架架子**每一层都反着长**。\n\n改法就是把两只牌子换回来：比这一层**小**的交给左边（`value < root->value` 走 `left`），**大**的交给右边。正好跟本课那句口诀对上：**小的往左、大的往右**。\n\n为什么中序会「倒过来」？因为中序是「先左边、再自己、最后右边」，而左边那一叉里装的偏偏都是**比这一层大**的数 —— 左右一换，报出来的次序就整整齐齐倒了个头。这也正是本喵拿「从小到大」当下判据的原因：\n\n**中序那一行是不是从小到大，就是这架架子有没有歪的照妖镜喵。**\n\n⚠️ 顺一句：这个错翻译官喵也**不会吭声** —— 本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，五个数一个不少、次序全反，它看不出来。",
+      "templateId": "c-s3-tree-flip-compare",
+      "params": {
+        "a": "50",
+        "b": "20",
+        "c": "70",
+        "d": "10",
+        "e": "40"
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:02.074Z",
+        "hash": "9020733fb2242aa4"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-inorder-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要搭一架**会分叉的猫爬架**：上头挂着的每个**接头**上写一个数，规矩是「**小的往左、大的往右**」。\n\n请你写三招：\n\n1. `new_node(int value)`：现租一个接头，把数写在自己的牌子上，**两只牌子（左边那只叉、右边那只叉）先都留空**。\n2. `insert(Node *root, int value)`：摸到空位就挂一个新的上去；手上的数比这一层**小**就交给左边，比这一层**大**就交给右边；**挂完要把架子顶叼回来**。\n3. `inorder(Node *root)`：中序报一遍 —— **先左边那只叉，再报自己，最后右边那只叉**。\n\n读数的部分、把每个数挨个挂上去的那几行、连「`中序：`」这个开头，底座里都写好了，你只管把上面三招填好。\n\n输入先给一个数（一共几个），然后一行一个数。样例输入：\n\n```text\n5\n12\n76\n95\n82\n76\n```\n\n该印出来**一行**（从小到大，每个数后面跟一个空格）：\n\n```text\n中序：12 76 82 95\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    /* ① 现租一个接头，两只牌子先都留空 */\n\n}\n\nNode *insert(Node *root, int value) {\n    /* ② 摸到空位就挂上去；小的往左、大的往右；把架子顶叼回来 */\n\n}\n\nvoid inorder(Node *root) {\n    /* ③ 先左边那只叉，再报自己，最后右边那只叉 */\n\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "中序：19 37 60 64",
+      "stdin": "5\n64\n37\n37\n60\n19\n",
+      "explanation": "三招各管一件事喵。\n\n**① `new_node`：现租一个接头。** 数写在自己的牌子上，**两只牌子先都留空**（`p->left = NULL; p->right = NULL;`）。这两句千万不能省：本喵见过不止一只猫租来接头就忘了把左边那只叉留空，结果摸过去一看是**上一位房客留下的烂地址**，程序当场摔得莫名其妙。\n\n**② `insert`：挂上去，记得接回来。** 顺着「小的往左、大的往右」一路往下摸，摸到空位（`root == NULL`）就地造一个新接头交回去。这里最要紧的是**写全 `root->left = insert(root->left, value);`**：少了前面那个 `root->left = `，新接头就没人接，白白丢掉 —— 这也是本课最容易翻车的一句。\n\n**③ `inorder`：先左、再自己、最后右。** 三句的顺序不能乱：\n\n```text\ninorder(root->left);\nprintf(\"%d \", root->value);\ninorder(root->right);\n```\n\n而且**头一句必须是「咬到空处就松口」**：\n\n```text\nif (root == NULL) {\n    return;\n}\n```\n\n不然空叉传进来照样去摸，招式会没完没了地喊自己。\n\n这三招合起来，为什么报出来的是**从小到大**？因为每一层都比左边的整半边大、比右边的整半边小；中序先把左边那一整片报完，再报自己，最后报右边那一整片 —— 一路走去正好是**从小往大挨个点名**。这就是中序那行字能当「架子搭歪没歪」的照妖镜的道理喵。\n\n顺一句：输入里要是有**一样的数**，本喵那一版会**只留一个**（`value < root->value` 和 `value > root->value` 都不成立，等于原地不动）—— 这不算错，本喵判的是「从小到大」这一条。",
+      "templateId": "c-s3-tree-inorder",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:47:26.257Z",
+        "hash": "65ca249c7e7da599"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-inorder-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "本喵要搭一架**会分叉的猫爬架**：上头挂着的每个**接头**上写一个数，规矩是「**小的往左、大的往右**」。\n\n请你写三招：\n\n1. `new_node(int value)`：现租一个接头，把数写在自己的牌子上，**两只牌子（左边那只叉、右边那只叉）先都留空**。\n2. `insert(Node *root, int value)`：摸到空位就挂一个新的上去；手上的数比这一层**小**就交给左边，比这一层**大**就交给右边；**挂完要把架子顶叼回来**。\n3. `inorder(Node *root)`：中序报一遍 —— **先左边那只叉，再报自己，最后右边那只叉**。\n\n读数的部分、把每个数挨个挂上去的那几行、连「`中序：`」这个开头，底座里都写好了，你只管把上面三招填好。\n\n输入先给一个数（一共几个），然后一行一个数。样例输入：\n\n```text\n6\n91\n71\n88\n66\n26\n81\n```\n\n该印出来**一行**（从小到大，每个数后面跟一个空格）：\n\n```text\n中序：26 66 71 81 88 91\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    /* ① 现租一个接头，两只牌子先都留空 */\n\n}\n\nNode *insert(Node *root, int value) {\n    /* ② 摸到空位就挂上去；小的往左、大的往右；把架子顶叼回来 */\n\n}\n\nvoid inorder(Node *root) {\n    /* ③ 先左边那只叉，再报自己，最后右边那只叉 */\n\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "中序：16 17 26 40 51 92",
+      "stdin": "6\n16\n17\n51\n92\n26\n40\n",
+      "explanation": "三招各管一件事喵。\n\n**① `new_node`：现租一个接头。** 数写在自己的牌子上，**两只牌子先都留空**（`p->left = NULL; p->right = NULL;`）。这两句千万不能省：本喵见过不止一只猫租来接头就忘了把左边那只叉留空，结果摸过去一看是**上一位房客留下的烂地址**，程序当场摔得莫名其妙。\n\n**② `insert`：挂上去，记得接回来。** 顺着「小的往左、大的往右」一路往下摸，摸到空位（`root == NULL`）就地造一个新接头交回去。这里最要紧的是**写全 `root->left = insert(root->left, value);`**：少了前面那个 `root->left = `，新接头就没人接，白白丢掉 —— 这也是本课最容易翻车的一句。\n\n**③ `inorder`：先左、再自己、最后右。** 三句的顺序不能乱：\n\n```text\ninorder(root->left);\nprintf(\"%d \", root->value);\ninorder(root->right);\n```\n\n而且**头一句必须是「咬到空处就松口」**：\n\n```text\nif (root == NULL) {\n    return;\n}\n```\n\n不然空叉传进来照样去摸，招式会没完没了地喊自己。\n\n这三招合起来，为什么报出来的是**从小到大**？因为每一层都比左边的整半边大、比右边的整半边小；中序先把左边那一整片报完，再报自己，最后报右边那一整片 —— 一路走去正好是**从小往大挨个点名**。这就是中序那行字能当「架子搭歪没歪」的照妖镜的道理喵。\n\n顺一句：输入里要是有**一样的数**，本喵那一版会**只留一个**（`value < root->value` 和 `value > root->value` 都不成立，等于原地不动）—— 这不算错，本喵判的是「从小到大」这一条。",
+      "templateId": "c-s3-tree-inorder",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-16T08:47:28.037Z",
+        "hash": "9e46301c7fc84023"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-insert-no-attach-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把 **5、3、8、1、4** 这五个数按这个次序挂到猫爬架上，然后**中序**报一遍 —— 照规矩该是**从小到大**。\n\n可印出来只有一个数：\n\n```text\n中序：5\n```\n\n五个数只挂上了最上面那一个。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**挂东西那一招**改好。改好之后该印：\n\n```text\n中序：1 3 4 5 8\n```",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        insert(root->left, value);\n    } else if (value > root->value) {\n        insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {5, 3, 8, 1, 4};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {5, 3, 8, 1, 4};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "中序：1 3 4 5 8",
+      "stdin": null,
+      "explanation": "毛病是**挂好的叉没接回来**喵。\n\n本喵那一版写的是 `insert(root->left, value);` —— 这一句本身没错：它照样一路往下摸，摸到空位就现造了一个新接头。可**造好的那个接头没人接**：那只新接头的牌子被拿在手上，一转头就丢了。所以整架架子上永远只有最上面那一个。\n\n要接上的是这一句前面的 `root->left = `：\n\n```text\nroot->left = insert(root->left, value);\n```\n\n念作「**让左边那只叉照同样的办法挂一遍，挂完把结果接回我左边这只牌子上**」。右边那一句同理。\n\n这也是「自己咬自己尾巴的招式」一定要**自己接自己**的地方喵：招式答回来的是**挂好之后那半边的架子顶**，不接回来，新挂的东西就白挂了。\n\n⚠️ 翻译官喵**不会吭声** —— 本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，跑起来也不摔，它只是**丢东西**。这一课里这一句 `root->left = `（还有它的右边兄弟）最值得你多念两遍喵。",
+      "templateId": "c-s3-tree-insert-no-attach",
+      "params": {
+        "a": "5",
+        "b": "3",
+        "c": "8",
+        "d": "1",
+        "e": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T08:45:55.817Z",
+        "hash": "643bbcaef8e1f358"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-insert-no-attach-031",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把 **50、20、70、10、40** 这五个数按这个次序挂到猫爬架上，然后**中序**报一遍 —— 照规矩该是**从小到大**。\n\n可印出来只有一个数：\n\n```text\n中序：50\n```\n\n五个数只挂上了最上面那一个。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**挂东西那一招**改好。改好之后该印：\n\n```text\n中序：10 20 40 50 70\n```",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        insert(root->left, value);\n    } else if (value > root->value) {\n        insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {50, 20, 70, 10, 40};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {50, 20, 70, 10, 40};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "中序：10 20 40 50 70",
+      "stdin": null,
+      "explanation": "毛病是**挂好的叉没接回来**喵。\n\n本喵那一版写的是 `insert(root->left, value);` —— 这一句本身没错：它照样一路往下摸，摸到空位就现造了一个新接头。可**造好的那个接头没人接**：那只新接头的牌子被拿在手上，一转头就丢了。所以整架架子上永远只有最上面那一个。\n\n要接上的是这一句前面的 `root->left = `：\n\n```text\nroot->left = insert(root->left, value);\n```\n\n念作「**让左边那只叉照同样的办法挂一遍，挂完把结果接回我左边这只牌子上**」。右边那一句同理。\n\n这也是「自己咬自己尾巴的招式」一定要**自己接自己**的地方喵：招式答回来的是**挂好之后那半边的架子顶**，不接回来，新挂的东西就白挂了。\n\n⚠️ 翻译官喵**不会吭声** —— 本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，跑起来也不摔，它只是**丢东西**。这一课里这一句 `root->left = `（还有它的右边兄弟）最值得你多念两遍喵。",
+      "templateId": "c-s3-tree-insert-no-attach",
+      "params": {
+        "a": "50",
+        "b": "20",
+        "c": "70",
+        "d": "10",
+        "e": "40"
+      },
+      "verified": {
+        "at": "2026-09-16T08:45:57.772Z",
+        "hash": "8e2eaba5493b085c"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-no-stop-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把 **5、3、8、1、4** 这五个数挂上了猫爬架，架子搭得没错，可**报数那一招**一跑就出事：程序当场摔了，屏幕上一个字都没印出来。\n\n翻译官喵这次**嘀咕了**一句：\n\n```text\nwarning: infinite recursion detected [-Winfinite-recursion]\n```\n\n嘀咕归嘀咕，编译照样过（答 0）；真正摔的是跑起来那一下 —— 程序**答回来一个巨大的数**，输出是空的。\n\n请你把**报数那一招**补好。改好之后该印：\n\n```text\n中序：1 3 4 5 8\n```",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {5, 3, 8, 1, 4};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {5, 3, 8, 1, 4};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "中序：1 3 4 5 8",
+      "stdin": null,
+      "explanation": "少的是**收手那一句**喵。\n\n本喵那一版把两边的叉都摸遍了，偏偏忘了问一句「**这只叉是不是空的**」：\n\n```text\nif (root == NULL) {\n    return;\n}\n```\n\n少了它，一只空叉传进来，程序照样去摸 `root->left` —— 可 `root` 本来就是空的，那里根本没有东西可摸。**自己咬自己尾巴的招式，最要紧的就是「咬到空处就松口」这一句**：它不松口，就会一代一代往下喊，永远回不了头。\n\n翻译官喵这次**确实嘀咕了**（`-Winfinite-recursion`：「这一招会没完没了地喊自己」），但那只算**提醒**，编译照样过 —— 真正摔的是跑起来：本喵真跑过，程序**输出是空的**，退出码是一串很大的数（不是 0）。所以这道题的判据不是「翻译官喵吭没吭声」，而是**跑起来摔不摔、印不印得出那一行**。\n\n顺一句：`insert` 里为什么不用愁这一句？因为它**第一句就问过了** —— 摸到空位就地现造一个接头，直接把它交回去（`return new_node(value);`），压根不会往空处摸第二下。报数这一招摸到空位没东西可造，只能**松口往回走**，这就是两句长得不一样的原因。",
+      "templateId": "c-s3-tree-no-stop",
+      "params": {
+        "a": "5",
+        "b": "3",
+        "c": "8",
+        "d": "1",
+        "e": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T08:47:29.732Z",
+        "hash": "02f93690115aff16"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-no-stop-031",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵把 **50、20、70、10、40** 这五个数挂上了猫爬架，架子搭得没错，可**报数那一招**一跑就出事：程序当场摔了，屏幕上一个字都没印出来。\n\n翻译官喵这次**嘀咕了**一句：\n\n```text\nwarning: infinite recursion detected [-Winfinite-recursion]\n```\n\n嘀咕归嘀咕，编译照样过（答 0）；真正摔的是跑起来那一下 —— 程序**答回来一个巨大的数**，输出是空的。\n\n请你把**报数那一招**补好。改好之后该印：\n\n```text\n中序：10 20 40 50 70\n```",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {50, 20, 70, 10, 40};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nint main(void) {\n    Node *root = NULL;\n    int values[5] = {50, 20, 70, 10, 40};\n    for (int i = 0; i < 5; i++) {\n        root = insert(root, values[i]);\n    }\n\n    printf(\"中序：\");\n    inorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "中序：10 20 40 50 70",
+      "stdin": null,
+      "explanation": "少的是**收手那一句**喵。\n\n本喵那一版把两边的叉都摸遍了，偏偏忘了问一句「**这只叉是不是空的**」：\n\n```text\nif (root == NULL) {\n    return;\n}\n```\n\n少了它，一只空叉传进来，程序照样去摸 `root->left` —— 可 `root` 本来就是空的，那里根本没有东西可摸。**自己咬自己尾巴的招式，最要紧的就是「咬到空处就松口」这一句**：它不松口，就会一代一代往下喊，永远回不了头。\n\n翻译官喵这次**确实嘀咕了**（`-Winfinite-recursion`：「这一招会没完没了地喊自己」），但那只算**提醒**，编译照样过 —— 真正摔的是跑起来：本喵真跑过，程序**输出是空的**，退出码是一串很大的数（不是 0）。所以这道题的判据不是「翻译官喵吭没吭声」，而是**跑起来摔不摔、印不印得出那一行**。\n\n顺一句：`insert` 里为什么不用愁这一句？因为它**第一句就问过了** —— 摸到空位就地现造一个接头，直接把它交回去（`return new_node(value);`），压根不会往空处摸第二下。报数这一招摸到空位没东西可造，只能**松口往回走**，这就是两句长得不一样的原因。",
+      "templateId": "c-s3-tree-no-stop",
+      "params": {
+        "a": "50",
+        "b": "20",
+        "c": "70",
+        "d": "10",
+        "e": "40"
+      },
+      "verified": {
+        "at": "2026-09-16T08:47:31.541Z",
+        "hash": "6a2e99c52d25675f"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-three-orders-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "猫爬架搭好了（搭架子的两招已经写在底座里）。本喵现在要你写**三招报数**，把同一架架子**用三种次序**各报一遍：\n\n1. `preorder(Node *root)`：**先报自己**，再左边那只叉，最后右边那只叉。\n2. `inorder(Node *root)`：先左边那只叉，**再报自己**，最后右边那只叉。\n3. `postorder(Node *root)`：先左边那只叉，再右边那只叉，**最后报自己**。\n\n三招**唯一的区别**，就是「报自己」那一下排在**第一句、第二句还是第三句**。\n\n每一招都得有「**咬到空处就松口**」那一句。读数和 `main` 里的三行开头（`前序：` / `中序：` / `后序：`）底座都写好了。\n\n输入先给一个数（一共几个），然后一行一个数。样例输入：\n\n```text\n5\n32\n22\n79\n23\n40\n```\n\n该印出来**三行**：\n\n```text\n前序：32 22 23 79 40\n中序：22 23 32 40 79\n后序：23 22 40 79 32\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid preorder(Node *root) {\n    /* ① 报自己排第一句 */\n\n}\n\nvoid inorder(Node *root) {\n    /* ② 报自己排第二句 */\n\n}\n\nvoid postorder(Node *root) {\n    /* ③ 报自己排第三句 */\n\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"前序：\");\n    preorder(root);\n    printf(\"\\n中序：\");\n    inorder(root);\n    printf(\"\\n后序：\");\n    postorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid preorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    printf(\"%d \", root->value);\n    preorder(root->left);\n    preorder(root->right);\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nvoid postorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    postorder(root->left);\n    postorder(root->right);\n    printf(\"%d \", root->value);\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"前序：\");\n    preorder(root);\n    printf(\"\\n中序：\");\n    inorder(root);\n    printf(\"\\n后序：\");\n    postorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "前序：25 39 84 63 85\n中序：25 39 63 84 85\n后序：63 85 84 39 25",
+      "stdin": "5\n25\n39\n84\n85\n63\n",
+      "explanation": "三招**长得几乎一模一样**，差别只有「报自己」那一下摆在第几句喵：\n\n```text\n前序：报自己 → 左边 → 右边\n中序：左边 → 报自己 → 右边\n后序：左边 → 右边 → 报自己\n```\n\n为什么换一下顺序，报出来就完全是另一串数？因为「自己」在架子上的位置是**中间那一层** —— 你先报它，整架架子就是从**架子顶往下**点名；最后报它，就是从**最底下那层往上**收尾。\n\n拿样例那架架子对一下，三行头一个数就各不相同：**前序开头是最上面那个数**（架子顶），**中序开头是最小那个数**（一路往左摸到底），**后序开头是最小那一支里最先松口的那个**。\n\n本喵给你留一句分头记：\n\n**三招是同一个走法，只是「报自己」那一下挪了位子 —— 头、腰、尾，各叫一个名字。**\n\n⚠️ 三招里**每一招都要有**「咬到空处就松口」那一句：\n\n```text\nif (root == NULL) {\n    return;\n}\n```\n\n少一句，那一招就会没完没了地喊自己，程序当场摔、一个字都印不出来。",
+      "templateId": "c-s3-tree-three-orders",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:49.955Z",
+        "hash": "788eaf9a175107f0"
+      }
+    },
+    {
+      "id": "bank-c-s3-tree-three-orders-001",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "猫爬架搭好了（搭架子的两招已经写在底座里）。本喵现在要你写**三招报数**，把同一架架子**用三种次序**各报一遍：\n\n1. `preorder(Node *root)`：**先报自己**，再左边那只叉，最后右边那只叉。\n2. `inorder(Node *root)`：先左边那只叉，**再报自己**，最后右边那只叉。\n3. `postorder(Node *root)`：先左边那只叉，再右边那只叉，**最后报自己**。\n\n三招**唯一的区别**，就是「报自己」那一下排在**第一句、第二句还是第三句**。\n\n每一招都得有「**咬到空处就松口**」那一句。读数和 `main` 里的三行开头（`前序：` / `中序：` / `后序：`）底座都写好了。\n\n输入先给一个数（一共几个），然后一行一个数。样例输入：\n\n```text\n6\n15\n23\n63\n17\n72\n41\n```\n\n该印出来**三行**：\n\n```text\n前序：15 23 17 63 41 72\n中序：15 17 23 41 63 72\n后序：17 41 72 63 23 15\n```",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid preorder(Node *root) {\n    /* ① 报自己排第一句 */\n\n}\n\nvoid inorder(Node *root) {\n    /* ② 报自己排第二句 */\n\n}\n\nvoid postorder(Node *root) {\n    /* ③ 报自己排第三句 */\n\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"前序：\");\n    preorder(root);\n    printf(\"\\n中序：\");\n    inorder(root);\n    printf(\"\\n后序：\");\n    postorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int value;\n    struct Node *left;\n    struct Node *right;\n} Node;\n\nNode *new_node(int value) {\n    Node *p = (Node *)malloc(sizeof(Node));\n    if (p == NULL) {\n        return NULL;\n    }\n    p->value = value;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\nNode *insert(Node *root, int value) {\n    if (root == NULL) {\n        return new_node(value);\n    }\n    if (value < root->value) {\n        root->left = insert(root->left, value);\n    } else if (value > root->value) {\n        root->right = insert(root->right, value);\n    }\n    return root;\n}\n\nvoid preorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    printf(\"%d \", root->value);\n    preorder(root->left);\n    preorder(root->right);\n}\n\nvoid inorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    inorder(root->left);\n    printf(\"%d \", root->value);\n    inorder(root->right);\n}\n\nvoid postorder(Node *root) {\n    if (root == NULL) {\n        return;\n    }\n    postorder(root->left);\n    postorder(root->right);\n    printf(\"%d \", root->value);\n}\n\nint main(void) {\n    int n;\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n    Node *root = NULL;\n    for (int i = 0; i < n; i++) {\n        int v;\n        if (scanf(\"%d\", &v) != 1) {\n            return 1;\n        }\n        root = insert(root, v);\n    }\n\n    printf(\"前序：\");\n    preorder(root);\n    printf(\"\\n中序：\");\n    inorder(root);\n    printf(\"\\n后序：\");\n    postorder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+      "expectedOutput": "前序：34 6 19 96 78 71\n中序：6 19 34 71 78 96\n后序：19 6 71 78 96 34",
+      "stdin": "6\n34\n6\n96\n78\n19\n71\n",
+      "explanation": "三招**长得几乎一模一样**，差别只有「报自己」那一下摆在第几句喵：\n\n```text\n前序：报自己 → 左边 → 右边\n中序：左边 → 报自己 → 右边\n后序：左边 → 右边 → 报自己\n```\n\n为什么换一下顺序，报出来就完全是另一串数？因为「自己」在架子上的位置是**中间那一层** —— 你先报它，整架架子就是从**架子顶往下**点名；最后报它，就是从**最底下那层往上**收尾。\n\n拿样例那架架子对一下，三行头一个数就各不相同：**前序开头是最上面那个数**（架子顶），**中序开头是最小那个数**（一路往左摸到底），**后序开头是最小那一支里最先松口的那个**。\n\n本喵给你留一句分头记：\n\n**三招是同一个走法，只是「报自己」那一下挪了位子 —— 头、腰、尾，各叫一个名字。**\n\n⚠️ 三招里**每一招都要有**「咬到空处就松口」那一句：\n\n```text\nif (root == NULL) {\n    return;\n}\n```\n\n少一句，那一招就会没完没了地喊自己，程序当场摔、一个字都印不出来。",
+      "templateId": "c-s3-tree-three-orders",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-09-16T08:46:51.893Z",
+        "hash": "807530e65d67f105"
+      }
+    }
+  ]
+}

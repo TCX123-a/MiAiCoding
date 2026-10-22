@@ -1,0 +1,236 @@
+{
+  "lessonId": "cpp-stage2-08",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s2-08-assign-copy-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "上一题本喵给盒子写了照抄招式；可**两只盒子都已经生出来了**的时候，`b = a;` 走的**不是**照抄招式 —— 它走的是另一手，本喵也得自己写。投喂口会递进来**两个数**（一行一个）：第一只、第二只的条数。\n\n请你这么办：\n\n1. **画图纸** `FishBox`：一栏带盖的牌子 `int* p`；出生招式里**租一间屋**（`new`）；收尾招式里**还掉**（`delete`）；再画公开招式 `get` 和 `set`。\n2. **自己写照抄招式**（另租一间、搬内容）。\n3. **再写赋值那一手**（名字是 `operator=` 那一手）：它**只把对方屋里的内容搬进本喵已有的那间屋**，**不许新租**（新租会把旧屋的地址冲掉，那间屋就再也没人还了）；最后把本喵**自己原样叼回去**，好让 `b = a = c;` 这种话能连着写。\n4. 在 `main` 里：读进两个数 → 生两只盒子 → 让第二只**照第一只的内容改**（`b = a;`）→ 再把**第一只**改成 40 → 印**两行**：\n\n```text\nXX 那一格现在是 N 条\n```\n\n（先印 `a` 那一格，再印 `b` 那一格）\n\n比如投喂给程序的是\n\n7\n4\n\n程序就要叼回\n\na 那一格现在是 40 条\nb 那一格现在是 7 条\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n    FishBox(const FishBox& other) { p = new int(*other.p); }\n    ~FishBox() { delete p; }\n\n    FishBox& operator=(const FishBox& other) {\n        *p = *other.p;\n        return *this;\n    }\n\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    int x = 0;\n    int y = 0;\n    cin >> x >> y;\n\n    FishBox a(x);\n    FishBox b(y);\n    b = a;\n    a.set(40);\n    cout << \"a 那一格现在是 \" << a.get() << \" 条\" << endl;\n    cout << \"b 那一格现在是 \" << b.get() << \" 条\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "a 那一格现在是 40 条\nb 那一格现在是 7 条",
+      "stdin": "7\n7\n",
+      "explanation": "这一题要和上一题**对照着**记，两者只差一个字，意思差很远喵：\n\n| | 照抄招式 | 赋值那一手 |\n|---|---|---|\n| 什么时候被叫起来 | **造一只新盒子**的时候（`FishBox b = a;`） | **两只都已经活着**的时候（`b = a;`） |\n| 里面那一句 | `p = new int(*other.p);` —— **新租**一间 | `*p = *other.p;` —— **不新租**，搬内容 |\n| 行尾 | 不用 | 要 `&` 和 `return *this;` |\n\n为什么赋值**不能**新租？因为本喵这只盒子的 `p` 那一格里，**已经记着一间租好的屋**了。要是写成 `p = new int(*other.p);`，本喵就把那间旧屋的地址**冲掉了** —— 那间屋再也无人归还，**漏了一间屋**。所以赋值那一手做的事是：把对方屋里的内容**搬进本喵已有的那间屋**。\n\n跑出来的两行就是证据：\n\n- `b = a;` 之后 `b` 那间屋里是 `a` 原来的数；\n- 本喵再把 `a` 改成 40 时，`b` **一点都不受影响**（两只各有各的屋）；\n- 屏幕上先印的 `a` 是新数 40，后印的 `b` 还停在原来的数上。\n\n⚠️ 最后别忘了 `return *this;` 和行尾那个 `&` —— 它们是同一件事的两半：**叼回去的是本喵自己，不是复印件**。这样 `b = a = c;` 才能一路接着写下去。",
+      "templateId": "cpp-s2-08-assign-copy",
+      "params": {
+        "s": 40
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:35.084Z",
+        "hash": "6fbb0bfeb9b496e1"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-assign-copy-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "上一题本喵给盒子写了照抄招式；可**两只盒子都已经生出来了**的时候，`b = a;` 走的**不是**照抄招式 —— 它走的是另一手，本喵也得自己写。投喂口会递进来**两个数**（一行一个）：第一只、第二只的条数。\n\n请你这么办：\n\n1. **画图纸** `FishBox`：一栏带盖的牌子 `int* p`；出生招式里**租一间屋**（`new`）；收尾招式里**还掉**（`delete`）；再画公开招式 `get` 和 `set`。\n2. **自己写照抄招式**（另租一间、搬内容）。\n3. **再写赋值那一手**（名字是 `operator=` 那一手）：它**只把对方屋里的内容搬进本喵已有的那间屋**，**不许新租**（新租会把旧屋的地址冲掉，那间屋就再也没人还了）；最后把本喵**自己原样叼回去**，好让 `b = a = c;` 这种话能连着写。\n4. 在 `main` 里：读进两个数 → 生两只盒子 → 让第二只**照第一只的内容改**（`b = a;`）→ 再把**第一只**改成 60 → 印**两行**：\n\n```text\nXX 那一格现在是 N 条\n```\n\n（先印 `a` 那一格，再印 `b` 那一格）\n\n比如投喂给程序的是\n\n9\n2\n\n程序就要叼回\n\na 那一格现在是 60 条\nb 那一格现在是 9 条\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n    FishBox(const FishBox& other) { p = new int(*other.p); }\n    ~FishBox() { delete p; }\n\n    FishBox& operator=(const FishBox& other) {\n        *p = *other.p;\n        return *this;\n    }\n\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    int x = 0;\n    int y = 0;\n    cin >> x >> y;\n\n    FishBox a(x);\n    FishBox b(y);\n    b = a;\n    a.set(60);\n    cout << \"a 那一格现在是 \" << a.get() << \" 条\" << endl;\n    cout << \"b 那一格现在是 \" << b.get() << \" 条\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "a 那一格现在是 60 条\nb 那一格现在是 9 条",
+      "stdin": "9\n1\n",
+      "explanation": "这一题要和上一题**对照着**记，两者只差一个字，意思差很远喵：\n\n| | 照抄招式 | 赋值那一手 |\n|---|---|---|\n| 什么时候被叫起来 | **造一只新盒子**的时候（`FishBox b = a;`） | **两只都已经活着**的时候（`b = a;`） |\n| 里面那一句 | `p = new int(*other.p);` —— **新租**一间 | `*p = *other.p;` —— **不新租**，搬内容 |\n| 行尾 | 不用 | 要 `&` 和 `return *this;` |\n\n为什么赋值**不能**新租？因为本喵这只盒子的 `p` 那一格里，**已经记着一间租好的屋**了。要是写成 `p = new int(*other.p);`，本喵就把那间旧屋的地址**冲掉了** —— 那间屋再也无人归还，**漏了一间屋**。所以赋值那一手做的事是：把对方屋里的内容**搬进本喵已有的那间屋**。\n\n跑出来的两行就是证据：\n\n- `b = a;` 之后 `b` 那间屋里是 `a` 原来的数；\n- 本喵再把 `a` 改成 60 时，`b` **一点都不受影响**（两只各有各的屋）；\n- 屏幕上先印的 `a` 是新数 60，后印的 `b` 还停在原来的数上。\n\n⚠️ 最后别忘了 `return *this;` 和行尾那个 `&` —— 它们是同一件事的两半：**叼回去的是本喵自己，不是复印件**。这样 `b = a = c;` 才能一路接着写下去。",
+      "templateId": "cpp-s2-08-assign-copy",
+      "params": {
+        "s": 60
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:37.807Z",
+        "hash": "0d56f6d0f42a2686"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-by-value-copy-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要**亲眼看见**「偷偷照抄」发生在哪一刻。投喂口会递进来**一个数**（盒子里装几条）。\n\n请你这么办：\n\n1. **画图纸** `FishBox`：一栏带盖的牌子 `int* p`。三手都要带上台词：\n   - **出生招式**：`new` 一间屋把数放进去，印一行 `租下一格仓库，放进 N 条`；\n   - **照抄招式**（自己写的那一份，另租一间、搬内容）：印一行 `另租一格，搬进 N 条`；\n   - **收尾招式**：先印一行 `归还这一格仓库`，再 `delete`。\n   - 再画一个公开招式 `get` 把屋里的数叼回来。\n2. **在图纸外面画一招 `show`**：它的料是 `FishBox`，**前面不带那个「不必还的名字」记号**（按值），里面印一行 `小橘 的盒子里 N 条`。\n3. 在 `main` 里：读进那个数 → 生一只盒子 → **喊一次** `show`。\n\n比如投喂给程序的是\n\n8\n\n程序就要叼回\n\n租下一格仓库，放进 8 条\n另租一格，搬进 8 条\n小橘 的盒子里 8 条\n归还这一格仓库\n归还这一格仓库\n\n**这一题请你数一数屏幕上有几行**，还要看清每一行是**哪一步**印的。\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) {\n        p = new int(v);\n        cout << \"租下一格仓库，放进 \" << *p << \" 条\" << endl;\n    }\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n        cout << \"另租一格，搬进 \" << *p << \" 条\" << endl;\n    }\n    ~FishBox() {\n        cout << \"归还这一格仓库\" << endl;\n        delete p;\n    }\n    int get() const { return *p; }\n};\n\nvoid show(FishBox b) {\n    cout << \"小橘 的盒子里 \" << b.get() << \" 条\" << endl;\n}\n\nint main() {\n    int v = 0;\n    cin >> v;\n\n    FishBox a(v);\n    show(a);\n    return 0;\n}\n",
+      "expectedOutput": "租下一格仓库，放进 4 条\n另租一格，搬进 4 条\n小橘 的盒子里 4 条\n归还这一格仓库\n归还这一格仓库",
+      "stdin": "4\n",
+      "explanation": "本喵在本机跑过这一题，输出是**五行**（投喂 5 时）：\n\n```text\n租下一格仓库，放进 5 条\n另租一格，搬进 5 条\n小橘 的盒子里 5 条\n归还这一格仓库\n归还这一格仓库\n```\n\n对着这五行数一数，本喵瞒着你干的事就露馅了：\n\n- 第 1 行是 `main` 里生 `a` —— 租了一间屋；\n- 第 2 行**本喵根本没写**。它从哪来的？**喊 `show` 的时候偷偷照抄了一只盒子。** `show` 的料是**按值**的，翻译官喵就得先造一份这个料的复印件 —— 而造复印件，走的就是本喵写的那份照抄招式，于是「另租一格、搬进内容」这一步被喊了起来。\n- 第 4 行是 `show` 里那只**复印件**走了（招式喊完，它的料就该还）；\n- 第 5 行是 `main` 里那只 `a` 走了。**两只盒子各还各的**，所以收尾时有两个「归还」，谁也不撞谁。\n\n⚠️ 这一课最该记住的一句话就在这儿：\n\n> **料写成「按值」，每喊一次就要照抄一只盒子。**\n\n要是本喵**只想看看、不想抄一份**，料的写法就得换成「**不必还的名字**」：`void show(const FishBox& b)` —— 那时候屏幕上就只剩三行（租、看、还），中间那两行全不见了。\n\n这也是本喵要你亲手写一遍「按值」的原因：**这件事藏在你不注意的地方** —— 你没在 `main` 里写任何照抄的话，它自己就发生了。",
+      "templateId": "cpp-s2-08-by-value-copy",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:40.899Z",
+        "hash": "9adfedd18dfe03cd"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-by-value-copy-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要**亲眼看见**「偷偷照抄」发生在哪一刻。投喂口会递进来**一个数**（盒子里装几条）。\n\n请你这么办：\n\n1. **画图纸** `FishBox`：一栏带盖的牌子 `int* p`。三手都要带上台词：\n   - **出生招式**：`new` 一间屋把数放进去，印一行 `租下一格仓库，放进 N 条`；\n   - **照抄招式**（自己写的那一份，另租一间、搬内容）：印一行 `另租一格，搬进 N 条`；\n   - **收尾招式**：先印一行 `归还这一格仓库`，再 `delete`。\n   - 再画一个公开招式 `get` 把屋里的数叼回来。\n2. **在图纸外面画一招 `show`**：它的料是 `FishBox`，**前面不带那个「不必还的名字」记号**（按值），里面印一行 `大胖 的盒子里 N 条`。\n3. 在 `main` 里：读进那个数 → 生一只盒子 → **喊一次** `show`。\n\n比如投喂给程序的是\n\n4\n\n程序就要叼回\n\n租下一格仓库，放进 4 条\n另租一格，搬进 4 条\n大胖 的盒子里 4 条\n归还这一格仓库\n归还这一格仓库\n\n**这一题请你数一数屏幕上有几行**，还要看清每一行是**哪一步**印的。\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) {\n        p = new int(v);\n        cout << \"租下一格仓库，放进 \" << *p << \" 条\" << endl;\n    }\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n        cout << \"另租一格，搬进 \" << *p << \" 条\" << endl;\n    }\n    ~FishBox() {\n        cout << \"归还这一格仓库\" << endl;\n        delete p;\n    }\n    int get() const { return *p; }\n};\n\nvoid show(FishBox b) {\n    cout << \"大胖 的盒子里 \" << b.get() << \" 条\" << endl;\n}\n\nint main() {\n    int v = 0;\n    cin >> v;\n\n    FishBox a(v);\n    show(a);\n    return 0;\n}\n",
+      "expectedOutput": "租下一格仓库，放进 3 条\n另租一格，搬进 3 条\n大胖 的盒子里 3 条\n归还这一格仓库\n归还这一格仓库",
+      "stdin": "3\n",
+      "explanation": "本喵在本机跑过这一题，输出是**五行**（投喂 5 时）：\n\n```text\n租下一格仓库，放进 5 条\n另租一格，搬进 5 条\n大胖 的盒子里 5 条\n归还这一格仓库\n归还这一格仓库\n```\n\n对着这五行数一数，本喵瞒着你干的事就露馅了：\n\n- 第 1 行是 `main` 里生 `a` —— 租了一间屋；\n- 第 2 行**本喵根本没写**。它从哪来的？**喊 `show` 的时候偷偷照抄了一只盒子。** `show` 的料是**按值**的，翻译官喵就得先造一份这个料的复印件 —— 而造复印件，走的就是本喵写的那份照抄招式，于是「另租一格、搬进内容」这一步被喊了起来。\n- 第 4 行是 `show` 里那只**复印件**走了（招式喊完，它的料就该还）；\n- 第 5 行是 `main` 里那只 `a` 走了。**两只盒子各还各的**，所以收尾时有两个「归还」，谁也不撞谁。\n\n⚠️ 这一课最该记住的一句话就在这儿：\n\n> **料写成「按值」，每喊一次就要照抄一只盒子。**\n\n要是本喵**只想看看、不想抄一份**，料的写法就得换成「**不必还的名字**」：`void show(const FishBox& b)` —— 那时候屏幕上就只剩三行（租、看、还），中间那两行全不见了。\n\n这也是本喵要你亲手写一遍「按值」的原因：**这件事藏在你不注意的地方** —— 你没在 `main` 里写任何照抄的话，它自己就发生了。",
+      "templateId": "cpp-s2-08-by-value-copy",
+      "params": {
+        "name": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:43.606Z",
+        "hash": "d4f18962c685489f"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-copy-missing-amp-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵给会租仓库的盒子自己写了一份照抄招式，里面那一句 `new` 也没漏。\n\n可翻译官喵说这份照抄招式写坏了，还顺手把正确写法写给本喵看了。\n\n你帮本喵改到能跑起来（圈里装 2 条，照抄一只、把抄出来那只的条数印出来）。**其他地方一个字都不改。**",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a(2);\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a(2);\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+      "expectedOutput": "2",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:9:5: error: invalid constructor; you probably meant 'FishBox (const FishBox&)'`\n\n**报错里那句「你大概想要的」就是正确答案** —— 本喵漏掉的正是料前面那个 `&`，翻译官喵直接补给它看了。\n\n为什么这个 `&` 非有不可？想一想链条：照抄招式塞进来的料要是**按值**的，翻译官喵就得**先替本喵造一份这个料的复印件**；可造复印件这件事，又要去叫一次照抄招式……**没完没了。** 所以它干脆在翻译阶段就把这事拦下来。\n\n这个 `&` 的读法是「**不必还的名字**」：本喵只是借看一下对方那只盒子，不要为它再造一只 —— 照抄的时候本来就只是「看原件、造新件」，原件不用被复制一份。\n\n⚠️ 顺带把这一行的另外两处也说清：`const` 放在最前面，意思是本喵只读对方、不改它；招式名和图纸同名，这正是「照抄招式」的身份标志。三样凑齐才是本喵要的那一份喵。",
+      "templateId": "cpp-s2-08-copy-missing-amp",
+      "params": {
+        "v": 2
+      },
+      "verified": {
+        "at": "2026-10-15T22:44:11.585Z",
+        "hash": "926b8b616ad0f102"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-copy-missing-amp-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵给会租仓库的盒子自己写了一份照抄招式，里面那一句 `new` 也没漏。\n\n可翻译官喵说这份照抄招式写坏了，还顺手把正确写法写给本喵看了。\n\n你帮本喵改到能跑起来（圈里装 4 条，照抄一只、把抄出来那只的条数印出来）。**其他地方一个字都不改。**",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a(4);\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a(4);\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+      "expectedOutput": "4",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:9:5: error: invalid constructor; you probably meant 'FishBox (const FishBox&)'`\n\n**报错里那句「你大概想要的」就是正确答案** —— 本喵漏掉的正是料前面那个 `&`，翻译官喵直接补给它看了。\n\n为什么这个 `&` 非有不可？想一想链条：照抄招式塞进来的料要是**按值**的，翻译官喵就得**先替本喵造一份这个料的复印件**；可造复印件这件事，又要去叫一次照抄招式……**没完没了。** 所以它干脆在翻译阶段就把这事拦下来。\n\n这个 `&` 的读法是「**不必还的名字**」：本喵只是借看一下对方那只盒子，不要为它再造一只 —— 照抄的时候本来就只是「看原件、造新件」，原件不用被复制一份。\n\n⚠️ 顺带把这一行的另外两处也说清：`const` 放在最前面，意思是本喵只读对方、不改它；招式名和图纸同名，这正是「照抄招式」的身份标志。三样凑齐才是本喵要的那一份喵。",
+      "templateId": "cpp-s2-08-copy-missing-amp",
+      "params": {
+        "v": 4
+      },
+      "verified": {
+        "at": "2026-10-15T22:44:14.281Z",
+        "hash": "c1ee13ae5e77c2d4"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-deep-copy-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要一只**会租仓库的盒子**，还要它照抄出来之后**各过各的**。投喂口会递进来**一个数**（盒子里装几条）。\n\n请你这么办：\n\n1. **画图纸** `FishBox`：一栏**带盖的牌子** `int* p`。\n   - **出生招式**：接进来的那个数先**租一间屋**放进去（`new`），地址记在 `p` 那一格里；\n   - **收尾招式**：把自己租的那间屋**还掉**（`delete`）；\n   - 再画两个公开招式：`get` 把屋里的数叼回来，`set` 把屋里的数改掉。\n2. **自己写一份照抄招式**（名字和图纸同名，料是另一只同款盒子，前面带 `const`、中间那个「不必还的名字」的记号也不能省）：里面**另租一间屋、把对方屋里的东西搬进去**。\n3. 在 `main` 里：读进那个数 → 生一只盒子 → **照抄一只** → 把**抄出来那只**改成 88 → 印**两行**：\n\n```text\nXX 那一格现在是 N 条\n```\n\n（第一行是原件、第二行是抄出来那只）\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\na 那一格现在是 2 条\nb 那一格现在是 88 条\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    int v = 0;\n    cin >> v;\n\n    FishBox a(v);\n    FishBox b = a;\n    b.set(88);\n    cout << \"a 那一格现在是 \" << a.get() << \" 条\" << endl;\n    cout << \"b 那一格现在是 \" << b.get() << \" 条\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "a 那一格现在是 4 条\nb 那一格现在是 88 条",
+      "stdin": "4\n",
+      "explanation": "这一题的重点全在照抄招式里那一句：\n\n```text\np = new int(*other.p);\n```\n\n把它拆成三截看，就再也不会写错喵：\n\n- `other.p` —— 对方那间屋的**地址**（一张牌子）；\n- `*other.p` —— **那间屋里装的东西**（一个整数）；\n- `new int( ... )` —— **本喵自己另租一间**，把取出来的东西放进去。\n\n租好之后，地址记进**本喵自己的** `p` 一格。于是两只盒子里装着两张**门牌号不同**的牌子，各有各的仓库：`b.set(88)` 只动 `b` 那间屋，`a` 那边一点都不变。收尾的时候也是各还各的，谁也不撞谁。\n\n⚠️ 三个最容易摔的地方，本喵都替你标出来：\n\n1. **`new` 一个都不能少。** 写成 `p = other.p;` 就变成「只抄牌子」，两只盒子共用一个仓库 —— 那一份本喵根本不用写，翻译官喵会偷偷替本喵补，补出来的正是这个。\n2. **料前面那个「不必还的名字」记号（`&`）不能省。** 省了的话，翻译官喵要先为这只料造一份复印件，而造复印件又要叫照抄招式，没完没了 —— 它会在翻译阶段直接拦下你，报 `invalid constructor`。\n3. **`*` 要写对地方。** `new int(other.p)` 是把「一张牌子」往屋里塞，类型对不上，翻译官喵会报 `invalid conversion from 'int*' to 'int'` 并且提示你补 `*`。要搬的是**屋里的东西**，不是牌子。\n\n一句话记牢：**深拷贝和浅拷贝的差别，就在那个 `new` 上。**",
+      "templateId": "cpp-s2-08-deep-copy",
+      "params": {
+        "k": 88
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:28.810Z",
+        "hash": "c660a7324271e4ee"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-deep-copy-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要一只**会租仓库的盒子**，还要它照抄出来之后**各过各的**。投喂口会递进来**一个数**（盒子里装几条）。\n\n请你这么办：\n\n1. **画图纸** `FishBox`：一栏**带盖的牌子** `int* p`。\n   - **出生招式**：接进来的那个数先**租一间屋**放进去（`new`），地址记在 `p` 那一格里；\n   - **收尾招式**：把自己租的那间屋**还掉**（`delete`）；\n   - 再画两个公开招式：`get` 把屋里的数叼回来，`set` 把屋里的数改掉。\n2. **自己写一份照抄招式**（名字和图纸同名，料是另一只同款盒子，前面带 `const`、中间那个「不必还的名字」的记号也不能省）：里面**另租一间屋、把对方屋里的东西搬进去**。\n3. 在 `main` 里：读进那个数 → 生一只盒子 → **照抄一只** → 把**抄出来那只**改成 99 → 印**两行**：\n\n```text\nXX 那一格现在是 N 条\n```\n\n（第一行是原件、第二行是抄出来那只）\n\n比如投喂给程序的是\n\n6\n\n程序就要叼回\n\na 那一格现在是 6 条\nb 那一格现在是 99 条\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    int v = 0;\n    cin >> v;\n\n    FishBox a(v);\n    FishBox b = a;\n    b.set(99);\n    cout << \"a 那一格现在是 \" << a.get() << \" 条\" << endl;\n    cout << \"b 那一格现在是 \" << b.get() << \" 条\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "a 那一格现在是 7 条\nb 那一格现在是 99 条",
+      "stdin": "7\n",
+      "explanation": "这一题的重点全在照抄招式里那一句：\n\n```text\np = new int(*other.p);\n```\n\n把它拆成三截看，就再也不会写错喵：\n\n- `other.p` —— 对方那间屋的**地址**（一张牌子）；\n- `*other.p` —— **那间屋里装的东西**（一个整数）；\n- `new int( ... )` —— **本喵自己另租一间**，把取出来的东西放进去。\n\n租好之后，地址记进**本喵自己的** `p` 一格。于是两只盒子里装着两张**门牌号不同**的牌子，各有各的仓库：`b.set(99)` 只动 `b` 那间屋，`a` 那边一点都不变。收尾的时候也是各还各的，谁也不撞谁。\n\n⚠️ 三个最容易摔的地方，本喵都替你标出来：\n\n1. **`new` 一个都不能少。** 写成 `p = other.p;` 就变成「只抄牌子」，两只盒子共用一个仓库 —— 那一份本喵根本不用写，翻译官喵会偷偷替本喵补，补出来的正是这个。\n2. **料前面那个「不必还的名字」记号（`&`）不能省。** 省了的话，翻译官喵要先为这只料造一份复印件，而造复印件又要叫照抄招式，没完没了 —— 它会在翻译阶段直接拦下你，报 `invalid constructor`。\n3. **`*` 要写对地方。** `new int(other.p)` 是把「一张牌子」往屋里塞，类型对不上，翻译官喵会报 `invalid conversion from 'int*' to 'int'` 并且提示你补 `*`。要搬的是**屋里的东西**，不是牌子。\n\n一句话记牢：**深拷贝和浅拷贝的差别，就在那个 `new` 上。**",
+      "templateId": "cpp-s2-08-deep-copy",
+      "params": {
+        "k": 99
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:31.865Z",
+        "hash": "3fc23829dcde029d"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-new-on-pointer-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵照着上课的样子写了一份照抄招式，`new` 也写了，可翻译官喵说本喵 `new` 出来的东西**对不上号**。\n\n你帮本喵改到能跑起来（盒子装 2 条，照抄一只、把抄出来那只的条数印出来）。**照抄招式这一手留在原地，`main` 那一行也别动。**",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a(2);\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a(2);\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+      "expectedOutput": "2",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:10:27: error: invalid conversion from 'int*' to 'int' [-fpermissive]`\n\n后面还跟了一条提示：`main.cpp:10:27: note: possible fix: dereference with '*'` —— 翻译官喵连补法都告诉本喵了。\n\n翻成猫话：**「`new int(...)` 这个括号里要放的是『装进新屋里的东西』，你塞进来的却是一张『牌子』，对不上号喵。」**\n\n这里要把两样东西分清楚（整课的精华就在这一步）：\n\n- `other.p` 是**对方那间仓库的地址**（一张牌子，类型是 `int*`）；\n- `*other.p` 是**那间屋里装的东西**（一个整数，类型是 `int`）。\n\n本喵要搬的是**屋里的东西**，所以得先在牌子前面加上那个 `*` 把内容取出来：`new int(*other.p)`。\n\n⚠️ 特别记一句：`new` 这个字**一个都不能少**，写成 `p = other.p;` 就又变回只抄牌子的浅拷贝了 —— 那时候程序能编过、能跑、前几行输出还挺好看，坑藏在后面（改一只另一只跟着变，收尾时两只盒子归还同一间仓库）。所以本喵宁可在这里被翻译官喵拦一次：**它拦的是「类型对不上」，本喵要的是「内容搬过去」。**",
+      "templateId": "cpp-s2-08-new-on-pointer",
+      "params": {
+        "v": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:16.603Z",
+        "hash": "9b97a12c88bb6c19"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-new-on-pointer-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵照着上课的样子写了一份照抄招式，`new` 也写了，可翻译官喵说本喵 `new` 出来的东西**对不上号**。\n\n你帮本喵改到能跑起来（盒子装 4 条，照抄一只、把抄出来那只的条数印出来）。**照抄招式这一手留在原地，`main` 那一行也别动。**",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a(4);\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n};\n\nint main() {\n    FishBox a(4);\n    FishBox b = a;\n    cout << b.get() << endl;\n    return 0;\n}\n",
+      "expectedOutput": "4",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:10:27: error: invalid conversion from 'int*' to 'int' [-fpermissive]`\n\n后面还跟了一条提示：`main.cpp:10:27: note: possible fix: dereference with '*'` —— 翻译官喵连补法都告诉本喵了。\n\n翻成猫话：**「`new int(...)` 这个括号里要放的是『装进新屋里的东西』，你塞进来的却是一张『牌子』，对不上号喵。」**\n\n这里要把两样东西分清楚（整课的精华就在这一步）：\n\n- `other.p` 是**对方那间仓库的地址**（一张牌子，类型是 `int*`）；\n- `*other.p` 是**那间屋里装的东西**（一个整数，类型是 `int`）。\n\n本喵要搬的是**屋里的东西**，所以得先在牌子前面加上那个 `*` 把内容取出来：`new int(*other.p)`。\n\n⚠️ 特别记一句：`new` 这个字**一个都不能少**，写成 `p = other.p;` 就又变回只抄牌子的浅拷贝了 —— 那时候程序能编过、能跑、前几行输出还挺好看，坑藏在后面（改一只另一只跟着变，收尾时两只盒子归还同一间仓库）。所以本喵宁可在这里被翻译官喵拦一次：**它拦的是「类型对不上」，本喵要的是「内容搬过去」。**",
+      "templateId": "cpp-s2-08-new-on-pointer",
+      "params": {
+        "v": 4
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:18.746Z",
+        "hash": "21657dae9ca3e6fc"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-shallow-copy-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这只盒子会租仓库（出生招式里 `new`）、会还仓库（收尾招式里 `delete`），也有一个改内容的招式。可本喵**漏了一件大事**：没给它自己写照抄招式。\n\n现在照抄一只、只改**抄出来那只**的条数，结果**原来那只也跟着变了**；而且程序收尾的时候会出事。\n\n你帮本喵把漏掉的那一手补上，让改抄出来的那只**不牵动原件**：盒子里装 2 条，抄出来那只改成 88 条，两行分别印自己那一格。**已有的三手和 `main` 都不用改，只添这一手。**",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    FishBox a(2);\n    FishBox b = a;\n    b.set(88);\n    cout << \"a 那一格现在是 \" << a.get() << \" 条\" << endl;\n    cout << \"b 那一格现在是 \" << b.get() << \" 条\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    FishBox a(2);\n    FishBox b = a;\n    b.set(88);\n    cout << \"a 那一格现在是 \" << a.get() << \" 条\" << endl;\n    cout << \"b 那一格现在是 \" << b.get() << \" 条\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "a 那一格现在是 2 条\nb 那一格现在是 88 条",
+      "stdin": null,
+      "explanation": "这一题**一个报错都没有** —— 本喵在本机跑过这一段：中间那两行输出**照印不误**（而且两行印出来是**同一个数**，光看屏幕还以为是本喵看花了眼），真正的崩在**收尾那一刻**：两只盒子都去归还同一间仓库，第一只交回去之后，第二只拿着早就交掉的牌子又交了一遍，进程当场倒下，**一个字都没留给本喵**。\n\n根子在「盒子里的那一格装的是什么」：这一格装的**不是条数，是一张写着门牌号的牌子**（`int* p`）。本喵没写照抄招式，翻译官喵就**偷偷替本喵补了一份**，而它补的那一份做的是最直白的事 —— **把对方那一格里的东西原样抄过来**，也就是**只抄牌子**。于是两只盒子里装着两张写着同一间仓库的牌子：改一只 = 改那间共用仓库，另一只当然跟着变。\n\n所以补的那一手必须自己写，写法就一句关键:\n\n```text\nFishBox(const FishBox& other) {\n    p = new int(*other.p);\n}\n```\n\n**另租一间、把内容搬过去**（`*other.p` 是屋里的东西），这就是**深拷贝**；抄一间新屋的地址给自己，从此两只盒子各有各的仓库，改一只不牵动另一只，收尾时也各还各的、谁也不撞谁。\n\n⚠️ 这一课的重点不是「记住这一手」，而是记住**这两句结论**：\n\n1. **盒子里装着牌子的时候，照抄招式必须自己写** —— 不写，翻译官喵替你补的那份一定是「只抄牌子」。\n2. **这种错不会给你报错。** 程序前半段跑得好好的、输出也全对，然后在你说不定已经离开电脑的时候才倒下。哪天撞上「跑着挺好、一结束就崩」，回来翻翻这一课喵。",
+      "templateId": "cpp-s2-08-shallow-copy",
+      "params": {
+        "v": 2,
+        "k": 88
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:21.362Z",
+        "hash": "af1ac1896cbdc462"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-08-shallow-copy-005",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "这只盒子会租仓库（出生招式里 `new`）、会还仓库（收尾招式里 `delete`），也有一个改内容的招式。可本喵**漏了一件大事**：没给它自己写照抄招式。\n\n现在照抄一只、只改**抄出来那只**的条数，结果**原来那只也跟着变了**；而且程序收尾的时候会出事。\n\n你帮本喵把漏掉的那一手补上，让改抄出来的那只**不牵动原件**：盒子里装 4 条，抄出来那只改成 99 条，两行分别印自己那一格。**已有的三手和 `main` 都不用改，只添这一手。**",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    FishBox a(4);\n    FishBox b = a;\n    b.set(99);\n    cout << \"a 那一格现在是 \" << a.get() << \" 条\" << endl;\n    cout << \"b 那一格现在是 \" << b.get() << \" 条\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n\n    FishBox(const FishBox& other) {\n        p = new int(*other.p);\n    }\n\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    FishBox a(4);\n    FishBox b = a;\n    b.set(99);\n    cout << \"a 那一格现在是 \" << a.get() << \" 条\" << endl;\n    cout << \"b 那一格现在是 \" << b.get() << \" 条\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "a 那一格现在是 4 条\nb 那一格现在是 99 条",
+      "stdin": null,
+      "explanation": "这一题**一个报错都没有** —— 本喵在本机跑过这一段：中间那两行输出**照印不误**（而且两行印出来是**同一个数**，光看屏幕还以为是本喵看花了眼），真正的崩在**收尾那一刻**：两只盒子都去归还同一间仓库，第一只交回去之后，第二只拿着早就交掉的牌子又交了一遍，进程当场倒下，**一个字都没留给本喵**。\n\n根子在「盒子里的那一格装的是什么」：这一格装的**不是条数，是一张写着门牌号的牌子**（`int* p`）。本喵没写照抄招式，翻译官喵就**偷偷替本喵补了一份**，而它补的那一份做的是最直白的事 —— **把对方那一格里的东西原样抄过来**，也就是**只抄牌子**。于是两只盒子里装着两张写着同一间仓库的牌子：改一只 = 改那间共用仓库，另一只当然跟着变。\n\n所以补的那一手必须自己写，写法就一句关键:\n\n```text\nFishBox(const FishBox& other) {\n    p = new int(*other.p);\n}\n```\n\n**另租一间、把内容搬过去**（`*other.p` 是屋里的东西），这就是**深拷贝**；抄一间新屋的地址给自己，从此两只盒子各有各的仓库，改一只不牵动另一只，收尾时也各还各的、谁也不撞谁。\n\n⚠️ 这一课的重点不是「记住这一手」，而是记住**这两句结论**：\n\n1. **盒子里装着牌子的时候，照抄招式必须自己写** —— 不写，翻译官喵替你补的那份一定是「只抄牌子」。\n2. **这种错不会给你报错。** 程序前半段跑得好好的、输出也全对，然后在你说不定已经离开电脑的时候才倒下。哪天撞上「跑着挺好、一结束就崩」，回来翻翻这一课喵。",
+      "templateId": "cpp-s2-08-shallow-copy",
+      "params": {
+        "v": 4,
+        "k": 99
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:24.408Z",
+        "hash": "cbc4b6cc65e4dcb5"
+      }
+    }
+  ]
+}

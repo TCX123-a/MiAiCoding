@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-double-into-int",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-03",
+  "type": "codefix",
+  "concept": ["int", "double", "lossy conversion", "牌子"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 8 }
+  },
+  "stemTemplate": "本喵想把一笔鱼干钱记成 {a}.{b} 元喵，可翻译官喵又拦下了 —— 这次它说 `incompatible types: possible lossy conversion from double to int`。\n\n你帮本喵看看它在心疼什么，把它改好 —— 改好之后，程序应该把这笔钱**原样**念出来（`.{b}` 那半截也得在喵）。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int price = {a}.{b};\n        System.out.println(price);\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        double price = {a}.{b};\n        System.out.println(price);\n    }\n}\n",
+  "explanationTemplate": "`incompatible types: possible lossy conversion from double to int` 是在说：「**小数要塞进整数仓库，会掉一块肉**」喵 —— `.{b}` 那半截就没了。\n\n这不是本喵写错了什么，是**牌子和东西对不上**：左边那间仓库的牌子写着 `int`（只收整个的小鱼干），右边递过来的却是个能掰开的小数。Java 不肯背着你偷偷把它掰断，宁可停下来让你自己拿主意。\n\n两条路，随你挑：\n\n- 换成**装小数的仓库** —— 牌子写 `double`，那半截就保住了；\n- 或者干脆**装个整数** —— 把小数那半截自己删掉。\n\n这道题要的是**原样念出来**，所以得走第一条路喵。"
+}

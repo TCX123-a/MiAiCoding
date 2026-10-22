@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-private-method-call",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-01",
+  "type": "codefix",
+  "concept": ["private", "招式也带盖子", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "a": { "kind": "int", "min": 2, "max": 3 },
+    "b": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stemTemplate": "本喵这只猫有一条**给自己添鱼干**的招式、和一扇读鱼干数的小窗。外面喊了两次那条招式，想把 {a} 条和 {b} 条都添进去 —— 可翻译官喵又是那句话：碰不得，程序**一趟都没跑起来**。\n\n请你帮本喵把它改好。改好之后，程序该印出这一行：`{name} 有 N 条小鱼干喵` —— 那个 N 就是外面那两次递进去的数**加起来**。\n\n图纸里那条招式本身干的事**一点没错**，别去改它的身子。",
+  "brokenCodeTemplate": "class Cat {\n    private String name;\n    private int fish;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n\n    public int getFish() {\n        return fish;\n    }\n\n    private void feed(int n) {\n        fish = fish + n;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.feed({a});\n        c.feed({b});\n        System.out.println(c.getName() + \" 有 \" + c.getFish() + \" 条小鱼干喵\");\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    private String name;\n    private int fish;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n\n    public int getFish() {\n        return fish;\n    }\n\n    public void feed(int n) {\n        fish = fish + n;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.feed({a});\n        c.feed({b});\n        System.out.println(c.getName() + \" 有 \" + c.getFish() + \" 条小鱼干喵\");\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 **`feed(int) has private access in Cat`**。\n\n这次它还把**每一处伸手**都点了名：外面喊了两次，它就报两条一模一样的原话，指着那两行各说一遍。以后看到同一条原话连着出现好几遍，就知道是「同一个盖子被伸了好几只手」，不是好几个毛病喵。\n\n症结在于：**盖子是扣在招式上的，不只是家当上。** `private void feed(int n)` 的意思是「这条招式只有这张图纸自己喊得动」—— 可本喵是在 `main` 里喊的，`main` 在图纸外面。\n\n改法就是把那一个词换成 `public`：这条招式本来就是留给外面用的入口，盖着盖子等于把门砌死了。\n\n顺手记：家当盖盖子、招式分两种 —— **只给里面用的盖 `private`，留给外面的开 `public`**。这次错在把一扇本来要开给外面的门也盖上了。"
+}

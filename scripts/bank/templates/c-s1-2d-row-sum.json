@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-2d-row-sum",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-10",
+  "type": "codewrite",
+  "concept": ["碗排表", "每行攒一只小碗", "小碗摆在内层圈外"],
+  "instances": 6,
+  "params": {
+    "table": { "kind": "pick", "values": ["{1, 2, 3}, {4, 5, 6}, {7, 8, 9}", "{2, 4, 6}, {1, 3, 5}, {9, 7, 8}", "{3, 1, 2}, {6, 5, 4}", "{8, 9, 7}, {2, 3, 1}"] }
+  },
+  "stemTemplate": "起手代码里已经摆好一张碗排表 —— 方括号里第一个空着，翻译官喵自己数了有几行。\n\n请你写个程序：**一行一行**给这张表攒小碗，报出每一行一共多少条。格式是一行报一次：`第 %d 行一共 %d 条喵`。\n\n（几行几格**别写死**：让翻译官喵自己量。）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n    int grid[][3] = {{table}};\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int grid[][3] = {{table}};\n\n    int rows = (int)(sizeof(grid) / sizeof(grid[0]));\n    int cols = (int)(sizeof(grid[0]) / sizeof(grid[0][0]));\n\n    for (int i = 0; i < rows; i++) {\n        int total = 0;\n        for (int j = 0; j < cols; j++) {\n            total = total + grid[i][j];\n        }\n        printf(\"第 %d 行一共 %d 条喵\\n\", i, total);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这道题的关键只有一处：**那只小碗摆在哪一层**喵。\n\n- 摆在**外层圈里、内层圈外** —— 也就是每换一行都重新洗一只干净的小碗。这样它攒到的是**这一行自己**的和。\n- 摆到**两个圈外面**去 —— 小碗就永远不洗，第一行攒完接着攒第二行，报出来的数越往后越大。上一道改错题摔的就是这一跤。\n\n所以本喵的习惯是：**摆小碗那一行紧贴着外层圈的开头**，跟「换行」那句一样住在内层圈外面 —— 一眼就能看出它是「每行一份」的东西。\n\n另外，报编号要报两次（`grid[i][j]`），**两个编号都从 0 起**；`i` 管行、`j` 管格，别把它俩写反了 —— 写反了 C 也一声不响，只是报出来的行数和格数对不上喵。"
+}

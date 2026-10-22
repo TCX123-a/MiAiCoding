@@ -1,0 +1,87 @@
+{
+  "lessonId": "cpp-stage2-12",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "图纸最上面那一行 `template <typename T>`，它在跟翻译官喵说什么？",
+      "options": [
+        "这张图纸上**留了一个空位**、代号叫 `T` —— 这一款到底是什么，留给塞料的人定",
+        "把这张图纸的名字改叫 `T`",
+        "告诉编译器这一段先别看、直接跳过去",
+        "让这张图纸只能给整数用"
+      ],
+      "answer": 0,
+      "explanation": "那一行是**立空位**的喵：它说「这张图纸上有一个位子空着，代号 `T`」。`T` 到底是整数、小数还是字符串，本喵不写死 —— 塞料的时候才定。所以同一张图纸能裁出好几款：塞整数裁整数版、塞小数裁小数版。**空位是它可以「量体裁衣」的根子**，也是本喵少画好几张图纸的原因喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写了一张加法图纸，然后喊了一句 `add(1, 2.5)`。翻译官喵的原话是哪一句？",
+      "options": [
+        "`error: no matching function for call to 'add(int, double)'`",
+        "`error: 'T' does not name a type`",
+        "`error: call of overloaded 'add(int&, double&)' is ambiguous`",
+        "`error: cannot declare variable 'a' to be of abstract type 'add'`"
+      ],
+      "answer": 0,
+      "explanation": "翻译官喵的原话是 `error: no matching function for call to 'add(int, double)'` —— 念作：「**这一声 `add` 要的是同一种料，可你一手递整数、一手递小数，本喵不知道那个空位该裁成哪一款喵。**」后面还会跟一串 `candidate` 和 `template argument deduction/substitution failed`，说的都是同一件事：照这张图纸裁不出这么一个版本。修法两条：把料凑成同一款（`add(1.0, 2.5)`），或者本喵自己点名（`add<double>(1, 2.5)`）喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵这辈子只给整数比大小，**一款料**。这时候该不该画一张留空位的图纸？",
+      "options": [
+        "不用画 —— 直接写死整数那一款更好读；多一层空位反而让读的人多绕一圈",
+        "一定要画，图纸越多越显得专业",
+        "必须画，不然编译器不给跑",
+        "整数塞不进留空位的图纸里"
+      ],
+      "answer": 0,
+      "explanation": "**留空位是为了「好几款料共用一套动作」这件事。** 只有一款料的话，空位就没活干了：本喵多写一行立空位、读的人多看一层，谁也白得不着。这时候直接写死那一款，反而最短最好读喵。留空位的图纸该上场的时候只有一个：**同一套动作，料有好几款** —— 比大小、换位、挑最大的，都是它的主场喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\n____\nT bigger(T a, T b) {\n    return a > b ? a : b;\n}\n\nint main() {\n    cout << bigger(3, 5) << endl;\n    return 0;\n}",
+      "stem": "本喵这张比大小的图纸上，**立空位的那一行被挖掉了**（用 `____` 标出）。补上之后，这一声 `bigger(3, 5)` 才喊得动喵。",
+      "blanks": [
+        { "answer": "template <typename T>", "accept": ["template<typename T>", "template <class T>"] }
+      ],
+      "explanation": "补的是 `template <typename T>` 这一行 —— **先立空位，再画图纸**喵。不补它，翻译官喵看到的是「`T` 这个名字本喵没见过」，它报的原话就是 `error: 'T' does not name a type`；紧接着还会报一句这一声喊不着了。补上之后，图纸上就有了一个代号 `T` 的空位，`bigger(3, 5)` 塞进去的是两个整数，翻译官喵自己就把它裁成整数那一版喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nvoid swap2(____) {\n    T t = a;\n    a = b;\n    b = t;\n}\n\nint main() {\n    int x = 3;\n    int y = 5;\n    swap2(x, y);\n    cout << x << \" \" << y << endl;\n    return 0;\n}",
+      "stem": "这张「换个个儿」的图纸，本喵把**两个塞料的写法整段挖掉**了（用 `____` 标出）。补上之后，屏幕上要出现 `5 3` —— 真身真的被换过来那种喵。",
+      "blanks": [
+        { "answer": "T& a, T& b", "accept": ["T &a, T &b", "T&a, T&b"] }
+      ],
+      "explanation": "补的是 `T& a, T& b` —— **那个 `&` 一个都不能漏**喵。漏了它写成 `T a, T b`，本喵在本机真跑过：程序照样跑完、翻译官喵一个错都不报，可屏幕上印出来的是 `3 5` —— **换了个寂寞**，因为图纸里换的是照料的样子又抄的两份，`x` 和 `y` 这两个真身从头到尾没被人碰过。补上 `&` 之后，屏幕上才是 `5 3` 喵。留空位的只是「料的款式」，这件事跟空位没关系 —— 上一课的规矩照样管用喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nT bigger(T a, T b) {\n    return a > b ? a : b;\n}\n\nint main() {\n    cout << bigger(9, 4) << endl;\n    cout << bigger(1.5, 1.25) << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "9\n1.5",
+      "accept": ["9\n1.5\n"],
+      "explanation": "两次喊话用的**是同一张图纸**喵，本喵一次都没说那个空位是谁：第一声塞进去两个整数，翻译官喵按料裁成整数版，印出 `9`；第二声塞进去两个小数，同一张图纸又裁成小数版，印出 `1.5` 喵。**一段动作，两款料，两个答案** —— 这就是留空位那张图纸最值钱的地方喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nT bigger(T a, T b) {\n    return a > b ? a : b;\n}\n\nint main() {\n    cout << bigger<int>(1.5, 2.5) << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "2",
+      "accept": ["2\n"],
+      "explanation": "这一声本喵**自己点了名**：尖括号里写着整数，所以 `1.5` 和 `2.5` 都被**悄悄改成整数**才喂进去 —— 一个 `1`、一个 `2`，比出来是 `2`，屏幕上就是 `2` 喵。**这一路一个错都不报、一个警告都没有**：本喵一点名，翻译官喵就照着点名那一款把料硬塞进去，不再替本喵核实料对不对了。要是本喵不点名、让它按料自己猜，塞两个小数进去本来能裁出小数那一版；可本喵说了算的款是整数，那 `2.5` 就白丢了喵。"
+    }
+  ]
+}

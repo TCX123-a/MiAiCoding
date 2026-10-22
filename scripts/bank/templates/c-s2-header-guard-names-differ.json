@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-header-guard-names-differ",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-09",
+  "type": "codewrite",
+  "concept": ["两本招牌各用各的记号名", "守卫会静默丢掉后一本", "不报错只算错"],
+  "instances": 6,
+  "params": {
+    "G": { "kind": "pick", "values": ["TOOL_H", "BOX_H", "FISH_H"] },
+    "A": { "kind": "int", "min": 20, "max": 29 },
+    "B": { "kind": "int", "min": 30, "max": 39 }
+  },
+  "stemTemplate": "本喵手上是**两本不同的招牌**：甲招牌是老规矩里的仓容，乙招牌是后来改过的那一本。两本都老老实实套了守卫，翻译官喵却一声没吭 —— 印出来的是甲那个老数，**乙那一本整个没了**。\n\n问题出在乙招牌身上：它跟甲**共用了同一个记号名**。请把乙那本的记号名改成它自己的（名字随你起，只要跟甲不一样、两行都改到），让程序印出乙那本改过的数。\n\n```text\n守卫的记号名管的是「这 一 本 招 牌 是不是已经抄过了」。\n两本不同的招牌共用一个名字，后一本就会被当成\n「已经抄过的重复件」整本跳过 —— 而且它不报错。\n```\n\n改完之后跑起来要印一行 `仓容 <数> 条`，那应该是乙招牌里那个数。",
+  "starterTemplate": "#include <stdio.h>\n\n/* ── 甲招牌 ── */\n#ifndef {G}\n#define {G}\n#define CAP {A}\n#endif\n\n/* ── 乙招牌（另一本，仓容后来改过）── */\n/* 它顺手也用了 {G} 这个名字 */\n#ifndef {G}\n#define {G}\n#define CAP {B}\n#endif\n\nint main(void) {\n    printf(\"仓容 %d 条\\n\", CAP);\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* ── 甲招牌 ── */\n#ifndef {G}\n#define {G}\n#define CAP {A}\n#endif\n\n/* ── 乙招牌（另一本，仓容后来改过）── */\n/* 这一本用自己的记号名 */\n#ifndef {G}2\n#define {G}2\n#define CAP {B}\n#endif\n\nint main(void) {\n    printf(\"仓容 %d 条\\n\", CAP);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题的关键，是**守卫挡掉的到底是谁**喵。\n\n甲招牌抄进来的时候：`{G}` 还没登记过 → `#ifndef` 放行 → `#define` 把 `{G}` 登记上 → 甲的内容收下。\n\n接着乙招牌上门问「`{G}` 登记了没」—— 得到的回答是「登记过了」。于是它认为「这一本已经抄过了」，**整本跳过**。可乙本来是一本**不同的**招牌，它只是想用这个名字当成「自己抄过没有」的记号而已。名字撞了，它就再也轮不到出场了。\n\n本喵真跑过这一段：甲写着 {A}、乙写着 {B}，跑出来是 {A}，翻译官喵一声都没吭 —— **不报错、不警告，只是把后一本悄悄扔掉**，这种错只能靠「一本书一个名字」这条口诀躲开。\n\n改法就是把乙那本的名字换成它自己的（本喵用的是 `{G}2`，你写 `CAP_H`、`MY_BOX_H` 都行，**两行要一起改**：`#ifndef` 那一行和 `#define` 那一行得是同一个名字）。\n\n顺手把口诀再念一遍：**同一本招牌被抄两遍 → 两份用同一个记号名；两本不同的招牌 → 各用各的记号名。**"
+}

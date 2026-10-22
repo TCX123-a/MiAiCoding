@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-clo-nonlocal-missing",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-18",
+  "type": "codefix",
+  "concept": ["闭包", "外层肚子里的仓库", "nonlocal 打招呼", "UnboundLocalError"],
+  "instances": 2,
+  "params": {
+    "start": { "kind": "pick", "values": [0, 5, 12] },
+    "step": { "kind": "pick", "values": [1, 2, 5] }
+  },
+  "stemTemplate": "本喵写了一只**会记数的小招式**：想让它在自己肚子里存一个数，每被喊一次就把这个数加上 {step}、再把加完的数报出来。\n\n可它第一次被喊就当场躺下了 —— 甩出一屏红字，一个数都没报出来。\n\n请你帮本喵看看是哪儿不对，改好它。改好之后它连喊三次，该报出三个**一次比一次大 {step}** 的数（起点从 {start} 算起）。\n\n⚠️ 提醒一句喵：招式里那几行**别的都不许动**。要补的只有一行 —— 让里层够得着外层肚子里那间仓库。",
+  "brokenCodeTemplate": "def 造计数器():\n    记数 = {start}\n    def 数一数():\n        记数 = 记数 + {step}\n        return 记数\n    return 数一数\n\n\n数一数 = 造计数器()\nprint(数一数(), 数一数(), 数一数())\n",
+  "referenceFixTemplate": "def 造计数器():\n    记数 = {start}\n    def 数一数():\n        nonlocal 记数\n        记数 = 记数 + {step}\n        return 记数\n    return 数一数\n\n\n数一数 = 造计数器()\nprint(数一数(), 数一数(), 数一数())\n",
+  "explanationTemplate": "真正的毛病只有一个：里层那只记数的招式**没跟翻译官喵打招呼**。\n\n`记数 = 记数 + {step}` 这一行里出现了「`记数 = 什么`」这样的写法，翻译官喵读一眼就把 `记数` 当成了**里层自己肚子里的仓库**。于是等号**右边**那个 `记数` 去翻本层肚子 —— 空的，当场 `UnboundLocalError: cannot access local variable '记数' where it is not associated with a value`。\n\n⚠️ 这里要看清一件事：`记数` 明明在外层肚子里摆着（`记数 = {start}`），可里层一旦对它**赋值**，翻译官喵就只认本层那一间。**只读**它的时候不会有这回事 —— 「读」和「改」是两件事，这正是本课第二节要你分开记的。\n\n补上一句 `nonlocal 记数` 之后，等号两边都指着**外层**那间仓库：左边「要放东西的」是它，右边「要读的」也是它。于是读得到、改得动，连喊三次报出的就是 `{start}` 加一次 {step}、加两次 {step}、加三次 {step} 这三个数。"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-09-compare-flipped",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-09",
+  "type": "codefix",
+  "concept": ["小招式身子那一行决定顺序", "大小反了顺序就反了", "错得一声不吭"],
+  "instances": 2,
+  "params": {
+    "nums": { "kind": "pick", "values": ["3, 1, 4, 1, 5", "2, 7, 1, 8, 2", "9, 5, 6, 5, 3"] }
+  },
+  "stemTemplate": "本喵要的是**从大到小** —— 最大的站最前面。可排出来偏偏是从小到大：小招式**身子那一行**的判断写反了。\n\n你帮本喵改对（只动小招式身子里的那一行，别的地方一个字都别碰）。\n\n这一排数是 `{nums}`。排完之后**一行一个数**印出来，从最大印到最小。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {{nums}};\n\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a < b;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    vector<int> v = {{nums}};\n\n    sort(v.begin(), v.end(), [](int a, int b) {\n        return a > b;\n    });\n\n    for (int x : v) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "小招式只回答排排坐那件活儿一个问题：**什么情况下 `a` 该站在 `b` 前面？**\n\n本喵写的是 `a < b` —— 那是「小的站前面」，排出来自然是从小到大。把它翻个面写成 `a > b`，意思就成了「大的站前面」，印出来才是从大到小。\n\n⚠️ 这种错**一个字都不会报**：编译的时候安安静静，跑起来数也一个不少，只是顺序反了 —— 跟那种编不过的错正好相反，它一声不吭。所以本喵的习惯是排完**先瞟一眼头一个数**：要的是最大，头一个就该是最大。排排坐的错，几乎全落在这一眼上。"
+}

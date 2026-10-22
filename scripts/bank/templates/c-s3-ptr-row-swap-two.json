@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-ptr-row-swap-two",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-18",
+  "type": "codewrite",
+  "concept": ["换两张牌子的位置要借一张临时的", "直接对调会冲掉一格原来的名字", "剩下的格子一个字都不动"],
+  "instances": 6,
+  "params": {
+    "k": { "kind": "pick", "values": [1, 2] },
+    "a": { "kind": "pick", "values": ["阿花", "小橘"] },
+    "b": { "kind": "pick", "values": ["大肥鱼", "煤球"] },
+    "c": { "kind": "pick", "values": ["豆豆", "团子"] }
+  },
+  "stemTemplate": "本喵这排三张牌子上插着 {a}、{b}、{c}。现在要把第 `0` 格和第 {k} 格**换个位置**，**剩下的格子一个字都不许动**。\n\n做法是借一张**临时的牌子** `tmp` 当中转：先把 `row[0]` 收进 `tmp`，再把 `row[{k}]` 挪进 `row[0]`，最后把 `tmp` 放回 `row[{k}]`。\n\n换完按格子顺序印三行，格式 `第 %d 张：名字`（`0` 开头）。输出逐字对上喵。",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    char *row[3] = {\"{a}\", \"{b}\", \"{c}\"};\n\n    char *tmp = row[0];\n    row[0] = row[{k}];\n    row[{k}] = tmp;\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"第 %d 张：%s\\n\", i, row[i]);\n    }\n\n    return 0;\n}\n",
+  "explanationTemplate": "为什么换位置要借一张临时的牌子？因为直接一句 `row[0] = row[{k}];` 会把第 `0` 格原来的名字**冲掉** —— 那张牌子还在牌面上，可名字已经找不回来了，那一格变成了一个谁都不指的位置。\n\n`tmp` 干的就是「先把这张牌子攥进爪子里」这件事：先把第 `0` 格收进 `tmp`，再让第 `0` 格去接第 {k} 格的，最后把爪子里那张放回第 {k} 格。三步走完，两张牌子上的名字正好对调。\n\n本喵真跑过：不管 {k} 是 1 还是 2，屏幕上都是三行 —— 第 `0` 格和第 {k} 格上的名字换了位置，**剩下的那一格一个字没动**。这也说明这一排牌子的每一格都是**各自独立**的：换第 `0` 格，别格纹丝不动。"
+}

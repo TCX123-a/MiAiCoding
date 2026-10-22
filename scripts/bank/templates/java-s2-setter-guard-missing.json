@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-setter-guard-missing",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-01",
+  "type": "codefix",
+  "concept": ["setter", "门口的规矩", "拦下坏账", "逻辑错"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "n": { "kind": "int", "min": 2, "max": 4 },
+    "m": { "kind": "int", "min": 3, "max": 9 }
+  },
+  "stemTemplate": "本喵给鱼干数开了一扇写的小窗，本来是想在窗口立块牌子：**负数一律不收**。\n\n可这段代码**翻稿子过得了、跑起来也没红字** —— 只是账本被改成了负数，本喵看着心里发毛。\n\n请你把窗口那块牌子补上。规矩是：\n\n- 递进来的数**小于 0** → 不收，只印一句 `鱼干数不能是负的喵`，账本上**一个数都不许动**\n- 别的数照收\n\n改好之后，程序该印出这两行：\n\n```text\n鱼干数不能是负的喵\n{name} 有 {m} 条小鱼干喵\n```",
+  "brokenCodeTemplate": "class Cat {\n    private String name;\n    private int fish;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n\n    public int getFish() {\n        return fish;\n    }\n\n    public void setFish(int fish) {\n        this.fish = fish;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.setFish(-{n});\n        c.setFish({m});\n        System.out.println(c.getName() + \" 有 \" + c.getFish() + \" 条小鱼干喵\");\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    private String name;\n    private int fish;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n\n    public int getFish() {\n        return fish;\n    }\n\n    public void setFish(int fish) {\n        if (fish < 0) {\n            System.out.println(\"鱼干数不能是负的喵\");\n            return;\n        }\n        this.fish = fish;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.setFish(-{n});\n        c.setFish({m});\n        System.out.println(c.getName() + \" 有 \" + c.getFish() + \" 条小鱼干喵\");\n    }\n}\n",
+  "explanationTemplate": "这题是本课最值钱的一道：**它不报错。** 翻译官喵一个字都不说，程序照样跑完（本喵量过：`javac` 的 stderr **0 字节**、跑起来退出码 0）。坏账也确实**进过账本** —— 只是那一下紧跟着就被第二笔盖住了：`c.setFish(-{n})` 把账本改成了负数，下一句 `c.setFish({m})` 又把它写了回去，所以最后印出来的是 `{m}` 喵。**「印出来是对的」和「坏账没进来」是两件事** —— 谁绕过那扇窗都能伸手，这正是本喵要立牌子的理由。\n\n所以本喵要的「规矩」必须**写进图纸里**，而不是指望外面每一只猫自觉。规矩写在小窗里，就成了一道谁都得过的关；写在外面，谁绕过那扇窗都能伸手。\n\n牌子就两步：\n\n- `if (fish < 0)` —— 先把递进来的数看一眼。\n- 撞上负数就印一句提示、然后 `return;` —— **这个 `return` 是重点**：它让这条招式当场收工，下面那行 `this.fish = fish;` 根本轮不到执行，所以账本上一个数都没动。\n\n最容易漏的就是那个 `return`：不写它，程序印完提示照样往下把负数记进去 —— **提示印了，坏账也进来了**，本喵还是白立牌子。"
+}

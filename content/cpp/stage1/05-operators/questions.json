@@ -1,0 +1,66 @@
+{
+  "lessonId": "cpp-stage1-05",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写了一句 `cout << 5 / 2 << endl;`，屏幕上会印出什么？",
+      "options": ["`2`", "`2.5`", "`3`", "报错，因为除不尽"],
+      "answer": 0,
+      "explanation": "**两边的货都挂着整数牌，它就按整数算**喵：除完把小数那截直接剁掉，得到 `2`——不四舍五入，也不报错。想拿到 `2.5`，得让参与运算的那件货先变成小数（`5.0 / 2`）。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵挂的是 `int total = 7;` 和 `int cats = 2;`，又写了一行 `double each = total / cats;`。屏幕上印出来的 `each` 是几？",
+      "options": ["`3`", "`3.5`", "`4`", "报错，装小数的屋收不下整数"],
+      "answer": 0,
+      "explanation": "毛病出在**顺序**上喵：`total / cats` 是**先算的**，两件货都是整数，这一步老老实实剁成 `3`；算完之后那个 `3` 才被搬进装小数的屋。**先剁掉、再变小数**，小数点后面那半截早就没了。要让哪一步出小数，就得在那一步**之前**把货变成小数。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "想问「这两个数一样大吗」，中间该写哪个符号？",
+      "options": ["一个等号 `=`", "两个等号 `==`", "一个叹号 `!`", "两个和号 `&&`"],
+      "answer": 1,
+      "explanation": "**一个等号是搬运**（把右边的货搬进左边那间屋），**两个等号才是问「一不一样」**喵。这一对是新手最常见的笔误，而且写错了常常**不报错**——程序照样跑，只是答案全错。顺带记住：`!=` 是「不相等」。"
+    },
+    {
+      "id": "q4",
+      "type": "fill",
+      "stem": "要把一件货**明确地**转成另一种类型，让本喵一眼看出「这里是故意转的」，该用哪一招？（写招式名字就行）",
+      "answer": "static_cast",
+      "explanation": "`static_cast` 这一招的用法是：招式名后面跟一对尖括号写「想变成什么样」，再跟一对圆括号写「要搬的是哪件货」喵。它的好处是**你说了算**——别人一看就知道这里是你故意要转的，而不是被翻译官喵偷偷剁了一刀。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "stem": "下面这份稿子缺了一招，补齐之后它应该能印出两行。横线上填那一招的名字。",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = 5;\n    int cats = 2;\n    cout << fish / cats << endl;\n    cout << ____<double>(fish) / cats << endl;\n    return 0;\n}\n",
+      "blanks": [{ "answer": "static_cast", "accept": [] }],
+      "explanation": "第一行是两件整数直接除，剁成了 `2`；第二行先给 `fish` 套上 `static_cast` 转成小数，再除以 `cats`，就按小数算，得到 `2.5`喵。同一份货，转一下，答案就不一样了。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int total = 9;\n    int cats = 4;\n    cout << total / cats << endl;\n    cout << static_cast<double>(total) / cats << endl;\n    return 0;\n}\n",
+      "stem": "这段代码会印出什么？把它印出来的内容原样写下来（每句一行）。",
+      "answer": "2\n2.25",
+      "accept": ["2\n2.25\n"],
+      "explanation": "第一行两件整数相除，9 除以 4 剁掉零头得 `2`；第二行先用 `static_cast` 把 `total` 转成小数，再除以 `cats`，就按小数算，得 `2.25`喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << (3 > 2) << endl;\n    cout << (3 == 3) << endl;\n    cout << !(3 > 2) << endl;\n    return 0;\n}\n",
+      "stem": "这段代码会印出什么？把它印出来的内容原样写下来（每句一行）。",
+      "answer": "1\n1\n0",
+      "accept": ["1\n1\n0\n"],
+      "explanation": "比较的答案只有「真」和「假」，C++ 把「真」印成 `1`、「假」印成 `0`喵。`3 > 2` 为真、`3 == 3` 为真，都是 `1`；最后那个 `!` 是「不」，把真翻成假，所以是 `0`。"
+    }
+  ]
+}

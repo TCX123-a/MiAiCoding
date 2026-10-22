@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-14-menu-no-break",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-14",
+  "type": "codefix",
+  "concept": ["收摊那一支要跳出走号码的圈", "漏了它收摊却没收成", "翻译官喵一个字都不提醒"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "大胖"] }
+  },
+  "stemTemplate": "本喵这台托儿所的菜单坏了：**本喵喊了收摊，它却接着登记。** 号码碗里是 `1, 0, 1` —— 中间那个 `0` 是收摊。\n\n你帮本喵补上收摊那一支**漏掉的那一句**，让收摊之后**一个号码都不再走**。屏幕上要印出这三行：**登记了一只，名册上现在 1 只**、**收摊喵，今天登记了 1 只**、**号码走完了，名册上 1 只**。别的几行都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    vector<Cat> roster;\n    vector<int> keys = {1, 0, 1};\n\n    for (int cmd : keys) {\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"{name}\", 3));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\n    int age;\npublic:\n    Cat(string n, int a) : name(n), age(a) {}\n    void greet() {\n        cout << \"我是\" << name << \"，今年 \" << age << \" 岁喵\" << endl;\n    }\n};\n\nint main() {\n    vector<Cat> roster;\n    vector<int> keys = {1, 0, 1};\n\n    for (int cmd : keys) {\n        if (cmd == 0) {\n            cout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\n            break;\n        } else if (cmd == 1) {\n            roster.push_back(Cat(\"{name}\", 3));\n            cout << \"登记了一只，名册上现在 \" << roster.size() << \" 只\" << endl;\n        }\n    }\n    cout << \"号码走完了，名册上 \" << roster.size() << \" 只\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机真跑过没补的那一版，屏幕上**四行**：\n\n```text\n登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n登记了一只，名册上现在 2 只\n号码走完了，名册上 2 只\n```\n\n第三行就是毛病：**收摊那一句印出来了，收摊却没收成** —— 后面那个 `1` 照走不误，最后名册上多出来一只。\n\n补的那一句是 `break;`，写在收摊那一句**后面**：\n\n```text\ncout << \"收摊喵，今天登记了 \" << roster.size() << \" 只\" << endl;\nbreak;\n```\n\n补完之后本喵真跑过，屏幕上三行：\n\n```text\n登记了一只，名册上现在 1 只\n收摊喵，今天登记了 1 只\n号码走完了，名册上 1 只\n```\n\n⚠️ 三条钉住：\n\n1. **报错和它不一样，这一跤翻译官喵一个字都不提醒。** 本喵这一版**编得过、跑得完**，每一行都像模像样 —— 只有你盯着屏幕数一遍，才看得出收摊以后还在干活。\n2. **`break;` 跳出的是「走号码的那一圈」，不是那一个 `if`。** 本喵的号码碗是预先装好的，走完就完了；真坐在键盘前面、号码一直进来的时候，漏了它就得一直转下去。\n3. **`break;` 的位置在「印完收摊那一句」之后。** 写在 `if` 里面的第一句上，屏幕上就少印一行「收摊喵，今天登记了 …」——本喵真跑过，那是另一个毛病。"
+}

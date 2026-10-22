@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-cast-average",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-05",
+  "type": "codewrite",
+  "concept": ["static_cast", "算之前先变成小数", "平均分"],
+  "instances": 6,
+  "params": {
+    "total": { "kind": "pick", "values": ["7", "9"] },
+    "cats": { "kind": "pick", "values": ["2", "4"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{total}\n{cats}\n", "sampleText": "13\n2\n" },
+  "stemTemplate": "这一回本喵要的是**带小数**的答案喵：一堆小鱼干平均分给几只猫，**平均每只猫分到几条**，小数点后面也要。\n\n投喂口会先递进来**总条数**，再递进来**猫的只数**（一行一个）。\n\n请你写个程序，印**一行**（X 是算出来的数）：\n\n```text\n平均每只猫 X 条喵\n```\n\n⚠️ X 必须是**带小数**的：比如 7 条分给 2 只猫，要印 `3.5`，不是 `3`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int total = 0;\n    int cats = 0;\n    cin >> total >> cats;\n\n    cout << \"平均每只猫 \" << static_cast<double>(total) / cats << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的正解只有一句话：**要让哪一步出小数，就得在那一步之前把货变成小数。**\n\n两只碗都挂着整数牌，`total / cats` 会按整数算、把小数剁掉。所以要在**算之前**先动一样货：\n\n- `static_cast<double>(total) / cats` —— 尖括号里写「变成什么样」，圆括号里写「搬哪件货」。`total` 先变成小数，`小数 / cats` 就整句按小数算。\n- 也可以在小数点上做文章：`1.0 * total / cats` —— 只要**参与这一步运算**的两件货里有一件带小数点，整句就按小数算。\n\n⚠️ 最容易摔的是**顺序**：写成 `double each = total / cats;` 是**先剁完再装进小数的屋** —— 接货的碗再讲究，剁掉的那半截也回不来了。这一条本课专门拎出来讲过，别踩。"
+}

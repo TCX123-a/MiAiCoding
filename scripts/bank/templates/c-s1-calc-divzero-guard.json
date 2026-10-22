@@ -1,0 +1,21 @@
+{
+  "templateId": "c-s1-calc-divzero-guard",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-15",
+  "type": "codewrite",
+  "concept": ["除数为零", "拦路虎", "while循环", "综合项目"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "4\n{a}\n0\n5\n",
+    "sampleText": "4\n7\n2\n5\n"
+  },
+  "stemTemplate": "本喵的计算器别的都好了，就剩一道**拦路虎**没装喵：要是有人要做除法、却把第二条鱼干填成 `0`，那一步不能真去做 —— 得拦下来，印一句 `0 不能当除数喵！`。\n\n请你写个程序：\n\n1. 先写**四个小招式**：`add`、`sub`、`mul`、`divide`。每一招喂两个整数，把结果叼回来（除法按整数的规矩除）。\n\n2. 再写一招 `showMenu`，一行一行印：`=== 小鱼干计算器 ===`、`1. 加法`、`2. 减法`、`3. 乘法`、`4. 除法`、`5. 收工`，最后一行是 `选一个（1-5）：`，**冒号后面不要换行**。\n\n3. `main` 里转一个大圈，一直转到选项等于 `5` 为止。每一圈里：摆菜单、读选项；读到 `5` 就印 `收工啦喵～` 收工；否则印 `第一条小鱼干：` 读一个数、印 `第二条小鱼干：` 读一个数。\n\n4. 算的时候注意喵：**选项是 4、并且第二条鱼干等于 `0` 的时候，不要去做除法**，改成印 `0 不能当除数喵！`。其他情况照常印结果，样子是「第一个数、空格、记号、空格、第二个数、空格、等号、空格、结果」，记号按选项分别是 `+`、`-`、`*`、`/`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～ 判分**一定会喂一次「除数为 0」**，所以那道拦路虎必须装好。）",
+  "starterTemplate": "#include <stdio.h>\n\n// 在这里写 add / sub / mul / divide 四个小招式\n\n// 在这里写 showMenu\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    // 转一个大圈，一直转到 choice 等于 5\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这道拦路虎的意义，比它表面上看起来大得多喵：**它拦的不是一个「不合法输入」，而是一场真正的塌方。**\n\n除法的规矩是「把被除数分成那么多个份」。分成 **0** 份是什么意思？没人知道 —— 所以翻译官喵根本不会给你一个数，它是**当场炸掉**（程序直接崩，屏幕上冒出一句你从没见过的抱怨，后面该印的东西一个字都不会印）。\n\n所以这一道判断必须在**做除法之前**就问出来：\n\n- `b == 0` → 印 `0 不能当除数喵！`，**别去做那一步除法**；\n- 不然 → 照常算、照常印。\n\n也正因为这一条被拦住了，本喵这台计算器才敢说「随便敲，不会炸」。\n\n顺带把这一课的三个记号再对一遍：`=` 是放东西（`b = 0` 会把碗清空），`==` 是比较（`b == 0` 只是在问一句），判断里**永远用两个等号**。\n\n（还有一处小地方：这一道拦路虎只跟选项 `4` 有关。加法减法乘法里第二条鱼干是 `0` 完全没问题 —— `7 + 0`、`7 * 0` 都算得出来。）"
+}

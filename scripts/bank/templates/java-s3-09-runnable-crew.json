@@ -1,0 +1,23 @@
+{
+  "templateId": "java-s3-09-runnable-crew",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-09",
+  "type": "codewrite",
+  "concept": ["一段活的图纸塞给现成的猫", "整队派出去整队等回来", "收货格子各填各的号"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": {
+    "kind": "ints",
+    "head": "{n}\n",
+    "count": "{n}",
+    "min": 1,
+    "max": 9
+  },
+  "stemTemplate": "本喵要派 **{n} 只猫**去干活。这一次本喵**不想为每一只都新画一张猫的图纸** —— 手上只有**一段「捞鱼」的活**，想把它**塞给几只现成的猫**。\n\n投喂给程序的是：**第一行一个整数 n**，**后面跟 n 行**，一行一个整数，就是第 1 只、第 2 只……第 n 只猫要捞的条数。\n\n请你写个程序，照这个次序做：\n\n1. 把那段活画成一张**「一段活」的图纸**（`implements Runnable`）；图纸上带三样东西：自己是**第几只**、**要捞几条**、还有母猫那边**先备好的一个能装 n 个整数的收货格子**（整队共用这一个）；\n2. 那段活做的事是：从 0 开始**转圈**加到「要捞几条」，把结果放进收货格子里**对应自己号数**的那一格（第 1 只放第 1 格）；\n3. 照投喂进来的数，一只一只把这段活**塞进一只现成的猫**里，凑成 {n} 只的一队；\n4. 整队一起**派出去**；\n5. **站在门口等整队都回来**；\n6. 回来之后按次序印 n 行：`第 k 只：x 条`（k 从 1 数起，x 是收货格子里第 k 号装着的数）；\n7. 最后印一行 `一共：` 后面接 n 个加起来的总数，再跟一个 ` 条`。\n\n比如投喂给程序的是\n\n```text\n{sampleInput}\n```\n\n程序就要叼回\n\n```text\n{sampleOutput}\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n        int[] 收货格子 = new int[n];\n        Thread[] 一队 = new Thread[n];\n        for (int i = 0; i < n; i++) {\n            一队[i] = new Thread(new FishJob(i + 1, 条数们[i], 收货格子));\n        }\n        for (int i = 0; i < n; i++) {\n            一队[i].start();\n        }\n        for (int i = 0; i < n; i++) {\n            一队[i].join();\n        }\n\n        int 一共 = 0;\n        for (int i = 0; i < n; i++) {\n            System.out.println(\"第 \" + (i + 1) + \" 只：\" + 收货格子[i] + \" 条\");\n            一共 = 一共 + 收货格子[i];\n        }\n        System.out.println(\"一共：\" + 一共 + \" 条\");\n    }\n}\n\nclass FishJob implements Runnable {\n    int 第几只;\n    int 要捞;\n    int[] 收货格子;\n\n    FishJob(int 第几只, int 要捞, int[] 收货格子) {\n        this.第几只 = 第几只;\n        this.要捞 = 要捞;\n        this.收货格子 = 收货格子;\n    }\n\n    public void run() {\n        int 数到 = 0;\n        for (int i = 0; i < 要捞; i++) {\n            数到 = 数到 + 1;\n        }\n        收货格子[第几只 - 1] = 数到;\n    }\n}\n",
+  "explanationTemplate": "**一、`implements Runnable` 的图纸写的是「一段活」，不是「一只猫」。** 它自己不会跑，得**塞给一只猫** —— `new Thread(new FishJob(...))` —— 那只猫才有名字、才能 `start()`。好处是**同一段活塞给几只猫都行**，不用为每一只新画一张猫的图纸。\n\n**二、每只猫拿的是自己那一份。** 第几只、要捞几条都是塞进去的，所以 {n} 只猫各干各的，各把自己那一号填上；收货格子是几只猫共用的**同一排**，各填各的格。\n\n**三、整队派出去、整队等回来。** 两句 `for` 转圈：一句把整队 `start()`，一句把整队 `join()`。少派几只，那几号就是空的；不等就收货，谁写完了说不准。\n\n**四、报数在全部 `join()` 之后，所以内容是稳的。** 谁先捞完、谁后捞完由机器定；本喵等的是**整队**，回来之后才一行一行报。顺带一句：等到它们都回来了，每一只填进格子里的东西本喵这边才一定看得见。\n\n**五、号数和条数各管一件事。** 报第 k 行的时候，`k` 是本喵数的号数，`x` 是那一号格子里装着的数 —— 两样都别写死，让程序自己读出来。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-fptr-missing-parens",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-12",
+  "type": "codefix",
+  "concept": ["函数指针", "括号不能丢", "编译错误"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵有一招「加」（投喂两个整数、叼回一个整数）。现在想摆**一只碗**，里面装这张「加」的牌子，然后照牌子上写的把 {a} 和 {b} 加起来印出来。\n\n可翻译官喵把整段代码退了回来，第一句话就是「招式怎么可以像一只碗那样给初值」。你帮本喵看看是哪儿让它读岔了，把它改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    int *p(int, int) = add;\n    printf(\"%d\\n\", p({a}, {b}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    int (*p)(int, int) = add;\n    printf(\"%d\\n\", p({a}, {b}));\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: function 'p' is initialized like a variable` —— 翻过来就是「**招式 `p` 怎么可以像一只碗那样给初值**」（底下还会跟着一串抱怨，都是从这一句牵出来的）。\n\n少的就是**包着 `*p` 的那对小括号**喵。看一下它把这行字读成了什么：\n\n- 本喵想写的：`int (*p)(int, int)` —— 「**一只碗**叫 `p`，里面装一张牌子，牌子上写的是『收两个整数、叼回一个整数』」。\n- 少了括号以后：`int *p(int, int)` —— 「**一招**名叫 `p`，投喂两个整数、**叼回一张指向整数的牌子**」。\n\n看出来了吗？少了那对括号，翻译官喵认为本喵在**定义一招**（名字叫 `p`、身体待会儿再写）。可后面又跟了个等号加初值 —— **招式是不能这样赋值的**，于是它当场翻脸。\n\n补上括号就完事。**这对括号是「这是一只碗」和「这是一招」的分界线**，一个都不能省。\n\n念法也顺手收下，**从里往外念**：\n\n1. 最右边那两个 `(int, int)`：这招要投喂什么 —— 两个整数；\n2. 最左边那个 `int`：它叼回来什么 —— 一个整数；\n3. 中间那包 `(*p)`：这只碗叫 `p`，装的是牌子。\n\n补好之后再喊：`p({a}, {b})` 照着牌子上写的走，得到 {a} 加 {b} 的和。"
+}

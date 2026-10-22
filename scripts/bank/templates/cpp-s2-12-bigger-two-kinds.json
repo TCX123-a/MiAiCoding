@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-12-bigger-two-kinds",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-12",
+  "type": "codewrite",
+  "concept": ["只画一张图纸", "同一张图纸裁两款料", "翻译官喵按料自己猜"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要一张「挑最大的」的图纸：收两个**同款**的料，回来的是大的那一个。\n\n投喂口会**先给一个数**（要跟着几个数），**再一只一只给 {n} 个数**喵。\n\n请你这么办：\n\n1. 先读进那个数，再一只一只读进后面那些数；\n2. **只画一张图纸**（立空位那一行不能少），一边读一边用它挑出最大的那个整数；\n3. **同一张图纸再用一次**：这一回每只数都加上一个小尾巴（`+ 0.5`）再喂进去，挑出最大的那个小数；\n4. 先印整数那一款的结果，再印小数那一款的结果，**一行一个**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nT bigger(T a, T b) {\n    return a > b ? a : b;\n}\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int best = 0;\n    double bestD = 0.0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        best = bigger(best, x);\n        bestD = bigger(bestD, x + 0.5);\n    }\n\n    cout << best << endl;\n    cout << bestD << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题，屏幕上两行是：\n\n```text\n{sampleOutput}\n```\n\n**两行出自同一张图纸。** 本喵一次都没在尖括号里点名，两次都是让翻译官喵**按料自己猜**：\n\n- 第一次喂进去的是「上一轮挑出来的那个」和「这一轮读进来的那个」，两处都是整数 —— 它猜这一款是整数，回来的是整数。\n- 第二次喂进去的是「上一轮挑出来的小数」和「这一只数加了个小尾巴」，两处都带小数 —— 同一张图纸，它猜出来的是小数那一款。\n\n⚠️ 三件事钉住：\n\n1. **立空位那一行不能少。** 少了它，图纸里那个代号就成了凭空冒出来的字母，翻译官喵报 `error: 'T' does not name a type`。\n2. **一张图纸就够，别画两张。** 本喵这一题要的正是「同一张图纸裁两款料」这个手感 —— 画两张几乎一字不差的图纸，就等于把这一课的收获又还回去了。\n3. **加小尾巴那一步不能省。** 省了的话两次喂进去的都是整数，两行会一模一样 —— 那这一题就白做了。"
+}

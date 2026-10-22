@@ -1,0 +1,356 @@
+{
+  "lessonId": "cpp-stage2-09",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s2-09-build-teardown-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把**搭的顺序**和**拆的顺序**都印出来看清楚。投喂口会递进来**一串字**（名字）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏够得着的那一档的 `name`（一串字）；出生招式把名字填进去，**并印一行** `先搭妈妈那一半：X`；收尾招式**印一行** `后拆妈妈那一半：X`。\n2. **让新图纸照它画下来**：叫 `Kitten`；出生招式**先把料交给妈妈**（那一小段 `: Cat(n)` 不能省），**再印一行** `再搭小猫那一半：X`；收尾招式**印一行** `先拆小猫那一半：X`。\n3. 在 `main` 里：照 `Kitten` 生一只小猫（名字用投喂口递进来的），然后**印一行** `---- 晒太阳 ----`。\n\n比如投喂给程序的是\n\n小胖\n\n程序就要叼回\n\n先搭妈妈那一半：小胖\n再搭小猫那一半：小胖\n---- 晒太阳 ----\n先拆小猫那一半：小胖\n后拆妈妈那一半：小胖\n\n**这一题请你数一数屏幕上有几行、每一行是哪一个动作印的。**\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {\n        cout << \"先搭妈妈那一半：\" << name << endl;\n    }\n    ~Cat() {\n        cout << \"后拆妈妈那一半：\" << name << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"再搭小猫那一半：\" << name << endl;\n    }\n    ~Kitten() {\n        cout << \"先拆小猫那一半：\" << name << endl;\n    }\n};\n\nint main() {\n    string name;\n    cin >> name;\n\n    Kitten k(name);\n    cout << \"---- 晒太阳 ----\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "先搭妈妈那一半：小橘\n再搭小猫那一半：小橘\n---- 晒太阳 ----\n先拆小猫那一半：小橘\n后拆妈妈那一半：小橘",
+      "stdin": "小橘\n",
+      "explanation": "本喵在本机跑过这一题（名字用小橘时），屏幕上是五行：\n\n```text\n先搭妈妈那一半：小橘\n再搭小猫那一半：小橘\n---- 晒太阳 ----\n先拆小猫那一半：小橘\n后拆妈妈那一半：小橘\n```\n\n对着这五行看顺序，一句话就记住了：\n\n> **搭的时候从妈妈往上搭，拆的时候从小猫往下拆。**\n\n- **搭**：小猫图纸照出来的真猫，是「妈妈那一半 + 小猫那一半」拼起来的。那一小段 `: Cat(n)` 排在最前面，所以妈妈的活**先**跑完，妈妈那一半里已经有名字了，本喵这一半才开始。\n- **中间那一行**是本喵在 `main` 里印的：它夹在两**头**中间，说明那时候两只猫**都活着** —— 妈妈那一半和小猫那一半都在。\n- **拆**：顺序**反过来**，小猫那一半先走、妈妈那一半后走。就像拆房子：楼上先拆掉，地基最后挖。\n\n⚠️ 为什么这个顺序不能靠猜？本喵下一课会讲得更狠：**妈妈那一半的收尾动作要是没跑到，它管着的东西就漏了。**（比如上一课那种「现要现租的仓库」—— 收尾没跑到，那间屋就再也没人还了。）顺序这件事看着像细节，它管的是**东西有没有还清**。\n\n⚠️ 顺手记一个反过来的例子：要是把出生招式后面那一小段 `: Cat(n)` **删掉**，翻译官喵会报 `no matching function for call to 'Cat::Cat()'` —— 它找不到一个「不用料就能搭妈妈那一半」的招式。",
+      "templateId": "cpp-s2-09-build-teardown",
+      "params": {
+        "name": "小橘",
+        "word": "晒太阳"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:26.076Z",
+        "hash": "1ab550edf6d7ec7e"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-build-teardown-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把**搭的顺序**和**拆的顺序**都印出来看清楚。投喂口会递进来**一串字**（名字）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏够得着的那一档的 `name`（一串字）；出生招式把名字填进去，**并印一行** `先搭妈妈那一半：X`；收尾招式**印一行** `后拆妈妈那一半：X`。\n2. **让新图纸照它画下来**：叫 `Kitten`；出生招式**先把料交给妈妈**（那一小段 `: Cat(n)` 不能省），**再印一行** `再搭小猫那一半：X`；收尾招式**印一行** `先拆小猫那一半：X`。\n3. 在 `main` 里：照 `Kitten` 生一只小猫（名字用投喂口递进来的），然后**印一行** `---- 打盹 ----`。\n\n比如投喂给程序的是\n\n小胖\n\n程序就要叼回\n\n先搭妈妈那一半：小胖\n再搭小猫那一半：小胖\n---- 打盹 ----\n先拆小猫那一半：小胖\n后拆妈妈那一半：小胖\n\n**这一题请你数一数屏幕上有几行、每一行是哪一个动作印的。**\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {\n        cout << \"先搭妈妈那一半：\" << name << endl;\n    }\n    ~Cat() {\n        cout << \"后拆妈妈那一半：\" << name << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"再搭小猫那一半：\" << name << endl;\n    }\n    ~Kitten() {\n        cout << \"先拆小猫那一半：\" << name << endl;\n    }\n};\n\nint main() {\n    string name;\n    cin >> name;\n\n    Kitten k(name);\n    cout << \"---- 打盹 ----\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "先搭妈妈那一半：小橘\n再搭小猫那一半：小橘\n---- 打盹 ----\n先拆小猫那一半：小橘\n后拆妈妈那一半：小橘",
+      "stdin": "小橘\n",
+      "explanation": "本喵在本机跑过这一题（名字用小橘时），屏幕上是五行：\n\n```text\n先搭妈妈那一半：小橘\n再搭小猫那一半：小橘\n---- 晒太阳 ----\n先拆小猫那一半：小橘\n后拆妈妈那一半：小橘\n```\n\n对着这五行看顺序，一句话就记住了：\n\n> **搭的时候从妈妈往上搭，拆的时候从小猫往下拆。**\n\n- **搭**：小猫图纸照出来的真猫，是「妈妈那一半 + 小猫那一半」拼起来的。那一小段 `: Cat(n)` 排在最前面，所以妈妈的活**先**跑完，妈妈那一半里已经有名字了，本喵这一半才开始。\n- **中间那一行**是本喵在 `main` 里印的：它夹在两**头**中间，说明那时候两只猫**都活着** —— 妈妈那一半和小猫那一半都在。\n- **拆**：顺序**反过来**，小猫那一半先走、妈妈那一半后走。就像拆房子：楼上先拆掉，地基最后挖。\n\n⚠️ 为什么这个顺序不能靠猜？本喵下一课会讲得更狠：**妈妈那一半的收尾动作要是没跑到，它管着的东西就漏了。**（比如上一课那种「现要现租的仓库」—— 收尾没跑到，那间屋就再也没人还了。）顺序这件事看着像细节，它管的是**东西有没有还清**。\n\n⚠️ 顺手记一个反过来的例子：要是把出生招式后面那一小段 `: Cat(n)` **删掉**，翻译官喵会报 `no matching function for call to 'Cat::Cat()'` —— 它找不到一个「不用料就能搭妈妈那一半」的招式。",
+      "templateId": "cpp-s2-09-build-teardown",
+      "params": {
+        "name": "小橘",
+        "word": "打盹"
+      },
+      "verified": {
+        "at": "2026-10-20T16:53:56.073Z",
+        "hash": "84d5d66b8e90b23a"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-build-teardown-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把**搭的顺序**和**拆的顺序**都印出来看清楚。投喂口会递进来**一串字**（名字）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏够得着的那一档的 `name`（一串字）；出生招式把名字填进去，**并印一行** `先搭妈妈那一半：X`；收尾招式**印一行** `后拆妈妈那一半：X`。\n2. **让新图纸照它画下来**：叫 `Kitten`；出生招式**先把料交给妈妈**（那一小段 `: Cat(n)` 不能省），**再印一行** `再搭小猫那一半：X`；收尾招式**印一行** `先拆小猫那一半：X`。\n3. 在 `main` 里：照 `Kitten` 生一只小猫（名字用投喂口递进来的），然后**印一行** `---- 晒太阳 ----`。\n\n比如投喂给程序的是\n\n小胖\n\n程序就要叼回\n\n先搭妈妈那一半：小胖\n再搭小猫那一半：小胖\n---- 晒太阳 ----\n先拆小猫那一半：小胖\n后拆妈妈那一半：小胖\n\n**这一题请你数一数屏幕上有几行、每一行是哪一个动作印的。**\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {\n        cout << \"先搭妈妈那一半：\" << name << endl;\n    }\n    ~Cat() {\n        cout << \"后拆妈妈那一半：\" << name << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"再搭小猫那一半：\" << name << endl;\n    }\n    ~Kitten() {\n        cout << \"先拆小猫那一半：\" << name << endl;\n    }\n};\n\nint main() {\n    string name;\n    cin >> name;\n\n    Kitten k(name);\n    cout << \"---- 晒太阳 ----\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "先搭妈妈那一半：狸花\n再搭小猫那一半：狸花\n---- 晒太阳 ----\n先拆小猫那一半：狸花\n后拆妈妈那一半：狸花",
+      "stdin": "狸花\n",
+      "explanation": "本喵在本机跑过这一题（名字用小橘时），屏幕上是五行：\n\n```text\n先搭妈妈那一半：小橘\n再搭小猫那一半：小橘\n---- 晒太阳 ----\n先拆小猫那一半：小橘\n后拆妈妈那一半：小橘\n```\n\n对着这五行看顺序，一句话就记住了：\n\n> **搭的时候从妈妈往上搭，拆的时候从小猫往下拆。**\n\n- **搭**：小猫图纸照出来的真猫，是「妈妈那一半 + 小猫那一半」拼起来的。那一小段 `: Cat(n)` 排在最前面，所以妈妈的活**先**跑完，妈妈那一半里已经有名字了，本喵这一半才开始。\n- **中间那一行**是本喵在 `main` 里印的：它夹在两**头**中间，说明那时候两只猫**都活着** —— 妈妈那一半和小猫那一半都在。\n- **拆**：顺序**反过来**，小猫那一半先走、妈妈那一半后走。就像拆房子：楼上先拆掉，地基最后挖。\n\n⚠️ 为什么这个顺序不能靠猜？本喵下一课会讲得更狠：**妈妈那一半的收尾动作要是没跑到，它管着的东西就漏了。**（比如上一课那种「现要现租的仓库」—— 收尾没跑到，那间屋就再也没人还了。）顺序这件事看着像细节，它管的是**东西有没有还清**。\n\n⚠️ 顺手记一个反过来的例子：要是把出生招式后面那一小段 `: Cat(n)` **删掉**，翻译官喵会报 `no matching function for call to 'Cat::Cat()'` —— 它找不到一个「不用料就能搭妈妈那一半」的招式。",
+      "templateId": "cpp-s2-09-build-teardown",
+      "params": {
+        "name": "狸花",
+        "word": "晒太阳"
+      },
+      "verified": {
+        "at": "2026-10-20T16:54:00.669Z",
+        "hash": "9a3a37566b42bb0b"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-build-teardown-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把**搭的顺序**和**拆的顺序**都印出来看清楚。投喂口会递进来**一串字**（名字）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏够得着的那一档的 `name`（一串字）；出生招式把名字填进去，**并印一行** `先搭妈妈那一半：X`；收尾招式**印一行** `后拆妈妈那一半：X`。\n2. **让新图纸照它画下来**：叫 `Kitten`；出生招式**先把料交给妈妈**（那一小段 `: Cat(n)` 不能省），**再印一行** `再搭小猫那一半：X`；收尾招式**印一行** `先拆小猫那一半：X`。\n3. 在 `main` 里：照 `Kitten` 生一只小猫（名字用投喂口递进来的），然后**印一行** `---- 打盹 ----`。\n\n比如投喂给程序的是\n\n小胖\n\n程序就要叼回\n\n先搭妈妈那一半：小胖\n再搭小猫那一半：小胖\n---- 打盹 ----\n先拆小猫那一半：小胖\n后拆妈妈那一半：小胖\n\n**这一题请你数一数屏幕上有几行、每一行是哪一个动作印的。**\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {\n        cout << \"先搭妈妈那一半：\" << name << endl;\n    }\n    ~Cat() {\n        cout << \"后拆妈妈那一半：\" << name << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"再搭小猫那一半：\" << name << endl;\n    }\n    ~Kitten() {\n        cout << \"先拆小猫那一半：\" << name << endl;\n    }\n};\n\nint main() {\n    string name;\n    cin >> name;\n\n    Kitten k(name);\n    cout << \"---- 打盹 ----\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "先搭妈妈那一半：狸花\n再搭小猫那一半：狸花\n---- 打盹 ----\n先拆小猫那一半：狸花\n后拆妈妈那一半：狸花",
+      "stdin": "狸花\n",
+      "explanation": "本喵在本机跑过这一题（名字用小橘时），屏幕上是五行：\n\n```text\n先搭妈妈那一半：小橘\n再搭小猫那一半：小橘\n---- 晒太阳 ----\n先拆小猫那一半：小橘\n后拆妈妈那一半：小橘\n```\n\n对着这五行看顺序，一句话就记住了：\n\n> **搭的时候从妈妈往上搭，拆的时候从小猫往下拆。**\n\n- **搭**：小猫图纸照出来的真猫，是「妈妈那一半 + 小猫那一半」拼起来的。那一小段 `: Cat(n)` 排在最前面，所以妈妈的活**先**跑完，妈妈那一半里已经有名字了，本喵这一半才开始。\n- **中间那一行**是本喵在 `main` 里印的：它夹在两**头**中间，说明那时候两只猫**都活着** —— 妈妈那一半和小猫那一半都在。\n- **拆**：顺序**反过来**，小猫那一半先走、妈妈那一半后走。就像拆房子：楼上先拆掉，地基最后挖。\n\n⚠️ 为什么这个顺序不能靠猜？本喵下一课会讲得更狠：**妈妈那一半的收尾动作要是没跑到，它管着的东西就漏了。**（比如上一课那种「现要现租的仓库」—— 收尾没跑到，那间屋就再也没人还了。）顺序这件事看着像细节，它管的是**东西有没有还清**。\n\n⚠️ 顺手记一个反过来的例子：要是把出生招式后面那一小段 `: Cat(n)` **删掉**，翻译官喵会报 `no matching function for call to 'Cat::Cat()'` —— 它找不到一个「不用料就能搭妈妈那一半」的招式。",
+      "templateId": "cpp-s2-09-build-teardown",
+      "params": {
+        "name": "狸花",
+        "word": "打盹"
+      },
+      "verified": {
+        "at": "2026-10-20T16:54:05.401Z",
+        "hash": "af21662e75e7dc19"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-build-teardown-004",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把**搭的顺序**和**拆的顺序**都印出来看清楚。投喂口会递进来**一串字**（名字）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏够得着的那一档的 `name`（一串字）；出生招式把名字填进去，**并印一行** `先搭妈妈那一半：X`；收尾招式**印一行** `后拆妈妈那一半：X`。\n2. **让新图纸照它画下来**：叫 `Kitten`；出生招式**先把料交给妈妈**（那一小段 `: Cat(n)` 不能省），**再印一行** `再搭小猫那一半：X`；收尾招式**印一行** `先拆小猫那一半：X`。\n3. 在 `main` 里：照 `Kitten` 生一只小猫（名字用投喂口递进来的），然后**印一行** `---- 晒太阳 ----`。\n\n比如投喂给程序的是\n\n小胖\n\n程序就要叼回\n\n先搭妈妈那一半：小胖\n再搭小猫那一半：小胖\n---- 晒太阳 ----\n先拆小猫那一半：小胖\n后拆妈妈那一半：小胖\n\n**这一题请你数一数屏幕上有几行、每一行是哪一个动作印的。**\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {\n        cout << \"先搭妈妈那一半：\" << name << endl;\n    }\n    ~Cat() {\n        cout << \"后拆妈妈那一半：\" << name << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"再搭小猫那一半：\" << name << endl;\n    }\n    ~Kitten() {\n        cout << \"先拆小猫那一半：\" << name << endl;\n    }\n};\n\nint main() {\n    string name;\n    cin >> name;\n\n    Kitten k(name);\n    cout << \"---- 晒太阳 ----\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "先搭妈妈那一半：大胖\n再搭小猫那一半：大胖\n---- 晒太阳 ----\n先拆小猫那一半：大胖\n后拆妈妈那一半：大胖",
+      "stdin": "大胖\n",
+      "explanation": "本喵在本机跑过这一题（名字用小橘时），屏幕上是五行：\n\n```text\n先搭妈妈那一半：小橘\n再搭小猫那一半：小橘\n---- 晒太阳 ----\n先拆小猫那一半：小橘\n后拆妈妈那一半：小橘\n```\n\n对着这五行看顺序，一句话就记住了：\n\n> **搭的时候从妈妈往上搭，拆的时候从小猫往下拆。**\n\n- **搭**：小猫图纸照出来的真猫，是「妈妈那一半 + 小猫那一半」拼起来的。那一小段 `: Cat(n)` 排在最前面，所以妈妈的活**先**跑完，妈妈那一半里已经有名字了，本喵这一半才开始。\n- **中间那一行**是本喵在 `main` 里印的：它夹在两**头**中间，说明那时候两只猫**都活着** —— 妈妈那一半和小猫那一半都在。\n- **拆**：顺序**反过来**，小猫那一半先走、妈妈那一半后走。就像拆房子：楼上先拆掉，地基最后挖。\n\n⚠️ 为什么这个顺序不能靠猜？本喵下一课会讲得更狠：**妈妈那一半的收尾动作要是没跑到，它管着的东西就漏了。**（比如上一课那种「现要现租的仓库」—— 收尾没跑到，那间屋就再也没人还了。）顺序这件事看着像细节，它管的是**东西有没有还清**。\n\n⚠️ 顺手记一个反过来的例子：要是把出生招式后面那一小段 `: Cat(n)` **删掉**，翻译官喵会报 `no matching function for call to 'Cat::Cat()'` —— 它找不到一个「不用料就能搭妈妈那一半」的招式。",
+      "templateId": "cpp-s2-09-build-teardown",
+      "params": {
+        "name": "大胖",
+        "word": "晒太阳"
+      },
+      "verified": {
+        "at": "2026-10-20T16:54:09.949Z",
+        "hash": "aabf807d8adaf9dc"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-build-teardown-005",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要把**搭的顺序**和**拆的顺序**都印出来看清楚。投喂口会递进来**一串字**（名字）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏够得着的那一档的 `name`（一串字）；出生招式把名字填进去，**并印一行** `先搭妈妈那一半：X`；收尾招式**印一行** `后拆妈妈那一半：X`。\n2. **让新图纸照它画下来**：叫 `Kitten`；出生招式**先把料交给妈妈**（那一小段 `: Cat(n)` 不能省），**再印一行** `再搭小猫那一半：X`；收尾招式**印一行** `先拆小猫那一半：X`。\n3. 在 `main` 里：照 `Kitten` 生一只小猫（名字用投喂口递进来的），然后**印一行** `---- 打盹 ----`。\n\n比如投喂给程序的是\n\n小胖\n\n程序就要叼回\n\n先搭妈妈那一半：小胖\n再搭小猫那一半：小胖\n---- 打盹 ----\n先拆小猫那一半：小胖\n后拆妈妈那一半：小胖\n\n**这一题请你数一数屏幕上有几行、每一行是哪一个动作印的。**\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {\n        cout << \"先搭妈妈那一半：\" << name << endl;\n    }\n    ~Cat() {\n        cout << \"后拆妈妈那一半：\" << name << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"再搭小猫那一半：\" << name << endl;\n    }\n    ~Kitten() {\n        cout << \"先拆小猫那一半：\" << name << endl;\n    }\n};\n\nint main() {\n    string name;\n    cin >> name;\n\n    Kitten k(name);\n    cout << \"---- 打盹 ----\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "先搭妈妈那一半：大胖\n再搭小猫那一半：大胖\n---- 打盹 ----\n先拆小猫那一半：大胖\n后拆妈妈那一半：大胖",
+      "stdin": "大胖\n",
+      "explanation": "本喵在本机跑过这一题（名字用小橘时），屏幕上是五行：\n\n```text\n先搭妈妈那一半：小橘\n再搭小猫那一半：小橘\n---- 晒太阳 ----\n先拆小猫那一半：小橘\n后拆妈妈那一半：小橘\n```\n\n对着这五行看顺序，一句话就记住了：\n\n> **搭的时候从妈妈往上搭，拆的时候从小猫往下拆。**\n\n- **搭**：小猫图纸照出来的真猫，是「妈妈那一半 + 小猫那一半」拼起来的。那一小段 `: Cat(n)` 排在最前面，所以妈妈的活**先**跑完，妈妈那一半里已经有名字了，本喵这一半才开始。\n- **中间那一行**是本喵在 `main` 里印的：它夹在两**头**中间，说明那时候两只猫**都活着** —— 妈妈那一半和小猫那一半都在。\n- **拆**：顺序**反过来**，小猫那一半先走、妈妈那一半后走。就像拆房子：楼上先拆掉，地基最后挖。\n\n⚠️ 为什么这个顺序不能靠猜？本喵下一课会讲得更狠：**妈妈那一半的收尾动作要是没跑到，它管着的东西就漏了。**（比如上一课那种「现要现租的仓库」—— 收尾没跑到，那间屋就再也没人还了。）顺序这件事看着像细节，它管的是**东西有没有还清**。\n\n⚠️ 顺手记一个反过来的例子：要是把出生招式后面那一小段 `: Cat(n)` **删掉**，翻译官喵会报 `no matching function for call to 'Cat::Cat()'` —— 它找不到一个「不用料就能搭妈妈那一半」的招式。",
+      "templateId": "cpp-s2-09-build-teardown",
+      "params": {
+        "name": "大胖",
+        "word": "打盹"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:29.012Z",
+        "hash": "8456055581a89a33"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-kitten-ctor-missing-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "老图纸的出生招式要收一样料（一串名字），小猫图纸的出生招式也收了一样料，可翻译官喵说**妈妈那一半搭不起来**。\n\n你帮本喵改到能跑起来（小猫叫 小橘，搭好的时候印一行）。**`main` 里的喊法、还有印东西那一行，都不用改。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) {\n        cout << \"小猫那一半搭好：\" << name << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"小橘\");\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"小猫那一半搭好：\" << name << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"小橘\");\n    return 0;\n}\n",
+      "expectedOutput": "小猫那一半搭好：小橘",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:14:22: error: no matching function for call to 'Cat::Cat()'`\n\n翻成猫话：**「本喵要搭一只猫，可找不到一个能空手搭妈妈那一半的招式喵。」**（`Cat()` 是「一样料都不收的出生招式」的写法。）\n\n根子在这一件事上：**小猫图纸照出来的真猫，是「妈妈那一半 + 小猫那一半」拼起来的。** 本喵那只小猫的出生招式只顾着搭自己这一半，**妈妈那一半怎么搭，一个字都没交代** —— 翻译官喵只好去找一个「不用料就能搭」的妈妈出生招式；可老图纸上写着的那个偏偏要收一串名字，两边对不上。\n\n改法就是把那一样料**交代给妈妈**，写在出生招式后面的那一小段里：\n\n```text\nKitten(string n) : Cat(n)\n```\n\n（就是接在出生招式名字后面的一小段，后面才轮到本喵自己那一半的大括号。）\n\n念作：「**先把 `n` 交给妈妈的出生招式，妈妈那一半搭好了，本喵这一半才开始。**」\n\n顺序这件事钉死成一句话就够：\n\n> **搭的时候从妈妈往上搭，拆的时候从小猫往下拆。**\n\n⚠️ 顺手记一条：那一小段 `: Cat(n)` 是**按顺序排在最前面的** —— 它比小猫自己这一半的活更早跑。所以本喵在 `Kitten` 的活里印 `name`，印出来的是**妈妈那一半刚才填好的**那个名字。",
+      "templateId": "cpp-s2-09-kitten-ctor-missing",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:08.650Z",
+        "hash": "5c51b93888b5cc8f"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-kitten-ctor-missing-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "老图纸的出生招式要收一样料（一串名字），小猫图纸的出生招式也收了一样料，可翻译官喵说**妈妈那一半搭不起来**。\n\n你帮本喵改到能跑起来（小猫叫 大胖，搭好的时候印一行）。**`main` 里的喊法、还有印东西那一行，都不用改。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) {\n        cout << \"小猫那一半搭好：\" << name << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"大胖\");\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprotected:\n    string name;\npublic:\n    Cat(string n) : name(n) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n) : Cat(n) {\n        cout << \"小猫那一半搭好：\" << name << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"大胖\");\n    return 0;\n}\n",
+      "expectedOutput": "小猫那一半搭好：大胖",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:14:22: error: no matching function for call to 'Cat::Cat()'`\n\n翻成猫话：**「本喵要搭一只猫，可找不到一个能空手搭妈妈那一半的招式喵。」**（`Cat()` 是「一样料都不收的出生招式」的写法。）\n\n根子在这一件事上：**小猫图纸照出来的真猫，是「妈妈那一半 + 小猫那一半」拼起来的。** 本喵那只小猫的出生招式只顾着搭自己这一半，**妈妈那一半怎么搭，一个字都没交代** —— 翻译官喵只好去找一个「不用料就能搭」的妈妈出生招式；可老图纸上写着的那个偏偏要收一串名字，两边对不上。\n\n改法就是把那一样料**交代给妈妈**，写在出生招式后面的那一小段里：\n\n```text\nKitten(string n) : Cat(n)\n```\n\n（就是接在出生招式名字后面的一小段，后面才轮到本喵自己那一半的大括号。）\n\n念作：「**先把 `n` 交给妈妈的出生招式，妈妈那一半搭好了，本喵这一半才开始。**」\n\n顺序这件事钉死成一句话就够：\n\n> **搭的时候从妈妈往上搭，拆的时候从小猫往下拆。**\n\n⚠️ 顺手记一条：那一小段 `: Cat(n)` 是**按顺序排在最前面的** —— 它比小猫自己这一半的活更早跑。所以本喵在 `Kitten` 的活里印 `name`，印出来的是**妈妈那一半刚才填好的**那个名字。",
+      "templateId": "cpp-s2-09-kitten-ctor-missing",
+      "params": {
+        "name": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:10.938Z",
+        "hash": "c66fb6ae467995cc"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-kitten-wag-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要**一张新图纸照着老图纸画下来**，省掉抄自己的力气。投喂口会递进来**一串字**（小猫的名字）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏公开的 `name`（一串字），一招 `meow`，喊它印一行 `X：喵～`。\n2. **让新图纸照着它画下来**：新图纸叫 `Kitten`。**照着画的那一行别漏了那一小段 `public`** —— 漏了的话，老图纸给的公开东西全会变成新图纸自己的私事。\n3. **新图纸上只添自己不一样的那一点**：一手 `wag`，喊它印一行 `X 摇起了尾巴`。**`name` 那一栏和 `meow` 那一手，一个字都不要再写一遍**（它们会自己跟着来）。\n4. 在 `main` 里：照 `Kitten` 生一只小猫，把投喂口递进来的名字填进它那一格，然后**先喊 `meow`、再喊 `wag`**。\n\n比如投喂给程序的是\n\n小胖\n\n程序就要叼回\n\n小胖：喵～\n小胖 摇起了尾巴\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    void meow() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    void wag() const {\n        cout << name << \" 摇起了尾巴\" << endl;\n    }\n};\n\nint main() {\n    string name;\n    cin >> name;\n\n    Kitten k;\n    k.name = name;\n    k.meow();\n    k.wag();\n    return 0;\n}\n",
+      "expectedOutput": "小橘：喵～\n小橘 摇起了尾巴",
+      "stdin": "小橘\n",
+      "explanation": "这一手值得看清的地方是：**`Kitten` 这一张图纸上根本没有写 `name`，也没有写 `meow`**，可照它生出来的小猫两样都会用。\n\n- **`class Kitten : public Cat`** 这一行就是全部的秘密，念作「`Kitten` 这张图纸，**照着 `Cat` 画下来**」。\n- **老图纸上的东西，新图纸自动全有**：格子跟着来、招式也跟着来。本喵只管往里添新东西（这一题里就是 `wag` 那一手）。\n- **改一处，处处跟着变**：哪天本喵把老图纸的 `meow` 改成别的调子，照着它画的所有图纸**立刻**跟着改，一个字都不用动。这正是本喵不想「重画一遍」的原因。\n- **小猫本来就是猫**：小橘是一只 `Kitten`，同时也**就是一只 `Cat`**。凡是「能放一只猫」的地方，放一只小猫同样成立 —— 这句话下一课就要派上大用场。\n\n⚠️ 那一小段 `public` 是这一题唯一容易摔的地方：写成 `class Kitten : Cat`，老图纸给的公开东西**全变成新图纸自己的私事**，外面会说「够不着」——而且报错永远站在**外面那句**上，图纸里怎么看都是好的。",
+      "templateId": "cpp-s2-09-kitten-wag",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:14.467Z",
+        "hash": "66971480f1ccec94"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-kitten-wag-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要**一张新图纸照着老图纸画下来**，省掉抄自己的力气。投喂口会递进来**一串字**（小猫的名字）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏公开的 `name`（一串字），一招 `meow`，喊它印一行 `X：喵～`。\n2. **让新图纸照着它画下来**：新图纸叫 `Kitten`。**照着画的那一行别漏了那一小段 `public`** —— 漏了的话，老图纸给的公开东西全会变成新图纸自己的私事。\n3. **新图纸上只添自己不一样的那一点**：一手 `wag`，喊它印一行 `X 摇起了尾巴`。**`name` 那一栏和 `meow` 那一手，一个字都不要再写一遍**（它们会自己跟着来）。\n4. 在 `main` 里：照 `Kitten` 生一只小猫，把投喂口递进来的名字填进它那一格，然后**先喊 `meow`、再喊 `wag`**。\n\n比如投喂给程序的是\n\n小胖\n\n程序就要叼回\n\n小胖：喵～\n小胖 摇起了尾巴\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    void meow() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    void wag() const {\n        cout << name << \" 摇起了尾巴\" << endl;\n    }\n};\n\nint main() {\n    string name;\n    cin >> name;\n\n    Kitten k;\n    k.name = name;\n    k.meow();\n    k.wag();\n    return 0;\n}\n",
+      "expectedOutput": "狸花：喵～\n狸花 摇起了尾巴",
+      "stdin": "狸花\n",
+      "explanation": "这一手值得看清的地方是：**`Kitten` 这一张图纸上根本没有写 `name`，也没有写 `meow`**，可照它生出来的小猫两样都会用。\n\n- **`class Kitten : public Cat`** 这一行就是全部的秘密，念作「`Kitten` 这张图纸，**照着 `Cat` 画下来**」。\n- **老图纸上的东西，新图纸自动全有**：格子跟着来、招式也跟着来。本喵只管往里添新东西（这一题里就是 `wag` 那一手）。\n- **改一处，处处跟着变**：哪天本喵把老图纸的 `meow` 改成别的调子，照着它画的所有图纸**立刻**跟着改，一个字都不用动。这正是本喵不想「重画一遍」的原因。\n- **小猫本来就是猫**：小橘是一只 `Kitten`，同时也**就是一只 `Cat`**。凡是「能放一只猫」的地方，放一只小猫同样成立 —— 这句话下一课就要派上大用场。\n\n⚠️ 那一小段 `public` 是这一题唯一容易摔的地方：写成 `class Kitten : Cat`，老图纸给的公开东西**全变成新图纸自己的私事**，外面会说「够不着」——而且报错永远站在**外面那句**上，图纸里怎么看都是好的。",
+      "templateId": "cpp-s2-09-kitten-wag",
+      "params": {
+        "name": "狸花"
+      },
+      "verified": {
+        "at": "2026-10-20T16:54:15.197Z",
+        "hash": "f460786de0cc360b"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-kitten-wag-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵要**一张新图纸照着老图纸画下来**，省掉抄自己的力气。投喂口会递进来**一串字**（小猫的名字）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：一栏公开的 `name`（一串字），一招 `meow`，喊它印一行 `X：喵～`。\n2. **让新图纸照着它画下来**：新图纸叫 `Kitten`。**照着画的那一行别漏了那一小段 `public`** —— 漏了的话，老图纸给的公开东西全会变成新图纸自己的私事。\n3. **新图纸上只添自己不一样的那一点**：一手 `wag`，喊它印一行 `X 摇起了尾巴`。**`name` 那一栏和 `meow` 那一手，一个字都不要再写一遍**（它们会自己跟着来）。\n4. 在 `main` 里：照 `Kitten` 生一只小猫，把投喂口递进来的名字填进它那一格，然后**先喊 `meow`、再喊 `wag`**。\n\n比如投喂给程序的是\n\n小胖\n\n程序就要叼回\n\n小胖：喵～\n小胖 摇起了尾巴\n\n（判分喂的是**另一只猫**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    void meow() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    void wag() const {\n        cout << name << \" 摇起了尾巴\" << endl;\n    }\n};\n\nint main() {\n    string name;\n    cin >> name;\n\n    Kitten k;\n    k.name = name;\n    k.meow();\n    k.wag();\n    return 0;\n}\n",
+      "expectedOutput": "大胖：喵～\n大胖 摇起了尾巴",
+      "stdin": "大胖\n",
+      "explanation": "这一手值得看清的地方是：**`Kitten` 这一张图纸上根本没有写 `name`，也没有写 `meow`**，可照它生出来的小猫两样都会用。\n\n- **`class Kitten : public Cat`** 这一行就是全部的秘密，念作「`Kitten` 这张图纸，**照着 `Cat` 画下来**」。\n- **老图纸上的东西，新图纸自动全有**：格子跟着来、招式也跟着来。本喵只管往里添新东西（这一题里就是 `wag` 那一手）。\n- **改一处，处处跟着变**：哪天本喵把老图纸的 `meow` 改成别的调子，照着它画的所有图纸**立刻**跟着改，一个字都不用动。这正是本喵不想「重画一遍」的原因。\n- **小猫本来就是猫**：小橘是一只 `Kitten`，同时也**就是一只 `Cat`**。凡是「能放一只猫」的地方，放一只小猫同样成立 —— 这句话下一课就要派上大用场。\n\n⚠️ 那一小段 `public` 是这一题唯一容易摔的地方：写成 `class Kitten : Cat`，老图纸给的公开东西**全变成新图纸自己的私事**，外面会说「够不着」——而且报错永远站在**外面那句**上，图纸里怎么看都是好的。",
+      "templateId": "cpp-s2-09-kitten-wag",
+      "params": {
+        "name": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:17.122Z",
+        "hash": "7f62ed5c943f6d8a"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-no-public-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵让新图纸照着老图纸画下来了，小猫图纸上还添了一手「摇尾巴」。图纸里面怎么写都没问题。\n\n可猫窝里那句改名字的话，翻译官喵突然说**够不着**了。\n\n你帮本喵改到能跑起来（小猫叫 小橘，先喵一声、再摇一次尾巴）。**图纸上画的格子、招式、还有猫窝里那几句喊法，一个字都不用改 —— 只动照着画的那一行。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    void meow() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Kitten : Cat {\npublic:\n    void wag() const {\n        cout << name << \" 摇起了尾巴\" << endl;\n    }\n};\n\nint main() {\n    Kitten k;\n    k.name = \"小橘\";\n    k.meow();\n    k.wag();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    void meow() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    void wag() const {\n        cout << name << \" 摇起了尾巴\" << endl;\n    }\n};\n\nint main() {\n    Kitten k;\n    k.name = \"小橘\";\n    k.meow();\n    k.wag();\n    return 0;\n}\n",
+      "expectedOutput": "小橘：喵～\n小橘 摇起了尾巴",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:22:7: error: 'std::string Cat::name' is inaccessible within this context`\n\n注意它用的词是 **`inaccessible`（够不着）**，**不是**「私有」。这两个词长得像、意思差很远喵：\n\n- 说「私有」是那一格**本来就没开**；\n- 说「够不着」往往是**新图纸把妈妈给的东西收进了自己兜里**。\n\n这一格在老图纸上明明白白挂的是 `public`，本喵一个字都没改它 —— 那为什么够不着了？因为照着画的那一行少写了 `public`：\n\n```text\nclass Kitten : Cat        ← 本喵写的（漏了）\nclass Kitten : public Cat ← 正确写法\n```\n\n**漏掉这一小段的后果是**：老图纸给的公开东西（格子和招式）**全变成了新图纸自己的私事** —— 不只外面够不着，连本喵自己都别想从外面碰。所以猫窝里 `k.name = \"小橘\";` 这一句第一个被抓出来。\n\n这一跤有个很坑的地方：**它很安静。** 图纸里面怎么写都没问题，报错永远站在**外面那句**上。所以以后看到「够不着」，第一件事就是回头看看照着画的那一行有没有 `public` 喵。",
+      "templateId": "cpp-s2-09-no-public",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T08:25:58.522Z",
+        "hash": "4ad11053f052b9ec"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-no-public-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵让新图纸照着老图纸画下来了，小猫图纸上还添了一手「摇尾巴」。图纸里面怎么写都没问题。\n\n可猫窝里那句改名字的话，翻译官喵突然说**够不着**了。\n\n你帮本喵改到能跑起来（小猫叫 大胖，先喵一声、再摇一次尾巴）。**图纸上画的格子、招式、还有猫窝里那几句喊法，一个字都不用改 —— 只动照着画的那一行。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    void meow() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Kitten : Cat {\npublic:\n    void wag() const {\n        cout << name << \" 摇起了尾巴\" << endl;\n    }\n};\n\nint main() {\n    Kitten k;\n    k.name = \"大胖\";\n    k.meow();\n    k.wag();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    void meow() const {\n        cout << name << \"：喵～\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    void wag() const {\n        cout << name << \" 摇起了尾巴\" << endl;\n    }\n};\n\nint main() {\n    Kitten k;\n    k.name = \"大胖\";\n    k.meow();\n    k.wag();\n    return 0;\n}\n",
+      "expectedOutput": "大胖：喵～\n大胖 摇起了尾巴",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:22:7: error: 'std::string Cat::name' is inaccessible within this context`\n\n注意它用的词是 **`inaccessible`（够不着）**，**不是**「私有」。这两个词长得像、意思差很远喵：\n\n- 说「私有」是那一格**本来就没开**；\n- 说「够不着」往往是**新图纸把妈妈给的东西收进了自己兜里**。\n\n这一格在老图纸上明明白白挂的是 `public`，本喵一个字都没改它 —— 那为什么够不着了？因为照着画的那一行少写了 `public`：\n\n```text\nclass Kitten : Cat        ← 本喵写的（漏了）\nclass Kitten : public Cat ← 正确写法\n```\n\n**漏掉这一小段的后果是**：老图纸给的公开东西（格子和招式）**全变成了新图纸自己的私事** —— 不只外面够不着，连本喵自己都别想从外面碰。所以猫窝里 `k.name = \"大胖\";` 这一句第一个被抓出来。\n\n这一跤有个很坑的地方：**它很安静。** 图纸里面怎么写都没问题，报错永远站在**外面那句**上。所以以后看到「够不着」，第一件事就是回头看看照着画的那一行有没有 `public` 喵。",
+      "templateId": "cpp-s2-09-no-public",
+      "params": {
+        "name": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:00.799Z",
+        "hash": "1c41e35f64330b10"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-private-blocks-kitten-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵的老图纸上有一格鱼干数，扣着盖子；小猫图纸照着它画下来，自己添了一手「吃一条」，里面直接去动那一格。\n\n翻译官喵说小猫够不着。\n\n你帮本喵改到能跑起来（小橘 一开始有 2 条，吃完一条印出现在几条）。**小猫那一段的写法是对的，别在那里绕圈子 —— 要动的是老图纸上那一格的身份。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"小橘\", 2);\n    k.eat();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\nprotected:\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"小橘\", 2);\n    k.eat();\n    return 0;\n}\n",
+      "expectedOutput": "吃了一条，现在 3 条",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:16:9: error: 'int Cat::fish' is private within this context`\n\n翻成猫话：**「私有，你现在站的这个地方够不着喵。」** 这里要说清一件反直觉的事：**小猫图纸不是老图纸自己。** 老图纸扣上盖子的格子，**连亲生孩子都碰不得**。\n\n三种盖子的老规矩摆出来对一下：\n\n| 标签 | 谁够得着 |\n|---|---|\n| `private:` | **只有图纸自己的招式**够得着 |\n| `protected:` | 图纸自己的招式 + **照着它画下来的新图纸**够得着 |\n| `public:` | 谁都够得着 |\n\n所以改法就是**把那一格从 `private:` 挪到 `protected:`** —— 这正是 `protected` 存在的理由：它管的正是「**妈妈自己 + 照着画的图纸**」这一对，而外面的 `main` 仍然够不着（这一点很重要，盖子没白扣）。\n\n另一条同样能跑的改法：**老图纸提供一个公开招式替小猫动手**（比如老图纸里添一招 `feedOne`，里面那句就是 `fish = fish + 1;`），小猫那一手去喊它。这条路保住了「谁都不能直接碰那一格」，只是在老图纸里多写一手。两条路都对，本喵这里挑了最省的 `protected`。\n\n⚠️ 顺手记一条边界：**别把老图纸的格子一股脑全改成 `protected:`。** 老图纸扣盖子的用意还在 —— 只有「照着画的图纸确实要用」的那几格才该挪。",
+      "templateId": "cpp-s2-09-private-blocks-kitten",
+      "params": {
+        "fish": 2,
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:03.512Z",
+        "hash": "43f67a400df6ef68"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-private-blocks-kitten-008",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵的老图纸上有一格鱼干数，扣着盖子；小猫图纸照着它画下来，自己添了一手「吃一条」，里面直接去动那一格。\n\n翻译官喵说小猫够不着。\n\n你帮本喵改到能跑起来（大胖 一开始有 4 条，吃完一条印出现在几条）。**小猫那一段的写法是对的，别在那里绕圈子 —— 要动的是老图纸上那一格的身份。**",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"大胖\", 4);\n    k.eat();\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\nprotected:\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Kitten k(\"大胖\", 4);\n    k.eat();\n    return 0;\n}\n",
+      "expectedOutput": "吃了一条，现在 5 条",
+      "stdin": null,
+      "explanation": "翻译官喵的原话是：\n\n`main.cpp:16:9: error: 'int Cat::fish' is private within this context`\n\n翻成猫话：**「私有，你现在站的这个地方够不着喵。」** 这里要说清一件反直觉的事：**小猫图纸不是老图纸自己。** 老图纸扣上盖子的格子，**连亲生孩子都碰不得**。\n\n三种盖子的老规矩摆出来对一下：\n\n| 标签 | 谁够得着 |\n|---|---|\n| `private:` | **只有图纸自己的招式**够得着 |\n| `protected:` | 图纸自己的招式 + **照着它画下来的新图纸**够得着 |\n| `public:` | 谁都够得着 |\n\n所以改法就是**把那一格从 `private:` 挪到 `protected:`** —— 这正是 `protected` 存在的理由：它管的正是「**妈妈自己 + 照着画的图纸**」这一对，而外面的 `main` 仍然够不着（这一点很重要，盖子没白扣）。\n\n另一条同样能跑的改法：**老图纸提供一个公开招式替小猫动手**（比如老图纸里添一招 `feedOne`，里面那句就是 `fish = fish + 1;`），小猫那一手去喊它。这条路保住了「谁都不能直接碰那一格」，只是在老图纸里多写一手。两条路都对，本喵这里挑了最省的 `protected`。\n\n⚠️ 顺手记一条边界：**别把老图纸的格子一股脑全改成 `protected:`。** 老图纸扣盖子的用意还在 —— 只有「照着画的图纸确实要用」的那几格才该挪。",
+      "templateId": "cpp-s2-09-private-blocks-kitten",
+      "params": {
+        "fish": 4,
+        "name": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:05.910Z",
+        "hash": "94c63e330428d7b3"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-protected-fish-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题要本喵把**两种盖子**摆明白：有一格连小猫都碰不得，有一格小猫够得着、外面够不着。投喂口会递进来**一个数**（一开始有几条）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：\n   - 一栏 `name`（一串字）**扣着盖子**（只有老图纸自己的招式够得着）；\n   - 一栏 `fish`（一个整数）挂上**「只有老图纸自己 + 照着它画下来的图纸」都够得着**的那一档；\n   - 一个出生招式，把这两样料填进去；\n   - 一个公开招式 `showName`，印一行 `本喵是X喵`。\n2. **让新图纸照它画下来**：叫 `Kitten`，出生招式先把两样料交给妈妈，再添一手 `eat` —— 里面把鱼干数**加一条**，印一行 `吃了一条，现在 N 条`。\n3. 在 `main` 里：读进那个数 → 照 `Kitten` 生一只小猫（名字叫 `小橘`）→ **先喊 `showName`、再喊 `eat`**。\n\n比如投喂给程序的是\n\n8\n\n程序就要叼回\n\n本喵是小橘喵\n吃了一条，现在 9 条\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\nprotected:\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    void showName() const {\n        cout << \"本喵是\" << name << \"喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    int f = 0;\n    cin >> f;\n\n    Kitten k(\"小橘\", f);\n    k.showName();\n    k.eat();\n    return 0;\n}\n",
+      "expectedOutput": "本喵是小橘喵\n吃了一条，现在 4 条",
+      "stdin": "3\n",
+      "explanation": "这一题里两格的身份是故意写得不一样的，对着看一遍就分得清了喵：\n\n| 标签 | 谁够得着 | 这一题里对应哪一格 |\n|---|---|---|\n| `private:` | **只有图纸自己的招式** | `name` —— 所以小猫里那句印名字**走的是妈妈的公开招式 `showName`**，它自己碰不到那一格 |\n| `protected:` | 图纸自己的招式 + **照着它画下来的图纸** | `fish` —— 所以小猫的 `eat` 里能直接写 `fish = fish + 1;` |\n| `public:` | 谁都够得着 | 出生招式和 `showName` |\n\n一句话抓住 `protected` 的用处：**它是专门给「妈妈 + 照着画的图纸」这一对开的** —— 外面的 `main` 照样够不着（盖子没白扣）。\n\n⚠️ 要是把 `fish` 那一格也扣成 `private:`，本喵真跑过那一段，翻译官喵会说：\n\n```text\nmain.cpp:16:9: error: 'int Cat::fish' is private within this context\n```\n\n意思是「私有，你现在站的这个地方够不着」。**小猫图纸不是老图纸自己** —— 老图纸扣上盖子的格子，连亲生孩子都碰不得。\n\n⚠️ 另外那个出生招式里的交代 `: Cat(n, f)` 也别漏：小猫自己这一半跑起来的时候，**妈妈那一半已经先搭好了**，所以 `name` 和 `fish` 里都已经有数了。",
+      "templateId": "cpp-s2-09-protected-fish",
+      "params": {
+        "name": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:20.133Z",
+        "hash": "e7e62f5f8949af07"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-protected-fish-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题要本喵把**两种盖子**摆明白：有一格连小猫都碰不得，有一格小猫够得着、外面够不着。投喂口会递进来**一个数**（一开始有几条）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：\n   - 一栏 `name`（一串字）**扣着盖子**（只有老图纸自己的招式够得着）；\n   - 一栏 `fish`（一个整数）挂上**「只有老图纸自己 + 照着它画下来的图纸」都够得着**的那一档；\n   - 一个出生招式，把这两样料填进去；\n   - 一个公开招式 `showName`，印一行 `本喵是X喵`。\n2. **让新图纸照它画下来**：叫 `Kitten`，出生招式先把两样料交给妈妈，再添一手 `eat` —— 里面把鱼干数**加一条**，印一行 `吃了一条，现在 N 条`。\n3. 在 `main` 里：读进那个数 → 照 `Kitten` 生一只小猫（名字叫 `狸花`）→ **先喊 `showName`、再喊 `eat`**。\n\n比如投喂给程序的是\n\n7\n\n程序就要叼回\n\n本喵是狸花喵\n吃了一条，现在 8 条\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\nprotected:\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    void showName() const {\n        cout << \"本喵是\" << name << \"喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    int f = 0;\n    cin >> f;\n\n    Kitten k(\"狸花\", f);\n    k.showName();\n    k.eat();\n    return 0;\n}\n",
+      "expectedOutput": "本喵是狸花喵\n吃了一条，现在 5 条",
+      "stdin": "4\n",
+      "explanation": "这一题里两格的身份是故意写得不一样的，对着看一遍就分得清了喵：\n\n| 标签 | 谁够得着 | 这一题里对应哪一格 |\n|---|---|---|\n| `private:` | **只有图纸自己的招式** | `name` —— 所以小猫里那句印名字**走的是妈妈的公开招式 `showName`**，它自己碰不到那一格 |\n| `protected:` | 图纸自己的招式 + **照着它画下来的图纸** | `fish` —— 所以小猫的 `eat` 里能直接写 `fish = fish + 1;` |\n| `public:` | 谁都够得着 | 出生招式和 `showName` |\n\n一句话抓住 `protected` 的用处：**它是专门给「妈妈 + 照着画的图纸」这一对开的** —— 外面的 `main` 照样够不着（盖子没白扣）。\n\n⚠️ 要是把 `fish` 那一格也扣成 `private:`，本喵真跑过那一段，翻译官喵会说：\n\n```text\nmain.cpp:16:9: error: 'int Cat::fish' is private within this context\n```\n\n意思是「私有，你现在站的这个地方够不着」。**小猫图纸不是老图纸自己** —— 老图纸扣上盖子的格子，连亲生孩子都碰不得。\n\n⚠️ 另外那个出生招式里的交代 `: Cat(n, f)` 也别漏：小猫自己这一半跑起来的时候，**妈妈那一半已经先搭好了**，所以 `name` 和 `fish` 里都已经有数了。",
+      "templateId": "cpp-s2-09-protected-fish",
+      "params": {
+        "name": "狸花"
+      },
+      "verified": {
+        "at": "2026-10-20T16:54:19.729Z",
+        "hash": "88feefc1b4bf3dcc"
+      }
+    },
+    {
+      "id": "bank-cpp-s2-09-protected-fish-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一题要本喵把**两种盖子**摆明白：有一格连小猫都碰不得，有一格小猫够得着、外面够不着。投喂口会递进来**一个数**（一开始有几条）。\n\n请你这么办：\n\n1. **画老图纸** `Cat`：\n   - 一栏 `name`（一串字）**扣着盖子**（只有老图纸自己的招式够得着）；\n   - 一栏 `fish`（一个整数）挂上**「只有老图纸自己 + 照着它画下来的图纸」都够得着**的那一档；\n   - 一个出生招式，把这两样料填进去；\n   - 一个公开招式 `showName`，印一行 `本喵是X喵`。\n2. **让新图纸照它画下来**：叫 `Kitten`，出生招式先把两样料交给妈妈，再添一手 `eat` —— 里面把鱼干数**加一条**，印一行 `吃了一条，现在 N 条`。\n3. 在 `main` 里：读进那个数 → 照 `Kitten` 生一只小猫（名字叫 `大胖`）→ **先喊 `showName`、再喊 `eat`**。\n\n比如投喂给程序的是\n\n8\n\n程序就要叼回\n\n本喵是大胖喵\n吃了一条，现在 9 条\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\n    string name;\nprotected:\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    void showName() const {\n        cout << \"本喵是\" << name << \"喵\" << endl;\n    }\n};\n\nclass Kitten : public Cat {\npublic:\n    Kitten(string n, int f) : Cat(n, f) {}\n    void eat() {\n        fish = fish + 1;\n        cout << \"吃了一条，现在 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    int f = 0;\n    cin >> f;\n\n    Kitten k(\"大胖\", f);\n    k.showName();\n    k.eat();\n    return 0;\n}\n",
+      "expectedOutput": "本喵是大胖喵\n吃了一条，现在 7 条",
+      "stdin": "6\n",
+      "explanation": "这一题里两格的身份是故意写得不一样的，对着看一遍就分得清了喵：\n\n| 标签 | 谁够得着 | 这一题里对应哪一格 |\n|---|---|---|\n| `private:` | **只有图纸自己的招式** | `name` —— 所以小猫里那句印名字**走的是妈妈的公开招式 `showName`**，它自己碰不到那一格 |\n| `protected:` | 图纸自己的招式 + **照着它画下来的图纸** | `fish` —— 所以小猫的 `eat` 里能直接写 `fish = fish + 1;` |\n| `public:` | 谁都够得着 | 出生招式和 `showName` |\n\n一句话抓住 `protected` 的用处：**它是专门给「妈妈 + 照着画的图纸」这一对开的** —— 外面的 `main` 照样够不着（盖子没白扣）。\n\n⚠️ 要是把 `fish` 那一格也扣成 `private:`，本喵真跑过那一段，翻译官喵会说：\n\n```text\nmain.cpp:16:9: error: 'int Cat::fish' is private within this context\n```\n\n意思是「私有，你现在站的这个地方够不着」。**小猫图纸不是老图纸自己** —— 老图纸扣上盖子的格子，连亲生孩子都碰不得。\n\n⚠️ 另外那个出生招式里的交代 `: Cat(n, f)` 也别漏：小猫自己这一半跑起来的时候，**妈妈那一半已经先搭好了**，所以 `name` 和 `fish` 里都已经有数了。",
+      "templateId": "cpp-s2-09-protected-fish",
+      "params": {
+        "name": "大胖"
+      },
+      "verified": {
+        "at": "2026-09-16T08:26:22.933Z",
+        "hash": "6499df7a162fd3a4"
+      }
+    }
+  ]
+}

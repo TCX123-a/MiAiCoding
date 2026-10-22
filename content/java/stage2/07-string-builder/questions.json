@@ -1,0 +1,83 @@
+{
+  "lessonId": "java-stage2-07",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵手上有一条项链 `a`，又另串了一条字一模一样的 `c`。想比「串上的字一不一样」，该写哪一句？",
+      "options": [
+        "`a.equals(c)` —— 比串上的字",
+        "`a == c` —— 比是不是同一条",
+        "`a.char(0) == c.char(0)` —— 比第一颗",
+        "`a.length() == c.length()` —— 比颗数"
+      ],
+      "answer": 0,
+      "explanation": "`.equals(...)` 问的才是「串上的字一不一样」，字一样它就答 `true` 喵。`a == c` 问的是「是不是**同一条**项链」，两条各串各的项链一律答 `false`；比第一颗、比颗数都只能说明那一小处一样，串上别处不同照样会被放过喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写下 `String s = \"小鱼干\";` 之后又写了一句 `s.concat(\"喵\");`（没拿东西接住它）。这时 `s` 是什么样？",
+      "options": [
+        "还是 `小鱼干` —— 字符串焊死了，那一句另串了一条新的，没人接住就扔了",
+        "变成 `小鱼干喵` —— 那一句把 `s` 接长了一截",
+        "变成 `喵` —— 新的一段盖掉了原来的",
+        "编译过不去，会当场报错"
+      ],
+      "answer": 0,
+      "explanation": "项链生出来就**永远不动**，所谓「改」其实是另串一条新的喵。那句 `s.concat(\"喵\")` 确实串出了一条 `小鱼干喵`，可本喵**没拿东西接住它**，它转头就被扔了，`s` 一个字都没变。这句完全合法，不会报错 —— 它的坑正是**太安静**：看着像改了，其实没有喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "要在**一个绕圈的招式里反复把好多段字接起来**，本喵该用哪种写法？",
+      "options": [
+        "生一个 `StringBuilder`，绕圈里一路 `append`，最后 `toString` 倒出来",
+        "一路用 `+` 接，每圈都串一条新项链，反正结果一样",
+        "每圈都 `new String(...)` 一条新的再接着接",
+        "把每一段都存下来，等绕完圈再一次性全部相加"
+      ],
+      "answer": 0,
+      "explanation": "`StringBuilder` 是一根**会自己长大的抽屉**，从头到尾只生一根，想加就往里塞，绕完圈再 `toString` 倒成一条完整的项链喵。一路用 `+` 结果确实一样，可每绕一圈都要重新串一条新项链，窝里会躺下一堆用完就扔的半成品；绕几百上千次时那堆垃圾就成了负担。每圈 `new` 一条是同样的毛病，存下来最后一次性相加也一样躲不掉那堆半成品喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        StringBuilder sb = new StringBuilder();\n        sb.____(\"小鱼干\");\n        sb.append(\"喵\");\n        System.out.println(sb.____());\n    }\n}",
+      "stem": "本喵要往这根抽屉里先塞一段，再把抽屉里的东西**倒成一条项链**印出来 —— 两个空白处各填哪个招式名？",
+      "blanks": [
+        {
+          "answer": "append",
+          "accept": []
+        },
+        {
+          "answer": "toString",
+          "accept": []
+        }
+      ],
+      "explanation": "第一处填 `append`：往抽屉里塞一段就是这一招喵。第二处填 `toString`：抽屉和项链是两种东西，想交给只收项链的 `System.out.println`，得先把抽屉**倒成一条项链**。两处都对上之后印出来是 `小鱼干喵`喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        String a = \"喵\";\n        String b = new String(\"喵\");\n        System.out.println(a.equals(b));\n        System.out.println(a == b);\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "true\nfalse",
+      "accept": ["true\nfalse\n"],
+      "explanation": "`b` 是明着喊 `new` 生的，**另串了一条新项链**，字一样、项链不一样喵。`.equals` 比的是串上的字，所以第一行 `true`；`==` 比的是「是不是同一条」，所以第二行 `false`喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        String t = \"小鱼干喵\";\n        System.out.println(t.substring(0, 2));\n        System.out.println(t.indexOf(\"喵\"));\n        System.out.println(t.length());\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小鱼\n3\n4",
+      "accept": ["小鱼\n3\n4\n"],
+      "explanation": "`substring(0, 2)` 从编号 0 剪到**编号 2 之前**，剪出来是 `小鱼` 两颗，不含编号 2 那颗喵。`喵` 排在编号 0、1、2、3 的最后一位，所以 `indexOf` 叼回 `3`（编号从 0 数起），`length()` 是颗数 `4`喵。"
+    }
+  ]
+}

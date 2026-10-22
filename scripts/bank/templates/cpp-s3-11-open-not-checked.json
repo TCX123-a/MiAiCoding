@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-11-open-not-checked",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-11",
+  "type": "codefix",
+  "concept": ["翻开本子要问 is_open", "本子不在不会摔", "静默什么都不读"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["小鱼干", "猫粮", "毛线球"] }
+  },
+  "stemTemplate": "这段代码要翻两本本子：第一本是它自己刚写好的，第二本**早就不在了**（名字打错的那本）。\n\n可它跑起来**不对**喵：第二本没打开，它却一个字都不说，本喵还以为是那本本子是空的。你帮本喵补上那句检查：**第二本没打开就印一句 `本子没找着喵`，然后收工**；打开了就照常把里面的东西读出来印掉。第一本那一段不用动。\n\n改好之后，程序要印出两行：先是 `{w}`，再是 `本子没找着喵`。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <fstream>\n#include <string>\nusing namespace std;\n\nint main() {\n    ofstream out(\"here.txt\");\n    out << \"{w}\" << endl;\n    out.close();\n\n    ifstream in(\"here.txt\");\n    string line;\n    while (getline(in, line)) {\n        cout << line << endl;\n    }\n\n    ifstream missing(\"buzai.txt\");\n    while (getline(missing, line)) {\n        cout << line << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <fstream>\n#include <string>\nusing namespace std;\n\nint main() {\n    ofstream out(\"here.txt\");\n    out << \"{w}\" << endl;\n    out.close();\n\n    ifstream in(\"here.txt\");\n    string line;\n    while (getline(in, line)) {\n        cout << line << endl;\n    }\n\n    ifstream missing(\"buzai.txt\");\n    if (!missing.is_open()) {\n        cout << \"本子没找着喵\" << endl;\n        return 0;\n    }\n    while (getline(missing, line)) {\n        cout << line << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题少的是一句**问话**喵。\n\n本子不在的时候，C++ **不会当场摔** —— 它只是把那本本子留在「没打开」的状态，然后什么都不读。所以这段代码照样跑完、照样安安静静地收工，看上去一切正常，只有本喵自己知道少了一整本东西。\n\n要问的那句话是 `if (!missing.is_open())`：`is_open()` 问的是「**这本本子打开了吗**」。本子不在的时候它给出 `0`（假），前面加个感叹号，正好在「没打开」时把提醒印出来。\n\n⚠️ 别只写 `if (!missing)`。课文里本喵把两种写法一起真跑过：本子明明不在，`is_open()` 老老实实给出 `0`，可 `!missing` 也给出 `0`（它说没事）—— 信了它，你就会对着一个空本子发呆。查本子在不在，**认准 `is_open()`**。\n\n⚠️ 印完那句提醒就 `return 0;` 收工，别再往下读 —— 本子都没打开，后面那几圈什么也叼不到。"
+}

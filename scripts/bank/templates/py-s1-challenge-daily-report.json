@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s1-challenge-daily-report",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-15",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["综合项目", "会自己长大的储物柜", "一只一只比", "最肥和最瘦"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 2, "max": 30 },
+  "stemTemplate": "本喵每天的账要出一张日报喵：先把一天一天的账收进一排碗里，然后印三行 ——\n\n1. `一共攒了 X 条喵`；\n2. `最肥的一天 X 条喵`；\n3. `最瘦的一天 X 条喵`。\n\n本喵想看你**用圈一只一只比出来**（总数顺手在同一个圈里加，别跑三趟）。\n\n投喂口先给一个数（一共几天），再一天一天给数。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵；至少四天，不会给你空排。）",
+  "starterTemplate": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\n# 用圈清点：总数、最肥、最瘦\n",
+  "referenceSolutionTemplate": "n = int(input())\nbowls = []\nfor i in range(n):\n    bowls.append(int(input()))\n\ntotal = 0\nbest = bowls[0]\nworst = bowls[0]\nfor i in range(n):\n    x = bowls[i]\n    total = total + x\n    if x > best:\n        best = x\n    if x < worst:\n        worst = x\n\nprint(\"一共攒了\", total, \"条喵\")\nprint(\"最肥的一天\", best, \"条喵\")\nprint(\"最瘦的一天\", worst, \"条喵\")\n",
+  "explanationTemplate": "三个数只跑一趟就够喵：每拿到一只碗，就顺手干三件小事 —— 加进总数、跟「目前最肥」比一比、跟「目前最瘦」比一比。\n\n两个起步的小讲究：\n\n1. **`best` 和 `worst` 都从第一只碗起步**（`bowls[0]`），别从 0 起步 —— 尤其是「最瘦」：碗里全是正数，从 0 起步的话 0 会永远赢，报出来的最瘦永远是 0；\n2. 比的写法是「**比它更极端才换人**」：`if x > best:` 才让 best 换成 x；`if x < worst:` 才让 worst 换成 x。两个判断各管各的，都放在同一个圈里。\n\n顺序上有个小地方喵：`bowls[0]` 要**等收完账再取** —— 收账的圈在前、清点的圈在后。\n\n想把三件事拆成三个圈分别跑也行，但一趟更省事，也不容易漏 —— 顺手练成「一趟清点」的习惯，账一多就知道它好了。"
+}

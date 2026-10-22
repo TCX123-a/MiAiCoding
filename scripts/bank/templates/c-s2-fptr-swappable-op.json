@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-fptr-swappable-op",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-12",
+  "type": "codewrite",
+  "concept": ["一口碗换牌子", "牌子当投喂递出去", "同一写法两种活"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 2, "max": 4 },
+    "b": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵想让「哪一招上」这件事**能改**：同一段 `main`，换一张牌子就换一套活。\n\n请你写三样东西：\n\n1. 一招 `add`：两个整数相加，把和交回来；\n2. 一招 `mul`：两个整数相乘，把积交回来；\n3. 一招 `apply`：头上第一样投喂是**一张牌子**（牌子上写的是「收两个整数、交回一个整数」），后面两样是两个整数 —— 招式里照着牌子把两个数办掉，把结果交回来。\n\n`main` 里：先摆一只碗装上 `add` 的牌子，请 `apply` 用 {a} 和 {b} 办一次，印一行 `先加：<结果>`；**然后把这只碗里的牌子换成 `mul`**（碗没换、牌子换了），再请 `apply` 办一次，印一行 `再乘：<结果>`。",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint apply(int (*op)(int, int), int a, int b) {\n    return op(a, b);\n}\n\nint main(void) {\n    int (*op)(int, int) = add;\n\n    printf(\"先加：%d\\n\", apply(op, {a}, {b}));\n    op = mul;\n    printf(\"再乘：%d\\n\", apply(op, {a}, {b}));\n    return 0;\n}\n",
+  "explanationTemplate": "这道题是这一课所有本事的种子喵，拆成三段看：\n\n**① 摆一只碗装牌子。**\n\n```c\nint (*op)(int, int) = add;\n```\n\n从里往外念：最右边 `(int, int)` 是「收两个整数」，最左边 `int` 是「交回一个整数」，中间 `(*op)` 是那只碗。包着 `*op` 的这对小括号**一个都不能省** —— 省了意思就从「一只碗」变成「一招」了。\n\n右边写 `add` 就行：**招式名单独写出来的时候，它自己就等于那张牌子**，所以写 `&add` 也是同一件事。\n\n**② 碗没换，牌子换了。** `op = mul;` 这一句是本课的甜头 —— 同一只碗，换张牌子就换了一套活。喊的时候照旧 `op(a, b)`，或者像本喵这样把牌子当小鱼干递进 `apply`。\n\n**③ 牌子当投喂递出去。** `apply` 头上第一样写的是 `int (*op)(int, int)` —— 它要的**不是数，是一张牌子**，而且把长相写清楚了。所以递「加」就加、递「乘」就乘，`apply` 自己完全不知道进来的是哪一招。\n\n**为什么这个形状值钱？** 因为它把「**怎么干**」从「**什么时候干**」里拆了出来。`apply` 只写一遍，想换活法就换牌子 —— 不用把它抄成两份、三份。往后你会见到很多这样的形状：别人写好一个框架，你只递进去一小张「规矩」。**这就是回调。**\n\n（两个小地方顺手记住：喊的时候写 `op(a, b)` 最干净 —— 写 `(*op)(a, b)` 也对，翻译官喵两种都认；但 `int *op(int, int)` 和 `int (*op)(int, int)` 是**两个完全不同的意思**，别手滑。）"
+}

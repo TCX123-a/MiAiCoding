@@ -1,0 +1,240 @@
+{
+  "lessonId": "cpp-stage3-14",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-14-bell-first-ear-only-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵的开饭喇叭登记了**两只耳朵**，喊的是 `开饭啦`。可跑起来只有**第一位**听见了 —— 第二位登记过，却从来没被喊到。\n\n请你帮本喵改对：**登记那两行不用动，喊的内容也不用动**，只把喇叭喊话那一步修好。改好之后，两行都要印出来（先是第一位听见的那行，再是第二位听见的那行）。",
+      "brokenCode": "#include <iostream>\n#include <functional>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass DinnerBell {\npublic:\n    void listen(function<void(const string&)> ear) { ears.push_back(ear); }\n    void ring(const string& what) const {\n        if (!ears.empty()) ears[0](what);\n    }\nprivate:\n    vector<function<void(const string&)>> ears;\n};\n\nint main() {\n    DinnerBell bell;\n    bell.listen([](const string& what) { cout << \"咪爱听见了：\" << what << endl; });\n    bell.listen([](const string& what) { cout << \"大肥鱼听见了：\" << what << endl; });\n    bell.ring(\"开饭啦\");\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <functional>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass DinnerBell {\npublic:\n    void listen(function<void(const string&)> ear) { ears.push_back(ear); }\n    void ring(const string& what) const {\n        for (auto& ear : ears) ear(what);\n    }\nprivate:\n    vector<function<void(const string&)>> ears;\n};\n\nint main() {\n    DinnerBell bell;\n    bell.listen([](const string& what) { cout << \"咪爱听见了：\" << what << endl; });\n    bell.listen([](const string& what) { cout << \"大肥鱼听见了：\" << what << endl; });\n    bell.ring(\"开饭啦\");\n    return 0;\n}\n",
+      "expectedOutput": "咪爱听见了：开饭啦\n大肥鱼听见了：开饭啦",
+      "stdin": null,
+      "explanation": "毛病出在喊话那一步喵：`if (!ears.empty()) ears[0](what);` 里那个 `ears[0]` 是**只喊名单上第一位**。第二位明明登记过（`listen` 那一句没毛病），却从来没被喊到 —— 程序编得过、跑得也安静。\n\n改成照着名单**从头到尾**走一遍：`for (auto& ear : ears) ear(what);`。名单上有几只耳朵就喊到几只，先后就是**登记的先后**：先是咪爱那行，再是大肥鱼那行。\n\n⚠️ 这一类漏喊最麻烦的地方是它**看不出来**：要是耳朵们都不吭声，少喊一位跟喊全了在屏幕上完全一样。所以写这一类东西时，最好让每只耳朵都**自己印一行**（就像本喵这两只这样）—— 一眼就能看出谁没被喊到。「登记了」和「喊到了」是两件事，得分开检查。",
+      "templateId": "cpp-s3-14-bell-first-ear-only",
+      "params": {
+        "food": "开饭啦"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:36.345Z",
+        "hash": "e71751faf6a9adde"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-bell-first-ear-only-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵的开饭喇叭登记了**两只耳朵**，喊的是 `猫粮`。可跑起来只有**第一位**听见了 —— 第二位登记过，却从来没被喊到。\n\n请你帮本喵改对：**登记那两行不用动，喊的内容也不用动**，只把喇叭喊话那一步修好。改好之后，两行都要印出来（先是第一位听见的那行，再是第二位听见的那行）。",
+      "brokenCode": "#include <iostream>\n#include <functional>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass DinnerBell {\npublic:\n    void listen(function<void(const string&)> ear) { ears.push_back(ear); }\n    void ring(const string& what) const {\n        if (!ears.empty()) ears[0](what);\n    }\nprivate:\n    vector<function<void(const string&)>> ears;\n};\n\nint main() {\n    DinnerBell bell;\n    bell.listen([](const string& what) { cout << \"咪爱听见了：\" << what << endl; });\n    bell.listen([](const string& what) { cout << \"大肥鱼听见了：\" << what << endl; });\n    bell.ring(\"猫粮\");\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <functional>\n#include <string>\n#include <vector>\nusing namespace std;\n\nclass DinnerBell {\npublic:\n    void listen(function<void(const string&)> ear) { ears.push_back(ear); }\n    void ring(const string& what) const {\n        for (auto& ear : ears) ear(what);\n    }\nprivate:\n    vector<function<void(const string&)>> ears;\n};\n\nint main() {\n    DinnerBell bell;\n    bell.listen([](const string& what) { cout << \"咪爱听见了：\" << what << endl; });\n    bell.listen([](const string& what) { cout << \"大肥鱼听见了：\" << what << endl; });\n    bell.ring(\"猫粮\");\n    return 0;\n}\n",
+      "expectedOutput": "咪爱听见了：猫粮\n大肥鱼听见了：猫粮",
+      "stdin": null,
+      "explanation": "毛病出在喊话那一步喵：`if (!ears.empty()) ears[0](what);` 里那个 `ears[0]` 是**只喊名单上第一位**。第二位明明登记过（`listen` 那一句没毛病），却从来没被喊到 —— 程序编得过、跑得也安静。\n\n改成照着名单**从头到尾**走一遍：`for (auto& ear : ears) ear(what);`。名单上有几只耳朵就喊到几只，先后就是**登记的先后**：先是咪爱那行，再是大肥鱼那行。\n\n⚠️ 这一类漏喊最麻烦的地方是它**看不出来**：要是耳朵们都不吭声，少喊一位跟喊全了在屏幕上完全一样。所以写这一类东西时，最好让每只耳朵都**自己印一行**（就像本喵这两只这样）—— 一眼就能看出谁没被喊到。「登记了」和「喊到了」是两件事，得分开检查。",
+      "templateId": "cpp-s3-14-bell-first-ear-only",
+      "params": {
+        "food": "猫粮"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:39.549Z",
+        "hash": "c0f0756ab0cac812"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-bell-listeners-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 写一只**开饭喇叭** `DinnerBell`：\n   - 登记耳朵的那一句叫 `listen`，登记的是「听见之后要干什么」那一小段；\n   - 喊一嗓子的那一句叫 `ring`，喊的是**一个数**，而且要把名单上每一位**从头到尾**都喊到；\n3. 主猫登记**三只耳朵**（用随身小招式那副方括号的样子）：\n   - 第一只：印一行 `咪爱收到 X`；\n   - 第二只：印一行 `大肥鱼收到 X`；\n   - 第三只：把 X 加进**外面**的一口碗里（那口碗在方括号里要用 `&` **共用同一个**）；\n4. 然后喊**两嗓子**：先喊投喂口给的那个数，再喊 `10`；\n5. 最后印一行 `一共 Y` —— `Y` 是那口碗里最后的数。\n\n比如投喂给程序的是\n\n8\n\n程序就要叼回\n\n咪爱收到 8\n大肥鱼收到 8\n咪爱收到 10\n大肥鱼收到 10\n一共 18\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <functional>\nusing namespace std;\n\n// 在这儿写开饭喇叭 DinnerBell：listen / ring，喊的时候要把名单走一遍\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    // 在这儿写：登记三只耳朵，喊两嗓子，最后印出总数\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <functional>\n#include <vector>\nusing namespace std;\n\nclass DinnerBell {\npublic:\n    void listen(function<void(int)> ear) { ears.push_back(ear); }\n    void ring(int what) const {\n        for (auto& ear : ears) ear(what);\n    }\nprivate:\n    vector<function<void(int)>> ears;\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int total = 0;\n    DinnerBell bell;\n    bell.listen([](int x) { cout << \"咪爱收到 \" << x << endl; });\n    bell.listen([](int x) { cout << \"大肥鱼收到 \" << x << endl; });\n    bell.listen([&total](int x) { total += x; });\n\n    bell.ring(n);\n    bell.ring(10);\n    cout << \"一共 \" << total << endl;\n    return 0;\n}\n",
+      "expectedOutput": "咪爱收到 9\n大肥鱼收到 9\n咪爱收到 10\n大肥鱼收到 10\n一共 19",
+      "stdin": "9\n",
+      "explanation": "这一题把**开饭喇叭**组装了一遍喵：\n\n- `listen` 登记的是「听见之后要干什么」那一小段 —— 就是随身小招式（方括号那副样子写出来的）；\n- `ring` 里那句 `for (auto& ear : ears) ear(what);` 照着名单**从头到尾**喊一遍，先后就是登记的先后；\n- 第三只耳朵要把数加进**外面**那口碗，所以方括号里得写 `[&total]` —— `&` 是「**共用同一个**」的意思。要是写成 `[total]`（揣一份带走），小招式里加的数**留在它自己肚子里**，外面那口碗一点没变，最后印出来就是 `一共 0`。\n\n喊一嗓子走一圈名单，所以顺序是：咪爱一行、大肥鱼一行；喊两嗓子就各印两行。两嗓子喊完，碗里的数才是最终那个 —— `一共` 那一行要印在**喊完之后**。\n\n⚠️ 这里也有个不报错的坑：`ring` 里要是漏写了走名单那一步（比如只喊了第一位），程序编得过、跑得也安静，后两只耳朵就是一直没动静。凡是「登记了却没人吭声」的场面，先回头检查喊话那一步。",
+      "templateId": "cpp-s3-14-bell-listeners",
+      "params": {
+        "w": "10"
+      },
+      "verified": {
+        "at": "2026-09-16T11:26:27.438Z",
+        "hash": "b20f26f91428b9e0"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-bell-listeners-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 写一只**开饭喇叭** `DinnerBell`：\n   - 登记耳朵的那一句叫 `listen`，登记的是「听见之后要干什么」那一小段；\n   - 喊一嗓子的那一句叫 `ring`，喊的是**一个数**，而且要把名单上每一位**从头到尾**都喊到；\n3. 主猫登记**三只耳朵**（用随身小招式那副方括号的样子）：\n   - 第一只：印一行 `咪爱收到 X`；\n   - 第二只：印一行 `大肥鱼收到 X`；\n   - 第三只：把 X 加进**外面**的一口碗里（那口碗在方括号里要用 `&` **共用同一个**）；\n4. 然后喊**两嗓子**：先喊投喂口给的那个数，再喊 `20`；\n5. 最后印一行 `一共 Y` —— `Y` 是那口碗里最后的数。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n咪爱收到 3\n大肥鱼收到 3\n咪爱收到 20\n大肥鱼收到 20\n一共 23\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <functional>\nusing namespace std;\n\n// 在这儿写开饭喇叭 DinnerBell：listen / ring，喊的时候要把名单走一遍\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    // 在这儿写：登记三只耳朵，喊两嗓子，最后印出总数\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <functional>\n#include <vector>\nusing namespace std;\n\nclass DinnerBell {\npublic:\n    void listen(function<void(int)> ear) { ears.push_back(ear); }\n    void ring(int what) const {\n        for (auto& ear : ears) ear(what);\n    }\nprivate:\n    vector<function<void(int)>> ears;\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int total = 0;\n    DinnerBell bell;\n    bell.listen([](int x) { cout << \"咪爱收到 \" << x << endl; });\n    bell.listen([](int x) { cout << \"大肥鱼收到 \" << x << endl; });\n    bell.listen([&total](int x) { total += x; });\n\n    bell.ring(n);\n    bell.ring(20);\n    cout << \"一共 \" << total << endl;\n    return 0;\n}\n",
+      "expectedOutput": "咪爱收到 4\n大肥鱼收到 4\n咪爱收到 20\n大肥鱼收到 20\n一共 24",
+      "stdin": "4\n",
+      "explanation": "这一题把**开饭喇叭**组装了一遍喵：\n\n- `listen` 登记的是「听见之后要干什么」那一小段 —— 就是随身小招式（方括号那副样子写出来的）；\n- `ring` 里那句 `for (auto& ear : ears) ear(what);` 照着名单**从头到尾**喊一遍，先后就是登记的先后；\n- 第三只耳朵要把数加进**外面**那口碗，所以方括号里得写 `[&total]` —— `&` 是「**共用同一个**」的意思。要是写成 `[total]`（揣一份带走），小招式里加的数**留在它自己肚子里**，外面那口碗一点没变，最后印出来就是 `一共 0`。\n\n喊一嗓子走一圈名单，所以顺序是：咪爱一行、大肥鱼一行；喊两嗓子就各印两行。两嗓子喊完，碗里的数才是最终那个 —— `一共` 那一行要印在**喊完之后**。\n\n⚠️ 这里也有个不报错的坑：`ring` 里要是漏写了走名单那一步（比如只喊了第一位），程序编得过、跑得也安静，后两只耳朵就是一直没动静。凡是「登记了却没人吭声」的场面，先回头检查喊话那一步。",
+      "templateId": "cpp-s3-14-bell-listeners",
+      "params": {
+        "w": "20"
+      },
+      "verified": {
+        "at": "2026-09-16T11:26:30.709Z",
+        "hash": "238e1bb255a50325"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-cat-factory-write-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口还会给 `2` 个数（一行一个）喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 写**一张底图纸** `Cat`：会一句 `speak`，这一句要**各猫各样**（牌子别忘挂）；\n2. 写**两张岔路图纸**：小鱼干猫那一句是 `小鱼干喵！`，毛线球猫那一句是 `毛线球喵！`；\n3. 写**一张接生图纸** `makeCat(int kind)`：读到 `1` 就接生小鱼干猫，别的数都兜底接生毛线球猫；\n4. 主猫一个一个读投喂口给的数，**每读到一个就接生一只**，印一行 `第 i 只：` 加上它自己那句话（`i` 从 `1` 数起）。\n\n比如投喂给程序的是\n\n2\n3\n\n程序就要叼回\n\n第 1 只：毛线球喵！\n第 2 只：毛线球喵！\n\n（判分喂的是**另外几个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\n// 在这儿写底图纸 Cat、两张岔路图纸，还有接生图纸 makeCat\n\nint main() {\n    int k = 0;\n    for (int i = 0; i < 2; i++) {\n        cin >> k;\n\n        // 在这儿写：按读到的数接生一只，印一行\n\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    virtual string speak() const { return \"……\"; }\n    virtual ~Cat() = default;\n};\n\nclass FishCat : public Cat {\npublic:\n    string speak() const override { return \"小鱼干喵！\"; }\n};\n\nclass BallCat : public Cat {\npublic:\n    string speak() const override { return \"毛线球喵！\"; }\n};\n\nunique_ptr<Cat> makeCat(int kind) {\n    if (kind == 1) return make_unique<FishCat>();\n    return make_unique<BallCat>();\n}\n\nint main() {\n    int k = 0;\n    for (int i = 0; i < 2; i++) {\n        cin >> k;\n        auto cat = makeCat(k);\n        cout << \"第 \" << i + 1 << \" 只：\" << cat->speak() << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 1 只：小鱼干喵！\n第 2 只：毛线球喵！",
+      "stdin": "1\n3\n",
+      "explanation": "这一题把**接生图纸**那张形状走了一遍喵：\n\n- 底图纸 `Cat` 里那句 `speak` 挂着 `virtual` 这块牌子，意思是「**这一句各猫各样，走到谁面前就念谁那句**」；两张岔路图纸各自把那一句换成自己的话；\n- 接生图纸 `makeCat` 里那条岔路：`kind` 是 `1` 就接生小鱼干猫，别的数全走兜底；\n- 主猫只报数，**不知道每一种猫怎么造** —— 造猫的事全在接生图纸肚子里。\n\n所以读到 `1` 的那一行印 `小鱼干喵！`，读到别的数的那一行印 `毛线球喵！`；投喂口给了 `2` 个数，就印 `2` 行。\n\n⚠️ 忘了挂牌子的话，程序**照样编得过、跑得起来**（岔路那边也别写 `override`），只是每一行都念底图纸那句「……」—— 一个「看着好像对」的结果。\n\n⚠️ 兜底那条路也有它的安静：报错了一个数**不会有谁提醒你**，它照样给你一只毛线球猫。每只猫自己报一句自己的话，正好能看出到底是哪只出来了 —— 这也是本喵让它印 `第 i 只：` 的缘故。",
+      "templateId": "cpp-s3-14-cat-factory-write",
+      "params": {
+        "w": "2"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:49.987Z",
+        "hash": "8432a40b47bf6f02"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-cat-factory-write-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口还会给 `3` 个数（一行一个）喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 写**一张底图纸** `Cat`：会一句 `speak`，这一句要**各猫各样**（牌子别忘挂）；\n2. 写**两张岔路图纸**：小鱼干猫那一句是 `小鱼干喵！`，毛线球猫那一句是 `毛线球喵！`；\n3. 写**一张接生图纸** `makeCat(int kind)`：读到 `1` 就接生小鱼干猫，别的数都兜底接生毛线球猫；\n4. 主猫一个一个读投喂口给的数，**每读到一个就接生一只**，印一行 `第 i 只：` 加上它自己那句话（`i` 从 `1` 数起）。\n\n比如投喂给程序的是\n\n3\n2\n1\n\n程序就要叼回\n\n第 1 只：毛线球喵！\n第 2 只：毛线球喵！\n第 3 只：小鱼干喵！\n\n（判分喂的是**另外几个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\n// 在这儿写底图纸 Cat、两张岔路图纸，还有接生图纸 makeCat\n\nint main() {\n    int k = 0;\n    for (int i = 0; i < 3; i++) {\n        cin >> k;\n\n        // 在这儿写：按读到的数接生一只，印一行\n\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    virtual string speak() const { return \"……\"; }\n    virtual ~Cat() = default;\n};\n\nclass FishCat : public Cat {\npublic:\n    string speak() const override { return \"小鱼干喵！\"; }\n};\n\nclass BallCat : public Cat {\npublic:\n    string speak() const override { return \"毛线球喵！\"; }\n};\n\nunique_ptr<Cat> makeCat(int kind) {\n    if (kind == 1) return make_unique<FishCat>();\n    return make_unique<BallCat>();\n}\n\nint main() {\n    int k = 0;\n    for (int i = 0; i < 3; i++) {\n        cin >> k;\n        auto cat = makeCat(k);\n        cout << \"第 \" << i + 1 << \" 只：\" << cat->speak() << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第 1 只：毛线球喵！\n第 2 只：小鱼干喵！\n第 3 只：毛线球喵！",
+      "stdin": "2\n1\n2\n",
+      "explanation": "这一题把**接生图纸**那张形状走了一遍喵：\n\n- 底图纸 `Cat` 里那句 `speak` 挂着 `virtual` 这块牌子，意思是「**这一句各猫各样，走到谁面前就念谁那句**」；两张岔路图纸各自把那一句换成自己的话；\n- 接生图纸 `makeCat` 里那条岔路：`kind` 是 `1` 就接生小鱼干猫，别的数全走兜底；\n- 主猫只报数，**不知道每一种猫怎么造** —— 造猫的事全在接生图纸肚子里。\n\n所以读到 `1` 的那一行印 `小鱼干喵！`，读到别的数的那一行印 `毛线球喵！`；投喂口给了 `3` 个数，就印 `3` 行。\n\n⚠️ 忘了挂牌子的话，程序**照样编得过、跑得起来**（岔路那边也别写 `override`），只是每一行都念底图纸那句「……」—— 一个「看着好像对」的结果。\n\n⚠️ 兜底那条路也有它的安静：报错了一个数**不会有谁提醒你**，它照样给你一只毛线球猫。每只猫自己报一句自己的话，正好能看出到底是哪只出来了 —— 这也是本喵让它印 `第 i 只：` 的缘故。",
+      "templateId": "cpp-s3-14-cat-factory-write",
+      "params": {
+        "w": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:53.039Z",
+        "hash": "22ec35e042b92d32"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-factory-no-virtual-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵写了一张底图纸 `Cat`、两张岔路图纸，还写了一张接生图纸 `makeCat`：报 `\"fish\"` 就接生第一只，报别的（本喵这儿报的是 `\"ball\"`）兜底接生第二只。\n\n可跑起来两行**念的是一模一样的一句**：「……」。本喵明明给两只猫都写了各自的话。你帮本喵改对：**主猫喂进去的两个名字、两张岔路图纸里那两句，都不用动**。\n\n改好之后，第一行该念第一只自己的那句，第二行该念 `毛线球喵！`。",
+      "brokenCode": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string speak() const { return \"……\"; }\n    virtual ~Cat() = default;\n};\n\nclass FishCat : public Cat {\npublic:\n    string speak() const { return \"小鱼干喵！\"; }\n};\n\nclass BallCat : public Cat {\npublic:\n    string speak() const { return \"毛线球喵！\"; }\n};\n\nunique_ptr<Cat> makeCat(const string& kind) {\n    if (kind == \"fish\") return make_unique<FishCat>();\n    return make_unique<BallCat>();\n}\n\nint main() {\n    auto c1 = makeCat(\"fish\");\n    auto c2 = makeCat(\"ball\");\n    cout << c1->speak() << endl;\n    cout << c2->speak() << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    virtual string speak() const { return \"……\"; }\n    virtual ~Cat() = default;\n};\n\nclass FishCat : public Cat {\npublic:\n    string speak() const override { return \"小鱼干喵！\"; }\n};\n\nclass BallCat : public Cat {\npublic:\n    string speak() const override { return \"毛线球喵！\"; }\n};\n\nunique_ptr<Cat> makeCat(const string& kind) {\n    if (kind == \"fish\") return make_unique<FishCat>();\n    return make_unique<BallCat>();\n}\n\nint main() {\n    auto c1 = makeCat(\"fish\");\n    auto c2 = makeCat(\"ball\");\n    cout << c1->speak() << endl;\n    cout << c2->speak() << endl;\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干喵！\n毛线球喵！",
+      "stdin": null,
+      "explanation": "这一题少的是底图纸那一句上的**牌子** `virtual` 喵。没挂牌子的话，底图纸里那句 `speak` 就只是一句普通的话；两张岔路图纸里的话再响，也**传不出来** —— 主猫拿到的两只猫，走到哪一只面前念的都是底图纸那句「……」。\n\n补上 `virtual`（顺手给两张岔路那句加上 `override` 更保险），同一份主猫再跑一遍，各自就念各自那句了：第一行印第一只的话，第二行印 `毛线球喵！`。\n\n⚠️ 这个坑的坏处在于它**一声不吭**：不挂牌子、岔路也别写 `override`，程序编得过、跑得起来，只是结果是一个「看着好像对」的「……」。牌子管的是「**这一句各猫各样，走到谁面前就念谁那句**」—— 写底图纸的时候先把牌子挂上，比事后找这个坑便宜得多。",
+      "templateId": "cpp-s3-14-factory-no-virtual",
+      "params": {
+        "k1": "fish",
+        "k2": "ball",
+        "w": "毛线球"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:29.506Z",
+        "hash": "0e14c2d8f2d96fd8"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-factory-no-virtual-007",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵写了一张底图纸 `Cat`、两张岔路图纸，还写了一张接生图纸 `makeCat`：报 `\"yarn\"` 就接生第一只，报别的（本喵这儿报的是 `\"wool\"`）兜底接生第二只。\n\n可跑起来两行**念的是一模一样的一句**：「……」。本喵明明给两只猫都写了各自的话。你帮本喵改对：**主猫喂进去的两个名字、两张岔路图纸里那两句，都不用动**。\n\n改好之后，第一行该念第一只自己的那句，第二行该念 `毛绒球喵！`。",
+      "brokenCode": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string speak() const { return \"……\"; }\n    virtual ~Cat() = default;\n};\n\nclass FishCat : public Cat {\npublic:\n    string speak() const { return \"小鱼干喵！\"; }\n};\n\nclass BallCat : public Cat {\npublic:\n    string speak() const { return \"毛绒球喵！\"; }\n};\n\nunique_ptr<Cat> makeCat(const string& kind) {\n    if (kind == \"yarn\") return make_unique<FishCat>();\n    return make_unique<BallCat>();\n}\n\nint main() {\n    auto c1 = makeCat(\"yarn\");\n    auto c2 = makeCat(\"wool\");\n    cout << c1->speak() << endl;\n    cout << c2->speak() << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    virtual string speak() const { return \"……\"; }\n    virtual ~Cat() = default;\n};\n\nclass FishCat : public Cat {\npublic:\n    string speak() const override { return \"小鱼干喵！\"; }\n};\n\nclass BallCat : public Cat {\npublic:\n    string speak() const override { return \"毛绒球喵！\"; }\n};\n\nunique_ptr<Cat> makeCat(const string& kind) {\n    if (kind == \"yarn\") return make_unique<FishCat>();\n    return make_unique<BallCat>();\n}\n\nint main() {\n    auto c1 = makeCat(\"yarn\");\n    auto c2 = makeCat(\"wool\");\n    cout << c1->speak() << endl;\n    cout << c2->speak() << endl;\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干喵！\n毛绒球喵！",
+      "stdin": null,
+      "explanation": "这一题少的是底图纸那一句上的**牌子** `virtual` 喵。没挂牌子的话，底图纸里那句 `speak` 就只是一句普通的话；两张岔路图纸里的话再响，也**传不出来** —— 主猫拿到的两只猫，走到哪一只面前念的都是底图纸那句「……」。\n\n补上 `virtual`（顺手给两张岔路那句加上 `override` 更保险），同一份主猫再跑一遍，各自就念各自那句了：第一行印第一只的话，第二行印 `毛绒球喵！`。\n\n⚠️ 这个坑的坏处在于它**一声不吭**：不挂牌子、岔路也别写 `override`，程序编得过、跑得起来，只是结果是一个「看着好像对」的「……」。牌子管的是「**这一句各猫各样，走到谁面前就念谁那句**」—— 写底图纸的时候先把牌子挂上，比事后找这个坑便宜得多。",
+      "templateId": "cpp-s3-14-factory-no-virtual",
+      "params": {
+        "k1": "yarn",
+        "k2": "wool",
+        "w": "毛绒球"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:32.722Z",
+        "hash": "64c00ef2fbad8791"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-pond-singleton-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 写一张**独苗图纸** `FishPond`：\n   - 喊猫过来的招式叫 `getInstance`，交回来的形状要能**把那只猫本身递出去**；\n   - 加法那一句叫 `add`，碗里那个数叫 `total`；\n   - 那只猫**只造一次**，而且是**头一次喊它的时候才造**；\n   - 起手式要藏在 `private:` 底下，不让外面的猫自己再造一只。\n3. 主猫用**两个不同的名字**各接住它一次：第一个名字加上投喂口给的那个数，第二个名字加上 `3`；\n4. 最后印两行：先 `一共 X`（X 是两处加法之和），再 `同一只 Y` —— `Y` 那儿，两个名字指的是同一只就印 `是`，不是就印 `不是`。\n\n比如投喂给程序的是\n\n9\n\n程序就要叼回\n\n一共 12\n同一只 是\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\n// 在这儿写独苗图纸 FishPond：getInstance / add / total，起手式藏在 private: 底下\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    // 在这儿写：两个名字各接住它一次，各加一次，印出两行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass FishPond {\npublic:\n    static FishPond& getInstance() {\n        static FishPond only;\n        return only;\n    }\n    void add(int n) { total += n; }\n    int total = 0;\nprivate:\n    FishPond() = default;\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    FishPond& a = FishPond::getInstance();\n    a.add(n);\n    FishPond& b = FishPond::getInstance();\n    b.add(3);\n    cout << \"一共 \" << a.total << endl;\n    cout << \"同一只 \" << (&a == &b ? \"是\" : \"不是\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "一共 10\n同一只 是",
+      "stdin": "7\n",
+      "explanation": "这一题要把**独苗图纸**的三件事凑齐喵：\n\n- 招式里那句 `static FishPond only;` —— **只造一次**，而且是头一次喊它的时候才造；\n- 交回来的形状带上 `&` —— **把那只猫本身递出去**，两个名字才指的是同一只（少了它，接回去的是复印的一份）；\n- 起手式藏在 `private:` 底下 —— 外面的猫就没法自己再造一只。\n\n三件事凑齐了，`a` 和 `b` 才是同一口碗：投喂口给的数加上 `3`，所以 `一共` 那一行印的是两处加法之和，`同一只` 那一行永远是 `是`。\n\n⚠️ 三件事里少哪一件会怎样，值得自己挨个试一遍：只造一次那句少了 `static`，每次喊都是一只新的；少写 `&`，拿到的是复印；起手式不藏，谁都能自己再造一只 —— **三种都不会报错**，只会让结果悄悄不对。",
+      "templateId": "cpp-s3-14-pond-singleton",
+      "params": {
+        "w": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:43.898Z",
+        "hash": "539bfdc67c153cd2"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-pond-singleton-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 写一张**独苗图纸** `FishPond`：\n   - 喊猫过来的招式叫 `getInstance`，交回来的形状要能**把那只猫本身递出去**；\n   - 加法那一句叫 `add`，碗里那个数叫 `total`；\n   - 那只猫**只造一次**，而且是**头一次喊它的时候才造**；\n   - 起手式要藏在 `private:` 底下，不让外面的猫自己再造一只。\n3. 主猫用**两个不同的名字**各接住它一次：第一个名字加上投喂口给的那个数，第二个名字加上 `5`；\n4. 最后印两行：先 `一共 X`（X 是两处加法之和），再 `同一只 Y` —— `Y` 那儿，两个名字指的是同一只就印 `是`，不是就印 `不是`。\n\n比如投喂给程序的是\n\n3\n\n程序就要叼回\n\n一共 8\n同一只 是\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\nusing namespace std;\n\n// 在这儿写独苗图纸 FishPond：getInstance / add / total，起手式藏在 private: 底下\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    // 在这儿写：两个名字各接住它一次，各加一次，印出两行\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\nusing namespace std;\n\nclass FishPond {\npublic:\n    static FishPond& getInstance() {\n        static FishPond only;\n        return only;\n    }\n    void add(int n) { total += n; }\n    int total = 0;\nprivate:\n    FishPond() = default;\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    FishPond& a = FishPond::getInstance();\n    a.add(n);\n    FishPond& b = FishPond::getInstance();\n    b.add(5);\n    cout << \"一共 \" << a.total << endl;\n    cout << \"同一只 \" << (&a == &b ? \"是\" : \"不是\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "一共 9\n同一只 是",
+      "stdin": "4\n",
+      "explanation": "这一题要把**独苗图纸**的三件事凑齐喵：\n\n- 招式里那句 `static FishPond only;` —— **只造一次**，而且是头一次喊它的时候才造；\n- 交回来的形状带上 `&` —— **把那只猫本身递出去**，两个名字才指的是同一只（少了它，接回去的是复印的一份）；\n- 起手式藏在 `private:` 底下 —— 外面的猫就没法自己再造一只。\n\n三件事凑齐了，`a` 和 `b` 才是同一口碗：投喂口给的数加上 `5`，所以 `一共` 那一行印的是两处加法之和，`同一只` 那一行永远是 `是`。\n\n⚠️ 三件事里少哪一件会怎样，值得自己挨个试一遍：只造一次那句少了 `static`，每次喊都是一只新的；少写 `&`，拿到的是复印；起手式不藏，谁都能自己再造一只 —— **三种都不会报错**，只会让结果悄悄不对。",
+      "templateId": "cpp-s3-14-pond-singleton",
+      "params": {
+        "w": "5"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:46.541Z",
+        "hash": "584557c7f57ab71b"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-singleton-handle-copy-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵的独苗图纸写对了：招式里那句 `static` 在，起手式也藏在 `private:` 底下。可这回两处加的数**没能加在一块儿** —— 两个名字各自捧着各自的碗。\n\n请你改对。**图纸那一半一个字都不用动**，只把主猫接货的地方修好。改好之后，印出来应该是这样：两行「的碗」印的是**同一个数**（`4` 和 `5` 加起来），最后一行印「同一只：是」。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nclass FishBowl {\npublic:\n    static FishBowl& getInstance() {\n        static FishBowl only;\n        return only;\n    }\n    void add(int n) { count += n; }\n    int count = 0;\nprivate:\n    FishBowl() = default;\n};\n\nint main() {\n    FishBowl a = FishBowl::getInstance();\n    a.add(4);\n    FishBowl b = FishBowl::getInstance();\n    b.add(5);\n    cout << \"a 的碗：\" << a.count << endl;\n    cout << \"b 的碗：\" << b.count << endl;\n    cout << \"同一只：\" << (&a == &b ? \"是\" : \"不是\") << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nclass FishBowl {\npublic:\n    static FishBowl& getInstance() {\n        static FishBowl only;\n        return only;\n    }\n    void add(int n) { count += n; }\n    int count = 0;\nprivate:\n    FishBowl() = default;\n};\n\nint main() {\n    FishBowl& a = FishBowl::getInstance();\n    a.add(4);\n    FishBowl& b = FishBowl::getInstance();\n    b.add(5);\n    cout << \"a 的碗：\" << a.count << endl;\n    cout << \"b 的碗：\" << b.count << endl;\n    cout << \"同一只：\" << (&a == &b ? \"是\" : \"不是\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "a 的碗：9\nb 的碗：9\n同一只：是",
+      "stdin": null,
+      "explanation": "这一题漏的是**接货时的那个 `&`** 喵。图纸那边交回来的形状明明写着 `FishBowl&`（意思是**把那只猫本身递出去**），可主猫这两行写成的是 `FishBowl a = ...` —— 少了那个 `&`，接回去的成了**复印的一份**。\n\n复印件当然也能加自己的数，只是加不进那口真碗里：所以 `a 的碗` 印 `4`、`b 的碗` 印 `5`，最后一行也成了「不是」。\n\n把两行都改成 `FishBowl& a = ...`、`FishBowl& b = ...`，两个名字就都指着**同一只**（同一口碗）：两处加法加起来，两行印的成了同一个数，最后一行也变回「是」。\n\n⚠️ 这一类毛病最费时间的地方是：程序**不报错、不提醒**，两个数看起来还都「有道理」。以后检查的时候别只盯着印出来的数 —— 问一句「**这两个名字是不是同一只**」（`&a == &b`）最快。",
+      "templateId": "cpp-s3-14-singleton-handle-copy",
+      "params": {
+        "w1": "4",
+        "w2": "5"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:23.301Z",
+        "hash": "5888dfe3c61cee6b"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-14-singleton-handle-copy-003",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵的独苗图纸写对了：招式里那句 `static` 在，起手式也藏在 `private:` 底下。可这回两处加的数**没能加在一块儿** —— 两个名字各自捧着各自的碗。\n\n请你改对。**图纸那一半一个字都不用动**，只把主猫接货的地方修好。改好之后，印出来应该是这样：两行「的碗」印的是**同一个数**（`7` 和 `9` 加起来），最后一行印「同一只：是」。",
+      "brokenCode": "#include <iostream>\nusing namespace std;\n\nclass FishBowl {\npublic:\n    static FishBowl& getInstance() {\n        static FishBowl only;\n        return only;\n    }\n    void add(int n) { count += n; }\n    int count = 0;\nprivate:\n    FishBowl() = default;\n};\n\nint main() {\n    FishBowl a = FishBowl::getInstance();\n    a.add(7);\n    FishBowl b = FishBowl::getInstance();\n    b.add(9);\n    cout << \"a 的碗：\" << a.count << endl;\n    cout << \"b 的碗：\" << b.count << endl;\n    cout << \"同一只：\" << (&a == &b ? \"是\" : \"不是\") << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\nusing namespace std;\n\nclass FishBowl {\npublic:\n    static FishBowl& getInstance() {\n        static FishBowl only;\n        return only;\n    }\n    void add(int n) { count += n; }\n    int count = 0;\nprivate:\n    FishBowl() = default;\n};\n\nint main() {\n    FishBowl& a = FishBowl::getInstance();\n    a.add(7);\n    FishBowl& b = FishBowl::getInstance();\n    b.add(9);\n    cout << \"a 的碗：\" << a.count << endl;\n    cout << \"b 的碗：\" << b.count << endl;\n    cout << \"同一只：\" << (&a == &b ? \"是\" : \"不是\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "a 的碗：16\nb 的碗：16\n同一只：是",
+      "stdin": null,
+      "explanation": "这一题漏的是**接货时的那个 `&`** 喵。图纸那边交回来的形状明明写着 `FishBowl&`（意思是**把那只猫本身递出去**），可主猫这两行写成的是 `FishBowl a = ...` —— 少了那个 `&`，接回去的成了**复印的一份**。\n\n复印件当然也能加自己的数，只是加不进那口真碗里：所以 `a 的碗` 印 `7`、`b 的碗` 印 `9`，最后一行也成了「不是」。\n\n把两行都改成 `FishBowl& a = ...`、`FishBowl& b = ...`，两个名字就都指着**同一只**（同一口碗）：两处加法加起来，两行印的成了同一个数，最后一行也变回「是」。\n\n⚠️ 这一类毛病最费时间的地方是：程序**不报错、不提醒**，两个数看起来还都「有道理」。以后检查的时候别只盯着印出来的数 —— 问一句「**这两个名字是不是同一只**」（`&a == &b`）最快。",
+      "templateId": "cpp-s3-14-singleton-handle-copy",
+      "params": {
+        "w1": "7",
+        "w2": "9"
+      },
+      "verified": {
+        "at": "2026-09-16T11:25:26.222Z",
+        "hash": "189f258e96aab63c"
+      }
+    }
+  ]
+}

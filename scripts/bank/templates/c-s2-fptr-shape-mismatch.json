@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-fptr-shape-mismatch",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-12",
+  "type": "codefix",
+  "concept": ["函数指针", "长相要对得上", "编译错误"],
+  "instances": 2,
+  "params": {
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫罐头", "冻干块"] }
+  },
+  "stemTemplate": "本喵有一招 `hello`：**不投喂、也不叼回**，只是印一句 `你好喵`。\n\n现在想摆一只碗装它的牌子，然后喊一声。程序该印两行：先一句 `你好喵`，再一句 `牌子喊完了，{unit}已经备好`。\n\n可翻译官喵把整段代码退了回来，说**长相对不上**。你帮本喵把这只碗和喊的那一声都改对（招式 `hello` 本身一个字都不用改）。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nvoid hello(void) {\n    printf(\"你好喵\\n\");\n}\n\nint main(void) {\n    int (*p)(int) = hello;\n    printf(\"%d\\n\", p(1));\n    printf(\"牌子喊完了，{unit}已经备好\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nvoid hello(void) {\n    printf(\"你好喵\\n\");\n}\n\nint main(void) {\n    void (*p)(void) = hello;\n    p();\n    printf(\"牌子喊完了，{unit}已经备好\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: initialization of 'int (*)(int)' from incompatible pointer type 'void (*)(void)' [-Wincompatible-pointer-types]` —— 翻过来就一句：**长相对不上**。\n\n它把两边都念了一遍：\n\n- **左边这只碗（`int (*p)(int)`）**要装的是「**投喂一个整数、叼回一个整数**」的牌子；\n- **右边的 `hello`** 是「**不投喂、也不叼回**」的招式。\n\n两边的长相不一样，它就不许你把它们放进同一只碗里。所以要改的地方是**碗和喊法**，不是招式本身：\n\n```c\nvoid (*p)(void) = hello;\np();\n```\n\n`void (*p)(void)` 读起来还是从里往外：最右边 `(void)` 是「不投喂」，最左边 `void` 是「不叼回」，中间 `(*p)` 是那只碗。喊的时候也**不用给投喂**，所以写 `p();` 就完了。\n\n**为什么原来的写法连喊都是错的？** 因为碗按旧长相说好了「要投喂一个整数」，本喵就顺手写了 `p(1)`、还想用 `%d` 把「叼回来的整数」印出来 —— 可 `hello` 根本不叼东西。牵一发动全身：**牌子的长相说的是「这招长什么样」的承诺，承诺错了，后面每一处都跟着错。**\n\n最后收一句让人安心的：这类错**根本跑不起来**。翻译官喵在翻的阶段就把它拦下了，你不可能带着它上考场 —— 这正是 C 让人放心的地方。"
+}

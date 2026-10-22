@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-array-walk-report",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-09",
+  "type": "codewrite",
+  "concept": ["摆一排碗", "报编号取碗", "编号从 0 起"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫粮"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵今天摆了 {n} 只碗，一只一只往里面装{unit}。\n\n请你写个程序：**先从投喂口读进来一个数**（就是摆了几只碗），**再读进来 {n} 行数**（一行一个，是每只碗里装了几条{unit}）。把这些数**一只碗一格**地装进一排碗里，再从第 0 只开始一只一只报出来：一行一只碗，`第 %d 只碗里有 %d 条{unit}喵`。\n\n（这排碗最多摆 5 只，今天只用了 {n} 只 —— 报的时候**别多报**喵。）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[5] = {0};\n    int n = 0;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    for (int i = 0; i < n; i++) {\n        printf(\"第 %d 只碗里有 %d 条{unit}喵\\n\", i, bowls[i]);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一课的主角是**一排贴编号的猫粮碗**。摆碗那一行是四块拼起来的：每只碗装什么形状、这排叫什么名字、方括号里一共摆几只、花括号里按顺序把每只碗里的东西写出来喵。\n\n这道题里有两个容易摔的地方：\n\n**① 碗数钉死了，编号从 0 起。** 这排摆了 5 只，可今天只用到 {n} 只 —— 所以转圈的眼色要写读进来的那个数。写成固定值 5 的话，会把没用过的碗也一起报出来（它们里面是摆碗时洗过的 0）。\n\n**② 读进来的数和装进去的格子可以对上号。** `i` 从 0 走到碗数减一，正好是这排碗的全部编号；每圈读一个数、装进这一只碗，读完也装完了 —— 用一个跑圈就能干完两件事。\n\n顺带记一句和 Python 很不一样的：**C 的这排碗想多一只，得回去改代码重新翻一遍**，它没有任何「加一格」的招式喵。"
+}

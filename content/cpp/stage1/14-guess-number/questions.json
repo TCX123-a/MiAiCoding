@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage1-14",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵不知道你要猜几次才猜得中 —— 这种「要转几圈说不准」的活儿，该用哪种圈？",
+      "options": [
+        "`for` 圈，先随便写个圈数，不够用再改",
+        "`while (true)` 配上 `break;` —— 一直转，猜中了喊停",
+        "不能用圈，得把同一段话抄二十遍",
+        "`if` 就行，不用圈"
+      ],
+      "answer": 1,
+      "explanation": "`for` 圈的本事是「跑几圈我事先就知道」，可猜几次谁也说不准。这时候用 `while (true)`：一直转下去，直到有人喊停 —— 猜中的时候 `break;` 一喊，就从圈里跳出来收工。圈数说不准就用它，这是本课这台机器的骨架喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "第一段里那句 `srand(1);` 在干什么？",
+      "options": [
+        "把本喵心里那个数定成 `1`",
+        "下种子：钉住运气，同一颗种子吐出来的那串数永远一模一样",
+        "让 `rand()` 从 `1` 开始一个一个往上数",
+        "把已经印出去的东西排个序"
+      ],
+      "answer": 1,
+      "explanation": "`srand` 是**下种子**：本喵给机器一颗种子，它照着这颗种子吐数。**同一颗种子，吐出来的那串数永远一样** —— 所以本喵钉住 `srand(1)` 跑出来的那五行，你照着跑也一模一样，能一行一行对。真玩的时候要把种子换成每次都不同的（`srand(time(0));`），不然每局都是同一个数喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "`check` 那一招里**一句 `cout` 都没有**，它只把该说的那句话叼回来。这样做的好处是什么？",
+      "options": [
+        "跑得更快，机器少干一点活",
+        "调用它的那位想直接印也行、想再加工一下也行，函数自己不被印字绑死",
+        "不写 `cout` 的函数可以少写一个 `#include`",
+        "没什么好处，只是本喵懒得写"
+      ],
+      "answer": 1,
+      "explanation": "招式里一旦写死了 `cout`，它就只会干「直接印出来」这一件事。只报信、不印字，喊它的那位就自由了：想印就 `cout << check(...)`，想再加工（比如前面加个「第 3 次：」）就直接拼，想换一种报法也不用动这一招。**一招只干一件事** —— 报信是报信，印字是印字喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "stem": "下面这台机器要一直猜下去、猜中才收工，最后还要数出猜了几次。把缺的两处补上：",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int target = 42;\n    int picks[3] = {10, 50, 42};\n    int i = 0;\n\n    while (____) {\n        int guess = picks[i];\n        i = i + 1;\n        if (guess == target) {\n            ____;\n        }\n    }\n    cout << \"猜了 \" << i << \" 次喵\" << endl;\n    return 0;\n}",
+      "blanks": [
+        { "answer": "true" },
+        { "answer": "break" }
+      ],
+      "explanation": "第一个空填 `true` —— 条件永远是真的，圈就一直转下去（圈数说不准的时候就用它）。第二个空填 `break` —— 猜中的时候喊停，从圈里跳出来。填好之后跑起来报 10、报 50、报 42，第三次猜中收工，印出来是 `猜了 3 次喵`：`i` 每报一次就加 1，所以它正好就是猜的次数喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstring check(int guess, int target) {\n    if (guess < target) {\n        return \"太小啦喵\";\n    } else if (guess > target) {\n        return \"太大啦喵\";\n    } else {\n        return \"猜中啦喵\";\n    }\n}\n\nint main() {\n    cout << check(10, 42) << endl;\n    cout << check(50, 42) << endl;\n    cout << check(42, 42) << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "太小啦喵\n太大啦喵\n猜中啦喵",
+      "accept": [],
+      "explanation": "`check` 收两样料（猜的数、本喵心里那个数），叼回来一句话。`10` 比 `42` 小，走第一条岔路；`50` 比 `42` 大，走第二条；`42` 和 `42` 相等，走最后那条。三条岔路各印一句，所以是三行。注意这一招自己**不印字**，是 `main` 里那三句 `cout` 印的喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int target = 42;\n    int picks[4] = {10, 50, 25, 42};\n    int i = 0;\n\n    while (true) {\n        int guess = picks[i];\n        i = i + 1;\n        cout << \"本喵报 \" << guess << endl;\n        if (guess == target) {\n            cout << \"猜中啦喵\" << endl;\n            break;\n        }\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "本喵报 10\n本喵报 50\n本喵报 25\n本喵报 42\n猜中啦喵",
+      "accept": [],
+      "explanation": "那一排替身是 `10`、`50`、`25`、`42`，机器一格一格往下报：`i` 每转一圈加 1，`picks[i]` 就是那一格上的数，所以先报 10、再 50、再 25、最后 42。最后那一格正好等于本喵心里那个数，于是印出「猜中啦喵」、`break;` 一喊收工 —— 一共五行，一行不多喵。"
+    }
+  ]
+}

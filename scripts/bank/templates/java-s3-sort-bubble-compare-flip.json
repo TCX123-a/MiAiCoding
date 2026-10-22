@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-sort-bubble-compare-flip",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-21",
+  "type": "codefix",
+  "concept": ["给小鱼干排排坐", "两两比一比", "慢慢往上冒", "比较号写反了"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["5", "50"] },
+    "b": { "kind": "pick", "values": ["3", "20"] },
+    "c": { "kind": "pick", "values": ["8", "70"] },
+    "d": { "kind": "pick", "values": ["1", "10"] },
+    "e": { "kind": "pick", "values": ["4", "40"] }
+  },
+  "stemTemplate": "本喵把 **{a}、{b}、{c}、{d}、{e}** 这五个数交给「**两两比一比、慢慢往上冒**」那一招，让它排成**从小到大**。\n\n可印出来是从大到小：\n\n```text\n排排坐：{c} {a} {e} {b} {d}\n```\n\n五个数一只不少、也确实排整齐了 —— 只是**方向反了**。翻译官喵一声没吭，编译跑得好好的。\n\n请你把那一招里**比较大小**的地方改对。改好之后该印：\n\n```text\n排排坐：{d} {b} {e} {a} {c}\n```",
+  "brokenCodeTemplate": "public class Main {\n    static void bubble(int[] a, int n) {\n        for (int i = 0; i < n - 1; i++) {\n            for (int j = 0; j < n - 1 - i; j++) {\n                if (a[j] < a[j + 1]) {\n                    int t = a[j];\n                    a[j] = a[j + 1];\n                    a[j + 1] = t;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        int[] a = {{a}, {b}, {c}, {d}, {e}};\n        bubble(a, 5);\n\n        System.out.print(\"排排坐：\");\n        for (int i = 0; i < 5; i++) {\n            System.out.print(a[i] + \" \");\n        }\n        System.out.println();\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    static void bubble(int[] a, int n) {\n        for (int i = 0; i < n - 1; i++) {\n            for (int j = 0; j < n - 1 - i; j++) {\n                if (a[j] > a[j + 1]) {\n                    int t = a[j];\n                    a[j] = a[j + 1];\n                    a[j + 1] = t;\n                }\n            }\n        }\n    }\n\n    public static void main(String[] args) {\n        int[] a = {{a}, {b}, {c}, {d}, {e}};\n        bubble(a, 5);\n\n        System.out.print(\"排排坐：\");\n        for (int i = 0; i < 5; i++) {\n            System.out.print(a[i] + \" \");\n        }\n        System.out.println();\n    }\n}\n",
+  "explanationTemplate": "毛病就在那个**比较号**上喵。\n\n本喵写的是 `a[j] < a[j + 1]`，念出来是「**后面那只比前面那只小，就把它俩换个个儿**」—— 换完，大的跑到前头去了。一趟一趟这么换下来，整排当然是从**大到小**。\n\n要从小到大，得让**前面那只比后面那只大**的时候才换：\n\n```text\na[j] > a[j + 1]\n```\n\n这一句和「谁往上冒」是同一件事的两面：`>` 是「大的往后挪一位」，一路挪到最后就冒到头了。\n\n⚠️ 这种错**最难靠眼睛发现**，因为输出也是一个排得整整齐齐的队，只是方向反了。翻译官喵管不着「你想排哪一头」—— 它只管这句话合不合语法。所以排完先问自己一句：**我要的是从小到大，还是从大到小喵？**"
+}

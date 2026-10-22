@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-06-month-end",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-06",
+  "type": "codewrite",
+  "concept": ["这个月有几天", "拉到 1 号", "往二月挪就退到最后一天"],
+  "instances": 6,
+  "params": {
+    "m1": { "kind": "pick", "values": ["01", "03"] }
+  },
+  "stemTemplate": "本喵这张纸条是 **2026 年 {m1} 月 31 日**（用 `LocalDate.of` 撕出来，三样都写全）。\n\n请你写个程序，印三行：\n\n1. `这个月有几天：` 后面接本喵这张纸条那个月总共有几天；\n2. `拉到 1 号：` 后面接「这个月 1 号」那张**新**纸条 —— 直接印那张纸本身（它长什么样就印什么样）；\n3. `往后挪一个月：` 后面接「往后挪一个月」那张**新**纸条，同样直接印。\n\n后两行都要**另撕一张、接住**再印 —— 本喵这张 31 号的纸，从头到尾一个字都不许变。\n\n（这一题**不用投喂任何东西**。）",
+  "starterTemplate": "import java.time.LocalDate;\n\npublic class Main {\n    public static void main(String[] args) {\n        LocalDate 本喵这张 = LocalDate.of(2026, {m1}, 31);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.time.LocalDate;\n\npublic class Main {\n    public static void main(String[] args) {\n        LocalDate 本喵这张 = LocalDate.of(2026, {m1}, 31);\n\n        System.out.println(\"这个月有几天：\" + 本喵这张.lengthOfMonth());\n        System.out.println(\"拉到 1 号：\" + 本喵这张.withDayOfMonth(1));\n        System.out.println(\"往后挪一个月：\" + 本喵这张.plusMonths(1));\n    }\n}\n",
+  "explanationTemplate": "**一、`lengthOfMonth()` 报的是「这个月一共几天」。** 大月 31、小月 30、二月再另说 —— 别自己背，问它。\n\n**二、`withDayOfMonth(1)` 是「照这张纸另撕一张，日改成 1 号」。** 它不是在本喵这张纸上涂改，原来那张照样是 31 号。\n\n**三、这一题最值钱的一行是「往后挪一个月」。** 本喵这张是 **31 号**，可下一个月的三十一号**不一定存在**（比如挪到二月、挪到只有 30 天的月份）。它不会报错，也不会硬凑一个「二月 31 日」出来 —— 它会**自己退到那个月的最后一天**。本题里后两行印出来的差别，正是在这一点上。\n\n**四、三行都是「另撕一张」，所以每一行都得把新纸接住再印**（要么直接印它的结果，要么接到名字里再印）—— 「单独写一句 `.plusMonths(1);` 就完事」那种写法，新纸当场丢，印出来的还是 31 号那张。"
+}

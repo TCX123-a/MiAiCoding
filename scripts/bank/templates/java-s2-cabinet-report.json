@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s2-cabinet-report",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-08",
+  "type": "codewrite",
+  "concept": ["柜子自己长大", "add", "size", "按编号取", "直接印柜子"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "k": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要拿会自己长大的柜子登记一批号码喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请把它们**一个不漏地加进柜子**，然后印四行：\n\n```text\n柜子印出来：那一串\n一共 N 格\n编号 K 那格是 X\n最后一格是 Z\n```\n\n- 第一行那串**不用本喵自己拼** —— 柜子直接印出来就是那个样子，方括号加逗号空格；\n- `N` 是格数；\n- `X` 是**编号 K** 那一格（这里的 K 就是 {k}）；\n- `Z` 是**最后一格**。这一处**别把编号写死** —— 让柜子自己算。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n        System.out.println(\"柜子印出来：\" + box);\n        System.out.println(\"一共 \" + box.size() + \" 格\");\n        System.out.println(\"编号 {k} 那格是 \" + box.get({k}));\n        System.out.println(\"最后一格是 \" + box.get(box.size() - 1));\n    }\n}\n",
+  "explanationTemplate": "这题四行正好把柜子最常用的几招各走一遍喵。\n\n**一、柜子自己长大。** `new ArrayList<>()` 的时候**一个字都没提「要几格」** —— 这正是它比那一排钉死的碗好用的地方。`box.add(...)` 每喊一次就往最后加一格，柜子自己撑大，本喵不用操心。\n\n**二、`size()` 报的是格数，不是最后一格的编号。** 这两样在柜子里**差着一**：有 3 格的时候，编号是 0、1、2，而 `size()` 说 3。所以摸最后一格得写 `box.get(box.size() - 1)` —— 这一条和项链上的 `charAt(s.length() - 1)` 一模一样。要是偷懒写成 `box.get(box.size())`，柜子会**当场炸**给你看（那串红字叫 `IndexOutOfBoundsException`），而不是叼个空值回来。\n\n**三、柜子可以直接印。** `\"...\" + box` 印出来的是 `[5, 3, 7]` 这个样子：方括号包着、逗号加一个空格隔开、按编号排。这是它自带的方便，本喵一行拼接代码都不用写。（要这个是本喵自己拼的格式，那就得回到上一课的抽屉去接。）\n\n**四、一个细节：往柜子里塞的是哪一号家当。** 读进来的数是光溜溜的 `int`，可柜子的牌子写的是 `Integer`。本喵没做任何转换 —— 翻译官喵一看两边对不上，**顺手照图纸生一只口袋**把数字装进去，这就是上一课学的装箱。取出来 `\"...\" + box.get(...)` 拼项链的时候，它又会自己把数字掏出来。\n\n往后装一串名字、一串纸条、一串别人的东西，都是这四行招式的变奏喵。"
+}

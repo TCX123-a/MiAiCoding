@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-pool-max-below-core",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-11",
+  "type": "codefix",
+  "concept": ["常驻与上限谁大谁小有规矩", "上限压不住常驻就不让建", "同一个数放错槽位"],
+  "instances": 2,
+  "params": {
+    "core": { "kind": "int", "min": 3, "max": 5 },
+    "max": { "kind": "int", "min": 1, "max": 2 }
+  },
+  "stemTemplate": "本喵自己动手装了一个池子：想让 **{core}** 只猫常驻，院子里最多容得下 **{max}** 只。结果程序**一跑就摔**喵。\n\n你帮本喵看看这两个数该往哪儿放，把它理顺。这两个数**都要用上，一个别改**。\n\n改好之后，程序该印出**两行**：`常驻 {max} 只`、`上限 {core} 只`。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.util.concurrent.LinkedBlockingQueue;\nimport java.util.concurrent.ThreadPoolExecutor;\nimport java.util.concurrent.TimeUnit;\n\npublic class Main {\n    public static void main(String[] args) {\n        ThreadPoolExecutor 池子 = new ThreadPoolExecutor({core}, {max}, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());\n\n        System.out.println(\"常驻 {max} 只\");\n        System.out.println(\"上限 {core} 只\");\n        池子.shutdown();\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.concurrent.LinkedBlockingQueue;\nimport java.util.concurrent.ThreadPoolExecutor;\nimport java.util.concurrent.TimeUnit;\n\npublic class Main {\n    public static void main(String[] args) {\n        ThreadPoolExecutor 池子 = new ThreadPoolExecutor({max}, {core}, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());\n\n        System.out.println(\"常驻 {max} 只\");\n        System.out.println(\"上限 {core} 只\");\n        池子.shutdown();\n    }\n}\n",
+  "explanationTemplate": "这一摔的原话是：\n\n```text\nException in thread \"main\" java.lang.IllegalArgumentException\n```\n\n念法是：「**你让本喵最多容下 {max} 只，又说要 {core} 只常驻 —— 这两句是打架的，本喵不伺候。**」\n\n池子的两个数是有前后关系的：**常驻的只数不能比上限还大**。上限管的是「院子里最多几只」，常驻管的是「平时留几只」。要是常驻比上限多，那「上限」这三个字就成了一句空话，池子连门都不让你进。\n\n治法不是删数、也不是把哪个数改小，而是**把两个数放回各自的槽位**：`new ThreadPoolExecutor({max}, {core}, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<>())` —— 报数那一行里**前面的槽是常驻，后面的槽是上限**，顺序反了就是刚才那一摔。\n\n放对之后跑出来是：\n\n```text\n常驻 {max} 只\n上限 {core} 只\n```\n\n顺带一提：这一摔发生在**刚建池子的那一行**，还没派过任何活 —— 也就是说，这种错不挑活的多少，池子一出生就得先过这一关喵。"
+}

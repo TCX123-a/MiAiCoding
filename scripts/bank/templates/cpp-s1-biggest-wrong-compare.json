@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-biggest-wrong-compare",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-15",
+  "type": "codefix",
+  "concept": ["找冠军的比法", "top 是目前最贵那张的编号", "编得过但找成了最便宜的"],
+  "instances": 2,
+  "params": {
+    "a1": { "kind": "pick", "values": ["30", "50"] },
+    "a2": { "kind": "pick", "values": ["12", "20"] },
+    "a3": { "kind": "pick", "values": ["88", "99"] }
+  },
+  "stemTemplate": "本喵这台机器要报出**最贵的一笔**：一招 `biggest` 去找出最贵那张卡片的编号，再用这个编号取卡片，把名字和数目印一行。\n\n可它报出来的却是**最便宜**的那一笔。翻译官喵一个字都没抱怨（这话编得过），是跑出来才对上号。\n\n你帮本喵把出问题的那一处改好：改完要报出最贵的那一笔。三笔的数目、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint biggest(Record book[], int n) {\n    int top = 0;\n    for (int i = 1; i < n; i++) {\n        if (book[i].amount < book[top].amount) {\n            top = i;\n        }\n    }\n    return top;\n}\n\nint main() {\n    Record book[3] = {{\"猫粮\", {a1}}, {\"小鱼干\", {a2}}, {\"猫窝\", {a3}}};\n\n    int top = biggest(book, 3);\n    cout << \"最贵的一笔是 \" << book[top].name << \" \" << book[top].amount << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint biggest(Record book[], int n) {\n    int top = 0;\n    for (int i = 1; i < n; i++) {\n        if (book[i].amount > book[top].amount) {\n            top = i;\n        }\n    }\n    return top;\n}\n\nint main() {\n    Record book[3] = {{\"猫粮\", {a1}}, {\"小鱼干\", {a2}}, {\"猫窝\", {a3}}};\n\n    int top = biggest(book, 3);\n    cout << \"最贵的一笔是 \" << book[top].name << \" \" << book[top].amount << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题坏的地方**编得过**，所以屏幕上没有红字，只是报错了**一笔**：把**最便宜的**那笔当成最贵的报了出来。\n\n先看清楚 `biggest` 在干什么喵：`top` 是「**目前最贵那张的编号**」，从 0 号开始，一个一个比过去。\n\n- 比到某一张时，要是它**比目前这张更贵**，就把 `top` 换成它 —— 所以那句比较得写 `book[i].amount > book[top].amount`。\n- 本喵写成了 `<`，意思就变成了「**比目前这张更便宜就换**」—— 一圈走下来，`top` 停在了**最便宜**那一张上。\n\n改法只有一处：把那个记号换回 `>`。\n\n顺带记牢这一招的两个老规矩喵：**它叼回来的是编号（`int`），不是那张卡片**（卡片不好整个叼回来，编号好叼）—— 所以外面那句才长成 `book[top].name`：先用编号取卡片、再点出那一栏。"
+}

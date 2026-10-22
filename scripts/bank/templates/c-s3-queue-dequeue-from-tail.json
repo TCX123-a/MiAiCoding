@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-queue-dequeue-from-tail",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-04",
+  "type": "codefix",
+  "concept": ["一条队伍", "head 送客", "先来后到", "拿错那一头"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["10", "40"] },
+    "b": { "kind": "pick", "values": ["20", "50"] },
+    "c": { "kind": "pick", "values": ["30", "60"] }
+  },
+  "stemTemplate": "三只猫按 **{a}、{b}、{c}** 的次序排进队伍领小鱼干。本喵要把它们**按先来后到**领出去，可印出来是这个样子：\n\n```text\n领到 {c}\n领到 {b}\n领到 {a}\n```\n\n**后来的反倒先领到了**，这不合规矩喵。\n\n请你把**领猫那一招**改好，让先来的先领到。改好之后该印三行：`领到 {a}`、`领到 {b}`、`领到 {c}`，一行一只，按次序来。\n\n（往队伍里塞猫那几句、还有问空问满的那两招，都不许动。）",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    tail--;\n    *value = line[tail];\n    return 1;\n}\n\nint main(void) {\n    enqueue({a});\n    enqueue({b});\n    enqueue({c});\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n#define MAX_CATS 5\n\nint line[MAX_CATS];\nint head = 0;\nint tail = 0;\n\nint is_empty(void) { return head == tail; }\nint is_full(void) { return tail == MAX_CATS; }\n\nint enqueue(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    line[tail] = value;\n    tail++;\n    return 1;\n}\n\nint dequeue(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = line[head];\n    head++;\n    return 1;\n}\n\nint main(void) {\n    enqueue({a});\n    enqueue({b});\n    enqueue({c});\n    int v = 0;\n    while (dequeue(&v)) {\n        printf(\"领到 %d\\n\", v);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "毛病是**送客的那一头拿错了**喵。\n\n一条队伍里两个下标各有各的活：\n\n- `tail` 负责**接客**：新来的站在 `line[tail]`，站好之后 `tail++`，指向下一个空位。\n- `head` 负责**送客**：队头那位先领走（`*value = line[head];`），然后 `head++`，指向队伍里新的第一位。\n\n本喵那一版写的是 `tail--; *value = line[tail];` —— 这是**从队尾往外拿**。队尾是最后一个来的，所以「最后来的先领到」，一条队伍当场变成了「后来者先得」，正好跟它的规矩反着来。\n\n更要紧的是：它拿的还是**同一条队伍的同一排格子**，只是从另一头动手。所以程序一声不响地跑完，印出来的三行数都是**真数**，一个都不错 —— 错的只有**次序**。\n\n⚠️ 这种「数都对、次序不对」的毛病，翻译官喵更是帮不上忙：本喵拿 `-Wall` 真编了一遍，一句嘀咕都没有，跑起来也不摔。**「先来后到」这条规矩，只能你自己盯着。**\n\n本喵给你留一句分头记：**接客看 `tail`，送客看 `head`。** 拿猫的时候手伸错一头，规矩就反了喵。"
+}

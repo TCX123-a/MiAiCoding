@@ -1,0 +1,19 @@
+{
+  "templateId": "py-s2-file-ledger",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-04",
+  "type": "codewrite",
+  "concept": ["open 模式", "写文件", "读文件", "with"],
+  "instances": 6,
+  "params": {
+    "book": {
+      "kind": "pick",
+      "values": ["zhangben.txt", "shouhuo.txt", "maoliang.txt"]
+    }
+  },
+  "stdinSpec": { "kind": "ints", "count": 3, "min": 1, "max": 9 },
+  "stemTemplate": "本喵的摊子每天都要记一笔账喵。\n\n请你写个程序：**读进来三行数**（一行一个，是今天收的小鱼干条数），把它们**一条一行**写进册子 `{book}`，每行的格式是 `小鱼干 N 条`（N 就是读进来的那个数，原样用）。\n\n写完别急着印 —— **再把这本册子读回来**，一行一行念给本喵听，每行前面加上 `档案里有：`。\n\n比如外面给的是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "with open(\"{book}\", \"w\", encoding=\"utf-8\") as f:\n    for _ in range(3):\n        f.write(\"小鱼干 \" + input() + \" 条\\n\")\n\nwith open(\"{book}\", encoding=\"utf-8\") as f:\n    for hang in f:\n        print(\"档案里有：\" + hang.strip())\n",
+  "explanationTemplate": "这道题正好把本课的四件事串了一遍喵：\n\n**① 写进去的每一条，末尾得自己补上换行符。** `f.write()` 和 `print()` 不一样 —— `print()` 印完会自己另起一行，`f.write()` **写完就停在那儿**。那三个 `\\n` 少一个，两条记录就挤在同一行上；等读回来的时候，`for` 只能叼到**一整行**，屏幕上就少印一句。所以这个换行不是装饰，是这道题的关键。\n\n**② 写完要关上，读回来才看得见。** 抽屉开着的时候，写进去的字可能还揣在翻译官喵兜里，没真的落进册子。`with` 会在这一段做完的时候替你关上（正常跑完、半路翻车都关），所以用它就忘不掉这件事。真忘了关、马上去读，叼回来的就是一本空册子 —— 而且**一个字都不报错**。\n\n**③ 读回来的每一行，尾巴上拖着换行符。** 册子里每行末尾那个换行符是跟着字一起被叼回来的，直接印出来会和 `print` 自己的换行叠在一起，屏幕上每两条之间空出一行。`.strip()` 把两头看不见的空白剃掉，印出来才是干干净净的一条 —— 中间那个空格它不动。\n\n**④ 写和读要分成两个块，别挤在一个里。** 第一个块写 `\"w\"`（撕掉重写），第二个块不写方式，那就是默认的 `\"r\"`（只读）。要是只开一块、写完就在同一个把手上伸手去读，那不是空册子，是**当场翻脸**：`\"w\"` 这扇门**只让你写、不让你读**，翻译官喵甩一句 `io.UnsupportedOperation: not readable`，退出码 1。真想看「空册子」长什么样，得是 ② 那种 —— **另开一块**去读，才会安安静静叼回一个空串。"
+}

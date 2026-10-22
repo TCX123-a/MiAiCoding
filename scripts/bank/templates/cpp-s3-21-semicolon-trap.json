@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-21-semicolon-trap",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-21",
+  "type": "codefix",
+  "concept": ["#define 行尾不能打分号", "分号会被一起换进去", "没报错不等于写对了"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 12, "max": 16 }
+  },
+  "stemTemplate": "本喵给翻译官喵留了张条子（宏），写的是「以后见到 `FISH_MAX`，就换成 {n}」。\n\n结果它一个字都不肯翻，当场把稿子退了回来。你帮本喵看看：这张条子上**多了一点不该有的东西**。\n\n改完跑起来，屏幕上要正好是 {n}，别的都不要喵。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\n#define FISH_MAX {n};\n\nint main() {\n    cout << FISH_MAX << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\n#define FISH_MAX {n}\n\nint main() {\n    cout << FISH_MAX << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "`#define` 那一行的末尾**不能顺手打分号** —— 条子上的每一个字都会被原样换进去，**分号也在里面**喵。\n\n换完那一行变成了：\n\n```\ncout << {n}; << endl;\n```\n\n括号还没闭上先撞上一个分号，翻译官喵只好停手。它报的那一句念的是「这儿不该有个 `<<`」，可**多出来的东西其实躺在条子上**，不在被指的那一行。\n\n⚠️ 更阴的一手在后面：那个分号**不是每次都碍事**。本喵真跑过 —— 拿同一张带分号的条子去给一只碗装值（`int bowl = FISH_MAX`），换完是 `int bowl = {n};;`：多出来的是个空句子，翻译官喵**一声不吭**，程序照跑不误，还印出了正确的数。\n\n所以「这次没报错」证明不了条子写对了，只能说这次运气好。改法很朴素：把那一行末尾的分号删掉，一个字都别留。"
+}

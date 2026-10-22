@@ -1,0 +1,87 @@
+{
+  "lessonId": "java-stage3-10",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "两只猫抢同一本账，各自都埋头记满了十万笔。可最后账本上的数，比两只加起来该有的数**少**。为什么？",
+      "options": [
+        "每记一笔要「读出来、加一、写回去」三下，两只猫同时做，后写的那一次把先写的盖掉了",
+        "有一只猫在偷懒，少记了几笔",
+        "账本那一格装不下那么多笔，满了以后就记不上",
+        "机器替猫加数的时候会把零头抹掉"
+      ],
+      "answer": 0,
+      "explanation": "答案是「被插队」喵：每记一笔，机器要做三下 —— **把账本上的数读出来、加上一、再写回去**。两只猫同时读到同一个旧数（比如都是 `100000`），各自加一，各自写回 `100001`：后写的那一下把先写的那一下**盖掉**了，等于有一次加数白记了。\n\n课文第一节那个例子本喵连跑十趟，十趟都没到 `200000`，最少的一趟只有 `115001`。\n\n注意这不是哪只猫偷懒：两只都老老实实记满了自己那十万笔，是「同时动同一个数」这件事本身出的岔子 —— 所以它**不红不响**，只有账本上的数不对。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵要写 `synchronized (账本锁) { ... }` 把「记一笔」这段罩住，两只猫都得经过这儿。那个 `账本锁` 该怎么造、归谁用？",
+      "options": [
+        "造在图纸上、带 `static`：照这张图纸长的猫共用**同一把**",
+        "每只猫各造一把自己留着，这样每只猫都有锁用",
+        "写在 `run()` 里，每记一笔就造一把新的",
+        "不用造：写 `synchronized (名字)` 就行，两只猫名字不同，各锁各的名字"
+      ],
+      "answer": 0,
+      "explanation": "答案是「造在图纸上、带 `static`、大家共用同一把」喵。\n\n`synchronized (账本锁) { ... }` 拦的是「**谁在里面**」，它只认**手上这一把** —— 两只猫手里是同一把，才拦得住；那把锁还得是大家共用的那一份（带 `static` 才只有一份）。\n\n另外三个错在哪儿：每只猫各造一把、或者每记一笔造一把新的，那都是**各锁各的门** —— 看着有锁，其实谁也拦不住谁（课文第三节那个把 `static` 去掉的例子就是这样：锁还在，数照样飘）。名字当锁也不行：两只猫名字不同，各锁各的名字，等于没锁。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "一只猫要动两样东西：先拿碗、再拿账本，两样都到手才记一笔。本喵让两只猫**都先拿碗、再拿账本**；要是改成「一只先拿碗、另一只先拿账本」，最坏会出什么事？",
+      "options": [
+        "可能僵住：两只各攥着一把，都在等对方先撒手，永远等下去",
+        "没关系，次序怎么写都一样，两笔照样记上",
+        "当场红：机器会说次序写错了",
+        "两笔都会记上，只是账本上的数会少一"
+      ],
+      "answer": 0,
+      "explanation": "答案是「可能僵住」喵。\n\n甲先拿碗、拿到手就不撒；乙先拿账本、拿到手也不撒。接着甲要账本（在乙手里）、乙要碗（在甲手里）—— 两只都在等对方先撒手，谁也不会先动。\n\n这一处和前三题不一样：它**不红、不报错、也不自己停**，程序就卡在那儿一直等。课文里那个反次序的版本本喵没真跑，就是因为这个 —— 机器会一直等到超时，白等一场，什么也看不见。\n\n躲开它的规矩只有一条：**要拿两把锁，所有猫都按同一个次序拿。**"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.util.concurrent.locks.Lock;\nimport java.util.concurrent.locks.ReentrantLock;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 甲 = new Cat(\"小橘\", 1000);\n        Cat 乙 = new Cat(\"狸花\", 1000);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Lock 锁 = new ReentrantLock();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            锁.____();\n            try {\n                账本 = 账本 + 1;\n            } finally {\n                锁.____();\n            }\n        }\n    }\n}",
+      "stem": "本喵改用「自己拿自己放」的那一路写法。两个空按顺序各该填什么？",
+      "blanks": [
+        {
+          "answer": "lock",
+          "accept": []
+        },
+        {
+          "answer": "unlock",
+          "accept": []
+        }
+      ],
+      "explanation": "第一个空填 `lock` 喵：`锁.lock();` 是「**拿锁**」—— 别人拿着的时候，这一句会一直等着，等到拿上为止。\n\n第二个空填 `unlock`：「**还锁**」。记完必须还回去，不然别的猫永远等在门口。两句必须配对：拿一次、还一次。\n\n还的那一句摆在 `finally` 里最稳：`finally` 读作「**不管中间顺不顺，收尾这一下都得做**」。万一加数那一段出了岔子，锁照样还回去；要是直接写在后面，出了岔子就还不上了 —— 那一把锁永远留在自己手里，别的猫再也没机会。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 甲 = new Cat(\"小橘\", 1000);\n        Cat 乙 = new Cat(\"狸花\", 1000);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Object 账本锁 = new Object();\n    static int 账本 = 0;\n\n    String 名字;\n    int 要记;\n\n    Cat(String 名字, int 要记) {\n        this.名字 = 名字;\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            synchronized (账本锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "账本：2000 条",
+      "accept": [
+        "账本：2000 条\n"
+      ],
+      "explanation": "答案是 `账本：2000 条` 喵，而且**每次都是这个数**。\n\n两只猫各记 `1000` 笔，加起来 `2000`。为什么这次稳：加数那一小段被 `synchronized (账本锁) { ... }` 罩住了，**一次只许一只猫进去记**，另一只在门口等；`账本锁` 带 `static`，两只猫抢的是**同一把**。所以不会出第一节那种「同时读、同时写、把一次加数盖掉」的事。\n\n还有一处别忽略：母猫是等两只都 `join()` 回来了才印账本的 —— 印出来的时候，两笔账一定都记满了。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "public class Main {\n    public static void main(String[] args) throws Exception {\n        Cat 甲 = new Cat(\"小橘\");\n        Cat 乙 = new Cat(\"狸花\");\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" 条\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Object 碗锁 = new Object();\n    static final Object 账本锁 = new Object();\n    static int 账本 = 0;\n\n    String 名字;\n\n    Cat(String 名字) {\n        this.名字 = 名字;\n    }\n\n    public void run() {\n        synchronized (碗锁) {\n            synchronized (账本锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}",
+      "stem": "这段程序输出什么？",
+      "answer": "账本：2 条",
+      "accept": [
+        "账本：2 条\n"
+      ],
+      "explanation": "答案是 `账本：2 条` 喵：两只猫各记一笔，两笔都记上了。\n\n为什么不会僵住：**两只猫都是先拿碗、再拿账本**，次序一模一样。甲攥着碗、要账本的时候，乙也在自己那份次序上乖乖排着 —— 不会出现「甲攥碗等账本、乙攥账本等碗」那种互不相让的局面。\n\n母猫这边照旧：等两只都 `join()` 回来了才印，所以这 `2` 是稳的。\n\n记住这一条：**要动两样东西，就把拿的次序在图纸上写死**，所有猫都照这个次序来。"
+    }
+  ]
+}

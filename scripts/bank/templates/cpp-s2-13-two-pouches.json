@@ -1,0 +1,19 @@
+{
+  "templateId": "cpp-s2-13-two-pouches",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-13",
+  "type": "codewrite",
+  "concept": ["同一张图纸裁出两只不一样的窝", "一款装数、一款装名字牌", "两只窝各自数各自的"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 3 },
+    "nameA": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "nameB": { "kind": "pick", "values": ["大肥鱼", "胖头鱼"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要**两只窝**，而且它们得是**同一张图纸**裁出来的：一只装整数、一只装名字牌。\n\n投喂口会**先给一个数**（要跟着几个数），**再一只一只给 {n} 个数**喵。\n\n请你这么办：\n\n1. **只画一张窝图纸**（名字你自己起，立空位那一行不能少）：里头的碗装什么、放什么料、数出来的是几个、取第几个，全是同一个空位；\n2. 读进那个数、再一只一只读进后面那些数，**每一只都放进第一只窝里**；\n3. 另一只窝装**两块写死的名字牌**：先放 {nameA}、再放 {nameB}；\n4. 最后印三行：**整数窝里有几只**、**名字窝里有几只**、**名字窝第 0 格是谁**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\ntemplate <typename T>\nclass Pouch {\npublic:\n    void put(T x) { goods.push_back(x); }\n    int count() { return goods.size(); }\n    T at(int i) { return goods[i]; }\nprivate:\n    vector<T> goods;\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    Pouch<int> nums;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        nums.put(x);\n    }\n\n    Pouch<string> names;\n    names.put(string(\"{nameA}\"));\n    names.put(string(\"{nameB}\"));\n\n    cout << nums.count() << endl;\n    cout << names.count() << endl;\n    cout << names.at(0) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题，屏幕上三行是：\n\n```text\n{sampleOutput}\n```\n\n**两只窝，一张图纸。** 本喵从头到尾只画了这一次 —— 图纸的头两行是：\n\n```text\ntemplate <typename T>\nclass Pouch\n```\n\n（下面跟着的就是那只碗和那几手：`vector<T> goods`、`put`、`count`、`at` —— 整张图纸只写了这一份。）\n\n- `Pouch<int> nums;` —— 本喵**自己点名**要整数款，它就是一只装整数的窝；\n- `Pouch<string> names;` —— 同一张图纸、换个点名，它就是一只装名字牌的窝。\n\n两只窝**各自数各自的**：往 `nums` 里放了几只，跟 `names` 一点关系都没有 —— 每只窝肚子里都有自己的那只碗。\n\n⚠️ 三件事钉住：\n\n1. **同一张图纸，别画两张。** 画两张几乎一字不差的图纸，就等于把这一课的收获又还回去了。\n2. **点名那一下是分开的。** 图纸空着，本喵点一次名裁一只 —— 想再要一只别款的，就再点一次名，图纸一个字都不用改。\n3. **名字牌得是名字牌那一款。** `names.put(string(\"{nameA}\"))` 里那一圈 `string(...)` 是把名字牌递成「一串小鱼干的项链」那款；本喵这一手收的正是那款料。"
+}

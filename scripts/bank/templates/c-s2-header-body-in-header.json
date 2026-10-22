@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-header-body-in-header",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-09",
+  "type": "codefix",
+  "concept": ["招牌该放什么", "宣告与身子", "redefinition", "编译报错"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stemTemplate": "本喵把招式**连着身子**一起写进了招牌，另一处又把同一份招牌抄了一遍 —— 翻译官喵当场翻了脸，说本喵把 `add` 教了两遍。\n\n招牌是给别人抄的，里头该放的只是**那一行宣告**（招式长什么样）。请你把**头一份身子**改成宣告，让程序能翻译过去，并且印出一行 `结果 <两数相加的数>`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\n/* ── 头一份：招牌里抄来的（本喵把身子也写进去了）── */\nint add(int a, int b) {\n    return a + b;\n}\n\n/* ── 另一处又抄了一遍同一份招牌 ── */\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    printf(\"结果 %d\\n\", add({a}, {b}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\n/* ── 头一份：只留这一行宣告 ── */\nint add(int a, int b);\n\n/* ── 身子留一份就够了 ── */\nint add(int a, int b) {\n    return a + b;\n}\n\nint main(void) {\n    printf(\"结果 %d\\n\", add({a}, {b}));\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `error: redefinition of 'add'`（`redefinition` = 又定义了一遍）喵 —— 两份都带着**身子**，它当然要说「你已经教过一遍了」。\n\n招牌是**给别人抄的**，所以里头只该放「长什么样」那一句：`int add(int a, int b);` —— 结尾一个分号、**没有花括号**。**身子**放在一处就够了，别人抄走招牌，就只是知道了「有这么一招、长这样」。\n\n两条路都能改好：\n\n- 把头一份的身子改成宣告（本喵这个改法）—— 身子就只剩一份；\n- 或者给两份都套上守卫（见课文里防重复抄那一段）。\n\n⚠️ 别改错方向：**身子只能留一份**。要是两份身子都改成宣告，`add` 就没人干活了，翻译官喵会改口抱怨别的（它到收尾的时候找不到这一招的身子了）。"
+}

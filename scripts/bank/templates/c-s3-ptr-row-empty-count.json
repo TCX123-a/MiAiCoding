@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-ptr-row-empty-count",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-18",
+  "type": "codewrite",
+  "concept": ["空牌子是把「不能走」写在牌面上", "走每一格之前先看一眼牌面", "数出真正能用的牌子的张数"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "pick", "values": [3, 4] },
+    "a": { "kind": "pick", "values": ["阿花", "小橘"] },
+    "b": { "kind": "pick", "values": ["大肥鱼", "煤球"] }
+  },
+  "stemTemplate": "本喵要摆一排 **{n} 格**的牌子，可手上只有 {a} 和 {b} 两个名字 —— 前两格插上这两张**正经牌子**，剩下的格子**统统插空牌子**。然后走一圈，一格一格看过来：\n\n· 碰上正经牌子，印 `第 %d 张：名字`，并且**数一个**；\n· 碰上空牌子，印 `第 %d 张：空`，这一格**不算数**。\n\n走完再补一行 `能用的牌子：%d 张`（`%d` 就是刚才数出来的那个数）。\n\n这一题练的是「空牌子把**不能走**写在了牌面上」：走每一格之前先看一眼牌面，绝不照着一张空牌子走过去。输出要逐字对上喵。",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    char names[2][16] = {\"{a}\", \"{b}\"};\n    char *row[{n}];\n\n    for (int i = 0; i < {n}; i++) {\n        if (i < 2) {\n            row[i] = names[i];\n        } else {\n            row[i] = NULL;\n        }\n    }\n\n    int count = 0;\n    for (int i = 0; i < {n}; i++) {\n        if (row[i] == NULL) {\n            printf(\"第 %d 张：空\\n\", i);\n        } else {\n            printf(\"第 %d 张：%s\\n\", i, row[i]);\n            count++;\n        }\n    }\n    printf(\"能用的牌子：%d 张\\n\", count);\n\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的全部意思就一句话：**走每一格之前，先看一眼牌面**。\n\n那道关卡是 `row[i] == NULL`：是空牌子就整格跳过去（`continue`），连「念」这一步都不给它。少了它，照着空牌子念出来的东西**不是这门语言保证的** —— 本喵这台机器上可能客客气气地印出 `(null)`，换台机器同一句就可能当场断气。\n\n还有一处容易混喵：空牌子上那一行「空」两个字，是**你自己写的那一行在印**，不是照着空牌子念出来的。印「空」是安全的；照着一张空牌子念，才是危险的那件事。\n\n本喵真跑过：能用的牌子**永远是 2 张**，印「空」的行数是 {n} 减去 2 —— {n} 是 3 的时候屏幕上四行（两张名字、一行「空」、一行「能用的牌子：2 张」），{n} 是 4 的时候五 行。"
+}

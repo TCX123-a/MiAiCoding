@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-ptrstr-write-literal",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-03",
+  "type": "codefix",
+  "concept": ["字面量只读", "char数组", "运行时崩溃", "编译器不吭声"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["cat", "fish", "bird", "moon"] }
+  },
+  "stemTemplate": "本喵有一条项链，是 `{word}` 这几个字母串起来的。\n\n程序想把**第 0 颗珠子**换成 `X`，然后把改过的项链印出来（一行）。\n\n可它跑起来什么都没印就断气了喵 —— 翻译官喵**一声都没吭**，代码照样编了出来。你帮本喵看看是哪儿写歪了。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    char *s = \"{word}\";\n    s[0] = 'X';\n    printf(\"%s\\n\", s);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    char word[] = \"{word}\";\n    word[0] = 'X';\n    printf(\"%s\\n\", word);\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的坑就藏在上一题那个「正确写法」里喵。\n\n`char *s = \"{word}\";` 里的 `\"{word}\"` 是一串**写死在程序里的字**。它住在程序一个**只给念、不给刻**的地方 —— C 里管这个叫字面量。你拿 `s[0] = 'X';` 去刻它，等于往一块「不许刻字」的木牌上下刀。\n\n⚠️ 最难看的是它的报错方式：**翻译官喵一个字都没说。** 本喵真跑过这一版，`-Wall` 开着，它安安静静地把程序编了出来 —— 因为这一行**语法上完全合法**，它管不了「那块地方能不能刻」。真正拦你的是跑起来之后那一下：屏幕上一片空白，一个字都没印出来，程序当场断气。\n\n想改，就得**自己摆一排碗把项链接住**：\n\n- `char word[] = \"{word}\";` —— 这句的意思是「照着那几个字母，本喵自己摆一排碗，一颗一颗接住」。摆出来的这排碗是**本喵自己的**，想刻第几颗刻第几颗。\n\n一句话收下：**念的用牌子，改的用自己摆的碗。** 下一题（还有往后每一课）只要看见「要往项链里写字」，先想想这一排碗是不是自己的喵。"
+}

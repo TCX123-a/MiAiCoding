@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-house-undeclared",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-03",
+  "type": "codefix",
+  "concept": ["先申报再装货", "undeclared", "货牌与货"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫粮"] }
+  },
+  "stemTemplate": "本喵想报一下仓库里存着几条{unit}。可这份稿子**跑不起来** —— 翻译官喵说它不认识 `fish` 这个名字。\n\n你帮本喵把那间屋盖起来：改完跑起来，屏幕上要出现 `仓库里存着 {n} 条{unit}`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    printf(\"仓库里存着 %d 条{unit}\\n\", fish);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish = {n};\n    printf(\"仓库里存着 %d 条{unit}\\n\", fish);\n    return 0;\n}\n",
+  "explanationTemplate": "C 在这件事上很硬气喵：**屋子必须先申报，才能装货。** 翻译官喵从上往下一句一句念，念到 `fish` 的时候它在登记簿上翻了个遍 —— 没见过这个名字，于是原地停活：\n\n```\nerror: 'fish' undeclared (first use in this function)\n```\n\n`undeclared` 就是**「没申报过」**，后面那半句是说「第一次用到它，就在大门里面」。\n\n缺的这一行是这样的：\n\n```c\nint fish = {n};\n```\n\n一行里其实是三件事喵：`int` 是**货牌**（这间屋只收整数），`fish` 是**屋名**，`= {n}` 是**当场装货**。三样齐了才是一间能用的屋。\n\n新手最常犯的是**只挂牌不盖屋** —— 心里想着「我说过了呀」，可稿子里一个字都没写；翻译官喵只认稿子上有的东西。"
+}

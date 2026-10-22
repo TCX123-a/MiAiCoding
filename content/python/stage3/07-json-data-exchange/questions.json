@@ -1,0 +1,101 @@
+{
+  "lessonId": "python-stage3-07",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵要把名牌格子柜里的清单**寄给鱼塘那头的猫**，得先把它变成一张谁都读得懂的纸条。这个「变成纸条」的动作，书上叫什么？",
+      "options": [
+        "装箱（序列化）",
+        "拆箱（反序列化）",
+        "排排坐",
+        "打印到屏幕"
+      ],
+      "answer": 0,
+      "explanation": "把格子柜里的东西原样搬进一张纸条（变成一串字符），书上叫**序列化**，本喵叫它**装箱**，招式是 `json.dumps`；反过来把纸条读回成一个能按名牌喊名字的格子柜，书上叫**反序列化**，本喵叫它**拆箱**，招式是 `json.loads` 喵。它俩是一对反向的动作，千万别记反：`dumps` 是格子柜 → 纸条，`loads` 是纸条 → 格子柜。至于「排排坐」，那是名牌次序的事，跟搬不搬没关系；「打印到屏幕」只是把东西念出来给你看，什么都没搬动喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵只想让中文原样印在纸条上，不想看到 `\\u` 开头的一串编号。该给 `dumps` 多喂哪一个开关？",
+      "options": [
+        "`ensure_ascii=False`",
+        "`sort_keys=True`",
+        "`indent=2`",
+        "`ensure_ascii=True`"
+      ],
+      "answer": 0,
+      "explanation": "`ensure_ascii` 这个开关管的就是「要不要把中文换成 `\\u` 加四位编号的写法」喵。它**默认是开着的**，所以你什么都不写时，中文就会变成一串编号。把它关掉（写成 `False`），中文才原样印出来。`sort_keys=True` 管的是名牌排排坐的次序，`indent=2` 管的是缩进好不好看，都管不着中文变不变编号；而 `ensure_ascii=True` 恰恰就是**默认**的那个状态，写了等于什么都没改喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵的格子柜里有一个位置放着 `False`、另一个位置放着 `None`。用 `dumps` 打成纸条之后，这两个位置在纸条上会写成什么样？",
+      "options": [
+        "`false` 和 `null`，都是小写",
+        "`False` 和 `None`，原样照抄",
+        "`0` 和空的一格",
+        "打不出来，纸条不认这两个东西"
+      ],
+      "answer": 0,
+      "explanation": "纸条（JSON）有自己的一套写法：真假写作**小写**的 `true` / `false`，空写作小写的 `null` 喵。所以格子柜里的 `False`、`None` 一出门上纸条，就变成 `false` 和 `null`；拆箱回来又会变回 `False` 和 `None` —— 课文里那三行输出印着 `False` 和 `None`，就是这么来的。纸条当然认得它俩，这两个写法本来就是纸条上的正规写法，不是打不出来喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "stem": "这张纸条想印出中文（而不是 `\\u` 开头的一串编号），两个空里各该填什么？",
+      "lang": "python",
+      "code": "import json\n\n零食 = {\"名字\": \"小鱼干\", \"数量\": 3}\n纸条 = json.____(零食, ____=False)\nprint(纸条)\n",
+      "blanks": [
+        {
+          "answer": "dumps"
+        },
+        {
+          "answer": "ensure_ascii"
+        }
+      ],
+      "explanation": "第一个空要的是**装箱**那一招：把格子柜变成纸条，所以填 `dumps` 喵。第二个空是这个开关自己的名字 —— `ensure_ascii`，把它的值写成 `False`，中文才不会被换成 `\\u` 加四位编号的写法，纸条上就是干干净净的「小鱼干」了。两个空的先后也有讲究：招式名写在前，开关写在后，读起来就是课文里那句 `json.dumps(零食, ensure_ascii=False)` 喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "stem": "把设置存进抽屉、再读回来，这两个空各该填哪一个招式？（提示：这两招**都不带 s**。带 s 的那两位是对着纸条干活的。）",
+      "lang": "python",
+      "code": "import json\n\n设置 = {\"音量\": 8, \"主题\": \"鱼塘蓝\"}\n\nwith open(\"设置.json\", \"w\", encoding=\"utf-8\") as 文件:\n    json.____(设置, 文件, ensure_ascii=False)\n\nwith open(\"设置.json\", encoding=\"utf-8\") as 文件:\n    读回来的 = json.____(文件)\n\nprint(读回来的)\n",
+      "blanks": [
+        {
+          "answer": "dump"
+        },
+        {
+          "answer": "load"
+        }
+      ],
+      "explanation": "两个空考的就是那对带不带 `s` 的招式喵。写进抽屉用 `json.dump(格子柜, 抽屉)`，**没有 s** —— 它把格子柜直接装进抽屉，不把纸条交给你；从抽屉里读回来用 `json.load(抽屉)`，也**没有 s**。带 s 的那两位（`dumps` 和 `loads`）是对着**纸条**干活的，你给它们递一个抽屉，它们反而不认识。一句话记牢：带 s 的对纸条，不带 s 的对抽屉喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "import json\n\n清单 = {\"小橘\": 2, \"狸花\": 1}\n纸条 = json.dumps(清单, ensure_ascii=False)\nprint(纸条)\nprint(json.loads(纸条)[\"小橘\"])\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "{\"小橘\": 2, \"狸花\": 1}\n2",
+      "accept": [
+        "{\"小橘\": 2, \"狸花\": 1}\n2\n"
+      ],
+      "explanation": "第一行把格子柜打成一张纸条，中文原样印出，次序按**放入顺序**：先小橘、后狸花喵。第二行把这张纸条当场拆箱，再按名牌喊出「小橘」那一格，拿到 `2`。盯住这一点：`print(纸条)` 印出来的东西是**纸条的样子**（全是双引号），跟直接 `print` 一个格子柜长得不一样，别混喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "python",
+      "code": "import json\n\n清单 = {\"小橘\": 2, \"狸花\": 1, \"三花\": 3}\nprint(json.dumps(清单, ensure_ascii=False, sort_keys=True))\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "{\"三花\": 3, \"小橘\": 2, \"狸花\": 1}",
+      "accept": [
+        "{\"三花\": 3, \"小橘\": 2, \"狸花\": 1}\n"
+      ],
+      "explanation": "`sort_keys=True` 会让名牌按**它们自己的字符编号**重排，跟放进去的次序无关，也跟拼音无关喵。三个名牌里「三花」的字符编号最小，所以跑到了最前面；接着是「小橘」，最后是「狸花」。要是忘了写 `sort_keys=True`，印出来的就会是本喵放进去的次序 —— 小橘、狸花、三花，那是另一道题的样子了喵。"
+    }
+  ]
+}

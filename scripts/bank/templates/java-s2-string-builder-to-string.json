@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-string-builder-to-string",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-07",
+  "type": "codefix",
+  "concept": ["会自己长大的抽屉", "倒出来成项链", "两样家当", "过不了稿子"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["小鱼干", "大胖鱼", "小橘"] }
+  },
+  "stemTemplate": "本喵往抽屉里塞了两段字，想把它交给一个**只收项链**的地方 —— 结果翻译官喵把稿子退了回来，一个字都没让跑。\n\n请你帮本喵改好，规矩是：**抽屉里攒的字一个都不许少、顺序也不许变**，倒出来之后还得能接着数它有几颗。\n\n改好之后，程序该印出这一行（`N` 就是项链上小鱼干的颗数）：\n\n```text\n{word}喵（N 个字）\n```\n\n只有倒抽屉那一行的问题，别的本喵都没写错喵。",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        StringBuilder sb = new StringBuilder();\n        sb.append(\"{word}\");\n        sb.append(\"喵\");\n        String s = sb;\n        System.out.println(s + \"（\" + s.length() + \" 个字）\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        StringBuilder sb = new StringBuilder();\n        sb.append(\"{word}\");\n        sb.append(\"喵\");\n        String s = sb.toString();\n        System.out.println(s + \"（\" + s.length() + \" 个字）\");\n    }\n}\n",
+  "explanationTemplate": "这一题属于**过不了稿子那一关**的翻车喵 —— 程序压根没跑起来，翻译官喵把稿子退回来，只留了一句话：\n\n```text\nincompatible types: StringBuilder cannot be converted to String\n```\n\n念起来是：**「抽屉不能当项链用喵。」**\n\n在这儿翻译官喵一点情面都不留。抽屉和项链是**两种家当**：哪怕抽屉里攒的字跟那条项链一模一样，抽屉也不是项链。想让抽屉变成项链，得喊抽屉自己那个招式：\n\n```java\nString s = sb.toString();\n```\n\n`toString()` 干的事就是**把抽屉里攒的东西倒出来、串成一条项链**。倒出来的这条项链，才能交给收项链的地方 —— 下面那句里的 `+` 拼接、还有 `s.length()` 数颗数，都是只认项链的。\n\n顺手记一句两样家当各自的分工喵：\n\n- **抽屉上的招式（`append` / `insert` / `reverse`）改的是抽屉自己**，不产生新抽屉；\n- **项链上的招式（`concat` / `substring` / `toUpperCase`）碰都不碰原来那条**，叼回来的全是新项链。\n\n所以「攒的时候用抽屉、交出去的时候倒成项链」是最常见的一串动作：`StringBuilder` 负责攒，`toString()` 负责交货。"
+}

@@ -1,0 +1,87 @@
+{
+  "lessonId": "python-stage3-09",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵说 `print` 是**正文的作者**，而日志默认走另一条渠。下面哪一句说对了这两条渠的关系？",
+      "options": [
+        "两条渠互不打扰：`print` 的字进正文，日志默认进侧渠",
+        "两条渠其实是一条：日志和 `print` 的字从头到尾混在一起",
+        "日志永远进不了正文，谁也没办法把它挪过去",
+        "`print` 的字进侧渠，日志的字进正文"
+      ],
+      "answer": 0,
+      "explanation": "`print` 往正文倒，日志默认往侧渠倒，两条渠是分开的喵 —— 所以值班小本子可以一直开着，它不会混进程序真正要给用户看的那几个字里。「日志永远进不了正文，谁也没办法把它挪过去」也不对：`basicConfig(stream=sys.stdout)` 就是把本子挪到正文那条渠的招式，喊一次就挪过去了喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵想让 `logging.debug` 和 `logging.info` 这两句也能在正文里印出来。最该做的是哪一件事？",
+      "options": [
+        "把 `basicConfig` 里的 `level=` 调松，比如写成 `level=logging.DEBUG`",
+        "把函数名改成大写，写成 `logging.DEBUG`",
+        "同一句多喊几遍，喊够三遍就会印出来",
+        "把 `format=` 换成另一种版式"
+      ],
+      "answer": 0,
+      "explanation": "关卡默认设在 `WARNING`，比这条线轻的一档一律不写进本子喵 —— 想把 `debug` 和 `info` 放进来，就得把关卡调松（`level=logging.DEBUG`）或者调成 `level=logging.INFO`。名字改成大写更糟：大写那块牌子上写的是一个编号，不是一招，喊下去程序当场断气。多喊几遍和换版式都动不了关卡的高低，喊多少遍都是被挡在门外的命喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "程序断气的时候会甩出一屏报错信息（`Traceback` 那一屏）。本喵说最该先看的是哪一行？",
+      "options": [
+        "最后一行：它写着到底是什么错",
+        "第一行，也就是 `Traceback` 那一行",
+        "中间随便哪一行都行，反正都一样",
+        "不用看，重新跑一遍就好了"
+      ],
+      "answer": 0,
+      "explanation": "那一屏是从下往上读的喵：**最后一行**告诉你「出了什么事」（比如 `ZeroDivisionError` 就是「除以零」这件做不到的事被干了）；它**上面那几行**才告诉你「出事时一路走到了哪儿」，离最后一行最近的那句就是案发现场。太多新手从上往下读，被开头那几行吓住，其实最有用的那句话在最底下喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "python",
+      "code": "import logging\nimport sys\n\nlogging.____(stream=____, level=logging.WARNING, format=\"%(levelname)s:%(message)s\")\n\nlogging.debug(\"正在数鱼干\")\nlogging.warning(\"鱼干快没了\")\n",
+      "stem": "这段代码想把值班小本子挪到**正文那条渠**上，还要让每一条日志都按「级别:消息」的样子写。两个空该填什么？（按从左到右的顺序填）",
+      "blanks": [
+        {
+          "answer": "basicConfig",
+          "accept": []
+        },
+        {
+          "answer": "sys.stdout",
+          "accept": []
+        }
+      ],
+      "explanation": "第一个空是「**给本子定规矩**」那一招 `basicConfig` —— 它只要喊一次，往后每一条日志都照这套规矩写，所以它摆在最前面喵。第二个空要填正文那条渠在代码里的名字 `sys.stdout`：不写它，本子上的字默认还是倒进侧渠，正文里一个字都看不见；`sys` 是 Python 自带的那盒系统工具，得先 `import` 进来才喊得到它喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "import logging\nimport sys\n\nlogging.basicConfig(stream=sys.stdout, level=logging.WARNING, format=\"%(levelname)s:%(message)s\")\n\nlogging.info(\"数鱼干\")\nlogging.warning(\"鱼干快没了\")\nlogging.error(\"锅烧糊了\")\n",
+      "stem": "这段代码跑起来，会印出哪几行？请把行按印出来的先后顺序一行一行写下来喵。",
+      "answer": "WARNING:鱼干快没了\nERROR:锅烧糊了",
+      "accept": [
+        "WARNING:鱼干快没了\nERROR:锅烧糊了\n"
+      ],
+      "explanation": "三句日志只印出来两句喵：关卡设在 `WARNING`，`info` 那句比它轻，连写都没写进本子，所以它一个字都不留。剩下的两句按级别排在门口那条线上——`warning` 和 `error` 都够重，照原顺序一句一行印出来。每行只有「级别」和「消息」两段、中间一个冒号，是因为 `format=` 里只写了 `%(levelname)s` 和 `%(message)s`，署名 `root` 被本喵丢掉了喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "import logging\n\nlogging.error(\"锅烧糊了\")\nprint(\"重新煮一锅\")\n",
+      "stem": "这段代码跑起来，**正文那条渠**里会出现什么？只写正文里的喵 —— 日志默认走的不是这条渠，别把它写进来。",
+      "answer": "重新煮一锅",
+      "accept": [
+        "重新煮一锅\n"
+      ],
+      "explanation": "`logging.error` 那行确实印出来了，可它默认走的是**侧渠**，正文那条渠里看不见它喵 —— 所以正文里只剩 `print` 的 `重新煮一锅`。这正是日志和 `print` 的分工：日志默认不混进程序真正的输出里。想让那行「锅烧糊了」也出现在正文里，得先喊一句 `basicConfig(stream=sys.stdout)` 把本子挪过去喵。"
+    }
+  ]
+}

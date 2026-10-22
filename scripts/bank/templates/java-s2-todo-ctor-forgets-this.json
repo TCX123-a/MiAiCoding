@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-todo-ctor-forgets-this",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-14",
+  "type": "codefix",
+  "concept": ["造物招式里的重名要用 this", "家当不会自己拿到值", "编得过跑得起来也会印 null"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["喂鱼", "洗猫窝"] },
+    "b": { "kind": "pick", "values": ["铲屎", "晒鱼干"] }
+  },
+  "stemTemplate": "本喵给一条事项画的图纸，造物招式里**漏了一句**。坏稿子**编得过、也跑得起来**，翻译官喵一个字都不说，可它印出来的是这样：\n\n```text\n[ ] null\n[x] null\n```\n\n请你把它补好，让程序印出：\n\n```text\n[ ] {a}\n[x] {b}\n```\n\n毛病只在**造物招式**里那两句话上，别的地方本喵都没写错喵。",
+  "brokenCodeTemplate": "class Todo {\n    private String what;\n    private boolean done;\n\n    Todo(String what, boolean done) {\n        this.done = done;\n    }\n\n    @Override\n    public String toString() {\n        return (done ? \"[x] \" : \"[ ] \") + what;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Todo t1 = new Todo(\"{a}\", false);\n        Todo t2 = new Todo(\"{b}\", true);\n        System.out.println(t1);\n        System.out.println(t2);\n    }\n}\n",
+  "referenceFixTemplate": "class Todo {\n    private String what;\n    private boolean done;\n\n    Todo(String what, boolean done) {\n        this.what = what;\n        this.done = done;\n    }\n\n    @Override\n    public String toString() {\n        return (done ? \"[x] \" : \"[ ] \") + what;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Todo t1 = new Todo(\"{a}\", false);\n        Todo t2 = new Todo(\"{b}\", true);\n        System.out.println(t1);\n        System.out.println(t2);\n    }\n}\n",
+  "explanationTemplate": "这题坏的是一处**最容易想歪**的地方：造物招式里两个名字**撞车**了。\n\n括号里喂进来的那一样叫 `what`，图纸里那一格家当也叫 `what`。所以 `this.what = what;` 这一句里，等号**左边**指的是「图纸里那一格」、**右边**指的是「喂进来的那一样」—— 少了 `this.`，那一格家当就没人管过，它一直是「什么都没有」（`null`）。\n\n坏稿子的下场是**印出 `null` 这四个字母**，不是冒红字：`(done ? \"[x] \" : \"[ ] \") + what` 那一句照常干活，只是它右边接上的是「什么都没有」。本喵真跑过这一对：坏的那版印 `[ ] null` 和 `[x] null`，补上那一句之后才是 `[ ] {a}` 和 `[x] {b}`。\n\n顺带看一眼：`this.done = done;` 那一句本来就在，所以第二行那个 `[x] ` 是好端端的 —— **只有内容那一格是空的**。这也是判分那两道题里本喵特意把内容换过的原因：光把坏稿子的输出抄一遍（`null`）根本过不了，得真把那一句补上。\n\n补法就一句喵：\n\n```java\nthis.what = what;\n```\n\n写在 `this.done = done;` 旁边就行。往后每画一张图纸，第一件事就是数一数：**每一格家当都有人喂过吗？**"
+}

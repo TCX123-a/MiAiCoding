@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-dunder-sum-bowls",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-08",
+  "type": "codewrite",
+  "concept": ["__add__", "接住新碗", "循环累加"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵有一堆碗，想把它们一只只**并成一只大碗**喵。\n\n请你画一张碗的图纸：`print(碗)` 印出来长这样 —— `装了 12 条小鱼干`（「装了」后面一个空格，数字和「条」之间一个空格）；两只碗用 `+` 加起来得一只**新碗**，里面装着两只碗**合起来**的数。\n\n然后写主程序：**先读一行整数 `n`**，接着**再读 n 行**（每行是一只碗里装的小鱼干数）。每读到一只碗，就把它**加到已经并起来的那只碗上**；最后把并成的那只碗印出来。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵 —— `n` 和每一行的数都会变，所以别把答案写死～）",
+  "referenceSolutionTemplate": "class Bowl:\n    def __init__(self, n):\n        self.n = n\n\n    def __str__(self):\n        return \"装了 \" + str(self.n) + \" 条小鱼干\"\n\n    def __add__(self, other):\n        return Bowl(self.n + other.n)\n\n\nn = int(input())\ntotal = Bowl(int(input()))\nfor _ in range(n - 1):\n    total = total + Bowl(int(input()))\nprint(total)\n",
+  "explanationTemplate": "这题考的不是加法的算术，而是**「谁把结果接住」**这件事喵。\n\n⚠️ **`__add__` 叼回来的是一只新碗，原来那两只一点没变。** 所以这一行必须是\n\n```text\ntotal = total + Bowl(int(input()))\n```\n\n**等号是必须的**：`+` 造出来的那只新碗得**重新塞回 `total` 手里**。只写 `total + Bowl(...)` 的话，那只新碗就掉在地上没人接，`total` 手里还是原来那只 —— **程序不报错**，只是最后印出来的数少加了好几只碗。这是这一课最容易栽的坑。\n\n⚠️ **开头那只碗别拿数字 0 去凑**。要是写 `total = 0` 再往上加，第一回就是 `0 + 碗`：`+` 的左边是数字 0，Python 会去喊**数字那一套加法**，它不认识碗，直接翻脸。所以本喵先读进来的**第一只碗**就当了开头。\n\n⚠️ **最后 `print(total)` 能印出话，靠的是 `__str__`。** 要是这一招忘了写，`print(碗)` 印出来的会是「这只碗住在哪儿」那种没人看得懂的记号 —— 不报错，但不是本喵要的样子。\n\n⚠️ 数几只碗的时候别数错：`n` 只碗里第一只已经读了，所以圈圈只转 `n - 1` 趟。"
+}

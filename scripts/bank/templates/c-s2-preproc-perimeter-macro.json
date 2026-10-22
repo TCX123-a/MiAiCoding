@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-preproc-perimeter-macro",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-08",
+  "type": "codewrite",
+  "concept": ["宏", "括号", "换字不换意思", "跑得成功但数不对"],
+  "instances": 6,
+  "params": {
+    "x": { "kind": "int", "min": 2, "max": 5 },
+    "y": { "kind": "int", "min": 6, "max": 9 }
+  },
+  "stemTemplate": "本喵要用一个**宏**来算长方形一圈有多长：先把「长 + 宽」加起来，再乘 2。\n\n这回的长宽不是现成的数，而是两个式子 —— 长写成 `{x} + 1`，宽写成 `{y}`。请写好这个宏（名字就叫 `PERIMETER`，收两样投喂），让 `main` 里那一句能印出正确的一圈长度。\n\n跑起来要印一行：先 `一圈` 两个字，一个空格，然后是算出来的数。",
+  "starterTemplate": "#include <stdio.h>\n\n/* ── 在这里写下你的宏 ── */\n\nint main(void) {\n    printf(\"一圈 %d\\n\", PERIMETER({x} + 1, {y}));\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n#define PERIMETER(w, h) (((w) + (h)) * 2)\n\nint main(void) {\n    printf(\"一圈 %d\\n\", PERIMETER({x} + 1, {y}));\n    return 0;\n}\n",
+  "explanationTemplate": "这题的关键只有一件事：**宏收到的是一段字，那个「先把长和宽加起来」得靠括号自己说出来**喵。\n\n先看一个还算走运的写法：`#define PERIMETER(w, h) (w + h) * 2`。它换开之后是 `({x} + 1 + {y}) * 2` —— 加起来再乘 2，数是对的（外面那层括号救了它）。\n\n真正会咬人的写法是**一个括号都不套**：`w + h * 2`。换开之后是 `{x} + 1 + {y} * 2`，先乘后加，数就错了 —— 而它**一个字都不报**，程序照跑，只是数不对。\n\n所以写宏的规矩是：**投喂进来的东西外面全都要套括号，整个身子再套一层**。这题写全了是这样：\n\n```c\n#define PERIMETER(w, h) (((w) + (h)) * 2)\n```\n\n把这条收好：**宏不替你算，也不替你加括号** —— 少了哪一层，数就错在哪一层。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s3-json-ensure-ascii",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-07",
+  "type": "codefix",
+  "concept": ["json.dumps", "ensure_ascii", "中文原样输出"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小鱼干", "冻干块", "鱼丸"] },
+    "n": { "kind": "int", "min": 3, "max": 9 }
+  },
+  "stemTemplate": "本喵要把手里这盒格子柜寄给鱼塘那头的猫喵 —— 它不认本喵的格子柜，得先**装箱**成一张纸条（JSON）才行。\n\n格子柜里有两格：名牌 `\"名字\"` 配的是「{name}」，名牌 `\"数量\"` 配的是 {n}。\n\n这段代码确实装出了一张纸条，可本喵凑近一看：**一个中文都没有**，名牌和名字全长成了 `\\u` 开头的一串密码 —— 鱼塘那头的猫读不懂，本喵也读不懂喵。你帮本喵改好它。\n\n改好之后印出来的纸条上，**中文要原样看得见**（就是「{name}」这几个字本来的样子），大括号、双引号、冒号、逗号都照旧，一个都不许动。",
+  "brokenCodeTemplate": "import json\n\n卡片 = {\"名字\": \"{name}\", \"数量\": {n}}\nprint(json.dumps(卡片))\n",
+  "referenceFixTemplate": "import json\n\n卡片 = {\"名字\": \"{name}\", \"数量\": {n}}\nprint(json.dumps(卡片, ensure_ascii=False))\n",
+  "explanationTemplate": "`json.dumps` 默认会把每个「ASCII 装不下的字」（中文、日文都算）换成 `\\u` 加四位十六进制 —— 本喵管它叫**密码**。于是「{name}」被写成了 `\\u` 开头的一长串，名词和数字倒是照旧。\n\n这不是坏了，是**默认就这么办**：早年间有些管道只认英文符号，怕中文在路上被压坏，干脆全换成密码。可本喵现在是要**印给人看**，用不着它这么保险。\n\n改法只是多喂一个开关：\n\n```python\njson.dumps(卡片, ensure_ascii=False)\n```\n\n`ensure_ascii` 读作「保证只用 ASCII 那一小撮英文符号」，写成 `False` 就是「不用保证了，中文原样留着」。\n\n⚠️ 记一条：**纸条本身没坏**。那些密码拆箱（`json.loads`）之后，中文一个字都不会少 —— 只是**屏幕上的字长得完全不一样**喵。"
+}

@@ -1,0 +1,234 @@
+{
+  "lessonId": "python-stage3-04",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-py-s3-mp-args-not-packed-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵想让 3 只小猫分头干活：第 i 只猫把**第 i 个数**平方一下，写回**同一块小黑板**上的**第 i 个位子**。三个数会一行一个报给你，最后本喵把小黑板上的三个位子**一行一个**念出来喵。\n\n可这段代码**根本没跑起来** —— 翻译官喵劈头就摔了一句，本喵连一只猫都没见到。你帮本喵改好它。\n\n改好之后要印出**三个平方数**，**一行一个**：第一行是第一个数的平方，第二行是第二个数的平方，第三行是第三个数的平方。",
+      "brokenCode": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = []\n    for _ in range(3):\n        起点.append(int(input()))\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=起点[i])\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\nif __name__ == '__main__':\n    主流程()\n",
+      "referenceFix": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = []\n    for _ in range(3):\n        起点.append(int(input()))\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\nif __name__ == '__main__':\n    主流程()\n",
+      "expectedOutput": "16\n1\n9",
+      "stdin": "4\n1\n3\n",
+      "explanation": "`mp.Process(target=招式, args=...)` 里那个 `args`，要的是**一串**要投喂的东西喵。\n\n坏代码递过去的是 `args=起点[i]` —— 一条**光溜溜的数**。翻译官喵要把它拆成一串，可一个数**拆不开**，于是当场摔 `TypeError: 'int' object is not iterable`（意思是「这东西没法拆成一串」），程序连一只猫都还没生出来就停住了。\n\n修法是：把这只猫要的东西**全装进括号里**再递过去。它要三样 —— **写去哪块小黑板**（`位子`）、**第几个位子**（`i`）、**算哪个数**（`起点[i]`）：\n\n```python\nargs=(位子, i, 起点[i])\n```\n\n⚠️ 哪怕只喂**一样**东西，也得先装成一串，末尾那个逗号不能省：`(7,)` 才叫「装了一样的串」，写成 `(7)` 就只是个光溜溜的数、等于什么都没装。这个逗号本喵当年也栽过喵。",
+      "templateId": "py-s3-mp-args-not-packed",
+      "params": {
+        "board": "小黑板"
+      },
+      "verified": {
+        "at": "2026-09-16T03:08:23.622Z",
+        "hash": "16f44a222bcba82a"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-args-not-packed-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵想让 3 只小猫分头干活：第 i 只猫把**第 i 个数**平方一下，写回**同一块石板**上的**第 i 个位子**。三个数会一行一个报给你，最后本喵把石板上的三个位子**一行一个**念出来喵。\n\n可这段代码**根本没跑起来** —— 翻译官喵劈头就摔了一句，本喵连一只猫都没见到。你帮本喵改好它。\n\n改好之后要印出**三个平方数**，**一行一个**：第一行是第一个数的平方，第二行是第二个数的平方，第三行是第三个数的平方。",
+      "brokenCode": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = []\n    for _ in range(3):\n        起点.append(int(input()))\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=起点[i])\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\nif __name__ == '__main__':\n    主流程()\n",
+      "referenceFix": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = []\n    for _ in range(3):\n        起点.append(int(input()))\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\nif __name__ == '__main__':\n    主流程()\n",
+      "expectedOutput": "64\n16\n25",
+      "stdin": "8\n4\n5\n",
+      "explanation": "`mp.Process(target=招式, args=...)` 里那个 `args`，要的是**一串**要投喂的东西喵。\n\n坏代码递过去的是 `args=起点[i]` —— 一条**光溜溜的数**。翻译官喵要把它拆成一串，可一个数**拆不开**，于是当场摔 `TypeError: 'int' object is not iterable`（意思是「这东西没法拆成一串」），程序连一只猫都还没生出来就停住了。\n\n修法是：把这只猫要的东西**全装进括号里**再递过去。它要三样 —— **写去哪块石板**（`位子`）、**第几个位子**（`i`）、**算哪个数**（`起点[i]`）：\n\n```python\nargs=(位子, i, 起点[i])\n```\n\n⚠️ 哪怕只喂**一样**东西，也得先装成一串，末尾那个逗号不能省：`(7,)` 才叫「装了一样的串」，写成 `(7)` 就只是个光溜溜的数、等于什么都没装。这个逗号本喵当年也栽过喵。",
+      "templateId": "py-s3-mp-args-not-packed",
+      "params": {
+        "board": "石板"
+      },
+      "verified": {
+        "at": "2026-09-16T03:08:24.577Z",
+        "hash": "a419c023a3666eaf"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-basket-not-shared-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵要让 3 只小猫**分头**干活：一只猫分到一个数，把它**平方**一下，算完丢进**同一个篮子**里。那 3 个数会一行一个报给你，最后本喵把篮子里的东西**加起来**印一个数。\n\n可它跑是跑起来了，印出来的却**永远是 `0`** —— 明明每只猫都干了活，篮子里却像什么都没进过喵。你帮本喵把篮子修好。\n\n改好之后要印出**这 3 个数的平方和**：一个数，占一行。",
+      "brokenCode": "import multiprocessing as mp\n\n\ndef 平方(篮子, 数):\n    篮子.append(数 * 数)\n\n\ndef 主流程():\n    起点 = []\n    for _ in range(3):\n        起点.append(int(input()))\n    篮子 = []\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(篮子, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    print(sum(篮子))\n\n\nif __name__ == '__main__':\n    主流程()\n",
+      "referenceFix": "import multiprocessing as mp\n\n\ndef 平方(篮子, 数):\n    篮子.append(数 * 数)\n\n\ndef 主流程():\n    起点 = []\n    for _ in range(3):\n        起点.append(int(input()))\n    篮子 = mp.Manager().list()\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(篮子, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    print(sum(篮子))\n\n\nif __name__ == '__main__':\n    主流程()\n",
+      "expectedOutput": "69",
+      "stdin": "7\n4\n2\n",
+      "explanation": "这道题踩的是多进程**最要命的那条规矩**：**孩子和本喵不住在同一块地盘上**喵。\n\n上一课那种「叫好几只猫一起干活」的做法，是**同一块地盘、同一个篮子** —— 一只猫放进去，另一只猫伸手就摸得到。\n\n换成**把孩子送到别的地盘**（多进程）就完全不一样了：你递给它一个篮子，它拿到的**不是那个篮子**，而是照着你的篮子**又编了一个一模一样的**。它把自己算的东西全放进**它自己那个**里，本喵手里这个一口都没动 —— 加起来当然是 `0`。\n\n要真的用**同一个**篮子，得换成专门给多进程造的：把 `篮子 = []` 改成\n\n```python\n篮子 = mp.Manager().list()\n```\n\n就行。这样的篮子全世界只有一个，谁都能伸手进去放。\n\n⚠️ 还有一条：孩子放东西是要花时间的，本喵得**等它们都放完**（`p.join()`）才数得准。少等一步，数出来的就少几样 —— 而且少等这一步之后**屏幕上是什么样子，得看篮子是哪一种**：本喵把 `join()` 那一段删掉，拿**本课这道题的普通篮子**真跑了一遍，`0` 是印出来了，屏幕上却**安安静静**，一个字都没有；换成上面那个 **`Manager` 篮子**再删掉 `join()`，收工那一瞬间才会甩出一大段子进程的红字（`AttributeError: 'ForkAwareLocal' object has no attribute 'connection'`，五千多字节），而**退出码两种都还是 `0`**。所以「数字不对」和「屏幕干净」是两件事喵：不管哪一种，摔的都是那几只小猫，正门自己走完了 —— 光看退出码看不出来，**光看屏幕也看不出来**。",
+      "templateId": "py-s3-mp-basket-not-shared",
+      "params": {
+        "k": 3
+      },
+      "verified": {
+        "at": "2026-09-16T15:25:20.746Z",
+        "hash": "479a7a519cc0ad83"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-basket-not-shared-001",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵要让 4 只小猫**分头**干活：一只猫分到一个数，把它**平方**一下，算完丢进**同一个篮子**里。那 4 个数会一行一个报给你，最后本喵把篮子里的东西**加起来**印一个数。\n\n可它跑是跑起来了，印出来的却**永远是 `0`** —— 明明每只猫都干了活，篮子里却像什么都没进过喵。你帮本喵把篮子修好。\n\n改好之后要印出**这 4 个数的平方和**：一个数，占一行。",
+      "brokenCode": "import multiprocessing as mp\n\n\ndef 平方(篮子, 数):\n    篮子.append(数 * 数)\n\n\ndef 主流程():\n    起点 = []\n    for _ in range(4):\n        起点.append(int(input()))\n    篮子 = []\n    孩子们 = []\n    for i in range(4):\n        p = mp.Process(target=平方, args=(篮子, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    print(sum(篮子))\n\n\nif __name__ == '__main__':\n    主流程()\n",
+      "referenceFix": "import multiprocessing as mp\n\n\ndef 平方(篮子, 数):\n    篮子.append(数 * 数)\n\n\ndef 主流程():\n    起点 = []\n    for _ in range(4):\n        起点.append(int(input()))\n    篮子 = mp.Manager().list()\n    孩子们 = []\n    for i in range(4):\n        p = mp.Process(target=平方, args=(篮子, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    print(sum(篮子))\n\n\nif __name__ == '__main__':\n    主流程()\n",
+      "expectedOutput": "105",
+      "stdin": "8\n3\n4\n4\n",
+      "explanation": "这道题踩的是多进程**最要命的那条规矩**：**孩子和本喵不住在同一块地盘上**喵。\n\n上一课那种「叫好几只猫一起干活」的做法，是**同一块地盘、同一个篮子** —— 一只猫放进去，另一只猫伸手就摸得到。\n\n换成**把孩子送到别的地盘**（多进程）就完全不一样了：你递给它一个篮子，它拿到的**不是那个篮子**，而是照着你的篮子**又编了一个一模一样的**。它把自己算的东西全放进**它自己那个**里，本喵手里这个一口都没动 —— 加起来当然是 `0`。\n\n要真的用**同一个**篮子，得换成专门给多进程造的：把 `篮子 = []` 改成\n\n```python\n篮子 = mp.Manager().list()\n```\n\n就行。这样的篮子全世界只有一个，谁都能伸手进去放。\n\n⚠️ 还有一条：孩子放东西是要花时间的，本喵得**等它们都放完**（`p.join()`）才数得准。少等一步，数出来的就少几样 —— 而且少等这一步之后**屏幕上是什么样子，得看篮子是哪一种**：本喵把 `join()` 那一段删掉，拿**本课这道题的普通篮子**真跑了一遍，`0` 是印出来了，屏幕上却**安安静静**，一个字都没有；换成上面那个 **`Manager` 篮子**再删掉 `join()`，收工那一瞬间才会甩出一大段子进程的红字（`AttributeError: 'ForkAwareLocal' object has no attribute 'connection'`，五千多字节），而**退出码两种都还是 `0`**。所以「数字不对」和「屏幕干净」是两件事喵：不管哪一种，摔的都是那几只小猫，正门自己走完了 —— 光看退出码看不出来，**光看屏幕也看不出来**。",
+      "templateId": "py-s3-mp-basket-not-shared",
+      "params": {
+        "k": 4
+      },
+      "verified": {
+        "at": "2026-09-16T15:25:22.401Z",
+        "hash": "e63c8d2932367038"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-missing-guard-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵手里有三个数：`3, 5, 8`。想让它们**各平方一下**，派 3 只小猫**分头**去干 —— 一只猫管一个数，算完把结果放进**自己那个位子**里，最后本喵把三个位子**一行一个**念出来喵。\n\n可是这段代码在本喵这台 Windows 上一跑就**摔**，摔完还照印了三行 —— 那三行全是 `0`。你帮本喵修好它。\n\n改好之后要印出**三个平方数**，**一行一个**：第一行是第一个数的平方，第二行是第二个数的平方，第三行是第三个数的平方。（`0` 不算数喵，三个位子都得真填上。）",
+      "brokenCode": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = [3, 5, 8]\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\n主流程()\n",
+      "referenceFix": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = [3, 5, 8]\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\nif __name__ == '__main__':\n    主流程()\n",
+      "expectedOutput": "9\n25\n64",
+      "stdin": null,
+      "explanation": "这段代码摔的根子不在算术上，而在**它被人从头念了两遍**喵。\n\n在 Windows 上，多进程是用一种「**另开一个新的 Python，把你的文件从头再念一遍**」的办法生孩子的。孩子的头一件事不是干活 —— 是**把你的文件整个再执行一次**。于是那几行 `mp.Process(...)` 又被念到了，孩子也想去生孙子……翻译官喵一看就急了，当场摔了一句 `RuntimeError`，三个位子于是从头到尾都是本喵填的初值 `0`。\n\n拦住它的只有一扇门：\n\n```python\nif __name__ == '__main__':\n    主流程()\n```\n\n这扇门的意思是「**只有这个文件被直接跑起来的时候，门才开**」。你亲手跑的那一次，门开着，活干了；孩子是被「念」出来的，门关着，所以它只把 `平方` 这个招式带走，一个字都不多干。\n\n⚠️ 有个细节千万别弄反：`平方` 这个招式**必须留在门外**。孩子干活时要用它，你把它也关进门里，孩子就找不到它了喵。",
+      "templateId": "py-s3-mp-missing-guard",
+      "params": {
+        "nums": "3, 5, 8"
+      },
+      "verified": {
+        "at": "2026-09-16T03:07:40.378Z",
+        "hash": "72ed7b7ab0a89147"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-missing-guard-002",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "本喵手里有三个数：`6, 1, 9`。想让它们**各平方一下**，派 3 只小猫**分头**去干 —— 一只猫管一个数，算完把结果放进**自己那个位子**里，最后本喵把三个位子**一行一个**念出来喵。\n\n可是这段代码在本喵这台 Windows 上一跑就**摔**，摔完还照印了三行 —— 那三行全是 `0`。你帮本喵修好它。\n\n改好之后要印出**三个平方数**，**一行一个**：第一行是第一个数的平方，第二行是第二个数的平方，第三行是第三个数的平方。（`0` 不算数喵，三个位子都得真填上。）",
+      "brokenCode": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = [6, 1, 9]\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\n主流程()\n",
+      "referenceFix": "import multiprocessing as mp\n\n\ndef 平方(位子, 下标, 数):\n    位子[下标] = 数 * 数\n\n\ndef 主流程():\n    起点 = [6, 1, 9]\n    位子 = mp.Array('i', 3)\n    孩子们 = []\n    for i in range(3):\n        p = mp.Process(target=平方, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(3):\n        print(位子[i])\n\n\nif __name__ == '__main__':\n    主流程()\n",
+      "expectedOutput": "36\n1\n81",
+      "stdin": null,
+      "explanation": "这段代码摔的根子不在算术上，而在**它被人从头念了两遍**喵。\n\n在 Windows 上，多进程是用一种「**另开一个新的 Python，把你的文件从头再念一遍**」的办法生孩子的。孩子的头一件事不是干活 —— 是**把你的文件整个再执行一次**。于是那几行 `mp.Process(...)` 又被念到了，孩子也想去生孙子……翻译官喵一看就急了，当场摔了一句 `RuntimeError`，三个位子于是从头到尾都是本喵填的初值 `0`。\n\n拦住它的只有一扇门：\n\n```python\nif __name__ == '__main__':\n    主流程()\n```\n\n这扇门的意思是「**只有这个文件被直接跑起来的时候，门才开**」。你亲手跑的那一次，门开着，活干了；孩子是被「念」出来的，门关着，所以它只把 `平方` 这个招式带走，一个字都不多干。\n\n⚠️ 有个细节千万别弄反：`平方` 这个招式**必须留在门外**。孩子干活时要用它，你把它也关进门里，孩子就找不到它了喵。",
+      "templateId": "py-s3-mp-missing-guard",
+      "params": {
+        "nums": "6, 1, 9"
+      },
+      "verified": {
+        "at": "2026-09-16T03:07:41.272Z",
+        "hash": "91f078168756717a"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-pool-two-halves-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵有一串数要过秤，它们会一行一个报给你：**第一行是个数 `n`**，后面跟着 `n` 个数。\n\n请你养一个**小队**（进程池，**两只猫**就够），把这 `n` 个数**平均分成前后两段** —— 一只猫算前一段的**和**，另一只算后一段的**和**。两只都干完之后，印**三行**：\n\n```text\n前半段的和：数\n后半段的和：数\n合计：数\n```\n\n（每行里那个「数」就是真正的数字，冒号后面**直接跟数字**、中间不要空格喵。）\n\n比如外面给的是\n\n4\n3\n6\n7\n1\n\n就要印出\n\n前半段的和：9\n后半段的和：8\n合计：17\n\n（判分用的是另外一组数喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import multiprocessing as mp\n\n\ndef 求和(一段):\n    小计 = 0\n    for 数 in 一段:\n        小计 += 数\n    return 小计\n\n\nif __name__ == '__main__':\n    n = int(input())\n    全部 = []\n    for _ in range(n):\n        全部.append(int(input()))\n    中 = len(全部) // 2\n    池 = mp.Pool(2)\n    结果 = 池.map(求和, [全部[:中], 全部[中:]])\n    池.close()\n    池.join()\n    print(\"前半段的和：\" + str(结果[0]))\n    print(\"后半段的和：\" + str(结果[1]))\n    print(\"合计：\" + str(结果[0] + 结果[1]))\n",
+      "expectedOutput": "前半段的和：12\n后半段的和：10\n合计：22",
+      "stdin": "4\n3\n9\n3\n7\n",
+      "explanation": "进程池就是本喵养的一**小队猫**：活丢进去，它们自己分着干，你只管收结果喵。\n\n**① 真要多干，就得多开一块地盘。** 同一块地盘里叫好几只猫一起干活那种做法，看着像同时在干，其实**钓竿只有一根**（就是那个 GIL）—— 真要动手的时候还是一只一只轮着来。想让两只猫**同时抓两条鱼**，就得给它们**各开一块地盘**，每块地盘都有自己的钓竿。把活送到别的地盘去干，这就是多进程。\n\n**② `map` 会按你递进去的次序把结果叼回来。** 谁先算完不算数，你递进去的是「前一段、后一段」，叼回来的就是「前一段的结果、后一段的结果」，次序不会乱。这一点很关键：要是靠「谁先算完谁先印」，那印出来的次序每次都不一样，这种输出**没法判对错**喵。\n\n**③ 别让孩子自己印。** 让孩子把结果**交回来**，由本喵按固定次序统一印 —— 这样跑一百遍，屏幕上都是同一段字。\n\n**④ `池.close()` 和 `池.join()` 是把小队解散、等它们全部收工。** 活虽然已经干完了（`map` 会等到有结果才往下走），但小队还挂在后台，讲究一点总没错。",
+      "templateId": "py-s3-mp-pool-two-halves",
+      "params": {
+        "n": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T03:08:48.854Z",
+        "hash": "32a1c564e9e15434"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-pool-two-halves-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵有一串数要过秤，它们会一行一个报给你：**第一行是个数 `n`**，后面跟着 `n` 个数。\n\n请你养一个**小队**（进程池，**两只猫**就够），把这 `n` 个数**平均分成前后两段** —— 一只猫算前一段的**和**，另一只算后一段的**和**。两只都干完之后，印**三行**：\n\n```text\n前半段的和：数\n后半段的和：数\n合计：数\n```\n\n（每行里那个「数」就是真正的数字，冒号后面**直接跟数字**、中间不要空格喵。）\n\n比如外面给的是\n\n6\n1\n5\n9\n6\n9\n6\n\n就要印出\n\n前半段的和：15\n后半段的和：21\n合计：36\n\n（判分用的是另外一组数喵，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import multiprocessing as mp\n\n\ndef 求和(一段):\n    小计 = 0\n    for 数 in 一段:\n        小计 += 数\n    return 小计\n\n\nif __name__ == '__main__':\n    n = int(input())\n    全部 = []\n    for _ in range(n):\n        全部.append(int(input()))\n    中 = len(全部) // 2\n    池 = mp.Pool(2)\n    结果 = 池.map(求和, [全部[:中], 全部[中:]])\n    池.close()\n    池.join()\n    print(\"前半段的和：\" + str(结果[0]))\n    print(\"后半段的和：\" + str(结果[1]))\n    print(\"合计：\" + str(结果[0] + 结果[1]))\n",
+      "expectedOutput": "前半段的和：19\n后半段的和：13\n合计：32",
+      "stdin": "6\n7\n4\n8\n6\n1\n6\n",
+      "explanation": "进程池就是本喵养的一**小队猫**：活丢进去，它们自己分着干，你只管收结果喵。\n\n**① 真要多干，就得多开一块地盘。** 同一块地盘里叫好几只猫一起干活那种做法，看着像同时在干，其实**钓竿只有一根**（就是那个 GIL）—— 真要动手的时候还是一只一只轮着来。想让两只猫**同时抓两条鱼**，就得给它们**各开一块地盘**，每块地盘都有自己的钓竿。把活送到别的地盘去干，这就是多进程。\n\n**② `map` 会按你递进去的次序把结果叼回来。** 谁先算完不算数，你递进去的是「前一段、后一段」，叼回来的就是「前一段的结果、后一段的结果」，次序不会乱。这一点很关键：要是靠「谁先算完谁先印」，那印出来的次序每次都不一样，这种输出**没法判对错**喵。\n\n**③ 别让孩子自己印。** 让孩子把结果**交回来**，由本喵按固定次序统一印 —— 这样跑一百遍，屏幕上都是同一段字。\n\n**④ `池.close()` 和 `池.join()` 是把小队解散、等它们全部收工。** 活虽然已经干完了（`map` 会等到有结果才往下走），但小队还挂在后台，讲究一点总没错。",
+      "templateId": "py-s3-mp-pool-two-halves",
+      "params": {
+        "n": "6"
+      },
+      "verified": {
+        "at": "2026-09-16T03:08:49.685Z",
+        "hash": "686a435ca1ec0a51"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-slot-per-child-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵读进来 3 个数（**一行一个**，一共 3 行），想让每一个都**翻一倍**（×2）。\n\n请你给**每一个数**都派一只小猫：第 i 只猫管**第 i 行**那个数，把翻倍的结果放进**第 i 个位子**。等**所有**小猫都干完了，再由本喵**按位子的次序**一行一个念出来。\n\n比如外面给的是\n\n5\n3\n9\n\n就要印出\n\n10\n6\n18\n\n⚠️ 印出来的次序要跟报给你的次序**一模一样** —— 不许谁先干完谁先印喵。\n\n（判分用的是另外一组数，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import multiprocessing as mp\n\n\ndef 翻倍(位子, 下标, 数):\n    位子[下标] = 数 * 2\n\n\nif __name__ == '__main__':\n    n = 3\n    起点 = []\n    for _ in range(n):\n        起点.append(int(input()))\n    位子 = mp.Array('i', n)\n    孩子们 = []\n    for i in range(n):\n        p = mp.Process(target=翻倍, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(n):\n        print(位子[i])\n",
+      "expectedOutput": "2\n14\n16",
+      "stdin": "1\n7\n8\n",
+      "explanation": "这道题把多进程的**两件正经事**凑在了一起喵：**共享位子**、**等齐再印**。\n\n**① 位子得是「真的只有一份」的。** 普通的储物柜，每个孩子拿到的是**复制品**（本喵前面那道改错题就是栽在这儿）。所以这里要用 `mp.Array('i', n)` —— 那是本喵和每一只猫**共用的一块板**，上面排着 n 个位子，谁写第几个都是写在同一块板上。孩子写完了，本喵念出来才是它写的那个数。\n\n**② `p.join()` 一个都不能少。** 孩子们是**同时在跑**的，谁先干完说不准。本喵要是没等齐就念，念到的可能是还没填上的空位子 —— 而且**每次跑出来的还不一样**。挨个 `join()` 就是「等这只猫回来，再等下一只」，等齐了才往下走，结果就定死了。\n\n**③ 印的时候按位子次序印。** 位子本来就是排好号的，本喵从第 0 个念到最后一个，念一百遍都是同样几行 —— 这就叫**不看谁先跑完，只看位子**。\n\n⚠️ 本喵为什么非要费这么大劲把次序钉死？因为多进程天生就是「谁快谁先」的。真程序里要是靠「谁先跑完谁先印」，屏幕上就会出现**乱七八糟、每次都不同**的输出 —— 而这种输出**没法判对错**，所以本喵的题都要求你先把次序摆正再印喵。",
+      "templateId": "py-s3-mp-slot-per-child",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T03:09:49.058Z",
+        "hash": "9583fa9c9d978314"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-slot-per-child-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵读进来 4 个数（**一行一个**，一共 4 行），想让每一个都**翻一倍**（×2）。\n\n请你给**每一个数**都派一只小猫：第 i 只猫管**第 i 行**那个数，把翻倍的结果放进**第 i 个位子**。等**所有**小猫都干完了，再由本喵**按位子的次序**一行一个念出来。\n\n比如外面给的是\n\n7\n8\n1\n1\n\n就要印出\n\n14\n16\n2\n2\n\n⚠️ 印出来的次序要跟报给你的次序**一模一样** —— 不许谁先干完谁先印喵。\n\n（判分用的是另外一组数，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import multiprocessing as mp\n\n\ndef 翻倍(位子, 下标, 数):\n    位子[下标] = 数 * 2\n\n\nif __name__ == '__main__':\n    n = 4\n    起点 = []\n    for _ in range(n):\n        起点.append(int(input()))\n    位子 = mp.Array('i', n)\n    孩子们 = []\n    for i in range(n):\n        p = mp.Process(target=翻倍, args=(位子, i, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    for p in 孩子们:\n        p.join()\n    for i in range(n):\n        print(位子[i])\n",
+      "expectedOutput": "6\n18\n8\n12",
+      "stdin": "3\n9\n4\n6\n",
+      "explanation": "这道题把多进程的**两件正经事**凑在了一起喵：**共享位子**、**等齐再印**。\n\n**① 位子得是「真的只有一份」的。** 普通的储物柜，每个孩子拿到的是**复制品**（本喵前面那道改错题就是栽在这儿）。所以这里要用 `mp.Array('i', n)` —— 那是本喵和每一只猫**共用的一块板**，上面排着 n 个位子，谁写第几个都是写在同一块板上。孩子写完了，本喵念出来才是它写的那个数。\n\n**② `p.join()` 一个都不能少。** 孩子们是**同时在跑**的，谁先干完说不准。本喵要是没等齐就念，念到的可能是还没填上的空位子 —— 而且**每次跑出来的还不一样**。挨个 `join()` 就是「等这只猫回来，再等下一只」，等齐了才往下走，结果就定死了。\n\n**③ 印的时候按位子次序印。** 位子本来就是排好号的，本喵从第 0 个念到最后一个，念一百遍都是同样几行 —— 这就叫**不看谁先跑完，只看位子**。\n\n⚠️ 本喵为什么非要费这么大劲把次序钉死？因为多进程天生就是「谁快谁先」的。真程序里要是靠「谁先跑完谁先印」，屏幕上就会出现**乱七八糟、每次都不同**的输出 —— 而这种输出**没法判对错**，所以本喵的题都要求你先把次序摆正再印喵。",
+      "templateId": "py-s3-mp-slot-per-child",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T03:09:50.022Z",
+        "hash": "5a8076e85c89b046"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-tagged-basket-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵摊开 2 个数（**一行一个**，一共 2 行），想让每**一个数**都由**一只**小猫接手：第 i 只猫管第 i 行那个数（i 从 1 数起），算「**从 1 一直加到它**」的和 —— 比如拿到 `4`，就是 `1+2+3+4=10`。\n\n算完之后，每只猫把自己那道题的答案丢进**同一个篮子**，丢的时候要**带上自己的号** —— 装成一包 `(第几只, 和)`。本喵等所有猫都交完了，再把篮子里的东西**按「第几只」摆好次序**念出来，一行一包：\n\n```text\n第 1 只：数\n第 2 只：数\n```\n\n（冒号后面**直接跟数字**、中间不留空格喵。）\n\n比如外面给的是\n\n8\n7\n\n就要印出\n\n第 1 只：36\n第 2 只：28\n\n⚠️ 谁先干完**不算数** —— 印出来的次序要跟报给你的次序**一模一样**。\n\n（判分用的是另外一组数，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import multiprocessing as mp\n\n\ndef 求和(篮子, 编号, 数):\n    小计 = 0\n    for k in range(1, 数 + 1):\n        小计 += k\n    篮子.put((编号, 小计))\n\n\nif __name__ == '__main__':\n    n = 2\n    起点 = []\n    for _ in range(n):\n        起点.append(int(input()))\n    篮子 = mp.Queue()\n    孩子们 = []\n    for i in range(n):\n        p = mp.Process(target=求和, args=(篮子, i + 1, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    收成 = []\n    for _ in range(n):\n        收成.append(篮子.get())\n    for p in 孩子们:\n        p.join()\n    收成.sort()\n    for 编号, 小计 in 收成:\n        print(\"第 \" + str(编号) + \" 只：\" + str(小计))\n",
+      "expectedOutput": "第 1 只：28\n第 2 只：36",
+      "stdin": "7\n8\n",
+      "explanation": "多进程里几只猫是**同时在干活**的，谁先算完**说不准**喵 —— 所以这道题要你亲手把次序钉死。\n\n**① 装成一包，号跟着答案走。** 篮子只有一个，可里面的东西**谁先丢进去谁在前面**。要是只丢答案不丢号，本喵就分不清哪一包是哪只猫的了（先算完的那只排在最前面，跟上头报给你的次序正好错开）。所以每一包都装成 `(第几只, 和)` —— 次序再怎么乱，包本身不会认错。\n\n**② 收齐了再摆次序。** `篮子.get()` 是「从篮子里摸一包出来」，摸到的次序**就是猫们抢着丢进去的次序**。摸够 2 包之后，本喵照包里的号**重新摆一遍**（一行 `收成.sort()`），再一行一包印出去 —— 谁先跑完就彻底不算数了。\n\n**③ 先收齐、再送客。** 本喵是**先把结果全收进屋、再挨个 `p.join()`** 的。这个先后是老规矩：孩子丢进篮子的包要先顺着一条管子送出来，**管子一满就送不动**，孩子就卡在门口等；本喵要是先傻等 `join()`、一包都不去摸，两边就互相干瞪眼。这道题篮子浅、管子塞不满，不一定会卡住 —— 但规矩先立对，换成大活才不会翻车喵。\n\n⚠️ 多进程题目的老规矩：孩子只管算，**不许自己印**；印的活儿交回本喵，**次序由本喵定**。",
+      "templateId": "py-s3-mp-tagged-basket",
+      "params": {
+        "n": 2
+      },
+      "verified": {
+        "at": "2026-09-16T03:12:41.191Z",
+        "hash": "bb024e420383fd6d"
+      }
+    },
+    {
+      "id": "bank-py-s3-mp-tagged-basket-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵摊开 3 个数（**一行一个**，一共 3 行），想让每**一个数**都由**一只**小猫接手：第 i 只猫管第 i 行那个数（i 从 1 数起），算「**从 1 一直加到它**」的和 —— 比如拿到 `4`，就是 `1+2+3+4=10`。\n\n算完之后，每只猫把自己那道题的答案丢进**同一个篮子**，丢的时候要**带上自己的号** —— 装成一包 `(第几只, 和)`。本喵等所有猫都交完了，再把篮子里的东西**按「第几只」摆好次序**念出来，一行一包：\n\n```text\n第 1 只：数\n第 2 只：数\n```\n\n（冒号后面**直接跟数字**、中间不留空格喵。）\n\n比如外面给的是\n\n6\n2\n8\n\n就要印出\n\n第 1 只：21\n第 2 只：3\n第 3 只：36\n\n⚠️ 谁先干完**不算数** —— 印出来的次序要跟报给你的次序**一模一样**。\n\n（判分用的是另外一组数，别把答案写死～）",
+      "starter": null,
+      "referenceSolution": "import multiprocessing as mp\n\n\ndef 求和(篮子, 编号, 数):\n    小计 = 0\n    for k in range(1, 数 + 1):\n        小计 += k\n    篮子.put((编号, 小计))\n\n\nif __name__ == '__main__':\n    n = 3\n    起点 = []\n    for _ in range(n):\n        起点.append(int(input()))\n    篮子 = mp.Queue()\n    孩子们 = []\n    for i in range(n):\n        p = mp.Process(target=求和, args=(篮子, i + 1, 起点[i]))\n        p.start()\n        孩子们.append(p)\n    收成 = []\n    for _ in range(n):\n        收成.append(篮子.get())\n    for p in 孩子们:\n        p.join()\n    收成.sort()\n    for 编号, 小计 in 收成:\n        print(\"第 \" + str(编号) + \" 只：\" + str(小计))\n",
+      "expectedOutput": "第 1 只：36\n第 2 只：36\n第 3 只：15",
+      "stdin": "8\n8\n5\n",
+      "explanation": "多进程里几只猫是**同时在干活**的，谁先算完**说不准**喵 —— 所以这道题要你亲手把次序钉死。\n\n**① 装成一包，号跟着答案走。** 篮子只有一个，可里面的东西**谁先丢进去谁在前面**。要是只丢答案不丢号，本喵就分不清哪一包是哪只猫的了（先算完的那只排在最前面，跟上头报给你的次序正好错开）。所以每一包都装成 `(第几只, 和)` —— 次序再怎么乱，包本身不会认错。\n\n**② 收齐了再摆次序。** `篮子.get()` 是「从篮子里摸一包出来」，摸到的次序**就是猫们抢着丢进去的次序**。摸够 3 包之后，本喵照包里的号**重新摆一遍**（一行 `收成.sort()`），再一行一包印出去 —— 谁先跑完就彻底不算数了。\n\n**③ 先收齐、再送客。** 本喵是**先把结果全收进屋、再挨个 `p.join()`** 的。这个先后是老规矩：孩子丢进篮子的包要先顺着一条管子送出来，**管子一满就送不动**，孩子就卡在门口等；本喵要是先傻等 `join()`、一包都不去摸，两边就互相干瞪眼。这道题篮子浅、管子塞不满，不一定会卡住 —— 但规矩先立对，换成大活才不会翻车喵。\n\n⚠️ 多进程题目的老规矩：孩子只管算，**不许自己印**；印的活儿交回本喵，**次序由本喵定**。",
+      "templateId": "py-s3-mp-tagged-basket",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T03:12:42.087Z",
+        "hash": "9b077d2d154f2f67"
+      }
+    }
+  ]
+}

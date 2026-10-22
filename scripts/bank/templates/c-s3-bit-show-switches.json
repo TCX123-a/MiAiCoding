@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-bit-show-switches",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-02",
+  "type": "codewrite",
+  "concept": ["整数就是一排开关", ">>", "& 1", "读数器"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["6", "12"] },
+    "b": { "kind": "pick", "values": ["3", "10"] }
+  },
+  "stemTemplate": "本喵要一个**开关读数器**：投喂一个标签、再投喂一排开关的读数，它就把最低那 8 位**一位一位**印出来。\n\n请你写：\n\n1. 招式 `show(const char *label, int value)`。\n2. 招式里先把读数收成最低 8 位（本喵写成 `unsigned char x = (unsigned char)value;`），再**从第 7 位一路印到第 0 位** —— 每一位用 `(x >> i) & 1` 取出来，**挨着印、中间不加空格**。\n3. 一行的样子是：**先印标签，再印 ` = `（空格、等号、空格，中间不补空格），再印那 8 个 0/1**，最后一个换行。\n4. `main` 里按这个次序喊它 **5 次**：\n   - 标签 `{a}`，读数 `{a}`\n   - 标签 `{b}`，读数 `{b}`\n   - 标签 `{a} & {b}`，读数 `{a} & {b}`\n   - 标签 `{a} | {b}`，读数 `{a} | {b}`\n   - 标签 `{a} ^ {b}`，读数 `{a} ^ {b}`\n\n比如说，标签是 `6` 的那一行印出来就是 `6 = 00000110`喵 —— 从右往左数，第 2 位和第 1 位亮着，正好是 4 + 2。",
+  "starterTemplate": "#include <stdio.h>\n\nvoid show(const char *label, int value) {\n    /* ① 收成最低 8 位 */\n    /* ② 印标签 + \" = \" */\n    /* ③ 从第 7 位印到第 0 位，中间不加空格 */\n    /* ④ 换行 */\n\n}\n\nint main(void) {\n    /* ⑤ 喊 5 次，把三个位运算的结果也读出来 */\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nvoid show(const char *label, int value) {\n    unsigned char x = (unsigned char)value;\n    printf(\"%s = \", label);\n    for (int i = 7; i >= 0; i--) {\n        printf(\"%d\", (x >> i) & 1);\n    }\n    printf(\"\\n\");\n}\n\nint main(void) {\n    show(\"{a}\", {a});\n    show(\"{b}\", {b});\n    show(\"{a} & {b}\", {a} & {b});\n    show(\"{a} | {b}\", {a} | {b});\n    show(\"{a} ^ {b}\", {a} ^ {b});\n    return 0;\n}\n",
+  "explanationTemplate": "这一题把「**整数就是一排开关**」这句话变成了看得见的东西喵。\n\n**① 一位一位地念。** `(x >> i) & 1` 念作「把第 i 位挪到最低位，再看它亮不亮」：`x >> i` 把整排往右挪 i 格，第 i 位就落到了最低格；再 `& 1` 把别的位全抹掉，只剩它。结果是 0 就是灭、1 就是亮。\n\n**② 为什么从第 7 位往第 0 位印。** 因为人念二进制是**从高位往低位念**的 —— 跟我们念十进制的 123 先念百位一样。要是从第 0 位开始印，那一排 0/1 就左右颠倒了。\n\n**③ 三个位运算的结果，正好能对着看。** `&` 只留下两边都亮的位、`|` 把两边亮的都拢过来、`^` 专挑两边不一样的位。同一排开关摆在一起印，看一眼就记住它们仨的分工了 —— 这比背定义管用得多。\n\n**④ 那个收 8 位的动作。** `(unsigned char)value` 是「只留最低 8 位」。今天的读数都很小，不去掉高位的 0 也看不出来；可要是投喂进来一个大数，不收一下就会多印出一串 0 —— 本喵先收干净，读数器就稳当了喵。"
+}

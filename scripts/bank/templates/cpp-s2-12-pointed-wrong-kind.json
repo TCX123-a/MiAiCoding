@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-12-pointed-wrong-kind",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-12",
+  "type": "codefix",
+  "concept": ["点名点错了款", "料被悄悄改小", "一个错都不报"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [1, 2] },
+    "b": { "kind": "pick", "values": [6, 8] }
+  },
+  "stemTemplate": "本喵在尖括号里**自己点了名**，要的是整数那一款。屏幕上印出来的那个数，是把 {a} 和 {b}.5 两处料都砍掉小数之后再加起来的 —— 可本喵心里想要的其实是**小数款**的那个答案。\n\n翻译官喵**一个字都没说**。你帮本喵把点名那一处改对（本喵要小数款），让屏幕上出现小数款的答案。图纸和 `main` 里别的几句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nT add(T a, T b) {\n    return a + b;\n}\n\nint main() {\n    cout << add<int>({a}, {b}.5) << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nT add(T a, T b) {\n    return a + b;\n}\n\nint main() {\n    cout << add<double>({a}, {b}.5) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "**这一路一个报错都没有、一个警告都没有。** 程序跑得完完整整，屏幕上就一行数。\n\n凭什么一声不吭？因为本喵**自己点了名**：尖括号里写着整数，翻译官喵就照着整数那一款把料**硬塞进去** —— {a} 还是 {a}，可 {b}.5 被**悄悄改成 {b}** 才喂进去。两处都成了整数，加出来的自然是砍掉小数的那个数。\n\n**「把带小数的料塞进整数那一格」这件事，翻译官喵本来就允许。** 更要紧的是：本喵一点名，它就**不再替本喵核实料对不对了** —— 按料自己猜的时候，猜不出来它会拦下本喵；点名之后就没这一层了。\n\n修法就是把点名那一处改成小数款：\n\n```text\nadd<double>({a}, {b}.5)\n```\n\n补完之后本喵真跑过：屏幕上出现的是那两处料相加的**小数额** —— 那才是本喵心里那个数。\n\n⚠️ 一句话钉住：**点名是件很硬气的事。** 本喵说哪一款，它就把料塞进哪一款里。所以平时**能不点名就别点名**：让它按料自己猜，猜不出来它会拦下本喵；一点名，这道保险就撤了。"
+}

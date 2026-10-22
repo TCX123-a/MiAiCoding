@@ -1,0 +1,458 @@
+{
+  "lessonId": "python-stage3-12",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-py-s3-guard-missing-ring-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "仓库里躺着一个本子 `bell.py`，它的尾巴上写了一句 `摇铃()`。\n\n正门那边只想**请它来当帮手**，然后自己伸手喊一次铃。可程序一跑，铃**响了两回**：头一回本喵还没伸手它就自己响了。\n\n本喵要的是这样：请它进来的时候它**一声都不许吭**；只有本喵自己伸手喊 `摇铃()`，铃才响。\n\n你改 `bell.py` 里那几行，让它闭嘴。正门那几行一个字都不用动。\n\n（铃本身那句 `print` 不许改，本喵要听的就是它。）",
+      "brokenCode": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n内容 = '''def 摇铃():\n    print(\"开饭啦喵\")\n\n\n摇铃()\n'''\nwith open(os.path.join(仓库, \"bell.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(内容)\n\nsys.path.insert(0, 仓库)\nimport bell\n\nprint(\"本喵来请帮手了\")\nbell.摇铃()\n",
+      "referenceFix": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n内容 = '''def 摇铃():\n    print(\"开饭啦喵\")\n\n\nif __name__ == \"__main__\":\n    摇铃()\n'''\nwith open(os.path.join(仓库, \"bell.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(内容)\n\nsys.path.insert(0, 仓库)\nimport bell\n\nprint(\"本喵来请帮手了\")\nbell.摇铃()\n",
+      "expectedOutput": "本喵来请帮手了\n开饭啦喵",
+      "stdin": null,
+      "explanation": "改之前那句 `摇铃()` 是**敞着**写在尾巴上的：本子只要被请进来，从头到尾走一遍，走到尾巴就顺手把铃摇了。请它的人和它自己都没想到这一层 —— 于是铃白响了一次。\n\n改法是在它上面加一道门卫：\n\n```text\nif __name__ == \"__main__\":\n    摇铃()\n```\n\n念作「**只有当本喵是走正门的那位，才摇这声铃**」。被请来当帮手的时候，本子心里那块牌子写的是它自己的名字（`bell`），不是 `__main__`，门卫一看牌子不对，就把这一句拦下了。\n\n所以改完以后，程序只剩两行：先 `本喵来请帮手了`，再一声铃。\n\n本喵要你把这条记牢：**被请进来的本子会当场从头到尾走一遍**。它在尾巴上写的每一句话都会被执行 —— 你想让它「只有当班时才做的事」，就都得搁在门卫底下喵。\n\n（这道门卫还有个好处：这个本子从此**既能走正门自己当班，也能被别人请去当帮手**，一份代码两用。）",
+      "templateId": "py-s3-guard-missing-ring",
+      "params": {
+        "mod": "bell",
+        "ring": "开饭啦喵"
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:51.134Z",
+        "hash": "c36fbdde24ebef6b"
+      }
+    },
+    {
+      "id": "bank-py-s3-guard-missing-ring-003",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "仓库里躺着一个本子 `chime.py`，它的尾巴上写了一句 `摇铃()`。\n\n正门那边只想**请它来当帮手**，然后自己伸手喊一次铃。可程序一跑，铃**响了两回**：头一回本喵还没伸手它就自己响了。\n\n本喵要的是这样：请它进来的时候它**一声都不许吭**；只有本喵自己伸手喊 `摇铃()`，铃才响。\n\n你改 `chime.py` 里那几行，让它闭嘴。正门那几行一个字都不用动。\n\n（铃本身那句 `print` 不许改，本喵要听的就是它。）",
+      "brokenCode": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n内容 = '''def 摇铃():\n    print(\"集合啦喵\")\n\n\n摇铃()\n'''\nwith open(os.path.join(仓库, \"chime.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(内容)\n\nsys.path.insert(0, 仓库)\nimport chime\n\nprint(\"本喵来请帮手了\")\nchime.摇铃()\n",
+      "referenceFix": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n内容 = '''def 摇铃():\n    print(\"集合啦喵\")\n\n\nif __name__ == \"__main__\":\n    摇铃()\n'''\nwith open(os.path.join(仓库, \"chime.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(内容)\n\nsys.path.insert(0, 仓库)\nimport chime\n\nprint(\"本喵来请帮手了\")\nchime.摇铃()\n",
+      "expectedOutput": "本喵来请帮手了\n集合啦喵",
+      "stdin": null,
+      "explanation": "改之前那句 `摇铃()` 是**敞着**写在尾巴上的：本子只要被请进来，从头到尾走一遍，走到尾巴就顺手把铃摇了。请它的人和它自己都没想到这一层 —— 于是铃白响了一次。\n\n改法是在它上面加一道门卫：\n\n```text\nif __name__ == \"__main__\":\n    摇铃()\n```\n\n念作「**只有当本喵是走正门的那位，才摇这声铃**」。被请来当帮手的时候，本子心里那块牌子写的是它自己的名字（`chime`），不是 `__main__`，门卫一看牌子不对，就把这一句拦下了。\n\n所以改完以后，程序只剩两行：先 `本喵来请帮手了`，再一声铃。\n\n本喵要你把这条记牢：**被请进来的本子会当场从头到尾走一遍**。它在尾巴上写的每一句话都会被执行 —— 你想让它「只有当班时才做的事」，就都得搁在门卫底下喵。\n\n（这道门卫还有个好处：这个本子从此**既能走正门自己当班，也能被别人请去当帮手**，一份代码两用。）",
+      "templateId": "py-s3-guard-missing-ring",
+      "params": {
+        "mod": "chime",
+        "ring": "集合啦喵"
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:51.442Z",
+        "hash": "b41e7f4fcd48d07e"
+      }
+    },
+    {
+      "id": "bank-py-s3-guard-name-layers-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这次要你看清楚那块牌子 `__name__` 在**三个位置**上分别写着什么。\n\n程序开头照样造好仓库。你要把**两本本子**写进仓库，内容一字不差照抄：\n\n本子 `bell.py`：\n\n```text\ndef 摇铃():\n    print(\"开饭啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n```\n\n本子 `ledger.py`（注意它头上先请了铃铛本子）：\n\n```text\nimport bell\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + bell.__name__)\n```\n\n然后正门这边按这个顺序做四件事：\n\n1. 告诉翻译官喵去仓库里找；\n2. 先请铃铛本子，再请账本本子；\n3. 印正门自己那块牌子；\n4. 伸手喊一次 `bell.摇铃()`。\n\n要印出这**四行**（帮手被请进来的时候自己会吭声，所以顺序你得自己想清楚）：\n\n```text\n帮手铃铛的牌子：bell\n帮手账本的牌子：ledger，它请来的帮手叫：bell\n正门本子的牌子：__main__\n开饭啦喵\n```",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n# ① 把 bell.py 写进仓库（内容照上面那份抄）\n\n# ② 把 ledger.py 写进仓库（内容照上面那份抄）\n\n# ③ 告诉翻译官喵去仓库里找\n\n# ④ 先请铃铛本子，再请账本本子\n\n# ⑤ 印正门自己那块牌子\n\n# ⑥ 伸手喊一次 bell.摇铃()\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n铃铛内容 = '''def 摇铃():\n    print(\"开饭啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n'''\nwith open(os.path.join(仓库, \"bell.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(铃铛内容)\n\n账本内容 = '''import bell\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + bell.__name__)\n'''\nwith open(os.path.join(仓库, \"ledger.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(账本内容)\n\nsys.path.insert(0, 仓库)\nimport bell\nimport ledger\n\nprint(\"正门本子的牌子：\" + __name__)\nbell.摇铃()\n",
+      "expectedOutput": "帮手铃铛的牌子：bell\n帮手账本的牌子：ledger，它请来的帮手叫：bell\n正门本子的牌子：__main__\n开饭啦喵",
+      "stdin": null,
+      "explanation": "四行对着三块牌子看喵。\n\n**第一行 `帮手铃铛的牌子：bell`** —— 它被正门请进来，所以它的牌子写的是它**自己的名字**。请的行为一发生，它就被从头到尾走了一遍，头上那句 `print` 当场就响了。\n\n**第二行 `帮手账本的牌子：ledger`，后面还跟着「它请来的帮手叫：bell」** —— 账本本子被请进来，走它自己的时候头上那句 `import bell` 又要请人。可铃铛本子**已经在屋里了**，翻译官喵认得，不会再请一遍 —— 所以第一行没有重复出现。这就是为什么牌子上写的是那本本子自己的名字：**换谁看它，它都是 `bell`**。\n\n**第三行 `正门本子的牌子：__main__`** —— 正门是你敲 `python 某某.py` 直接推开的，它不发工资给谁，它就是主事的那位。\n\n**第四行**才是本喵自己伸手喊的铃。前三行都是「被请进来」时自动响的，只有这一行是**主动**响的喵。\n\n把握住这两句话，这一课就通了：\n\n- **牌子 `__name__` 写的是「现在是什么身份」** —— 被请去的写自己的名字，走正门的写 `__main__`。\n- **门卫 `if __name__ == \"__main__\":` 就是拿这个身份做判断** —— 只有走正门的那位才往下做。\n\n所以那个铃铛本子要是尾巴上**敞着**写一句 `摇铃()`，正门一请它就要响一次，你再伸手它又响一次 —— 这正是上一题埋给你的那个坑。",
+      "templateId": "py-s3-guard-name-layers",
+      "params": {
+        "mod": "bell",
+        "ledger": "ledger",
+        "ring": "开饭啦喵"
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:53.496Z",
+        "hash": "2241ccc33be73b71"
+      }
+    },
+    {
+      "id": "bank-py-s3-guard-name-layers-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这次要你看清楚那块牌子 `__name__` 在**三个位置**上分别写着什么。\n\n程序开头照样造好仓库。你要把**两本本子**写进仓库，内容一字不差照抄：\n\n本子 `bell.py`：\n\n```text\ndef 摇铃():\n    print(\"集合啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n```\n\n本子 `ledger.py`（注意它头上先请了铃铛本子）：\n\n```text\nimport bell\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + bell.__name__)\n```\n\n然后正门这边按这个顺序做四件事：\n\n1. 告诉翻译官喵去仓库里找；\n2. 先请铃铛本子，再请账本本子；\n3. 印正门自己那块牌子；\n4. 伸手喊一次 `bell.摇铃()`。\n\n要印出这**四行**（帮手被请进来的时候自己会吭声，所以顺序你得自己想清楚）：\n\n```text\n帮手铃铛的牌子：bell\n帮手账本的牌子：ledger，它请来的帮手叫：bell\n正门本子的牌子：__main__\n集合啦喵\n```",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n# ① 把 bell.py 写进仓库（内容照上面那份抄）\n\n# ② 把 ledger.py 写进仓库（内容照上面那份抄）\n\n# ③ 告诉翻译官喵去仓库里找\n\n# ④ 先请铃铛本子，再请账本本子\n\n# ⑤ 印正门自己那块牌子\n\n# ⑥ 伸手喊一次 bell.摇铃()\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n铃铛内容 = '''def 摇铃():\n    print(\"集合啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n'''\nwith open(os.path.join(仓库, \"bell.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(铃铛内容)\n\n账本内容 = '''import bell\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + bell.__name__)\n'''\nwith open(os.path.join(仓库, \"ledger.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(账本内容)\n\nsys.path.insert(0, 仓库)\nimport bell\nimport ledger\n\nprint(\"正门本子的牌子：\" + __name__)\nbell.摇铃()\n",
+      "expectedOutput": "帮手铃铛的牌子：bell\n帮手账本的牌子：ledger，它请来的帮手叫：bell\n正门本子的牌子：__main__\n集合啦喵",
+      "stdin": null,
+      "explanation": "四行对着三块牌子看喵。\n\n**第一行 `帮手铃铛的牌子：bell`** —— 它被正门请进来，所以它的牌子写的是它**自己的名字**。请的行为一发生，它就被从头到尾走了一遍，头上那句 `print` 当场就响了。\n\n**第二行 `帮手账本的牌子：ledger`，后面还跟着「它请来的帮手叫：bell」** —— 账本本子被请进来，走它自己的时候头上那句 `import bell` 又要请人。可铃铛本子**已经在屋里了**，翻译官喵认得，不会再请一遍 —— 所以第一行没有重复出现。这就是为什么牌子上写的是那本本子自己的名字：**换谁看它，它都是 `bell`**。\n\n**第三行 `正门本子的牌子：__main__`** —— 正门是你敲 `python 某某.py` 直接推开的，它不发工资给谁，它就是主事的那位。\n\n**第四行**才是本喵自己伸手喊的铃。前三行都是「被请进来」时自动响的，只有这一行是**主动**响的喵。\n\n把握住这两句话，这一课就通了：\n\n- **牌子 `__name__` 写的是「现在是什么身份」** —— 被请去的写自己的名字，走正门的写 `__main__`。\n- **门卫 `if __name__ == \"__main__\":` 就是拿这个身份做判断** —— 只有走正门的那位才往下做。\n\n所以那个铃铛本子要是尾巴上**敞着**写一句 `摇铃()`，正门一请它就要响一次，你再伸手它又响一次 —— 这正是上一题埋给你的那个坑。",
+      "templateId": "py-s3-guard-name-layers",
+      "params": {
+        "mod": "bell",
+        "ledger": "ledger",
+        "ring": "集合啦喵"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:37.906Z",
+        "hash": "2a45bcee34fa1979"
+      }
+    },
+    {
+      "id": "bank-py-s3-guard-name-layers-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这次要你看清楚那块牌子 `__name__` 在**三个位置**上分别写着什么。\n\n程序开头照样造好仓库。你要把**两本本子**写进仓库，内容一字不差照抄：\n\n本子 `bell.py`：\n\n```text\ndef 摇铃():\n    print(\"集合啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n```\n\n本子 `tally.py`（注意它头上先请了铃铛本子）：\n\n```text\nimport bell\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + bell.__name__)\n```\n\n然后正门这边按这个顺序做四件事：\n\n1. 告诉翻译官喵去仓库里找；\n2. 先请铃铛本子，再请账本本子；\n3. 印正门自己那块牌子；\n4. 伸手喊一次 `bell.摇铃()`。\n\n要印出这**四行**（帮手被请进来的时候自己会吭声，所以顺序你得自己想清楚）：\n\n```text\n帮手铃铛的牌子：bell\n帮手账本的牌子：tally，它请来的帮手叫：bell\n正门本子的牌子：__main__\n集合啦喵\n```",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n# ① 把 bell.py 写进仓库（内容照上面那份抄）\n\n# ② 把 tally.py 写进仓库（内容照上面那份抄）\n\n# ③ 告诉翻译官喵去仓库里找\n\n# ④ 先请铃铛本子，再请账本本子\n\n# ⑤ 印正门自己那块牌子\n\n# ⑥ 伸手喊一次 bell.摇铃()\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n铃铛内容 = '''def 摇铃():\n    print(\"集合啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n'''\nwith open(os.path.join(仓库, \"bell.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(铃铛内容)\n\n账本内容 = '''import bell\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + bell.__name__)\n'''\nwith open(os.path.join(仓库, \"tally.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(账本内容)\n\nsys.path.insert(0, 仓库)\nimport bell\nimport tally\n\nprint(\"正门本子的牌子：\" + __name__)\nbell.摇铃()\n",
+      "expectedOutput": "帮手铃铛的牌子：bell\n帮手账本的牌子：tally，它请来的帮手叫：bell\n正门本子的牌子：__main__\n集合啦喵",
+      "stdin": null,
+      "explanation": "四行对着三块牌子看喵。\n\n**第一行 `帮手铃铛的牌子：bell`** —— 它被正门请进来，所以它的牌子写的是它**自己的名字**。请的行为一发生，它就被从头到尾走了一遍，头上那句 `print` 当场就响了。\n\n**第二行 `帮手账本的牌子：tally`，后面还跟着「它请来的帮手叫：bell」** —— 账本本子被请进来，走它自己的时候头上那句 `import bell` 又要请人。可铃铛本子**已经在屋里了**，翻译官喵认得，不会再请一遍 —— 所以第一行没有重复出现。这就是为什么牌子上写的是那本本子自己的名字：**换谁看它，它都是 `bell`**。\n\n**第三行 `正门本子的牌子：__main__`** —— 正门是你敲 `python 某某.py` 直接推开的，它不发工资给谁，它就是主事的那位。\n\n**第四行**才是本喵自己伸手喊的铃。前三行都是「被请进来」时自动响的，只有这一行是**主动**响的喵。\n\n把握住这两句话，这一课就通了：\n\n- **牌子 `__name__` 写的是「现在是什么身份」** —— 被请去的写自己的名字，走正门的写 `__main__`。\n- **门卫 `if __name__ == \"__main__\":` 就是拿这个身份做判断** —— 只有走正门的那位才往下做。\n\n所以那个铃铛本子要是尾巴上**敞着**写一句 `摇铃()`，正门一请它就要响一次，你再伸手它又响一次 —— 这正是上一题埋给你的那个坑。",
+      "templateId": "py-s3-guard-name-layers",
+      "params": {
+        "mod": "bell",
+        "ledger": "tally",
+        "ring": "集合啦喵"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:38.334Z",
+        "hash": "70d00e6bcfde29db"
+      }
+    },
+    {
+      "id": "bank-py-s3-guard-name-layers-004",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这次要你看清楚那块牌子 `__name__` 在**三个位置**上分别写着什么。\n\n程序开头照样造好仓库。你要把**两本本子**写进仓库，内容一字不差照抄：\n\n本子 `chime.py`：\n\n```text\ndef 摇铃():\n    print(\"开饭啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n```\n\n本子 `ledger.py`（注意它头上先请了铃铛本子）：\n\n```text\nimport chime\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + chime.__name__)\n```\n\n然后正门这边按这个顺序做四件事：\n\n1. 告诉翻译官喵去仓库里找；\n2. 先请铃铛本子，再请账本本子；\n3. 印正门自己那块牌子；\n4. 伸手喊一次 `chime.摇铃()`。\n\n要印出这**四行**（帮手被请进来的时候自己会吭声，所以顺序你得自己想清楚）：\n\n```text\n帮手铃铛的牌子：chime\n帮手账本的牌子：ledger，它请来的帮手叫：chime\n正门本子的牌子：__main__\n开饭啦喵\n```",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n# ① 把 chime.py 写进仓库（内容照上面那份抄）\n\n# ② 把 ledger.py 写进仓库（内容照上面那份抄）\n\n# ③ 告诉翻译官喵去仓库里找\n\n# ④ 先请铃铛本子，再请账本本子\n\n# ⑤ 印正门自己那块牌子\n\n# ⑥ 伸手喊一次 chime.摇铃()\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n铃铛内容 = '''def 摇铃():\n    print(\"开饭啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n'''\nwith open(os.path.join(仓库, \"chime.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(铃铛内容)\n\n账本内容 = '''import chime\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + chime.__name__)\n'''\nwith open(os.path.join(仓库, \"ledger.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(账本内容)\n\nsys.path.insert(0, 仓库)\nimport chime\nimport ledger\n\nprint(\"正门本子的牌子：\" + __name__)\nchime.摇铃()\n",
+      "expectedOutput": "帮手铃铛的牌子：chime\n帮手账本的牌子：ledger，它请来的帮手叫：chime\n正门本子的牌子：__main__\n开饭啦喵",
+      "stdin": null,
+      "explanation": "四行对着三块牌子看喵。\n\n**第一行 `帮手铃铛的牌子：chime`** —— 它被正门请进来，所以它的牌子写的是它**自己的名字**。请的行为一发生，它就被从头到尾走了一遍，头上那句 `print` 当场就响了。\n\n**第二行 `帮手账本的牌子：ledger`，后面还跟着「它请来的帮手叫：chime」** —— 账本本子被请进来，走它自己的时候头上那句 `import chime` 又要请人。可铃铛本子**已经在屋里了**，翻译官喵认得，不会再请一遍 —— 所以第一行没有重复出现。这就是为什么牌子上写的是那本本子自己的名字：**换谁看它，它都是 `chime`**。\n\n**第三行 `正门本子的牌子：__main__`** —— 正门是你敲 `python 某某.py` 直接推开的，它不发工资给谁，它就是主事的那位。\n\n**第四行**才是本喵自己伸手喊的铃。前三行都是「被请进来」时自动响的，只有这一行是**主动**响的喵。\n\n把握住这两句话，这一课就通了：\n\n- **牌子 `__name__` 写的是「现在是什么身份」** —— 被请去的写自己的名字，走正门的写 `__main__`。\n- **门卫 `if __name__ == \"__main__\":` 就是拿这个身份做判断** —— 只有走正门的那位才往下做。\n\n所以那个铃铛本子要是尾巴上**敞着**写一句 `摇铃()`，正门一请它就要响一次，你再伸手它又响一次 —— 这正是上一题埋给你的那个坑。",
+      "templateId": "py-s3-guard-name-layers",
+      "params": {
+        "mod": "chime",
+        "ledger": "ledger",
+        "ring": "开饭啦喵"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:38.795Z",
+        "hash": "d8768332bcf9a47a"
+      }
+    },
+    {
+      "id": "bank-py-s3-guard-name-layers-006",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这次要你看清楚那块牌子 `__name__` 在**三个位置**上分别写着什么。\n\n程序开头照样造好仓库。你要把**两本本子**写进仓库，内容一字不差照抄：\n\n本子 `chime.py`：\n\n```text\ndef 摇铃():\n    print(\"开饭啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n```\n\n本子 `tally.py`（注意它头上先请了铃铛本子）：\n\n```text\nimport chime\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + chime.__name__)\n```\n\n然后正门这边按这个顺序做四件事：\n\n1. 告诉翻译官喵去仓库里找；\n2. 先请铃铛本子，再请账本本子；\n3. 印正门自己那块牌子；\n4. 伸手喊一次 `chime.摇铃()`。\n\n要印出这**四行**（帮手被请进来的时候自己会吭声，所以顺序你得自己想清楚）：\n\n```text\n帮手铃铛的牌子：chime\n帮手账本的牌子：tally，它请来的帮手叫：chime\n正门本子的牌子：__main__\n开饭啦喵\n```",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n# ① 把 chime.py 写进仓库（内容照上面那份抄）\n\n# ② 把 tally.py 写进仓库（内容照上面那份抄）\n\n# ③ 告诉翻译官喵去仓库里找\n\n# ④ 先请铃铛本子，再请账本本子\n\n# ⑤ 印正门自己那块牌子\n\n# ⑥ 伸手喊一次 chime.摇铃()\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n铃铛内容 = '''def 摇铃():\n    print(\"开饭啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n'''\nwith open(os.path.join(仓库, \"chime.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(铃铛内容)\n\n账本内容 = '''import chime\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + chime.__name__)\n'''\nwith open(os.path.join(仓库, \"tally.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(账本内容)\n\nsys.path.insert(0, 仓库)\nimport chime\nimport tally\n\nprint(\"正门本子的牌子：\" + __name__)\nchime.摇铃()\n",
+      "expectedOutput": "帮手铃铛的牌子：chime\n帮手账本的牌子：tally，它请来的帮手叫：chime\n正门本子的牌子：__main__\n开饭啦喵",
+      "stdin": null,
+      "explanation": "四行对着三块牌子看喵。\n\n**第一行 `帮手铃铛的牌子：chime`** —— 它被正门请进来，所以它的牌子写的是它**自己的名字**。请的行为一发生，它就被从头到尾走了一遍，头上那句 `print` 当场就响了。\n\n**第二行 `帮手账本的牌子：tally`，后面还跟着「它请来的帮手叫：chime」** —— 账本本子被请进来，走它自己的时候头上那句 `import chime` 又要请人。可铃铛本子**已经在屋里了**，翻译官喵认得，不会再请一遍 —— 所以第一行没有重复出现。这就是为什么牌子上写的是那本本子自己的名字：**换谁看它，它都是 `chime`**。\n\n**第三行 `正门本子的牌子：__main__`** —— 正门是你敲 `python 某某.py` 直接推开的，它不发工资给谁，它就是主事的那位。\n\n**第四行**才是本喵自己伸手喊的铃。前三行都是「被请进来」时自动响的，只有这一行是**主动**响的喵。\n\n把握住这两句话，这一课就通了：\n\n- **牌子 `__name__` 写的是「现在是什么身份」** —— 被请去的写自己的名字，走正门的写 `__main__`。\n- **门卫 `if __name__ == \"__main__\":` 就是拿这个身份做判断** —— 只有走正门的那位才往下做。\n\n所以那个铃铛本子要是尾巴上**敞着**写一句 `摇铃()`，正门一请它就要响一次，你再伸手它又响一次 —— 这正是上一题埋给你的那个坑。",
+      "templateId": "py-s3-guard-name-layers",
+      "params": {
+        "mod": "chime",
+        "ledger": "tally",
+        "ring": "开饭啦喵"
+      },
+      "verified": {
+        "at": "2026-10-20T17:27:39.220Z",
+        "hash": "89b4dc24f5b1a87a"
+      }
+    },
+    {
+      "id": "bank-py-s3-guard-name-layers-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "这次要你看清楚那块牌子 `__name__` 在**三个位置**上分别写着什么。\n\n程序开头照样造好仓库。你要把**两本本子**写进仓库，内容一字不差照抄：\n\n本子 `chime.py`：\n\n```text\ndef 摇铃():\n    print(\"集合啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n```\n\n本子 `tally.py`（注意它头上先请了铃铛本子）：\n\n```text\nimport chime\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + chime.__name__)\n```\n\n然后正门这边按这个顺序做四件事：\n\n1. 告诉翻译官喵去仓库里找；\n2. 先请铃铛本子，再请账本本子；\n3. 印正门自己那块牌子；\n4. 伸手喊一次 `chime.摇铃()`。\n\n要印出这**四行**（帮手被请进来的时候自己会吭声，所以顺序你得自己想清楚）：\n\n```text\n帮手铃铛的牌子：chime\n帮手账本的牌子：tally，它请来的帮手叫：chime\n正门本子的牌子：__main__\n集合啦喵\n```",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n# ① 把 chime.py 写进仓库（内容照上面那份抄）\n\n# ② 把 tally.py 写进仓库（内容照上面那份抄）\n\n# ③ 告诉翻译官喵去仓库里找\n\n# ④ 先请铃铛本子，再请账本本子\n\n# ⑤ 印正门自己那块牌子\n\n# ⑥ 伸手喊一次 chime.摇铃()\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n\n铃铛内容 = '''def 摇铃():\n    print(\"集合啦喵\")\n\n\nprint(\"帮手铃铛的牌子：\" + __name__)\n'''\nwith open(os.path.join(仓库, \"chime.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(铃铛内容)\n\n账本内容 = '''import chime\n\n\nprint(\"帮手账本的牌子：\" + __name__ + \"，它请来的帮手叫：\" + chime.__name__)\n'''\nwith open(os.path.join(仓库, \"tally.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(账本内容)\n\nsys.path.insert(0, 仓库)\nimport chime\nimport tally\n\nprint(\"正门本子的牌子：\" + __name__)\nchime.摇铃()\n",
+      "expectedOutput": "帮手铃铛的牌子：chime\n帮手账本的牌子：tally，它请来的帮手叫：chime\n正门本子的牌子：__main__\n集合啦喵",
+      "stdin": null,
+      "explanation": "四行对着三块牌子看喵。\n\n**第一行 `帮手铃铛的牌子：chime`** —— 它被正门请进来，所以它的牌子写的是它**自己的名字**。请的行为一发生，它就被从头到尾走了一遍，头上那句 `print` 当场就响了。\n\n**第二行 `帮手账本的牌子：tally`，后面还跟着「它请来的帮手叫：chime」** —— 账本本子被请进来，走它自己的时候头上那句 `import chime` 又要请人。可铃铛本子**已经在屋里了**，翻译官喵认得，不会再请一遍 —— 所以第一行没有重复出现。这就是为什么牌子上写的是那本本子自己的名字：**换谁看它，它都是 `chime`**。\n\n**第三行 `正门本子的牌子：__main__`** —— 正门是你敲 `python 某某.py` 直接推开的，它不发工资给谁，它就是主事的那位。\n\n**第四行**才是本喵自己伸手喊的铃。前三行都是「被请进来」时自动响的，只有这一行是**主动**响的喵。\n\n把握住这两句话，这一课就通了：\n\n- **牌子 `__name__` 写的是「现在是什么身份」** —— 被请去的写自己的名字，走正门的写 `__main__`。\n- **门卫 `if __name__ == \"__main__\":` 就是拿这个身份做判断** —— 只有走正门的那位才往下做。\n\n所以那个铃铛本子要是尾巴上**敞着**写一句 `摇铃()`，正门一请它就要响一次，你再伸手它又响一次 —— 这正是上一题埋给你的那个坑。",
+      "templateId": "py-s3-guard-name-layers",
+      "params": {
+        "mod": "chime",
+        "ledger": "tally",
+        "ring": "集合啦喵"
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:53.717Z",
+        "hash": "153d07cf0211f58f"
+      }
+    },
+    {
+      "id": "bank-py-s3-guard-typo-mian-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "下面这个本子想干两件事：**当班的时候报一声家门**，然后不管怎样都喊一嗓子「开饭啦喵」。\n\n它跑起来是这样的：只印出了 `开饭啦喵`，那句报家门**一声没响**。程序也没报错，安安静静就跑完了。\n\n你把门卫那一行改对。改好以后该印**两行**：先报家门，再喊话。\n\n（报家门那句 `print` 和最后那句喊话都不许动，要改的就是门卫那一行的牌子名。）",
+      "brokenCode": "def 报家门():\n    print(\"本喵是走正门的那位喵\")\n\n\nif __name__ == \"__mian__\":\n    报家门()\n\nprint(\"开饭啦喵\")\n",
+      "referenceFix": "def 报家门():\n    print(\"本喵是走正门的那位喵\")\n\n\nif __name__ == \"__main__\":\n    报家门()\n\nprint(\"开饭啦喵\")\n",
+      "expectedOutput": "本喵是走正门的那位喵\n开饭啦喵",
+      "stdin": null,
+      "explanation": "`__mian__` 和 `__main__` 差一个字母，本喵把 `a` 和 `i` 写倒了。\n\n这一倒，门卫那句话就变成了「只有当本喵的牌子写着 `__mian__` 时，才报家门」—— 而**没有任何一份代码的牌子会写那个名字**，所以这句话永远不成立，报家门那一行永远轮不到。\n\n最气人的地方是：**程序不报错**。它安安静静跑完了，只印了喊话那一行。你不盯着输出对，根本不知道少了一行。\n\n本喵管这种错叫「**它不是坏了，它只是没在做事**」。修起来只要一个字母，找起来能从下午找到天黑 —— 你心里得先有个「该印两行」的预期，才会发现少了一行。\n\n⚠️ 顺便记一下牌子的长相：`__name__` **前后各两条下划线，一共四条**。门卫另一边那个 `__main__` 一样是前后各两条。少一条就变成另一个名字了，本喵这次就是栽在这儿。",
+      "templateId": "py-s3-guard-typo-mian",
+      "params": {
+        "line": "本喵是走正门的那位喵",
+        "ring": "开饭啦喵"
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:04.980Z",
+        "hash": "180634f7be13e492"
+      }
+    },
+    {
+      "id": "bank-py-s3-guard-typo-mian-003",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "下面这个本子想干两件事：**当班的时候报一声家门**，然后不管怎样都喊一嗓子「集合啦喵」。\n\n它跑起来是这样的：只印出了 `集合啦喵`，那句报家门**一声没响**。程序也没报错，安安静静就跑完了。\n\n你把门卫那一行改对。改好以后该印**两行**：先报家门，再喊话。\n\n（报家门那句 `print` 和最后那句喊话都不许动，要改的就是门卫那一行的牌子名。）",
+      "brokenCode": "def 报家门():\n    print(\"走正门的这位就是本喵\")\n\n\nif __name__ == \"__mian__\":\n    报家门()\n\nprint(\"集合啦喵\")\n",
+      "referenceFix": "def 报家门():\n    print(\"走正门的这位就是本喵\")\n\n\nif __name__ == \"__main__\":\n    报家门()\n\nprint(\"集合啦喵\")\n",
+      "expectedOutput": "走正门的这位就是本喵\n集合啦喵",
+      "stdin": null,
+      "explanation": "`__mian__` 和 `__main__` 差一个字母，本喵把 `a` 和 `i` 写倒了。\n\n这一倒，门卫那句话就变成了「只有当本喵的牌子写着 `__mian__` 时，才报家门」—— 而**没有任何一份代码的牌子会写那个名字**，所以这句话永远不成立，报家门那一行永远轮不到。\n\n最气人的地方是：**程序不报错**。它安安静静跑完了，只印了喊话那一行。你不盯着输出对，根本不知道少了一行。\n\n本喵管这种错叫「**它不是坏了，它只是没在做事**」。修起来只要一个字母，找起来能从下午找到天黑 —— 你心里得先有个「该印两行」的预期，才会发现少了一行。\n\n⚠️ 顺便记一下牌子的长相：`__name__` **前后各两条下划线，一共四条**。门卫另一边那个 `__main__` 一样是前后各两条。少一条就变成另一个名字了，本喵这次就是栽在这儿。",
+      "templateId": "py-s3-guard-typo-mian",
+      "params": {
+        "line": "走正门的这位就是本喵",
+        "ring": "集合啦喵"
+      },
+      "verified": {
+        "at": "2026-09-16T08:20:05.144Z",
+        "hash": "c480899947d45e24"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-house-from-outside-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要你把一间屋从零搭起来，再站到屋外喊它一声。\n\n程序开头已经把仓库和屋文件夹造好了：\n\n```text\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\n```\n\n接下来四件事交给你（照这个顺序做）：\n\n1. **在屋门口摆上迎宾的那一页** —— 那一页的文件名就是 `__init__.py`，里面一个字都不用写。（本喵真跑过：**不摆它，屋外也喊得应**；摆上它是为了让这屋被整间请进来时**先跑这一页**。）\n2. **把本子写进屋里** —— 本子叫 `分鱼干.py`，内容就一个招式：\n\n```text\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n```\n\n   （写文件那套照上一题的写法来：`open(..., \"w\", encoding=\"utf-8\")`，内容先放进一串字里，本子里要换行的地方就在那串字里换行。）\n3. **告诉翻译官喵去仓库里找屋**。\n4. **站到屋外，连着屋名把 `平分` 请进来**，然后用它算一次。\n\n最后印**一行**：\n\n```text\n6 条鱼干分给 2 只猫，每只 3 条\n```\n\n最后那个数不许直接写死，得是 `平分(6, 2)` 算出来的。",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\n\n# ① 摆上迎宾的那一页：一个空的 __init__.py\n\n# ② 把本子 分鱼干.py 写进屋里\n\n# ③ 告诉翻译官喵去仓库里找屋\n\n# ④ 站到屋外，连着屋名把 平分 请进来，然后印那一行\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\n\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom miaow.分鱼干 import 平分\n\nprint(\"6 条鱼干分给 2 只猫，每只\", 平分(6, 2), \"条\")\n",
+      "expectedOutput": "6 条鱼干分给 2 只猫，每只 3 条",
+      "stdin": null,
+      "explanation": "四件事，一件比一件多知道一点喵。\n\n**① 迎宾那一页 `__init__.py` 是空的。** 摆完就撒手 —— 这一行念作「造个空文件，立刻关掉」。它**不是入场券**：本喵真跑过，没有这一页，屋外照样喊得应（翻译官喵管这种「只有文件夹、没有那一页」的屋叫**命名空间包**）。它管的是另一件事 —— 这屋被整间请进来的时候，**先跑的就是这一页**；空着，就等于迎宾的时候什么也不做喵。\n\n**② 本子的内容也是先放进一串字，再整个写进文件里。** 那串字里的换行就是文件里的换行，缩进（招式里那四个空格）也一并写进去 —— 所以写那串字的时候手下要留神，缩进少了翻译官喵会翻脸。\n\n**③ `sys.path.insert(0, 仓库)` 是给翻译官喵递话**：「去这个仓库里找屋」。默认它只看正门所在的那一层，屋住在临时仓库里，不递这句话它找不着。\n\n**④ 屋外喊名字，必须连着屋名喊。** 写全的这句里，`miaow` 是屋、`分鱼干` 是本子、`平分` 是你真正要的那个招式 —— 中间那些点念作「里面的」。\n\n回头看，工程结构这一课真正变的就是**喊法**：招式不再跟正门挤在一张桌上，而是住进屋、从屋外连着屋名喊；你每次用它，都在名字里写明它住在哪儿喵。",
+      "templateId": "py-s3-pkg-house-from-outside",
+      "params": {
+        "house": "miaow",
+        "a": 6,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:55:59.862Z",
+        "hash": "412d25eb7a85caf1"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-house-from-outside-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要你把一间屋从零搭起来，再站到屋外喊它一声。\n\n程序开头已经把仓库和屋文件夹造好了：\n\n```text\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\n```\n\n接下来四件事交给你（照这个顺序做）：\n\n1. **在屋门口摆上迎宾的那一页** —— 那一页的文件名就是 `__init__.py`，里面一个字都不用写。（本喵真跑过：**不摆它，屋外也喊得应**；摆上它是为了让这屋被整间请进来时**先跑这一页**。）\n2. **把本子写进屋里** —— 本子叫 `分鱼干.py`，内容就一个招式：\n\n```text\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n```\n\n   （写文件那套照上一题的写法来：`open(..., \"w\", encoding=\"utf-8\")`，内容先放进一串字里，本子里要换行的地方就在那串字里换行。）\n3. **告诉翻译官喵去仓库里找屋**。\n4. **站到屋外，连着屋名把 `平分` 请进来**，然后用它算一次。\n\n最后印**一行**：\n\n```text\n6 条鱼干分给 3 只猫，每只 3 条\n```\n\n最后那个数不许直接写死，得是 `平分(6, 3)` 算出来的。",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\n\n# ① 摆上迎宾的那一页：一个空的 __init__.py\n\n# ② 把本子 分鱼干.py 写进屋里\n\n# ③ 告诉翻译官喵去仓库里找屋\n\n# ④ 站到屋外，连着屋名把 平分 请进来，然后印那一行\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\n\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom miaow.分鱼干 import 平分\n\nprint(\"6 条鱼干分给 3 只猫，每只\", 平分(6, 3), \"条\")\n",
+      "expectedOutput": "6 条鱼干分给 3 只猫，每只 2 条",
+      "stdin": null,
+      "explanation": "四件事，一件比一件多知道一点喵。\n\n**① 迎宾那一页 `__init__.py` 是空的。** 摆完就撒手 —— 这一行念作「造个空文件，立刻关掉」。它**不是入场券**：本喵真跑过，没有这一页，屋外照样喊得应（翻译官喵管这种「只有文件夹、没有那一页」的屋叫**命名空间包**）。它管的是另一件事 —— 这屋被整间请进来的时候，**先跑的就是这一页**；空着，就等于迎宾的时候什么也不做喵。\n\n**② 本子的内容也是先放进一串字，再整个写进文件里。** 那串字里的换行就是文件里的换行，缩进（招式里那四个空格）也一并写进去 —— 所以写那串字的时候手下要留神，缩进少了翻译官喵会翻脸。\n\n**③ `sys.path.insert(0, 仓库)` 是给翻译官喵递话**：「去这个仓库里找屋」。默认它只看正门所在的那一层，屋住在临时仓库里，不递这句话它找不着。\n\n**④ 屋外喊名字，必须连着屋名喊。** 写全的这句里，`miaow` 是屋、`分鱼干` 是本子、`平分` 是你真正要的那个招式 —— 中间那些点念作「里面的」。\n\n回头看，工程结构这一课真正变的就是**喊法**：招式不再跟正门挤在一张桌上，而是住进屋、从屋外连着屋名喊；你每次用它，都在名字里写明它住在哪儿喵。",
+      "templateId": "py-s3-pkg-house-from-outside",
+      "params": {
+        "house": "miaow",
+        "a": 6,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:46.624Z",
+        "hash": "9aff8e930439d395"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-house-from-outside-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要你把一间屋从零搭起来，再站到屋外喊它一声。\n\n程序开头已经把仓库和屋文件夹造好了：\n\n```text\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\n```\n\n接下来四件事交给你（照这个顺序做）：\n\n1. **在屋门口摆上迎宾的那一页** —— 那一页的文件名就是 `__init__.py`，里面一个字都不用写。（本喵真跑过：**不摆它，屋外也喊得应**；摆上它是为了让这屋被整间请进来时**先跑这一页**。）\n2. **把本子写进屋里** —— 本子叫 `分鱼干.py`，内容就一个招式：\n\n```text\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n```\n\n   （写文件那套照上一题的写法来：`open(..., \"w\", encoding=\"utf-8\")`，内容先放进一串字里，本子里要换行的地方就在那串字里换行。）\n3. **告诉翻译官喵去仓库里找屋**。\n4. **站到屋外，连着屋名把 `平分` 请进来**，然后用它算一次。\n\n最后印**一行**：\n\n```text\n9 条鱼干分给 3 只猫，每只 3 条\n```\n\n最后那个数不许直接写死，得是 `平分(9, 3)` 算出来的。",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\n\n# ① 摆上迎宾的那一页：一个空的 __init__.py\n\n# ② 把本子 分鱼干.py 写进屋里\n\n# ③ 告诉翻译官喵去仓库里找屋\n\n# ④ 站到屋外，连着屋名把 平分 请进来，然后印那一行\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\n\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom miaow.分鱼干 import 平分\n\nprint(\"9 条鱼干分给 3 只猫，每只\", 平分(9, 3), \"条\")\n",
+      "expectedOutput": "9 条鱼干分给 3 只猫，每只 3 条",
+      "stdin": null,
+      "explanation": "四件事，一件比一件多知道一点喵。\n\n**① 迎宾那一页 `__init__.py` 是空的。** 摆完就撒手 —— 这一行念作「造个空文件，立刻关掉」。它**不是入场券**：本喵真跑过，没有这一页，屋外照样喊得应（翻译官喵管这种「只有文件夹、没有那一页」的屋叫**命名空间包**）。它管的是另一件事 —— 这屋被整间请进来的时候，**先跑的就是这一页**；空着，就等于迎宾的时候什么也不做喵。\n\n**② 本子的内容也是先放进一串字，再整个写进文件里。** 那串字里的换行就是文件里的换行，缩进（招式里那四个空格）也一并写进去 —— 所以写那串字的时候手下要留神，缩进少了翻译官喵会翻脸。\n\n**③ `sys.path.insert(0, 仓库)` 是给翻译官喵递话**：「去这个仓库里找屋」。默认它只看正门所在的那一层，屋住在临时仓库里，不递这句话它找不着。\n\n**④ 屋外喊名字，必须连着屋名喊。** 写全的这句里，`miaow` 是屋、`分鱼干` 是本子、`平分` 是你真正要的那个招式 —— 中间那些点念作「里面的」。\n\n回头看，工程结构这一课真正变的就是**喊法**：招式不再跟正门挤在一张桌上，而是住进屋、从屋外连着屋名喊；你每次用它，都在名字里写明它住在哪儿喵。",
+      "templateId": "py-s3-pkg-house-from-outside",
+      "params": {
+        "house": "miaow",
+        "a": 9,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:47.028Z",
+        "hash": "95ef4ffa219e38eb"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-house-from-outside-004",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要你把一间屋从零搭起来，再站到屋外喊它一声。\n\n程序开头已经把仓库和屋文件夹造好了：\n\n```text\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"kitty\")\nos.makedirs(屋)\n```\n\n接下来四件事交给你（照这个顺序做）：\n\n1. **在屋门口摆上迎宾的那一页** —— 那一页的文件名就是 `__init__.py`，里面一个字都不用写。（本喵真跑过：**不摆它，屋外也喊得应**；摆上它是为了让这屋被整间请进来时**先跑这一页**。）\n2. **把本子写进屋里** —— 本子叫 `分鱼干.py`，内容就一个招式：\n\n```text\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n```\n\n   （写文件那套照上一题的写法来：`open(..., \"w\", encoding=\"utf-8\")`，内容先放进一串字里，本子里要换行的地方就在那串字里换行。）\n3. **告诉翻译官喵去仓库里找屋**。\n4. **站到屋外，连着屋名把 `平分` 请进来**，然后用它算一次。\n\n最后印**一行**：\n\n```text\n6 条鱼干分给 2 只猫，每只 3 条\n```\n\n最后那个数不许直接写死，得是 `平分(6, 2)` 算出来的。",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"kitty\")\nos.makedirs(屋)\n\n# ① 摆上迎宾的那一页：一个空的 __init__.py\n\n# ② 把本子 分鱼干.py 写进屋里\n\n# ③ 告诉翻译官喵去仓库里找屋\n\n# ④ 站到屋外，连着屋名把 平分 请进来，然后印那一行\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"kitty\")\nos.makedirs(屋)\n\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom kitty.分鱼干 import 平分\n\nprint(\"6 条鱼干分给 2 只猫，每只\", 平分(6, 2), \"条\")\n",
+      "expectedOutput": "6 条鱼干分给 2 只猫，每只 3 条",
+      "stdin": null,
+      "explanation": "四件事，一件比一件多知道一点喵。\n\n**① 迎宾那一页 `__init__.py` 是空的。** 摆完就撒手 —— 这一行念作「造个空文件，立刻关掉」。它**不是入场券**：本喵真跑过，没有这一页，屋外照样喊得应（翻译官喵管这种「只有文件夹、没有那一页」的屋叫**命名空间包**）。它管的是另一件事 —— 这屋被整间请进来的时候，**先跑的就是这一页**；空着，就等于迎宾的时候什么也不做喵。\n\n**② 本子的内容也是先放进一串字，再整个写进文件里。** 那串字里的换行就是文件里的换行，缩进（招式里那四个空格）也一并写进去 —— 所以写那串字的时候手下要留神，缩进少了翻译官喵会翻脸。\n\n**③ `sys.path.insert(0, 仓库)` 是给翻译官喵递话**：「去这个仓库里找屋」。默认它只看正门所在的那一层，屋住在临时仓库里，不递这句话它找不着。\n\n**④ 屋外喊名字，必须连着屋名喊。** 写全的这句里，`kitty` 是屋、`分鱼干` 是本子、`平分` 是你真正要的那个招式 —— 中间那些点念作「里面的」。\n\n回头看，工程结构这一课真正变的就是**喊法**：招式不再跟正门挤在一张桌上，而是住进屋、从屋外连着屋名喊；你每次用它，都在名字里写明它住在哪儿喵。",
+      "templateId": "py-s3-pkg-house-from-outside",
+      "params": {
+        "house": "kitty",
+        "a": 6,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:47.446Z",
+        "hash": "96a25c67d6909680"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-house-from-outside-006",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要你把一间屋从零搭起来，再站到屋外喊它一声。\n\n程序开头已经把仓库和屋文件夹造好了：\n\n```text\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"kitty\")\nos.makedirs(屋)\n```\n\n接下来四件事交给你（照这个顺序做）：\n\n1. **在屋门口摆上迎宾的那一页** —— 那一页的文件名就是 `__init__.py`，里面一个字都不用写。（本喵真跑过：**不摆它，屋外也喊得应**；摆上它是为了让这屋被整间请进来时**先跑这一页**。）\n2. **把本子写进屋里** —— 本子叫 `分鱼干.py`，内容就一个招式：\n\n```text\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n```\n\n   （写文件那套照上一题的写法来：`open(..., \"w\", encoding=\"utf-8\")`，内容先放进一串字里，本子里要换行的地方就在那串字里换行。）\n3. **告诉翻译官喵去仓库里找屋**。\n4. **站到屋外，连着屋名把 `平分` 请进来**，然后用它算一次。\n\n最后印**一行**：\n\n```text\n9 条鱼干分给 2 只猫，每只 3 条\n```\n\n最后那个数不许直接写死，得是 `平分(9, 2)` 算出来的。",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"kitty\")\nos.makedirs(屋)\n\n# ① 摆上迎宾的那一页：一个空的 __init__.py\n\n# ② 把本子 分鱼干.py 写进屋里\n\n# ③ 告诉翻译官喵去仓库里找屋\n\n# ④ 站到屋外，连着屋名把 平分 请进来，然后印那一行\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"kitty\")\nos.makedirs(屋)\n\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom kitty.分鱼干 import 平分\n\nprint(\"9 条鱼干分给 2 只猫，每只\", 平分(9, 2), \"条\")\n",
+      "expectedOutput": "9 条鱼干分给 2 只猫，每只 4 条",
+      "stdin": null,
+      "explanation": "四件事，一件比一件多知道一点喵。\n\n**① 迎宾那一页 `__init__.py` 是空的。** 摆完就撒手 —— 这一行念作「造个空文件，立刻关掉」。它**不是入场券**：本喵真跑过，没有这一页，屋外照样喊得应（翻译官喵管这种「只有文件夹、没有那一页」的屋叫**命名空间包**）。它管的是另一件事 —— 这屋被整间请进来的时候，**先跑的就是这一页**；空着，就等于迎宾的时候什么也不做喵。\n\n**② 本子的内容也是先放进一串字，再整个写进文件里。** 那串字里的换行就是文件里的换行，缩进（招式里那四个空格）也一并写进去 —— 所以写那串字的时候手下要留神，缩进少了翻译官喵会翻脸。\n\n**③ `sys.path.insert(0, 仓库)` 是给翻译官喵递话**：「去这个仓库里找屋」。默认它只看正门所在的那一层，屋住在临时仓库里，不递这句话它找不着。\n\n**④ 屋外喊名字，必须连着屋名喊。** 写全的这句里，`kitty` 是屋、`分鱼干` 是本子、`平分` 是你真正要的那个招式 —— 中间那些点念作「里面的」。\n\n回头看，工程结构这一课真正变的就是**喊法**：招式不再跟正门挤在一张桌上，而是住进屋、从屋外连着屋名喊；你每次用它，都在名字里写明它住在哪儿喵。",
+      "templateId": "py-s3-pkg-house-from-outside",
+      "params": {
+        "house": "kitty",
+        "a": 9,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:47.852Z",
+        "hash": "8b138d3c67cb0ff0"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-house-from-outside-007",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "本喵要你把一间屋从零搭起来，再站到屋外喊它一声。\n\n程序开头已经把仓库和屋文件夹造好了：\n\n```text\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"kitty\")\nos.makedirs(屋)\n```\n\n接下来四件事交给你（照这个顺序做）：\n\n1. **在屋门口摆上迎宾的那一页** —— 那一页的文件名就是 `__init__.py`，里面一个字都不用写。（本喵真跑过：**不摆它，屋外也喊得应**；摆上它是为了让这屋被整间请进来时**先跑这一页**。）\n2. **把本子写进屋里** —— 本子叫 `分鱼干.py`，内容就一个招式：\n\n```text\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n```\n\n   （写文件那套照上一题的写法来：`open(..., \"w\", encoding=\"utf-8\")`，内容先放进一串字里，本子里要换行的地方就在那串字里换行。）\n3. **告诉翻译官喵去仓库里找屋**。\n4. **站到屋外，连着屋名把 `平分` 请进来**，然后用它算一次。\n\n最后印**一行**：\n\n```text\n9 条鱼干分给 3 只猫，每只 3 条\n```\n\n最后那个数不许直接写死，得是 `平分(9, 3)` 算出来的。",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"kitty\")\nos.makedirs(屋)\n\n# ① 摆上迎宾的那一页：一个空的 __init__.py\n\n# ② 把本子 分鱼干.py 写进屋里\n\n# ③ 告诉翻译官喵去仓库里找屋\n\n# ④ 站到屋外，连着屋名把 平分 请进来，然后印那一行\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"kitty\")\nos.makedirs(屋)\n\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom kitty.分鱼干 import 平分\n\nprint(\"9 条鱼干分给 3 只猫，每只\", 平分(9, 3), \"条\")\n",
+      "expectedOutput": "9 条鱼干分给 3 只猫，每只 3 条",
+      "stdin": null,
+      "explanation": "四件事，一件比一件多知道一点喵。\n\n**① 迎宾那一页 `__init__.py` 是空的。** 摆完就撒手 —— 这一行念作「造个空文件，立刻关掉」。它**不是入场券**：本喵真跑过，没有这一页，屋外照样喊得应（翻译官喵管这种「只有文件夹、没有那一页」的屋叫**命名空间包**）。它管的是另一件事 —— 这屋被整间请进来的时候，**先跑的就是这一页**；空着，就等于迎宾的时候什么也不做喵。\n\n**② 本子的内容也是先放进一串字，再整个写进文件里。** 那串字里的换行就是文件里的换行，缩进（招式里那四个空格）也一并写进去 —— 所以写那串字的时候手下要留神，缩进少了翻译官喵会翻脸。\n\n**③ `sys.path.insert(0, 仓库)` 是给翻译官喵递话**：「去这个仓库里找屋」。默认它只看正门所在的那一层，屋住在临时仓库里，不递这句话它找不着。\n\n**④ 屋外喊名字，必须连着屋名喊。** 写全的这句里，`kitty` 是屋、`分鱼干` 是本子、`平分` 是你真正要的那个招式 —— 中间那些点念作「里面的」。\n\n回头看，工程结构这一课真正变的就是**喊法**：招式不再跟正门挤在一张桌上，而是住进屋、从屋外连着屋名喊；你每次用它，都在名字里写明它住在哪儿喵。",
+      "templateId": "py-s3-pkg-house-from-outside",
+      "params": {
+        "house": "kitty",
+        "a": 9,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:56:00.101Z",
+        "hash": "aadbc00bf2422d96"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-module-calls-module-000",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "上一题只有一间屋、一本本子。这次屋里有**两本**，而且它们要互相请。\n\n程序开头照旧把屋搭好了（屋叫 `miaow`，门牌也挂上了），本子 `分鱼干.py` 也已经写好放在屋里了：\n\n```text\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n```\n\n你要加的是**第二本本子**，叫 `记账.py`，内容**一字不差**照抄下面这份：\n\n```text\nfrom miaow.分鱼干 import 平分\n\n\ndef 一笔账(总数, 猫数):\n    return \"记账本上写着：\" + str(总数) + \" 条鱼干，\" + str(猫数) + \" 只猫，每只 \" + str(平分(总数, 猫数)) + \" 条\"\n```\n\n看清楚它开头那行喵：**它在屋里，喊旁边那本本子的时候照样把屋名写全了。**\n\n最后，正门那边站到屋外，连着屋名把 `一笔账` 请进来，喂 6 和 2，把它叼回来的那句印出来。\n\n要印的行：\n\n```text\n记账本上写着：6 条鱼干，2 只猫，每只 3 条\n```",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n分鱼干内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(分鱼干内容)\n\n# ① 把 记账.py 写进屋里（内容照上面那份抄）\n\n# ② 告诉翻译官喵去仓库里找屋\n\n# ③ 站到屋外，连着屋名把 一笔账 请进来，喂 6 和 2，印出来\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n分鱼干内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(分鱼干内容)\n\n记账内容 = '''from miaow.分鱼干 import 平分\n\n\ndef 一笔账(总数, 猫数):\n    return \"记账本上写着：\" + str(总数) + \" 条鱼干，\" + str(猫数) + \" 只猫，每只 \" + str(平分(总数, 猫数)) + \" 条\"\n'''\nwith open(os.path.join(屋, \"记账.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(记账内容)\n\nsys.path.insert(0, 仓库)\nfrom miaow.记账 import 一笔账\n\nprint(一笔账(6, 2))\n",
+      "expectedOutput": "记账本上写着：6 条鱼干，2 只猫，每只 3 条",
+      "stdin": null,
+      "explanation": "这一题的要害在那行 `from miaow.分鱼干 import 平分` 喵。\n\n**它在屋里，完全可以直接写 `from 分鱼干 import 平分`** —— 同一个屋里，两本本子互相喊，翻译官喵是认得的。本喵故意写成写全的那一种，是想让你上手就养成习惯：\n\n- 写全的 → 本子将来挪了屋、或者屋改了名字，**只要改一处**；\n- 省屋名的 → 到时候你得挨个本子翻一遍，还不知道漏没漏。\n\n这道题多出来的一件事是：**请进来的东西会连带把它自己请的东西也请进来**。正门只喊了一句 `一笔账`，翻译官喵顺着 `记账` 屋里的那句喊话，自己把 `分鱼干` 也请进来了 —— 你不用管这层，它自己会把账结平。\n\n还有一处是拼接：本子里的那句 `一笔账` 拿 `str(...)` 把数变成一串字，再用 `+` 一段段接起来。本喵在屋里写它的时候，就是照「先写好一个模子，再把几处数填进去」的路子搭的。\n\n正门那一层，本喵建议你记住**厚度**这件事：正门只干三件事 —— 递话（`sys.path.insert`）、喊人（那句 `import`）、印结果。真本事全都住在屋里。正门越薄，越不容易坏喵。",
+      "templateId": "py-s3-pkg-module-calls-module",
+      "params": {
+        "a": 6,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:52.864Z",
+        "hash": "0f754e2b2f6e9ba5"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-module-calls-module-001",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "上一题只有一间屋、一本本子。这次屋里有**两本**，而且它们要互相请。\n\n程序开头照旧把屋搭好了（屋叫 `miaow`，门牌也挂上了），本子 `分鱼干.py` 也已经写好放在屋里了：\n\n```text\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n```\n\n你要加的是**第二本本子**，叫 `记账.py`，内容**一字不差**照抄下面这份：\n\n```text\nfrom miaow.分鱼干 import 平分\n\n\ndef 一笔账(总数, 猫数):\n    return \"记账本上写着：\" + str(总数) + \" 条鱼干，\" + str(猫数) + \" 只猫，每只 \" + str(平分(总数, 猫数)) + \" 条\"\n```\n\n看清楚它开头那行喵：**它在屋里，喊旁边那本本子的时候照样把屋名写全了。**\n\n最后，正门那边站到屋外，连着屋名把 `一笔账` 请进来，喂 6 和 3，把它叼回来的那句印出来。\n\n要印的行：\n\n```text\n记账本上写着：6 条鱼干，3 只猫，每只 3 条\n```",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n分鱼干内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(分鱼干内容)\n\n# ① 把 记账.py 写进屋里（内容照上面那份抄）\n\n# ② 告诉翻译官喵去仓库里找屋\n\n# ③ 站到屋外，连着屋名把 一笔账 请进来，喂 6 和 3，印出来\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n分鱼干内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(分鱼干内容)\n\n记账内容 = '''from miaow.分鱼干 import 平分\n\n\ndef 一笔账(总数, 猫数):\n    return \"记账本上写着：\" + str(总数) + \" 条鱼干，\" + str(猫数) + \" 只猫，每只 \" + str(平分(总数, 猫数)) + \" 条\"\n'''\nwith open(os.path.join(屋, \"记账.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(记账内容)\n\nsys.path.insert(0, 仓库)\nfrom miaow.记账 import 一笔账\n\nprint(一笔账(6, 3))\n",
+      "expectedOutput": "记账本上写着：6 条鱼干，3 只猫，每只 2 条",
+      "stdin": null,
+      "explanation": "这一题的要害在那行 `from miaow.分鱼干 import 平分` 喵。\n\n**它在屋里，完全可以直接写 `from 分鱼干 import 平分`** —— 同一个屋里，两本本子互相喊，翻译官喵是认得的。本喵故意写成写全的那一种，是想让你上手就养成习惯：\n\n- 写全的 → 本子将来挪了屋、或者屋改了名字，**只要改一处**；\n- 省屋名的 → 到时候你得挨个本子翻一遍，还不知道漏没漏。\n\n这道题多出来的一件事是：**请进来的东西会连带把它自己请的东西也请进来**。正门只喊了一句 `一笔账`，翻译官喵顺着 `记账` 屋里的那句喊话，自己把 `分鱼干` 也请进来了 —— 你不用管这层，它自己会把账结平。\n\n还有一处是拼接：本子里的那句 `一笔账` 拿 `str(...)` 把数变成一串字，再用 `+` 一段段接起来。本喵在屋里写它的时候，就是照「先写好一个模子，再把几处数填进去」的路子搭的。\n\n正门那一层，本喵建议你记住**厚度**这件事：正门只干三件事 —— 递话（`sys.path.insert`）、喊人（那句 `import`）、印结果。真本事全都住在屋里。正门越薄，越不容易坏喵。",
+      "templateId": "py-s3-pkg-module-calls-module",
+      "params": {
+        "a": 6,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:48.280Z",
+        "hash": "0f7d3f2e1f75977e"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-module-calls-module-002",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "上一题只有一间屋、一本本子。这次屋里有**两本**，而且它们要互相请。\n\n程序开头照旧把屋搭好了（屋叫 `miaow`，门牌也挂上了），本子 `分鱼干.py` 也已经写好放在屋里了：\n\n```text\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n```\n\n你要加的是**第二本本子**，叫 `记账.py`，内容**一字不差**照抄下面这份：\n\n```text\nfrom miaow.分鱼干 import 平分\n\n\ndef 一笔账(总数, 猫数):\n    return \"记账本上写着：\" + str(总数) + \" 条鱼干，\" + str(猫数) + \" 只猫，每只 \" + str(平分(总数, 猫数)) + \" 条\"\n```\n\n看清楚它开头那行喵：**它在屋里，喊旁边那本本子的时候照样把屋名写全了。**\n\n最后，正门那边站到屋外，连着屋名把 `一笔账` 请进来，喂 9 和 2，把它叼回来的那句印出来。\n\n要印的行：\n\n```text\n记账本上写着：9 条鱼干，2 只猫，每只 3 条\n```",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n分鱼干内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(分鱼干内容)\n\n# ① 把 记账.py 写进屋里（内容照上面那份抄）\n\n# ② 告诉翻译官喵去仓库里找屋\n\n# ③ 站到屋外，连着屋名把 一笔账 请进来，喂 9 和 2，印出来\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n分鱼干内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(分鱼干内容)\n\n记账内容 = '''from miaow.分鱼干 import 平分\n\n\ndef 一笔账(总数, 猫数):\n    return \"记账本上写着：\" + str(总数) + \" 条鱼干，\" + str(猫数) + \" 只猫，每只 \" + str(平分(总数, 猫数)) + \" 条\"\n'''\nwith open(os.path.join(屋, \"记账.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(记账内容)\n\nsys.path.insert(0, 仓库)\nfrom miaow.记账 import 一笔账\n\nprint(一笔账(9, 2))\n",
+      "expectedOutput": "记账本上写着：9 条鱼干，2 只猫，每只 4 条",
+      "stdin": null,
+      "explanation": "这一题的要害在那行 `from miaow.分鱼干 import 平分` 喵。\n\n**它在屋里，完全可以直接写 `from 分鱼干 import 平分`** —— 同一个屋里，两本本子互相喊，翻译官喵是认得的。本喵故意写成写全的那一种，是想让你上手就养成习惯：\n\n- 写全的 → 本子将来挪了屋、或者屋改了名字，**只要改一处**；\n- 省屋名的 → 到时候你得挨个本子翻一遍，还不知道漏没漏。\n\n这道题多出来的一件事是：**请进来的东西会连带把它自己请的东西也请进来**。正门只喊了一句 `一笔账`，翻译官喵顺着 `记账` 屋里的那句喊话，自己把 `分鱼干` 也请进来了 —— 你不用管这层，它自己会把账结平。\n\n还有一处是拼接：本子里的那句 `一笔账` 拿 `str(...)` 把数变成一串字，再用 `+` 一段段接起来。本喵在屋里写它的时候，就是照「先写好一个模子，再把几处数填进去」的路子搭的。\n\n正门那一层，本喵建议你记住**厚度**这件事：正门只干三件事 —— 递话（`sys.path.insert`）、喊人（那句 `import`）、印结果。真本事全都住在屋里。正门越薄，越不容易坏喵。",
+      "templateId": "py-s3-pkg-module-calls-module",
+      "params": {
+        "a": 9,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-10-20T17:28:48.720Z",
+        "hash": "b7a34ad16c9c2edd"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-module-calls-module-003",
+      "type": "codewrite",
+      "lang": "python",
+      "stem": "上一题只有一间屋、一本本子。这次屋里有**两本**，而且它们要互相请。\n\n程序开头照旧把屋搭好了（屋叫 `miaow`，门牌也挂上了），本子 `分鱼干.py` 也已经写好放在屋里了：\n\n```text\ndef 平分(总数, 猫数):\n    return 总数 // 猫数\n```\n\n你要加的是**第二本本子**，叫 `记账.py`，内容**一字不差**照抄下面这份：\n\n```text\nfrom miaow.分鱼干 import 平分\n\n\ndef 一笔账(总数, 猫数):\n    return \"记账本上写着：\" + str(总数) + \" 条鱼干，\" + str(猫数) + \" 只猫，每只 \" + str(平分(总数, 猫数)) + \" 条\"\n```\n\n看清楚它开头那行喵：**它在屋里，喊旁边那本本子的时候照样把屋名写全了。**\n\n最后，正门那边站到屋外，连着屋名把 `一笔账` 请进来，喂 9 和 3，把它叼回来的那句印出来。\n\n要印的行：\n\n```text\n记账本上写着：9 条鱼干，3 只猫，每只 3 条\n```",
+      "starter": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n分鱼干内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(分鱼干内容)\n\n# ① 把 记账.py 写进屋里（内容照上面那份抄）\n\n# ② 告诉翻译官喵去仓库里找屋\n\n# ③ 站到屋外，连着屋名把 一笔账 请进来，喂 9 和 3，印出来\n",
+      "referenceSolution": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n分鱼干内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(分鱼干内容)\n\n记账内容 = '''from miaow.分鱼干 import 平分\n\n\ndef 一笔账(总数, 猫数):\n    return \"记账本上写着：\" + str(总数) + \" 条鱼干，\" + str(猫数) + \" 只猫，每只 \" + str(平分(总数, 猫数)) + \" 条\"\n'''\nwith open(os.path.join(屋, \"记账.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(记账内容)\n\nsys.path.insert(0, 仓库)\nfrom miaow.记账 import 一笔账\n\nprint(一笔账(9, 3))\n",
+      "expectedOutput": "记账本上写着：9 条鱼干，3 只猫，每只 3 条",
+      "stdin": null,
+      "explanation": "这一题的要害在那行 `from miaow.分鱼干 import 平分` 喵。\n\n**它在屋里，完全可以直接写 `from 分鱼干 import 平分`** —— 同一个屋里，两本本子互相喊，翻译官喵是认得的。本喵故意写成写全的那一种，是想让你上手就养成习惯：\n\n- 写全的 → 本子将来挪了屋、或者屋改了名字，**只要改一处**；\n- 省屋名的 → 到时候你得挨个本子翻一遍，还不知道漏没漏。\n\n这道题多出来的一件事是：**请进来的东西会连带把它自己请的东西也请进来**。正门只喊了一句 `一笔账`，翻译官喵顺着 `记账` 屋里的那句喊话，自己把 `分鱼干` 也请进来了 —— 你不用管这层，它自己会把账结平。\n\n还有一处是拼接：本子里的那句 `一笔账` 拿 `str(...)` 把数变成一串字，再用 `+` 一段段接起来。本喵在屋里写它的时候，就是照「先写好一个模子，再把几处数填进去」的路子搭的。\n\n正门那一层，本喵建议你记住**厚度**这件事：正门只干三件事 —— 递话（`sys.path.insert`）、喊人（那句 `import`）、印结果。真本事全都住在屋里。正门越薄，越不容易坏喵。",
+      "templateId": "py-s3-pkg-module-calls-module",
+      "params": {
+        "a": 9,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:53.075Z",
+        "hash": "50a2b58657bcb039"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-outside-needs-house-000",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "下面这段程序现场搭出一间屋：屋叫 `miaow`，屋门口挂着那块空的 `__init__.py`，屋里住着本子 `分鱼干.py`。搭完以后它**站到屋外**喊一声，想把 `平分` 请出来用。\n\n结果它当场躺下了，报的是「**没有叫这个名字的盒子**」。本喵查了半天：本子明明在屋里躺着，牌子也挂得好好的。\n\n你把这句喊话改对。改好以后程序该跑通，印出 6 条鱼干分给 2 只猫之后平分的结果。",
+      "brokenCode": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom 分鱼干 import 平分\n\nprint(\"6 条鱼干分给 2 只猫，每只\", 平分(6, 2), \"条\")\n",
+      "referenceFix": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom miaow.分鱼干 import 平分\n\nprint(\"6 条鱼干分给 2 只猫，每只\", 平分(6, 2), \"条\")\n",
+      "expectedOutput": "6 条鱼干分给 2 只猫，每只 3 条",
+      "stdin": null,
+      "explanation": "这是「站到屋外喊」最经典的一跤喵。\n\n翻译官喵找本子的时候，是**从仓库根上**一格一格找的。仓库根上有没有一个叫 `分鱼干` 的盒子？没有 —— 真正的本子在 `miaow` 这间屋里面。所以它老老实实回你一句：\n\n```text\nModuleNotFoundError: No module named '分鱼干'\n```\n\n念作「没有叫 `分鱼干` 的盒子」。注意它报的是**你喊的那个名字**，不是「屋里没这本子」—— 牌子挂着、本子躺着，都没问题，有问题的是**喊法**。\n\n改法是把屋名连上去：\n\n```text\nfrom miaow.分鱼干 import 平分\n```\n\n屋名在前、本子名在后，中间点一个点。这句话念作「从 `miaow` 这间屋里、把 `分鱼干` 这本子里的 `平分` 请进来」。\n\n有一条本喵建议你从现在起就照做：**哪怕在屋里，也从屋名喊起**。屋里的本子互相喊，写不写屋名其实都行；但将来屋改了名字、或者某个本子挪进了另一间屋，**写全的那种只要改一处**，省下的都是你自己的时间喵。",
+      "templateId": "py-s3-pkg-outside-needs-house",
+      "params": {
+        "a": 6,
+        "b": 2
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:50.324Z",
+        "hash": "4e70c038d5158e11"
+      }
+    },
+    {
+      "id": "bank-py-s3-pkg-outside-needs-house-003",
+      "type": "codefix",
+      "lang": "python",
+      "stem": "下面这段程序现场搭出一间屋：屋叫 `miaow`，屋门口挂着那块空的 `__init__.py`，屋里住着本子 `分鱼干.py`。搭完以后它**站到屋外**喊一声，想把 `平分` 请出来用。\n\n结果它当场躺下了，报的是「**没有叫这个名字的盒子**」。本喵查了半天：本子明明在屋里躺着，牌子也挂得好好的。\n\n你把这句喊话改对。改好以后程序该跑通，印出 9 条鱼干分给 3 只猫之后平分的结果。",
+      "brokenCode": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom 分鱼干 import 平分\n\nprint(\"9 条鱼干分给 3 只猫，每只\", 平分(9, 3), \"条\")\n",
+      "referenceFix": "import os, sys, tempfile\n\n仓库 = tempfile.mkdtemp()\n屋 = os.path.join(仓库, \"miaow\")\nos.makedirs(屋)\nopen(os.path.join(屋, \"__init__.py\"), \"w\").close()\n\n本子内容 = '''def 平分(总数, 猫数):\n    return 总数 // 猫数\n'''\nwith open(os.path.join(屋, \"分鱼干.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(本子内容)\n\nsys.path.insert(0, 仓库)\nfrom miaow.分鱼干 import 平分\n\nprint(\"9 条鱼干分给 3 只猫，每只\", 平分(9, 3), \"条\")\n",
+      "expectedOutput": "9 条鱼干分给 3 只猫，每只 3 条",
+      "stdin": null,
+      "explanation": "这是「站到屋外喊」最经典的一跤喵。\n\n翻译官喵找本子的时候，是**从仓库根上**一格一格找的。仓库根上有没有一个叫 `分鱼干` 的盒子？没有 —— 真正的本子在 `miaow` 这间屋里面。所以它老老实实回你一句：\n\n```text\nModuleNotFoundError: No module named '分鱼干'\n```\n\n念作「没有叫 `分鱼干` 的盒子」。注意它报的是**你喊的那个名字**，不是「屋里没这本子」—— 牌子挂着、本子躺着，都没问题，有问题的是**喊法**。\n\n改法是把屋名连上去：\n\n```text\nfrom miaow.分鱼干 import 平分\n```\n\n屋名在前、本子名在后，中间点一个点。这句话念作「从 `miaow` 这间屋里、把 `分鱼干` 这本子里的 `平分` 请进来」。\n\n有一条本喵建议你从现在起就照做：**哪怕在屋里，也从屋名喊起**。屋里的本子互相喊，写不写屋名其实都行；但将来屋改了名字、或者某个本子挪进了另一间屋，**写全的那种只要改一处**，省下的都是你自己的时间喵。",
+      "templateId": "py-s3-pkg-outside-needs-house",
+      "params": {
+        "a": 9,
+        "b": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:19:50.634Z",
+        "hash": "7647f0e333207d46"
+      }
+    }
+  ]
+}

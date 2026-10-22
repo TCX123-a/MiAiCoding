@@ -1,0 +1,27 @@
+{
+  "templateId": "py-s2-file-mode-r",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-04",
+  "type": "codefix",
+  "concept": [
+    "open 模式",
+    "写文件",
+    "with"
+  ],
+  "instances": 3,
+  "params": {
+    "word": {
+      "kind": "pick",
+      "values": [
+        "小鱼干藏好了",
+        "今天也要加油喵",
+        "档案室已上锁"
+      ]
+    }
+  },
+  "stemTemplate": "本喵想把一句话记进档案室，然后再念出来喵。\n\n可这段代码一跑就报错了 —— 它想往一份**还不存在的**档案里写字。\n\n你帮本喵改对：先把那句话写进 `note.txt`，再读回来打印一遍。打印出来的就是那句话本身，前后别多出空行。",
+  "brokenCodeTemplate": "f = open(\"note.txt\", \"r\", encoding=\"utf-8\")\nf.write(\"{word}\\n\")\nf.close()\n",
+  "referenceFixTemplate": "with open(\"note.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(\"{word}\\n\")\n\nwith open(\"note.txt\", encoding=\"utf-8\") as f:\n    print(f.read().strip())\n",
+  "explanationTemplate": "`open()` 括号里的第二个位置是**「本喵打算干什么」**喵：\n\n- `\"r\"` = 只读。**这份档案必须已经存在**，不存在就当场报错 —— 你看到的就是这一条。\n- `\"w\"` = 只写。它会**新建**一份（已经有的会被**清空**！），然后从开头写起。\n- `\"a\"` = 接着写。在末尾追加，不动原来的内容。\n\n⚠️ **最坑的是 `\"w\"` 会清空原有内容。** 只想加一句话却写成 `\"w\"`，整份档案就没了 —— 而且**不报错**，你只会发现东西少了。本意是「加上去」的时候，就不该出现 `\"w\"`。\n\n⚠️ 还有：**`with` 是帮你关档案的**。写出这一块以后，不管中间是正常跑完还是半路出错，它都会把档案关掉。忘了关的话，写进去的内容可能还卡在缓冲区里没落盘，别的程序读到的就是半截。\n\n⚠️ 题面里没写 `\"r\"` 也是合法的 —— 那个位置空着不写，就默认是 `\"r\"`。所以本喵写的 `open(\"note.txt\", encoding=\"utf-8\")` 就是「只读」的意思。"
+}

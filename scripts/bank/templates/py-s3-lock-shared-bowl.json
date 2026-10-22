@@ -1,0 +1,21 @@
+{
+  "templateId": "py-s3-lock-shared-bowl",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-03",
+  "type": "codewrite",
+  "concept": ["threading.Lock", "共享数据", "with 锁"],
+  "instances": 6,
+  "params": {
+    "cats": { "kind": "pick", "values": [3, 4] }
+  },
+  "stdinSpec": {
+    "kind": "ints",
+    "count": 1,
+    "min": 20000,
+    "max": 60000
+  },
+  "stemTemplate": "本喵要请 **{cats}** 只小猫**一起**往**同一只大碗**里搬鱼干。\n\n请你写个程序：\n\n1. **读进来一个数**（第一行，也只有这一行），它表示**每只小猫要搬多少趟**。\n2. 起 **{cats}** 只小猫，**每只**都要搬**那么多趟**：每搬一趟，就往那只**大家共用**的大碗里**加 1 条**。\n3. 本喵（主线程）要**等所有小猫都搬完**，再印出大碗里一共有多少条（就印一个数）。\n\n⚠️ 这只碗是**大家的**，本喵给代码备了一把钥匙：`锁 = threading.Lock()`。伸手动这只碗之前要先**攥住钥匙**，动完再**松开** —— 这样保证任何时刻**只有一只猫**在动它。不攥钥匙的话，两只小猫有可能读到同一个旧数、各加一条、再各写回去，那一趟就白搬了。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另一个趟数**喵，别把答案写死～）",
+  "referenceSolutionTemplate": "import threading\n\n趟数 = int(input())\n\n锁 = threading.Lock()\n大碗 = [0]\n\n\ndef 搬(几趟):\n    for _ in range(几趟):\n        with 锁:\n            大碗[0] = 大碗[0] + 1\n\n\n猫们 = []\nfor _ in range({cats}):\n    一只猫 = threading.Thread(target=搬, args=(趟数,))\n    猫们.append(一只猫)\n\nfor 一只猫 in 猫们:\n    一只猫.start()\n\nfor 一只猫 in 猫们:\n    一只猫.join()\n\nprint(大碗[0])\n",
+  "explanationTemplate": "这道题的核心是那句「**这只碗是大家的**」喵。\n\n一个东西只要**好几只小猫都要动**，它就危险了：加一条这件事看着简单，其实是三步 —— **读到碗里现在的数 → 加一 → 写回去**。这三步**不是一口气做完的**，中间随时可能被换下去（让别的猫跑一会儿）。于是完全可能出现这种事：两只猫都读到了同一个旧数，各自加一，再各自写回去 —— **搬了两趟，碗里只多了 1**。\n\n⚠️ 这种错不一定**每次**都出现（要看两只猫当时正好跑到哪一步），所以它比崩溃难查得多：跑一次对，不代表写对了。\n\n本喵这里用的是 `with 锁:` —— 进这块的时候自动攥住钥匙，出来的时候自动松开（**哪怕中途摔了也会松开**），所以比手写 `acquire()` / `release()` 更不容易漏。\n\n还有一点：末尾那两段，**先全 `start()`、再全 `join()`**，一只都不能漏。少等一只，印出来的数就是少算了的 —— 而且同样是「有时候对、有时候错」。"
+}

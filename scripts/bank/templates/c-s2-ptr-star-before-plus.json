@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-ptr-star-before-plus",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-01",
+  "type": "codefix",
+  "concept": ["指针算术", "解引用", "运算符优先级", "星号"],
+  "instances": 2,
+  "params": {
+    "base": { "kind": "int", "min": 1, "max": 4 },
+    "step": { "kind": "int", "min": 2, "max": 5 }
+  },
+  "stemTemplate": "本喵在架子上摆了 3 只碗：第 0 只碗里放着 {base} 条小鱼干，往后每只碗都比前一只多 {step} 条。\n\n程序要用一块牌子把这三只碗从第 0 只起一只一只报出来，格式是 `第 i 只：v`（`i` 是碗的编号，从 0 数起，`v` 是那只碗里的数）。\n\n可它跑出来第 1 只碗的数不对喵 —— 翻译官喵一声没吭，代码照样编了出来。你帮本喵看看是哪儿写歪了，把它改好。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n    int *p = bowls;\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = {base} + i * {step};\n    }\n\n    printf(\"第 0 只：%d\\n\", *p);\n    printf(\"第 1 只：%d\\n\", *p + 1);\n    printf(\"第 2 只：%d\\n\", *(p + 2));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[3];\n    int *p = bowls;\n\n    for (int i = 0; i < 3; i++) {\n        bowls[i] = {base} + i * {step};\n    }\n\n    printf(\"第 0 只：%d\\n\", *p);\n    printf(\"第 1 只：%d\\n\", *(p + 1));\n    printf(\"第 2 只：%d\\n\", *(p + 2));\n    return 0;\n}\n",
+  "explanationTemplate": "三只碗里的数分别是 {base}、还有往后每一步加 {step} 得到的数，所以第 1 只碗里的数**一定**比第 0 只大 {step} 喵。\n\n出问题的是第 1 只那一行，它写的是 `*p + 1`。这个写法要**从星号开始读**：星号先跟紧它右边那一样东西（这里就是 `p`），于是它先把 `p` 指着的第 0 只碗里的数拿出来，**再给这个数加 1**。加的是碗里的数，跟门牌号一点关系都没有 —— 所以才得到「第 0 只的数 + 1」，而不是第 1 只的数。\n\n想让 `+ 1` 落在**门牌号**上，就得给加法套一对括号：`*(p + 1)`。括号先把门牌号算好（「往后挪一只」），外面的星号再去吃它，拿到的才是第 1 只碗里的数。\n\n这条规矩是本课的地基，收下喵：**星号只吃紧挨着它的那一样东西。** `*p + 1` 里星号只吃了 `p`；`*(p + 1)` 里被吃掉的是一整个 `(p + 1)`。\n\n⚠️ 最要命的一点：**这个坑翻译官喵是不出声的。** 本喵真把两版都跑过一遍，`-Wall` 开着，它一个字都没说 —— 因为 `*p + 1` 和 `*(p + 1)` **两种写法本身都合法**，只是意思不同。代码照样编出来、照样跑完，只有数字悄悄错掉。这种错没有闸门替你拦，只能靠你自己盯紧那对括号。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s2-03-const-reader",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-03",
+  "type": "codewrite",
+  "concept": ["只读招式尾巴上的 const", "带封印的猫", "能动的招式和只看的招式"],
+  "instances": 6,
+  "params": {
+    "nameA": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "nameB": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 1, "max": 5 },
+  "stemTemplate": "本喵想看清楚**只看看的招式**和**要动格子的招式**有什么区别。投喂口会递进来**两个数**（一行一个）：第一只猫的条数、第二只猫的条数。\n\n请你这么办：\n\n1. **画图纸**：一张叫 `Cat` 的图纸，两栏家常 —— `name` 装一串字、`fish` 装一个整数；写一个**出生招式**，用出生清单把两样装好；\n2. 图上写**两招**：\n   - `show`：印一行 `XX 有 N 条`，尾巴上带 `const`（它只看看，一格都不碰）；\n   - `eat`：把条数加一，并印一行 `XX 吃掉了一条`，尾巴上**不带** `const`；\n3. `main` 里的顺序是：\n   - 生一只**普通的**猫叫 `{nameA}`，条数用**第一个数**；喊 `show`、再喊 `eat`、再喊 `show`；\n   - 再生一只**带封印的**猫叫 `{nameB}`，条数用**第二个数**；只喊一次 `show`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void show() const {\n        cout << name << \" 有 \" << fish << \" 条\" << endl;\n    }\n\n    void eat() {\n        fish = fish + 1;\n        cout << name << \" 吃掉了一条\" << endl;\n    }\n};\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat c1(\"{nameA}\", a);\n    c1.show();\n    c1.eat();\n    c1.show();\n\n    const Cat c2(\"{nameB}\", b);\n    c2.show();\n    return 0;\n}\n",
+  "explanationTemplate": "带封印的猫（`const Cat`）身上**每一格都不许改**，所以它只喊得动**尾巴上带 `const` 的招式**喵。\n\n- `show` 的尾巴上有 `const`，等于立了张字据「本喵只看看，一格不动」—— 带封印的猫递得出一个「不打算改你」的自己，这一招就接得了这活。\n- `eat` 的尾巴上没有 `const`，它要往格子里写东西 —— 带封印的猫接不了。**这一步不用试**：翻译官喵在你看不到的那道关上就把它拦下了（它会说 `discards qualifiers`）。\n\n另外注意 `show` 喊了**两次**：第一次是吃之前，第二次是吃之后。第二次印出来的条数比第一次多一 —— 因为 `eat` 真的把格子改掉了。\n\n⚠️ 别给 `eat` 也补上 `const`：它要动格子，补了当场编不过。`const` 是**承诺**，不是装饰喵。"
+}

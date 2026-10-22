@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-try-wrong-guard",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-14",
+  "type": "codefix",
+  "concept": ["翻车", "接错了路", "ArithmeticException", "catch"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 5, "max": 8 }
+  },
+  "stemTemplate": "本喵守着「一串字变不成数」那一路车，可这次翻的**不是那一路**喵 —— 一只猫都没有，这份账除不了。结果 `catch` 里的活儿一句没干，程序照样**断气**。\n\n你帮本喵把这一路接住：翻车了就印 `没有猫来分，这条算不了喵`，然后照常印 `分账结束喵`。\n\n（这两样本喵是写死的：`fish = {a}`、`cats = 0`。跑一遍，断气那行字里会写这一路车**真正的名字** —— 照着它改喵。）",
+  "brokenCodeTemplate": "public class Main {\n    public static void main(String[] args) {\n        int fish = {a};\n        int cats = 0;\n        try {\n            System.out.println(fish / cats);\n        } catch (NumberFormatException e) {\n            System.out.println(\"这串字变不成数字喵\");\n        }\n        System.out.println(\"分账结束喵\");\n    }\n}\n",
+  "referenceFixTemplate": "public class Main {\n    public static void main(String[] args) {\n        int fish = {a};\n        int cats = 0;\n        try {\n            System.out.println(fish / cats);\n        } catch (ArithmeticException e) {\n            System.out.println(\"没有猫来分，这条算不了喵\");\n        }\n        System.out.println(\"分账结束喵\");\n    }\n}\n",
+  "explanationTemplate": "这一处的关键不是「有没有 `catch`」，是「**手里这块牌子认不认这一路车**」喵。断气那一行的原话是：\n\n```text\nException in thread \"main\" java.lang.ArithmeticException: / by zero\n```\n\n那是「算数算不成」这一路车的名字：`ArithmeticException`。本喵手里举的牌子写的是 `NumberFormatException`（一串字变不成数那一路）—— 车不认这块牌子，`catch` 里那句一个字没跑，程序照旧断气。\n\n改法就是把括号里的名字换成它真翻的那一路：`catch (ArithmeticException e)`。\n\n**判据一句话：程序断气、而 `catch` 里的活儿一句没干 —— 第一个要查的就是括号里的名字对不对。** 拿不准的时候，看断气那行字写的是什么，那上面就是这一路车真正的名字喵。"
+}

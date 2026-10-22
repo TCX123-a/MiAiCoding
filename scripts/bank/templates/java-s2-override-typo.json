@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s2-override-typo",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-02",
+  "type": "codefix",
+  "concept": ["重写", "@Override", "super.speak", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵写了一张小图纸，想在大图纸那一招之外**先请大图纸出一声、再补上本喵自己那句**。可翻译官喵把爪子拍下来了，程序**一趟都没跑起来**。\n\n请你帮本喵改好。改好之后，程序该印出这两行：\n\n```text\n{name}发出了一声叫\n{name}：喵～\n```\n\n（第一行是大图纸那一版的样子，第二行才是本喵补的那句。）",
+  "brokenCodeTemplate": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speek() {\n        super.speak();\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.speak();\n    }\n}\n",
+  "referenceFixTemplate": "class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n\n    void speak() {\n        System.out.println(name + \"发出了一声叫\");\n    }\n}\n\nclass Cat extends Animal {\n    Cat(String name) {\n        super(name);\n    }\n\n    @Override\n    void speak() {\n        super.speak();\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.speak();\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话只有一句：**`method does not override or implement a method from a supertype`** —— 念起来是「本喵这一手，上面**根本没有可盖的**」。\n\n它指的是那一行 `@Override`。这张小纸条的意思本来是「本喵这一手是**故意**要盖掉上面某一版的」，可翻译官拿着本喵写下的名字往上找了一圈：**大图纸上压根没有叫这个名字的一手**，于是当场翻脸。\n\n症结就是**名字手滑多打了一个字母** —— 写成了 `speek`，而大图纸上叫 `speak`。名字不一样，翻译官就当成「本喵新写的一张招式」，新招式没有什么可盖的，`@Override` 那张纸条就成了假的。\n\n把名字改对之后，本喵想要的行为才出得来：\n\n- `super.speak();` 请上一层把大图纸那一版跑一遍 → 印出第一行；\n- 接着本喵自己那行印出第二行。\n\n**这张小纸条值钱就值在这儿**：要是没写 `@Override`，同一个拼写错会**安安静静地溜过去** —— 小图纸上多出一招没人喊得动的 `speek`，而 `main` 里喊 `speak` 走的还是大图纸那一版，程序一声不吭、结果就是不对。所以本喵每次盖掉大图纸某一版，都写上它喵。\n\n顺手记：`super.speak()` 请的是**上一层那一版**，不是再喊一次自己 —— 写在盖掉的那一招里面也是安全的，不会绕回去。"
+}

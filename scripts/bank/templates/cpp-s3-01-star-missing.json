@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-01-star-missing",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-01",
+  "type": "codefix",
+  "concept": ["爪子取货要加星星", "少了星星编不过", "报错里点名的就是爪子"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [3, 6] },
+    "b": { "kind": "pick", "values": [8, 1] },
+    "c": { "kind": "pick", "values": [5, 9] }
+  },
+  "stemTemplate": "本喵写了一段走柜子的代码，想让柜子里的货**一格印一行**。可它**编不过** —— 翻译官喵拦在了印货那一句上。\n\n你帮本喵把它改对：**每一轮印出来的都该是那一格里的货**。往柜子里塞货那几句不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back({a});\n    v.push_back({b});\n    v.push_back({c});\n    for (auto it = v.begin(); it != v.end(); ++it) {\n        cout << it << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> v;\n    v.push_back({a});\n    v.push_back({b});\n    v.push_back({c});\n    for (auto it = v.begin(); it != v.end(); ++it) {\n        cout << *it << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题错在取货那一句喵。\n\n那一圈里有两个记号，差一个字符、意思差一整格货：\n\n- `it` 是**爪子本身**（一张指着哪一格的牌子）；\n- `*it` 才是「指着的那一格**里的货**」。\n\n往 `<<` 的右半边递一张牌子，翻译官喵认不出这是什么、也印不出来 —— 它的原话里有 `no match for 'operator<<'`，下面还会点出右边那一坨的本名 `__gnu_cxx::__normal_iterator`（就是本喵说的「爪子」）。这句原话里那句 `no match` 念作「**没找着能这么用的招**」，所以看到它，先低头看 `<<` 右边：**该有的星星是不是漏了。**\n\n⚠️ 改完以后每一轮印出来的应该是**那一格**的货（第一轮是塞进去的第一个数），不是每一轮都印同一个数。"
+}

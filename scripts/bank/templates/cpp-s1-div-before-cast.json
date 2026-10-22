@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s1-div-before-cast",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-05",
+  "type": "codefix",
+  "concept": ["整数除法先剁一刀", "先算后装", "static_cast"],
+  "instances": 2,
+  "params": {
+    "total": { "kind": "pick", "values": ["7", "9"] },
+    "cats": { "kind": "pick", "values": ["2", "4"] }
+  },
+  "stemTemplate": "本喵要把 {total} 条小鱼干**平均分**给 {cats} 只猫，心里想要的是「每只猫分到几条」这种**带小数**的答案，所以接货的那只碗特意挑了装小数的 `double`。\n\n可屏幕上印出来的数，小数点后面那截没了。它跑得起来，翻译官喵一句原话都没有，就是算出来的数不对。\n\n你帮本喵把算账那一句改对：让屏幕上印出来的是**带小数**的每只猫条数。两只碗里装的数、还有要印的那句话，一个字都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int total = {total};\n    int cats = {cats};\n    double each = total / cats;\n    cout << \"每只猫分到 \" << each << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int total = {total};\n    int cats = {cats};\n    double each = static_cast<double>(total) / cats;\n    cout << \"每只猫分到 \" << each << \" 条喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "毛病出在**顺序**上喵：`total / cats` 是**先算的**。两只碗都挂着整数牌，这一步就老老实实按整数算，除完把小数那截**直接剁掉**；剁完那个整数，才被搬进装小数的 `double` 里。**先剁、后装** —— 小数点后面那半截早就没了，接货的碗再讲究也没用。\n\n改法只有一处：把「变成小数」这一步**提到算之前**，写成 `static_cast<double>(total) / cats`。\n\n`static_cast` 那一招的读法：后面一对**尖括号**里写「要变成什么样」（这里是变成小数），再一对圆括号里写「要搬的是哪件货」。于是 `total` 先变成小数，`小数 / cats` 就整句按小数算了。\n\n⚠️ 这一题**一声不吭**：整数除法写得完全合规矩，翻译官喵看不出任何毛病 —— 它只认「写法对不对」，**不认「你心里想要的是小数」**。\n\n往后算完账发现「数字差不多、可就是不对」，第一件事就是回头看那一步的**两件货是不是都挂着整数牌**喵。"
+}

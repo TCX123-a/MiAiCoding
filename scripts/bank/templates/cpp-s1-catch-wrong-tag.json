@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s1-catch-wrong-tag",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-13",
+  "type": "codefix",
+  "concept": ["牌子对不上就是接不住", "invalid_argument 与 out_of_range", "扔车的车上挂着什么牌子"],
+  "instances": 2,
+  "params": {
+    "word": { "kind": "pick", "values": ["喵", "呜"] }
+  },
+  "stemTemplate": "本喵要把一串**根本不是数字**的字 `{word}` 读成整数。本喵知道 `stoi` 会为这件事扔一辆车，就在地上铺了一张软垫，接住之后印出 `接住了：` 接上车上那句说明。\n\n这一回翻译官喵**收下了稿子**（开演前一点没错），可一跑起来程序当场就停了，连一个字都没印出来。\n\n你帮本喵把出问题的那一处改好：改完要能印出 `接住了：` 接上车上那句说明。那串字、要印的那句话，都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    try {\n        int n = stoi(\"{word}\");\n        cout << n << endl;\n    } catch (const out_of_range& e) {\n        cout << \"接住了：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    try {\n        int n = stoi(\"{word}\");\n        cout << n << endl;\n    } catch (const invalid_argument& e) {\n        cout << \"接住了：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题难在**屏幕上什么都不说**：程序不是编不过，是**跑起来之后当场停了**，最后丢下两行这样的话：\n\n`terminate called after throwing an instance of 'std::invalid_argument'`\n\n`  what():  stoi`\n\n翻成人话：**有人扔了一辆挂着 `std::invalid_argument` 牌子的车，可地上那张软垫只接 `out_of_range`，接不住 —— 机器只好就地停下。**\n\n看明白了吗喵：**`stoi` 扔出来的车，挂的是 `invalid_argument` 这块牌子**（意思是「你给的料根本不对」），而 `out_of_range` 是**越界**那块牌子（比如从只有 4 颗的串上拿第 10 颗）。牌子对不上，车就从你手边过去了。\n\n改法只有一处：把软垫括号里的牌子换成 `const invalid_argument&` —— 本课第二节那张标准写法，照抄即可。改完它就能安稳落地，印出 `接住了：` 接上 `e.what()`。"
+}

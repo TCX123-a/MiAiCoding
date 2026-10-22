@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-04-tally-assign-not-add",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-04",
+  "type": "codefix",
+  "concept": ["加和等于不一样", "数数要用加", "不报错但数悄悄不对"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "w2": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stemTemplate": "本喵在数名字：同一个名字每念到一次，那一格就该**加 1**喵。可跑完一看，念过两遍的那个名字也只记了 **1**。\n\n你帮本喵把它改对：**同一个名字出现几回，那一格就该是几**。开柜子和印字那几句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n    map<string, int> tally;\n    tally[\"{w1}\"] = 1;\n    tally[\"{w2}\"] = 1;\n    tally[\"{w1}\"] = 1;\n\n    for (auto p : tally) {\n        cout << p.first << \" \" << p.second << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n    map<string, int> tally;\n    tally[\"{w1}\"] += 1;\n    tally[\"{w2}\"] += 1;\n    tally[\"{w1}\"] += 1;\n\n    for (auto p : tally) {\n        cout << p.first << \" \" << p.second << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的关键是**「等于」和「加」不是一回事**喵。\n\n`tally[\"小橘\"] = 1;` 念作「把那一格**改成** 1」—— 不管它原来是几，念一遍就抹成 1；念第三遍还是一样。\n\n数数要用**加**：\n\n`tally[\"小橘\"] += 1;`\n\n念作「在那一格**原来的数上**加 1」。\n\n⚠️ 中括号有一个白送的好处：某个名字**第一次**出现的时候，那一格本来还没开出来 —— 用 `+=` 的话它会**先开成 0** 再加 1，所以不用本喵提前铺 0。\n\n⚠️ 这一题翻译官喵**一个字都不说**：编得过、跑得完，只是数出来的数悄悄不对（本喵真跑过才敢这么说）—— 这种错只能靠**自己盯住结果**，所以「同一个名字念几遍」这件事得自己算清楚。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-14-pond-singleton",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-14",
+  "type": "codewrite",
+  "concept": ["独苗图纸三件事凑齐", "只造一次 + 只递一只", "起手式藏起来"],
+  "instances": 6,
+  "params": {
+    "w": { "kind": "pick", "values": ["3", "5"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": "1", "min": 3, "max": 9 },
+  "stemTemplate": "投喂口会给**一个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 先把那个数读进来；\n2. 写一张**独苗图纸** `FishPond`：\n   - 喊猫过来的招式叫 `getInstance`，交回来的形状要能**把那只猫本身递出去**；\n   - 加法那一句叫 `add`，碗里那个数叫 `total`；\n   - 那只猫**只造一次**，而且是**头一次喊它的时候才造**；\n   - 起手式要藏在 `private:` 底下，不让外面的猫自己再造一只。\n3. 主猫用**两个不同的名字**各接住它一次：第一个名字加上投喂口给的那个数，第二个名字加上 `{w}`；\n4. 最后印两行：先 `一共 X`（X 是两处加法之和），再 `同一只 Y` —— `Y` 那儿，两个名字指的是同一只就印 `是`，不是就印 `不是`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\nusing namespace std;\n\n// 在这儿写独苗图纸 FishPond：getInstance / add / total，起手式藏在 private: 底下\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    // 在这儿写：两个名字各接住它一次，各加一次，印出两行\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\nclass FishPond {\npublic:\n    static FishPond& getInstance() {\n        static FishPond only;\n        return only;\n    }\n    void add(int n) { total += n; }\n    int total = 0;\nprivate:\n    FishPond() = default;\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    FishPond& a = FishPond::getInstance();\n    a.add(n);\n    FishPond& b = FishPond::getInstance();\n    b.add({w});\n    cout << \"一共 \" << a.total << endl;\n    cout << \"同一只 \" << (&a == &b ? \"是\" : \"不是\") << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题要把**独苗图纸**的三件事凑齐喵：\n\n- 招式里那句 `static FishPond only;` —— **只造一次**，而且是头一次喊它的时候才造；\n- 交回来的形状带上 `&` —— **把那只猫本身递出去**，两个名字才指的是同一只（少了它，接回去的是复印的一份）；\n- 起手式藏在 `private:` 底下 —— 外面的猫就没法自己再造一只。\n\n三件事凑齐了，`a` 和 `b` 才是同一口碗：投喂口给的数加上 `{w}`，所以 `一共` 那一行印的是两处加法之和，`同一只` 那一行永远是 `是`。\n\n⚠️ 三件事里少哪一件会怎样，值得自己挨个试一遍：只造一次那句少了 `static`，每次喊都是一只新的；少写 `&`，拿到的是复印；起手式不藏，谁都能自己再造一只 —— **三种都不会报错**，只会让结果悄悄不对。"
+}

@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-def-init-zero",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-14",
+  "type": "codefix",
+  "concept": ["初始值要从真实存在的数里挑", "全是最边上的值：全是欠账", "凭空写的 0 会坐了整场"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["2", "5"] },
+    "b": { "kind": "pick", "values": ["3", "6"] },
+    "c": { "kind": "pick", "values": ["4", "7"] }
+  },
+  "stemTemplate": "这一排碗里放的全是**欠账**喵（本喵把欠了几条写成负数，三碗分别欠 {a}、{b}、{c} 条）。本喵要挑出「最多的一碗」，也就是**欠得最少**的那碗。\n\n现在它印出来的是 `0` —— 可这一排里压根**没有 `0`** 这位客人，它却坐了整场。请你把这招改对：末尾该印出这一排里**最接近 `0`** 的那个数。口诀是：**初始值要从真实存在的数里挑**。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish[3] = { -{a}, -{b}, -{c} };\n    int best = 0;\n    for (int i = 0; i < 3; i++) {\n        if (fish[i] > best) {\n            best = fish[i];\n        }\n    }\n    printf(\"最多的一碗：%d\\n\", best);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish[3] = { -{a}, -{b}, -{c} };\n    int best = fish[0];\n    for (int i = 1; i < 3; i++) {\n        if (fish[i] > best) {\n            best = fish[i];\n        }\n    }\n    printf(\"最多的一碗：%d\\n\", best);\n    return 0;\n}\n",
+  "explanationTemplate": "王座上先请**真实的第一碗**坐下（`int best = fish[0];`），再从第二碗（`i = 1`）开始比喵 —— 这么写有个好处：不管这一排里放的是什么（哪怕全是欠账），王座上坐的一定是**这一排里的客人**，最后印出来的一定是这一排里的数。\n\n原来那句 `int best = 0;` 是凭空写的一个「觉得差不多」的数，本喵这台机器上它比三碗欠账都大，于是一路坐着不下来，印出来的就是它。\n\n反过来也要留神：把初始值写成**很大的数**（比如一个特别大的正数）是另一个坑 —— 那样**谁都赢不过它**，最后印出来的同样不是这一排里的客人。"
+}

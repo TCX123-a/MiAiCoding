@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s3-challenge-tidy-tally",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-21",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["祖传稿子能跑但丑", "名字要说人话", "宏名全大写", "注释与花括号各归位"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["6", "3"] },
+    "b": { "kind": "pick", "values": ["2", "5"] },
+    "c": { "kind": "pick", "values": ["7", "4"] },
+    "lim": { "kind": "pick", "values": ["5", "4"] }
+  },
+  "stemTemplate": "本喵把**祖传稿子**翻出来了喵 —— 它**能跑**，数也数得对，可本喵每次看它都得眯起眼：名字一水儿拼音、宏名小写、花括号东倒西歪、注释一句没有。\n\n请你照课文讲的**工程规范**把它**翻新**一遍：名字（宏、函数、变量）、注释、结构，全按那套规矩来。有一条边界死也不许越过：**翻新之后，程序的输出必须和原版逐字一致** —— 同样的输入喂两个版本，出来的那两行一模一样，数分毫不许差。\n\n祖传稿子长这样：\n\n```c\n#include <stdio.h>\n\n#define fishlimit {lim}\n\nint zonghe(int shuzu[], int geshu) {\n    int he = 0;\n    for (int i = 0; i < geshu; i++) {\n    he = he + shuzu[i];\n    }\n    return he;\n}\n\nint chaoguo(int shuzu[], int geshu) {\n    int ji = 0;\n    for (int i = 0; i < geshu; i++)\n    if (shuzu[i] > fishlimit)\n    ji++;\n    return ji;\n}\n\nint main(void) {\n    int fan[3];\n    fan[0] = {a};\n    fan[1] = {b};\n    fan[2] = {c};\n    printf(\"合计 %d 条喵\\n\", zonghe(fan, 3));\n    printf(\"超限 %d 碗喵\\n\", chaoguo(fan, 3));\n    return 0;\n}\n```\n\n赶考的这排碗是 {a}、{b}、{c} 条，限额 {lim} 条 —— **严格超过**限额（等于不算）的碗才叫超限。",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n/* 盘点一排碗里的鱼干：印出合计与超限的碗数。\n   超限 = 严格大于 FISH_LIMIT（等于不算）。 */\n#define FISH_LIMIT {lim}\n\n/* 这一排一共几只碗。 */\n#define BOWL_COUNT 3\n\n/* 把一排碗里的条数加起来。 */\nint total_fish(int fish[], int count) {\n    int total = 0;\n    for (int i = 0; i < count; i++) {\n        total += fish[i];\n    }\n    return total;\n}\n\n/* 数一数有几碗严格超过限额。 */\nint count_over_limit(int fish[], int count) {\n    int over = 0;\n    for (int i = 0; i < count; i++) {\n        if (fish[i] > FISH_LIMIT) {\n            over++;\n        }\n    }\n    return over;\n}\n\nint main(void) {\n    int fish[BOWL_COUNT] = { {a}, {b}, {c} };\n    printf(\"合计 %d 条喵\\n\", total_fish(fish, BOWL_COUNT));\n    printf(\"超限 %d 碗喵\\n\", count_over_limit(fish, BOWL_COUNT));\n    return 0;\n}\n",
+  "explanationTemplate": "翻新这份祖传稿子，不是给它化妆，是把**名字、结构、注释**三样摆回规矩上喵。逐条点给你看：\n\n**一、名字要说人话。** `zonghe`、`chaoguo`、`shuzu`、`geshu`、`he`、`ji`、`fan` —— 一水儿的拼音缩写，谁读谁脑补。按课文规矩，招式名和仓库名是**小写加下划线的英文词**，一眼说清它管什么：\n\n```c\nint total_fish(int fish[], int count)\nint count_over_limit(int fish[], int count)\n```\n\n（`he` 这种两笔的名字，走出那三行绕圈就没人认得它是谁 —— 它叫 `total`；那一排碗 `fan` 也一样，叫 `fish`。）\n\n**二、宏全大写。** `fishlimit` 换成 `FISH_LIMIT` —— 宏是**开工前照抄替换**的家伙，全大写的招牌一挂，读的人立刻知道「这不是普通的仓库名」，它也永远撞不上小写起头的仓库名。\n\n**三、写死的数给个名字。** 原版里那个 `3` 冒出来三回 —— 按规矩它该有个名字：`BOWL_COUNT`。\n\n**四、结构摆正。** 第二个招式里那句**裸奔的 `if`**（贴着 `for` 不裹花括号、缩进也对不上）挪进花括号、缩进对齐。好不好看是次要的：**改代码的人要一眼看出这段管到哪儿**，这才是把花括号立起来的理由。\n\n**五、注释讲职责。** 参考解在文件头写了「这文件干嘛的」、每个招式头顶写了「它负责什么」—— 注释讲**为什么**和**干什么**，不复述「这里在绕圈」这种一眼就懂的事。\n\n翻新的边界也记一下：**名字、注释、结构随便动，行为一个字不许动** —— 题干要求翻新后输出与原版逐字一致，参考解照这个边界来。"
+}

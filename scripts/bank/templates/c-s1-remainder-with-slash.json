@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-remainder-with-slash",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-05",
+  "type": "codefix",
+  "concept": ["/ 与 %", "求零头", "不吭声的错数"],
+  "instances": 2,
+  "params": {
+    "fish": { "kind": "int", "min": 17, "max": 19 },
+    "cats": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stemTemplate": "{fish} 条小鱼干要**平分**给 {cats} 只猫。这段稿子第一行报得对，第二行报的「还剩几条」却是错的 —— 它**一个错都不报**，安安静静报了个错数。\n\n你帮本喵把第二行改对：要照实印出分完之后**还剩几条**。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish = {fish};\n    int cats = {cats};\n\n    printf(\"每只猫分到 %d 条\\n\", fish / cats);\n    printf(\"还剩 %d 条\\n\", fish / cats);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish = {fish};\n    int cats = {cats};\n\n    printf(\"每只猫分到 %d 条\\n\", fish / cats);\n    printf(\"还剩 %d 条\\n\", fish % cats);\n    return 0;\n}\n",
+  "explanationTemplate": "`/` 是**平分**，它回答的是「每只分到几条」；`%` 是**求零头**，它回答的是「分完还剩几条」。两个记号，两个问题喵。\n\n这段稿子第二行又问了一遍 `fish / cats`，所以它把「每只分到几条」的答案**又答了一次** —— 跑得起来、两行字都在，只是第二行答的**不是那个问题**。\n\n```c\nprintf(\"还剩 %d 条\\n\", fish % cats);\n```\n\n两条关于 `%` 的叮嘱喵：\n\n- **`%` 只跟整条的东西打交道。** 写成 `{fish}.0 % {cats}`，它当场翻脸 —— 那份稿子连翻都翻不过去；\n- **`%` 和 `/` 是一对。** 先想「能平分成几份」用 `/`；先想「分完剩多少」用 `%`。一道题里两个都问，就两行各用各的记号。"
+}

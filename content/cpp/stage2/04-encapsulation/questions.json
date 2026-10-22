@@ -1,0 +1,79 @@
+{
+  "lessonId": "cpp-stage2-04",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "图纸上那颗 `fish` 写在 `private:` 底下，本喵却在 `main` 里伸手 `c1.fish = 10;` —— 会发生什么？",
+      "options": [
+        "编译器当场拦下，原话里有 `is private within this context` —— 它还会补一句，告诉你该走 `getFish()` 那道门",
+        "跑得起来，只是这一次改动会被悄悄丢掉",
+        "跑得起来，但 `fish` 会先被改成 `0`",
+        "拦下 —— 因为 `main` 里根本不许写「猫名 + 点号」这种形状"
+      ],
+      "answer": 0,
+      "explanation": "`private:` 那颗盖子挡的正是**外面**的手，而 `main` 就是外面，所以这一句连编都编不过喵。报错里那句 `within this context` 念作「你现在站的这个地方碰不着它」；紧接着还有一条 `note` 替你指路：想碰它得隔着 `getFish()` 那道门。「跑得起来，只是这一次改动会被悄悄丢掉」和「跑得起来，但 `fish` 会先被改成 `0`」都写着「跑得起来」—— 这一伸手在翻译的时候就过不去了，程序压根到不了能跑的那一步。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "图纸上那颗 `fish` 写在 `protected:` 底下，本喵在 `main` 里伸手去碰它 —— 会发生什么？",
+      "options": [
+        "编译器拦下，原话里有 `is protected within this context` —— 对「外面」来说它一样碰不得",
+        "碰得到 —— `protected` 是「半开着」的盖子，外面也伸手可及",
+        "碰得到，只是只许读、不许改",
+        "碰得到 —— 只要在 `main` 里先写一句「本喵是这张图纸上的」声明"
+      ],
+      "answer": 0,
+      "explanation": "`protected` 那一档是留给「套着这张图纸的下级图纸」的：本喵自己的招式碰得着，将来照这张图纸再画一张更细的图纸，那张图纸上的招式也碰得着 —— 可「外面」不在这两类里喵。所以在 `main` 里伸手，翻译官喵说的和碰 `private` 格子几乎一模一样，只是把词换成了 `is protected within this context`。**别把它记成半开的盖子**，它不是。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵开了一道改数的门 `void setFish(int f)`，门上只写了一句 `fish = f;` —— 一点规矩都没立。有人投喂 `-2` 进来，会怎样？",
+      "options": [
+        "编得过、跑得完、编译器一个字都不说 —— 负数的条数就这么住进了格子里",
+        "编译器拦下 —— 门上没立规矩，这道门不许开",
+        "跑起来会在印结果那一行崩掉",
+        "编不过 —— `fish` 是 `private` 的，改动必须先过一道规矩"
+      ],
+      "answer": 0,
+      "explanation": "盖子只管「**谁能伸手**」，不管伸进来的手**递的是什么**喵。所以门里那句 `fish = f;` 会把 `-2` 原样装进格子。本喵拿最啰嗦的那档念叨（`-Wall`）真跑过：没有报错、没有警告，只是印出来的结果悄悄不对。这是这一课最该带走的手感 —— **盖子和规矩是两件事**：`private` 挡得住乱伸的手，挡不住荒唐的数字，能挡它的只有门里那句守卫。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass Cat {\n____:\n    int fish;\n\npublic:\n    Cat(int f) : fish(f) {}\n\n    int getFish() const {\n        return fish;\n    }\n\n    void setFish(int f) {\n        if (f < 0) {\n            cout << \"不许倒扣喵\" << endl;\n            ____;\n        }\n        fish = f;\n    }\n};\n\nint main() {\n    Cat c1(3);\n    c1.setFish(5);\n    cout << c1.getFish() << endl;\n    c1.setFish(-1);\n    cout << c1.getFish() << endl;\n    return 0;\n}",
+      "stem": "这段代码里有两处被本喵挖空了（用 `____` 标出）。补上之后，它会先印 `5`、再印一行 `不许倒扣喵`、最后再印一次 `5` 喵。",
+      "blanks": [
+        { "answer": "private", "accept": [] },
+        { "answer": "return", "accept": [] }
+      ],
+      "explanation": "第一处是盖子那一小段字：`private`，念作「只有图纸自己的招式能碰」—— 它后面那个**冒号**别丢，而且它一直管到下一区（那个 `public:`）为止喵。第二处是门里的守卫：条件成立时要**空手退出去**，所以写一句 `return`（`void` 的招式只干活、不叼东西回来，退出去时不用带任何东西）。两句合起来念：「要改 `fish`，先过这道门；递进来的数是个负数，本喵就不改了，直接退出去。」少了那句 `return`，负数会照样落进格子。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprivate:\n    string name;\n    int fish;\n\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    string getName() const {\n        return name;\n    }\n\n    int getFish() const {\n        return fish;\n    }\n\n    void setFish(int f) {\n        if (f < 0) {\n            cout << \"不许倒扣喵\" << endl;\n            return;\n        }\n        fish = f;\n    }\n};\n\nint main() {\n    Cat c1(\"小橘\", 3);\n    c1.setFish(-1);\n    c1.setFish(7);\n    cout << c1.getName() << \" 有 \" << c1.getFish() << \" 条\" << endl;\n    c1.setFish(-1);\n    c1.setFish(2);\n    cout << c1.getName() << \" 有 \" << c1.getFish() << \" 条\" << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？（一行一行照抄，注意顺序）",
+      "answer": "不许倒扣喵\n小橘 有 7 条\n不许倒扣喵\n小橘 有 2 条",
+      "accept": ["不许倒扣喵\n小橘 有 7 条\n不许倒扣喵\n小橘 有 2 条\n"],
+      "explanation": "两次 `-1` 都被门上那句 `if (f < 0)` 挡在外面：先印一行「不许倒扣喵」，然后**空手退出去**，格子里的数一点没动喵。两次投喂 `7` 和 `2` 都是正经数，门就放行，格子跟着变。所以顺序是：挡下来（印字）→ 改成 7 → 印一行 7 条 → 又挡下来（印字）→ 改成 2 → 印一行 2 条。注意被挡下来的那两次**只印了门上那行字**，没有印条数 —— 因为它们根本没走到印条数那一句。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\nprivate:\n    string name;\n    int fish;\n\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void setName(string n) {\n        name = n;\n    }\n\n    void eat() {\n        fish = fish + 1;\n        cout << name << \" 吃掉了一条，现在有 \" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Cat c1(\"小橘\", 2);\n    c1.eat();\n    c1.eat();\n    c1.setName(\"大胖\");\n    c1.eat();\n    return 0;\n}",
+      "stem": "这两格家常都盖着盖子，本喵却让图纸上自己的招式去动它们。这段代码的输出是什么？",
+      "answer": "小橘 吃掉了一条，现在有 3 条\n小橘 吃掉了一条，现在有 4 条\n大胖 吃掉了一条，现在有 5 条",
+      "accept": [
+        "小橘 吃掉了一条，现在有 3 条\n小橘 吃掉了一条，现在有 4 条\n大胖 吃掉了一条，现在有 5 条\n"
+      ],
+      "explanation": "盖子挡的只是**外面**的手喵 —— `eat` 和 `setName` 是这张图纸自己的招式，站的地方就是「里面」，所以它们动 `private` 格子一点都不费劲。前两次 `eat` 让条数从 2 走到 4；`setName(\"大胖\")` 把名字那一格改掉；最后一次 `eat` 用的是**改过之后**的新名字，条数再走一步到 5。这题还顺带说明一件事：`setName` 门上本喵没立任何规矩，所以喊它就一定能改成功 —— 规矩不是盖子自动带来的，是**本喵亲手写进门里**的。"
+    }
+  ]
+}

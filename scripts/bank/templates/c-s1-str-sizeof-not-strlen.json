@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-str-sizeof-not-strlen",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-11",
+  "type": "codefix",
+  "concept": ["strlen", "sizeof", "暗号", "\\0"],
+  "instances": 2,
+  "params": {
+    "w": { "kind": "pick", "values": ["cat", "fish", "小橘", "大肥鱼"] }
+  },
+  "stemTemplate": "本喵想让程序先印一遍牌子上的字，再印一行这串字的**真珠子**颗数喵。牌子上写的是 `{w}`。\n\n可它印出来的颗数**总是比本喵数出来的多一颗**……\n\n你帮本喵看看是哪儿数岔了，把它改好。改好之后，第一行是牌子上的字，第二行是它真珠子的颗数（**末尾那颗看不见的暗号不算**）。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[] = \"{w}\";\n\n    printf(\"%s\\n\", word);\n    printf(\"%d\\n\", (int)sizeof(word));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[] = \"{w}\";\n\n    printf(\"%s\\n\", word);\n    printf(\"%d\\n\", (int)strlen(word));\n    return 0;\n}\n",
+  "explanationTemplate": "这两个数永远差 **1**，差别就在末尾站岗的那颗暗号上喵。\n\n**`sizeof(word)` 量的是「这排碗一共几只」** —— 牌子上的字用掉几只碗，再加上末尾给暗号留的那一只，全都算进去。所以它报出来的永远是「真珠子 + 1」。\n\n**`strlen(word)` 数的是「项链上有几颗珠子」** —— 它从第一颗开始往外念，一撞上暗号就闭嘴，所以暗号**不算数**。\n\n一句话记住：**`sizeof` 量地方，`strlen` 数珠子。** 一个字之差，答案永远差 1。\n\n（顺便对一下课文里那句话：`char word[] = \"cat\";` 是**四只碗** —— 三颗珠子加一颗暗号。所以题面里那个「多出来的一颗」就是它喵。）"
+}

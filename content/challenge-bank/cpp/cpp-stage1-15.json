@@ -1,0 +1,578 @@
+{
+  "lessonId": "cpp-stage1-15",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s1-addrecord-no-count-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这台机器往一排卡片里**记三笔账**（猫粮、小鱼干、猫窝），记完把每一笔印一行，最后报一句「一共记了几笔」。\n\n可这一回它只印出一句话 `一共记了 0 笔喵` —— 三笔全没了。翻译官喵一个字都没抱怨（这话编得过），是跑出来才对上号。\n\n你帮本喵把出问题的那一处改好：改完三行账和那句「一共记了 3 笔喵」都要在。三笔的料、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    addRecord(book, count, \"猫粮\", 30);\n    addRecord(book, count, \"小鱼干\", 12);\n    addRecord(book, count, \"猫窝\", 88);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    addRecord(book, count, \"猫粮\", 30);\n    addRecord(book, count, \"小鱼干\", 12);\n    addRecord(book, count, \"猫窝\", 88);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 30\n小鱼干 12\n猫窝 88\n一共记了 3 笔喵",
+      "stdin": null,
+      "explanation": "这一题坏的地方**编得过**，所以屏幕上只有「0 笔」这句话不对：**三笔账全盖在第 0 号格上了**。\n\n`addRecord` 里少了一句 —— 记一笔的**收尾**：\n\n`count = count + 1;`\n\n细看没有它会怎样喵：\n\n- 第一笔记在第 `count` 格（0 号格），记完 `count` 还是 0；\n- 第二笔又来，还是「第 0 格」→ **盖掉第一笔**；\n- 第三笔照旧盖下去 —— 最后只剩最后一笔的影子，而外面那只 `count` 一直是 0，所以连印都印不出来（那个圈的圈数是 `i < count`，一圈也没转）。\n\n漏掉这一句是本课最容易栽的地方喵：**「把卡片放进去」和「把编号往后挪一格」是两件事，一件都不能少。** 放进去的是那两栏，挪编号的是这一句 —— 它才是「记了一笔」真正的收尾。",
+      "templateId": "cpp-s1-addrecord-no-count",
+      "params": {
+        "n1": "猫粮",
+        "a1": "30",
+        "n2": "小鱼干",
+        "a2": "12",
+        "n3": "猫窝",
+        "a3": "88"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:24.621Z",
+        "hash": "49799e63306243c5"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-addrecord-no-count-063",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这台机器往一排卡片里**记三笔账**（猫薄荷、逗猫棒、猫爬架），记完把每一笔印一行，最后报一句「一共记了几笔」。\n\n可这一回它只印出一句话 `一共记了 0 笔喵` —— 三笔全没了。翻译官喵一个字都没抱怨（这话编得过），是跑出来才对上号。\n\n你帮本喵把出问题的那一处改好：改完三行账和那句「一共记了 3 笔喵」都要在。三笔的料、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    addRecord(book, count, \"猫薄荷\", 50);\n    addRecord(book, count, \"逗猫棒\", 20);\n    addRecord(book, count, \"猫爬架\", 99);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    addRecord(book, count, \"猫薄荷\", 50);\n    addRecord(book, count, \"逗猫棒\", 20);\n    addRecord(book, count, \"猫爬架\", 99);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫薄荷 50\n逗猫棒 20\n猫爬架 99\n一共记了 3 笔喵",
+      "stdin": null,
+      "explanation": "这一题坏的地方**编得过**，所以屏幕上只有「0 笔」这句话不对：**三笔账全盖在第 0 号格上了**。\n\n`addRecord` 里少了一句 —— 记一笔的**收尾**：\n\n`count = count + 1;`\n\n细看没有它会怎样喵：\n\n- 第一笔记在第 `count` 格（0 号格），记完 `count` 还是 0；\n- 第二笔又来，还是「第 0 格」→ **盖掉第一笔**；\n- 第三笔照旧盖下去 —— 最后只剩最后一笔的影子，而外面那只 `count` 一直是 0，所以连印都印不出来（那个圈的圈数是 `i < count`，一圈也没转）。\n\n漏掉这一句是本课最容易栽的地方喵：**「把卡片放进去」和「把编号往后挪一格」是两件事，一件都不能少。** 放进去的是那两栏，挪编号的是这一句 —— 它才是「记了一笔」真正的收尾。",
+      "templateId": "cpp-s1-addrecord-no-count",
+      "params": {
+        "n1": "猫薄荷",
+        "a1": "50",
+        "n2": "逗猫棒",
+        "a2": "20",
+        "n3": "猫爬架",
+        "a3": "99"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:27.536Z",
+        "hash": "738f6065b25c90a4"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-biggest-wrong-compare-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这台机器要报出**最贵的一笔**：一招 `biggest` 去找出最贵那张卡片的编号，再用这个编号取卡片，把名字和数目印一行。\n\n可它报出来的却是**最便宜**的那一笔。翻译官喵一个字都没抱怨（这话编得过），是跑出来才对上号。\n\n你帮本喵把出问题的那一处改好：改完要报出最贵的那一笔。三笔的数目、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint biggest(Record book[], int n) {\n    int top = 0;\n    for (int i = 1; i < n; i++) {\n        if (book[i].amount < book[top].amount) {\n            top = i;\n        }\n    }\n    return top;\n}\n\nint main() {\n    Record book[3] = {{\"猫粮\", 30}, {\"小鱼干\", 12}, {\"猫窝\", 88}};\n\n    int top = biggest(book, 3);\n    cout << \"最贵的一笔是 \" << book[top].name << \" \" << book[top].amount << \" 条喵\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint biggest(Record book[], int n) {\n    int top = 0;\n    for (int i = 1; i < n; i++) {\n        if (book[i].amount > book[top].amount) {\n            top = i;\n        }\n    }\n    return top;\n}\n\nint main() {\n    Record book[3] = {{\"猫粮\", 30}, {\"小鱼干\", 12}, {\"猫窝\", 88}};\n\n    int top = biggest(book, 3);\n    cout << \"最贵的一笔是 \" << book[top].name << \" \" << book[top].amount << \" 条喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "最贵的一笔是 猫窝 88 条喵",
+      "stdin": null,
+      "explanation": "这一题坏的地方**编得过**，所以屏幕上没有红字，只是报错了**一笔**：把**最便宜的**那笔当成最贵的报了出来。\n\n先看清楚 `biggest` 在干什么喵：`top` 是「**目前最贵那张的编号**」，从 0 号开始，一个一个比过去。\n\n- 比到某一张时，要是它**比目前这张更贵**，就把 `top` 换成它 —— 所以那句比较得写 `book[i].amount > book[top].amount`。\n- 本喵写成了 `<`，意思就变成了「**比目前这张更便宜就换**」—— 一圈走下来，`top` 停在了**最便宜**那一张上。\n\n改法只有一处：把那个记号换回 `>`。\n\n顺带记牢这一招的两个老规矩喵：**它叼回来的是编号（`int`），不是那张卡片**（卡片不好整个叼回来，编号好叼）—— 所以外面那句才长成 `book[top].name`：先用编号取卡片、再点出那一栏。",
+      "templateId": "cpp-s1-biggest-wrong-compare",
+      "params": {
+        "a1": "30",
+        "a2": "12",
+        "a3": "88"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:30.709Z",
+        "hash": "132446706993a90d"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-biggest-wrong-compare-007",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵这台机器要报出**最贵的一笔**：一招 `biggest` 去找出最贵那张卡片的编号，再用这个编号取卡片，把名字和数目印一行。\n\n可它报出来的却是**最便宜**的那一笔。翻译官喵一个字都没抱怨（这话编得过），是跑出来才对上号。\n\n你帮本喵把出问题的那一处改好：改完要报出最贵的那一笔。三笔的数目、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint biggest(Record book[], int n) {\n    int top = 0;\n    for (int i = 1; i < n; i++) {\n        if (book[i].amount < book[top].amount) {\n            top = i;\n        }\n    }\n    return top;\n}\n\nint main() {\n    Record book[3] = {{\"猫粮\", 50}, {\"小鱼干\", 20}, {\"猫窝\", 99}};\n\n    int top = biggest(book, 3);\n    cout << \"最贵的一笔是 \" << book[top].name << \" \" << book[top].amount << \" 条喵\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint biggest(Record book[], int n) {\n    int top = 0;\n    for (int i = 1; i < n; i++) {\n        if (book[i].amount > book[top].amount) {\n            top = i;\n        }\n    }\n    return top;\n}\n\nint main() {\n    Record book[3] = {{\"猫粮\", 50}, {\"小鱼干\", 20}, {\"猫窝\", 99}};\n\n    int top = biggest(book, 3);\n    cout << \"最贵的一笔是 \" << book[top].name << \" \" << book[top].amount << \" 条喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "最贵的一笔是 猫窝 99 条喵",
+      "stdin": null,
+      "explanation": "这一题坏的地方**编得过**，所以屏幕上没有红字，只是报错了**一笔**：把**最便宜的**那笔当成最贵的报了出来。\n\n先看清楚 `biggest` 在干什么喵：`top` 是「**目前最贵那张的编号**」，从 0 号开始，一个一个比过去。\n\n- 比到某一张时，要是它**比目前这张更贵**，就把 `top` 换成它 —— 所以那句比较得写 `book[i].amount > book[top].amount`。\n- 本喵写成了 `<`，意思就变成了「**比目前这张更便宜就换**」—— 一圈走下来，`top` 停在了**最便宜**那一张上。\n\n改法只有一处：把那个记号换回 `>`。\n\n顺带记牢这一招的两个老规矩喵：**它叼回来的是编号（`int`），不是那张卡片**（卡片不好整个叼回来，编号好叼）—— 所以外面那句才长成 `book[top].name`：先用编号取卡片、再点出那一栏。",
+      "templateId": "cpp-s1-biggest-wrong-compare",
+      "params": {
+        "a1": "50",
+        "a2": "20",
+        "a3": "99"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:33.593Z",
+        "hash": "94dc5cf4506e9870"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-missing-semicolon-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵照图纸做了一张卡片：名字 `猫粮`、数目 30。先把两栏印一行，再把数目加上 5 印第二行。\n\n可翻译官喵当场就把稿子退回来了 —— 它还格外贴心，**把该补的那个字符直接摆给你看**。\n\n你帮本喵把它改好：改完屏幕上要是两行 —— 第一行是名字和原来的数目，第二行是名字和加完之后的数目。名字、数目、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n}\n\nint main() {\n    Record r = {\"猫粮\", 30};\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 5;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    Record r = {\"猫粮\", 30};\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 5;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 30\n猫粮 35",
+      "stdin": null,
+      "explanation": "翻译官喵这一回的原话是：\n\n`error: expected ';' after struct definition`\n\n意思是「**图纸画完了，这里少一个分号**」（`struct definition` 就是「卡片图纸」）。看清楚它下面还摆了一个字符给你：那一行提示里的 `;` 就是该补的地方。\n\n这是本课最容易漏的一个字符喵：**卡片图纸收尾的那一个分号不能省。**\n\n拿它和别的东西对一对：\n\n- 招式的大括号闭合之后**不带**分号；\n- 圈（`for`、`while`）的大括号闭合之后也**不带**；\n- 可**卡片图纸带** —— `struct Record` 那一对括号闭合之后，还得老老实实补一个 `;`。\n\n为什么？因为图纸是一句「本喵要画这么一张卡」的交代，交代完得有个句号收住。改法就是把它补上。",
+      "templateId": "cpp-s1-card-missing-semicolon",
+      "params": {
+        "n": "猫粮",
+        "a": "30"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:19.589Z",
+        "hash": "f8626f6b60f84d03"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-missing-semicolon-003",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵照图纸做了一张卡片：名字 `小鱼干`、数目 12。先把两栏印一行，再把数目加上 5 印第二行。\n\n可翻译官喵当场就把稿子退回来了 —— 它还格外贴心，**把该补的那个字符直接摆给你看**。\n\n你帮本喵把它改好：改完屏幕上要是两行 —— 第一行是名字和原来的数目，第二行是名字和加完之后的数目。名字、数目、要印的那句话，都不用动。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n}\n\nint main() {\n    Record r = {\"小鱼干\", 12};\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 5;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    Record r = {\"小鱼干\", 12};\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 5;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 12\n小鱼干 17",
+      "stdin": null,
+      "explanation": "翻译官喵这一回的原话是：\n\n`error: expected ';' after struct definition`\n\n意思是「**图纸画完了，这里少一个分号**」（`struct definition` 就是「卡片图纸」）。看清楚它下面还摆了一个字符给你：那一行提示里的 `;` 就是该补的地方。\n\n这是本课最容易漏的一个字符喵：**卡片图纸收尾的那一个分号不能省。**\n\n拿它和别的东西对一对：\n\n- 招式的大括号闭合之后**不带**分号；\n- 圈（`for`、`while`）的大括号闭合之后也**不带**；\n- 可**卡片图纸带** —— `struct Record` 那一对括号闭合之后，还得老老实实补一个 `;`。\n\n为什么？因为图纸是一句「本喵要画这么一张卡」的交代，交代完得有个句号收住。改法就是把它补上。",
+      "templateId": "cpp-s1-card-missing-semicolon",
+      "params": {
+        "n": "小鱼干",
+        "a": "12"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:21.949Z",
+        "hash": "af45f74f434f7ee4"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-one-record-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "记账本要记的每一笔都有两样东西：**它是什么**和**花了多少条鱼干**。本喵要的是一张**小卡片**，把这两样写在同一张卡上。\n\n投喂口会递进来**两样料**（一行一样）：先是一串字（这笔账的名字），再是一个整数（这笔账的数目）。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. **照图纸做一张真卡片**，把递进来的名字和数目填进那两栏；\n3. 印**一行**：`名字 数目`（两样之间空一格）；\n4. 再把卡片上的数目**加上 5**，印**第二行**：`名字 数目`。\n\n比如投喂给程序的是\n\n猫窝\n88\n\n程序就要叼回\n\n猫窝 88\n猫窝 93\n\n（判分喂的是**另外两样料**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    string name;\n    int amount = 0;\n    cin >> name >> amount;\n\n    Record r;\n    r.name = name;\n    r.amount = amount;\n\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 5;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 30\n猫粮 35",
+      "stdin": "猫粮\n30\n",
+      "explanation": "这一题练的是那张**小卡片**喵，三处要点：\n\n**一、图纸和真卡片是两样东西。** `struct Record` 那一对括号里写的是「这张卡上有哪几栏」—— 它自己**不吃地方、不能装东西**，只是画在这儿：以后照这个样子做卡片。照图纸**做出来**的（`Record r;`）才装得住东西。\n\n**二、图纸结尾那个分号。** 大括号闭合之后还要补一个 `;` —— 这是它和招式、圈最不一样的一点（招式和大括号结尾都不带分号，图纸带）。\n\n**三、点号取一栏。** `r.name` 念作「`r` 这张卡片上的 `name` 那一栏」；取出来跟普通的碗一样，能印也能改 —— 所以 `r.amount = r.amount + 5;` 就是把那一栏从原来的数改成加完之后的数。\n\n（顺带一句喵：卡片和招式有点像 —— 招式写了不跑，得有人喊才跑；图纸画了不做卡片，得有人做出来才有东西用。）",
+      "templateId": "cpp-s1-card-one-record",
+      "params": {
+        "name": "猫粮",
+        "amount": "30",
+        "k": "5"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:37.724Z",
+        "hash": "d12983197e629255"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-one-record-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "记账本要记的每一笔都有两样东西：**它是什么**和**花了多少条鱼干**。本喵要的是一张**小卡片**，把这两样写在同一张卡上。\n\n投喂口会递进来**两样料**（一行一样）：先是一串字（这笔账的名字），再是一个整数（这笔账的数目）。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. **照图纸做一张真卡片**，把递进来的名字和数目填进那两栏；\n3. 印**一行**：`名字 数目`（两样之间空一格）；\n4. 再把卡片上的数目**加上 7**，印**第二行**：`名字 数目`。\n\n比如投喂给程序的是\n\n猫窝\n88\n\n程序就要叼回\n\n猫窝 88\n猫窝 95\n\n（判分喂的是**另外两样料**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    string name;\n    int amount = 0;\n    cin >> name >> amount;\n\n    Record r;\n    r.name = name;\n    r.amount = amount;\n\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 7;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 30\n猫粮 37",
+      "stdin": "猫粮\n30\n",
+      "explanation": "这一题练的是那张**小卡片**喵，三处要点：\n\n**一、图纸和真卡片是两样东西。** `struct Record` 那一对括号里写的是「这张卡上有哪几栏」—— 它自己**不吃地方、不能装东西**，只是画在这儿：以后照这个样子做卡片。照图纸**做出来**的（`Record r;`）才装得住东西。\n\n**二、图纸结尾那个分号。** 大括号闭合之后还要补一个 `;` —— 这是它和招式、圈最不一样的一点（招式和大括号结尾都不带分号，图纸带）。\n\n**三、点号取一栏。** `r.name` 念作「`r` 这张卡片上的 `name` 那一栏」；取出来跟普通的碗一样，能印也能改 —— 所以 `r.amount = r.amount + 7;` 就是把那一栏从原来的数改成加完之后的数。\n\n（顺带一句喵：卡片和招式有点像 —— 招式写了不跑，得有人喊才跑；图纸画了不做卡片，得有人做出来才有东西用。）",
+      "templateId": "cpp-s1-card-one-record",
+      "params": {
+        "name": "猫粮",
+        "amount": "30",
+        "k": "7"
+      },
+      "verified": {
+        "at": "2026-10-20T16:43:10.630Z",
+        "hash": "8293cfbd76961d35"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-one-record-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "记账本要记的每一笔都有两样东西：**它是什么**和**花了多少条鱼干**。本喵要的是一张**小卡片**，把这两样写在同一张卡上。\n\n投喂口会递进来**两样料**（一行一样）：先是一串字（这笔账的名字），再是一个整数（这笔账的数目）。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. **照图纸做一张真卡片**，把递进来的名字和数目填进那两栏；\n3. 印**一行**：`名字 数目`（两样之间空一格）；\n4. 再把卡片上的数目**加上 7**，印**第二行**：`名字 数目`。\n\n比如投喂给程序的是\n\n猫窝\n88\n\n程序就要叼回\n\n猫窝 88\n猫窝 95\n\n（判分喂的是**另外两样料**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    string name;\n    int amount = 0;\n    cin >> name >> amount;\n\n    Record r;\n    r.name = name;\n    r.amount = amount;\n\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 7;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 12\n猫粮 19",
+      "stdin": "猫粮\n12\n",
+      "explanation": "这一题练的是那张**小卡片**喵，三处要点：\n\n**一、图纸和真卡片是两样东西。** `struct Record` 那一对括号里写的是「这张卡上有哪几栏」—— 它自己**不吃地方、不能装东西**，只是画在这儿：以后照这个样子做卡片。照图纸**做出来**的（`Record r;`）才装得住东西。\n\n**二、图纸结尾那个分号。** 大括号闭合之后还要补一个 `;` —— 这是它和招式、圈最不一样的一点（招式和大括号结尾都不带分号，图纸带）。\n\n**三、点号取一栏。** `r.name` 念作「`r` 这张卡片上的 `name` 那一栏」；取出来跟普通的碗一样，能印也能改 —— 所以 `r.amount = r.amount + 7;` 就是把那一栏从原来的数改成加完之后的数。\n\n（顺带一句喵：卡片和招式有点像 —— 招式写了不跑，得有人喊才跑；图纸画了不做卡片，得有人做出来才有东西用。）",
+      "templateId": "cpp-s1-card-one-record",
+      "params": {
+        "name": "猫粮",
+        "amount": "12",
+        "k": "7"
+      },
+      "verified": {
+        "at": "2026-10-20T16:43:15.130Z",
+        "hash": "4ddd87d356555399"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-one-record-004",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "记账本要记的每一笔都有两样东西：**它是什么**和**花了多少条鱼干**。本喵要的是一张**小卡片**，把这两样写在同一张卡上。\n\n投喂口会递进来**两样料**（一行一样）：先是一串字（这笔账的名字），再是一个整数（这笔账的数目）。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. **照图纸做一张真卡片**，把递进来的名字和数目填进那两栏；\n3. 印**一行**：`名字 数目`（两样之间空一格）；\n4. 再把卡片上的数目**加上 5**，印**第二行**：`名字 数目`。\n\n比如投喂给程序的是\n\n猫窝\n88\n\n程序就要叼回\n\n猫窝 88\n猫窝 93\n\n（判分喂的是**另外两样料**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    string name;\n    int amount = 0;\n    cin >> name >> amount;\n\n    Record r;\n    r.name = name;\n    r.amount = amount;\n\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 5;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 30\n小鱼干 35",
+      "stdin": "小鱼干\n30\n",
+      "explanation": "这一题练的是那张**小卡片**喵，三处要点：\n\n**一、图纸和真卡片是两样东西。** `struct Record` 那一对括号里写的是「这张卡上有哪几栏」—— 它自己**不吃地方、不能装东西**，只是画在这儿：以后照这个样子做卡片。照图纸**做出来**的（`Record r;`）才装得住东西。\n\n**二、图纸结尾那个分号。** 大括号闭合之后还要补一个 `;` —— 这是它和招式、圈最不一样的一点（招式和大括号结尾都不带分号，图纸带）。\n\n**三、点号取一栏。** `r.name` 念作「`r` 这张卡片上的 `name` 那一栏」；取出来跟普通的碗一样，能印也能改 —— 所以 `r.amount = r.amount + 5;` 就是把那一栏从原来的数改成加完之后的数。\n\n（顺带一句喵：卡片和招式有点像 —— 招式写了不跑，得有人喊才跑；图纸画了不做卡片，得有人做出来才有东西用。）",
+      "templateId": "cpp-s1-card-one-record",
+      "params": {
+        "name": "小鱼干",
+        "amount": "30",
+        "k": "5"
+      },
+      "verified": {
+        "at": "2026-10-20T16:43:19.619Z",
+        "hash": "e0e1b3eaeea444f9"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-one-record-006",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "记账本要记的每一笔都有两样东西：**它是什么**和**花了多少条鱼干**。本喵要的是一张**小卡片**，把这两样写在同一张卡上。\n\n投喂口会递进来**两样料**（一行一样）：先是一串字（这笔账的名字），再是一个整数（这笔账的数目）。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. **照图纸做一张真卡片**，把递进来的名字和数目填进那两栏；\n3. 印**一行**：`名字 数目`（两样之间空一格）；\n4. 再把卡片上的数目**加上 5**，印**第二行**：`名字 数目`。\n\n比如投喂给程序的是\n\n猫窝\n88\n\n程序就要叼回\n\n猫窝 88\n猫窝 93\n\n（判分喂的是**另外两样料**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    string name;\n    int amount = 0;\n    cin >> name >> amount;\n\n    Record r;\n    r.name = name;\n    r.amount = amount;\n\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 5;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 12\n小鱼干 17",
+      "stdin": "小鱼干\n12\n",
+      "explanation": "这一题练的是那张**小卡片**喵，三处要点：\n\n**一、图纸和真卡片是两样东西。** `struct Record` 那一对括号里写的是「这张卡上有哪几栏」—— 它自己**不吃地方、不能装东西**，只是画在这儿：以后照这个样子做卡片。照图纸**做出来**的（`Record r;`）才装得住东西。\n\n**二、图纸结尾那个分号。** 大括号闭合之后还要补一个 `;` —— 这是它和招式、圈最不一样的一点（招式和大括号结尾都不带分号，图纸带）。\n\n**三、点号取一栏。** `r.name` 念作「`r` 这张卡片上的 `name` 那一栏」；取出来跟普通的碗一样，能印也能改 —— 所以 `r.amount = r.amount + 5;` 就是把那一栏从原来的数改成加完之后的数。\n\n（顺带一句喵：卡片和招式有点像 —— 招式写了不跑，得有人喊才跑；图纸画了不做卡片，得有人做出来才有东西用。）",
+      "templateId": "cpp-s1-card-one-record",
+      "params": {
+        "name": "小鱼干",
+        "amount": "12",
+        "k": "5"
+      },
+      "verified": {
+        "at": "2026-10-20T16:43:24.074Z",
+        "hash": "4a8ef68015376687"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-one-record-007",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "记账本要记的每一笔都有两样东西：**它是什么**和**花了多少条鱼干**。本喵要的是一张**小卡片**，把这两样写在同一张卡上。\n\n投喂口会递进来**两样料**（一行一样）：先是一串字（这笔账的名字），再是一个整数（这笔账的数目）。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. **照图纸做一张真卡片**，把递进来的名字和数目填进那两栏；\n3. 印**一行**：`名字 数目`（两样之间空一格）；\n4. 再把卡片上的数目**加上 7**，印**第二行**：`名字 数目`。\n\n比如投喂给程序的是\n\n猫窝\n88\n\n程序就要叼回\n\n猫窝 88\n猫窝 95\n\n（判分喂的是**另外两样料**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    string name;\n    int amount = 0;\n    cin >> name >> amount;\n\n    Record r;\n    r.name = name;\n    r.amount = amount;\n\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 7;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}\n",
+      "expectedOutput": "小鱼干 12\n小鱼干 19",
+      "stdin": "小鱼干\n12\n",
+      "explanation": "这一题练的是那张**小卡片**喵，三处要点：\n\n**一、图纸和真卡片是两样东西。** `struct Record` 那一对括号里写的是「这张卡上有哪几栏」—— 它自己**不吃地方、不能装东西**，只是画在这儿：以后照这个样子做卡片。照图纸**做出来**的（`Record r;`）才装得住东西。\n\n**二、图纸结尾那个分号。** 大括号闭合之后还要补一个 `;` —— 这是它和招式、圈最不一样的一点（招式和大括号结尾都不带分号，图纸带）。\n\n**三、点号取一栏。** `r.name` 念作「`r` 这张卡片上的 `name` 那一栏」；取出来跟普通的碗一样，能印也能改 —— 所以 `r.amount = r.amount + 7;` 就是把那一栏从原来的数改成加完之后的数。\n\n（顺带一句喵：卡片和招式有点像 —— 招式写了不跑，得有人喊才跑；图纸画了不做卡片，得有人做出来才有东西用。）",
+      "templateId": "cpp-s1-card-one-record",
+      "params": {
+        "name": "小鱼干",
+        "amount": "12",
+        "k": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:40.585Z",
+        "hash": "3ddd91bbdffceb12"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-row-walk-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "一张卡片不够，一栏一栏往下记才叫记账 —— 卡片也能排成一排。\n\n名字本喵替你定好了，三笔依次是：`猫粮`、`小鱼干`、`猫窝`。\n\n投喂口会递进来**三个整数**（一行一个），依次是这三笔的**数目**。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排三张**卡片，把三个名字和三个数目分别填进各自那两栏（先按编号拿到第几张，再用点号填那一栏）；\n3. **走一遍**这一排，每张印一行：`名字 数目`。\n\n比如投喂给程序的是\n\n6\n7\n8\n\n程序就要叼回\n\n猫粮 6\n小鱼干 7\n猫窝 8\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    int a1 = 0;\n    int a2 = 0;\n    int a3 = 0;\n    cin >> a1 >> a2 >> a3;\n\n    Record book[3];\n    book[0].name = \"猫粮\";\n    book[0].amount = a1;\n    book[1].name = \"小鱼干\";\n    book[1].amount = a2;\n    book[2].name = \"猫窝\";\n    book[2].amount = a3;\n\n    for (int i = 0; i < 3; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 30\n小鱼干 12\n猫窝 88",
+      "stdin": "30\n12\n88\n",
+      "explanation": "这一题的核心就一句喵：**先方括号、后点号，两个记号各干各的活。**\n\n- **`book[i]`** —— 第 `i` 张卡片（一排碗的老手艺：从 0 数起）。\n- **`book[i].name`** —— 先按编号拿到第 `i` 张卡片，**再**用点号取那一栏。\n\n往卡片里填东西也是这一条路倒过来走：`book[0].name = \"猫粮\";` —— 先按编号拿到第 0 张，再点出 `name` 那一栏，把料填进去。\n\n走一遍那一排，就是把 `i` 从 0 数到 2，每格印一行。\n\n（另外记一句本课的老规矩喵：**图纸可以画在招式外面**，它的名字从画下的地方开始都能用 —— 所以本喵把 `struct Record` 画在最外面，招式里、圈里都认得它。）",
+      "templateId": "cpp-s1-card-row-walk",
+      "params": {
+        "a1": "30",
+        "a2": "12",
+        "a3": "88"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:43.755Z",
+        "hash": "e2292b06f438ddbc"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-row-walk-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "一张卡片不够，一栏一栏往下记才叫记账 —— 卡片也能排成一排。\n\n名字本喵替你定好了，三笔依次是：`猫粮`、`小鱼干`、`猫窝`。\n\n投喂口会递进来**三个整数**（一行一个），依次是这三笔的**数目**。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排三张**卡片，把三个名字和三个数目分别填进各自那两栏（先按编号拿到第几张，再用点号填那一栏）；\n3. **走一遍**这一排，每张印一行：`名字 数目`。\n\n比如投喂给程序的是\n\n6\n7\n8\n\n程序就要叼回\n\n猫粮 6\n小鱼干 7\n猫窝 8\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    int a1 = 0;\n    int a2 = 0;\n    int a3 = 0;\n    cin >> a1 >> a2 >> a3;\n\n    Record book[3];\n    book[0].name = \"猫粮\";\n    book[0].amount = a1;\n    book[1].name = \"小鱼干\";\n    book[1].amount = a2;\n    book[2].name = \"猫窝\";\n    book[2].amount = a3;\n\n    for (int i = 0; i < 3; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 30\n小鱼干 12\n猫窝 99",
+      "stdin": "30\n12\n99\n",
+      "explanation": "这一题的核心就一句喵：**先方括号、后点号，两个记号各干各的活。**\n\n- **`book[i]`** —— 第 `i` 张卡片（一排碗的老手艺：从 0 数起）。\n- **`book[i].name`** —— 先按编号拿到第 `i` 张卡片，**再**用点号取那一栏。\n\n往卡片里填东西也是这一条路倒过来走：`book[0].name = \"猫粮\";` —— 先按编号拿到第 0 张，再点出 `name` 那一栏，把料填进去。\n\n走一遍那一排，就是把 `i` 从 0 数到 2，每格印一行。\n\n（另外记一句本课的老规矩喵：**图纸可以画在招式外面**，它的名字从画下的地方开始都能用 —— 所以本喵把 `struct Record` 画在最外面，招式里、圈里都认得它。）",
+      "templateId": "cpp-s1-card-row-walk",
+      "params": {
+        "a1": "30",
+        "a2": "12",
+        "a3": "99"
+      },
+      "verified": {
+        "at": "2026-10-20T16:43:28.673Z",
+        "hash": "179eaebc30e9d232"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-row-walk-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "一张卡片不够，一栏一栏往下记才叫记账 —— 卡片也能排成一排。\n\n名字本喵替你定好了，三笔依次是：`猫粮`、`小鱼干`、`猫窝`。\n\n投喂口会递进来**三个整数**（一行一个），依次是这三笔的**数目**。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排三张**卡片，把三个名字和三个数目分别填进各自那两栏（先按编号拿到第几张，再用点号填那一栏）；\n3. **走一遍**这一排，每张印一行：`名字 数目`。\n\n比如投喂给程序的是\n\n6\n7\n8\n\n程序就要叼回\n\n猫粮 6\n小鱼干 7\n猫窝 8\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    int a1 = 0;\n    int a2 = 0;\n    int a3 = 0;\n    cin >> a1 >> a2 >> a3;\n\n    Record book[3];\n    book[0].name = \"猫粮\";\n    book[0].amount = a1;\n    book[1].name = \"小鱼干\";\n    book[1].amount = a2;\n    book[2].name = \"猫窝\";\n    book[2].amount = a3;\n\n    for (int i = 0; i < 3; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 30\n小鱼干 20\n猫窝 99",
+      "stdin": "30\n20\n99\n",
+      "explanation": "这一题的核心就一句喵：**先方括号、后点号，两个记号各干各的活。**\n\n- **`book[i]`** —— 第 `i` 张卡片（一排碗的老手艺：从 0 数起）。\n- **`book[i].name`** —— 先按编号拿到第 `i` 张卡片，**再**用点号取那一栏。\n\n往卡片里填东西也是这一条路倒过来走：`book[0].name = \"猫粮\";` —— 先按编号拿到第 0 张，再点出 `name` 那一栏，把料填进去。\n\n走一遍那一排，就是把 `i` 从 0 数到 2，每格印一行。\n\n（另外记一句本课的老规矩喵：**图纸可以画在招式外面**，它的名字从画下的地方开始都能用 —— 所以本喵把 `struct Record` 画在最外面，招式里、圈里都认得它。）",
+      "templateId": "cpp-s1-card-row-walk",
+      "params": {
+        "a1": "30",
+        "a2": "20",
+        "a3": "99"
+      },
+      "verified": {
+        "at": "2026-10-20T16:43:33.554Z",
+        "hash": "85db4e7fcdb53016"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-row-walk-004",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "一张卡片不够，一栏一栏往下记才叫记账 —— 卡片也能排成一排。\n\n名字本喵替你定好了，三笔依次是：`猫粮`、`小鱼干`、`猫窝`。\n\n投喂口会递进来**三个整数**（一行一个），依次是这三笔的**数目**。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排三张**卡片，把三个名字和三个数目分别填进各自那两栏（先按编号拿到第几张，再用点号填那一栏）；\n3. **走一遍**这一排，每张印一行：`名字 数目`。\n\n比如投喂给程序的是\n\n6\n7\n8\n\n程序就要叼回\n\n猫粮 6\n小鱼干 7\n猫窝 8\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    int a1 = 0;\n    int a2 = 0;\n    int a3 = 0;\n    cin >> a1 >> a2 >> a3;\n\n    Record book[3];\n    book[0].name = \"猫粮\";\n    book[0].amount = a1;\n    book[1].name = \"小鱼干\";\n    book[1].amount = a2;\n    book[2].name = \"猫窝\";\n    book[2].amount = a3;\n\n    for (int i = 0; i < 3; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 50\n小鱼干 12\n猫窝 88",
+      "stdin": "50\n12\n88\n",
+      "explanation": "这一题的核心就一句喵：**先方括号、后点号，两个记号各干各的活。**\n\n- **`book[i]`** —— 第 `i` 张卡片（一排碗的老手艺：从 0 数起）。\n- **`book[i].name`** —— 先按编号拿到第 `i` 张卡片，**再**用点号取那一栏。\n\n往卡片里填东西也是这一条路倒过来走：`book[0].name = \"猫粮\";` —— 先按编号拿到第 0 张，再点出 `name` 那一栏，把料填进去。\n\n走一遍那一排，就是把 `i` 从 0 数到 2，每格印一行。\n\n（另外记一句本课的老规矩喵：**图纸可以画在招式外面**，它的名字从画下的地方开始都能用 —— 所以本喵把 `struct Record` 画在最外面，招式里、圈里都认得它。）",
+      "templateId": "cpp-s1-card-row-walk",
+      "params": {
+        "a1": "50",
+        "a2": "12",
+        "a3": "88"
+      },
+      "verified": {
+        "at": "2026-10-20T16:43:38.333Z",
+        "hash": "a0ff1eaa7d1d712e"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-row-walk-006",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "一张卡片不够，一栏一栏往下记才叫记账 —— 卡片也能排成一排。\n\n名字本喵替你定好了，三笔依次是：`猫粮`、`小鱼干`、`猫窝`。\n\n投喂口会递进来**三个整数**（一行一个），依次是这三笔的**数目**。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排三张**卡片，把三个名字和三个数目分别填进各自那两栏（先按编号拿到第几张，再用点号填那一栏）；\n3. **走一遍**这一排，每张印一行：`名字 数目`。\n\n比如投喂给程序的是\n\n6\n7\n8\n\n程序就要叼回\n\n猫粮 6\n小鱼干 7\n猫窝 8\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    int a1 = 0;\n    int a2 = 0;\n    int a3 = 0;\n    cin >> a1 >> a2 >> a3;\n\n    Record book[3];\n    book[0].name = \"猫粮\";\n    book[0].amount = a1;\n    book[1].name = \"小鱼干\";\n    book[1].amount = a2;\n    book[2].name = \"猫窝\";\n    book[2].amount = a3;\n\n    for (int i = 0; i < 3; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 50\n小鱼干 20\n猫窝 88",
+      "stdin": "50\n20\n88\n",
+      "explanation": "这一题的核心就一句喵：**先方括号、后点号，两个记号各干各的活。**\n\n- **`book[i]`** —— 第 `i` 张卡片（一排碗的老手艺：从 0 数起）。\n- **`book[i].name`** —— 先按编号拿到第 `i` 张卡片，**再**用点号取那一栏。\n\n往卡片里填东西也是这一条路倒过来走：`book[0].name = \"猫粮\";` —— 先按编号拿到第 0 张，再点出 `name` 那一栏，把料填进去。\n\n走一遍那一排，就是把 `i` 从 0 数到 2，每格印一行。\n\n（另外记一句本课的老规矩喵：**图纸可以画在招式外面**，它的名字从画下的地方开始都能用 —— 所以本喵把 `struct Record` 画在最外面，招式里、圈里都认得它。）",
+      "templateId": "cpp-s1-card-row-walk",
+      "params": {
+        "a1": "50",
+        "a2": "20",
+        "a3": "88"
+      },
+      "verified": {
+        "at": "2026-10-20T16:43:43.103Z",
+        "hash": "0d9e7ee1daccb623"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-card-row-walk-007",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "一张卡片不够，一栏一栏往下记才叫记账 —— 卡片也能排成一排。\n\n名字本喵替你定好了，三笔依次是：`猫粮`、`小鱼干`、`猫窝`。\n\n投喂口会递进来**三个整数**（一行一个），依次是这三笔的**数目**。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排三张**卡片，把三个名字和三个数目分别填进各自那两栏（先按编号拿到第几张，再用点号填那一栏）；\n3. **走一遍**这一排，每张印一行：`名字 数目`。\n\n比如投喂给程序的是\n\n6\n7\n8\n\n程序就要叼回\n\n猫粮 6\n小鱼干 7\n猫窝 8\n\n（判分喂的是**另外三个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    int a1 = 0;\n    int a2 = 0;\n    int a3 = 0;\n    cin >> a1 >> a2 >> a3;\n\n    Record book[3];\n    book[0].name = \"猫粮\";\n    book[0].amount = a1;\n    book[1].name = \"小鱼干\";\n    book[1].amount = a2;\n    book[2].name = \"猫窝\";\n    book[2].amount = a3;\n\n    for (int i = 0; i < 3; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 50\n小鱼干 20\n猫窝 99",
+      "stdin": "50\n20\n99\n",
+      "explanation": "这一题的核心就一句喵：**先方括号、后点号，两个记号各干各的活。**\n\n- **`book[i]`** —— 第 `i` 张卡片（一排碗的老手艺：从 0 数起）。\n- **`book[i].name`** —— 先按编号拿到第 `i` 张卡片，**再**用点号取那一栏。\n\n往卡片里填东西也是这一条路倒过来走：`book[0].name = \"猫粮\";` —— 先按编号拿到第 0 张，再点出 `name` 那一栏，把料填进去。\n\n走一遍那一排，就是把 `i` 从 0 数到 2，每格印一行。\n\n（另外记一句本课的老规矩喵：**图纸可以画在招式外面**，它的名字从画下的地方开始都能用 —— 所以本喵把 `struct Record` 画在最外面，招式里、圈里都认得它。）",
+      "templateId": "cpp-s1-card-row-walk",
+      "params": {
+        "a1": "50",
+        "a2": "20",
+        "a3": "99"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:46.685Z",
+        "hash": "2e63fe80282771a4"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-challenge-flip-word-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "difficulty": "challenge",
+      "stem": "本喵有一招 `flip`，专管「**掉头**」：把一个词整个儿倒过来，头尾对调（`abc` 掉头是 `cba`）。\n\n可现在它**喊了跟没喊一样**：喊完 `flip(word)` 再印，印出来的还是原来那个词喵……程序不报错，翻译官喵也不吭声。你帮本喵看看病根在哪。\n\n投喂口给一个词，程序掉完头印一行：`掉头之后是 X 喵`。\n\n比如投喂给程序的是\n\nmiaomiao\n\n修好之后就要叼回\n\n掉头之后是 oaimoaim 喵\n\n（判分喂的是**另一个词**喵，别把答案写死。）",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid flip(string word) {\n    int i = 0;\n    int j = (int)word.size() - 1;\n    while (i < j) {\n        char t = word[i];\n        word[i] = word[j];\n        word[j] = t;\n        i++;\n        j--;\n    }\n}\n\nint main() {\n    string word;\n    cin >> word;\n\n    flip(word);\n\n    cout << \"掉头之后是 \" << word << \" 喵\" << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nvoid flip(string &word) {\n    int i = 0;\n    int j = (int)word.size() - 1;\n    while (i < j) {\n        char t = word[i];\n        word[i] = word[j];\n        word[j] = t;\n        i++;\n        j--;\n    }\n}\n\nint main() {\n    string word;\n    cin >> word;\n\n    flip(word);\n\n    cout << \"掉头之后是 \" << word << \" 喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "掉头之后是 uyiefad 喵",
+      "stdin": "dafeiyu",
+      "explanation": "病根在那句喊招式的地方递出去的东西：`flip(word)` 递的是一份**复印件**喵。\n\n`void flip(string word)` 这条招式声明里，`word` 是个**现做的本地名字**：喊它的时候，原来那个词会被**照抄一份**放进去。招式里掉头的动作全都做在那份复印件上 —— 做得再卖力，本喵手里原来那只词**一个字母都没动**。所以「喊了跟没喊一样」，还不报错：它觉得自己干得好好的。\n\n改法只在名字前面加一个小符号：\n\n```cpp\nvoid flip(string &word)\n```\n\n这个 `&` 是**温柔版的指向牌**：它不复制，只给原来那个词**再起一个称呼**。有了它，招式里叫 `word` 的时候够到的就是本喵手里那一只，掉头掉的就是原件。\n\n判据记一句喵：**招式里要动原件，名字前就加 `&`；只看一眼不改，不加更省事。**",
+      "templateId": "cpp-s1-challenge-flip-word",
+      "params": {},
+      "verified": {
+        "at": "2026-09-30T12:37:04.534Z",
+        "hash": "da8684a7a08ac5ce"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-challenge-safe-divide-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "difficulty": "challenge",
+      "stem": "本喵要一对一对地分鱼干：每对里，第一个数是**要分的条数**，第二个数是**分给几只猫**。\n\n麻烦在第二个数 —— 它**可能是 0**。分给 0 只猫这件事本喵不想让它当场翻脸；希望用前几课学的**主动喊停 + 接住**那一招来办：分不了的那对，喊一嗓子跳过它，报一句照样接着往下分。\n\n要干的事：\n\n1. 先读一个数（这一串一共几个数），再一个一个读；每两个算一对；\n2. 能分的，印 `A 分给 B 份，每份 C 条喵`（C 是 A 除以 B 的整数结果）；\n3. 分不了的（第二个数是 0），印 `0 份分不了喵`，接着处理下一对；\n4. 全部处理完，最后补一行 `分完啦喵`。\n\n比如投喂给程序的是\n\n4\n2\n2\n7\n3\n\n程序就要叼回\n\n2 分给 2 份，每份 1 条喵\n7 分给 3 份，每份 2 条喵\n分完啦喵\n\n（判分喂的是**另外一组数**喵 —— 样例里不一定有分不了的对，程序得照规矩自己判。）",
+      "starter": "#include <iostream>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    if (!(cin >> n)) {\n        return 1;\n    }\n\n    for (int i = 0; i < n / 2; i++) {\n        int a = 0;\n        int b = 0;\n        // 一对一对地读进来，试着分一次\n    }\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    if (!(cin >> n)) {\n        return 1;\n    }\n\n    for (int i = 0; i < n / 2; i++) {\n        int a = 0;\n        int b = 0;\n        cin >> a >> b;\n        try {\n            if (b == 0) {\n                throw runtime_error(\"zero\");\n            }\n            cout << a << \" 分给 \" << b << \" 份，每份 \" << a / b << \" 条喵\" << endl;\n        } catch (const runtime_error &e) {\n            cout << \"0 份分不了喵\" << endl;\n        }\n    }\n\n    cout << \"分完啦喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "2 分给 3 份，每份 0 条喵\n8 分给 7 份，每份 1 条喵\n分完啦喵",
+      "stdin": "4\n2\n3\n8\n7\n",
+      "explanation": "这一题的主角是**主动喊停**和**接住**这对搭档喵。\n\n先说为什么需要它：**除以 0** 是没有定义的事，真算下去程序当场塌方（不是好好报错退出，是崩掉）。可「第二个数是 0」这件事本喵**能提前看出来**，所以别急着算，先问一句：\n\n```cpp\nif (b == 0) {\n    throw runtime_error(\"zero\");\n}\n```\n\n`throw` 就是**主动喊停**：喊出去的瞬间，这一段剩下的话全都不执行 —— 下面那行 `cout` 连碰都不会碰。喊出来的东西会被**最近的那只手接住**：\n\n```cpp\ncatch (const runtime_error &e) {\n    cout << \"0 份分不了喵\" << endl;\n}\n```\n\n接住、报一句、接着处理下一对 —— 这就是「不翻脸」的意思。\n\n两个必须记的细节：\n\n1. `runtime_error` 这类名字住在 `<stdexcept>` 这个抽屉里，**要用就得先 `#include <stdexcept>`**，不然翻译官喵翻脸说不认识；\n2. 会出事的那句除法必须待在 `try` 那对花括号**里面** —— 放在外面，喊停就没人接得住。",
+      "templateId": "cpp-s1-challenge-safe-divide",
+      "params": {
+        "n": "4"
+      },
+      "verified": {
+        "at": "2026-09-30T12:37:08.333Z",
+        "hash": "ecfc491d23ceaa71"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-challenge-safe-divide-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "difficulty": "challenge",
+      "stem": "本喵要一对一对地分鱼干：每对里，第一个数是**要分的条数**，第二个数是**分给几只猫**。\n\n麻烦在第二个数 —— 它**可能是 0**。分给 0 只猫这件事本喵不想让它当场翻脸；希望用前几课学的**主动喊停 + 接住**那一招来办：分不了的那对，喊一嗓子跳过它，报一句照样接着往下分。\n\n要干的事：\n\n1. 先读一个数（这一串一共几个数），再一个一个读；每两个算一对；\n2. 能分的，印 `A 分给 B 份，每份 C 条喵`（C 是 A 除以 B 的整数结果）；\n3. 分不了的（第二个数是 0），印 `0 份分不了喵`，接着处理下一对；\n4. 全部处理完，最后补一行 `分完啦喵`。\n\n比如投喂给程序的是\n\n6\n1\n4\n1\n8\n6\n0\n\n程序就要叼回\n\n1 分给 4 份，每份 0 条喵\n1 分给 8 份，每份 0 条喵\n0 份分不了喵\n分完啦喵\n\n（判分喂的是**另外一组数**喵 —— 样例里不一定有分不了的对，程序得照规矩自己判。）",
+      "starter": "#include <iostream>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    if (!(cin >> n)) {\n        return 1;\n    }\n\n    for (int i = 0; i < n / 2; i++) {\n        int a = 0;\n        int b = 0;\n        // 一对一对地读进来，试着分一次\n    }\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    if (!(cin >> n)) {\n        return 1;\n    }\n\n    for (int i = 0; i < n / 2; i++) {\n        int a = 0;\n        int b = 0;\n        cin >> a >> b;\n        try {\n            if (b == 0) {\n                throw runtime_error(\"zero\");\n            }\n            cout << a << \" 分给 \" << b << \" 份，每份 \" << a / b << \" 条喵\" << endl;\n        } catch (const runtime_error &e) {\n            cout << \"0 份分不了喵\" << endl;\n        }\n    }\n\n    cout << \"分完啦喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "8 分给 4 份，每份 2 条喵\n7 分给 4 份，每份 1 条喵\n8 分给 8 份，每份 1 条喵\n分完啦喵",
+      "stdin": "6\n8\n4\n7\n4\n8\n8\n",
+      "explanation": "这一题的主角是**主动喊停**和**接住**这对搭档喵。\n\n先说为什么需要它：**除以 0** 是没有定义的事，真算下去程序当场塌方（不是好好报错退出，是崩掉）。可「第二个数是 0」这件事本喵**能提前看出来**，所以别急着算，先问一句：\n\n```cpp\nif (b == 0) {\n    throw runtime_error(\"zero\");\n}\n```\n\n`throw` 就是**主动喊停**：喊出去的瞬间，这一段剩下的话全都不执行 —— 下面那行 `cout` 连碰都不会碰。喊出来的东西会被**最近的那只手接住**：\n\n```cpp\ncatch (const runtime_error &e) {\n    cout << \"0 份分不了喵\" << endl;\n}\n```\n\n接住、报一句、接着处理下一对 —— 这就是「不翻脸」的意思。\n\n两个必须记的细节：\n\n1. `runtime_error` 这类名字住在 `<stdexcept>` 这个抽屉里，**要用就得先 `#include <stdexcept>`**，不然翻译官喵翻脸说不认识；\n2. 会出事的那句除法必须待在 `try` 那对花括号**里面** —— 放在外面，喊停就没人接得住。",
+      "templateId": "cpp-s1-challenge-safe-divide",
+      "params": {
+        "n": "6"
+      },
+      "verified": {
+        "at": "2026-10-20T16:44:11.460Z",
+        "hash": "c005d855782dec1b"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ledger-add-record-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一回要能**往里记**：每记一笔，就是往账本那一排的末尾放一张新卡片。\n\n投喂口会递进来**两笔账**（四样料，一行一样）：第一笔的名字、第一笔的数目、第二笔的名字、第二笔的数目。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排 8 格的空位**当账本，再开一只 `count` 从 **0** 起（记了几笔，它说了算）；\n3. 写**一招** `addRecord`：收那一排卡片、收 `count`、收一笔的名字和数目 —— 把这一笔放在**第 `count` 格**上（两栏都填），然后**把 `count` 加 1**；\n4. 喊它**两次**（两笔各一次），然后把账本印出来：一笔一行 `名字 数目`，最后再印一行 `一共记了 X 笔喵`。\n\n⚠️ `count` 那一头要写**温柔版的小记号**（`int& count`）—— 不写的话，招式里 `count` 加得再欢，外面那本账也一动不动。\n\n比如投喂给程序的是\n\n猫爬架\n7\n逗猫棒\n9\n\n程序就要叼回\n\n猫爬架 7\n逗猫棒 9\n一共记了 2 笔喵\n\n（判分喂的是**另外两笔账**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    string n1;\n    string n2;\n    int a1 = 0;\n    int a2 = 0;\n    cin >> n1 >> a1 >> n2 >> a2;\n\n    addRecord(book, count, n1, a1);\n    addRecord(book, count, n2, a2);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 30\n小鱼干 12\n一共记了 2 笔喵",
+      "stdin": "猫粮\n30\n小鱼干\n12\n",
+      "explanation": "这一招把前面十几课的东西全串上了喵，两个关键处：\n\n**一、`int& count` 那个温柔版的小记号。** 为什么这里非用它不可？因为 `count` 得**改**：每记一笔就加 1。要是写成 `int count`，那只是一份**复印件** —— 招式里加得再欢，外面那位还是 0，下一笔又会盖在 0 号格上，账全被吃光（第十课那块牌子讲的就是这件事）。\n\n**二、`count = count + 1;` 这一句别漏。** 「把卡片放进去」（那两句赋值）和「把编号往后挪一格」（这一句）是**两件事**：光放不挪，三笔全盖在第 0 格上；光挪不放，格子空空。它俩合起来才叫「记了一笔」。\n\n再看 `book[count].name = name;` 这一行喵：名字一样（都是 `name`），但**左边是卡片上的那一栏**、**右边是招式收到的那样料** —— 分不清的时候看它前面有没有点号。\n\n最后一句：账本开的是 8 格空位，可走的时候圈子写的是 `i < count` —— 只走**真记过的**那几张，后面没填过的空卡片一张都不碰。",
+      "templateId": "cpp-s1-ledger-add-record",
+      "params": {
+        "n1": "猫粮",
+        "a1": "30",
+        "n2": "小鱼干",
+        "a2": "12"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:49.829Z",
+        "hash": "a2df500d84447a59"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ledger-add-record-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一回要能**往里记**：每记一笔，就是往账本那一排的末尾放一张新卡片。\n\n投喂口会递进来**两笔账**（四样料，一行一样）：第一笔的名字、第一笔的数目、第二笔的名字、第二笔的数目。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排 8 格的空位**当账本，再开一只 `count` 从 **0** 起（记了几笔，它说了算）；\n3. 写**一招** `addRecord`：收那一排卡片、收 `count`、收一笔的名字和数目 —— 把这一笔放在**第 `count` 格**上（两栏都填），然后**把 `count` 加 1**；\n4. 喊它**两次**（两笔各一次），然后把账本印出来：一笔一行 `名字 数目`，最后再印一行 `一共记了 X 笔喵`。\n\n⚠️ `count` 那一头要写**温柔版的小记号**（`int& count`）—— 不写的话，招式里 `count` 加得再欢，外面那本账也一动不动。\n\n比如投喂给程序的是\n\n猫爬架\n7\n逗猫棒\n9\n\n程序就要叼回\n\n猫爬架 7\n逗猫棒 9\n一共记了 2 笔喵\n\n（判分喂的是**另外两笔账**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    string n1;\n    string n2;\n    int a1 = 0;\n    int a2 = 0;\n    cin >> n1 >> a1 >> n2 >> a2;\n\n    addRecord(book, count, n1, a1);\n    addRecord(book, count, n2, a2);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 30\n猫薄荷 20\n一共记了 2 笔喵",
+      "stdin": "猫粮\n30\n猫薄荷\n20\n",
+      "explanation": "这一招把前面十几课的东西全串上了喵，两个关键处：\n\n**一、`int& count` 那个温柔版的小记号。** 为什么这里非用它不可？因为 `count` 得**改**：每记一笔就加 1。要是写成 `int count`，那只是一份**复印件** —— 招式里加得再欢，外面那位还是 0，下一笔又会盖在 0 号格上，账全被吃光（第十课那块牌子讲的就是这件事）。\n\n**二、`count = count + 1;` 这一句别漏。** 「把卡片放进去」（那两句赋值）和「把编号往后挪一格」（这一句）是**两件事**：光放不挪，三笔全盖在第 0 格上；光挪不放，格子空空。它俩合起来才叫「记了一笔」。\n\n再看 `book[count].name = name;` 这一行喵：名字一样（都是 `name`），但**左边是卡片上的那一栏**、**右边是招式收到的那样料** —— 分不清的时候看它前面有没有点号。\n\n最后一句：账本开的是 8 格空位，可走的时候圈子写的是 `i < count` —— 只走**真记过的**那几张，后面没填过的空卡片一张都不碰。",
+      "templateId": "cpp-s1-ledger-add-record",
+      "params": {
+        "n1": "猫粮",
+        "a1": "30",
+        "n2": "猫薄荷",
+        "a2": "20"
+      },
+      "verified": {
+        "at": "2026-10-20T16:45:48.148Z",
+        "hash": "a54147e53bbd6f22"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ledger-add-record-006",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一回要能**往里记**：每记一笔，就是往账本那一排的末尾放一张新卡片。\n\n投喂口会递进来**两笔账**（四样料，一行一样）：第一笔的名字、第一笔的数目、第二笔的名字、第二笔的数目。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排 8 格的空位**当账本，再开一只 `count` 从 **0** 起（记了几笔，它说了算）；\n3. 写**一招** `addRecord`：收那一排卡片、收 `count`、收一笔的名字和数目 —— 把这一笔放在**第 `count` 格**上（两栏都填），然后**把 `count` 加 1**；\n4. 喊它**两次**（两笔各一次），然后把账本印出来：一笔一行 `名字 数目`，最后再印一行 `一共记了 X 笔喵`。\n\n⚠️ `count` 那一头要写**温柔版的小记号**（`int& count`）—— 不写的话，招式里 `count` 加得再欢，外面那本账也一动不动。\n\n比如投喂给程序的是\n\n猫爬架\n7\n逗猫棒\n9\n\n程序就要叼回\n\n猫爬架 7\n逗猫棒 9\n一共记了 2 笔喵\n\n（判分喂的是**另外两笔账**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    string n1;\n    string n2;\n    int a1 = 0;\n    int a2 = 0;\n    cin >> n1 >> a1 >> n2 >> a2;\n\n    addRecord(book, count, n1, a1);\n    addRecord(book, count, n2, a2);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫粮 50\n猫薄荷 12\n一共记了 2 笔喵",
+      "stdin": "猫粮\n50\n猫薄荷\n12\n",
+      "explanation": "这一招把前面十几课的东西全串上了喵，两个关键处：\n\n**一、`int& count` 那个温柔版的小记号。** 为什么这里非用它不可？因为 `count` 得**改**：每记一笔就加 1。要是写成 `int count`，那只是一份**复印件** —— 招式里加得再欢，外面那位还是 0，下一笔又会盖在 0 号格上，账全被吃光（第十课那块牌子讲的就是这件事）。\n\n**二、`count = count + 1;` 这一句别漏。** 「把卡片放进去」（那两句赋值）和「把编号往后挪一格」（这一句）是**两件事**：光放不挪，三笔全盖在第 0 格上；光挪不放，格子空空。它俩合起来才叫「记了一笔」。\n\n再看 `book[count].name = name;` 这一行喵：名字一样（都是 `name`），但**左边是卡片上的那一栏**、**右边是招式收到的那样料** —— 分不清的时候看它前面有没有点号。\n\n最后一句：账本开的是 8 格空位，可走的时候圈子写的是 `i < count` —— 只走**真记过的**那几张，后面没填过的空卡片一张都不碰。",
+      "templateId": "cpp-s1-ledger-add-record",
+      "params": {
+        "n1": "猫粮",
+        "a1": "50",
+        "n2": "猫薄荷",
+        "a2": "12"
+      },
+      "verified": {
+        "at": "2026-10-20T16:45:52.868Z",
+        "hash": "893bd706e1ca9316"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ledger-add-record-009",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一回要能**往里记**：每记一笔，就是往账本那一排的末尾放一张新卡片。\n\n投喂口会递进来**两笔账**（四样料，一行一样）：第一笔的名字、第一笔的数目、第二笔的名字、第二笔的数目。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排 8 格的空位**当账本，再开一只 `count` 从 **0** 起（记了几笔，它说了算）；\n3. 写**一招** `addRecord`：收那一排卡片、收 `count`、收一笔的名字和数目 —— 把这一笔放在**第 `count` 格**上（两栏都填），然后**把 `count` 加 1**；\n4. 喊它**两次**（两笔各一次），然后把账本印出来：一笔一行 `名字 数目`，最后再印一行 `一共记了 X 笔喵`。\n\n⚠️ `count` 那一头要写**温柔版的小记号**（`int& count`）—— 不写的话，招式里 `count` 加得再欢，外面那本账也一动不动。\n\n比如投喂给程序的是\n\n猫爬架\n7\n逗猫棒\n9\n\n程序就要叼回\n\n猫爬架 7\n逗猫棒 9\n一共记了 2 笔喵\n\n（判分喂的是**另外两笔账**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    string n1;\n    string n2;\n    int a1 = 0;\n    int a2 = 0;\n    cin >> n1 >> a1 >> n2 >> a2;\n\n    addRecord(book, count, n1, a1);\n    addRecord(book, count, n2, a2);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫窝 30\n小鱼干 20\n一共记了 2 笔喵",
+      "stdin": "猫窝\n30\n小鱼干\n20\n",
+      "explanation": "这一招把前面十几课的东西全串上了喵，两个关键处：\n\n**一、`int& count` 那个温柔版的小记号。** 为什么这里非用它不可？因为 `count` 得**改**：每记一笔就加 1。要是写成 `int count`，那只是一份**复印件** —— 招式里加得再欢，外面那位还是 0，下一笔又会盖在 0 号格上，账全被吃光（第十课那块牌子讲的就是这件事）。\n\n**二、`count = count + 1;` 这一句别漏。** 「把卡片放进去」（那两句赋值）和「把编号往后挪一格」（这一句）是**两件事**：光放不挪，三笔全盖在第 0 格上；光挪不放，格子空空。它俩合起来才叫「记了一笔」。\n\n再看 `book[count].name = name;` 这一行喵：名字一样（都是 `name`），但**左边是卡片上的那一栏**、**右边是招式收到的那样料** —— 分不清的时候看它前面有没有点号。\n\n最后一句：账本开的是 8 格空位，可走的时候圈子写的是 `i < count` —— 只走**真记过的**那几张，后面没填过的空卡片一张都不碰。",
+      "templateId": "cpp-s1-ledger-add-record",
+      "params": {
+        "n1": "猫窝",
+        "a1": "30",
+        "n2": "小鱼干",
+        "a2": "20"
+      },
+      "verified": {
+        "at": "2026-10-20T16:45:57.500Z",
+        "hash": "42576edc6ed9d79a"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ledger-add-record-012",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一回要能**往里记**：每记一笔，就是往账本那一排的末尾放一张新卡片。\n\n投喂口会递进来**两笔账**（四样料，一行一样）：第一笔的名字、第一笔的数目、第二笔的名字、第二笔的数目。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排 8 格的空位**当账本，再开一只 `count` 从 **0** 起（记了几笔，它说了算）；\n3. 写**一招** `addRecord`：收那一排卡片、收 `count`、收一笔的名字和数目 —— 把这一笔放在**第 `count` 格**上（两栏都填），然后**把 `count` 加 1**；\n4. 喊它**两次**（两笔各一次），然后把账本印出来：一笔一行 `名字 数目`，最后再印一行 `一共记了 X 笔喵`。\n\n⚠️ `count` 那一头要写**温柔版的小记号**（`int& count`）—— 不写的话，招式里 `count` 加得再欢，外面那本账也一动不动。\n\n比如投喂给程序的是\n\n猫爬架\n7\n逗猫棒\n9\n\n程序就要叼回\n\n猫爬架 7\n逗猫棒 9\n一共记了 2 笔喵\n\n（判分喂的是**另外两笔账**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    string n1;\n    string n2;\n    int a1 = 0;\n    int a2 = 0;\n    cin >> n1 >> a1 >> n2 >> a2;\n\n    addRecord(book, count, n1, a1);\n    addRecord(book, count, n2, a2);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫窝 50\n小鱼干 12\n一共记了 2 笔喵",
+      "stdin": "猫窝\n50\n小鱼干\n12\n",
+      "explanation": "这一招把前面十几课的东西全串上了喵，两个关键处：\n\n**一、`int& count` 那个温柔版的小记号。** 为什么这里非用它不可？因为 `count` 得**改**：每记一笔就加 1。要是写成 `int count`，那只是一份**复印件** —— 招式里加得再欢，外面那位还是 0，下一笔又会盖在 0 号格上，账全被吃光（第十课那块牌子讲的就是这件事）。\n\n**二、`count = count + 1;` 这一句别漏。** 「把卡片放进去」（那两句赋值）和「把编号往后挪一格」（这一句）是**两件事**：光放不挪，三笔全盖在第 0 格上；光挪不放，格子空空。它俩合起来才叫「记了一笔」。\n\n再看 `book[count].name = name;` 这一行喵：名字一样（都是 `name`），但**左边是卡片上的那一栏**、**右边是招式收到的那样料** —— 分不清的时候看它前面有没有点号。\n\n最后一句：账本开的是 8 格空位，可走的时候圈子写的是 `i < count` —— 只走**真记过的**那几张，后面没填过的空卡片一张都不碰。",
+      "templateId": "cpp-s1-ledger-add-record",
+      "params": {
+        "n1": "猫窝",
+        "a1": "50",
+        "n2": "小鱼干",
+        "a2": "12"
+      },
+      "verified": {
+        "at": "2026-10-20T16:46:02.141Z",
+        "hash": "5bd022a5bc969461"
+      }
+    },
+    {
+      "id": "bank-cpp-s1-ledger-add-record-015",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "这一回要能**往里记**：每记一笔，就是往账本那一排的末尾放一张新卡片。\n\n投喂口会递进来**两笔账**（四样料，一行一样）：第一笔的名字、第一笔的数目、第二笔的名字、第二笔的数目。\n\n请这样办：\n\n1. **画图纸**：一张叫 `Record` 的卡片，两栏 —— `name` 装一串字，`amount` 装一个整数；\n2. 开**一排 8 格的空位**当账本，再开一只 `count` 从 **0** 起（记了几笔，它说了算）；\n3. 写**一招** `addRecord`：收那一排卡片、收 `count`、收一笔的名字和数目 —— 把这一笔放在**第 `count` 格**上（两栏都填），然后**把 `count` 加 1**；\n4. 喊它**两次**（两笔各一次），然后把账本印出来：一笔一行 `名字 数目`，最后再印一行 `一共记了 X 笔喵`。\n\n⚠️ `count` 那一头要写**温柔版的小记号**（`int& count`）—— 不写的话，招式里 `count` 加得再欢，外面那本账也一动不动。\n\n比如投喂给程序的是\n\n猫爬架\n7\n逗猫棒\n9\n\n程序就要叼回\n\n猫爬架 7\n逗猫棒 9\n一共记了 2 笔喵\n\n（判分喂的是**另外两笔账**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    string n1;\n    string n2;\n    int a1 = 0;\n    int a2 = 0;\n    cin >> n1 >> a1 >> n2 >> a2;\n\n    addRecord(book, count, n1, a1);\n    addRecord(book, count, n2, a2);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}\n",
+      "expectedOutput": "猫窝 50\n猫薄荷 20\n一共记了 2 笔喵",
+      "stdin": "猫窝\n50\n猫薄荷\n20\n",
+      "explanation": "这一招把前面十几课的东西全串上了喵，两个关键处：\n\n**一、`int& count` 那个温柔版的小记号。** 为什么这里非用它不可？因为 `count` 得**改**：每记一笔就加 1。要是写成 `int count`，那只是一份**复印件** —— 招式里加得再欢，外面那位还是 0，下一笔又会盖在 0 号格上，账全被吃光（第十课那块牌子讲的就是这件事）。\n\n**二、`count = count + 1;` 这一句别漏。** 「把卡片放进去」（那两句赋值）和「把编号往后挪一格」（这一句）是**两件事**：光放不挪，三笔全盖在第 0 格上；光挪不放，格子空空。它俩合起来才叫「记了一笔」。\n\n再看 `book[count].name = name;` 这一行喵：名字一样（都是 `name`），但**左边是卡片上的那一栏**、**右边是招式收到的那样料** —— 分不清的时候看它前面有没有点号。\n\n最后一句：账本开的是 8 格空位，可走的时候圈子写的是 `i < count` —— 只走**真记过的**那几张，后面没填过的空卡片一张都不碰。",
+      "templateId": "cpp-s1-ledger-add-record",
+      "params": {
+        "n1": "猫窝",
+        "a1": "50",
+        "n2": "猫薄荷",
+        "a2": "20"
+      },
+      "verified": {
+        "at": "2026-09-16T08:01:52.716Z",
+        "hash": "1262f0a9b9c9a575"
+      }
+    }
+  ]
+}

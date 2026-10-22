@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s2-file-append-log",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-13",
+  "type": "codewrite",
+  "concept": ["天天往上添", "接着写要喂 true", "写一个数行数的招式", "读完印总数"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["dangan.txt", "zhangben.txt"] },
+    "old": { "kind": "pick", "values": ["第一天：3 条", "星期一：2 条"] },
+    "f1": { "kind": "pick", "values": ["第二天：5 条", "星期二：7 条"] },
+    "f2": { "kind": "pick", "values": ["第三天：2 条", "星期三：4 条"] }
+  },
+  "stemTemplate": "本喵的账本是**天天往上添**的，可不能每添一笔就把前头的全撕掉。\n\n要写的东西（册子名字就叫 `{name}`）：\n\n1. 先往册子上写下第一条记录 `{old}` —— 这一回用「撕掉重来」的写法，册子本来就该从这一条开始；\n2. 写一个招式，收到册子名字，**叼回册子上现在有几条**（打开、一条条读、数完交出来）；喊它一次，印一行 `今天之前：N 条`；\n3. 再往册子上**接着**添两条：`{f1}` 和 `{f2}`；\n4. 最后把册子从头读一遍，每读一条印一行 `档案里有：内容`；读完再印一行 `现在一共 N 条`。\n\n程序就要叼回：\n\n```text\n今天之前：1 条\n档案里有：{old}\n档案里有：{f1}\n档案里有：{f2}\n现在一共 3 条\n```\n\n（判分那一道的册子名字和几条记录跟这里不一样喵，所以别把答案写死～）",
+  "starterTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n\n        return 0;\n    }\n\n    public static void main(String[] args) throws IOException {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    static int countLines(String name) throws IOException {\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(name))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                hang = r.readLine();\n            }\n        }\n        return n;\n    }\n\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"{name}\")) {\n            w.write(\"{old}\\n\");\n        }\n        System.out.println(\"今天之前：\" + countLines(\"{name}\") + \" 条\");\n        try (FileWriter w = new FileWriter(\"{name}\", true)) {\n            w.write(\"{f1}\\n\");\n            w.write(\"{f2}\\n\");\n        }\n        int n = 0;\n        try (BufferedReader r = new BufferedReader(new FileReader(\"{name}\"))) {\n            String hang = r.readLine();\n            while (hang != null) {\n                n++;\n                System.out.println(\"档案里有：\" + hang);\n                hang = r.readLine();\n            }\n        }\n        System.out.println(\"现在一共 \" + n + \" 条\");\n    }\n}\n",
+  "explanationTemplate": "这题就一个考点：**第二回拉开抽屉，是「接着写」还是「擦干净重来」。**\n\n**一、两次拉开抽屉，喂的东西不一样。**\n\n```java\nnew FileWriter(\"{name}\")\nnew FileWriter(\"{name}\", true)\n```\n\n第一回**故意不喂** —— 账本第一天本来就该从零开始。第二回**必须喂 `true`**：不喂的话，拉开抽屉那一刻第一条就被擦干净了。本喵真跑过：把第二回的 `true` 拿掉，`今天之前：1 条` 那一行照样印（因为数的时候第一条还在），可后面读出来**只剩两条**，最后那句变成 `现在一共 2 条` —— 前面的字是**静悄悄没的**，翻译官喵一个字都不说。\n\n**二、数一数那个招式。** 它一整套就是课上那个骨架，只是在读的时候顺手数：\n\n```java\nwhile (hang != null) {\n    n++;\n    hang = r.readLine();\n}\nreturn n;\n```\n\n有两个地方容易漏喵：**数目那个仓库要在招式一开始就摆好**（写在绕圈外面，不然每转一圈又归零了）；**数完要把数交出来**（`return n;`），不然喊它的那一行拿到的还是开头那个 `0`。\n\n**三、招式头上要表态。** 册子这套本事是「要表态的」，`countLines` 里动了册子，所以它的头上也得写 `throws IOException`，`main` 那边也一样。少一处都编不过。"
+}

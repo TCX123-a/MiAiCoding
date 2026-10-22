@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-organize-rename-loses-ext",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-14",
+  "type": "codefix",
+  "concept": ["os.rename", "后缀要接回去", "splitext"],
+  "instances": 2,
+  "params": {
+    "e": { "kind": "pick", "values": [".txt", ".jpg"] }
+  },
+  "stemTemplate": "本喵要给抽屉里那些以 `{e}` 收尾的东西**重新编号**，编成「鱼干 + 两位号」的样子，别的一根手指都不动。\n\n它**跑得顺顺的，一句错都不报**，可改完之后抽屉里那几样东西**打不开了** —— 名字后面那半截不见了。\n\n你帮本喵改对喵。要求：\n\n1. 改完印出来的那一行里，**每一样东西后面那半截都得还在**（原来的那半截是什么，改完还是什么）。\n2. 前面铺东西的那几句、还有挑选的那一句，**一个字都不许动**。\n3. 编号的排法（从 1 起、两位、不够补 0）也不许改。",
+  "brokenCodeTemplate": "import os\n\n工作台 = \"小工作台\"\nos.makedirs(工作台, exist_ok=True)\nfor 名字 in [\"猫1.txt\", \"猫2.txt\", \"鱼.jpg\"]:\n    with open(os.path.join(工作台, 名字), \"w\", encoding=\"utf-8\") as 档案:\n        档案.write(\"x\")\n\n序号 = 0\nfor 名字 in sorted(os.listdir(工作台)):\n    if not 名字.endswith(\"{e}\"):\n        continue\n    序号 = 序号 + 1\n    os.rename(os.path.join(工作台, 名字), os.path.join(工作台, f\"鱼干{序号:02d}\"))\n\nprint(sorted(os.listdir(工作台)))\n",
+  "referenceFixTemplate": "import os\n\n工作台 = \"小工作台\"\nos.makedirs(工作台, exist_ok=True)\nfor 名字 in [\"猫1.txt\", \"猫2.txt\", \"鱼.jpg\"]:\n    with open(os.path.join(工作台, 名字), \"w\", encoding=\"utf-8\") as 档案:\n        档案.write(\"x\")\n\n序号 = 0\nfor 名字 in sorted(os.listdir(工作台)):\n    if not 名字.endswith(\"{e}\"):\n        continue\n    序号 = 序号 + 1\n    主体, 后缀 = os.path.splitext(名字)\n    os.rename(os.path.join(工作台, 名字), os.path.join(工作台, f\"鱼干{序号:02d}\" + 后缀))\n\nprint(sorted(os.listdir(工作台)))\n",
+  "explanationTemplate": "这一段**一个字都不报错** —— 名字确实改了，抽屉里也确实有新名字，可那些东西**已经不是原来那种东西了**喵。\n\n前面那句话里，名字由**两截**拼成：主体（`鱼干` 加两位号）和后缀（`.txt` 这种）。本喵写新名字的时候只写了前面那半截，后缀就**整个丢了**：`.txt` 的那张便条还好，顶多打不开；`.jpg` 的那种丢了后缀，看图的东西就再也不认得它是图了。\n\n改法就是把后缀**接回去**：先用 `os.path.splitext(名字)` 把名字拆成**主体**和**后缀**两样，拆出来的后缀带着那个小数点，连同它一起拼进新名字里。本喵这里顺手把拆出来的主体扔掉不用（新名字的编号重排了），但**拆这一步不能省**，因为后缀只能从老名字里拿。\n\n⚠️ 特别注意：铺东西的那一句和挑选的那一句**动不得** —— 挑选用的是老名字以 `{e}` 收尾，这一句是对的；毛病只在**造新名字**那一步。改代码之前先看清楚**是哪一步丢的东西**，别把好好的那两句也改了喵。\n\n⚠️ 还有一条对照：这一段丢的是后缀，程序**照跑照印**；要是把后缀拼错了位置（比如拼到主体前面去），印出来的名字会立刻不一样、一眼就能看出来 —— 所以查这种毛病，**盯着印出来的那一行**比盯着代码快得多喵。"
+}

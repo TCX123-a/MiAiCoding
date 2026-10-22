@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-10-catch-mismatch",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-10",
+  "type": "codefix",
+  "concept": ["网口要跟扔出来的话对得上", "对不上就穿网而过", "对不上等于没支网"],
+  "instances": 2,
+  "params": {
+    "msg": { "kind": "pick", "values": ["门口摔了一跤", "锅翻了", "货撒了"] }
+  },
+  "stemTemplate": "本喵扔出去的那句话**没被接住** —— 程序当场停了。毛病是网收的那个口子跟扔出来的那种话**对不上**。\n\n请你把网改对（只动接住那一处的口子，扔出去那句话一个字都别改）。\n\n改好之后印 2 行：\n\n1. `接住：{msg}`\n2. `收工`",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    try {\n        throw string(\"{msg}\");\n    } catch (int e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    try {\n        throw string(\"{msg}\");\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "网是有**口子**的喵：扔出来的那种话跟网口对不上，它就**穿网而过**。课文第一节里本喵见过「扔出去的话一路往上飘」，这一题它飘到最顶上也没人接得住 —— 程序只好当场停下（真跑出来那行是 `terminate called …`，看着挺吓人，其实只是没人接）。\n\n这一题扔出来的一句话是 `string`，而网口写的是 `int`，两种话对不上；把口子改成 `string` 就对上了，于是印「接住：{msg}」，接着往下走印「收工」。\n\n⚠️ 记住一句话：**接住的那一处，要跟扔出来的那种话对得上**，对不上等于没支网。这也是「出事之后程序还走不走得下去」最常见的岔子。"
+}

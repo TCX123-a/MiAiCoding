@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-stack-peek",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-04",
+  "type": "codewrite",
+  "concept": ["一摞碗", "只看一眼不拿走", "top 不许动"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "pick", "values": ["1", "4"] },
+    "b": { "kind": "pick", "values": ["2", "6"] },
+    "c": { "kind": "pick", "values": ["3", "7"] }
+  },
+  "stemTemplate": "碗摞上还差一招喵：**只看一眼最上面那只碗里装的是什么，但不把它拿走**。\n\n请你写：\n\n1. 底座一排 5 只碗（`#define` 一个 5 出来），再摆一个数记「摞了几只」。\n2. `is_empty()` / `is_full()` 两招问界面的。\n3. `push(int value)` / `pop(int *value)` 两招，跟平时一样：放碗记得把那个数往上抬，拿碗记得先往下退。\n4. 再写一招 `peek(int *value)`：**先问空没空** —— 空了就答 0；没空就把**最上面那只碗**里装的数叼出来，**那个数一个指头都不许动**，答 1。\n5. `main` 里：先摞上 **{a}、{b}、{c}**；然后 `peek` 一次，印一行 `最上面那只碗里是 几只`；再 `pop` 一次，印一行 `拿走一只，是 几只`；最后再 `peek` 一次，印一行 `现在最上面是 几只`。\n\n该印出来**三行**：\n\n```text\n最上面那只碗里是 {c}\n拿走一只，是 {c}\n现在最上面是 {b}\n```\n\n（注意头两行是**同一个数** —— 这是本喵要看的证据：看了一眼，不代表拿走了喵。）",
+  "starterTemplate": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    /* 放一只碗上去 */\n\n}\n\nint pop(int *value) {\n    /* 从最上面拿一只下来 */\n\n}\n\nint peek(int *value) {\n    /* ① 先问空没空 */\n    /* ② 把最上面那只碗里的数叼出来，那个数不许动 */\n\n}\n\nint main(void) {\n    /* ③ 摞上 {a}、{b}、{c}，看一眼、拿一只、再看一眼 */\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\n#define MAX_BOWLS 5\n\nint bowls[MAX_BOWLS];\nint top = 0;\n\nint is_full(void) { return top == MAX_BOWLS; }\nint is_empty(void) { return top == 0; }\n\nint push(int value) {\n    if (is_full()) {\n        return 0;\n    }\n    bowls[top] = value;\n    top++;\n    return 1;\n}\n\nint pop(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    top--;\n    *value = bowls[top];\n    return 1;\n}\n\nint peek(int *value) {\n    if (is_empty()) {\n        return 0;\n    }\n    *value = bowls[top - 1];\n    return 1;\n}\n\nint main(void) {\n    push({a});\n    push({b});\n    push({c});\n\n    int v = 0;\n    peek(&v);\n    printf(\"最上面那只碗里是 %d\\n\", v);\n\n    pop(&v);\n    printf(\"拿走一只，是 %d\\n\", v);\n\n    peek(&v);\n    printf(\"现在最上面是 %d\\n\", v);\n    return 0;\n}\n",
+  "explanationTemplate": "`peek` 和 `pop` 的区别只有**一句话**喵：**动不动 `top`**。\n\n- `pop` 要先 `top--` —— 退一格，那格上的碗就归你了，碗摞也就矮了一层。**它动了 `top`。**\n- `peek` 里的 `*value = bowls[top - 1];` 念作「最上面那只碗在 `top - 1` 这一格，把它叼出来」—— 叼完 `top` 还是原来那个数，碗摞还是原来那么高。**它没动 `top`。**\n\n为什么是 `top - 1` 而不是 `top`？因为 `top` 是「下一只碗该放在哪儿」，也就是**最上面那只碗的上面一格**。真正的碗在最上面那一格，得往回退一格才摸得到。这也正是 `pop` 里为什么要先 `top--` 才去叼 —— 两招摸的是**同一格**，区别只在 `pop` 摸完把那格让出去了。\n\n这也是本喵要你看头两行是同一个数的原因：看了一眼（{c}），拿走的还是那一只（{c}）—— **看**这件事对碗摞**一点影响都没有**。第三行变成 {b}，才是 `pop` 真的拿走一只之后的样子喵。"
+}

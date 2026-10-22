@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-08-append-missing",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-08",
+  "type": "codefix",
+  "concept": ["默认从头写", "APPEND 接着添", "被擦掉的前一笔"],
+  "instances": 2,
+  "params": {
+    "n1": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "c1": { "kind": "int", "min": 2, "max": 9 }
+  },
+  "stemTemplate": "本喵拿同一张门牌同一天写了两笔账：第一笔「{n1} {c1} 条」，第二笔「大肥鱼 7 条」。\n\n可念回来只剩第二笔，第一笔**连影子都没有** —— 而且一个字都不红。\n\n你帮本喵看看第二手少了哪一声喊，把它补上 —— 改好之后两笔都在，先写的在前。\n\n（这一题**不用投喂任何东西**。）",
+  "brokenCodeTemplate": "import java.nio.file.Files;\nimport java.nio.file.Path;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"账本.txt\");\n\n        Files.writeString(门牌, \"{n1} {c1} 条\\n\");\n        Files.writeString(门牌, \"大肥鱼 7 条\\n\");\n\n        System.out.println(\"念回来：\");\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+  "referenceFixTemplate": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"账本.txt\");\n\n        Files.writeString(门牌, \"{n1} {c1} 条\\n\");\n        Files.writeString(门牌, \"大肥鱼 7 条\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"念回来：\");\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+  "explanationTemplate": "**一、`Files.writeString` 默认那三样规矩里有一条是「先擦干净再写」（从头写）。** 第一手写完，文件里躺着「{n1} {c1} 条」；第二手没喊别的话，它就照默认来：**先把文件擦成空的**，再写「大肥鱼 7 条」 —— 第一笔就是这么没的。\n\n**二、想接着后面添，得在本喵这头喊一声：**`StandardOpenOption.APPEND`。它写在 `writeString` 的**第三格**上（前两格是门牌、要写的字），喊了之后第二手才是「跟在别人后面写」。\n\n**三、这一脚为什么不红。** 在它眼里，「从头写」是一个完全正常的动作 —— 文件本来就好好的，它也照着规矩办完了。所以这类错只能靠**默认值意识**挡：每回写下 `writeString`，先问自己一句「本喵是想**盖掉**它，还是想**添上去**」。\n\n**四、对照着看。** 上一课的「忘了收工」是本喵该做没做的动作没人提醒；这一题反过来 —— 它**默默替本喵做了一个**本喵没打算做的动作（擦干净）。两种都一个共同点：**不红不响**，只有念回来才发现不对。"
+}

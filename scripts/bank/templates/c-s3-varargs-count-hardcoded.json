@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s3-varargs-count-hardcoded",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-12",
+  "type": "codefix",
+  "concept": ["份数只有账本知道", "绕圈要跟着账本走", "圈数写死", "少算了"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["1", "2"] },
+    "b": { "kind": "pick", "values": ["2", "4"] },
+    "c": { "kind": "pick", "values": ["3", "6"] },
+    "d": { "kind": "pick", "values": ["4", "8"] },
+    "e": { "kind": "pick", "values": ["5", "10"] }
+  },
+  "stemTemplate": "本喵递了**五份**进去（{a}、{b}、{c}、{d}、{e}），账本上写得明明白白：`5`。可它印出来的数**小了一截** —— 后头两份明明就摆在那儿，它压根没伸手喵。\n\n请你把它改对（`main` 里那一行别动）。改好之后该印出这**五份加起来**的总和。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nint fish_total(int count, ...) {\n    va_list list;\n    va_start(list, count);\n    int sum = 0;\n    for (int i = 0; i < 3; i++) {\n        sum += va_arg(list, int);\n    }\n    va_end(list);\n    return sum;\n}\n\nint main(void) {\n    printf(\"%d\\n\", fish_total(5, {a}, {b}, {c}, {d}, {e}));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nint fish_total(int count, ...) {\n    va_list list;\n    va_start(list, count);\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum += va_arg(list, int);\n    }\n    va_end(list);\n    return sum;\n}\n\nint main(void) {\n    printf(\"%d\\n\", fish_total(5, {a}, {b}, {c}, {d}, {e}));\n    return 0;\n}\n",
+  "explanationTemplate": "账本 `count` 传进来了，可**绕鱼干跑圈的圈数写死成了 3**喵 —— 本喵递五份，它只绕三圈，后两份压根没被叼起来，所以印出来的数小了一截。\n\n规矩是：那一串的**份数只有账本知道**，绕圈一定要跟着账本走（`i < count`）。这里写成 `i < 3`，就是本喵自己把那句话钉死在墙上了。\n\n这跟课文里「份数说错」那个坑是同一个家族：账本说几份就得绕几圈 —— 少绕一圈就少叼一份，多绕一圈则会叼来**谁也不知道从哪儿抓来的**东西（那个更阴，印出来的数毫无意义）喵。"
+}

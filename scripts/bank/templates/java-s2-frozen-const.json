@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-frozen-const",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-05",
+  "type": "codefix",
+  "concept": ["常量 static final", "钉死的格子不许改", "编译错误"],
+  "instances": 2,
+  "params": {
+    "max": { "kind": "int", "min": 3, "max": 4 },
+    "n": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stemTemplate": "鱼塘边立了条规矩：一顿最多吃几条，本喵把它写成了一格**全院子共用、又钉死**的数。后来本喵又想让这条规矩每出生一只猫就往上长一点 —— 翻译官喵当场把爪子拍在我的手背上。\n\n请你帮本喵改好。改好之后，程序该印出这一行：\n\n```text\n上限 {max} 条，一共有 {n} 只\n```\n\n那一格钉死的写法本喵不想动，「一共几只」也得照数，问题出在**出生那一手多写的那一行**喵。",
+  "brokenCodeTemplate": "class Cat {\n    static final int MAX_FISH = {max};\n    static int count = 0;\n\n    Cat() {\n        count = count + 1;\n        MAX_FISH = MAX_FISH + 1;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        for (int i = 0; i < {n}; i++) {\n            new Cat();\n        }\n        System.out.println(\"上限 \" + Cat.MAX_FISH + \" 条，一共有 \" + Cat.count + \" 只\");\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    static final int MAX_FISH = {max};\n    static int count = 0;\n\n    Cat() {\n        count = count + 1;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        for (int i = 0; i < {n}; i++) {\n            new Cat();\n        }\n        System.out.println(\"上限 \" + Cat.MAX_FISH + \" 条，一共有 \" + Cat.count + \" 只\");\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 **`cannot assign a value to static final variable MAX_FISH`** —— 「这一格是**全院子共用、又钉死**的：共用是说它不归哪只猫，钉死是说它只填过一次、谁都不许再往里头塞东西。你这一行是在改它喵。」\n\n这一处最容易混的是两个词的分工，本喵把它摆开说：\n\n- **`static`** 管「只有一份」：全院子共用，谁念都是 `Cat.MAX_FISH`。\n- **`final`** 管「只填一次」：填过就锁死，谁都不许改。\n\n本喵原来那句 `MAX_FISH = MAX_FISH + 1;` 想干的事其实是「一边出生一边往上加」—— 那是**记账**的活，不是**规矩**的活。规矩就该钉死不动；要数别的东西，就**另开一格共用的**：这段里本来就有一格 `static int count = 0;`，出生那一手在它上面加一，正好把「一共几只」数得清清楚楚。所以改法就是**把那一行删掉**：规矩留在原处不动，数交给专管数的格子。\n\n顺带认一认两个词的合体：`static final` 就是**常量** —— 「全院子共用、又谁都改不了」的那一份。名字照本喵的写法全用大写、词间加下划线（`MAX_FISH`），要改就只改这一处，全院子立刻都按新规矩来喵。"
+}

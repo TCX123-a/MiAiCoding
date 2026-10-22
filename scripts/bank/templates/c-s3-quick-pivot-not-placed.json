@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s3-quick-pivot-not-placed",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-07",
+  "type": "codefix",
+  "concept": ["拆开分头办", "尺子法", "拿最后一只当尺子", "尺子忘了换到位"],
+  "instances": 2,
+  "params": {
+    "p1": { "kind": "pick", "values": ["30", "3"] },
+    "p2": { "kind": "pick", "values": ["90", "9"] },
+    "p3": { "kind": "pick", "values": ["10", "1"] },
+    "p4": { "kind": "pick", "values": ["60", "6"] },
+    "p5": { "kind": "pick", "values": ["20", "2"] }
+  },
+  "stemTemplate": "本喵用「**尺子法**」收拾这五只：**{p1}、{p2}、{p3}、{p4}、{p5}** —— 拿最后一只当尺子，比它矮的往左边站、比它高的留在右边，尺子自己站到中间那条线上；然后左右两段各自再办一遍。\n\n可印出来那一排**没排整齐**：前面看着像有点样子了，越往后越乱。翻译官喵一声没吭，编译跑得好好的。\n\n请你把**分堆那一招**改对。改好之后该印：\n\n```text\n尺子法：{p3} {p5} {p1} {p4} {p2}\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint partition(int a[], int lo, int hi) {\n    int pivot = a[hi];\n    int i = lo;\n\n    for (int j = lo; j < hi; j++) {\n        if (a[j] < pivot) {\n            int t = a[i];\n            a[i] = a[j];\n            a[j] = t;\n            i++;\n        }\n    }\n\n    return i;\n}\n\nvoid quick(int a[], int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main(void) {\n    int a[5] = {{p1}, {p2}, {p3}, {p4}, {p5}};\n    quick(a, 0, 4);\n\n    printf(\"尺子法：\");\n    for (int i = 0; i < 5; i++) {\n        printf(\"%d \", a[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint partition(int a[], int lo, int hi) {\n    int pivot = a[hi];\n    int i = lo;\n\n    for (int j = lo; j < hi; j++) {\n        if (a[j] < pivot) {\n            int t = a[i];\n            a[i] = a[j];\n            a[j] = t;\n            i++;\n        }\n    }\n\n    int t = a[i];\n    a[i] = a[hi];\n    a[hi] = t;\n    return i;\n}\n\nvoid quick(int a[], int lo, int hi) {\n    if (lo >= hi) {\n        return;\n    }\n    int p = partition(a, lo, hi);\n    quick(a, lo, p - 1);\n    quick(a, p + 1, hi);\n}\n\nint main(void) {\n    int a[5] = {{p1}, {p2}, {p3}, {p4}, {p5}};\n    quick(a, 0, 4);\n\n    printf(\"尺子法：\");\n    for (int i = 0; i < 5; i++) {\n        printf(\"%d \", a[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "本喵这一招少干了**最后一步**：尺子还杵在**最右边**，没搬到中间那条线上喵。\n\n前面那一趟很老实：比尺子矮的，一只一只换到左边来，`i` 一路往后挪 —— 挪完，「比尺子矮的那一摊」已经整整齐齐待在 `lo` 到 `i - 1` 了。可尺子本身还在 `hi` 那一位上，**它两边站的是谁就没人管了**。\n\n要补的就是这三行（写在 `return i;` 前面）：\n\n```text\nint t = a[i];\na[i] = a[hi];\na[hi] = t;\n```\n\n换完之后，尺子站在第 `i` 位上，它左边全是比它矮的、右边全是比它高的 —— **这一位就算安顿好了**，往后两段各自再办时都不用再管它。答回去的 `i` 就是尺子现在站的位子，`quick` 正是拿它切两段的。\n\n⚠️ 少了这一步，翻译官喵一个字都不会说，跑起来也不摔 —— 只是**每切一刀，切口都是歪的**：前面几刀还能碰巧切对一点，越往后越乱。这种错看着像「我的拆法是不是有问题」，其实问题在**尺子没归位**喵。"
+}

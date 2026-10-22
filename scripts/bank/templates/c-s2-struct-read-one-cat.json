@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s2-struct-read-one-cat",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-05",
+  "type": "codewrite",
+  "concept": ["结构体", "读进格子", "点号", "struct关键字"],
+  "instances": 6,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "狸花", "大肥鱼"] },
+    "who2": { "kind": "pick", "values": ["三花", "墨墨", "奶牛"] },
+    "f1": { "kind": "int", "min": 2, "max": 5 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{who}\n{f1}\n", "sampleText": "{who2}\n{f1}\n" },
+  "stemTemplate": "本喵要从键盘上接住**一只猫**：先读进来一行名字（不带空格），再读进来一行一个数（今天的食量）。\n\n请你先照着课文的样子画一张**图纸**（一只猫有什么：一个名字、一个食量），然后在 `main` 里用这张图纸生一只猫，把读进来的两样东西填进它的格子里，最后印一行：`<名字> 今天吃了 <食量> 条喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一只猫**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a;\n\n    if (scanf(\"%s\", a.name) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &a.fish) != 1) {\n        return 1;\n    }\n\n    printf(\"%s 今天吃了 %d 条喵\\n\", a.name, a.fish);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题把「图纸」和「读进来」两件事拼在了一起喵，拆开看只有三步：\n\n**① 先画图纸。** 用 `struct Cat` 打头，后面跟一对花括号，把一只猫**有什么**一格一格列在里面（一个名字、一个食量），末尾那个分号别丢。图纸只说明「一只猫长什么样」，它本身不生猫。分号丢了翻译官喵会报一串看不懂的错 —— 那些都是从这一处牵出来的。\n\n**② 用图纸生一只猫。** `struct Cat a;` —— 记号要写全：`struct` 加标签，两个都要。生出来的 `a` 身上就带着 `name` 和 `fish` 两个格子。\n\n**③ 把读进来的东西放进格子里。** 这里有一处**最容易写歪**的地方：\n\n- `scanf(\"%s\", a.name)` —— **不用写 `&`**。因为 `a.name` 本来就是「一排碗的名字」，交出来就已经是门牌号了，正好是 `%s` 想要的东西。\n- `scanf(\"%d\", &a.fish)` —— **要写 `&`**。因为 `a.fish` 是**一只碗**，`%d` 要的是「碗在哪儿」，得拿 `&` 问一下门牌号。\n\n同一行代码里一个写 `&`、一个不写，看着别扭，道理却很整齐：**一排碗的名字自带门牌号，一只碗得自己问。** 这一条从学 `scanf` 那天起就是个老坑，收下喵。"
+}

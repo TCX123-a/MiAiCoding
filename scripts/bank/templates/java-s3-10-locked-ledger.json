@@ -1,0 +1,22 @@
+{
+  "templateId": "java-s3-10-locked-ledger",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-10",
+  "type": "codewrite",
+  "concept": ["一格共用的账配一把共用的锁", "每圈进锁记一笔", "两只都回来才念账"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["条", "笔"] }
+  },
+  "stdinSpec": {
+    "kind": "ints",
+    "count": 2,
+    "min": 3,
+    "max": 9
+  },
+  "stemTemplate": "本喵要两只猫记**同一本账**。\n\n投喂给程序的是**两行**，一行一个整数：第一行是甲要记多少{unit}，第二行是乙要记多少{unit}。\n\n请你写个程序，照这个次序做：\n\n1. 图纸上摆**一格大家共用的账**和**一把大家共用的锁**：`static int 账本 = 0;`、`static final Object 账本锁 = new Object();`；\n2. 照这张图纸长出**两只**猫，每只带一样东西：**自己要记多少{unit}**；\n3. 每只猫转圈记自己那一份 —— **每一圈都要进锁**（`synchronized (账本锁)` 后面那对花括号罩住记的那一下）才许动账本，一次只放一只猫进去；\n4. 把两只猫都**派出去**；\n5. **站在门口等两只都回来**；\n6. 回来之后印一行 `账本：X {unit}`（X 是账上记到的总数）。\n\n比如投喂给程序的是\n\n```text\n{sampleInput}\n```\n\n程序就要叼回\n\n```text\n{sampleOutput}\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 甲要记 = sc.nextInt();\n        int 乙要记 = sc.nextInt();\n\n        // 这里往下：长出两只猫、派出去、等回来、念账本\n\n    }\n}\n\nclass Cat extends Thread {\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        // 这里往下：转圈，每圈把「记一笔」罩起来\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int 甲要记 = sc.nextInt();\n        int 乙要记 = sc.nextInt();\n\n        Cat 甲 = new Cat(甲要记);\n        Cat 乙 = new Cat(乙要记);\n\n        甲.start();\n        乙.start();\n\n        甲.join();\n        乙.join();\n\n        System.out.println(\"账本：\" + Cat.账本 + \" {unit}\");\n    }\n}\n\nclass Cat extends Thread {\n    static final Object 账本锁 = new Object();\n    static int 账本 = 0;\n\n    int 要记;\n\n    Cat(int 要记) {\n        this.要记 = 要记;\n    }\n\n    public void run() {\n        for (int i = 0; i < 要记; i++) {\n            synchronized (账本锁) {\n                账本 = 账本 + 1;\n            }\n        }\n    }\n}\n",
+  "explanationTemplate": "**一、一格账、一把锁，都摆在图纸上。** `static int 账本 = 0;` 是大家共用的那一格；`static final Object 账本锁 = new Object();` 是大家共用的那一把。两只猫照的是同一张图纸，所以翻开的是**同一本账**、抢的是**同一把锁**（两个 `static` 一个都不能漏）。\n\n**二、`synchronized (账本锁)` 后面那对花括号里，一次只放一只猫进去。** 「记一笔」那三下（读出来、加一、写回去）被罩在里面，另一只猫在门口等 —— 等不是丢下活走了；等到了，它进去记自己那一笔。\n\n**三、两只都回来才念账。** `甲.start(); 乙.start();` 派出去，`甲.join(); 乙.join();` 站在门口等。两句 `join()` 都摆在印账本**前面**：少等一只，念出来的数就是半截的。\n\n**四、数不是本喵写在纸上的。** 两只猫各记多少是从投喂进来的两行里读的 —— 判分喂的是**另一组数**，写死任何数字都会当场露馅。"
+}

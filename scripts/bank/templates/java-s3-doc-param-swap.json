@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-doc-param-swap",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-27",
+  "type": "codefix",
+  "concept": [
+    "Javadoc 的 @param 名单是写给调用者的说明书：顺序、含义都要照着核对",
+    "两个 int 传反了语言不会拦你，只有结果发怪才会被发现",
+    "@param 要写更要读：它是「没人拦你」的坑边上的警示牌"
+  ],
+  "instances": 2,
+  "params": {
+    "q": { "kind": "int", "min": 30, "max": 34 }
+  },
+  "stemTemplate": "本喵这只算结余的小工具，**报数报成了负数**喵 —— 明明只领走一部分，屏幕上却印出一个带减号的数。\n\n答案写在**方法的 Javadoc** 里：`@param quota` 是配额、`@param used` 是已领走，谁先谁后写得清清楚楚。可门口那行调用**把两个数传反了**。\n\n你照着 Javadoc 的名单把调用改对，让它印出**一行**：`还能领 ` 拼上「配额 − 已领走」的结余，再拼 ` 条`。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "public class Main {\n    /**\n     * 算配额领完一部分之后还剩多少。\n     *\n     * @param quota 配额条数\n     * @param used 已经领走的条数\n     * @return 还能领的条数\n     */\n    static int left(int quota, int used) {\n        return quota - used;\n    }\n\n    public static void main(String[] args) {\n        int quota = {q};\n        int used = 18;\n        System.out.println(\"还能领 \" + left(used, quota) + \" 条\");\n    }\n}",
+  "referenceFixTemplate": "public class Main {\n    /**\n     * 算配额领完一部分之后还剩多少。\n     *\n     * @param quota 配额条数\n     * @param used 已经领走的条数\n     * @return 还能领的条数\n     */\n    static int left(int quota, int used) {\n        return quota - used;\n    }\n\n    public static void main(String[] args) {\n        int quota = {q};\n        int used = 18;\n        System.out.println(\"还能领 \" + left(quota, used) + \" 条\");\n    }\n}",
+  "explanationTemplate": "**一、Javadoc 的 `@param` 名单是写给谁看的？** 写给**调用者**：方法要求「第一个数给配额、第二个给已领走」。写调用的人没按名单核对，位置上先放了 `used`、后放了 `quota`：\n\n```java\nSystem.out.println(\"还能领 \" + left(used, quota) + \" 条\");\n```\n\n于是方法内部老老实实做「先来的减后来的」—— 结余就这么变成了负数。\n\n**二、修法是把位置扳回来**（方法本身没有错，错的是投喂的手）：\n\n```java\nSystem.out.println(\"还能领 \" + left(quota, used) + \" 条\");\n```\n\n**三、这种错为什么值得讲。** 投喂顺序这种约定，翻译官喵**不会**帮你检查：两只投喂的小鱼干都是 `int`，传反了照样编过，只有看到怪结果才会被发现。所以 Javadoc 的 `@param` 要写、更要读 —— 它是这类「没人拦你」的坑边上那块警示牌。\n\n一句话记住：**调用之前对着 `@param` 名单点一遍名 —— 两个都是 int 的时候，翻译官喵帮不了你。**"
+}

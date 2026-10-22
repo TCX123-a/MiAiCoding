@@ -1,0 +1,22 @@
+{
+  "templateId": "py-s1-branch-order",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-07",
+  "type": "codefix",
+  "concept": ["elif", "眼色的顺序", "逻辑错误"],
+  "instances": 2,
+  "params": {
+    "score": { "kind": "int", "min": 91, "max": 95 },
+    "sample": { "kind": "int", "min": 80, "max": 84 },
+    "lo": { "kind": "pick", "values": ["55", "60"] },
+    "hi": { "kind": "pick", "values": ["80", "85"] },
+    "pass": { "kind": "pick", "values": ["及格喵", "过关喵"] },
+    "good": { "kind": "pick", "values": ["优秀喵", "拔尖喵"] }
+  },
+  "stemTemplate": "本喵的判分规矩是这样的喵：**{hi} 分以上算「{good}」，{lo} 分以上算「{pass}」** —— 分数更高的时候，本喵要的是「{good}」那一句。\n\n每行都先印分数、空一格，再印那句评语。可这段代码碰上高分的时候，印出来的偏偏是「{pass}」……你帮本喵改对。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一个分数**喵，所以别把答案写死～）",
+  "brokenCodeTemplate": "score = int(input())\nif score >= {lo}:\n    print(score, \"{pass}\")\nelif score >= {hi}:\n    print(score, \"{good}\")\n",
+  "referenceFixTemplate": "score = int(input())\nif score >= {hi}:\n    print(score, \"{good}\")\nelif score >= {lo}:\n    print(score, \"{pass}\")\n",
+  "stdinSpec": { "kind": "raw", "text": "{score}\n", "sampleText": "{sample}\n" },
+  "explanationTemplate": "一串眼色是**从上往下一个一个问**的喵：谁先答「真」就走谁那条路，**后面那些连问都不问**。\n\n所以把**宽松**的条件排在前面，就等于把后面那些更细的路全堵死了 —— 分数明明够高，可第一句「{lo} 分以上吗」已经答了真，电脑高高兴兴走了这条路，「{hi} 分以上吗」根本没被问出口。\n\n改法只有一条：**最严的条件放最上面**。先问「{hi} 分以上吗」，再问「{lo} 分以上吗」，高分的同学就能走到该走的那条路上。\n\n（这种毛病一个错都不报 —— 它只是安安静静给出不对的结果，最费眼神。）"
+}

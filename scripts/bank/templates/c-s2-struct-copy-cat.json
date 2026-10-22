@@ -1,0 +1,19 @@
+{
+  "templateId": "c-s2-struct-copy-cat",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-05",
+  "type": "codewrite",
+  "concept": ["整只搬", "副本", "strcpy", "结构体赋值"],
+  "instances": 6,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "狸花", "大肥鱼"] },
+    "who2": { "kind": "pick", "values": ["假小橘", "冒牌货", "影子猫"] },
+    "f1": { "kind": "int", "min": 2, "max": 4 },
+    "f2": { "kind": "int", "min": 1, "max": 3 }
+  },
+  "stemTemplate": "本喵要试一件好玩的事：**整只猫能不能整个搬走**。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），然后在 `main` 里：\n\n1. 生一只猫，名字叫 `{who}`、食量填 {f1}；\n2. 再生**第二只猫**，把第一只**整个搬**过去；\n3. 把搬过去的那只改一改：食量**再加上** {f2}，名字换成 `{who2}`；\n4. 报两行：`a：<名字> 吃了 <食量> 条喵` 和 `b：<名字> 吃了 <食量> 条喵`（`a` 是原来那只、`b` 是搬出来的那只）。\n\n改名字那一步用课文里那个抄项链的招式。\n\n程序叼回来的应当是这样两行（`a` 那只一个字没动，`b` 那只加了 {f2} 条、名字也换了）：\n\n```\na：{who} 吃了 {f1} 条喵\nb：{who2} 吃了（{f1} 加 {f2} 之后的那个数）条喵\n```\n\n（判分用的是**另外一组名字和数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <string.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat a = {\"{who}\", {f1}};\n    struct Cat b;\n\n    b = a;\n    b.fish = b.fish + {f2};\n    strcpy(b.name, \"{who2}\");\n\n    printf(\"a：%s 吃了 %d 条喵\\n\", a.name, a.fish);\n    printf(\"b：%s 吃了 %d 条喵\\n\", b.name, b.fish);\n    return 0;\n}\n",
+  "explanationTemplate": "这道题就为看清楚一件事喵：**整只猫可以整个搬，搬完是两只。**\n\n- `b = a;` 这一句是本课的甜头：翻译官喵会替本喵把 `a` 身上**每一个格子**都照着搬一份到 `b` 里 —— 连名字那一排碗都一颗一颗珠子搬过去，不用本喵自己写绕圈。\n- 搬完以后，`a` 和 `b` 是**两只各自独立的猫**。所以 `b.fish = b.fish + {f2};` 改的是 `b` 自己的食量，`a` 一点没动；`strcpy(b.name, \"{who2}\");` 换的是 `b` 自己的名字，`a` 的名字也一个字没变。\n- 最后两行印出来一对照，就看得很清楚了：原来那只还是 `{f1}`，搬出来那只变成加了 {f2} 之后的数、名字也换了。\n\n两个小地方顺手收下：\n\n- **改名字要用 `strcpy`**（住在 `string.h` 家里）。名字那格是一排碗，一整排碗不能整个换掉，只能一颗一颗抄过去 —— 这就是本课那道改错的题里翻译官喵拦下来的那件事。\n- **食量那格是「一只碗」**，所以可以整个读写：`b.fish = b.fish + {f2};` 右边先把旧的读出来加上 {f2}，左边再把新数存回去。写成 `b.fish + {f2};` 就白算了。\n\n下一课本喵要把这张「多出一只副本」的账算清楚：想让招式改到**本人**，光有图纸不够，还得给猫配一块牌子喵。"
+}

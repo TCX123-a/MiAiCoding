@@ -1,0 +1,17 @@
+{
+  "templateId": "py-s2-comp-filter-bump",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-02",
+  "type": "codewrite",
+  "concept": ["推导式", "加工和筛选一起用", "sum 外援", "打印柜子"],
+  "instances": 6,
+  "params": {
+    "line": { "kind": "pick", "values": [60, 70] },
+    "a": { "kind": "pick", "values": [88, 62] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "5\n58\n92\n75\n41\n{a}\n", "sampleText": "4\n60\n88\n45\n72\n" },
+  "stemTemplate": "本喵翻出一排分数，想把**及格**的那些（{line} 分及以上）挑出来、每颗**加 5 分**，看看加完是什么样子喵。\n\n请你写个程序：**第一行读一个整数 n**，接下来 n 行每行一个分数 —— 打印**两行**：\n\n- 第一行：挑出来又加过 5 分的那些分数，照柜子本来的样子印（方括号圈着、每颗之间一个逗号一个空格）；\n- 第二行：这些分数**加起来**是多少。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "n = int(input())\nnums = []\nfor _ in range(n):\n    nums.append(int(input()))\n\nbumped = [x + 5 for x in nums if x >= {line}]\nprint(bumped)\nprint(sum(bumped))\n",
+  "explanationTemplate": "加工和筛选能**住在同一行里**，各管各的位子喵：前面的 `x + 5` 管「进来之后变成什么样」，尾巴上的 `if` 管「**哪些能进来**」。每从柜子里拿出一件，先问它一句「你大于等于 {line} 吗？」—— 答「是」的收进新柜子，答「不是」的这一件跳过，配方接着往下走。\n\n所以新柜子里只剩及格的那些，而且**每一颗都已经加过 5 分**了。\n\n印的时候有两处小地方：\n\n1. 第一行直接把柜子交给 `print`，它就会照柜子本来的样子印 —— 方括号圈着、每颗之间一个逗号一个空格；\n2. 第二行把**这只新柜子**交给 `sum` 这个外援。注意加的是**加过 5 分**的那些数，不是原来的分数喵；`sum` 的喊法和数格数的 `len` 一样，名字写在括号外面。\n\n（读分数那三步还是老样子：先 `int(input())` 摘成整数罐，再用 `append` 塞进柜子。要是想连没加过分的一起留着，就得在加工之前先筛一遍、或者多备一只柜子 —— 推导式一出新柜子，原来的分数可就还在老柜子里躺着呢。）"
+}

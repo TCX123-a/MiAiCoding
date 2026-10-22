@@ -1,0 +1,84 @@
+{
+  "lessonId": "java-stage2-13",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵拉开抽屉写字时，`new FileWriter(\"dangan.txt\")` 和 `new FileWriter(\"dangan.txt\", true)` 差在哪儿？",
+      "options": [
+        "前面那种拉开抽屉的那一刻会把册子上原来的字全擦干净，后面那种是接着往下写",
+        "前面那种只能写、后面那种既能写又能读",
+        "前面那种不写 `\\n` 就不会换行，后面那种会自动换行",
+        "前面那种册子不在会当场断气，后面那种册子不在会顺手新建一本"
+      ],
+      "answer": 0,
+      "explanation": "差别**只在「原来那些字留不留」**这一件事上：不喂 `true`，拉开抽屉的那一刻册子就被**擦干净**了，从头写起；喂了 `true`，就从本喵上次停笔的地方往下接着写。两处很容易想歪的地方喵：**册子本来就不在的时候，两种写法都会顺手新建一本**（所以「前面那种册子不在会当场断气，后面那种册子不在会顺手新建一本」说错了）；**换行符该写还得自己写**，喂 `true` 不会让 `write` 突然学会自动换行（「前面那种不写 `\\n` 就不会换行，后面那种会自动换行」也错了）。剩下那一项（能写还是能读）是另一回事：写字请 `FileWriter`、读字请 `BufferedReader`，跟喂不喂 `true` 没关系。本喵真跑过：同一本册子上先写第一天、再换个不喂 `true` 的写法写第二天，读出来只剩第二天那一条。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵动册子的时候，既没在当场接住，也忘了在 `main` 头上写 `throws IOException`。会发生什么？",
+      "options": [
+        "编得过，跑到动册子那一刻才炸",
+        "编译那一关就被退回来，编译器说「unreported exception IOException」",
+        "编得过、也跑得起来，只是册子上的字会少写几笔",
+        "编译器会自己替本喵接住，什么都不用管"
+      ],
+      "answer": 1,
+      "explanation": "册子这一套本事全归**「要表态的」**那一档（和 `Exception` 是一家）—— 你不在头上写 `throws`、又不在当场接住，**编稿子那一关就退回来**，根本轮不到运行。本喵真跑过，翻译官喵的原话是 `Main.java:8: error: unreported exception IOException; must be caught or declared to be thrown`，而且它一口气报了**好几条**：拉开抽屉（`new FileWriter(…)`）那一下、写字那一下、关上抽屉那一下，它都单独数了出来。「编得过，跑到动册子那一刻才炸」说的是**另一档**（`RuntimeException` 那一家）的脾气，册子这套本事没有这个待遇；「编得过、也跑得起来，只是册子上的字会少写几笔」也不对 —— 少写几笔是「忘了 `\n`」或者「抽屉没关」的事，跟表不表态是两回事；「编译器会自己替本喵接住，什么都不用管」更不存在，翻译官喵**从来不替本喵做决定**，它只负责把稿子退回来。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵用 `readLine()` 一行一行读册子，读到最后（册子上已经没有下一行了）的时候，它叼回什么？",
+      "options": [
+        "空的 `\"\"`",
+        "`null`",
+        "把最后那一行再叼回来一遍",
+        "`-1`"
+      ],
+      "answer": 1,
+      "explanation": "`readLine()` 到头的时候叼回的是 **`null`** —— 「什么都没有」。这正是那句绕圈条件 `hang != null` 的来历：**它是有话才叼回来，没话了就给个 `null`**，所以「读到的不是 `null`」就等于「还有下一行」。空的那一串字 `\"\"` 是另一样东西：册子上真真切切有**一个空行**的时候，叼回来的才是它（一行「什么都没有写」和「没有这一行」是两件事，写册子的时候也是 `\\n` 一个不能少）。本喵真跑过：册子上只有一行字的时候，第一次 `readLine()` 把那一行叼回来，**第二次就叼回 `null`**，屏幕上印出来就是 `null` 这四个字母。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) ____ IOException {\n        try (____ w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"小鱼干 3 条\\n\");\n        }\n        try (BufferedReader r = new BufferedReader(new ____(\"dangan.txt\"))) {\n            String hang = r.readLine();\n            while (hang ____ null) {\n                System.out.println(\"档案里有：\" + hang);\n                hang = ____.readLine();\n            }\n        }\n    }\n}",
+      "stem": "本喵写了一段「写一行、再读出来」的稿子，把五处抠掉了。填上让它跑起来、并且印出 `档案里有：小鱼干 3 条`。",
+      "blanks": [
+        { "answer": "throws", "accept": [] },
+        { "answer": "FileWriter", "accept": [] },
+        { "answer": "FileReader", "accept": [] },
+        { "answer": "!=", "accept": [] },
+        { "answer": "r", "accept": [] }
+      ],
+      "explanation": "五处分别是这套骨架的五个要害喵。**一、`throws IOException`** —— `main` 的头上不表态，动册子那几句连编都编不过（这是上一课那条「要表态的」，册子这一套本事全在这个档里）。**二、`FileWriter`** —— `try ( … )` 括号里那一样东西，就是「这一趟要用的笔」：拉开抽屉写字，册子不在顺手新建。**三、`FileReader`** —— 读字的管子，喂给外面那层 `BufferedReader`（「带兜的」那张嘴，加兜是为了让它一次捞一大块、再一行行递给你）。**四、`!=`** —— 到头了 `readLine()` 给的是 `null`，所以条件写成 `hang != null`：「叼回来的不是『什么都没有』，就说明还有下一行」。**五、`r`** —— 绕圈最后一格那句 `hang = r.readLine();`，喊的还是同一张嘴；这一句要是漏了，`hang` 永远停在第一行，程序会印同一行印到天荒地老。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.io.File;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        File f = new File(\"dangan.txt\");\n        System.out.println(\"在不在：\" + f.exists());\n        System.out.println(\"新建成功了没：\" + f.createNewFile());\n        System.out.println(\"现在在不在：\" + f.exists());\n        System.out.println(\"叫什么：\" + f.getName());\n        System.out.println(\"多少字节：\" + f.length());\n    }\n}",
+      "stem": "这段代码的输出是什么？（假设这台机器上从来没有过 `dangan.txt`）",
+      "answer": "在不在：false\n新建成功了没：true\n现在在不在：true\n叫什么：dangan.txt\n多少字节：0",
+      "accept": [
+        "在不在：false\n新建成功了没：true\n现在在不在：true\n叫什么：dangan.txt\n多少字节：0\n"
+      ],
+      "explanation": "五行喵。第一行那个 `false` 是本课最值钱的一行：`new File(\"dangan.txt\")` 只是**照图纸生了一个名牌**，它**不会真去动硬盘** —— 册子到底在不在，得拿牌子去问（`f.exists()`），机器上从来没有过这本册子，问出来的自然是「不在」。第二行 `true` 是 `f.createNewFile()` 的答复：**当场新建一本空册子，建成了所以叼回 `true`**（要是本来就有，它会叼回 `false`，而且**不会把原来那本撕掉**）。第三行再问一次，这回 `true` 了。第四行是牌子上写的名字。最后一行 `0` —— 刚建好的册子**一个字节都没有**。（`f.length()` 数的是**字节**，本喵真跑过：往这本册子上写「小鱼干 3 条」加一个换行，它就变成 16 字节。）"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "java",
+      "code": "import java.io.BufferedReader;\nimport java.io.FileReader;\nimport java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        try (FileWriter w = new FileWriter(\"dangan.txt\")) {\n            w.write(\"小鱼干 3 条\");\n            w.write(\"猫粮 1 碗\");\n        }\n        try (BufferedReader r = new BufferedReader(new FileReader(\"dangan.txt\"))) {\n            System.out.println(\"读到：\" + r.readLine());\n            System.out.println(\"再读：\" + r.readLine());\n        }\n    }\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "读到：小鱼干 3 条猫粮 1 碗\n再读：null",
+      "accept": [
+        "读到：小鱼干 3 条猫粮 1 碗\n再读：null\n"
+      ],
+      "explanation": "两行喵，两行都在教东西。**第一行里两条记录挤在一起了** —— 因为 `w.write` **没有「印完自动换一行」这个脾气**：你写什么，册子上就是什么。本喵那两句都没带 `\\n`，所以「小鱼干 3 条」和「猫粮 1 碗」在册子上是**紧紧连着的一串字**，`readLine()` 一次就把它们整串叼了回来。（想让它们各占一行，每一句末尾都得自己补 `\\n` —— 册子上哪一句自成一行，全看这个。）**第二行是 `null`** —— 册子上只有这一行，叼过一遍就没了，下一趟叼回来的是「什么都没有」。注意别把它和印出来的字搞混：屏幕上那四个字母是 `null`，意思是**这里什么都没有**，所以绕圈的条件写成 `hang != null` 就正好在这里停下。"
+    }
+  ]
+}

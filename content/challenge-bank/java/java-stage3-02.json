@@ -1,0 +1,336 @@
+{
+  "lessonId": "java-stage3-02",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-comparator-sort-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要请个**帮工**来替柜子定排排坐的规矩：**大的排前面**喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请先把它们一个不漏地收进柜子，再印两行：\n\n```text\n从大到小：那一串\n最大的是 M\n```\n\n- 第一行那串**不用本喵自己拼** —— 柜子排完直接印出来就是方括号加逗号空格那个样子；\n- `M` 是排完之后**打头的那一件**（也就是最大的那个）。这一处**别自己绕圈去找最大**，让柜子自己报。\n\n要求那个「大的排前面」的规矩，**单独写在一张图纸里**（本课第二节那种请帮工的写法），别改柜子里东西自己会的那套规矩。\n\n定好规矩之后，让柜子用它排一次。\n\n比如投喂给程序的是\n\n3\n6\n7\n5\n\n程序就要叼回\n\n从大到小：[7, 6, 5]\n最大的是 7\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\nimport java.util.Scanner;\n\nclass BigFirst implements Comparator<Integer> {\n    public int compare(Integer a, Integer b) {\n        return 0;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\nimport java.util.Scanner;\n\nclass BigFirst implements Comparator<Integer> {\n    public int compare(Integer a, Integer b) {\n        return b - a;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n        nums.sort(new BigFirst());\n        System.out.println(\"从大到小：\" + nums);\n        System.out.println(\"最大的是 \" + nums.get(0));\n    }\n}\n",
+      "expectedOutput": "从大到小：[6, 5, 3]\n最大的是 6",
+      "stdin": "3\n3\n5\n6\n",
+      "explanation": "这题练的是**「请个帮工来定规矩」**那条路，和「东西自己会排」那条路是两回事喵。\n\n**一、那张帮工图纸里只有一招：定谁在前。** `implements Comparator<Integer>` 的那张图纸，本喵只写了一招 `compare`。它收两件东西回来一个数：\n\n- 回**正数**：意思是「先递进来那件该排后面」；\n- 回**负数**：意思是「先递进来那件该排前面」；\n- 回 **0**：两件一样大，谁前谁后都行。\n\n所以 `b - a` 就是「大的排前面」：`a` 小、`b` 大，`b - a` 是正的，意思是 `a` 该往后站。反过来写 `a - b` 就是小的排前面了。\n\n**二、为什么这题要用帮工、而不是让东西自己会排。** 「自己会排」那条路要求**柜子里的东西自己带着那手比大小的本事**，而这里的柜子里装的是光溜溜的数字那一家 —— 那是别人家的东西，本喵没法给它添本事。所以这类「想换一种排法」的时候，请帮工是唯一的路喵。（本课第一节那条路上，本喵画的是自己的图纸，那才能把比大小的本事写在图纸里。）\n\n**三、请来之后怎么用。** `nums.sort(new BigFirst())` —— 照图纸生一只帮工出来，交给柜子，柜子就用它的规矩排一遍。排的动作是**当场改这只柜子**，不用接叼回来的东西。\n\n**四、`nums.get(0)` 为什么就是最大的。** 排完之后打头那件当然是最大的，所以不用再绕一圈去找。这一手能成立，全靠前面那句排过了 —— 把这两句的先后顺序颠倒过来，拿到的就是原来第一件，而**那种错一行红字都不会有**。\n\n往后只要听见「换一种排法」，就先想请帮工那条路喵。",
+      "templateId": "java-s3-comparator-sort",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T08:50:34.228Z",
+        "hash": "59c134bdc7560260"
+      }
+    },
+    {
+      "id": "bank-java-s3-comparator-sort-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要请个**帮工**来替柜子定排排坐的规矩：**大的排前面**喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请先把它们一个不漏地收进柜子，再印两行：\n\n```text\n从大到小：那一串\n最大的是 M\n```\n\n- 第一行那串**不用本喵自己拼** —— 柜子排完直接印出来就是方括号加逗号空格那个样子；\n- `M` 是排完之后**打头的那一件**（也就是最大的那个）。这一处**别自己绕圈去找最大**，让柜子自己报。\n\n要求那个「大的排前面」的规矩，**单独写在一张图纸里**（本课第二节那种请帮工的写法），别改柜子里东西自己会的那套规矩。\n\n定好规矩之后，让柜子用它排一次。\n\n比如投喂给程序的是\n\n4\n5\n4\n6\n7\n\n程序就要叼回\n\n从大到小：[7, 6, 5, 4]\n最大的是 7\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\nimport java.util.Scanner;\n\nclass BigFirst implements Comparator<Integer> {\n    public int compare(Integer a, Integer b) {\n        return 0;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\nimport java.util.Scanner;\n\nclass BigFirst implements Comparator<Integer> {\n    public int compare(Integer a, Integer b) {\n        return b - a;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n        nums.sort(new BigFirst());\n        System.out.println(\"从大到小：\" + nums);\n        System.out.println(\"最大的是 \" + nums.get(0));\n    }\n}\n",
+      "expectedOutput": "从大到小：[8, 5, 4, 1]\n最大的是 8",
+      "stdin": "4\n4\n8\n1\n5\n",
+      "explanation": "这题练的是**「请个帮工来定规矩」**那条路，和「东西自己会排」那条路是两回事喵。\n\n**一、那张帮工图纸里只有一招：定谁在前。** `implements Comparator<Integer>` 的那张图纸，本喵只写了一招 `compare`。它收两件东西回来一个数：\n\n- 回**正数**：意思是「先递进来那件该排后面」；\n- 回**负数**：意思是「先递进来那件该排前面」；\n- 回 **0**：两件一样大，谁前谁后都行。\n\n所以 `b - a` 就是「大的排前面」：`a` 小、`b` 大，`b - a` 是正的，意思是 `a` 该往后站。反过来写 `a - b` 就是小的排前面了。\n\n**二、为什么这题要用帮工、而不是让东西自己会排。** 「自己会排」那条路要求**柜子里的东西自己带着那手比大小的本事**，而这里的柜子里装的是光溜溜的数字那一家 —— 那是别人家的东西，本喵没法给它添本事。所以这类「想换一种排法」的时候，请帮工是唯一的路喵。（本课第一节那条路上，本喵画的是自己的图纸，那才能把比大小的本事写在图纸里。）\n\n**三、请来之后怎么用。** `nums.sort(new BigFirst())` —— 照图纸生一只帮工出来，交给柜子，柜子就用它的规矩排一遍。排的动作是**当场改这只柜子**，不用接叼回来的东西。\n\n**四、`nums.get(0)` 为什么就是最大的。** 排完之后打头那件当然是最大的，所以不用再绕一圈去找。这一手能成立，全靠前面那句排过了 —— 把这两句的先后顺序颠倒过来，拿到的就是原来第一件，而**那种错一行红字都不会有**。\n\n往后只要听见「换一种排法」，就先想请帮工那条路喵。",
+      "templateId": "java-s3-comparator-sort",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T08:50:36.098Z",
+        "hash": "76aa01db8651a4fe"
+      }
+    },
+    {
+      "id": "bank-java-s3-foreach-remove-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵的柜子里放了**四件**东西，想把**中间那一件**（狸花）挑出来扔掉喵。\n\n本喵是这么写的：挨个过一遍，碰上它就把它扔了。看着挺顺，可它**跑到一半当场炸了**，红字里有一长串本喵不认识的名字。\n\n你帮本喵把它改好 —— 规矩是：**这一遍走法里不许直接对柜子动手**，得让柜子自己派一个向导出来，摘除也让那个向导来做。\n\n改好之后它该印出**一行**：方括号包着的三件东西（剩下的那三件，按原来的先后排）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"小橘\");\n        names.add(\"狸花\");\n        names.add(\"大橘\");\n        names.add(\"花卷\");\n\n        for (String name : names) {\n            if (name.equals(\"狸花\")) {\n                names.remove(name);\n            }\n        }\n        System.out.println(names);\n    }\n}\n",
+      "referenceFix": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"小橘\");\n        names.add(\"狸花\");\n        names.add(\"大橘\");\n        names.add(\"花卷\");\n\n        Iterator<String> it = names.iterator();\n        while (it.hasNext()) {\n            String name = it.next();\n            if (name.equals(\"狸花\")) {\n                it.remove();\n            }\n        }\n        System.out.println(names);\n    }\n}\n",
+      "expectedOutput": "[小橘, 大橘, 花卷]",
+      "stdin": null,
+      "explanation": "那串红字叫 `ConcurrentModificationException`，翻译过来是：**「这一遍还没走完，你居然把柜子改了。」**\n\n**一、为什么「挨个过一遍」不能一边走一边改。** 那个写法背后其实是柜子**自己派了一个向导**，向导手里记着「本喵走到第几件了」。本喵要是绕过向导直接 `names.remove(...)`，柜子里的件数就变了，向导手里那个数**对不上**了 —— 它下一次伸手去拿，发现柜子跟刚才不是同一个样子，当场翻脸。\n\n（这里有个特别坑人的地方：**不是每次都炸。** 要是扔掉的那件正好是**本喵刚走过的那一件**、而且**它后面只剩一件**（也就是倒数第二件），向导手里那个数会正好对上柜子缩水后的件数，它会**安安静静地收工** —— 最后那一件它连看都不看一眼，程序看着完全正常。所以「这次没炸」根本不能当依据 —— 件数一多、位置一变，它就炸给你看。）\n\n**二、改法是让向导自己动手。** 先用 `names.iterator()` 把那个向导请出来，请出来之后本喵走这一遍就**全听向导的**：\n\n- `it.hasNext()` 问「后面还有吗」；\n- `it.next()` 说「把下一件拿给本喵」；\n- `it.remove()` 说「**把刚拿出来的那一件**扔掉」。\n\n这三句的顺序不能乱：`remove` 扔的是**最近一次 `next` 拿出来的那一件**，所以必须先拿再扔。\n\n**三、别改成「自己数着编号往前走」的写法。** 有人会想：那本喵不请向导，自己数编号从头往前走不就行了？正着数的时候，扔掉一件会让后面所有东西**整体往前挪一格** —— 于是挨着它的下一件会被**跳过去**，程序一声不吭，但结果少看了一件。这种错一行红字都不会有，比刚才那个当场炸的更阴险。所以这一遍走法，交给向导最省心喵。\n\n一句话收尾：**要走这一遍，就别绕过向导动柜子；要动手，就让向导动手。**",
+      "templateId": "java-s3-foreach-remove",
+      "params": {
+        "w1": "小橘",
+        "w2": "狸花",
+        "w3": "大橘",
+        "w4": "花卷"
+      },
+      "verified": {
+        "at": "2026-09-16T15:25:14.123Z",
+        "hash": "f68599159720665c"
+      }
+    },
+    {
+      "id": "bank-java-s3-foreach-remove-015",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵的柜子里放了**四件**东西，想把**中间那一件**（三花）挑出来扔掉喵。\n\n本喵是这么写的：挨个过一遍，碰上它就把它扔了。看着挺顺，可它**跑到一半当场炸了**，红字里有一长串本喵不认识的名字。\n\n你帮本喵把它改好 —— 规矩是：**这一遍走法里不许直接对柜子动手**，得让柜子自己派一个向导出来，摘除也让那个向导来做。\n\n改好之后它该印出**一行**：方括号包着的三件东西（剩下的那三件，按原来的先后排）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+      "brokenCode": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"煤球\");\n        names.add(\"三花\");\n        names.add(\"墨点\");\n        names.add(\"芝麻\");\n\n        for (String name : names) {\n            if (name.equals(\"三花\")) {\n                names.remove(name);\n            }\n        }\n        System.out.println(names);\n    }\n}\n",
+      "referenceFix": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"煤球\");\n        names.add(\"三花\");\n        names.add(\"墨点\");\n        names.add(\"芝麻\");\n\n        Iterator<String> it = names.iterator();\n        while (it.hasNext()) {\n            String name = it.next();\n            if (name.equals(\"三花\")) {\n                it.remove();\n            }\n        }\n        System.out.println(names);\n    }\n}\n",
+      "expectedOutput": "[煤球, 墨点, 芝麻]",
+      "stdin": null,
+      "explanation": "那串红字叫 `ConcurrentModificationException`，翻译过来是：**「这一遍还没走完，你居然把柜子改了。」**\n\n**一、为什么「挨个过一遍」不能一边走一边改。** 那个写法背后其实是柜子**自己派了一个向导**，向导手里记着「本喵走到第几件了」。本喵要是绕过向导直接 `names.remove(...)`，柜子里的件数就变了，向导手里那个数**对不上**了 —— 它下一次伸手去拿，发现柜子跟刚才不是同一个样子，当场翻脸。\n\n（这里有个特别坑人的地方：**不是每次都炸。** 要是扔掉的那件正好是**本喵刚走过的那一件**、而且**它后面只剩一件**（也就是倒数第二件），向导手里那个数会正好对上柜子缩水后的件数，它会**安安静静地收工** —— 最后那一件它连看都不看一眼，程序看着完全正常。所以「这次没炸」根本不能当依据 —— 件数一多、位置一变，它就炸给你看。）\n\n**二、改法是让向导自己动手。** 先用 `names.iterator()` 把那个向导请出来，请出来之后本喵走这一遍就**全听向导的**：\n\n- `it.hasNext()` 问「后面还有吗」；\n- `it.next()` 说「把下一件拿给本喵」；\n- `it.remove()` 说「**把刚拿出来的那一件**扔掉」。\n\n这三句的顺序不能乱：`remove` 扔的是**最近一次 `next` 拿出来的那一件**，所以必须先拿再扔。\n\n**三、别改成「自己数着编号往前走」的写法。** 有人会想：那本喵不请向导，自己数编号从头往前走不就行了？正着数的时候，扔掉一件会让后面所有东西**整体往前挪一格** —— 于是挨着它的下一件会被**跳过去**，程序一声不吭，但结果少看了一件。这种错一行红字都不会有，比刚才那个当场炸的更阴险。所以这一遍走法，交给向导最省心喵。\n\n一句话收尾：**要走这一遍，就别绕过向导动柜子；要动手，就让向导动手。**",
+      "templateId": "java-s3-foreach-remove",
+      "params": {
+        "w1": "煤球",
+        "w2": "三花",
+        "w3": "墨点",
+        "w4": "芝麻"
+      },
+      "verified": {
+        "at": "2026-09-16T15:25:15.474Z",
+        "hash": "29b8c45a14be7a68"
+      }
+    },
+    {
+      "id": "bank-java-s3-iterator-next-overrun-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵派了一位向导去走柜子，柜子里明明只有两件，本喵却伸手要了**三次**喵。\n\n前两次都好好叼回来了，第三次当场就炸 —— 而且炸出来的红字**指的那一行，语法上一个毛病都没有**。\n\n你帮本喵改成「**先问一句「还有下一件吗」，它说有，本喵才伸手**」的写法。这样柜子里有几件都能走完，一件不多要。\n\n投喂的那两件**一个字都别动**。改好之后它该印两行，把那两件一个一个印出来。\n\n（这一题**不用投喂任何东西**，那两样字是固定死的。）",
+      "brokenCode": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"小橘\");\n        names.add(\"狸花\");\n\n        Iterator<String> it = names.iterator();\n        System.out.println(it.next());\n        System.out.println(it.next());\n        System.out.println(it.next());\n    }\n}\n",
+      "referenceFix": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"小橘\");\n        names.add(\"狸花\");\n\n        Iterator<String> it = names.iterator();\n        while (it.hasNext()) {\n            System.out.println(it.next());\n        }\n    }\n}\n",
+      "expectedOutput": "小橘\n狸花",
+      "stdin": null,
+      "explanation": "这题演的是向导那句问话**存在的全部理由**喵。\n\n**一、红字里那个名字的直译是「没有下一个了」。** 本喵伸手要第三件的时候，向导手上已经什么都没有了 —— 柜子里就两件。它不是说语法写错了，是说**本喵要的东西不在那儿**。\n\n**二、注意前两行印出来了。** 所以这个错**不是一开始就炸**的：前面好好叼了两回，第三回才翻脸。数据一变（柜子里只剩一件），炸的位置也跟着往前挪 —— 这种「看数据脸色」的错，光看代码是看不出来的。\n\n**三、改成先问一句就稳了。** `it.hasNext()` 问「还有下一件吗」，答真才伸手。柜子里几件都能走完，一件不多要、一件不少拿。这就是上一课那个「挨个过一遍」背后站着的那套问话。\n\n**四、别用「心里数着几件」来兜。** 有人会想「我知道柜子里有两件，那就伸手两次」。这样写**数据一变就炸**，而且炸的位置和这次一模一样 —— 本喵要的不是「这次能跑」，是**每次都稳**喵。",
+      "templateId": "java-s3-iterator-next-overrun",
+      "params": {
+        "w1": "小橘",
+        "w2": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:10.065Z",
+        "hash": "7680e60871a5ed9d"
+      }
+    },
+    {
+      "id": "bank-java-s3-iterator-next-overrun-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵派了一位向导去走柜子，柜子里明明只有两件，本喵却伸手要了**三次**喵。\n\n前两次都好好叼回来了，第三次当场就炸 —— 而且炸出来的红字**指的那一行，语法上一个毛病都没有**。\n\n你帮本喵改成「**先问一句「还有下一件吗」，它说有，本喵才伸手**」的写法。这样柜子里有几件都能走完，一件不多要。\n\n投喂的那两件**一个字都别动**。改好之后它该印两行，把那两件一个一个印出来。\n\n（这一题**不用投喂任何东西**，那两样字是固定死的。）",
+      "brokenCode": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"煤球\");\n        names.add(\"三花\");\n\n        Iterator<String> it = names.iterator();\n        System.out.println(it.next());\n        System.out.println(it.next());\n        System.out.println(it.next());\n    }\n}\n",
+      "referenceFix": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"煤球\");\n        names.add(\"三花\");\n\n        Iterator<String> it = names.iterator();\n        while (it.hasNext()) {\n            System.out.println(it.next());\n        }\n    }\n}\n",
+      "expectedOutput": "煤球\n三花",
+      "stdin": null,
+      "explanation": "这题演的是向导那句问话**存在的全部理由**喵。\n\n**一、红字里那个名字的直译是「没有下一个了」。** 本喵伸手要第三件的时候，向导手上已经什么都没有了 —— 柜子里就两件。它不是说语法写错了，是说**本喵要的东西不在那儿**。\n\n**二、注意前两行印出来了。** 所以这个错**不是一开始就炸**的：前面好好叼了两回，第三回才翻脸。数据一变（柜子里只剩一件），炸的位置也跟着往前挪 —— 这种「看数据脸色」的错，光看代码是看不出来的。\n\n**三、改成先问一句就稳了。** `it.hasNext()` 问「还有下一件吗」，答真才伸手。柜子里几件都能走完，一件不多要、一件不少拿。这就是上一课那个「挨个过一遍」背后站着的那套问话。\n\n**四、别用「心里数着几件」来兜。** 有人会想「我知道柜子里有两件，那就伸手两次」。这样写**数据一变就炸**，而且炸的位置和这次一模一样 —— 本喵要的不是「这次能跑」，是**每次都稳**喵。",
+      "templateId": "java-s3-iterator-next-overrun",
+      "params": {
+        "w1": "煤球",
+        "w2": "三花"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:11.695Z",
+        "hash": "56a0f8fbc457bfc4"
+      }
+    },
+    {
+      "id": "bank-java-s3-iterator-pick-big-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把柜子里**够大**的那些挑出来，收进一只新柜子里喵。\n\n这一题**必须派一位向导**去走：不看编号、也不数一共几件，只做那两句 —— 先问「还有下一件吗」，它说有，才把下一件叼出来。叼出来的每一件顺手比一比：够得上 5 的就往新柜子里放一个。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请它们收进柜子、挑完之后，印三行：\n\n```text\n原柜子里有 N 件\n够大的有 C 件\n它们是 那一串\n```\n\n- `N` 是**原柜子**的件数（挑完之后它一件都不该少）；\n- `C` 是新柜子的件数；\n- 第三行把新柜子直接印出来（方括号加逗号空格那个样子），**前面别自己拼**。\n\n比如投喂给程序的是\n\n3\n6\n1\n1\n\n程序就要叼回\n\n原柜子里有 3 件\n够大的有 1 件\n它们是 [6]\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n        List<Integer> picked = new ArrayList<>();\n        Iterator<Integer> it = nums.iterator();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n        List<Integer> picked = new ArrayList<>();\n        Iterator<Integer> it = nums.iterator();\n        while (it.hasNext()) {\n            int x = it.next();\n            if (x >= 5) {\n                picked.add(x);\n            }\n        }\n        System.out.println(\"原柜子里有 \" + nums.size() + \" 件\");\n        System.out.println(\"够大的有 \" + picked.size() + \" 件\");\n        System.out.println(\"它们是 \" + picked);\n    }\n}\n",
+      "expectedOutput": "原柜子里有 3 件\n够大的有 3 件\n它们是 [7, 9, 8]",
+      "stdin": "3\n7\n9\n8\n",
+      "explanation": "这题的重点是**那位向导的两句话**喵。\n\n**一、`it.hasNext()` 是问话，`it.next()` 是叼东西。** 问话答真，本喵才伸手；伸手的同时向导**自己往前挪一格**。全程本喵一个编号都没写、也没数过一共几件 —— 这就是它比「报编号拿东西」稳的地方：编号要自己数，数错一点就当场炸。\n\n**二、挑出来的得另起一只柜子装。** 本喵一边走一边把够大的往 `picked` 里放 —— 往一只**新**柜子里放，而不是去动正在走的这一只。这一点很要紧：要是本喵一边走一边从原柜子里拿走东西，那就踩上课文第二节那个坑了。\n\n**三、原柜子一件都没少。** 因为本喵从头到尾只是在**读**它。所以第一行印的件数还是原来那个 —— 这是「边读边挑」和「边读边拿」的区别，值得对着印出来的三行多看两眼。\n\n**四、够大的有几件，别自己数。** 新柜子自己会报件数，印出来就行 —— 自己立个小篮子一件件加，多一个能数错的地方。\n\n**五、为什么这里不能用「挨个过一遍」。** 能用，而且更短。但这题要练的是**那位向导本身** —— 看清它在干什么，以后碰上「边走边拿」的场合才知道该找谁。",
+      "templateId": "java-s3-iterator-pick-big",
+      "params": {
+        "n": 3,
+        "t": 5
+      },
+      "verified": {
+        "at": "2026-09-16T11:46:33.518Z",
+        "hash": "661d6f695dca3e8e"
+      }
+    },
+    {
+      "id": "bank-java-s3-iterator-pick-big-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把柜子里**够大**的那些挑出来，收进一只新柜子里喵。\n\n这一题**必须派一位向导**去走：不看编号、也不数一共几件，只做那两句 —— 先问「还有下一件吗」，它说有，才把下一件叼出来。叼出来的每一件顺手比一比：够得上 6 的就往新柜子里放一个。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请它们收进柜子、挑完之后，印三行：\n\n```text\n原柜子里有 N 件\n够大的有 C 件\n它们是 那一串\n```\n\n- `N` 是**原柜子**的件数（挑完之后它一件都不该少）；\n- `C` 是新柜子的件数；\n- 第三行把新柜子直接印出来（方括号加逗号空格那个样子），**前面别自己拼**。\n\n比如投喂给程序的是\n\n3\n8\n9\n1\n\n程序就要叼回\n\n原柜子里有 3 件\n够大的有 2 件\n它们是 [8, 9]\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n        List<Integer> picked = new ArrayList<>();\n        Iterator<Integer> it = nums.iterator();\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n        List<Integer> picked = new ArrayList<>();\n        Iterator<Integer> it = nums.iterator();\n        while (it.hasNext()) {\n            int x = it.next();\n            if (x >= 6) {\n                picked.add(x);\n            }\n        }\n        System.out.println(\"原柜子里有 \" + nums.size() + \" 件\");\n        System.out.println(\"够大的有 \" + picked.size() + \" 件\");\n        System.out.println(\"它们是 \" + picked);\n    }\n}\n",
+      "expectedOutput": "原柜子里有 3 件\n够大的有 0 件\n它们是 []",
+      "stdin": "3\n4\n5\n2\n",
+      "explanation": "这题的重点是**那位向导的两句话**喵。\n\n**一、`it.hasNext()` 是问话，`it.next()` 是叼东西。** 问话答真，本喵才伸手；伸手的同时向导**自己往前挪一格**。全程本喵一个编号都没写、也没数过一共几件 —— 这就是它比「报编号拿东西」稳的地方：编号要自己数，数错一点就当场炸。\n\n**二、挑出来的得另起一只柜子装。** 本喵一边走一边把够大的往 `picked` 里放 —— 往一只**新**柜子里放，而不是去动正在走的这一只。这一点很要紧：要是本喵一边走一边从原柜子里拿走东西，那就踩上课文第二节那个坑了。\n\n**三、原柜子一件都没少。** 因为本喵从头到尾只是在**读**它。所以第一行印的件数还是原来那个 —— 这是「边读边挑」和「边读边拿」的区别，值得对着印出来的三行多看两眼。\n\n**四、够大的有几件，别自己数。** 新柜子自己会报件数，印出来就行 —— 自己立个小篮子一件件加，多一个能数错的地方。\n\n**五、为什么这里不能用「挨个过一遍」。** 能用，而且更短。但这题要练的是**那位向导本身** —— 看清它在干什么，以后碰上「边走边拿」的场合才知道该找谁。",
+      "templateId": "java-s3-iterator-pick-big",
+      "params": {
+        "n": 3,
+        "t": 6
+      },
+      "verified": {
+        "at": "2026-09-16T11:46:35.414Z",
+        "hash": "3a808c47217bf47b"
+      }
+    },
+    {
+      "id": "bank-java-s3-sort-by-length-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把柜子里这三只按**名字的长短**站好：**名字短的站前面**喵。\n\n麻烦在于：这些东西自己**一份承诺都没挂**，本喵也不想动它们。所以要**请一个帮工**来替它们排。\n\n请你写这么一张帮工的图纸（专门挂「本喵会替两只当裁判」那份承诺），并用柜子上那只手把它请过来排一次。\n\n三只东西的名字和柜子本身**别去改**，也**别在它们身上挂任何承诺**。排完之后把柜子直接印出来（方括号加逗号空格那个样子）。\n\n比如那三只叫 `大肥鱼`、`橘`、`煤球`，印出来就该是\n\n```text\n[橘, 煤球, 大肥鱼]\n```\n\n（这一题**不用投喂任何东西**，三只的名字都是固定死的。）",
+      "starter": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"大肥鱼\"));\n        pond.add(new Fish(\"橘\"));\n        pond.add(new Fish(\"煤球\"));\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\nclass ShortFirst implements Comparator<Fish> {\n    public int compare(Fish a, Fish b) {\n        return a.name.length() - b.name.length();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"大肥鱼\"));\n        pond.add(new Fish(\"橘\"));\n        pond.add(new Fish(\"煤球\"));\n\n        pond.sort(new ShortFirst());\n        System.out.println(pond);\n    }\n}\n",
+      "expectedOutput": "[橘, 煤球, 大肥鱼]",
+      "stdin": null,
+      "explanation": "这题练的是**请帮工**那一路喵。\n\n**一、帮工是一张单独的图纸。** 它跟东西自己那份承诺长得像，可意思完全不同：它挂的是「**本喵会替两只同类比一比**」—— 不挂在猫身上，是一张专门干「当裁判」这件事的图纸。\n\n**二、请它来的那只手写在柜子上。** `pond.sort(new ShortFirst())` 读作「这只柜子，请这个帮工来排」。注意本喵**没有**去动这些东西，也没有在它们身上挂任何承诺 —— 排完它们还是原来那些，只是站的位置换了。\n\n**三、帮工报的数是什么意思。** 它报负数就是「本喵该站前面」，报正数就是「本喵该站后面」。这题要名字短的站前面，所以拿本喵名字的长短去减对方的长短。\n\n**四、为什么这题不能用「东西自己会排」那一路。** 那一路要先在图纸上挂承诺、再填一手，**改的是东西自己**。本喵这题不打算动它们（同一个东西以后可能还要按别的规矩站），所以只能请帮工。这也是课文那句分岔：**改承诺是改东西本身，请帮工只是换一双眼睛。**\n\n**五、别忘了印。** 排完只是排好了，把柜子印出来才看得见 —— 柜子自己会按方括号那个样子印，本喵不用自己拼。",
+      "templateId": "java-s3-sort-by-length",
+      "params": {
+        "n1": "大肥鱼",
+        "n2": "橘",
+        "n3": "煤球"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:21.212Z",
+        "hash": "fc5bcef4d4a4a282"
+      }
+    },
+    {
+      "id": "bank-java-s3-sort-by-length-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把柜子里这三只按**名字的长短**站好：**名字短的站前面**喵。\n\n麻烦在于：这些东西自己**一份承诺都没挂**，本喵也不想动它们。所以要**请一个帮工**来替它们排。\n\n请你写这么一张帮工的图纸（专门挂「本喵会替两只当裁判」那份承诺），并用柜子上那只手把它请过来排一次。\n\n三只东西的名字和柜子本身**别去改**，也**别在它们身上挂任何承诺**。排完之后把柜子直接印出来（方括号加逗号空格那个样子）。\n\n比如那三只叫 `大肥鱼`、`橘`、`煤球`，印出来就该是\n\n```text\n[橘, 煤球, 大肥鱼]\n```\n\n（这一题**不用投喂任何东西**，三只的名字都是固定死的。）",
+      "starter": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"大肥鱼\"));\n        pond.add(new Fish(\"橘\"));\n        pond.add(new Fish(\"花卷\"));\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\nclass ShortFirst implements Comparator<Fish> {\n    public int compare(Fish a, Fish b) {\n        return a.name.length() - b.name.length();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"大肥鱼\"));\n        pond.add(new Fish(\"橘\"));\n        pond.add(new Fish(\"花卷\"));\n\n        pond.sort(new ShortFirst());\n        System.out.println(pond);\n    }\n}\n",
+      "expectedOutput": "[橘, 花卷, 大肥鱼]",
+      "stdin": null,
+      "explanation": "这题练的是**请帮工**那一路喵。\n\n**一、帮工是一张单独的图纸。** 它跟东西自己那份承诺长得像，可意思完全不同：它挂的是「**本喵会替两只同类比一比**」—— 不挂在猫身上，是一张专门干「当裁判」这件事的图纸。\n\n**二、请它来的那只手写在柜子上。** `pond.sort(new ShortFirst())` 读作「这只柜子，请这个帮工来排」。注意本喵**没有**去动这些东西，也没有在它们身上挂任何承诺 —— 排完它们还是原来那些，只是站的位置换了。\n\n**三、帮工报的数是什么意思。** 它报负数就是「本喵该站前面」，报正数就是「本喵该站后面」。这题要名字短的站前面，所以拿本喵名字的长短去减对方的长短。\n\n**四、为什么这题不能用「东西自己会排」那一路。** 那一路要先在图纸上挂承诺、再填一手，**改的是东西自己**。本喵这题不打算动它们（同一个东西以后可能还要按别的规矩站），所以只能请帮工。这也是课文那句分岔：**改承诺是改东西本身，请帮工只是换一双眼睛。**\n\n**五、别忘了印。** 排完只是排好了，把柜子印出来才看得见 —— 柜子自己会按方括号那个样子印，本喵不用自己拼。",
+      "templateId": "java-s3-sort-by-length",
+      "params": {
+        "n1": "大肥鱼",
+        "n2": "橘",
+        "n3": "花卷"
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:55.794Z",
+        "hash": "c9a11868cbd7cb6f"
+      }
+    },
+    {
+      "id": "bank-java-s3-sort-by-length-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把柜子里这三只按**名字的长短**站好：**名字短的站前面**喵。\n\n麻烦在于：这些东西自己**一份承诺都没挂**，本喵也不想动它们。所以要**请一个帮工**来替它们排。\n\n请你写这么一张帮工的图纸（专门挂「本喵会替两只当裁判」那份承诺），并用柜子上那只手把它请过来排一次。\n\n三只东西的名字和柜子本身**别去改**，也**别在它们身上挂任何承诺**。排完之后把柜子直接印出来（方括号加逗号空格那个样子）。\n\n比如那三只叫 `大肥鱼`、`橘`、`煤球`，印出来就该是\n\n```text\n[橘, 煤球, 大肥鱼]\n```\n\n（这一题**不用投喂任何东西**，三只的名字都是固定死的。）",
+      "starter": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"大肥鱼\"));\n        pond.add(new Fish(\"煤\"));\n        pond.add(new Fish(\"花卷\"));\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\nclass ShortFirst implements Comparator<Fish> {\n    public int compare(Fish a, Fish b) {\n        return a.name.length() - b.name.length();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"大肥鱼\"));\n        pond.add(new Fish(\"煤\"));\n        pond.add(new Fish(\"花卷\"));\n\n        pond.sort(new ShortFirst());\n        System.out.println(pond);\n    }\n}\n",
+      "expectedOutput": "[煤, 花卷, 大肥鱼]",
+      "stdin": null,
+      "explanation": "这题练的是**请帮工**那一路喵。\n\n**一、帮工是一张单独的图纸。** 它跟东西自己那份承诺长得像，可意思完全不同：它挂的是「**本喵会替两只同类比一比**」—— 不挂在猫身上，是一张专门干「当裁判」这件事的图纸。\n\n**二、请它来的那只手写在柜子上。** `pond.sort(new ShortFirst())` 读作「这只柜子，请这个帮工来排」。注意本喵**没有**去动这些东西，也没有在它们身上挂任何承诺 —— 排完它们还是原来那些，只是站的位置换了。\n\n**三、帮工报的数是什么意思。** 它报负数就是「本喵该站前面」，报正数就是「本喵该站后面」。这题要名字短的站前面，所以拿本喵名字的长短去减对方的长短。\n\n**四、为什么这题不能用「东西自己会排」那一路。** 那一路要先在图纸上挂承诺、再填一手，**改的是东西自己**。本喵这题不打算动它们（同一个东西以后可能还要按别的规矩站），所以只能请帮工。这也是课文那句分岔：**改承诺是改东西本身，请帮工只是换一双眼睛。**\n\n**五、别忘了印。** 排完只是排好了，把柜子印出来才看得见 —— 柜子自己会按方括号那个样子印，本喵不用自己拼。",
+      "templateId": "java-s3-sort-by-length",
+      "params": {
+        "n1": "大肥鱼",
+        "n2": "煤",
+        "n3": "花卷"
+      },
+      "verified": {
+        "at": "2026-10-20T17:25:57.963Z",
+        "hash": "cb8dfad39a8d209c"
+      }
+    },
+    {
+      "id": "bank-java-s3-sort-by-length-004",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把柜子里这三只按**名字的长短**站好：**名字短的站前面**喵。\n\n麻烦在于：这些东西自己**一份承诺都没挂**，本喵也不想动它们。所以要**请一个帮工**来替它们排。\n\n请你写这么一张帮工的图纸（专门挂「本喵会替两只当裁判」那份承诺），并用柜子上那只手把它请过来排一次。\n\n三只东西的名字和柜子本身**别去改**，也**别在它们身上挂任何承诺**。排完之后把柜子直接印出来（方括号加逗号空格那个样子）。\n\n比如那三只叫 `大肥鱼`、`橘`、`煤球`，印出来就该是\n\n```text\n[橘, 煤球, 大肥鱼]\n```\n\n（这一题**不用投喂任何东西**，三只的名字都是固定死的。）",
+      "starter": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"小狸花\"));\n        pond.add(new Fish(\"橘\"));\n        pond.add(new Fish(\"煤球\"));\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\nclass ShortFirst implements Comparator<Fish> {\n    public int compare(Fish a, Fish b) {\n        return a.name.length() - b.name.length();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"小狸花\"));\n        pond.add(new Fish(\"橘\"));\n        pond.add(new Fish(\"煤球\"));\n\n        pond.sort(new ShortFirst());\n        System.out.println(pond);\n    }\n}\n",
+      "expectedOutput": "[橘, 煤球, 小狸花]",
+      "stdin": null,
+      "explanation": "这题练的是**请帮工**那一路喵。\n\n**一、帮工是一张单独的图纸。** 它跟东西自己那份承诺长得像，可意思完全不同：它挂的是「**本喵会替两只同类比一比**」—— 不挂在猫身上，是一张专门干「当裁判」这件事的图纸。\n\n**二、请它来的那只手写在柜子上。** `pond.sort(new ShortFirst())` 读作「这只柜子，请这个帮工来排」。注意本喵**没有**去动这些东西，也没有在它们身上挂任何承诺 —— 排完它们还是原来那些，只是站的位置换了。\n\n**三、帮工报的数是什么意思。** 它报负数就是「本喵该站前面」，报正数就是「本喵该站后面」。这题要名字短的站前面，所以拿本喵名字的长短去减对方的长短。\n\n**四、为什么这题不能用「东西自己会排」那一路。** 那一路要先在图纸上挂承诺、再填一手，**改的是东西自己**。本喵这题不打算动它们（同一个东西以后可能还要按别的规矩站），所以只能请帮工。这也是课文那句分岔：**改承诺是改东西本身，请帮工只是换一双眼睛。**\n\n**五、别忘了印。** 排完只是排好了，把柜子印出来才看得见 —— 柜子自己会按方括号那个样子印，本喵不用自己拼。",
+      "templateId": "java-s3-sort-by-length",
+      "params": {
+        "n1": "小狸花",
+        "n2": "橘",
+        "n3": "煤球"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:00.126Z",
+        "hash": "2385c7b9bd062635"
+      }
+    },
+    {
+      "id": "bank-java-s3-sort-by-length-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把柜子里这三只按**名字的长短**站好：**名字短的站前面**喵。\n\n麻烦在于：这些东西自己**一份承诺都没挂**，本喵也不想动它们。所以要**请一个帮工**来替它们排。\n\n请你写这么一张帮工的图纸（专门挂「本喵会替两只当裁判」那份承诺），并用柜子上那只手把它请过来排一次。\n\n三只东西的名字和柜子本身**别去改**，也**别在它们身上挂任何承诺**。排完之后把柜子直接印出来（方括号加逗号空格那个样子）。\n\n比如那三只叫 `大肥鱼`、`橘`、`煤球`，印出来就该是\n\n```text\n[橘, 煤球, 大肥鱼]\n```\n\n（这一题**不用投喂任何东西**，三只的名字都是固定死的。）",
+      "starter": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"小狸花\"));\n        pond.add(new Fish(\"煤\"));\n        pond.add(new Fish(\"煤球\"));\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\nclass ShortFirst implements Comparator<Fish> {\n    public int compare(Fish a, Fish b) {\n        return a.name.length() - b.name.length();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"小狸花\"));\n        pond.add(new Fish(\"煤\"));\n        pond.add(new Fish(\"煤球\"));\n\n        pond.sort(new ShortFirst());\n        System.out.println(pond);\n    }\n}\n",
+      "expectedOutput": "[煤, 煤球, 小狸花]",
+      "stdin": null,
+      "explanation": "这题练的是**请帮工**那一路喵。\n\n**一、帮工是一张单独的图纸。** 它跟东西自己那份承诺长得像，可意思完全不同：它挂的是「**本喵会替两只同类比一比**」—— 不挂在猫身上，是一张专门干「当裁判」这件事的图纸。\n\n**二、请它来的那只手写在柜子上。** `pond.sort(new ShortFirst())` 读作「这只柜子，请这个帮工来排」。注意本喵**没有**去动这些东西，也没有在它们身上挂任何承诺 —— 排完它们还是原来那些，只是站的位置换了。\n\n**三、帮工报的数是什么意思。** 它报负数就是「本喵该站前面」，报正数就是「本喵该站后面」。这题要名字短的站前面，所以拿本喵名字的长短去减对方的长短。\n\n**四、为什么这题不能用「东西自己会排」那一路。** 那一路要先在图纸上挂承诺、再填一手，**改的是东西自己**。本喵这题不打算动它们（同一个东西以后可能还要按别的规矩站），所以只能请帮工。这也是课文那句分岔：**改承诺是改东西本身，请帮工只是换一双眼睛。**\n\n**五、别忘了印。** 排完只是排好了，把柜子印出来才看得见 —— 柜子自己会按方括号那个样子印，本喵不用自己拼。",
+      "templateId": "java-s3-sort-by-length",
+      "params": {
+        "n1": "小狸花",
+        "n2": "煤",
+        "n3": "煤球"
+      },
+      "verified": {
+        "at": "2026-10-20T17:26:02.196Z",
+        "hash": "78f833316deae582"
+      }
+    },
+    {
+      "id": "bank-java-s3-sort-by-length-007",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把柜子里这三只按**名字的长短**站好：**名字短的站前面**喵。\n\n麻烦在于：这些东西自己**一份承诺都没挂**，本喵也不想动它们。所以要**请一个帮工**来替它们排。\n\n请你写这么一张帮工的图纸（专门挂「本喵会替两只当裁判」那份承诺），并用柜子上那只手把它请过来排一次。\n\n三只东西的名字和柜子本身**别去改**，也**别在它们身上挂任何承诺**。排完之后把柜子直接印出来（方括号加逗号空格那个样子）。\n\n比如那三只叫 `大肥鱼`、`橘`、`煤球`，印出来就该是\n\n```text\n[橘, 煤球, 大肥鱼]\n```\n\n（这一题**不用投喂任何东西**，三只的名字都是固定死的。）",
+      "starter": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"小狸花\"));\n        pond.add(new Fish(\"煤\"));\n        pond.add(new Fish(\"花卷\"));\n\n    }\n}\n",
+      "referenceSolution": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\n\nclass Fish {\n    String name;\n\n    Fish(String name) {\n        this.name = name;\n    }\n\n    public String toString() {\n        return name;\n    }\n}\n\nclass ShortFirst implements Comparator<Fish> {\n    public int compare(Fish a, Fish b) {\n        return a.name.length() - b.name.length();\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"小狸花\"));\n        pond.add(new Fish(\"煤\"));\n        pond.add(new Fish(\"花卷\"));\n\n        pond.sort(new ShortFirst());\n        System.out.println(pond);\n    }\n}\n",
+      "expectedOutput": "[煤, 花卷, 小狸花]",
+      "stdin": null,
+      "explanation": "这题练的是**请帮工**那一路喵。\n\n**一、帮工是一张单独的图纸。** 它跟东西自己那份承诺长得像，可意思完全不同：它挂的是「**本喵会替两只同类比一比**」—— 不挂在猫身上，是一张专门干「当裁判」这件事的图纸。\n\n**二、请它来的那只手写在柜子上。** `pond.sort(new ShortFirst())` 读作「这只柜子，请这个帮工来排」。注意本喵**没有**去动这些东西，也没有在它们身上挂任何承诺 —— 排完它们还是原来那些，只是站的位置换了。\n\n**三、帮工报的数是什么意思。** 它报负数就是「本喵该站前面」，报正数就是「本喵该站后面」。这题要名字短的站前面，所以拿本喵名字的长短去减对方的长短。\n\n**四、为什么这题不能用「东西自己会排」那一路。** 那一路要先在图纸上挂承诺、再填一手，**改的是东西自己**。本喵这题不打算动它们（同一个东西以后可能还要按别的规矩站），所以只能请帮工。这也是课文那句分岔：**改承诺是改东西本身，请帮工只是换一双眼睛。**\n\n**五、别忘了印。** 排完只是排好了，把柜子印出来才看得见 —— 柜子自己会按方括号那个样子印，本喵不用自己拼。",
+      "templateId": "java-s3-sort-by-length",
+      "params": {
+        "n1": "小狸花",
+        "n2": "煤",
+        "n3": "花卷"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:22.273Z",
+        "hash": "b72ef451940e70f3"
+      }
+    },
+    {
+      "id": "bank-java-s3-sort-without-promise-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想让这三只按**轻重**排排坐，轻的站前面喵。\n\n写完之后翻稿子就红了，一行都没跑。翻译官喵的意思是：排排坐的那只手**只收挂过那份承诺的东西**，而本喵这张图纸上一份承诺都没挂。\n\n请你帮本喵把这张图纸补全：\n\n1. 在图纸名后面**挂上那份承诺**（「本喵会跟同类比大小」那份）；\n2. 把那一手**填进去** —— 按轻重比，**轻的站前面**。\n\n投喂的那三只和印出来的那一句**一个字都别动**。改好之后它该印一行，把排好队的三只印出来。\n\n（这一题**不用投喂任何东西**，那三只和它们的轻重都是固定死的。）",
+      "brokenCode": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nclass Fish {\n    String name;\n    int weight;\n\n    Fish(String name, int weight) {\n        this.name = name;\n        this.weight = weight;\n    }\n\n    public String toString() {\n        return name + \"(\" + weight + \")\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"小橘\", 5));\n        pond.add(new Fish(\"煤球\", 2));\n        pond.add(new Fish(\"狸花\", 8));\n\n        Collections.sort(pond);\n        System.out.println(pond);\n    }\n}\n",
+      "referenceFix": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nclass Fish implements Comparable<Fish> {\n    String name;\n    int weight;\n\n    Fish(String name, int weight) {\n        this.name = name;\n        this.weight = weight;\n    }\n\n    public int compareTo(Fish other) {\n        return this.weight - other.weight;\n    }\n\n    public String toString() {\n        return name + \"(\" + weight + \")\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"小橘\", 5));\n        pond.add(new Fish(\"煤球\", 2));\n        pond.add(new Fish(\"狸花\", 8));\n\n        Collections.sort(pond);\n        System.out.println(pond);\n    }\n}\n",
+      "expectedOutput": "[煤球(2), 小橘(5), 狸花(8)]",
+      "stdin": null,
+      "explanation": "这题演的是「排排坐的那只手**只收挂过承诺的东西**」喵。\n\n**一、红字里那两行是要害。** 头一行 `no suitable method found for sort(...)` 是「没找着一双能收下这只柜子的手」；再往下那句 `upper bounds: Comparable<? super T#1>` 才是理由 —— 那双手上写着「只收**挂过那份承诺**的东西」，而本喵这些东西一个都没挂。\n\n**二、注意这一回是翻稿子的时候就红。** 不是跑起来才炸。早红是好事：本喵还没跑，就知道自己漏了一件事。\n\n**三、补两处，一处都不能少。** 第一处在图纸名后面：挂上那份「本喵会跟同类比大小」的承诺；第二处是**把那一手填进去** —— 光挂承诺不填那一手，翻译官喵照样退稿（它会说本喵答应了要做的事没做）。\n\n**四、那一手报的数是什么意思。** 报负数就是「本喵轻，本喵站前面」，报正数就是「本喵重，本喵站后面」。本喵这题要的是**轻的站前面**，所以拿本喵的轻重去减对方的轻重。\n\n**五、换一种站法就得改这份承诺。** 想让重的站前面，就得改那一手 —— 可那样一改，**所有**这种猫的站法都跟着翻过来。想「换个站法又不动东西自己」，那是请帮工那一路的事喵。",
+      "templateId": "java-s3-sort-without-promise",
+      "params": {
+        "n1": "小橘",
+        "n2": "煤球",
+        "n3": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:13.700Z",
+        "hash": "278d2ad13eff4588"
+      }
+    },
+    {
+      "id": "bank-java-s3-sort-without-promise-007",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想让这三只按**轻重**排排坐，轻的站前面喵。\n\n写完之后翻稿子就红了，一行都没跑。翻译官喵的意思是：排排坐的那只手**只收挂过那份承诺的东西**，而本喵这张图纸上一份承诺都没挂。\n\n请你帮本喵把这张图纸补全：\n\n1. 在图纸名后面**挂上那份承诺**（「本喵会跟同类比大小」那份）；\n2. 把那一手**填进去** —— 按轻重比，**轻的站前面**。\n\n投喂的那三只和印出来的那一句**一个字都别动**。改好之后它该印一行，把排好队的三只印出来。\n\n（这一题**不用投喂任何东西**，那三只和它们的轻重都是固定死的。）",
+      "brokenCode": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nclass Fish {\n    String name;\n    int weight;\n\n    Fish(String name, int weight) {\n        this.name = name;\n        this.weight = weight;\n    }\n\n    public String toString() {\n        return name + \"(\" + weight + \")\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"大橘\", 5));\n        pond.add(new Fish(\"墨点\", 2));\n        pond.add(new Fish(\"三花\", 8));\n\n        Collections.sort(pond);\n        System.out.println(pond);\n    }\n}\n",
+      "referenceFix": "import java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nclass Fish implements Comparable<Fish> {\n    String name;\n    int weight;\n\n    Fish(String name, int weight) {\n        this.name = name;\n        this.weight = weight;\n    }\n\n    public int compareTo(Fish other) {\n        return this.weight - other.weight;\n    }\n\n    public String toString() {\n        return name + \"(\" + weight + \")\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Fish> pond = new ArrayList<>();\n        pond.add(new Fish(\"大橘\", 5));\n        pond.add(new Fish(\"墨点\", 2));\n        pond.add(new Fish(\"三花\", 8));\n\n        Collections.sort(pond);\n        System.out.println(pond);\n    }\n}\n",
+      "expectedOutput": "[墨点(2), 大橘(5), 三花(8)]",
+      "stdin": null,
+      "explanation": "这题演的是「排排坐的那只手**只收挂过承诺的东西**」喵。\n\n**一、红字里那两行是要害。** 头一行 `no suitable method found for sort(...)` 是「没找着一双能收下这只柜子的手」；再往下那句 `upper bounds: Comparable<? super T#1>` 才是理由 —— 那双手上写着「只收**挂过那份承诺**的东西」，而本喵这些东西一个都没挂。\n\n**二、注意这一回是翻稿子的时候就红。** 不是跑起来才炸。早红是好事：本喵还没跑，就知道自己漏了一件事。\n\n**三、补两处，一处都不能少。** 第一处在图纸名后面：挂上那份「本喵会跟同类比大小」的承诺；第二处是**把那一手填进去** —— 光挂承诺不填那一手，翻译官喵照样退稿（它会说本喵答应了要做的事没做）。\n\n**四、那一手报的数是什么意思。** 报负数就是「本喵轻，本喵站前面」，报正数就是「本喵重，本喵站后面」。本喵这题要的是**轻的站前面**，所以拿本喵的轻重去减对方的轻重。\n\n**五、换一种站法就得改这份承诺。** 想让重的站前面，就得改那一手 —— 可那样一改，**所有**这种猫的站法都跟着翻过来。想「换个站法又不动东西自己」，那是请帮工那一路的事喵。",
+      "templateId": "java-s3-sort-without-promise",
+      "params": {
+        "n1": "大橘",
+        "n2": "墨点",
+        "n3": "三花"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:15.476Z",
+        "hash": "bc152a581c1193d4"
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>咪爱编程</title>
+    <!--
+      场景引擎接入后（P3 第三步，2026-10-05）的 CSP —— 整串以 P1 原型
+      __csp-1.html（E4 认证通过的那份）为底，两处放宽各有硬证据：
+      · script-src 加 'unsafe-eval'：webwallgl 用 new Function 编译场景脚本，
+        被 CSP 拒时**不抛异常**、只在内部 catch 成 warn —— 症状是"画面在但
+        特效全灭"，最难查的一类静默失败（docs/23 §2.2 实测定论）。
+      · media-src/font-src/frame-src/worker-src 的 blob:：mediabunny 的
+        alpha 合并管线从 blob: 起 worker / 读回帧（worker-src 'self' 不够，
+        blob: worker 是它的硬需求）。
+      其余口径不变：miai-wall: 是自有特权 scheme（handler 带路径围栏）；
+      media-src/connect-src/frame-src 显式写出来时都带上原有的 'self'。
+      P10.1 §7.1-12 加固（末尾净增三项，不动上面任何一项）：
+      · form-action 'none'：禁一切表单提交 —— 页面被注入 <form> 也不许把
+        数据外发（本应用没有任何表单外发需求）。
+      · object-src 'none'：禁 <object>/<embed> 插件对象面（整类老式攻击面）。
+      · base-uri 'none'：禁 <base> 改文档基准地址，防相对路径被劫持解析。
+      （CDP 测不出页面 CSP —— DevTools 对它豁免；真实挂载成功即实证。）
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: miai-wall:; media-src 'self' blob: miai-wall:; font-src 'self' data: blob:; connect-src 'self' miai-wall:; frame-src 'self' blob: miai-wall:; worker-src 'self' blob:; form-action 'none'; object-src 'none'; base-uri 'none'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

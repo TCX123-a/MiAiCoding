@@ -1,0 +1,72 @@
+{
+  "lessonId": "cpp-stage3-06",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵想让一块牌子换主人，写成 `unique_ptr<int> b = a;`，翻译官喵当场拦下，原话里有 `use of deleted function`。想换主人，正确的写法是哪一个？",
+      "options": [
+        "先喊一句 `a.reset();` 把旧牌子清空，再写 `b = a;` 就能复制了",
+        "在 `b = a;` 前面加一句 `delete a;` 把旧的那间仓库还掉",
+        "打招呼搬家：`unique_ptr<int> b = move(a);` —— 搬完以后 `a` 就空手了",
+        "写成 `unique_ptr<int> b = a[0];` —— 从旧牌子上把货取下来再挂上去"
+      ],
+      "answer": 2,
+      "explanation": "牌子的规矩是**一块牌子只有一个主人**喵。翻译官喵那句 `use of deleted function` 说的是「这个本事已经被划掉了」—— 复制这条路压根不给你走，不是本喵名字写错了。想换主人得**打招呼搬家**：`move(a)` 念作「`a` 这一份本喵不要了，你搬过去」，搬完 `a` 就剩个空壳（本喵在课文里印过 `a 已经空手了` 那一行）。另外三个选项都是在跟这条规矩对着干：`reset()` 是让牌子松手（仓库当场被还回去），`delete a` 是拿还仓库当搬家，两个都会把本喵的货弄丢。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵写了个招式，中间有一句 `if (early) { return; }` 提前出门，仓库是用牌子（`unique_ptr`）拿的。这一趟会印出 `还回 大肥鱼` 吗？",
+      "options": [
+        "不会 —— `return` 把后面的还仓库整个跳过去了，和手写 `delete` 一样漏",
+        "会 —— 牌子走出花括号就把仓库还了，跟本喵怎么出门没关系",
+        "不会 —— 得先手动喊一次 `delete` 才会还",
+        "会 —— 但要本喵在 `return` 前面补一句 `move(p);` 才行"
+      ],
+      "answer": 1,
+      "explanation": "这正是牌子比手写 `delete` 靠谱的地方喵：**还仓库这件事是写进牌子的出生证里的**，只要牌子走出它出生的那片花括号，仓库就会被叼回去 —— 正常走到底会还，中途 `return` 也会还。课文第三节里本喵把同一件事写了两遍：手写的那版提前出门就漏了 `还回 大肥鱼`，牌子那版 `租下` 和 `还回` 一对整整齐齐。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵请了一块牌子指着大肥鱼，接着又写了一句 `shared_ptr<Fish> b = a;`（`a` 也是 `shared_ptr`）。这时候 `a.use_count()` 印出来是几？",
+      "options": ["2", "1", "0", "说不准，得看大肥鱼在不在屋里"],
+      "answer": 0,
+      "explanation": "`use_count()` 数的是**现在有几只手指着这间仓库**喵。刚请来是 1，`b = a` 之后多了一只手，就变成 2；等花括号里那只手放下，它会回到 1 —— 这时候仓库**还没还**，要等最后一根手指也松开，`还回 大肥鱼` 才出现。所以「数变成 1」和「仓库还了」不是一回事，别看到 1 就以为已经还完了。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n    unique_ptr<int> a = ____(3);\n    unique_ptr<int> b = ____(a);\n    cout << *b << endl;\n    return 0;\n}",
+      "stem": "本喵想请一块会自己还仓库的牌子、里头放 `3`，然后**换主人**交给另一块牌子。两个空位（用 `____` 标出）该填什么？",
+      "blanks": [
+        { "answer": "make_unique<int>", "accept": ["make_unique<int>"] },
+        { "answer": "move", "accept": [] }
+      ],
+      "explanation": "第一个空位是 `make_unique<int>` 喵 —— 它**一趟把两件事都做了**：仓库租下来、货也放进去，所以不用自己写 `new`（请它别忘了开头的 `#include <memory>`）。第二个空位是 `move`：牌子不许复制，换主人得先打招呼说「这一份本喵不要了，你搬过去」。搬完之后 `a` 就空手了，所以后面只能拿 `b` 去取货。补完这两处，程序印出的是 `3`。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <memory>\n#include <string>\nusing namespace std;\n\nstruct Fish {\n    string name;\n    Fish(string n) : name(n) { cout << \"领到 \" << name << endl; }\n    ~Fish() { cout << \"还回 \" << name << endl; }\n};\n\nint main() {\n    {\n        unique_ptr<Fish> p = make_unique<Fish>(\"大肥鱼\");\n        cout << p->name << endl;\n    }\n    cout << \"收工\" << endl;\n    return 0;\n}",
+      "stem": "本喵把牌子请进了一层花括号里，出门以后才印收工。这段代码的输出是什么？（一行一行照抄）",
+      "answer": "领到 大肥鱼\n大肥鱼\n还回 大肥鱼\n收工",
+      "accept": ["领到 大肥鱼\n大肥鱼\n还回 大肥鱼\n收工\n"],
+      "explanation": "牌子一请来，仓库当场就租下了，所以 `领到 大肥鱼` 最先印喵。接着 `p->name` 取出里头那只猫的名字，印出 `大肥鱼`。**关键是第三行**：花括号一结束，牌子走出去，仓库自己被叼回去了 —— 所以 `还回 大肥鱼` 印在 `收工` **前面**。要是牌子请在外面（没有那层花括号），`还回 大肥鱼` 就会跑到 `收工` 后面去，本喵在课文第二节真跑过那一种。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n    shared_ptr<int> a = make_shared<int>(5);\n    cout << a.use_count() << endl;\n    {\n        shared_ptr<int> b = a;\n        cout << a.use_count() << endl;\n    }\n    cout << a.use_count() << endl;\n    return 0;\n}",
+      "stem": "本喵请了一块 `shared_ptr`，又在一层花括号里让另一块牌子指着同一份，最后数了三回人头。这三行输出分别是什么？（一行一行照抄）",
+      "answer": "1\n2\n1",
+      "accept": ["1\n2\n1\n"],
+      "explanation": "`use_count()` 数的是**现在有几只手指着这间仓库**喵。刚请来只有一只手，印 `1`；花括号里多了一块牌子指着同一份，两只手，印 `2`；花括号结束、那只手放下，回到一只手，印 `1`。**注意最后一行的 `1` 不等于仓库还了** —— 仓库要等最后一根手指也松开（也就是 `main` 走完）才会被还回去。"
+    }
+  ]
+}

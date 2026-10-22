@@ -1,0 +1,20 @@
+{
+  "templateId": "java-s3-stream-lazy-drop",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-04",
+  "type": "codefix",
+  "concept": ["流水线要挂上收尾那一道", "没挂收尾才是真没跑", "接住叼回来的东西"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["3", "4"] },
+    "b": { "kind": "pick", "values": ["8", "9"] },
+    "c": { "kind": "pick", "values": ["1", "2"] },
+    "d": { "kind": "pick", "values": ["6", "7"] },
+    "t": { "kind": "pick", "values": ["5", "6"] }
+  },
+  "stemTemplate": "本喵搭了一条流水线：四件东西先过筛子，撑过去的**翻十倍**，再收起来喵。\n\n搭完一跑，**程序一声不吭，只印了半行** —— 流水线该吐的东西一件都没见着。\n\n你帮本喵看看：这条流水线上**收尾那一道挂了没有**，本喵又是拿什么去接它吐出来的东西的。改好之后，它该印出**一行**：`撑过筛子的：` 后面跟着方括号包起来的那串数。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。那四件东西和那个门槛都是固定死的，别去改它们。）",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.stream.Collectors;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        nums.add({a});\n        nums.add({b});\n        nums.add({c});\n        nums.add({d});\n\n        nums.stream()\n                .filter(n -> n >= {t})\n                .map(n -> n * 10)\n                .collect(Collectors.toList());\n\n        System.out.println(\"撑过筛子的：\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.stream.Collectors;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<Integer> nums = new ArrayList<>();\n        nums.add({a});\n        nums.add({b});\n        nums.add({c});\n        nums.add({d});\n\n        List<Integer> big = nums.stream()\n                .filter(n -> n >= {t})\n                .map(n -> n * 10)\n                .collect(Collectors.toList());\n\n        System.out.println(\"撑过筛子的：\" + big);\n    }\n}\n",
+  "explanationTemplate": "这题把本课最要紧的那个直觉演了一遍喵：**流水线上中间那几道，挂上收尾那一道之前，一道都不会跑。**\n\n**一、本喵那条流水线缺了「接住」。** `.collect(Collectors.toList())` 确实是**收尾的那一道** —— 它把流水线上流过来的东西收成一只新柜子，叼回来交给本喵。可本喵**没伸手去接**：那一行写完了就把叼回来的柜子扔了，什么都没存下来。\n\n**二、那中间那两道跑了没有？** **跑了。** 这句本喵要说准一点：**收尾那一道是挂着的，前面登记的几道就真的动起来了** —— 本喵往 `map` 里塞了一句 `System.out.println` 去偷看，屏幕上真的多出两行，说明它们一道不落地走过。**只是跑得再热闹，本喵也一个结果都拿不着**：`filter` 和 `map` 本来就不吭声，它们吐出来的东西被收尾那一道收进了一只新柜子，而那只柜子本喵没伸手去接。所以本喵那句 `System.out.println(\"撑过筛子的：\")` 印出来是**半行**，后面空空如也 —— 屏幕干净不是因为它没跑，是因为**跑出来的东西全被扔了**。\n\n那**什么时候中间那几道是真的不跑**？**一道收尾都不挂**的时候 —— 那时候它们只是在「登记要做的事」，登记完就等着，没人来取就一直等着。这两件事要分清楚喵：**「没挂收尾」才是真没跑，「接了没接住」是跑了也白跑。**\n\n**三、改法有两种，都对。**\n\n- **接住它**：把收尾那一道叼回来的柜子存进一个小篮子（照本课的写法，声明的时候写清楚它是一只装 `Integer` 的柜子），然后印那个小篮子。这一种最贴近题面那句「收起来再报一遍」。\n- **换一道更短的收尾**：新版 Java 的流水线自带一手 `.toList()`，把整句 `.collect(Collectors.toList())` 换成 `.toList()` 效果一样 —— 都是「收成一只柜子交给本喵」。换成它之后，上面那句 `import ...stream.Collectors;` 就没人用了，留着也不算错喵。\n\n两条路都合法，判分只看印出来的那一行对不对喵。\n\n**四、有一个坑必须记住。** 收尾那一道**只能挂一道**，而且挂完之后那条流水线就用过了 —— 想再走一遍，得**重新 `.stream()`** 起一条新的。这不是规矩刁难人，是因为一条流水线只认一个出口喵。\n\n往后再看见流水线「一声不吭」，先数一数：**收尾那一道挂了没有、挂上之后本喵伸手接了没有。**"
+}

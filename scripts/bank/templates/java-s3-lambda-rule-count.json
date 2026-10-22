@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-lambda-rule-count",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-03",
+  "type": "codewrite",
+  "concept": ["把规矩当成一样东西递过去", "只有一招的约定", "当场写一小段交出去"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 },
+    "t": { "kind": "int", "min": 5, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要写一招**通用的清点招式**：柜子里有几件东西**符合规矩**，它就报几件喵。\n\n关键在于：**「规矩」本身要当成一样东西递进去**，而不是把某一条规矩写死在招式里 —— 这样往后换一条规矩，清点那一招一个字都不用动。\n\n做法是：\n\n1. 先用 `interface` 写一张**只有一招**的约定，那一招收一个整数、答一句「行不行」；\n2. 再写一招清点：收的是柜子和这份约定，挨个过一遍，符合规矩的就把计数加一；\n3. 在 `main` 里，把规矩**当场写一小段交出去**（就是本课那种 `x -> ...` 的写法）。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。把它们收进柜子之后，印这些行：\n\n```text\n柜子里有 N 件\n够大的有 C 件\n装的是 X\n装的是 X\n...\n```\n\n- `N` 是件数；\n- `C` 是**不小于 {t}** 的数有几件；\n- 后面**每件印一行**（按原来的先后，每行都是 `装的是 ` 加上那一件），件数就是 `N`。\n\n最后那几行，用柜子自带的那手「挨个过一遍」的招式印，别自己另写一个绕圈。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\ninterface Rule {\n\n}\n\npublic class Main {\n    static int countIf(List<Integer> box, Rule rule) {\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.Scanner;\n\ninterface Rule {\n    boolean ok(int x);\n}\n\npublic class Main {\n    static int countIf(List<Integer> box, Rule rule) {\n        int cnt = 0;\n        for (int x : box) {\n            if (rule.ok(x)) {\n                cnt++;\n            }\n        }\n        return cnt;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> box = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            box.add(sc.nextInt());\n        }\n        System.out.println(\"柜子里有 \" + box.size() + \" 件\");\n        System.out.println(\"够大的有 \" + countIf(box, x -> x >= {t}) + \" 件\");\n        box.forEach(x -> System.out.println(\"装的是 \" + x));\n    }\n}\n",
+  "explanationTemplate": "这题的主角是**那张只有一招的约定**喵。\n\n**一、为什么只留一招。** 那张约定里就写一招 `ok`：收一个整数，答一句「行不行」。为什么是一招而不是两招？因为只有这样，本喵才能在 `main` 里**当场把这一招写出来交出去** —— 本课那种 `x -> ...` 的写法，认的就是「**一张纸上只有一招**」的形状。要是约定里写了第二招，当场写一小段交出去这套就不成立了。\n\n**二、清点那一招一个字都不提具体规矩。** `countIf` 里从头到尾只做三件事：挨个过一遍、问一句 `rule.ok(x)`、行就把计数加一。它不知道规矩是「够大」还是「是偶数」还是别的什么 —— **规矩是从外面递进来的**。所以往后想换一条规矩，本喵只要在调用那一处换一小段，清点那一招**一个字都不用动**。\n\n**三、当场交出去那一小段。** `x -> x >= {t}` 读作「收进来一条小鱼干，名字叫 `x`；答一句它够不够大」。箭头左边是**投喂进来的那样东西**的名字，右边是叼回去的那句话。它写出来的东西，和「照约定另起一张图纸、把那一招规规矩矩写长」**完全是同一件事**，只是省掉了一大圈客套。\n\n**四、最后几行的挨个过一遍，用柜子自带的那一手。** `box.forEach(...)` 就是那个「把柜子里每一件挨个拿出来，每拿一件就跑一遍大括号里的东西」的招式 —— 本喵把「印一行」这一小段当场交出去就行，不用自己另写绕圈。\n\n（顺带一句：要是那一小段正好就是「把拿到的直接交给现成的招式」，本课还教过一种更短的写法 `System.out::println`。这题因为每行前面要加 `装的是 `，用当场写一小段更顺手喵。）\n\n**五、计数那个小篮子得立在绕圈外面。** 立在里面的话，每转一圈就重新归零，最后只会得到一件的结果喵。\n\n一句话记住：**招式收的可以是「一段做法」，不一定是数** —— 这就是今天这张约定的分量所在。"
+}

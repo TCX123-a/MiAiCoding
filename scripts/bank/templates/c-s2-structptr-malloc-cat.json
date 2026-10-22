@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-structptr-malloc-cat",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-06",
+  "type": "codewrite",
+  "concept": ["现要现租", "sizeof", "补写记号", "free"],
+  "instances": 6,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "狸花", "大肥鱼"] },
+    "f1": { "kind": "int", "min": 3, "max": 7 }
+  },
+  "stemTemplate": "本喵今天想**现租一只猫**：不用在 `main` 里提前生好，直接跟大仓库要一块刚够一只猫住的地方，让牌子指着它。\n\n请你先画一张图纸（一只猫有什么：一个名字、一个食量），然后：\n\n1. 跟仓库要一块地方，**大小正好是一只猫**（别写死数字，用「量一下一只猫多大」那个招式）；要完**先看看有没有租到** —— 没租到就印一行 `仓库没租到喵` 然后收工；\n2. 把名字填成 `{who}`（用抄项链那一招）、食量填成 {f1}；\n3. 印一行 `{who} 有 {f1} 条喵`；\n4. 用完把地方**还回去**，牌子也擦干净（让它指着空）。\n\n仓库那头（`malloc`/`free`）住在 `stdlib.h` 家里，抄项链的招式住在 `string.h` 家里喵。",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nstruct Cat {\n    char name[20];\n    int fish;\n};\n\nint main(void) {\n    struct Cat *p = (struct Cat *)malloc(sizeof(struct Cat));\n\n    if (p == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 0;\n    }\n\n    strcpy(p->name, \"{who}\");\n    p->fish = {f1};\n    printf(\"%s 有 %d 条喵\\n\", p->name, p->fish);\n\n    free(p);\n    p = NULL;\n    return 0;\n}\n",
+  "explanationTemplate": "一块地能不能住下一只猫，得先**量一下**喵。\n\n**① 量一只猫多大：`sizeof(struct Cat)`。** 这是翻译官喵替本喵算的：把图纸上每一个格子各占多大加起来。自己拿计算器去凑数字（写 `sizeof(char)*20 + sizeof(int)` 之类）看着聪明，可图纸一改就全错，还是让翻译官喵去量最稳。\n\n**② 补写「这块地方按一只猫来读」。** 仓库那头只管给一块地，它不知道本喵要住猫还是住别的，所以交回来的是一块**说不清是什么**的门牌号。要给牌子配上记号，得自己补一句：\n\n```c\n(struct Cat *)malloc(sizeof(struct Cat))\n```\n\n前面那对括号加图纸记号，读作「**这块地，按一只猫来读**」。少了它翻译官喵会拦你（说不清的东西配不上带记号的牌子）。\n\n**③ 要完先看租没租到。** 仓库也可能两手一摊（比如地方不够），那时候拿回来的门牌号是 `NULL`（空牌子）。不先检查就顺着空牌子进门，程序当场就倒 —— 所以 `if (p == NULL)` 那一步不是客套话，是真要做的事。\n\n**④ 用完记得还。** `free(p);` 把地方交回仓库，`p = NULL;` 是把牌子擦干净。擦这一下很像多此一举，可它是个好习惯：空牌子再被谁拿去用，好歹是当场倒下、一眼看得见，比悄悄写到别人家地里强得多喵。"
+}

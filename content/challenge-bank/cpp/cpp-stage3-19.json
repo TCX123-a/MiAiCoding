@@ -1,0 +1,360 @@
+{
+  "lessonId": "cpp-stage3-19",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-19-hard-cast-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵手里这张牌子明明写着「猫」，却硬把它当成橘猫 —— 用的是**不照光**的那一手 `static_cast`。翻译官喵一声没吭，程序也跑完了，它却印了 `照出来了`：屋里住的其实是一只狸花猫喵。\n\n改一个词就够：把那一手换成**会照光**的 `dynamic_cast`，照不到就给空牌子。改完跑一遍，屏幕上只该剩下一行：\n\n1. `照不出来`\n\n这一题的坑不在「会不会写」，在**转错了它不吭声** —— 不照光那一手压根不看屋里住的是谁。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    int weight;\n    OrangeCat(const string& n) : Cat(n), weight(7) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    TabbyCat t(\"小橘\");\n    Cat* p = &t;\n    OrangeCat* a = static_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了\") << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    int weight;\n    OrangeCat(const string& n) : Cat(n), weight(7) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    TabbyCat t(\"小橘\");\n    Cat* p = &t;\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "照不出来",
+      "stdin": null,
+      "explanation": "不照光那一手（`static_cast`）是**照着纸面算**的喵：它只看牌子上写的那一栏，照着图纸的布局把地址挪一挪，就把新牌子递过来了 —— 屋里住的是谁，它**一次都不看**。所以本喵拿狸花猫的屋子去硬当橘猫，它照样给牌子、一声不吭，印出来的 `照出来了` 是**假的**。\n\n会照光那一手（`dynamic_cast`）才会在跑起来的时候问一句「这间屋里住的到底是谁」。不是橘猫，它就递一张**空牌子**，所以本喵查 `a == nullptr` 一查就知道，屏幕上老老实实印 `照不出来`。\n\n记死这一组：**不照光 = 不查、不报错、牌子照给**；**照光 = 查、不对就空牌子**。真出事的地方在这儿：本喵要是信了那个假 `照出来了`，接着去读「橘猫才有的那一格」，读到的会是别人身上那一格 —— 屏幕上一点异常都看不出来。",
+      "templateId": "cpp-s3-19-hard-cast",
+      "params": {
+        "who": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:22.570Z",
+        "hash": "94e3a9d6ac1440e0"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-hard-cast-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵手里这张牌子明明写着「猫」，却硬把它当成橘猫 —— 用的是**不照光**的那一手 `static_cast`。翻译官喵一声没吭，程序也跑完了，它却印了 `照出来了`：屋里住的其实是一只狸花猫喵。\n\n改一个词就够：把那一手换成**会照光**的 `dynamic_cast`，照不到就给空牌子。改完跑一遍，屏幕上只该剩下一行：\n\n1. `照不出来`\n\n这一题的坑不在「会不会写」，在**转错了它不吭声** —— 不照光那一手压根不看屋里住的是谁。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    int weight;\n    OrangeCat(const string& n) : Cat(n), weight(7) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    OrangeCat* a = static_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了\") << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    int weight;\n    OrangeCat(const string& n) : Cat(n), weight(7) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "照不出来",
+      "stdin": null,
+      "explanation": "不照光那一手（`static_cast`）是**照着纸面算**的喵：它只看牌子上写的那一栏，照着图纸的布局把地址挪一挪，就把新牌子递过来了 —— 屋里住的是谁，它**一次都不看**。所以本喵拿狸花猫的屋子去硬当橘猫，它照样给牌子、一声不吭，印出来的 `照出来了` 是**假的**。\n\n会照光那一手（`dynamic_cast`）才会在跑起来的时候问一句「这间屋里住的到底是谁」。不是橘猫，它就递一张**空牌子**，所以本喵查 `a == nullptr` 一查就知道，屏幕上老老实实印 `照不出来`。\n\n记死这一组：**不照光 = 不查、不报错、牌子照给**；**照光 = 查、不对就空牌子**。真出事的地方在这儿：本喵要是信了那个假 `照出来了`，接着去读「橘猫才有的那一格」，读到的会是别人身上那一格 —— 屏幕上一点异常都看不出来。",
+      "templateId": "cpp-s3-19-hard-cast",
+      "params": {
+        "who": "小灰"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:24.926Z",
+        "hash": "2908491e51d7f707"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-no-virtual-gate-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "底座上一手挂了招牌的都没有，程序里直接来了一手 `dynamic_cast` —— 翻译官喵看了当场翻脸，**一个字都编不出来**喵。这不是坏事：照光得先能问「屋里住的是谁」，而这份记录是挂了招牌的那一手带来的。\n\n补一手最简单也最常用的挂招牌（出生招式那一手就行），让它编得动。\n\n修好之后，屏幕上只有一行：\n\n1. `照出来了：小橘`\n\n⚠️ 这一题跟「补个分号」不一样：翻译官喵的原话里有 `source type is not polymorphic`，它不是挑刺，是这道门槛真的绕不过去。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"小橘\");\n    Cat* p = &o;\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了：\" + a->name) << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"小橘\");\n    Cat* p = &o;\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了：\" + a->name) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "照出来了：小橘",
+      "stdin": null,
+      "explanation": "照光要在**跑起来的时候**问一句「这间屋里住的到底是谁」，这句话得有个地方记着喵。记它的地方不是白来的：底座上至少得挂一手招牌（`virtual`，最容易的就是出生招式 `virtual ~Cat() {}`），翻译官喵才会给每只猫配这样一份记录。一手招牌都没有的底座，它连记录都不配，照光没人可问，于是**当场拦下来、不许编过**，原话是 `cannot 'dynamic_cast' ... (source type is not polymorphic)`。\n\n换个角度看这也是好事：编不过，比「悄悄转错」强得多 —— 前面那种不照光的写法（`static_cast`）就是悄悄转错，翻译官喵一声不吭，等本喵拿着错牌子去读别人那一格才发现。所以这道门槛宁可要。",
+      "templateId": "cpp-s3-19-no-virtual-gate",
+      "params": {
+        "who": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:27.335Z",
+        "hash": "29bb2e2b775c5032"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-no-virtual-gate-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "底座上一手挂了招牌的都没有，程序里直接来了一手 `dynamic_cast` —— 翻译官喵看了当场翻脸，**一个字都编不出来**喵。这不是坏事：照光得先能问「屋里住的是谁」，而这份记录是挂了招牌的那一手带来的。\n\n补一手最简单也最常用的挂招牌（出生招式那一手就行），让它编得动。\n\n修好之后，屏幕上只有一行：\n\n1. `照出来了：小灰`\n\n⚠️ 这一题跟「补个分号」不一样：翻译官喵的原话里有 `source type is not polymorphic`，它不是挑刺，是这道门槛真的绕不过去。",
+      "brokenCode": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"小灰\");\n    Cat* p = &o;\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了：\" + a->name) << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"小灰\");\n    Cat* p = &o;\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"照不出来\" : \"照出来了：\" + a->name) << endl;\n    return 0;\n}\n",
+      "expectedOutput": "照出来了：小灰",
+      "stdin": null,
+      "explanation": "照光要在**跑起来的时候**问一句「这间屋里住的到底是谁」，这句话得有个地方记着喵。记它的地方不是白来的：底座上至少得挂一手招牌（`virtual`，最容易的就是出生招式 `virtual ~Cat() {}`），翻译官喵才会给每只猫配这样一份记录。一手招牌都没有的底座，它连记录都不配，照光没人可问，于是**当场拦下来、不许编过**，原话是 `cannot 'dynamic_cast' ... (source type is not polymorphic)`。\n\n换个角度看这也是好事：编不过，比「悄悄转错」强得多 —— 前面那种不照光的写法（`static_cast`）就是悄悄转错，翻译官喵一声不吭，等本喵拿着错牌子去读别人那一格才发现。所以这道门槛宁可要。",
+      "templateId": "cpp-s3-19-no-virtual-gate",
+      "params": {
+        "who": "小灰"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:29.288Z",
+        "hash": "080e36eb8ef17cbc"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-ref-or-throw-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n这一题照的是**「不必还的名字」**那一侧：`dynamic_cast<OrangeCat&>(*p)` —— 照成了，本喵拿到的是**那只猫自己**；照不成，它**没有「空」这个状态**可以递过来，只能当场抛出来。\n\n要补两处：\n\n1. 照光那一手，照「不必还的名字」，目标写死成 `OrangeCat&`；\n2. 照到了印 `照出来了：` 接上它的名字；照不到就**接住那一抛**，印 `照不出来：` 接上翻译官喵报的名字（`e.what()`）。\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\n照不出来：std::bad_cast\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    try {\n        OrangeCat& r = dynamic_cast<OrangeCat&>(*p);\n        cout << \"照出来了：\" << r.name << endl;\n    } catch (const bad_cast& e) {\n        cout << \"照不出来：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "照出来了：小橘",
+      "stdin": "1\n",
+      "explanation": "照**牌子**失败和照**不必还的名字**失败，是**两条路**喵，这一题把两边摆在一起看：\n\n- 照牌子（`dynamic_cast<OrangeCat*>(p)`）：照不到就递**空牌子**，本喵查 `== nullptr` 就知道，程序照样往下跑；\n- 照不必还的名字（`dynamic_cast<OrangeCat&>(*p)`）：那边**没有空这一说**，照不到只剩一条路 —— 当场抛一个 `bad_cast` 出来。\n\n所以第 2 处那个 `try` / `catch` 不是可写可不写的礼貌话：接不住，程序当场就停在那儿了。接住之后 `e.what()` 报出来的字就是 `std::bad_cast`（本机读数，换个翻译官喵可能换一套写法，所以**别拿它去比**）。\n\n还有一处对照：照光既不改手上那张牌子，也不改屋里那一位，它只回答「能不能照成橘猫」喵。",
+      "templateId": "cpp-s3-19-ref-or-throw",
+      "params": {
+        "who": "小橘",
+        "other": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:31.955Z",
+        "hash": "ec89542fb508ca8d"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-ref-or-throw-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n这一题照的是**「不必还的名字」**那一侧：`dynamic_cast<OrangeCat&>(*p)` —— 照成了，本喵拿到的是**那只猫自己**；照不成，它**没有「空」这个状态**可以递过来，只能当场抛出来。\n\n要补两处：\n\n1. 照光那一手，照「不必还的名字」，目标写死成 `OrangeCat&`；\n2. 照到了印 `照出来了：` 接上它的名字；照不到就**接住那一抛**，印 `照不出来：` 接上翻译官喵报的名字（`e.what()`）。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n照出来了：小橘\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    try {\n        OrangeCat& r = dynamic_cast<OrangeCat&>(*p);\n        cout << \"照出来了：\" << r.name << endl;\n    } catch (const bad_cast& e) {\n        cout << \"照不出来：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "照不出来：std::bad_cast",
+      "stdin": "2\n",
+      "explanation": "照**牌子**失败和照**不必还的名字**失败，是**两条路**喵，这一题把两边摆在一起看：\n\n- 照牌子（`dynamic_cast<OrangeCat*>(p)`）：照不到就递**空牌子**，本喵查 `== nullptr` 就知道，程序照样往下跑；\n- 照不必还的名字（`dynamic_cast<OrangeCat&>(*p)`）：那边**没有空这一说**，照不到只剩一条路 —— 当场抛一个 `bad_cast` 出来。\n\n所以第 2 处那个 `try` / `catch` 不是可写可不写的礼貌话：接不住，程序当场就停在那儿了。接住之后 `e.what()` 报出来的字就是 `std::bad_cast`（本机读数，换个翻译官喵可能换一套写法，所以**别拿它去比**）。\n\n还有一处对照：照光既不改手上那张牌子，也不改屋里那一位，它只回答「能不能照成橘猫」喵。",
+      "templateId": "cpp-s3-19-ref-or-throw",
+      "params": {
+        "who": "小橘",
+        "other": "小灰"
+      },
+      "verified": {
+        "at": "2026-10-20T17:01:43.823Z",
+        "hash": "0da309abc7a1469b"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-ref-or-throw-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n这一题照的是**「不必还的名字」**那一侧：`dynamic_cast<OrangeCat&>(*p)` —— 照成了，本喵拿到的是**那只猫自己**；照不成，它**没有「空」这个状态**可以递过来，只能当场抛出来。\n\n要补两处：\n\n1. 照光那一手，照「不必还的名字」，目标写死成 `OrangeCat&`；\n2. 照到了印 `照出来了：` 接上它的名字；照不到就**接住那一抛**，印 `照不出来：` 接上翻译官喵报的名字（`e.what()`）。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n照出来了：小P\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    try {\n        OrangeCat& r = dynamic_cast<OrangeCat&>(*p);\n        cout << \"照出来了：\" << r.name << endl;\n    } catch (const bad_cast& e) {\n        cout << \"照不出来：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "照不出来：std::bad_cast",
+      "stdin": "2\n",
+      "explanation": "照**牌子**失败和照**不必还的名字**失败，是**两条路**喵，这一题把两边摆在一起看：\n\n- 照牌子（`dynamic_cast<OrangeCat*>(p)`）：照不到就递**空牌子**，本喵查 `== nullptr` 就知道，程序照样往下跑；\n- 照不必还的名字（`dynamic_cast<OrangeCat&>(*p)`）：那边**没有空这一说**，照不到只剩一条路 —— 当场抛一个 `bad_cast` 出来。\n\n所以第 2 处那个 `try` / `catch` 不是可写可不写的礼貌话：接不住，程序当场就停在那儿了。接住之后 `e.what()` 报出来的字就是 `std::bad_cast`（本机读数，换个翻译官喵可能换一套写法，所以**别拿它去比**）。\n\n还有一处对照：照光既不改手上那张牌子，也不改屋里那一位，它只回答「能不能照成橘猫」喵。",
+      "templateId": "cpp-s3-19-ref-or-throw",
+      "params": {
+        "who": "小P",
+        "other": "狸花"
+      },
+      "verified": {
+        "at": "2026-10-20T17:01:48.497Z",
+        "hash": "ae23813408cbae9b"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-ref-or-throw-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n这一题照的是**「不必还的名字」**那一侧：`dynamic_cast<OrangeCat&>(*p)` —— 照成了，本喵拿到的是**那只猫自己**；照不成，它**没有「空」这个状态**可以递过来，只能当场抛出来。\n\n要补两处：\n\n1. 照光那一手，照「不必还的名字」，目标写死成 `OrangeCat&`；\n2. 照到了印 `照出来了：` 接上它的名字；照不到就**接住那一抛**，印 `照不出来：` 接上翻译官喵报的名字（`e.what()`）。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n照出来了：小P\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    try {\n        OrangeCat& r = dynamic_cast<OrangeCat&>(*p);\n        cout << \"照出来了：\" << r.name << endl;\n    } catch (const bad_cast& e) {\n        cout << \"照不出来：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "照不出来：std::bad_cast",
+      "stdin": "2\n",
+      "explanation": "照**牌子**失败和照**不必还的名字**失败，是**两条路**喵，这一题把两边摆在一起看：\n\n- 照牌子（`dynamic_cast<OrangeCat*>(p)`）：照不到就递**空牌子**，本喵查 `== nullptr` 就知道，程序照样往下跑；\n- 照不必还的名字（`dynamic_cast<OrangeCat&>(*p)`）：那边**没有空这一说**，照不到只剩一条路 —— 当场抛一个 `bad_cast` 出来。\n\n所以第 2 处那个 `try` / `catch` 不是可写可不写的礼貌话：接不住，程序当场就停在那儿了。接住之后 `e.what()` 报出来的字就是 `std::bad_cast`（本机读数，换个翻译官喵可能换一套写法，所以**别拿它去比**）。\n\n还有一处对照：照光既不改手上那张牌子，也不改屋里那一位，它只回答「能不能照成橘猫」喵。",
+      "templateId": "cpp-s3-19-ref-or-throw",
+      "params": {
+        "who": "小P",
+        "other": "小灰"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:34.363Z",
+        "hash": "99cdf2d72c934ac8"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-small-snack-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n这一题是这一课最实用的那一场：**只有橘猫才有的一手**（`eatSnack`，开小灶）。手上只有一张写着「猫」的牌子，骨架里已经让每只猫先喊过一声了（`p->speak()`），你要补的是后面半场：\n\n1. 先照光，把橘猫那一张照出来；\n2. 照到了，就喊那一手 `eatSnack()`；\n3. 照不到，就印一行：它的名字接上 `：没有小灶，喵～`。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n小橘：本喵是橘猫，喵喵喵！\n小橘：这条小鱼干归本喵！\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n    virtual void speak() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是橘猫，喵喵喵！\" << endl; }\n    void eatSnack() const { cout << name << \"：这条小鱼干归本喵！\" << endl; }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是狸花猫，喵呜～\" << endl; }\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    p->speak();\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n    virtual void speak() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是橘猫，喵喵喵！\" << endl; }\n    void eatSnack() const { cout << name << \"：这条小鱼干归本喵！\" << endl; }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是狸花猫，喵呜～\" << endl; }\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    p->speak();\n\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    if (a != nullptr) {\n        a->eatSnack();\n    } else {\n        cout << p->name << \"：没有小灶，喵～\" << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "狸花：本喵是狸花猫，喵呜～\n狸花：没有小灶，喵～",
+      "stdin": "2\n",
+      "explanation": "这一题练的是照光最常用的那个姿势：**底座够不着的东西，照到了才够得着**喵。\n\n- `speak()` 是底座上就有的那一手（挂了招牌，`virtual`），所以拿着「猫」牌子直接喊 `p->speak()` 就行，一声开饭、各猫各样；\n- `eatSnack()` 是**橘猫自己那张图纸上才有的**，底座上根本没有这一格 —— 所以只能用「猫」牌子照出橘猫牌，`a->eatSnack()` 才喊得动。照不到（`a == nullptr`）就老实印它没有小灶。\n\n两处细节别写反：**先照、先查空，再去喊那一手**；照不到那一支里印名字用的是 `p->name` —— 那一格底座上就有，照样够得着。",
+      "templateId": "cpp-s3-19-small-snack",
+      "params": {
+        "who": "小橘",
+        "other": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:36.697Z",
+        "hash": "dfc5beba71c94ccf"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-small-snack-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n这一题是这一课最实用的那一场：**只有橘猫才有的一手**（`eatSnack`，开小灶）。手上只有一张写着「猫」的牌子，骨架里已经让每只猫先喊过一声了（`p->speak()`），你要补的是后面半场：\n\n1. 先照光，把橘猫那一张照出来；\n2. 照到了，就喊那一手 `eatSnack()`；\n3. 照不到，就印一行：它的名字接上 `：没有小灶，喵～`。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n小橘：本喵是橘猫，喵喵喵！\n小橘：这条小鱼干归本喵！\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n    virtual void speak() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是橘猫，喵喵喵！\" << endl; }\n    void eatSnack() const { cout << name << \"：这条小鱼干归本喵！\" << endl; }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是狸花猫，喵呜～\" << endl; }\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    p->speak();\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n    virtual void speak() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是橘猫，喵喵喵！\" << endl; }\n    void eatSnack() const { cout << name << \"：这条小鱼干归本喵！\" << endl; }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是狸花猫，喵呜～\" << endl; }\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    p->speak();\n\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    if (a != nullptr) {\n        a->eatSnack();\n    } else {\n        cout << p->name << \"：没有小灶，喵～\" << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "小灰：本喵是狸花猫，喵呜～\n小灰：没有小灶，喵～",
+      "stdin": "2\n",
+      "explanation": "这一题练的是照光最常用的那个姿势：**底座够不着的东西，照到了才够得着**喵。\n\n- `speak()` 是底座上就有的那一手（挂了招牌，`virtual`），所以拿着「猫」牌子直接喊 `p->speak()` 就行，一声开饭、各猫各样；\n- `eatSnack()` 是**橘猫自己那张图纸上才有的**，底座上根本没有这一格 —— 所以只能用「猫」牌子照出橘猫牌，`a->eatSnack()` 才喊得动。照不到（`a == nullptr`）就老实印它没有小灶。\n\n两处细节别写反：**先照、先查空，再去喊那一手**；照不到那一支里印名字用的是 `p->name` —— 那一格底座上就有，照样够得着。",
+      "templateId": "cpp-s3-19-small-snack",
+      "params": {
+        "who": "小橘",
+        "other": "小灰"
+      },
+      "verified": {
+        "at": "2026-10-20T17:01:53.141Z",
+        "hash": "98f660f33c0102f6"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-small-snack-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n这一题是这一课最实用的那一场：**只有橘猫才有的一手**（`eatSnack`，开小灶）。手上只有一张写着「猫」的牌子，骨架里已经让每只猫先喊过一声了（`p->speak()`），你要补的是后面半场：\n\n1. 先照光，把橘猫那一张照出来；\n2. 照到了，就喊那一手 `eatSnack()`；\n3. 照不到，就印一行：它的名字接上 `：没有小灶，喵～`。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n小P：本喵是橘猫，喵喵喵！\n小P：这条小鱼干归本喵！\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n    virtual void speak() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是橘猫，喵喵喵！\" << endl; }\n    void eatSnack() const { cout << name << \"：这条小鱼干归本喵！\" << endl; }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是狸花猫，喵呜～\" << endl; }\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    p->speak();\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n    virtual void speak() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是橘猫，喵喵喵！\" << endl; }\n    void eatSnack() const { cout << name << \"：这条小鱼干归本喵！\" << endl; }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是狸花猫，喵呜～\" << endl; }\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    p->speak();\n\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    if (a != nullptr) {\n        a->eatSnack();\n    } else {\n        cout << p->name << \"：没有小灶，喵～\" << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "狸花：本喵是狸花猫，喵呜～\n狸花：没有小灶，喵～",
+      "stdin": "2\n",
+      "explanation": "这一题练的是照光最常用的那个姿势：**底座够不着的东西，照到了才够得着**喵。\n\n- `speak()` 是底座上就有的那一手（挂了招牌，`virtual`），所以拿着「猫」牌子直接喊 `p->speak()` 就行，一声开饭、各猫各样；\n- `eatSnack()` 是**橘猫自己那张图纸上才有的**，底座上根本没有这一格 —— 所以只能用「猫」牌子照出橘猫牌，`a->eatSnack()` 才喊得动。照不到（`a == nullptr`）就老实印它没有小灶。\n\n两处细节别写反：**先照、先查空，再去喊那一手**；照不到那一支里印名字用的是 `p->name` —— 那一格底座上就有，照样够得着。",
+      "templateId": "cpp-s3-19-small-snack",
+      "params": {
+        "who": "小P",
+        "other": "狸花"
+      },
+      "verified": {
+        "at": "2026-10-20T17:01:57.811Z",
+        "hash": "6bb5b107d4585e33"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-small-snack-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n这一题是这一课最实用的那一场：**只有橘猫才有的一手**（`eatSnack`，开小灶）。手上只有一张写着「猫」的牌子，骨架里已经让每只猫先喊过一声了（`p->speak()`），你要补的是后面半场：\n\n1. 先照光，把橘猫那一张照出来；\n2. 照到了，就喊那一手 `eatSnack()`；\n3. 照不到，就印一行：它的名字接上 `：没有小灶，喵～`。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n小P：本喵是橘猫，喵喵喵！\n小P：这条小鱼干归本喵！\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n    virtual void speak() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是橘猫，喵喵喵！\" << endl; }\n    void eatSnack() const { cout << name << \"：这条小鱼干归本喵！\" << endl; }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是狸花猫，喵呜～\" << endl; }\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    p->speak();\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n    virtual void speak() const { cout << name << \"：喵～\" << endl; }\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是橘猫，喵喵喵！\" << endl; }\n    void eatSnack() const { cout << name << \"：这条小鱼干归本喵！\" << endl; }\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n    void speak() const override { cout << name << \"：本喵是狸花猫，喵呜～\" << endl; }\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    p->speak();\n\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    if (a != nullptr) {\n        a->eatSnack();\n    } else {\n        cout << p->name << \"：没有小灶，喵～\" << endl;\n    }\n    return 0;\n}\n",
+      "expectedOutput": "小灰：本喵是狸花猫，喵呜～\n小灰：没有小灶，喵～",
+      "stdin": "2\n",
+      "explanation": "这一题练的是照光最常用的那个姿势：**底座够不着的东西，照到了才够得着**喵。\n\n- `speak()` 是底座上就有的那一手（挂了招牌，`virtual`），所以拿着「猫」牌子直接喊 `p->speak()` 就行，一声开饭、各猫各样；\n- `eatSnack()` 是**橘猫自己那张图纸上才有的**，底座上根本没有这一格 —— 所以只能用「猫」牌子照出橘猫牌，`a->eatSnack()` 才喊得动。照不到（`a == nullptr`）就老实印它没有小灶。\n\n两处细节别写反：**先照、先查空，再去喊那一手**；照不到那一支里印名字用的是 `p->name` —— 那一格底座上就有，照样够得着。",
+      "templateId": "cpp-s3-19-small-snack",
+      "params": {
+        "who": "小P",
+        "other": "小灰"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:39.048Z",
+        "hash": "b497291fd21d666e"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-star-or-not-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵用问「是不是同一张图纸」的笨办法辨认屋里那一位，可它**问错猫**了喵：写的是 `typeid(p)`，问的是**牌子自己**是哪一张，不是屋里住的那一位。\n\n屋里住的明明是橘猫，程序却印 `不是橘猫图纸`。补一个字符就够：让这一手问的是屋里那一位。\n\n改完跑一遍，应该只有一行：\n\n1. `是橘猫图纸`",
+      "brokenCode": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"小橘\");\n    Cat* p = &o;\n    cout << (typeid(p) == typeid(OrangeCat) ? \"是橘猫图纸\" : \"不是橘猫图纸\") << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"小橘\");\n    Cat* p = &o;\n    cout << (typeid(*p) == typeid(OrangeCat) ? \"是橘猫图纸\" : \"不是橘猫图纸\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "是橘猫图纸",
+      "stdin": null,
+      "explanation": "这一手问的是「这是哪一张图纸」，而它**问谁**，全看本喵在小括号里写的是什么喵：\n\n- 写 `typeid(p)`：`p` 就是**牌子上写的那一栏**，永远是「猫的牌子」，拿它去跟「橘猫图纸」比，两个压根不是一回事，于是印 `不是橘猫图纸`；\n- 写 `typeid(*p)`：`*p` 顺着牌子找进屋，问的是**屋里那一位** —— 这才是本喵想知道的。\n\n所以差的就是那个星号，别的都没变。还有一条别记错：这一手能认出屋里住的是谁，靠的也是底座上挂了招牌（`virtual`）的那一手；一手招牌都没有的底座，它就只会照着牌面上写的那一栏回答喵。另外，判断「是不是同一张图纸」永远用 `typeid(*p) == typeid(OrangeCat)` 这么比，**别去比名字** —— 名字是翻译官喵自己改写的，换个翻译官喵就换一套写法。",
+      "templateId": "cpp-s3-19-star-or-not",
+      "params": {
+        "who": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:40.625Z",
+        "hash": "91f9f01f2736dbf9"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-star-or-not-001",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵用问「是不是同一张图纸」的笨办法辨认屋里那一位，可它**问错猫**了喵：写的是 `typeid(p)`，问的是**牌子自己**是哪一张，不是屋里住的那一位。\n\n屋里住的明明是橘猫，程序却印 `不是橘猫图纸`。补一个字符就够：让这一手问的是屋里那一位。\n\n改完跑一遍，应该只有一行：\n\n1. `是橘猫图纸`",
+      "brokenCode": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"小P\");\n    Cat* p = &o;\n    cout << (typeid(p) == typeid(OrangeCat) ? \"是橘猫图纸\" : \"不是橘猫图纸\") << endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    OrangeCat o(\"小P\");\n    Cat* p = &o;\n    cout << (typeid(*p) == typeid(OrangeCat) ? \"是橘猫图纸\" : \"不是橘猫图纸\") << endl;\n    return 0;\n}\n",
+      "expectedOutput": "是橘猫图纸",
+      "stdin": null,
+      "explanation": "这一手问的是「这是哪一张图纸」，而它**问谁**，全看本喵在小括号里写的是什么喵：\n\n- 写 `typeid(p)`：`p` 就是**牌子上写的那一栏**，永远是「猫的牌子」，拿它去跟「橘猫图纸」比，两个压根不是一回事，于是印 `不是橘猫图纸`；\n- 写 `typeid(*p)`：`*p` 顺着牌子找进屋，问的是**屋里那一位** —— 这才是本喵想知道的。\n\n所以差的就是那个星号，别的都没变。还有一条别记错：这一手能认出屋里住的是谁，靠的也是底座上挂了招牌（`virtual`）的那一手；一手招牌都没有的底座，它就只会照着牌面上写的那一栏回答喵。另外，判断「是不是同一张图纸」永远用 `typeid(*p) == typeid(OrangeCat)` 这么比，**别去比名字** —— 名字是翻译官喵自己改写的，换个翻译官喵就换一套写法。",
+      "templateId": "cpp-s3-19-star-or-not",
+      "params": {
+        "who": "小P"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:43.033Z",
+        "hash": "020a5328f47d1851"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-which-cat-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n两只猫都搭好了，牌子 `p` 也已经指着其中一只，缺的就是**照光那一手**。你要补的就是它，然后分两条路印字：\n\n- 照到了：印 `是橘猫：` 接上它的名字；\n- 照不到：印 `不是橘猫：` 接上它的名字。\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\n不是橘猫：狸花\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"不是橘猫：\" : \"是橘猫：\") << p->name << endl;\n    return 0;\n}\n",
+      "expectedOutput": "是橘猫：小橘",
+      "stdin": "1\n",
+      "explanation": "这一题的姿势是**先照、先查空，再动手**喵：\n\n- `dynamic_cast<OrangeCat*>(p)` 拿手上那张「猫」牌子去照橘猫：照到了递一张新牌子 `a`，照不到递**空牌子**；\n- 所以下一句必须先问 `a == nullptr`：是空牌子就说明屋里住的不是橘猫，两条路印不同的字。\n\n顺序不能反：**照完不查就顺手去读**，等于把「万一不是」这一半赌掉了。还有个细节：照光**不改手上那张牌子** —— `p` 从头到尾都还是「猫」，从头到尾都够得着 `p->name`，所以两支里印名字都用它。",
+      "templateId": "cpp-s3-19-which-cat",
+      "params": {
+        "who": "小橘",
+        "other": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:46.215Z",
+        "hash": "ebcc3fa9f655d358"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-which-cat-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n两只猫都搭好了，牌子 `p` 也已经指着其中一只，缺的就是**照光那一手**。你要补的就是它，然后分两条路印字：\n\n- 照到了：印 `是橘猫：` 接上它的名字；\n- 照不到：印 `不是橘猫：` 接上它的名字。\n\n比如投喂给程序的是\n\n2\n\n程序就要叼回\n\n不是橘猫：小灰\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小橘\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"不是橘猫：\" : \"是橘猫：\") << p->name << endl;\n    return 0;\n}\n",
+      "expectedOutput": "是橘猫：小橘",
+      "stdin": "1\n",
+      "explanation": "这一题的姿势是**先照、先查空，再动手**喵：\n\n- `dynamic_cast<OrangeCat*>(p)` 拿手上那张「猫」牌子去照橘猫：照到了递一张新牌子 `a`，照不到递**空牌子**；\n- 所以下一句必须先问 `a == nullptr`：是空牌子就说明屋里住的不是橘猫，两条路印不同的字。\n\n顺序不能反：**照完不查就顺手去读**，等于把「万一不是」这一半赌掉了。还有个细节：照光**不改手上那张牌子** —— `p` 从头到尾都还是「猫」，从头到尾都够得着 `p->name`，所以两支里印名字都用它。",
+      "templateId": "cpp-s3-19-which-cat",
+      "params": {
+        "who": "小橘",
+        "other": "小灰"
+      },
+      "verified": {
+        "at": "2026-10-20T17:02:02.429Z",
+        "hash": "eee2d163109993d2"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-which-cat-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n两只猫都搭好了，牌子 `p` 也已经指着其中一只，缺的就是**照光那一手**。你要补的就是它，然后分两条路印字：\n\n- 照到了：印 `是橘猫：` 接上它的名字；\n- 照不到：印 `不是橘猫：` 接上它的名字。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n是橘猫：小P\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"狸花\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"不是橘猫：\" : \"是橘猫：\") << p->name << endl;\n    return 0;\n}\n",
+      "expectedOutput": "不是橘猫：狸花",
+      "stdin": "2\n",
+      "explanation": "这一题的姿势是**先照、先查空，再动手**喵：\n\n- `dynamic_cast<OrangeCat*>(p)` 拿手上那张「猫」牌子去照橘猫：照到了递一张新牌子 `a`，照不到递**空牌子**；\n- 所以下一句必须先问 `a == nullptr`：是空牌子就说明屋里住的不是橘猫，两条路印不同的字。\n\n顺序不能反：**照完不查就顺手去读**，等于把「万一不是」这一半赌掉了。还有个细节：照光**不改手上那张牌子** —— `p` 从头到尾都还是「猫」，从头到尾都够得着 `p->name`，所以两支里印名字都用它。",
+      "templateId": "cpp-s3-19-which-cat",
+      "params": {
+        "who": "小P",
+        "other": "狸花"
+      },
+      "verified": {
+        "at": "2026-10-20T17:02:06.983Z",
+        "hash": "9073c74ed27cc276"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-19-which-cat-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n两只猫都搭好了，牌子 `p` 也已经指着其中一只，缺的就是**照光那一手**。你要补的就是它，然后分两条路印字：\n\n- 照到了：印 `是橘猫：` 接上它的名字；\n- 照不到：印 `不是橘猫：` 接上它的名字。\n\n比如投喂给程序的是\n\n1\n\n程序就要叼回\n\n是橘猫：小P\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+      "starter": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"小P\");\n    TabbyCat t(\"小灰\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    OrangeCat* a = dynamic_cast<OrangeCat*>(p);\n    cout << (a == nullptr ? \"不是橘猫：\" : \"是橘猫：\") << p->name << endl;\n    return 0;\n}\n",
+      "expectedOutput": "不是橘猫：小灰",
+      "stdin": "2\n",
+      "explanation": "这一题的姿势是**先照、先查空，再动手**喵：\n\n- `dynamic_cast<OrangeCat*>(p)` 拿手上那张「猫」牌子去照橘猫：照到了递一张新牌子 `a`，照不到递**空牌子**；\n- 所以下一句必须先问 `a == nullptr`：是空牌子就说明屋里住的不是橘猫，两条路印不同的字。\n\n顺序不能反：**照完不查就顺手去读**，等于把「万一不是」这一半赌掉了。还有个细节：照光**不改手上那张牌子** —— `p` 从头到尾都还是「猫」，从头到尾都够得着 `p->name`，所以两支里印名字都用它。",
+      "templateId": "cpp-s3-19-which-cat",
+      "params": {
+        "who": "小P",
+        "other": "小灰"
+      },
+      "verified": {
+        "at": "2026-09-20T11:26:48.531Z",
+        "hash": "036b9d053ec315ba"
+      }
+    }
+  ]
+}

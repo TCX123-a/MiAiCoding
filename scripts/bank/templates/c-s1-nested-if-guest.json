@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-nested-if-guest",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-06",
+  "type": "codewrite",
+  "concept": ["嵌套 if", "从外往里读", "大括号配对"],
+  "instances": 6,
+  "params": {
+    "unit": { "kind": "pick", "values": ["冻干块", "猫罐头"] },
+    "guestname": { "kind": "pick", "values": ["大肥鱼", "小橘"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 0, "max": 3 },
+  "stemTemplate": "本喵想问两件事：碗里还有{unit}吗？今天有没有带客人来？\n\n- 碗里有**而且**带了客人 → 印 `有{unit}，还带了{guestname}一起来吃喵`\n- 碗里有**但没带客人** → 印 `有{unit}，本喵自己吃喵`\n- 碗里**空的**（有没有客人都一样）→ 印 `碗空了，去鱼塘边找{guestname}喵`\n\n请你写个程序：**先从投喂口读进来两个数**，第一个是碗里还剩几条，第二个是今天带了几位客人（两个数都可能是 0）。**先问的那个眼色是「碗里有没有」，答真了才轮到「有没有客人」**，一层套一层。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish = 0;\n    int guest = 0;\n\n    if (scanf(\"%d\", &fish) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &guest) != 1) {\n        return 1;\n    }\n\n    if (fish > 0) {\n        if (guest > 0) {\n            printf(\"有{unit}，还带了{guestname}一起来吃喵\\n\");\n        } else {\n            printf(\"有{unit}，本喵自己吃喵\\n\");\n        }\n    } else {\n        printf(\"碗空了，去鱼塘边找{guestname}喵\\n\");\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "嵌套眼色的读法是**从外往里**喵：\n\n- 外层先看「碗里有没有」；答真，才轮到它大括号里的东西上场 —— 里面那个眼色再问第二句。\n- 它俩是**各自独立的两对括号**，别把它们看成一对。\n- 外层要是答假，里面那一整套**连问都不会被问到**，直接跳到最外层那条兜底的路上去。\n\n所以「碗空」那条路只写一次就够了：不管今天有没有客人，只要碗是空的都归它管 —— 这正是嵌套比「把三种情况平铺成三个并列眼色」省事的地方。\n\n写法上本喵的习惯是**每往里一层就多让 4 格**。C 不看缩进（缩不缩它都照样跑），可你的眼睛看 —— 缩得齐，才一眼看得出哪句话归哪一对大括号管喵。"
+}

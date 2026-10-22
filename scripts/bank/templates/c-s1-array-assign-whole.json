@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-array-assign-whole",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-09",
+  "type": "codefix",
+  "concept": ["整排不能换", "一只一只搬", "assignment to expression with array type"],
+  "instances": 2,
+  "params": {
+    "b1": { "kind": "int", "min": 7, "max": 9 },
+    "b2": { "kind": "int", "min": 4, "max": 6 },
+    "b3": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stemTemplate": "本喵想把 `b` 那排碗里的东西整排搬进 `a` 那排去。\n\n可这段代码翻译官喵不肯收 —— 它指着搬东西那一行说，整排不能这么换。你帮本喵看看它为什么不肯收，把它改好。改好之后，程序应该印出 `b` 那一排的三个数：{b1} {b2} {b3}（中间用一个空格隔开）。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int a[3] = {1, 2, 3};\n    int b[3] = {{b1}, {b2}, {b3}};\n\n    a = b;\n    printf(\"%d %d %d\\n\", a[0], a[1], a[2]);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int a[3] = {1, 2, 3};\n    int b[3] = {{b1}, {b2}, {b3}};\n\n    for (int i = 0; i < 3; i++) {\n        a[i] = b[i];\n    }\n    printf(\"%d %d %d\\n\", a[0], a[1], a[2]);\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：`main.c:7:7: error: assignment to expression with array type`。\n\n这句话的意思是：**「一整排」这种东西不能放在等号左边被整个换掉。**\n\n一排碗不是一只碗 —— 它是**钉在一块板上的三只碗**。等号那一套「把右边装进左边」的玩法在它身上用不上。想真的把 `b` 那排的内容搬进 `a`，只能**一只一只地搬**：\n\n用一个跑圈，让 `i` 从 0 走到 2，每圈做一次 `a[i] = b[i];` —— 报编号取碗、报编号装碗，这正是这一课学的「挨个走一遍」。搬完再印 `a`，它就成了 `b` 的样子（{b1} {b2} {b3}）。\n\n⚠️ 顺带把这一条记牢：**报编号只动一只碗**（写 `a[1] = 99;` 只改 1 号碗），而**整排是不许整个换的**。这两件事看着像，翻译官喵的态度完全不同喵。"
+}

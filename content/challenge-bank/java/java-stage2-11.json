@@ -1,0 +1,528 @@
+{
+  "lessonId": "java-stage2-11",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s2-enum-anon-judge-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一张**只用一次**的图纸要当场画 —— 它管的是「这一项算不算合格」喵。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」（这题固定是 `4`），接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`6` 是 `SUN`）。\n\n要写的东西：\n\n1. 一个招式 `report`，收两样：**清单上的一项**、和一份**与猫的约定**（约定的样子稿子开头已经给你了：`Judge`，它有一个本事 `boolean ok(Day d)`）。招式里问一句「这一项合格吗」：合格印 `项名 合格`、否则印 `项名 不合格`；合格就叼回 `true`，否则叼回 `false`。\n2. **「合格」这条规矩，本喵要在用它的那一行当场画** —— 位次是偶数的算合格（`0`、`2`、`4`、`6`），奇数的不算。\n3. `main` 里绕圈读位次，每读一个就喂给 `report` 一次；`report` 说合格的那一次，让一个数加一；所有笔过完，最后印一行 `合格的一共 … 天`。\n\n比如投喂给程序的是\n\n4\n4\n2\n3\n0\n\n程序就要叼回\n\nFRI 合格\nWED 合格\nTHU 不合格\nMON 合格\n合格的一共 3 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    static boolean report(Day d, Judge j) {\n        if (j.ok(d)) {\n            System.out.println(d.name() + \" 合格\");\n            return true;\n        }\n        System.out.println(d.name() + \" 不合格\");\n        return false;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            if (report(Day.values()[sc.nextInt()], new Judge() {\n                @Override\n                public boolean ok(Day d) {\n                    return d.ordinal() % 2 == 0;\n                }\n            })) {\n                cnt++;\n            }\n        }\n        System.out.println(\"合格的一共 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "MON 合格\nTUE 不合格\nSUN 合格\nSAT 不合格\n合格的一共 2 天",
+      "stdin": "4\n0\n1\n6\n5\n",
+      "explanation": "这题的考点就一句话：**「干什么」写在投喂的地方**。\n\n那张只用一次的图纸是这么当场画出来的：\n\n```java\nreport(Day.values()[k], new Judge() {\n    @Override\n    public boolean ok(Day d) {\n        return d.ordinal() % 2 == 0;\n    }\n});\n```\n\n拆开看：`new Judge()` 平常后面跟的是图纸名，这里跟的是一份**与猫的约定** —— 意思是「本喵要一只会照这份约定干活的真猫，可具体怎么干，本喵当场说」；紧跟的一对花括号就是**当场画的那张图纸的身子**；末尾那个分号属于外面那句调用，别漏。\n\n三处容易踩的地方，本喵都真跑过：\n\n- **末尾那个分号。** 画完花括号就当完事、把分号丢掉，翻译官喵会指着最后那个 `}` 说 `';' expected`。\n- **里面写的是完整的本事**，不是一句话。把本事的头和身子写成光秃秃的一整行、省掉「叼回什么」那一截，它当场翻脸：`error: invalid method declaration; return type required` —— 「这一行看着像个本事，可你没说它叼回来什么」。\n- **`@Override` 那顶小帽子可有可无。** 不挂它照样跑得好好的；挂着只是让翻译官喵帮本喵核对「名字是不是真跟约定上写的一样」。所以它是保险，不是非写不可的东西。\n\n为什么这题非要用当场画的写法？因为**「合格」这条规矩只用这一次** —— 为它单独存一张图纸、还得起个名字，全是多余的啰嗦。要是好几处都要用同一条规矩，那就该老实画一张有名字的图纸了。\n\n还有那个 `% 2 == 0`：本喵把参考解里它换成 `% 2 == 1` 真跑过一遍 —— 每一行的「合格」和「不合格」当场对调。所以「合格怎么定」这件事，在这道题里是真被考到的。\n\n最后一句：`cnt++` 得**接住 `report` 叼回来的答案**再加一。因为那条规矩写在 `report` 的身子里，本喵在外面数不着它，只能看它叼回来什么喵。",
+      "templateId": "java-s2-enum-anon-judge",
+      "params": {
+        "a": "0",
+        "b": "1",
+        "c": "6",
+        "d": "5"
+      },
+      "verified": {
+        "at": "2026-09-16T11:28:29.027Z",
+        "hash": "95e77e4d0724be5a"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-anon-judge-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一张**只用一次**的图纸要当场画 —— 它管的是「这一项算不算合格」喵。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」（这题固定是 `4`），接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`6` 是 `SUN`）。\n\n要写的东西：\n\n1. 一个招式 `report`，收两样：**清单上的一项**、和一份**与猫的约定**（约定的样子稿子开头已经给你了：`Judge`，它有一个本事 `boolean ok(Day d)`）。招式里问一句「这一项合格吗」：合格印 `项名 合格`、否则印 `项名 不合格`；合格就叼回 `true`，否则叼回 `false`。\n2. **「合格」这条规矩，本喵要在用它的那一行当场画** —— 位次是偶数的算合格（`0`、`2`、`4`、`6`），奇数的不算。\n3. `main` 里绕圈读位次，每读一个就喂给 `report` 一次；`report` 说合格的那一次，让一个数加一；所有笔过完，最后印一行 `合格的一共 … 天`。\n\n比如投喂给程序的是\n\n4\n4\n2\n3\n0\n\n程序就要叼回\n\nFRI 合格\nWED 合格\nTHU 不合格\nMON 合格\n合格的一共 3 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    static boolean report(Day d, Judge j) {\n        if (j.ok(d)) {\n            System.out.println(d.name() + \" 合格\");\n            return true;\n        }\n        System.out.println(d.name() + \" 不合格\");\n        return false;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            if (report(Day.values()[sc.nextInt()], new Judge() {\n                @Override\n                public boolean ok(Day d) {\n                    return d.ordinal() % 2 == 0;\n                }\n            })) {\n                cnt++;\n            }\n        }\n        System.out.println(\"合格的一共 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "MON 合格\nTUE 不合格\nFRI 合格\nSUN 合格\n合格的一共 3 天",
+      "stdin": "4\n0\n1\n4\n6\n",
+      "explanation": "这题的考点就一句话：**「干什么」写在投喂的地方**。\n\n那张只用一次的图纸是这么当场画出来的：\n\n```java\nreport(Day.values()[k], new Judge() {\n    @Override\n    public boolean ok(Day d) {\n        return d.ordinal() % 2 == 0;\n    }\n});\n```\n\n拆开看：`new Judge()` 平常后面跟的是图纸名，这里跟的是一份**与猫的约定** —— 意思是「本喵要一只会照这份约定干活的真猫，可具体怎么干，本喵当场说」；紧跟的一对花括号就是**当场画的那张图纸的身子**；末尾那个分号属于外面那句调用，别漏。\n\n三处容易踩的地方，本喵都真跑过：\n\n- **末尾那个分号。** 画完花括号就当完事、把分号丢掉，翻译官喵会指着最后那个 `}` 说 `';' expected`。\n- **里面写的是完整的本事**，不是一句话。把本事的头和身子写成光秃秃的一整行、省掉「叼回什么」那一截，它当场翻脸：`error: invalid method declaration; return type required` —— 「这一行看着像个本事，可你没说它叼回来什么」。\n- **`@Override` 那顶小帽子可有可无。** 不挂它照样跑得好好的；挂着只是让翻译官喵帮本喵核对「名字是不是真跟约定上写的一样」。所以它是保险，不是非写不可的东西。\n\n为什么这题非要用当场画的写法？因为**「合格」这条规矩只用这一次** —— 为它单独存一张图纸、还得起个名字，全是多余的啰嗦。要是好几处都要用同一条规矩，那就该老实画一张有名字的图纸了。\n\n还有那个 `% 2 == 0`：本喵把参考解里它换成 `% 2 == 1` 真跑过一遍 —— 每一行的「合格」和「不合格」当场对调。所以「合格怎么定」这件事，在这道题里是真被考到的。\n\n最后一句：`cnt++` 得**接住 `report` 叼回来的答案**再加一。因为那条规矩写在 `report` 的身子里，本喵在外面数不着它，只能看它叼回来什么喵。",
+      "templateId": "java-s2-enum-anon-judge",
+      "params": {
+        "a": "0",
+        "b": "1",
+        "c": "4",
+        "d": "6"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:19.214Z",
+        "hash": "cc4a6a8111c671f6"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-anon-judge-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一张**只用一次**的图纸要当场画 —— 它管的是「这一项算不算合格」喵。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」（这题固定是 `4`），接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`6` 是 `SUN`）。\n\n要写的东西：\n\n1. 一个招式 `report`，收两样：**清单上的一项**、和一份**与猫的约定**（约定的样子稿子开头已经给你了：`Judge`，它有一个本事 `boolean ok(Day d)`）。招式里问一句「这一项合格吗」：合格印 `项名 合格`、否则印 `项名 不合格`；合格就叼回 `true`，否则叼回 `false`。\n2. **「合格」这条规矩，本喵要在用它的那一行当场画** —— 位次是偶数的算合格（`0`、`2`、`4`、`6`），奇数的不算。\n3. `main` 里绕圈读位次，每读一个就喂给 `report` 一次；`report` 说合格的那一次，让一个数加一；所有笔过完，最后印一行 `合格的一共 … 天`。\n\n比如投喂给程序的是\n\n4\n4\n2\n3\n0\n\n程序就要叼回\n\nFRI 合格\nWED 合格\nTHU 不合格\nMON 合格\n合格的一共 3 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    static boolean report(Day d, Judge j) {\n        if (j.ok(d)) {\n            System.out.println(d.name() + \" 合格\");\n            return true;\n        }\n        System.out.println(d.name() + \" 不合格\");\n        return false;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            if (report(Day.values()[sc.nextInt()], new Judge() {\n                @Override\n                public boolean ok(Day d) {\n                    return d.ordinal() % 2 == 0;\n                }\n            })) {\n                cnt++;\n            }\n        }\n        System.out.println(\"合格的一共 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "MON 合格\nTHU 不合格\nFRI 合格\nSAT 不合格\n合格的一共 2 天",
+      "stdin": "4\n0\n3\n4\n5\n",
+      "explanation": "这题的考点就一句话：**「干什么」写在投喂的地方**。\n\n那张只用一次的图纸是这么当场画出来的：\n\n```java\nreport(Day.values()[k], new Judge() {\n    @Override\n    public boolean ok(Day d) {\n        return d.ordinal() % 2 == 0;\n    }\n});\n```\n\n拆开看：`new Judge()` 平常后面跟的是图纸名，这里跟的是一份**与猫的约定** —— 意思是「本喵要一只会照这份约定干活的真猫，可具体怎么干，本喵当场说」；紧跟的一对花括号就是**当场画的那张图纸的身子**；末尾那个分号属于外面那句调用，别漏。\n\n三处容易踩的地方，本喵都真跑过：\n\n- **末尾那个分号。** 画完花括号就当完事、把分号丢掉，翻译官喵会指着最后那个 `}` 说 `';' expected`。\n- **里面写的是完整的本事**，不是一句话。把本事的头和身子写成光秃秃的一整行、省掉「叼回什么」那一截，它当场翻脸：`error: invalid method declaration; return type required` —— 「这一行看着像个本事，可你没说它叼回来什么」。\n- **`@Override` 那顶小帽子可有可无。** 不挂它照样跑得好好的；挂着只是让翻译官喵帮本喵核对「名字是不是真跟约定上写的一样」。所以它是保险，不是非写不可的东西。\n\n为什么这题非要用当场画的写法？因为**「合格」这条规矩只用这一次** —— 为它单独存一张图纸、还得起个名字，全是多余的啰嗦。要是好几处都要用同一条规矩，那就该老实画一张有名字的图纸了。\n\n还有那个 `% 2 == 0`：本喵把参考解里它换成 `% 2 == 1` 真跑过一遍 —— 每一行的「合格」和「不合格」当场对调。所以「合格怎么定」这件事，在这道题里是真被考到的。\n\n最后一句：`cnt++` 得**接住 `report` 叼回来的答案**再加一。因为那条规矩写在 `report` 的身子里，本喵在外面数不着它，只能看它叼回来什么喵。",
+      "templateId": "java-s2-enum-anon-judge",
+      "params": {
+        "a": "0",
+        "b": "3",
+        "c": "4",
+        "d": "5"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:22.516Z",
+        "hash": "d48fd4efdadd165e"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-anon-judge-009",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一张**只用一次**的图纸要当场画 —— 它管的是「这一项算不算合格」喵。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」（这题固定是 `4`），接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`6` 是 `SUN`）。\n\n要写的东西：\n\n1. 一个招式 `report`，收两样：**清单上的一项**、和一份**与猫的约定**（约定的样子稿子开头已经给你了：`Judge`，它有一个本事 `boolean ok(Day d)`）。招式里问一句「这一项合格吗」：合格印 `项名 合格`、否则印 `项名 不合格`；合格就叼回 `true`，否则叼回 `false`。\n2. **「合格」这条规矩，本喵要在用它的那一行当场画** —— 位次是偶数的算合格（`0`、`2`、`4`、`6`），奇数的不算。\n3. `main` 里绕圈读位次，每读一个就喂给 `report` 一次；`report` 说合格的那一次，让一个数加一；所有笔过完，最后印一行 `合格的一共 … 天`。\n\n比如投喂给程序的是\n\n4\n4\n2\n3\n0\n\n程序就要叼回\n\nFRI 合格\nWED 合格\nTHU 不合格\nMON 合格\n合格的一共 3 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    static boolean report(Day d, Judge j) {\n        if (j.ok(d)) {\n            System.out.println(d.name() + \" 合格\");\n            return true;\n        }\n        System.out.println(d.name() + \" 不合格\");\n        return false;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            if (report(Day.values()[sc.nextInt()], new Judge() {\n                @Override\n                public boolean ok(Day d) {\n                    return d.ordinal() % 2 == 0;\n                }\n            })) {\n                cnt++;\n            }\n        }\n        System.out.println(\"合格的一共 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "SAT 不合格\nTUE 不合格\nSUN 合格\nSUN 合格\n合格的一共 2 天",
+      "stdin": "4\n5\n1\n6\n6\n",
+      "explanation": "这题的考点就一句话：**「干什么」写在投喂的地方**。\n\n那张只用一次的图纸是这么当场画出来的：\n\n```java\nreport(Day.values()[k], new Judge() {\n    @Override\n    public boolean ok(Day d) {\n        return d.ordinal() % 2 == 0;\n    }\n});\n```\n\n拆开看：`new Judge()` 平常后面跟的是图纸名，这里跟的是一份**与猫的约定** —— 意思是「本喵要一只会照这份约定干活的真猫，可具体怎么干，本喵当场说」；紧跟的一对花括号就是**当场画的那张图纸的身子**；末尾那个分号属于外面那句调用，别漏。\n\n三处容易踩的地方，本喵都真跑过：\n\n- **末尾那个分号。** 画完花括号就当完事、把分号丢掉，翻译官喵会指着最后那个 `}` 说 `';' expected`。\n- **里面写的是完整的本事**，不是一句话。把本事的头和身子写成光秃秃的一整行、省掉「叼回什么」那一截，它当场翻脸：`error: invalid method declaration; return type required` —— 「这一行看着像个本事，可你没说它叼回来什么」。\n- **`@Override` 那顶小帽子可有可无。** 不挂它照样跑得好好的；挂着只是让翻译官喵帮本喵核对「名字是不是真跟约定上写的一样」。所以它是保险，不是非写不可的东西。\n\n为什么这题非要用当场画的写法？因为**「合格」这条规矩只用这一次** —— 为它单独存一张图纸、还得起个名字，全是多余的啰嗦。要是好几处都要用同一条规矩，那就该老实画一张有名字的图纸了。\n\n还有那个 `% 2 == 0`：本喵把参考解里它换成 `% 2 == 1` 真跑过一遍 —— 每一行的「合格」和「不合格」当场对调。所以「合格怎么定」这件事，在这道题里是真被考到的。\n\n最后一句：`cnt++` 得**接住 `report` 叼回来的答案**再加一。因为那条规矩写在 `report` 的身子里，本喵在外面数不着它，只能看它叼回来什么喵。",
+      "templateId": "java-s2-enum-anon-judge",
+      "params": {
+        "a": "5",
+        "b": "1",
+        "c": "6",
+        "d": "6"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:26.002Z",
+        "hash": "d4bbcfd1dd105cdf"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-anon-judge-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一张**只用一次**的图纸要当场画 —— 它管的是「这一项算不算合格」喵。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」（这题固定是 `4`），接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`6` 是 `SUN`）。\n\n要写的东西：\n\n1. 一个招式 `report`，收两样：**清单上的一项**、和一份**与猫的约定**（约定的样子稿子开头已经给你了：`Judge`，它有一个本事 `boolean ok(Day d)`）。招式里问一句「这一项合格吗」：合格印 `项名 合格`、否则印 `项名 不合格`；合格就叼回 `true`，否则叼回 `false`。\n2. **「合格」这条规矩，本喵要在用它的那一行当场画** —— 位次是偶数的算合格（`0`、`2`、`4`、`6`），奇数的不算。\n3. `main` 里绕圈读位次，每读一个就喂给 `report` 一次；`report` 说合格的那一次，让一个数加一；所有笔过完，最后印一行 `合格的一共 … 天`。\n\n比如投喂给程序的是\n\n4\n4\n2\n3\n0\n\n程序就要叼回\n\nFRI 合格\nWED 合格\nTHU 不合格\nMON 合格\n合格的一共 3 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    static boolean report(Day d, Judge j) {\n        if (j.ok(d)) {\n            System.out.println(d.name() + \" 合格\");\n            return true;\n        }\n        System.out.println(d.name() + \" 不合格\");\n        return false;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            if (report(Day.values()[sc.nextInt()], new Judge() {\n                @Override\n                public boolean ok(Day d) {\n                    return d.ordinal() % 2 == 0;\n                }\n            })) {\n                cnt++;\n            }\n        }\n        System.out.println(\"合格的一共 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "SAT 不合格\nTHU 不合格\nSUN 合格\nSAT 不合格\n合格的一共 1 天",
+      "stdin": "4\n5\n3\n6\n5\n",
+      "explanation": "这题的考点就一句话：**「干什么」写在投喂的地方**。\n\n那张只用一次的图纸是这么当场画出来的：\n\n```java\nreport(Day.values()[k], new Judge() {\n    @Override\n    public boolean ok(Day d) {\n        return d.ordinal() % 2 == 0;\n    }\n});\n```\n\n拆开看：`new Judge()` 平常后面跟的是图纸名，这里跟的是一份**与猫的约定** —— 意思是「本喵要一只会照这份约定干活的真猫，可具体怎么干，本喵当场说」；紧跟的一对花括号就是**当场画的那张图纸的身子**；末尾那个分号属于外面那句调用，别漏。\n\n三处容易踩的地方，本喵都真跑过：\n\n- **末尾那个分号。** 画完花括号就当完事、把分号丢掉，翻译官喵会指着最后那个 `}` 说 `';' expected`。\n- **里面写的是完整的本事**，不是一句话。把本事的头和身子写成光秃秃的一整行、省掉「叼回什么」那一截，它当场翻脸：`error: invalid method declaration; return type required` —— 「这一行看着像个本事，可你没说它叼回来什么」。\n- **`@Override` 那顶小帽子可有可无。** 不挂它照样跑得好好的；挂着只是让翻译官喵帮本喵核对「名字是不是真跟约定上写的一样」。所以它是保险，不是非写不可的东西。\n\n为什么这题非要用当场画的写法？因为**「合格」这条规矩只用这一次** —— 为它单独存一张图纸、还得起个名字，全是多余的啰嗦。要是好几处都要用同一条规矩，那就该老实画一张有名字的图纸了。\n\n还有那个 `% 2 == 0`：本喵把参考解里它换成 `% 2 == 1` 真跑过一遍 —— 每一行的「合格」和「不合格」当场对调。所以「合格怎么定」这件事，在这道题里是真被考到的。\n\n最后一句：`cnt++` 得**接住 `report` 叼回来的答案**再加一。因为那条规矩写在 `report` 的身子里，本喵在外面数不着它，只能看它叼回来什么喵。",
+      "templateId": "java-s2-enum-anon-judge",
+      "params": {
+        "a": "5",
+        "b": "3",
+        "c": "6",
+        "d": "5"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:29.481Z",
+        "hash": "04131d5d62a1a26f"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-anon-judge-015",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵有一张**只用一次**的图纸要当场画 —— 它管的是「这一项算不算合格」喵。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」（这题固定是 `4`），接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`6` 是 `SUN`）。\n\n要写的东西：\n\n1. 一个招式 `report`，收两样：**清单上的一项**、和一份**与猫的约定**（约定的样子稿子开头已经给你了：`Judge`，它有一个本事 `boolean ok(Day d)`）。招式里问一句「这一项合格吗」：合格印 `项名 合格`、否则印 `项名 不合格`；合格就叼回 `true`，否则叼回 `false`。\n2. **「合格」这条规矩，本喵要在用它的那一行当场画** —— 位次是偶数的算合格（`0`、`2`、`4`、`6`），奇数的不算。\n3. `main` 里绕圈读位次，每读一个就喂给 `report` 一次；`report` 说合格的那一次，让一个数加一；所有笔过完，最后印一行 `合格的一共 … 天`。\n\n比如投喂给程序的是\n\n4\n4\n2\n3\n0\n\n程序就要叼回\n\nFRI 合格\nWED 合格\nTHU 不合格\nMON 合格\n合格的一共 3 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    interface Judge {\n        boolean ok(Day d);\n    }\n\n    static boolean report(Day d, Judge j) {\n        if (j.ok(d)) {\n            System.out.println(d.name() + \" 合格\");\n            return true;\n        }\n        System.out.println(d.name() + \" 不合格\");\n        return false;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            if (report(Day.values()[sc.nextInt()], new Judge() {\n                @Override\n                public boolean ok(Day d) {\n                    return d.ordinal() % 2 == 0;\n                }\n            })) {\n                cnt++;\n            }\n        }\n        System.out.println(\"合格的一共 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "SAT 不合格\nTHU 不合格\nFRI 合格\nSUN 合格\n合格的一共 2 天",
+      "stdin": "4\n5\n3\n4\n6\n",
+      "explanation": "这题的考点就一句话：**「干什么」写在投喂的地方**。\n\n那张只用一次的图纸是这么当场画出来的：\n\n```java\nreport(Day.values()[k], new Judge() {\n    @Override\n    public boolean ok(Day d) {\n        return d.ordinal() % 2 == 0;\n    }\n});\n```\n\n拆开看：`new Judge()` 平常后面跟的是图纸名，这里跟的是一份**与猫的约定** —— 意思是「本喵要一只会照这份约定干活的真猫，可具体怎么干，本喵当场说」；紧跟的一对花括号就是**当场画的那张图纸的身子**；末尾那个分号属于外面那句调用，别漏。\n\n三处容易踩的地方，本喵都真跑过：\n\n- **末尾那个分号。** 画完花括号就当完事、把分号丢掉，翻译官喵会指着最后那个 `}` 说 `';' expected`。\n- **里面写的是完整的本事**，不是一句话。把本事的头和身子写成光秃秃的一整行、省掉「叼回什么」那一截，它当场翻脸：`error: invalid method declaration; return type required` —— 「这一行看着像个本事，可你没说它叼回来什么」。\n- **`@Override` 那顶小帽子可有可无。** 不挂它照样跑得好好的；挂着只是让翻译官喵帮本喵核对「名字是不是真跟约定上写的一样」。所以它是保险，不是非写不可的东西。\n\n为什么这题非要用当场画的写法？因为**「合格」这条规矩只用这一次** —— 为它单独存一张图纸、还得起个名字，全是多余的啰嗦。要是好几处都要用同一条规矩，那就该老实画一张有名字的图纸了。\n\n还有那个 `% 2 == 0`：本喵把参考解里它换成 `% 2 == 1` 真跑过一遍 —— 每一行的「合格」和「不合格」当场对调。所以「合格怎么定」这件事，在这道题里是真被考到的。\n\n最后一句：`cnt++` 得**接住 `report` 叼回来的答案**再加一。因为那条规矩写在 `report` 的身子里，本喵在外面数不着它，只能看它叼回来什么喵。",
+      "templateId": "java-s2-enum-anon-judge",
+      "params": {
+        "a": "5",
+        "b": "3",
+        "c": "4",
+        "d": "6"
+      },
+      "verified": {
+        "at": "2026-09-16T11:28:30.862Z",
+        "hash": "c350a9cb74cc5907"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-ctor-missing-label-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵给清单上的每一项配了一只当班的猫，配好之后就绕清单走一圈，把项名和当班的那只一起印出来。\n\n可这稿子**编都编不过** —— 翻译官喵说，有一项的写法跟出生那一手对不上。请你补好，让程序印出：\n\n```text\nMON 是 小橘\nTUE 是 狸花\n```\n\n清单上就两项，每一行都是「项名 + ` 是 ` + 那一项自己带的猫」。除了那一处对不上，别的本喵都没写错喵。",
+      "brokenCode": "public class Main {\n    enum Day {\n        MON, TUE(\"狸花\");\n        private final String cat;\n\n        Day(String cat) {\n            this.cat = cat;\n        }\n\n        String cat() {\n            return cat;\n        }\n    }\n\n    public static void main(String[] args) {\n        for (Day d : Day.values()) {\n            System.out.println(d + \" 是 \" + d.cat());\n        }\n    }\n}\n",
+      "referenceFix": "public class Main {\n    enum Day {\n        MON(\"小橘\"), TUE(\"狸花\");\n        private final String cat;\n\n        Day(String cat) {\n            this.cat = cat;\n        }\n\n        String cat() {\n            return cat;\n        }\n    }\n\n    public static void main(String[] args) {\n        for (Day d : Day.values()) {\n            System.out.println(d + \" 是 \" + d.cat());\n        }\n    }\n}\n",
+      "expectedOutput": "MON 是 小橘\nTUE 是 狸花",
+      "stdin": null,
+      "explanation": "翻译官喵拦下这一处的原话是：\n\n```text\nerror: constructor Day in enum Day cannot be applied to given types;\n  required: String\n  found:    no arguments\n```\n\n念起来是：**「夹在 `Day` 这张清单里的出生那一手，要一样 `String`；可这一项递过去的时候，手里是空的喵。」** `required: String` 说的是出生那一手要什么，`found: no arguments` 说的是这一项给了什么 —— 一边要、一边没给，翻译官喵不放行。\n\n为什么清单上的一项还能「递东西」？因为**清单也是图纸**：写几项，生出来的就是几只真猫。既然是真猫，它就能带上自己的家当（这里是 `cat` 那一格），而**家当要在出生那一刻就装好** —— `MON(\"小橘\")` 那对小括号里装的正是它自己的那一份。\n\n另外两处顺手记牢：\n\n- **最后一项后面跟的是分号，不是逗号。**「哪几项」这句话到那儿就说完了，后面接的是家当、出生那一手、还有那个本事。本喵真把分号改成逗号跑过一遍，翻译官喵说 `error: enum constant expected here` —— 「这儿该写一项的名字，你怎么写起家当来了」，它一直读到 `private` 才发觉不对。\n- **这张清单的出生那一手只给清单自己用。** 在外面写 `new Day(\"小橘\")` 是写不出来的：翻译官喵会说 `error: enum classes may not be instantiated` —— 「清单上的项不能在外面另生」。清单上写几项就是几只，一只不多一只不少喵。\n\n一句话收尾：**清单上加一样家当，就得给每一项都递一份**；少递一项，编稿子那一关就过不去 —— 又是「本喵的约定变成了机器的规矩」那一件事喵。",
+      "templateId": "java-s2-enum-ctor-missing-label",
+      "params": {
+        "l1": "小橘",
+        "l2": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-16T11:27:51.497Z",
+        "hash": "6cbc0113725eeb5c"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-ctor-missing-label-003",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵给清单上的每一项配了一只当班的猫，配好之后就绕清单走一圈，把项名和当班的那只一起印出来。\n\n可这稿子**编都编不过** —— 翻译官喵说，有一项的写法跟出生那一手对不上。请你补好，让程序印出：\n\n```text\nMON 是 大橘\nTUE 是 花卷\n```\n\n清单上就两项，每一行都是「项名 + ` 是 ` + 那一项自己带的猫」。除了那一处对不上，别的本喵都没写错喵。",
+      "brokenCode": "public class Main {\n    enum Day {\n        MON, TUE(\"花卷\");\n        private final String cat;\n\n        Day(String cat) {\n            this.cat = cat;\n        }\n\n        String cat() {\n            return cat;\n        }\n    }\n\n    public static void main(String[] args) {\n        for (Day d : Day.values()) {\n            System.out.println(d + \" 是 \" + d.cat());\n        }\n    }\n}\n",
+      "referenceFix": "public class Main {\n    enum Day {\n        MON(\"大橘\"), TUE(\"花卷\");\n        private final String cat;\n\n        Day(String cat) {\n            this.cat = cat;\n        }\n\n        String cat() {\n            return cat;\n        }\n    }\n\n    public static void main(String[] args) {\n        for (Day d : Day.values()) {\n            System.out.println(d + \" 是 \" + d.cat());\n        }\n    }\n}\n",
+      "expectedOutput": "MON 是 大橘\nTUE 是 花卷",
+      "stdin": null,
+      "explanation": "翻译官喵拦下这一处的原话是：\n\n```text\nerror: constructor Day in enum Day cannot be applied to given types;\n  required: String\n  found:    no arguments\n```\n\n念起来是：**「夹在 `Day` 这张清单里的出生那一手，要一样 `String`；可这一项递过去的时候，手里是空的喵。」** `required: String` 说的是出生那一手要什么，`found: no arguments` 说的是这一项给了什么 —— 一边要、一边没给，翻译官喵不放行。\n\n为什么清单上的一项还能「递东西」？因为**清单也是图纸**：写几项，生出来的就是几只真猫。既然是真猫，它就能带上自己的家当（这里是 `cat` 那一格），而**家当要在出生那一刻就装好** —— `MON(\"大橘\")` 那对小括号里装的正是它自己的那一份。\n\n另外两处顺手记牢：\n\n- **最后一项后面跟的是分号，不是逗号。**「哪几项」这句话到那儿就说完了，后面接的是家当、出生那一手、还有那个本事。本喵真把分号改成逗号跑过一遍，翻译官喵说 `error: enum constant expected here` —— 「这儿该写一项的名字，你怎么写起家当来了」，它一直读到 `private` 才发觉不对。\n- **这张清单的出生那一手只给清单自己用。** 在外面写 `new Day(\"大橘\")` 是写不出来的：翻译官喵会说 `error: enum classes may not be instantiated` —— 「清单上的项不能在外面另生」。清单上写几项就是几只，一只不多一只不少喵。\n\n一句话收尾：**清单上加一样家当，就得给每一项都递一份**；少递一项，编稿子那一关就过不去 —— 又是「本喵的约定变成了机器的规矩」那一件事喵。",
+      "templateId": "java-s2-enum-ctor-missing-label",
+      "params": {
+        "l1": "大橘",
+        "l2": "花卷"
+      },
+      "verified": {
+        "at": "2026-09-16T11:27:53.367Z",
+        "hash": "bd1b272ed0332051"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-item-typo-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵的四季清单上，四项的名字都取好了；可本喵在 `main` 里挑的时候，**手滑多敲了一个字母**。翻译官喵当场把稿子退回来，一个字都不让跑。\n\n请你把那一处改好，让程序印出：\n\n```text\n现在轮到 SPRING\n```\n\n只有**用的那一处**手滑了 —— 清单上那四项的名字，本喵一个都没写错喵。",
+      "brokenCode": "public class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Season s = Season.SPRINGX;\n        System.out.println(\"现在轮到 \" + s);\n    }\n}\n",
+      "referenceFix": "public class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Season s = Season.SPRING;\n        System.out.println(\"现在轮到 \" + s);\n    }\n}\n",
+      "expectedOutput": "现在轮到 SPRING",
+      "stdin": null,
+      "explanation": "这一处**压根跑不到**：翻译官喵在编稿子那一关就把稿子退回来了。原话是\n\n```text\nerror: cannot find symbol\n  symbol:   variable SPRINGX\n  location: class Season\n```\n\n念起来是：**「`Season` 这张清单上，没有叫 `SPRINGX` 的一项喵。」**\n\n这正是清单最值钱的地方。回头看看上一课那个 `int day = 8`：翻译官喵只拦得住「不是整数」，拦不住「是整数，可排班表上根本没这一天」。清单把**本喵心里的约定**搬成了**机器读得懂的规矩** —— 名字对不上，它当场就翻脸，压根不用等到跑起来才发现。\n\n两处细节顺手记牢：\n\n- `location: class Season` 说的是**它是在哪儿找的** —— 清单名和项名都得一个字母不差，少一个字母就是另一只猫。\n- 要改的是**用的那一处**。本喵要是反过来去清单里加一项 `SPRINGX`，那不是改错，是把本喵的约定改坏了：往后 `SPRING` 和 `SPRINGX` 两只猫都合法，谁还分得清喵？\n\n顺带一句：这种错**越早发现越省事**。要是那个名字是在跑起来之后才用到的（比如从键盘上读进来的一串字），翻译官喵就管不着了 —— 那正是「只有固定几种」的东西该列成清单的理由喵。",
+      "templateId": "java-s2-enum-item-typo",
+      "params": {
+        "picked": "SPRING"
+      },
+      "verified": {
+        "at": "2026-09-16T11:27:47.715Z",
+        "hash": "d5baeebdce222158"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-item-typo-002",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵的四季清单上，四项的名字都取好了；可本喵在 `main` 里挑的时候，**手滑多敲了一个字母**。翻译官喵当场把稿子退回来，一个字都不让跑。\n\n请你把那一处改好，让程序印出：\n\n```text\n现在轮到 WINTER\n```\n\n只有**用的那一处**手滑了 —— 清单上那四项的名字，本喵一个都没写错喵。",
+      "brokenCode": "public class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Season s = Season.WINTERX;\n        System.out.println(\"现在轮到 \" + s);\n    }\n}\n",
+      "referenceFix": "public class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Season s = Season.WINTER;\n        System.out.println(\"现在轮到 \" + s);\n    }\n}\n",
+      "expectedOutput": "现在轮到 WINTER",
+      "stdin": null,
+      "explanation": "这一处**压根跑不到**：翻译官喵在编稿子那一关就把稿子退回来了。原话是\n\n```text\nerror: cannot find symbol\n  symbol:   variable WINTERX\n  location: class Season\n```\n\n念起来是：**「`Season` 这张清单上，没有叫 `WINTERX` 的一项喵。」**\n\n这正是清单最值钱的地方。回头看看上一课那个 `int day = 8`：翻译官喵只拦得住「不是整数」，拦不住「是整数，可排班表上根本没这一天」。清单把**本喵心里的约定**搬成了**机器读得懂的规矩** —— 名字对不上，它当场就翻脸，压根不用等到跑起来才发现。\n\n两处细节顺手记牢：\n\n- `location: class Season` 说的是**它是在哪儿找的** —— 清单名和项名都得一个字母不差，少一个字母就是另一只猫。\n- 要改的是**用的那一处**。本喵要是反过来去清单里加一项 `WINTERX`，那不是改错，是把本喵的约定改坏了：往后 `WINTER` 和 `WINTERX` 两只猫都合法，谁还分得清喵？\n\n顺带一句：这种错**越早发现越省事**。要是那个名字是在跑起来之后才用到的（比如从键盘上读进来的一串字），翻译官喵就管不着了 —— 那正是「只有固定几种」的东西该列成清单的理由喵。",
+      "templateId": "java-s2-enum-item-typo",
+      "params": {
+        "picked": "WINTER"
+      },
+      "verified": {
+        "at": "2026-09-16T11:27:49.423Z",
+        "hash": "2d836be84550bb0f"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-lookup-report-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要按位次点清单上的项。\n\n投喂给程序的纸上：**第一个数是「后面还有几笔」**，接着正好那么多行，一行一个位次（位次从 `0` 起，`0` 就是清单上的第一项）。每一笔印一行 `位次 k 是 项名` —— 那个 `k` 就是读到的那一位；所有笔过完，最后印一行 `清单上一共 … 项`。\n\n比如投喂给程序的是\n\n3\n2\n0\n0\n\n程序就要叼回\n\n位次 2 是 WED\n位次 0 是 MON\n位次 0 是 MON\n清单上一共 7 项\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            System.out.println(\"位次 \" + k + \" 是 \" + Day.values()[k].name());\n        }\n        System.out.println(\"清单上一共 \" + Day.values().length + \" 项\");\n    }\n}\n",
+      "expectedOutput": "位次 3 是 THU\n位次 1 是 TUE\n位次 3 是 THU\n清单上一共 7 项",
+      "stdin": "3\n3\n1\n3\n",
+      "explanation": "这题练的是清单上那两个本事：**把每一项挨个叼出来**（`values()`）和**把项名叼回来**（`name()`）。\n\n- `Day.values()` 把清单上每一项挨个叼出来一遍，排成一个有先后次序的长队；后面那对中括号里写几，就取第几个。**位次从 `0` 起**，所以第一位是 `values()[0]`。\n- 取出来的东西是**一项本身** —— 不是它在清单里排第几，也不是项名那串字。想印项名，得再喊一句 `name()`。换成 `ordinal()` 会印出一串数：本喵把参考解里那一处真换掉跑过一遍，`位次 0 是 MON` 当场变成 `位次 0 是 0`。\n- `values().length` 是「清单上一共几项」。**先把每一项叼出来、再数** —— 本喵不用自己记着写了几项，往后加一项它自己就跟着变。\n\n`main` 那边：先读第一个数当笔数，再绕圈读后面的位次。每一笔从纸上叼进来的是一个光溜溜的数，拿它当中括号里的位次正合适。\n\n清单写在 `main` 外面（在 `Main` 这张图纸里），`main` 里就喊得到它 —— 清单也是图纸的一种，跟别的图纸一样摆在外面用喵。",
+      "templateId": "java-s2-enum-lookup-report",
+      "params": {
+        "n": "3",
+        "listName": "Day",
+        "items": "MON, TUE, WED, THU, FRI, SAT, SUN",
+        "total": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T11:28:00.521Z",
+        "hash": "721b0579280dbba1"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-lookup-report-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要按位次点清单上的项。\n\n投喂给程序的纸上：**第一个数是「后面还有几笔」**，接着正好那么多行，一行一个位次（位次从 `0` 起，`0` 就是清单上的第一项）。每一笔印一行 `位次 k 是 项名` —— 那个 `k` 就是读到的那一位；所有笔过完，最后印一行 `清单上一共 … 项`。\n\n比如投喂给程序的是\n\n3\n0\n0\n3\n\n程序就要叼回\n\n位次 0 是 SPRING\n位次 0 是 SPRING\n位次 3 是 WINTER\n清单上一共 4 项\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            System.out.println(\"位次 \" + k + \" 是 \" + Day.values()[k].name());\n        }\n        System.out.println(\"清单上一共 \" + Day.values().length + \" 项\");\n    }\n}\n",
+      "expectedOutput": "位次 2 是 AUTUMN\n位次 3 是 WINTER\n位次 2 是 AUTUMN\n清单上一共 4 项",
+      "stdin": "3\n2\n3\n2\n",
+      "explanation": "这题练的是清单上那两个本事：**把每一项挨个叼出来**（`values()`）和**把项名叼回来**（`name()`）。\n\n- `Day.values()` 把清单上每一项挨个叼出来一遍，排成一个有先后次序的长队；后面那对中括号里写几，就取第几个。**位次从 `0` 起**，所以第一位是 `values()[0]`。\n- 取出来的东西是**一项本身** —— 不是它在清单里排第几，也不是项名那串字。想印项名，得再喊一句 `name()`。换成 `ordinal()` 会印出一串数：本喵把参考解里那一处真换掉跑过一遍，`位次 0 是 MON` 当场变成 `位次 0 是 0`。\n- `values().length` 是「清单上一共几项」。**先把每一项叼出来、再数** —— 本喵不用自己记着写了几项，往后加一项它自己就跟着变。\n\n`main` 那边：先读第一个数当笔数，再绕圈读后面的位次。每一笔从纸上叼进来的是一个光溜溜的数，拿它当中括号里的位次正合适。\n\n清单写在 `main` 外面（在 `Main` 这张图纸里），`main` 里就喊得到它 —— 清单也是图纸的一种，跟别的图纸一样摆在外面用喵。",
+      "templateId": "java-s2-enum-lookup-report",
+      "params": {
+        "n": "3",
+        "listName": "Day",
+        "items": "SPRING, SUMMER, AUTUMN, WINTER",
+        "total": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:32.861Z",
+        "hash": "9f9119630465a969"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-lookup-report-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要按位次点清单上的项。\n\n投喂给程序的纸上：**第一个数是「后面还有几笔」**，接着正好那么多行，一行一个位次（位次从 `0` 起，`0` 就是清单上的第一项）。每一笔印一行 `位次 k 是 项名` —— 那个 `k` 就是读到的那一位；所有笔过完，最后印一行 `清单上一共 … 项`。\n\n比如投喂给程序的是\n\n3\n3\n0\n3\n\n程序就要叼回\n\n位次 3 是 WINTER\n位次 0 是 SPRING\n位次 3 是 WINTER\n清单上一共 4 项\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            System.out.println(\"位次 \" + k + \" 是 \" + Season.values()[k].name());\n        }\n        System.out.println(\"清单上一共 \" + Season.values().length + \" 项\");\n    }\n}\n",
+      "expectedOutput": "位次 3 是 WINTER\n位次 1 是 SUMMER\n位次 3 是 WINTER\n清单上一共 4 项",
+      "stdin": "3\n3\n1\n3\n",
+      "explanation": "这题练的是清单上那两个本事：**把每一项挨个叼出来**（`values()`）和**把项名叼回来**（`name()`）。\n\n- `Season.values()` 把清单上每一项挨个叼出来一遍，排成一个有先后次序的长队；后面那对中括号里写几，就取第几个。**位次从 `0` 起**，所以第一位是 `values()[0]`。\n- 取出来的东西是**一项本身** —— 不是它在清单里排第几，也不是项名那串字。想印项名，得再喊一句 `name()`。换成 `ordinal()` 会印出一串数：本喵把参考解里那一处真换掉跑过一遍，`位次 0 是 MON` 当场变成 `位次 0 是 0`。\n- `values().length` 是「清单上一共几项」。**先把每一项叼出来、再数** —— 本喵不用自己记着写了几项，往后加一项它自己就跟着变。\n\n`main` 那边：先读第一个数当笔数，再绕圈读后面的位次。每一笔从纸上叼进来的是一个光溜溜的数，拿它当中括号里的位次正合适。\n\n清单写在 `main` 外面（在 `Main` 这张图纸里），`main` 里就喊得到它 —— 清单也是图纸的一种，跟别的图纸一样摆在外面用喵。",
+      "templateId": "java-s2-enum-lookup-report",
+      "params": {
+        "n": "3",
+        "listName": "Season",
+        "items": "SPRING, SUMMER, AUTUMN, WINTER",
+        "total": "7"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:36.151Z",
+        "hash": "a3991385cf75b37a"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-lookup-report-009",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要按位次点清单上的项。\n\n投喂给程序的纸上：**第一个数是「后面还有几笔」**，接着正好那么多行，一行一个位次（位次从 `0` 起，`0` 就是清单上的第一项）。每一笔印一行 `位次 k 是 项名` —— 那个 `k` 就是读到的那一位；所有笔过完，最后印一行 `清单上一共 … 项`。\n\n比如投喂给程序的是\n\n4\n3\n3\n3\n3\n\n程序就要叼回\n\n位次 3 是 THU\n位次 3 是 THU\n位次 3 是 THU\n位次 3 是 THU\n清单上一共 7 项\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            System.out.println(\"位次 \" + k + \" 是 \" + Day.values()[k].name());\n        }\n        System.out.println(\"清单上一共 \" + Day.values().length + \" 项\");\n    }\n}\n",
+      "expectedOutput": "位次 2 是 WED\n位次 1 是 TUE\n位次 1 是 TUE\n位次 2 是 WED\n清单上一共 7 项",
+      "stdin": "4\n2\n1\n1\n2\n",
+      "explanation": "这题练的是清单上那两个本事：**把每一项挨个叼出来**（`values()`）和**把项名叼回来**（`name()`）。\n\n- `Day.values()` 把清单上每一项挨个叼出来一遍，排成一个有先后次序的长队；后面那对中括号里写几，就取第几个。**位次从 `0` 起**，所以第一位是 `values()[0]`。\n- 取出来的东西是**一项本身** —— 不是它在清单里排第几，也不是项名那串字。想印项名，得再喊一句 `name()`。换成 `ordinal()` 会印出一串数：本喵把参考解里那一处真换掉跑过一遍，`位次 0 是 MON` 当场变成 `位次 0 是 0`。\n- `values().length` 是「清单上一共几项」。**先把每一项叼出来、再数** —— 本喵不用自己记着写了几项，往后加一项它自己就跟着变。\n\n`main` 那边：先读第一个数当笔数，再绕圈读后面的位次。每一笔从纸上叼进来的是一个光溜溜的数，拿它当中括号里的位次正合适。\n\n清单写在 `main` 外面（在 `Main` 这张图纸里），`main` 里就喊得到它 —— 清单也是图纸的一种，跟别的图纸一样摆在外面用喵。",
+      "templateId": "java-s2-enum-lookup-report",
+      "params": {
+        "n": "4",
+        "listName": "Day",
+        "items": "MON, TUE, WED, THU, FRI, SAT, SUN",
+        "total": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:39.551Z",
+        "hash": "adbd3602bb739205"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-lookup-report-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要按位次点清单上的项。\n\n投喂给程序的纸上：**第一个数是「后面还有几笔」**，接着正好那么多行，一行一个位次（位次从 `0` 起，`0` 就是清单上的第一项）。每一笔印一行 `位次 k 是 项名` —— 那个 `k` 就是读到的那一位；所有笔过完，最后印一行 `清单上一共 … 项`。\n\n比如投喂给程序的是\n\n4\n3\n2\n3\n1\n\n程序就要叼回\n\n位次 3 是 THU\n位次 2 是 WED\n位次 3 是 THU\n位次 1 是 TUE\n清单上一共 7 项\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Season { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Season { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            System.out.println(\"位次 \" + k + \" 是 \" + Season.values()[k].name());\n        }\n        System.out.println(\"清单上一共 \" + Season.values().length + \" 项\");\n    }\n}\n",
+      "expectedOutput": "位次 1 是 TUE\n位次 0 是 MON\n位次 1 是 TUE\n位次 1 是 TUE\n清单上一共 7 项",
+      "stdin": "4\n1\n0\n1\n1\n",
+      "explanation": "这题练的是清单上那两个本事：**把每一项挨个叼出来**（`values()`）和**把项名叼回来**（`name()`）。\n\n- `Season.values()` 把清单上每一项挨个叼出来一遍，排成一个有先后次序的长队；后面那对中括号里写几，就取第几个。**位次从 `0` 起**，所以第一位是 `values()[0]`。\n- 取出来的东西是**一项本身** —— 不是它在清单里排第几，也不是项名那串字。想印项名，得再喊一句 `name()`。换成 `ordinal()` 会印出一串数：本喵把参考解里那一处真换掉跑过一遍，`位次 0 是 MON` 当场变成 `位次 0 是 0`。\n- `values().length` 是「清单上一共几项」。**先把每一项叼出来、再数** —— 本喵不用自己记着写了几项，往后加一项它自己就跟着变。\n\n`main` 那边：先读第一个数当笔数，再绕圈读后面的位次。每一笔从纸上叼进来的是一个光溜溜的数，拿它当中括号里的位次正合适。\n\n清单写在 `main` 外面（在 `Main` 这张图纸里），`main` 里就喊得到它 —— 清单也是图纸的一种，跟别的图纸一样摆在外面用喵。",
+      "templateId": "java-s2-enum-lookup-report",
+      "params": {
+        "n": "4",
+        "listName": "Season",
+        "items": "MON, TUE, WED, THU, FRI, SAT, SUN",
+        "total": "7"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:42.839Z",
+        "hash": "8f0f129036cfc23c"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-lookup-report-015",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要按位次点清单上的项。\n\n投喂给程序的纸上：**第一个数是「后面还有几笔」**，接着正好那么多行，一行一个位次（位次从 `0` 起，`0` 就是清单上的第一项）。每一笔印一行 `位次 k 是 项名` —— 那个 `k` 就是读到的那一位；所有笔过完，最后印一行 `清单上一共 … 项`。\n\n比如投喂给程序的是\n\n4\n0\n0\n1\n1\n\n程序就要叼回\n\n位次 0 是 SPRING\n位次 0 是 SPRING\n位次 1 是 SUMMER\n位次 1 是 SUMMER\n清单上一共 4 项\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            System.out.println(\"位次 \" + k + \" 是 \" + Season.values()[k].name());\n        }\n        System.out.println(\"清单上一共 \" + Season.values().length + \" 项\");\n    }\n}\n",
+      "expectedOutput": "位次 2 是 AUTUMN\n位次 1 是 SUMMER\n位次 2 是 AUTUMN\n位次 1 是 SUMMER\n清单上一共 4 项",
+      "stdin": "4\n2\n1\n2\n1\n",
+      "explanation": "这题练的是清单上那两个本事：**把每一项挨个叼出来**（`values()`）和**把项名叼回来**（`name()`）。\n\n- `Season.values()` 把清单上每一项挨个叼出来一遍，排成一个有先后次序的长队；后面那对中括号里写几，就取第几个。**位次从 `0` 起**，所以第一位是 `values()[0]`。\n- 取出来的东西是**一项本身** —— 不是它在清单里排第几，也不是项名那串字。想印项名，得再喊一句 `name()`。换成 `ordinal()` 会印出一串数：本喵把参考解里那一处真换掉跑过一遍，`位次 0 是 MON` 当场变成 `位次 0 是 0`。\n- `values().length` 是「清单上一共几项」。**先把每一项叼出来、再数** —— 本喵不用自己记着写了几项，往后加一项它自己就跟着变。\n\n`main` 那边：先读第一个数当笔数，再绕圈读后面的位次。每一笔从纸上叼进来的是一个光溜溜的数，拿它当中括号里的位次正合适。\n\n清单写在 `main` 外面（在 `Main` 这张图纸里），`main` 里就喊得到它 —— 清单也是图纸的一种，跟别的图纸一样摆在外面用喵。",
+      "templateId": "java-s2-enum-lookup-report",
+      "params": {
+        "n": "4",
+        "listName": "Season",
+        "items": "SPRING, SUMMER, AUTUMN, WINTER",
+        "total": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T11:28:02.563Z",
+        "hash": "1019b63ef8e061cd"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-ordinal-offbyone-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想让清单上的每一项都报出「它是第几项」，**而且要从 1 开始数**。\n\n可这稿子跑起来印的头一行是：\n\n```text\nMON 是第 0 天\n```\n\n—— 从 `0` 开始数了。请你改好，让它印成 `MON 是第 1 天`、下一项 `2`、一路数到 `SUN 是第 7 天`。\n\n要求：**那一处不许把数写死**，要让每一项自己报出本喵要的那个「第几」。清单上的次序本喵没动过，别的也都没写错喵。",
+      "brokenCode": "public class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        for (Day d : Day.values()) {\n            System.out.println(d.name() + \" 是第 \" + d.ordinal() + \" 天\");\n        }\n    }\n}\n",
+      "referenceFix": "public class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        for (Day d : Day.values()) {\n            System.out.println(d.name() + \" 是第 \" + (d.ordinal() + 1) + \" 天\");\n        }\n    }\n}\n",
+      "expectedOutput": "MON 是第 1 天\nTUE 是第 2 天\nWED 是第 3 天\nTHU 是第 4 天\nFRI 是第 5 天\nSAT 是第 6 天\nSUN 是第 7 天",
+      "stdin": null,
+      "explanation": "这一题是**跑起来不对**的那一类：稿子编得过，屏幕上没有红字，就是数不对。它印出来长这样：\n\n```text\nMON 是第 0 天\n（后面每一项依次是 1、2、3 ……）\n```\n\n错在 `ordinal()` 报的是**它排第几个**，而它是**从 0 开始数**的 —— 第一项报 `0`，最后一项报的是「项数减一」（这里的清单一共 7 项）。可本喵嘴上说的「第几项」是从 1 开始数的。**机器报的位次，和本喵要的「第几」，差着 1** —— 这一笔得自己补：\n\n```java\n(d.ordinal() + 1)\n```\n\n括号别省。旁边的 `+` 是拼字用的，翻译官喵按先后顺序算 —— 不括起来，它先把「 是第 」和 `d.ordinal()` 拼成一串字，再往后拼那个 `1`。本喵拿一张三项的小清单真跑过一遍：印出来是 `MON 是第 01 天`、`TUE 是第 11 天`、`WED 是第 21 天` —— **它一声不吭，就是数不对**，这种错最难查。\n\n顺手和项链那边对一下：项链上摸最后一颗要用 `length() - 1`，清单上最后一项的位次是「项数减一」—— 都是「编号从 0 起」惹出来的账。**从 0 起是机器的习惯，从 1 起是人的习惯，两个都要会看，转换的那一笔得自己补上**喵。",
+      "templateId": "java-s2-enum-ordinal-offbyone",
+      "params": {
+        "listName": "Day",
+        "items": "MON, TUE, WED, THU, FRI, SAT, SUN",
+        "unit": "天",
+        "first": "MON",
+        "last": "SUN",
+        "total": "7"
+      },
+      "verified": {
+        "at": "2026-09-16T11:27:55.588Z",
+        "hash": "4f7554f04c5edd6e"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-ordinal-offbyone-063",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想让清单上的每一项都报出「它是第几项」，**而且要从 1 开始数**。\n\n可这稿子跑起来印的头一行是：\n\n```text\nSPRING 是第 0 季\n```\n\n—— 从 `0` 开始数了。请你改好，让它印成 `SPRING 是第 1 季`、下一项 `2`、一路数到 `WINTER 是第 4 季`。\n\n要求：**那一处不许把数写死**，要让每一项自己报出本喵要的那个「第几」。清单上的次序本喵没动过，别的也都没写错喵。",
+      "brokenCode": "public class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        for (Season d : Season.values()) {\n            System.out.println(d.name() + \" 是第 \" + d.ordinal() + \" 季\");\n        }\n    }\n}\n",
+      "referenceFix": "public class Main {\n    enum Season { SPRING, SUMMER, AUTUMN, WINTER }\n\n    public static void main(String[] args) {\n        for (Season d : Season.values()) {\n            System.out.println(d.name() + \" 是第 \" + (d.ordinal() + 1) + \" 季\");\n        }\n    }\n}\n",
+      "expectedOutput": "SPRING 是第 1 季\nSUMMER 是第 2 季\nAUTUMN 是第 3 季\nWINTER 是第 4 季",
+      "stdin": null,
+      "explanation": "这一题是**跑起来不对**的那一类：稿子编得过，屏幕上没有红字，就是数不对。它印出来长这样：\n\n```text\nSPRING 是第 0 季\n（后面每一项依次是 1、2、3 ……）\n```\n\n错在 `ordinal()` 报的是**它排第几个**，而它是**从 0 开始数**的 —— 第一项报 `0`，最后一项报的是「项数减一」（这里的清单一共 4 项）。可本喵嘴上说的「第几项」是从 1 开始数的。**机器报的位次，和本喵要的「第几」，差着 1** —— 这一笔得自己补：\n\n```java\n(d.ordinal() + 1)\n```\n\n括号别省。旁边的 `+` 是拼字用的，翻译官喵按先后顺序算 —— 不括起来，它先把「 是第 」和 `d.ordinal()` 拼成一串字，再往后拼那个 `1`。本喵拿一张三项的小清单真跑过一遍：印出来是 `MON 是第 01 天`、`TUE 是第 11 天`、`WED 是第 21 天` —— **它一声不吭，就是数不对**，这种错最难查。\n\n顺手和项链那边对一下：项链上摸最后一颗要用 `length() - 1`，清单上最后一项的位次是「项数减一」—— 都是「编号从 0 起」惹出来的账。**从 0 起是机器的习惯，从 1 起是人的习惯，两个都要会看，转换的那一笔得自己补上**喵。",
+      "templateId": "java-s2-enum-ordinal-offbyone",
+      "params": {
+        "listName": "Season",
+        "items": "SPRING, SUMMER, AUTUMN, WINTER",
+        "unit": "季",
+        "first": "SPRING",
+        "last": "WINTER",
+        "total": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T11:27:57.497Z",
+        "hash": "d83acd1c7e24c419"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-rest-counter-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给排班表上的每一天盖章：**`SAT` 和 `SUN` 是休息日**，别的都不是。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」，接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`5` 是 `SAT`、`6` 是 `SUN`）。每一笔印一行：休息日印 `项名 是休息日`，否则印 `项名 不是休息日`。所有笔过完，最后印一行 `休息日有 … 天`。\n\n比如投喂给程序的是\n\n4\n6\n1\n0\n5\n\n程序就要叼回\n\nSUN 是休息日\nTUE 不是休息日\nMON 不是休息日\nSAT 是休息日\n休息日有 2 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    static boolean isRest(Day d) {\n        switch (d) {\n            case SAT:\n            case SUN:\n                return true;\n            default:\n                return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            Day d = Day.values()[k];\n            if (isRest(d)) {\n                System.out.println(d.name() + \" 是休息日\");\n                cnt++;\n            } else {\n                System.out.println(d.name() + \" 不是休息日\");\n            }\n        }\n        System.out.println(\"休息日有 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "SAT 是休息日\nMON 不是休息日\nSUN 是休息日\nTHU 不是休息日\n休息日有 2 天",
+      "stdin": "4\n5\n0\n6\n3\n",
+      "explanation": "这题多练一样东西：**拿清单上的一项当分支的开关**。\n\n`switch (d)` 的括号里直接就能放清单上的一项，`case` 后面写**项名**就行。本喵真试过写全的 `case Day.SAT:` —— 这一版翻译官喵**也收**，只是括号里已经说清是哪张清单了，多写一份纯属啰嗦。\n\n```java\ncase SAT:\ncase SUN:\n    return true;\n```\n\n两格共用一个身子：落到哪一格，都往下走到那一句。这也是这一课最家常的用法 —— **「是不是这几种」的活，交给清单和分支一起干**。\n\n三处要留神：\n\n- **`case` 后面的名字也得一个字母不差。** 手滑写成 `case SATRDAY:`，翻译官喵当场说 `error: cannot find symbol`、`symbol: variable SATRDAY`、`location: class Main` —— 注意那个 `location` 指的是**本喵写这段 `switch` 的地方**，不是清单（本喵真跑过）。又一次「清单之外的名字，编稿子那一关就被拦下」。\n- **数不出来就露馅。** `cnt` 从 0 起，每盖到一个休息日加一，最后印出来。判分那组数里**一定**有休息日、也一定有不是休息日的 —— 所以「只印不数」或者「数错了」都藏不住。\n- **先把那一项叼出来，再拿它去问。** `Day.values()[k]` 里位次从 `0` 起，和上一题同款。`d` 接住的是**清单上的一项本身**，所以 `d.name()` 印得出项名，`switch (d)` 也认它。\n\n顺带说一句这题的判分输入：它是**写死的**，所以每一组里什么时候碰上休息日、碰上几个，都是本喵挑好的 —— 保证「两格共用一个身子」这件事真被考到，不是碰运气喵。",
+      "templateId": "java-s2-enum-rest-counter",
+      "params": {
+        "rest1": "5",
+        "day1": "0",
+        "rest2": "6",
+        "day2": "3"
+      },
+      "verified": {
+        "at": "2026-09-16T11:28:04.996Z",
+        "hash": "c0a9521be8538795"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-rest-counter-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给排班表上的每一天盖章：**`SAT` 和 `SUN` 是休息日**，别的都不是。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」，接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`5` 是 `SAT`、`6` 是 `SUN`）。每一笔印一行：休息日印 `项名 是休息日`，否则印 `项名 不是休息日`。所有笔过完，最后印一行 `休息日有 … 天`。\n\n比如投喂给程序的是\n\n4\n6\n1\n0\n5\n\n程序就要叼回\n\nSUN 是休息日\nTUE 不是休息日\nMON 不是休息日\nSAT 是休息日\n休息日有 2 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    static boolean isRest(Day d) {\n        switch (d) {\n            case SAT:\n            case SUN:\n                return true;\n            default:\n                return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            Day d = Day.values()[k];\n            if (isRest(d)) {\n                System.out.println(d.name() + \" 是休息日\");\n                cnt++;\n            } else {\n                System.out.println(d.name() + \" 不是休息日\");\n            }\n        }\n        System.out.println(\"休息日有 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "SAT 是休息日\nMON 不是休息日\nMON 不是休息日\nFRI 不是休息日\n休息日有 1 天",
+      "stdin": "4\n5\n0\n0\n4\n",
+      "explanation": "这题多练一样东西：**拿清单上的一项当分支的开关**。\n\n`switch (d)` 的括号里直接就能放清单上的一项，`case` 后面写**项名**就行。本喵真试过写全的 `case Day.SAT:` —— 这一版翻译官喵**也收**，只是括号里已经说清是哪张清单了，多写一份纯属啰嗦。\n\n```java\ncase SAT:\ncase SUN:\n    return true;\n```\n\n两格共用一个身子：落到哪一格，都往下走到那一句。这也是这一课最家常的用法 —— **「是不是这几种」的活，交给清单和分支一起干**。\n\n三处要留神：\n\n- **`case` 后面的名字也得一个字母不差。** 手滑写成 `case SATRDAY:`，翻译官喵当场说 `error: cannot find symbol`、`symbol: variable SATRDAY`、`location: class Main` —— 注意那个 `location` 指的是**本喵写这段 `switch` 的地方**，不是清单（本喵真跑过）。又一次「清单之外的名字，编稿子那一关就被拦下」。\n- **数不出来就露馅。** `cnt` 从 0 起，每盖到一个休息日加一，最后印出来。判分那组数里**一定**有休息日、也一定有不是休息日的 —— 所以「只印不数」或者「数错了」都藏不住。\n- **先把那一项叼出来，再拿它去问。** `Day.values()[k]` 里位次从 `0` 起，和上一题同款。`d` 接住的是**清单上的一项本身**，所以 `d.name()` 印得出项名，`switch (d)` 也认它。\n\n顺带说一句这题的判分输入：它是**写死的**，所以每一组里什么时候碰上休息日、碰上几个，都是本喵挑好的 —— 保证「两格共用一个身子」这件事真被考到，不是碰运气喵。",
+      "templateId": "java-s2-enum-rest-counter",
+      "params": {
+        "rest1": "5",
+        "day1": "0",
+        "rest2": "0",
+        "day2": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:46.167Z",
+        "hash": "459db695df0f7ad0"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-rest-counter-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给排班表上的每一天盖章：**`SAT` 和 `SUN` 是休息日**，别的都不是。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」，接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`5` 是 `SAT`、`6` 是 `SUN`）。每一笔印一行：休息日印 `项名 是休息日`，否则印 `项名 不是休息日`。所有笔过完，最后印一行 `休息日有 … 天`。\n\n比如投喂给程序的是\n\n4\n6\n1\n0\n5\n\n程序就要叼回\n\nSUN 是休息日\nTUE 不是休息日\nMON 不是休息日\nSAT 是休息日\n休息日有 2 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    static boolean isRest(Day d) {\n        switch (d) {\n            case SAT:\n            case SUN:\n                return true;\n            default:\n                return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            Day d = Day.values()[k];\n            if (isRest(d)) {\n                System.out.println(d.name() + \" 是休息日\");\n                cnt++;\n            } else {\n                System.out.println(d.name() + \" 不是休息日\");\n            }\n        }\n        System.out.println(\"休息日有 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "SAT 是休息日\nWED 不是休息日\nMON 不是休息日\nTHU 不是休息日\n休息日有 1 天",
+      "stdin": "4\n5\n2\n0\n3\n",
+      "explanation": "这题多练一样东西：**拿清单上的一项当分支的开关**。\n\n`switch (d)` 的括号里直接就能放清单上的一项，`case` 后面写**项名**就行。本喵真试过写全的 `case Day.SAT:` —— 这一版翻译官喵**也收**，只是括号里已经说清是哪张清单了，多写一份纯属啰嗦。\n\n```java\ncase SAT:\ncase SUN:\n    return true;\n```\n\n两格共用一个身子：落到哪一格，都往下走到那一句。这也是这一课最家常的用法 —— **「是不是这几种」的活，交给清单和分支一起干**。\n\n三处要留神：\n\n- **`case` 后面的名字也得一个字母不差。** 手滑写成 `case SATRDAY:`，翻译官喵当场说 `error: cannot find symbol`、`symbol: variable SATRDAY`、`location: class Main` —— 注意那个 `location` 指的是**本喵写这段 `switch` 的地方**，不是清单（本喵真跑过）。又一次「清单之外的名字，编稿子那一关就被拦下」。\n- **数不出来就露馅。** `cnt` 从 0 起，每盖到一个休息日加一，最后印出来。判分那组数里**一定**有休息日、也一定有不是休息日的 —— 所以「只印不数」或者「数错了」都藏不住。\n- **先把那一项叼出来，再拿它去问。** `Day.values()[k]` 里位次从 `0` 起，和上一题同款。`d` 接住的是**清单上的一项本身**，所以 `d.name()` 印得出项名，`switch (d)` 也认它。\n\n顺带说一句这题的判分输入：它是**写死的**，所以每一组里什么时候碰上休息日、碰上几个，都是本喵挑好的 —— 保证「两格共用一个身子」这件事真被考到，不是碰运气喵。",
+      "templateId": "java-s2-enum-rest-counter",
+      "params": {
+        "rest1": "5",
+        "day1": "2",
+        "rest2": "0",
+        "day2": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:49.707Z",
+        "hash": "a7e4824c86f92426"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-rest-counter-009",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给排班表上的每一天盖章：**`SAT` 和 `SUN` 是休息日**，别的都不是。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」，接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`5` 是 `SAT`、`6` 是 `SUN`）。每一笔印一行：休息日印 `项名 是休息日`，否则印 `项名 不是休息日`。所有笔过完，最后印一行 `休息日有 … 天`。\n\n比如投喂给程序的是\n\n4\n6\n1\n0\n5\n\n程序就要叼回\n\nSUN 是休息日\nTUE 不是休息日\nMON 不是休息日\nSAT 是休息日\n休息日有 2 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    static boolean isRest(Day d) {\n        switch (d) {\n            case SAT:\n            case SUN:\n                return true;\n            default:\n                return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            Day d = Day.values()[k];\n            if (isRest(d)) {\n                System.out.println(d.name() + \" 是休息日\");\n                cnt++;\n            } else {\n                System.out.println(d.name() + \" 不是休息日\");\n            }\n        }\n        System.out.println(\"休息日有 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "SUN 是休息日\nMON 不是休息日\nSUN 是休息日\nFRI 不是休息日\n休息日有 2 天",
+      "stdin": "4\n6\n0\n6\n4\n",
+      "explanation": "这题多练一样东西：**拿清单上的一项当分支的开关**。\n\n`switch (d)` 的括号里直接就能放清单上的一项，`case` 后面写**项名**就行。本喵真试过写全的 `case Day.SAT:` —— 这一版翻译官喵**也收**，只是括号里已经说清是哪张清单了，多写一份纯属啰嗦。\n\n```java\ncase SAT:\ncase SUN:\n    return true;\n```\n\n两格共用一个身子：落到哪一格，都往下走到那一句。这也是这一课最家常的用法 —— **「是不是这几种」的活，交给清单和分支一起干**。\n\n三处要留神：\n\n- **`case` 后面的名字也得一个字母不差。** 手滑写成 `case SATRDAY:`，翻译官喵当场说 `error: cannot find symbol`、`symbol: variable SATRDAY`、`location: class Main` —— 注意那个 `location` 指的是**本喵写这段 `switch` 的地方**，不是清单（本喵真跑过）。又一次「清单之外的名字，编稿子那一关就被拦下」。\n- **数不出来就露馅。** `cnt` 从 0 起，每盖到一个休息日加一，最后印出来。判分那组数里**一定**有休息日、也一定有不是休息日的 —— 所以「只印不数」或者「数错了」都藏不住。\n- **先把那一项叼出来，再拿它去问。** `Day.values()[k]` 里位次从 `0` 起，和上一题同款。`d` 接住的是**清单上的一项本身**，所以 `d.name()` 印得出项名，`switch (d)` 也认它。\n\n顺带说一句这题的判分输入：它是**写死的**，所以每一组里什么时候碰上休息日、碰上几个，都是本喵挑好的 —— 保证「两格共用一个身子」这件事真被考到，不是碰运气喵。",
+      "templateId": "java-s2-enum-rest-counter",
+      "params": {
+        "rest1": "6",
+        "day1": "0",
+        "rest2": "6",
+        "day2": "4"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:53.134Z",
+        "hash": "cb2159e8c94deec0"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-rest-counter-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给排班表上的每一天盖章：**`SAT` 和 `SUN` 是休息日**，别的都不是。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」，接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`5` 是 `SAT`、`6` 是 `SUN`）。每一笔印一行：休息日印 `项名 是休息日`，否则印 `项名 不是休息日`。所有笔过完，最后印一行 `休息日有 … 天`。\n\n比如投喂给程序的是\n\n4\n6\n1\n0\n5\n\n程序就要叼回\n\nSUN 是休息日\nTUE 不是休息日\nMON 不是休息日\nSAT 是休息日\n休息日有 2 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    static boolean isRest(Day d) {\n        switch (d) {\n            case SAT:\n            case SUN:\n                return true;\n            default:\n                return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            Day d = Day.values()[k];\n            if (isRest(d)) {\n                System.out.println(d.name() + \" 是休息日\");\n                cnt++;\n            } else {\n                System.out.println(d.name() + \" 不是休息日\");\n            }\n        }\n        System.out.println(\"休息日有 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "SUN 是休息日\nWED 不是休息日\nSUN 是休息日\nTHU 不是休息日\n休息日有 2 天",
+      "stdin": "4\n6\n2\n6\n3\n",
+      "explanation": "这题多练一样东西：**拿清单上的一项当分支的开关**。\n\n`switch (d)` 的括号里直接就能放清单上的一项，`case` 后面写**项名**就行。本喵真试过写全的 `case Day.SAT:` —— 这一版翻译官喵**也收**，只是括号里已经说清是哪张清单了，多写一份纯属啰嗦。\n\n```java\ncase SAT:\ncase SUN:\n    return true;\n```\n\n两格共用一个身子：落到哪一格，都往下走到那一句。这也是这一课最家常的用法 —— **「是不是这几种」的活，交给清单和分支一起干**。\n\n三处要留神：\n\n- **`case` 后面的名字也得一个字母不差。** 手滑写成 `case SATRDAY:`，翻译官喵当场说 `error: cannot find symbol`、`symbol: variable SATRDAY`、`location: class Main` —— 注意那个 `location` 指的是**本喵写这段 `switch` 的地方**，不是清单（本喵真跑过）。又一次「清单之外的名字，编稿子那一关就被拦下」。\n- **数不出来就露馅。** `cnt` 从 0 起，每盖到一个休息日加一，最后印出来。判分那组数里**一定**有休息日、也一定有不是休息日的 —— 所以「只印不数」或者「数错了」都藏不住。\n- **先把那一项叼出来，再拿它去问。** `Day.values()[k]` 里位次从 `0` 起，和上一题同款。`d` 接住的是**清单上的一项本身**，所以 `d.name()` 印得出项名，`switch (d)` 也认它。\n\n顺带说一句这题的判分输入：它是**写死的**，所以每一组里什么时候碰上休息日、碰上几个，都是本喵挑好的 —— 保证「两格共用一个身子」这件事真被考到，不是碰运气喵。",
+      "templateId": "java-s2-enum-rest-counter",
+      "params": {
+        "rest1": "6",
+        "day1": "2",
+        "rest2": "6",
+        "day2": "3"
+      },
+      "verified": {
+        "at": "2026-10-20T17:12:56.555Z",
+        "hash": "7c9aa4afff747966"
+      }
+    },
+    {
+      "id": "bank-java-s2-enum-rest-counter-015",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要给排班表上的每一天盖章：**`SAT` 和 `SUN` 是休息日**，别的都不是。\n\n投喂给程序的纸上：第一个数是「后面还有几笔」，接着正好那么多行，一行一个位次（位次从 `0` 起：`0` 是 `MON`、`5` 是 `SAT`、`6` 是 `SUN`）。每一笔印一行：休息日印 `项名 是休息日`，否则印 `项名 不是休息日`。所有笔过完，最后印一行 `休息日有 … 天`。\n\n比如投喂给程序的是\n\n4\n6\n1\n0\n5\n\n程序就要叼回\n\nSUN 是休息日\nTUE 不是休息日\nMON 不是休息日\nSAT 是休息日\n休息日有 2 天\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+      "starter": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+      "referenceSolution": "import java.util.Scanner;\n\npublic class Main {\n    enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }\n\n    static boolean isRest(Day d) {\n        switch (d) {\n            case SAT:\n            case SUN:\n                return true;\n            default:\n                return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int cnt = 0;\n        for (int i = 0; i < n; i++) {\n            int k = sc.nextInt();\n            Day d = Day.values()[k];\n            if (isRest(d)) {\n                System.out.println(d.name() + \" 是休息日\");\n                cnt++;\n            } else {\n                System.out.println(d.name() + \" 不是休息日\");\n            }\n        }\n        System.out.println(\"休息日有 \" + cnt + \" 天\");\n    }\n}\n",
+      "expectedOutput": "SUN 是休息日\nWED 不是休息日\nMON 不是休息日\nFRI 不是休息日\n休息日有 1 天",
+      "stdin": "4\n6\n2\n0\n4\n",
+      "explanation": "这题多练一样东西：**拿清单上的一项当分支的开关**。\n\n`switch (d)` 的括号里直接就能放清单上的一项，`case` 后面写**项名**就行。本喵真试过写全的 `case Day.SAT:` —— 这一版翻译官喵**也收**，只是括号里已经说清是哪张清单了，多写一份纯属啰嗦。\n\n```java\ncase SAT:\ncase SUN:\n    return true;\n```\n\n两格共用一个身子：落到哪一格，都往下走到那一句。这也是这一课最家常的用法 —— **「是不是这几种」的活，交给清单和分支一起干**。\n\n三处要留神：\n\n- **`case` 后面的名字也得一个字母不差。** 手滑写成 `case SATRDAY:`，翻译官喵当场说 `error: cannot find symbol`、`symbol: variable SATRDAY`、`location: class Main` —— 注意那个 `location` 指的是**本喵写这段 `switch` 的地方**，不是清单（本喵真跑过）。又一次「清单之外的名字，编稿子那一关就被拦下」。\n- **数不出来就露馅。** `cnt` 从 0 起，每盖到一个休息日加一，最后印出来。判分那组数里**一定**有休息日、也一定有不是休息日的 —— 所以「只印不数」或者「数错了」都藏不住。\n- **先把那一项叼出来，再拿它去问。** `Day.values()[k]` 里位次从 `0` 起，和上一题同款。`d` 接住的是**清单上的一项本身**，所以 `d.name()` 印得出项名，`switch (d)` 也认它。\n\n顺带说一句这题的判分输入：它是**写死的**，所以每一组里什么时候碰上休息日、碰上几个，都是本喵挑好的 —— 保证「两格共用一个身子」这件事真被考到，不是碰运气喵。",
+      "templateId": "java-s2-enum-rest-counter",
+      "params": {
+        "rest1": "6",
+        "day1": "2",
+        "rest2": "0",
+        "day2": "4"
+      },
+      "verified": {
+        "at": "2026-09-16T11:28:06.987Z",
+        "hash": "4a28cf19ce3372b1"
+      }
+    }
+  ]
+}

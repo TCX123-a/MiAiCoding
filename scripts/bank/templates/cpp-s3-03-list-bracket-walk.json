@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-03-list-bracket-walk",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-03",
+  "type": "codefix",
+  "concept": ["链子柜不认编号", "中括号取货编不过", "改成一格一格走"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [3, 6] },
+    "b": { "kind": "pick", "values": [8, 1] },
+    "c": { "kind": "pick", "values": [5, 9] }
+  },
+  "stemTemplate": "本喵往链子柜里接了三格货，想让它们**一格印一行**。可这段代码**编不过** —— 翻译官喵拦在了取货那一句上。\n\n你帮本喵把它改对：**每一格都要印出来，一行一格**。接货那几句不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <list>\nusing namespace std;\n\nint main() {\n    list<int> l;\n    l.push_back({a});\n    l.push_back({b});\n    l.push_back({c});\n\n    for (int i = 0; i < 3; i++) {\n        cout << l[i] << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <list>\nusing namespace std;\n\nint main() {\n    list<int> l;\n    l.push_back({a});\n    l.push_back({b});\n    l.push_back({c});\n\n    for (int x : l) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题错在**取货那一句**喵。\n\n链子柜里的货**不挨着坐**：每格身上只有一张写着「下一格在哪儿」的小牌子，所以「第 3 格在哪儿」没有一步到位的答案 —— 它压根没有**报编号取货**这一招。翻译官喵的原话里有 `no match for 'operator[]'`，念作「这一招在这只柜子身上没有能对上的用法」，看到它就该想起来：**这只柜子只能一格一格走。**\n\n正确的写法是拿爪子走一圈：从 `l.begin()` 出发，一直走到 `l.end()`，每一格把 `*it` 印出来。用「一格一格交给 `x`」那种新写法也行，一样一格印一行。\n\n⚠️ 「货」和「编号」是两件事：这一题只要货，所以不用自己备编号；哪道题要你报「第几格」，那才需要另拿一个从 0 起数的数。"
+}

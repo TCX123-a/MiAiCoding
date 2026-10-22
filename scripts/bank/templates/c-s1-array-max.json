@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s1-array-max",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-09",
+  "type": "codewrite",
+  "concept": ["一排碗", "打擂台找最大", "从 1 号碗比起"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "猫粮"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵今天摆了 {n} 只碗，一只一只往里面装{unit}。\n\n请你写个程序：**先从投喂口读进来一个数**（就是摆了几只碗），**再读进来 {n} 行数**（一行一个，是每只碗里装了几条{unit}）。把这些数一只碗一格地装进一排碗里，然后找出**装得最多的那一只**，把它的数报出来：`最多的那一只碗里有 %d 条{unit}喵`。\n\n（这排碗最多摆 5 只，今天只用了 {n} 只，而且每只碗里**至少有 1 条**喵。）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[5] = {0};\n    int n = 0;\n\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    for (int i = 0; i < n; i++) {\n        if (scanf(\"%d\", &bowls[i]) != 1) {\n            return 1;\n        }\n    }\n\n    int big = bowls[0];\n    for (int i = 1; i < n; i++) {\n        if (bowls[i] > big) {\n            big = bowls[i];\n        }\n    }\n    printf(\"最多的那一只碗里有 %d 条{unit}喵\\n\", big);\n    return 0;\n}\n",
+  "explanationTemplate": "找「最多的那一只」，用的是**打擂台**的老办法喵：\n\n1. **先请 0 号碗上台。** `int big = bowls[0];` —— 让它先当擂主。这里有个讲究：擂主要用**这排碗里真实存在的数**来起头，**不能洗成 0**。这道题每只碗至少 1 条，所以洗成 0 也碰巧对；可要是碗里全是 0 或者有负数，洗成 0 的擂主就会一直站在台上，答案就错了。\n2. **从 1 号碗开始，一只一只上来比。** 眼色写 `i < n`，`i` 从 1 走到 n 减一。\n3. **比擂主大就换它上台。** 一圈比一只，比完最后站在台上的就是最多的那一只。\n\n为什么从 **1** 号起、不是从 0 号起？因为 0 号已经在台上了 —— 让它跟自己比一场也不算错，只是白跑一圈。这种「差一位」的地方，写完之后在心里数一遍最稳。\n\n⚠️ 还有一条：这道题用到的是**一排碗**，所以「最多」是按**碗**比，不是把碗里的数加起来比。题目问的是哪只碗装得最多，答案就是那只碗里的条数喵。"
+}

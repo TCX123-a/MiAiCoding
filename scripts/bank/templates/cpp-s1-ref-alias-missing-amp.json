@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s1-ref-alias-missing-amp",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-10",
+  "type": "codefix",
+  "concept": ["第二个名字", "别名", "& 小记号", "改它等于改原碗"],
+  "instances": 2,
+  "params": {
+    "p": { "kind": "int", "min": 3, "max": 4 },
+    "q": { "kind": "int", "min": 7, "max": 9 }
+  },
+  "stemTemplate": "本喵想让 `other` 当 `fish` 那只碗的**第二个名字** —— 从此改 `other` 就等于改 `fish`，它俩永远是同一个数。\n\n碗里本来有 {p}；把 `other` 改成 {q} 之后，两行**都该印出 {q}**。\n\n可这段代码跑出来是两行不一样：`fish` 还停在 {p}。它跑得起来，翻译官喵一句原话都没有，就是两个名字没绑在一起。\n\n你帮本喵改对：改完 `other` 之后，两行都印 {q}。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = {p};\n    int other = fish;\n\n    other = {q};\n    cout << fish << endl;\n    cout << other << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int fish = {p};\n    int& other = fish;\n\n    other = {q};\n    cout << fish << endl;\n    cout << other << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "`int other = fish;` 读出来是：**照着 `fish` 里的数，另摆一只碗**（`other` 是**另一只碗**，只是里面的数正好一样）。从那以后它俩各过各的：改 `other`，`fish` 当然不动。\n\n想让 `other` 真的变成**第二个名字**（同一只碗的别名），要写成：\n\n```\nint& other = fish;\n```\n\n那个 `&` 的意思是：**不新摆碗，只借外面那只碗的名字来用**。\n\n从此 `other` 和 `fish` 就是**同一只碗**：`other = {q};` 装进去的是那只碗，所以两行印出来都是 {q} —— 不是巧合，是它俩本来就是一个东西。\n\n⚠️ 又是一声不吭的一题：抄一份是完全合规矩的写法，翻译官喵不会拦你。**只有「改了一个名字、另一个没跟着变」这一个迹象**能让你发现它。\n\n顺着这一条记住别名最要紧的脾气：**它不是一只新碗，只是同一只碗的另一个称呼** —— 所以改它、印它、拿去当料，动的、看的、递出去的都是**同一只碗**喵。"
+}

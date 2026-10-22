@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-unionenum-color-door",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-07",
+  "type": "codewrite",
+  "concept": ["枚举当选项", "招式头上写enum", "名字就是整数"],
+  "instances": 6,
+  "params": {
+    "c1": { "kind": "pick", "values": ["RED", "GREEN", "BLUE"] },
+    "c2": { "kind": "pick", "values": ["BLUE", "GREEN", "RED"] }
+  },
+  "stemTemplate": "本喵给三种颜色起了名字。\n\n请你照着课文的样子做两件事：\n\n1. 用**枚举**给三种颜色起名（红的叫 `RED`、绿的叫 `GREEN`、蓝的叫 `BLUE`，按这个顺序写）；\n2. 写一招 `show`：头上收一个颜色，招式里**比一比是哪种**，分别印出 `红色` / `绿色` / `蓝色`（各占一行）。\n\n然后在 `main` 里请这一招报两次：先报 `{c1}`，再报 `{c2}`。最后再印一行，把这两个名字**各自对应的编号**印出来，中间用空格隔开。\n\n也就是说程序一共印三行：两行颜色名，最后一行两个数。",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nenum Color { RED, GREEN, BLUE };\n\nvoid show(enum Color c) {\n    if (c == RED) {\n        printf(\"红色\\n\");\n    } else if (c == GREEN) {\n        printf(\"绿色\\n\");\n    } else {\n        printf(\"蓝色\\n\");\n    }\n}\n\nint main(void) {\n    show({c1});\n    show({c2});\n    printf(\"%d %d\\n\", {c1}, {c2});\n    return 0;\n}\n",
+  "explanationTemplate": "这道题把枚举的两副面孔都摆出来了喵。\n\n**① 名字是用来给人看的。** `void show(enum Color c)` 头上写的是 `enum Color`，招式里拿名字比：`if (c == RED)`。喊的时候直接把名字递过去 —— `show({c1});`。要是没有这串名字，这一行得写成 `show(0);`、`show(2);`，过一星期谁都认不出那个 `2` 是哪种颜色。**读代码的人能不能一眼看懂，就是枚举存在的理由。**\n\n**② 名字的底下还是整数。** 最后那行 `printf(\"%d %d\\n\", {c1}, {c2});` 印出来的就是编号。这里能印，是因为**这些名字在 C 里本来就是整数**，只是穿了件好认的外套。编号的规矩是：不写起点就从 **0** 开始，一个比一个大 1 —— 所以 `RED` 是 0、`GREEN` 是 1、`BLUE` 是 2。\n\n对照一下最后那行和上面两行，你就看清楚了：**递给招式的是名字，招式里比的也是名字，可要是你拿 `%d` 去印它，出来的还是数。** 名字和数是一回事。\n\n两个容易写歪的地方：\n\n- `enum Color` 里的 `enum` **一个字母都不能少**（标签本身不是名字）。\n- 招式里那一串比较：`RED` 是第一个、`GREEN` 是第二个，**剩下的都归 `else`** —— 因为只有三种，最后一种不用再比。这么写跟课文里那一招一模一样，也比写三遍 `if` 干净。"
+}

@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s1-if-assign-not-eq",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-06",
+  "type": "codefix",
+  "concept": ["if", "两个等号", "警告不是错误"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵每天早上出门前都要看一眼猫粮碗：碗里空了就去找大肥鱼要点，还有剩就开吃喵。\n\n可本喵的碗里明明装着 {n} 条鱼干，这段代码报出来的数却完全不是那个数。你帮本喵把它改对：碗里还有剩的时候，应该照实印出 `碗里还有 {n} 条，开吃喵`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish = {n};\n\n    if (fish = 0) {\n        printf(\"碗空了，去找大肥鱼喵\\n\");\n    } else {\n        printf(\"碗里还有 %d 条，开吃喵\\n\", fish);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    int fish = {n};\n\n    if (fish == 0) {\n        printf(\"碗空了，去找大肥鱼喵\\n\");\n    } else {\n        printf(\"碗里还有 %d 条，开吃喵\\n\", fish);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵其实看见了这一行，它小声嘀咕的原话是：`warning: suggest parentheses around assignment used as truth value`（意思差不多是「你是不是想写两个等号呀」）喵。\n\n可**那只是一句警告，不是错误** —— 它不会拦下这份程序，照样把程序生出来让你跑。于是 `fish = 0` 真的被执行了：它的意思是「把 0 装进 `fish`」，而这件事本身也有个结果值，就是 0。C 的真假规矩只有一条：**0 算假，别的都算真**。0 是假，所以走的是兜底那条路 —— 而且这一装，`fish` 里的数也被改成了 0，印出来当然只剩 0 条。\n\n想清楚这里的两件事，就不容易再摔：\n\n1. **一个等号是装东西，两个等号才是问话。** `fish = 0` 是命令，`fish == 0` 才是问题。\n2. **C 不会为这个错拦你。** 它只念一句警告就放你过去，然后给你一个不对的结果 —— 这一条和 Python 正好相反（那边会当场甩你一个 `SyntaxError` 让你没法跑）。所以写眼色的时候，永远回头检查一眼是不是两个等号喵。"
+}

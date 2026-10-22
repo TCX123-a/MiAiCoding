@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-log-debug-probe",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-09",
+  "type": "codewrite",
+  "concept": ["门槛放到 DEBUG", "只在可疑的那一步留痕迹", "断点的不打断替代"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 },
+    "k": { "kind": "int", "min": 2, "max": 3 },
+    "unit": { "kind": "pick", "values": ["筐", "箱", "袋"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n{k}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵查「哪一{unit}条数最多」的时候，最想知道的是**跑到第几{unit}那会儿，本喵见过的最大的数是几**喵。\n\n真设断点的话，程序一停就得等人敲键盘；本喵不敲它就一直杵在那儿，跑不完。所以本喵换个**不打断**的法子：**只在那一{unit}上留一条痕迹**，别处一声不吭。\n\n**外面给的数分三段**：第一行是一个数（要数几{unit}），第二行是一个数（要在这一{unit}上看一眼），后面**每一行一个数**（一{unit}的条数）。\n\n请你写个程序：\n\n① **数到第二行指的那一{unit}时**，记一条 **`DEBUG`** 级别的日志，话是「停在第 i {unit}：到这一步最多 X 条」—— i 就是第二行那个数；X 是**从开头到这一{unit}为止**见过的最大的条数。\n② 全部数完，用**正文**印一行：`最多 X 条`—— X 是全部{unit}里最大的条数。\n\n⚠️ 三件事本喵说死：\n\n① 那条日志**必须出现在正文里**（躺在侧渠里的本喵不认）：开头是 `DEBUG` 五个大写字母，后面跟**一个英文冒号**；消息里「第 i {unit}」后面紧跟的是**一个全角冒号**。\n② 这种啰嗦话**平时是记不下来的**—— 你得自己动手，让本子愿意把它写上。\n③ 除了那一{unit}，**别的地方一条日志都不许留**（本喵只在那一个地方停下来看）。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，别把答案写死～）",
+  "referenceSolutionTemplate": "import sys\nimport logging\n\nlogging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)\n\n筐数 = int(sys.stdin.readline())\n看第几 = int(sys.stdin.readline())\n最多 = 0\n\nfor i in range(筐数):\n    一条 = int(sys.stdin.readline())\n    if 一条 > 最多:\n        最多 = 一条\n    if i + 1 == 看第几:\n        logging.debug(\"停在第 \" + str(i + 1) + \" {unit}：到这一步最多 \" + str(最多) + \" 条\")\n\nprint(\"最多 \" + str(最多) + \" 条\")\n",
+  "explanationTemplate": "这道题练的是**「让本子记下那一刻」**喵 —— 它正是断点的**不打断版**。\n\n设断点的做法是：在那一行停住，爪子悬在半空，翻看那一刻碗里装着什么。它最准的地方在于**你只挑那一个地方看**；可它有个绕不开的脾气 —— **一停下来就得等人敲键盘**，没人敲它就杵在那儿不动。所以本喵在要交付的代码里从不留 `breakpoint()`，改用**记一笔**：程序跑到那一{unit}的时候把数写进本子，接着往下跑，回头翻开本子，那一刻的值就摆在那儿。\n\n⚠️ 所以本题只许你在**那一{unit}**上留一条 —— 这跟「挑一行停下来看」是同一个思路：**别处处都停，挑一个看得出对错的位置看**。处处都停，等于没停。\n\n⚠️ 第二个关键是**门槛**。这句用的是 `logging.debug(...)`，而 `DEBUG` 是**最矮**的一档；**不写 `level=` 的时候门槛在 `WARNING`**，比门槛矮的一律不写进本子。所以光把那句 `logging.debug` 摆进去，本子上**一个字都不会有**，正文里就少了一行 —— 而且它**一个字都不报错**，最容易被当成「本子坏了」。\n\n把门槛放下来就好：`logging.basicConfig(stream=sys.stdout, format=\"%(levelname)s:%(message)s\", level=logging.DEBUG)`。三样各管一件事：`stream=sys.stdout` 把本子挪到正文那条渠；`format` 定「级别 + 英文冒号 + 那句话」的长相；`level=logging.DEBUG` 把门槛放到最矮，啰嗦话才过得去。\n\n⚠️ 顺带记一条本喵的规矩：**门槛越低，本子越吵**。抓虫的时候放到 `DEBUG` 看得最细，事情办完了就该把它抬回去 —— 一屋子碎碎念的本子，真出事那天你反而翻不出来。"
+}

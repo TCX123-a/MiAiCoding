@@ -1,0 +1,87 @@
+{
+  "lessonId": "cpp-stage1-15",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵写了一句 `struct Record { string name; int amount; };`。这句写完，本喵手上有的是什么？",
+      "options": [
+        "一张已经填好「猫粮 30」的真卡片",
+        "一张卡片图纸 —— 得再照它做一张，才有真卡片装东西",
+        "一排三张空卡片",
+        "一个能印出菜单的函数"
+      ],
+      "answer": 1,
+      "explanation": "`struct Record { ... };` 是**画图纸**：它自己不吃地方、装不了东西，只是画在这儿 —— 以后照这个样子做卡片。要有真卡片，还得写一句 `Record r = {\"猫粮\", 30};`。这跟招式有点像：招式写了不跑，得有人喊才跑；图纸画了不做卡片，得有人做出来才有东西用喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵手上有一排卡片 `Record book[3]`。想拿到**第 2 张卡片上的 `name` 那一栏**，该写什么？",
+      "options": [
+        "`book.name[2]`",
+        "`book[2].name`",
+        "`name.book[2]`",
+        "`book(2).name`"
+      ],
+      "answer": 1,
+      "explanation": "两个记号各干各的活，顺序不能换：**先方括号拿编号**（`book[2]` 是第 2 张卡片），**再点号取一栏**（`.name` 是卡片上的那一栏）。反过来写 `book.name[2]`，就是先在一张卡片上取名叫 `name` 的那一栏（那是一串字），再拿它去按编号 —— 一串字可没有编号可数喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "「记一笔」那一招收的料是 `int& count`。要是把那个小记号去掉、写成 `int count`，会发生什么？",
+      "options": [
+        "一样管用，改不改记号都一样",
+        "函数照样能编译能跑，可它改的是自己那份副本 —— 外面那位一直是 `0`，新账会一笔一笔盖在同一格上",
+        "编译器会报错，不让这么写",
+        "函数里那句 `count = count + 1;` 会被自动跳过"
+      ],
+      "answer": 1,
+      "explanation": "那就是第十课那个**温柔版**的小记号：写上它，招式里的 `count` 就是外面那只碗本人；不写，它只是一份复印件。复印件的毛病很阴：**程序不报错、跑得也欢**，可里面加得再多也传不出来 —— 外面那位一直以为自己才记了 0 笔，下一笔又盖回 0 号格，账就被一笔一笔吃光了喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "stem": "下面这段要画一张记账卡片图纸、做出一张真卡片，然后把名字那一栏印出来。把缺的两处补上：",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\n____ Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    Record r = {\"猫粮\", 30};\n    cout << r.____ << \" \" << r.amount << endl;\n    return 0;\n}",
+      "blanks": [
+        { "answer": "struct" },
+        { "answer": "name" }
+      ],
+      "explanation": "第一个空填 `struct` —— 画卡片图纸就是用它开头的。第二个空填 `name` —— 点号是从卡片里取某一栏的办法，这回取的是名字那一栏。填好之后跑起来印出 `猫粮 30`：一张卡片两栏东西捆在一起，按名字取名字、按 `amount` 取数目，谁也不碍着谁喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    Record r = {\"猫粮\", 30};\n    cout << r.name << \" \" << r.amount << endl;\n\n    r.amount = r.amount + 5;\n    cout << r.name << \" \" << r.amount << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "猫粮 30\n猫粮 35",
+      "accept": [],
+      "explanation": "第一行先印卡片原本的样子：名字 `猫粮`、数目 `30`。然后 `r.amount = r.amount + 5;` 把那一栏从 30 改成 35 —— 名字那一栏没动，所以第二行还是 `猫粮`，后面的数变成了 35。点号取出来的那一栏，改起来和普通的碗一模一样喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nint main() {\n    Record book[3] = {{\"猫粮\", 30}, {\"小鱼干\", 12}, {\"猫窝\", 88}};\n\n    for (int i = 0; i < 3; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "猫粮 30\n小鱼干 12\n猫窝 88",
+      "accept": [],
+      "explanation": "外面一圈大括号是**这一排**，里面每一个大括号是**一张卡片**。圈从 0 转到 2，`book[i]` 是第 `i` 张卡片，点号再取出它的两栏 —— 三张卡片各印一行，就是这三行。一排碗加上点号，两样本事合起来就是这么用的喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nstruct Record {\n    string name;\n    int amount;\n};\n\nvoid addRecord(Record book[], int& count, string name, int amount) {\n    book[count].name = name;\n    book[count].amount = amount;\n    count = count + 1;\n}\n\nint main() {\n    Record book[8];\n    int count = 0;\n\n    addRecord(book, count, \"猫粮\", 30);\n    addRecord(book, count, \"小鱼干\", 12);\n    addRecord(book, count, \"猫窝\", 88);\n\n    for (int i = 0; i < count; i++) {\n        cout << book[i].name << \" \" << book[i].amount << endl;\n    }\n    cout << \"一共记了 \" << count << \" 笔喵\" << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "猫粮 30\n小鱼干 12\n猫窝 88\n一共记了 3 笔喵",
+      "accept": [],
+      "explanation": "三句 `addRecord` 一笔一笔往里记：每喊一次，卡片填在 `count` 那一格上，`count` 再加 1（收的料是温柔版 `int& count`，所以外面那只真的在涨）。三笔记完 `count` 成了 3，下面那个圈就走三张 —— 三行账加一行总结。要是把 `int&` 那个小记号漏了，外面那只 `count` 一直是 0，三笔会全盖在 0 号格上，屏幕上只剩一行喵。"
+    }
+  ]
+}

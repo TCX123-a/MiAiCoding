@@ -1,0 +1,83 @@
+{
+  "lessonId": "c-stage3-12",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "投喂表最后一位写了 `...` 之后，招式**怎么知道**后头跟了几份喵？",
+      "options": [
+        "它不知道 —— 得写函数的人自己想办法数（本喵传 `count`，`printf` 靠格式串）",
+        "三个点会自己数一数后头有几份",
+        "编译器会把份数记在清单里",
+        "清单里存着份数，`va_arg` 取完会告诉本喵"
+      ],
+      "answer": 0,
+      "explanation": "后头那一串**不带标签**喵：清单只知道「接下来还有东西」，既不知道有几份，也不知道每一份是什么。所以规矩是**谁写的招式谁自己数** —— 本喵传了个 `count` 当账本，`printf` 拿格式串里几个占位符当账本，一个道理喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "`va_start(list, count);` 里的 `count` 是干嘛用的喵？",
+      "options": [
+        "说清**从哪一位开始记**：`count` 是最后那个有名字的投喂",
+        "说清后头一共有几份",
+        "把 `count` 自己也算进清单里去",
+        "收摊的时候用的"
+      ],
+      "answer": 0,
+      "explanation": "`va_start` 的第二个参数是**最后那个有名字的投喂**喵 —— 它说的是「**从哪一位后面开始记**」，不是「有几份」。名字挂错了，清单就从错的地方开始叼。份数是另一回事：本喵是在绕鱼干跑圈里拿着 `count` 一份一份数着叼的，清单自己不会数喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵写 `va_arg(list, int)`，可喂进去的那一份其实是个小数（`double`）—— 会怎样喵？",
+      "options": [
+        "一声不吭，叼回来一个跟原来毫无关系的数（本喵跑出来是 0）",
+        "编译器当场报错，不让过",
+        "编译器嘟囔一句警告，然后照样跑",
+        "它会自动按小数把那一份叼回来"
+      ],
+      "answer": 0,
+      "explanation": "本喵真跑过喵：翻译官喵**一声没吭**，程序照样跑完，叼回来的是 `0` —— 喂进去的明明是 `1.5`。清单不认字，你说按 `int` 叼，它就这么抓。所以**类型一定要和喂进去的对上**，这一处替不了你。（对照一下：`printf` 的格式串跟投喂对不上，它会嘟囔一句 `-Wformat=` 警告；自己写的清单没这个福气。）"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <____>\n\nint fish_total(int count, ...) {\n    va_list list;\n    va_start(list, count);\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum += va_arg(list, int);\n    }\n    va_end(list);\n    return sum;\n}\n\nint main(void) {\n    printf(\"%d\\n\", fish_total(3, 2, 3, 4));\n    return 0;\n}",
+      "stem": "这段稿子忘了带工具房那一行喵。把空补上，补完它该印出 9。",
+      "blanks": [{ "answer": "stdarg.h" }],
+      "explanation": "四件工具 `va_list`、`va_start`、`va_arg`、`va_end` 都住在 `stdarg.h` 这个工具房里喵。忘了这一行，翻译官喵压根不认识它们，只当是没听过的新招式名字 —— 课文里那个报错演示就是这个样子，一路 `implicit declaration` 报下去。看见 `implicit declaration`，先摸摸是不是忘了带工具房。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdarg.h>\n\nint fish_total(int count, ...) {\n    ____ list;\n    ____(list, count);\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum += va_arg(list, int);\n    }\n    va_end(list);\n    return sum;\n}\n\nint main(void) {\n    printf(\"%d\\n\", fish_total(3, 2, 3, 4));\n    return 0;\n}",
+      "stem": "四步走少了两步喵：先**开一张清单**，再**把它挂到名字上**。把这两处补上，补完该印出 9。",
+      "blanks": [{ "answer": "va_list" }, { "answer": "va_start" }],
+      "explanation": "两处空是一对喵：`va_list list;` 先**开清单**，`va_start(list, count);` 再**挂名字** —— 第二项永远是最后那个有名字的投喂。挂好之后，绕鱼干跑圈里就能用 `va_arg(list, int)` 一份一份叼；叼完 `va_end(list)` 收摊。开、挂、叼、收，四步少一步都不成。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdarg.h>\n\nint fish_total(int count, ...) {\n    va_list list;\n    va_start(list, count);\n    int sum = 0;\n    for (int i = 0; i < count; i++) {\n        sum += va_arg(list, int);\n    }\n    va_end(list);\n    return sum;\n}\n\nint main(void) {\n    printf(\"三只猫的：%d\\n\", fish_total(3, 2, 3, 4));\n    printf(\"五只猫的：%d\\n\", fish_total(5, 1, 1, 1, 1, 1));\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "三只猫的：9\n五只猫的：5",
+      "accept": ["三只猫的：9\n五只猫的：5\n"],
+      "explanation": "同一招收两回喵：第一回账本写 `3`，就顺着后头叼三份（2、3、4），加起来 9；第二回账本写 `5`，叼五份（五个 1），加起来 5。**账本说几份就叼几份** —— 这就是不限量投喂的窍门：份数不是写在投喂表上的，是传进去的。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdarg.h>\n\nvoid report(const char *fmt, ...) {\n    va_list list;\n    va_start(list, fmt);\n    vprintf(fmt, list);\n    va_end(list);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    report(\"%d 只猫，一共 %d 条鱼\", 3, 9);\n    report(\"只印一句话\");\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "3 只猫，一共 9 条鱼\n只印一句话",
+      "accept": ["3 只猫，一共 9 条鱼\n只印一句话\n"],
+      "explanation": "`report` 自己手里是一张清单，没法原样递给只收「一串投喂」的 `printf` —— 所以要用**收清单的那一版** `vprintf` 喵。格式串就是它的账本：头一句里两个 `%d`，就往后叼两个 `int`，印出 `3 只猫，一共 9 条鱼`；第二句一个占位符都没有，后头一份也不用叼，照样印得出来。"
+    }
+  ]
+}

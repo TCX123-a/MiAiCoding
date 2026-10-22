@@ -1,0 +1,38 @@
+{
+  "templateId": "py-s1-func-kwarg-order",
+  "lang": "python",
+  "stage": 1,
+  "lessonId": "python-stage1-12",
+  "type": "codefix",
+  "concept": [
+    "关键字参数",
+    "位置参数",
+    "逻辑错误"
+  ],
+  "instances": 2,
+  "params": {
+    "who": {
+      "kind": "pick",
+      "values": [
+        "大肥鱼",
+        "小鳕鱼"
+      ]
+    },
+    "food": {
+      "kind": "pick",
+      "values": [
+        "小鱼干",
+        "猫罐头"
+      ]
+    },
+    "times": {
+      "kind": "int",
+      "min": 2,
+      "max": 4
+    }
+  },
+  "stemTemplate": "本喵要打印一句喂食记录，格式是「**谁** 吃了 **几次** **什么**」喵。\n\n可这段代码跑起来了、**也没报错**，打出来的句子却是乱的……你帮本喵改对。",
+  "brokenCodeTemplate": "def feed(name, food, times):\n    print(name + \" 吃了 \" + str(times) + \" 次\" + food)\n\nfeed(\"{food}\", \"{who}\", {times})\n",
+  "referenceFixTemplate": "def feed(name, food, times):\n    print(name + \" 吃了 \" + str(times) + \" 次\" + food)\n\nfeed(name=\"{who}\", food=\"{food}\", times={times})\n",
+  "explanationTemplate": "这段代码**没有报错**，这恰恰是它最坏的地方喵 —— 它老老实实按你给的顺序把三样东西塞进了三个空位，只是塞错了人。\n\n要修有两种写法：\n\n① 把顺序摆对：`feed(\"{who}\", \"{food}\", {times})`\n② **报出名字**：`feed(name=..., food=..., times=...)`\n\n② 比 ① 稳得多。顺序是一条**看不见**的约定 —— 招式表哪天加了个空位、或者你把两个实参对调一下，代码照跑不误，结果悄悄就错了。写成 `名字=值` 之后，**塞错空位这件事从「看不出来」变成「不可能」**：名字对不上，Python 当场就报错。\n\n（`name=` 这种写法就叫**点名投喂**。它和排队投喂能在同一次调用里混着用，但排队投喂必须写在前面。）"
+}

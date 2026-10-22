@@ -1,0 +1,19 @@
+{
+  "templateId": "py-s2-deco-guard",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-09",
+  "type": "codewrite",
+  "concept": ["把门", "args[0]", "拦下"],
+  "instances": 6,
+  "params": {
+    "x": { "kind": "int", "min": -6, "max": -3 },
+    "y": { "kind": "int", "min": 3, "max": 6 },
+    "sx": { "kind": "int", "min": 3, "max": 6 },
+    "sy": { "kind": "int", "min": -6, "max": -3 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{x}\n{y}\n", "sampleText": "{sx}\n{sy}\n" },
+  "stemTemplate": "本喵要一层「**把门**」特效喵：壳里先看**接住的那些小鱼干里、按位置排在最前面的那一个**（`args[0]`）——\n\n- 要是它比 0 小：印一句 `不许喂负的`，然后**直接结束**，里面那一招**喊都不喊**。\n- 不然：照常喊里面那一招，并把它叼回来的东西原样叼回去。\n\n再写一招 `翻三倍(n)`：它**自己把 `n * 3` 印出来**（不叼回东西）—— 给它套上 `@把门`。\n\n最后**读两行整数**，一行喊一次 `翻三倍(...)`，一共印两行。\n\n比如输入是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外两行数**喵 —— 一正一负，顺序还会换，所以别把答案写死～）",
+  "referenceSolutionTemplate": "import functools\n\n\ndef 把门(fn):\n    @functools.wraps(fn)\n    def 包装(*args, **kwargs):\n        if args[0] < 0:\n            print(\"不许喂负的\")\n            return\n        return fn(*args, **kwargs)\n\n    return 包装\n\n\n@把门\ndef 翻三倍(n):\n    print(n * 3)\n\n\nx = int(input())\ny = int(input())\n翻三倍(x)\n翻三倍(y)\n",
+  "explanationTemplate": "「把门」这种特效的形状是：**开演前先看一眼，条件不满足就直接拦下**喵。\n\n- `def 包装(*args, **kwargs):` —— 壳把外面喂进来的东西**原封不动全都接住**。里面那一位被接住之后躺在这儿，按位置排：第一个就是 `args[0]`。\n- `if args[0] < 0:` —— 拿第一个来把关。成立就印一句 `不许喂负的`，然后 `return`：**这一招到此为止**，下面那一句 `fn(...)` 根本轮不到执行，里面那招喊都不喊。\n- 不成立才往下走到 `return fn(*args, **kwargs)` —— 原样投喂给里面那一招。\n\n⚠️ **壳里看不见名字**：壳上写的只有 `args[0]`，不能写 `n`。因为壳是通用的一层，它根本不知道里面那一招把小鱼干叫 `n` 还是叫 `a`。想拿到「第一个」就只能按位置去取。\n\n⚠️ 这一题里 `翻三倍` 是**自己印**结果的，壳叼回来的那个「空」没人用，所以外面只写 `翻三倍(x)`、不写 `print(翻三倍(x))`。要是套上一招**叼回**战利品的招式，那就得在外面 `print` 出来才看得见。\n\n⚠️ 把门这一层**不改变原来的规矩**，它只是在门口多站了一个看门的 —— 里面那一招还是原来那一招，本喵一个字都没改它。"
+}

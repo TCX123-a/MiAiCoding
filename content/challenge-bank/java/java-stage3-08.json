@@ -1,0 +1,414 @@
+{
+  "lessonId": "java-stage3-08",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-java-s3-08-append-missing-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵拿同一张门牌同一天写了两笔账：第一笔「小橘 2 条」，第二笔「大肥鱼 7 条」。\n\n可念回来只剩第二笔，第一笔**连影子都没有** —— 而且一个字都不红。\n\n你帮本喵看看第二手少了哪一声喊，把它补上 —— 改好之后两笔都在，先写的在前。\n\n（这一题**不用投喂任何东西**。）",
+      "brokenCode": "import java.nio.file.Files;\nimport java.nio.file.Path;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"账本.txt\");\n\n        Files.writeString(门牌, \"小橘 2 条\\n\");\n        Files.writeString(门牌, \"大肥鱼 7 条\\n\");\n\n        System.out.println(\"念回来：\");\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "referenceFix": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"账本.txt\");\n\n        Files.writeString(门牌, \"小橘 2 条\\n\");\n        Files.writeString(门牌, \"大肥鱼 7 条\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"念回来：\");\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "念回来：\n小橘 2 条\n大肥鱼 7 条",
+      "stdin": null,
+      "explanation": "**一、`Files.writeString` 默认那三样规矩里有一条是「先擦干净再写」（从头写）。** 第一手写完，文件里躺着「小橘 2 条」；第二手没喊别的话，它就照默认来：**先把文件擦成空的**，再写「大肥鱼 7 条」 —— 第一笔就是这么没的。\n\n**二、想接着后面添，得在本喵这头喊一声：**`StandardOpenOption.APPEND`。它写在 `writeString` 的**第三格**上（前两格是门牌、要写的字），喊了之后第二手才是「跟在别人后面写」。\n\n**三、这一脚为什么不红。** 在它眼里，「从头写」是一个完全正常的动作 —— 文件本来就好好的，它也照着规矩办完了。所以这类错只能靠**默认值意识**挡：每回写下 `writeString`，先问自己一句「本喵是想**盖掉**它，还是想**添上去**」。\n\n**四、对照着看。** 上一课的「忘了收工」是本喵该做没做的动作没人提醒；这一题反过来 —— 它**默默替本喵做了一个**本喵没打算做的动作（擦干净）。两种都一个共同点：**不红不响**，只有念回来才发现不对。",
+      "templateId": "java-s3-08-append-missing",
+      "params": {
+        "n1": "小橘",
+        "c1": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:24.156Z",
+        "hash": "5b97b1f58b48330d"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-append-missing-015",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵拿同一张门牌同一天写了两笔账：第一笔「狸花 9 条」，第二笔「大肥鱼 7 条」。\n\n可念回来只剩第二笔，第一笔**连影子都没有** —— 而且一个字都不红。\n\n你帮本喵看看第二手少了哪一声喊，把它补上 —— 改好之后两笔都在，先写的在前。\n\n（这一题**不用投喂任何东西**。）",
+      "brokenCode": "import java.nio.file.Files;\nimport java.nio.file.Path;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"账本.txt\");\n\n        Files.writeString(门牌, \"狸花 9 条\\n\");\n        Files.writeString(门牌, \"大肥鱼 7 条\\n\");\n\n        System.out.println(\"念回来：\");\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "referenceFix": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"账本.txt\");\n\n        Files.writeString(门牌, \"狸花 9 条\\n\");\n        Files.writeString(门牌, \"大肥鱼 7 条\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"念回来：\");\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "念回来：\n狸花 9 条\n大肥鱼 7 条",
+      "stdin": null,
+      "explanation": "**一、`Files.writeString` 默认那三样规矩里有一条是「先擦干净再写」（从头写）。** 第一手写完，文件里躺着「狸花 9 条」；第二手没喊别的话，它就照默认来：**先把文件擦成空的**，再写「大肥鱼 7 条」 —— 第一笔就是这么没的。\n\n**二、想接着后面添，得在本喵这头喊一声：**`StandardOpenOption.APPEND`。它写在 `writeString` 的**第三格**上（前两格是门牌、要写的字），喊了之后第二手才是「跟在别人后面写」。\n\n**三、这一脚为什么不红。** 在它眼里，「从头写」是一个完全正常的动作 —— 文件本来就好好的，它也照着规矩办完了。所以这类错只能靠**默认值意识**挡：每回写下 `writeString`，先问自己一句「本喵是想**盖掉**它，还是想**添上去**」。\n\n**四、对照着看。** 上一课的「忘了收工」是本喵该做没做的动作没人提醒；这一题反过来 —— 它**默默替本喵做了一个**本喵没打算做的动作（擦干净）。两种都一个共同点：**不红不响**，只有念回来才发现不对。",
+      "templateId": "java-s3-08-append-missing",
+      "params": {
+        "n1": "狸花",
+        "c1": 9
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:25.858Z",
+        "hash": "c77b2472a98754c2"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-channel-roundtrip-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要用**管子 + 货舱**这套家什，把 `小橘 2 条` 这串字搬进文件、再搬回来念。\n\n请你写个程序，照这个次序做：\n\n1. 撕一张门牌（文件叫 `鱼塘.txt`）；\n2. 开一根**往里灌**的管子：文件不在就建一个（`CREATE`）、这一头是灌的（`WRITE`）；\n3. 把那串字按 UTF-8 变成字节、糊一只货舱，整趟灌进去，然后**收工**；\n4. 换一根**往外拉**的管子（`READ`）：先照它的 `size()` 备一只正好装得下的货舱，把字节拉进来，再把**书签拨回第一格**；\n5. 印一行 `念到：` 后面接拼回来的那串字 —— 从书签现在的位置起、取还剩的那些字节、按 UTF-8 拼回一串字。\n\n跑完屏幕上该是 `念到：小橘 2 条` 喵。\n\n（这一题**不用投喂任何东西**：开门、灌、拉、念都在程序里一次做完。）",
+      "starter": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"小橘 2 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+      "expectedOutput": "念到：小橘 2 条",
+      "stdin": null,
+      "explanation": "**一、管子得自己开自己收，货舱得自己备。** `FileChannel.open(门牌, 规矩...)` 开管子，后面那串是**开门的规矩**：`CREATE`（不在就建）、`WRITE`（这一头往里灌）、`READ`（这一头往外拉）。管子不是「一口气」那一路的家什，所以本喵**必须自己 `close()` 收工**。\n\n**二、管子里走的是字节，所以中间要过一道字典。** `\"小橘 2 条\".getBytes(StandardCharsets.UTF_8)` 把一串字变成字节们，`ByteBuffer.wrap(字节们)` 拿它糊一只货舱 —— 灌的那一头就备好了。\n\n**三、书签是这套家什最容易翻车的地方。** 拉完字节，书签停在末尾（意思是「本喵写到这儿了」）；要念，就得 `flip()` 把它**拨回第一格**，这时候 `position()` 是 `0`、`remaining()` 是刚拉进来的那一整排。本喵那句长长的拼字读作「从书签现在的位置起，取还剩的这些字节，按 UTF-8 拼回一串字」—— 记住**念之前先拨**，这一脚就不会摔。\n\n**四、备货舱照 `入口.size()` 最省事。** `size()` 报管子里那头一共几个字节，照它 `allocate` 一只**正好装得下**的货舱，一趟就能拉完，不多不少。",
+      "templateId": "java-s3-08-channel-roundtrip",
+      "params": {
+        "n1": "小橘",
+        "c1": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:35.863Z",
+        "hash": "eaca01d3c4c61286"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-channel-roundtrip-003",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要用**管子 + 货舱**这套家什，把 `小橘 5 条` 这串字搬进文件、再搬回来念。\n\n请你写个程序，照这个次序做：\n\n1. 撕一张门牌（文件叫 `鱼塘.txt`）；\n2. 开一根**往里灌**的管子：文件不在就建一个（`CREATE`）、这一头是灌的（`WRITE`）；\n3. 把那串字按 UTF-8 变成字节、糊一只货舱，整趟灌进去，然后**收工**；\n4. 换一根**往外拉**的管子（`READ`）：先照它的 `size()` 备一只正好装得下的货舱，把字节拉进来，再把**书签拨回第一格**；\n5. 印一行 `念到：` 后面接拼回来的那串字 —— 从书签现在的位置起、取还剩的那些字节、按 UTF-8 拼回一串字。\n\n跑完屏幕上该是 `念到：小橘 5 条` 喵。\n\n（这一题**不用投喂任何东西**：开门、灌、拉、念都在程序里一次做完。）",
+      "starter": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"小橘 5 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+      "expectedOutput": "念到：小橘 5 条",
+      "stdin": null,
+      "explanation": "**一、管子得自己开自己收，货舱得自己备。** `FileChannel.open(门牌, 规矩...)` 开管子，后面那串是**开门的规矩**：`CREATE`（不在就建）、`WRITE`（这一头往里灌）、`READ`（这一头往外拉）。管子不是「一口气」那一路的家什，所以本喵**必须自己 `close()` 收工**。\n\n**二、管子里走的是字节，所以中间要过一道字典。** `\"小橘 5 条\".getBytes(StandardCharsets.UTF_8)` 把一串字变成字节们，`ByteBuffer.wrap(字节们)` 拿它糊一只货舱 —— 灌的那一头就备好了。\n\n**三、书签是这套家什最容易翻车的地方。** 拉完字节，书签停在末尾（意思是「本喵写到这儿了」）；要念，就得 `flip()` 把它**拨回第一格**，这时候 `position()` 是 `0`、`remaining()` 是刚拉进来的那一整排。本喵那句长长的拼字读作「从书签现在的位置起，取还剩的这些字节，按 UTF-8 拼回一串字」—— 记住**念之前先拨**，这一脚就不会摔。\n\n**四、备货舱照 `入口.size()` 最省事。** `size()` 报管子里那头一共几个字节，照它 `allocate` 一只**正好装得下**的货舱，一趟就能拉完，不多不少。",
+      "templateId": "java-s3-08-channel-roundtrip",
+      "params": {
+        "n1": "小橘",
+        "c1": 5
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:46.092Z",
+        "hash": "3f55dc7fd21ef371"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-channel-roundtrip-006",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要用**管子 + 货舱**这套家什，把 `小橘 8 条` 这串字搬进文件、再搬回来念。\n\n请你写个程序，照这个次序做：\n\n1. 撕一张门牌（文件叫 `鱼塘.txt`）；\n2. 开一根**往里灌**的管子：文件不在就建一个（`CREATE`）、这一头是灌的（`WRITE`）；\n3. 把那串字按 UTF-8 变成字节、糊一只货舱，整趟灌进去，然后**收工**；\n4. 换一根**往外拉**的管子（`READ`）：先照它的 `size()` 备一只正好装得下的货舱，把字节拉进来，再把**书签拨回第一格**；\n5. 印一行 `念到：` 后面接拼回来的那串字 —— 从书签现在的位置起、取还剩的那些字节、按 UTF-8 拼回一串字。\n\n跑完屏幕上该是 `念到：小橘 8 条` 喵。\n\n（这一题**不用投喂任何东西**：开门、灌、拉、念都在程序里一次做完。）",
+      "starter": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"小橘 8 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+      "expectedOutput": "念到：小橘 8 条",
+      "stdin": null,
+      "explanation": "**一、管子得自己开自己收，货舱得自己备。** `FileChannel.open(门牌, 规矩...)` 开管子，后面那串是**开门的规矩**：`CREATE`（不在就建）、`WRITE`（这一头往里灌）、`READ`（这一头往外拉）。管子不是「一口气」那一路的家什，所以本喵**必须自己 `close()` 收工**。\n\n**二、管子里走的是字节，所以中间要过一道字典。** `\"小橘 8 条\".getBytes(StandardCharsets.UTF_8)` 把一串字变成字节们，`ByteBuffer.wrap(字节们)` 拿它糊一只货舱 —— 灌的那一头就备好了。\n\n**三、书签是这套家什最容易翻车的地方。** 拉完字节，书签停在末尾（意思是「本喵写到这儿了」）；要念，就得 `flip()` 把它**拨回第一格**，这时候 `position()` 是 `0`、`remaining()` 是刚拉进来的那一整排。本喵那句长长的拼字读作「从书签现在的位置起，取还剩的这些字节，按 UTF-8 拼回一串字」—— 记住**念之前先拨**，这一脚就不会摔。\n\n**四、备货舱照 `入口.size()` 最省事。** `size()` 报管子里那头一共几个字节，照它 `allocate` 一只**正好装得下**的货舱，一趟就能拉完，不多不少。",
+      "templateId": "java-s3-08-channel-roundtrip",
+      "params": {
+        "n1": "小橘",
+        "c1": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:48.324Z",
+        "hash": "c5e6072d90395b51"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-channel-roundtrip-009",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要用**管子 + 货舱**这套家什，把 `狸花 3 条` 这串字搬进文件、再搬回来念。\n\n请你写个程序，照这个次序做：\n\n1. 撕一张门牌（文件叫 `鱼塘.txt`）；\n2. 开一根**往里灌**的管子：文件不在就建一个（`CREATE`）、这一头是灌的（`WRITE`）；\n3. 把那串字按 UTF-8 变成字节、糊一只货舱，整趟灌进去，然后**收工**；\n4. 换一根**往外拉**的管子（`READ`）：先照它的 `size()` 备一只正好装得下的货舱，把字节拉进来，再把**书签拨回第一格**；\n5. 印一行 `念到：` 后面接拼回来的那串字 —— 从书签现在的位置起、取还剩的那些字节、按 UTF-8 拼回一串字。\n\n跑完屏幕上该是 `念到：狸花 3 条` 喵。\n\n（这一题**不用投喂任何东西**：开门、灌、拉、念都在程序里一次做完。）",
+      "starter": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"狸花 3 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+      "expectedOutput": "念到：狸花 3 条",
+      "stdin": null,
+      "explanation": "**一、管子得自己开自己收，货舱得自己备。** `FileChannel.open(门牌, 规矩...)` 开管子，后面那串是**开门的规矩**：`CREATE`（不在就建）、`WRITE`（这一头往里灌）、`READ`（这一头往外拉）。管子不是「一口气」那一路的家什，所以本喵**必须自己 `close()` 收工**。\n\n**二、管子里走的是字节，所以中间要过一道字典。** `\"狸花 3 条\".getBytes(StandardCharsets.UTF_8)` 把一串字变成字节们，`ByteBuffer.wrap(字节们)` 拿它糊一只货舱 —— 灌的那一头就备好了。\n\n**三、书签是这套家什最容易翻车的地方。** 拉完字节，书签停在末尾（意思是「本喵写到这儿了」）；要念，就得 `flip()` 把它**拨回第一格**，这时候 `position()` 是 `0`、`remaining()` 是刚拉进来的那一整排。本喵那句长长的拼字读作「从书签现在的位置起，取还剩的这些字节，按 UTF-8 拼回一串字」—— 记住**念之前先拨**，这一脚就不会摔。\n\n**四、备货舱照 `入口.size()` 最省事。** `size()` 报管子里那头一共几个字节，照它 `allocate` 一只**正好装得下**的货舱，一趟就能拉完，不多不少。",
+      "templateId": "java-s3-08-channel-roundtrip",
+      "params": {
+        "n1": "狸花",
+        "c1": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:50.540Z",
+        "hash": "c23c4dada1110cc7"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-channel-roundtrip-012",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要用**管子 + 货舱**这套家什，把 `狸花 6 条` 这串字搬进文件、再搬回来念。\n\n请你写个程序，照这个次序做：\n\n1. 撕一张门牌（文件叫 `鱼塘.txt`）；\n2. 开一根**往里灌**的管子：文件不在就建一个（`CREATE`）、这一头是灌的（`WRITE`）；\n3. 把那串字按 UTF-8 变成字节、糊一只货舱，整趟灌进去，然后**收工**；\n4. 换一根**往外拉**的管子（`READ`）：先照它的 `size()` 备一只正好装得下的货舱，把字节拉进来，再把**书签拨回第一格**；\n5. 印一行 `念到：` 后面接拼回来的那串字 —— 从书签现在的位置起、取还剩的那些字节、按 UTF-8 拼回一串字。\n\n跑完屏幕上该是 `念到：狸花 6 条` 喵。\n\n（这一题**不用投喂任何东西**：开门、灌、拉、念都在程序里一次做完。）",
+      "starter": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"狸花 6 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+      "expectedOutput": "念到：狸花 6 条",
+      "stdin": null,
+      "explanation": "**一、管子得自己开自己收，货舱得自己备。** `FileChannel.open(门牌, 规矩...)` 开管子，后面那串是**开门的规矩**：`CREATE`（不在就建）、`WRITE`（这一头往里灌）、`READ`（这一头往外拉）。管子不是「一口气」那一路的家什，所以本喵**必须自己 `close()` 收工**。\n\n**二、管子里走的是字节，所以中间要过一道字典。** `\"狸花 6 条\".getBytes(StandardCharsets.UTF_8)` 把一串字变成字节们，`ByteBuffer.wrap(字节们)` 拿它糊一只货舱 —— 灌的那一头就备好了。\n\n**三、书签是这套家什最容易翻车的地方。** 拉完字节，书签停在末尾（意思是「本喵写到这儿了」）；要念，就得 `flip()` 把它**拨回第一格**，这时候 `position()` 是 `0`、`remaining()` 是刚拉进来的那一整排。本喵那句长长的拼字读作「从书签现在的位置起，取还剩的这些字节，按 UTF-8 拼回一串字」—— 记住**念之前先拨**，这一脚就不会摔。\n\n**四、备货舱照 `入口.size()` 最省事。** `size()` 报管子里那头一共几个字节，照它 `allocate` 一只**正好装得下**的货舱，一趟就能拉完，不多不少。",
+      "templateId": "java-s3-08-channel-roundtrip",
+      "params": {
+        "n1": "狸花",
+        "c1": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:52.802Z",
+        "hash": "7a2a4ba8fffdb17a"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-channel-roundtrip-015",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要用**管子 + 货舱**这套家什，把 `狸花 9 条` 这串字搬进文件、再搬回来念。\n\n请你写个程序，照这个次序做：\n\n1. 撕一张门牌（文件叫 `鱼塘.txt`）；\n2. 开一根**往里灌**的管子：文件不在就建一个（`CREATE`）、这一头是灌的（`WRITE`）；\n3. 把那串字按 UTF-8 变成字节、糊一只货舱，整趟灌进去，然后**收工**；\n4. 换一根**往外拉**的管子（`READ`）：先照它的 `size()` 备一只正好装得下的货舱，把字节拉进来，再把**书签拨回第一格**；\n5. 印一行 `念到：` 后面接拼回来的那串字 —— 从书签现在的位置起、取还剩的那些字节、按 UTF-8 拼回一串字。\n\n跑完屏幕上该是 `念到：狸花 9 条` 喵。\n\n（这一题**不用投喂任何东西**：开门、灌、拉、念都在程序里一次做完。）",
+      "starter": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"狸花 9 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+      "expectedOutput": "念到：狸花 9 条",
+      "stdin": null,
+      "explanation": "**一、管子得自己开自己收，货舱得自己备。** `FileChannel.open(门牌, 规矩...)` 开管子，后面那串是**开门的规矩**：`CREATE`（不在就建）、`WRITE`（这一头往里灌）、`READ`（这一头往外拉）。管子不是「一口气」那一路的家什，所以本喵**必须自己 `close()` 收工**。\n\n**二、管子里走的是字节，所以中间要过一道字典。** `\"狸花 9 条\".getBytes(StandardCharsets.UTF_8)` 把一串字变成字节们，`ByteBuffer.wrap(字节们)` 拿它糊一只货舱 —— 灌的那一头就备好了。\n\n**三、书签是这套家什最容易翻车的地方。** 拉完字节，书签停在末尾（意思是「本喵写到这儿了」）；要念，就得 `flip()` 把它**拨回第一格**，这时候 `position()` 是 `0`、`remaining()` 是刚拉进来的那一整排。本喵那句长长的拼字读作「从书签现在的位置起，取还剩的这些字节，按 UTF-8 拼回一串字」—— 记住**念之前先拨**，这一脚就不会摔。\n\n**四、备货舱照 `入口.size()` 最省事。** `size()` 报管子里那头一共几个字节，照它 `allocate` 一只**正好装得下**的货舱，一趟就能拉完，不多不少。",
+      "templateId": "java-s3-08-channel-roundtrip",
+      "params": {
+        "n1": "狸花",
+        "c1": 9
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:37.099Z",
+        "hash": "ddb8c527c3804528"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-directories-append-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把账本放进**两层柜子**里，路径是 `鱼塘/深水区/账本.txt`（本喵这里写斜杠是为了好读，实际拼的时候交给它自己补分隔符）。\n\n请你写个程序，照这个次序做：\n\n1. 先撕一张**柜子**的门牌：`鱼塘` 底下的 `深水区`；\n2. 把柜子**造出来** —— 不在就造，已经在也别让它翻脸；\n3. 再撕一张**账本**的门牌：`鱼塘`、`深水区`、`账本.txt` 三段拼出来的；\n4. 第 1 笔写成一行 `小橘 2 条`（后面跟一个换行）；\n5. 第 2 笔写成一行 `大肥鱼 2 条`（后面跟一个换行），**接着后面添**，别把第 1 笔擦掉；\n6. 印一行 `几个字节：` 后面接**它自己数出来的**字节数（不是本喵替它算好写死的）；\n7. 最后把整份文件**一口气念回来、原样印出来**（不加任何前缀）—— 两笔都要在，先写的在前。\n\n（这一题**不用投喂任何东西**；柜子和文件都得靠程序自己造出来。）",
+      "starter": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 柜子 = Path.of(\"鱼塘\", \"深水区\");\n        Files.createDirectories(柜子);\n\n        Path 门牌 = Path.of(\"鱼塘\", \"深水区\", \"账本.txt\");\n\n        Files.writeString(门牌, \"小橘 2 条\\n\");\n        Files.writeString(门牌, \"大肥鱼 2 条\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"几个字节：\" + Files.size(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "几个字节：29\n小橘 2 条\n大肥鱼 2 条",
+      "stdin": null,
+      "explanation": "**一、柜子得先造出来，文件才有地方落。** `Files.createDirectories(柜子)` 读作「这个柜子不在就先造一个」——中间缺的每一层它都替本喵补齐；**已经在的话它也不翻脸**，照样往下走。所以这一步不用先问在不在，直接造最省事。\n\n**二、门牌是拼出来的。** `Path.of(\"鱼塘\", \"深水区\", \"账本.txt\")` 一截一截交进去，分隔符它自己补 —— 本喵那串「鱼塘/深水区/账本.txt」只是写给人看的，真拼的时候别自己拿字加斜杠。\n\n**三、两笔的写法不一样，差的就是那一声。** 第 1 笔照默认来（文件不在就建、从头写）；第 2 笔多喊一声 `StandardOpenOption.APPEND` 才是**接着后面添**。少了这一声，第 1 笔当场被擦掉，念回来只剩一行。\n\n**四、`Files.size` 数的是字节，不是字数。** 本喵这里写的「26」只是个样子：一个汉字占好几个字节，真数是多少得让程序自己报 —— 所以这一行**别在心里估**，交给它数。\n\n**五、念回来还是那一手「一口气」。** `Files.readString` 把整份文件端回来、原样印出去，两笔都在、先写的在前。",
+      "templateId": "java-s3-08-directories-append",
+      "params": {
+        "n1": "小橘",
+        "n2": "大肥鱼",
+        "c1": 2,
+        "c2": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:38.711Z",
+        "hash": "d48fc1d8877c6f95"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-directories-append-051",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把账本放进**两层柜子**里，路径是 `鱼塘/深水区/账本.txt`（本喵这里写斜杠是为了好读，实际拼的时候交给它自己补分隔符）。\n\n请你写个程序，照这个次序做：\n\n1. 先撕一张**柜子**的门牌：`鱼塘` 底下的 `深水区`；\n2. 把柜子**造出来** —— 不在就造，已经在也别让它翻脸；\n3. 再撕一张**账本**的门牌：`鱼塘`、`深水区`、`账本.txt` 三段拼出来的；\n4. 第 1 笔写成一行 `小橘 8 条`（后面跟一个换行）；\n5. 第 2 笔写成一行 `大肥鱼 5 条`（后面跟一个换行），**接着后面添**，别把第 1 笔擦掉；\n6. 印一行 `几个字节：` 后面接**它自己数出来的**字节数（不是本喵替它算好写死的）；\n7. 最后把整份文件**一口气念回来、原样印出来**（不加任何前缀）—— 两笔都要在，先写的在前。\n\n（这一题**不用投喂任何东西**；柜子和文件都得靠程序自己造出来。）",
+      "starter": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 柜子 = Path.of(\"鱼塘\", \"深水区\");\n        Files.createDirectories(柜子);\n\n        Path 门牌 = Path.of(\"鱼塘\", \"深水区\", \"账本.txt\");\n\n        Files.writeString(门牌, \"小橘 8 条\\n\");\n        Files.writeString(门牌, \"大肥鱼 5 条\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"几个字节：\" + Files.size(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "几个字节：29\n小橘 8 条\n大肥鱼 5 条",
+      "stdin": null,
+      "explanation": "**一、柜子得先造出来，文件才有地方落。** `Files.createDirectories(柜子)` 读作「这个柜子不在就先造一个」——中间缺的每一层它都替本喵补齐；**已经在的话它也不翻脸**，照样往下走。所以这一步不用先问在不在，直接造最省事。\n\n**二、门牌是拼出来的。** `Path.of(\"鱼塘\", \"深水区\", \"账本.txt\")` 一截一截交进去，分隔符它自己补 —— 本喵那串「鱼塘/深水区/账本.txt」只是写给人看的，真拼的时候别自己拿字加斜杠。\n\n**三、两笔的写法不一样，差的就是那一声。** 第 1 笔照默认来（文件不在就建、从头写）；第 2 笔多喊一声 `StandardOpenOption.APPEND` 才是**接着后面添**。少了这一声，第 1 笔当场被擦掉，念回来只剩一行。\n\n**四、`Files.size` 数的是字节，不是字数。** 本喵这里写的「26」只是个样子：一个汉字占好几个字节，真数是多少得让程序自己报 —— 所以这一行**别在心里估**，交给它数。\n\n**五、念回来还是那一手「一口气」。** `Files.readString` 把整份文件端回来、原样印出去，两笔都在、先写的在前。",
+      "templateId": "java-s3-08-directories-append",
+      "params": {
+        "n1": "小橘",
+        "n2": "大肥鱼",
+        "c1": 8,
+        "c2": 5
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:54.984Z",
+        "hash": "87c61e3cdfc46b4e"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-directories-append-102",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把账本放进**两层柜子**里，路径是 `鱼塘/深水区/账本.txt`（本喵这里写斜杠是为了好读，实际拼的时候交给它自己补分隔符）。\n\n请你写个程序，照这个次序做：\n\n1. 先撕一张**柜子**的门牌：`鱼塘` 底下的 `深水区`；\n2. 把柜子**造出来** —— 不在就造，已经在也别让它翻脸；\n3. 再撕一张**账本**的门牌：`鱼塘`、`深水区`、`账本.txt` 三段拼出来的；\n4. 第 1 笔写成一行 `小橘 6 条`（后面跟一个换行）；\n5. 第 2 笔写成一行 `团子 8 条`（后面跟一个换行），**接着后面添**，别把第 1 笔擦掉；\n6. 印一行 `几个字节：` 后面接**它自己数出来的**字节数（不是本喵替它算好写死的）；\n7. 最后把整份文件**一口气念回来、原样印出来**（不加任何前缀）—— 两笔都要在，先写的在前。\n\n（这一题**不用投喂任何东西**；柜子和文件都得靠程序自己造出来。）",
+      "starter": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 柜子 = Path.of(\"鱼塘\", \"深水区\");\n        Files.createDirectories(柜子);\n\n        Path 门牌 = Path.of(\"鱼塘\", \"深水区\", \"账本.txt\");\n\n        Files.writeString(门牌, \"小橘 6 条\\n\");\n        Files.writeString(门牌, \"团子 8 条\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"几个字节：\" + Files.size(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "几个字节：26\n小橘 6 条\n团子 8 条",
+      "stdin": null,
+      "explanation": "**一、柜子得先造出来，文件才有地方落。** `Files.createDirectories(柜子)` 读作「这个柜子不在就先造一个」——中间缺的每一层它都替本喵补齐；**已经在的话它也不翻脸**，照样往下走。所以这一步不用先问在不在，直接造最省事。\n\n**二、门牌是拼出来的。** `Path.of(\"鱼塘\", \"深水区\", \"账本.txt\")` 一截一截交进去，分隔符它自己补 —— 本喵那串「鱼塘/深水区/账本.txt」只是写给人看的，真拼的时候别自己拿字加斜杠。\n\n**三、两笔的写法不一样，差的就是那一声。** 第 1 笔照默认来（文件不在就建、从头写）；第 2 笔多喊一声 `StandardOpenOption.APPEND` 才是**接着后面添**。少了这一声，第 1 笔当场被擦掉，念回来只剩一行。\n\n**四、`Files.size` 数的是字节，不是字数。** 本喵这里写的「26」只是个样子：一个汉字占好几个字节，真数是多少得让程序自己报 —— 所以这一行**别在心里估**，交给它数。\n\n**五、念回来还是那一手「一口气」。** `Files.readString` 把整份文件端回来、原样印出去，两笔都在、先写的在前。",
+      "templateId": "java-s3-08-directories-append",
+      "params": {
+        "n1": "小橘",
+        "n2": "团子",
+        "c1": 6,
+        "c2": 8
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:57.096Z",
+        "hash": "4458a17d28dae35b"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-directories-append-153",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把账本放进**两层柜子**里，路径是 `鱼塘/深水区/账本.txt`（本喵这里写斜杠是为了好读，实际拼的时候交给它自己补分隔符）。\n\n请你写个程序，照这个次序做：\n\n1. 先撕一张**柜子**的门牌：`鱼塘` 底下的 `深水区`；\n2. 把柜子**造出来** —— 不在就造，已经在也别让它翻脸；\n3. 再撕一张**账本**的门牌：`鱼塘`、`深水区`、`账本.txt` 三段拼出来的；\n4. 第 1 笔写成一行 `狸花 5 条`（后面跟一个换行）；\n5. 第 2 笔写成一行 `大肥鱼 3 条`（后面跟一个换行），**接着后面添**，别把第 1 笔擦掉；\n6. 印一行 `几个字节：` 后面接**它自己数出来的**字节数（不是本喵替它算好写死的）；\n7. 最后把整份文件**一口气念回来、原样印出来**（不加任何前缀）—— 两笔都要在，先写的在前。\n\n（这一题**不用投喂任何东西**；柜子和文件都得靠程序自己造出来。）",
+      "starter": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 柜子 = Path.of(\"鱼塘\", \"深水区\");\n        Files.createDirectories(柜子);\n\n        Path 门牌 = Path.of(\"鱼塘\", \"深水区\", \"账本.txt\");\n\n        Files.writeString(门牌, \"狸花 5 条\\n\");\n        Files.writeString(门牌, \"大肥鱼 3 条\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"几个字节：\" + Files.size(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "几个字节：29\n狸花 5 条\n大肥鱼 3 条",
+      "stdin": null,
+      "explanation": "**一、柜子得先造出来，文件才有地方落。** `Files.createDirectories(柜子)` 读作「这个柜子不在就先造一个」——中间缺的每一层它都替本喵补齐；**已经在的话它也不翻脸**，照样往下走。所以这一步不用先问在不在，直接造最省事。\n\n**二、门牌是拼出来的。** `Path.of(\"鱼塘\", \"深水区\", \"账本.txt\")` 一截一截交进去，分隔符它自己补 —— 本喵那串「鱼塘/深水区/账本.txt」只是写给人看的，真拼的时候别自己拿字加斜杠。\n\n**三、两笔的写法不一样，差的就是那一声。** 第 1 笔照默认来（文件不在就建、从头写）；第 2 笔多喊一声 `StandardOpenOption.APPEND` 才是**接着后面添**。少了这一声，第 1 笔当场被擦掉，念回来只剩一行。\n\n**四、`Files.size` 数的是字节，不是字数。** 本喵这里写的「26」只是个样子：一个汉字占好几个字节，真数是多少得让程序自己报 —— 所以这一行**别在心里估**，交给它数。\n\n**五、念回来还是那一手「一口气」。** `Files.readString` 把整份文件端回来、原样印出去，两笔都在、先写的在前。",
+      "templateId": "java-s3-08-directories-append",
+      "params": {
+        "n1": "狸花",
+        "n2": "大肥鱼",
+        "c1": 5,
+        "c2": 3
+      },
+      "verified": {
+        "at": "2026-10-20T17:18:59.234Z",
+        "hash": "af49994da11d960e"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-directories-append-204",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把账本放进**两层柜子**里，路径是 `鱼塘/深水区/账本.txt`（本喵这里写斜杠是为了好读，实际拼的时候交给它自己补分隔符）。\n\n请你写个程序，照这个次序做：\n\n1. 先撕一张**柜子**的门牌：`鱼塘` 底下的 `深水区`；\n2. 把柜子**造出来** —— 不在就造，已经在也别让它翻脸；\n3. 再撕一张**账本**的门牌：`鱼塘`、`深水区`、`账本.txt` 三段拼出来的；\n4. 第 1 笔写成一行 `狸花 3 条`（后面跟一个换行）；\n5. 第 2 笔写成一行 `团子 6 条`（后面跟一个换行），**接着后面添**，别把第 1 笔擦掉；\n6. 印一行 `几个字节：` 后面接**它自己数出来的**字节数（不是本喵替它算好写死的）；\n7. 最后把整份文件**一口气念回来、原样印出来**（不加任何前缀）—— 两笔都要在，先写的在前。\n\n（这一题**不用投喂任何东西**；柜子和文件都得靠程序自己造出来。）",
+      "starter": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 柜子 = Path.of(\"鱼塘\", \"深水区\");\n        Files.createDirectories(柜子);\n\n        Path 门牌 = Path.of(\"鱼塘\", \"深水区\", \"账本.txt\");\n\n        Files.writeString(门牌, \"狸花 3 条\\n\");\n        Files.writeString(门牌, \"团子 6 条\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"几个字节：\" + Files.size(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "几个字节：26\n狸花 3 条\n团子 6 条",
+      "stdin": null,
+      "explanation": "**一、柜子得先造出来，文件才有地方落。** `Files.createDirectories(柜子)` 读作「这个柜子不在就先造一个」——中间缺的每一层它都替本喵补齐；**已经在的话它也不翻脸**，照样往下走。所以这一步不用先问在不在，直接造最省事。\n\n**二、门牌是拼出来的。** `Path.of(\"鱼塘\", \"深水区\", \"账本.txt\")` 一截一截交进去，分隔符它自己补 —— 本喵那串「鱼塘/深水区/账本.txt」只是写给人看的，真拼的时候别自己拿字加斜杠。\n\n**三、两笔的写法不一样，差的就是那一声。** 第 1 笔照默认来（文件不在就建、从头写）；第 2 笔多喊一声 `StandardOpenOption.APPEND` 才是**接着后面添**。少了这一声，第 1 笔当场被擦掉，念回来只剩一行。\n\n**四、`Files.size` 数的是字节，不是字数。** 本喵这里写的「26」只是个样子：一个汉字占好几个字节，真数是多少得让程序自己报 —— 所以这一行**别在心里估**，交给它数。\n\n**五、念回来还是那一手「一口气」。** `Files.readString` 把整份文件端回来、原样印出去，两笔都在、先写的在前。",
+      "templateId": "java-s3-08-directories-append",
+      "params": {
+        "n1": "狸花",
+        "n2": "团子",
+        "c1": 3,
+        "c2": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:19:01.352Z",
+        "hash": "c3c512d283198c55"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-directories-append-255",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把账本放进**两层柜子**里，路径是 `鱼塘/深水区/账本.txt`（本喵这里写斜杠是为了好读，实际拼的时候交给它自己补分隔符）。\n\n请你写个程序，照这个次序做：\n\n1. 先撕一张**柜子**的门牌：`鱼塘` 底下的 `深水区`；\n2. 把柜子**造出来** —— 不在就造，已经在也别让它翻脸；\n3. 再撕一张**账本**的门牌：`鱼塘`、`深水区`、`账本.txt` 三段拼出来的；\n4. 第 1 笔写成一行 `狸花 9 条`（后面跟一个换行）；\n5. 第 2 笔写成一行 `团子 9 条`（后面跟一个换行），**接着后面添**，别把第 1 笔擦掉；\n6. 印一行 `几个字节：` 后面接**它自己数出来的**字节数（不是本喵替它算好写死的）；\n7. 最后把整份文件**一口气念回来、原样印出来**（不加任何前缀）—— 两笔都要在，先写的在前。\n\n（这一题**不用投喂任何东西**；柜子和文件都得靠程序自己造出来。）",
+      "starter": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 柜子 = Path.of(\"鱼塘\", \"深水区\");\n        Files.createDirectories(柜子);\n\n        Path 门牌 = Path.of(\"鱼塘\", \"深水区\", \"账本.txt\");\n\n        Files.writeString(门牌, \"狸花 9 条\\n\");\n        Files.writeString(门牌, \"团子 9 条\\n\", StandardOpenOption.APPEND);\n\n        System.out.println(\"几个字节：\" + Files.size(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "几个字节：26\n狸花 9 条\n团子 9 条",
+      "stdin": null,
+      "explanation": "**一、柜子得先造出来，文件才有地方落。** `Files.createDirectories(柜子)` 读作「这个柜子不在就先造一个」——中间缺的每一层它都替本喵补齐；**已经在的话它也不翻脸**，照样往下走。所以这一步不用先问在不在，直接造最省事。\n\n**二、门牌是拼出来的。** `Path.of(\"鱼塘\", \"深水区\", \"账本.txt\")` 一截一截交进去，分隔符它自己补 —— 本喵那串「鱼塘/深水区/账本.txt」只是写给人看的，真拼的时候别自己拿字加斜杠。\n\n**三、两笔的写法不一样，差的就是那一声。** 第 1 笔照默认来（文件不在就建、从头写）；第 2 笔多喊一声 `StandardOpenOption.APPEND` 才是**接着后面添**。少了这一声，第 1 笔当场被擦掉，念回来只剩一行。\n\n**四、`Files.size` 数的是字节，不是字数。** 本喵这里写的「26」只是个样子：一个汉字占好几个字节，真数是多少得让程序自己报 —— 所以这一行**别在心里估**，交给它数。\n\n**五、念回来还是那一手「一口气」。** `Files.readString` 把整份文件端回来、原样印出去，两笔都在、先写的在前。",
+      "templateId": "java-s3-08-directories-append",
+      "params": {
+        "n1": "狸花",
+        "n2": "团子",
+        "c1": 9,
+        "c2": 9
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:39.877Z",
+        "hash": "c3845b14d272004a"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-files-hands-000",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把 **3 笔**账记进一份文件（文件名就叫 `账本.txt`），全部用本课那几句**现成手势**，不要自己开管子。\n\n投喂给程序的是：**第一行一个整数 n**，**后面跟 n 行**，一行一个整数，就是第 1 笔、第 2 笔……第 n 笔的条数。\n\n请你写个程序，照这个次序做：\n\n1. 撕一张门牌；\n2. 第 1 笔写成一行 `第 1 笔：x 条`（x 是投喂进来那个数）；\n3. 剩下每一笔都写成一行 `第 k 笔：x 条`（k 接着往下数），**接着后面添** —— 别把前面写的擦掉；\n4. 印一行 `在不在：` 后面接「这份文件在不在」的结果；\n5. 印一行 `几个字节：` 后面接这份文件几个字节；\n6. 最后把整份文件**一口气念回来、原样印出来**（不加任何前缀）。\n\n比如投喂给程序的是\n\n```text\n3\n9\n6\n6\n```\n\n程序就要叼回\n\n```text\n在不在：true\n几个字节：54\n第 1 笔：9 条\n第 2 笔：6 条\n第 3 笔：6 条\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～ 另外「几个字节」那一行是它自己数出来的，本喵这里不替它算。）",
+      "starter": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n        Path 门牌 = Path.of(\"账本.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n        Path 门牌 = Path.of(\"账本.txt\");\n\n        Files.writeString(门牌, \"第 1 笔：\" + 条数们[0] + \" 条\\n\");\n        for (int i = 1; i < n; i++) {\n            Files.writeString(门牌, \"第 \" + (i + 1) + \" 笔：\" + 条数们[i] + \" 条\\n\", StandardOpenOption.APPEND);\n        }\n\n        System.out.println(\"在不在：\" + Files.exists(门牌));\n        System.out.println(\"几个字节：\" + Files.size(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "在不在：true\n几个字节：54\n第 1 笔：7 条\n第 2 笔：9 条\n第 3 笔：5 条",
+      "stdin": "3\n7\n9\n5\n",
+      "explanation": "**一、全部用现成手势，一步都不用自己开管子。** 门牌用 `Path.of` 撕；写字用 `Files.writeString`；问在不在用 `Files.exists`；数几个字节用 `Files.size`；念回来用 `Files.readString`。这几手自己开自己收，所以整个程序里**一句 `close()` 都不用写**。\n\n**二、第 1 笔和第 2 笔的写法不一样，就是本课那个差别。** 第一笔没喊别的话，照默认来：文件不在就顺手建出来、然后从头写。后面每一笔都得多喊一声 `StandardOpenOption.APPEND`，才是「接着后面添」—— 少了它，每一次都把前面的擦干净，最后只剩最后一笔。\n\n**三、「几个字节」不是「几个字」。** `Files.size` 报的是字节数：本喵这些账是汉字加数字，一个汉字要占好几个字节，所以数出来总是比本喵看得见的字数大。这一行让程序自己数，**别在心里估**。\n\n**四、念回来那一手是「一口气」。** `Files.readString` 把整份文件端回来，原样印出去就是本喵写进去的那几行。这一手跟上一课一口一口的写法**读出来一模一样**，区别只在「谁在端」：小文件它最省事，大东西就不该这么端。",
+      "templateId": "java-s3-08-files-hands",
+      "params": {
+        "n": 3
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:32.469Z",
+        "hash": "3612b63e8459b12f"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-files-hands-001",
+      "type": "codewrite",
+      "lang": "java",
+      "stem": "本喵要把 **4 笔**账记进一份文件（文件名就叫 `账本.txt`），全部用本课那几句**现成手势**，不要自己开管子。\n\n投喂给程序的是：**第一行一个整数 n**，**后面跟 n 行**，一行一个整数，就是第 1 笔、第 2 笔……第 n 笔的条数。\n\n请你写个程序，照这个次序做：\n\n1. 撕一张门牌；\n2. 第 1 笔写成一行 `第 1 笔：x 条`（x 是投喂进来那个数）；\n3. 剩下每一笔都写成一行 `第 k 笔：x 条`（k 接着往下数），**接着后面添** —— 别把前面写的擦掉；\n4. 印一行 `在不在：` 后面接「这份文件在不在」的结果；\n5. 印一行 `几个字节：` 后面接这份文件几个字节；\n6. 最后把整份文件**一口气念回来、原样印出来**（不加任何前缀）。\n\n比如投喂给程序的是\n\n```text\n4\n6\n9\n2\n3\n```\n\n程序就要叼回\n\n```text\n在不在：true\n几个字节：72\n第 1 笔：6 条\n第 2 笔：9 条\n第 3 笔：2 条\n第 4 笔：3 条\n```\n\n（判分的时候喂的是**另一组数**喵，所以别把答案写死～ 另外「几个字节」那一行是它自己数出来的，本喵这里不替它算。）",
+      "starter": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n        Path 门牌 = Path.of(\"账本.txt\");\n\n    }\n}\n",
+      "referenceSolution": "import java.nio.file.Files;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] 条数们 = new int[n];\n        for (int i = 0; i < n; i++) {\n            条数们[i] = sc.nextInt();\n        }\n\n        Path 门牌 = Path.of(\"账本.txt\");\n\n        Files.writeString(门牌, \"第 1 笔：\" + 条数们[0] + \" 条\\n\");\n        for (int i = 1; i < n; i++) {\n            Files.writeString(门牌, \"第 \" + (i + 1) + \" 笔：\" + 条数们[i] + \" 条\\n\", StandardOpenOption.APPEND);\n        }\n\n        System.out.println(\"在不在：\" + Files.exists(门牌));\n        System.out.println(\"几个字节：\" + Files.size(门牌));\n        System.out.print(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "在不在：true\n几个字节：72\n第 1 笔：2 条\n第 2 笔：3 条\n第 3 笔：6 条\n第 4 笔：4 条",
+      "stdin": "4\n2\n3\n6\n4\n",
+      "explanation": "**一、全部用现成手势，一步都不用自己开管子。** 门牌用 `Path.of` 撕；写字用 `Files.writeString`；问在不在用 `Files.exists`；数几个字节用 `Files.size`；念回来用 `Files.readString`。这几手自己开自己收，所以整个程序里**一句 `close()` 都不用写**。\n\n**二、第 1 笔和第 2 笔的写法不一样，就是本课那个差别。** 第一笔没喊别的话，照默认来：文件不在就顺手建出来、然后从头写。后面每一笔都得多喊一声 `StandardOpenOption.APPEND`，才是「接着后面添」—— 少了它，每一次都把前面的擦干净，最后只剩最后一笔。\n\n**三、「几个字节」不是「几个字」。** `Files.size` 报的是字节数：本喵这些账是汉字加数字，一个汉字要占好几个字节，所以数出来总是比本喵看得见的字数大。这一行让程序自己数，**别在心里估**。\n\n**四、念回来那一手是「一口气」。** `Files.readString` 把整份文件端回来，原样印出去就是本喵写进去的那几行。这一手跟上一课一口一口的写法**读出来一模一样**，区别只在「谁在端」：小文件它最省事，大东西就不该这么端。",
+      "templateId": "java-s3-08-files-hands",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:34.303Z",
+        "hash": "a47da96d1bf70b60"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-flip-forgot-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵开管子把一笔账灌进文件，接着换一根管子把它拉回来念。\n\n可印出来是 `念到：` 后面**光秃秃的什么都没有**，而且一个字都不红。\n\n你帮本喵看看货舱那边少了哪一步，把它补上 —— 改好之后该印出 `念到：小橘 2 条`。\n\n（这一题**不用投喂任何东西**。）",
+      "brokenCode": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"小橘 2 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+      "referenceFix": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"小橘 2 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+      "expectedOutput": "念到：小橘 2 条",
+      "stdin": null,
+      "explanation": "**一、字节一个都没少，是书签的位置不对。** 货舱里夹着一枚书签，记着「本喵现在读到哪儿了」。`入口.read(另一个)` 拉字节的时候它一路往前挪，拉完停在**末尾** —— 那意思是「本喵**写到这儿**了」。\n\n**二、念要的是另一头。** 本喵那句长长的拼字读作「从书签**现在这个位置**起，取**还剩的这些**字节」：书签停在末尾，「还剩的这些」就是 `0` 个 —— 取 0 个字节拼回一串字，自然是空的。\n\n**三、补的那一步就是 `另一个.flip();`**，读作「把书签拨回第一格，同时记下读到哪儿为止」—— 拨完位置是 `0`、剩下的是刚拉进来的那一整排，才念得出东西。这一句要写在 `read` **之后**、拼字**之前**。\n\n**四、为什么这一脚最坑。** 管子开了、字节真拉进来了、程序也跑完了 —— 不红不响，只是念出来空着。所以往后记住这个动作：**管子的「写」那一头不用拨；要从货舱里念，先 `flip()`。**",
+      "templateId": "java-s3-08-flip-forgot",
+      "params": {
+        "n1": "小橘",
+        "c1": 2
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:20.171Z",
+        "hash": "b6e11c998e23d043"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-flip-forgot-015",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵开管子把一笔账灌进文件，接着换一根管子把它拉回来念。\n\n可印出来是 `念到：` 后面**光秃秃的什么都没有**，而且一个字都不红。\n\n你帮本喵看看货舱那边少了哪一步，把它补上 —— 改好之后该印出 `念到：狸花 9 条`。\n\n（这一题**不用投喂任何东西**。）",
+      "brokenCode": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"狸花 9 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+      "referenceFix": "import java.nio.ByteBuffer;\nimport java.nio.channels.FileChannel;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Path;\nimport java.nio.file.StandardOpenOption;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"鱼塘.txt\");\n\n        FileChannel 出口 = FileChannel.open(门牌, StandardOpenOption.CREATE, StandardOpenOption.WRITE);\n        ByteBuffer 货舱 = ByteBuffer.wrap(\"狸花 9 条\".getBytes(StandardCharsets.UTF_8));\n        出口.write(货舱);\n        出口.close();\n\n        FileChannel 入口 = FileChannel.open(门牌, StandardOpenOption.READ);\n        ByteBuffer 另一个 = ByteBuffer.allocate((int) 入口.size());\n        入口.read(另一个);\n        另一个.flip();\n        System.out.println(\"念到：\" + new String(另一个.array(), 另一个.position(), 另一个.remaining(), StandardCharsets.UTF_8));\n        入口.close();\n    }\n}\n",
+      "expectedOutput": "念到：狸花 9 条",
+      "stdin": null,
+      "explanation": "**一、字节一个都没少，是书签的位置不对。** 货舱里夹着一枚书签，记着「本喵现在读到哪儿了」。`入口.read(另一个)` 拉字节的时候它一路往前挪，拉完停在**末尾** —— 那意思是「本喵**写到这儿**了」。\n\n**二、念要的是另一头。** 本喵那句长长的拼字读作「从书签**现在这个位置**起，取**还剩的这些**字节」：书签停在末尾，「还剩的这些」就是 `0` 个 —— 取 0 个字节拼回一串字，自然是空的。\n\n**三、补的那一步就是 `另一个.flip();`**，读作「把书签拨回第一格，同时记下读到哪儿为止」—— 拨完位置是 `0`、剩下的是刚拉进来的那一整排，才念得出东西。这一句要写在 `read` **之后**、拼字**之前**。\n\n**四、为什么这一脚最坑。** 管子开了、字节真拉进来了、程序也跑完了 —— 不红不响，只是念出来空着。所以往后记住这个动作：**管子的「写」那一头不用拨；要从货舱里念，先 `flip()`。**",
+      "templateId": "java-s3-08-flip-forgot",
+      "params": {
+        "n1": "狸花",
+        "c1": 9
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:22.014Z",
+        "hash": "b3af6ddbf5ce5f3b"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-no-such-file-000",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想让程序做到：账本**要是还没有**，就先写一句「小橘 的账本」进去，然后念出来。\n\n可它一跑起来就**当场翻脸**，什么都没印出来。\n\n你帮本喵看看：念之前少做了一步什么事？把这一步补上 —— 改好之后该印出 `小橘 的账本`。\n\n（这一题**不用投喂任何东西**；那份账本从头到尾都不在，得靠程序自己造。）",
+      "brokenCode": "import java.nio.file.Files;\nimport java.nio.file.Path;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"还没建的账本.txt\");\n\n        System.out.println(Files.readString(门牌));\n    }\n}\n",
+      "referenceFix": "import java.nio.file.Files;\nimport java.nio.file.Path;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"还没建的账本.txt\");\n\n        if (!Files.exists(门牌)) {\n            Files.writeString(门牌, \"小橘 的账本\\n\");\n        }\n\n        System.out.println(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "小橘 的账本",
+      "stdin": null,
+      "explanation": "**一、它翻脸的原话是 `java.nio.file.NoSuchFileException: 还没建的账本.txt`**，读作「**没有这份文件**」，后面还跟着那份文件的名字。念一份不存在的文件，它没法凭空变出内容来，只能当场拦住。\n\n**二、补的那一步就是「先问一声」：**\n\n```java\nif (!Files.exists(门牌)) {\n    Files.writeString(门牌, \"小橘 的账本\\n\");\n}\n```\n\n`Files.exists(门牌)` 问「在不在」，答 `true` / `false`；前面加个 `!` 读作「**要是不在**」。不在的时候那句 `writeString` 不光写了字，还**顺手把文件建了出来** —— 门牌本来指的是一个还不存在的位置，写完它就成了真文件。回头再念，念的就是刚写进去的那句。\n\n**三、门牌本身跟这事儿没关系。** `Path.of(...)` 撕一张写着位置的门牌，文件在不在它都能撕 —— 所以「文件不在」这件事**只能靠 `exists` 问，问不出来就只能等它翻脸**。\n\n**四、这种「当场红」其实是好事。** 本课里那些不红不响的坑（忘了拨书签、默认从头写）要念回来才发现不对；这一脚直接把话说清楚，本喵一眼就知道该去问 `exists` 了。",
+      "templateId": "java-s3-08-no-such-file",
+      "params": {
+        "n1": "小橘"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:27.911Z",
+        "hash": "fb79092c64f92606"
+      }
+    },
+    {
+      "id": "bank-java-s3-08-no-such-file-001",
+      "type": "codefix",
+      "lang": "java",
+      "stem": "本喵想让程序做到：账本**要是还没有**，就先写一句「狸花 的账本」进去，然后念出来。\n\n可它一跑起来就**当场翻脸**，什么都没印出来。\n\n你帮本喵看看：念之前少做了一步什么事？把这一步补上 —— 改好之后该印出 `狸花 的账本`。\n\n（这一题**不用投喂任何东西**；那份账本从头到尾都不在，得靠程序自己造。）",
+      "brokenCode": "import java.nio.file.Files;\nimport java.nio.file.Path;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"还没建的账本.txt\");\n\n        System.out.println(Files.readString(门牌));\n    }\n}\n",
+      "referenceFix": "import java.nio.file.Files;\nimport java.nio.file.Path;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        Path 门牌 = Path.of(\"还没建的账本.txt\");\n\n        if (!Files.exists(门牌)) {\n            Files.writeString(门牌, \"狸花 的账本\\n\");\n        }\n\n        System.out.println(Files.readString(门牌));\n    }\n}\n",
+      "expectedOutput": "狸花 的账本",
+      "stdin": null,
+      "explanation": "**一、它翻脸的原话是 `java.nio.file.NoSuchFileException: 还没建的账本.txt`**，读作「**没有这份文件**」，后面还跟着那份文件的名字。念一份不存在的文件，它没法凭空变出内容来，只能当场拦住。\n\n**二、补的那一步就是「先问一声」：**\n\n```java\nif (!Files.exists(门牌)) {\n    Files.writeString(门牌, \"狸花 的账本\\n\");\n}\n```\n\n`Files.exists(门牌)` 问「在不在」，答 `true` / `false`；前面加个 `!` 读作「**要是不在**」。不在的时候那句 `writeString` 不光写了字，还**顺手把文件建了出来** —— 门牌本来指的是一个还不存在的位置，写完它就成了真文件。回头再念，念的就是刚写进去的那句。\n\n**三、门牌本身跟这事儿没关系。** `Path.of(...)` 撕一张写着位置的门牌，文件在不在它都能撕 —— 所以「文件不在」这件事**只能靠 `exists` 问，问不出来就只能等它翻脸**。\n\n**四、这种「当场红」其实是好事。** 本课里那些不红不响的坑（忘了拨书签、默认从头写）要念回来才发现不对；这一脚直接把话说清楚，本喵一眼就知道该去问 `exists` 了。",
+      "templateId": "java-s3-08-no-such-file",
+      "params": {
+        "n1": "狸花"
+      },
+      "verified": {
+        "at": "2026-09-16T11:12:29.639Z",
+        "hash": "50eb314d844d4b07"
+      }
+    }
+  ]
+}

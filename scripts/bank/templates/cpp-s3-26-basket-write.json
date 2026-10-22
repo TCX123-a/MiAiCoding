@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-26-basket-write",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-26",
+  "type": "codewrite",
+  "concept": ["画一张篮子图纸", "三条招式内外分工", "先按验收台定死用法"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 99 },
+  "stemTemplate": "这回换成**从头画一张图纸**喵。验收台（`main`）已经定死了要和篮子（`Basket`）这么打交道：\n\n- `b.put(w)` —— 往里放一条；\n- `b.count()` —— 数一数篮子里有几条；\n- `b.total()` —— 把重量合计出来。\n\n请你把这张图纸和三条招式都补出来。验收台**一个字都不许改**，照着它的用法把篮子造得服服帖帖就行。\n\n老规矩喵：三条招式的**报名**写在图纸里、**正文**挪到图纸外面写（记得报家门）。\n\n比如投喂给程序的是：\n\n```text\n{sampleInput}\n```\n\n补好之后就要叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是另外一组数喵。）",
+  "starterTemplate": "#include <iostream>\n#include <vector>\n\nclass Basket {\npublic:\n    /* ① 在这里登记三条招式：放一条（put）、数几条（count）、算合计（total） */\n\nprivate:\n    /* ② 篮子里的东西放这儿（一排格子） */\n};\n\n/* ③ 在图纸外面把三条招式都补完（每条前面记得报家门） */\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    Basket b;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        b.put(w);\n    }\n    std::cout << \"篮子：\" << b.count() << \" 条，合计 \" << b.total() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <vector>\n\nclass Basket {\npublic:\n    void put(int w);\n\n    int count() const;\n\n    int total() const;\n\nprivate:\n    std::vector<int> items;\n};\n\nvoid Basket::put(int w) {\n    items.push_back(w);\n}\n\nint Basket::count() const {\n    return static_cast<int>(items.size());\n}\n\nint Basket::total() const {\n    int s = 0;\n    for (int i = 0; i < static_cast<int>(items.size()); i++) {\n        s += items[i];\n    }\n    return s;\n}\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n    Basket b;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        b.put(w);\n    }\n    std::cout << \"篮子：\" << b.count() << \" 条，合计 \" << b.total() << \" 克\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这题里验收台是**先定死的**：它怎么写调用，图纸就得怎么长。逐条对一遍：\n\n**① 存东西的格子**：一排能伸能缩的格子（`std::vector<int>`），关起门放着。\n\n**② 三条招式**：放一条、数几条、算合计。前两条各自只有一句 —— 往末尾推一格、报一下格子数；合计那条是本课老套路：一圈圈加起来。\n\n```cpp\nint Basket::total() const {\n    int s = 0;\n    for (int i = 0; i < static_cast<int>(items.size()); i++) {\n        s += items[i];\n    }\n    return s;\n}\n```\n\n**③ 报名与正文**：图纸里每条只写「名字 + 形态」那一行，末尾带戳；正文在图纸外面，每条开头报家门 `Basket::`。\n\n⚠️ 两个最常翻车的地方：\n\n1. **忘了给验收台开门** —— 三条招式都在没挂牌子的区域里，验收台一伸手就是 `is private`；\n2. **正文忘报家门** —— `Basket::` 少一个，就是 `non-member function`。\n\n验收标准就一条喵：**验收台一个字没改、照样编得过、照样印出那一行。**"
+}

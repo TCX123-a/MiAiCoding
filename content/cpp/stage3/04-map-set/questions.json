@@ -1,0 +1,77 @@
+{
+  "lessonId": "cpp-stage3-04",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵只想问一句「这只柜子里有没有『狸花』这把钥匙」，**一点也不想惊动柜子**。该用哪一句？",
+      "options": [
+        "`fish.count(\"狸花\")` —— 它只回答在不在，不会给柜子添格子",
+        "`fish[\"狸花\"]` —— 取一下不就知道了",
+        "`fish.erase(\"狸花\")` —— 划得掉就说明本来有",
+        "`fish.size() > 0` —— 柜子不是空的就说明有"
+      ],
+      "answer": 0,
+      "explanation": "中括号是**取货 / 放货**两用的一把钥匙：钥匙不在柜子里，它就顺手给你开一格（那一格的货默认是 0）喵 —— 所以拿 `fish[\"狸花\"]` 去「问」，其实是在往柜子里**添格子**。`count` 才是纯问话的那一招：在给 1、不在给 0，柜子一动不动。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵想数数「喵」出现了几回，写了两遍 `tally[\"喵\"] = 1;`，可印出来还是 1。这是为什么？",
+      "options": [
+        "因为那个等号是「把这一格**改成** 1」—— 写多少遍都还是 1；想累加得写 `+=`",
+        "因为 `map` 里同一把钥匙只许放一次货，第二次被它忽略了",
+        "因为编译器把这行当成没用的话丢掉了，加一句印字就能逼它生效",
+        "因为「喵」是中文，得先过一趟 `stoi` 才能当数字用"
+      ],
+      "answer": 0,
+      "explanation": "`=` 是「**改成**」，`+=` 才是「**在原来的数上加**」喵。而且这个坑**不吵不闹**：本喵拿最啰嗦的那档 `-Wall` 真跑过，翻译官喵一个字都没说 —— 编得过、跑得完，只是数出来的数是错的。把它换成 `+=` 之后（第一回念它的时候那一格会自动从 0 起步），「喵」就数出 2 来了。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵按「小橘、大胖、狸花」的顺序往柜子里放货，可走一圈印出来的是「大胖、小橘、狸花」。为什么？",
+      "options": [
+        "因为这只柜子会**按钥匙自动排排坐**，它压根不记本喵放货的顺序",
+        "因为它把最后放的那把钥匙排在最前面",
+        "因为中文钥匙排不了序，走一圈的顺序是随机的",
+        "因为本喵放货时写错了，得改用 `insert` 才保得住顺序"
+      ],
+      "answer": 0,
+      "explanation": "`map` 是一只**自己排排坐**的柜子：走一圈的时候，它按**钥匙**从小到大把每一格交给你喵 —— 整数钥匙就按数字大小排（2 号、1 号放进去，印出来是 1 号在前），一串字当钥匙就按它的编号码比。本喵放货的顺序它不当回事。「谁先来谁先排」是另一只柜子的本事，不归它管。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n    map<string, int> tally;\n    tally[\"喵\"] += 1;\n    tally[\"喵\"] += 1;\n    tally[\"鱼\"] += 1;\n    cout << tally.____(\"喵\") << endl;\n    cout << tally.____() << endl;\n    return 0;\n}",
+      "stem": "本喵先想问一句「『喵』这把钥匙在不在」，再想问一句「柜子里一共几格」。这两个空位（用 `____` 标出）该填什么？",
+      "blanks": [
+        { "answer": "count", "accept": [] },
+        { "answer": "size", "accept": [] }
+      ],
+      "explanation": "第一个空位是那句**只问不惊动柜子**的招式 `count`：问钥匙在不在，在给 1、不在给 0 喵。第二个空位是问「柜子里有几格」的 `size`。注意第一行印出来的**不是**「喵数到了几回」（那是 2），而是「这把钥匙在不在」的答复 —— 想知道数到了几回，得直接从那一格里取货看。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n    map<string, int> bowl;\n    bowl[\"大胖\"] = 2;\n    bowl[\"小橘\"] = 5;\n    bowl[\"大胖\"] = 4;\n    cout << bowl[\"大胖\"] << endl;\n    cout << bowl.size() << endl;\n    for (auto p : bowl) {\n        cout << p.first << \" \" << p.second << endl;\n    }\n    return 0;\n}",
+      "stem": "这一回本喵往同一把钥匙上放了两次货，最后走一圈把每一格都印出来。这段代码的输出是什么？（一行一行照抄）",
+      "answer": "4\n2\n大胖 4\n小橘 5",
+      "accept": ["4\n2\n大胖 4\n小橘 5\n"],
+      "explanation": "同一把钥匙放两次货，**后放的把前面的盖掉**（不是加起来！）喵 —— 所以 `bowl[\"大胖\"]` 是 4，不是 2 加 4。柜子里只有两把钥匙，`size()` 印 `2`。走一圈的时候它按钥匙排排坐：先交「大胖」这一格，再交「小橘」那一格。这一题一次串起三件事：**盖掉、几格、排排坐**。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <map>\n#include <string>\nusing namespace std;\n\nint main() {\n    map<string, int> tally;\n    tally[\"喵\"] += 1;\n    tally[\"喵\"] += 1;\n    tally[\"鱼\"] += 1;\n    tally[\"喵\"] += 1;\n    for (auto p : tally) {\n        cout << p.first << \" \" << p.second << endl;\n    }\n    cout << tally.size() << endl;\n    return 0;\n}",
+      "stem": "本喵这回写对了 —— 加号没丢。这段代码的输出是什么？（一行一行照抄）",
+      "answer": "喵 3\n鱼 1\n2",
+      "accept": ["喵 3\n鱼 1\n2\n"],
+      "explanation": "三回「加 1」都落在「喵」那一格上，所以它攒到了 3；「鱼」那一格只加过一回，是 1 喵。走一圈按钥匙排排坐（「喵」在前、「鱼」在后）。最后问一句几格：柜子里只有两把钥匙，所以印 `2` —— 注意 `size()` 数的是**有几格**，不是**往里加了几回**。"
+    }
+  ]
+}

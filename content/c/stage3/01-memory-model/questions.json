@@ -1,0 +1,89 @@
+{
+  "lessonId": "c-stage3-01",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵在一招**里面**写了一间局部小鱼干仓库，就是 `int local = 42;` 这一句。它住在哪间屋、什么时候消失喵？",
+      "options": [
+        "住在堆栈上，函数一出门就被收走",
+        "住门口那排固定储物柜里，要等程序结束才走",
+        "住动态内存里，用完得自己还",
+        "住在秘籍架上，只能读不能改"
+      ],
+      "answer": 0,
+      "explanation": "写在招式里面的仓库住在**一摞叠起来的猫粮碗**上喵：翻译官喵给每只进门干活的猫摆一层碗，招式一出门，那层碗当场收走，里面的东西也就跟着没了。固定柜里住的是招式外面的仓库和被 `static` 点过名的仓库，它们从头活到尾；现租的仓库要自己还；秘籍架码的是翻译好的指令，压根不是仓库喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "写在一招**里面**、又被 `static` 点过名的那间仓库，有什么特别喵？",
+      "options": [
+        "它搬进了门口的固定静态存储区：函数出门了它还在，下次进门还记得上次的值",
+        "它每次进门都重新摆一份，出门就扔掉",
+        "它住在动态内存里，用完必须自己还",
+        "它只能装整数，装小数就会报错"
+      ],
+      "answer": 0,
+      "explanation": "`static` 的全部本事就是把仓库从碗摞上搬进门口的固定柜喵：它只摆一份，招式出门时**不跟着走**，所以下次进门接着上次的值往下数。「它每次进门都重新摆一份，出门就扔掉」说的正是没有 `static` 的普通局部仓库；住现租仓库、要自己还的是 `malloc` 要来的地方；至于「只能装整数」跟住哪间屋一点关系都没有，那是类型的事喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "下面哪一间屋里的东西，用完必须**自己**还，不然它一直占着地方喵？",
+      "options": [
+        "函数外面写的全局变量",
+        "堆栈上的局部变量",
+        "`malloc` 要来的那块地方",
+        "秘籍架上码着的指令"
+      ],
+      "answer": 2,
+      "explanation": "现要现租的那间屋是唯一要自己动手的地方喵：`malloc` 租来的地方不会自己消失，得你喊 `free` 才还回去。全局仓库和局部仓库都不用管 —— 一个活到程序结束，一个出门就被收走；秘籍架上的指令是只读的，谈不上还喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint next_id(void) {\n    ____ int counter = 0;\n    counter++;\n    return ____;\n}\n\nint main(void) {\n    int a = next_id();\n    int b = next_id();\n    printf(\"%d %d\\n\", a, b);\n    return 0;\n}",
+      "stem": "这一招要能记住自己数到哪儿了：第一次喊它印出 1、第二次喊它接着印出 2，中间不能忘。把两个空补完整，让它住进门口那排固定储物柜里喵～",
+      "blanks": [
+        { "answer": "static" },
+        { "answer": "counter" }
+      ],
+      "explanation": "`static` 这两个字的全部本事，就是把仓库从碗摞上搬进门口的固定柜喵：招式出门了它还在，下次进门接着上次的值往下数，所以两次印出来是 1 和 2。要是漏掉这个词，`counter` 就住在碗摞上，每次进门都是全新的一间，两次都印 1。第二个空填的是要叼回去的东西 —— 数完的那份成果得 `return` 出来，招式外面才拿得到喵。"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *box = (int *)____(sizeof(int));\n    if (box == NULL) {\n        return 1;\n    }\n    *box = 21;\n    *box = *box * 2;\n    printf(\"盒子里是 %d\\n\", *box);\n    ____(box);\n    box = NULL;\n    return 0;\n}",
+      "stem": "这间仓库要能自己决定什么时候租、什么时候还：先租一块刚好装下一个整数的地方，用完再还给系统。把两处补完整喵～",
+      "blanks": [
+        { "answer": "malloc" },
+        { "answer": "free" }
+      ],
+      "explanation": "`malloc` 是租、`free` 是还，两位都住在 `stdlib.h` 这位档案管理员家里喵。`(int *)malloc(sizeof(int))` 的意思是「租一块刚好装得下一个整数的地方，牌子按整数那样举」；拿到牌子先看看是不是 `NULL`，再看仓库里放东西。最后那句 `free` 一个字都不能省：租来的地方不会自己消失，不还就一直占着喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint g = 5;\n\nint bump(void) {\n    static int s = 0;\n    s = s + g;\n    return s;\n}\n\nint main(void) {\n    int a = bump();\n    int b = bump();\n    g = 1;\n    int c = bump();\n    printf(\"%d %d %d\\n\", a, b, c);\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "5 10 11",
+      "accept": ["5 10 11\n"],
+      "explanation": "`s` 被 `static` 点过名，住在固定柜里，两次喊它之间记着上一轮的值喵：第一次 `s` 从 0 变 5，第二次从 5 变 10。第三次喊之前，住在固定柜里的另一个仓库 `g` 被改成了 1，于是 `s` 从 10 变 11 —— 印出来就是 5 10 11。要是把 `static` 去掉，`s` 就搬到碗摞上，每次进门都是新的 0，三行会变成 5 5 1 喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *rooms = (int *)malloc(sizeof(int) * 3);\n    if (rooms == NULL) {\n        return 1;\n    }\n    rooms[0] = 10;\n    rooms[1] = 20;\n    rooms[2] = 30;\n    int sum = 0;\n    for (int i = 0; i < 3; i++) {\n        sum = sum + rooms[i];\n    }\n    printf(\"三间仓库加起来是 %d\\n\", sum);\n    free(rooms);\n    rooms = NULL;\n    return 0;\n}",
+      "stem": "这段代码输出什么喵？",
+      "answer": "三间仓库加起来是 60",
+      "accept": ["三间仓库加起来是 60\n"],
+      "explanation": "`malloc(sizeof(int) * 3)` 一次租下三间连着的仓库，牌子拿到手就能像一排贴了编号的猫粮碗那样按下标取用喵。三间里分别放了 10、20、30，加起来是 60。最后那句 `free(rooms)` 是把三间一起还掉 —— 租的时候一次租，还的时候也一次还，还完再把牌子收起来（`rooms = NULL`），免得回头又拿着旧牌子去开别人的门喵。"
+    }
+  ]
+}

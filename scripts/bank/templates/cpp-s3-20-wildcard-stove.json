@@ -1,0 +1,15 @@
+{
+  "templateId": "cpp-s3-20-wildcard-stove",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-20",
+  "type": "codewrite",
+  "concept": ["一份留空位管一整种形状", "一份一个空位都不留只管一款料", "两份小灶各管各的不打架"],
+  "instances": 6,
+  "params": {
+    "t": { "kind": "pick", "values": ["double", "char"] }
+  },
+  "stemTemplate": "本喵要一张会回答「这块料是什么形状」的图纸，名字叫 `Tag`，而且要有**三份**：\n\n1. **通用那份**：回答 `普通料`。\n2. **管一整种形状的那份**：凡是**指向牌**都回答 `指向牌` —— 注意是「凡是指向牌」，不管它指向的是什么料。\n3. **只管一款料的那份**：对错料回答 `对错料`。\n\n这三份各用哪种写法，就是这一课的重点喵。\n\n写完之后，`main` 里按顺序印三行（每行 `endl` 收尾）：\n\n1. `{t} 走 ` 再接上 `Tag<{t}>` 的回答；\n2. `{t}* 走 ` 再接上 `Tag<{t}*>` 的回答；\n3. `bool 走 ` 再接上 `Tag<bool>` 的回答。\n\n比如第一行应该长成 `{t} 走 普通料` 这个样子喵。",
+  "referenceSolutionTemplate": "#include <iostream>\nusing namespace std;\n\ntemplate <typename T>\nstruct Tag {\n    static const char* name() { return \"普通料\"; }\n};\n\ntemplate <typename T>\nstruct Tag<T*> {\n    static const char* name() { return \"指向牌\"; }\n};\n\ntemplate <>\nstruct Tag<bool> {\n    static const char* name() { return \"对错料\"; }\n};\n\nint main() {\n    cout << \"{t} 走 \" << Tag<{t}>::name() << endl;\n    cout << \"{t}* 走 \" << Tag<{t}*>::name() << endl;\n    cout << \"bool 走 \" << Tag<bool>::name() << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "三份图纸的分工，全在头上一行喵：\n\n- **通用那份**：头上写 `template <typename T>`，留一个空位。\n- **管一整种形状的那份**：头上照样留空位，名字后面把**形状**说清楚 —— `Tag<T*>`。它只把形状写死，「指向的是什么料」这个空位还留着，所以 `{t}*` 和别的指向牌都归它管。\n- **只管一款料的那份**：头上换成空的尖括号 `template <>`，名字后面把料写死 —— `Tag<bool>`。一个空位都不留，所以只有对错料归它管。\n\n⚠️ 第二份和第三份的差别就是本课那句话：**只填一半**（留着一整种形状）和**一个都不留**（只认一款料）。写法上差两处 —— 头上是空的尖括号还是留空位、名字后面写的是具体那款料还是一整种形状。\n\n⚠️ 还有一条：**两份小灶不打架**。对错料本身不是指向牌，只对得上第三份；指向牌只对得上第二份。要是你跑出来某一行印的是「普通料」，回头看看是不是把「留空位」和「空尖括号」这两样写反了 —— 写反了不会报错，只会安安静静少管一批料。"
+}

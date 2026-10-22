@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s2-11-feed-by-contract",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-11",
+  "type": "codewrite",
+  "concept": ["约定能当塞料收", "一只普通招式收下发过誓的谁", "不下五份誓也能用同一份"],
+  "instances": 6,
+  "params": {
+    "catName": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "fishName": { "kind": "pick", "values": ["大肥鱼", "胖头鱼"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 2, "min": 1, "max": 9 },
+  "stemTemplate": "本喵要写一只**普通的招式**，它不关心你是一只猫还是一条鱼，只要求你**答应了那份约定**。投喂口会递进来**两个数**（一行一个）：猫和鱼各吃了几条小鱼干。\n\n请你这么办：\n\n1. **画那张约定图纸** `Speaker`：只有一手 `speak()`（只挂招牌、不写动作），再加一个收尾招式 `virtual ~Speaker() {}`。\n2. **画两只照它画下来的**，各添一栏 `name`（一串字）和一个整数 `fish`，出生招式把两样填上，并把 `speak` 补成自己的版本（挂 `override`）：\n   - `Cat` → `X：喵～本喵吃了 N 条`\n   - `Fish` → `X：咕噜咕噜～本喵吃了 N 条`\n3. **写一只普通招式** `void rollCall(const Speaker& s)`：先印一行 `点名：`，再让 `s` 喊一声（`s.speak();`）。注意**它收的是一张写着「会叫的」的牌子，收不到真身** —— 所以要用「不必还的名字」那种写法。\n4. 在 `main` 里：读进两个数 → 生一只猫（`{catName}`）和一条鱼（`{fishName}`）→ **把两只依次喂进那只普通招式**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n**这一题要你亲手体会一件事**：那只普通招式从头到尾**只认识「会叫的」**，可它先后接待了一只猫和一条鱼，而且两只都叫出了自己的声音。\n\n（判分喂的是**另外两个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Speaker {\npublic:\n    virtual void speak() const = 0;\n    virtual ~Speaker() {}\n};\n\nclass Cat : public Speaker {\n    string name;\n    int fish;\npublic:\n    Cat(string n, int f) : name(n), fish(f) {}\n    void speak() const override {\n        cout << name << \"：喵～本喵吃了 \" << fish << \" 条\" << endl;\n    }\n};\n\nclass Fish : public Speaker {\n    string name;\n    int fish;\npublic:\n    Fish(string n, int f) : name(n), fish(f) {}\n    void speak() const override {\n        cout << name << \"：咕噜咕噜～本喵吃了 \" << fish << \" 条\" << endl;\n    }\n};\n\nvoid rollCall(const Speaker& s) {\n    cout << \"点名：\" << endl;\n    s.speak();\n}\n\nint main() {\n    int a = 0;\n    int b = 0;\n    cin >> a >> b;\n\n    Cat cat(\"{catName}\", a);\n    Fish fish(\"{fishName}\", b);\n\n    rollCall(cat);\n    rollCall(fish);\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题，屏幕上四行是：\n\n```text\n{sampleOutput}\n```\n\n**关键在那只普通招式的写法**：\n\n```text\nvoid rollCall(const Speaker& s)\n```\n\n它收的塞料是**一张写着「会叫的」的牌子**（「不必还的名字」那种写法，`&` 不能漏），也**只能是牌子**：约定那张图纸生不出真身，收真身就编不过。所以本喵喂进去的猫和鱼，都是**被牌子指着**进去的。\n\n进去之后发生两件事，正是这一题要教的：\n\n1. **`s.speak()` 会低头看屋里住的是谁。** 所以同一句 `s.speak()`，接待猫的时候印猫那一版，接待鱼的时候印鱼那一版 —— 而这只普通招式**根本不认识 `Cat` 和 `Fish` 这两个名字**，它俩是在它写完之后才画的图纸。\n2. **这只普通招式一个字都不用改，就能接待第二种、第三种「会叫的」。** 往后本喵画一只鸭子、让它照约定补上那一手，`rollCall` 里**一行都不用动**。\n\n⚠️ 两处容易摔的地方：\n\n- **塞料前面的 `&` 不能漏。** 掉了它就变成「照约定图纸造一具真身」—— 本喵实测过，原话是 `error: cannot declare parameter 's' to be of abstract type 'Speaker'`：约定那张图纸生不出真身（真身是「屋里住的那只」，不是「约定」本身）。\n- **约定那一手要写成 `virtual` 和 `= 0` 两块记号都齐全。** 只写 `= 0` 漏掉 `virtual`，本喵实测是**当场拦下**：`error: initializer specified for non-virtual method`。而真正阴的那种写法是：老图纸那一手**带着动作、又没挂 `virtual`** —— 那样程序照样跑完、**一个错都不报**，可 `s.speak()` 会一律跑老图纸那一版，跟屋里住的是谁没关系。\n\n一句话收住这一题：**约定能当塞料收** —— 收进来的是牌子，屋里住的是谁，喊下去才知道。"
+}

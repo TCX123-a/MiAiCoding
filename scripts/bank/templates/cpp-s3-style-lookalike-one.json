@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-style-lookalike-one",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-28",
+  "type": "codefix",
+  "concept": ["形近字", "字母l和数字1", "名字要能读出来", "上一条"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵有一条「往上爬」的小账本：先报一个数（今天记了几条），再一条条报数。**每一条比上一条大，就算往上爬了一次**；第一条的「上一条」当作 0。数完印一行 `往上爬 X 次喵`。\n\n可账本数出来的次数老是**偏大** —— 明明没爬几步，它回回都记上一大串。病根是本喵自己埋的：账本里「上一条」的名字是个**单字母**，在有些字体里**看着跟数字一模一样**；偏偏有一处，本喵手一滑，把那个字母敲成了数字。程序里现在还剩一句「那个名字只被写过、没被读过」的小提醒 —— 翻译官喵给的提示里就有一行 `set but not used`。\n\n你帮本喵把这一趟数对：先说清拿谁跟谁比，再把那个名字换成**读得出来**的词 —— 从此想敲错都难。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。）",
+  "brokenCodeTemplate": "#include <iostream>\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int l = 0;\n    int climbs = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > 1) {\n            climbs = climbs + 1;\n        }\n        l = x;\n    }\n\n    std::cout << \"往上爬 \" << climbs << \" 次喵\" << std::endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int previous = 0;\n    int climbs = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > previous) {\n            climbs = climbs + 1;\n        }\n        previous = x;\n    }\n\n    std::cout << \"往上爬 \" << climbs << \" 次喵\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这处毛病最难抓的地方，是它**看起来没毛病**喵。\n\n账本里「上一条」的名字叫 `l` —— 小写的字母 L。而它旁边该比的那处写成了\n\n```text\nif (x > 1) {\n```\n\n`l` 和 `1` 在不少字体里几乎长得一模一样：一个是字母、一个是数字。本喵当时的打算是「比上一条大」，被翻译官喵读到的却是「比数字 1 大」—— 数字 1 和账本没有任何关系，于是回回都多记一截。翻译官喵还留了个尾巴提醒：`l` 只被写过、没被读过（`set but not used`）—— 那正是这一滑的证据。\n\n改法分两层喵：\n\n**① 把比较改回「上一条」：**\n\n```text\nif (x > previous) {\n```\n\n**② 把名字换成读得出来的词。** 这一步才是根治 —— `l` 改叫 `previous`（上一条），从今往后：\n\n```text\nint previous = 0;\n```\n\n它写出来就有半个词那么长，想再跟 `1` 认错都难。这也正是 Google 那套规矩里的一条：名字要让**不在你团队的新读者**一眼看懂；单字母除了 `i` 这种约定俗成的「第几趟」序号，尽量别用 —— 特别是 `l`、`I` 这种和数字 1 跳贴面舞的。\n\n记住一句话喵：**形近字骗的不是翻译官喵，是读代码的眼睛；把名字写成词，眼睛就不会被骗。**"
+}

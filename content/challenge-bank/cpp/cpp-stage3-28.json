@@ -1,0 +1,338 @@
+{
+  "lessonId": "cpp-stage3-28",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-cpp-s3-style-const-enum-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊要挂一块价目牌，起名全按 Google 那套手势：**柜台（`namespace`）名全小写加下划线**（`fish_market`），**档位清单用 `enum class`，里面的值也是常量 —— `k` 开头、后面词头大写**（`kGuest`、`kRegular`、`kVip`），**单价常量同样 `k` 开头**，**招式名首字母大写**（`PriceOf`、`NameOf`）。\n\n价目台已经搭好样板，请你补三样：\n\n1. **三个单价常量**（每斤收多少条小鱼干）：散客 1 条、常客 3 条、贵宾 5 条；起名照样板的手势（比如 `kGuestPrice` 这种写法）；\n2. `PriceOf` 这一招：按档位叼回每斤单价；\n3. `NameOf` 这一招：按档位叼回中文名（散客 / 常客 / 贵宾）。\n\n收账的活已经在 main 里接好：先报档位（0 散客、1 常客、2 贵宾），再报今天过了几条鱼，然后一条条报斤两。样例输入：\n\n```text\n0\n4\n4\n9\n1\n2\n```\n\n该印出来**两行**（档位一行、应收一行）：\n\n```text\n档位：散客\n应收 16 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单当样板：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* ① 三个单价常量自己写：散客 1 条、常客 3 条、贵宾 5 条（每斤收多少）\n   起名照上面的手势（k 开头 + 词头大写，比如 kGuestPrice） */\n\n/* ② PriceOf：按档位叼回每斤单价（把刚写的常量用上） */\nint PriceOf(MemberClass member) {\n    /* 这里写 */\n    return 1;\n}\n\n/* ③ NameOf：按档位叼回中文名（散客 / 常客 / 贵宾） */\nstd::string NameOf(MemberClass member) {\n    /* 这里写 */\n    return \"？\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* 每斤单价（收多少条小鱼干）：常量规矩 —— k 开头 + 词头大写 */\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "档位：散客\n应收 23 条喵",
+      "stdin": "0\n4\n3\n7\n8\n5\n",
+      "explanation": "**一、价目台的命名规矩逐条过。**\n\n**柜台名**：`namespace fish_market` —— 全小写、词间下划线。招牌一眼能认：这是本摊的价目台，跟普通名字分得开。\n\n**档位清单**：\n\n```text\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n```\n\n枚举里那三个值**本质是常量**，所以按常量的手势起名：`k` 开头 + 后面每个词头大写。最容易踩的坑是写成宏那样的大写（`GUEST`、`REGULAR`）—— 那会让读者以为它们是 `#define` 小字条。Google 的规矩说得很直白：**枚举值用常量的起名法，别用宏的起名法**。\n\n**单价常量**：\n\n```text\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n```\n\n`k` 开头是流传很久的常量暗号：早年流行的命名传统里，k 专用来指「一锤定音、不再变的数」。Google 把它收编成正式规矩：**常量名 k 开头 + 词头大写**。一眼看见 `k` 打头，不用翻定义就知道这是个一辈子不变的数。\n\n**二、两招的写法。**\n\n```text\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n```\n\n三处细节多念两遍喵：比较档位要写全名 `MemberClass::kGuest` —— `enum class` 的值被锁在清单里，不会像老式枚举那样到处乱飘；三个常量不是摆设，正是要在这里被叼回去，**价只在价目台上写一处**；招式名 `PriceOf` 首字母大写，跟口袋名、常量名一眼分家。\n\n```text\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n```\n\n**三、为什么值要起名。** 要是把 1、3、5 直接钉死在算账的算式里，改价那天就得满程序翻；起成 `kGuestPrice` 之后，价目台成了唯一改动点，算式里读到的也是「贵宾价」这块牌子，不是裸的 5。\n\n一句话收好：**柜台小写下划线、档位与单价都 k 开头、招式大驼峰；值起好名，改价只改一处喵。**",
+      "templateId": "cpp-s3-style-const-enum",
+      "params": {
+        "tier": 0,
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:00:28.746Z",
+        "hash": "60ed0fd4c2844657"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-const-enum-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊要挂一块价目牌，起名全按 Google 那套手势：**柜台（`namespace`）名全小写加下划线**（`fish_market`），**档位清单用 `enum class`，里面的值也是常量 —— `k` 开头、后面词头大写**（`kGuest`、`kRegular`、`kVip`），**单价常量同样 `k` 开头**，**招式名首字母大写**（`PriceOf`、`NameOf`）。\n\n价目台已经搭好样板，请你补三样：\n\n1. **三个单价常量**（每斤收多少条小鱼干）：散客 1 条、常客 3 条、贵宾 5 条；起名照样板的手势（比如 `kGuestPrice` 这种写法）；\n2. `PriceOf` 这一招：按档位叼回每斤单价；\n3. `NameOf` 这一招：按档位叼回中文名（散客 / 常客 / 贵宾）。\n\n收账的活已经在 main 里接好：先报档位（0 散客、1 常客、2 贵宾），再报今天过了几条鱼，然后一条条报斤两。样例输入：\n\n```text\n0\n6\n7\n8\n4\n4\n1\n2\n```\n\n该印出来**两行**（档位一行、应收一行）：\n\n```text\n档位：散客\n应收 26 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单当样板：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* ① 三个单价常量自己写：散客 1 条、常客 3 条、贵宾 5 条（每斤收多少）\n   起名照上面的手势（k 开头 + 词头大写，比如 kGuestPrice） */\n\n/* ② PriceOf：按档位叼回每斤单价（把刚写的常量用上） */\nint PriceOf(MemberClass member) {\n    /* 这里写 */\n    return 1;\n}\n\n/* ③ NameOf：按档位叼回中文名（散客 / 常客 / 贵宾） */\nstd::string NameOf(MemberClass member) {\n    /* 这里写 */\n    return \"？\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* 每斤单价（收多少条小鱼干）：常量规矩 —— k 开头 + 词头大写 */\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "档位：散客\n应收 28 条喵",
+      "stdin": "0\n6\n8\n3\n7\n3\n2\n5\n",
+      "explanation": "**一、价目台的命名规矩逐条过。**\n\n**柜台名**：`namespace fish_market` —— 全小写、词间下划线。招牌一眼能认：这是本摊的价目台，跟普通名字分得开。\n\n**档位清单**：\n\n```text\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n```\n\n枚举里那三个值**本质是常量**，所以按常量的手势起名：`k` 开头 + 后面每个词头大写。最容易踩的坑是写成宏那样的大写（`GUEST`、`REGULAR`）—— 那会让读者以为它们是 `#define` 小字条。Google 的规矩说得很直白：**枚举值用常量的起名法，别用宏的起名法**。\n\n**单价常量**：\n\n```text\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n```\n\n`k` 开头是流传很久的常量暗号：早年流行的命名传统里，k 专用来指「一锤定音、不再变的数」。Google 把它收编成正式规矩：**常量名 k 开头 + 词头大写**。一眼看见 `k` 打头，不用翻定义就知道这是个一辈子不变的数。\n\n**二、两招的写法。**\n\n```text\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n```\n\n三处细节多念两遍喵：比较档位要写全名 `MemberClass::kGuest` —— `enum class` 的值被锁在清单里，不会像老式枚举那样到处乱飘；三个常量不是摆设，正是要在这里被叼回去，**价只在价目台上写一处**；招式名 `PriceOf` 首字母大写，跟口袋名、常量名一眼分家。\n\n```text\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n```\n\n**三、为什么值要起名。** 要是把 1、3、5 直接钉死在算账的算式里，改价那天就得满程序翻；起成 `kGuestPrice` 之后，价目台成了唯一改动点，算式里读到的也是「贵宾价」这块牌子，不是裸的 5。\n\n一句话收好：**柜台小写下划线、档位与单价都 k 开头、招式大驼峰；值起好名，改价只改一处喵。**",
+      "templateId": "cpp-s3-style-const-enum",
+      "params": {
+        "tier": 0,
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:04:18.083Z",
+        "hash": "a917a22cec488b8f"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-const-enum-003",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊要挂一块价目牌，起名全按 Google 那套手势：**柜台（`namespace`）名全小写加下划线**（`fish_market`），**档位清单用 `enum class`，里面的值也是常量 —— `k` 开头、后面词头大写**（`kGuest`、`kRegular`、`kVip`），**单价常量同样 `k` 开头**，**招式名首字母大写**（`PriceOf`、`NameOf`）。\n\n价目台已经搭好样板，请你补三样：\n\n1. **三个单价常量**（每斤收多少条小鱼干）：散客 1 条、常客 3 条、贵宾 5 条；起名照样板的手势（比如 `kGuestPrice` 这种写法）；\n2. `PriceOf` 这一招：按档位叼回每斤单价；\n3. `NameOf` 这一招：按档位叼回中文名（散客 / 常客 / 贵宾）。\n\n收账的活已经在 main 里接好：先报档位（0 散客、1 常客、2 贵宾），再报今天过了几条鱼，然后一条条报斤两。样例输入：\n\n```text\n1\n4\n3\n9\n2\n6\n```\n\n该印出来**两行**（档位一行、应收一行）：\n\n```text\n档位：常客\n应收 60 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单当样板：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* ① 三个单价常量自己写：散客 1 条、常客 3 条、贵宾 5 条（每斤收多少）\n   起名照上面的手势（k 开头 + 词头大写，比如 kGuestPrice） */\n\n/* ② PriceOf：按档位叼回每斤单价（把刚写的常量用上） */\nint PriceOf(MemberClass member) {\n    /* 这里写 */\n    return 1;\n}\n\n/* ③ NameOf：按档位叼回中文名（散客 / 常客 / 贵宾） */\nstd::string NameOf(MemberClass member) {\n    /* 这里写 */\n    return \"？\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* 每斤单价（收多少条小鱼干）：常量规矩 —— k 开头 + 词头大写 */\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "档位：常客\n应收 72 条喵",
+      "stdin": "1\n4\n2\n4\n9\n9\n",
+      "explanation": "**一、价目台的命名规矩逐条过。**\n\n**柜台名**：`namespace fish_market` —— 全小写、词间下划线。招牌一眼能认：这是本摊的价目台，跟普通名字分得开。\n\n**档位清单**：\n\n```text\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n```\n\n枚举里那三个值**本质是常量**，所以按常量的手势起名：`k` 开头 + 后面每个词头大写。最容易踩的坑是写成宏那样的大写（`GUEST`、`REGULAR`）—— 那会让读者以为它们是 `#define` 小字条。Google 的规矩说得很直白：**枚举值用常量的起名法，别用宏的起名法**。\n\n**单价常量**：\n\n```text\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n```\n\n`k` 开头是流传很久的常量暗号：早年流行的命名传统里，k 专用来指「一锤定音、不再变的数」。Google 把它收编成正式规矩：**常量名 k 开头 + 词头大写**。一眼看见 `k` 打头，不用翻定义就知道这是个一辈子不变的数。\n\n**二、两招的写法。**\n\n```text\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n```\n\n三处细节多念两遍喵：比较档位要写全名 `MemberClass::kGuest` —— `enum class` 的值被锁在清单里，不会像老式枚举那样到处乱飘；三个常量不是摆设，正是要在这里被叼回去，**价只在价目台上写一处**；招式名 `PriceOf` 首字母大写，跟口袋名、常量名一眼分家。\n\n```text\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n```\n\n**三、为什么值要起名。** 要是把 1、3、5 直接钉死在算账的算式里，改价那天就得满程序翻；起成 `kGuestPrice` 之后，价目台成了唯一改动点，算式里读到的也是「贵宾价」这块牌子，不是裸的 5。\n\n一句话收好：**柜台小写下划线、档位与单价都 k 开头、招式大驼峰；值起好名，改价只改一处喵。**",
+      "templateId": "cpp-s3-style-const-enum",
+      "params": {
+        "tier": 1,
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T17:04:22.649Z",
+        "hash": "79929aab7be08c8a"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-const-enum-005",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊要挂一块价目牌，起名全按 Google 那套手势：**柜台（`namespace`）名全小写加下划线**（`fish_market`），**档位清单用 `enum class`，里面的值也是常量 —— `k` 开头、后面词头大写**（`kGuest`、`kRegular`、`kVip`），**单价常量同样 `k` 开头**，**招式名首字母大写**（`PriceOf`、`NameOf`）。\n\n价目台已经搭好样板，请你补三样：\n\n1. **三个单价常量**（每斤收多少条小鱼干）：散客 1 条、常客 3 条、贵宾 5 条；起名照样板的手势（比如 `kGuestPrice` 这种写法）；\n2. `PriceOf` 这一招：按档位叼回每斤单价；\n3. `NameOf` 这一招：按档位叼回中文名（散客 / 常客 / 贵宾）。\n\n收账的活已经在 main 里接好：先报档位（0 散客、1 常客、2 贵宾），再报今天过了几条鱼，然后一条条报斤两。样例输入：\n\n```text\n1\n6\n4\n6\n9\n7\n5\n1\n```\n\n该印出来**两行**（档位一行、应收一行）：\n\n```text\n档位：常客\n应收 96 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单当样板：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* ① 三个单价常量自己写：散客 1 条、常客 3 条、贵宾 5 条（每斤收多少）\n   起名照上面的手势（k 开头 + 词头大写，比如 kGuestPrice） */\n\n/* ② PriceOf：按档位叼回每斤单价（把刚写的常量用上） */\nint PriceOf(MemberClass member) {\n    /* 这里写 */\n    return 1;\n}\n\n/* ③ NameOf：按档位叼回中文名（散客 / 常客 / 贵宾） */\nstd::string NameOf(MemberClass member) {\n    /* 这里写 */\n    return \"？\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* 每斤单价（收多少条小鱼干）：常量规矩 —— k 开头 + 词头大写 */\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "档位：常客\n应收 93 条喵",
+      "stdin": "1\n6\n4\n7\n1\n7\n7\n5\n",
+      "explanation": "**一、价目台的命名规矩逐条过。**\n\n**柜台名**：`namespace fish_market` —— 全小写、词间下划线。招牌一眼能认：这是本摊的价目台，跟普通名字分得开。\n\n**档位清单**：\n\n```text\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n```\n\n枚举里那三个值**本质是常量**，所以按常量的手势起名：`k` 开头 + 后面每个词头大写。最容易踩的坑是写成宏那样的大写（`GUEST`、`REGULAR`）—— 那会让读者以为它们是 `#define` 小字条。Google 的规矩说得很直白：**枚举值用常量的起名法，别用宏的起名法**。\n\n**单价常量**：\n\n```text\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n```\n\n`k` 开头是流传很久的常量暗号：早年流行的命名传统里，k 专用来指「一锤定音、不再变的数」。Google 把它收编成正式规矩：**常量名 k 开头 + 词头大写**。一眼看见 `k` 打头，不用翻定义就知道这是个一辈子不变的数。\n\n**二、两招的写法。**\n\n```text\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n```\n\n三处细节多念两遍喵：比较档位要写全名 `MemberClass::kGuest` —— `enum class` 的值被锁在清单里，不会像老式枚举那样到处乱飘；三个常量不是摆设，正是要在这里被叼回去，**价只在价目台上写一处**；招式名 `PriceOf` 首字母大写，跟口袋名、常量名一眼分家。\n\n```text\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n```\n\n**三、为什么值要起名。** 要是把 1、3、5 直接钉死在算账的算式里，改价那天就得满程序翻；起成 `kGuestPrice` 之后，价目台成了唯一改动点，算式里读到的也是「贵宾价」这块牌子，不是裸的 5。\n\n一句话收好：**柜台小写下划线、档位与单价都 k 开头、招式大驼峰；值起好名，改价只改一处喵。**",
+      "templateId": "cpp-s3-style-const-enum",
+      "params": {
+        "tier": 1,
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-20T17:04:27.253Z",
+        "hash": "94a28d236278a392"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-const-enum-006",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊要挂一块价目牌，起名全按 Google 那套手势：**柜台（`namespace`）名全小写加下划线**（`fish_market`），**档位清单用 `enum class`，里面的值也是常量 —— `k` 开头、后面词头大写**（`kGuest`、`kRegular`、`kVip`），**单价常量同样 `k` 开头**，**招式名首字母大写**（`PriceOf`、`NameOf`）。\n\n价目台已经搭好样板，请你补三样：\n\n1. **三个单价常量**（每斤收多少条小鱼干）：散客 1 条、常客 3 条、贵宾 5 条；起名照样板的手势（比如 `kGuestPrice` 这种写法）；\n2. `PriceOf` 这一招：按档位叼回每斤单价；\n3. `NameOf` 这一招：按档位叼回中文名（散客 / 常客 / 贵宾）。\n\n收账的活已经在 main 里接好：先报档位（0 散客、1 常客、2 贵宾），再报今天过了几条鱼，然后一条条报斤两。样例输入：\n\n```text\n2\n4\n7\n4\n8\n4\n```\n\n该印出来**两行**（档位一行、应收一行）：\n\n```text\n档位：贵宾\n应收 115 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单当样板：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* ① 三个单价常量自己写：散客 1 条、常客 3 条、贵宾 5 条（每斤收多少）\n   起名照上面的手势（k 开头 + 词头大写，比如 kGuestPrice） */\n\n/* ② PriceOf：按档位叼回每斤单价（把刚写的常量用上） */\nint PriceOf(MemberClass member) {\n    /* 这里写 */\n    return 1;\n}\n\n/* ③ NameOf：按档位叼回中文名（散客 / 常客 / 贵宾） */\nstd::string NameOf(MemberClass member) {\n    /* 这里写 */\n    return \"？\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* 每斤单价（收多少条小鱼干）：常量规矩 —— k 开头 + 词头大写 */\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "档位：贵宾\n应收 105 条喵",
+      "stdin": "2\n4\n8\n4\n8\n1\n",
+      "explanation": "**一、价目台的命名规矩逐条过。**\n\n**柜台名**：`namespace fish_market` —— 全小写、词间下划线。招牌一眼能认：这是本摊的价目台，跟普通名字分得开。\n\n**档位清单**：\n\n```text\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n```\n\n枚举里那三个值**本质是常量**，所以按常量的手势起名：`k` 开头 + 后面每个词头大写。最容易踩的坑是写成宏那样的大写（`GUEST`、`REGULAR`）—— 那会让读者以为它们是 `#define` 小字条。Google 的规矩说得很直白：**枚举值用常量的起名法，别用宏的起名法**。\n\n**单价常量**：\n\n```text\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n```\n\n`k` 开头是流传很久的常量暗号：早年流行的命名传统里，k 专用来指「一锤定音、不再变的数」。Google 把它收编成正式规矩：**常量名 k 开头 + 词头大写**。一眼看见 `k` 打头，不用翻定义就知道这是个一辈子不变的数。\n\n**二、两招的写法。**\n\n```text\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n```\n\n三处细节多念两遍喵：比较档位要写全名 `MemberClass::kGuest` —— `enum class` 的值被锁在清单里，不会像老式枚举那样到处乱飘；三个常量不是摆设，正是要在这里被叼回去，**价只在价目台上写一处**；招式名 `PriceOf` 首字母大写，跟口袋名、常量名一眼分家。\n\n```text\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n```\n\n**三、为什么值要起名。** 要是把 1、3、5 直接钉死在算账的算式里，改价那天就得满程序翻；起成 `kGuestPrice` 之后，价目台成了唯一改动点，算式里读到的也是「贵宾价」这块牌子，不是裸的 5。\n\n一句话收好：**柜台小写下划线、档位与单价都 k 开头、招式大驼峰；值起好名，改价只改一处喵。**",
+      "templateId": "cpp-s3-style-const-enum",
+      "params": {
+        "tier": 2,
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-20T17:04:31.725Z",
+        "hash": "71c65508a346bb23"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-const-enum-008",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "本喵的鱼摊要挂一块价目牌，起名全按 Google 那套手势：**柜台（`namespace`）名全小写加下划线**（`fish_market`），**档位清单用 `enum class`，里面的值也是常量 —— `k` 开头、后面词头大写**（`kGuest`、`kRegular`、`kVip`），**单价常量同样 `k` 开头**，**招式名首字母大写**（`PriceOf`、`NameOf`）。\n\n价目台已经搭好样板，请你补三样：\n\n1. **三个单价常量**（每斤收多少条小鱼干）：散客 1 条、常客 3 条、贵宾 5 条；起名照样板的手势（比如 `kGuestPrice` 这种写法）；\n2. `PriceOf` 这一招：按档位叼回每斤单价；\n3. `NameOf` 这一招：按档位叼回中文名（散客 / 常客 / 贵宾）。\n\n收账的活已经在 main 里接好：先报档位（0 散客、1 常客、2 贵宾），再报今天过了几条鱼，然后一条条报斤两。样例输入：\n\n```text\n2\n6\n1\n6\n9\n2\n6\n9\n```\n\n该印出来**两行**（档位一行、应收一行）：\n\n```text\n档位：贵宾\n应收 165 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单当样板：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* ① 三个单价常量自己写：散客 1 条、常客 3 条、贵宾 5 条（每斤收多少）\n   起名照上面的手势（k 开头 + 词头大写，比如 kGuestPrice） */\n\n/* ② PriceOf：按档位叼回每斤单价（把刚写的常量用上） */\nint PriceOf(MemberClass member) {\n    /* 这里写 */\n    return 1;\n}\n\n/* ③ NameOf：按档位叼回中文名（散客 / 常客 / 贵宾） */\nstd::string NameOf(MemberClass member) {\n    /* 这里写 */\n    return \"？\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n#include <string>\n\n/* 鱼摊的价目台：档位、单价、算账都归它管。\n   柜台名规矩：全小写加下划线 —— fish_market 就是样板 */\nnamespace fish_market {\n\n/* 档位清单：枚举值也是「常量」，k 开头、后面词头大写 */\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n\n/* 每斤单价（收多少条小鱼干）：常量规矩 —— k 开头 + 词头大写 */\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n\n}  // namespace fish_market\n\nint main() {\n    int tier = 0;\n    std::cin >> tier;\n\n    fish_market::MemberClass member = fish_market::MemberClass::kGuest;\n    if (tier == 1) {\n        member = fish_market::MemberClass::kRegular;\n    } else if (tier == 2) {\n        member = fish_market::MemberClass::kVip;\n    }\n\n    int n = 0;\n    std::cin >> n;\n    int total_weight = 0;\n    for (int i = 0; i < n; i++) {\n        int w = 0;\n        std::cin >> w;\n        total_weight = total_weight + w;\n    }\n\n    int bill = total_weight * fish_market::PriceOf(member);\n    std::cout << \"档位：\" << fish_market::NameOf(member) << std::endl;\n    std::cout << \"应收 \" << bill << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "档位：贵宾\n应收 120 条喵",
+      "stdin": "2\n6\n5\n2\n5\n4\n2\n6\n",
+      "explanation": "**一、价目台的命名规矩逐条过。**\n\n**柜台名**：`namespace fish_market` —— 全小写、词间下划线。招牌一眼能认：这是本摊的价目台，跟普通名字分得开。\n\n**档位清单**：\n\n```text\nenum class MemberClass {\n    kGuest = 0,\n    kRegular = 1,\n    kVip = 2\n};\n```\n\n枚举里那三个值**本质是常量**，所以按常量的手势起名：`k` 开头 + 后面每个词头大写。最容易踩的坑是写成宏那样的大写（`GUEST`、`REGULAR`）—— 那会让读者以为它们是 `#define` 小字条。Google 的规矩说得很直白：**枚举值用常量的起名法，别用宏的起名法**。\n\n**单价常量**：\n\n```text\nconstexpr int kGuestPrice = 1;\nconstexpr int kRegularPrice = 3;\nconstexpr int kVipPrice = 5;\n```\n\n`k` 开头是流传很久的常量暗号：早年流行的命名传统里，k 专用来指「一锤定音、不再变的数」。Google 把它收编成正式规矩：**常量名 k 开头 + 词头大写**。一眼看见 `k` 打头，不用翻定义就知道这是个一辈子不变的数。\n\n**二、两招的写法。**\n\n```text\nint PriceOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return kGuestPrice;\n    }\n    if (member == MemberClass::kRegular) {\n        return kRegularPrice;\n    }\n    return kVipPrice;\n}\n```\n\n三处细节多念两遍喵：比较档位要写全名 `MemberClass::kGuest` —— `enum class` 的值被锁在清单里，不会像老式枚举那样到处乱飘；三个常量不是摆设，正是要在这里被叼回去，**价只在价目台上写一处**；招式名 `PriceOf` 首字母大写，跟口袋名、常量名一眼分家。\n\n```text\nstd::string NameOf(MemberClass member) {\n    if (member == MemberClass::kGuest) {\n        return \"散客\";\n    }\n    if (member == MemberClass::kRegular) {\n        return \"常客\";\n    }\n    return \"贵宾\";\n}\n```\n\n**三、为什么值要起名。** 要是把 1、3、5 直接钉死在算账的算式里，改价那天就得满程序翻；起成 `kGuestPrice` 之后，价目台成了唯一改动点，算式里读到的也是「贵宾价」这块牌子，不是裸的 5。\n\n一句话收好：**柜台小写下划线、档位与单价都 k 开头、招式大驼峰；值起好名，改价只改一处喵。**",
+      "templateId": "cpp-s3-style-const-enum",
+      "params": {
+        "tier": 2,
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-11T17:00:32.918Z",
+        "hash": "7495202d01b72c34"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-lookalike-one-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵有一条「往上爬」的小账本：先报一个数（今天记了几条），再一条条报数。**每一条比上一条大，就算往上爬了一次**；第一条的「上一条」当作 0。数完印一行 `往上爬 X 次喵`。\n\n可账本数出来的次数老是**偏大** —— 明明没爬几步，它回回都记上一大串。病根是本喵自己埋的：账本里「上一条」的名字是个**单字母**，在有些字体里**看着跟数字一模一样**；偏偏有一处，本喵手一滑，把那个字母敲成了数字。程序里现在还剩一句「那个名字只被写过、没被读过」的小提醒 —— 翻译官喵给的提示里就有一行 `set but not used`。\n\n你帮本喵把这一趟数对：先说清拿谁跟谁比，再把那个名字换成**读得出来**的词 —— 从此想敲错都难。\n\n比如投喂给程序的是\n\n4\n8\n7\n3\n2\n\n修好之后就要叼回\n\n往上爬 1 次喵\n\n（判分喂的是**另外一组数**喵。）",
+      "brokenCode": "#include <iostream>\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int l = 0;\n    int climbs = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > 1) {\n            climbs = climbs + 1;\n        }\n        l = x;\n    }\n\n    std::cout << \"往上爬 \" << climbs << \" 次喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int previous = 0;\n    int climbs = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > previous) {\n            climbs = climbs + 1;\n        }\n        previous = x;\n    }\n\n    std::cout << \"往上爬 \" << climbs << \" 次喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "往上爬 2 次喵",
+      "stdin": "4\n7\n2\n9\n5\n",
+      "explanation": "这处毛病最难抓的地方，是它**看起来没毛病**喵。\n\n账本里「上一条」的名字叫 `l` —— 小写的字母 L。而它旁边该比的那处写成了\n\n```text\nif (x > 1) {\n```\n\n`l` 和 `1` 在不少字体里几乎长得一模一样：一个是字母、一个是数字。本喵当时的打算是「比上一条大」，被翻译官喵读到的却是「比数字 1 大」—— 数字 1 和账本没有任何关系，于是回回都多记一截。翻译官喵还留了个尾巴提醒：`l` 只被写过、没被读过（`set but not used`）—— 那正是这一滑的证据。\n\n改法分两层喵：\n\n**① 把比较改回「上一条」：**\n\n```text\nif (x > previous) {\n```\n\n**② 把名字换成读得出来的词。** 这一步才是根治 —— `l` 改叫 `previous`（上一条），从今往后：\n\n```text\nint previous = 0;\n```\n\n它写出来就有半个词那么长，想再跟 `1` 认错都难。这也正是 Google 那套规矩里的一条：名字要让**不在你团队的新读者**一眼看懂；单字母除了 `i` 这种约定俗成的「第几趟」序号，尽量别用 —— 特别是 `l`、`I` 这种和数字 1 跳贴面舞的。\n\n记住一句话喵：**形近字骗的不是翻译官喵，是读代码的眼睛；把名字写成词，眼睛就不会被骗。**",
+      "templateId": "cpp-s3-style-lookalike-one",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:00:36.974Z",
+        "hash": "f411c374cee540a6"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-lookalike-one-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵有一条「往上爬」的小账本：先报一个数（今天记了几条），再一条条报数。**每一条比上一条大，就算往上爬了一次**；第一条的「上一条」当作 0。数完印一行 `往上爬 X 次喵`。\n\n可账本数出来的次数老是**偏大** —— 明明没爬几步，它回回都记上一大串。病根是本喵自己埋的：账本里「上一条」的名字是个**单字母**，在有些字体里**看着跟数字一模一样**；偏偏有一处，本喵手一滑，把那个字母敲成了数字。程序里现在还剩一句「那个名字只被写过、没被读过」的小提醒 —— 翻译官喵给的提示里就有一行 `set but not used`。\n\n你帮本喵把这一趟数对：先说清拿谁跟谁比，再把那个名字换成**读得出来**的词 —— 从此想敲错都难。\n\n比如投喂给程序的是\n\n6\n6\n1\n7\n3\n1\n8\n\n修好之后就要叼回\n\n往上爬 3 次喵\n\n（判分喂的是**另外一组数**喵。）",
+      "brokenCode": "#include <iostream>\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int l = 0;\n    int climbs = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > 1) {\n            climbs = climbs + 1;\n        }\n        l = x;\n    }\n\n    std::cout << \"往上爬 \" << climbs << \" 次喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int previous = 0;\n    int climbs = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > previous) {\n            climbs = climbs + 1;\n        }\n        previous = x;\n    }\n\n    std::cout << \"往上爬 \" << climbs << \" 次喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "往上爬 3 次喵",
+      "stdin": "6\n6\n7\n1\n7\n2\n1\n",
+      "explanation": "这处毛病最难抓的地方，是它**看起来没毛病**喵。\n\n账本里「上一条」的名字叫 `l` —— 小写的字母 L。而它旁边该比的那处写成了\n\n```text\nif (x > 1) {\n```\n\n`l` 和 `1` 在不少字体里几乎长得一模一样：一个是字母、一个是数字。本喵当时的打算是「比上一条大」，被翻译官喵读到的却是「比数字 1 大」—— 数字 1 和账本没有任何关系，于是回回都多记一截。翻译官喵还留了个尾巴提醒：`l` 只被写过、没被读过（`set but not used`）—— 那正是这一滑的证据。\n\n改法分两层喵：\n\n**① 把比较改回「上一条」：**\n\n```text\nif (x > previous) {\n```\n\n**② 把名字换成读得出来的词。** 这一步才是根治 —— `l` 改叫 `previous`（上一条），从今往后：\n\n```text\nint previous = 0;\n```\n\n它写出来就有半个词那么长，想再跟 `1` 认错都难。这也正是 Google 那套规矩里的一条：名字要让**不在你团队的新读者**一眼看懂；单字母除了 `i` 这种约定俗成的「第几趟」序号，尽量别用 —— 特别是 `l`、`I` 这种和数字 1 跳贴面舞的。\n\n记住一句话喵：**形近字骗的不是翻译官喵，是读代码的眼睛；把名字写成词，眼睛就不会被骗。**",
+      "templateId": "cpp-s3-style-lookalike-one",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-11T17:00:41.019Z",
+        "hash": "34f32092f4366d20"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-macro-clash-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵翻出一份别猫塞来的老程序：门口点货，先报一个数（今天一共报了几回），再一回一回报数；**超过 4 条**的要记上一笔（4 就是上限，写在一张小字条上），最后印 `超标 X 只喵`。\n\n可这份程序现在**连门都进不去** —— 翻译官喵念到一半就当场翻脸：\n\n```text\nerror: expected unqualified-id before numeric constant\n```\n\n本喵凑近一看：问题出在**两个名字撞了车** —— 一张全大写的**小字条**（`#define` 那种开工前照抄的小抄），和一个全大写的名字，在程序里长得**一模一样**。你帮本喵把这份程序救回来：让翻译官喵念得下去，输出还是原来那行格式。\n\n比如投喂给程序的是\n\n4\n1\n2\n2\n5\n\n修好之后就要叼回\n\n超标 1 只喵\n\n（判分喂的是**另外一组数**喵。）",
+      "brokenCode": "#include <iostream>\n\n#define COUNT 4\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int COUNT = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > COUNT) {\n            COUNT = COUNT + 1;\n        }\n    }\n\n    std::cout << \"超标 \" << COUNT << \" 只喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n\n#define FISH_LIMIT 4\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int over_count = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > FISH_LIMIT) {\n            over_count = over_count + 1;\n        }\n    }\n\n    std::cout << \"超标 \" << over_count << \" 只喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "超标 2 只喵",
+      "stdin": "4\n1\n4\n9\n8\n",
+      "explanation": "这一趟过不去门，根因不在报错的那一行本身，而在**两个名字撞了车**喵。\n\n**一、小字条是开工前照抄的。** 翻译官喵真正动工之前，先把每张 `#define` 小字条挨个抄一遍：程序里**每一处**出现 `COUNT` 的地方，都被原样换成 `4`。所以这一行\n\n```text\nint COUNT = 0;\n```\n\n早就不是一句声明了，它被抄成了\n\n```text\nint 4 = 0;\n```\n\n—— 等号左边要跟一个可以放东西的名字，它却拿到一个数字，翻译官喵当场翻脸（`expected unqualified-id before numeric constant` 就是在说这件事）。\n\n**二、一处撞车，处处遭殃。** 就算把这一行绕过去，下面那句 `COUNT = COUNT + 1;` 同样会被抄成 `4 = 4 + 1;` —— 连「往哪儿加」都没了。撞车不是一行的伤，是同一个名字被两边同时占用的伤。\n\n**三、救法是让两个名字分家。** 它们本来就不是一个用途：一个是不动的**上限**，一个是往上加的**计数**。\n\n- 上限那张小字条，按 Google 的规矩起名：**全大写 + 下划线 + 项目前缀** —— `FISH_LIMIT`。前缀就是「这是本店的」记号，从此跟程序里的普通名字分家；\n- 数数的那个改成 `over_count`：小写 + 下划线，名字本身就把「在数超标的只数」说清楚了。\n\n**四、顺带记一条更高的规矩。** Google 的原话是「你不是真的想 define 宏吧」—— 宏能不用就不用。一个一辈子不动的数，写成 `constexpr int kFishLimit = 4;`：`k` 开头的常量名一眼可认，还能让翻译官喵顺手帮你把关，比小字条干净得多。\n\n一句话收好：**宏名要全大写加前缀，普通名字用不到它；两边各让一步，撞车就不会发生喵。**",
+      "templateId": "cpp-s3-style-macro-clash",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:00:45.066Z",
+        "hash": "be5db545d680b1b9"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-macro-clash-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵翻出一份别猫塞来的老程序：门口点货，先报一个数（今天一共报了几回），再一回一回报数；**超过 4 条**的要记上一笔（4 就是上限，写在一张小字条上），最后印 `超标 X 只喵`。\n\n可这份程序现在**连门都进不去** —— 翻译官喵念到一半就当场翻脸：\n\n```text\nerror: expected unqualified-id before numeric constant\n```\n\n本喵凑近一看：问题出在**两个名字撞了车** —— 一张全大写的**小字条**（`#define` 那种开工前照抄的小抄），和一个全大写的名字，在程序里长得**一模一样**。你帮本喵把这份程序救回来：让翻译官喵念得下去，输出还是原来那行格式。\n\n比如投喂给程序的是\n\n6\n7\n7\n5\n1\n8\n1\n\n修好之后就要叼回\n\n超标 4 只喵\n\n（判分喂的是**另外一组数**喵。）",
+      "brokenCode": "#include <iostream>\n\n#define COUNT 4\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int COUNT = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > COUNT) {\n            COUNT = COUNT + 1;\n        }\n    }\n\n    std::cout << \"超标 \" << COUNT << \" 只喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n\n#define FISH_LIMIT 4\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    int over_count = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        if (x > FISH_LIMIT) {\n            over_count = over_count + 1;\n        }\n    }\n\n    std::cout << \"超标 \" << over_count << \" 只喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "超标 3 只喵",
+      "stdin": "6\n7\n8\n4\n6\n1\n2\n",
+      "explanation": "这一趟过不去门，根因不在报错的那一行本身，而在**两个名字撞了车**喵。\n\n**一、小字条是开工前照抄的。** 翻译官喵真正动工之前，先把每张 `#define` 小字条挨个抄一遍：程序里**每一处**出现 `COUNT` 的地方，都被原样换成 `4`。所以这一行\n\n```text\nint COUNT = 0;\n```\n\n早就不是一句声明了，它被抄成了\n\n```text\nint 4 = 0;\n```\n\n—— 等号左边要跟一个可以放东西的名字，它却拿到一个数字，翻译官喵当场翻脸（`expected unqualified-id before numeric constant` 就是在说这件事）。\n\n**二、一处撞车，处处遭殃。** 就算把这一行绕过去，下面那句 `COUNT = COUNT + 1;` 同样会被抄成 `4 = 4 + 1;` —— 连「往哪儿加」都没了。撞车不是一行的伤，是同一个名字被两边同时占用的伤。\n\n**三、救法是让两个名字分家。** 它们本来就不是一个用途：一个是不动的**上限**，一个是往上加的**计数**。\n\n- 上限那张小字条，按 Google 的规矩起名：**全大写 + 下划线 + 项目前缀** —— `FISH_LIMIT`。前缀就是「这是本店的」记号，从此跟程序里的普通名字分家；\n- 数数的那个改成 `over_count`：小写 + 下划线，名字本身就把「在数超标的只数」说清楚了。\n\n**四、顺带记一条更高的规矩。** Google 的原话是「你不是真的想 define 宏吧」—— 宏能不用就不用。一个一辈子不动的数，写成 `constexpr int kFishLimit = 4;`：`k` 开头的常量名一眼可认，还能让翻译官喵顺手帮你把关，比小字条干净得多。\n\n一句话收好：**宏名要全大写加前缀，普通名字用不到它；两边各让一步，撞车就不会发生喵。**",
+      "templateId": "cpp-s3-style-macro-clash",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-11T17:00:48.527Z",
+        "hash": "6ba0f036e8197281"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-member-shadow-000",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵的鱼袋口上系着一个小账本：每喂进一条鱼，账本都要把「最近一条」翻新成它，数完最后报一句 `记着 X 条喵`。\n\n可这本账**永远是空的** —— 不管喂进去多少条，它回回都印 `记着 0 条喵`。程序不崩、不报错，安静得很，可数就是不对。病根藏在账本那张图纸里：**「装数的口袋」和「递鱼的手」起了同一个名字**，于是有一行动作变成了「把鱼从左手递到左手」。\n\n你帮本喵把账本修活：让「递进来的数」真正被装进「口袋」里。顺带按 Google 的规矩给口袋换个名字 —— 这条规矩就是为这种病准备的。\n\n比如投喂给程序的是\n\n4\n6\n2\n9\n5\n\n修好之后就要叼回\n\n记着 5 条喵\n\n（判分喂的是**另外一组数**喵。）",
+      "brokenCode": "#include <iostream>\n\nclass FishBag {\npublic:\n    void Set(int count) {\n        count = count;\n    }\n    int Get() {\n        return count;\n    }\nprivate:\n    int count = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishBag bag;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        bag.Set(x);\n    }\n\n    std::cout << \"记着 \" << bag.Get() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n\nclass FishBag {\npublic:\n    void Set(int count) {\n        count_ = count;\n    }\n    int Get() {\n        return count_;\n    }\nprivate:\n    int count_ = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishBag bag;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        bag.Set(x);\n    }\n\n    std::cout << \"记着 \" << bag.Get() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "记着 3 条喵",
+      "stdin": "4\n9\n6\n8\n3\n",
+      "explanation": "先说清楚病是怎么得的喵。\n\n**一、两个名字撞成一模一样。** 图纸里存数的口袋叫 `count`，而 `Set` 这招接鱼的那只「手」也叫 `count`：\n\n```text\nvoid Set(int count) {\n    count = count;\n}\n```\n\n翻译官喵认名字的规矩是**离得近的先算**：在 Set 里面写 `count`，它够到的永远是手里那个（刚递进来的数），口袋被挡在背后看不见。于是这行动作的真实意思是「把手里那条鱼，再塞回手里」—— 口袋一次都没被碰过，`Get` 读口袋，自然永远读到一开始的 0。\n\n**二、为什么这种病最阴。** 它不崩、不报错、连提醒都没有 —— 从头到尾安安静静，就是数不对。要是没人去对输出，它能安安静静躺到交付。\n\n**三、Google 的规矩正好管它。** Google 规定：**图纸里的数据成员（口袋）名字带一个尾下划线**。口袋改名叫 `count_`，这行就变成\n\n```text\ncount_ = count;\n```\n\n一个是手里的（`count`），一个是口袋里的（`count_`），**一眼分得开**，手滑撞不出来；再看这一行，从左到右就是「装进口袋」的动作，谁读谁懂。规矩的原文理由也在这一点上：口袋和外面的名字长得有区别，就不用到处写 `this->`，也不用给每个接收数的手另起怪名字。\n\n**四、还有一种老修法。** 口袋名字不动，写 `this->count = count;` 硬指口袋 —— 能跑，但 `this->` 得回回记得写、回回写得对。Google 选了尾下划线，就是让「口袋」在名字上自带记号，省掉这份记忆负担。\n\n一句话收好：**同行同名，近的赢；口袋缝上尾下划线，手和口袋就再也认不错喵。**",
+      "templateId": "cpp-s3-style-member-shadow",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:00:51.993Z",
+        "hash": "ebb9fa767bc761b3"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-member-shadow-002",
+      "type": "codefix",
+      "lang": "cpp",
+      "stem": "本喵的鱼袋口上系着一个小账本：每喂进一条鱼，账本都要把「最近一条」翻新成它，数完最后报一句 `记着 X 条喵`。\n\n可这本账**永远是空的** —— 不管喂进去多少条，它回回都印 `记着 0 条喵`。程序不崩、不报错，安静得很，可数就是不对。病根藏在账本那张图纸里：**「装数的口袋」和「递鱼的手」起了同一个名字**，于是有一行动作变成了「把鱼从左手递到左手」。\n\n你帮本喵把账本修活：让「递进来的数」真正被装进「口袋」里。顺带按 Google 的规矩给口袋换个名字 —— 这条规矩就是为这种病准备的。\n\n比如投喂给程序的是\n\n6\n6\n8\n3\n9\n6\n7\n\n修好之后就要叼回\n\n记着 7 条喵\n\n（判分喂的是**另外一组数**喵。）",
+      "brokenCode": "#include <iostream>\n\nclass FishBag {\npublic:\n    void Set(int count) {\n        count = count;\n    }\n    int Get() {\n        return count;\n    }\nprivate:\n    int count = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishBag bag;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        bag.Set(x);\n    }\n\n    std::cout << \"记着 \" << bag.Get() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceFix": "#include <iostream>\n\nclass FishBag {\npublic:\n    void Set(int count) {\n        count_ = count;\n    }\n    int Get() {\n        return count_;\n    }\nprivate:\n    int count_ = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishBag bag;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        bag.Set(x);\n    }\n\n    std::cout << \"记着 \" << bag.Get() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "记着 1 条喵",
+      "stdin": "6\n5\n3\n7\n1\n5\n1\n",
+      "explanation": "先说清楚病是怎么得的喵。\n\n**一、两个名字撞成一模一样。** 图纸里存数的口袋叫 `count`，而 `Set` 这招接鱼的那只「手」也叫 `count`：\n\n```text\nvoid Set(int count) {\n    count = count;\n}\n```\n\n翻译官喵认名字的规矩是**离得近的先算**：在 Set 里面写 `count`，它够到的永远是手里那个（刚递进来的数），口袋被挡在背后看不见。于是这行动作的真实意思是「把手里那条鱼，再塞回手里」—— 口袋一次都没被碰过，`Get` 读口袋，自然永远读到一开始的 0。\n\n**二、为什么这种病最阴。** 它不崩、不报错、连提醒都没有 —— 从头到尾安安静静，就是数不对。要是没人去对输出，它能安安静静躺到交付。\n\n**三、Google 的规矩正好管它。** Google 规定：**图纸里的数据成员（口袋）名字带一个尾下划线**。口袋改名叫 `count_`，这行就变成\n\n```text\ncount_ = count;\n```\n\n一个是手里的（`count`），一个是口袋里的（`count_`），**一眼分得开**，手滑撞不出来；再看这一行，从左到右就是「装进口袋」的动作，谁读谁懂。规矩的原文理由也在这一点上：口袋和外面的名字长得有区别，就不用到处写 `this->`，也不用给每个接收数的手另起怪名字。\n\n**四、还有一种老修法。** 口袋名字不动，写 `this->count = count;` 硬指口袋 —— 能跑，但 `this->` 得回回记得写、回回写得对。Google 选了尾下划线，就是让「口袋」在名字上自带记号，省掉这份记忆负担。\n\n一句话收好：**同行同名，近的赢；口袋缝上尾下划线，手和口袋就再也认不错喵。**",
+      "templateId": "cpp-s3-style-member-shadow",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-11T17:00:55.994Z",
+        "hash": "58f84de7a2b9e51d"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-refactor-challenge-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "difficulty": "challenge",
+      "stem": "本喵接手的**祖传账本**长这样喵 —— 完整、能跑，就是丑得扎手：\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main(){\n    // 老祖宗传下来的算法，别动\n    int n;\n    cin>>n;\n    int ZD=0; // 最大 zui da\n    int ZS=0; // 总数 zong shu\n    for(int j=0;j<n;j++){\n        int t;\n        cin>>t;\n        if(t>ZD){\n            ZD=t;\n        }\n        ZS=ZS+t;\n    }\n    cout<<\"最大：\"<<ZD<<\" 条喵\"<<endl;\n    cout<<\"总计：\"<<ZS<<\" 条喵\"<<endl;\n    return 0;\n}\n```\n\n请你**照本课的尺子**（名字写全英文人话、禁拼音缩写、禁用一把抓的 `using namespace std;`、缩进两个空格、操作符两边留空格、注释说人话）把它整治成企业里过得去的样子：\n\n- 拼音缩写（`ZD`、`ZS`）和单字母（`j`、`t`）一处一处都换成人话；\n- `using namespace std;` 请出去，用到谁就写全 `std::` 前缀；\n- 注释要么说清楚，要么删掉；\n- 从**空白**起笔，一个字都不照抄；\n- **印出来的东西必须和原版逐字一致** —— 这是本题的硬要求（机器只管比输出；名字、注释和排版的规矩，要经得起下一位读代码的人用眼睛验收）。\n\n程序先读一个数（一共几条），再一条条报斤两。样例输入：\n\n```text\n4\n9\n2\n4\n7\n```\n\n原版会印出来**两行**：\n\n```text\n最大：9 条喵\n总计：22 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": null,
+      "referenceSolution": "#include <iostream>\n\n/* 鱼干盘点：一边记下最大的一只，一边把总数加起来 */\nint main() {\n    int fish_count = 0;\n    std::cin >> fish_count;\n\n    int max_fish = 0;\n    int total_fish = 0;\n    for (int i = 0; i < fish_count; i++) {\n        int fish_size = 0;\n        std::cin >> fish_size;\n        if (fish_size > max_fish) {\n            max_fish = fish_size;\n        }\n        total_fish = total_fish + fish_size;\n    }\n\n    std::cout << \"最大：\" << max_fish << \" 条喵\" << std::endl;\n    std::cout << \"总计：\" << total_fish << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "最大：5 条喵\n总计：13 条喵",
+      "stdin": "4\n5\n4\n2\n2\n",
+      "explanation": "丑在哪，本喵一处一处指给你喵 —— 每一条都能在本课的尺子上找到对应的一格：\n\n**一、名字是拼音缩写。** `ZD`、`ZS` 是「最大」「总数」的拼音首字母 —— 读者得在脑子里翻译三步。规范要名字**语义完整**：`max_fish`、`total_fish`，读名如读注释。`j`、`t` 这种单字母更含糊：Google 只放行 `i` 这种约定俗成的「第几趟」序号，其余单字母都该起人话名。\n\n**二、`using namespace std;` 是一把抓的指令。** 它把整个 std 柜台的名字一股脑倒进当前房间，重名时谁也说不清用的是谁家的。Google 的规矩：**不要这种一把抓的写法**，用到谁就写全名 —— `std::cin`、`std::cout`、`std::endl`。\n\n**三、注释全是废话。** 「老祖宗传下来的算法，别动」没告诉读者任何事；`// 最大 zui da` 只是把缩写的拼音又抄了一遍。注释要给「名字给不了的信息」，给不了就别写。\n\n**四、排版挤成一团。** 缩进用了四个空格（Google 是**两个空格**）、`cin>>n;` 和 `int main(){` 都贴着写 —— 操作符两边留空格、花括号前留一个空格，眼睛才不用停下来拆。\n\n整治完，大致是这个形状：\n\n```cpp\n#include <iostream>\n\n/* 鱼干盘点：一边记下最大的一只，一边把总数加起来 */\nint main() {\n    int fish_count = 0;\n    std::cin >> fish_count;\n\n    int max_fish = 0;\n    int total_fish = 0;\n    for (int i = 0; i < fish_count; i++) {\n        int fish_size = 0;\n        std::cin >> fish_size;\n        if (fish_size > max_fish) {\n            max_fish = fish_size;\n        }\n        total_fish = total_fish + fish_size;\n    }\n\n    std::cout << \"最大：\" << max_fish << \" 条喵\" << std::endl;\n    std::cout << \"总计：\" << total_fish << \" 条喵\" << std::endl;\n    return 0;\n}\n```\n\n两条硬要求再回一遍：**输出逐字不变**（原版印什么，你的版本就印什么）；**从空白起笔** —— 是「翻译」，不是「复印」。\n\n一句话收好：**名字是写给下一位读代码的人的第一句注释；把拼音和排版都收拾干净，账本才交得出手喵。**",
+      "templateId": "cpp-s3-style-refactor-challenge",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:00.080Z",
+        "hash": "460c01014f790013"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-refactor-challenge-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "difficulty": "challenge",
+      "stem": "本喵接手的**祖传账本**长这样喵 —— 完整、能跑，就是丑得扎手：\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main(){\n    // 老祖宗传下来的算法，别动\n    int n;\n    cin>>n;\n    int ZD=0; // 最大 zui da\n    int ZS=0; // 总数 zong shu\n    for(int j=0;j<n;j++){\n        int t;\n        cin>>t;\n        if(t>ZD){\n            ZD=t;\n        }\n        ZS=ZS+t;\n    }\n    cout<<\"最大：\"<<ZD<<\" 条喵\"<<endl;\n    cout<<\"总计：\"<<ZS<<\" 条喵\"<<endl;\n    return 0;\n}\n```\n\n请你**照本课的尺子**（名字写全英文人话、禁拼音缩写、禁用一把抓的 `using namespace std;`、缩进两个空格、操作符两边留空格、注释说人话）把它整治成企业里过得去的样子：\n\n- 拼音缩写（`ZD`、`ZS`）和单字母（`j`、`t`）一处一处都换成人话；\n- `using namespace std;` 请出去，用到谁就写全 `std::` 前缀；\n- 注释要么说清楚，要么删掉；\n- 从**空白**起笔，一个字都不照抄；\n- **印出来的东西必须和原版逐字一致** —— 这是本题的硬要求（机器只管比输出；名字、注释和排版的规矩，要经得起下一位读代码的人用眼睛验收）。\n\n程序先读一个数（一共几条），再一条条报斤两。样例输入：\n\n```text\n5\n1\n4\n7\n3\n6\n```\n\n原版会印出来**两行**：\n\n```text\n最大：7 条喵\n总计：21 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": null,
+      "referenceSolution": "#include <iostream>\n\n/* 鱼干盘点：一边记下最大的一只，一边把总数加起来 */\nint main() {\n    int fish_count = 0;\n    std::cin >> fish_count;\n\n    int max_fish = 0;\n    int total_fish = 0;\n    for (int i = 0; i < fish_count; i++) {\n        int fish_size = 0;\n        std::cin >> fish_size;\n        if (fish_size > max_fish) {\n            max_fish = fish_size;\n        }\n        total_fish = total_fish + fish_size;\n    }\n\n    std::cout << \"最大：\" << max_fish << \" 条喵\" << std::endl;\n    std::cout << \"总计：\" << total_fish << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "最大：9 条喵\n总计：26 条喵",
+      "stdin": "5\n9\n4\n9\n2\n2\n",
+      "explanation": "丑在哪，本喵一处一处指给你喵 —— 每一条都能在本课的尺子上找到对应的一格：\n\n**一、名字是拼音缩写。** `ZD`、`ZS` 是「最大」「总数」的拼音首字母 —— 读者得在脑子里翻译三步。规范要名字**语义完整**：`max_fish`、`total_fish`，读名如读注释。`j`、`t` 这种单字母更含糊：Google 只放行 `i` 这种约定俗成的「第几趟」序号，其余单字母都该起人话名。\n\n**二、`using namespace std;` 是一把抓的指令。** 它把整个 std 柜台的名字一股脑倒进当前房间，重名时谁也说不清用的是谁家的。Google 的规矩：**不要这种一把抓的写法**，用到谁就写全名 —— `std::cin`、`std::cout`、`std::endl`。\n\n**三、注释全是废话。** 「老祖宗传下来的算法，别动」没告诉读者任何事；`// 最大 zui da` 只是把缩写的拼音又抄了一遍。注释要给「名字给不了的信息」，给不了就别写。\n\n**四、排版挤成一团。** 缩进用了四个空格（Google 是**两个空格**）、`cin>>n;` 和 `int main(){` 都贴着写 —— 操作符两边留空格、花括号前留一个空格，眼睛才不用停下来拆。\n\n整治完，大致是这个形状：\n\n```cpp\n#include <iostream>\n\n/* 鱼干盘点：一边记下最大的一只，一边把总数加起来 */\nint main() {\n    int fish_count = 0;\n    std::cin >> fish_count;\n\n    int max_fish = 0;\n    int total_fish = 0;\n    for (int i = 0; i < fish_count; i++) {\n        int fish_size = 0;\n        std::cin >> fish_size;\n        if (fish_size > max_fish) {\n            max_fish = fish_size;\n        }\n        total_fish = total_fish + fish_size;\n    }\n\n    std::cout << \"最大：\" << max_fish << \" 条喵\" << std::endl;\n    std::cout << \"总计：\" << total_fish << \" 条喵\" << std::endl;\n    return 0;\n}\n```\n\n两条硬要求再回一遍：**输出逐字不变**（原版印什么，你的版本就印什么）；**从空白起笔** —— 是「翻译」，不是「复印」。\n\n一句话收好：**名字是写给下一位读代码的人的第一句注释；把拼音和排版都收拾干净，账本才交得出手喵。**",
+      "templateId": "cpp-s3-style-refactor-challenge",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-20T17:04:36.174Z",
+        "hash": "8af7ff0e06c47f80"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-refactor-challenge-002",
+      "type": "codewrite",
+      "lang": "cpp",
+      "difficulty": "challenge",
+      "stem": "本喵接手的**祖传账本**长这样喵 —— 完整、能跑，就是丑得扎手：\n\n```cpp\n#include <iostream>\nusing namespace std;\n\nint main(){\n    // 老祖宗传下来的算法，别动\n    int n;\n    cin>>n;\n    int ZD=0; // 最大 zui da\n    int ZS=0; // 总数 zong shu\n    for(int j=0;j<n;j++){\n        int t;\n        cin>>t;\n        if(t>ZD){\n            ZD=t;\n        }\n        ZS=ZS+t;\n    }\n    cout<<\"最大：\"<<ZD<<\" 条喵\"<<endl;\n    cout<<\"总计：\"<<ZS<<\" 条喵\"<<endl;\n    return 0;\n}\n```\n\n请你**照本课的尺子**（名字写全英文人话、禁拼音缩写、禁用一把抓的 `using namespace std;`、缩进两个空格、操作符两边留空格、注释说人话）把它整治成企业里过得去的样子：\n\n- 拼音缩写（`ZD`、`ZS`）和单字母（`j`、`t`）一处一处都换成人话；\n- `using namespace std;` 请出去，用到谁就写全 `std::` 前缀；\n- 注释要么说清楚，要么删掉；\n- 从**空白**起笔，一个字都不照抄；\n- **印出来的东西必须和原版逐字一致** —— 这是本题的硬要求（机器只管比输出；名字、注释和排版的规矩，要经得起下一位读代码的人用眼睛验收）。\n\n程序先读一个数（一共几条），再一条条报斤两。样例输入：\n\n```text\n6\n8\n3\n6\n5\n7\n9\n```\n\n原版会印出来**两行**：\n\n```text\n最大：9 条喵\n总计：38 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": null,
+      "referenceSolution": "#include <iostream>\n\n/* 鱼干盘点：一边记下最大的一只，一边把总数加起来 */\nint main() {\n    int fish_count = 0;\n    std::cin >> fish_count;\n\n    int max_fish = 0;\n    int total_fish = 0;\n    for (int i = 0; i < fish_count; i++) {\n        int fish_size = 0;\n        std::cin >> fish_size;\n        if (fish_size > max_fish) {\n            max_fish = fish_size;\n        }\n        total_fish = total_fish + fish_size;\n    }\n\n    std::cout << \"最大：\" << max_fish << \" 条喵\" << std::endl;\n    std::cout << \"总计：\" << total_fish << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "最大：9 条喵\n总计：35 条喵",
+      "stdin": "6\n4\n2\n6\n9\n8\n6\n",
+      "explanation": "丑在哪，本喵一处一处指给你喵 —— 每一条都能在本课的尺子上找到对应的一格：\n\n**一、名字是拼音缩写。** `ZD`、`ZS` 是「最大」「总数」的拼音首字母 —— 读者得在脑子里翻译三步。规范要名字**语义完整**：`max_fish`、`total_fish`，读名如读注释。`j`、`t` 这种单字母更含糊：Google 只放行 `i` 这种约定俗成的「第几趟」序号，其余单字母都该起人话名。\n\n**二、`using namespace std;` 是一把抓的指令。** 它把整个 std 柜台的名字一股脑倒进当前房间，重名时谁也说不清用的是谁家的。Google 的规矩：**不要这种一把抓的写法**，用到谁就写全名 —— `std::cin`、`std::cout`、`std::endl`。\n\n**三、注释全是废话。** 「老祖宗传下来的算法，别动」没告诉读者任何事；`// 最大 zui da` 只是把缩写的拼音又抄了一遍。注释要给「名字给不了的信息」，给不了就别写。\n\n**四、排版挤成一团。** 缩进用了四个空格（Google 是**两个空格**）、`cin>>n;` 和 `int main(){` 都贴着写 —— 操作符两边留空格、花括号前留一个空格，眼睛才不用停下来拆。\n\n整治完，大致是这个形状：\n\n```cpp\n#include <iostream>\n\n/* 鱼干盘点：一边记下最大的一只，一边把总数加起来 */\nint main() {\n    int fish_count = 0;\n    std::cin >> fish_count;\n\n    int max_fish = 0;\n    int total_fish = 0;\n    for (int i = 0; i < fish_count; i++) {\n        int fish_size = 0;\n        std::cin >> fish_size;\n        if (fish_size > max_fish) {\n            max_fish = fish_size;\n        }\n        total_fish = total_fish + fish_size;\n    }\n\n    std::cout << \"最大：\" << max_fish << \" 条喵\" << std::endl;\n    std::cout << \"总计：\" << total_fish << \" 条喵\" << std::endl;\n    return 0;\n}\n```\n\n两条硬要求再回一遍：**输出逐字不变**（原版印什么，你的版本就印什么）；**从空白起笔** —— 是「翻译」，不是「复印」。\n\n一句话收好：**名字是写给下一位读代码的人的第一句注释；把拼音和排版都收拾干净，账本才交得出手喵。**",
+      "templateId": "cpp-s3-style-refactor-challenge",
+      "params": {
+        "n": 6
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:03.160Z",
+        "hash": "5a2679c2b16d08e6"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-write-counter-000",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "Google 那套规矩里，给图纸和图纸里的东西起名，有一套固定手势：**图纸名大驼峰**（每个词头都大写，像 `FishCounter`），**招式名也首字母大写**（`AddFish`、`TotalFish`），**口袋（数据成员）全小写加词间下划线，尾巴上再缝一个下划线**（`total_fish_`）。\n\n请照这套手势，把「鱼数小柜台」补完：\n\n1. 图纸已经起好名 `FishCounter`，口袋里 `total_fish_` 记总数，一开始是 0；\n2. `AddFish` 每收到一条鱼的数，就把它**加进**总数；\n3. `TotalFish` 把总数**叼回去**。\n\n程序先读一个数（一共几条），再一条一条读。样例输入：\n\n```text\n4\n2\n9\n3\n7\n```\n\n该印出来**一行**：\n\n```text\n一共 21 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "#include <iostream>\n\n/* 鱼数小柜台：每来一条就加一笔，随时能报总数 */\nclass FishCounter {\npublic:\n    /* ① 每收到一条鱼的数，就把它加进口袋 */\n    void AddFish(int fish) {\n        /* 这里写：把这条鱼记进 total_fish_ */\n    }\n\n    /* ② 把口袋里的总数叼回去 */\n    int TotalFish() const {\n        /* 这里写：把 total_fish_ 叼回去 */\n        return 0;\n    }\n\nprivate:\n    int total_fish_ = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishCounter counter;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        counter.AddFish(x);\n    }\n\n    std::cout << \"一共 \" << counter.TotalFish() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n\n/* 鱼数小柜台：每来一条就加一笔，随时能报总数 */\nclass FishCounter {\npublic:\n    void AddFish(int fish) {\n        total_fish_ = total_fish_ + fish;\n    }\n\n    int TotalFish() const {\n        return total_fish_;\n    }\n\nprivate:\n    int total_fish_ = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishCounter counter;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        counter.AddFish(x);\n    }\n\n    std::cout << \"一共 \" << counter.TotalFish() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "一共 24 条喵",
+      "stdin": "4\n4\n8\n4\n8\n",
+      "explanation": "**一、命名三件套先过一遍。**\n\n- **图纸名**：`FishCounter` —— 每个词头大写（大驼峰），一眼就跟普通名字分家；\n- **招式名**：`AddFish`、`TotalFish` —— 也是首字母大写，Google 说普通招式一律这样；唯一一处例外是把「报数」这种招式写成全小写也行（比如 `total_fish()`），本课统一用大驼峰；\n- **口袋（数据成员）**：`total_fish_` —— 全小写、词间下划线、**尾巴再缝一个下划线**。尾下划线是图纸专用记号：看见尾巴就知道它住在图纸里。\n\n**二、两招各干一件事。**\n\n```text\nvoid AddFish(int fish) {\n    total_fish_ = total_fish_ + fish;\n}\n```\n\n收一条、加一笔：等号右边是「老总数加上这条」，再装回口袋。别写成 `total_fish_ = fish;` —— 那是每来一条都把老的**盖掉**，最后只剩最后一条。\n\n```text\nint TotalFish() const {\n    return total_fish_;\n}\n```\n\n念总数只是**读**，不改 —— 所以末尾缀一个 `const`，相当于给这招挂块牌子「我不动口袋」，谁拿到图纸副本都能放心喊它。\n\n**三、那条尾巴不是装饰。** 还记得那本「永远是空的」账本吗 —— 病根就是口袋和手起了同一个名字。尾下划线让口袋的名字**天生跟别的名字不一样**：写 `total_fish_ = total_fish_ + fish;` 时，哪个是口袋、哪个是手里的鱼，一眼可辨。Google 给数据成员留这条尾巴，图的就是这个：不用到处写 `this->`，也不用给每个接收数的手另起名字。\n\n一句话收好：**图纸大驼峰、招式大驼峰、口袋小写加尾下划线；记的时候加进去，报的时候叼出来喵。**",
+      "templateId": "cpp-s3-style-write-counter",
+      "params": {
+        "n": 4
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:06.569Z",
+        "hash": "fb87ccb3abffe658"
+      }
+    },
+    {
+      "id": "bank-cpp-s3-style-write-counter-001",
+      "type": "codewrite",
+      "lang": "cpp",
+      "stem": "Google 那套规矩里，给图纸和图纸里的东西起名，有一套固定手势：**图纸名大驼峰**（每个词头都大写，像 `FishCounter`），**招式名也首字母大写**（`AddFish`、`TotalFish`），**口袋（数据成员）全小写加词间下划线，尾巴上再缝一个下划线**（`total_fish_`）。\n\n请照这套手势，把「鱼数小柜台」补完：\n\n1. 图纸已经起好名 `FishCounter`，口袋里 `total_fish_` 记总数，一开始是 0；\n2. `AddFish` 每收到一条鱼的数，就把它**加进**总数；\n3. `TotalFish` 把总数**叼回去**。\n\n程序先读一个数（一共几条），再一条一条读。样例输入：\n\n```text\n5\n7\n9\n9\n6\n7\n```\n\n该印出来**一行**：\n\n```text\n一共 38 条喵\n```\n\n（判分喂的是**另外一组数**喵。）",
+      "starter": "#include <iostream>\n\n/* 鱼数小柜台：每来一条就加一笔，随时能报总数 */\nclass FishCounter {\npublic:\n    /* ① 每收到一条鱼的数，就把它加进口袋 */\n    void AddFish(int fish) {\n        /* 这里写：把这条鱼记进 total_fish_ */\n    }\n\n    /* ② 把口袋里的总数叼回去 */\n    int TotalFish() const {\n        /* 这里写：把 total_fish_ 叼回去 */\n        return 0;\n    }\n\nprivate:\n    int total_fish_ = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishCounter counter;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        counter.AddFish(x);\n    }\n\n    std::cout << \"一共 \" << counter.TotalFish() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "referenceSolution": "#include <iostream>\n\n/* 鱼数小柜台：每来一条就加一笔，随时能报总数 */\nclass FishCounter {\npublic:\n    void AddFish(int fish) {\n        total_fish_ = total_fish_ + fish;\n    }\n\n    int TotalFish() const {\n        return total_fish_;\n    }\n\nprivate:\n    int total_fish_ = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishCounter counter;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        counter.AddFish(x);\n    }\n\n    std::cout << \"一共 \" << counter.TotalFish() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+      "expectedOutput": "一共 29 条喵",
+      "stdin": "5\n1\n7\n8\n9\n4\n",
+      "explanation": "**一、命名三件套先过一遍。**\n\n- **图纸名**：`FishCounter` —— 每个词头大写（大驼峰），一眼就跟普通名字分家；\n- **招式名**：`AddFish`、`TotalFish` —— 也是首字母大写，Google 说普通招式一律这样；唯一一处例外是把「报数」这种招式写成全小写也行（比如 `total_fish()`），本课统一用大驼峰；\n- **口袋（数据成员）**：`total_fish_` —— 全小写、词间下划线、**尾巴再缝一个下划线**。尾下划线是图纸专用记号：看见尾巴就知道它住在图纸里。\n\n**二、两招各干一件事。**\n\n```text\nvoid AddFish(int fish) {\n    total_fish_ = total_fish_ + fish;\n}\n```\n\n收一条、加一笔：等号右边是「老总数加上这条」，再装回口袋。别写成 `total_fish_ = fish;` —— 那是每来一条都把老的**盖掉**，最后只剩最后一条。\n\n```text\nint TotalFish() const {\n    return total_fish_;\n}\n```\n\n念总数只是**读**，不改 —— 所以末尾缀一个 `const`，相当于给这招挂块牌子「我不动口袋」，谁拿到图纸副本都能放心喊它。\n\n**三、那条尾巴不是装饰。** 还记得那本「永远是空的」账本吗 —— 病根就是口袋和手起了同一个名字。尾下划线让口袋的名字**天生跟别的名字不一样**：写 `total_fish_ = total_fish_ + fish;` 时，哪个是口袋、哪个是手里的鱼，一眼可辨。Google 给数据成员留这条尾巴，图的就是这个：不用到处写 `this->`，也不用给每个接收数的手另起名字。\n\n一句话收好：**图纸大驼峰、招式大驼峰、口袋小写加尾下划线；记的时候加进去，报的时候叼出来喵。**",
+      "templateId": "cpp-s3-style-write-counter",
+      "params": {
+        "n": 5
+      },
+      "verified": {
+        "at": "2026-10-11T17:01:10.563Z",
+        "hash": "652f5c23e65b1f4b"
+      }
+    }
+  ]
+}

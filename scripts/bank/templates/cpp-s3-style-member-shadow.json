@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-style-member-shadow",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-28",
+  "type": "codefix",
+  "concept": ["同名遮住", "口袋和手", "尾下划线", "安静的不对"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵的鱼袋口上系着一个小账本：每喂进一条鱼，账本都要把「最近一条」翻新成它，数完最后报一句 `记着 X 条喵`。\n\n可这本账**永远是空的** —— 不管喂进去多少条，它回回都印 `记着 0 条喵`。程序不崩、不报错，安静得很，可数就是不对。病根藏在账本那张图纸里：**「装数的口袋」和「递鱼的手」起了同一个名字**，于是有一行动作变成了「把鱼从左手递到左手」。\n\n你帮本喵把账本修活：让「递进来的数」真正被装进「口袋」里。顺带按 Google 的规矩给口袋换个名字 —— 这条规矩就是为这种病准备的。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n修好之后就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。）",
+  "brokenCodeTemplate": "#include <iostream>\n\nclass FishBag {\npublic:\n    void Set(int count) {\n        count = count;\n    }\n    int Get() {\n        return count;\n    }\nprivate:\n    int count = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishBag bag;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        bag.Set(x);\n    }\n\n    std::cout << \"记着 \" << bag.Get() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n\nclass FishBag {\npublic:\n    void Set(int count) {\n        count_ = count;\n    }\n    int Get() {\n        return count_;\n    }\nprivate:\n    int count_ = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishBag bag;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        bag.Set(x);\n    }\n\n    std::cout << \"记着 \" << bag.Get() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "先说清楚病是怎么得的喵。\n\n**一、两个名字撞成一模一样。** 图纸里存数的口袋叫 `count`，而 `Set` 这招接鱼的那只「手」也叫 `count`：\n\n```text\nvoid Set(int count) {\n    count = count;\n}\n```\n\n翻译官喵认名字的规矩是**离得近的先算**：在 Set 里面写 `count`，它够到的永远是手里那个（刚递进来的数），口袋被挡在背后看不见。于是这行动作的真实意思是「把手里那条鱼，再塞回手里」—— 口袋一次都没被碰过，`Get` 读口袋，自然永远读到一开始的 0。\n\n**二、为什么这种病最阴。** 它不崩、不报错、连提醒都没有 —— 从头到尾安安静静，就是数不对。要是没人去对输出，它能安安静静躺到交付。\n\n**三、Google 的规矩正好管它。** Google 规定：**图纸里的数据成员（口袋）名字带一个尾下划线**。口袋改名叫 `count_`，这行就变成\n\n```text\ncount_ = count;\n```\n\n一个是手里的（`count`），一个是口袋里的（`count_`），**一眼分得开**，手滑撞不出来；再看这一行，从左到右就是「装进口袋」的动作，谁读谁懂。规矩的原文理由也在这一点上：口袋和外面的名字长得有区别，就不用到处写 `this->`，也不用给每个接收数的手另起怪名字。\n\n**四、还有一种老修法。** 口袋名字不动，写 `this->count = count;` 硬指口袋 —— 能跑，但 `this->` 得回回记得写、回回写得对。Google 选了尾下划线，就是让「口袋」在名字上自带记号，省掉这份记忆负担。\n\n一句话收好：**同行同名，近的赢；口袋缝上尾下划线，手和口袋就再也认不错喵。**"
+}

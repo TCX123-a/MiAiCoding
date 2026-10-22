@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-contract-not-kept",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-04",
+  "type": "codefix",
+  "concept": ["与猫的约定", "implements", "认下约定就得把那一手补上", "编译错误"],
+  "instances": 2,
+  "params": {
+    "robot": { "kind": "pick", "values": ["铁喵", "阿铁"] },
+    "cry": { "kind": "pick", "values": ["嘀嘀", "哔啵"] }
+  },
+  "stemTemplate": "院子里的机器人{robot}也想要一块能上架子的牌子，本喵就让它认下了那份约定。它认得挺痛快，写也写了 —— 可翻译官喵翻开一看，还是把爪子拍下来了。\n\n修好之后，程序该印出这一行：\n\n```text\n{robot}：{cry}\n```\n\n它印东西那一下本身没写错，别去动 `System.out.println` 那一行喵。",
+  "brokenCodeTemplate": "interface Speaker {\n    void speak();\n}\n\nclass Robot implements Speaker {\n    String name;\n\n    Robot(String name) {\n        this.name = name;\n    }\n\n    public void say() {\n        System.out.println(name + \"：{cry}\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Speaker s = new Robot(\"{robot}\");\n        s.speak();\n    }\n}\n",
+  "referenceFixTemplate": "interface Speaker {\n    void speak();\n}\n\nclass Robot implements Speaker {\n    String name;\n\n    Robot(String name) {\n        this.name = name;\n    }\n\n    public void speak() {\n        System.out.println(name + \"：{cry}\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Speaker s = new Robot(\"{robot}\");\n        s.speak();\n    }\n}\n",
+  "explanationTemplate": "翻译官喵说的是 **`Robot is not abstract and does not override abstract method speak() in Speaker`** —— 「你认下了约定，可约定里点名要的那一手，我没在你身上找着喵」。\n\n这里有意思的地方是：本喵明明**写了一张行为**，报错却说「没补上」。因为认下约定的规矩不是「写点像样的东西」，而是**照着约定的名头一字不差地补** —— 约定里写的是 `speak`，你补的这一手叫 `say`，在翻译官喵眼里这是两件**互不相干**的事：约定的那一手仍是一片空白，你新写的那一手则是搭不上任何约定的散件。\n\n报错里那两个字 `abstract` 别被它唬住 —— 翻译官喵用的是同一句现成的话，凡是「认下了却没补全」都这么念，跟我们上一课那张只画了一半的图纸共用一套说法喵。\n\n改法就一处：把 `say` 改成 `speak`（你要是舍不得 `say`，留着它、另写一手 `speak` 也行，只是 `say` 从此没人喊，本喵劝你别留）。改完再看一眼 `main` 里那句 `s.speak();` —— 它一直没写错，是底下**没人接得住**它喵。"
+}

@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-varargs-forward-write",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-12",
+  "type": "codewrite",
+  "concept": ["一串投喂要往下转交", "收清单的那一版 vprintf", "格式串当账本"],
+  "instances": 6,
+  "params": {
+    "msg": { "kind": "pick", "values": ["收货", "开箱"] },
+    "a": { "kind": "pick", "values": ["3", "7"] }
+  },
+  "stemTemplate": "请写一招 `report` 喵：主人递进来一个**格式串**和后头一串数，它要**原样**把这句话印出来（格式串里的 `%d` 照旧按递进来的数渲染），**每句末尾换一行**。\n\n`main` 里在这么喊它：\n\n```text\nreport(\"{msg}：%d 条\", {a});\nreport(\"今天到此为止\");\n```\n\n该印两行：第一行是 `{msg}：{a} 条`，第二行原样是 `今天到此为止`。\n\n⚠️ 递进来的那一串，在招式手里只剩一张**清单** —— 想转交给那个会印字的招式，认准名字里带 `v` 的那一位喵。`main` 里那两行别动。",
+  "starterTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nvoid report(const char *fmt, ...) {\n    /* ↓ 在这儿写：把主人递进来的这一串，原样递给那个会印字的招式；每句末尾换一行 */\n\n}\n\nint main(void) {\n    report(\"{msg}：%d 条\", {a});\n    report(\"今天到此为止\");\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdarg.h>\n\nvoid report(const char *fmt, ...) {\n    va_list list;\n    va_start(list, fmt);\n    vprintf(fmt, list);\n    va_end(list);\n    printf(\"\\n\");\n}\n\nint main(void) {\n    report(\"{msg}：%d 条\", {a});\n    report(\"今天到此为止\");\n    return 0;\n}\n",
+  "explanationTemplate": "关键就一句话喵：**主人递进来的那一串，在招式手里只剩一张清单**（`va_list`），它没法原样递给只收「一串投喂」的 `printf`。\n\n所以要用**收清单的那一版**：`vprintf(fmt, list);` —— 格式串照样是账本，清单里的东西按占位符一份一份叼出来渲染。\n\n四步还是那四步：开 `va_list list;`、挂 `va_start(list, fmt);`（这里最后那个有名字的投喂是 `fmt`）、叼（交给 `vprintf`）、收 `va_end(list);`，最后补一句换行。\n\n顺一句：第二个喊话 `report(\"今天到此为止\")` 后头**一份都没跟**，照样能印 —— 那一串本来就是「想跟几份跟几份」，包括一份都不跟喵。以后凡是要把一串投喂往下转交，认准名字里带 `v` 的那一位就行。"
+}

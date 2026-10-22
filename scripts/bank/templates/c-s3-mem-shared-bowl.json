@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s3-mem-shared-bowl",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-01",
+  "type": "codewrite",
+  "concept": ["招式外面的仓库", "三招共用一间", "存和取分开"],
+  "instances": 6,
+  "params": {
+    "a": { "kind": "int", "min": 5, "max": 7 },
+    "b": { "kind": "int", "min": 2, "max": 4 }
+  },
+  "stemTemplate": "本喵要三只**够得着同一间碗**的招式：一只往里放，一只往外拿，一只报数。\n\n请你写：\n\n1. 招式**外面**摆一间整数仓库 `bowl`，出场是 0。\n2. `put_in(int n)`：把 `n` 加到 `bowl` 上，别的什么都不做。\n3. `eat_one(void)`：把 `bowl` 减掉 1。\n4. `peek(void)`：把 `bowl` 现在的数答回来。\n5. `main` 里按这个次序做三件事，一件事印一行：\n   - 投喂 **{a}** 进 `put_in`，印 `放进 {a} 条，碗里 {a} 条`；\n   - 连喊 **2 次** `eat_one`，印一行 `吃掉 2 条，碗里 （吃剩的数） 条`；\n   - 投喂 **{b}** 进 `put_in`，印一行 `再放进 {b} 条，碗里 （最后的数） 条`。\n\n该印出来是**三行**：\n\n```text\n放进 {a} 条，碗里 {a} 条\n吃掉 2 条，碗里 ？条\n再放进 {b} 条，碗里 ？条\n```\n\n（两个问号是**一路加加减减算到那一步**的数，本喵故意不告诉你喵。）",
+  "starterTemplate": "#include <stdio.h>\n\n/* ① 招式外面摆一间碗 */\n\n/* ② 往里放 */\n\n/* ③ 往外拿 */\n\n/* ④ 报数 */\n\nint main(void) {\n    /* ⑤ 按次序做三件事，一件事印一行 */\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint bowl = 0;\n\nvoid put_in(int n) {\n    bowl = bowl + n;\n}\n\nvoid eat_one(void) {\n    bowl = bowl - 1;\n}\n\nint peek(void) {\n    return bowl;\n}\n\nint main(void) {\n    put_in({a});\n    printf(\"放进 {a} 条，碗里 %d 条\\n\", peek());\n    eat_one();\n    eat_one();\n    printf(\"吃掉 2 条，碗里 %d 条\\n\", peek());\n    put_in({b});\n    printf(\"再放进 {b} 条，碗里 %d 条\\n\", peek());\n    return 0;\n}\n",
+  "explanationTemplate": "这一题只有一句话：**要三只招式共用一样东西，那样东西就得摆在招式外面。**\n\n你把 `bowl` 写在招式外面，它住进**固定柜**：程序一开跑就摆好，一直摆到程序结束，而且**每一只招式都够得着它**。所以 `put_in` 加的、`eat_one` 减的、`peek` 报的，从头到尾都是**同一间碗** —— 三只招式之间就这样传上了话。\n\n本喵特意把「放」「拿」「报」拆成三招，就是想让你看清这件事：**拆成几招都行，只要那间碗在招式外面**，它们看到的就是同一间。\n\n⚠️ 反面本喵也真跑过一遍：要是把 `bowl` 写进每一招**里面**（三只招式各摆一间自己的碗），本喵拿 `-Wall` 编的时候翻译官喵**一声没吭**、跑起来也不摔 —— 可三行全印 `碗里 0 条`。因为那时候每一招都在跟自己那间碗说话，它们**从来没见过面**。\n\n一句话收尾：**招式之间要共享的东西，只能摆在招式外面。** 摆错了不报错，只是各自为政喵。"
+}

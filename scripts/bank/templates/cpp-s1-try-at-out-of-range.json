@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s1-try-at-out-of-range",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-13",
+  "type": "codewrite",
+  "concept": ["at 是带软垫版的取法", "越界扔 out_of_range", "越界那句说明里数字都告诉你"],
+  "instances": 6,
+  "params": {
+    "word": { "kind": "pick", "values": ["miai", "fish"] },
+    "pos": { "kind": "pick", "values": ["1", "10"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{word}\n{pos}\n", "sampleText": "cat\n2\n" },
+  "stemTemplate": "投喂口会先递进来**一行字**，再递进来**一个整数**（本喵叫它 `K`）。本喵要拿这串字**第 `K` 号位**上的那颗（**从 0 数起**，跟第八课数格子一样）。\n\n可是那一颗**可能根本不存在** —— 要是这串字没那么长，就得稳稳接住车。请这样办：\n\n1. 用**带软垫版**的取法（`at`，不是方括号那种）去拿第 `K` 号位；\n2. **拿得到**的话，印一行：`第 K 号位是 X 喵`（X 就是那颗字）；\n3. **越界**的话，用 `catch (const out_of_range& e)` 接住，印一行：`越界喵：` 后面接上 `e.what()`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一串字和另一个位置**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\n#include <stdexcept>\nusing namespace std;\n\nint main() {\n    string word;\n    int pos = 0;\n    getline(cin, word);\n    cin >> pos;\n\n    try {\n        char c = word.at(pos);\n        cout << \"第 \" << pos << \" 号位是 \" << c << \" 喵\" << endl;\n    } catch (const out_of_range& e) {\n        cout << \"越界喵：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的关键在**取法**上喵：\n\n- 用**方括号**那种取法（`word[pos]`）越界时**不扔车** —— 它直接踩进一块没人管的地方，安静得很（和第十一课那块「野牌子」是同一种坏法）。\n- **`at` 是带软垫版的取法**：那一颗不存在时，它自己就扔出一辆挂着 `out_of_range` 牌子的车（意思是「超出范围」）。\n\n所以这一题必须用 `at`，铺上 `catch (const out_of_range& e)`，两条路才都走得下来。越界那辆车上的说明很有意思喵 —— `e.what()` 印出来是**连数字都告诉你的一整句**：你要的是第几颗、这串一共只有几颗，它都写在上面（本课第三节那段跑出来的原话就是这么长一串）。\n\n顺带记住：`at` 说明里那串数字每次都不一样，**所以那一行只能由程序自己跑出来，不能写死**。"
+}

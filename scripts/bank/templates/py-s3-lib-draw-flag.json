@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-lib-draw-flag",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-13",
+  "type": "codewrite",
+  "concept": ["Image.new 造画布", "ImageDraw.Draw 按笔", "rectangle 画方块", "读格子"],
+  "instances": 6,
+  "params": {
+    "w": { "kind": "pick", "values": [120, 160] },
+    "h": { "kind": "pick", "values": [60, 80] },
+    "box": { "kind": "pick", "values": ["10, 10, 110, 50", "10, 10, 140, 60"] }
+  },
+  "stemTemplate": "画图那只窝请进来了，本喵要你给本喵画一面小旗子。\n\n要求：\n\n1. 造一块画布：宽 {w}、高 {h}、底色**天空蓝**（颜色名就写 `\"skyblue\"`）、色彩模式 `\"RGB\"`。\n2. 在画布上**按一支笔**。\n3. 用那支笔画一块**金色**的方块（颜色名写 `\"gold\"`），方块占的区域是 `[{box}]` —— 这四个数念作「左上角的横竖、右下角的横竖」。\n4. 印**三行**：\n\n```text\n尺寸： ({w}, {h})\n色彩模式： RGB\n左上角那一格的颜色： (255, 215, 0)\n```\n\n第三行读的是 `15, 15` 那一格（横着数第 15、竖着数第 15）—— 它在金色块里面，所以该读到金色的三个数。\n\n⚠️ 读那一格的时候，横竖两个数要**包成一对**再喂给它；画方块那四个数不用包。这两处的写法不一样，别写成一样喵。",
+  "starterTemplate": "from PIL import Image, ImageDraw\n\n# ① 造画布\n\n# ② 按笔\n\n# ③ 画金色方块\n\n# ④ 印三行\n",
+  "referenceSolutionTemplate": "from PIL import Image, ImageDraw\n\n画布 = Image.new(\"RGB\", ({w}, {h}), \"skyblue\")\n笔 = ImageDraw.Draw(画布)\n笔.rectangle([{box}], fill=\"gold\")\n\nprint(\"尺寸：\", 画布.size)\nprint(\"色彩模式：\", 画布.mode)\nprint(\"左上角那一格的颜色：\", 画布.getpixel((15, 15)))\n",
+  "explanationTemplate": "四步走完，本喵一句一句给你拆喵。\n\n**① 造画布：`Image.new(\"RGB\", ({w}, {h}), \"skyblue\")`** —— 三样投喂，念作「什么模式、多宽多高、什么底色」。那个 `({w}, {h})` 是**一对数**：宽在前、高在后。\n\n**② 按笔：`ImageDraw.Draw(画布)`** —— 造出来的笔得**接着画布**，本喵后面画什么，都喊这支笔。\n\n**③ 画方块：`笔.rectangle([...], fill=\"gold\")`** —— 方括号里那四个数是**平铺**的，念作「左上角的横竖、右下角的横竖」；`fill=` 是里面填什么颜色。\n\n**④ 读格子：`画布.getpixel((15, 15))`** —— 这里横竖两个数是**包成一对**的。跟第③步一比就看出来：**读一格要「一对」，画一块要「四个数平铺」**。本喵特意把这两处放在一题里，就是想让你记住它们长得不一样。\n\n读出来是 `(255, 215, 0)`，正好是金色的三个数 —— 红、绿、蓝三盏灯各自的亮度。你按这几行跑一遍，就是那面蓝底金块的小旗子喵。"
+}

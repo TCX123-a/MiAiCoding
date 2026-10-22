@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s2-unionenum-tagged-cabinet",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-07",
+  "type": "codewrite",
+  "concept": ["图纸套共用体", "记号", "先看记号再进门"],
+  "instances": 6,
+  "params": {
+    "k": { "kind": "pick", "values": [0, 1] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{k}\n", "count": 1, "min": 3, "max": 9 },
+  "stemTemplate": "本喵要搭一个**带记号的柜子**：柜子上第一格写「今天住的是整数还是小数」，第二格是那间共用的仓库。\n\n从键盘上读进来两行：第一行是一个记号（`0` 表示整数、`1` 表示小数），第二行是一个整数 n。按记号分两种情况：\n\n- 记号是 **整数**：把 n 原样住进仓库，印一行 `整数 <n>`；\n- 记号是 **小数**：把 n **乘 1.5** 之后住进仓库，印一行 `小数 <算出来的数>`，小数保留一位。\n\n翻成代码时，请照着课文的样子搭：\n\n1. 先用**枚举**给两个记号起名字（比如 `IS_INT` 是 0、`IS_DOUBLE` 是 1）；\n2. 再画一张**图纸**当柜子：第一格装记号，第二格装那间**共用体**仓库（仓库里一个整数、一个小数）；\n3. 读进来的记号转成枚举名字存进第一格，然后**先看记号，再进对的那扇门**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nenum Kind { IS_INT, IS_DOUBLE };\n\nstruct Value {\n    enum Kind kind;\n    union {\n        int i;\n        double d;\n    } num;\n};\n\nint main(void) {\n    int k;\n    int n;\n    struct Value v;\n\n    if (scanf(\"%d\", &k) != 1) {\n        return 1;\n    }\n    if (scanf(\"%d\", &n) != 1) {\n        return 1;\n    }\n\n    v.kind = (enum Kind)k;\n\n    if (v.kind == IS_INT) {\n        v.num.i = n;\n        printf(\"整数 %d\\n\", v.num.i);\n    } else {\n        v.num.d = n * 1.5;\n        printf(\"小数 %.1f\\n\", v.num.d);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这个柜子的形状是本课最值钱的一件东西喵，拆开看三层：\n\n**① 记号那一层用枚举。** 写 `enum Kind` 打头，花括号里列上 `IS_INT` 和 `IS_DOUBLE` 两个名字 —— 翻译官喵自动编号：0 就是 `IS_INT`、1 就是 `IS_DOUBLE`。要是直接写 `if (k == 0)`，过一星期谁也不知道那个 `0` 是什么意思；写成 `if (v.kind == IS_INT)` 就一眼看懂了。**枚举存在的全部理由就是让人看懂。**\n\n**② 仓库那一层用共用体。** 第二格写 `union` 打头，花括号里列上 `int i;` 和 `double d;` 两位，末尾写上 `num` —— 注意这里**连标签都没起**，是直接把图纸写在柜子的那一格里。这是合法的，也正好说明「这一格是个仓库」。这间仓库只花 8 格（小数那位最胖），要是写成图纸，整数和小数各占一份，就得花 16 格。\n\n**③ 两格合起来才是完整的柜子。** 写的时候两格一起写：记号写 `IS_INT`，仓库写 `v.num.i = n;`。读的时候**先看记号，再进对的那扇门** —— 这句「先看记号」不是客套，是共用体唯一的保命规矩。\n\n还有一处要交代：读进来的是个整数，怎么变成枚举名字？写成 `(enum Kind)k` 就行 —— 括号里写清「这个整数按 `enum Kind` 来读」。本课那句「它们在 C 里就是整数」在这里正好用上：**整数和名字之间可以互相转换**，只是名字更好看。\n\n**为什么共用体自己不知道住的是谁？** 因为仓库只有格子、没有记忆 —— 写进去的字节躺在那儿，谁来读都能读，读出来的是不是你要的它可不管。所以记号这件事只能由本喵自己补上，这也是「带记号的柜子」这个形状会一直用下去的原因喵。"
+}

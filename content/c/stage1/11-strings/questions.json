@@ -1,0 +1,79 @@
+{
+  "lessonId": "c-stage1-11",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵说过，项链的末尾一定要多挂一颗看不见的珠子。这颗珠子写出来是下面哪一个？",
+      "options": ["`\\0`", "`\\n`", "`%s`", "`%c`"],
+      "answer": 0,
+      "explanation": "末尾那颗编号为 0 的珠子写作 `\\0`，`%s` 就是靠它知道念到哪一颗该停嘴的喵。`\\n` 是换行符，管的是「另起一行」；`%s` 和 `%c` 都是打印用的占位符，它们压根不住在项链里喵～"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "想把一整条项链一口气打印出来，占位符该用哪一个？",
+      "options": ["`%c`", "`%s`", "`%d`", "`%f`"],
+      "answer": 1,
+      "explanation": "`%c` 一次只印一颗珠子，`%d` 印整数、`%f` 印小数 —— 要一口气把整条项链念出来，只有 `%s` 干得了这活儿喵。本喵教你一句口诀：`%c` 一颗，`%s` 一串。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "两条项链里装的珠子一模一样，下面哪一句能正确判断出「它们内容相同」？",
+      "options": [
+        "`if (a == b)`",
+        "`if (strcmp(a, b) == 0)`",
+        "`if (strlen(a) == strlen(b))`",
+        "`if (a = b)`"
+      ],
+      "answer": 1,
+      "explanation": "`a == b` 比的是**两张牌子**，不是碗里的珠子 —— 两条项链摆在不同地方，它八成会说「不一样」喵。`strlen` 只能比「谁长」，`cat` 和 `dog` 长短一样，照样会骗过它。`a = b` 更是把「比一比」写成了「倒过去」，摆明是写错了。只有 `strcmp(a, b) == 0` 是一颗一颗对着比，完全一样才叼回 `0` 喵～"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    char word[____];\n\n    word[0] = 'c';\n    word[1] = 'a';\n    word[2] = 't';\n    word[____] = '\\0';\n\n    printf(\"%s\\n\", word);\n    return 0;\n}",
+      "stem": "下面这段代码想亲手串出项链 `cat`，还要在末尾挂上暗号。两个空该填什么喵？",
+      "blanks": [
+        { "answer": "4" },
+        { "answer": "3" }
+      ],
+      "explanation": "三颗珠子 `c`、`a`、`t` 住的是编号 0、1、2 的碗，暗号**也要占一只碗**，所以排在编号 3 —— 一共得摆 4 只碗喵。要是只摆 3 只，暗号就没地方挂了，`%s` 会一路念到你根本没摆碗的地方去，念出来什么每次都不一样，这一条本喵在课文里专门警告过喵～"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char a[] = \"cat\";\n    char b[] = \"cat\";\n\n    if (____(a, b) == ____) {\n        printf(\"一样喵\\n\");\n    }\n    return 0;\n}",
+      "stem": "下面这段代码想判断两条项链装的东西是不是一样。两个空该填什么喵？",
+      "blanks": [
+        { "answer": "strcmp" },
+        { "answer": "0" }
+      ],
+      "explanation": "比项链只有一条路：把两条项链交给 `strcmp` 一颗一颗对着比，**完全一样它叼回 0**，所以判「一样」要写 `== 0` 喵。这一招住在 `string.h` 家，文件最上面那句请它出场的开头可不能漏 —— 漏了翻译官喵会说「这个名字本喵没听说过」喵～"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char word[] = \"fish\";\n    printf(\"%d\\n\", (int)strlen(word));\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "4",
+      "accept": ["4\n"],
+      "explanation": "`strlen` 数的是**真珠子的颗数**，末尾那颗暗号不算数喵。`fish` 是 f、i、s、h 四颗珠子，所以报 `4` —— 而它实际占掉的是五只碗，第五只装暗号喵。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char a[] = \"cat\";\n    char b[] = \"cat\";\n    printf(\"%d\\n\", strcmp(a, b));\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "0",
+      "accept": ["0\n"],
+      "explanation": "`strcmp` 把两条项链一颗一颗对着比：`a` 和 `b` 装的都是 `cat`，一模一样，它就叼回 `0` 喵。所以判「一样」写 `strcmp(a, b) == 0` 正好合适 —— 反过来，光看输出 `0` 也别误会成「长度是 0」，它说的是「一颗都不差」喵～"
+    }
+  ]
+}

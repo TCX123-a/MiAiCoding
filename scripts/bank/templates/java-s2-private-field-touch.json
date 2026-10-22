@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s2-private-field-touch",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-01",
+  "type": "codefix",
+  "concept": ["private", "盖子", "小窗", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] },
+    "n": { "kind": "int", "min": 3, "max": 6 }
+  },
+  "stemTemplate": "本喵在 `main` 里伸手**直接去改**猫的鱼干数，翻译官喵当场把爪子拍下来 —— 程序**一趟都没跑起来**。\n\n请你帮本喵把它改好。改好之后，程序该印出这一行：\n\n```text\n{name} 有 {n} 条小鱼干喵\n```\n\n图纸上那些家当和招式本喵都写好了，缺的只是**外面那一步走错了门**喵。",
+  "brokenCodeTemplate": "class Cat {\n    private String name;\n    private int fish;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n\n    public int getFish() {\n        return fish;\n    }\n\n    public void setFish(int fish) {\n        this.fish = fish;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.fish = {n};\n        System.out.println(c.getName() + \" 有 \" + c.getFish() + \" 条小鱼干喵\");\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    private String name;\n    private int fish;\n\n    Cat(String name) {\n        this.name = name;\n    }\n\n    public String getName() {\n        return name;\n    }\n\n    public int getFish() {\n        return fish;\n    }\n\n    public void setFish(int fish) {\n        this.fish = fish;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat(\"{name}\");\n        c.setFish({n});\n        System.out.println(c.getName() + \" 有 \" + c.getFish() + \" 条小鱼干喵\");\n    }\n}\n",
+  "explanationTemplate": "翻译官喵的原话念起来是：**「`fish` 是 `Cat` 自己扣上盖子的家当，外面的人不许直接碰喵。」**\n\n有一件事要记牢：这颗钉子是**翻稿子的时候**就钉下来的 —— 你会先看到那句原话，然后才发现程序压根没跑起来，和「跑到一半才翻车」完全不一样。\n\n`private` 盖的是「**出了这张图纸谁都伸不进手**」：图纸里的招式、出生那一手伸手拿它照样合法。可 `main` 写在图纸**外面**，它伸手就是越界。\n\n正路是走本喵留的那扇小窗 —— `c.setFish({n});`。小窗的身子写在图纸里面，所以它伸得进手；外面只管把数递到窗口。\n\n（顺一句：这四档盖子没有「更安全」的默认值 —— 什么都不写不是 `private`，是「同一个外卖箱里的邻居也能伸手」喵。）"
+}

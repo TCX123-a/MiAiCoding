@@ -1,0 +1,26 @@
+{
+  "templateId": "c-s3-10-guess-report",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-10",
+  "type": "codewrite",
+  "concept": ["骰子想一个秘密数", "一句一句往上猜", "猜大往小收猜小往大抬", "猜中就不猜了"],
+  "instances": 6,
+  "params": {
+    "seed": { "kind": "pick", "values": ["5", "7"] },
+    "g1": { "kind": "pick", "values": ["50", "40"] },
+    "g2": { "kind": "pick", "values": ["75", "70"] },
+    "g3": { "kind": "pick", "values": ["62", "60"] },
+    "g4": { "kind": "pick", "values": ["56", "55"] },
+    "g5": { "kind": "pick", "values": ["55", "45"] }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "{g1}\n{g2}\n{g3}\n{g4}\n{g5}\n",
+    "sampleText": "1\n2\n3\n4\n5\n"
+  },
+  "stemTemplate": "骰子已经想好了一个 **1 到 100** 的秘密数（稿子里已经摇出来了）。投喂口里递进来 **5 个猜想，一行一个**。你要**一句一句往上猜**，印出来的格式是写死的：\n\n- 猜小了 → 一行 `猜 X：小了`；\n- 猜大了 → 一行 `猜 X：大了`；\n- 猜中了 → 一行 `猜 X：猜中啦，一共猜了 N 次`，**然后就不猜了**；\n- 5 个猜想全试完还没中 → 最后补一行 `5 次都没猜中`。\n\n样例输入：\n\n```text\n{sampleInput}\n```\n\n样例跑出来是这样：\n\n```text\n{sampleOutput}\n```",
+  "starterTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand({seed});\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    /* ↓ 自己写：一句一句往上猜 ——\n       ① 从投喂口里一行一个读猜想，一共 5 个\n       ② 猜小了印「猜 X：小了」；猜大了印「猜 X：大了」\n       ③ 猜中印「猜 X：猜中啦，一共猜了 N 次」，然后收工\n       ④ 5 个都猜完还没中，最后补一行「5 次都没猜中」 */\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand({seed});\n    int secret = rand() % 100 + 1;   /* 骰子想好的秘密，已经给你了 */\n\n    int g;\n    int times = 0;\n    while (scanf(\"%d\", &g) == 1) {\n        times++;\n        if (g < secret) {\n            printf(\"猜 %d：小了\\n\", g);\n        } else if (g > secret) {\n            printf(\"猜 %d：大了\\n\", g);\n        } else {\n            printf(\"猜 %d：猜中啦，一共猜了 %d 次\\n\", g, times);\n            return 0;\n        }\n    }\n\n    printf(\"%d 次都没猜中\\n\", times);\n    return 0;\n}\n",
+  "explanationTemplate": "这一招是把前几样凑一块儿喵：**骰子想一个秘密数**，本喵一句一句往上猜，猜大猜小全看它的脾气。\n\n两句关键的话：\n\n```text\nint secret = rand() % 100 + 1;\n```\n\n要 1 到 100 的秘密，还是那句老句式：`% 100` 拿余数（0 到 99）、`+ 1` 挪到 1 到 100。\n\n```text\nwhile (scanf(\"%d\", &g) == 1)\n```\n\n一句一句地收猜想：收得到就往下比，收不到（投喂口空了）就退出圈圈。收满了 5 个还没中，最后补一行「都没猜中」。\n\n猜的路数跟「砍一半」是同一门功夫：**猜小了就往大抬、猜大了就往小收** —— 只不过这里每一句都得骰子点头才算数。\n\n⚠️ 一个容易踩的坑：`srand` 是**开场前**的事（稿子里已经在 `main` 开头定好了）。别把它搬进收猜想的圈圈里 —— 那样每收一句都把骰子拨回起点，秘密数每次都被重摇一个一模一样的，看着挺神秘，其实一点变化都没有。"
+}

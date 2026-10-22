@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-19-ref-or-throw",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-19",
+  "type": "codewrite",
+  "concept": ["照不必还的名字没有空这一说", "照不到就当场抛出来", "try 和 catch 不是礼貌话"],
+  "instances": 6,
+  "params": {
+    "who": { "kind": "pick", "values": ["小橘", "小P"] },
+    "other": { "kind": "pick", "values": ["狸花", "小灰"] }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 1, "max": 2 },
+  "stemTemplate": "投喂口会给**一个数**：`1` 就是橘猫，别的数是狸花猫喵（骨架里已经照着这个数把牌子指好了）。\n\n这一题照的是**「不必还的名字」**那一侧：`dynamic_cast<OrangeCat&>(*p)` —— 照成了，本喵拿到的是**那只猫自己**；照不成，它**没有「空」这个状态**可以递过来，只能当场抛出来。\n\n要补两处：\n\n1. 照光那一手，照「不必还的名字」，目标写死成 `OrangeCat&`；\n2. 照到了印 `照出来了：` 接上它的名字；照不到就**接住那一抛**，印 `照不出来：` 接上翻译官喵报的名字（`e.what()`）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一个数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"{who}\");\n    TabbyCat t(\"{other}\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <string>\n#include <typeinfo>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    Cat(const string& n) : name(n) {}\n    virtual ~Cat() {}\n};\n\nclass OrangeCat : public Cat {\npublic:\n    OrangeCat(const string& n) : Cat(n) {}\n};\n\nclass TabbyCat : public Cat {\npublic:\n    TabbyCat(const string& n) : Cat(n) {}\n};\n\nint main() {\n    int kind = 0;\n    cin >> kind;\n\n    OrangeCat o(\"{who}\");\n    TabbyCat t(\"{other}\");\n    Cat* p = &t;\n    if (kind == 1) p = &o;\n\n    try {\n        OrangeCat& r = dynamic_cast<OrangeCat&>(*p);\n        cout << \"照出来了：\" << r.name << endl;\n    } catch (const bad_cast& e) {\n        cout << \"照不出来：\" << e.what() << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "照**牌子**失败和照**不必还的名字**失败，是**两条路**喵，这一题把两边摆在一起看：\n\n- 照牌子（`dynamic_cast<OrangeCat*>(p)`）：照不到就递**空牌子**，本喵查 `== nullptr` 就知道，程序照样往下跑；\n- 照不必还的名字（`dynamic_cast<OrangeCat&>(*p)`）：那边**没有空这一说**，照不到只剩一条路 —— 当场抛一个 `bad_cast` 出来。\n\n所以第 2 处那个 `try` / `catch` 不是可写可不写的礼貌话：接不住，程序当场就停在那儿了。接住之后 `e.what()` 报出来的字就是 `std::bad_cast`（本机读数，换个翻译官喵可能换一套写法，所以**别拿它去比**）。\n\n还有一处对照：照光既不改手上那张牌子，也不改屋里那一位，它只回答「能不能照成橘猫」喵。"
+}

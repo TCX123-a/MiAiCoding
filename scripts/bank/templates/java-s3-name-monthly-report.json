@@ -1,0 +1,21 @@
+{
+  "templateId": "java-s3-name-monthly-report",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-26",
+  "type": "codewrite",
+  "concept": [
+    "起名是最高频的编码决策：类名大驼峰、方法变量小驼峰、常量全大写",
+    "名字语义完整：FISH_PER_BASKET 把「每筐几条」立成有名字的常量，改容量只动一行",
+    "方法名读出来要像一句人话，别用 x、y、a1 这类谜语名"
+  ],
+  "instances": 6,
+  "params": {
+    "p": { "kind": "int", "min": 10, "max": 14 }
+  },
+  "stdinSpec": { "kind": "ints", "count": 1, "min": 20, "max": 90 },
+  "stemTemplate": "本喵要一只**周报账本**喵：从投喂口叼一个数（这周攒下的鱼干总数），每 **{p}** 条装一筐，印**两行**：\n\n```text\n满筐 X 筐\n零散 Y 条\n```\n\n- `满筐` 是能装满的**整筐数**，`零散` 是装不满一筐的零头；\n- 本喵给你留了**骨架**：里面有个常量 `FISH_PER_BASKET`、一只待补的方法和一些 TODO 等着你；\n- 起名照本课的尺子：图纸名大驼峰、方法名和小鱼干仓库名小驼峰、常量全大写、禁拼音、名字自解释（方法名要让人一眼看出「按筐容量算整筐数」）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n就该叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class WeeklyReport {\n    static final int FISH_PER_BASKET = {p};\n\n    // TODO 1：补一只方法：按每筐容量算能装满几整筐（名字照本课的尺子起）\n    // TODO 2：在 main 里算出「满筐」和「零散」，各印一行\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fishTotal = sc.nextInt();\n        // TODO 3：把上面两行打印补完\n    }\n}",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\n/**\n * 本周鱼干装筐小报。\n */\npublic class WeeklyReport {\n    /** 每筐容量。 */\n    static final int FISH_PER_BASKET = {p};\n\n    /**\n     * 按每筐容量算能装满几整筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal) {\n        return fishTotal / FISH_PER_BASKET;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fishTotal = sc.nextInt();\n        int loose = fishTotal % FISH_PER_BASKET;\n        System.out.println(\"满筐 \" + fullBaskets(fishTotal) + \" 筐\");\n        System.out.println(\"零散 \" + loose + \" 条\");\n    }\n}",
+  "explanationTemplate": "这只账本本喵故意把**名字**留了空，让你自己起喵 —— 因为「起名」是写代码时最高频的决策，也是读代码的人最直接的体验。照尺子起完，大致是这个形状：\n\n```java\nimport java.util.Scanner;\n\n/**\n * 本周鱼干装筐小报。\n */\npublic class WeeklyReport {\n    /** 每筐容量。 */\n    static final int FISH_PER_BASKET = {p};\n\n    /**\n     * 按每筐容量算能装满几整筐。\n     *\n     * @param fishTotal 鱼干总数\n     * @return 能装满的整筐数\n     */\n    static int fullBaskets(int fishTotal) {\n        return fishTotal / FISH_PER_BASKET;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int fishTotal = sc.nextInt();\n        int loose = fishTotal % FISH_PER_BASKET;\n        System.out.println(\"满筐 \" + fullBaskets(fishTotal) + \" 筐\");\n        System.out.println(\"零散 \" + loose + \" 条\");\n    }\n}\n```\n\n**一、图纸名 `WeeklyReport`**：大驼峰、两个完整单词 —— 读出来就是「周报」。\n\n**二、常量 `FISH_PER_BASKET`**：全大写 + 下划线，语义完整（谁、按什么单位、装哪）。它把「每筐几条」从用法里请出来立了名分：以后要改容量，只动这一行。\n\n**三、方法 `fullBaskets`**：小驼峰，读出来像一句话 —— 「满筐数」。想更动感一点，叫 `countFullBaskets` 也行；要紧的是别让读的人来猜。\n\n**四、`loose`（零散）**：叫 `leftover`、`spare` 都行，关键是别用 `x`、`y`、`a1` 这种谜语名。\n\n一句话记住：**名字写完先朗读一遍 —— 读不顺的，谁看都得卡壳。**"
+}

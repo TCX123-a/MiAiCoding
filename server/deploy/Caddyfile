@@ -1,0 +1,33 @@
+# /opt/miai/conf/Caddyfile —— miai 正式版模板（仓库副本；现场文件在服务器上）。
+# ⚠️ 本文件已脱敏：203.0.113.10 是 TEST-NET-3 文档保留地址，admin@example.com 是占位邮箱。
+#    部署时把两处地址替换成实际公网 IP、把邮箱替换成 ACME 通知邮箱；**不要把真实值提交回仓库**。
+# 与 S6 实测版（tls-test）的差异只有一处：删掉占位 respond 行、启用 reverse_proxy api:8787 块。
+# default_sni / issuer acme{profile shortlived} / 全局 servers{protocols h1 h2} 逐字保留（B2 已达标，续期链不动）。
+# 生效方式：覆盖到 /opt/miai/conf/Caddyfile 后 `docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile`。
+{
+	email admin@example.com
+	default_sni 203.0.113.10
+	servers {
+		protocols h1 h2
+	}
+}
+
+https://203.0.113.10 {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+	}
+
+	reverse_proxy api:8787 {
+		header_up X-Forwarded-For {remote_host}
+	}
+
+	tls {
+		issuer acme {
+			profile shortlived
+		}
+	}
+}

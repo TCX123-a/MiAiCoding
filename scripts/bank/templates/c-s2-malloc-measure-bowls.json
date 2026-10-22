@@ -1,0 +1,20 @@
+{
+  "templateId": "c-s2-malloc-measure-bowls",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-04",
+  "type": "codewrite",
+  "concept": ["sizeof", "量整排", "量一只", "只数", "两把尺子"],
+  "instances": 6,
+  "params": {
+    "v0": { "kind": "int", "min": 2, "max": 4 },
+    "v1": { "kind": "int", "min": 3, "max": 5 },
+    "v2": { "kind": "int", "min": 4, "max": 6 },
+    "v3": { "kind": "int", "min": 5, "max": 7 },
+    "v4": { "kind": "int", "min": 6, "max": 8 }
+  },
+  "stemTemplate": "本喵在窝里摆好了一排猫粮碗，一共 **5 只**，每只碗里放几条小鱼干都写在代码里了：{v0}、{v1}、{v2}、{v3}、{v4}。\n\n本喵想**用尺子把这排碗量清楚** —— 报只数那一行，不许直接把 5 写上去，要量出来喵。\n\n请你写个程序：\n\n① 量出**这排碗一共占几格**、**一只碗占几格**；\n② 用这两个数量出**这排碗有几只**；\n③ 按这个格式一行一行报出来：\n\n```text\n这排碗一共占 20 格\n一只碗占 4 格\n这排碗有 5 只\n```\n\n④ 最后再一只一只报出来：`第 0 只：{v0} 条小鱼干` 这样，一行一只，一共 5 行。",
+  "starterTemplate": "#include <stdio.h>\n\nint main(void) {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <stdio.h>\n\nint main(void) {\n    int bowls[5] = {{v0}, {v1}, {v2}, {v3}, {v4}};\n\n    int total_size = (int)sizeof(bowls);\n    int one_size = (int)sizeof(bowls[0]);\n    int count = total_size / one_size;\n\n    printf(\"这排碗一共占 %d 格\\n\", total_size);\n    printf(\"一只碗占 %d 格\\n\", one_size);\n    printf(\"这排碗有 %d 只\\n\", count);\n\n    for (int i = 0; i < count; i++) {\n        printf(\"第 %d 只：%d 条小鱼干\\n\", i, bowls[i]);\n    }\n\n    return 0;\n}\n",
+  "explanationTemplate": "这道题的尺子是**两把一起用**的喵：\n\n**① 量整排。** `sizeof(bowls)` 里的 `bowls` 是**一整排**（贴好编号的那种写法），量到的是这一排**总共占几格** —— 5 只碗、一只 4 格，所以是 20 格。\n\n**② 量一只。** `sizeof(bowls[0])` 量的是**一只碗**（第 0 只），得到 4 格。一排里每只一样大，量哪只都一样。\n\n**③ 除一下就是只数。** 20 ÷ 4 = 5。这两个量**必须都从同一排上取**：一个量整排、一个量单只，除出来才是「有几只」。\n\n⚠️ 这两个式子跟「拿一块牌子去量」长得像，意思却完全不同 —— 量牌子量到的永远是牌子自己（8 格），和它指向的那排有多大**没关系**。所以尺子要量在**那一排本身**上，才量得出只数。\n\n尺子说的「格」就是**字节**：20 格、4 格这些数，正是租仓库时「先量一间、再乘间数」用的同一把尺子喵。"
+}

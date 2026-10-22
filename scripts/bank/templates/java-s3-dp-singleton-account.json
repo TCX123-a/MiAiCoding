@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s3-dp-singleton-account",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-14",
+  "type": "codewrite",
+  "concept": ["图纸上留一格全窝共用", "拿本前先看那一格空着没有", "两处拿到的是同一本"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 5 }
+  },
+  "stemTemplate": "本喵要把单例这手摆法自己写一遍喵：全窝只有**一本**账本，谁记账都记到同一本上。\n\n图纸上那一格（`唯一的一本`）和锁上的产房都已经画好了，你只写两处：\n\n1. **`拿本()` 的身体**：那一格还空着，就造一本、顺手记进那一格；已经记着了，就直接把那一本递出去；\n2. **`main` 的身体**：从两处各拿一次（`甲`、`乙`），给 `甲` 添上 `{n}` 条，然后印两行 —— 第一行 `是同一本吗：` 后面跟着「是不是同一本」，第二行 `乙 里看到的条数：` 后面跟着从 `乙` 那边看到的条数。\n\n改不了的东西一个都别碰（那一格、产房、`添()` 都别动）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "starterTemplate": "public class Main {\n    public static void main(String[] args) {\n\n    }\n}\n\nclass 账本 {\n    private static 账本 唯一的一本;\n\n    int 条数;\n\n    private 账本() {\n    }\n\n    static 账本 拿本() {\n\n    }\n\n    void 添(int 几条) {\n        条数 = 条数 + 几条;\n    }\n}\n",
+  "referenceSolutionTemplate": "public class Main {\n    public static void main(String[] args) {\n        账本 甲 = 账本.拿本();\n        账本 乙 = 账本.拿本();\n        甲.添({n});\n        System.out.println(\"是同一本吗：\" + (甲 == 乙));\n        System.out.println(\"乙 里看到的条数：\" + 乙.条数);\n    }\n}\n\nclass 账本 {\n    private static 账本 唯一的一本;\n\n    int 条数;\n\n    private 账本() {\n    }\n\n    static 账本 拿本() {\n        if (唯一的一本 == null) {\n            唯一的一本 = new 账本();\n        }\n        return 唯一的一本;\n    }\n\n    void 添(int 几条) {\n        条数 = 条数 + 几条;\n    }\n}\n",
+  "explanationTemplate": "这一题就是课文第一节那三样东西，一个不少喵：\n\n**一、图纸上留一格。** `private static 账本 唯一的一本;` 那一格归图纸自己、不归哪只真猫 —— 全窝共用。\n\n**二、产房锁着。** `private 账本()` 已经画好了：别人想自己 `new` 一本，翻译官喵那一关就过不去（原话是 `账本() has private access in 账本`），只能走 `拿本()` 这个口子。\n\n**三、门口那一手的心思。** 先看那一格**空着没有**（`== null`）：空着才造一本、造完顺手记进去；已经记着了就直接把那一本递出去。**判空这一句是整个套路的命门** —— 少了它，每喊一次都造一本新的，`甲` 和 `乙` 拿到的就不是同一本了（第一行会印 `false`，第二行 `乙` 那边看到的是 `0`）。\n\n**四、两处拿到的是同一本。** 所以本喵给 `甲` 添的那 `{n}` 条，从 `乙` 那边也看得见 —— 第二行印的就是那个数喵。"
+}

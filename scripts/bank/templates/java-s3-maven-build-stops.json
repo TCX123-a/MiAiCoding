@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-maven-build-stops",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-25",
+  "type": "codewrite",
+  "concept": ["一关一关按顺序看", "栽了就当场停", "收尾那行看中途栽没栽"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 0, "max": 1 },
+  "stemTemplate": "管家跑构建有个脾气：一关一关按顺序过，**哪一关栽了当场停住**，后面的关看都不看。本喵照着这个脾气写个小程序：\n\n1. 读第一行的 `n`——一共有几关；\n2. 再一行一个、接着读进来 `n` 个数——每个数是一关的结果：`0` 表示这一关过得去，`1` 表示栽了（跟真管家的习惯一致：零就是好）；\n3. 一关一关按顺序查看，第 k 关印一行：过得去印 `第 k 关：过`；栽了就印 `第 k 关：没过`，并且**从这里起不再往下查看**；\n4. 收尾那行：从头到尾都过得去，印 `构建成功`；要是中途栽了，紧跟着栽的那行再印 `构建失败，停在第 k 关`（k 就是栽掉的那一关）。\n\n比如投喂这几行：\n\n```text\n{sampleInput}\n```\n\n程序就叼回：\n\n```text\n{sampleOutput}\n```\n\n（判分的时候喂的是另一组数喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int 栽在第几关 = 0;\n        for (int k = 1; k <= n; k++) {\n            int 结果 = sc.nextInt();\n            if (结果 == 1) {\n                System.out.println(\"第 \" + k + \" 关：没过\");\n                栽在第几关 = k;\n                break;\n            }\n            System.out.println(\"第 \" + k + \" 关：过\");\n        }\n        if (栽在第几关 == 0) {\n            System.out.println(\"构建成功\");\n        } else {\n            System.out.println(\"构建失败，停在第 \" + 栽在第几关 + \" 关\");\n        }\n    }\n}\n",
+  "explanationTemplate": "**一、为什么「栽了就停」**\n\n管家构建是一串一关接一关的活儿：前面的关栽了，后面的关做出来也没意义，不如**当场停**、把力气省下来、把红字摆在你眼前。真管家跑起来就是这个脾气：某一关失败，屏幕上最后一行告诉你停在哪，后面的步骤一律不动。\n\n**二、怎么把「停」写出来**\n\n看一眼那关的结果：是 `0` 就印「过」、接着看下一关；是 `1` 就先印「没过」，再**当机立断**从绕圈里跳出去——这就是「当场停」的写法。跳出来之后还得回头看一眼「刚才到底栽没栽」（本喵记了个「栽在第几关」的数：还是 0 就说明一路平安），这才能决定收尾那行写「成功」还是「停在第几关」。\n\n**三、剩下没看的关**\n\n投喂进去的数里，栽点后面可能还排着好几关——程序一停，它们原样留在那里没人碰。这不是漏读，是**故意不读**：「停止」这件事，本来就包含「剩下的不做」。\n\n**四、一句话记住**\n\n一关一关看、栽了当场停、收尾看中途栽没栽。"
+}

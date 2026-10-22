@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-13-pouch-count-first",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-13",
+  "type": "codewrite",
+  "concept": ["图纸里放一只会自己变长的碗", "自己点名要哪一款", "数一数、取第几个"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要一只**装整数的窝**：外面看着是一整只窝，里面是一只**会自己变长的碗**，外加「放一条进去」「数数有几条」「取第几个」这几手。\n\n投喂口会**先给一个数**（要跟着几个数），**再一只一只给 {n} 个数**喵。\n\n请你这么办：\n\n1. **画一张窝图纸**（名字你自己起）：里头的碗装什么、放什么料、数出来的是几个、取出来的是什么 —— 全是**同一个空位**；立空位那一行不能少；\n2. 先读进那个数，再一只一只读进后面那些数，**每一只都放进窝里**；\n3. 最后印两行：**窝里有几只**、**第 0 格是哪一只**。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <vector>\nusing namespace std;\n\ntemplate <typename T>\nclass Pouch {\npublic:\n    void put(T x) { goods.push_back(x); }\n    int count() { return goods.size(); }\n    T at(int i) { return goods[i]; }\nprivate:\n    vector<T> goods;\n};\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    Pouch<int> p;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        p.put(x);\n    }\n\n    cout << p.count() << endl;\n    cout << p.at(0) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机跑过这一题，屏幕上两行是：\n\n```text\n{sampleOutput}\n```\n\n**碗在图纸里面** —— 这就是这一题的骨架。这张图纸上一共就这么几样东西：\n\n- `template <typename T>` —— **立空位那一行**，这一题的重点就在这儿；\n- `vector<T> goods` —— 肚子里那只**会自己变长的碗**，装什么款由空位说了算；\n- `void put(T x)` —— 把一只料放进碗里；\n- `int count()` —— 数数碗里有几只；\n- `T at(int i)` —— 把第 i 格那一只叼回来。\n\n看仔细：`vector<T>` 里的 `T`、`put` 收的料上的 `T`、`at` 叼回来的那款上的 `T` —— 三处是**同一个空位**。所以本喵点名 `Pouch<int>`，它就成了一只装整数的窝；同一张图纸点名成别的款，立刻换成另一只窝。\n\n⚠️ 四件事钉住：\n\n1. **立空位那一行不能少。** 少了它，图纸里那个代号就成了凭空冒出来的字母（课文里摔法二那一对）。\n2. **碗要端上桌。** 图纸里用了 `vector`，顶上那一行 `#include <vector>` 就得在 —— 漏了它，翻译官喵报 `error: 'vector' was not declared in this scope`。\n3. **`at` 是「取第几个」，格子从 0 数起。** 所以第 0 格就是**最先放进去**的那一只。\n4. **一边读一边放，不用先摆格子。** 本喵一个格数都没写死：读进来一只就放一只，碗自己会长（这正是它比「格数写死的碗」强的地方）。"
+}

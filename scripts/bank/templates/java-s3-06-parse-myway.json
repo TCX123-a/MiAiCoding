@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-06-parse-myway",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-06",
+  "type": "codewrite",
+  "concept": ["递念法清单去 parse", "正规模样", "同一张纸换花样印"],
+  "instances": 6,
+  "params": {
+    "m1": { "kind": "pick", "values": ["03", "09"] },
+    "d1": { "kind": "pick", "values": ["07", "16"] }
+  },
+  "stemTemplate": "本喵手里有一串字：`2026/{m1}/{d1}`（就写在程序里，不用投喂）。\n\n它自己的规矩只认短横，本喵这串字用的是**斜杠**，所以得把**念法清单**一起递过去。\n\n请你写个程序，做三件事：\n\n1. 撕一张念法清单：年、月、日之间是斜杠；\n2. 用两个格子那一版的手势，把这串字念成一张日期纸条；\n3. 印两行：\n   - `念出来了：` 后面接这张纸条的**正规模样**（短横那个样子）；\n   - `餐券上写：` 后面接同一张纸条、换成 `yyyy年MM月dd日` 这张清单念出来的样子。\n\n这一胎跑完，屏幕上头一行该是 `念出来了：2026-{m1}-{d1}`，第二行该是 `餐券上写：2026年{m1}月{d1}日`。\n\n（这一题**不用投喂任何东西**；那串字一个符号都不许手改。）",
+  "starterTemplate": "import java.time.LocalDate;\nimport java.time.format.DateTimeFormatter;\n\npublic class Main {\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.time.LocalDate;\nimport java.time.format.DateTimeFormatter;\n\npublic class Main {\n    public static void main(String[] args) {\n        DateTimeFormatter 斜杠念法 = DateTimeFormatter.ofPattern(\"yyyy/MM/dd\");\n\n        LocalDate d = LocalDate.parse(\"2026/{m1}/{d1}\", 斜杠念法);\n\n        System.out.println(\"念出来了：\" + d);\n        System.out.println(\"餐券上写：\" + d.format(DateTimeFormatter.ofPattern(\"yyyy年MM月dd日\")));\n    }\n}\n",
+  "explanationTemplate": "**一、不带清单的 `parse` 只认一种形状**：四位年、短横、两位月、短横、两位日。这串字用的是斜杠，读不通，读不通就当场翻脸，原话是 `DateTimeParseException` —— 翻译官喵拦不住这种错，它只管语法，真拦的是**跑起来那一刻**。\n\n**二、递清单的那一版有两个格子。** `LocalDate.parse(一串字, 念法清单)`：第一个格子是那串字，第二个格子才是清单。清单照着**递进去那串字的花样**写：`yyyy/MM/dd` —— 哪一位是年、哪一位是月、中间拿什么隔开，一个符号对不上照样翻脸。\n\n**三、念出来之后，纸条自己的正规模样还是短横那个样子。** 印它本身（`+ d`）印的是 `2026-{m1}-{d1}`；想换花样，就拿同一张纸条再走一次 `format` 配另一张清单。**同一张纸能印成很多花样，纸本身永远只有一副正规模样** —— 这一点记住，往后排餐券、排账目都不慌。\n\n**四、两个方向别搞混。** `parse` 是「字 → 纸条」，`format` 是「纸条 → 字」。这一题两样都用了：先用清单把字念成纸，再用另一张清单把纸印成字。"
+}

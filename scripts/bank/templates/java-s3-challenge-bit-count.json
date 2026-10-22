@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-challenge-bit-count",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-20",
+  "type": "codewrite",
+  "difficulty": "challenge",
+  "concept": ["底片上的 1", "只看最右一位", "往右挪一格", "看—挪—看—挪"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 1, "max": 6 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 63 },
+  "stemTemplate": "本喵要练一门「**数底片上的 1**」的手艺喵：每个数都有一张 0 和 1 的底片（比如 5 的底片是 101），这门手艺要数出里面藏着几个 1。\n\n两个小动作给你备好了：\n\n- `x & 1` —— **只看最右边那一位**（是 1 就得 1，是 0 就得 0）；\n- `x >> 1` —— 把整个数**往右挪一格**（把刚看过的那位挪掉）。\n\n干法就一句口诀：**反复「看一眼最右、把数往右挪」，直到整个数变成 0 为止。**\n\n投喂口先给一个数（今天几个数），再一个一个给数（1 到 63 的整数）。每数完一个，印一行：`X 里有 Y 个 1 喵`。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵。）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            // 对 x 数一数底片上有几个 1\n        }\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n\n        for (int i = 0; i < n; i++) {\n            int x = sc.nextInt();\n            int rest = x;\n            int bits = 0;\n            while (rest > 0) {\n                if ((rest & 1) == 1) {\n                    bits = bits + 1;\n                }\n                rest = rest >> 1;\n            }\n            System.out.println(x + \" 里有 \" + bits + \" 个 1 喵\");\n        }\n    }\n}\n",
+  "explanationTemplate": "这趟手艺的诀窍是：**从最右边一位开始，一位一位「看—挪—看—挪」**，直到整个数被挪空（变成 0）喵。\n\n```java\nint rest = x;\nint bits = 0;\nwhile (rest > 0) {\n    if ((rest & 1) == 1) {\n        bits = bits + 1;\n    }\n    rest = rest >> 1;\n}\n```\n\n拿 5（底片 101）逐步走一遍：\n\n- `rest = 5`（101）：`5 & 1` 是 1 → 数到一个；右挪一格 → 2（10）；\n- `rest = 2`（10）：`2 & 1` 是 0 → 不数；右挪 → 1（1）；\n- `rest = 1`（1）：`1 & 1` 是 1 → 再数一个；右挪 → 0；\n- `rest = 0`：圈停。总共 2 个 ✓。\n\n三个小地方别踩喵：\n\n1. **圈的条件是 `rest > 0`** —— 挪成 0 就是「底片看完了」，再看下去只会看到一串无穷的 0；\n2. `(rest & 1) == 1` 的**括号别省** —— `&` 的先后次序比 `==` 低，不裹住会先算 `1 == 1`（永远是「对」），意思就全变了；\n3. 每数一个数都要**重新起一份 `rest` 和一个 `bits`**，别把上一个数的结果带进下一个。\n\n一个留到以后的小尾巴：今天全是**正的正数**（1 到 63），右挪很乖；换成负数时右挪会拖着一串 1 不放，那是另一课的坑。"
+}

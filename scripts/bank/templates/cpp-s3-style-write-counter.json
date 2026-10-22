@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-style-write-counter",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-28",
+  "type": "codewrite",
+  "concept": ["图纸大驼峰", "招式名首字母大写", "口袋尾下划线", "加一笔报一声"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 4, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "Google 那套规矩里，给图纸和图纸里的东西起名，有一套固定手势：**图纸名大驼峰**（每个词头都大写，像 `FishCounter`），**招式名也首字母大写**（`AddFish`、`TotalFish`），**口袋（数据成员）全小写加词间下划线，尾巴上再缝一个下划线**（`total_fish_`）。\n\n请照这套手势，把「鱼数小柜台」补完：\n\n1. 图纸已经起好名 `FishCounter`，口袋里 `total_fish_` 记总数，一开始是 0；\n2. `AddFish` 每收到一条鱼的数，就把它**加进**总数；\n3. `TotalFish` 把总数**叼回去**。\n\n程序先读一个数（一共几条），再一条一条读。样例输入：\n\n```text\n{sampleInput}\n```\n\n该印出来**一行**：\n\n```text\n{sampleOutput}\n```\n\n（判分喂的是**另外一组数**喵。）",
+  "starterTemplate": "#include <iostream>\n\n/* 鱼数小柜台：每来一条就加一笔，随时能报总数 */\nclass FishCounter {\npublic:\n    /* ① 每收到一条鱼的数，就把它加进口袋 */\n    void AddFish(int fish) {\n        /* 这里写：把这条鱼记进 total_fish_ */\n    }\n\n    /* ② 把口袋里的总数叼回去 */\n    int TotalFish() const {\n        /* 这里写：把 total_fish_ 叼回去 */\n        return 0;\n    }\n\nprivate:\n    int total_fish_ = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishCounter counter;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        counter.AddFish(x);\n    }\n\n    std::cout << \"一共 \" << counter.TotalFish() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n\n/* 鱼数小柜台：每来一条就加一笔，随时能报总数 */\nclass FishCounter {\npublic:\n    void AddFish(int fish) {\n        total_fish_ = total_fish_ + fish;\n    }\n\n    int TotalFish() const {\n        return total_fish_;\n    }\n\nprivate:\n    int total_fish_ = 0;\n};\n\nint main() {\n    int n = 0;\n    std::cin >> n;\n\n    FishCounter counter;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        std::cin >> x;\n        counter.AddFish(x);\n    }\n\n    std::cout << \"一共 \" << counter.TotalFish() << \" 条喵\" << std::endl;\n    return 0;\n}\n",
+  "explanationTemplate": "**一、命名三件套先过一遍。**\n\n- **图纸名**：`FishCounter` —— 每个词头大写（大驼峰），一眼就跟普通名字分家；\n- **招式名**：`AddFish`、`TotalFish` —— 也是首字母大写，Google 说普通招式一律这样；唯一一处例外是把「报数」这种招式写成全小写也行（比如 `total_fish()`），本课统一用大驼峰；\n- **口袋（数据成员）**：`total_fish_` —— 全小写、词间下划线、**尾巴再缝一个下划线**。尾下划线是图纸专用记号：看见尾巴就知道它住在图纸里。\n\n**二、两招各干一件事。**\n\n```text\nvoid AddFish(int fish) {\n    total_fish_ = total_fish_ + fish;\n}\n```\n\n收一条、加一笔：等号右边是「老总数加上这条」，再装回口袋。别写成 `total_fish_ = fish;` —— 那是每来一条都把老的**盖掉**，最后只剩最后一条。\n\n```text\nint TotalFish() const {\n    return total_fish_;\n}\n```\n\n念总数只是**读**，不改 —— 所以末尾缀一个 `const`，相当于给这招挂块牌子「我不动口袋」，谁拿到图纸副本都能放心喊它。\n\n**三、那条尾巴不是装饰。** 还记得那本「永远是空的」账本吗 —— 病根就是口袋和手起了同一个名字。尾下划线让口袋的名字**天生跟别的名字不一样**：写 `total_fish_ = total_fish_ + fish;` 时，哪个是口袋、哪个是手里的鱼，一眼可辨。Google 给数据成员留这条尾巴，图的就是这个：不用到处写 `this->`，也不用给每个接收数的手另起名字。\n\n一句话收好：**图纸大驼峰、招式大驼峰、口袋小写加尾下划线；记的时候加进去，报的时候叼出来喵。**"
+}

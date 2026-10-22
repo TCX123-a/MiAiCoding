@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-mem-ret-local-crash",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-01",
+  "type": "codefix",
+  "concept": ["碗摞上的仓库", "把牌子递出去", "现要现租", "free"],
+  "instances": 2,
+  "params": {
+    "v": { "kind": "pick", "values": ["42", "7"] }
+  },
+  "stemTemplate": "本喵写了一个招式，想在里头**现造一间仓库**把数装好，再把写着仓库地址的牌子递出来给 `main` 用。\n\n翻译官喵这次**没拦路** —— 它只在旁边嘀咕了一句 `warning:` 开头的字，编译照样过。可程序一跑就**当场摔了**，屏幕上一个字都没印出来。\n\n请你把这段改好。改好之后该印**两行**：\n\n```text\n盒子里装着 {v}\n还掉之后，牌子也收起来了\n```\n\n⚠️ 这一回不许再把住在那层碗摞上的仓库的牌子递出去 —— 要改成**现要现租**一间，并且用完了**自己还**。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint *give_me_a_number(void) {\n    int local = {v};\n    return &local;\n}\n\nint main(void) {\n    int *box = give_me_a_number();\n    printf(\"盒子里装着 %d\\n\", *box);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint *give_me_a_number(void) {\n    int *local = (int *)malloc(sizeof(int));\n    if (local == NULL) {\n        return NULL;\n    }\n    *local = {v};\n    return local;\n}\n\nint main(void) {\n    int *box = give_me_a_number();\n    if (box == NULL) {\n        printf(\"仓库没租到喵\\n\");\n        return 1;\n    }\n    printf(\"盒子里装着 %d\\n\", *box);\n    free(box);\n    box = NULL;\n    printf(\"还掉之后，牌子也收起来了\\n\");\n    return 0;\n}\n",
+  "explanationTemplate": "问题出在**那间仓库住在哪**喵。\n\n`int local = {v};` 这间仓库写在招式**里面**，它住在**一摞叠起来的猫粮碗**上 —— 招式一出门，那层碗当场就被收走了。可这招偏偏把它的牌子（`&local`）递了出去：牌子看着好好的，牌子指的那间仓库**早就换主人了**。\n\n翻译官喵其实**看见了**。本喵真跑时它的原话是：\n\n```text\nwarning: function returns address of local variable [-Wreturn-local-addr]\n```\n\n翻过来就是「你把碗摞上那间仓库的地址递出去了」。但它**只是警告**：编译照样过、编译出来的程序照样能起。本喵这段代码真跑了一遍，退出码是 `3221225477`，意思是「踩到了不属于自己的地方」—— **一个字都没印出来就摔了**。\n\n⚠️ 换一位翻译官喵、换一个优化档，也可能先印出一个看着挺对的小数字再摔。**这两种结果都不能信**：那间仓库早就不归你管了。\n\n改法就是把仓库从碗摞搬到现要现租的那间屋：\n\n```text\nint *local = (int *)malloc(sizeof(int));\n```\n\n租来的仓库**不跟着招式出门**，所以牌子能放心递出去。可它也**不会自己消失** —— 所以 `main` 里那句 `free(box)` 一个字都不能省，这就是这一题最后那一行的来历。还完顺手把牌子擦成 `NULL`，还掉的牌子别再拿来用喵。"
+}

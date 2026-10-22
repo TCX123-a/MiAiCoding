@@ -1,0 +1,23 @@
+{
+  "templateId": "c-s3-half-find-strict-less",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-08",
+  "type": "codefix",
+  "concept": ["砍一半", "两头夹着找", "只剩最后一只也不能放过", "收手条件写早了"],
+  "instances": 2,
+  "params": {
+    "e1": { "kind": "pick", "values": ["2", "20"] },
+    "e2": { "kind": "pick", "values": ["4", "40"] },
+    "e3": { "kind": "pick", "values": ["6", "60"] },
+    "e4": { "kind": "pick", "values": ["8", "80"] },
+    "e5": { "kind": "pick", "values": ["10", "100"] },
+    "e6": { "kind": "pick", "values": ["12", "120"] },
+    "e7": { "kind": "pick", "values": ["14", "140"] },
+    "t":  { "kind": "pick", "values": ["2", "20"] }
+  },
+  "stemTemplate": "这七只碗里的编号是**从小到大**摆好的：**{e1}、{e2}、{e3}、{e4}、{e5}、{e6}、{e7}**。本喵要用「**砍一半**」找出编号 **{t}** 在第几只碗里（从 1 数起）。\n\n可它答的是「没找到」：\n\n```text\n找 {t}：没找到\n```\n\n编号 {t} 明明就在**第一只碗**里。翻译官喵一声没吭，编译跑得好好的。\n\n请你把那一招改对。改好之后该印：\n\n```text\n找 {t}：在第 1 只碗里\n```",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint bowl[7] = {{e1}, {e2}, {e3}, {e4}, {e5}, {e6}, {e7}};\n\n/* 砍一半：答「在第几只碗里」（从 1 数起），没找到答 0 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = 6;\n\n    while (lo < hi) {\n        int mid = (lo + hi) / 2;\n        if (bowl[mid] == target) {\n            return mid + 1;\n        } else if (bowl[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return 0;\n}\n\nint main(void) {\n    int pos = half_find({t});\n    if (pos == 0) {\n        printf(\"找 {t}：没找到\\n\");\n    } else {\n        printf(\"找 {t}：在第 %d 只碗里\\n\", pos);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint bowl[7] = {{e1}, {e2}, {e3}, {e4}, {e5}, {e6}, {e7}};\n\n/* 砍一半：答「在第几只碗里」（从 1 数起），没找到答 0 */\nint half_find(int target) {\n    int lo = 0;\n    int hi = 6;\n\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        if (bowl[mid] == target) {\n            return mid + 1;\n        } else if (bowl[mid] < target) {\n            lo = mid + 1;\n        } else {\n            hi = mid - 1;\n        }\n    }\n    return 0;\n}\n\nint main(void) {\n    int pos = half_find({t});\n    if (pos == 0) {\n        printf(\"找 {t}：没找到\\n\");\n    } else {\n        printf(\"找 {t}：在第 %d 只碗里\\n\", pos);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "毛病在**收手的条件**上：本喵写的是 `while (lo < hi)`，该写的是 `while (lo <= hi)` 喵。\n\n这两句话差在**「只剩最后一只」那一下**：\n\n- `lo < hi` 的意思是「这一段的头还没追上尾」，说得再直白点：**至少要两只**才接着找；\n- `lo == hi` 的时候，这一段里还剩**正好一只** —— 它到底是不是我们要找的那只，**还没看呢**。\n\n`lo < hi` 偏偏就在这时候收手了，所以「目标正好落在最后剩下的那一只上」的情形，永远轮不到看一眼。上面这个例子里，{t} 排在最前面，一路砍下来正好剩它一个，就被这一句提前收手放走了 —— 连第一只都能找不到，就是这么来的。\n\n⚠️ 翻译官喵一个字都不会说，跑起来也不摔：它只是**少看了最后那一眼**。想记住这条，就念一遍：**「头尾撞上那一下，还得再看一眼。」**"
+}

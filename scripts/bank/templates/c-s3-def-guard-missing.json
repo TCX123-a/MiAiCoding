@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s3-def-guard-missing",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-14",
+  "type": "codefix",
+  "concept": ["进门先验货", "守卫叼暗号 -1 回去", "没验货就会读到不该看的数"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": ["7", "4"] },
+    "b": { "kind": "pick", "values": ["2", "9"] },
+    "c": { "kind": "pick", "values": ["5", "6"] }
+  },
+  "stemTemplate": "这段稿子**没验货**喵：要数的碗数是 `0` 的时候，它照样伸手去掏「第一碗」，掏出一个**不该看的数**印给你 —— 屏幕上没提示、程序也不崩，就是安安静静说胡话。\n\n本喵的规矩：进门先验货。`count` 不合格（小于等于 `0`）就叼 `-1` 回去，压根别往后走 —— `-1` 不会跟真的条数撞上，是约好的暗号。\n\n请你把守卫补上（别的都别动）。改好之后该印两行：第一行是 {a}、{b}、{c} 三碗里**最多**的那个数，第二行是 `-1`。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint biggest(int fish[], int count) {\n    int best = fish[0];\n    for (int i = 1; i < count; i++) {\n        if (fish[i] > best) {\n            best = fish[i];\n        }\n    }\n    return best;\n}\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    printf(\"三碗：%d\\n\", biggest(fish, 3));\n    printf(\"一碗都没有：%d\\n\", biggest(fish, 0));\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint biggest(int fish[], int count) {\n    if (count <= 0) {\n        return -1;\n    }\n    int best = fish[0];\n    for (int i = 1; i < count; i++) {\n        if (fish[i] > best) {\n            best = fish[i];\n        }\n    }\n    return best;\n}\n\nint main(void) {\n    int fish[3] = { {a}, {b}, {c} };\n    printf(\"三碗：%d\\n\", biggest(fish, 3));\n    printf(\"一碗都没有：%d\\n\", biggest(fish, 0));\n    return 0;\n}\n",
+  "explanationTemplate": "守卫就摆在这招**刚进门的地方**，一眼能看见喵：\n\n- `count <= 0` 说的是「要数的碗数不合格」—— `0` 只碗也算不合格，那一排里压根没有碗可看；\n- 叼回去的暗号是 `-1`，因为**条数不可能是负数**，这个值不会跟真的结果撞上；\n- 位置在门口，后面那些「伸手去掏第一碗」的动作就压根不会发生。\n\n没验货的那一版，第二行印出来的是 {a} —— 那是第一碗里的数，可这一排是空的。这种「不该看却看了」比印错更吓人：它不报错、不崩，主人不会起疑心。"
+}

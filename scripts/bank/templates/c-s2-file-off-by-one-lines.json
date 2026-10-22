@@ -1,0 +1,18 @@
+{
+  "templateId": "c-s2-file-off-by-one-lines",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-13",
+  "type": "codefix",
+  "concept": ["fgets", "行号从几数起", "跑得成功但数不对"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "int", "min": 1, "max": 3 },
+    "b": { "kind": "int", "min": 4, "max": 6 },
+    "c": { "kind": "int", "min": 7, "max": 9 }
+  },
+  "stemTemplate": "本喵要往册子上记三笔账：`小鱼干 {a} 条`、`猫粮 {b} 碗`、`冻干块 {c} 块`，然后一行一行读回来，边读边报第几行。\n\n读回来应当是（**行号从 1 数起**）：\n\n```\n第 1 行：小鱼干 {a} 条\n第 2 行：猫粮 {b} 碗\n第 3 行：冻干块 {c} 块\n一共 3 行\n```\n\n可跑出来行号全都往后偏了一行。翻译官喵**一个字都没说**。你帮本喵找出这一处笔误（**只差一个数**）。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 {a} 条\\n\");\n    fprintf(fp, \"猫粮 {b} 碗\\n\");\n    fprintf(fp, \"冻干块 {c} 块\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 1;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"第 %d 行：%s\", n, line);\n        n = n + 1;\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"zhangben.txt\", \"w\");\n    if (fp == NULL) {\n        printf(\"打不开喵\\n\");\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 {a} 条\\n\");\n    fprintf(fp, \"猫粮 {b} 碗\\n\");\n    fprintf(fp, \"冻干块 {c} 块\\n\");\n    fclose(fp);\n\n    fp = fopen(\"zhangben.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"读不到喵\\n\");\n        return 0;\n    }\n    char line[64];\n    int n = 0;\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"第 %d 行：%s\", n, line);\n        n = n + 1;\n    }\n    fclose(fp);\n\n    printf(\"一共 %d 行\\n\", n);\n    return 0;\n}\n",
+  "explanationTemplate": "那一处笔误就一个字：**数行号的那只碗，开手的时候应该装 0，不是 1。**\n\n```c\nint n = 0;\n```\n\n为什么会偏？因为这只碗的身世是「**到此刻为止已经读到了几行**」。一开始一行都还没读到，所以它是 **0**；每读回来一行，才 `n = n + 1;` 加一。\n\n原来写成 `int n = 1;`，等于**先白送了一行**：第一行读回来报的是 2，第二行报 3，第三行报 4；最后那只碗停在 4，所以总数也印成 4 —— 明明册子上只有三行。\n\n**这类错有个好认的脸：句子本身一点毛病没有，翻译官喵一个字都不说，只是数全都往后错了一格。** 它管的是「字写没写规矩」，管不了「本喵心里打算从几数起」。所以写完这种带计数器的地方，**自己在纸上走一遍第一步**：还没读的时候应该是几？\n\n顺便把读文件那段的三样投喂再对一遍喵：`fgets(line, sizeof(line), fp)` —— `line` 是接这一行的碗、`sizeof(line)` 是这只碗最多能接多少个格子（超了只接这么多，不会撑破碗）、`fp` 是从哪本册子读。读到册子末尾叼回来的就是 `NULL`，绕圈自然收工。"
+}

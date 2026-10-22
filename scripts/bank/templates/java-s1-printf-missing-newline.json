@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-printf-missing-newline",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-04",
+  "type": "codefix",
+  "concept": ["printf", "%n", "换行"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 6 },
+    "p": { "kind": "pick", "values": ["2.5", "3.5", "4.5"] }
+  },
+  "stemTemplate": "本喵让程序报一笔账喵：纸条上写着条数和单价，算完一共多少钱之后，要印成**三行** —— 第一行报条数，第二行报花了多少钱（**两位小数**），第三行是那句客套话。\n\n可它印出来的东西全挤在一块儿了……你帮本喵看看问题出在哪儿，把它改好。\n\n（纸条上是 {n} 条，单价 {p} 元喵。）",
+  "brokenCodeTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(\"{n} {p}\");\n        int fish = sc.nextInt();\n        double price = sc.nextDouble();\n        System.out.printf(\"一共 %d 条\", fish);\n        System.out.printf(\"花了 %.2f 元%n\", fish * price);\n        System.out.println(\"谢谢惠顾\");\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(\"{n} {p}\");\n        int fish = sc.nextInt();\n        double price = sc.nextDouble();\n        System.out.printf(\"一共 %d 条%n\", fish);\n        System.out.printf(\"花了 %.2f 元%n\", fish * price);\n        System.out.println(\"谢谢惠顾\");\n    }\n}\n",
+  "explanationTemplate": "问题在第一句身上喵：**`printf` 念完不会自己换行**。\n\n这是它和 `println` 的分工：`println` 念完顺手换一行；`printf` 只管把话念出去，要换行得**自己写**。那个记号是 `%n`（是百分号加 n，不是反斜杠加 n）—— 本喵第一句漏了它，第二句就原样紧贴上来，两句话挤成一行了。\n\n改法：给第一句**末尾补上 `%n`**。（把那一句改成 `println`、自己把话拼好，也是一样的效果，照样能过。）\n\n顺带看一眼中间那句 `%.2f`：那个 `.2` 的意思是「小数只留两位」，所以 {p} 那种一位小数的钱数，会被整整齐齐地印成两位喵。"
+}

@@ -1,0 +1,76 @@
+{
+  "lessonId": "cpp-stage2-08",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "盒子里那一格装的是「现要现租的仓库」的牌子。本喵没写照抄招式，直接 `FishBox b = a;` —— 这时改 `b` 里面的数，`a` 会怎样？",
+      "options": [
+        "`a` 跟着一起变，因为两只盒子里的牌子写着同一个门牌号",
+        "`a` 不变，照抄出来的本来就是各管各的",
+        "`a` 不变，但收尾的时候 `a` 会把仓库还给 `b`",
+        "编译器会当场报错，因为缺了照抄函数"
+      ],
+      "answer": 0,
+      "explanation": "本喵没写照抄招式的时候，翻译官喵会偷偷补一份最直白的 —— 它做的事就是**把对方那一格里的东西原样抄过来**喵。而本喵那一格里装的是**牌子的地址**，所以抄过来的是同一间仓库的地址；改 `b` 里的数就是改那间共用的屋，`a` 拿着同一张牌子，自然一起变喵。它不会报错，也不会「各管各的」—— 这正是浅拷贝最会骗人的地方：跑得动、看起来也正常，只是两只盒子其实是同一间屋喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "关于本喵自己写的「照抄招式」和「赋值那一手」，下面哪一句说对了？",
+      "options": [
+        "照抄函数要 `new` 一间新的，赋值不用新租、只把内容搬过去",
+        "照抄函数不用新租，赋值才要 `new` 一间新的",
+        "两者都要 `new` 一间新的，不然就会撞车",
+        "两者都不用 `new`，只要最后 `return *this;` 就行"
+      ],
+      "answer": 0,
+      "explanation": "照抄招式是在**造一只新盒子**的时候被叫起来的，那时本喵还没有仓库，所以得自己 `new` 一间、把内容搬进去喵。赋值那一手是在**两只盒子都已经活着**的时候被叫起来的，对方的仓库本喵早就租好了，只要把数搬过去覆盖掉原来的就行 —— 这一手要是也写 `new`，**旧仓库的地址会被冲掉，那间屋再也没人还了**喵。另外 `return *this;` 是赋值那一手收尾的写法，照抄招式用不上它（它是造新盒子，不是把自己叼回去）喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "照抄招式的料写成 `const FishBox other`（漏了那个 `&`）会怎样？",
+      "options": [
+        "编译器在翻译阶段就拦下来，报 `invalid constructor`，还会把正确写法写给它看",
+        "能编过，只是每次照抄会慢一点",
+        "能编过，但收尾时会撞车",
+        "能编过，跑起来会和深拷贝一模一样"
+      ],
+      "answer": 0,
+      "explanation": "这一条是翻译阶段就拦下的喵。想一想：料是**按值**的，翻译官喵就得先替本喵造一份这份料的复印件，而造复印件又要叫一次照抄招式 —— 没完没了，所以它干脆拦住。它回的那句话里带着「你大概想要的是 `FishBox (const FishBox&)`」，等于**把正确答案直接写给本喵看**，照着抄下来就好了喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n    FishBox(____ other) { p = new int(*other.p); }\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    FishBox a(3);\n    FishBox b = a;\n    b.set(9);\n    cout << a.get() << \" \" << b.get() << endl;\n    return 0;\n}",
+      "stem": "这段代码里有一处被本喵挖空了（用 `____` 标出），补上之后它会印出 `3 9` 喵。",
+      "blanks": [
+        { "answer": "const FishBox&", "accept": ["const FishBox &", "const FishBox& ", "FishBox const&", "const FishBox&"] }
+      ],
+      "explanation": "照抄招式的料要写成「不必还的名字」：前面加 `const`（本喵只看不改），后面跟 `&`（借看一下对方那只盒子，不为它再造一只）喵。补上之后 `p = new int(*other.p);` 就是真正的深拷贝：另租一间、把对方屋里的数搬进来，所以改 `b` 不再动到 `a`，才会印出 `3 9` 喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n    FishBox(const FishBox& other) { p = new int(*other.p); }\n    ~FishBox() { delete p; }\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    FishBox a(3);\n    FishBox b = a;\n    b.set(9);\n    a.set(a.get() + 1);\n    cout << a.get() << \" \" << b.get() << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "4 9",
+      "accept": ["4 9\n"],
+      "explanation": "这一段的照抄招式是**深拷贝**：`FishBox b = a;` 的时候，`b` 拿到了**自己另租的一间仓库**，里面装着从 `a` 那儿抄来的 3 喵。所以后面 `b.set(9);` 改的是 `b` 自己那间（变成 9），`a.set(a.get() + 1);` 改的是 `a` 自己那间（3 加 1 变成 4）—— 两只盒子各有各的屋，谁也不影响谁喵。最后一行先印 `a` 的 4、再印一个空格、再印 `b` 的 9，所以是 `4 9` 喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\nusing namespace std;\n\nclass FishBox {\n    int* p;\npublic:\n    FishBox(int v) { p = new int(v); }\n    FishBox(const FishBox& other) { p = new int(*other.p); }\n    ~FishBox() { delete p; }\n    FishBox& operator=(const FishBox& other) {\n        *p = *other.p;\n        return *this;\n    }\n    int get() const { return *p; }\n    void set(int v) { *p = v; }\n};\n\nint main() {\n    FishBox a(5);\n    FishBox b(2);\n    b = a;\n    a.set(8);\n    cout << a.get() << \" \" << b.get() << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "8 5",
+      "accept": ["8 5\n"],
+      "explanation": "`b = a;` 这一句里，两只盒子**都已经活着**了，所以叫的是赋值那一手，不是照抄招式喵。赋值那一手做的是 `*p = *other.p;` —— 把 `a` 屋里那个 5 **搬进 `b` 早就租好的那间屋**，覆盖掉原来的 2，所以 `b` 变成 5（注意它**没有**另租新屋）喵。接着 `a.set(8);` 只动 `a` 自己那间，`b` 那间已经是独立的了，不受影响，所以 `a` 是 8、`b` 还是 5，印出来是 `8 5` 喵。"
+    }
+  ]
+}

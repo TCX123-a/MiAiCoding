@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-11-line-report",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-11",
+  "type": "codewrite",
+  "concept": ["getline 认一整行", "写进去什么就读回来什么", "逐行报行号"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "tag": { "kind": "pick", "values": ["小鱼干", "猫粮"] }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "投喂口会**先给一个数**（表示接下来有几个数），**再一个一个给 {n} 个数**喵。\n\n请你写个程序，按这个顺序干活：\n\n1. 把这 {n} 个数写进小本本，**一行一个数**，每一行的前面都加上 `{tag}` 和一个空格（比如第一个数是 4，那一行就写 `{tag} 4`）；\n2. **合上本子**；\n3. 重新翻开本子，**一次读回一整行**，读一行就印一行：先印 `第 1 行：`，再把这一行的内容原样接上去；行号从 1 开始，一行一行往上加；\n4. 全读完之后，最后再印一行 `一共 X 行`，X 是读回来的行数。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <fstream>\n#include <string>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <fstream>\n#include <string>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    ofstream out(\"list.txt\");\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        out << \"{tag} \" << x << endl;\n    }\n    out.close();\n\n    ifstream in(\"list.txt\");\n    string line;\n    int row = 0;\n    while (getline(in, line)) {\n        row = row + 1;\n        cout << \"第 \" << row << \" 行：\" << line << endl;\n    }\n    cout << \"一共 \" << row << \" 行\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题的钥匙是**读回来要用 `getline`** 喵。\n\n写进去的每一行都是 `{tag} 4` 这样的两截：一个词、一个空格、一个数。`getline(in, line)` 认的是「**一整行**」—— 它会一路叼到行尾，把空格两边一起带回来，所以印出来才是完整的一行。换成 `in >> line` 就完了：那个姿势一碰空格就停嘴，一行会被切成两截。\n\n行号那件事要**自己记**：本喵用一格仓库 `row`，每读回来一行就加一。所以印的是 `row` 加一之后的数 —— 第一行正好是 `1`。\n\n⚠️ 最后那行 `一共 X 行` 的数字，就是 `row` 加到最后的值，别再数一遍：它本来就是「读回来几行」。\n\n⚠️ `getline` 一次只叼一行，所以它也要住在 `while` 的圆括号里当条件，叼不动了自己就停。"
+}

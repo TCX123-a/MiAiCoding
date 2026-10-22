@@ -1,0 +1,22 @@
+{
+  "templateId": "java-s2-custom-ex-take",
+  "lang": "java",
+  "stage": 2,
+  "lessonId": "java-stage2-12",
+  "type": "codewrite",
+  "concept": ["自己画一张出事图纸", "口信往上交给师父", "招式头上要表态", "接住写在圈外面"],
+  "instances": 6,
+  "params": {
+    "exName": { "kind": "pick", "values": ["FishEmptyException", "BowlEmptyException"] },
+    "msg": { "kind": "pick", "values": ["仓库空了喵", "碗底朝天了喵"] },
+    "n1": { "kind": "pick", "values": ["3", "4"] },
+    "n2": { "kind": "pick", "values": ["5", "2"] },
+    "bad": { "kind": "pick", "values": ["0", "-2"] },
+    "tail": { "kind": "pick", "values": ["9", "7"] }
+  },
+  "stdinSpec": { "kind": "raw", "text": "4\n{n1}\n{n2}\n{bad}\n{tail}\n", "sampleText": "4\n2\n6\n-1\n8\n" },
+  "stemTemplate": "本喵要自己画一张专门报「仓库空了」的出事图纸，然后**用它**喵。\n\n要求：\n\n1. 图纸叫 `{exName}`，认 `Exception` 当师父；出生那一手收一句口信，并把它**往上交给师父**（这样接住它的猫才叼得回那句话）。\n2. 一个招式 `take`，收一个数：这个数**不到 1** 就**当场喊一声** `{exName}`，口信是 `{msg}`；否则印一行 `拿到 n 条`（`n` 就是收到的那个数）。\n3. `main` 里：先读第一个数（后面还有几笔），接着正好那么多行、一行一个数，挨个喂给 `take`；喂的过程**整个包在接住的括号里** —— 接住就印一行 `接住了：` 接上口信。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）\n\n还有一条：**出事之后，没喂到的那些数就别再管了** —— 别把「接住」写在绕圈的里面喵。",
+  "starterTemplate": "import java.util.Scanner;\n\nclass {exName} extends Exception {\n\n}\n\npublic class Main {\n    static void take(int n) {\n\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\nclass {exName} extends Exception {\n    {exName}(String msg) {\n        super(msg);\n    }\n}\n\npublic class Main {\n    static void take(int n) throws {exName} {\n        if (n <= 0) {\n            throw new {exName}(\"{msg}\");\n        }\n        System.out.println(\"拿到 \" + n + \" 条\");\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int total = sc.nextInt();\n        try {\n            for (int i = 0; i < total; i++) {\n                take(sc.nextInt());\n            }\n        } catch ({exName} e) {\n            System.out.println(\"接住了：\" + e.getMessage());\n        }\n    }\n}\n",
+  "explanationTemplate": "这题有四处要写对，缺一处都露馅喵。\n\n**一、认谁当师父。** `class {exName} extends Exception` —— 认了 `Exception`，这张图纸就归**「要表态的」**那一档：凡是用它的招式，都得在头上写 `throws`，或者在当场接住。\n\n**二、口信要往上交。** 出生那一手收进来的那句话，得用 `super(msg)` 交给师父：\n\n```java\n{exName}(String msg) {\n    super(msg);\n}\n```\n\n不交上去，接住它的猫 `getMessage()` 叼回来的是空的 —— 本喵把参考解里那句 `super(msg);` 拆掉真跑过一遍：那一行当场印成 `接住了：null`。所以它不是摆设，是口信**唯一的来路**。\n\n**三、招式头上要表态。** `static void take(int n) throws {exName}` —— 本喵自己先声明「这招可能出事，出了事本喵不在这儿处理」。有了这句，`main` 那边才有资格接。\n\n**四、接住的地方要包对。** 接住的括号得把**整个绕圈**包进去：\n\n```java\ntry {\n    for (int i = 0; i < total; i++) {\n        take(sc.nextInt());\n    }\n} catch ({exName} e) {\n    System.out.println(\"接住了：\" + e.getMessage());\n}\n```\n\n包在外面，出事那一刻**整个圈就停了**，后面的数一个都不喂。判分那组数里，出事之后**还留着数** —— 就是拿来盯这一处的：把接住写在圈的里面，那些数会被接着喂下去，屏幕上多几行，一眼就看出来了。\n\n包在里面也能编得过、跑得起来，但那不是这题要的：**出事之后剩下的活全都不干**，这正是课里那句「`try` 里出事的那一行之后不跑，`try` 里剩下的行也不跑」喵。"
+}

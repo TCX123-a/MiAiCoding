@@ -1,0 +1,16 @@
+{
+  "templateId": "java-s1-blueprint-not-newed",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-12",
+  "type": "codefix",
+  "concept": ["new", "牌子与真猫", "编译错误"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "狸花"] }
+  },
+  "stemTemplate": "本喵在 `main` 里写好了「要一只猫」的打算，也给它挂了名字、让它叫了一声 —— 可翻译官喵一张口就是那句 `variable c might not have been initialized`，说什么都不肯往下走。\n\n你帮本喵把**缺的那一步**补上。改好之后，屏幕上该是这一行：\n\n```text\n{name}：喵～\n```\n\n（挂名字、喊那一嗓子那两句本身没毛病，别去动它们。）",
+  "brokenCodeTemplate": "class Cat {\n    String name;\n\n    void meow() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c;\n        c.name = \"{name}\";\n        c.meow();\n    }\n}\n",
+  "referenceFixTemplate": "class Cat {\n    String name;\n\n    void meow() {\n        System.out.println(name + \"：喵～\");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Cat c = new Cat();\n        c.name = \"{name}\";\n        c.meow();\n    }\n}\n",
+  "explanationTemplate": "原话念起来是「**牌子 `c` 可能还没装东西喵**」—— 它拦的是**第一次用到 `c` 的那一行**（`c.name = ...`）：到那一刻为止，`c` 这块牌子还是空的。\n\n`Cat c;` 只是「本喵打算要一只 `Cat`」这个念头，**真猫还没生出来**。生猫的动作是 `new Cat()` —— 少了它，牌子一直空着，翻译官一眼看出来，不让程序带着这个窟窿往下跑。\n\n**规矩：牌子和 `new`，一口气写完** —— `Cat c = new Cat();`。\n\n顺一句：要是本喵写成 `Cat c = null;`，翻译官就**不拦**了 —— 它以为本喵心里有数，结果一跑起来照样在 `c.name` 那一行断气。这种「编译不管、跑起来才炸」的空牌子，比刚才那句报错更难查喵。"
+}

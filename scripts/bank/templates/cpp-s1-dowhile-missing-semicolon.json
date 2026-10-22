@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s1-dowhile-missing-semicolon",
+  "lang": "cpp",
+  "stage": 1,
+  "lessonId": "cpp-stage1-07",
+  "type": "codefix",
+  "concept": ["do-while", "收尾的分号", "expected ';'"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 },
+    "unit": { "kind": "pick", "values": ["小鱼干", "冻干块"] }
+  },
+  "stemTemplate": "本喵这段代码**翻不过去** —— 翻译官喵把它拦下了，一行都没跑。\n\n它该干的事是：一条一条往外喂，喂到第 {n} 条为止，每喂一条印一行 `喂到第 X 条喵`，最后再印一行 `一共喂了 {n} 条{unit}喵`。\n\n它用的是 `do-while` 那套写法（**先干一圈，再回头看一眼**）。你帮本喵把漏掉的那个小记号补上，让它翻得过去、跑得起来。",
+  "brokenCodeTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = {n};\n    int fish = 0;\n    do {\n        fish = fish + 1;\n        cout << \"喂到第 \" << fish << \" 条喵\" << endl;\n    } while (fish < n)\n    cout << \"一共喂了 \" << fish << \" 条{unit}喵\" << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int n = {n};\n    int fish = 0;\n    do {\n        fish = fish + 1;\n        cout << \"喂到第 \" << fish << \" 条喵\" << endl;\n    } while (fish < n);\n    cout << \"一共喂了 \" << fish << \" 条{unit}喵\" << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "`do-while` 的长相是这样的：**`do` 下面挂一对大括号（圈里的活），尾巴上收一句 `} while (眼色);`**。\n\n翻译官喵的原话是 `error: expected ';' before 'cout'`，翻过来就是：**「本喵等着一个分号，冒出来的却是下一行的 `cout`。」**\n\n挨骂的是下面那一行 `cout`，可真正漏掉的东西**在它上面那一行的末尾** —— `} while (fish < n)` 后面少了一个分号喵。\n\n这里有个容易糊涂的地方：`while` 平时是**独自开场**的（`while (fish > 0)` 末尾不带分号），可在 `do-while` 里它是**收尾**的，尾巴上那个分号千万不能丢 —— 少了它，这一整句就没说完。\n\n所以记住这个口诀：**看见 `expected ';'`，先去挨骂那一行的上面找漏掉的分号**，别瞪着挨骂的那一行看。\n\n顺带把 `do-while` 的脾气认全：它是**先干一圈，再看眼色**，所以圈里的活**至少会跑一遍** —— 哪怕眼色的第一眼就是假。这一点和 `while`、`for` 不一样（那两位可能一圈都不跑）喵。"
+}

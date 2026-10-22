@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s2-05-touch-own",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-05",
+  "type": "codefix",
+  "concept": ["挂在图纸上的招式", "喊它的时候没有猫", "自己的格子碰不得"],
+  "instances": 2,
+  "params": {
+    "nameA": { "kind": "pick", "values": ["小橘", "大胖"] },
+    "nameB": { "kind": "pick", "values": ["狸花", "三花"] }
+  },
+  "stemTemplate": "本喵写了一个**挂在图纸上**的招式 `static int howMany()` —— 它的活只是报一报「一共出生了几只」，可它肚子里本喵顺手多碰了一样东西，翻译官喵当场拦下喵。\n\n你帮本喵改**一处**，让它跑起来、印出这两行：先一行 `一共出生了 2 只`，再一行 `第一只叫 XX`（`XX` 是第一只猫的名字）。**`main` 里那几句和图纸上别的地方都不用动。**",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int count;\n    string name;\n\n    Cat(string n) : name(n) {\n        count = count + 1;\n    }\n\n    static int howMany() {\n        return count + name.size();\n    }\n};\n\nint Cat::count = 0;\n\nint main() {\n    Cat a(\"{nameA}\");\n    Cat b(\"{nameB}\");\n    cout << \"一共出生了 \" << Cat::howMany() << \" 只\" << endl;\n    cout << \"第一只叫 \" << a.name << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    static int count;\n    string name;\n\n    Cat(string n) : name(n) {\n        count = count + 1;\n    }\n\n    static int howMany() {\n        return count;\n    }\n};\n\nint Cat::count = 0;\n\nint main() {\n    Cat a(\"{nameA}\");\n    Cat b(\"{nameB}\");\n    cout << \"一共出生了 \" << Cat::howMany() << \" 只\" << endl;\n    cout << \"第一只叫 \" << a.name << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是：\n\n`main.cpp:15:24: error: invalid use of member 'Cat::name' in static member function`\n`main.cpp:8:12: note: declared here`\n\n念作：**「`name` 是每只猫自己的一份，可你现在站的是挂在图纸上的招式 —— 喊它的时候没有猫站在旁边，你要用的是哪只猫的 `name`？」**\n\n道理上一课就埋好了：招式被哪只猫喊，就替哪只猫干活。而这个招式是**挂在图纸上**的 —— 喊它的时候根本不需要先有一只猫，所以它手里没有「哪只猫」这个信息，每只猫自己那一格就取不出来。\n\n改法很简单：把它碰不到的那半截拿掉，肚子里只留 `return count;`。共用的那一格谁都能碰，挂在图纸上的招式碰它一点问题都没有。\n\n⚠️ 顺带记住：看到 `invalid use of member` 这一句，先看这一招前面是不是带着那个「挂在图纸上」的标记 —— 带了，它肚子里就只能碰共用的东西。"
+}

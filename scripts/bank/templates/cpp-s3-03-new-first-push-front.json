@@ -1,0 +1,18 @@
+{
+  "templateId": "cpp-s3-03-new-first-push-front",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-03",
+  "type": "codefix",
+  "concept": ["最新的一条排最前面", "push_front 与 push_back 的分工", "顺序错翻译官不吭声"],
+  "instances": 2,
+  "params": {
+    "a": { "kind": "pick", "values": [3, 6] },
+    "b": { "kind": "pick", "values": [8, 1] },
+    "c": { "kind": "pick", "values": [5, 9] }
+  },
+  "stemTemplate": "三条货到本喵手上的顺序是：先 {a}，再 {b}，最后 {c}。本喵想让**最新到的那条排在最前面** —— 所以柜子里从前往后该看到 {c}、{b}、{a}。\n\n可这段代码**跑得起来，顺序却不对**（翻译官喵一声都不会吭，顺序对不对只有印出来才知道喵）。你帮本喵把它改对：三条货都要留在柜子里，一格印一行。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <deque>\nusing namespace std;\n\nint main() {\n    deque<int> d;\n    d.push_front({a});\n    d.push_front({b});\n    d.push_back({c});\n\n    for (int x : d) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <deque>\nusing namespace std;\n\nint main() {\n    deque<int> d;\n    d.push_front({a});\n    d.push_front({b});\n    d.push_front({c});\n\n    for (int x : d) {\n        cout << x << endl;\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "这一题**翻译官喵一个字都不会说**：两段代码都编得过、都跑得完，差别只在印出来的顺序上。这种错只能靠自己走一圈核对。\n\n要点是那两招的分工喵：\n\n- `push_back` 把货接到**最后面** —— 越晚接上去的越靠后；\n- `push_front` 把货**顶到最前面** —— 越晚顶上去的越靠前。\n\n三条货里，{a} 和 {b} 都是从前面顶进去的，只有最后那条 {c} 被接到了后面 —— 于是它掉到了最后面，而这一题要的是「最新的排最前」。把那一句也换成一个**从前面塞**的招式，柜子里就成了 {c}、{b}、{a}。\n\n⚠️ 记住这条：想让最新的一条排最前面，**每一条**都得用从前面塞的招式 —— 缺一条，它就掉到最后面去。"
+}

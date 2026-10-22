@@ -1,0 +1,87 @@
+{
+  "lessonId": "c-stage1-15",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵的计算器里算了这么一笔：`7 / 2`。屏幕上会印出什么？",
+      "options": [
+        "`3`",
+        "`3.5`",
+        "`4`",
+        "编译器会报错，程序编不出来"
+      ],
+      "answer": 0,
+      "explanation": "两只碗里装的都是整数，**整数和整数算，结果还是整数**喵 —— C 会把小数点后面那截**直接砍掉**，不是四舍五入，也不给你任何提示，所以 `7 / 2` 印出来是 `3`。想让结果带小数，得另外想办法 —— 后面的课会教你喵～"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "机器里有这么一句：`if (scanf(\"%d\", &choice) != 1)`。这个 `1` 是在查什么？",
+      "options": [
+        "查这一趟到底有没有真收到一个数",
+        "查用户敲进来的数是不是 1",
+        "查碗里现在装的是不是 1",
+        "查菜单上有没有第 1 项"
+      ],
+      "answer": 0,
+      "explanation": "`scanf` 是有战利品的：**它收到几个数，就叼回几**喵。所以拿它的战利品跟 `1` 比，问的正是「这一趟到底收着一个数没有」—— 收到就继续算，没收到（比如输入被掐断了、或者敲的根本不是数字）就印一句道别乖乖收工。要是把 `1` 理解成「用户敲的数是 1」，那可就差到天边去了喵～"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "除法那一招外面套了一句 `if (b == 0)`。它挡的是什么？",
+      "options": [
+        "挡住拿 0 当除数 —— 这种事在 C 里是不许的，会出什么事谁也说不准",
+        "挡住用户敲进来的不是数字",
+        "挡住结果太大印不下",
+        "挡住菜单选错了号"
+      ],
+      "answer": 0,
+      "explanation": "`0` 当除数在 C 里是**不许的**，真出了事结果谁也说不准，跟「印错一个数」完全不是一个量级喵。所以做机器的人要提前把这道拦住，印一句「0 不能当除数喵！」然后照常接着转 —— **能提前挡住的坑，就别留给运气**喵～"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    int choice = 3;\n    int a = 6;\n    int b = 7;\n\n    if (choice == 1) {\n        printf(\"%d\\n\", a + b);\n    } else if (choice == 2) {\n        printf(\"%d\\n\", a - b);\n    } else if (choice ____ 3) {\n        printf(\"%d\\n\", a * b);\n    } else {\n        printf(\"%d\\n\", a / b);\n    }\n    return 0;\n}",
+      "stem": "这是计算器里那段「按选项分岔」的骨架。空里该填什么记号喵？",
+      "blanks": [
+        { "answer": "==" }
+      ],
+      "explanation": "问「相等吗」要用**两个等号** `==`喵。一个等号是「把右边放进左边」的意思，那是另一件事 —— 两个记号长得像，脾气完全不同。填好之后 `choice` 是 `3`，正好落在这一岔上，印出来是 `6 * 7 = 42`喵～"
+    },
+    {
+      "id": "q5",
+      "type": "codefill",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint main(void) {\n    int a;\n    int b;\n\n    if (scanf(\"%d\", &a) != 1) {\n        printf(\"没收到喵\\n\");\n        return 0;\n    }\n    if (scanf(\"%d\", ____b) != 1) {\n        printf(\"没收到喵\\n\");\n        return 0;\n    }\n    printf(\"%d\\n\", a + b);\n    return 0;\n}",
+      "stem": "这段代码要连收两个数，再印出它们的和。第二个收数的空里该填什么喵？",
+      "blanks": [
+        { "answer": "&" }
+      ],
+      "explanation": "填 `&`喵 —— `scanf` 要把收到的数**放进你的碗里**，所以得先把这只碗的门牌号交出去（第 14 课那块牌子，还记得吗）。另外留意这段的两道检查：**每读一次就查一次「收到了吗」**，收到才敢往下算，没收到就印一句道别走人。填完跑一遍，喂 `6` 和 `7` 进去，印的是 `13`喵～"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint main(void) {\n    int choice = 3;\n    int a = 6;\n    int b = 7;\n\n    if (choice == 1) {\n        printf(\"%d\\n\", add(a, b));\n    } else if (choice == 3) {\n        printf(\"%d\\n\", mul(a, b));\n    } else {\n        printf(\"%d\\n\", a - b);\n    }\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "42",
+      "accept": ["42\n"],
+      "explanation": "`choice` 是 `3`，第一个分岔问「等于 1 吗」—— 不是；第二个问「等于 3 吗」—— 是，于是走进去喊了 `mul` 那一招喵。`mul(6, 7)` 把 `42` 叼回来，落进打印的投喂口。旁边那只 `add` 招式登记了却没被喊到，它就安安静静待着，不会自己跳出来抢活干喵～"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "c",
+      "code": "#include <stdio.h>\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nint main(void) {\n    printf(\"%d\\n\", divide(9, 2));\n    printf(\"%d\\n\", 9 / 2);\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "4\n4",
+      "accept": ["4\n4\n"],
+      "explanation": "两行都是 `4`喵。第一行是把两个整数喂进 `divide` 那一招，第二行是当场自己算 —— **结果一模一样**，因为 `9 / 2` 这一刀是 C 在算式上砍的，跟招式没关系。小数点后面那截就这么没了，不打招呼、也不报错。这两行并排放在一起，就是想让你记住：**这是 C 的规矩，不是谁的招式写错了**喵～"
+    }
+  ]
+}

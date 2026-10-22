@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s3-comparator-sort",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-02",
+  "type": "codewrite",
+  "concept": ["请个帮工来定规矩", "大的排前面", "柜子直接印"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "本喵要请个**帮工**来替柜子定排排坐的规矩：**大的排前面**喵。\n\n投喂给程序的是：**第一行一个数 n**，**后面跟 n 个数**（一行一个）。请先把它们一个不漏地收进柜子，再印两行：\n\n```text\n从大到小：那一串\n最大的是 M\n```\n\n- 第一行那串**不用本喵自己拼** —— 柜子排完直接印出来就是方括号加逗号空格那个样子；\n- `M` 是排完之后**打头的那一件**（也就是最大的那个）。这一处**别自己绕圈去找最大**，让柜子自己报。\n\n要求那个「大的排前面」的规矩，**单独写在一张图纸里**（本课第二节那种请帮工的写法），别改柜子里东西自己会的那套规矩。\n\n定好规矩之后，让柜子用它排一次。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\nimport java.util.Scanner;\n\nclass BigFirst implements Comparator<Integer> {\n    public int compare(Integer a, Integer b) {\n        return 0;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.ArrayList;\nimport java.util.Comparator;\nimport java.util.List;\nimport java.util.Scanner;\n\nclass BigFirst implements Comparator<Integer> {\n    public int compare(Integer a, Integer b) {\n        return b - a;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        List<Integer> nums = new ArrayList<>();\n        for (int i = 0; i < n; i++) {\n            nums.add(sc.nextInt());\n        }\n        nums.sort(new BigFirst());\n        System.out.println(\"从大到小：\" + nums);\n        System.out.println(\"最大的是 \" + nums.get(0));\n    }\n}\n",
+  "explanationTemplate": "这题练的是**「请个帮工来定规矩」**那条路，和「东西自己会排」那条路是两回事喵。\n\n**一、那张帮工图纸里只有一招：定谁在前。** `implements Comparator<Integer>` 的那张图纸，本喵只写了一招 `compare`。它收两件东西回来一个数：\n\n- 回**正数**：意思是「先递进来那件该排后面」；\n- 回**负数**：意思是「先递进来那件该排前面」；\n- 回 **0**：两件一样大，谁前谁后都行。\n\n所以 `b - a` 就是「大的排前面」：`a` 小、`b` 大，`b - a` 是正的，意思是 `a` 该往后站。反过来写 `a - b` 就是小的排前面了。\n\n**二、为什么这题要用帮工、而不是让东西自己会排。** 「自己会排」那条路要求**柜子里的东西自己带着那手比大小的本事**，而这里的柜子里装的是光溜溜的数字那一家 —— 那是别人家的东西，本喵没法给它添本事。所以这类「想换一种排法」的时候，请帮工是唯一的路喵。（本课第一节那条路上，本喵画的是自己的图纸，那才能把比大小的本事写在图纸里。）\n\n**三、请来之后怎么用。** `nums.sort(new BigFirst())` —— 照图纸生一只帮工出来，交给柜子，柜子就用它的规矩排一遍。排的动作是**当场改这只柜子**，不用接叼回来的东西。\n\n**四、`nums.get(0)` 为什么就是最大的。** 排完之后打头那件当然是最大的，所以不用再绕一圈去找。这一手能成立，全靠前面那句排过了 —— 把这两句的先后顺序颠倒过来，拿到的就是原来第一件，而**那种错一行红字都不会有**。\n\n往后只要听见「换一种排法」，就先想请帮工那条路喵。"
+}

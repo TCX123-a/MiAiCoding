@@ -1,0 +1,17 @@
+{
+  "templateId": "cpp-s3-06-move-sum",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-06",
+  "type": "codewrite",
+  "concept": ["牌子不许复制", "换主人要打招呼", "搬完旧牌子空手"],
+  "instances": 6,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stdinSpec": { "kind": "ints", "head": "{n}\n", "count": "{n}", "min": 1, "max": 9 },
+  "stemTemplate": "投喂口会**先给一个数**（要跟着几个数），**再一只一只给 {n} 个数**喵。\n\n请你写个程序：\n\n1. 把这 {n} 个数**加起来**（用那只从 0 开始的小碗），总和放进一个 `int` 里；\n2. 请一块牌子装着这个和（`make_unique<int>(...)`）；\n3. 把这块牌子**换主人**交给另一块牌子 —— 牌子不许复制，要用「打招呼搬家」那一招；\n4. 最后印**两行**：\n   - 第一行：从**新牌子**上取下来的那个和；\n   - 第二行：**旧牌子**现在的样子 —— 已经**空手**了就印 `空手`，还拿着就印 `还拿着`（就是拿它去和「什么都没有」比一比）。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分喂的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n\n    return 0;\n}\n",
+  "referenceSolutionTemplate": "#include <iostream>\n#include <memory>\nusing namespace std;\n\nint main() {\n    int n = 0;\n    cin >> n;\n\n    int total = 0;\n    for (int i = 0; i < n; i++) {\n        int x = 0;\n        cin >> x;\n        total += x;\n    }\n\n    unique_ptr<int> a = make_unique<int>(total);\n    unique_ptr<int> b = move(a);\n\n    cout << *b << endl;\n    cout << (a == nullptr ? \"空手\" : \"还拿着\") << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "这一题串了三件本喵今天刚学的事喵：\n\n**① 装满一个数**：`total` 从 0 起，绕 {n} 圈，每圈把一个数加进去 —— 和就攒好了。\n**② 请牌子装货**：`make_unique<int>(total)` 一趟把两件事都做了（仓库租下来、货放进去），不用自己写 `new`。\n**③ 换主人**：写成 `unique_ptr<int> b = a;` 是不行的 —— 复制那条路被划掉了，翻译官喵的原话里有 `use of deleted function`。得**打招呼**：`move(a)`，念作「`a` 这一份本喵不要了，你搬过去」。\n\n最后那两行就是这一步的证据：搬完家之后**旧的那块牌子只剩个空壳**，拿它去和「什么都没有」（`nullptr`）比一比，会印出 `空手` —— 课文第五节真跑过一模一样的一行。所以取货只能拿 `b` 去取：`*b`。\n\n⚠️ 要是本喵没打招呼、另外请了一块牌子装着同样的数，那第二行会印成 `还拿着` —— 和判分要的不一样，这一题就是靠这一行盯住「你到底有没有真的搬家」。\n\n⚠️ 判分喂的数跟样例不一样，别把样例的答案写死。"
+}

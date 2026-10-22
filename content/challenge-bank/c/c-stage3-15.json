@@ -1,0 +1,578 @@
+{
+  "lessonId": "c-stage3-15",
+  "bankVersion": 1,
+  "items": [
+    {
+      "id": "bank-c-s3-proj-append-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一课的第一招要你自己写喵：`add_last` —— **往后接**一位学员。骨架里这一招是空的（只有一句 `return head;`），所以链子从头到尾一位都没接上，印表**什么都不印**。\n\n按注释把那几步写完（别的都别动）。写好之后该印三行，按加进来的顺序一人一行：小橘 90 分、小白 85 分、阿花 95 分。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    /* ↓ 在这儿写：租一节、把名字和分数放进去、把这一节记着的下一节写成 NULL；\n       链子还空着就把它交回去当新的头，否则从头走到最后一节，把新节挂在它后头。 */\n\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"阿花\", 95);\n    print_all(head);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"阿花\", 95);\n    print_all(head);\n    return 0;\n}\n",
+      "expectedOutput": "小橘：90 分\n小白：85 分\n阿花：95 分",
+      "stdin": null,
+      "explanation": "尾插一共就五步喵：**①** `malloc` 租一节（顺手验货，租不到就把链子原样交回去）；**②③** 把名字和分数放进盒子；**④** 把「下一节」写成 `NULL` —— 它现在站在最后，后头什么都没有；**⑤** 如果链子还空着（`head == NULL`），这一节**就是**新的头，直接交回去；否则从头走到最后一节（`while (p->next != NULL)`），把新节挂上去（`p->next = fresh`）。\n\n为什么走的是「走到**下一步没有了**」而不是「走到 `p == NULL`」喵？因为你要的是**最后一节本身**（好把新节挂在它后头），不是它后头那片空地。要是走成了 `while (p != NULL)`，你会一脚踏出链子，手里那节早就错过了。\n\n最后那两行 `return head;` 要看清：链子的头**只在空链子那一次**会变成新节；之后每一回接的都是尾巴，头还是原来那位 —— 所以门口那句 `head = add_last(head, ...)` 接回去的，多半还是原来那个头。",
+      "templateId": "c-s3-proj-append-write",
+      "params": {
+        "n1": "小橘",
+        "n2": "小白",
+        "n3": "阿花",
+        "s1": "90",
+        "s2": "85",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:11.064Z",
+        "hash": "f865bf5dd50c926b"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-append-write-013",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一课的第一招要你自己写喵：`add_last` —— **往后接**一位学员。骨架里这一招是空的（只有一句 `return head;`），所以链子从头到尾一位都没接上，印表**什么都不印**。\n\n按注释把那几步写完（别的都别动）。写好之后该印三行，按加进来的顺序一人一行：小橘 88 分、小白 85 分、咪咪 79 分。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    /* ↓ 在这儿写：租一节、把名字和分数放进去、把这一节记着的下一节写成 NULL；\n       链子还空着就把它交回去当新的头，否则从头走到最后一节，把新节挂在它后头。 */\n\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 88);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"咪咪\", 79);\n    print_all(head);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 88);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"咪咪\", 79);\n    print_all(head);\n    return 0;\n}\n",
+      "expectedOutput": "小橘：88 分\n小白：85 分\n咪咪：79 分",
+      "stdin": null,
+      "explanation": "尾插一共就五步喵：**①** `malloc` 租一节（顺手验货，租不到就把链子原样交回去）；**②③** 把名字和分数放进盒子；**④** 把「下一节」写成 `NULL` —— 它现在站在最后，后头什么都没有；**⑤** 如果链子还空着（`head == NULL`），这一节**就是**新的头，直接交回去；否则从头走到最后一节（`while (p->next != NULL)`），把新节挂上去（`p->next = fresh`）。\n\n为什么走的是「走到**下一步没有了**」而不是「走到 `p == NULL`」喵？因为你要的是**最后一节本身**（好把新节挂在它后头），不是它后头那片空地。要是走成了 `while (p != NULL)`，你会一脚踏出链子，手里那节早就错过了。\n\n最后那两行 `return head;` 要看清：链子的头**只在空链子那一次**会变成新节；之后每一回接的都是尾巴，头还是原来那位 —— 所以门口那句 `head = add_last(head, ...)` 接回去的，多半还是原来那个头。",
+      "templateId": "c-s3-proj-append-write",
+      "params": {
+        "n1": "小橘",
+        "n2": "小白",
+        "n3": "咪咪",
+        "s1": "88",
+        "s2": "85",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:14.450Z",
+        "hash": "f7a69bf8d9e180f2"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-append-write-025",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一课的第一招要你自己写喵：`add_last` —— **往后接**一位学员。骨架里这一招是空的（只有一句 `return head;`），所以链子从头到尾一位都没接上，印表**什么都不印**。\n\n按注释把那几步写完（别的都别动）。写好之后该印三行，按加进来的顺序一人一行：小橘 90 分、小灰 85 分、咪咪 79 分。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    /* ↓ 在这儿写：租一节、把名字和分数放进去、把这一节记着的下一节写成 NULL；\n       链子还空着就把它交回去当新的头，否则从头走到最后一节，把新节挂在它后头。 */\n\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小灰\", 85);\n    head = add_last(head, \"咪咪\", 79);\n    print_all(head);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小灰\", 85);\n    head = add_last(head, \"咪咪\", 79);\n    print_all(head);\n    return 0;\n}\n",
+      "expectedOutput": "小橘：90 分\n小灰：85 分\n咪咪：79 分",
+      "stdin": null,
+      "explanation": "尾插一共就五步喵：**①** `malloc` 租一节（顺手验货，租不到就把链子原样交回去）；**②③** 把名字和分数放进盒子；**④** 把「下一节」写成 `NULL` —— 它现在站在最后，后头什么都没有；**⑤** 如果链子还空着（`head == NULL`），这一节**就是**新的头，直接交回去；否则从头走到最后一节（`while (p->next != NULL)`），把新节挂上去（`p->next = fresh`）。\n\n为什么走的是「走到**下一步没有了**」而不是「走到 `p == NULL`」喵？因为你要的是**最后一节本身**（好把新节挂在它后头），不是它后头那片空地。要是走成了 `while (p != NULL)`，你会一脚踏出链子，手里那节早就错过了。\n\n最后那两行 `return head;` 要看清：链子的头**只在空链子那一次**会变成新节；之后每一回接的都是尾巴，头还是原来那位 —— 所以门口那句 `head = add_last(head, ...)` 接回去的，多半还是原来那个头。",
+      "templateId": "c-s3-proj-append-write",
+      "params": {
+        "n1": "小橘",
+        "n2": "小灰",
+        "n3": "咪咪",
+        "s1": "90",
+        "s2": "85",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:16.676Z",
+        "hash": "71f9ef9254de0e0e"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-append-write-038",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一课的第一招要你自己写喵：`add_last` —— **往后接**一位学员。骨架里这一招是空的（只有一句 `return head;`），所以链子从头到尾一位都没接上，印表**什么都不印**。\n\n按注释把那几步写完（别的都别动）。写好之后该印三行，按加进来的顺序一人一行：大黄 88 分、小白 92 分、阿花 95 分。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    /* ↓ 在这儿写：租一节、把名字和分数放进去、把这一节记着的下一节写成 NULL；\n       链子还空着就把它交回去当新的头，否则从头走到最后一节，把新节挂在它后头。 */\n\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小白\", 92);\n    head = add_last(head, \"阿花\", 95);\n    print_all(head);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小白\", 92);\n    head = add_last(head, \"阿花\", 95);\n    print_all(head);\n    return 0;\n}\n",
+      "expectedOutput": "大黄：88 分\n小白：92 分\n阿花：95 分",
+      "stdin": null,
+      "explanation": "尾插一共就五步喵：**①** `malloc` 租一节（顺手验货，租不到就把链子原样交回去）；**②③** 把名字和分数放进盒子；**④** 把「下一节」写成 `NULL` —— 它现在站在最后，后头什么都没有；**⑤** 如果链子还空着（`head == NULL`），这一节**就是**新的头，直接交回去；否则从头走到最后一节（`while (p->next != NULL)`），把新节挂上去（`p->next = fresh`）。\n\n为什么走的是「走到**下一步没有了**」而不是「走到 `p == NULL`」喵？因为你要的是**最后一节本身**（好把新节挂在它后头），不是它后头那片空地。要是走成了 `while (p != NULL)`，你会一脚踏出链子，手里那节早就错过了。\n\n最后那两行 `return head;` 要看清：链子的头**只在空链子那一次**会变成新节；之后每一回接的都是尾巴，头还是原来那位 —— 所以门口那句 `head = add_last(head, ...)` 接回去的，多半还是原来那个头。",
+      "templateId": "c-s3-proj-append-write",
+      "params": {
+        "n1": "大黄",
+        "n2": "小白",
+        "n3": "阿花",
+        "s1": "88",
+        "s2": "92",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:18.918Z",
+        "hash": "bd3146807a20349e"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-append-write-050",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一课的第一招要你自己写喵：`add_last` —— **往后接**一位学员。骨架里这一招是空的（只有一句 `return head;`），所以链子从头到尾一位都没接上，印表**什么都不印**。\n\n按注释把那几步写完（别的都别动）。写好之后该印三行，按加进来的顺序一人一行：大黄 90 分、小灰 92 分、阿花 95 分。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    /* ↓ 在这儿写：租一节、把名字和分数放进去、把这一节记着的下一节写成 NULL；\n       链子还空着就把它交回去当新的头，否则从头走到最后一节，把新节挂在它后头。 */\n\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 90);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"阿花\", 95);\n    print_all(head);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 90);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"阿花\", 95);\n    print_all(head);\n    return 0;\n}\n",
+      "expectedOutput": "大黄：90 分\n小灰：92 分\n阿花：95 分",
+      "stdin": null,
+      "explanation": "尾插一共就五步喵：**①** `malloc` 租一节（顺手验货，租不到就把链子原样交回去）；**②③** 把名字和分数放进盒子；**④** 把「下一节」写成 `NULL` —— 它现在站在最后，后头什么都没有；**⑤** 如果链子还空着（`head == NULL`），这一节**就是**新的头，直接交回去；否则从头走到最后一节（`while (p->next != NULL)`），把新节挂上去（`p->next = fresh`）。\n\n为什么走的是「走到**下一步没有了**」而不是「走到 `p == NULL`」喵？因为你要的是**最后一节本身**（好把新节挂在它后头），不是它后头那片空地。要是走成了 `while (p != NULL)`，你会一脚踏出链子，手里那节早就错过了。\n\n最后那两行 `return head;` 要看清：链子的头**只在空链子那一次**会变成新节；之后每一回接的都是尾巴，头还是原来那位 —— 所以门口那句 `head = add_last(head, ...)` 接回去的，多半还是原来那个头。",
+      "templateId": "c-s3-proj-append-write",
+      "params": {
+        "n1": "大黄",
+        "n2": "小灰",
+        "n3": "阿花",
+        "s1": "90",
+        "s2": "92",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:21.200Z",
+        "hash": "4defeb9a0bd92e95"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-append-write-063",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "这一课的第一招要你自己写喵：`add_last` —— **往后接**一位学员。骨架里这一招是空的（只有一句 `return head;`），所以链子从头到尾一位都没接上，印表**什么都不印**。\n\n按注释把那几步写完（别的都别动）。写好之后该印三行，按加进来的顺序一人一行：大黄 88 分、小灰 92 分、咪咪 79 分。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    /* ↓ 在这儿写：租一节、把名字和分数放进去、把这一节记着的下一节写成 NULL；\n       链子还空着就把它交回去当新的头，否则从头走到最后一节，把新节挂在它后头。 */\n\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"咪咪\", 79);\n    print_all(head);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"咪咪\", 79);\n    print_all(head);\n    return 0;\n}\n",
+      "expectedOutput": "大黄：88 分\n小灰：92 分\n咪咪：79 分",
+      "stdin": null,
+      "explanation": "尾插一共就五步喵：**①** `malloc` 租一节（顺手验货，租不到就把链子原样交回去）；**②③** 把名字和分数放进盒子；**④** 把「下一节」写成 `NULL` —— 它现在站在最后，后头什么都没有；**⑤** 如果链子还空着（`head == NULL`），这一节**就是**新的头，直接交回去；否则从头走到最后一节（`while (p->next != NULL)`），把新节挂上去（`p->next = fresh`）。\n\n为什么走的是「走到**下一步没有了**」而不是「走到 `p == NULL`」喵？因为你要的是**最后一节本身**（好把新节挂在它后头），不是它后头那片空地。要是走成了 `while (p != NULL)`，你会一脚踏出链子，手里那节早就错过了。\n\n最后那两行 `return head;` 要看清：链子的头**只在空链子那一次**会变成新节；之后每一回接的都是尾巴，头还是原来那位 —— 所以门口那句 `head = add_last(head, ...)` 接回去的，多半还是原来那个头。",
+      "templateId": "c-s3-proj-append-write",
+      "params": {
+        "n1": "大黄",
+        "n2": "小灰",
+        "n3": "咪咪",
+        "s1": "88",
+        "s2": "92",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:12.367Z",
+        "hash": "b7498ed9211dd720"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-best-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "再来一招要你自己写喵：`best_in_list` —— 把链子上**分数最高**的那一节叼回来。两处别忘：链子还空着的时候叼 `NULL` 回去（门口就靠它印「一个人都没有喵」），以及**王座上的初始值该从哪儿请**。\n\n骨架里这一招现在只会叼 `NULL`，所以两回都印「一个人都没有喵」。写好之后该印两行：`第一名：阿花 95 分`、`一个人都没有喵`。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    /* ↓ 在这儿写：空链子先拦住；王座请第一节坐下，从第二节开始一个一个比；\n       谁分高谁上位，最后把王座上那位交回去。 */\n\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"阿花\", 95);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    if (head == NULL) {\n        return NULL;\n    }\n    Node *best = head;\n    for (Node *p = head->next; p != NULL; p = p->next) {\n        if (p->score > best->score) {\n            best = p;\n        }\n    }\n    return best;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"阿花\", 95);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第一名：阿花 95 分\n一个人都没有喵",
+      "stdin": null,
+      "explanation": "两句口诀喵：**空链子先拦住**（`head == NULL` 就直接叼 `NULL` 回去）—— 少了这句，下一句「王座请第一节坐下」就会伸爪子去碰一位根本不存在的学员，稿子当场崩掉；**王座上的初始值请第一节**（`Node *best = head;`），它是链子上**真实存在**的那一位。\n\n然后从**第二节**开始比（`p = head->next`）—— 第一节已经坐上王座了，不用再跟自己比一回。每一节用 `p->score > best->score` 量一下，分高就上位（`best = p;`）。绕完一圈，王座上坐着的就是最高分那位。\n\n这回叼回来的是**一整节**（不是分数），所以门口能直接拿 `top->name` 和 `top->score` 印 —— 这也是链子比一排碗灵巧的地方：找着了谁，连它身上别的账也一并找回来了。",
+      "templateId": "c-s3-proj-best-write",
+      "params": {
+        "n1": "小橘",
+        "n2": "小白",
+        "n3": "阿花",
+        "s1": "90",
+        "s2": "85",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:13.929Z",
+        "hash": "4387aa4494384e2b"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-best-write-013",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "再来一招要你自己写喵：`best_in_list` —— 把链子上**分数最高**的那一节叼回来。两处别忘：链子还空着的时候叼 `NULL` 回去（门口就靠它印「一个人都没有喵」），以及**王座上的初始值该从哪儿请**。\n\n骨架里这一招现在只会叼 `NULL`，所以两回都印「一个人都没有喵」。写好之后该印两行：`第一名：咪咪 79 分`、`一个人都没有喵`。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    /* ↓ 在这儿写：空链子先拦住；王座请第一节坐下，从第二节开始一个一个比；\n       谁分高谁上位，最后把王座上那位交回去。 */\n\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 88);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"咪咪\", 79);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    if (head == NULL) {\n        return NULL;\n    }\n    Node *best = head;\n    for (Node *p = head->next; p != NULL; p = p->next) {\n        if (p->score > best->score) {\n            best = p;\n        }\n    }\n    return best;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 88);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"咪咪\", 79);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第一名：小橘 88 分\n一个人都没有喵",
+      "stdin": null,
+      "explanation": "两句口诀喵：**空链子先拦住**（`head == NULL` 就直接叼 `NULL` 回去）—— 少了这句，下一句「王座请第一节坐下」就会伸爪子去碰一位根本不存在的学员，稿子当场崩掉；**王座上的初始值请第一节**（`Node *best = head;`），它是链子上**真实存在**的那一位。\n\n然后从**第二节**开始比（`p = head->next`）—— 第一节已经坐上王座了，不用再跟自己比一回。每一节用 `p->score > best->score` 量一下，分高就上位（`best = p;`）。绕完一圈，王座上坐着的就是最高分那位。\n\n这回叼回来的是**一整节**（不是分数），所以门口能直接拿 `top->name` 和 `top->score` 印 —— 这也是链子比一排碗灵巧的地方：找着了谁，连它身上别的账也一并找回来了。",
+      "templateId": "c-s3-proj-best-write",
+      "params": {
+        "n1": "小橘",
+        "n2": "小白",
+        "n3": "咪咪",
+        "s1": "88",
+        "s2": "85",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:23.580Z",
+        "hash": "00f223d800c364df"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-best-write-025",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "再来一招要你自己写喵：`best_in_list` —— 把链子上**分数最高**的那一节叼回来。两处别忘：链子还空着的时候叼 `NULL` 回去（门口就靠它印「一个人都没有喵」），以及**王座上的初始值该从哪儿请**。\n\n骨架里这一招现在只会叼 `NULL`，所以两回都印「一个人都没有喵」。写好之后该印两行：`第一名：咪咪 79 分`、`一个人都没有喵`。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    /* ↓ 在这儿写：空链子先拦住；王座请第一节坐下，从第二节开始一个一个比；\n       谁分高谁上位，最后把王座上那位交回去。 */\n\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小灰\", 85);\n    head = add_last(head, \"咪咪\", 79);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    if (head == NULL) {\n        return NULL;\n    }\n    Node *best = head;\n    for (Node *p = head->next; p != NULL; p = p->next) {\n        if (p->score > best->score) {\n            best = p;\n        }\n    }\n    return best;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小灰\", 85);\n    head = add_last(head, \"咪咪\", 79);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第一名：小橘 90 分\n一个人都没有喵",
+      "stdin": null,
+      "explanation": "两句口诀喵：**空链子先拦住**（`head == NULL` 就直接叼 `NULL` 回去）—— 少了这句，下一句「王座请第一节坐下」就会伸爪子去碰一位根本不存在的学员，稿子当场崩掉；**王座上的初始值请第一节**（`Node *best = head;`），它是链子上**真实存在**的那一位。\n\n然后从**第二节**开始比（`p = head->next`）—— 第一节已经坐上王座了，不用再跟自己比一回。每一节用 `p->score > best->score` 量一下，分高就上位（`best = p;`）。绕完一圈，王座上坐着的就是最高分那位。\n\n这回叼回来的是**一整节**（不是分数），所以门口能直接拿 `top->name` 和 `top->score` 印 —— 这也是链子比一排碗灵巧的地方：找着了谁，连它身上别的账也一并找回来了。",
+      "templateId": "c-s3-proj-best-write",
+      "params": {
+        "n1": "小橘",
+        "n2": "小灰",
+        "n3": "咪咪",
+        "s1": "90",
+        "s2": "85",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:25.871Z",
+        "hash": "5c8e61af90ea143d"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-best-write-038",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "再来一招要你自己写喵：`best_in_list` —— 把链子上**分数最高**的那一节叼回来。两处别忘：链子还空着的时候叼 `NULL` 回去（门口就靠它印「一个人都没有喵」），以及**王座上的初始值该从哪儿请**。\n\n骨架里这一招现在只会叼 `NULL`，所以两回都印「一个人都没有喵」。写好之后该印两行：`第一名：阿花 95 分`、`一个人都没有喵`。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    /* ↓ 在这儿写：空链子先拦住；王座请第一节坐下，从第二节开始一个一个比；\n       谁分高谁上位，最后把王座上那位交回去。 */\n\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小白\", 92);\n    head = add_last(head, \"阿花\", 95);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    if (head == NULL) {\n        return NULL;\n    }\n    Node *best = head;\n    for (Node *p = head->next; p != NULL; p = p->next) {\n        if (p->score > best->score) {\n            best = p;\n        }\n    }\n    return best;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小白\", 92);\n    head = add_last(head, \"阿花\", 95);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第一名：阿花 95 分\n一个人都没有喵",
+      "stdin": null,
+      "explanation": "两句口诀喵：**空链子先拦住**（`head == NULL` 就直接叼 `NULL` 回去）—— 少了这句，下一句「王座请第一节坐下」就会伸爪子去碰一位根本不存在的学员，稿子当场崩掉；**王座上的初始值请第一节**（`Node *best = head;`），它是链子上**真实存在**的那一位。\n\n然后从**第二节**开始比（`p = head->next`）—— 第一节已经坐上王座了，不用再跟自己比一回。每一节用 `p->score > best->score` 量一下，分高就上位（`best = p;`）。绕完一圈，王座上坐着的就是最高分那位。\n\n这回叼回来的是**一整节**（不是分数），所以门口能直接拿 `top->name` 和 `top->score` 印 —— 这也是链子比一排碗灵巧的地方：找着了谁，连它身上别的账也一并找回来了。",
+      "templateId": "c-s3-proj-best-write",
+      "params": {
+        "n1": "大黄",
+        "n2": "小白",
+        "n3": "阿花",
+        "s1": "88",
+        "s2": "92",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:28.167Z",
+        "hash": "70d49e2f8a75842b"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-best-write-050",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "再来一招要你自己写喵：`best_in_list` —— 把链子上**分数最高**的那一节叼回来。两处别忘：链子还空着的时候叼 `NULL` 回去（门口就靠它印「一个人都没有喵」），以及**王座上的初始值该从哪儿请**。\n\n骨架里这一招现在只会叼 `NULL`，所以两回都印「一个人都没有喵」。写好之后该印两行：`第一名：阿花 95 分`、`一个人都没有喵`。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    /* ↓ 在这儿写：空链子先拦住；王座请第一节坐下，从第二节开始一个一个比；\n       谁分高谁上位，最后把王座上那位交回去。 */\n\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 90);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"阿花\", 95);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    if (head == NULL) {\n        return NULL;\n    }\n    Node *best = head;\n    for (Node *p = head->next; p != NULL; p = p->next) {\n        if (p->score > best->score) {\n            best = p;\n        }\n    }\n    return best;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 90);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"阿花\", 95);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第一名：阿花 95 分\n一个人都没有喵",
+      "stdin": null,
+      "explanation": "两句口诀喵：**空链子先拦住**（`head == NULL` 就直接叼 `NULL` 回去）—— 少了这句，下一句「王座请第一节坐下」就会伸爪子去碰一位根本不存在的学员，稿子当场崩掉；**王座上的初始值请第一节**（`Node *best = head;`），它是链子上**真实存在**的那一位。\n\n然后从**第二节**开始比（`p = head->next`）—— 第一节已经坐上王座了，不用再跟自己比一回。每一节用 `p->score > best->score` 量一下，分高就上位（`best = p;`）。绕完一圈，王座上坐着的就是最高分那位。\n\n这回叼回来的是**一整节**（不是分数），所以门口能直接拿 `top->name` 和 `top->score` 印 —— 这也是链子比一排碗灵巧的地方：找着了谁，连它身上别的账也一并找回来了。",
+      "templateId": "c-s3-proj-best-write",
+      "params": {
+        "n1": "大黄",
+        "n2": "小灰",
+        "n3": "阿花",
+        "s1": "90",
+        "s2": "92",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:30.555Z",
+        "hash": "976cf820635ce449"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-best-write-063",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "再来一招要你自己写喵：`best_in_list` —— 把链子上**分数最高**的那一节叼回来。两处别忘：链子还空着的时候叼 `NULL` 回去（门口就靠它印「一个人都没有喵」），以及**王座上的初始值该从哪儿请**。\n\n骨架里这一招现在只会叼 `NULL`，所以两回都印「一个人都没有喵」。写好之后该印两行：`第一名：咪咪 79 分`、`一个人都没有喵`。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    /* ↓ 在这儿写：空链子先拦住；王座请第一节坐下，从第二节开始一个一个比；\n       谁分高谁上位，最后把王座上那位交回去。 */\n\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"咪咪\", 79);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *best_in_list(Node *head) {\n    if (head == NULL) {\n        return NULL;\n    }\n    Node *best = head;\n    for (Node *p = head->next; p != NULL; p = p->next) {\n        if (p->score > best->score) {\n            best = p;\n        }\n    }\n    return best;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"咪咪\", 79);\n\n    Node *top = best_in_list(head);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n\n    Node *nobody = NULL;\n    top = best_in_list(nobody);\n    if (top != NULL) {\n        printf(\"第一名：%s %d 分\\n\", top->name, top->score);\n    } else {\n        printf(\"一个人都没有喵\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "第一名：小灰 92 分\n一个人都没有喵",
+      "stdin": null,
+      "explanation": "两句口诀喵：**空链子先拦住**（`head == NULL` 就直接叼 `NULL` 回去）—— 少了这句，下一句「王座请第一节坐下」就会伸爪子去碰一位根本不存在的学员，稿子当场崩掉；**王座上的初始值请第一节**（`Node *best = head;`），它是链子上**真实存在**的那一位。\n\n然后从**第二节**开始比（`p = head->next`）—— 第一节已经坐上王座了，不用再跟自己比一回。每一节用 `p->score > best->score` 量一下，分高就上位（`best = p;`）。绕完一圈，王座上坐着的就是最高分那位。\n\n这回叼回来的是**一整节**（不是分数），所以门口能直接拿 `top->name` 和 `top->score` 印 —— 这也是链子比一排碗灵巧的地方：找着了谁，连它身上别的账也一并找回来了。",
+      "templateId": "c-s3-proj-best-write",
+      "params": {
+        "n1": "大黄",
+        "n2": "小灰",
+        "n3": "咪咪",
+        "s1": "88",
+        "s2": "92",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:15.201Z",
+        "hash": "dcb2ffc3bb7ef250"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-name-compare-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "查找这招**怎么找都找不到人**喵：名单里明明有 小橘，它却一直回「名单里没有这位喵」。名字是一串小鱼干的项链，比它不能用牌子比牌子 —— 那一步写错了。\n\n请你把「比名字」那一步改对（别的都别动）。改好之后该印一行：找到：小橘 90 分。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *find_by_name(Node *head, char *name) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        if (p->name == name) {\n            return p;\n        }\n    }\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n\n    char want[16];\n    strcpy(want, \"小橘\");\n    Node *it = find_by_name(head, want);\n    if (it != NULL) {\n        printf(\"找到：%s %d 分\\n\", it->name, it->score);\n    } else {\n        printf(\"名单里没有这位喵\\n\");\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *find_by_name(Node *head, char *name) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        if (strcmp(p->name, name) == 0) {\n            return p;\n        }\n    }\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n\n    char want[16];\n    strcpy(want, \"小橘\");\n    Node *it = find_by_name(head, want);\n    if (it != NULL) {\n        printf(\"找到：%s %d 分\\n\", it->name, it->score);\n    } else {\n        printf(\"名单里没有这位喵\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找到：小橘 90 分",
+      "stdin": null,
+      "explanation": "名字是**一串小鱼干的项链**，编成稿子以后手里只有指向它的那张牌子喵。`p->name == name` 比的是「两张牌子指的是不是同一间仓库」—— 本喵这里 `want` 是自己那一排格子（`char want[16]`），跟档案盒里那张牌子压根不是同一处，所以它**永远不相等**，找谁都回「名单里没有这位喵」。\n\n要比**内容**就得喊 `strcmp`（住在 `string.h` 工具房里）：它把两串项链一件一件比过去，全一样才叼 `0` 回来，所以写法是 `strcmp(p->name, name) == 0`。\n\n还有一处顺带看清：找不到的时候叼回去的是 `NULL`（「没有这一节」），门口靠 `it != NULL` 分辨 —— 跟上一课拿 `-1` 当暗号是同一个道理：**选一个不可能跟真结果撞上的记号**。",
+      "templateId": "c-s3-proj-name-compare",
+      "params": {
+        "n1": "小橘",
+        "n2": "小白",
+        "s1": "90",
+        "s2": "85"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:03.048Z",
+        "hash": "5e2f49c55ac772ff"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-name-compare-015",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "查找这招**怎么找都找不到人**喵：名单里明明有 大黄，它却一直回「名单里没有这位喵」。名字是一串小鱼干的项链，比它不能用牌子比牌子 —— 那一步写错了。\n\n请你把「比名字」那一步改对（别的都别动）。改好之后该印一行：找到：大黄 88 分。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *find_by_name(Node *head, char *name) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        if (p->name == name) {\n            return p;\n        }\n    }\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n\n    char want[16];\n    strcpy(want, \"大黄\");\n    Node *it = find_by_name(head, want);\n    if (it != NULL) {\n        printf(\"找到：%s %d 分\\n\", it->name, it->score);\n    } else {\n        printf(\"名单里没有这位喵\\n\");\n    }\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nNode *find_by_name(Node *head, char *name) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        if (strcmp(p->name, name) == 0) {\n            return p;\n        }\n    }\n    return NULL;\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n\n    char want[16];\n    strcpy(want, \"大黄\");\n    Node *it = find_by_name(head, want);\n    if (it != NULL) {\n        printf(\"找到：%s %d 分\\n\", it->name, it->score);\n    } else {\n        printf(\"名单里没有这位喵\\n\");\n    }\n    return 0;\n}\n",
+      "expectedOutput": "找到：大黄 88 分",
+      "stdin": null,
+      "explanation": "名字是**一串小鱼干的项链**，编成稿子以后手里只有指向它的那张牌子喵。`p->name == name` 比的是「两张牌子指的是不是同一间仓库」—— 本喵这里 `want` 是自己那一排格子（`char want[16]`），跟档案盒里那张牌子压根不是同一处，所以它**永远不相等**，找谁都回「名单里没有这位喵」。\n\n要比**内容**就得喊 `strcmp`（住在 `string.h` 工具房里）：它把两串项链一件一件比过去，全一样才叼 `0` 回来，所以写法是 `strcmp(p->name, name) == 0`。\n\n还有一处顺带看清：找不到的时候叼回去的是 `NULL`（「没有这一节」），门口靠 `it != NULL` 分辨 —— 跟上一课拿 `-1` 当暗号是同一个道理：**选一个不可能跟真结果撞上的记号**。",
+      "templateId": "c-s3-proj-name-compare",
+      "params": {
+        "n1": "大黄",
+        "n2": "小灰",
+        "s1": "88",
+        "s2": "92"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:04.850Z",
+        "hash": "44a5f8873e59f61d"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-save-write-000",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一招要你自己写喵：`save_to_file` —— 把链子上每位学员**按一行**写进档案。骨架里门是开了、也关了，可**一行都没写**，所以读回来是「一共 0 位」。\n\n按注释把绕圈那几步补上（别的都别动）。写好之后该印三行「第 1 位：小橘 90 分」「第 2 位：小白 85 分」「第 3 位：阿花 95 分」，最后一行「一共 3 位」。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    /* ↓ 在这儿写：走链子，把每一节写成一个「名字 分数」的行（行尾记得换行） */\n\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"阿花\", 95);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    for (Node *p = head; p != NULL; p = p->next) {\n        fprintf(fp, \"%s %d\\n\", p->name, p->score);\n    }\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"阿花\", 95);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 位：小橘 90 分\n第 2 位：小白 85 分\n第 3 位：阿花 95 分\n一共 3 位",
+      "stdin": null,
+      "explanation": "绕圈那两句是熟脸喵：`for (Node *p = head; p != NULL; p = p->next)` —— 从第一节走到「下一步没有了」。每圈写在纸上的一行是 `fprintf(fp, \"%s %d\\n\", p->name, p->score)`：**名字、一个空格、分数、换行**。\n\n那一行里的空格和换行**不是排版好看**，是**存和读两边的约定** —— 读的那头 `fscanf(fp, \"%15s %d\", name, &score) == 2` 就按这个约定切：先叼一串项链、再叼一个整数，两样都到手才算读完一位。你把写的格式改了（比如分数在前、名字在后），读的那头就对不上了：它会拿着 `%15s` 去啃那串数字，`%d` 再啃名字，啃不动就停 —— 于是「一共 0 位」，档案里明明躺着三位。\n\n还有那两句守卫：`fopen` 叼回 `NULL` 就是「门打不开」，先拦住再动手；门外 `fclose` 是收摊，把门关好，别让写下去的东西还挂在半路上没落地。",
+      "templateId": "c-s3-proj-save-write",
+      "params": {
+        "n1": "小橘",
+        "n2": "小白",
+        "n3": "阿花",
+        "s1": "90",
+        "s2": "85",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:16.768Z",
+        "hash": "7c9dca54b5051b4f"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-save-write-013",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一招要你自己写喵：`save_to_file` —— 把链子上每位学员**按一行**写进档案。骨架里门是开了、也关了，可**一行都没写**，所以读回来是「一共 0 位」。\n\n按注释把绕圈那几步补上（别的都别动）。写好之后该印三行「第 1 位：小橘 88 分」「第 2 位：小白 85 分」「第 3 位：咪咪 79 分」，最后一行「一共 3 位」。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    /* ↓ 在这儿写：走链子，把每一节写成一个「名字 分数」的行（行尾记得换行） */\n\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 88);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"咪咪\", 79);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    for (Node *p = head; p != NULL; p = p->next) {\n        fprintf(fp, \"%s %d\\n\", p->name, p->score);\n    }\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 88);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"咪咪\", 79);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 位：小橘 88 分\n第 2 位：小白 85 分\n第 3 位：咪咪 79 分\n一共 3 位",
+      "stdin": null,
+      "explanation": "绕圈那两句是熟脸喵：`for (Node *p = head; p != NULL; p = p->next)` —— 从第一节走到「下一步没有了」。每圈写在纸上的一行是 `fprintf(fp, \"%s %d\\n\", p->name, p->score)`：**名字、一个空格、分数、换行**。\n\n那一行里的空格和换行**不是排版好看**，是**存和读两边的约定** —— 读的那头 `fscanf(fp, \"%15s %d\", name, &score) == 2` 就按这个约定切：先叼一串项链、再叼一个整数，两样都到手才算读完一位。你把写的格式改了（比如分数在前、名字在后），读的那头就对不上了：它会拿着 `%15s` 去啃那串数字，`%d` 再啃名字，啃不动就停 —— 于是「一共 0 位」，档案里明明躺着三位。\n\n还有那两句守卫：`fopen` 叼回 `NULL` 就是「门打不开」，先拦住再动手；门外 `fclose` 是收摊，把门关好，别让写下去的东西还挂在半路上没落地。",
+      "templateId": "c-s3-proj-save-write",
+      "params": {
+        "n1": "小橘",
+        "n2": "小白",
+        "n3": "咪咪",
+        "s1": "88",
+        "s2": "85",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:33.003Z",
+        "hash": "5b38d8b2bbdebaca"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-save-write-025",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一招要你自己写喵：`save_to_file` —— 把链子上每位学员**按一行**写进档案。骨架里门是开了、也关了，可**一行都没写**，所以读回来是「一共 0 位」。\n\n按注释把绕圈那几步补上（别的都别动）。写好之后该印三行「第 1 位：小橘 90 分」「第 2 位：小灰 85 分」「第 3 位：咪咪 79 分」，最后一行「一共 3 位」。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    /* ↓ 在这儿写：走链子，把每一节写成一个「名字 分数」的行（行尾记得换行） */\n\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小灰\", 85);\n    head = add_last(head, \"咪咪\", 79);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    for (Node *p = head; p != NULL; p = p->next) {\n        fprintf(fp, \"%s %d\\n\", p->name, p->score);\n    }\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小灰\", 85);\n    head = add_last(head, \"咪咪\", 79);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 位：小橘 90 分\n第 2 位：小灰 85 分\n第 3 位：咪咪 79 分\n一共 3 位",
+      "stdin": null,
+      "explanation": "绕圈那两句是熟脸喵：`for (Node *p = head; p != NULL; p = p->next)` —— 从第一节走到「下一步没有了」。每圈写在纸上的一行是 `fprintf(fp, \"%s %d\\n\", p->name, p->score)`：**名字、一个空格、分数、换行**。\n\n那一行里的空格和换行**不是排版好看**，是**存和读两边的约定** —— 读的那头 `fscanf(fp, \"%15s %d\", name, &score) == 2` 就按这个约定切：先叼一串项链、再叼一个整数，两样都到手才算读完一位。你把写的格式改了（比如分数在前、名字在后），读的那头就对不上了：它会拿着 `%15s` 去啃那串数字，`%d` 再啃名字，啃不动就停 —— 于是「一共 0 位」，档案里明明躺着三位。\n\n还有那两句守卫：`fopen` 叼回 `NULL` 就是「门打不开」，先拦住再动手；门外 `fclose` 是收摊，把门关好，别让写下去的东西还挂在半路上没落地。",
+      "templateId": "c-s3-proj-save-write",
+      "params": {
+        "n1": "小橘",
+        "n2": "小灰",
+        "n3": "咪咪",
+        "s1": "90",
+        "s2": "85",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:35.370Z",
+        "hash": "4b728c51009553ca"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-save-write-038",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一招要你自己写喵：`save_to_file` —— 把链子上每位学员**按一行**写进档案。骨架里门是开了、也关了，可**一行都没写**，所以读回来是「一共 0 位」。\n\n按注释把绕圈那几步补上（别的都别动）。写好之后该印三行「第 1 位：大黄 88 分」「第 2 位：小白 92 分」「第 3 位：阿花 95 分」，最后一行「一共 3 位」。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    /* ↓ 在这儿写：走链子，把每一节写成一个「名字 分数」的行（行尾记得换行） */\n\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小白\", 92);\n    head = add_last(head, \"阿花\", 95);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    for (Node *p = head; p != NULL; p = p->next) {\n        fprintf(fp, \"%s %d\\n\", p->name, p->score);\n    }\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小白\", 92);\n    head = add_last(head, \"阿花\", 95);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 位：大黄 88 分\n第 2 位：小白 92 分\n第 3 位：阿花 95 分\n一共 3 位",
+      "stdin": null,
+      "explanation": "绕圈那两句是熟脸喵：`for (Node *p = head; p != NULL; p = p->next)` —— 从第一节走到「下一步没有了」。每圈写在纸上的一行是 `fprintf(fp, \"%s %d\\n\", p->name, p->score)`：**名字、一个空格、分数、换行**。\n\n那一行里的空格和换行**不是排版好看**，是**存和读两边的约定** —— 读的那头 `fscanf(fp, \"%15s %d\", name, &score) == 2` 就按这个约定切：先叼一串项链、再叼一个整数，两样都到手才算读完一位。你把写的格式改了（比如分数在前、名字在后），读的那头就对不上了：它会拿着 `%15s` 去啃那串数字，`%d` 再啃名字，啃不动就停 —— 于是「一共 0 位」，档案里明明躺着三位。\n\n还有那两句守卫：`fopen` 叼回 `NULL` 就是「门打不开」，先拦住再动手；门外 `fclose` 是收摊，把门关好，别让写下去的东西还挂在半路上没落地。",
+      "templateId": "c-s3-proj-save-write",
+      "params": {
+        "n1": "大黄",
+        "n2": "小白",
+        "n3": "阿花",
+        "s1": "88",
+        "s2": "92",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:37.593Z",
+        "hash": "029aa811d035d709"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-save-write-050",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一招要你自己写喵：`save_to_file` —— 把链子上每位学员**按一行**写进档案。骨架里门是开了、也关了，可**一行都没写**，所以读回来是「一共 0 位」。\n\n按注释把绕圈那几步补上（别的都别动）。写好之后该印三行「第 1 位：大黄 90 分」「第 2 位：小灰 92 分」「第 3 位：阿花 95 分」，最后一行「一共 3 位」。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    /* ↓ 在这儿写：走链子，把每一节写成一个「名字 分数」的行（行尾记得换行） */\n\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 90);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"阿花\", 95);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    for (Node *p = head; p != NULL; p = p->next) {\n        fprintf(fp, \"%s %d\\n\", p->name, p->score);\n    }\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 90);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"阿花\", 95);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 位：大黄 90 分\n第 2 位：小灰 92 分\n第 3 位：阿花 95 分\n一共 3 位",
+      "stdin": null,
+      "explanation": "绕圈那两句是熟脸喵：`for (Node *p = head; p != NULL; p = p->next)` —— 从第一节走到「下一步没有了」。每圈写在纸上的一行是 `fprintf(fp, \"%s %d\\n\", p->name, p->score)`：**名字、一个空格、分数、换行**。\n\n那一行里的空格和换行**不是排版好看**，是**存和读两边的约定** —— 读的那头 `fscanf(fp, \"%15s %d\", name, &score) == 2` 就按这个约定切：先叼一串项链、再叼一个整数，两样都到手才算读完一位。你把写的格式改了（比如分数在前、名字在后），读的那头就对不上了：它会拿着 `%15s` 去啃那串数字，`%d` 再啃名字，啃不动就停 —— 于是「一共 0 位」，档案里明明躺着三位。\n\n还有那两句守卫：`fopen` 叼回 `NULL` 就是「门打不开」，先拦住再动手；门外 `fclose` 是收摊，把门关好，别让写下去的东西还挂在半路上没落地。",
+      "templateId": "c-s3-proj-save-write",
+      "params": {
+        "n1": "大黄",
+        "n2": "小灰",
+        "n3": "阿花",
+        "s1": "90",
+        "s2": "92",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-10-20T16:40:39.946Z",
+        "hash": "e3a3a2ea5e151ba7"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-save-write-063",
+      "type": "codewrite",
+      "lang": "c",
+      "stem": "最后一招要你自己写喵：`save_to_file` —— 把链子上每位学员**按一行**写进档案。骨架里门是开了、也关了，可**一行都没写**，所以读回来是「一共 0 位」。\n\n按注释把绕圈那几步补上（别的都别动）。写好之后该印三行「第 1 位：大黄 88 分」「第 2 位：小灰 92 分」「第 3 位：咪咪 79 分」，最后一行「一共 3 位」。",
+      "starter": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    /* ↓ 在这儿写：走链子，把每一节写成一个「名字 分数」的行（行尾记得换行） */\n\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"咪咪\", 79);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "referenceSolution": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid save_to_file(Node *head, const char *path) {\n    FILE *fp = fopen(path, \"w\");\n    if (fp == NULL) {\n        printf(\"档案开不了喵\\n\");\n        return;\n    }\n    for (Node *p = head; p != NULL; p = p->next) {\n        fprintf(fp, \"%s %d\\n\", p->name, p->score);\n    }\n    fclose(fp);\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"咪咪\", 79);\n    save_to_file(head, \"scores.txt\");\n\n    FILE *fp = fopen(\"scores.txt\", \"r\");\n    if (fp == NULL) {\n        printf(\"档案丢了喵\\n\");\n        return 0;\n    }\n    char name[16];\n    int score;\n    int n = 0;\n    while (fscanf(fp, \"%15s %d\", name, &score) == 2) {\n        n++;\n        printf(\"第 %d 位：%s %d 分\\n\", n, name, score);\n    }\n    fclose(fp);\n    printf(\"一共 %d 位\\n\", n);\n    return 0;\n}\n",
+      "expectedOutput": "第 1 位：大黄 88 分\n第 2 位：小灰 92 分\n第 3 位：咪咪 79 分\n一共 3 位",
+      "stdin": null,
+      "explanation": "绕圈那两句是熟脸喵：`for (Node *p = head; p != NULL; p = p->next)` —— 从第一节走到「下一步没有了」。每圈写在纸上的一行是 `fprintf(fp, \"%s %d\\n\", p->name, p->score)`：**名字、一个空格、分数、换行**。\n\n那一行里的空格和换行**不是排版好看**，是**存和读两边的约定** —— 读的那头 `fscanf(fp, \"%15s %d\", name, &score) == 2` 就按这个约定切：先叼一串项链、再叼一个整数，两样都到手才算读完一位。你把写的格式改了（比如分数在前、名字在后），读的那头就对不上了：它会拿着 `%15s` 去啃那串数字，`%d` 再啃名字，啃不动就停 —— 于是「一共 0 位」，档案里明明躺着三位。\n\n还有那两句守卫：`fopen` 叼回 `NULL` 就是「门打不开」，先拦住再动手；门外 `fclose` 是收摊，把门关好，别让写下去的东西还挂在半路上没落地。",
+      "templateId": "c-s3-proj-save-write",
+      "params": {
+        "n1": "大黄",
+        "n2": "小灰",
+        "n3": "咪咪",
+        "s1": "88",
+        "s2": "92",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:18.004Z",
+        "hash": "df543da678677a21"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-swap-forgot-name-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "排座这招**排是排了，可排出来的表是张冠李戴的**喵：分数确实从高到低站着，名字却全停在原来的位置 —— 于是「小橘 95 分」这种胡说八道就印出来了。\n\n病根是交换的时候**只换了一半**。档案盒里装着名字和分数两样东西，换就得一起换。请你把这招改对（别的都别动）。改好之后该印三行：阿花 95 分、小橘 90 分、小白 85 分 —— 名字和分数得是**同一位**的。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nvoid sort_by_score(Node *head) {\n    for (Node *a = head; a != NULL; a = a->next) {\n        for (Node *b = a->next; b != NULL; b = b->next) {\n            if (b->score > a->score) {\n                int ts = a->score;\n                a->score = b->score;\n                b->score = ts;\n            }\n        }\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"阿花\", 95);\n    sort_by_score(head);\n    print_all(head);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nvoid sort_by_score(Node *head) {\n    for (Node *a = head; a != NULL; a = a->next) {\n        for (Node *b = a->next; b != NULL; b = b->next) {\n            if (b->score > a->score) {\n                int ts = a->score;\n                a->score = b->score;\n                b->score = ts;\n                char *tn = a->name;\n                a->name = b->name;\n                b->name = tn;\n            }\n        }\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"阿花\", 95);\n    sort_by_score(head);\n    print_all(head);\n    return 0;\n}\n",
+      "expectedOutput": "阿花：95 分\n小橘：90 分\n小白：85 分",
+      "stdin": null,
+      "explanation": "名字和分数是**分开躺在盒子里**的两件东西喵，谁也不会「跟着」谁动。只换分数的结果是：分数排好了，名字还停在原来的位置 —— 于是印出来的是「小橘 95 分」这种**张冠李戴**的账。\n\n这种错最吓人的地方是：屏幕上看着特别整齐（三行、分数从高到低），你要是不认识这几位学员，压根看不出问题 —— 跟上一课那个「印错了仓库」的毛病一个脾气。\n\n两样一起换就是那四句：先把这一节的分数和名字各抄进临时的小本本（`ts`、`tn`），再把另一节的抄过来，最后把小本本里的还回去。**为什么非要那个小本本**：一覆盖，原来那个值就没了 —— 跟交换两碗小鱼干是同一个道理。",
+      "templateId": "c-s3-proj-swap-forgot-name",
+      "params": {
+        "n1": "小橘",
+        "n2": "小白",
+        "n3": "阿花",
+        "s1": "90",
+        "s2": "85",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:06.969Z",
+        "hash": "b1ebe80cc30e5fd1"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-swap-forgot-name-063",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "排座这招**排是排了，可排出来的表是张冠李戴的**喵：分数确实从高到低站着，名字却全停在原来的位置 —— 于是「大黄 79 分」这种胡说八道就印出来了。\n\n病根是交换的时候**只换了一半**。档案盒里装着名字和分数两样东西，换就得一起换。请你把这招改对（别的都别动）。改好之后该印三行：咪咪 79 分、大黄 88 分、小灰 92 分 —— 名字和分数得是**同一位**的。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nvoid sort_by_score(Node *head) {\n    for (Node *a = head; a != NULL; a = a->next) {\n        for (Node *b = a->next; b != NULL; b = b->next) {\n            if (b->score > a->score) {\n                int ts = a->score;\n                a->score = b->score;\n                b->score = ts;\n            }\n        }\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"咪咪\", 79);\n    sort_by_score(head);\n    print_all(head);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nvoid sort_by_score(Node *head) {\n    for (Node *a = head; a != NULL; a = a->next) {\n        for (Node *b = a->next; b != NULL; b = b->next) {\n            if (b->score > a->score) {\n                int ts = a->score;\n                a->score = b->score;\n                b->score = ts;\n                char *tn = a->name;\n                a->name = b->name;\n                b->name = tn;\n            }\n        }\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"咪咪\", 79);\n    sort_by_score(head);\n    print_all(head);\n    return 0;\n}\n",
+      "expectedOutput": "小灰：92 分\n大黄：88 分\n咪咪：79 分",
+      "stdin": null,
+      "explanation": "名字和分数是**分开躺在盒子里**的两件东西喵，谁也不会「跟着」谁动。只换分数的结果是：分数排好了，名字还停在原来的位置 —— 于是印出来的是「大黄 79 分」这种**张冠李戴**的账。\n\n这种错最吓人的地方是：屏幕上看着特别整齐（三行、分数从高到低），你要是不认识这几位学员，压根看不出问题 —— 跟上一课那个「印错了仓库」的毛病一个脾气。\n\n两样一起换就是那四句：先把这一节的分数和名字各抄进临时的小本本（`ts`、`tn`），再把另一节的抄过来，最后把小本本里的还回去。**为什么非要那个小本本**：一覆盖，原来那个值就没了 —— 跟交换两碗小鱼干是同一个道理。",
+      "templateId": "c-s3-proj-swap-forgot-name",
+      "params": {
+        "n1": "大黄",
+        "n2": "小灰",
+        "n3": "咪咪",
+        "s1": "88",
+        "s2": "92",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:08.779Z",
+        "hash": "74aeb2ab0101125b"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-walk-stuck-000",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这份成绩册的印表这招**卡住了**喵：它把最前头那一节印了又印，后头两位一次都没露脸 —— 屏幕上倒是整整齐齐三行，可三行是同一个人。\n\n毛病在走链子那一步。请你把这招改成**走链子的标准写法**（别的都别动）。改好之后该印三行，按加进来的顺序一人一行：小橘 90 分、小白 85 分、阿花 95 分。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    Node *p = head;\n    for (int i = 0; i < 3; i++) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"阿花\", 95);\n    print_all(head);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"小橘\", 90);\n    head = add_last(head, \"小白\", 85);\n    head = add_last(head, \"阿花\", 95);\n    print_all(head);\n    return 0;\n}\n",
+      "expectedOutput": "小橘：90 分\n小白：85 分\n阿花：95 分",
+      "stdin": null,
+      "explanation": "走链子的标准写法是这一句喵：`for (Node *p = head; p != NULL; p = p->next)` —— **从第一节出发**、**走到「下一步没有了」为止**、**每一圈跳到这一节记着的下一节**。\n\n原来那版少了最后半句：`p` 一直杵在第一节上没动过，所以同一节被印了三回，后头两位永远轮不到。它比那种停不下来的跑圈温和一点（好歹有个圈数上限），可屏幕上照样是三行看不出毛病的东西 —— 这种「看着整齐、其实全错」最难抓。\n\n顺便记一句：它和走一排碗的跑圈是亲兄弟，区别只在往前走的那一步 —— 一排碗靠编号（`i++`），链子靠**每一节自己记着下一节在哪儿**（`p = p->next`）。",
+      "templateId": "c-s3-proj-walk-stuck",
+      "params": {
+        "n1": "小橘",
+        "n2": "小白",
+        "n3": "阿花",
+        "s1": "90",
+        "s2": "85",
+        "s3": "95"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:43.137Z",
+        "hash": "fbb2d8fbf2ba5c48"
+      }
+    },
+    {
+      "id": "bank-c-s3-proj-walk-stuck-063",
+      "type": "codefix",
+      "lang": "c",
+      "stem": "本喵这份成绩册的印表这招**卡住了**喵：它把最前头那一节印了又印，后头两位一次都没露脸 —— 屏幕上倒是整整齐齐三行，可三行是同一个人。\n\n毛病在走链子那一步。请你把这招改成**走链子的标准写法**（别的都别动）。改好之后该印三行，按加进来的顺序一人一行：大黄 88 分、小灰 92 分、咪咪 79 分。",
+      "brokenCode": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    Node *p = head;\n    for (int i = 0; i < 3; i++) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"咪咪\", 79);\n    print_all(head);\n    return 0;\n}\n",
+      "referenceFix": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    char *name;\n    int score;\n    struct Node *next;\n} Node;\n\nNode *add_last(Node *head, char *name, int score) {\n    Node *fresh = malloc(sizeof(Node));\n    if (fresh == NULL) {\n        return head;\n    }\n    fresh->name = name;\n    fresh->score = score;\n    fresh->next = NULL;\n    if (head == NULL) {\n        return fresh;\n    }\n    Node *p = head;\n    while (p->next != NULL) {\n        p = p->next;\n    }\n    p->next = fresh;\n    return head;\n}\n\nvoid print_all(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%s：%d 分\\n\", p->name, p->score);\n    }\n}\n\nint main(void) {\n    Node *head = NULL;\n    head = add_last(head, \"大黄\", 88);\n    head = add_last(head, \"小灰\", 92);\n    head = add_last(head, \"咪咪\", 79);\n    print_all(head);\n    return 0;\n}\n",
+      "expectedOutput": "大黄：88 分\n小灰：92 分\n咪咪：79 分",
+      "stdin": null,
+      "explanation": "走链子的标准写法是这一句喵：`for (Node *p = head; p != NULL; p = p->next)` —— **从第一节出发**、**走到「下一步没有了」为止**、**每一圈跳到这一节记着的下一节**。\n\n原来那版少了最后半句：`p` 一直杵在第一节上没动过，所以同一节被印了三回，后头两位永远轮不到。它比那种停不下来的跑圈温和一点（好歹有个圈数上限），可屏幕上照样是三行看不出毛病的东西 —— 这种「看着整齐、其实全错」最难抓。\n\n顺便记一句：它和走一排碗的跑圈是亲兄弟，区别只在往前走的那一步 —— 一排碗靠编号（`i++`），链子靠**每一节自己记着下一节在哪儿**（`p = p->next`）。",
+      "templateId": "c-s3-proj-walk-stuck",
+      "params": {
+        "n1": "大黄",
+        "n2": "小灰",
+        "n3": "咪咪",
+        "s1": "88",
+        "s2": "92",
+        "s3": "79"
+      },
+      "verified": {
+        "at": "2026-09-16T11:34:44.965Z",
+        "hash": "cb51d516139374b7"
+      }
+    }
+  ]
+}

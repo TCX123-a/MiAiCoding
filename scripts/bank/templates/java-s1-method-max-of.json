@@ -1,0 +1,17 @@
+{
+  "templateId": "java-s1-method-max-of",
+  "lang": "java",
+  "stage": 1,
+  "lessonId": "java-stage1-09",
+  "type": "codewrite",
+  "concept": ["方法", "return", "战利品能当值用", "Scanner"],
+  "instances": 6,
+  "params": {
+    "k": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stdinSpec": { "kind": "ints", "count": "{k}", "min": 1, "max": 9 },
+  "stemTemplate": "纸条上写着 **{k} 个数**喵，一行一个，谁大谁小没排过。本喵想报出里头**最大的那一个**，印一行：\n\n```text\n最大的那个是 X 喵\n```\n\n请你写个程序，并且把「挑两个数里大的那个」打包成一招 —— 打头就写 `public static int maxOf(int a, int b)`：喂两样料，它把大的那个**叼回来**喵。\n\n有了这一招，{k} 个数就手拉手比过去：先拿头一个当「**目前最大的**」，后面每读一个，就把它和「目前最大的」一起喂给这一招，叼回来的那个接着当「目前最大的」。\n\n比如投喂给程序的是\n\n{sampleInput}\n\n程序就要叼回\n\n{sampleOutput}\n\n（判分用的是**另外一组数**喵，所以别把答案写死～）",
+  "starterTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.util.Scanner;\n\npublic class Main {\n    public static int maxOf(int a, int b) {\n        return a > b ? a : b;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n        int best = sc.nextInt();\n        for (int i = 1; i < {k}; i++) {\n            best = maxOf(best, sc.nextInt());\n        }\n\n        System.out.println(\"最大的那个是 \" + best + \" 喵\");\n    }\n}\n",
+  "explanationTemplate": "会叼战利品的招，喊出来的结果**能当值用**喵 —— 这一题正是吃这口饭的。\n\n- 打头写 `int`，身子里就得有 `return`：`return a > b ? a : b;` 这一行的意思是「算完就交回去」。上一课那对 `? :` 记号在这儿正合适：**眼色 ? 真的那个 : 假的那个**。\n- 喊一声得到的值，能装进牌子（`int best = maxOf(...)`），也能**直接再喂给同一招** —— 所以还能写成 `maxOf(maxOf(a, b), c)` 这种一层套一层的样子，两个一个不少地比过去。\n- 牌子 `best` 摆在圈子**外面**，爪子先从纸条上抓一个数当它的起点；圈里每转一圈，都用这一招把「目前最大的」和刚读到的数比一次。\n\n最容易写岔的一处：`return` 一出场，**这一招当场收工**，后面再排着多少句子都不跑了 —— 所以它得放在「算完了、可以交了」的那个位置喵。"
+}

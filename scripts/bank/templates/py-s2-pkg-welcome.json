@@ -1,0 +1,15 @@
+{
+  "templateId": "py-s2-pkg-welcome",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-05",
+  "type": "codewrite",
+  "concept": ["包", "__init__.py 是迎宾那一页", "from 柜子 import 手册", "自己写的手册"],
+  "instances": 6,
+  "params": {
+    "k": { "kind": "int", "min": 3, "max": 5 }
+  },
+  "stemTemplate": "本喵要把手册分开放喵。请你写个程序，**先自己动手在盘上做一格子手册柜**：文件夹名叫 `kit`，里面放两样 ——\n\n1. 门口那张纸 `__init__.py`：纸上写一句 `print(\"门口那张纸先开了口：喵～\")`；\n2. 一本手册 `bowl_tools.py`：里面先写一句报到的 `print(\"bowl_tools 这本也被请醒了\")`，再写一招 `double(n)`，把喂进去的数**翻一倍**叼回来。\n\n然后**从这格柜子里**把 `bowl_tools` 这本手册请进来，最后印一行「拿到招式： （把 {k} 翻倍的结果）」（逗号印法，冒号后面跟着一个空格）。\n\n跑完屏幕上该是**三行**：门口那张纸先开口、手册再报一声到，最后才是拿到招式的那行 —— 次序错不得喵。",
+  "referenceSolutionTemplate": "import os\n\nos.makedirs(\"kit\", exist_ok=True)\nwith open(os.path.join(\"kit\", \"__init__.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(\"print(\\\"门口那张纸先开了口：喵～\\\")\\n\")\nwith open(os.path.join(\"kit\", \"bowl_tools.py\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(\"print(\\\"bowl_tools 这本也被请醒了\\\")\\ndef double(n):\\n    return n * 2\\n\")\n\nfrom kit import bowl_tools\nprint(\"拿到招式：\", bowl_tools.double({k}))\n",
+  "explanationTemplate": "**好几本手册装进一个文件夹**，这格文件夹就叫**包**喵。请柜子里的手册，要在名字中间**用圆点把柜子和手册串起来**：`from kit import bowl_tools` 读作「从 `kit` 这格柜子里，把 `bowl_tools` 这本手册拿出来」；请进来之后，用里面的招式还是那句老话 —— 手册名点招式名，`bowl_tools.double(...)`。\n\n门口那张纸 `__init__.py` 常常被误会成**入场券**（老教程说少了它 Python 就不认这格柜子）。真跑一遍就知道不是喵：**没有这张纸，柜子照样是柜子**，`from kit import bowl_tools` 照样请得动（Python 管这种柜子叫**命名空间包**）。\n\n它真正的身份是**这格柜子被打开的时候，最先跑起来的那一页** —— 不是入场券，是**迎宾的那一页**。所以上面那三行的次序才长这样：`from kit import bowl_tools` 请的是柜子里的手册，可 Python 得**先把这格柜子打开**，而打开这一步就是先跑门口那张纸 —— 于是那张纸的话喊在了柜子里每一本的前头。\n\n（顺手记两条喵：手册名就是**文件名去掉 `.py` 后缀**那一截；两个文件要**住在同一个文件夹里**，手册搁在手边，`import` 才找得着。）"
+}

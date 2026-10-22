@@ -1,0 +1,18 @@
+{
+  "templateId": "py-s3-sqlite-new-row",
+  "lang": "python",
+  "stage": 3,
+  "lessonId": "python-stage3-08",
+  "type": "codewrite",
+  "concept": ["INSERT 也要用投喂口", "文字货从 ? 递进去", "commit", "另开一次读回来"],
+  "instances": 6,
+  "params": {
+    "name": { "kind": "pick", "values": ["小鱼干", "猫粮"] },
+    "sampleName": { "kind": "pick", "values": ["冻干块", "毛线球"] },
+    "n": { "kind": "int", "min": 8, "max": 9 }
+  },
+  "stdinSpec": { "kind": "raw", "text": "{name}\n{n}\n", "sampleText": "{sampleName}\n{n}\n" },
+  "stemTemplate": "本喵今天新收了一件货，要把它**记进仓库**，记完再把整张表端出来看看喵。\n\n外面给**两行**：第一行是这件货的**名字**（一串字），第二行是一个数，是它的**条数**。\n\n请你写个程序：\n\n1. 开一个新仓库 `库存.db`，开一张叫 `库存` 的表。两根表头：`名字`（放文字）、`条数`（放整数）。\n2. 仓库里**本来就有的三格货**先记进去：原味 3 条、海苔味 7 条、麻辣味 5 条。\n3. 再把外面给的那一件**也记进去**。名字和条数**都要从投喂口递进去**（口令里留两个 `?`）—— 不许把名字缝进口令里。\n4. **盖章**。\n5. 把整张表端出来，**从多到少**印，一行一格，格式是 `名字 N 条`（名字和 N 中间隔一个空格）。\n\n比如外面给的是\n\n{sampleInput}\n\n就要输出\n\n{sampleOutput}\n\n（判分用的是**另外一件货**喵，所以别把答案写死～）",
+  "referenceSolutionTemplate": "import sqlite3\n\n名字 = input()\n条数 = int(input())\n\ncon = sqlite3.connect(\"库存.db\")\ncur = con.cursor()\ncur.execute(\"CREATE TABLE 库存 (名字 TEXT, 条数 INTEGER)\")\ncur.executemany(\"INSERT INTO 库存 VALUES (?, ?)\", [(\"原味\", 3), (\"海苔味\", 7), (\"麻辣味\", 5)])\ncur.execute(\"INSERT INTO 库存 VALUES (?, ?)\", (名字, 条数))\ncon.commit()\n\ncur.execute(\"SELECT 名字, 条数 FROM 库存 ORDER BY 条数 DESC\")\nfor 货名, 条数 in cur:\n    print(货名 + \" \" + str(条数) + \" 条\")\ncon.close()\n",
+  "explanationTemplate": "这道题的重点是**「添货也要走投喂口」**喵 —— 前面查东西时用投喂口，添东西时同样要用。\n\n`INSERT INTO 库存 VALUES (?, ?)` 里两个 `?` 就是两个投喂口，货从第二个逗号后面递进去：`(名字, 条数)`，一份对一格，**顺序不能反**（表头是先 `名字` 后 `条数`，递货也照这个先后）。\n\n⚠️ **为什么死活不能缝？** 本喵拿真事说话：名字里只要带一个撇号（英文名 `O'Brien` 这种满地都是），缝出来的那句话管家就读不懂了 —— 本喵试过，屏幕上摔出来的是 `sqlite3.OperationalError: near \"Brien\": syntax error`。换成投喂口，同一个名字一点事都没有。\n\n⚠️ 还有两处容易漏的：\n\n- **递货那对括号，一个货时逗号也不能少**：`(名字,)` 对，`(名字)` 错。两个货时就是 `(名字, 条数)`，中间那个逗号照着写。\n- **盖章别忘**：`con.commit()`。这道题特别要看这一句 —— 你把程序跑完再打开别的连接看，没盖章的那一行**根本不在仓库里**。\n\n最后那一步是把整张表端出来：`ORDER BY 条数 DESC` 让它从多到少摆。本喵新加的那一件正好条数最多，它就排在最前头喵。"
+}

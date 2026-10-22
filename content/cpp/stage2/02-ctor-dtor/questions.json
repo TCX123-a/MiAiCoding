@@ -1,0 +1,78 @@
+{
+  "lessonId": "cpp-stage2-02",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵把出生招式写成了 `void Cat(string n)`，翻译官喵当场拦下，报的原话里有 `return type specification for constructor invalid`。看到这一句，该动手改哪儿？",
+      "options": [
+        "把脑袋上那个 `void` 删掉 —— 出生函数的脑袋上不写返回什么",
+        "把函数名 `Cat` 改掉，别跟类重名",
+        "在肚子里补一句 `return 0;`，把东西叼回去",
+        "回到 `main` 里改成先写 `Cat c1;`，再往格子里塞料"
+      ],
+      "answer": 0,
+      "explanation": "报错里那个 `constructor` 说的就是出生招式，`return type specification` 说的是「你给它写了个叼回什么的类型」。出生招式**不是**被谁喊去干活的普通招式，所以脑袋上除了「收什么料」之外什么都不能写 —— 删掉 `void` 就通了喵。改名没用（认领暗号的规矩就是跟图纸同名），`return 0;` 也没用（它压根不叼东西回来），`main` 里那句更是没毛病。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "本喵在里屋那对大括号里生了 `b`、`c` 两只猫，屋外还有一只 `a`。里屋那对大括号结束的那一刻，谁先被收走？",
+      "options": [
+        "`c` 先走 —— 里屋里的猫后来的先走，接着才轮到 `b`；`a` 得等 `main` 结束",
+        "`a` 先走 —— 它是最先出生的那一只",
+        "`b` 先走 —— 它是里屋里最先出生的那一只",
+        "三只一起走 —— 收尾的那一刻不分先后"
+      ],
+      "answer": 0,
+      "explanation": "谁**走出**自己所在的那对大括号，谁就被自动收走，而且**倒着收**：里屋里的猫后进去的先出来，先走的是 `c`、然后是 `b`（它俩都在里屋）。`a` 住在外屋，得等 `main` 那对大括号结束才走，所以它是最后一只喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵要一格叫 `fish` 的格子「出生以后再也不能改」，于是给它加了封印，写成 `const int fish;`。这一格该怎么装东西进去？",
+      "options": [
+        "只能写在出生清单里 —— `Cat(int f) : fish(f) {}`",
+        "在出生函数肚子里写 `fish = f;` 一样能装",
+        "先空着，等 `main` 里再写 `c1.fish = 3;` 装进去",
+        "加了封印的格子装不进去东西，只能一直是 0"
+      ],
+      "answer": 0,
+      "explanation": "带封印的格子只认出生清单：`Cat(int f) : fish(f) {}`。本喵要是在肚子里写 `fish = f;`，翻译官喵会说 `read-only member`（只读的格子不许赋值），再补一句 note 告诉你「这一格该在清单里装好」喵。至于 `main` 里那句，同样是赋值，一样会被拦；而「一直是 0」也不对 —— 它只是**出生那一刻**装，装好之后就锁上，不是永远空着。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat(string n, int f) : name(____), fish(____) {}\n\n    void show() const {\n        cout << name << \" 有 \" << fish << \" 条小鱼干\" << endl;\n    }\n};\n\nint main() {\n    Cat c1(\"小橘\", 3);\n    c1.____();\n    return 0;\n}",
+      "stem": "这段代码里有三处被本喵挖空了（用 `____` 标出），补上之后它会印出「小橘 有 3 条小鱼干」喵。",
+      "blanks": [
+        { "answer": "n", "accept": [] },
+        { "answer": "f", "accept": [] },
+        { "answer": "show", "accept": [] }
+      ],
+      "explanation": "出生清单念作「用 `n` 去装 `name`、用 `f` 去装 `fish`」—— 括号里放的是收进来的那份料，所以两格分别填 `n` 和 `f` 喵。最后一处是把招式喊出来的写法：先说哪只猫、再写招式名，连起来念「让 `c1` 这一只施展 `show`」。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n    int fish;\n\n    Cat() : name(\"无名\"), fish(0) {}\n    Cat(string n) : name(n), fish(0) {}\n    Cat(string n, int f) : name(n), fish(f) {}\n\n    void show() const {\n        cout << name << \"：\" << fish << \" 条\" << endl;\n    }\n};\n\nint main() {\n    Cat a;\n    Cat b(\"狸花\");\n    a.show();\n    b.show();\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "无名：0 条\n狸花：0 条",
+      "accept": ["无名：0 条\n狸花：0 条\n"],
+      "explanation": "`Cat a;` 一样料都没喂，跑的是不带料的那套：名字「无名」、条数 0 喵。`Cat b(\"狸花\");` 只喂了一根项链，跑的是 `Cat(string n)` 那套 —— 它照样把名字接住了，但那份料里没有条数，所以条数还是 0。两套出生法各管各的，翻译官喵看你喂了什么就挑哪一套。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "cpp",
+      "code": "#include <iostream>\n#include <string>\nusing namespace std;\n\nclass Cat {\npublic:\n    string name;\n\n    Cat(string n) : name(n) {\n        cout << name << \" 来了\" << endl;\n    }\n    ~Cat() {\n        cout << name << \" 走了\" << endl;\n    }\n};\n\nint main() {\n    Cat a(\"小橘\");\n    {\n        Cat b(\"狸花\");\n        Cat c(\"大胖\");\n        cout << \"三只都在\" << endl;\n    }\n    cout << \"里屋空了\" << endl;\n    return 0;\n}",
+      "stem": "这段代码的输出是什么？",
+      "answer": "小橘 来了\n狸花 来了\n大胖 来了\n三只都在\n大胖 走了\n狸花 走了\n里屋空了\n小橘 走了",
+      "accept": ["小橘 来了\n狸花 来了\n大胖 来了\n三只都在\n大胖 走了\n狸花 走了\n里屋空了\n小橘 走了\n"],
+      "explanation": "出生招式是按生猫的先后跑的：小橘、狸花、大胖，所以前三行排着队出来喵。里屋那对大括号一结束，里屋里那两只立刻被倒着收走 —— 后进去的 `c` 先走，接着 `b`，于是「大胖 走了」排在「狸花 走了」前面。`a` 住在外屋，得等 `main` 结束，所以它是最后一只。"
+    }
+  ]
+}

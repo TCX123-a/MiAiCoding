@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s3-10-rand-range-no-one",
+  "lang": "c",
+  "stage": 3,
+  "lessonId": "c-stage3-10",
+  "type": "codefix",
+  "concept": ["骰子摇出来的数很大", "想要什么范围自己算", "取余数只会从 0 起", "把 0 赶走"],
+  "instances": 2,
+  "params": {
+    "seed": { "kind": "pick", "values": ["7", "3"] }
+  },
+  "stemTemplate": "本喵要摇**三个**数，**每一个都得落在 1 到 100 之间**（`1` 和 `100` 都算数）。\n\n可它这支骰子在 `0` 到 `99` 那一档里打转：最小的可能是 `0`（骰子上根本没这一面），`100` 却永远摇不出来。翻译官喵一声没吭，跑起来也不摔。\n\n请你把**摇的那一下**改对（`main` 里其余几行别动）。改好之后，这三行数**每一个**都得落在 1 到 100 之间（跟本喵真跑出来的那一串一模一样）。",
+  "brokenCodeTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand({seed});\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d\\n\", rand() % 100);\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    srand({seed});\n    for (int i = 0; i < 3; i++) {\n        printf(\"%d\\n\", rand() % 100 + 1);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "`rand()` 摇出来的是一个**很大的数**，直接用没法使。想要「1 到 100」，得**先取余数、再加一**喵：\n\n```text\nrand() % 100 + 1\n```\n\n- `% 100` 这一步只给 `0` 到 `99` —— 余数天生就是从 `0` 起数的，最大的一个余数是 99；\n- 那个 `+ 1` 不是装饰：它把整个范围**往前挪一格**，把 `0` 赶走、把 `100` 迎进来。\n\n课文里那句提醒就是这个意思：**想要什么范围，自己去取余数再加，写清楚**。写成 `% 100` 得到的是 0 到 99，写成 `% 100 + 1` 才是 1 到 100 —— 两个都「能跑」，可答案差一格。\n\n顺带记一句：范围不是非要从 1 起。想要 0 到 99 就写 `% 100`，想要 1 到 6 就写 `% 6 + 1` —— **看你要的起点在哪，再决定加多少**。"
+}

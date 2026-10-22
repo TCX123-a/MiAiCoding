@@ -1,0 +1,18 @@
+{
+  "templateId": "java-s3-anno-deprecated-count",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-13",
+  "type": "codewrite",
+  "concept": ["翻译官喵本来就认得的纸条也能照 X 光读出来", "isAnnotationPresent 问「贴了没」", "数数要自己数"],
+  "instances": 6,
+  "params": {
+    "d1": { "kind": "pick", "values": ["老招呼", "旧招呼"] },
+    "d2": { "kind": "pick", "values": ["老舔毛", "旧舔毛"] },
+    "n1": { "kind": "pick", "values": ["新招呼", "新招手"] }
+  },
+  "stemTemplate": "本喵手上有一张图纸（代码里那张 `大猫`），图纸上画了三招，其中两招头上贴着翻译官喵本来就认得的 `@Deprecated`（意思是「过时了」）喵。\n\n要列一张**过时清单**：\n\n1. 三招一招不落，每行写 `招式名：` 后面跟 `已过时` 或 `还在用`（贴了 `@Deprecated` 的写 `已过时`）；\n2. **顺序不能靠光片** —— 把这几行塞进一个柜子，整行交给 `Collections.sort` 排一遍再印；\n3. 最后再印一行 `过时的一共 N 招`（N 是贴了 `@Deprecated` 的那几招的个数）。\n\n填 `main` 里空着的那一段就行，**图纸一个字都别改**。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "starterTemplate": "import java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 大猫 {\n        @Deprecated\n        void {d1}() {\n        }\n\n        @Deprecated\n        void {d2}() {\n        }\n\n        void {n1}() {\n        }\n    }\n\n    public static void main(String[] args) {\n\n    }\n}\n",
+  "referenceSolutionTemplate": "import java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\npublic class Main {\n    static class 大猫 {\n        @Deprecated\n        void {d1}() {\n        }\n\n        @Deprecated\n        void {d2}() {\n        }\n\n        void {n1}() {\n        }\n    }\n\n    public static void main(String[] args) throws Exception {\n        List<String> 表 = new ArrayList<>();\n        int 过时的 = 0;\n        for (Method 一招 : 大猫.class.getDeclaredMethods()) {\n            if (一招.isAnnotationPresent(Deprecated.class)) {\n                过时的 = 过时的 + 1;\n                表.add(一招.getName() + \"：已过时\");\n            } else {\n                表.add(一招.getName() + \"：还在用\");\n            }\n        }\n        Collections.sort(表);\n        for (String 一行 : 表) {\n            System.out.println(一行);\n        }\n        System.out.println(\"过时的一共 \" + 过时的 + \" 招\");\n    }\n}\n",
+  "explanationTemplate": "这一题读的是**翻译官喵本来就认得**的那种纸条喵。\n\n**一、问「贴了没」用 `isAnnotationPresent`。** 课文第三节那张 `@Deprecated` 就是这么读出来的：`一招.isAnnotationPresent(Deprecated.class)` 给的是 `true` 或 `false` —— 只要问「贴了没」，这一手比 `getAnnotation(...)` 省事（后者交回来的是一张纸条，没贴的时候给的是 `null`，还得自己判）。\n\n**二、它留到跑的时候。** 跑起来读得到，说明 `@Deprecated` 那一档是 `RUNTIME`：不像本喵自己画的纸条，不写说明书就默认只留到翻译那一步。\n\n**三、数数得自己数。** 最后那行 `过时的一共 N 招` 里的 N 是本喵一边读一边自己加的，纸条不会替本喵数。\n\n**四、顺序照旧自己造。** 光片上的招式顺序说了不算，所以三行要先排再印，不排就印、先后说不准，判分那边也对不上喵。"
+}

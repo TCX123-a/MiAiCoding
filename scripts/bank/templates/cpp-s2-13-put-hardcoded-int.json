@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s2-13-put-hardcoded-int",
+  "lang": "cpp",
+  "stage": 2,
+  "lessonId": "cpp-stage2-13",
+  "type": "codefix",
+  "concept": ["图纸留了空位、有一手没留", "招式上的款式写死了", "换成另一款料就进不去"],
+  "instances": 2,
+  "params": {
+    "name": { "kind": "pick", "values": ["小橘", "大肥鱼"] }
+  },
+  "stemTemplate": "本喵画了一张**装东西的图纸**：`at` 那一手留了空位，可 `put` 那一手本喵把款式**写死了**。\n\n现在本喵要装的是名字牌（{name}），翻译官喵**当场拦下**。你帮本喵把 `put` 那一处的款式也留成空位，让屏幕上印出 **{name}**。图纸上别的几行、`main` 里那几句都不用动。",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\ntemplate <typename T>\nclass Pouch {\npublic:\n    void put(int x) { goods.push_back(x); }\n    T at(int i) { return goods[i]; }\nprivate:\n    vector<T> goods;\n};\n\nint main() {\n    Pouch<string> p;\n    p.put(\"{name}\");\n    cout << p.at(0) << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\n#include <vector>\nusing namespace std;\n\ntemplate <typename T>\nclass Pouch {\npublic:\n    void put(T x) { goods.push_back(x); }\n    T at(int i) { return goods[i]; }\nprivate:\n    vector<T> goods;\n};\n\nint main() {\n    Pouch<string> p;\n    p.put(\"{name}\");\n    cout << p.at(0) << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "本喵在本机真跑过没改的版本，翻译官喵当场拦下 —— 跟这一处对着的两句原话是：\n\n```text\nmain.cpp:17:11: error: invalid conversion from 'const char*' to 'int' [-fpermissive]\nmain.cpp:9:18: note: initializing argument 1 of 'void Pouch<T>::put(int) [with T = std::__cxx11::basic_string<char>]'\n```\n\n（除了这两句，它后面还追着一串「哪一个候选都对不上」的话 —— 本喵只把点着名字的这两句抄下来。）\n\n第一句念作：「**你要递进来的这一款料，塞不进本喵写死的那个口子喵。**」第二句 `note` 把**那一手原样念了出来**：`put(int)` —— 写死了整数，后面跟着的那半句还告诉你 `T` 现在被点名成了什么款。\n\n修法就是把那一处的款式也留成空位：\n\n```text\nvoid put(T x)\n```\n\n补完之后本喵真跑过：屏幕上印 `{name}`。\n\n⚠️ 三条钉住：\n\n1. **图纸留空位，得整张都留。** 本喵这一张图纸上 `at` 留了、`put` 写死了 —— 装整数的时候一点毛病都看不出来，一换成名字牌就露馅。\n2. **那个 `T` 是「同一个空位」的意思。** `put(T x)` 里的 `T`、`vector<T>` 里的 `T`、`at` 里那个 `T`，指的是同一个空位 —— 本喵点名哪一款，它们一起换成那一款。\n3. **一只窝里只装同一款料。** 这只窝点名成了名字牌，再往里塞整数也进不去 —— 本喵在本机真试过，原话是 `error: cannot convert 'int' to 'std::__cxx11::basic_string<char>'`。这正是空位在替本喵管的事。"
+}

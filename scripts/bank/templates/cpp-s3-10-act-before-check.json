@@ -1,0 +1,16 @@
+{
+  "templateId": "cpp-s3-10-act-before-check",
+  "lang": "cpp",
+  "stage": 3,
+  "lessonId": "cpp-stage3-10",
+  "type": "codefix",
+  "concept": ["先动账后检查会留烂摊子", "检查在前动账在后", "出事了外面原封不动"],
+  "instances": 2,
+  "params": {
+    "s": { "kind": "int", "min": 8, "max": 10 }
+  },
+  "stemTemplate": "这一段是**先动账、后检查**的：先把货从仓库里减掉，减完才发现减多了。程序没崩（那句「不够了」被接住了），可仓库那笔账被减成了**负数** —— 这就是留了个烂摊子。\n\n请你改成课文第三节那套：**检查在前，动账在后** —— 先看清楚够不够，够了才动账。\n\n改好之后印 2 行：\n\n1. `接住：不够了`\n2. `仓库里还是 {s}`\n\n（`main` 一个字都别动，要改的只有 `take` 里那两句话的**顺序**。）",
+  "brokenCodeTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = {s};\n\nvoid take(int n) {\n    stock -= n;\n    if (stock < 0) {\n        throw string(\"不够了\");\n    }\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(stock + 5);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <iostream>\n#include <string>\nusing namespace std;\n\nint stock = {s};\n\nvoid take(int n) {\n    if (n > stock) {\n        throw string(\"不够了\");\n    }\n    stock -= n;\n    cout << \"领走 \" << n << \"，还剩 \" << stock << endl;\n}\n\nint main() {\n    try {\n        take(stock + 5);\n    } catch (string e) {\n        cout << \"接住：\" << e << endl;\n    }\n    cout << \"仓库里还是 \" << stock << endl;\n    return 0;\n}\n",
+  "explanationTemplate": "毛病就出在顺序上喵：减账那一句排在检查**前面**，于是账先减了、后来才发现不够 —— 那句「不够了」扔出来的时候，仓库已经被减成负数了（真跑出来是 `仓库里还是 -5`）。\n\n改法就是课文第三节那句口诀：**检查在前，动账在后**。先把「够不够」看明白，不够就直接扔出去 —— 这时候**外面的账一点没动**；够了才动手减。于是没领成的那一次，仓库里还是 {s}。\n\n⚠️ 这一题是个**安静**的错：程序不崩、网也接住了，印出来的头一行看着也没什么不对，只有最后那一行数能看出账被动了。所以本喵每次写下「动账」那一句之前，都会先问自己一句：**该检查的，都检查完了吗？**"
+}

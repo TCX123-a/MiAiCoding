@@ -1,0 +1,19 @@
+{
+  "templateId": "java-s3-foreach-remove",
+  "lang": "java",
+  "stage": 3,
+  "lessonId": "java-stage3-02",
+  "type": "codefix",
+  "concept": ["一边走一边改会炸", "让柜子自己派向导", "向导手里那手摘除"],
+  "instances": 2,
+  "params": {
+    "w1": { "kind": "pick", "values": ["小橘", "煤球"] },
+    "w2": { "kind": "pick", "values": ["狸花", "三花"] },
+    "w3": { "kind": "pick", "values": ["大橘", "墨点"] },
+    "w4": { "kind": "pick", "values": ["花卷", "芝麻"] }
+  },
+  "stemTemplate": "本喵的柜子里放了**四件**东西，想把**中间那一件**（{w2}）挑出来扔掉喵。\n\n本喵是这么写的：挨个过一遍，碰上它就把它扔了。看着挺顺，可它**跑到一半当场炸了**，红字里有一长串本喵不认识的名字。\n\n你帮本喵把它改好 —— 规矩是：**这一遍走法里不许直接对柜子动手**，得让柜子自己派一个向导出来，摘除也让那个向导来做。\n\n改好之后它该印出**一行**：方括号包着的三件东西（剩下的那三件，按原来的先后排）。\n\n（这一题**不用投喂任何东西**，程序自己就能跑。）",
+  "brokenCodeTemplate": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"{w1}\");\n        names.add(\"{w2}\");\n        names.add(\"{w3}\");\n        names.add(\"{w4}\");\n\n        for (String name : names) {\n            if (name.equals(\"{w2}\")) {\n                names.remove(name);\n            }\n        }\n        System.out.println(names);\n    }\n}\n",
+  "referenceFixTemplate": "import java.util.ArrayList;\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class Main {\n    public static void main(String[] args) {\n        List<String> names = new ArrayList<>();\n        names.add(\"{w1}\");\n        names.add(\"{w2}\");\n        names.add(\"{w3}\");\n        names.add(\"{w4}\");\n\n        Iterator<String> it = names.iterator();\n        while (it.hasNext()) {\n            String name = it.next();\n            if (name.equals(\"{w2}\")) {\n                it.remove();\n            }\n        }\n        System.out.println(names);\n    }\n}\n",
+  "explanationTemplate": "那串红字叫 `ConcurrentModificationException`，翻译过来是：**「这一遍还没走完，你居然把柜子改了。」**\n\n**一、为什么「挨个过一遍」不能一边走一边改。** 那个写法背后其实是柜子**自己派了一个向导**，向导手里记着「本喵走到第几件了」。本喵要是绕过向导直接 `names.remove(...)`，柜子里的件数就变了，向导手里那个数**对不上**了 —— 它下一次伸手去拿，发现柜子跟刚才不是同一个样子，当场翻脸。\n\n（这里有个特别坑人的地方：**不是每次都炸。** 要是扔掉的那件正好是**本喵刚走过的那一件**、而且**它后面只剩一件**（也就是倒数第二件），向导手里那个数会正好对上柜子缩水后的件数，它会**安安静静地收工** —— 最后那一件它连看都不看一眼，程序看着完全正常。所以「这次没炸」根本不能当依据 —— 件数一多、位置一变，它就炸给你看。）\n\n**二、改法是让向导自己动手。** 先用 `names.iterator()` 把那个向导请出来，请出来之后本喵走这一遍就**全听向导的**：\n\n- `it.hasNext()` 问「后面还有吗」；\n- `it.next()` 说「把下一件拿给本喵」；\n- `it.remove()` 说「**把刚拿出来的那一件**扔掉」。\n\n这三句的顺序不能乱：`remove` 扔的是**最近一次 `next` 拿出来的那一件**，所以必须先拿再扔。\n\n**三、别改成「自己数着编号往前走」的写法。** 有人会想：那本喵不请向导，自己数编号从头往前走不就行了？正着数的时候，扔掉一件会让后面所有东西**整体往前挪一格** —— 于是挨着它的下一件会被**跳过去**，程序一声不吭，但结果少看了一件。这种错一行红字都不会有，比刚才那个当场炸的更阴险。所以这一遍走法，交给向导最省心喵。\n\n一句话收尾：**要走这一遍，就别绕过向导动柜子；要动手，就让向导动手。**"
+}

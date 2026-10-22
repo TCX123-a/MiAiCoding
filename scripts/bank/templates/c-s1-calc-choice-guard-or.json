@@ -1,0 +1,23 @@
+{
+  "templateId": "c-s1-calc-choice-guard-or",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-15",
+  "type": "codefix",
+  "concept": ["||", "&&", "范围判断", "看门的"],
+  "instances": 2,
+  "params": {
+    "c": { "kind": "pick", "values": [1, 2, 3, 4] },
+    "a": { "kind": "int", "min": 1, "max": 4 },
+    "b": { "kind": "int", "min": 5, "max": 9 }
+  },
+  "stdinSpec": {
+    "kind": "raw",
+    "text": "9\n{c}\n{a}\n{b}\n5\n",
+    "sampleText": "6\n3\n8\n2\n5\n"
+  },
+  "stemTemplate": "本喵的计算器门口有个**看门的**喵：菜单上只有 1 到 5，敲进来的数要是超出这个范围，就该印一句 `没有这一项喵，再选一次～`，把菜单重新摆出来。\n\n可本喵刚刚敲了个 `9`，它**压根没吭声**，反而当成一次运算接着往下跑了……\n\n你帮本喵看看那道看门的是哪儿没拦住，把它改好。改好之后，敲到菜单上没有的数时，程序应该印 `没有这一项喵，再选一次～`，然后把菜单重新摆出来。\n\n（判分会先喂一个菜单上没有的数，再喂一项正常的运算和两条鱼干，最后敲 `5` 收工。）",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 && choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint add(int a, int b) {\n    return a + b;\n}\n\nint sub(int a, int b) {\n    return a - b;\n}\n\nint mul(int a, int b) {\n    return a * b;\n}\n\nint divide(int a, int b) {\n    return a / b;\n}\n\nvoid showMenu(void) {\n    printf(\"=== 小鱼干计算器 ===\\n\");\n    printf(\"1. 加法\\n\");\n    printf(\"2. 减法\\n\");\n    printf(\"3. 乘法\\n\");\n    printf(\"4. 除法\\n\");\n    printf(\"5. 收工\\n\");\n    printf(\"选一个（1-5）：\");\n}\n\nint main(void) {\n    int choice = 0;\n    int a, b;\n\n    while (choice != 5) {\n        showMenu();\n        if (scanf(\"%d\", &choice) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        if (choice == 5) {\n            printf(\"收工啦喵～\\n\");\n            break;\n        }\n        if (choice < 1 || choice > 5) {\n            printf(\"没有这一项喵，再选一次～\\n\");\n            continue;\n        }\n\n        printf(\"第一条小鱼干：\");\n        if (scanf(\"%d\", &a) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n        printf(\"第二条小鱼干：\");\n        if (scanf(\"%d\", &b) != 1) {\n            printf(\"\\n下次再来喵～\\n\");\n            break;\n        }\n\n        if (choice == 1) {\n            printf(\"%d + %d = %d\\n\", a, b, add(a, b));\n        } else if (choice == 2) {\n            printf(\"%d - %d = %d\\n\", a, b, sub(a, b));\n        } else if (choice == 3) {\n            printf(\"%d * %d = %d\\n\", a, b, mul(a, b));\n        } else {\n            if (b == 0) {\n                printf(\"0 不能当除数喵！\\n\");\n            } else {\n                printf(\"%d / %d = %d\\n\", a, b, divide(a, b));\n            }\n        }\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "看门那一行现在是 `if (choice < 1 && choice > 5)` 喵 —— `&&` 读作「**并且**」：它问的是「**既比 1 小，又比 5 大**」。\n\n这句话**永远不成立**：一个数不可能同时比 1 小、又比 5 大呀。所以这道门等于没关，敲什么它都放行 —— 敲 `9` 放行，敲 `999` 也放行。\n\n要拦「越界」，得问的是「**两头任意一头出去了**」，那就得用 `||`（「**或者**」）：`choice < 1 || choice > 5` —— 「比 1 小，**或者**比 5 大」。\n\n两个记号的分工记牢喵：\n\n- `&&` = 并且，**两条都得成立**才算数；\n- `||` = 或者，**有一条成立**就算数。\n\n⚠️ 这种错最阴的地方是：**翻译官喵一句话都不会说**。程序照跑、屏幕照印，只是看门的睡着了。所以以后遇到「本该拦住的没有拦住」，第一件事就是回头看那道判断上的记号。"
+}

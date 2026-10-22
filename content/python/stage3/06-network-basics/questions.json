@@ -1,0 +1,85 @@
+{
+  "lessonId": "python-stage3-06",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "本喵的摊子收到一张点菜单，回执上的状态码写着 `404`。下面哪一句说得对？",
+      "options": [
+        "客人要的那道菜摊子上没有，但两边都好好的",
+        "摊主的程序崩了，得赶紧去改代码",
+        "网断了，客人根本没联系上摊子",
+        "摊主手滑了，五秒之后再点一次就好"
+      ],
+      "answer": 0,
+      "explanation": "回执上写着 `404`，意思是「**联系上了、也回话了，只是摊子上没有这道菜**」喵。你看课文里那一对例子：点 `/fish` 和点 `/stone` 两次都正常跑完了，两次都收到了回执，只是第二次的回执上写的是 `404`。所以它不是「程序坏了」，也不是「没联系上」—— 那两种情况根本收不到回执，`requests` 会当场甩一段 `ConnectionError` 给你，压根轮不到你看状态码。碰到 `404` 该做的是读一读回执说了什么：多半是地址写错了，换个地址再点一次就好喵。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "摆摊的时候本喵写下 `(\"127.0.0.1\", 0)`。后面那个 `0` 是什么意思？",
+      "options": [
+        "让系统随便挑一个此刻空着的窗口",
+        "让摊子开在门牌号 0 号那栋楼里",
+        "表示不设超时，一直等客人等下去",
+        "表示这个摊子谁都不许来敲门"
+      ],
+      "answer": 0,
+      "explanation": "那个 `0` 是「**让系统随便挑一个此刻空着的窗口**」喵。窗口号就是往一台电脑里递东西时要敲的那个窗口；万一本喵自己挑的数字已经被别的程序占了呢？摊子就摆不起来了。交给系统挑，永远不会撞车。代价是——**窗口号每次都不一样**，所以课文里的例子从来不把它印出来，都是让程序自己拿着它去敲门喵。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "本喵给你一段别人写的代码，第一行是 `import requests`，你一跑就报 `ModuleNotFoundError`。最可能的原因是什么？",
+      "options": [
+        "这个库不是 Python 自带的，你还没把它装进来",
+        "你把代码写错了，得去改代码",
+        "网断了，连不上鱼塘那头",
+        "Python 版本太老了，得重装一个"
+      ],
+      "answer": 0,
+      "explanation": "`ModuleNotFoundError: No module named ...` 这句话不是在说你代码写错了喵 —— 它在说「**这个仓库里没有叫这个名字的东西**」，十有八九就是**你还没装它**。`requests` 不是 Python 自带的，得先在命令行里敲一句 `pip install requests`，你的 Python 才认识这个名字。网断了不是这个错（那会甩 `ConnectionError`），版本太老也不是这个错（那会是另外一张脸的报错）喵。"
+    },
+    {
+      "id": "q4",
+      "type": "codefill",
+      "stem": "本喵摆了个摊子，又派了一位客人 `requests` 去点菜。这两个空各该填什么？（提示：第一个空是派客人出去的**招式名**，第二个空是回执上的状态码。）",
+      "lang": "python",
+      "code": "import http.server\nimport threading\n\nimport requests\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    protocol_version = \"HTTP/1.1\"\n\n    def do_GET(self):\n        body = \"小鱼干已送达\".encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(body)))\n        self.end_headers()\n        self.wfile.write(body)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n\nr = requests.____(f\"http://127.0.0.1:{摊.server_address[1]}/fish\", timeout=5, headers={\"Connection\": \"close\"})\nprint(r.____)\nprint(r.text)\n摊.shutdown()\n摊.server_close()\n",
+      "blanks": [
+        {
+          "answer": "get"
+        },
+        {
+          "answer": "status_code"
+        }
+      ],
+      "explanation": "第一个空要的是**派客人去点菜**的那一招：`requests.get(...)`。`get` 是「只看一看，不动手」的点菜方式，正好对应课文里点菜单第一行那个 `GET` 喵。第二个空是回执上的状态码，名字叫 `status_code` —— 填完之后跑出来，第一行是 `200`，第二行就是正文「小鱼干已送达」。别写成 `status` 或者 `code`：回执上的每一项都有一个**一个字符都不能差**的名字，`requests` 认的就是 `status_code` 这个写法喵。"
+    },
+    {
+      "id": "q5",
+      "type": "code",
+      "lang": "python",
+      "code": "import socket\n\n守门猫 = socket.socket()\n守门猫.bind((\"127.0.0.1\", 0))\n守门猫.listen(1)\n\n来访猫 = socket.socket()\n来访猫.connect(守门猫.getsockname())\n来访猫.sendall(\"小鱼干\".encode(\"utf-8\"))\n\n连接, 客人地址 = 守门猫.accept()\nprint(\"收到:\", 连接.recv(1024).decode(\"utf-8\"))\n\n连接.close()\n来访猫.close()\n守门猫.close()\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "收到: 小鱼干",
+      "accept": [
+        "收到: 小鱼干\n"
+      ],
+      "explanation": "这就是课文里那两根电话线喵。守门猫先 `bind` 到自己家的窗口、`listen` 起来，来访猫 `connect` 拨号，再把「小鱼干」**编码成字节**递过去；守门猫 `accept` 接听，从连着这位客人的那根线上 `recv` 到字节，最后 `decode(\"utf-8\")` 把字节翻回话。所以印出来是「收到: 小鱼干」——注意**没有引号**：引号只是本喵在代码里圈边界用的，它本身不是内容喵。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "import http.server\nimport threading\n\nimport requests\n\n\nclass 小摊(http.server.BaseHTTPRequestHandler):\n    protocol_version = \"HTTP/1.1\"\n\n    def do_GET(self):\n        if self.path == \"/fish\":\n            话 = \"小鱼干已送达\"\n            码 = 200\n        else:\n            话 = \"本摊没有这条鱼\"\n            码 = 404\n        body = 话.encode(\"utf-8\")\n        self.send_response(码)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(body)))\n        self.end_headers()\n        self.wfile.write(body)\n\n    def log_message(self, *args):\n        pass\n\n\n摊 = http.server.HTTPServer((\"127.0.0.1\", 0), 小摊)\nthreading.Thread(target=摊.serve_forever, daemon=True).start()\n门牌 = f\"http://127.0.0.1:{摊.server_address[1]}\"\n\n有鱼 = requests.get(门牌 + \"/fish\", timeout=5, headers={\"Connection\": \"close\"})\n没鱼 = requests.get(门牌 + \"/stone\", timeout=5, headers={\"Connection\": \"close\"})\nprint(有鱼.status_code, 有鱼.text)\nprint(没鱼.status_code, 没鱼.text)\n摊.shutdown()\n摊.server_close()\n",
+      "stem": "这段代码的输出是什么？",
+      "answer": "200 小鱼干已送达\n404 本摊没有这条鱼",
+      "accept": [
+        "200 小鱼干已送达\n404 本摊没有这条鱼\n"
+      ],
+      "explanation": "摊子按客人要的地址分岔：要 `/fish` 就回 `200` 和「小鱼干已送达」，别的地址就回 `404` 和「本摊没有这条鱼」喵。`print(有鱼.status_code, 有鱼.text)` 会把两样东西用**一个空格**隔开印出来，所以两行分别是 `200 小鱼干已送达` 和 `404 本摊没有这条鱼`。看仔细喵：两次点菜**都正常跑完了**，`404` 只是第二份回执上写的内容 —— 它不是程序崩了，也不是网断了喵。"
+    }
+  ]
+}

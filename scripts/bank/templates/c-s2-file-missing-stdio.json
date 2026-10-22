@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-file-missing-stdio",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-13",
+  "type": "codefix",
+  "concept": ["fopen", "档案管理员", "头文件", "编译错误"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 2, "max": 5 }
+  },
+  "stemTemplate": "本喵要往档案室的一本册子里记一笔账：写上 `小鱼干 {n} 条`，再把它读回来印一行 `读到：小鱼干 {n} 条`。\n\n写和读放在同一段里，你一次跑完就能看见效果。可翻译官喵把整段代码退了回来，第一句就是「`FILE` 这个名字本喵没见过」。你帮本喵把开头缺的那一样补上（**别去改中间那几行**，它们都是好的）。",
+  "brokenCodeTemplate": "int main(void) {\n    FILE *fp = fopen(\"dangan.txt\", \"w\");\n    if (fp == NULL) {\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 {n} 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"dangan.txt\", \"r\");\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"读到：%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    FILE *fp = fopen(\"dangan.txt\", \"w\");\n    if (fp == NULL) {\n        return 0;\n    }\n    fprintf(fp, \"小鱼干 {n} 条\\n\");\n    fclose(fp);\n\n    fp = fopen(\"dangan.txt\", \"r\");\n    char line[64];\n    while (fgets(line, sizeof(line), fp) != NULL) {\n        printf(\"读到：%s\", line);\n    }\n    fclose(fp);\n    return 0;\n}\n",
+  "explanationTemplate": "缺的是最上面那一行 `#include <stdio.h>` 喵。\n\n翻译官喵最上面那句原话是 `error: unknown type name 'FILE'` —— 翻过来就是「**`FILE` 这个名字本喵没见过**」。紧跟着还会抱怨 `fopen`、`fprintf`、`fclose`、`printf` 一堆名字都没见过，**那些都是从第一句牵出来的**，不用一条条去看。\n\n它其实还很贴心：真正的报错里会跟着一句 `note: 'FILE' is defined in header '<stdio.h>'; this is probably fixable by adding '#include <stdio.h>'` —— **等于把答案写在卷子上了**。看见这句提示，就别再盯着代码找错别字了，去文件头上补那一行。\n\n为什么会这样？因为档案室这一家子 —— `FILE`、`fopen`、`fprintf`、`fclose`、`fgets` —— **全都住在 `stdio.h` 家里**。本喵不请档案管理员出场，翻译官喵就一个都不认得。（`printf` 也一样住那儿，只是它在有些环境下会被「网开一面」，所以有时候少了这一行它只是嘀咕一句、不拦你 —— 但今天这一家子它一个都不会放过。）\n\n补上那一行之后程序就通了：**先拉开抽屉写一行、关上；再拉开读、一行行印出来。** 写在册子上的字是真真切切落在硬盘上的，关灯、关机、明天再来，它都还在 —— 这就是本课开头那只「用完就拆的仓库」和册子的分别。"
+}

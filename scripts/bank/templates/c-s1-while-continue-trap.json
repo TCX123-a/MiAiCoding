@@ -1,0 +1,17 @@
+{
+  "templateId": "c-s1-while-continue-trap",
+  "lang": "c",
+  "stage": 1,
+  "lessonId": "c-stage1-08",
+  "type": "codefix",
+  "concept": ["while 配 continue", "步子被挡住", "圈停不下来"],
+  "instances": 2,
+  "params": {
+    "limit": { "kind": "int", "min": 5, "max": 6 },
+    "trap": { "kind": "int", "min": 2, "max": 3 }
+  },
+  "stemTemplate": "本喵要用 `while` 从 1 数到 {limit}，只有 **{trap}** 这个数跳过不印，别的都要印出来。\n\n这段代码里本喵放了个数圈的小哨兵（装在 `guard` 里）—— 数过 10 圈它就强行把程序停下，并喊一句「卡住啦」。要是你看到了那句话，就说明这个圈出事了喵。你帮本喵把它改对：把 1 到 {limit} 里除了 {trap} 以外的数一个一个印出来。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nint main(void) {\n    int i = 1;\n    int guard = 0;\n\n    while (i <= {limit}) {\n        guard = guard + 1;\n        if (guard > 10) {\n            printf(\"卡住啦！i 一直是 %d 喵\\n\", i);\n            break;\n        }\n        if (i == {trap}) {\n            continue;\n        }\n        printf(\"%d\\n\", i);\n        i = i + 1;\n    }\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nint main(void) {\n    for (int i = 1; i <= {limit}; i++) {\n        if (i == {trap}) {\n            continue;\n        }\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}\n",
+  "explanationTemplate": "`i` 走到 {trap} 的时候，`if (i == {trap})` 答真，`continue` 一跳，**直接回到圈的开头** —— 而那句让 `i` 往前走的 `i = i + 1;` 站在 `continue` **后面**，压根没轮到。于是下一圈 `i` 还是 {trap}，`continue` 又跳一次……`i` 永远停在那儿，圈永远走不完。这就是哨兵喊「卡住啦」的原因喵。\n\n改法有两条路，都通：\n\n**① 在跳之前也补一步。** 让 `continue` 前面也有一句 `i = i + 1;`（这样 `i` 每圈都动，圈就转得下去了），顺手再把那个小哨兵收拾掉 —— 圈不卡了，它就没事可干了。这条路的代价是「往前走一步」在圈里写了两遍。\n\n**② 换成 `for`（本喵推荐的写法）。** `for` 的「收尾」那一步写在括号里，`continue` **跳不过去** —— 每圈过完它都替你走一步，这个坑从根上就不存在了，小哨兵也一道不用留。\n\n⚠️ 所以这一跤是 `while` 配 `continue` 独有的。以后写 `while` 又用到 `continue`，一定回头看一眼：**那个让圈往前走的数，这一圈到底动了没有？**喵"
+}

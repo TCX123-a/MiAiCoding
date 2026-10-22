@@ -1,0 +1,16 @@
+{
+  "templateId": "py-s2-organize-join-missing",
+  "lang": "python",
+  "stage": 2,
+  "lessonId": "python-stage2-14",
+  "type": "codefix",
+  "concept": ["os.path.join", "新位置也要拼", "搬家"],
+  "instances": 2,
+  "params": {
+    "m": { "kind": "pick", "values": ["·新", "·改"] }
+  },
+  "stemTemplate": "本喵想把抽屉里每一样东西都改成「原来的名字 + 一个新记号」的样子喵。\n\n它**跑得顺顺的，一句错都不报**，可印出来一看，**抽屉是空的** —— 东西全不见了。\n\n（它们其实没丢，只是跑到**程序当时站着的地方**去了，那是另一个位置。）\n\n你帮本喵改对喵。要求：\n\n1. 改完之后，印出来的那一行里**两样东西都在**，名字后面都多了那一截记号。\n2. **只许动搬家那一句的后半截**，前面铺东西的几句、还有拆名字的那一句，一个字都不许改。\n3. 记号那一道（`{m}`）不许换。",
+  "brokenCodeTemplate": "import os\n\n工作台 = \"小工作台\"\nos.makedirs(工作台, exist_ok=True)\nfor 名字 in [\"猫1.txt\", \"鱼.jpg\"]:\n    with open(os.path.join(工作台, 名字), \"w\", encoding=\"utf-8\") as 档案:\n        档案.write(\"x\")\n\nfor 名字 in sorted(os.listdir(工作台)):\n    主体, 后缀 = os.path.splitext(名字)\n    os.rename(os.path.join(工作台, 名字), f\"{主体}{m}{后缀}\")\n\nprint(sorted(os.listdir(工作台)))\n",
+  "referenceFixTemplate": "import os\n\n工作台 = \"小工作台\"\nos.makedirs(工作台, exist_ok=True)\nfor 名字 in [\"猫1.txt\", \"鱼.jpg\"]:\n    with open(os.path.join(工作台, 名字), \"w\", encoding=\"utf-8\") as 档案:\n        档案.write(\"x\")\n\nfor 名字 in sorted(os.listdir(工作台)):\n    主体, 后缀 = os.path.splitext(名字)\n    os.rename(os.path.join(工作台, 名字), os.path.join(工作台, f\"{主体}{m}{后缀}\"))\n\nprint(sorted(os.listdir(工作台)))\n",
+  "explanationTemplate": "毛病出在「**新名字**」这一截上：本喵只写了名字本身（`猫1·新.txt` 这种），**没写它在哪个抽屉里**喵。\n\n要记住一句：**名字和位置是两件事**。`猫1.txt` 只是个名字，不带上抽屉的名字，它就只是「有一个东西叫这个名」—— 而本喵当时正站在别的地方，于是搬过去的东西就落到了**本喵站着的地方**，抽屉里自然空了。\n\n把抽屉名和名字拼起来这件事，**交给 `os.path.join(抽屉, 名字)` 去办**，别自己拿加号拼：不同的系统用的分隔号不一样，手拼的那一版在自己机器上跑得好好的，换个地方就找不着东西了。本喵前面的搬家都把两边拼好了 —— 老位置拼了，新位置也**得**拼，两边一样长才算对齐。\n\n⚠️ 查这种毛病有个快法子：**盯着「搬家」那一句的两个位置**看 —— 它要的是**两个位置**，不是「一个位置 + 一个名字」。一眼扫过去，两边谁少写了抽屉名，立刻就看出来了。打印出来的那一行（空空的）也早就提醒本喵了：抽屉没动过，说明东西**根本没搬进来**，而不是搬错了名字喵。\n\n⚠️ 顺带记一条：这一句搬家**不报错**，因为程序站着的地方也是个正经位置，写过去完全合法。所以「它有没有报错」在这里一点用都没有 —— **要拿印出来的结果去对**。"
+}

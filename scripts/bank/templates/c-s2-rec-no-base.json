@@ -1,0 +1,16 @@
+{
+  "templateId": "c-s2-rec-no-base",
+  "lang": "c",
+  "stage": 2,
+  "lessonId": "c-stage2-11",
+  "type": "codefix",
+  "concept": ["递归", "基线条件", "停不下来", "警告不是错误"],
+  "instances": 2,
+  "params": {
+    "n": { "kind": "int", "min": 3, "max": 4 }
+  },
+  "stemTemplate": "本喵写了个倒数的小招式：投喂 {n} 进去，它要把 {n}、{n} 以下的数一路印到 1，最后印一句 `到站喵`，然后收工。\n\n印出来的应该是这样（{n} 开头，一路减到 1，末尾是那句话）：\n\n```\n{n}\n...（一路往下）...\n1\n到站喵\n```\n\n可这段代码一跑就收不了场：数字一路往下印个没完，最后「啪」地一下断掉。翻译官喵倒是出了声，你顺着它那句话看看是漏了哪一句要紧的话，把它补上。",
+  "brokenCodeTemplate": "#include <stdio.h>\n\nvoid countdown(int n) {\n    printf(\"%d\\n\", n);\n    countdown(n - 1);\n}\n\nint main(void) {\n    countdown({n});\n    return 0;\n}\n",
+  "referenceFixTemplate": "#include <stdio.h>\n\nvoid countdown(int n) {\n    if (n == 0) {\n        printf(\"到站喵\\n\");\n        return;\n    }\n    printf(\"%d\\n\", n);\n    countdown(n - 1);\n}\n\nint main(void) {\n    countdown({n});\n    return 0;\n}\n",
+  "explanationTemplate": "翻译官喵的原话是 `warning: infinite recursion detected [-Winfinite-recursion]` —— 底下还跟了一句 `note: recursive call`，指着那个喊自己的地方。翻过来就是：「**发现有个停不下来的自己喊自己。**」\n\n它说的正是这件事：这个招式里**没有刹车**。每一位都在喊下一位、永远没人喊停，于是「记着待会儿要回到哪儿」的那一摞碗越摞越高，最后把地方撑爆 —— 所以程序是先刷一大片数字、再突然断掉。\n\n补上刹车就完事了：\n\n```c\nif (n == 0) {\n    printf(\"到站喵\\n\");\n    return;\n}\n```\n\n这一句要写在**印数字之前**，也就是「先看要不要停，再干自己的活」。补完再走一遍：{n} 进去印 {n}、喊下一位；一路减到 0；最后一位看到刹车成立，印「到站喵」收工，然后一层层收尾回来。\n\n**为什么刹车非写不可？** 因为自己咬自己尾巴这门本事只说了「怎么一直问下去」，没说「问到哪儿算完」。刹车就是那句「什么时候算完」，**它是本喵自己补上去的**。写这门本事的第一件事永远是先想清楚它。\n\n顺带记一件更要命的事：**警告不是错误。** 这一回翻译官喵看出来了，可它只是出声提醒，程序照样照样编了出来、交到你手里 —— 一跑就崩。换个形状（比如刹车写对了、可每一步都朝反方向挪），它甚至**一个字都不说**。所以这一条别指望它帮你守着喵。"
+}
