@@ -4,6 +4,10 @@
 >
 > 一款面向编程初学者的 Windows 桌面学习应用：五门语言、266 节课文、6026 道题，代码在本机真编译、真运行。
 
+[![📥 极速下载体验](https://img.shields.io/badge/%F0%9F%93%A5%20%E6%9E%81%E9%80%9F%E4%B8%8B%E8%BD%BD%E4%BD%93%E9%AA%8C-Windows%20x64-ff5c8a?style=for-the-badge)](https://github.com/TCX123-a/MiAiCoding/releases/latest)
+
+**📥 [极速下载体验 →](https://github.com/TCX123-a/MiAiCoding/releases/latest)**　Windows 10/11 x64 · 下载后双击安装 · 无解压密码
+
 [简体中文](#咪爱编程--miai-biancheng) · [English summary](#english-summary)
 
 ---
