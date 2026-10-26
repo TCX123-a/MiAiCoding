@@ -8,9 +8,9 @@
  * 可选环境变量：
  *   FORK_FROM       要 fork 的上游，默认 TCX123-a/MiAiCoding
  *   RELEASE_REPO    目标仓库；不填则自动用「你的账号/MiAiCoding」
- *   RELEASE_TAG     默认 v0.1.0
+ *   RELEASE_TAG     默认 v<package.json 的 version>
  *   RELEASE_NAME    Release 标题
- *   RELEASE_NOTES   说明文件路径，默认 release/RELEASE_NOTES_v0.1.0.md
+ *   RELEASE_NOTES   说明文件路径，默认 release/RELEASE_NOTES_v<version>.md
  *   DRY_RUN=1       只打印计划，不 fork、不创建、不上传
  *
  * 设计取舍：
@@ -24,14 +24,18 @@ import { resolve } from 'node:path'
 
 const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || ''
 const FORK_FROM = process.env.FORK_FROM || 'TCX123-a/MiAiCoding'
-const TAG = process.env.RELEASE_TAG || 'v0.1.0'
-const NAME = process.env.RELEASE_NAME || '咪爱编程 v0.1.0 · Windows x64'
-const NOTES_PATH = resolve(process.env.RELEASE_NOTES || 'release/RELEASE_NOTES_v0.1.0.md')
+
+// 版本一律以 package.json 为准，避免发版时出现「标签 v0.1.1、包装 0.1.0」的错位
+const VERSION = JSON.parse(readFileSync(resolve('package.json'), 'utf8')).version
+
+const TAG = process.env.RELEASE_TAG || `v${VERSION}`
+const NAME = process.env.RELEASE_NAME || `咪爱编程 v${VERSION} · Windows x64`
+const NOTES_PATH = resolve(process.env.RELEASE_NOTES || `release/RELEASE_NOTES_v${VERSION}.md`)
 const DRY_RUN = process.env.DRY_RUN === '1'
 
 const ASSETS = [
-  'release/miai-biancheng-0.1.0-setup.exe',
-  'release/miai-biancheng-0.1.0-win-x64-portable.zip'
+  `release/miai-biancheng-${VERSION}-setup.exe`,
+  `release/miai-biancheng-${VERSION}-win-x64-portable.zip`
 ].map((p) => resolve(p))
 
 const GH = 'https://api.github.com'
