@@ -14,6 +14,7 @@
 | `docs/12-开源项目借鉴清单.md` | **选型与技术债的唯一记录处** | 【可直接复用】/【仅可借鉴】/【不推荐】三张清单 + **M5-03 待办的真问题**（runner.ts 4 条缺陷，含会让主进程崩溃的 spawn 崩溃）。**动 M5-03 / 想换技术栈 / 想引入新依赖之前先读这份**。每条结论标注了【实测】还是【调研】 |
 | `docs/10-大肥鱼视觉宪法.md` | 角色视觉唯一真源 | 头身比、色值、部件定义、UI 组件规范。应用内出口在 `src/renderer/src/components/base/MiMascot.vue`（按 `pose` 取图，无图则显示虚线占位框）+ `domain/MiBubble.vue`。**要改形象先读 docs/10（长什么样）+ docs/13（哪个位置要哪个姿态、多大）** |
 | `docs/11-图片资产生产规范.md` | **LoRA 出图资产产线** | 大肥鱼 LoRA（`dafeiyu_c_v2` + `dswhale`）的模型路径与 SHA256、训练参数、出图配方、提示词模板、复现脚本索引。**批量出图/调整出图效果时先读这份**。注意：角色外观以 docs/10 为准，出图参数以 docs/11 为准 |
+| `docs/27-AI辅助编程改造交接文档.md` | **AI 编程化改造的唯一交接真源** | 2026-10-25 讨论结论 + **P1 已交付并实测通过**：双模式定位、流式对话 + AI 侧栏（右栏「辅助信息 / 大肥鱼」两页签）、单 DeepSeek（`deepseek-chat` 别名 → V4.1-Flash）、工作区自动执行分期落地；含 §0.1 交付现状、§16 逐版记录、P2–P4 路线与「只加少减」硬约束。**动 AI 层 / 想加工作区或补全之前先读这份** |
 | `content/` | **内容唯一真源** | `glossary.json` 术语映射、`syllabus.json` 194 课大纲、`common/ c/ cpp/ java/ python/` 每课一个目录（`lesson.md` + `questions.json`）、`error-lib/` 内置错误库。**改内容只改这里** |
 | `scripts/` | 内容流水线脚本 | `content-validate.mjs`（质量闸门）、`content-build.mjs`（打包成 bundle）、`gen-batch.mjs`（生成批次提示词）、`check-lesson-code.mjs` / `check-question-code.mjs`（两条真跑台，共用 `lib/run-code.mjs`）、`gen-bank.mjs` + `check-bank.mjs`（无限题库的产与查，共用 `lib/bank-verify.mjs`） |
 | `src/shared/` | 主/渲染进程共享纯逻辑 | `types.ts` 全部 DTO、`ipc-channels.ts` IPC 通道唯一真源、`review-engine.ts` 间隔重复、`quiz-grading.ts` 判分、`error-match.ts` 错误匹配、`unlock.ts` 解锁链。**此处只放纯函数，可被 Vitest 直接测** |

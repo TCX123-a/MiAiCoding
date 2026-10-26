@@ -1330,6 +1330,20 @@ export type AiFailReason =
   /** 回来了，但不是我们要的形状：不是 JSON、没有 choices、内容是空的、
    *  或者出的题一条都没通过校验 */
   | 'bad-response'
+  /**
+   * 侧栏对话：**上一条还没回完**（P1，docs/27 §8.2 的软限制）。
+   *
+   * 【为什么单开一码，而不是复用 'disabled'】两者的下一步动作完全不同：
+   * disabled 是"去设置里把开关拨开"，busy 是"等这条说完再问"。
+   * 侧栏只允许 1 条在飞 —— 不设这条闸的话，用户连点两次发送，
+   * 第二个请求会 abort 掉第一个，表现是「说到一半自己停了」（docs/27 §12.2）。
+   */
+  | 'busy'
+  /**
+   * 侧栏对话：**被限流挡下了**（同一会话最小间隔 800ms / 连败 3 次退避 30s，
+   * docs/27 §8.3）。防的是连点刷额度——Token 是用户自己掏的钱。
+   */
+  | 'throttled'
 
 /**
  * AI 请求的结果。**用返回值表示失败，不抛异常。**
@@ -1385,6 +1399,119 @@ export interface AiGenerateInput {
   terms: GlossaryTerm[]
   /** 本地日期 `YYYY-MM-DD`，用来拼题目 id。由渲染进程算好传进来，避免两边时区不一致 */
   dateKey: string
+}
+
+// ---------------------------------------------------------------- AI 侧栏对话（P1，docs/27）
+
+/**
+ * 侧栏对话里的一条消息。
+ *
+ * 【为什么只有 user / assistant，没有 system】
+ * system 段（人设 + 术语 + 上下文）**由主进程拼**，渲染层交不上来：
+ * 它是"我们和模型打交道的方式"，不是用户能编辑的内容。
+ * 一旦允许渲染层塞 system，提示词注入就是一行代码的事 ——
+ * 而这条链的出口是用户自己付钱的 API。
+ */
+export interface AiChatMessage {
+  role: 'user' | 'assistant'
+  /** 正文。**原样保留换行**（模型回的是带段落的文本，不是一行） */
+  content: string
+}
+
+/**
+ * 选区（`@选区`）。**行号是给人看的**（提示词里写"第 3~7 行"），
+ * 字符偏移量给将来"点一下跳回编辑器"用，P1 不消费它。
+ */
+export interface AiChatSelection {
+  text: string
+  /** 1 起：选区起点所在行 */
+  fromLine: number
+  /** 1 起：选区终点所在行 */
+  toLine: number
+}
+
+/**
+ * 对话上下文（P1 **只读**，绝不读磁盘）。
+ *
+ * 【每一项都是可选的，而且都要被渲染层显式勾选】docs/27 §8.4 规定
+ * P1 绝不发送用户目录路径、配置原文、Key、错题本全量、云同步凭证 ——
+ * 类型上就没有这些字段，而不是靠"记得别填"。
+ *
+ * `terms`（术语表）是 docs/27 §8.4 之外**追加**的一项，理由同既有的
+ * `AiExplainInput.terms`：铁律 2 要求任何讲代码的地方都用统一术语，
+ * 而术语表的真源在内容包里（渲染层手里），主进程没必要再读一份。
+ */
+export interface AiChatContext {
+  /** 当前编辑器里的全部代码（主进程会按行截断） */
+  code?: string
+  /** 用户在编辑器里选中的片段 */
+  selection?: AiChatSelection
+  /** 代码语言 —— 决定提示词里怎么称呼它（"C 语言"还是"Python"） */
+  lang?: LangOfCode
+  /** 最近一次运行的输出（主进程会截断） */
+  runOutput?: string
+  /** 术语表。由渲染进程给（同 AiExplainInput.terms 的先例） */
+  terms?: GlossaryTerm[]
+}
+
+/** `ai:chat-start` 的入参（渲染进程 → 主进程） */
+export interface AiChatStartInput {
+  /**
+   * 渲染层**预生成**的请求 id（P1 补丁，可省略）。
+   *
+   * 【为什么要让渲染层生成】主进程生成的话，id 要绕一圈 IPC 才回到渲染层，
+   * 而 `ai:chat-delta` 有可能比这个回话先到 —— 那一刻渲染层还不知道自己
+   * 这条请求叫什么，事件会被当成"别人的"丢掉（连 `done` 一起丢，界面永远
+   * 停在"正在输入"）。渲染层先起名，事件一到就能对上号。
+   * 主进程会原样沿用；省略时照旧自己生成。
+   */
+  requestId?: string
+  /**
+   * **完整**的消息列表（含刚敲的这条 user）。
+   * 主进程只取最近 N 轮拼进请求，落盘时也只追加最后一条 ——
+   * 让渲染层交"这一句"、主进程自己拼历史，两边就对不上了。
+   */
+  messages: AiChatMessage[]
+  context?: AiChatContext
+}
+
+/**
+ * `ai:chat-start` 的回话。**立刻返回，不等模型**（docs/27 §8.1）。
+ *
+ * `accepted: false` 表示这次根本没发出去（`reason` 是 busy / throttled / no-key…），
+ * 渲染层据此显示一句人话，而不是干等一个永远不会来的 delta。
+ * 这是对 docs/27 §8.1「`→ {requestId}`」的**加法扩展**：`requestId` 照旧有。
+ */
+export interface AiChatStartResult {
+  requestId: string
+  accepted: boolean
+  reason?: AiFailReason
+}
+
+/** `ai:chat-delta` 的载荷（主进程 → 渲染进程，每个增量推一次） */
+export interface AiChatDeltaPayload {
+  requestId: string
+  delta: string
+}
+
+/**
+ * `ai:chat-done` 的载荷：**成功/失败/取消统一收尾**（docs/27 §8.1）。
+ *
+ * 【为什么失败也走 done，而不是另开一条 error 通道】
+ * 渲染层的收尾动作只有一处（停止"正在输入"、置回可发送），
+ * 分成两条通道就会有一条漏清理 → 界面永远卡在"正在输入"（docs/27 §12.7）。
+ */
+export interface AiChatDonePayload {
+  requestId: string
+  ok: boolean
+  reason?: AiFailReason
+  /** 排查用的原始信息（HTTP 码、接口 message）。**不是给用户看的文案** */
+  detail?: string
+}
+
+/** `ai:chat-history` 的返回：跨重启的会话历史（最多 200 条，超限丢最旧） */
+export interface AiChatHistoryView {
+  messages: AiChatMessage[]
 }
 
 // ---------------------------------------------------------------- 每日挑战

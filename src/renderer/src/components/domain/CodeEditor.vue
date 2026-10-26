@@ -30,7 +30,20 @@ const props = defineProps<{
   readonly?: boolean
 }>()
 
-const emit = defineEmits<{ 'update:modelValue': [v: string] }>()
+const emit = defineEmits<{
+  'update:modelValue': [v: string]
+  /**
+   * 选区状态变化（P1，给 AI 侧栏的 @选区 用）。
+   *
+   * 【为什么由编辑器广播、而不是让侧栏来问】侧栏在应用外壳里，编辑器在这一层
+   * 之下 —— 外壳问不到它。而且"有没有选区"是**用户动作的结果**，只有
+   * CodeMirror 的 updateListener 当场知道。
+   *
+   * 只播**布尔**，不播正文：正文每次现取（见 lib/editor-selection.ts 的理由），
+   * 播正文会让每动一次光标就克隆一段字符串。
+   */
+  'selection-change': [hasSelection: boolean]
+}>()
 
 const host = ref<HTMLDivElement>()
 
@@ -175,7 +188,36 @@ function lineRect(n: number): { x: number; y: number; width: number; height: num
   }
 }
 
-defineExpose({ focus, clear, lineRect })
+/**
+ * 当前选区（1 起的行号 + 原文）。**只读，给 AI 侧栏的「@选区」用**
+ * （P1，docs/27 §8.4）。
+ *
+ * 【为什么在这里加一个口子，而不是在侧栏里自己算】选区只有 EditorView 知道；
+ * 从 DOM 的 `window.getSelection()` 反推会丢掉 CodeMirror 的换行映射与虚拟滚动，
+ * 拿到的是"看起来选中的那几个字"，行号一定不对 —— 而提示词里写的正是行号。
+ *
+ * 【为什么是"每次现取"的函数，而不是一个响应式的 value】
+ * 侧栏只在**发送的那一刻**需要它。做成响应式就得给编辑器挂 selection 监听，
+ * 那是每敲一次方向键一次回调，而收益为零（没人盯着那行字看）。
+ *
+ * 空选区返回 `null`（不是空字符串）：调用方据此决定"这次别带选区"。
+ */
+function selection(): { text: string; fromLine: number; toLine: number } | null {
+  const v = view.value
+  if (!v) return null
+  const { from, to } = v.state.selection.main
+  if (from === to) return null
+  const text = v.state.sliceDoc(from, to)
+  if (text.trim() === '') return null
+  // 行号用 doc.lineAt 求（不是数 \n）：偏移落在行首/行尾时它才是对的
+  return {
+    text,
+    fromLine: v.state.doc.lineAt(from).number,
+    toLine: v.state.doc.lineAt(to).number
+  }
+}
+
+defineExpose({ focus, clear, lineRect, selection })
 
 onMounted(() => {
   if (!host.value) return
@@ -191,6 +233,14 @@ onMounted(() => {
           // 回传后父组件把同一个值传回来时，applyExternal 会发现
           // 「和当前内容一样」直接返回，不会绕成死循环。
           if (!applyingExternal) emit('update:modelValue', doc)
+        }),
+        /*
+         * 选区广播：只在 selectionSet 或 docChanged 时算一次布尔。
+         * 不挂在普通事务上 —— 滚动/主题切换也会产生事务，那些和选区无关。
+         */
+        EditorView.updateListener.of((u) => {
+          if (!u.selectionSet && !u.docChanged) return
+          emit('selection-change', !u.state.selection.main.empty)
         }),
         langSlot.of(languageExtension(props.lang)),
         editableSlot.of(editableExtensions(props.readonly ?? false)),

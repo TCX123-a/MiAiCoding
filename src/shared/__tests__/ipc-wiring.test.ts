@@ -102,6 +102,13 @@ const mainPushed = [
   // app.ts 自己也有直推：config:external（桌宠菜单「关闭大肥鱼」触发，2026-10-06）。
   // 同一形状（`w.webContents.send(IPC.xxx, pub)`），同一条正则口径。
   ...channelsIn(mainSrc, /\.send\(\s*IPC\.(\w+)/g),
+  // 侧栏对话的增量与收尾（P1，docs/27 §8）：又是「住在调用点」的形状 ——
+  // `sendToRenderer(wc, IPC.aiChatDelta, payload)`，真正的 `.send(channel)` 在
+  // 那个 helper 里（channel 是形参）。helper 存在的理由是「窗口可能在流式途中
+  // 被销毁」：isDestroyed 判空只该写一处，不该在四个发点各抄一遍。
+  // 不抓这条的话 aiChatDelta/aiChatDone 会在 orphan 那条上被误报成
+  // 「常量声明了却没人处理」—— 修法不是删通道，也不是放弃 helper。
+  ...channelsIn(mainSrc, /sendToRenderer\(\s*[^,)]+,\s*IPC\.(\w+)/g),
   // dsh-pet 宿主的 appNav 推送（`mw.webContents.send(IPC.appNav, payload)`）。
   ...channelsIn(mainDshpetSrc, /\.send\(\s*IPC\.(\w+)/g)
 ]
@@ -155,6 +162,12 @@ describe('IPC 接线', () => {
     expect(
       channelsIn(mainDshpetSrc, /\.send\(\s*IPC\.(\w+)/g).length,
       'main/dshpet/host.ts 里一个 .send(IPC.xxx) 都没抓到（appNav 推送），正则已失效'
+    ).toBeGreaterThan(0)
+    // 侧栏对话的推送（P1）：helper 里的 `.send(channel)` 抓不到，只能抓调用点。
+    // 这条自检保证调用点正则没写歪 —— 否则 aiChatDelta/aiChatDone 会静默退出比对。
+    expect(
+      channelsIn(mainSrc, /sendToRenderer\(\s*[^,)]+,\s*IPC\.(\w+)/g).length,
+      'main（app.ts）里一个 sendToRenderer(wc, IPC.xxx, ...) 都没抓到，侧栏推送正则已失效'
     ).toBeGreaterThan(0)
   })
 

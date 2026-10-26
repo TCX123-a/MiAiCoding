@@ -67,11 +67,62 @@ export const IPC = {
    * 不 abort 的话，请求还在跑、token 还在烧、**用户的钱还在花** ——
    * 界面上却显示「已取消」，那是骗人。docs/04 硬规定 AI 等待中必须可取消。
    *
-   * 通道不带参数，因为它只能表示「掐掉现在那个」——
-   * 这要求主进程**同一时刻只允许一个 AI 请求在飞**（见 main/index.ts 的单飞逻辑）。
-   * 要是有两个在飞，这一句「取消」就说不清是取消哪个了。
+   * 通道**可以**带一个可选参数（P1，docs/27 §8.1「扩展 1 条」）：
+   * `{requestId}` = 只掐那一条侧栏对话；**省略参数 = 取消全部**（旧单飞通道
+   * 与所有在飞的侧栏对话）—— 这正是旧调用点的行为：它们调 `aiCancel()` 不带参，
+   * 而旧世界里"全部"就是"现在那一个"。所以旧语义逐字节保留（§5.2）。
+   *
+   * 【侧栏自己的取消一定要带 requestId】不带就等于"掐掉全部"，
+   * 会把用户另一半屏幕上还在跑的出题一并掐断（docs/27 §12.2 的互不干扰要求）。
    */
   aiCancel: 'ai:cancel',
+
+  // ---------------------------------------------------------------- AI 侧栏对话（P1，docs/27）
+
+  /**
+   * 开一条侧栏对话。**立刻返回 requestId，不等模型**（docs/27 §8.1）——
+   * 等模型的话 invoke 会挂住 20~120 秒，渲染层连"正在输入"都画不出来。
+   *
+   * 入参 `AiChatStartInput`（完整消息列表 + 只读上下文）；
+   * 回话 `AiChatStartResult`（`{requestId, accepted, reason?}`）。
+   *
+   * 【为什么和 ai:explain / ai:generate-questions 并行、而不是共用单飞】
+   * 那两条是**整段返回**的旧链路，靠 `withAi` 的单飞语义（新请求顶掉旧请求）
+   * 保证 `ai:cancel` 无歧义；侧栏是流式、要能单独取消，
+   * 所以它走自己的一张 Map（见 main/app.ts 的 aiInflight）。
+   * 两条路互不顶替：桌宠/出题在飞时，侧栏照样能开对话（docs/27 §8.2）。
+   */
+  aiChatStart: 'ai:chat-start',
+  /**
+   * 主进程 → 渲染进程：正文增量（每个 token/块推一次，`AiChatDeltaPayload`）。
+   *
+   * 【为什么是事件不是 invoke 的返回值】流式的本质是"不等它说完"。
+   * 【红线】renderer 不许自己开 fetch / EventSource（CSP + Key 隔离），
+   * 出网只在主进程 —— 这条通道就是那份"只能经 IPC 转发"的具体形状。
+   */
+  aiChatDelta: 'ai:chat-delta',
+  /**
+   * 主进程 → 渲染进程：**统一收尾**（`AiChatDonePayload`：ok / reason / detail）。
+   * 成功、失败、用户取消都发这一条，让渲染层只有一处复位逻辑
+   * （docs/27 §12.7：发晚了会让界面卡在"正在输入"）。
+   */
+  aiChatDone: 'ai:chat-done',
+  /**
+   * 读会话历史（`AiChatHistoryView`，最多 200 条，超限丢最旧）。
+   *
+   * 【docs/27 §8.1 只列了 chat-start/delta/done 三条，这条是补的】
+   * 那三条里没有任何一条能把 `chat.json` 读回渲染层，而 §7 把"会话历史"
+   * 列进了 P1 范围、§10 又要求它落盘成文件 —— 没有读口，重启后历史就只是
+   * 躺在磁盘上的一堆字节。同因还有下面的 ai:chat-clear。
+   */
+  aiChatHistory: 'ai:chat-history',
+  /**
+   * 清空会话历史（`chat.json`）。无入参、无返回值。
+   *
+   * 【为什么清空要过主进程】文件归主进程所有；渲染层清掉自己那份列表
+   * 而不动磁盘，下次启动历史会"复活"——用户会以为清空按钮是假的。
+   */
+  aiChatClear: 'ai:chat-clear',
 
   /**
    * 读某一天的挑战批次 + 抽题要用的排除清单（见 types.ts 的 `ChallengeToday`）。

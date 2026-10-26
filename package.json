@@ -1,6 +1,6 @@
 {
   "name": "miai-biancheng",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "咪爱编程——猫咪口吻 + 大肥鱼陪你学编程的离线学习伴侣",
   "main": "./out/main/index.js",
   "private": true,
@@ -11,6 +11,8 @@
     "build": "npm run build:content && electron-vite build",
     "build:app": "electron-vite build",
     "package:win": "npm run build && electron-builder --win nsis --x64",
+    "package:release": "npm run build && electron-builder --win nsis zip --x64",
+    "release:upload": "node scripts/upload-release.mjs",
     "start": "electron-vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false && vue-tsc --noEmit -p tsconfig.web.json --composite false",
     "validate:content": "node scripts/content-validate.mjs",
@@ -103,10 +105,18 @@
     ],
     "asar": true,
     "electronVersion": "44.9.3",
+    "compression": "maximum",
+    "afterPack": "scripts/after-pack.cjs",
     "win": {
       "target": [
         {
           "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
           "arch": [
             "x64"
           ]
