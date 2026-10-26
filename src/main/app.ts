@@ -50,6 +50,13 @@ import { startDshPetHost, type DshPetHost } from './dshpet/host'
 import { scanSplashMaterials, splashMaterialDirs } from './splash/material'
 import { importMedia, type PickFileRequest } from './media-import'
 import { explainError, generateQuestions, testConnection, type AiDeps } from './ai/deepseek'
+import { createChatGate, runChat } from './ai/chat'
+import {
+  appendChatMessage,
+  clearChatFile,
+  normalizeChatFile,
+  type AiChatFile
+} from './store/ai-chat'
 import {
   AccountFlowError,
   accountDirOf,
@@ -94,6 +101,11 @@ import {
 import { isCanonicalUuid } from './store/account-id'
 import { createPetStore } from './pet/store'
 import type {
+  AiChatDeltaPayload,
+  AiChatDonePayload,
+  AiChatHistoryView,
+  AiChatStartInput,
+  AiChatStartResult,
   AiExplainInput,
   AiGenerateInput,
   AiResult,
@@ -335,6 +347,18 @@ const configStore = createJsonStore<AppConfig>(storageDir(), 'config.json')
 // **只有成功的响应才进来**（规矩在 store/ai-cache.ts 的 cachePut 抬头）；
 // 键是 prompt 的哈希，换模型/改提示词自动失效，不需要"清缓存"这个动作
 const aiCacheStore = createJsonStore<AiCacheFile>(storageDir(), 'ai-cache.json')
+
+/**
+ * 侧栏对话历史（P1，docs/27 §10）：`chat.json` —— **设备级，不进盒**。
+ *
+ * 【为什么不进盒】AI 缓存与它同类：是本机这一台机器上发生过的对话。
+ * 云同步的四份文档（档案/错题/收藏/练习）是"学习成果"，对话是"聊天记录"，
+ * 混进盒会让同步体积和隐私面同时变大，而 docs/27 没要求它跟着人走。
+ *
+ * 【为什么不用 ai-cache 那个文件】见 store/ai-chat.ts 抬头：长文本、不命中、
+ * 会挤掉出题缓存。两个文件、两套上限，各自坏各自修。
+ */
+const aiChatStore = createJsonStore<AiChatFile>(storageDir(), 'chat.json')
 
 /**
  * 读配置，缺了就给一份默认的（**别把 DEFAULT_APP_CONFIG 直接交出去**，它是共享常量）。
@@ -826,6 +850,54 @@ async function withAi<T>(run: (deps: AiDeps) => Promise<AiResult<T>>): Promise<A
   }
 }
 
+// ---------------------------------------------------------------- 侧栏对话的并发与限流（P1，docs/27 §8.2 / §8.3）
+
+/**
+ * 侧栏对话在飞的请求：`requestId → 控制器`。
+ *
+ * 【为什么是 Map，而既有三条主链还是单个 `aiAbort`】
+ * 两种语义不能共用一个变量：
+ *   · 旧链路（讲报错 / 出题 / 测连接）是**新请求顶掉旧请求**的单飞，
+ *     `ai:cancel` 不带参时"掐掉现在那个"才有意义；
+ *   · 侧栏是**长连接**，要能单独掐、要能同时和出题并存（docs/27 §8.2 明确要求
+ *     「两者互不干扰」）。共用单例的话，用户一边等出题一边聊两句，第二次发送
+ *     就会把出题掐了，表现是"AI 出题莫名失败"。
+ *
+ * 【谁负责清】请求真结束的那一刻（成功/失败/取消）删自己那一项。
+ * 用 try/finally 把清理写在一处也好，但异步链里 `finally` 容易和"发 done"
+ * 的顺序打架（docs/27 §12.7：done 必须先于界面清理），所以"谁结束谁删"更好查。
+ */
+const aiChatInflight = new Map<string, AbortController>()
+
+/**
+ * 侧栏的限流闸门（同一会话最小间隔 800ms、连败 3 次退避 30s）。
+ *
+ * 【为什么闸门在主进程，而不是界面禁用按钮】
+ * 按钮的 disabled 是"界面自觉"；这条闸管的却是**用户自己的钱**。
+ * 渲染层写错一处、或者将来多一个入口直接 invoke，自觉就没了。
+ */
+const aiChatGate = createChatGate()
+
+/**
+ * 安全地推一条事件给渲染层。
+ *
+ * 【为什么每次都要判 isDestroyed】窗口可能在流式途中被关掉（用户直接关软件）。
+ * 对着已销毁的 webContents send 会抛，而这一抛发生在异步链里 ——
+ * 没有 catch 就是一条 unhandled rejection，进程日志里一片红，且**没有任何用户可见收益**。
+ */
+function sendToRenderer(
+  wc: IpcMainInvokeEvent['sender'],
+  channel: string,
+  payload: AiChatDeltaPayload | AiChatDonePayload
+): void {
+  if (wc.isDestroyed()) return
+  try {
+    wc.send(channel, payload)
+  } catch {
+    /* 窗口在这两行之间被销毁了：事件本来就没人接，丢掉即可 */
+  }
+}
+
 /**
  * 复核一道 AI 出的 `code` 题：**真的在本机跑一遍**，输出对上 `answer`（或任一
  * `accept`）才算通过。生成时就把关，而不是等学员答错才发现题目本身是错的。
@@ -881,6 +953,48 @@ function assertAiExplain(input: unknown): asserts input is AiExplainInput {
     throw new Error('invalid ai payload')
   }
   assertTerms(i.terms)
+}
+
+/**
+ * `ai:chat-start` 的入参校验。
+ *
+ * 【为什么校验得比别处细】这条链上有两样东西是**用户付钱**的：
+ * 发出去的 token、和"历史被写成什么样"。渲染层是网页环境（CSP 再严也挡不住
+ * 它自己被改坏），而主进程是最后一道 —— 畸形数据在这里抛，比让它进提示词强。
+ *
+ * 【为什么只抛不"修正"】入参形状不对 = 我们自己写错了（调用点传错），
+ * 和 runner:run 一个规矩：炸得响亮才有人修。「顺手洗一遍」会把调用点的 bug
+ * 变成一条永远发不出去的悄悄话，查都没法查。
+ */
+function assertAiChatStart(input: unknown): asserts input is AiChatStartInput {
+  const i = input as AiChatStartInput | null
+  if (!i || typeof i !== 'object') throw new Error('invalid ai payload')
+  if (!Array.isArray(i.messages) || i.messages.length === 0) throw new Error('invalid ai payload')
+  // 上限：渲染层每次最多带 ~几十条；给到 200 是防"某个调用点把全量历史灌进来"
+  if (i.messages.length > 200) throw new Error('invalid ai payload')
+  for (const m of i.messages) {
+    if (!m || typeof m !== 'object') throw new Error('invalid ai payload')
+    if (m.role !== 'user' && m.role !== 'assistant') throw new Error('invalid ai payload')
+    if (typeof m.content !== 'string') throw new Error('invalid ai payload')
+  }
+
+  const ctx = i.context
+  if (ctx === undefined) return
+  if (!ctx || typeof ctx !== 'object') throw new Error('invalid ai payload')
+  if (ctx.code !== undefined && typeof ctx.code !== 'string') throw new Error('invalid ai payload')
+  if (ctx.runOutput !== undefined && typeof ctx.runOutput !== 'string') {
+    throw new Error('invalid ai payload')
+  }
+  if (ctx.lang !== undefined) assertLang(ctx.lang)
+  if (ctx.terms !== undefined) assertTerms(ctx.terms)
+  if (ctx.selection !== undefined) {
+    const s = ctx.selection
+    if (!s || typeof s !== 'object') throw new Error('invalid ai payload')
+    if (typeof s.text !== 'string') throw new Error('invalid ai payload')
+    if (typeof s.fromLine !== 'number' || typeof s.toLine !== 'number') {
+      throw new Error('invalid ai payload')
+    }
+  }
 }
 
 function assertAiGenerate(input: unknown): asserts input is AiGenerateInput {
@@ -1887,9 +2001,133 @@ if (!gotTheLock) {
     /**
      * 取消。**没有请求在飞时调用它是安全的** —— abort 一个已经结束的控制器
      * 是空操作，这是 AbortController 保证的，不用额外判空。
+     *
+     * 【P1 起多了个可选参数】（docs/27 §8.1「扩展 1 条」）
+     *   · 带 `{requestId}`：只掐那一条侧栏对话；
+     *   · 省略参数：取消**全部** —— 旧单飞通道 + 所有在飞的侧栏对话。
+     *     旧调用点（设置页测试连接、挑战抽题）调的就是这一支，而旧世界里
+     *     "全部"恰好等于"现在那一个"，所以**旧语义逐字节不变**（§5.2）。
+     *
+     * 【为什么省略时也要掐侧栏】用户按下"取消"的意思是"别再花钱了"。
+     * 只掐旧通道、放任侧栏继续烧，是把他那句话理解反了。
+     * 侧栏自己的取消按钮一定带 requestId，所以正常使用中不会误伤（§12.2）。
      */
-    ipcMain.handle(IPC.aiCancel, () => {
+    ipcMain.handle(IPC.aiCancel, (_e, payload?: { requestId?: string }) => {
+      const requestId =
+        payload && typeof payload === 'object' ? (payload as { requestId?: unknown }).requestId : undefined
+      if (typeof requestId === 'string' && requestId !== '') {
+        aiChatInflight.get(requestId)?.abort()
+        return
+      }
       aiAbort?.abort()
+      for (const ac of aiChatInflight.values()) ac.abort()
+    })
+
+    // ---- AI 侧栏对话（P1，docs/27 §8）
+    //
+    // 五条通道的分工：
+    //   start   渲染层要开一条对话 → **立刻**回 requestId，不等模型
+    //   delta   主进程 → 渲染层：正文增量（每个块一条）
+    //   done    主进程 → 渲染层：统一收尾（成功/失败/取消都是这一条）
+    //   history 重启后把 chat.json 读回来（docs/27 §8.1 未列，见通道注释）
+    //   clear   清空 chat.json
+
+    /**
+     * 开一条侧栏对话。
+     *
+     * 【为什么 invoke 立刻返回、正文走事件】**这是流式的全部意义**：
+     * 等模型说完再 return 的话，invoke 会挂 20~120 秒，渲染层连"正在输入"
+     * 都画不出来（它连 requestId 都还没拿到）。
+     *
+     * 【为什么先落盘主人这句】他确实说过；失败时历史里保留这一句，
+     * 下次打开还能看到"我问过、它没答上来"，比凭空消失诚实。
+     */
+    ipcMain.handle(IPC.aiChatStart, (e, raw: unknown): AiChatStartResult => {
+      assertAiChatStart(raw)
+
+      /*
+       * id 优先沿用渲染层预生成的那个（见 types.ts 的 AiChatStartInput.requestId：
+       * 渲染层先生成才能保证"事件到的时候它已经知道自己叫什么"）。
+       * 只在缺失/形状可疑时自己生成 —— 长度上限防的是"某个调用点把整段文本当 id 灌进来"。
+       */
+      const wantId = raw.requestId
+      const requestId =
+        typeof wantId === 'string' && wantId !== '' && wantId.length <= 64
+          ? wantId
+          : crypto.randomUUID()
+      const now = Date.now()
+
+      // 闸门顺序：先限流、再看有没有在飞的 —— 两者的提示不同（§8.3 vs §8.2）
+      const throttled = aiChatGate.tryStart(now)
+      if (throttled !== null) return { requestId, accepted: false, reason: throttled }
+      if (aiChatInflight.size > 0) return { requestId, accepted: false, reason: 'busy' }
+
+      const ac = new AbortController()
+      aiChatInflight.set(requestId, ac)
+      const wc = e.sender
+
+      const last = raw.messages[raw.messages.length - 1]
+      if (last.role === 'user') {
+        aiChatStore.write(appendChatMessage(aiChatStore.read(), last))
+      }
+
+      void runChat(
+        {
+          // Electron 主进程自带全局 fetch（Node 18+ 的 undici），不用额外引库
+          fetch: (url, init) => globalThis.fetch(url, init),
+          getConfig: readConfig,
+          signal: ac.signal
+        },
+        raw,
+        (delta) => {
+          // 已经取消/结束的请求不许再往界面推：否则"取消"之后还会冒出几个字，
+          // 看起来像取消没生效（用户会再点一次，而那一次真的会重复计费）
+          if (ac.signal.aborted) return
+          sendToRenderer(wc, IPC.aiChatDelta, { requestId, delta })
+        }
+      ).then(
+        (res) => {
+          aiChatInflight.delete(requestId)
+          if (res.ok) {
+            aiChatGate.noteResult('ok', Date.now())
+            // 助手这一句也落盘：不落的话，重启后历史里只剩主人单方面在问
+            aiChatStore.write(appendChatMessage(aiChatStore.read(), { role: 'assistant', content: res.data }))
+            sendToRenderer(wc, IPC.aiChatDone, { requestId, ok: true })
+            return
+          }
+          aiChatGate.noteResult(res.reason === 'canceled' ? 'cancel' : 'fail', Date.now())
+          sendToRenderer(wc, IPC.aiChatDone, {
+            requestId,
+            ok: false,
+            reason: res.reason,
+            detail: res.detail
+          })
+        },
+        // runChat 按设计不抛（失败即值）；能到这里的只有"我们自己的代码炸了"。
+        // 照样要发 done —— 不发的话界面永远卡在"正在输入"（docs/27 §12.7）。
+        (err: unknown) => {
+          aiChatInflight.delete(requestId)
+          aiChatGate.noteResult('fail', Date.now())
+          sendToRenderer(wc, IPC.aiChatDone, {
+            requestId,
+            ok: false,
+            reason: 'bad-response',
+            detail: err instanceof Error ? err.message : String(err)
+          })
+        }
+      )
+
+      return { requestId, accepted: true }
+    })
+
+    /** 读会话历史（最多 200 条）。文件坏掉时返回空列表 —— 不是错误，是"重启从头来" */
+    ipcMain.handle(IPC.aiChatHistory, (): AiChatHistoryView => ({
+      messages: normalizeChatFile(aiChatStore.read()).messages
+    }))
+
+    /** 清空对话。写一份空结构而不是删文件：删文件会让 .bak 在下次读取时"复活"它 */
+    ipcMain.handle(IPC.aiChatClear, () => {
+      aiChatStore.write(clearChatFile())
     })
 
     // ---- 每日挑战（M6）

@@ -1,6 +1,11 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '../shared/ipc-channels'
 import type {
+  AiChatDeltaPayload,
+  AiChatDonePayload,
+  AiChatHistoryView,
+  AiChatStartInput,
+  AiChatStartResult,
   AiExplainInput,
   AiGenerateInput,
   AiResult,
@@ -259,10 +264,66 @@ const miai = {
     ipcRenderer.invoke(IPC.aiTestConnection),
 
   /**
-   * 掐掉在飞的那个 AI 请求（真的 abort，不是假装不看了）。
+   * 掐掉在飞的 AI 请求（真的 abort，不是假装不看了）。
    * 没有请求在飞时调用它是安全的，什么都不会发生。
+   *
+   * 【P1 起可带 requestId】（docs/27 §8.1「扩展 1 条」）：
+   *   · 带 id → 只掐那一条侧栏对话（侧栏自己的取消按钮必须带，否则会误伤出题）；
+   *   · 不带 → 取消全部（旧调用点的原样行为：那时候"全部"就等于"现在那一个"）。
    */
-  aiCancel: (): Promise<void> => ipcRenderer.invoke(IPC.aiCancel),
+  aiCancel: (requestId?: string): Promise<void> =>
+    ipcRenderer.invoke(IPC.aiCancel, { requestId }),
+
+  // ---- AI 侧栏对话（P1，docs/27 §8）
+  //
+  // 【形状为什么和上面三条不一样】那三条是"问一句、等一整段回来"；
+  // 这条是**立刻回 requestId、正文走事件**。等整段回来的话，界面连
+  // "正在输入"都画不出来（invoke 会挂到模型说完，20~120 秒）。
+  //
+  // ⚠️ 红线（docs/27 §3.4 / §12.3）：renderer **不许**自己 fetch / EventSource
+  // 去打模型接口。Key 在主进程，出网也在主进程 —— 这里是把流"搬"进来的唯一入口。
+
+  /**
+   * 开一条对话。`accepted:false` 表示这次根本没发出去（`reason`: busy / throttled /
+   * no-key…），界面据此直接说一句人话，不用等一个永远不会来的增量。
+   */
+  aiChatStart: (input: AiChatStartInput): Promise<AiChatStartResult> =>
+    ipcRenderer.invoke(IPC.aiChatStart, input),
+
+  /**
+   * 订阅正文增量。**契约同 onWallpaperState**：回调只收载荷（绝不把
+   * IpcRendererEvent 泄给渲染层 —— 它带着 sender 等原生对象），返回退订函数。
+   *
+   * 【订阅前就开跑会丢增量】所以顺序必须是"先订阅、再 aiChatStart"；
+   * 万一真丢了，`onAiChatDone` 那条一定会到，界面不会卡死（只是少了几个字）。
+   */
+  onAiChatDelta: (cb: (p: AiChatDeltaPayload) => void): (() => void) => {
+    const listener = (_e: Electron.IpcRendererEvent, p: AiChatDeltaPayload): void => cb(p)
+    ipcRenderer.on(IPC.aiChatDelta, listener)
+    return () => {
+      ipcRenderer.removeListener(IPC.aiChatDelta, listener)
+    }
+  },
+
+  /**
+   * 订阅收尾（成功 / 失败 / 取消都走这一条）。契约同上。
+   *
+   * 【它必须最后到、且一定会到】界面的"正在输入"只在这一条里复位 ——
+   * 少了它，界面会永远停在输入中（docs/27 §12.7 点名的那条坑）。
+   */
+  onAiChatDone: (cb: (p: AiChatDonePayload) => void): (() => void) => {
+    const listener = (_e: Electron.IpcRendererEvent, p: AiChatDonePayload): void => cb(p)
+    ipcRenderer.on(IPC.aiChatDone, listener)
+    return () => {
+      ipcRenderer.removeListener(IPC.aiChatDone, listener)
+    }
+  },
+
+  /** 读会话历史（跨重启，最多 200 条）。文件坏掉时是空列表 —— 不是错误 */
+  getChatHistory: (): Promise<AiChatHistoryView> => ipcRenderer.invoke(IPC.aiChatHistory),
+
+  /** 清空会话历史（连磁盘一起清，否则下次启动历史会"复活"） */
+  clearChat: (): Promise<void> => ipcRenderer.invoke(IPC.aiChatClear),
 
   /**
    * 读某天的挑战批次**和抽题要用的排除清单**（见 types.ts 的 `ChallengeToday`）。

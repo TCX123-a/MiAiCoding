@@ -23,6 +23,7 @@ import { ACTION, ERROR_UI, RUNNER_UI, TOAST } from '../../lib/copy'
 import { EDITOR_LANGS, shouldRestoreFocus } from '../../lib/editor-setup'
 import { detectIdeOnce, planIdeChoice, type IdePickHint } from '../../lib/ide-detect'
 import { runView } from '../../lib/run-result-view'
+import { markSelectionState, registerSelectionSource, releaseSelectionSource } from '../../lib/editor-selection'
 import { reportRunToPet, type PetViewRect } from '../../lib/pet-bridge'
 import { claimWorkRect, releaseWorkRect } from '../../lib/pet-work-rect'
 import MiButton from '../base/MiButton.vue'
@@ -292,7 +293,44 @@ const editor = ref<{
   focus: () => void
   clear: () => void
   lineRect: (n: number) => PetViewRect | null
+  selection: () => { text: string; fromLine: number; toLine: number } | null
 } | null>(null)
+
+/**
+ * 把编辑器的选区透出去（P1，AI 侧栏的「@选区」）。
+ *
+ * 【为什么加这一层转发，而不是让侧栏直接拿 CodeEditor】编辑器实例住在这一层
+ * （它是 RunnerPanel 的子组件）；侧栏和 RunnerPanel 是**兄弟**，
+ * 兄弟之间不该知道对方的内部结构。父组件（PlaygroundView）拿到的就是这个函数 ——
+ * 侧栏只认"能现取一段选区"这个契约，不认 CodeEditor。
+ */
+function selection(): { text: string; fromLine: number; toLine: number } | null {
+  return editor.value?.selection() ?? null
+}
+
+/*
+ * 把"取选区"这件事登记给侧栏（P1）。侧栏在外壳里，拿不到这个组件实例 ——
+ * 登记处是两者之间唯一的桥（理由见 lib/editor-selection.ts）。
+ * 卸载时**必须撤销并比对是不是自己**，否则路由切走之后侧栏还会指着一个
+ * 已销毁的 EditorView。
+ */
+const selectionSource = (): { text: string; fromLine: number; toLine: number } | null =>
+  editor.value?.selection() ?? null
+
+onMounted(() => {
+  registerSelectionSource(selectionSource)
+})
+
+onBeforeUnmount(() => {
+  releaseSelectionSource(selectionSource)
+})
+
+/** 编辑器报上来的"有没有选区"（只透传，不解释） */
+function onSelectionChange(has: boolean): void {
+  markSelectionState(has)
+}
+
+defineExpose({ selection })
 
 /**
  * 输出区正文（桌宠的兜底落脚点）：报错行不在视口里 / 认不出行号时，
@@ -463,6 +501,7 @@ watch(
           :lang="runner.lang"
           :readonly="runner.running"
           height="100%"
+          @selection-change="onSelectionChange"
         />
       </div>
     </div>

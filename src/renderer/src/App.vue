@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { Pane, Splitpanes } from 'splitpanes'
 import Sidebar from './components/domain/Sidebar.vue'
 import RightPanel from './components/domain/RightPanel.vue'
+import AiPanel from './components/domain/AiPanel.vue'
 import SearchPanel from './components/domain/SearchPanel.vue'
 import QuizOverlay from './components/domain/quiz/QuizOverlay.vue'
 import RewardDialog from './components/domain/quiz/RewardDialog.vue'
@@ -13,7 +14,7 @@ import WallpaperLayer from './components/wallpaper/WallpaperLayer.vue'
 import TopBar from './components/domain/TopBar.vue'
 import FullscreenMenu from './components/domain/FullscreenMenu.vue'
 import MiToast from './components/base/MiToast.vue'
-import { LAYOUT } from './lib/copy'
+import { AI_CHAT, LAYOUT } from './lib/copy'
 import { useCloudSyncStore } from './stores/cloud-sync'
 import { useSearchStore } from './stores/search'
 import { useSettingsStore } from './stores/settings'
@@ -73,6 +74,22 @@ const menuOpen = ref(false)
 function openMenu(): void {
   menuOpen.value = true
 }
+
+/**
+ * 右栏当前显示哪一页（P1，docs/27 §8.5 落点修订）。
+ *
+ * 【为什么右栏要做成两个页签】默认 1200 窗口下主区只有 720px
+ * （左栏 18% + 右栏 22%）。把 AI 侧栏当成"第四栏"或塞进主区，
+ * 都会把编辑器和首页卡片压到 366px —— 那是把主界面改窄，不是加功能。
+ * 右栏本来就是给辅助信息留的位置，还能被用户拖宽，是唯一不伤主区的落点。
+ *
+ * 【为什么默认 'panel'】默认值必须是"旧行为"：升级完第一眼看到的还是
+ * 练习入口/复习状态，AI 想用的人自己点一下页签（只加少减，§5.2）。
+ *
+ * 【为什么不落配置】它是一次交互状态，不是用户的长期设定（docs/27 §10：
+ * P1 不新增配置字段，schema 保持 v20）。
+ */
+const rightTab = ref<'panel' | 'ai'>('panel')
 
 const layout = computed<LayoutConfig>(() => settings.config.layout)
 const rightPanelOpen = computed(() => layout.value.rightPanelOpen)
@@ -307,7 +324,34 @@ onBeforeUnmount(() => {
         :min-size="RIGHT_PANEL_MIN_SIZE"
         :max-size="RIGHT_PANEL_MAX_SIZE"
       >
-        <RightPanel />
+        <div class="right-dock">
+          <div class="right-tabs">
+            <button
+              type="button"
+              class="right-tab"
+              :class="{ active: rightTab === 'panel' }"
+              :aria-pressed="rightTab === 'panel'"
+              :title="LAYOUT.TAB_PANEL_TITLE"
+              @click="rightTab = 'panel'"
+            >
+              {{ LAYOUT.TAB_PANEL }}
+            </button>
+            <button
+              type="button"
+              class="right-tab"
+              :class="{ active: rightTab === 'ai' }"
+              :aria-pressed="rightTab === 'ai'"
+              :title="AI_CHAT.TAB_TITLE"
+              @click="rightTab = 'ai'"
+            >
+              {{ AI_CHAT.TAB }}
+            </button>
+          </div>
+          <div class="right-dock-body">
+            <RightPanel v-if="rightTab === 'panel'" />
+            <AiPanel v-else />
+          </div>
+        </div>
       </Pane>
     </Splitpanes>
 
@@ -548,5 +592,54 @@ onBeforeUnmount(() => {
 .layout :deep(.splitpanes__splitter.is-fold-hint)::before {
   width: 4px;
   background: var(--mi-blue-deep);
+}
+
+/* ---------------------------------------------------------------- 右栏页签（P1）
+
+   右栏在 P1 起有两个页签：「辅助信息」（原来那一栏，默认）与「大肥鱼」（AI 侧栏）。
+   页签条只占 32px，两栏的**宽度逻辑一个字没动** —— 仍然是用户拖出来的那个百分比，
+   所以「只加少减」在这里是"右栏里多了一个页签"，不是"多了一栏"。 */
+.right-dock {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.right-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 6px 8px 0;
+  flex-shrink: 0;
+}
+.right-tab {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 6px;
+  border: none;
+  border-radius: var(--mi-radius-sm) var(--mi-radius-sm) 0 0;
+  background: transparent;
+  color: var(--mi-text-2);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.right-tab:hover {
+  color: var(--mi-text);
+}
+/* 选中态用底色 + 字色两个信号，不只靠颜色深浅 —— 264px 的窄栏里
+   只变字重几乎看不出来（对比度硬线也要求文字始终实心，不用 opacity） */
+.right-tab.active {
+  background: var(--mi-bg);
+  color: var(--mi-text);
+  font-weight: 600;
+}
+.right-dock-body {
+  flex: 1;
+  min-height: 0;
+  /* 子组件（RightPanel / AiPanel）各自管自己的滚动；这里只负责给它们确定的高度 */
+  overflow: hidden;
 }
 </style>

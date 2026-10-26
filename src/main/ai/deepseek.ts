@@ -19,6 +19,7 @@ import { normalizeStem, parseAiQuestions, type AiParseResult } from '../../share
 import type { PoolItem } from '../../shared/challenge'
 import { PET_PROMPT } from '../../shared/copy'
 import type { PetChatMessage } from '../../shared/pet'
+import { createSseParser, readSsePayload } from '../../shared/sse'
 
 // ---------------------------------------------------------------- 依赖注入
 
@@ -27,7 +28,29 @@ export interface HttpResponseLike {
   ok: boolean
   status: number
   text(): Promise<string>
+  /**
+   * 流式响应的字节流（P1 追加，**可选**）。
+   *
+   * 【为什么是可选的，而不是新开一个 StreamResponseLike】
+   * 既有 5 个导出（讲报错 / 出题 / 测试连接 / 余额 / 桌宠聊天）都是整段返回，
+   * 它们的假货只实现了 `text()`；把它变成必填，等于逼所有既有测试跟着改一遍 ——
+   * 而「只加少减」要求旧路径与旧测试**逐字节不变**（docs/27 §5.2）。
+   * 可选字段让流式成为一条**新路**，旧路一点都不经过它。
+   *
+   * 【形状为什么这么小】Node 的 `Response.body`（web ReadableStream）自带
+   * `getReader()`，返回的东西正好满足 `StreamReaderLike`；测试里的假货也用
+   * 同一个形状手写，不需要真的构造 ReadableStream。
+   */
+  body?: { getReader(): StreamReaderLike } | null
 }
+
+/** 流式读口的最小形状（Node fetch 的默认 reader 就满足它） */
+export interface StreamReaderLike {
+  read(): Promise<{ done: boolean; value?: Uint8Array }>
+  /** 提前收场时释放连接。**失败不抛**（见 streamChat 的 finally） */
+  cancel?(): Promise<void>
+}
+
 
 export type FetchLike = (url: string, init: RequestInit) => Promise<HttpResponseLike>
 
@@ -540,6 +563,191 @@ export async function chatPet(
     max_tokens: MAX_TOKENS_PET,
     stream: false
   })
+}
+
+// ---------------------------------------------------------------- 流式对话（P1，docs/27 §8）
+
+/**
+ * **首字**超时：从发出请求到收到第一个正文增量的上限。
+ *
+ * 【为什么流式下"总时长"不再是唯一判据】不流式时，用户只能等最后那一包，
+ * 30 秒也好 3 分钟也好，体验差别就是"等"；流式之后第一块字迟迟不来，
+ * 界面就是一片空白 + 一个转圈 —— 那和卡死没有区别。20 秒是"还愿意盯着看"
+ * 的上限（docs/27 §8.3 拍板值）。
+ *
+ * 【它和总时长是两道闸，不是一道】首字闸只负责"开头"，一旦开了头就不再计时
+ * （`sawFirstToken` 一置位就 clearTimeout），否则长回答会被首字闸误杀。
+ */
+export const CHAT_FIRST_TOKEN_TIMEOUT_MS = 20_000
+
+/**
+ * 流式对话的**总时长**上限。120 秒，和出题的 180 秒**故意不一样**
+ * （docs/27 §8.3）：出题要吐 20 道题的完整 JSON，是"长尾允许"；
+ * 对话一旦超过两分钟，用户早就滚走了，继续跑只是白烧钱。
+ */
+export const CHAT_STREAM_TIMEOUT_MS = 120_000
+
+/** 流式请求的入参。`messages` 由 ai/chat.ts 拼好（system 段在那边） */
+export interface StreamChatInput {
+  messages: ChatMessage[]
+  temperature: number
+  maxTokens: number
+}
+
+/**
+ * 流式对话：**边收边推**，每来一块正文就调一次 `onDelta`。
+ *
+ * 与 `postChat` 同一条纪律：失败以 `AiResult` 返回、不抛；`fetch` 是注入的；
+ * 零中文（原因码由界面翻成人话）。差别只有一个 —— 正文不再等齐，
+ * 而是**逐块交出去**，所以调用方拿到的是"已经推给界面的那份拼接结果"。
+ *
+ * 【双闸超时怎么落地】两个 `setTimeout` 共用一个 `AbortController`：
+ *   · 首字闸：`sawFirstToken` 一置位就清掉，之后只受总时长管；
+ *   · 总时长闸：无论如何都会在 120 秒 abort。
+ * 两个标志位分开记，是因为「首字没来」和「说到一半超时」对用户是两件事，
+ * 虽然原因码都是 timeout（界面那句话写的是"等太久"，两种都适用）。
+ *
+ * 【取消为什么优先于超时】外部 abort（用户点取消）不置任何 timeout 标志，
+ * 于是 catch 里落到 `canceled` —— 不再烧 token，界面也不该冒出一句"超时了喵"。
+ */
+export async function streamChat(
+  deps: AiDeps,
+  input: StreamChatInput,
+  onDelta: (delta: string) => void
+): Promise<AiResult<string>> {
+  const cfg = deps.getConfig()
+  const apiKey = cfg.ai.apiKey.trim()
+  // 没配 Key 不是错误，是「这个功能还没开」（同 postChat 的口径）
+  if (apiKey === '') return fail('no-key')
+  if (deps.signal?.aborted) return fail('canceled')
+
+  const ac = new AbortController()
+  let firstTimedOut = false
+  let totalTimedOut = false
+  let sawFirstToken = false
+
+  let firstTimer: ReturnType<typeof setTimeout> | null = setTimeout(() => {
+    if (sawFirstToken) return
+    firstTimedOut = true
+    ac.abort()
+  }, CHAT_FIRST_TOKEN_TIMEOUT_MS)
+  const totalTimer = setTimeout(() => {
+    totalTimedOut = true
+    ac.abort()
+  }, CHAT_STREAM_TIMEOUT_MS)
+  const onExternalAbort = (): void => ac.abort()
+  deps.signal?.addEventListener('abort', onExternalAbort, { once: true })
+
+  const parser = createSseParser()
+  // stream:true —— 字节块可能在多字节字符中间断开，解码器必须流式喂
+  const decoder = new TextDecoder()
+  let reader: StreamReaderLike | null = null
+  let text = ''
+
+  /** 处理一条 SSE data；返回 true = 服务端说完了（[DONE]） */
+  /*
+   * 【"首字"到底指什么】这里指**流里出现了第一个有意义的增量**，
+   * 包括 `reasoning_content`（思考）—— 带思考的模型会先想后说，
+   * 思考期间一个正文字都没有；若只认正文，20 秒首字闸会在它正想得起劲时
+   * 把连接掐掉，用户看到"等太久"，而实际上一切正常。
+   * 思考内容**不往界面吐**（它不是给主人读的），只用来给闸门续命。
+   */
+  const kickFirstToken = (): void => {
+    if (sawFirstToken) return
+    sawFirstToken = true
+    if (firstTimer !== null) {
+      clearTimeout(firstTimer)
+      firstTimer = null
+    }
+  }
+
+  const applyEvent = (data: string): boolean => {
+    const payload = readSsePayload(data)
+    if (payload.kind === 'done') return true
+    if (payload.kind === 'ignore') return false
+    if (payload.kind === 'reasoning') {
+      kickFirstToken()
+      return false
+    }
+    kickFirstToken()
+    text += payload.text
+    onDelta(payload.text)
+    return false
+  }
+
+  try {
+    const res = await deps.fetch(chatUrl(cfg.ai.baseUrl), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: cfg.ai.model,
+        messages: input.messages,
+        temperature: input.temperature,
+        max_tokens: input.maxTokens,
+        stream: true
+      }),
+      signal: ac.signal
+    })
+
+    if (!res.ok) {
+      // 状态码分档口径与 postChat 逐条一致（同一套"用户下一步动作不同"的理由）
+      const raw = await res.text()
+      if (res.status === 401 || res.status === 403) return fail('unauthorized', detailOf(raw, res))
+      if (res.status === 402 || res.status === 429) return fail('quota', detailOf(raw, res))
+      if (res.status >= 500) return fail('server', detailOf(raw, res))
+      return fail('bad-response', detailOf(raw, res))
+    }
+
+    const body = res.body
+    if (!body) return fail('bad-response', 'no response body')
+    reader = body.getReader()
+
+    let finished = false
+    while (!finished) {
+      const step = await reader.read()
+      if (step.done) break
+      const chunk = decoder.decode(step.value ?? new Uint8Array(), { stream: true })
+      for (const ev of parser.feed(chunk)) {
+        if (applyEvent(ev.data)) {
+          finished = true
+          break
+        }
+      }
+    }
+    // 服务端偶发不发结束空行：把残余那块也过一遍，否则最后几个字会丢
+    if (!finished) {
+      for (const ev of parser.end()) {
+        if (applyEvent(ev.data)) break
+      }
+    }
+
+    // 一个字都没收到 = 不算"AI 说没话说"，而是一次失败（同 extractContent 的理由）
+    if (text.trim() === '') return fail('bad-response', 'empty stream')
+    return { ok: true, data: text }
+  } catch (e) {
+    // 取消、首字超时、总时长超时都会走到这里，靠 name 分辨
+    const name = (e as { name?: string } | null)?.name
+    if (name === 'AbortError' || name === 'TimeoutError') {
+      return fail(firstTimedOut || totalTimedOut ? 'timeout' : 'canceled')
+    }
+    return fail('offline', e instanceof Error ? e.message : String(e))
+  } finally {
+    clearTimeout(totalTimer)
+    if (firstTimer !== null) clearTimeout(firstTimer)
+    deps.signal?.removeEventListener('abort', onExternalAbort)
+    // 提前收场（[DONE] / 取消 / 超时）时把读口放开：不放会让连接挂到对端超时，
+    // 表现为"取消了但网卡上还有一条长连接"。释放失败不影响结果，一律吞掉。
+    if (reader?.cancel) {
+      try {
+        await reader.cancel()
+      } catch {
+        /* 读口已经断了，没东西可释放 */
+      }
+    }
+  }
 }
 
 /**
