@@ -52,6 +52,8 @@ const ALLOWED_AT_ZERO = [
   'feed-empty',
   'feed-full',
   'feed-ok',
+  // v7 模块五：饱了但好感没满的溢喂回执（feedPet 的 overflow），同 feed-* 族
+  'feed-overflow',
   'grant-checkin',
   'grant-lesson',
   'grant-review',
@@ -64,7 +66,13 @@ const ALLOWED_AT_ZERO = [
   'rice-cap',
   'rice-full',
   'run-ok',
-  'run-reward'
+  'run-reward',
+  // v7 模块五（2026-10-31）：喂小鱼干的四种回执 —— 与 feed-* 同族，
+  // 是"刚喂完/喂不动"的应答，饿到 0 时恰恰靠它救场，吞掉 = 点了没反应。
+  'snack-empty',
+  'snack-full',
+  'snack-ok',
+  'snack-overflow'
 ]
 
 /**

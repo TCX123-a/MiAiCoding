@@ -2,7 +2,7 @@
 id: common-37
 lang: common
 stage: 0
-order: 37
+order: 49
 title: 写代码的软件——编辑器、IDE 与配置思维
 tags: [工具链, 工程素养]
 required: ["common-36"]

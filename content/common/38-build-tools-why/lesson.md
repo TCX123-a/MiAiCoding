@@ -2,7 +2,7 @@
 id: common-38
 lang: common
 stage: 0
-order: 38
+order: 50
 title: 为什么要有管家——构建工具存在的理由
 tags: [工具链, 工程素养]
 required: ["common-37"]

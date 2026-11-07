@@ -2,7 +2,7 @@
 id: common-33
 lang: common
 stage: 0
-order: 30
+order: 42
 title: Python 的底牌：连 3 都是对象——名字、id 与「一切皆对象」
 tags: [面向对象, 变量]
 required: ["common-32"]

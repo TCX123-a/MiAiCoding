@@ -43,7 +43,7 @@
  * ——主人 2026-10-10 拍板的规矩：多语言不代表高分，专精一门也能霸榜，
  * 核心在于你能连对多少道高难度题目（RULES_LANGS 就是这句的展开）。
  */
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import MiCard from '../components/base/MiCard.vue'
 import MiMascot from '../components/base/MiMascot.vue'
@@ -126,6 +126,13 @@ const optInDisabled = computed(() => snap.value === null || board.optInBusy)
 function loadCurrent(): void {
   if (acct.signedIn) void board.load(period.value)
 }
+/**
+ * 8 秒卡死兜底的定时器句柄（2026-10-31 自检 P2）：
+ * 旧版直接 `setTimeout` 不存句柄 —— 用户在这 8 秒内切走页面，定时器照样
+ * 到点发请求（组件已经卸载，结果没人看）；来回进几次还真会叠出多个。
+ * 卸载时清掉它，句柄这里只此一份。
+ */
+let watchdog: ReturnType<typeof setTimeout> | null = null
 onMounted(() => {
   // 账号状态还没读过（本次启动第一次进这页）先补一发；读到了 signedIn 变 true
   // 会触发下面的 watch 拉榜 —— 这里 loadCurrent 只是"状态已在手"时的直通车
@@ -138,11 +145,18 @@ onMounted(() => {
    * 说不清是哪个 watcher 时序没接上。这里不赌时序：8 秒后还是空的就自己再拉一次。
    * 正在拉（loading）或已有失败态（failed，界面有说明行）都不插手。
    */
-  setTimeout(() => {
+  watchdog = setTimeout(() => {
+    watchdog = null
     if (!board.boards[period.value] && board.loading[period.value] !== true && board.failed[period.value] !== true) {
       loadCurrent()
     }
   }, 8000)
+})
+onBeforeUnmount(() => {
+  if (watchdog !== null) {
+    clearTimeout(watchdog)
+    watchdog = null
+  }
 })
 watch(period, () => loadCurrent())
 watch(

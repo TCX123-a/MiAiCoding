@@ -6,10 +6,13 @@
  * 运行路径完全同源：main.c / main.cpp / 类名.java / main.py），再用用户
  * **自己在设置里指定**的程序把那个文件打开。
  *
- * 【安全边界：exe 从哪来】
- * 对外只收 `(lang, code)`；exe 路径由主进程从 `readConfig()`（main/index.ts，
- * 全项目唯一读口）现读 —— 要是让渲染层传 exe，这条 IPC 就成了渲染层的
- * 「任意程序执行」通道。
+ * 【安全边界：exe 从哪来】对外只收 `(lang, code)`；exe 路径由主进程从
+ * `readConfig()`（main/index.ts，全项目唯一读口）现读 —— 要是让渲染层传 exe，
+ * 这条 IPC 就成了渲染层的「任意程序执行」通道。
+ * ⚠️ 只做到这一步还不够（2026-10-31 自检 P2）：渲染层能通过 `config:save`
+ * 改 nativeIdePaths，主进程再把它 spawn 起来，边界就形同虚设。所以 spawn 前
+ * 还有一道 **basename 白名单**（`ideNameOf`，即 IDE_EXE_NAMES）—— 见
+ * openInNativeIde 里的注释。
  *
  * 【为什么没有清理逻辑】IDE 打开文件是**异步**的：我们返回时它可能还没读到
  * 文件内容。导出后**绝不能**删目录（否则 IDE 里看到的是「文件不存在」）。
@@ -131,7 +134,14 @@ export function writeCodeToFile(
   if (plan.error) return null
   const dir = makeRunDir()
   const file = join(dir, plan.srcFile)
-  writeFileSync(file, encodeCode(code, encoding))
+  // v7 模块六：Java 多 public 类拆分时，把每个类都写到同一个临时目录，
+  // IDE/导出拿到的仍是入口文件路径；同目录下的 Person.java 等一并存在，
+  // 用 IDE 编译整目录不会丢类。
+  if (plan.sources) {
+    for (const source of plan.sources) writeFileSync(join(dir, source.file), encodeCode(source.content, encoding))
+  } else {
+    writeFileSync(file, encodeCode(code, encoding))
+  }
   return { dir, file }
 }
 
@@ -141,7 +151,8 @@ export function writeCodeToFile(
  * 三段各自的返回：
  *   ① 该语言没配路径 → `unconfigured`（渲染层会现检现荐，设置页也能手填）
  *   ② 配了但文件不在 → `missing`（下一步是换路径）—— 单列的理由见 types.ts 里 IdeOpenResult 的注释
- *   ③ 起不来 / 写不进 / 定不出文件名 → `failed` + detail
+ *   ③ 路径在、但不在 IDE 白名单 → `unsupported`（自动检测不会产出它，多半是手填错了）
+ *   ④ 起不来 / 写不进 / 定不出文件名 → `failed` + detail
  */
 export async function openInNativeIde(
   lang: LangOfCode,
@@ -154,6 +165,22 @@ export async function openInNativeIde(
     const exe = deps.readConfig().nativeIdePaths[lang].trim()
     if (exe === '') return { ok: false, reason: 'unconfigured' }
     if (!existsSync(exe)) return { ok: false, reason: 'missing', detail: exe }
+
+    /*
+     * 【2026-10-31 自检 P2】只拉起白名单里的 IDE。
+     *
+     * 旧版只有 existsSync 一道闸。文件头那句「exe 不在入参里，所以渲染层
+     * 无法任意执行程序」并不成立：渲染层能通过 `config:save` 往
+     * nativeIdePaths 里写**任意**路径，下一次点「本地 IDE 打开」主进程就
+     * 把它 spawn 起来 —— existsSync 只证明「这个文件存在」，不证明「它是 IDE」。
+     *
+     * 判据用 ideNameOf（IDE_EXE_NAMES 的 basename 白名单）：自动检测本来就
+     * 只产出这张表里的程序，正常路径零影响；手填/手挑一个不在表里的 exe
+     * （cmd.exe、任意下载来的程序）则停下来说清楚，而不是照单执行。
+     * 导出（exportCodeToFile）不在此列：它只写文件、不 spawn，编码仍按
+     * 「认不出就按语言回退」走。
+     */
+    if (ideNameOf(exe) === undefined) return { ok: false, reason: 'unsupported', detail: exe }
 
     const written = writeCodeToFile(lang, code, encodingForIdePath(lang, exe))
     if (!written) return { ok: false, reason: 'failed', detail: 'cannot derive source file name' }

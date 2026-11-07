@@ -2,7 +2,7 @@
 id: common-12
 lang: common
 stage: 0
-order: 34
+order: 46
 title: 看懂翻译官喵的报错——常见错误类型
 tags: [报错, 调试, 错误类型]
 required: ["common-11"]

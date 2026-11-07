@@ -9,6 +9,7 @@ import { useWallUiStore } from './stores/wall-ui'
 import { wallUiOf, materialFadeOf } from '../../shared/wall-ui'
 import type { SplashTimeline } from '../../shared/splash'
 import { applyCursorAssets, installCursor } from './lib/cursor'
+import { installCustomCursor } from './lib/custom-cursor'
 import { installSfxWire, loadSfxAssets } from './lib/sfx-wire'
 import { installAppNav } from './lib/app-nav'
 import { refreshRewardOverrides } from './lib/reward-overrides'
@@ -295,6 +296,9 @@ loadSfxAssets()
  */
 applyCursorAssets()
 installCursor()
+// 自定义指针（图片/视频）晚一步异步覆盖掉上面的内置值 —— 它要过一次 IPC
+// 和图片解码，没法同步。期间用户看到的是内置猫爪，不会闪成系统箭头。
+installCustomCursor()
 installSfxWire(router)
 // 桌宠菜单「一键直达设置」的接收端（主进程 app:nav → 跳到设置页某张卡）
 installAppNav(router)

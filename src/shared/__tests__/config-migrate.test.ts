@@ -27,6 +27,7 @@ import {
   type AppConfig
 } from '../types'
 import { defaultSplash } from '../splash'
+import { FREE_POOL_DEFAULT_MODEL } from '../free-pool'
 
 /** 一份**当前版本**的完整配置，用来做「迁移不该改动已经对了的东西」的基线 */
 const current = (): AppConfig => structuredClone(DEFAULT_APP_CONFIG)
@@ -39,7 +40,7 @@ describe('apiKey **绝对不能**在迁移里丢掉', () => {
     // 别的字段错了顶多是显示不对，这个错了用户得再去后台生成一把 Key。
     const key = 'sk-0123456789abcdef0123456789abcdef'
     const out = migrateConfig({ version: 1, ai: { apiKey: key } })
-    expect(out.ai.apiKey).toBe(key)
+    expect(out.ai.apiKeys.deepseek).toBe(key)
   })
 
   it('**不 trim**：前后带空格也一字不改地留着', () => {
@@ -48,26 +49,26 @@ describe('apiKey **绝对不能**在迁移里丢掉', () => {
     // 万一某家的 Key 真允许这种形状，我们就在他没察觉的情况下换了它的值。
     // 真需要 trim 的地方是保存入口（config-merge 的 nextApiKey），那里有单测盯着。
     const out = migrateConfig({ ai: { apiKey: '  sk-padded  ' } })
-    expect(out.ai.apiKey).toBe('  sk-padded  ')
+    expect(out.ai.apiKeys.deepseek).toBe('  sk-padded  ')
   })
 
   it('反向验证：**空串也是合法值**，不能被 fallback 顶掉', () => {
     // 「没配 Key」和「配了一把空 Key」在存储上都是空串，迁移必须原样接受。
     // 少了这一条，上面那条「不 trim」用一个 `?? ''` 也能绿 ——
     // 而那会把空串当成缺失，语义就变了。
-    expect(migrateConfig({ ai: { apiKey: '' } }).ai.apiKey).toBe('')
+    expect(migrateConfig({ ai: { apiKey: '' } }).ai.apiKeys.deepseek).toBe('')
   })
 
   it('apiKey 不是字符串时退回空串（而不是把某个对象塞进去）', () => {
     // 手工编辑过的配置文件里什么都可能。塞一个非字符串进去，
     // 后面拼 Authorization 头的时候才会炸，那时已经离现场很远了。
-    expect(migrateConfig({ ai: { apiKey: { nested: true } } }).ai.apiKey).toBe('')
+    expect(migrateConfig({ ai: { apiKey: { nested: true } } }).ai.apiKeys.deepseek).toBe('')
   })
 
   it('`ai` 整节都不在（或不是对象）时**不崩**，给一节默认值', () => {
     for (const raw of [{ version: 1 }, { ai: null }, { ai: 'nope' }, { ai: [] }]) {
       const out = migrateConfig(raw)
-      expect(out.ai.apiKey).toBe('')
+      expect(out.ai.apiKeys.deepseek).toBe('')
       expect(out.ai.baseUrl).toBe(DEFAULT_APP_CONFIG.ai.baseUrl)
       expect(out.ai.model).toBe(DEFAULT_APP_CONFIG.ai.model)
     }
@@ -965,7 +966,7 @@ describe('v19 → v20：AI 动态出题开关（默认关）', () => {
     })
     expect(out.version).toBe(CURRENT_CONFIG_VERSION)
     expect(out.ai.dynamicEnabled).toBe(false)
-    expect(out.ai.apiKey).toBe('sk-old')
+    expect(out.ai.apiKeys.deepseek).toBe('sk-old')
   })
 
   it('用户亲手打开的 true 必须留住', () => {
@@ -981,6 +982,272 @@ describe('v19 → v20：AI 动态出题开关（默认关）', () => {
 
   it('幂等：迁出来的配置再迁一遍逐字节不变', () => {
     const once = migrateConfig({ version: 19, ai: { dynamicEnabled: true } })
+    expect(migrateConfig(once)).toEqual(once)
+  })
+})
+
+// ---------------------------------------------------------------- v20 → v21
+
+/**
+ * v20 → v21：`ai.apiKey` 一个字符串拆成 `ai.apiKeys` 六个槽位 + `ai.provider`。
+ *
+ * 这条迁移最容易出的错有两类，且都是静默的：
+ *   · 把 Key 丢了（用户得回后台重新生成）；
+ *   · 把「中转/自建网关」认成官方厂商（Key 被发去官方域名，两边都不对）。
+ * 所以下面把「官方地址规范化」和「自定义原样保留」分成两条独立用例。
+ */
+describe('v20 → v21：单 Key 拆成多厂商表', () => {
+  it('DeepSeek 老配置：地址规范化、Key 灌进 deepseek 槽位、模型与开关不动', () => {
+    const key = 'sk-0123456789abcdef'
+    const out = migrateConfig({
+      version: 20,
+      ai: {
+        apiKey: key,
+        baseUrl: 'https://api.deepseek.com/',
+        model: 'deepseek-chat',
+        dynamicEnabled: true
+      }
+    })
+    expect(out.version).toBe(CURRENT_CONFIG_VERSION)
+    expect(out.ai.provider).toBe('deepseek')
+    expect(out.ai.apiKeys.deepseek).toBe(key)
+    expect(out.ai.baseUrl).toBe('https://api.deepseek.com')
+    expect(out.ai.model).toBe('deepseek-chat')
+    expect(out.ai.dynamicEnabled).toBe(true)
+  })
+
+  it('中转/自建地址：认成 custom，地址与 Key **原样保留**（绝不把 Key 送去官方域名）', () => {
+    const out = migrateConfig({
+      version: 20,
+      ai: {
+        apiKey: '  sk-proxy  ',
+        baseUrl: 'https://my-gateway.example.com/v1/',
+        model: 'gpt-4o'
+      }
+    })
+    expect(out.ai.provider).toBe('custom')
+    expect(out.ai.apiKeys.custom).toBe('  sk-proxy  ')
+    expect(out.ai.baseUrl).toBe('https://my-gateway.example.com/v1/')
+    expect(out.ai.model).toBe('gpt-4o')
+  })
+
+  it('认出来的官方厂商一律用目录地址（当年抄错字母的老用户自动修好）', () => {
+    const out = migrateConfig({
+      ai: { apiKey: 'k-openai', baseUrl: 'https://api.openai.com/v2', model: 'gpt-4o' }
+    })
+    expect(out.ai.provider).toBe('openai')
+    expect(out.ai.baseUrl).toBe('https://api.openai.com/v1')
+    expect(out.ai.apiKeys.openai).toBe('k-openai')
+  })
+
+  it('Kimi 的两套域名都认得出，Key 只进 kimi 槽位', () => {
+    const out = migrateConfig({
+      ai: { apiKey: 'k-moon', baseUrl: 'https://api.moonshot.ai/v1' }
+    })
+    expect(out.ai.provider).toBe('kimi')
+    expect(out.ai.baseUrl).toBe('https://api.moonshot.cn/v1')
+    expect(out.ai.apiKeys.kimi).toBe('k-moon')
+    expect(out.ai.apiKeys.deepseek).toBe('')
+  })
+
+  it('2026-11-01 新增五家的老地址也认得出，Key 只进对应槽位', () => {
+    const cases = [
+      ['zhipu', 'https://open.bigmodel.cn/api/paas/v4', 'https://open.bigmodel.cn/api/paas/v4'],
+      ['xai', 'https://api.x.ai/v1', 'https://api.x.ai/v1'],
+      [
+        'gemini',
+        'https://generativelanguage.googleapis.com/v1beta/openai/',
+        'https://generativelanguage.googleapis.com/v1beta/openai/'
+      ],
+      ['baidu', 'https://qianfan.baidubce.com/v2', 'https://qianfan.baidubce.com/v2'],
+      // 旧混元平台已停服：认出来后迁到现役 TokenHub 地址
+      [
+        'hunyuan',
+        'https://api.hunyuan.cloud.tencent.com/v1',
+        'https://tokenhub.tencentmaas.com/v1'
+      ],
+      [
+        'hunyuan',
+        'https://tokenhub.tencentmaas.com/v1',
+        'https://tokenhub.tencentmaas.com/v1'
+      ]
+    ] as const
+    for (const [provider, oldBase, canonical] of cases) {
+      const out = migrateConfig({ ai: { apiKey: 'k-new', baseUrl: oldBase } })
+      expect(out.ai.provider, provider).toBe(provider)
+      expect(out.ai.baseUrl, provider).toBe(canonical)
+      expect(out.ai.apiKeys[provider], provider).toBe('k-new')
+    }
+  })
+
+  it('没有 baseUrl 的极老配置：默认 DeepSeek，旧 Key 也带去', () => {
+    const out = migrateConfig({ version: 1, ai: { apiKey: 'sk-old' } })
+    expect(out.ai.provider).toBe('deepseek')
+    expect(out.ai.baseUrl).toBe('https://api.deepseek.com')
+    expect(out.ai.apiKeys.deepseek).toBe('sk-old')
+  })
+
+  it('apiKeys 表里已有的值优先，旧 apiKey 不许覆盖它', () => {
+    const out = migrateConfig({ ai: { apiKey: 'legacy', apiKeys: { deepseek: 'newer' } } })
+    expect(out.ai.apiKeys.deepseek).toBe('newer')
+  })
+
+  it('新旧两处都没有 → 全部厂商空串，不编造任何 Key', () => {
+    const out = migrateConfig({ version: 21 })
+    for (const id of [
+      'deepseek',
+      'openai',
+      'anthropic',
+      'qwen',
+      'kimi',
+      'zhipu',
+      'xai',
+      'gemini',
+      'baidu',
+      'hunyuan',
+      'custom'
+    ] as const) {
+      expect(out.ai.apiKeys[id], id).toBe('')
+    }
+  })
+
+  it('幂等：迁出来的配置再迁一遍逐字节不变', () => {
+    const once = migrateConfig({
+      version: 20,
+      ai: { apiKey: 'k', baseUrl: 'https://api.moonshot.cn/v1' }
+    })
+    expect(migrateConfig(once)).toEqual(once)
+  })
+})
+
+// ---------------------------------------------------------------- v21 → v22
+
+/**
+ * v21 → v22：加双模式（`ai.mode`）与免费池模型（`ai.poolModel`）。
+ *
+ * 这两格决定「请求发去哪条路」，静默写错比崩溃更糟：
+ *   · 老配置没有 mode → 必须落成 `api`（v21 的行为原样保留）；
+ *   · 用户选过 pool、但配置文件被人手改成垃圾 → 也必须落回 `api`，
+ *     不能因为一个乱码值就把请求送去第三方免费池。
+ */
+describe('v21 → v22：双模式 + 免费池模型', () => {
+  it('v21 老配置没有这两格 → 专属 API 模式 + 兜底池模型（行为与升级前一致）', () => {
+    const out = migrateConfig({ version: 21 })
+    expect(out.version).toBe(CURRENT_CONFIG_VERSION)
+    expect(out.ai.mode).toBe('api')
+    expect(out.ai.poolModel).toBe(FREE_POOL_DEFAULT_MODEL)
+  })
+
+  it('用户选过 pool → 原样保留（升级不能把免费池用户推回要 Key 的模式）', () => {
+    const out = migrateConfig({ version: 22, ai: { mode: 'pool', poolModel: 'some/free' } })
+    expect(out.ai.mode).toBe('pool')
+    expect(out.ai.poolModel).toBe('some/free')
+  })
+
+  it.each(['free', 'POOL', '', 42, null, {}])('坏 mode（%s）→ 退回 api，绝不猜成 pool', (mode) => {
+    const out = migrateConfig({ version: 22, ai: { mode } })
+    expect(out.ai.mode).toBe('api')
+  })
+
+  it('poolModel 不是非空字符串 → 用兜底模型（下一次请求必须有模型名可发）', () => {
+    for (const poolModel of [undefined, '', '   ', 42, null, {}, []]) {
+      const out = migrateConfig({ version: 22, ai: { poolModel } })
+      expect(out.ai.poolModel).toBe(FREE_POOL_DEFAULT_MODEL)
+    }
+  })
+
+  it('幂等：迁出来的双模式块再迁一遍逐字节不变', () => {
+    const once = migrateConfig({ version: 21, ai: { mode: 'pool', poolModel: 'x/free' } })
+    expect(migrateConfig(once)).toEqual(once)
+  })
+})
+
+// ---------------------------------------------------------------- v22 → v23
+
+/**
+ * v22 → v23：加思考档位（`ai.thinking`）与按模型记忆的表（`ai.thinkingByModel`）。
+ *
+ * 迁移只补缺，不替用户改主意：
+ *   · 没有这一格 → 按当前模型推荐一档（不是写死 medium）；
+ *   · 存过的档位与记忆表 → 原样保留；
+ *   · 坏值 → 推荐档，绝不把非法字符串漏到设置页的下拉框里。
+ */
+describe('v22 → v23：思考档位', () => {
+  it('老配置没有这两格 → 按当前模型推荐（deepseek-chat 是 medium）', () => {
+    const out = migrateConfig({ version: 22, ai: { model: 'deepseek-chat' } })
+    expect(out.version).toBe(CURRENT_CONFIG_VERSION)
+    expect(out.ai.thinking).toBe('medium')
+    expect(out.ai.thinkingByModel).toEqual({})
+  })
+
+  it('推荐是**按模型**算的：deepseek-reasoner 落成 high', () => {
+    const out = migrateConfig({ version: 22, ai: { model: 'deepseek-reasoner' } })
+    expect(out.ai.thinking).toBe('high')
+  })
+
+  it('免费池模式按池里的模型推荐（目前是 medium），不按专属模式的 model 算', () => {
+    const out = migrateConfig({
+      version: 22,
+      ai: { mode: 'pool', poolModel: 'kilo-auto/free', model: 'deepseek-chat' }
+    })
+    expect(out.ai.thinking).toBe('medium')
+  })
+
+  it('用户存过的档位与记忆表原样保留（迁移不是重置）', () => {
+    const out = migrateConfig({
+      version: 22,
+      ai: {
+        model: 'deepseek-chat',
+        thinking: 'off',
+        thinkingByModel: {
+          'api:deepseek:deepseek-chat': 'off',
+          'api:openai:gpt-5': 'high'
+        }
+      }
+    })
+    expect(out.ai.thinking).toBe('off')
+    expect(out.ai.thinkingByModel).toEqual({
+      'api:deepseek:deepseek-chat': 'off',
+      'api:openai:gpt-5': 'high'
+    })
+  })
+
+  it('没有记忆时用记忆表里这条路由的值', () => {
+    const out = migrateConfig({
+      version: 22,
+      ai: {
+        model: 'deepseek-chat',
+        thinkingByModel: { 'api:deepseek:deepseek-chat': 'low' }
+      }
+    })
+    expect(out.ai.thinking).toBe('low')
+  })
+
+  it.each(['ultra', 'HIGH', '', 42, null, {}, []])(
+    '坏档位（%s）→ 推荐值，绝不漏到下拉框',
+    (thinking) => {
+      const out = migrateConfig({ version: 22, ai: { model: 'deepseek-chat', thinking } })
+      expect(out.ai.thinking).toBe('medium')
+    }
+  )
+
+  it('记忆表里的坏条目被筛掉，好的留着；读一次配置不会往表里塞新条目', () => {
+    const out = migrateConfig({
+      version: 22,
+      ai: {
+        model: 'deepseek-chat',
+        thinkingByModel: {
+          'api:openai:gpt-5': 'high',
+          'api:openai:bad': 'ultra',
+          '': 'low'
+        }
+      }
+    })
+    expect(out.ai.thinkingByModel).toEqual({ 'api:openai:gpt-5': 'high' })
+  })
+
+  it('幂等：迁出来的思考块再迁一遍逐字节不变', () => {
+    const once = migrateConfig({ version: 22, ai: { model: 'deepseek-reasoner' } })
     expect(migrateConfig(once)).toEqual(once)
   })
 })
@@ -1096,9 +1363,9 @@ describe('输入整份坏掉时：给默认值，但**必须出声**', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     try {
       const out = migrateConfig(null)
-      out.ai.apiKey = 'MUTATED'
+      out.ai.apiKeys.deepseek = 'MUTATED'
       out.layout.sidebarSize = 999
-      expect(DEFAULT_APP_CONFIG.ai.apiKey).toBe('')
+      expect(DEFAULT_APP_CONFIG.ai.apiKeys.deepseek).toBe('')
       expect(DEFAULT_APP_CONFIG.layout).not.toEqual({ ...out.layout })
     } finally {
       warn.mockRestore()

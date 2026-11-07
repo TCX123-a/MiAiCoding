@@ -169,6 +169,13 @@ interface SlotRec {
   gen: number
   /** scene 档的引擎实例（kind!=='scene' 时恒 null；retireSlot 负责 destroy） */
   inst: SceneInstance | null
+  /**
+   * 液态玻璃取样的开闸（沙箱代理专有，见 lib/wallpaper/engine.ts 的 setMirror）。
+   * 非场景槽 / 老引擎实例恒 null；retireSlot 负责清回 null（实例已随之销毁）。
+   */
+  mirror: ((on: boolean) => void) | null
+  /** 已收到的镜像帧数（只读探针面；不是开闸入口，开闸只有 mirror） */
+  mirrorFrames: (() => number) | null
   /** 场景真实挂载耗时（毫秒；探针要的读数，非 scene 为 null） */
   mountMs: number | null
   /** 本次挂载用的首帧预算（探针/诊断回显「为什么等这么久」） */
@@ -240,6 +247,8 @@ function freshRec(el: HTMLElement): SlotRec {
     pending: false,
     gen: 0,
     inst: null,
+    mirror: null,
+    mirrorFrames: null,
     mountMs: null,
     budgetMs: null,
     diag: null
@@ -608,11 +617,16 @@ async function preloadInto(idx: number, it: WallpaperItem, myEpoch: number): Pro
     rec.src = plan.dir
     rec.degraded = false
     rec.inst = handle.inst
+    rec.mirror = handle.setMirror ?? null
+    rec.mirrorFrames = handle.mirrorFrames ?? null
     rec.mountMs = handle.mountMs
     rec.budgetMs = handle.budgetMs
     // mount resolve = 首帧已真画出（引擎就绪信号的唯一权威）⇒ 当场暂停：热身的层
     // 不占渲染开销；像素留在画布（preserveDrawingBuffer 恒开），转正 resume 即刻接上
     rec.inst.pause()
+    // 玻璃取样门与暂停无关地先对齐（热身期恒暂停 ⇒ 沙箱不会真回传，转正 resume
+    // 后自然开泵；这里写位不写帧，零开销）
+    applySceneMirror(rec)
     applyFit(rec)
     void pushSceneProps(rec)
     preloadState = 'ready'
@@ -987,6 +1001,9 @@ function retireSlot(idx: number): void {
     destroyScene(rec.inst)
     rec.inst = null
   }
+  // 取样门随实例一起作废（沙箱 iframe 与镜像 canvas 都已在 destroy 里摘掉）
+  rec.mirror = null
+  rec.mirrorFrames = null
   rec.fit = null
   rec.media = null
   rec.kind = 'none'
@@ -1137,10 +1154,14 @@ async function mountInto(idx: number, it: WallpaperItem, myEpoch: number): Promi
       rec.src = dir
       rec.degraded = false
       rec.inst = handle.inst
+      rec.mirror = handle.setMirror ?? null
+      rec.mirrorFrames = handle.mirrorFrames ?? null
       rec.mountMs = handle.mountMs
       rec.budgetMs = handle.budgetMs
       // 挂载即对齐暂停态：stopped 的变化可能发生在挂载期间，watch 不会补发
       if (stopped.value) rec.inst.pause()
+      // 玻璃取样门同刻对齐（同 applyFit 的落座补刀纪律；暂停中的实例不会回传）
+      applySceneMirror(rec)
       applyFit(rec)
       // 壁纸自带属性（全量「默认+覆盖」；异步，缓存命中时毫秒级）——不 await：
       // 渲染层不该等在属性上（见 pushSceneProps 的异步收口）
@@ -1510,6 +1531,9 @@ function snapshotStats(): Record<string, unknown> {
             z: r.el.style.zIndex,
             gen: r.gen,
             inst: !!r.inst,
+            // 玻璃取样门是否接上（沙箱代理专有；探针据此证明「开/关玻璃」真
+            // 传到了沙箱，而不是只在 store 里变了个布尔）
+            mirror: r.mirror !== null,
             mountMs: r.mountMs,
             budgetMs: r.budgetMs,
             diag: r.diag
@@ -1598,6 +1622,8 @@ function snapshotStats(): Record<string, unknown> {
         ? {
             mountMs: rec.mountMs,
             budgetMs: rec.budgetMs,
+            // 沙箱镜像回传的实测帧数（玻璃开着才涨；只读探针面）
+            mirrorFrames: rec.mirrorFrames ? rec.mirrorFrames() : null,
             fps: rec.inst.stats.fps,
             running: rec.inst.stats.running,
             paused: rec.inst.paused,
@@ -1865,6 +1891,29 @@ const wallUi = useWallUiStore()
 const refractRef = ref<HTMLCanvasElement | null>(null)
 let refractHandle: RefractionHandle | null = null
 
+/**
+ * 液态玻璃 → 场景取样的门（P0 沙盒方案 B 的配套，2026-10-31）。
+ *
+ * 场景画面现在活在 `sandbox="allow-scripts"` 的 iframe 里（scene-frame.ts），
+ * 父页面读不到那块 canvas 的像素，只能让沙箱按 0.5 缩放把 ImageBitmap 回传、
+ * 父页面画进 `.wp-fit` 内的隐藏镜像 canvas —— refraction 的 findSource 本来就
+ * 收 canvas，数学逐项不变。**这条回传只在玻璃折射开着时才该跑**：关着还每
+ * 33ms 传一张全屏图是白烧的 CPU/带宽（这也是「关掉玻璃 = 零开销」的承诺）。
+ *
+ * 视频/图片没有这条通道（父页面直接 drawImage 原生元素），rec.mirror 恒 null，
+ * 本函数对它们是无操作。设置页拨动开关走 watch(wallUi.config.glass) 热更，
+ * 挂载落座两处（attemptScene / preloadInto）各补一刀 —— 与 applyFit 的同一条
+ * 纪律：只在 watch 里写的话，挂载完成前已经跑过的 watch 不会补发。
+ */
+function applySceneMirror(rec: SlotRec): void {
+  if (!rec.mirror) return
+  try {
+    rec.mirror(wallUi.config.glass.refract)
+  } catch (err) {
+    console.warn('[wallpaper] scene mirror toggle failed:', err)
+  }
+}
+
 function ensureRefraction(): void {
   const el = refractRef.value
   if (el && !refractHandle) {
@@ -1884,7 +1933,14 @@ watch(refractRef, ensureRefraction, { immediate: true, flush: 'post' })
 
 watch(
   () => wallUi.config.glass,
-  () => refractHandle?.sync()
+  () => {
+    refractHandle?.sync()
+    // 玻璃折射开关同时是场景取样的门（applySceneMirror 的注释）：开 → 沙箱开始
+    // 回传，关 → 当场停泵。拨开关时场景可能正挂着，不补这一刀就要等下次挂载。
+    for (const rec of recs) {
+      if (rec) applySceneMirror(rec)
+    }
+  }
 )
 
 // 尺寸/档位变化直接让几何作废：等运行时的下一拍太慢（那一下是「镜头没跟上窗口」）

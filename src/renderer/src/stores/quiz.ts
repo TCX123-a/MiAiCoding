@@ -963,6 +963,26 @@ export const useQuizStore = defineStore('quiz', () => {
         // 同一条 allCorrect 判据，不另立第二份定义。
         reportPetEvent('review')
       }
+    } else if (s.mode === 'wrong') {
+      /**
+       * 错题本复习完成（v7 加，模块五 2026-10-31 主人点名）：
+       * 「错题本复习完成给大白饭+零食」。
+       *
+       * 【判据是 answeredAll，不是 allCorrect】错题本就是用来错的 ——
+       * 重做一遍还有几道没啃下来，那正是复习的价值所在，不能因此一分不给。
+       * 「完成」= 每一道都作答过（同上面 review 的发图口径，`checked[i]`）。
+       *
+       * 【为什么 kind 仍报 'review'】大白饭账本的服务端白名单只有
+       * feed/lesson/review/answer/checkin/run 六种；'review' 的语义就是
+       * "复习了一圈"，与错题本场景同义。brain 收到 review 时会**同时**发
+       * 一根小鱼干（PET_SNACK_REWARD.review），所以这里只发一次 grant，
+       * 不要再另外发 snack —— 那会绕过 brain 的日上限/满袋判据。
+       *
+       * 【日上限】rice 与 snack 两条账各自有 cap（4/天）；超过之后 brain
+       * 会如实说"今天攒满了"（不静默），这里不做二次判断。
+       */
+      const answeredAll = s.questions.length > 0 && s.questions.every((_q, i) => s!.checked[i])
+      if (answeredAll) grantPetRice('review')
     }
 
     /*

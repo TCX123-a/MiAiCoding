@@ -11,6 +11,7 @@ import { tmpdir } from 'os'
 import { dirname, isAbsolute, join } from 'path'
 import { performance } from 'perf_hooks'
 import { RUNNER } from '../../shared/copy'
+import { splitJavaSource } from '../../shared/java-split'
 import type { EnvReport, LangOfCode, RunRequest, RunResult } from '../../shared/types'
 
 // ---------------------------------------------------------------- 常量与纯函数（可单测）
@@ -119,6 +120,13 @@ export function findJavaClass(code: string): string | null {
 
 export interface LangPlan {
   srcFile: string
+  /**
+   * v7 模块六：Java 单文件多类拆分后要写盘的**全部**源文件。
+   * 没有这个字段 = 旧路径（把整段代码写进 srcFile 一个文件）。
+   */
+  sources?: { file: string; content: string }[]
+  /** 拆分信息（只有真的拆了才有）；运行器原样带进 RunResult.javaSplit */
+  javaSplit?: { files: string[]; entry: string }
   compile?: { exe: string; args: string[] }
   run: { exe: string; args: string[] }
   env?: Record<string, string>
@@ -152,6 +160,42 @@ export function planForLang(lang: LangOfCode, toolPath: string, code: string): L
         run: { exe: 'prog.exe', args: [] }
       }
     case 'java': {
+      // v7 模块六（2026-10-31）：顶层 public 类 ≥2 时拆分写盘（Person.java + Test.java）。
+      // 只有一个 public 类 / 没有 public 类 / 带 package 的代码一律返回 plan:null，
+      // 下面继续走**逐字节不变**的旧路径 —— 这是「不制造回归」的硬边界。
+      const split = splitJavaSource(code)
+      if (split.duplicatePublic) {
+        return {
+          srcFile: `${split.duplicatePublic}.java`,
+          run: { exe: toolPath, args: [] },
+          error: RUNNER.JAVA_DUPLICATE_CLASS(split.duplicatePublic)
+        }
+      }
+      if (split.plan) {
+        const javaExe = join(dirname(toolPath), 'java.exe')
+        const fileNames = split.plan.files.map((f) => f.file)
+        return {
+          srcFile: fileNames[0],
+          sources: split.plan.files,
+          javaSplit: { files: fileNames, entry: split.plan.entry },
+          compile: {
+            exe: toolPath,
+            // 显式列全部文件名（不用 *.java）：Windows 原生模式借 cmd 跑，
+            // 通配符展开与引号规则都不如显式清单可靠。
+            args: ['-J-Duser.language=en', '-J-Duser.country=US', '-encoding', 'UTF-8', ...fileNames]
+          },
+          run: {
+            exe: javaExe,
+            args: [
+              '-Duser.language=en',
+              '-Duser.country=US',
+              '-Dfile.encoding=UTF-8',
+              '-Dstdout.encoding=UTF-8',
+              split.plan.entry
+            ]
+          }
+        }
+      }
       const cls = findJavaClass(code)
       if (!cls) {
         return {
@@ -274,21 +318,36 @@ export function pickTempRoot(tmp: string, asciiFallback: string): string {
 }
 
 /**
- * 建本次运行的临时目录：优先 ASCII 根，创建失败则退回系统 tmpdir。
+ * 建本次运行的临时目录：优先 ASCII 根，创建失败再试另一个根。
+ *
+ * 【为什么是两个候选根，而不是「主根 + 系统 tmpdir」】
+ * 旧写法在 tmpdir 是纯 ASCII 时，主根**就是** tmpdir；它建不出来（磁盘满、
+ * TEMP 指向一个不存在的盘）之后又去 `mkdtempSync(join(tmpdir(), ...))` ——
+ * 同一个坏目录再试一次，注定失败，异常直接穿出 `runCode`。于是用户只看到
+ * 一句「这次没能跑起来，再点一次试试」，而再看几次也不会好。
+ * 现在两处**互不相同**：中文用户名 → 先 Public、失败再退回原 tmpdir；
+ * 其余情况 → 先 tmpdir、失败再退 Public。两个都建不出来才抛，
+ * 由 runCode / runNative 翻译成一句能照着做的人话（见 RUNNER.TEMP_DIR_FAIL）。
  *
  * 【为什么导出】原生模式（native.ts）要用**同一个**临时目录策略 ——
  * 两处各写一遍的话，「用户名含中文时退回 Public」这条修复就只会惠及其中一条路径，
  * 而另一条的症状（javac 报了看不懂的路径错）没人认得出是同一个根因。
  */
 export function makeRunDir(): string {
-  const fallback = join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'miai-runner')
-  const root = pickTempRoot(tmpdir(), fallback)
-  try {
-    mkdirSync(root, { recursive: true })
-    return mkdtempSync(join(root, 'miai-run-'))
-  } catch {
-    return mkdtempSync(join(tmpdir(), 'miai-run-'))
+  const tmp = tmpdir()
+  const publicRoot = join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'miai-runner')
+  // 中文用户名：Public 优先；其余：tmpdir 优先。第二个是真正不同的退路。
+  const roots = pickTempRoot(tmp, publicRoot) === publicRoot ? [publicRoot, tmp] : [tmp, publicRoot]
+  let lastErr: unknown
+  for (const root of roots) {
+    try {
+      mkdirSync(root, { recursive: true })
+      return mkdtempSync(join(root, 'miai-run-'))
+    } catch (e) {
+      lastErr = e
+    }
   }
+  throw lastErr ?? new Error('cannot create run directory')
 }
 
 /**
@@ -477,10 +536,14 @@ export async function runCode(req: RunRequest, report: EnvReport): Promise<RunRe
   // 只在这一趟真的跑了「运行」阶段时才带出去：编译失败时 stderr 本身就是主角，
   // 再挂一份就是同一段话在屏幕上显示两遍。
   let compileWarnings: string | undefined
+  // 拆分信息：成功、编译失败、运行失败都如实带出去（编译失败时最需要知道
+  // 「本鱼到底把你哪几个类拆成了什么文件」）。
+  let javaSplit: RunResult['javaSplit']
 
   const done = (partial: Omit<RunResult, 'durationMs'>): RunResult => ({
     ...partial,
     ...(compileWarnings && partial.phase === 'run' ? { compileWarnings } : {}),
+    ...(javaSplit ? { javaSplit } : {}),
     durationMs: Math.round(performance.now() - started)
   })
 
@@ -503,6 +566,7 @@ export async function runCode(req: RunRequest, report: EnvReport): Promise<RunRe
   }
 
   const plan = planForLang(req.lang, tool.path, req.code)
+  javaSplit = plan.javaSplit
   if (plan.error) {
     return done({
       ok: false,
@@ -516,9 +580,32 @@ export async function runCode(req: RunRequest, report: EnvReport): Promise<RunRe
     })
   }
 
-  const dir = makeRunDir()
+  // 临时目录真的建不出来（磁盘满、系统 TEMP 指向一个坏路径、两个候选根都不可写）：
+  // 这是一句**用户能照着做**的话，不是「再试一次」。不能让它抛穿 —— 抛出去渲染层
+  // 只会兜成通用的 UNEXPECTED（「再点一次试试」），而再点几次都不会好。
+  let dir: string
   try {
-    writeFileSync(join(dir, plan.srcFile), req.code, 'utf8')
+    dir = makeRunDir()
+  } catch (e) {
+    console.error('[runner] makeRunDir failed:', e)
+    return done({
+      ok: false,
+      phase: 'compile',
+      stdout: '',
+      stderr: '',
+      exitCode: null,
+      timedOut: false,
+      truncated: false,
+      message: RUNNER.TEMP_DIR_FAIL
+    })
+  }
+  try {
+    // 拆分过的 Java：每个文件写自己的内容；其余语言/单类 Java：整段写进 srcFile（旧行为）
+    if (plan.sources) {
+      for (const source of plan.sources) writeFileSync(join(dir, source.file), source.content, 'utf8')
+    } else {
+      writeFileSync(join(dir, plan.srcFile), req.code, 'utf8')
+    }
 
     if (plan.compile) {
       const c = await runProcess(plan.compile.exe, plan.compile.args, {

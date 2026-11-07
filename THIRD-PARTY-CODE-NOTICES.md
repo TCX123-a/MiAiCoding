@@ -264,12 +264,24 @@ SOFTWARE.
 `src/renderer/src/assets/cursors/`、`src/renderer/public/splash/` 中的素材由项目作者制作或提供。
 如果你替换为自己的素材，请自行确认授权；不要把「仓库里有这个文件」当成「它可以被任意商用」。
 
-**字体**：桌宠 helper 使用的 `上首软糖体.ttf`（SSRuanTangTi）是**第三方商业字体**，
-版权归上首品牌（SounSo）所有。该文件**不在本仓库的 Git 跟踪范围内**，
-来自 `dsh-pet` npm 包的 `assets/fonts/`，由 `build/dshpet-vendor.ts` 在构建时拷入
-`out/pet-helper/assets/fonts/`。它**不适用**本项目的 MIT 许可；把安装包用于商业分发前，
-必须自行取得字体授权或替换为可商用字体。`dsh-pet` 的「允许开源使用」条款不能覆盖
-字体本身的商业授权。
+**字体**：桌宠 helper 使用的 `MiSans-Regular.otf`（小米 MiSans）按
+**MiSans 字体知识产权许可协议**分发，版权归北京小米移动软件有限公司
+（Beijing Xiaomi Mobile Software Co.,Ltd.）所有（字体 name 表原文：
+`Copyright © 2020-2025 Beijing Xiaomi Mobile Software Co.,Ltd. All Rights Reserved.`）。官方下载：
+<https://hyperos.mi.com/font>（本项目从 `https://hyperos.mi.com/font-download/MiSans.zip`
+取回，SHA256 见 `resources/fonts/font-manifest.json`）。要点：
+
+- 允许个人与商业使用，允许把字体嵌入软件、随软件一起分发；
+- 要求在使用该字体的软件中**特别注明使用了 MiSans 字体**——本项目在设置页显示
+  「桌宠气泡字体使用了 MiSans 字体（小米免费商用）喵～」；
+- **不得改编、二次开发字体**，也**不得单独再分发字体软件副本**。因此该 `.otf`
+  **不在本仓库的 Git 跟踪范围内**，`npm run font:fetch` 会从官方包取回并校验；
+  由 `build/dshpet-vendor.ts` 在构建时拷入 `out/pet-helper/assets/fonts/`。
+- 它**不适用**本项目的 MIT 许可。许可证全文以上述官方页面为准。
+
+（历史记录：上游 `dsh-pet` npm 包自带 `上首软糖体.ttf`（SSRuanTangTi），是第三方商业
+字体，版权归上首品牌（SounSo）所有。本项目已于 2026-10-31 将其从构建产物中移除并替换为
+MiSans；`dsh-pet` 的「允许开源使用」条款不覆盖字体本身的商业授权。）
 
 **桌宠表情包**：`dsh-pet` 的 `assets/memes/` 随 helper 一并分发，适用上游「允许开源使用，
 禁止商用」的素材条款，不是 MIT。
@@ -298,8 +310,8 @@ SOFTWARE.
 | Apache-2.0（impeccable / frontend-design） | 上游仓库 `LICENSE`；本项目未复制其代码 |
 | GPL-3.0（ComfyUI 等） | 上游仓库 `LICENSE`；本项目未随应用分发 |
 | Anima 非商业许可证 | <https://huggingface.co/circlestone-labs/Anima/blob/main/LICENSE.md> |
-| 上首软糖体（字体） | 上游字体授权；本仓库不跟踪该文件，**MIT 不覆盖** |
+| MiSans（字体） | <https://hyperos.mi.com/font> 的 MiSans 字体许可；本仓库不跟踪字体文件，**MIT 不覆盖** |
 
 ---
 
-*最后更新：2026-10-22。新增第三方代码或素材时，请同时更新本文件、README 与 `THIRD-PARTY-NOTICES.md`。*
+*最后更新：2026-10-31。新增第三方代码或素材时，请同时更新本文件、README 与 `THIRD-PARTY-NOTICES.md`。*

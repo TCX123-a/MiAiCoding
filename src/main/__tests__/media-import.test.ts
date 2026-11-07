@@ -12,7 +12,7 @@
  * pickFile 是注入的（本模块零 electron），这里注入「假装用户选了 X」，
  * 配真临时目录把每条路走一遍真 fs。
  */
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
@@ -106,6 +106,15 @@ describe('importMedia：拷贝成功', () => {
     expect(r).toEqual({ ok: true, name: 'star.png' })
     expect(existsSync(src)).toBe(true)
     expect(readFileSync(join(destDir, 'star.png'))).toEqual(readFileSync(src))
+    // 落盘走「.partial → rename」，成功后不许留下任何半成品
+    expect(readdirSync(destDir).filter((n) => n.includes('.partial'))).toEqual([])
+  })
+
+  it('以点开头的文件名拒收（扫描器会跳过它，收下 = 成功却永远看不见）', async () => {
+    const src = putSrc('.hidden.mp4', 2048, 7)
+    const r = await run(picks(src))
+    expect(r).toEqual({ ok: false, reason: 'bad-ext' })
+    expect(readdirSync(destDir)).toEqual([])
   })
 
   it('重名加序号（从 (2) 起，扩展名之前）—— 绝不覆盖已有文件', async () => {
@@ -227,8 +236,49 @@ describe('importMedia：导入体积上限（2GiB）', () => {
   })
 })
 
-describe('uniqueDestName：有界去重', () => {
-  it('没冲突原样返回；占用则依次升序号', () => {
+/**
+ * minBytes 覆盖（自定义鼠标指针，2026-10-31）。
+ *
+ * 【为什么需要】壁纸/开屏素材的 1KB 下限是给扫描器对齐的；16×16 的指针 PNG
+ * 可能只有几百字节 —— 沿用 1KB 会把它当"损坏文件"拒掉，用户只觉得
+ * 「我这图明明能打开，软件说不行」。但下限也不能取消：0 字节 / 几个字节
+ * 的残片要挡在导入第一步。
+ */
+describe('importMedia：minBytes 覆盖（指针素材）', () => {
+  function runMin(minBytes: number, pick: PickFileFn) {
+    return importMedia({
+      pickFile: pick,
+      destDir,
+      allowedExts: ['png', 'mp4'],
+      title: 'T',
+      filterName: 'F',
+      minBytes
+    })
+  }
+
+  it('默认仍是 1KB（不传 minBytes 的调用方行为不变）', async () => {
+    expect(await run(picks(putSrc('tiny.png', 512)))).toEqual({
+      ok: false,
+      reason: 'too-small'
+    })
+  })
+
+  it('minBytes=16：512 字节的指针图放行（源文件内容真的拷过去）', async () => {
+    const src = putSrc('cursor.png', 512, 5)
+    const r = await runMin(16, picks(src))
+    expect(r).toEqual({ ok: true, name: 'cursor.png' })
+    expect(readFileSync(join(destDir, 'cursor.png'))).toEqual(readFileSync(src))
+  })
+
+  it('minBytes=16：15 字节仍拒（空文件/残片不能进来）', async () => {
+    expect(await runMin(16, picks(putSrc('empty.png', 15)))).toEqual({
+      ok: false,
+      reason: 'too-small'
+    })
+  })
+})
+
+describe('uniqueDestName：有界去重', () => {  it('没冲突原样返回；占用则依次升序号', () => {
     expect(uniqueDestName(destDir, 'x.png')).toBe('x.png')
     writeFileSync(join(destDir, 'x.png'), 'x')
     expect(uniqueDestName(destDir, 'x.png')).toBe('x (2).png')

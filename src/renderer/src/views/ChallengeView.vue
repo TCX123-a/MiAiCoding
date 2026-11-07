@@ -3,18 +3,28 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useChallengeStore } from '../stores/challenge'
 import { useContentStore } from '../stores/content'
+import { useProgressStore } from '../stores/progress'
+import { useAccountStore } from '../stores/account'
 import { seedFromKey } from '../lib/mascot'
 import { LANG_LABEL } from '../lib/labels'
 import { CHALLENGE, TITLE } from '../lib/copy'
+import { toast } from '../components/base/toast'
+import { PET_REWARD_RICE } from '../../../shared/pet'
 import MiButton from '../components/base/MiButton.vue'
 import MiMascot from '../components/base/MiMascot.vue'
 import MiCheckbox from '../components/base/MiCheckbox.vue'
 import MiBubble from '../components/domain/MiBubble.vue'
+import MiModal from '../components/base/MiModal.vue'
 import MiProgressBar from '../components/base/MiProgressBar.vue'
 import QuizReview from '../components/domain/quiz/QuizReview.vue'
+import type { Lang } from '../../../shared/types'
 
 const challenge = useChallengeStore()
 const content = useContentStore()
+const progress = useProgressStore()
+// 结算区的「分数去哪了」要照实说：未登录 / 未激活时只排在本机队列
+//（2026-10-31 自检 P1，与 QuizOverlay 的结果页同一口径）
+const acct = useAccountStore()
 const router = useRouter()
 
 /** 逐题回顾那张弹窗开着没有 */
@@ -63,7 +73,14 @@ onMounted(() => {
   // P10.6 ⑤：走 refresh（=load + 补交未上行的收工单）。它不再被 progress
   // 闸吞掉 —— 深链冷启动也要读到今天那批，不然「可以开始」会把存档覆盖掉
   void challenge.refresh()
+  // 结算区的去向句要读账号态：本次启动还没读过就先补一发（读到了才不误报）
+  if (acct.state === null) void acct.refresh().catch(() => {})
 })
+
+/** 结算区积分行的去向句：已登录且已激活才算「上了日榜」（同 QuizOverlay） */
+const boardClaim = computed(() =>
+  acct.signedIn && acct.activated ? CHALLENGE.POINTS_TO_BOARD : CHALLENGE.POINTS_TO_BOARD_PENDING
+)
 
 /** 今天做过之后，按钮区不再给「再做一遍」—— 重做没有意义，还会重复记账 */
 const showStart = computed(
@@ -89,6 +106,79 @@ const pointsToday = computed(() => {
  * 而是**图在疯狂闪**。日期键同一天恒定，跨天才会换。
  */
 const rewardSeed = computed(() => seedFromKey(challenge.dateKey))
+
+/**
+ * 跳级挑战（2026-10-31 主人令）：不想从头学完一门语言的人，可以在锁定页
+ * 对某门语言点「跳到这一门」，确认后**该语言前面的课一次全绿**，
+ * 和课文页的「学到这里啦喵」走同一套结算（`markLearnedMany`）。
+ *
+ * 目标在**打开确认框那一刻**算好并冻结：确认框开着的时候用户理论上不可能
+ * 在别处继续学（弹窗是模态的），但把清单落成快照比在确认时重算更诚实 ——
+ * 用户看到的是「确认后会发生什么」，结算就应该按他看到的这份发生。
+ */
+const skipOpen = ref(false)
+const skipLang = ref<Lang | null>(null)
+const skipTargets = ref<string[]>([])
+const skipBusy = ref(false)
+
+/**
+ * 每门语言「跳级会点亮几节」。按钮上的数字必须与 `openSkip` 真正冻结的清单
+ * 同源（`writtenOfLang` + 未学过滤），不能拿 `p.total - p.learned` 估 ——
+ * 大纲里可能混着还没写内容的课，两个数字对不上，按钮就在骗人。
+ */
+const skipCounts = computed<Record<string, number>>(() => {
+  const counts: Record<string, number> = {}
+  for (const p of challenge.langProgress) {
+    counts[p.lang] = content.writtenOfLang(p.lang).filter((id) => !progress.learnedSet.has(id))
+      .length
+  }
+  return counts
+})
+
+function openSkip(lang: Lang): void {
+  const targets = content.writtenOfLang(lang).filter((id) => !progress.learnedSet.has(id))
+  // 已经没有可点的课了（进度计算与大纲不同步的极端情况）：不发一颗
+  // 「确认后什么都不发生」的空头确认框，直接告诉他现状。
+  if (targets.length === 0) {
+    toast(CHALLENGE.SKIP_ALREADY)
+    return
+  }
+  skipLang.value = lang
+  skipTargets.value = targets
+  skipOpen.value = true
+}
+
+/**
+ * 确认框里的正向出口（A4）：不逼人在「跳 51 节」和「关掉弹窗」之间二选一。
+ * 直接把这门语言第一节还没学的课打开，让「先去学」变成一次点击。
+ */
+function learnFirstOfSkip(): void {
+  const lang = skipLang.value
+  skipOpen.value = false
+  if (!lang) return
+  const rest = content.writtenOfLang(lang).filter((id) => !progress.learnedSet.has(id))
+  // 优先去**能直接学的**第一节；全都还锁着时才退回第一节（软锁仍可打开）
+  const first = rest.find((id) => content.statusOf(id) === 'open') ?? rest[0]
+  if (first) router.push(`/lesson/${first}`)
+}
+
+async function confirmSkip(): Promise<void> {
+  if (skipBusy.value) return
+  const lang = skipLang.value
+  const ids = skipTargets.value
+  if (!lang || ids.length === 0) {
+    skipOpen.value = false
+    return
+  }
+  skipBusy.value = true
+  try {
+    const r = await progress.markLearnedMany(ids)
+    skipOpen.value = false
+    toast(CHALLENGE.SKIP_DONE(LANG_LABEL[lang], r.newLessons), 'success', 3600)
+  } finally {
+    skipBusy.value = false
+  }
+}
 </script>
 
 <template>
@@ -116,11 +206,24 @@ const rewardSeed = computed(() => seedFromKey(challenge.dateKey))
       <div class="empty-title">{{ CHALLENGE.LOCKED_TITLE }}</div>
       <div class="locked-progress">
         <div class="locked-progress-title">{{ CHALLENGE.LOCKED_PROGRESS_TITLE }}</div>
+        <p class="locked-skip-hint">{{ CHALLENGE.SKIP_HINT }}</p>
         <div v-for="p in challenge.langProgress" :key="p.lang" class="locked-row">
           <span class="locked-lang">{{ LANG_LABEL[p.lang] }}</span>
           <MiProgressBar class="locked-bar" :percent="p.percent" :height="6" />
           <span class="locked-count">{{ p.learned }}/{{ p.total }}</span>
           <span v-if="p.done" class="locked-done">{{ CHALLENGE.LOCKED_ROW_DONE }}</span>
+          <!-- 跳级：只给还没学完的语言。学完的那门已经没有「前面」可点了 -->
+          <MiButton
+            v-else-if="(skipCounts[p.lang] ?? 0) > 0"
+            class="locked-skip"
+            variant="ghost"
+            size="sm"
+            :title="CHALLENGE.SKIP_ACTION_TITLE(LANG_LABEL[p.lang], skipCounts[p.lang] ?? 0)"
+            @click="openSkip(p.lang)"
+          >
+            {{ CHALLENGE.SKIP_ACTION(skipCounts[p.lang] ?? 0) }}
+          </MiButton>
+          <span v-else class="locked-done">{{ CHALLENGE.SKIP_NONE }}</span>
         </div>
       </div>
       <MiButton v-if="resumeLesson" variant="primary" @click="router.push(`/lesson/${resumeLesson.id}`)">
@@ -152,7 +255,7 @@ const rewardSeed = computed(() => seedFromKey(challenge.dateKey))
       </div>
       <!-- 积分行下面接一句去向（V1-25「攒分的地方和看分的地方互不指路」）：
            说清分数落到了哪，去排行榜那颗按钮在下面 done-actions 里 -->
-      <p v-if="pointsToday" class="muted small">{{ CHALLENGE.POINTS_TO_BOARD }}</p>
+      <p v-if="pointsToday" class="muted small">{{ boardClaim }}</p>
       <!-- 答错即停提前收工的那一局：说清为什么只做了这几道。
            判据在 store（`stoppedEarly` = 答对数 < 总题数）—— v3 收工重写后
            「批长 > 结算数」不再成立，别再在这儿自己算一遍。 -->
@@ -266,6 +369,39 @@ const rewardSeed = computed(() => seedFromKey(challenge.dateKey))
     <!-- 逐题回顾。挂在页面这一层而不是某张卡里 —— 它是个 Teleport 到 body 的
          弹窗，放在哪张卡里都只是「碰巧在这个状态才渲染得出来」的巧合 -->
     <QuizReview v-model:visible="reviewOpen" :rows="challenge.reviewRows" />
+
+    <!-- 跳级确认框（Module 3.5）：和课文页「学到这里啦喵」的确认同一套措辞纪律
+         —— 先说清会点亮几课、大白饭怎么发，再说「挑战会从这门语言出题」 -->
+    <MiModal
+      v-model:visible="skipOpen"
+      :title="CHALLENGE.SKIP_CONFIRM_TITLE(skipTargets.length)"
+      :width="520"
+      :closable="!skipBusy"
+    >
+      <p class="skip-text">
+        {{
+          skipLang
+            ? CHALLENGE.SKIP_CONFIRM_BODY(
+                LANG_LABEL[skipLang],
+                skipTargets.length,
+                skipTargets.length * PET_REWARD_RICE.lesson
+              )
+            : ''
+        }}
+      </p>
+      <div class="skip-actions">
+        <!-- 正向出口排在最左，用 secondary 而不是 ghost：它比「再学学」更值得点 -->
+        <MiButton variant="secondary" :disabled="skipBusy" @click="learnFirstOfSkip">
+          {{ CHALLENGE.SKIP_CONFIRM_LEARN }}
+        </MiButton>
+        <MiButton variant="ghost" :disabled="skipBusy" @click="skipOpen = false">
+          {{ CHALLENGE.SKIP_CONFIRM_CANCEL }}
+        </MiButton>
+        <MiButton variant="danger" :disabled="skipBusy" :loading="skipBusy" @click="confirmSkip">
+          {{ CHALLENGE.SKIP_CONFIRM_OK(skipTargets.length) }}
+        </MiButton>
+      </div>
+    </MiModal>
   </div>
 </template>
 
@@ -345,6 +481,15 @@ const rewardSeed = computed(() => seedFromKey(challenge.dateKey))
   color: var(--mi-text-2);
   margin-bottom: 8px;
 }
+/* 跳级说明：按钮改成「跳过 N 节」之后必须先把代价摆在眼前，
+   否则密集的进度行里那颗小按钮仍会被读成导航 */
+.locked-skip-hint {
+  margin: 0 0 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  text-align: left;
+  color: var(--mi-text-3);
+}
 .locked-row {
   display: flex;
   align-items: center;
@@ -373,6 +518,30 @@ const rewardSeed = computed(() => seedFromKey(challenge.dateKey))
   font-size: 12px;
   font-weight: 600;
   color: var(--mi-success-deep);
+}
+/* 跳级按钮：进度行里唯一可点的东西，不参与收缩 ——
+   被压窄之后「跳过 N 节」会折行，行高跟着变，四条进度行就不齐了。
+   配色用警告色（不是主色）：它是一次改写进度的动作，不该和「去继续学习」抢眼 */
+.locked-skip {
+  flex-shrink: 0;
+  color: var(--mi-warn-deep);
+  border: 1px solid var(--mi-warn-edge);
+}
+.locked-skip:hover:not(:disabled) {
+  background: var(--mi-warn-fill);
+}
+/* 跳级确认框正文与按钮排 */
+.skip-text {
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--mi-text);
+  margin: 0;
+}
+.skip-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
 }
 /*
  * 奖励卡 + 它左右那两条鱼。

@@ -200,6 +200,21 @@ function onRowClick(it: WallpaperItem): void {
   onPick(it.id)
 }
 
+/**
+ * 键盘选中（2026-10-31 自检 P2）。
+ *
+ * ⚠️ **必须判 `e.target === e.currentTarget`**：行里还嵌着「预览 / 隐藏」两个
+ * 真按钮，它们自己按 Enter/空格时事件会冒泡到这一层。不判的话，用户在
+ * 「隐藏」上按空格会**顺手把这张壁纸选中并关掉弹窗** —— 键盘用户的隐藏动作
+ * 永远做不成。只有焦点落在行本身才算「选中这一行」。
+ */
+function onRowKey(e: KeyboardEvent, it: WallpaperItem): void {
+  if (e.target !== e.currentTarget) return
+  if (e.key !== 'Enter' && e.key !== ' ') return
+  e.preventDefault()
+  onRowClick(it)
+}
+
 function onPick(id: string): void {
   // 选中引起的关闭：若热身的就是这条，别 drop —— 那条实例要交给换片流水线
   // 原地转正（墙纸层 doShow 的 adopted 分支）；选了别的条目则一并收掉。
@@ -261,14 +276,24 @@ function openPreview(it: WallpaperItem): void {
         </button>
       </div>
     </div>
-    <div v-if="filteredItems.length" class="pick-grid">
+    <div
+      v-if="filteredItems.length"
+      class="pick-grid"
+      role="listbox"
+      :aria-label="SETTINGS.WALL_PICK_TITLE"
+    >
       <div
         v-for="it in filteredItems"
         :key="it.id"
         class="pick-item"
+        role="option"
+        :aria-selected="it.id === selectedId"
+        :aria-disabled="!isRenderableItem(it)"
+        :tabindex="0"
         :data-id="it.id"
         :class="{ 'is-current': it.id === selectedId, 'is-disabled': !isRenderableItem(it) }"
         @click="onRowClick(it)"
+        @keydown="onRowKey($event, it)"
         @pointerenter="onItemEnter(it)"
         @pointerleave="onItemLeave"
       >
@@ -399,6 +424,13 @@ function openPreview(it: WallpaperItem): void {
 }
 .pick-item:hover {
   border-color: var(--mi-blue);
+}
+/* 键盘焦点环：与全仓按钮同一套约定（2px 笔画色、offset 2px）。
+   2026-10-31 自检 P2：行本身成了可聚焦的 listbox option（Enter/空格 = 选中），
+   没有环的话键盘用户看不见自己在哪一行。 */
+.pick-item:focus-visible {
+  outline: 2px solid var(--mi-blue-deep);
+  outline-offset: 2px;
 }
 .pick-item.is-current {
   border-color: var(--mi-blue);

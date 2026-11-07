@@ -51,8 +51,6 @@ import {
   PET_AFFECTION_TIERS,
   PET_CHASE_COOLDOWN_MS,
   PET_CHASE_COST,
-  PET_DECAY_OFFLINE_PERIOD_MS,
-  PET_DECAY_ONLINE_PERIOD_MS,
   PET_HUNGER_MEDIUM_AT,
   PET_INTERACT_COOLDOWN_MS,
   PET_LONG_AWAY_MS,
@@ -71,7 +69,9 @@ import {
   decayPet,
   exertPet,
   feedPet,
+  feedSnack,
   grantPetRice,
+  grantPetSnack,
   grantRunReward,
   lastWrongLabel,
   lessonStreak,
@@ -81,10 +81,12 @@ import {
   petChatCommit,
   petChatGate,
   petDayKey,
+  petDecayPeriods,
   petFace,
   petHungerTier,
   petMood,
   pushPetMemory,
+  setPetDecayTier,
   setPetEmotion,
   snapshotOf,
   touchPetSeen,
@@ -165,6 +167,12 @@ export interface PetBrainDeps {
   onRice?: (ev: { kind: PetRiceKind; ref: Record<string, unknown> | null }) => number | null
   log?: (line: string) => void
   now?: () => number
+  /**
+   * 随机源（可选，2026-10-31 模块五补丁）：喂零食要**随机**抽一段「吃」动画
+   * （主人点名"必须随机触发除了吃大白饭之外的其他吃饭动作"）。默认
+   * Math.random；单测注入固定值才能钉住首/末两个边界，不靠跑一百次撞概率。
+   */
+  random?: () => number
   /** CPU 采样注入（测试用）；默认 os.cpus() 累计时间差，同 v1 */
   sampleCpu?: () => { idle: number; total: number }
   /**
@@ -272,7 +280,7 @@ export const HUNGRY_FACE_GAP_MS = 3 * 60_000
  */
 const GRANT_SPECS: Record<
   PetRewardKind,
-  { remember: boolean; line: ((n: number) => string) | null; tag: string }
+  { remember: boolean; line: ((n: number, snacks: number) => string) | null; tag: string }
 > = {
   lesson: { remember: true, line: PET.GRANT_LESSON, tag: 'grant-lesson' },
   review: { remember: true, line: PET.GRANT_REVIEW, tag: 'grant-review' },
@@ -298,6 +306,23 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
   const log = deps.log ?? (() => {})
   const nowMs = (): number => (deps.now ? deps.now() : Date.now())
   const nowIso = (): string => new Date(nowMs()).toISOString()
+  const rand = (): number => (deps.random ? deps.random() : Math.random())
+
+  /**
+   * 喂零食播哪段「吃」动画：从 PET_DSH.ANIM.SNACK_POOL 里等概率抽一个。
+   *
+   * 【主人口径 2026-10-31】"必须随机触发除了吃大白饭之外的其他吃饭动作
+   * （比如吃零食、吃糖葫芦等）"。池子本身已排除吃白饭（见 copy.ts）。
+   * 【防脏随机源】random 注入是给单测钉边界用的；万一注入值越界/NaN
+   * （负数、1、Infinity），夹到 [0, len-1] —— 点播一个不存在的动画名
+   * 在透明窗里的表现就是"什么都没发生"，比夹一下难查得多。
+   */
+  function pickSnackAnim(): string {
+    const pool = PET_DSH.ANIM.SNACK_POOL
+    const r = rand()
+    const clamped = Number.isFinite(r) ? Math.min(Math.max(r, 0), 0.999999999) : 0
+    return pool[Math.floor(clamped * pool.length)]!
+  }
 
   /**
    * 冻结位（空转[4]，2026-10-16）：关掉的宠物**什么都不该走** —— 心跳空转、
@@ -326,7 +351,10 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
     // "补扣"（v1 同款注释）。
     const iso = nowIso()
     const loaded = deps.store.load(iso)
-    const decayed = decayPet(loaded.state, iso, PET_DECAY_OFFLINE_PERIOD_MS, PET_OFFLINE_DECAY_FLOOR)
+    // 离线补算的周期按**用户选的档位**取（v7 模块五）：normal = 老常量 6 分钟，
+    // relaxed/strict 各按表走。档位住在 pet.json 里，正常装载前就已经能读到。
+    const offlineMs = petDecayPeriods(loaded.state.decayTier).offlineMs
+    const decayed = decayPet(loaded.state, iso, offlineMs, PET_OFFLINE_DECAY_FLOOR)
     // 好感度同样要吃"关着软件的这几天"（24h -1 的锚点法，P3 ④）——
     // 与饱食度同刻结算，喂饭/学习都发生在这之后。
     const decayedAff = decayAffection(decayed.state, iso)
@@ -369,11 +397,12 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
   }
 
   /**
-   * vitals 读数的指纹（`satiety|rice|mood|affection`）。不变就不推 —— 心跳
+   * vitals 读数的指纹（`satiety|rice|snacks|mood|affection`）。不变就不推 —— 心跳
    * 30 秒一拍、在线衰减 2 分钟才掉 1，不指纹的话渲染端每 30 秒收到一条一字
    * 不差的读数，叶子的 counter「严格递增」就退化成噪声（探针拿 counter 当
    * "变没变"的证据用，噪声 = 假绿）。affection 进指纹（P3 ④）：它变化远比
-   * 饱食度慢，但"变了就该推"的规则两者一样。
+   * 饱食度慢，但"变了就该推"的规则两者一样。snacks 进指纹（v7 模块五）：
+   * 小鱼干入袋/被喂走都该让下一次 /state 看见，与大白饭同刻更新。
    */
   let lastVitals = ''
 
@@ -383,10 +412,11 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
     const v: PetVitals = {
       satiety: state.satiety,
       rice: state.rice,
+      snacks: state.snacks,
       mood: petMood(state.satiety),
       affection: state.affection
     }
-    const fp = `${v.satiety}|${v.rice}|${v.mood}|${v.affection}`
+    const fp = `${v.satiety}|${v.rice}|${v.snacks}|${v.mood}|${v.affection}`
     if (fp === lastVitals) return
     lastVitals = fp
     deps.vitals(v)
@@ -636,12 +666,49 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
     state = withRiceMirror(next, { kind: 'feed', ref: null })
     // 好感 +2/日3（P3 ④ 计分表）：喂进嘴里的这一碗是"处出来的交情"，
     // 与饱食度的分开记账（连喂 20 顿的上限由 cap 拦）。
+    // 2026-10-31（模块五）溢出喂食也走这一笔：饱腹度满了但好感没满时，
+    // 这碗**真的被吃下去了**（扣饭、fedTotal+1），饱腹度不变、好感照涨。
     applyAffection('feed')
     // commit(true)：喂饭回升跨档要播台词（契约点名）。顺序 = 先报档、再嚼 ——
     // 气泡最后停在"嚼嚼"上，符合"刚喂了一口"的当下（探针按 tag 抓两行都在日志）
     commit(true)
-    say(pickLine(PET.FEED_OK), 'feed-ok')
+    // 溢出（reason === 'overflow'）：饱腹度已经 100、好感还没满 —— 主人点名的
+    // 原句在 copy.ts（FEED_OVERFLOW），一个字不换。正常吃饱仍走老台词轮播。
+    if (reason === 'overflow') say(PET.FEED_OVERFLOW, 'feed-overflow')
+    else say(pickLine(PET.FEED_OK), 'feed-ok')
     deps.anim(PET_DSH.ANIM.FEED)
+  }
+
+  /**
+   * 喂零食（v7 加，模块五 2026-10-31）。
+   *
+   * 【共享互动冷却、不吃双击豁免】冷却与喂饭/摸头同一股（连点不能刷好感）；
+   * 但**没有** doFeed 里那条 V1-45 的双击放行 —— 双击手势只会触发摸头+喂饭，
+   * 喂零食只有右键菜单一个入口，不存在"一只手的两半被拦"。
+   *
+   * 【三条台词与 doFeed 逐字同构】空袋子 / 真吃不下（饱腹与好感都顶格）/
+   * 饱了但好感没满（overflow：扣零食、饱腹不变、好感照涨，主人点名原句）。
+   * 动画走 pickSnackAnim()：每次随机抽「吃什么」池里除吃白饭外的动作
+   * （2026-10-31 主人体验修正：不许永远播'大口吃零食'）。
+   */
+  function doSnack(): void {
+    const now = nowMs()
+    if (now - lastInteractAt < PET_INTERACT_COOLDOWN_MS) return
+    lastInteractAt = now
+    const { state: next, ok, reason } = feedSnack(state)
+    if (!ok) {
+      const full = reason === 'full'
+      say(pickLine(full ? PET.SNACK_FULL : PET.SNACK_EMPTY), full ? 'snack-full' : 'snack-empty')
+      return
+    }
+    state = next
+    // 好感走 'snack' 一档（+2/日6，见 PET_AFFECTION_RULES）：小鱼干比大白饭
+    // 稀有，溢出的那几口也算交情；日上限比 feed 高是因为来源本来就少。
+    applyAffection('snack')
+    commit(true)
+    if (reason === 'overflow') say(PET.FEED_OVERFLOW, 'snack-overflow')
+    else say(pickLine(PET.SNACK_OK), 'snack-ok')
+    deps.anim(pickSnackAnim())
   }
 
   function doPat(): void {
@@ -715,23 +782,37 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
   }
 
   function doGrant(kind: PetRewardKind, lessonId?: string): void {
-    const { state: next, credited, capped } = grantPetRice(
-      state,
-      kind,
-      new Date(nowMs()).toISOString()
-    )
+    const nowIso = new Date(nowMs()).toISOString()
+    const rice = grantPetRice(state, kind, nowIso)
+    const { credited, capped } = rice
     // 饭镜像：lesson 带 lessonId（服务端硬要求的 ref.lessonId；缺了账本会
     // 标 rejected 拦下——见 deps.onRice 注释）；其余 kind 的 ref 是 null。
     // 【capped 为什么跳过镜像（V1-42 日上限）】账本按 kind 独立加账
     // （RICE_DELTA_BY_KIND），把这笔送进去 = 它会把上限拦下的这碗加回来，
     // 上限形同虚设。与 grantRunReward 的 granted 门同一套路：纯函数说
     // "发"才过账，"不发"就一个字节都别进账本。
-    state = capped
-      ? next
-      : withRiceMirror(next, {
+    let next = capped
+      ? rice.state
+      : withRiceMirror(rice.state, {
           kind,
           ref: kind === 'lesson' && typeof lessonId === 'string' && lessonId !== '' ? { lessonId } : null
         })
+    /**
+     * 小鱼干（v7 加，模块五 2026-10-31）：**错题本复习完成**（kind 'review'）
+     * 除了大白饭还给一根小鱼干。两种货币各记各的日账（snackDay 独立于
+     * riceDay），所以互不影响：饭盒满仓了，小鱼干照样能进袋；小鱼干攒满了，
+     * 大白饭照样能进盒 —— 下面两句台词按"谁真到账"分别说话。
+     * 与 grantPetRice 同口径：capped（当日发满）与满仓（999 装不下）是两件事。
+     */
+    let snackCredited = 0
+    let snackCapped = false
+    if (kind === 'review') {
+      const snack = grantPetSnack(next, 'review', nowIso)
+      next = snack.state
+      snackCredited = snack.credited
+      snackCapped = snack.capped
+    }
+    state = next
     // 探针用的如实读数（C13）：最后一个**真的进到这里**的奖励种类。
     // 住内存不落盘：它回答的是"这次调用到没到 brain"，不是一个要跨启动的历史。
     lastGrantKind = kind
@@ -754,9 +835,16 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
     //   · credited === 0 —— 这碗没进来，两种成因两句话：满仓 999（RICE_FULL）
     //     或当日赚满（RICE_CAP_TODAY）。两句话共用一个冷却锚 —— 都是"这碗
     //     没进盒"的回执，同一口气里连学几课只提醒一次（锚点用法同 lastWrongQuipAt）。
+    // 【v7 模块五：复习的双货币】review 先看小鱼干有没有真到账：
+    //   · 小鱼干到账 → 一句里把两边都交代（GRANT_REVIEW / GRANT_REVIEW_SNACK_ONLY）；
+    //   · 小鱼干没到账、大白饭到账 → GRANT_REVIEW_RICE_ONLY（袋满/日上限分开说）；
+    //   · 两边都没到账 → 下面既有的 capped / 满仓回执（不许零解释，V1-42）。
     // 【为什么 capped 的台词不挂在 spec.line !== null 里】answer 平时不说话，
     // 但"赚满被拦"必须说 —— 数字不再涨却零解释，正是 V1-42 要修的静默。
-    if (capped) {
+    if (kind === 'review' && snackCredited > 0) {
+      if (credited > 0) say(PET.GRANT_REVIEW(credited, snackCredited), 'grant-review')
+      else say(PET.GRANT_REVIEW_SNACK_ONLY(snackCredited, capped), 'grant-review')
+    } else if (capped) {
       const now = nowMs()
       if (now - lastRiceBlockedAt >= PET_RICE_FULL_COOLDOWN_MS) {
         lastRiceBlockedAt = now
@@ -769,8 +857,11 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
           lastRiceBlockedAt = now
           say(PET.RICE_FULL(PET_RICE_MAX), 'rice-full')
         }
+      } else if (kind === 'review') {
+        // 大白饭到账、小鱼干没到（模块五）：袋满与日上限分开说。
+        say(PET.GRANT_REVIEW_RICE_ONLY(credited, snackCapped), 'grant-review')
       } else {
-        say(spec.line(credited), spec.tag)
+        say(spec.line(credited, snackCredited), spec.tag)
       }
     }
     // 「一口气学完好几课」的彩蛋：窗口内课数到线才说，说一次之后靠记忆环的
@@ -787,11 +878,11 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
   }
 
   /**
-   * 执行一个动作。**只认 renderer 还会上报的六种**
-   * （feed/pat/rua/grant/wrong/event）；pos/mode/size/show/hide/menu/chat
-   * 是旧宠物窗的施动，新引擎里没有对应物（窗口与体型真源 = config.pet），
-   * 来了记一行日志、原样返回快照 —— 不装作执行了（"默认回退为成功"的反面：
-   * 至少留下痕迹）。
+   * 执行一个动作。**只认 renderer 还会上报的几种**
+   * （feed/snack/pat/rua/grant/wrong/event，以及设置页的 decay 档位切换）；
+   * pos/mode/size/show/hide/menu/chat 是旧宠物窗的施动，新引擎里没有对应物
+   * （窗口与体型真源 = config.pet），来了记一行日志、原样返回快照 ——
+   * 不装作执行了（"默认回退为成功"的反面：至少留下痕迹）。
    */
   function act(raw: unknown): PetSnapshot {
     const action = parsePetAction(raw)
@@ -808,6 +899,10 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
       case 'feed':
         doFeed()
         break
+      case 'snack':
+        // 喂小鱼干（v7 模块五）：菜单「喂一根小鱼干」→ POST /miai/snack。
+        doSnack()
+        break
       case 'pat':
         doPat()
         break
@@ -819,6 +914,18 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
         break
       case 'wrong':
         doWrong(action)
+        break
+      case 'decay':
+        // 饱腹度衰减档位（模块五）：用户可调的是"饿得有多快"，好感度**不在
+        // 这个开关的管辖范围**（好感仍按固定表走，见 shared/pet.ts 的注释）。
+        // 只换档、不动计时锚：切档前已经过去的那段按旧档算过，不追溯重算。
+        // 【2026-10-31 'never' 档】切进"不会饿"要**当场**把饱腹度钉到 100 ——
+        // 否则设置页刚选完、下一次 tick 之前界面上还挂着半条饱腹度，主人会
+        // 以为开关没生效。never 期间不衰减，锚点原地不动；切出时
+        // setPetDecayTier 会用这里传的 nowIso 把锚点重设到此刻，不补扣旧账。
+        state = setPetDecayTier(state, action.tier, nowIso())
+        log(`decay tier -> ${action.tier}`)
+        commit()
         break
       case 'event':
         // 收工事件（P3 ④）：挑战完成 +3/日1、复习满分 +5/日1（表在 shared/pet.ts）。
@@ -1213,8 +1320,14 @@ export function createPetBrain(deps: PetBrainDeps): PetBrain {
     // 冻结双保险（空转[4]）：宿主已停表，这里是"哪怕谁又接回常驻"的第二道
     if (paused) return
     const iso = nowIso()
-    const { state: next, dropped } = decayPet(state, iso, PET_DECAY_ONLINE_PERIOD_MS)
-    if (dropped > 0 || next.lastDecayAt !== state.lastDecayAt) {
+    // 在线衰减周期同样按档位取（v7）：normal 与老值逐毫秒一致 —— 默认档升级前后
+    // 手感不变；relaxed/strict 只改"多久 -1"，喂食收益与下限一概不动。
+    const { state: next, dropped } = decayPet(state, iso, petDecayPeriods(state.decayTier).onlineMs)
+    // 第三个条件（2026-10-31 不会饿档）：holdPetFull 只钉饱腹、不动锚点 ——
+    // 若这里只看 dropped/锚点，内存里 satiety 不是满值的那一拍会把"应钉满"
+    // 整个丢掉（next 根本没赋给 state）。正常档的饱腹变化必然伴随 dropped>0，
+    // 所以这一项只为 never 分支存在，不会让普通档多写盘。
+    if (dropped > 0 || next.lastDecayAt !== state.lastDecayAt || next.satiety !== state.satiety) {
       state = next
       // 挨饿到 0 的那一刻：好感 -2/日1（P3 ④ 计分表）。判据 = "这一跳真的
       // 掉了饱食度、且落点是 0"——躺在 0 上时 dropped=0 不会再罚（cap=1

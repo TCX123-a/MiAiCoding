@@ -1,5 +1,13 @@
 // 场景引擎接线层（P3 第三步，2026-10-05）：webwallgl 2.1.0 的**唯一**入口。
 //
+// 【P0 壁纸沙盒逃逸（2026-10-31）之后本层多了一层身份】
+// 引擎不再跑在应用自己的文档里，而是跑在 `.wp-fit` 内的
+// `sandbox="allow-scripts"` iframe（opaque origin）中 —— 场景脚本（new Function）
+// 拿不到父页面 DOM / preload / IPC。父页面看到的仍是一个 SceneInstance 形状的
+// 代理（scene-frame.ts），所以调用方 WallpaperLayer 一行没改语义。本文件负责
+// 的仍是「永远 settle、失败可回收、超时有预算」，只是 mount 那一跳换成了
+// iframe 握手。沙箱侧的宿主是 scene-host.ts。
+//
 // 为什么单独一层：库本身只认 miai-wall:// 之外的 URL 语义、只抛裸错误；
 // 本层把它包成「永远 settle、失败可回收、超时有预算」的挂载器，供
 // WallpaperLayer 消费。纯函数（预算/适配/画质映射）单独导出给单测。
@@ -22,12 +30,12 @@ import type {
   AudioSource,
   DiagnosticLevel,
   Fit,
-  MountOptions,
   QualityOptions,
   SceneInstance,
 } from 'webwallgl'
 import type { WallpaperObjectFit, WallpaperQuality } from '../../../../shared/wallpaper'
 import { miaiWallUrl } from './url'
+import { createSceneFrame, sceneSandboxUrl, type SceneFrame } from './scene-frame'
 
 /** 挂载超时错误的 code（调用方按它区分「超时」与「引擎报错」，别对文案做匹配） */
 export const SCENE_TIMEOUT_CODE = 'scene-mount-timeout'
@@ -134,7 +142,7 @@ export function destroyScene(inst: SceneInstance | null | undefined): void {
 }
 
 export interface MountSceneOpts {
-  /** 把实例挂进哪个元素（非 canvas 时引擎自建内层 canvas 并铺满） */
+  /** 把沙箱 iframe 挂进哪个元素（`.wp-fit`；引擎在 iframe 内部自建 canvas） */
   el: HTMLElement
   /** 条目目录（本机绝对路径），引擎按名取资源全部走 miai-wall:// */
   dir: string
@@ -160,6 +168,13 @@ export interface MountSceneOpts {
 
 export interface SceneHandle {
   inst: SceneInstance
+  /**
+   * 液态玻璃取样的开关（沙箱代理专有；外部引擎实例没有这个入口）。
+   * 只在玻璃折射开着时启用 —— 关着时沙箱一帧都不回传，零开销。
+   */
+  setMirror?: (on: boolean) => void
+  /** 已收到的镜像帧数（探针用：分辨「没回传」与「回传了但画错」） */
+  mirrorFrames?: () => number
   /** 从开始挂载到首帧的实测毫秒数（探针要的真实读数） */
   mountMs: number
   /** 本次用的预算（探针/诊断要回显"为什么等这么久"） */
@@ -182,6 +197,20 @@ export async function mountScene(opts: MountSceneOpts): Promise<SceneHandle> {
   let settled = false
   let expired = false
   let handle: SceneInstance | null = null
+  let frame: SceneFrame | null = null
+
+  /**
+   * 收掉沙箱句柄。`frame` 只在 work / guard 两个闭包里被赋值，外层函数体里的
+   * 流分析看不见那些赋值 —— 直接在 catch 里写 `if (frame) frame.dispose()`
+   * 会被窄化成 never（TS2339）。把类型钉回显式形参，收尸也只写这一处。
+   */
+  const disposeFrame = (f: SceneFrame | null): void => {
+    try {
+      f?.dispose()
+    } catch {
+      // 文档已经没了：无妨
+    }
+  }
 
   // deadline 到期：标记 expired（让迟到的 mount 结果就地收尸），并 reject。
   let timer: ReturnType<typeof setTimeout> | null = null
@@ -193,47 +222,40 @@ export async function mountScene(opts: MountSceneOpts): Promise<SceneHandle> {
         destroyScene(handle)
         handle = null
       }
+      // 沙箱还没 ready 就超时：iframe 一并拆掉（只 destroy 实例不够 ——
+      // 挂载中的代理还没有实例可收，文档本身就是要收的那份资源）
+      disposeFrame(frame)
+      frame = null
       reject(new SceneMountTimeoutError(budgetMs))
     }, deadlineMs)
   })
 
   const work = (async (): Promise<SceneHandle> => {
-    const mod = await import('webwallgl')
-    const source = mod.httpSource(miaiWallUrl(opts.dir))
-    const mountOpts: MountOptions = {
-      source,
+    // 方案 B：引擎与场景脚本全部关在 sandbox="allow-scripts" 的 iframe 里。
+    // 父页面拿到的 inst 是 postMessage 代理（形状与 SceneInstance 一致）。
+    const f = createSceneFrame({
+      el: opts.el,
+      htmlUrl: sceneSandboxUrl(),
+      dirUrl: miaiWallUrl(opts.dir),
       fit: opts.fit,
       fps: opts.fps,
-      // 静音起步：场景自带音轨不从这里出声，音频反应走 setAudio。**这个键是
-      // 静音布尔、不是音量旋钮** —— 引擎只做 `muted: (o.volume ?? 0) <= 0` 的
-      // 映射（dist L52725），传 0.8 会得到「立即满音量」。真实音量走
-      // opts.initialVolume / 实例 setVolume（dist L52999-53010，唯一法定入口）；
-      // 此处恒 0 = 让声部先以 muted 落座，避免挂载瞬间全音量 blip，落座后由
-      // initialVolume 显式钉住。
-      volume: 0,
-      autoplay: true,
-      // 0 = 跟随设备 DPR；软件渲染时引擎自动封顶（resourceScaleFor 的 0.6 档）
-      renderDpr: 0,
-      // 恒开：这是 2G 档"自动降档而不是卡死"的核心机制（挂载期默认档 +
-      // 运行期 fps 自适应）。用户显式画的档位永不被它改写（见文件头注释）。
-      autoQuality: true,
+      quality: qualityForScene(opts.quality),
       // 库内看门狗用预算本身；本层 deadline 比它宽 5s，先响的总是库，
       // 用户拿到的是带排查提示的诊断而不是我们的裸超时。
       mountTimeoutMs: budgetMs,
+      // null 也要显式传：不传键时引擎回落**内置模拟频谱**（场景会"自嗨"地
+      // 随假节拍抖动）。原型实证口径 = 未启用就是真 zero 频谱，不是假数据。
+      audio: opts.audio,
       onDiagnostic: opts.onDiagnostic,
-    }
-    const q = qualityForScene(opts.quality)
-    if (q) mountOpts.quality = q
-    // null 也要显式传：不传键时引擎回落**内置模拟频谱**（场景会"自嗨"地
-    // 随假节拍抖动）。原型实证口径 = 未启用就是真 zero 频谱，不是假数据。
-    mountOpts.audio = opts.audio
-
-    const inst = await mod.mount(opts.el, mountOpts)
+    })
+    frame = f
+    const inst = await f.ready
     handle = inst
     if (expired) {
       // 迟到的实例：guard 已经 reject 过，这里收尸且不再 resolve（race 已结算，
       // 本分支抛出的错误会被 race 的处理器吞掉，不会变成未处理拒绝）。
-      destroyScene(inst)
+      f.dispose()
+      frame = null
       handle = null
       throw new SceneMountTimeoutError(budgetMs)
     }
@@ -247,7 +269,13 @@ export async function mountScene(opts: MountSceneOpts): Promise<SceneHandle> {
         console.warn('[wallpaper] scene setVolume on mount failed:', err)
       }
     }
-    return { inst, mountMs: performance.now() - started, budgetMs }
+    return {
+      inst,
+      setMirror: (on: boolean) => f.setMirror(on),
+      mirrorFrames: () => f.mirrorFrames(),
+      mountMs: performance.now() - started,
+      budgetMs,
+    }
   })()
 
   try {
@@ -256,9 +284,13 @@ export async function mountScene(opts: MountSceneOpts): Promise<SceneHandle> {
     return h
   } catch (err) {
     settled = true
-    // mount 失败时半成品挂在这里 —— 不清就是泄漏一个 WebGL 上下文。
+    // mount 失败时半成品挂在这个字段上 —— 不清就是泄漏一个 WebGL 上下文。
     const salvage = (err as { instance?: SceneInstance } | null)?.instance
     if (salvage && salvage !== handle) destroyScene(salvage)
+    // 沙箱侧的失败已经在 fail 消息里自行 dispose；这里再兜一次（幂等），
+    // 覆盖「createSceneFrame 之后、ready 之前」抛出的其它路径。
+    disposeFrame(frame)
+    frame = null
     throw err
   } finally {
     if (timer !== null) clearTimeout(timer)

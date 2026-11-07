@@ -131,6 +131,16 @@ export interface CloudAccountDeps {
   /** 省略 = 内存实现（测试与降级路径；app.ts 接 session-store.ts 的磁盘实现） */
   tokens?: TokenStore
   /**
+   * 服务端判死令牌时的收尾钩子（2026-10-31 自检 P2 #20）。**在 token 已清之后**
+   * 调用，恰好一次 —— 调用方（app.ts）必须让数据盒跟着回客人位。
+   *
+   * 【为什么必须有】令牌死了但盒还停在那个账号上，就是一个"未登录却占着账号盒"
+   * 的悬空态：下一个账号来首激活时，activateAccount 的盒位置断言
+   * （'box parked on another account'）会把 IPC 调用抛成 TypeError，界面上
+   * 那颗收编按钮按下去毫无反应。令牌与盒是同一场会话的两半，判死就得一起收。
+   */
+  onSessionInvalid?: () => void
+  /**
    * 设备显示名（device.json 的 clientLabel，P10.1 第 2 项）：注册/登录时告诉
    * 服务端"这是哪台设备"（dto.ts:172 契约的可选字段，服务端 zod 1~64）。
    * 省略 = 不发这个字段（服务端按可选处理）—— 老调用方与测试因此零改动。
@@ -335,8 +345,11 @@ export function createCloudAccountClient(deps: CloudAccountDeps): CloudAccountCl
       const result = await transport.request({ method: 'GET', path: PATH_SESSION, token })
       if (!result.ok) {
         if (result.failure.code === 'UNAUTHENTICATED' || result.failure.code === 'TOKEN_EXPIRED') {
-          // 服务端查过库：令牌真的死了 —— 清本地，按"未登录"上报（不是错误）
+          // 服务端查过库：令牌真的死了 —— 清本地，按"未登录"上报（不是错误）。
+          // 钩子排在清 token 之后：它要做的是"会话的另一半"（数据盒）的收尾，
+          // 先清令牌能保证钩子里读到的一定是未登录态（判据见单测）。
           tokens.set(null)
+          deps.onSessionInvalid?.()
           return cloudOk(null)
         }
         return result

@@ -32,6 +32,7 @@ import { join } from 'path'
 import { cpus } from 'os'
 import { IPC } from '../../shared/ipc-channels'
 import { PET } from '../../shared/copy'
+import { aiModeOf } from '../../shared/free-pool'
 import {
   PET_CHAT_REPLY_TOKENS,
   PET_DECAY_OFFLINE_PERIOD_MS,
@@ -284,7 +285,19 @@ export function createPetController(deps: PetControllerDeps): PetController {
     if (noKeyNoticed || disposed) return
     let hasKey = true
     try {
-      hasKey = deps.getConfig().ai.apiKey.trim() !== ''
+      const ai = deps.getConfig().ai
+      /*
+       * 免费公开池模式**不需要 Key**。这里不认 mode 的话，用户明明已经
+       * 切到模式 B 能聊天了，桌宠每次启动还会补一句「去填个 Key」——
+       * 那是一句不成立的催促。
+       */
+      if (aiModeOf(ai.mode) === 'pool') {
+        noKeyNoticed = true
+        return
+      }
+      // v21 起 Key 按厂商分格存；只看当前选中的那一格。
+      const key = ai.apiKeys?.[ai.provider]
+      hasKey = typeof key === 'string' && key.trim() !== ''
     } catch {
       return
     }
@@ -969,7 +982,8 @@ export function createPetController(deps: PetControllerDeps): PetController {
     chatAbort = ac
     try {
       const aiDeps: AiDeps = {
-        fetch: (url, init) => globalThis.fetch(url, init),
+        // Chromium 网络栈：尊重系统代理与企业证书库（见 app.ts cloudFetch 同款说明）
+        fetch: (url, init) => net.fetch(url, init),
         getConfig: deps.getConfig,
         signal: ac.signal
       }

@@ -73,6 +73,8 @@ const TEMPLATE = MASKED.slice(T_START, T_END + '</template>'.length)
 const FROZEN = {
   rules: {
     feed: 2,
+    /** v7 模块五（2026-10-31）：小鱼干 +2/日 6，溢喂同档 */
+    snack: 2,
     pat: 1,
     checkin: 1,
     study: 2,
@@ -96,7 +98,8 @@ const FROZEN = {
     '每天签到 +1',
     '学完一课 +2',
     '完成每日挑战 +3',
-    '复习考满分 +5'
+    '复习考满分 +5',
+    '喂零食 +2'
   ],
   affDown: ['答错题 -1', '让它饿到 0 -2', '很久不来看它 -5'],
   affDecay: '另外，超过一天没来，好感每天会悄悄 -1，最低掉到 0 就不再掉了喵。',
@@ -143,11 +146,11 @@ const VIEW_DECAY_PER_DAY = (DAY_MS / PET_AFFECTION_DECAY_PERIOD_MS) * viewAffDec
 // ---------------------------------------------------------------- ① 真源常量
 
 describe('① 真源常量 === 冻结台账（pet.ts 调参必须过这里）', () => {
-  it('好感九类增量逐值相等', () => {
+  it('好感十类增量逐值相等', () => {
     for (const [kind, want] of Object.entries(FROZEN.rules)) {
       expect(PET_AFFECTION_RULES[kind as keyof typeof PET_AFFECTION_RULES].delta, kind).toBe(want)
     }
-    // 反向：台账里的九类就是全部计分表（pet.ts 加了新类别而文案没讲，这里提醒）
+    // 反向：台账里的十类就是全部计分表（pet.ts 加了新类别而文案没讲，这里提醒）
     expect(Object.keys(PET_AFFECTION_RULES).sort()).toEqual(Object.keys(FROZEN.rules).sort())
   })
 
@@ -175,7 +178,7 @@ describe('① 真源常量 === 冻结台账（pet.ts 调参必须过这里）', 
 // ---------------------------------------------------------------- ② copy 输出
 
 describe('② copy.ts 的 PET_GUIDE_* 用真源调用 === 冻结台账（改文案先红）', () => {
-  it('好感加分六条 / 扣分三条 / 衰减一句', () => {
+  it('好感加分七条 / 扣分三条 / 衰减一句', () => {
     expect(
       SETTINGS.PET_GUIDE_AFF_LINES(
         PET_AFFECTION_RULES.feed.delta,
@@ -183,7 +186,8 @@ describe('② copy.ts 的 PET_GUIDE_* 用真源调用 === 冻结台账（改文�
         PET_AFFECTION_RULES.checkin.delta,
         PET_AFFECTION_RULES.study.delta,
         PET_AFFECTION_RULES.challenge.delta,
-        PET_AFFECTION_RULES.review.delta
+        PET_AFFECTION_RULES.review.delta,
+        PET_AFFECTION_RULES.snack.delta
       )
     ).toEqual(FROZEN.affGain)
     expect(
@@ -257,7 +261,7 @@ const EXPECT_CALLS = [
   'constDAY_MS=24*60*60_000',
   'constAFF_DECAY_STEP=1',
   'constAFF_DECAY_PER_DAY=(DAY_MS/PET_AFFECTION_DECAY_PERIOD_MS)*AFF_DECAY_STEP',
-  'SETTINGS.PET_GUIDE_AFF_LINES(PET_AFFECTION_RULES.feed.delta,PET_AFFECTION_RULES.pat.delta,PET_AFFECTION_RULES.checkin.delta,PET_AFFECTION_RULES.study.delta,PET_AFFECTION_RULES.challenge.delta,PET_AFFECTION_RULES.review.delta)',
+  'SETTINGS.PET_GUIDE_AFF_LINES(PET_AFFECTION_RULES.feed.delta,PET_AFFECTION_RULES.pat.delta,PET_AFFECTION_RULES.checkin.delta,PET_AFFECTION_RULES.study.delta,PET_AFFECTION_RULES.challenge.delta,PET_AFFECTION_RULES.review.delta,PET_AFFECTION_RULES.snack.delta)',
   "SETTINGS.PET_GUIDE_AFF_DOWN(Math.abs(PET_AFFECTION_RULES.wrong.delta),Math.abs(PET_AFFECTION_RULES.starving.delta),Math.abs(PET_AFFECTION_RULES['long-away'].delta))",
   'SETTINGS.PET_GUIDE_AFF_DECAY(AFF_DECAY_PER_DAY)',
   'SETTINGS.PET_GUIDE_HUN_LINES(PET_DECAY_ONLINE_PERIOD_MS/MINUTE_MS,PET_DECAY_OFFLINE_PERIOD_MS/MINUTE_MS,PET_FEED_GAIN,PET_CHECKIN_RICE,PET_REWARD_RICE.lesson,PET_REWARD_RICE.review,PET_REWARD_RICE.answer,PET_RICE_MAX)',

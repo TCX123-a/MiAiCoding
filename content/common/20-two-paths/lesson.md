@@ -2,10 +2,10 @@
 id: common-20
 lang: common
 stage: 0
-order: 17
+order: 29
 title: 两条路——同一件事的两种拆法
 tags: [面向对象, 入门]
-required: ["common-19"]
+required: ["common-53"]
 crossRefs: ["c-stage1-12","c-stage2-05","cpp-stage2-01","java-stage1-12","python-stage1-14","common-10"]
 estMinutes: 16
 keywords: [procedural, object, decomposition, responsibility]
@@ -13,7 +13,7 @@ keywords: [procedural, object, decomposition, responsibility]
 
 ## 钩子：一块地垫，两条路
 
-上一课本喵刚学会「把一件事拆成一步步」：算最长尺子，就拆成「取余 → 短的顶上来 → 余数接上去」喵。
+上一课，本喵把那十一关算法套路拼成了一张地图——认旗、看数据范围、先想清楚再动爪。可地图看得再熟，所有套路落到纸上，终究要回答同一个问题：**同一件事，到底该拆成哪几步？**
 
 今天这件小事更小：本喵要给猫窝门口铺一块长方形的地垫，长 3、宽 4，算算要盖住多少面积。
 

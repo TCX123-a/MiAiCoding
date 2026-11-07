@@ -100,6 +100,19 @@ export interface RunView {
    */
   compileWarnings: string
   showCompileWarnings: boolean
+  /**
+   * Java 多文件拆分后写成的文件（v7 模块六）。空数组 = 这一趟没拆分。
+   *
+   * 【为什么单独一栏，而不是拼进 message/stdout】
+   * · `message` 会被上面的 tone 规则判成「坏」—— 拆分不是错误；
+   * · `stdout` 是**判分依据**，往里掺一句提示会让学员「代码对了却判错」。
+   * 所以它只作为中性的界面提示，不参与任何判定。
+   */
+  splitFiles: string[]
+  /** 拆分提示的正文；空串 = 不显示 */
+  splitHint: string
+  /** 这一趟要不要显示拆分提示（还在跑时不显示） */
+  showSplitHint: boolean
   /** 输出被截断过，要给一句「只显示了一部分」 */
   truncated: boolean
   /** 用时该不该显示 */
@@ -159,6 +172,10 @@ export function runView(
   const stderr = r?.stderr ?? ''
   const compileWarnings = r?.compileWarnings ?? ''
   const envIssue = !!r?.envIssue
+  // v7 模块六：Java 拆分信息（成功/失败都带出来，用来对上编译器说的文件名）
+  const splitFiles = r?.javaSplit?.files ?? []
+  const splitHint =
+    r && splitFiles.length > 0 ? RUNNER_UI.JAVA_SPLIT(splitFiles, r.javaSplit?.entry ?? '') : ''
 
   // ── 结果条上的话。message 优先：那是主进程给的针对性解释，
   //    比自己按 ok/phase 拼出来的笼统话有用得多
@@ -259,6 +276,9 @@ export function runView(
     // 这是真实且常见的一格，两个都该说。
     compileWarnings,
     showCompileWarnings: !!r && !running && compileWarnings.length > 0,
+    splitFiles,
+    splitHint,
+    showSplitHint: !!r && !running && splitHint.length > 0,
     truncated: !!r && !running && r.truncated,
     // 用时为 0 的场合（比如环境没装就直接返回了）不显示，免得出现「用时 0.00 秒」这种废话
     showDuration: !!r && !running && r.durationMs > 0,

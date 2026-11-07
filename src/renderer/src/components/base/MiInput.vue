@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { isImeComposing } from '../../lib/ime'
 
 const props = withDefaults(
   defineProps<{
@@ -41,6 +42,13 @@ function onInput(e: Event) {
  */
 function onKeydown(e: KeyboardEvent) {
   if (e.key !== 'Enter') return
+  /*
+   * 【2026-10-31 自检 P2】输入法组词中的 Enter = 确认候选，不是提交。
+   * 不挡的话，中文/日文用户选词那一下会把半截输入直接提交出去（登录、
+   * 注册、答题、改名全部中招），而且看起来像应用自己在乱点。
+   * 判定只此一份，见 lib/ime.ts。
+   */
+  if (isImeComposing(e)) return
   if (props.multiline && !e.ctrlKey) return
   emit('enter')
 }

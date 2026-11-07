@@ -100,6 +100,24 @@ export default defineConfig({
     },
     plugins: [vue(), webwallglHotfixPlugin()],
     /**
+     * 双入口（2026-10-31，P0 壁纸沙盒逃逸）：`index` 是应用本体；
+     * `scene-sandbox` 是 sandbox="allow-scripts" iframe 里的引擎宿主页
+     * （见 src/renderer/scene-sandbox.html 与 lib/wallpaper/scene-host.ts）。
+     *
+     * 【为什么必须是显式输入】Vite 的 HTML 入口只认 rollupOptions.input 里
+     * 列出来的那些 —— 放 public/ 也不算入口（那是原样拷贝，模块不会被
+     * 打包，宿主页 import 'webwallgl' 会 404）。构建日志全绿、应用里
+     * 场景挂载一律空白，是这条配置漏写的典型症状。
+     */
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve('src/renderer/index.html'),
+          'scene-sandbox': resolve('src/renderer/scene-sandbox.html')
+        }
+      }
+    },
+    /**
      * webwallgl 的 bundle 里内嵌了 Mediabunny（MPL-2.0）。MPL 要求分发时不得
      * 移除许可证通告；压缩器默认可能把 `/*! ... *\/` 这类注释挪走或丢掉。
      * 这里显式要求 legal comments 原样内联，保证构建产物里的版权/许可横幅

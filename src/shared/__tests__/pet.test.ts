@@ -25,7 +25,9 @@ import {
   defaultPetState,
   exertPet,
   feedPet,
+  feedSnack,
   grantPetRice,
+  grantPetSnack,
   grantRunReward,
   lastWrongLabel,
   lessonStreak,
@@ -39,6 +41,7 @@ import {
   petChatCommit,
   petChatGate,
   petDayKey,
+  petDecayPeriods,
   petFace,
   petHungerTier,
   petMood,
@@ -53,9 +56,14 @@ import {
   PET_AFFECTION_TIERS,
   PET_CHAT_DAILY_MAX,
   PET_CHAT_DAILY_TOKENS,
+  PET_CHAT_COST,
+  PET_CHASE_COST,
   PET_CHECKIN_RICE,
   PET_DECAY_OFFLINE_PERIOD_MS,
   PET_DECAY_ONLINE_PERIOD_MS,
+  PET_DECAY_TIERS,
+  PET_DECAY_TIER_DEFAULT,
+  PET_DECAY_TIER_PERIODS,
   PET_HUNGER_FULL_AT,
   PET_HUNGER_MILD_AT,
   PET_HUNGER_MEDIUM_AT,
@@ -68,10 +76,15 @@ import {
   PET_RICE_MAX,
   PET_RUN_LEDGER_MAX,
   PET_RUN_REWARD_DAILY_MAX,
+  PET_SATIETY_MAX,
   PET_SIZE_DEFAULT,
   PET_SIZES,
+  PET_SNACK_DAILY_CAPS,
+  PET_SNACK_MAX,
+  PET_SNACK_REWARD,
   PET_VERSION,
   pushPetMemory,
+  setPetDecayTier,
   setPetEmotion,
   setPetMode,
   setPetPos,
@@ -128,6 +141,38 @@ describe('normalizePetState：读口的"缺就补、坏就扔"', () => {
     for (const good of PET_SIZES) {
       expect(normalizePetState({ ...v2, size: good }, now).size).toBe(good)
     }
+  })
+
+  it('v6 老文件（没有 snacks/snackDay/decayTier）升到 v7：补 0 根 + 空账 + normal 档；坏值回默认', () => {
+    const now = local(2026, 10, 31, 12)
+    const v6 = { ...defaultPetState(now) } as Record<string, unknown>
+    delete v6.snacks
+    delete v6.snackDay
+    delete v6.decayTier
+    v6.version = 6
+    const s = normalizePetState(v6, now)
+    expect(s.version).toBe(PET_VERSION)
+    // 老文件没有这两样 = 从没喂过零食、没调过档 —— 补出来的必须是"没发生过"，
+    // 不是编一段历史（0 根、空账、normal 档 = v6 的衰减节奏原样延续）
+    expect(s.snacks).toBe(0)
+    expect(s.snackDay).toEqual({ day: petDayKey(now), counts: {} })
+    expect(s.decayTier).toBe('normal')
+    // 坏值不吃回声：NaN / 负数 / 白名单外的档名都不认
+    for (const bad of [Number.NaN, -3, 'many', null]) {
+      expect(normalizePetState({ ...v6, snacks: bad }, now).snacks, `snacks=${String(bad)}`).toBe(0)
+    }
+    for (const bad of ['turbo', 3, null, {}]) {
+      expect(
+        normalizePetState({ ...v6, decayTier: bad }, now).decayTier,
+        `decayTier=${String(bad)}`
+      ).toBe('normal')
+    }
+    // snackDay 的 counts 逐项白名单：假来源键扔掉，负数条目也扔掉（只留 >0 的）
+    const dirty = normalizePetState(
+      { ...v6, snackDay: { day: petDayKey(now), counts: { review: -2, cake: 9 } } },
+      now
+    )
+    expect(dirty.snackDay.counts).toEqual({})
   })
 
   it('v3 老文件（有 size、没有 runLedger）升到 v4：补一本空白运行账（当天起算）；runLedger 是垃圾也回默认', () => {
@@ -557,22 +602,32 @@ describe('衰减 / 喂饭 / 发奖 / 位置', () => {
     expect(dropped).toBe(3)
   })
 
-  it('喂饭：饭盒空 → reason empty；吃饱了拒喂（reason full，饭不凭空蒸发）；正常一碗 +20 封顶 100', () => {
+  it('喂饭：饭盒空 → empty；饱了且好感满 → full（拒喂不动饭）；饱了但好感没满 → overflow（扣饭、饱腹不变）；正常 +20 封顶', () => {
     // 饭盒空：拒，原样返回（同引用 —— 调用方靠 next !== prev 判要不要落盘）
     const empty = { ...defaultPetState(t0), rice: 0 }
     const r1 = feedPet(empty)
     expect(r1.ok).toBe(false)
     expect(r1.reason).toBe('empty')
     expect(r1.state).toBe(empty)
-    // 已经吃饱：拒，且**饭盒不动**（允许喂 = rice 扣了、satiety 没涨，玩家看到"喂了没反应"）
-    const fullStomach = { ...defaultPetState(t0), rice: 2, satiety: 100 }
-    const r2 = feedPet(fullStomach)
-    expect(r2.ok).toBe(false)
-    expect(r2.reason).toBe('full')
-    expect(r2.state).toBe(fullStomach)
-    expect(r2.state.rice).toBe(2)
-    // 两种"喂不进"必须可区分：调用方要各出一句不同的台词
+    // v7 模块五：饱腹 100 不再一律拒 —— 好感没满时允许"勉为其难继续吃"：
+    // 扣饭、fedTotal+1、饱腹度**不变**（这一碗只换好感，见 brain 的 applyAffection）
+    const overflow = { ...defaultPetState(t0), rice: 2, satiety: 100, affection: 50 }
+    const r2 = feedPet(overflow)
+    expect(r2.ok).toBe(true)
+    expect(r2.reason).toBe('overflow')
+    expect(r2.state.rice).toBe(1)
+    expect(r2.state.satiety).toBe(100)
+    expect(r2.state.fedTotal).toBe(1)
+    // 饱腹与好感都顶格：真吃不下了 —— 拒，且**饭盒不动**（喂了没反应才是骗人）
+    const fullStomach = { ...defaultPetState(t0), rice: 2, satiety: 100, affection: 100 }
+    const r2b = feedPet(fullStomach)
+    expect(r2b.ok).toBe(false)
+    expect(r2b.reason).toBe('full')
+    expect(r2b.state).toBe(fullStomach)
+    expect(r2b.state.rice).toBe(2)
+    // 三种"喂不进/不同路"必须可区分：调用方要各出一句不同的台词
     expect(r1.reason).not.toBe(r2.reason)
+    expect(r2.reason).not.toBe(r2b.reason)
     // 正常喂：扣 1 碗、+20 封顶 100、fedTotal +1（这一路才产生新状态）
     const hungry = { ...defaultPetState(t0), rice: 1, satiety: 95 }
     const r3 = feedPet(hungry)
@@ -582,6 +637,135 @@ describe('衰减 / 喂饭 / 发奖 / 位置', () => {
     expect(r3.state.rice).toBe(0)
     expect(r3.state.satiety).toBe(100) // 95+20 封顶
     expect(r3.state.fedTotal).toBe(1)
+  })
+
+  it('喂小鱼干（v7）：空袋 → empty；三条出口与 feedPet 逐字同构；不记 fedTotal', () => {
+    const base = defaultPetState(t0)
+    const empty = { ...base, snacks: 0 }
+    const s1 = feedSnack(empty)
+    expect(s1.ok).toBe(false)
+    expect(s1.reason).toBe('empty')
+    expect(s1.state).toBe(empty)
+    // 饱腹满、好感没满 → overflow：扣零食、饱腹不变、好感交给调用方
+    const overflow = { ...base, snacks: 3, satiety: 100, affection: 50 }
+    const s2 = feedSnack(overflow)
+    expect(s2.ok).toBe(true)
+    expect(s2.reason).toBe('overflow')
+    expect(s2.state.snacks).toBe(2)
+    expect(s2.state.satiety).toBe(100)
+    expect(s2.state.fedTotal).toBe(0) // 零嘴不是"喂过几碗饭"的纪念数字
+    // 饱腹与好感都满 → full：不扣零食、原样返回
+    const full = { ...base, snacks: 3, satiety: 100, affection: 100 }
+    const s3 = feedSnack(full)
+    expect(s3.ok).toBe(false)
+    expect(s3.reason).toBe('full')
+    expect(s3.state).toBe(full)
+    // 正常：扣 1 根、饱腹 +PET_SNACK_GAIN 封顶
+    const ok = { ...base, snacks: 1, satiety: 90 }
+    const s4 = feedSnack(ok)
+    expect(s4.ok).toBe(true)
+    expect(s4.reason).toBe('ok')
+    expect(s4.state.snacks).toBe(0)
+    expect(s4.state.satiety).toBe(95)
+  })
+
+  it('小鱼干发奖（v7）：review 来源 +1/根、999 封顶、日上限 4 笔；与大白饭账本各记各的', () => {
+    expect(PET_SNACK_REWARD.review).toBe(1)
+    expect(PET_SNACK_DAILY_CAPS.review).toBe(4)
+    const base = defaultPetState(t0)
+    const first = grantPetSnack(base, 'review', t0)
+    expect(first.credited).toBe(1)
+    expect(first.capped).toBe(false)
+    expect(first.state.snacks).toBe(1)
+    // 袋子满 999：装不下 → credited=0、capped=false（不是"今天发满了"），
+    // 也不消耗当日额度 —— 同 grantPetRice 的满仓口径
+    const bagFull = grantPetSnack({ ...base, snacks: PET_SNACK_MAX }, 'review', t0)
+    expect(bagFull.credited).toBe(0)
+    expect(bagFull.capped).toBe(false)
+    expect(bagFull.state.snacks).toBe(PET_SNACK_MAX)
+    // 第 4 笔仍有；第 5 笔 capped（state 原样引用 = 不扣不加）
+    let s = base
+    for (let i = 0; i < 4; i += 1) {
+      const r = grantPetSnack(s, 'review', t0)
+      expect(r.capped, `第 ${i + 1} 笔不该被拦`).toBe(false)
+      s = r.state
+    }
+    expect(s.snacks).toBe(4)
+    const fifth = grantPetSnack(s, 'review', t0)
+    expect(fifth.capped).toBe(true)
+    expect(fifth.credited).toBe(0)
+    expect(fifth.state).toBe(s)
+    // 跨日重置：明天照发
+    const tomorrow = local(2026, 10, 7, 12)
+    expect(grantPetSnack(s, 'review', tomorrow).credited).toBe(1)
+    // 两种货币互不干扰：大白饭日上限用满时，小鱼干照样入账（独立账本）
+    const riceCapped = { ...base, riceDay: { day: petDayKey(t0), counts: { review: 99 } } }
+    expect(grantPetRice(riceCapped, 'review', t0).capped).toBe(true)
+    expect(grantPetSnack(riceCapped, 'review', t0).credited).toBe(1)
+  })
+
+  it('饱腹衰减档位（v7）：normal 与老常量逐值一致；三档周期单调；换档不动锚点', () => {
+    expect(PET_DECAY_TIERS).toEqual(['relaxed', 'normal', 'strict', 'never'])
+    expect(PET_DECAY_TIER_DEFAULT).toBe('normal')
+    expect(petDecayPeriods('normal')).toEqual({
+      onlineMs: PET_DECAY_ONLINE_PERIOD_MS,
+      offlineMs: PET_DECAY_OFFLINE_PERIOD_MS
+    })
+    // relaxed 更慢、strict 更快（只比较周期，不钉死具体数字 —— 数字的真源在表里）
+    expect(PET_DECAY_TIER_PERIODS.relaxed.onlineMs).toBeGreaterThan(PET_DECAY_TIER_PERIODS.normal.onlineMs)
+    expect(PET_DECAY_TIER_PERIODS.strict.onlineMs).toBeLessThan(PET_DECAY_TIER_PERIODS.normal.onlineMs)
+    expect(PET_DECAY_TIER_PERIODS.relaxed.offlineMs).toBeGreaterThan(PET_DECAY_TIER_PERIODS.normal.offlineMs)
+    expect(PET_DECAY_TIER_PERIODS.strict.offlineMs).toBeLessThan(PET_DECAY_TIER_PERIODS.normal.offlineMs)
+    // 未知档回默认（读口守门，不做回声筒）
+    expect(petDecayPeriods('turbo' as never)).toEqual(petDecayPeriods('normal'))
+    // 换档只换档：饱腹度、衰减锚点、好感一个都不动
+    const s = { ...defaultPetState(t0), satiety: 42 }
+    const next = setPetDecayTier(s, 'relaxed')
+    expect(next.decayTier).toBe('relaxed')
+    expect(next.satiety).toBe(s.satiety)
+    expect(next.lastDecayAt).toBe(s.lastDecayAt)
+    expect(next.affection).toBe(s.affection)
+  })
+
+  /**
+   * 「不会饿（保持饱腹）」档（2026-10-31 主人点名新增）的三条承诺：
+   *   ① 饱腹永不下降，且切进这一档的**当下**就钉满（不是等下一拍心跳）；
+   *   ② never 期间心跳不扣值、也不重锚（避免每 30 秒空转写盘）；
+   *   ③ 切回普通档不补扣 never 期间的旧账（切出时锚点重设到当下）。
+   * 第 ③ 条是最容易漏的：只判"周期 = ∞ 就跳过衰减"而不动 lastDecayAt 的写法，
+   * 切回来第一拍会把 3 天的账一次扣完 —— 用户看到"刚关掉不会饿就饿死了"。
+   */
+  it('不会饿档（never）：切进即钉满、心跳不扣、切回不补扣旧账', () => {
+    expect(PET_DECAY_TIER_PERIODS.never).toEqual({
+      onlineMs: Number.POSITIVE_INFINITY,
+      offlineMs: Number.POSITIVE_INFINITY
+    })
+
+    // ① 切进 never 的当下就满（42 → 100），好感一个字节不动；锚点保持原值
+    //    —— never 期间不衰减，切出时再重设（③）。这里故意给一个旧锚点，
+    //    若实现偷偷重锚，这条会立刻红。
+    const oldAnchor = local(2026, 10, 20, 12)
+    const hungry = { ...defaultPetState(t0), satiety: 42, affection: 37, lastDecayAt: oldAnchor }
+    const pinned = setPetDecayTier(hungry, 'never', t0)
+    expect(pinned.decayTier).toBe('never')
+    expect(pinned.satiety).toBe(PET_SATIETY_MAX)
+    expect(pinned.lastDecayAt).toBe(oldAnchor)
+    expect(pinned.affection).toBe(37)
+
+    // ② 三天后心跳照旧不扣（周期 ∞）；锚点原地不动 —— 每拍重锚会让 tick
+    //    每 30 秒落一次盘，纯属给不衰减的档位空转磁盘
+    const threeDaysLater = local(2026, 11, 3, 12)
+    const kept = decayPet(pinned, threeDaysLater, petDecayPeriods('never').onlineMs)
+    expect(kept.dropped).toBe(0)
+    expect(kept.state.satiety).toBe(PET_SATIETY_MAX)
+    expect(kept.state.lastDecayAt).toBe(oldAnchor)
+
+    // ③ 再切回 normal：切出时锚点重设到当下 ⇒ 第一拍不满一个周期，0 掉，不补扣
+    const back = setPetDecayTier(kept.state, 'normal', threeDaysLater)
+    expect(back.lastDecayAt).toBe(threeDaysLater)
+    const firstBeat = decayPet(back, local(2026, 11, 3, 12, 1), petDecayPeriods('normal').onlineMs)
+    expect(firstBeat.dropped).toBe(0)
+    expect(firstBeat.state.satiety).toBe(PET_SATIETY_MAX)
   })
 
   it('发奖按 kind 走表，大白饭封顶 999（V1-46：摸头不再发饭，本表只测学习奖）', () => {
@@ -671,6 +855,34 @@ describe('exertPet：干活扣饱食度，夹在 0 以上', () => {
     const s = { ...defaultPetState(t0), satiety: 50 }
     expect(exertPet(s, 2.4).satiety).toBe(48)
     expect(exertPet(s, 2).satiety).toBe(48)
+  })
+
+  /**
+   * 不会饿档的第二条减饱腹的路（2026-11-01 修）：衰减那条已由 decayPet 的
+   * Infinity 分支挡住；此处若漏判，never 下跑一次腿 / 聊一句就会从 100 掉一点，
+   * 直到下一拍 30 秒心跳才被 holdPetFull 钉回去 —— 设置页写着"永远保持吃饱"，
+   * 用户当场看到的却是有规律地掉。所以判在 exertPet 这个唯一入口。
+   */
+  it('不会饿档（never）：干活也不扣饱腹度（跑腿/聊天两条路都经这里）', () => {
+    const s = { ...defaultPetState(t0), satiety: PET_SATIETY_MAX, decayTier: 'never' as const }
+    // 同引用 = 零变化（调用方据此不落盘），且数值一个字节没动
+    expect(exertPet(s, PET_CHASE_COST)).toBe(s)
+    expect(exertPet(s, PET_CHAT_COST)).toBe(s)
+    // 尺子自证：同样的消耗在 normal 档必须扣 —— 否则上面的 toBe 在丢弃 cost
+    // 的坏实现上也会绿（「不许默认回退为成功」的同一把尺）
+    const normal = { ...s, decayTier: 'normal' as const }
+    expect(exertPet(normal, PET_CHASE_COST).satiety).toBe(PET_SATIETY_MAX - PET_CHASE_COST)
+  })
+
+  it('不会饿档（never）：聊天照常记账（额度/时间），只是体力不扣', () => {
+    const s = { ...defaultPetState(t0), satiety: PET_SATIETY_MAX, decayTier: 'never' as const }
+    const after = petChatCommit(s, t0, 50)
+    expect(after.satiety).toBe(PET_SATIETY_MAX)
+    expect(after.memory.chatCallsToday).toBe(1)
+    expect(after.memory.lastChatAt).toBe(t0)
+    // 尺子：同一笔账在 normal 档会扣 2 点
+    const normal = petChatCommit({ ...s, decayTier: 'normal' }, t0, 50)
+    expect(normal.satiety).toBe(PET_SATIETY_MAX - PET_CHAT_COST)
   })
 })
 
@@ -825,9 +1037,14 @@ describe('运行奖：normalizePetRunLedger 读口清洗与 runRewardsToday 快�
 
 describe('IPC 入参清洗（parsePetAction / parsePetHitRects / normalizeRunReport）', () => {
   it('parsePetAction：简单动作过、白名单外的落 null', () => {
-    for (const a of ['feed', 'pat', 'show', 'hide', 'menu', 'chat', 'rua']) {
+    for (const a of ['feed', 'snack', 'pat', 'show', 'hide', 'menu', 'chat', 'rua']) {
       expect(parsePetAction({ action: a })).toEqual({ action: a })
     }
+    // 衰减档位（v7 模块五）：三档白名单，档名/缺参/伪造都不收
+    expect(parsePetAction({ action: 'decay', tier: 'relaxed' })).toEqual({ action: 'decay', tier: 'relaxed' })
+    expect(parsePetAction({ action: 'decay', tier: 'strict' })).toEqual({ action: 'decay', tier: 'strict' })
+    expect(parsePetAction({ action: 'decay', tier: 'turbo' })).toBe(null)
+    expect(parsePetAction({ action: 'decay' })).toBe(null)
     expect(parsePetAction({ action: 'explode' })).toBe(null)
     expect(parsePetAction(null)).toBe(null)
     expect(parsePetAction({ action: 'grant', reward: 'gold' })).toBe(null)
@@ -962,11 +1179,12 @@ describe('IPC 入参清洗（parsePetAction / parsePetHitRects / normalizeRunRep
 
 describe('好感度：计分表与档界常量（拍板值钉死）', () => {
   it('计分表逐项对账：delta 正负与日上限', () => {
-    // 拍板表（契约 §2）：喂+2/3、摸+1/5、学习+2/6、挑战+3/1、复习满分+5/1、
-    // 签到+1/1、错题-1/3、挨饿-2/1、久离-5/1。逐项写死是有意的 ——
+    // 拍板表（契约 §2）：喂+2/3、喂零食(v7)+2/6、摸+1/5、学习+2/6、挑战+3/1、
+    // 复习满分+5/1、签到+1/1、错题-1/3、挨饿-2/1、久离-5/1。逐项写死是有意的 ——
     // 改表必须同时改这里，改完两边一起红才叫"看得见"
     expect(PET_AFFECTION_RULES).toEqual({
       feed: { delta: 2, cap: 3 },
+      snack: { delta: 2, cap: 6 },
       pat: { delta: 1, cap: 5 },
       study: { delta: 2, cap: 6 },
       challenge: { delta: 3, cap: 1 },

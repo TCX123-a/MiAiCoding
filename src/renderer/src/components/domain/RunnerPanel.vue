@@ -134,6 +134,9 @@ async function doOpen(lang: LangOfCode, recommendedName?: string): Promise<void>
     } else if (r.reason === 'missing') {
       // detail 由主进程填成配置里那个路径 —— 用户要拿它对照自己填过什么
       ideIssue.value = { text: RUNNER_UI.IDE_MISSING(r.detail ?? ''), settings: true }
+    } else if (r.reason === 'unsupported') {
+      // 路径在、但不是白名单里的 IDE：下一步同样是去设置页换一个
+      ideIssue.value = { text: RUNNER_UI.IDE_UNSUPPORTED(r.detail ?? ''), settings: true }
     } else {
       ideIssue.value = { text: RUNNER_UI.IDE_FAILED(r.detail), settings: false }
     }
@@ -215,6 +218,11 @@ const pickerList = ref<IdeCandidate[]>([])
 const pickerLang = ref<LangOfCode>('c')
 const pickerHint = ref<IdePickHint>('tie')
 const pickerRecommended = ref<string | null>(null)
+
+/** 去设置页的「本机编程环境」卡：带 card=env + 时间戳，直达并闪一下 */
+function openEnvSettings(): void {
+  void router.push({ path: '/settings', query: { card: 'env', at: String(Date.now()) } })
+}
 
 async function detectIdeAndOpen(lang: LangOfCode): Promise<void> {
   if (detecting.value) return
@@ -514,7 +522,7 @@ watch(
             <MiButton size="sm" variant="secondary" :disabled="detecting" @click="detectIdeAndOpen(runner.lang)">
               {{ detecting ? ACTION.DETECTING : ACTION.AUTO_DETECT }}
             </MiButton>
-            <MiButton size="sm" variant="secondary" @click="router.push('/settings')">
+            <MiButton size="sm" variant="secondary" @click="openEnvSettings">
               {{ RUNNER_UI.IDE_GO_SETTINGS }}
             </MiButton>
           </div>
@@ -541,7 +549,7 @@ watch(
           <template v-else>
             <div v-if="view.showMessage" class="callout">{{ view.statusText }}</div>
             <div v-if="view.envIssue" class="callout-action">
-              <MiButton size="sm" variant="secondary" @click="router.push('/settings')">
+              <MiButton size="sm" variant="secondary" @click="openEnvSettings">
                 {{ RUNNER_UI.GO_SETTINGS }}
               </MiButton>
             </div>
@@ -566,6 +574,13 @@ watch(
                 <MiRichText :text="view.errorCard.fixHint" />
               </div>
             </div>
+
+            <!--
+              Java 单文件里写了多个 public 类时，本鱼把它拆成了哪几个文件
+              （v7 模块六）。中性提示：拆分不是错误，所以不用 warn/err 卡片；
+              摆在编译器原话之前，帮学员把报错里的文件名对上号。
+            -->
+            <div v-if="view.showSplitHint" class="note">{{ view.splitHint }}</div>
 
             <!--
               编译过了、编译器却仍说的话（-Wall 的告警）。

@@ -27,6 +27,7 @@ import {
   type AppConfig,
   type ConfigSavePayload
 } from '../../../shared/types'
+import type { AiProviderId } from '../../../shared/ai-providers'
 import {
   DEFAULT_LAYOUT,
   RIGHT_PANEL_MAX_SIZE,
@@ -41,7 +42,7 @@ const REAL_KEY = 'sk-0123456789abcdef0123456789abcdef'
 
 function withKey(apiKey: string): AppConfig {
   const c = structuredClone(DEFAULT_APP_CONFIG)
-  c.ai.apiKey = apiKey
+  c.ai.apiKeys[c.ai.provider] = apiKey
   return c
 }
 
@@ -56,10 +57,30 @@ function withKey(apiKey: string): AppConfig {
  * 一直在断言一个根本没被改过的值。测试照跑、照绿，测的却不是我以为的东西。
  * 拆成两个参数之后，TS 的多余属性检查会在 typecheck 阶段就把这种误传顶回来。
  */
+/**
+ * 测试夹具允许写 `apiKey` 这个便捷字段：多厂商之后真正落盘的是
+ * `apiKeys[provider]`，逐条用例写一整张表会把「测什么」淹掉。这里把它
+ * 映射到**当前厂商**的槽位，与渲染层 `clearAiKey/setAiProvider` 的发法同款。
+ */
+type AiPayloadPatch = Partial<ConfigSavePayload['ai']> & { apiKey?: string | null }
+
 function payload(
-  ai: Partial<ConfigSavePayload['ai']> = {},
+  ai: AiPayloadPatch = {},
   top: Partial<Omit<ConfigSavePayload, 'ai'>> = {}
 ): ConfigSavePayload {
+  const { apiKey, ...rest } = ai
+  const provider = rest.provider ?? 'deepseek'
+  // 故意**不**补 `dynamicEnabled`：有单测要求「载荷没带这个字段时保留现有值」，
+  // 夹具若默认填 false 会把那条用例变成永远绿。类型上靠一次收口转换放行。
+  const aiPayload = {
+    provider,
+    baseUrl: 'https://api.deepseek.com',
+    model: 'deepseek-chat',
+    ...rest
+  } as ConfigSavePayload['ai']
+  if (apiKey !== undefined) {
+    aiPayload.apiKeys = { ...(rest.apiKeys ?? {}), [provider]: apiKey }
+  }
   return {
     version: 1,
     reviewEnabled: true,
@@ -75,7 +96,7 @@ function payload(
     // 同 wallpaper：开屏块也由渲染层整块提交（v14 起）
     splash: defaultSplash(),
     ...top,
-    ai: { baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat', ...ai }
+    ai: aiPayload
   } as ConfigSavePayload
 }
 
@@ -83,7 +104,7 @@ function payload(
 
 describe('toPublicConfig：Key 绝不出现在返回值里', () => {
   it('**全文扫描**：序列化之后哪儿都找不到那把 Key', () => {
-    // 只断言 `ai.apiKey === undefined` 是不够的 —— 将来有人加个 `aiKey`、
+    // 只断言 `ai.apiKeys === undefined` 是不够的 —— 将来有人加个 `aiKey`、
     // 或者把整个 config 塞进别的字段，字段检查会**放它过去**。
     // 扫全文才拦得住，代价只是这一行。
     const pub = toPublicConfig(withKey(REAL_KEY))
@@ -594,25 +615,25 @@ describe('mergeConfigPayload：保存音量时「没带」与「拨到 0」是�
 describe('apiKey 是三态，不是两态', () => {
   it('① 不传 → 保持原样（只想改别的字段时）', () => {
     const merged = mergeConfigPayload(withKey(REAL_KEY), payload())
-    expect(merged.ai.apiKey).toBe(REAL_KEY)
+    expect(merged.ai.apiKeys.deepseek).toBe(REAL_KEY)
   })
 
   it('② 空串 → **保持原样**，不是清空', () => {
     // 这是整件事的关键：渲染进程永远不知道真 Key，它保存时必然带回空串。
     // 要是把空串当「用户想清空」，每保存一次别的设置 Key 就没了。
     const merged = mergeConfigPayload(withKey(REAL_KEY), payload({ apiKey: '' }))
-    expect(merged.ai.apiKey).toBe(REAL_KEY)
+    expect(merged.ai.apiKeys.deepseek).toBe(REAL_KEY)
   })
 
   it('③ null → 真的清空（设置页的「清除 Key」走这条）', () => {
     // 只有 null 这一条路能删 Key。少了它，Key 就永远卡在配置里删不掉。
     const merged = mergeConfigPayload(withKey(REAL_KEY), payload({ apiKey: null }))
-    expect(merged.ai.apiKey).toBe('')
+    expect(merged.ai.apiKeys.deepseek).toBe('')
   })
 
   it('④ 新字符串 → 换掉', () => {
     const merged = mergeConfigPayload(withKey('sk-old'), payload({ apiKey: 'sk-new' }))
-    expect(merged.ai.apiKey).toBe('sk-new')
+    expect(merged.ai.apiKeys.deepseek).toBe('sk-new')
   })
 
   it('从「没配」变成「配了」，hasKey 跟着翻转', () => {
@@ -626,45 +647,403 @@ describe('粘贴带空白 / 换行的 Key', () => {
     // 从网页复制 Key 极易连带选中换行。不去掉的话 fetch 在设置 header 时就抛，
     // 而那个异常会被归类成 offline「连不上网」，用户会去查路由器，方向全错。
     const merged = mergeConfigPayload(withKey(''), payload({ apiKey: `  ${REAL_KEY}\n` }))
-    expect(merged.ai.apiKey).toBe(REAL_KEY)
+    expect(merged.ai.apiKeys.deepseek).toBe(REAL_KEY)
   })
 
   it('全是空白 → 当成「没填」，不是「把 Key 改成一串空格」', () => {
     const merged = mergeConfigPayload(withKey(REAL_KEY), payload({ apiKey: '   \t ' }))
-    expect(merged.ai.apiKey).toBe(REAL_KEY)
+    expect(merged.ai.apiKeys.deepseek).toBe(REAL_KEY)
   })
 
   it('Key 中间的字符一个都不许动（有些 Key 里就有连字符/下划线）', () => {
     const weird = 'sk-a-b_c.d~e'
-    expect(mergeConfigPayload(withKey(''), payload({ apiKey: weird })).ai.apiKey).toBe(weird)
+    expect(mergeConfigPayload(withKey(''), payload({ apiKey: weird })).ai.apiKeys.deepseek).toBe(weird)
+  })
+})
+
+// ---------------------------------------------------------------- 多厂商
+
+/**
+ * 多厂商之后 Key 是**一张表**，不再是单个字段。
+ *
+ * 这一节守的是「串槽」：用户换了 OpenAI 的 Key，DeepSeek 那把被顺手清掉；
+ * 或者界面上选着 Kimi，请求却读着 DeepSeek 的 Key。两种都不会报错 ——
+ * 只会 401，然后用户以为自己把钥匙填错了。
+ */
+describe('多厂商：Key 分槽存，切换厂商不许串味', () => {
+  const withKeys = (
+    keys: Partial<Record<AiProviderId, string>>,
+    provider: AiProviderId = 'deepseek'
+  ): AppConfig => {
+    const c = structuredClone(DEFAULT_APP_CONFIG)
+    c.ai.provider = provider
+    for (const [id, v] of Object.entries(keys)) c.ai.apiKeys[id as AiProviderId] = v ?? ''
+    return c
+  }
+
+  it('只改 openai 的 Key —— deepseek 那把原封不动', () => {
+    const cur = withKeys({ deepseek: 'sk-ds', openai: 'sk-old' }, 'openai')
+    const merged = mergeConfigPayload(
+      cur,
+      payload({ provider: 'openai', apiKeys: { openai: 'sk-new' } })
+    )
+    expect(merged.ai.apiKeys.openai).toBe('sk-new')
+    expect(merged.ai.apiKeys.deepseek).toBe('sk-ds')
+  })
+
+  it('null 只清指定厂商，不连坐别家', () => {
+    const cur = withKeys({ deepseek: 'sk-ds', kimi: 'sk-k' }, 'kimi')
+    const merged = mergeConfigPayload(cur, payload({ provider: 'kimi', apiKeys: { kimi: null } }))
+    expect(merged.ai.apiKeys.kimi).toBe('')
+    expect(merged.ai.apiKeys.deepseek).toBe('sk-ds')
+  })
+
+  it('不传 apiKeys → 六家全部保持原样（改一次别的设置不许洗掉任何一把）', () => {
+    const cur = withKeys({ deepseek: 'sk-ds', anthropic: 'sk-an' }, 'deepseek')
+    const merged = mergeConfigPayload(cur, payload({ provider: 'deepseek' }))
+    expect(merged.ai.apiKeys.deepseek).toBe('sk-ds')
+    expect(merged.ai.apiKeys.anthropic).toBe('sk-an')
+    expect(merged.ai.apiKeys.openai).toBe('')
+  })
+
+  it('apiKeys 不是对象 → 抛（调用方写错，不许悄悄保全）', () => {
+    const cur = withKeys({ deepseek: 'sk-ds' })
+    const p = payload({ provider: 'deepseek' })
+    ;(p.ai as { apiKeys?: unknown }).apiKeys = 'nope'
+    expect(() => mergeConfigPayload(cur, p)).toThrow()
+  })
+
+  it('provider 是未知值 → 抛，而不是悄悄退回 deepseek（否则会拿错钥匙）', () => {
+    const cur = withKeys({ deepseek: 'sk-ds' })
+    const p = payload({ provider: 'deepseek' })
+    ;(p.ai as { provider?: unknown }).provider = 'nope'
+    expect(() => mergeConfigPayload(cur, p)).toThrow()
+  })
+
+  it('切到官方厂商且没带 model → 用该厂商第一条模型，不许留着上家的', () => {
+    // 留着 `deepseek-chat` 发给 Kimi = 必然 404，而界面看起来一切正常。
+    const cur = withKeys({ deepseek: 'sk-ds' })
+    cur.ai.model = 'deepseek-chat'
+    const merged = mergeConfigPayload(
+      cur,
+      payload({ provider: 'kimi', model: undefined as unknown as string })
+    )
+    expect(merged.ai.provider).toBe('kimi')
+    expect(merged.ai.model).toBe('kimi-latest')
+  })
+
+  it('切到 custom 且没带 model → **清空**，等用户填（留着上家模型必 404）', () => {
+    const cur = withKeys({ deepseek: 'sk-ds' })
+    cur.ai.model = 'deepseek-chat'
+    const merged = mergeConfigPayload(
+      cur,
+      payload({ provider: 'custom', model: undefined as unknown as string })
+    )
+    expect(merged.ai.model).toBe('')
+  })
+
+  it('切厂商时显式带了模型 → 听载荷的', () => {
+    const cur = withKeys({ deepseek: 'sk-ds' })
+    const merged = mergeConfigPayload(cur, payload({ provider: 'openai', model: 'o3-mini' }))
+    expect(merged.ai.model).toBe('o3-mini')
+  })
+
+  it('官方厂商忽略载荷里的 baseUrl —— Key 不会被引到奇怪地址', () => {
+    const cur = withKeys({ deepseek: 'sk-ds' })
+    const merged = mergeConfigPayload(
+      cur,
+      payload({ provider: 'anthropic', baseUrl: 'https://evil.example.com/v1' })
+    )
+    expect(merged.ai.baseUrl).toBe('https://api.anthropic.com/v1')
+  })
+
+  it('custom 仍走地址规范化：补 https、保留 /v1 前缀', () => {
+    const cur = withKeys({})
+    const merged = mergeConfigPayload(
+      cur,
+      payload({ provider: 'custom', baseUrl: 'my-gateway.example.com/v1/', model: 'my-model' })
+    )
+    expect(merged.ai.baseUrl).toBe('https://my-gateway.example.com/v1')
+  })
+
+  it('custom 的公网 http 地址直接拒（Key 不许明文上路）', () => {
+    expect(() =>
+      mergeConfigPayload(
+        withKeys({}),
+        payload({ provider: 'custom', baseUrl: 'http://1.2.3.4/v1', model: 'm' })
+      )
+    ).toThrow()
+  })
+
+  it('hasKey 只看**当前厂商**那把钥匙', () => {
+    const cur = withKeys({ deepseek: 'sk-ds', openai: '' }, 'openai')
+    expect(toPublicConfig(cur).ai.hasKey).toBe(false)
+    const merged = mergeConfigPayload(cur, payload({ provider: 'openai', apiKeys: { openai: 'sk-o' } }))
+    expect(toPublicConfig(merged).ai.hasKey).toBe(true)
+    // 切回 deepseek，读到的仍是它自己那把（一直没动过）
+    const back = mergeConfigPayload(merged, payload({ provider: 'deepseek' }))
+    expect(toPublicConfig(back).ai.hasKey).toBe(true)
+  })
+})
+
+// ---------------------------------------------------------------- 双模式（v22）
+
+/**
+ * 双模式合并：`ai.mode` 决定请求走专属 API 还是免费公开池。
+ *
+ * 这里守三件静默事故：
+ *   1. 未知 mode 被「好心」纠正成 api —— 等于替用户把请求从免费池搬走；
+ *   2. 切模式时把 Key 表洗掉 —— 切回专属模式要求用户重新去后台拿 Key；
+ *   3. `ready` 算错 —— 免费池没 Key 却被判成「不能用」，动态出题与桌宠全哑。
+ */
+describe('v22 双模式：mode / poolModel / ready', () => {
+  it('mode 原样保存；切模式**不动**任何一把 Key', () => {
+    const cur = withKey(REAL_KEY)
+    cur.ai.apiKeys.openai = 'sk-openai'
+    const merged = mergeConfigPayload(cur, payload({ mode: 'pool', poolModel: 'x/free' }))
+    expect(merged.ai.mode).toBe('pool')
+    expect(merged.ai.poolModel).toBe('x/free')
+    expect(merged.ai.apiKeys.deepseek).toBe(REAL_KEY)
+    expect(merged.ai.apiKeys.openai).toBe('sk-openai')
+  })
+
+  it('缺 mode = 这次不改；磁盘上是 pool 就还是 pool', () => {
+    const cur = withKey(REAL_KEY)
+    cur.ai.mode = 'pool'
+    cur.ai.poolModel = 'x/free'
+    const merged = mergeConfigPayload(cur, payload({ model: 'deepseek-reasoner' }))
+    expect(merged.ai.mode).toBe('pool')
+    expect(merged.ai.poolModel).toBe('x/free')
+  })
+
+  it.each(['free', 'API', '', 42, null, {}])('坏 mode（%s）→ 抛错，不静默改道', (mode) => {
+    expect(() =>
+      mergeConfigPayload(withKey(REAL_KEY), payload({ mode } as never))
+    ).toThrow('invalid config payload')
+  })
+
+  it('poolModel 非字符串 → 抛错；空值 = 没改（保留当前值）', () => {
+    expect(() =>
+      mergeConfigPayload(withKey(REAL_KEY), payload({ poolModel: 42 } as never))
+    ).toThrow('invalid config payload')
+
+    const cur = withKey(REAL_KEY)
+    cur.ai.poolModel = 'x/free'
+    expect(mergeConfigPayload(cur, payload({ poolModel: '   ' })).ai.poolModel).toBe('x/free')
+  })
+
+  it('ready：专属模式看当前厂商的 Key，免费池模式永远为真', () => {
+    const noKey = structuredClone(DEFAULT_APP_CONFIG)
+    expect(toPublicConfig(noKey).ai.ready).toBe(false)
+    expect(toPublicConfig(noKey).ai.hasKey).toBe(false)
+
+    // 只给「别的厂商」配 Key，当前厂商仍算没配 —— 两个布尔都照实
+    noKey.ai.apiKeys.openai = 'sk-openai'
+    expect(toPublicConfig(noKey).ai.ready).toBe(false)
+    expect(toPublicConfig(noKey).ai.hasKey).toBe(false)
+
+    noKey.ai.apiKeys.deepseek = REAL_KEY
+    expect(toPublicConfig(noKey).ai.ready).toBe(true)
+    expect(toPublicConfig(noKey).ai.hasKey).toBe(true)
+
+    // 免费池：hasKey 仍照实为假，ready 为真（这就是两份布尔分开的理由）
+    noKey.ai.apiKeys.deepseek = ''
+    noKey.ai.mode = 'pool'
+    expect(toPublicConfig(noKey).ai.ready).toBe(true)
+    expect(toPublicConfig(noKey).ai.hasKey).toBe(false)
+  })
+})
+
+// ---------------------------------------------------------------- 思考档位（v23）
+
+/**
+ * 思考档位是**用户花钱的开关**：档位存错，Token 就照错的档烧。
+ * 这里守住三条：
+ *   1. 显式档位必须原样落盘（界面点「高」，盘上就是 high）；
+ *   2. 换模型时不能把上一条路由的高档悄悄带过去（会给聊天烧思维链）；
+ *   3. 坏值抛错，绝不静默落成某个"看起来合理"的档。
+ */
+describe('ai.thinking：保存与换路由', () => {
+  it('显式档位原样保存，并记住这条路由', () => {
+    const cur = withKey(REAL_KEY)
+    const merged = mergeConfigPayload(cur, payload({ thinking: 'high' }))
+    expect(merged.ai.thinking).toBe('high')
+    expect(merged.ai.thinkingByModel['api:deepseek:deepseek-chat']).toBe('high')
+  })
+
+  it('不传档位（老调用方）→ 保留磁盘上的值，不被推荐值改掉', () => {
+    const cur = withKey(REAL_KEY)
+    cur.ai.thinking = 'off'
+    cur.ai.thinkingByModel = { 'api:deepseek:deepseek-chat': 'off' }
+    expect(mergeConfigPayload(cur, payload()).ai.thinking).toBe('off')
+  })
+
+  it('换模型 → 按新模型重新解析，旧路由的高档不许跟过去', () => {
+    const cur = withKey(REAL_KEY)
+    cur.ai.thinking = 'high'
+    cur.ai.thinkingByModel = { 'api:deepseek:deepseek-chat': 'high' }
+    const merged = mergeConfigPayload(cur, payload({ model: 'deepseek-reasoner' }))
+    // reasoner 的推荐也是 high；换成一个小模型才看得出「没跟过去」
+    expect(merged.ai.thinkingByModel['api:deepseek:deepseek-chat']).toBe('high')
+
+    const cur2 = withKey(REAL_KEY)
+    cur2.ai.thinking = 'high'
+    cur2.ai.thinkingByModel = { 'api:deepseek:deepseek-chat': 'high' }
+    const merged2 = mergeConfigPayload(cur2, payload({ provider: 'qwen', model: 'qwen-turbo' }))
+    expect(merged2.ai.thinking).toBe('low')
+  })
+
+  it('换回旧路由 → 恢复那条路由记住的档位', () => {
+    const cur = withKey(REAL_KEY)
+    cur.ai.provider = 'openai'
+    cur.ai.model = 'gpt-4o'
+    cur.ai.thinking = 'medium'
+    cur.ai.thinkingByModel = {
+      'api:deepseek:deepseek-chat': 'off',
+      'api:openai:gpt-4o': 'medium'
+    }
+    const merged = mergeConfigPayload(
+      cur,
+      payload({ provider: 'deepseek', model: 'deepseek-chat' })
+    )
+    expect(merged.ai.thinking).toBe('off')
+  })
+
+  it('坏档位 → 抛错（不静默改成推荐值）', () => {
+    for (const thinking of ['ultra', 'HIGH', '', 42, null, {}]) {
+      expect(
+        () => mergeConfigPayload(withKey(REAL_KEY), payload({ thinking } as never)),
+        String(thinking)
+      ).toThrow('invalid config payload')
+    }
+  })
+
+  it('记忆表不是对象 → 抛错', () => {
+    for (const thinkingByModel of ['nope', 42, [], null]) {
+      expect(
+        () =>
+          mergeConfigPayload(
+            withKey(REAL_KEY),
+            payload({ thinkingByModel } as never)
+          ),
+        String(thinkingByModel)
+      ).toThrow('invalid config payload')
+    }
+  })
+
+  it('toPublicConfig：缺省/坏值时给合法档位，且读一次不往记忆表里塞条目', () => {
+    const old = structuredClone(DEFAULT_APP_CONFIG) as Partial<AppConfig>
+    delete (old.ai as Partial<AppConfig['ai']>).thinking
+    delete (old.ai as Partial<AppConfig['ai']>).thinkingByModel
+    const pub = toPublicConfig(old as AppConfig)
+    expect(pub.ai.thinking).toBe('medium')
+    expect(pub.ai.thinkingByModel).toEqual({})
+
+    const dirty = structuredClone(DEFAULT_APP_CONFIG)
+    ;(dirty.ai as { thinking?: unknown }).thinking = 'ultra'
+    ;(dirty.ai as { thinkingByModel?: unknown }).thinkingByModel = { 'x': 'nope' }
+    const pub2 = toPublicConfig(dirty)
+    expect(pub2.ai.thinking).toBe('medium')
+    expect(pub2.ai.thinkingByModel).toEqual({})
   })
 })
 
 // ---------------------------------------------------------------- baseUrl / model
 
 describe('baseUrl 和 model：空值算「没改」', () => {
+  /**
+   * 「服务地址可编辑」这条路现在**只剩自定义服务**能走。
+   * 官方厂商的地址由 shared/ai-providers.ts 的目录给，载荷里带什么都不认 ——
+   * 这是 2026-11-01 双模式重构的核心（主界面绝不让用户手填 BaseURL）。
+   * 所以下面所有地址规范化用例都显式走 `provider: 'custom'`。
+   */
+  const withCustom = (baseUrl: string): AppConfig => {
+    const c = structuredClone(DEFAULT_APP_CONFIG)
+    c.ai.provider = 'custom'
+    c.ai.baseUrl = baseUrl
+    c.ai.model = 'm'
+    c.ai.apiKeys.custom = REAL_KEY
+    return c
+  }
+
   it('清空输入框 → 保留原值，不会让请求发到空地址', () => {
-    const merged = mergeConfigPayload(withKey(REAL_KEY), payload({ baseUrl: '', model: '' }))
-    expect(merged.ai.baseUrl).toBe(DEFAULT_APP_CONFIG.ai.baseUrl)
-    expect(merged.ai.model).toBe(DEFAULT_APP_CONFIG.ai.model)
+    const cur = withCustom('https://my-proxy.local/v1')
+    const merged = mergeConfigPayload(cur, payload({ provider: 'custom', baseUrl: '', model: '' }))
+    expect(merged.ai.baseUrl).toBe('https://my-proxy.local/v1')
+    expect(merged.ai.model).toBe('m')
   })
 
-  it('改了就换（用户可能用的是代理 / 别的 OpenAI 兼容服务）', () => {
+  it('自定义服务改了就换（用户可能用的是代理 / 别的 OpenAI 兼容服务）', () => {
     const merged = mergeConfigPayload(
-      withKey(REAL_KEY),
-      payload({ baseUrl: 'https://my-proxy.local/v1', model: 'deepseek-reasoner' })
+      withCustom('https://old-proxy.local/v1'),
+      payload({ provider: 'custom', baseUrl: 'https://my-proxy.local/v1', model: 'my-model' })
     )
     expect(merged.ai.baseUrl).toBe('https://my-proxy.local/v1')
+    expect(merged.ai.model).toBe('my-model')
+  })
+
+  it('官方厂商的地址**只听目录**：载荷里塞代理地址也不生效', () => {
+    const merged = mergeConfigPayload(
+      withKey(REAL_KEY),
+      payload({ provider: 'deepseek', baseUrl: 'https://my-proxy.local/v1', model: 'deepseek-reasoner' })
+    )
+    expect(merged.ai.baseUrl).toBe('https://api.deepseek.com')
     expect(merged.ai.model).toBe('deepseek-reasoner')
   })
 
   it('首尾空白同样去掉', () => {
     const merged = mergeConfigPayload(
-      withKey(REAL_KEY),
-      payload({ baseUrl: '  https://api.deepseek.com  ', model: ' deepseek-chat ' })
+      withCustom('https://old.example.com/v1'),
+      payload({ provider: 'custom', baseUrl: '  https://my-proxy.local/v1  ', model: ' my-model ' })
     )
-    expect(merged.ai.baseUrl).toBe('https://api.deepseek.com')
-    expect(merged.ai.model).toBe('deepseek-chat')
+    expect(merged.ai.baseUrl).toBe('https://my-proxy.local/v1')
+    expect(merged.ai.model).toBe('my-model')
+  })
+
+  // 2026-10-31 自检 P2：地址校验。每条拒绝都抛 `ai-base-url: <reason>`，
+  // 渲染层按码翻成人话（SettingsView.aiBaseUrlErrorText）。
+  it('没写协议 → 自动补 https://', () => {
+    const merged = mergeConfigPayload(
+      withCustom('https://old.example.com/v1'),
+      payload({ provider: 'custom', baseUrl: 'my-gateway.example.com/v1', model: 'm' })
+    )
+    expect(merged.ai.baseUrl).toBe('https://my-gateway.example.com/v1')
+  })
+
+  it('公网 http → 拒绝（API Key 会明文上路）', () => {
+    expect(() =>
+      mergeConfigPayload(
+        withCustom('https://old.example.com/v1'),
+        payload({ provider: 'custom', baseUrl: 'http://my-proxy.example.com/v1', model: 'm' })
+      )
+    ).toThrow('ai-base-url: insecure-http')
+  })
+
+  it('http 回环地址放行（本机中转/ollama 一类）', () => {
+    for (const baseUrl of ['http://localhost:11434/v1', 'http://127.0.0.1:8080', 'http://[::1]:9000']) {
+      const merged = mergeConfigPayload(
+        withCustom('https://old.example.com/v1'),
+        payload({ provider: 'custom', baseUrl, model: 'm' })
+      )
+      expect(merged.ai.baseUrl).toBe(baseUrl)
+    }
+  })
+
+  it('非 http/https scheme → 拒绝；带账号密码 → 拒绝；畸形地址 → 拒绝', () => {
+    const cases: Array<[string, string]> = [
+      ['file:///C:/keys.txt', 'ai-base-url: scheme'],
+      ['ftp://example.com/v1', 'ai-base-url: scheme'],
+      ['https://user:pass@example.com/v1', 'ai-base-url: credentials'],
+      ['https://', 'ai-base-url: bad-url']
+    ]
+    for (const [baseUrl, code] of cases) {
+      expect(() =>
+        mergeConfigPayload(
+          withCustom('https://old.example.com/v1'),
+          payload({ provider: 'custom', baseUrl, model: 'm' })
+        )
+      ).toThrow(code)
+    }
   })
 })
 
@@ -1087,7 +1466,8 @@ describe('入参非法就抛错，而且一个字节都不写', () => {
     ['ai 没了', { version: 1, reviewEnabled: true, runTimeoutSec: 10 }],
     ['reviewEnabled 不是布尔', { version: 1, reviewEnabled: 'yes', runTimeoutSec: 10, ai: {} }],
     ['runTimeoutSec 是字符串', { version: 1, reviewEnabled: true, runTimeoutSec: '10', ai: {} }],
-    ['baseUrl 不是字符串', { version: 1, reviewEnabled: true, runTimeoutSec: 10, ai: { baseUrl: 42 } }],
+    // 地址校验只对自定义服务生效（官方厂商地址由目录给），所以这家要显式写 custom
+    ['baseUrl 不是字符串', { version: 1, reviewEnabled: true, runTimeoutSec: 10, ai: { provider: 'custom', baseUrl: 42 } }],
     ['model 是对象', { version: 1, reviewEnabled: true, runTimeoutSec: 10, ai: { model: {} } }]
   ]
 
@@ -1106,7 +1486,7 @@ describe('入参非法就抛错，而且一个字节都不写', () => {
   it('合并是**纯**的：不改传入的那个 current', () => {
     const current = withKey('sk-old')
     mergeConfigPayload(current, payload({ apiKey: null }))
-    expect(current.ai.apiKey).toBe('sk-old')
+    expect(current.ai.apiKeys.deepseek).toBe('sk-old')
   })
 })
 
@@ -1279,7 +1659,7 @@ describe('withPetEnabled：主进程自发开关桌宠，别的一律不动', ()
     })
     expect(got.theme).toBe('dark')
     // 这个文件的主线（见文件头）：无论从哪条路改配置，Key 都不许被动
-    expect(got.ai.apiKey).toBe(REAL_KEY)
+    expect(got.ai.apiKeys.deepseek).toBe(REAL_KEY)
   })
 
   it('★ 整树新造：不原地改 current，pet 也不是同一个引用', () => {

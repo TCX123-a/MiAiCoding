@@ -13,6 +13,7 @@ import { execFile } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 
+import { decodeConsole } from '../env/detect'
 import { weLibraries } from './steam-vdf'
 
 export const WE_APPID = '431960'
@@ -43,10 +44,15 @@ export function steamPathFromRegistry(): Promise<string | null> {
       execFile(
         reg,
         ['query', 'HKCU\\Software\\Valve\\Steam', '/v', 'SteamPath'],
-        { encoding: 'utf8', windowsHide: true, timeout: REG_TIMEOUT_MS },
+        // 【2026-10-31 自检 P2】必须按 Buffer 收、再用 decodeConsole 解。
+        // 旧版写死 encoding:'utf8'：中文 Windows 的 reg.exe 输出是 GBK，
+        // Steam 装在「D:\游戏\Steam」这类路径时整条被发现链静默失效
+        // （正则匹配不到 = 当作没装，界面上只说「没找到 Wallpaper Engine」）。
+        { encoding: 'buffer', windowsHide: true, timeout: REG_TIMEOUT_MS },
         (err, stdout) => {
           if (err) return resolve(null)
-          const m = /SteamPath\s+REG_SZ\s+(.+)/i.exec(stdout || '')
+          const text = decodeConsole(stdout ?? Buffer.alloc(0))
+          const m = /SteamPath\s+REG_SZ\s+(.+)/i.exec(text)
           resolve(m ? toPosix(m[1].trim()) : null)
         },
       )

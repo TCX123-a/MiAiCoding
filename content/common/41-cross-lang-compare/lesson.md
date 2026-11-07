@@ -2,7 +2,7 @@
 id: common-41
 lang: common
 stage: 0
-order: 41
+order: 53
 title: 四种方言四种规矩——跨语言规范对照
 tags: [代码规范, 工程素养]
 required: ["common-40"]

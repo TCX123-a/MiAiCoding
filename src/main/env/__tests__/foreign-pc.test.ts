@@ -439,10 +439,40 @@ describe('兜底表按盘符生成：装在 D 盘的人不该被漏掉', () => {
     expect(fallbackPathsFor('c').some((p) => p.includes('%ProgramFiles(x86)%'))).toBe(true)
   })
 
+  it('★ Code::Blocks 的默认落点必须被强制扫到（2026-10-31 主人点名）', () => {
+    // 真实世界的两种变化都会出现：目录名带不带版本号（CodeBlocks 20.03 / 25.03）、
+    // 工具链叫 MinGW / MinGW32 / MinGW64。光钉住「无版本号 + MinGW」这一种，
+    // 换个发行版就静默找不到。
+    // ⚠️ 目录名只能叫 `CodeBlocks`：Windows 路径不允许冒号，`Code::Blocks`
+    // 只存在于产品名里（candidate 表里写它，expandGlob 连 mkdir 都建不出来）。
+    const c = fallbackPathsFor('c')
+    for (const d of drives) {
+      for (const p of [
+        `${d}:\\Program Files\\CodeBlocks\\MinGW\\bin\\gcc.exe`,
+        `${d}:\\Program Files\\CodeBlocks*\\MinGW*\\bin\\gcc.exe`,
+        `${d}:\\Program Files (x86)\\CodeBlocks*\\MinGW*\\bin\\gcc.exe`,
+        `${d}:\\CodeBlocks*\\MinGW*\\bin\\gcc.exe`
+      ]) {
+        expect(c, `${d} 盘缺 Code::Blocks 落点：${p}`).toContain(p)
+      }
+    }
+    // 环境变量那半边（Program Files 被挪过窝 / 假环境端到端）也要有
+    expect(c.some((p) => p.includes('%ProgramFiles%\\CodeBlocks*'))).toBe(true)
+  })
+
+  it('Code::Blocks 目录名带版本号时，expandGlob 真能展开到 exe', () => {
+    const root = makeTmp()
+    const bin = join(root, 'CodeBlocks 20.03', 'MinGW', 'bin')
+    mkdirSync(bin, { recursive: true })
+    copyFileSync(FAKE_EXE_SRC, join(bin, 'gcc.exe'))
+    const pattern = join(root, 'CodeBlocks*', 'MinGW*', 'bin', 'gcc.exe')
+    expect(expandGlob(pattern)).toEqual([join(bin, 'gcc.exe')])
+  })
+
   it('★ C 表补了 gcc，C++ 表必须同步补 g++（改一边忘另一边 = 「C 找得到、C++ 找不到」）', () => {
     const cpp = fallbackPathsFor('cpp')
     for (const p of fallbackPathsFor('c')) {
-      if (!/dev-cpp|codeblocks|tdm-gcc/i.test(p)) continue // 只验本次补的 IDE 那批
+      if (!/dev-cpp|code::?blocks|tdm-gcc/i.test(p)) continue // 只验本次补的 IDE 那批
       expect(cpp, `C 表有 ${p}，C++ 表没有对应的 g++.exe`).toContain(
         p.replace(/gcc\.exe$/i, 'g++.exe')
       )
@@ -498,6 +528,33 @@ describe('真进程端到端：朋友的电脑', { timeout: 60_000 }, () => {
 
     expect(got.found).toBe(true)
     expect(got.path, '没有选中放在非默认位置的那个').toBe(join(fakeBin, 'gcc.exe'))
+    expect(got.version && looksLikeVersion(got.version), `版本行不像版本号：${got.version}`).toBe(
+      true
+    )
+  })
+
+  it('★ 编译器装在中文字符 + 空格的目录里 → where 的中文路径解得对，版本也报得出来', async () => {
+    // 纯中文 / 带空格路径是 2026-11-01 主人点名的陌生电脑场景：中文用户名
+    // （C:\Users\小明）把临时目录也带成中文，这一条把「检测」这半边钉死。
+    const tmp = makeTmp()
+    const fakeBin = join(tmp, '我的 工具', '编译器 2026', 'bin')
+    mkdirSync(fakeBin, { recursive: true })
+    copyFileSync(FAKE_EXE_SRC, join(fakeBin, 'gcc.exe'))
+
+    const runEnv: NodeJS.ProcessEnv = {
+      ...process.env,
+      PATH: `${fakeBin};C:\\Windows\\System32`
+    }
+    // 前提：where 真的把这条中文路径原样回了上来 —— 没这条，下面的绿可能
+    // 只是兜底表碰巧找到了别的东西，测不到 where 的 GBK 解码。
+    const viaWhere = await runWhere('gcc', runEnv)
+    expect(viaWhere[0], `前提不成立：where 没认出中文目录里的 gcc（返回 ${viaWhere.join(' | ')}）`).toBe(
+      join(fakeBin, 'gcc.exe')
+    )
+
+    const got = await detectLang('c', process.env, runEnv)
+    expect(got.found).toBe(true)
+    expect(got.path, '选中的不是中文目录里的那一个').toBe(join(fakeBin, 'gcc.exe'))
     expect(got.version && looksLikeVersion(got.version), `版本行不像版本号：${got.version}`).toBe(
       true
     )

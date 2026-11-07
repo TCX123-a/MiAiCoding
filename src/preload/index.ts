@@ -1,8 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC } from '../shared/ipc-channels'
 import type {
+  AiBalance,
   AiExplainInput,
   AiGenerateInput,
+  AiModelInfo,
   AiResult,
   ChallengeDay,
   ChallengeToday,
@@ -30,6 +32,7 @@ import type {
   WrongUpdateItem
 } from '../shared/types'
 import type { AiParseResult } from '../shared/ai-question'
+import type { AiMode, AiPoolModel } from '../shared/free-pool'
 import type { BoxStamp, DocWriteResult, StampedDoc } from '../shared/doc-write'
 import type { WallpaperCatalog, WallpaperPropsResult, WallpaperWindowState } from '../shared/wallpaper'
 import type { MediaImportResult } from '../shared/media-import'
@@ -63,6 +66,12 @@ import type {
 } from '../shared/cloud/dto'
 import type { LeaderboardPeriod } from '../shared/cloud/protocol'
 import type { RewardGrantKind } from '../shared/gallery'
+import type {
+  CursorHotspot,
+  CursorOpResult,
+  CursorSlot,
+  CursorStateView
+} from '../shared/cursor'
 
 /**
  * renderer 唯一能接触的系统能力白名单。
@@ -218,8 +227,8 @@ const miai = {
    */
   getConfig: (): Promise<PublicAppConfig> => ipcRenderer.invoke(IPC.configGet),
   /**
-   * 存设置。入参里的 `ai.apiKey` 是**三态**：
-   * 不传 / `''` = 不改；`null` = 删；非空 = 设新的。
+   * 存设置。入参里的 `ai.apiKeys[厂商]` **逐格三态**：
+   * 不传 / `''` = 不改；`null` = 删这一家；非空 = 设这一家的新 Key。
    * 所以这里收的是 `ConfigSavePayload` 而不是 `AppConfig` —— 类型上就写明了
    * 「你没带 Key 是正常的」，免得哪天有人为了类型对齐，把真 Key 从界面回传一次。
    */
@@ -254,9 +263,30 @@ const miai = {
   aiGenerateQuestions: (input: AiGenerateInput): Promise<AiResult<AiParseResult>> =>
     ipcRenderer.invoke(IPC.aiGenerateQuestions, input),
 
-  /** 设置页的「测试连接」：一次验完 Key、服务地址、模型名三样 */
-  aiTestConnection: (): Promise<AiResult<{ model: string }>> =>
+  /** 设置页的「测试连接」：一次验完 Key、厂商、模型名三样（池模式验的是网关） */
+  aiTestConnection: (): Promise<AiResult<{ model: string; provider: string; mode: AiMode }>> =>
     ipcRenderer.invoke(IPC.aiTestConnection),
+
+  /**
+   * 查一次当前厂商的余额（v21）。没有公开余额接口的厂商返回
+   * `reason:'unsupported'` —— 这不是故障，界面只显示一句说明。
+   */
+  aiBalance: (): Promise<AiResult<AiBalance>> => ipcRenderer.invoke(IPC.aiBalance),
+
+  /**
+   * 拉免费公开池的模型清单（v22 模式 B）。失败返回 `{ok:false}`，
+   * 界面保留兜底模型并给一个「重试」—— 清单拉不到不代表模式 B 不能用。
+   */
+  aiPoolModels: (): Promise<AiResult<AiPoolModel[]>> =>
+    ipcRenderer.invoke(IPC.aiPoolModels),
+
+  /**
+   * 拉当前专属厂商的模型清单（v23 模式 A）。`id` 是发请求的真值，`name`
+   * 只用于显示。失败返回 `{ok:false}`，界面显示「无法获取模型列表，请检查
+   * Key 或网络」+ 重试 —— **不会退回一份写死的选项**。
+   */
+  aiProviderModels: (): Promise<AiResult<AiModelInfo[]>> =>
+    ipcRenderer.invoke(IPC.aiProviderModels),
 
   /**
    * 掐掉在飞的那个 AI 请求（真的 abort，不是假装不看了）。
@@ -355,6 +385,31 @@ const miai = {
    */
   importWallpaper: (): Promise<MediaImportResult> => ipcRenderer.invoke(IPC.wallpaperImport),
 
+  // ---- 自定义鼠标指针（v7 模块六，2026-10-31）
+  //
+  // 两个槽位（normal / click）各自可以是一张图片、一段视频或空着（空着 =
+  // 该状态用内置猫爪）。素材路径永远不出主进程：导入走系统对话框，
+  // 渲染层只拿 miai-wall:// 地址（契约见 shared/cursor.ts）。
+  cursor: {
+    /** 读当前自定义指针状态（两个槽位各自可能为 null） */
+    get: (): Promise<CursorStateView> => ipcRenderer.invoke(IPC.cursorGet),
+    /**
+     * 给一个槽位换素材。无路径入参 —— 主进程弹框现选。
+     * 取消 / 扩展名不对 / 体积不对都是返回值（不抛），成功回写后完整状态。
+     */
+    import: (slot: CursorSlot): Promise<CursorOpResult> =>
+      ipcRenderer.invoke(IPC.cursorImport, slot),
+    /** 清空一个槽位（回到内置猫爪），回写后的完整状态 */
+    clear: (slot: CursorSlot): Promise<CursorOpResult> =>
+      ipcRenderer.invoke(IPC.cursorClear, slot),
+    /**
+     * 改一个槽位的热点。`hotspot` 是 0~1 的归一化坐标，`null` = 自动定位。
+     * 只有显式坐标会落盘 —— 自动定位是渲染层每台机器现算的。
+     */
+    updateHotspot: (slot: CursorSlot, hotspot: CursorHotspot | null): Promise<CursorOpResult> =>
+      ipcRenderer.invoke(IPC.cursorUpdateHotspot, { slot, hotspot })
+  },
+
   /**
    * 订阅窗口原生状态（失焦/最小化/隐藏）—— **本工程第一条推送订阅**。
    *
@@ -387,6 +442,41 @@ const miai = {
     return () => {
       ipcRenderer.removeListener(IPC.appNav, listener)
     }
+  },
+
+  /**
+   * 订阅「用户点了关窗，但主进程先拦下来问你」的消息（2026-10-31）。
+   *
+   * 【为什么是订阅而不是拉取】它是一次事件，不是状态 —— 错过就没有意义。
+   * 回调只收载荷、返回退订函数，与 onAppNav 同一形状。
+   */
+  onAppCloseRequest: (cb: () => void): (() => void) => {
+    const listener = (): void => cb()
+    ipcRenderer.on(IPC.appCloseRequest, listener)
+    return () => {
+      ipcRenderer.removeListener(IPC.appCloseRequest, listener)
+    }
+  },
+
+  /**
+   * 回主进程一张收条：「关窗询问收到了」。主进程据此把 5 秒强关定时器
+   * 换成 10 分钟长兜底 —— 用户读弹框、等结算写完的时间不再被硬掐。
+   */
+  ackAppClose: (): void => {
+    ipcRenderer.send(IPC.appCloseAck)
+  },
+
+  /**
+   * 告诉主进程「可以关了」。**单向 send**：调完窗口就会消失，
+   * 不需要（也等不到）回执。
+   */
+  confirmAppClose: (): void => {
+    ipcRenderer.send(IPC.appCloseConfirm)
+  },
+
+  /** 用户选了「继续学习」：取消这次关窗，主进程清掉待关状态与超时定时器。 */
+  cancelAppClose: (): void => {
+    ipcRenderer.send(IPC.appCloseCancel)
   },
 
   // ---- 开屏动画（docs/24，2026-10-05）

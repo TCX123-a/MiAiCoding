@@ -7,6 +7,9 @@
 import { DEFAULT_LAYOUT, type LayoutConfig } from './layout'
 import { defaultWallpaper, type WallpaperConfig } from './wallpaper'
 import { defaultSplash, type SplashConfig } from './splash'
+import { AI_PROVIDER_IDS, type AiProviderId } from './ai-providers'
+import { FREE_POOL_DEFAULT_MODEL, type AiMode } from './free-pool'
+import { recommendedAiThinking, type AiThinking } from './ai-thinking'
 import type { BoxStamp } from './doc-write'
 
 // ---------------------------------------------------------------- 内容（content-bundle.json）
@@ -32,6 +35,22 @@ export const LANG_OF_CODE: readonly LangOfCode[] = ['c', 'cpp', 'java', 'python'
  * 一旦被谁原地改一下，默认配置就跟着变了（同 `layout: { ...DEFAULT_LAYOUT }`
  * 的理由）。每次调用新造一个对象，谁改谁的，互不影响。
  */
+/**
+ * 一份「每个厂商都还没填 Key」的表格（config v21 的形状）。
+ *
+ * 【为什么是每个厂商各存一把，而不是一把 Key 走天下】
+ * 用户从 DeepSeek 换到 Kimi 再换回来，原 Key 不该被覆盖 —— 换厂商是
+ * 「换一个试试」，不是「注销上一个」。存成表也意味着清 Key 只能清当前
+ * 这一格（见 config-merge 的 mergeAiKeys），不会把别家的 Key 一起抹掉。
+ *
+ * 【为什么是函数】同 emptyIdePaths：默认配置里的对象不能被谁原地改一下。
+ */
+export function emptyAiKeys(): Record<AiProviderId, string> {
+  const out = {} as Record<AiProviderId, string>
+  for (const id of AI_PROVIDER_IDS) out[id] = ''
+  return out
+}
+
 export function emptyIdePaths(): Record<LangOfCode, string> {
   return { c: '', cpp: '', java: '', python: '' }
 }
@@ -420,7 +439,7 @@ export type RewardOverridesInfo = {
  */
 export type IdeOpenResult =
   | { ok: true; path: string }
-  | { ok: false; reason: 'unconfigured' | 'missing' | 'failed'; detail?: string }
+  | { ok: false; reason: 'unconfigured' | 'missing' | 'unsupported' | 'failed'; detail?: string }
 
 /** 「导出代码并复制路径」的结果。写盘失败是唯一失败态（复制那一步由渲染层做） */
 export type ExportCodeResult =
@@ -1036,13 +1055,49 @@ export interface AppConfig {
    */
   layout: LayoutConfig
   ai: {
-    apiKey: string
+    /**
+     * 接入方式（v21 → v22）。
+     *
+     * | 值 | 含义 | 需要 Key 吗 |
+     * |---|---|---|
+     * | `api` | 专属 API 模式：用用户自己的 Key | 是 |
+     * | `pool` | 免费公开池模式：走团队 OFM 项目的免费网关 | 否 |
+     *
+     * 【默认 `api`】老配置没有这个字段，迁移后行为必须和 v21 **逐字节一致**
+     * （继续用自己那把 Key）。把默认值写成 pool 等于替用户换了一条会经过
+     * 第三方的路，那是不能替他做的决定。
+     */
+    mode: AiMode
+    /**
+     * 当 mode='pool' 时用哪个免费模型（v21 → v22）。
+     * 远端清单拉不到时由 shared/free-pool.ts 的 FREE_POOL_DEFAULT_MODEL 兜底。
+     * `mode='api'` 时这个值仍然留着 —— 用户从免费池切回专属模式再切回来，
+     * 不该忘记上次选的模型。
+     */
+    poolModel: string
+    /**
+     * 当前选中的服务商（v20 → v21）。UI 只用它决定「列哪家的模型、往哪家发」。
+     *
+     * 旧版的 `baseUrl` 仍然保留，但**只对 `custom` 有意义**：官方厂商的
+     * 地址由 shared/ai-providers.ts 的目录给，用户不需要知道也不需要填。
+     */
+    provider: AiProviderId
+    /**
+     * 每个厂商各一把 Key（v20 → v21）。真值只活在主进程，渲染进程只拿到
+     * 当前厂商有没有配（`hasKey`）。
+     *
+     * 【为什么不复用旧的单值 apiKey】换厂商会覆盖上一家的 Key；用户想换回来
+     * 时只能重新去后台生成，而界面根本不知道旧 Key 还在不在。分厂商存之后，
+     * 「清 Key」也只清当前这一格。
+     */
+    apiKeys: Record<AiProviderId, string>
+    /** 自定义服务地址。官方厂商不用它（真源在 ai-providers.ts） */
     baseUrl: string
     model: string
     /**
      * AI 动态出题总开关。**v19 → v20 新增的字段**，默认 **false**。
      *
-     * 【为什么默认关】AI 出题花的是用户自己的 DeepSeek 余额。哪怕 Key 已经
+     * 【为什么默认关】AI 出题花的是用户自己的余额。哪怕 Key 已经
      * 配好了，也不代表他同意每次挑战都让 AI 现编题 —— 「有 Key」是能力，
      * 「开动态出题」是授权，两者不能合并。老用户升级上来时行为逐字节不变：
      * 仍然只抽本地题库；想尝鲜的人自己去设置页打开。
@@ -1051,6 +1106,28 @@ export interface AppConfig {
      * 本地题库。关掉开关不需要清 Key，用户随时可以再打开。
      */
     dynamicEnabled: boolean
+    /**
+     * 思考强度（v22 → v23）。四档，语义与线缆映射的真源在
+     * `shared/ai-thinking.ts`。
+     *
+     * 【为什么存的是「用户选的那一档」而不是折算后的参数】不同厂商接受
+     * 的参数完全不同（OpenAI 是 reasoning_effort，DeepSeek 要换模型，
+     * Qwen3 是布尔开关，Anthropic 根本不收）。存折算结果是替某一家
+     * 固化协议；厂商出新模型时旧值就失去意义。存档位，发送前再翻译。
+     */
+    thinking: AiThinking
+    /**
+     * 每个「模式 + 厂商 + 模型」各记一档（v22 → v23）。key 由
+     * `aiThinkingKey()` 生成。
+     *
+     * 【为什么要按模型记】同一个用户会来回切模型：给 deepseek-reasoner
+     * 调成 high，切去 deepseek-chat 做日常问答时如果原样带过去，每一句
+     * 闲聊都会先烧一段思维链；切回来又得重调。按模型记住，两边各是各的。
+     *
+     * 【为什么要设上限】这是便利记忆，不是数据集。只保留最近 64 个，
+     * 当前正在用的那个永远保留（`resolveAiThinking()` 处理）。
+     */
+    thinkingByModel: Record<string, AiThinking>
   }
   envCache: Partial<EnvCache>
   /**
@@ -1217,8 +1294,11 @@ export function normalizePetConfig(raw: unknown): PetConfig {
  * | 18 | 加 `layout.sidebarRail`（左栏三态的中间态「图标窄栏」：open → rail → hidden 循环；normalizeLayout 补 false、并把「关着还带 rail」的脏组合钳掉，不替老用户切态）；见 config-migrate.ts 里 v17 → v18 的那一段 |
  * | 19 | `pet` 加 `followMouse` / `hungryRoam`（两个主动行为开关：跟随鼠标撒娇 / 饥饿时活跃乱跑，缺省全开 = 老行为不含跟随，但开关默认开着不骗人；全由 normalizePetConfig 逐键净化）；见 config-migrate.ts 里 v18 → v19 的那一段 |
  * | 20 | `ai` 加 `dynamicEnabled`（AI 动态出题总开关，默认 **false**：AI 会花用户自己的 Token，只能由用户主动打开）；见 config-migrate.ts 里 v19 → v20 的那一段 |
+ * | 21 | `ai` 加 `provider`（服务商）与 `apiKeys`（每厂商一把 Key），`apiKey` 退役；旧单值按 `baseUrl` 认出厂商后搬进 `apiKeys[provider]`，认不出就把地址/Key 原样归到 `custom`；`baseUrl` 从此只对自定义服务生效；见 config-migrate.ts 里 v20 → v21 的那一段 |
+ * | 22 | `ai` 加 `mode`（`api` 专属模式 / `pool` 免费公开池）与 `poolModel`（免费池模型）；缺省 `api` + `kilo-auto/free`，老用户行为不变；见 config-migrate.ts 里 v21 → v22 的那一段 |
+ * | 23 | `ai` 加 `thinking`（思考强度四档）与 `thinkingByModel`（按 模式+厂商+模型 记忆）；缺省按当前模型推荐（老配置 deepseek-chat 落到 medium），迁移只补默认、不替用户改档；见 config-migrate.ts 里 v22 → v23 的那一段 |
  */
-export const CURRENT_CONFIG_VERSION = 20
+export const CURRENT_CONFIG_VERSION = 23
 
 /** 默认配置（主进程与渲染进程共用的初始值，避免两处漂移） */
 export const DEFAULT_APP_CONFIG: AppConfig = {
@@ -1245,11 +1325,21 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
   // 它是共享常量，谁哪天不小心原地改一下默认配置就跟着变了。
   layout: { ...DEFAULT_LAYOUT },
   ai: {
-    apiKey: '',
+    // 默认专属 API 模式：老配置没有 mode 字段，升级后行为必须与 v21 一致
+    mode: 'api',
+    // 免费池的兜底模型。远端清单拉不到时也仍然能跑（理由见 shared/free-pool.ts）
+    poolModel: FREE_POOL_DEFAULT_MODEL,
+    // 默认 DeepSeek：旧版唯一的服务商，升级上来的人第一眼不变
+    provider: 'deepseek',
+    apiKeys: emptyAiKeys(),
     baseUrl: 'https://api.deepseek.com',
     model: 'deepseek-chat',
     // 默认关：AI 花的是用户自己的余额，只能由用户主动打开（理由见 AppConfig.ai）
-    dynamicEnabled: false
+    dynamicEnabled: false,
+    // 默认档 = 当前模型的推荐档（deepseek-chat 是 medium）。不写死 'medium'
+    // 是为了以后换默认模型时，默认档自动跟着模型能力走。
+    thinking: recommendedAiThinking('api', 'deepseek', 'deepseek-chat'),
+    thinkingByModel: {}
   },
   envCache: {},
   // 工厂函数现造深对象（理由同 emptyIdePaths：别让两份配置共享子块）。
@@ -1278,26 +1368,48 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
  * 所以抹掉的同时必须补一个布尔出来。**抹掉一个字段，就得补上界面需要的那一点点信息。**
  */
 export type PublicAppConfig = Omit<AppConfig, 'ai'> & {
-  ai: Omit<AppConfig['ai'], 'apiKey'> & { hasKey: boolean }
+  ai: Omit<AppConfig['ai'], 'apiKeys'> & {
+    hasKey: boolean
+    /**
+     * 「现在能不能用 AI」的**唯一判据**：专属模式下看当前厂商有没有 Key，
+     * 免费池模式下永远为 true。
+     *
+     * 【为什么不直接让各调用点自己判 mode】动态出题有三处入口（挑战、
+     * 补题、延展练习），每一处都写一遍「pool 或者 hasKey」迟早在某处漏掉
+     * 一半，症状是「免费池模式开了，但动态出题永远不生效」或者反过来
+     * 「免费池模式没 Key，桌宠一直催接 Key」。把判定收在主进程出口一处，
+     * 渲染层只认这个布尔。
+     */
+    ready: boolean
+  }
 }
 
 /**
- * `config:save` 的入参。**apiKey 是三态，不是两态**：
+ * `config:save` 的入参。**每个厂商的 Key 各自是三态**：
  *
  * | 传进来的值 | 含义 |
  * |---|---|
- * | 不传 / `''` | **不改**（界面根本不知道真 Key，它回传的永远是空串） |
- * | `null` | **显式删除**（设置页的「清除 Key」） |
- * | 非空字符串 | 设置新 Key |
+ * | 这个键不传 / `''` | **不改**（界面根本不知道真 Key，它回传的永远是空串） |
+ * | `null` | **显式删除这一家的 Key**（设置页的「清除 Key」） |
+ * | 非空字符串 | 设置这一家的新 Key |
  *
  * 【为什么必须有第三态】只有「空串 = 不改」和「空串 = 删」两种选择时，
  * 你**永远没法把 Key 删掉** —— 留空保存会被当成「不改」，Key 就永远卡在里面了。
  * 删除必须有一个「界面能表达、而真实 Key 不可能是」的值，`null` 正好。
  *
- * 别的字段照旧整体覆盖，只有 apiKey 走这套规矩。
+ * 传哪几家就只动哪几家；没传的厂商保持原样（换厂商不覆盖上一家的 Key）。
  */
 export type ConfigSavePayload = Omit<AppConfig, 'ai'> & {
-  ai: Omit<AppConfig['ai'], 'apiKey'> & { apiKey?: string | null }
+  ai: Omit<AppConfig['ai'], 'apiKeys' | 'thinking' | 'thinkingByModel'> & {
+    apiKeys?: Partial<Record<AiProviderId, string | null>>
+    /**
+     * 思考模式（v23）。**可选**：老调用方/测试不带它时由主进程按「这条路由
+     * 记住的选择 → 模型推荐」补出来；设置页每次都会带，因为用户的选择
+     * 必须精确落盘。不设成必填是为了不让一个纯 UI 字段去动所有既有调用点。
+     */
+    thinking?: AiThinking
+    thinkingByModel?: Record<string, AiThinking>
+  }
 }
 
 // ---------------------------------------------------------------- AI（M6）
@@ -1330,6 +1442,9 @@ export type AiFailReason =
   /** 回来了，但不是我们要的形状：不是 JSON、没有 choices、内容是空的、
    *  或者出的题一条都没通过校验 */
   | 'bad-response'
+  /** 这家服务商没有公开的余额查询接口（OpenAI / Anthropic / 百炼等）。
+   *  **不是故障**：聊天和出题照常可用，只是查不到余额 */
+  | 'unsupported'
 
 /**
  * AI 请求的结果。**用返回值表示失败，不抛异常。**
@@ -1353,6 +1468,36 @@ export type AiResult<T> =
        */
       detail?: string
     }
+
+/**
+ * 余额读数（2026-11-01 多厂商）。**各家统一成这一个形状**：
+ * 设置页只认 currency / total，`granted`（赠送）与 `toppedUp`（充值）
+ * 留着给排查和以后的气泡用。
+ *
+ * 【为什么金额是字符串】不同接口给的类型不一致（数字/字符串都有），
+ * 统一 `toFixed(2)` 成字符串，界面直接显示，不在这里做货币格式化。
+ */
+export interface AiBalance {
+  provider: AiProviderId
+  currency: string
+  total: string
+  granted: string
+  toppedUp: string
+}
+
+/**
+ * 一条模型选项。**id 是发请求用的真值，name 只给人看**。
+ *
+ * 两个字段必须都在：`/v1/models` 返回的是 `deepseek-chat` 这种历史别名，
+ * 直接塞进下拉框用户看不懂；但把易读名当 model 发出去，厂商一律 400。
+ * 所以 UI 的 value 永远取 id，name 只用于显示（见 shared/ai-models.ts）。
+ */
+export interface AiModelInfo {
+  /** 发请求时原样放进 `model` 字段 */
+  id: string
+  /** 下拉框里显示的易读名，例如 `DeepSeek V4.1 Flash` */
+  name: string
+}
 
 /**
  * 出题时要考的一课：**给 AI 的输入**（不是给用户看的）。
@@ -1627,6 +1772,20 @@ export interface RunResult {
    * 根本跑不到「有结果」这一步（工具缺失是 `ok:false`）。
    * 留成可选是为了「找到了、但预检这一步自己坏了」时也能如实出结果。
    */
+  /**
+   * Java 多文件拆分（v7 模块六，2026-10-31）。**只有真的拆了才带这个字段**。
+   *
+   * 【为什么单开字段，不并进 message / compileWarnings】
+   * message 会被 runView 当成失败（红色、盖掉错误卡）；compileWarnings 是
+   * 编译器的原话。这条是「本鱼替你拆了文件」的**中性提示**，成功运行时也要显示。
+   *
+   * `files` 是写进临时目录的文件名（不含目录），`entry` 是实际运行的主类。
+   * 界面据此说「拆成了 Person.java、Test.java，入口 Test」。
+   */
+  javaSplit?: {
+    files: string[]
+    entry: string
+  }
   native?: {
     /** 实际用的命令名（`gcc` / `g++` / `javac` / `python`） */
     command: string

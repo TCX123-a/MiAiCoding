@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <!--
+    场景沙箱宿主页（P0 壁纸沙盒逃逸，方案 B）。
+
+    **只**被 `sandbox="allow-scripts"` 的 iframe 加载（opaque origin）：
+    这个文档里跑 webwallgl 引擎与场景脚本，外面的一切它都够不着。
+    生产环境经 miai-scene://s/scene-sandbox.html 提供（main/wallpaper/
+    scene-protocol.ts）；dev 走 Vite 同源 URL。
+
+    故意不写 CSP：本页的隔离边界是 sandbox 属性（opaque origin + 无父页面
+    访问），而场景脚本靠 new Function 编译，写 script-src 只会把引擎自己的
+    合法路径挡掉。真正需要收紧的是**父页面**的 CSP（已含 frame-src）。
+
+    背景恒黑：与引擎 canvas（alpha:false）在空场景时的底一致，过场
+    淡入时不会先透出一块父页面底色。
+  -->
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module" src="/src/lib/wallpaper/scene-host.ts"></script>
+  </body>
+</html>

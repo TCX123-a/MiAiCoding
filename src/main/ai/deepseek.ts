@@ -1,5 +1,11 @@
 /**
- * DeepSeek 调用 —— **全项目唯一会联网的地方**。
+ * AI 调用（多厂商）—— **全项目唯一会联网的地方**。
+ *
+ * 2026-11-01 起从「DeepSeek 专用」扩成一张厂商目录（shared/ai-providers.ts）：
+ * 设置页选厂商、填 Key，适配层在这里按 `format` 分派到
+ * OpenAI 兼容的 `chat/completions` 或 Anthropic 的 `messages`。
+ * 文件名保留 deepseek.ts 是历史原因（几十处 import 与测试都指着它），
+ * 语义以本段为准。
  *
  * 【为什么单独一层，不直接写在 IPC handler 里】
  * 网络是这个项目里最不可控的东西：断网、超时、401、余额不足、对方服务器抽风。
@@ -13,12 +19,49 @@
  * 它在 `src/` 下，会被文案闸门扫。要显示的文案在 copy.ts，
  * 这里只回**原因码**（英文），由界面翻成人话。
  */
-import type { AppConfig, AiResult, AiFailReason, GlossaryTerm } from '../../shared/types'
+import type {
+  AppConfig,
+  AiBalance,
+  AiModelInfo,
+  AiResult,
+  AiFailReason,
+  GlossaryTerm
+} from '../../shared/types'
 import { buildExplainPrompt, buildQuestionsPrompt, type TopicInput } from '../../shared/ai-prompt'
 import { normalizeStem, parseAiQuestions, type AiParseResult } from '../../shared/ai-question'
 import type { PoolItem } from '../../shared/challenge'
-import { PET_PROMPT } from '../../shared/copy'
+import { AI_THINKING_PROMPT, PET_PROMPT } from '../../shared/copy'
 import type { PetChatMessage } from '../../shared/pet'
+import {
+  AI_PROVIDERS,
+  baseUrlOf,
+  isAiProviderId,
+  isOpenAiReasoningModel,
+  type AiProviderId
+} from '../../shared/ai-providers'
+import {
+  FREE_POOL_BASE,
+  FREE_POOL_DEFAULT_MODEL,
+  POOL_MODELS_TIMEOUT_MS,
+  aiModeOf,
+  poolModelOf,
+  type AiMode,
+  type AiPoolModel
+} from '../../shared/free-pool'
+import {
+  modelsUrlCandidates,
+  parseAiModelList,
+  prettyAiModelName
+} from '../../shared/ai-models'
+import {
+  isAiThinking,
+  planAiThinking,
+  planNeedsReasoningHeadroom,
+  planReasoningHeadroom,
+  recommendedAiThinking,
+  type AiThinking,
+  type AiThinkingPlan
+} from '../../shared/ai-thinking'
 
 // ---------------------------------------------------------------- 依赖注入
 
@@ -127,15 +170,56 @@ const MAX_TOKENS_PET = 200
 /** 测试连接只要一个字的回复 */
 const MAX_TOKENS_PING = 8
 
+/**
+ * 免费池的推理余量。池里有些模型会先把预算花在 reasoning 上再吐正文；
+ * 不给余量的话，测连接（8 token）和桌宠（200 token）都会拿到空正文，
+ * 表现成「连不上」—— 那是个查错方向的假故障。
+ */
+const POOL_REASONING_HEADROOM = 1024
+
+/**
+ * Ceiling for the new providers whose output limits are far above ours
+ * (Gemini 2.5 / GLM-4.7 / Hunyuan Hy3 all allow 64K~128K). A question batch
+ * costs 8192 base + 8192 thinking headroom = 16384; clamping at the old 8192
+ * would throw the headroom away and bring back the truncated-JSON bug the
+ * headroom exists to prevent.
+ *
+ * Deliberately NOT applied to deepseek (8192 hard limit), openai (kept at its
+ * existing budget) or custom (an unknown gateway may reject anything above
+ * the request's own value).
+ */
+const API_HEADROOM_CAP = 16384
+
+/**
+ * Reasoning models can spend a long time before the first visible token. The
+ * ordinary 30s budget was tuned for a chat reply; a reasoning ping that thinks
+ * for 40s would be reported as "connection failed" even though the network and
+ * key are fine. Questions already have their own 180s budget; this only lifts
+ * the short paths (test connection / explain / pet).
+ */
+const REASONING_TIMEOUT_MS = 60_000
+
 // ---------------------------------------------------------------- 内部工具
 
 function fail(reason: AiFailReason, detail?: string): AiResult<never> {
   return detail === undefined ? { ok: false, reason } : { ok: false, reason, detail }
 }
 
-/** 把 baseUrl 拼成 chat/completions。用户可能填了结尾的斜杠，也可能填了 /v1 */
+/**
+ * 把 baseUrl 拼成 chat/completions。
+ *
+ * 用户可能填的三种形态（2026-10-31 自定义服务地址支持）：
+ *   ① `https://api.deepseek.com`          → 追加 /chat/completions
+ *   ② `https://api.deepseek.com/v1/`      → 去掉尾斜杠再追加（OpenAI 兼容写法）
+ *   ③ `https://x/v1/chat/completions`     → **已经是一整条端点，原样使用**
+ * 第三种是第三方中转/自建网关最常见的给法（面板上直接给一整条 URL）。
+ * 不给它这一条，用户粘进来的地址会变成 `.../chat/completions/chat/completions`，
+ * 对面回 404，而界面上只能看到「服务地址或模型名不对」—— 找不到真正原因。
+ */
 function chatUrl(baseUrl: string): string {
-  return `${baseUrl.trim().replace(/\/+$/, '')}/chat/completions`
+  const base = baseUrl.trim().replace(/\/+$/, '')
+  if (/\/chat\/completions$/i.test(base)) return base
+  return `${base}/chat/completions`
 }
 
 interface ChatMessage {
@@ -148,14 +232,266 @@ interface ChatMessage {
   content: string
 }
 
-interface ChatBody {
+interface ChatRequest {
   model: string
   messages: ChatMessage[]
   temperature: number
   max_tokens: number
-  stream: false
-  /** 出题时开 JSON 模式。**要求提示词里出现 json 字样**，否则接口直接报错 */
-  response_format?: { type: 'json_object' }
+  /** 出题时要求返回 JSON。**提示词里必须出现 json 字样**，否则部分接口直接报错 */
+  json?: boolean
+}
+
+/** 当前选中的厂商。坏值退回 deepseek —— 与迁移/裁剪的兜底同一方向 */
+function activeProvider(cfg: AppConfig): AiProviderId {
+  return isAiProviderId(cfg.ai.provider) ? cfg.ai.provider : 'deepseek'
+}
+
+/**
+ * 当前厂商的 Key。**读的是 apiKeys[provider]，不是某一家的固定字段**；
+ * 未来某条读路径漏了迁移、表不在了，也只会退回空串（走 no-key 引导），
+ * 而不是抛异常把设置页炸掉。
+ */
+function activeKey(cfg: AppConfig): string {
+  const key = cfg.ai.apiKeys?.[activeProvider(cfg)]
+  return typeof key === 'string' ? key.trim() : ''
+}
+
+/** 官方厂商用目录里的地址，自定义服务用用户填的 */
+function activeBase(cfg: AppConfig): string {
+  return baseUrlOf(activeProvider(cfg), cfg.ai.baseUrl)
+}
+
+/** 当前接入方式。坏值退回 api —— 与迁移/裁剪的兜底同一方向 */
+function activeMode(cfg: AppConfig): AiMode {
+  return aiModeOf(cfg.ai.mode)
+}
+
+/**
+ * 这次请求真正要发出去的模型名。
+ *
+ * 专属模式 = 用户选的那家模型；免费池模式 = poolModel（远端清单里的 id）。
+ * **两套模型名不能混用**：把 `deepseek-chat` 发给免费池只会得到一个 404，
+ * 而界面上看起来一切正常。
+ *
+ * Thinking may switch the model too (deepseek-chat + high -> deepseek-reasoner).
+ * That switch must be reflected here, because this value is what the settings
+ * page reports as "the model that actually answered" and what the question
+ * cache uses as its discriminator.
+ */
+export function effectiveAiModel(cfg: AppConfig): string {
+  return effectiveThinkingPlan(cfg).model
+}
+
+/**
+ * Cache discriminator: the wire model **plus** the thinking level.
+ *
+ * The cache key is computed before postChat injects the thinking instruction
+ * into the system prompt, so the model alone is not enough: asking the same
+ * question with low and high would otherwise return the low-depth answer from
+ * cache. The level is part of the key on purpose.
+ */
+export function aiCacheModelOf(cfg: AppConfig): string {
+  const level = currentThinkingLevel(cfg)
+  return `${effectiveThinkingPlan(cfg).model}|thinking:${level}`
+}
+
+/** Current level for the route on disk. Bad/missing values get the recommendation. */
+function currentThinkingLevel(cfg: AppConfig): AiThinking {
+  const mode = activeMode(cfg)
+  const provider = activeProvider(cfg)
+  const model = mode === 'pool' ? poolModelOf(cfg.ai.poolModel) : cfg.ai.model
+  return isAiThinking(cfg.ai.thinking)
+    ? cfg.ai.thinking
+    : recommendedAiThinking(mode, provider, model)
+}
+
+/** The plan for the route on disk (used by effectiveAiModel / cache key). */
+function effectiveThinkingPlan(cfg: AppConfig): AiThinkingPlan {
+  const mode = activeMode(cfg)
+  const provider = activeProvider(cfg)
+  const model = mode === 'pool' ? poolModelOf(cfg.ai.poolModel) : cfg.ai.model
+  return planAiThinking({
+    mode,
+    provider,
+    model,
+    level: currentThinkingLevel(cfg)
+  })
+}
+
+/**
+ * Append the thinking instruction to the existing system prompt.
+ *
+ * Deliberately **does not create** a system message when there is none: the
+ * only request without one is the 8-token connection ping, and the persona /
+ * persona-adjacent instructions are what this addition must refine. Every real
+ * path (questions / explain / pet) already has a system message, so the
+ * instruction always lands where the persona lives and cannot replace it.
+ */
+function withThinkingInstruction(req: ChatRequest, level: AiThinking): ChatRequest {
+  const instruction = AI_THINKING_PROMPT[level]
+  if (instruction === '') return req
+  let applied = false
+  const messages = req.messages.map((m) => {
+    if (applied || m.role !== 'system') return m
+    applied = true
+    return { ...m, content: `${m.content}\n\n${instruction}` }
+  })
+  return applied ? { ...req, messages } : req
+}
+
+/** Anthropic 的回复端点（它的 base 已经带 /v1） */
+function messagesUrl(baseUrl: string): string {
+  const base = baseUrl.trim().replace(/\/+$/, '')
+  if (/\/messages$/i.test(base)) return base
+  return `${base}/messages`
+}
+
+/**
+ * 采样温度的「线材规则」：不是每家都吃我们这几个固定值。
+ *
+ * 应用里有三个固定温度：出题/讲解 1.0、桌宠 1.3、连通性测试 0。各家的
+ * 可接受范围并不一样，原样发出去就是 400 —— 用户看到的是「AI 用不了」，
+ * 根本猜不到是温度越界。
+ *
+ *   · Gemini：2.5 起文档把 sampling 参数标为弃用，3.x 预览对显式
+ *     temperature 直接回 400。**不发** = 用模型默认值，所有型号都安全。
+ *   · 智谱：官方的 OpenAI 兼容说明把区间写成 **(0,1) 开区间**，官方
+ *     zai-sdk 与 LangChain 集成都把上界夹到 0.99。测试用的 0 变成 0.01，
+ *     出题/桌宠的 1.0/1.3 变成 0.99 —— 这三个值都在合法区间内。
+ *     不夹上界的话，1.3 一定 400；1.0 处在开区间的边界上，官方 SDK 自己
+ *     也会改写成 0.99，我们跟着改写，别把边界值赌在服务端实现上。
+ *   · 其余 OpenAI 兼容厂商（DeepSeek / OpenAI / Qwen / Kimi / xAI /
+ *     百度 / 混元）文档范围覆盖 [0,2]，原样发。
+ *
+ * 返回 undefined = 这个字段压根不该出现在请求体里。
+ */
+function wireTemperature(provider: AiProviderId, t: number): number | undefined {
+  if (provider === 'gemini') return undefined
+  if (provider === 'zhipu') return Math.min(Math.max(t, 0.01), 0.99)
+  return t
+}
+
+/**
+ * 输出上限的「线材规则」。
+ *
+ *   · 智谱 GLM-4 老世代（glm-4-plus / air / airx / flash / flashx）单次输出
+ *     上限只有 4095；带日期的 glm-4-flash-250414 / flashx-250414 是 32768；
+ *     glm-4v-flash 只有 1024。统一按 8192 发出题请求，用户一旦在下拉框里
+ *     选中这几档老模型就是 400。新世代（4.5 / 4.6 / 4.7 / 5.x）上限在
+ *     98K 以上，不夹。
+ *   · 其余 OpenAI 兼容厂商原样：它们都接受 max_tokens，且各档上限都高于
+ *     本应用的预算（出题 8192）。
+ *
+ * `pool` 模式下请求发去免费池网关，模型名与厂商无关，不能套用这条规则。
+ */
+function wireMaxTokens(
+  provider: AiProviderId,
+  model: string,
+  maxTokens: number,
+  pool: boolean
+): number {
+  if (pool || provider !== 'zhipu') return maxTokens
+  const m = model.trim().toLowerCase()
+  if (/^glm-4v-flash$/.test(m)) return Math.min(maxTokens, 1024)
+  if (/^glm-4-(?:flash|flashx)-\d{6}$/.test(m)) return Math.min(maxTokens, 32768)
+  if (/^glm-4-(?:plus|air|airx|flash|flashx)$/.test(m)) return Math.min(maxTokens, 4095)
+  return maxTokens
+}
+
+/**
+ * 组 OpenAI 兼容的请求体。
+ *
+ * o1/o3 这类推理模型有四处不同（`max_completion_tokens`、不认 temperature、
+ * system 要写 developer、部分型号不认 response_format），全在
+ * shared/ai-providers.ts 的 isOpenAiReasoningModel 里判定 —— 不处理的话，
+ * 用户一选 o1 就会得到 400，而界面只会说「模型名不对」。
+ */
+function openAiBody(
+  req: ChatRequest,
+  provider: AiProviderId,
+  pool = false,
+  reasoningEffort?: 'low' | 'medium' | 'high'
+): Record<string, unknown> {
+  const reasoning = provider === 'openai' && isOpenAiReasoningModel(req.model)
+  /*
+   * DeepSeek 的 reasoner 不属于 OpenAI 的 o 系（它照旧用 `max_tokens` 和
+   * `system`），但它同样**不认 temperature / response_format**。不单列这一档
+   * 的话，用户在下拉框里选了 deepseek-reasoner，出题一开 JSON 模式就会 400 ——
+   * 而界面只会说「模型名不对」，根本查不到原因。
+   */
+  const reasoner = provider === 'deepseek' && /reasoner/i.test(req.model.trim())
+  const messages = reasoning
+    ? req.messages.map((m) =>
+        m.role === 'system' ? { role: 'developer', content: m.content } : m
+      )
+    : req.messages
+  const body: Record<string, unknown> = {
+    model: req.model,
+    messages,
+    stream: false
+  }
+  const maxTokens = wireMaxTokens(provider, req.model, req.max_tokens, pool)
+  if (reasoning) {
+    body.max_completion_tokens = maxTokens
+    // Documented by OpenAI for o-series / GPT-5. Never sent to any other
+    // provider: an unknown field there can be a 400, and a 400 here looks like
+    // "your model name is wrong" to the user.
+    if (reasoningEffort !== undefined) body.reasoning_effort = reasoningEffort
+  } else if (!pool && provider === 'xai') {
+    /*
+     * xAI keeps max_tokens only for backward compatibility and documents
+     * max_completion_tokens as the supported field. It caps visible output
+     * only, so a reasoning model (grok-4.7 always thinks) does not silently
+     * eat the whole reply budget. `pool` never takes this branch: the gateway
+     * is not xAI.
+     */
+    body.max_completion_tokens = maxTokens
+    const temp = wireTemperature(provider, req.temperature)
+    if (temp !== undefined) body.temperature = temp
+  } else {
+    body.max_tokens = maxTokens
+    const temp = wireTemperature(provider, req.temperature)
+    if (!reasoner && temp !== undefined) body.temperature = temp
+  }
+  /*
+   * 免费池**不带 response_format**：那批免费模型来自不同上游，不是每一家
+   * 都认这个字段；有的会直接 400，有的会静默忽略。出题的提示词本来就把
+   * JSON 形状写死了，safeJson 还会剥 markdown 围栏 —— 少这一层保障换
+   * 「换一个模型也不会突然 400」，划算。
+   */
+  if (!pool && req.json && AI_PROVIDERS[provider].jsonMode && !reasoning && !reasoner) {
+    body.response_format = { type: 'json_object' }
+  }
+  return body
+}
+
+/**
+ * 组 Anthropic Messages 的请求体：`system` 不在 messages 里，而是顶层字段。
+ *
+ * 【为什么**完全不发** temperature】2026-10-21 起 Anthropic 的现行模型
+ * （Claude 5 家族）对 `temperature` 一律回 400。桌宠的 TEMP_PET=1.3 本来
+ * 就超了它 0~1 的上限，以前靠夹一次能过，现在夹了也过不去 —— 正确做法是
+ * 这个字段根本不出现在请求里（不传 = 用模型默认值）。风格差异由 system 段
+ * 的人设提示词负责，不靠采样温度。
+ *
+ * 【不传 thinking】现行模型默认就是自适应思考；显式传 `{type:'disabled'}`
+ * 在部分型号上同样会 400。少写一项，少一条会过期的规则。
+ */
+function anthropicBody(req: ChatRequest): Record<string, unknown> {
+  const system = req.messages
+    .filter((m) => m.role === 'system')
+    .map((m) => m.content)
+    .join('\n\n')
+  const messages = req.messages
+    .filter((m) => m.role !== 'system')
+    .map((m) => ({ role: m.role, content: m.content }))
+  const body: Record<string, unknown> = {
+    model: req.model,
+    max_tokens: req.max_tokens,
+    messages
+  }
+  if (system !== '') body.system = system
+  return body
 }
 
 /**
@@ -168,32 +504,101 @@ interface ChatBody {
 async function postChat(
   deps: AiDeps,
   cfg: AppConfig,
-  body: ChatBody,
+  req: ChatRequest,
   timeoutMs: number = AI_TIMEOUT_MS
 ): Promise<AiResult<string>> {
-  const apiKey = cfg.ai.apiKey.trim()
-  // 没配 Key 不是错误，是「这个功能还没开」——界面该引导去设置页，不是报错
-  if (apiKey === '') return fail('no-key')
+  const mode = activeMode(cfg)
+  const pool = mode === 'pool'
+  const provider = activeProvider(cfg)
+  const apiKey = activeKey(cfg)
+  /*
+   * 免费池**不需要 Key**，这是模式 B 的全部意义。专属模式没配 Key 也不是
+   * 错误，是「这个功能还没开」——界面该引导去设置页，不是报错。
+   */
+  if (!pool && apiKey === '') return fail('no-key')
+
+  const base = pool ? FREE_POOL_BASE : activeBase(cfg)
+  if (base === '') return fail('offline', 'base url is empty')
 
   // 开跑之前就被取消了（用户点了取消，请求才轮到）
   if (deps.signal?.aborted) return fail('canceled')
+
+  const meta = AI_PROVIDERS[provider]
+  const url = pool ? chatUrl(base) : meta.format === 'anthropic' ? messagesUrl(base) : chatUrl(base)
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (!pool) {
+    if (meta.format === 'anthropic') {
+      headers['x-api-key'] = apiKey
+      // Anthropic 要求显式版本头；不写会 400，而错误正文只说 missing header。
+      headers['anthropic-version'] = '2023-06-01'
+    } else {
+      headers.Authorization = `Bearer ${apiKey}`
+    }
+  }
+
+  /*
+   * Thinking depth (v23). Translate the saved level into this model's real
+   * controls before building the body:
+   *   - OpenAI reasoning models -> reasoning_effort;
+   *   - DeepSeek -> swap chat <-> reasoner at the two ends;
+   *   - Anthropic / Qwen / Zhipu / xAI / Gemini / Baidu / Hunyuan / custom /
+   *     pool -> prompt only (no risky unknown fields).
+   * The plan's model is used on the wire, and the instruction is appended to
+   * the existing system prompt so the persona is never replaced.
+   */
+  const level: AiThinking = isAiThinking(cfg.ai.thinking)
+    ? cfg.ai.thinking
+    : recommendedAiThinking(mode, provider, req.model)
+  const plan = planAiThinking({ mode, provider, model: req.model, level })
+
+  const planned: ChatRequest = pool
+    ? { ...req, model: poolModelOf(cfg.ai.poolModel) }
+    : { ...req, model: plan.model }
+
+  /*
+   * Reasoning tokens count against the output budget and are spent BEFORE the
+   * first content token. Without headroom, a reasoning model given 8 tokens
+   * for the connection test (or 200 for the pet) returns empty content and the
+   * UI says "connection failed" -- a false alarm that sends the user looking
+   * at the network and the key instead of the budget.
+   *
+   * The pool path keeps its original unconditional headroom; the API path only
+   * pays it when the model actually reasons.
+   */
+  const headroom = pool ? POOL_REASONING_HEADROOM : planReasoningHeadroom(provider, plan)
+  const budgetCap =
+    pool || provider === 'deepseek' || provider === 'openai' || provider === 'custom'
+      ? 8192
+      : API_HEADROOM_CAP
+  const budgeted: ChatRequest =
+    headroom > 0
+      ? {
+          ...planned,
+          max_tokens: Math.min(planned.max_tokens + headroom, budgetCap)
+        }
+      : planned
+  const finalReq = withThinkingInstruction(budgeted, level)
+
+  const body =
+    !pool && meta.format === 'anthropic'
+      ? anthropicBody(finalReq)
+      : openAiBody(finalReq, provider, pool, plan.reasoningEffort)
 
   const ac = new AbortController()
   let timedOut = false
   const timer = setTimeout(() => {
     timedOut = true
     ac.abort()
-  }, timeoutMs)
+  }, planNeedsReasoningHeadroom(provider, plan) && timeoutMs < REASONING_TIMEOUT_MS
+    ? REASONING_TIMEOUT_MS
+    : timeoutMs)
   const onExternalAbort = (): void => ac.abort()
   deps.signal?.addEventListener('abort', onExternalAbort, { once: true })
 
   try {
-    const res = await deps.fetch(chatUrl(cfg.ai.baseUrl), {
+    const res = await deps.fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`
-      },
+      headers,
       body: JSON.stringify(body),
       signal: ac.signal
     })
@@ -209,7 +614,7 @@ async function postChat(
       return fail('bad-response', detailOf(raw, res))
     }
 
-    return extractContent(raw)
+    return meta.format === 'anthropic' ? extractAnthropicContent(raw) : extractContent(raw)
   } catch (e) {
     // 取消和超时都会走到这里，靠 name 分辨。
     // 用 name 而不是 instanceof：Node 里 fetch 抛的是 DOMException，
@@ -251,6 +656,35 @@ function extractContent(raw: string): AiResult<string> {
   return { ok: true, data: trimmed }
 }
 
+/**
+ * 从 Anthropic Messages 的回复里取正文：`content` 是一组带类型的块，
+ * 只拼 `type:'text'` 的那些（thinking/tool_use 不是给用户看的话）。
+ * 块之间用换行拼，避免两段话粘成一句。
+ */
+function extractAnthropicContent(raw: string): AiResult<string> {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    return fail('bad-response', 'response is not JSON')
+  }
+  const content = (parsed as { content?: unknown })?.content
+  if (!Array.isArray(content)) return fail('bad-response', 'no content')
+  const text = content
+    .filter(
+      (b): b is { type: string; text: string } =>
+        !!b &&
+        typeof b === 'object' &&
+        (b as { type?: unknown }).type === 'text' &&
+        typeof (b as { text?: unknown }).text === 'string'
+    )
+    .map((b) => b.text)
+    .join('\n')
+    .trim()
+  if (text === '') return fail('bad-response', 'empty content')
+  return { ok: true, data: text }
+}
+
 // ---------------------------------------------------------------- 对外功能
 
 /** 讲报错：把代码和报错交给 AI，拿回一段人话 */
@@ -261,14 +695,13 @@ export async function explainError(
   const cfg = deps.getConfig()
   const { system, user } = buildExplainPrompt(input)
   return postChat(deps, cfg, {
-    model: cfg.ai.model,
+    model: effectiveAiModel(cfg),
     messages: [
       { role: 'system', content: system },
       { role: 'user', content: user }
     ],
     temperature: TEMP_EXPLAIN,
-    max_tokens: MAX_TOKENS_EXPLAIN,
-    stream: false
+    max_tokens: MAX_TOKENS_EXPLAIN
   })
 }
 
@@ -290,15 +723,14 @@ export async function generateQuestions(
   // dateKey 既写进提示词（每日换题 + 缓存键每日变），也用于铸题号。
   const { system, user } = buildQuestionsPrompt({ ...input, freshness: input.dateKey })
   const res = await postChat(deps, cfg, {
-    model: cfg.ai.model,
+    model: effectiveAiModel(cfg),
     messages: [
       { role: 'system', content: system },
       { role: 'user', content: user }
     ],
     temperature: TEMP_QUESTIONS,
     max_tokens: MAX_TOKENS_QUESTIONS,
-    stream: false,
-    response_format: { type: 'json_object' }
+    json: true
   }, QUESTIONS_TIMEOUT_MS)
   if (!res.ok) return res
 
@@ -383,61 +815,38 @@ export async function generateQuestions(
   }
 }
 
-/** 设置页的「测试连接」：发一条最小的请求，一次验完 Key、baseUrl、模型名三样 */
+/** 设置页的「测试连接」：发一条最小的请求，一次验完 Key、厂商、模型名三样 */
 export async function testConnection(
   deps: AiDeps
-): Promise<AiResult<{ model: string }>> {
+): Promise<AiResult<{ model: string; provider: AiProviderId; mode: AiMode }>> {
   const cfg = deps.getConfig()
   const res = await postChat(deps, cfg, {
-    model: cfg.ai.model,
+    model: effectiveAiModel(cfg),
     messages: [{ role: 'user', content: 'ping' }],
     temperature: 0,
-    max_tokens: MAX_TOKENS_PING,
-    stream: false
+    max_tokens: MAX_TOKENS_PING
   })
   if (!res.ok) return res
-  return { ok: true, data: { model: cfg.ai.model } }
-}
-
-// ---------------------------------------------------------------- 余额查询（V1-30）
-
-/**
- * 余额查询的等待上限。**比聊天短得多**：它不是"AI 在想"，而是一次读数 ——
- * 菜单点下去是交互动作，10 秒还问不到就别让用户对着菜单干等（超时后气泡
- * 会说「过会儿再点点看」，用户随时可以再点）。
- */
-export const BALANCE_TIMEOUT_MS = 10_000
-
-/**
- * 挑出来的余额四元组（全部字符串 —— 与 dsh-pet 的 deepseek 余额形状
- * `{currency,total,granted,toppedUp}` 逐字对齐；那个形状的消费方在供应商
- * bundle 的 balance.ts 里，我们只负责喂数据，不替它算"还剩几成"）。
- */
-export interface DeepseekBalance {
-  currency: string
-  total: string
-  granted: string
-  toppedUp: string
-}
-
-/** 用户可能填了结尾的斜杠 —— 与 chatUrl 同款修剪 */
-function balanceUrl(baseUrl: string): string {
-  return `${baseUrl.trim().replace(/\/+$/, '')}/user/balance`
+  return {
+    ok: true,
+    data: { model: effectiveAiModel(cfg), provider: activeProvider(cfg), mode: activeMode(cfg) }
+  }
 }
 
 /**
- * 查一次 DeepSeek 余额（GET /user/balance）。**不花 token、不计费**，
- * 但照样走注入的 fetch / 现读配置 / 结构化失败 —— 与 postChat 同一套纪律
- * （超时掐掉与外部取消靠 `name` 分辨，异常一个都不许漏出去）。
+ * 免费公开池的模型清单（模式 B 的下拉框）。
  *
- * 【失败原因码复用 AiFailReason】宿主（host.ts 的 refreshBalance）把它翻成
- * dsh-pet 的三档 reason（credential-missing / fetch-error）和一句人话小字；
- * 这里照旧零中文。
+ * 只挑 `isFree === true` 的行 —— 那个网关同时挂着付费模型，把它们列进来
+ * 等于让用户点一个「没有 Key 时必然 401」的选项。
+ *
+ * **失败不抛**：清单拉不到时界面照旧能用兜底模型（`kilo-auto/free`），
+ * 所以这里返回 AiResult，让界面决定是显示「重试」还是直接开跑。
+ * 也**不走 withAi**：拉清单不该取消用户正在等的出题/聊天请求。
  */
-export async function fetchBalance(deps: AiDeps): Promise<AiResult<DeepseekBalance>> {
-  const cfg = deps.getConfig()
-  const apiKey = cfg.ai.apiKey.trim()
-  if (apiKey === '') return fail('no-key')
+export async function listPoolModels(deps: {
+  fetch: FetchLike
+  signal?: AbortSignal
+}): Promise<AiResult<AiPoolModel[]>> {
   if (deps.signal?.aborted) return fail('canceled')
 
   const ac = new AbortController()
@@ -445,25 +854,24 @@ export async function fetchBalance(deps: AiDeps): Promise<AiResult<DeepseekBalan
   const timer = setTimeout(() => {
     timedOut = true
     ac.abort()
-  }, BALANCE_TIMEOUT_MS)
+  }, POOL_MODELS_TIMEOUT_MS)
   const onExternalAbort = (): void => ac.abort()
   deps.signal?.addEventListener('abort', onExternalAbort, { once: true })
 
   try {
-    const res = await deps.fetch(balanceUrl(cfg.ai.baseUrl), {
+    const res = await deps.fetch(`${FREE_POOL_BASE}/models`, {
       method: 'GET',
-      headers: { Authorization: `Bearer ${apiKey}` },
+      headers: { Accept: 'application/json' },
       signal: ac.signal
     })
     const raw = await res.text()
     if (!res.ok) {
-      // 状态码分档口径与 postChat 逐条一致（同一套"用户下一步动作不同"的理由）
       if (res.status === 401 || res.status === 403) return fail('unauthorized', detailOf(raw, res))
       if (res.status === 402 || res.status === 429) return fail('quota', detailOf(raw, res))
       if (res.status >= 500) return fail('server', detailOf(raw, res))
       return fail('bad-response', detailOf(raw, res))
     }
-    return extractBalance(raw)
+    return extractPoolModels(raw)
   } catch (e) {
     const name = (e as { name?: string } | null)?.name
     if (name === 'AbortError' || name === 'TimeoutError') {
@@ -477,14 +885,292 @@ export async function fetchBalance(deps: AiDeps): Promise<AiResult<DeepseekBalan
 }
 
 /**
- * 从余额响应里挑出四元组。响应形状（官方文档）：
- * `{is_available, balance_infos:[{currency, total_balance, granted_balance,
- * topped_up_balance}]}`。多币种时**优先 CNY** —— 气泡里的「¥」是写死的，
- * 拿到 USD 金额按 ¥ 显示就是报错账；没有 CNY 才退回第一条。
- * is_available=false 或列表为空都算 bad-response（拿不到数就是拿不到，
- * 不许编一个 0 出来）。
+ * 从 `/models` 的响应里挑出免费模型。
+ *
+ * 兼容三种常见形状：OpenAI 风格的 `{data:[...]}`、`{models:[...]}`、裸数组。
+ * 每一项只认 `id` 是字符串且 `isFree === true`；`name` 缺了就用 id，
+ * 界面永远不会显示一个空标签。
  */
-function extractBalance(raw: string): AiResult<DeepseekBalance> {
+function extractPoolModels(raw: string): AiResult<AiPoolModel[]> {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    return fail('bad-response', 'response is not JSON')
+  }
+  const root = parsed as { data?: unknown; models?: unknown }
+  const rows = Array.isArray(parsed)
+    ? parsed
+    : Array.isArray(root.data)
+      ? root.data
+      : Array.isArray(root.models)
+        ? root.models
+        : null
+  if (rows === null) return fail('bad-response', 'no model list')
+
+  const out: AiPoolModel[] = []
+  const seen = new Set<string>()
+  for (const row of rows) {
+    if (!row || typeof row !== 'object') continue
+    const obj = row as { id?: unknown; name?: unknown; isFree?: unknown }
+    if (typeof obj.id !== 'string' || obj.id.trim() === '') continue
+    if (obj.isFree !== true) continue
+    const id = obj.id.trim()
+    if (seen.has(id)) continue
+    seen.add(id)
+    out.push({
+      id,
+      // Readable label for the dropdown; the id above is still the wire value.
+      // `name` from the pool is already a display name when present.
+      name:
+        typeof obj.name === 'string' && obj.name.trim() !== ''
+          ? prettyAiModelName('pool', id, obj.name.trim())
+          : prettyAiModelName('pool', id)
+    })
+  }
+
+  /*
+   * 兜底模型永远排第一：它是唯一「清单为空也能发请求」的选项。
+   * 远端没把它标成免费时也补上 —— 这个 id 由网关自己路由，不是我们编的。
+   */
+  const fallbackIdx = out.findIndex((m) => m.id === FREE_POOL_DEFAULT_MODEL)
+  if (fallbackIdx >= 0) {
+    const [fallback] = out.splice(fallbackIdx, 1)
+    out.unshift(fallback)
+  } else {
+    out.unshift({
+      id: FREE_POOL_DEFAULT_MODEL,
+      name: prettyAiModelName('pool', FREE_POOL_DEFAULT_MODEL)
+    })
+  }
+  return { ok: true, data: out }
+}
+
+/**
+ * Auth header for one model-list candidate URL.
+ *
+ * Most providers take `Authorization: Bearer`. Two exceptions:
+ *   - Anthropic: `x-api-key` + `anthropic-version`;
+ *   - Gemini's **native** `/v1beta/models`: `x-goog-api-key`. The
+ *     `/v1beta/openai` compatibility path still takes Bearer.
+ *
+ * Headers are computed per URL because one Gemini call may try the compat
+ * endpoint and then the native fallback. The key is still only ever sent to
+ * Google's own host: the fallback URL is added only for the official base
+ * (see modelsUrlCandidates).
+ */
+function modelsListHeaders(
+  provider: AiProviderId,
+  key: string,
+  url: string
+): Record<string, string> {
+  const headers: Record<string, string> = { Accept: 'application/json' }
+  if (provider === 'anthropic') {
+    headers['x-api-key'] = key
+    headers['anthropic-version'] = '2023-06-01'
+    return headers
+  }
+  if (provider === 'gemini' && /\/v1beta\/models(?:[?#]|$)/i.test(url)) {
+    headers['x-goog-api-key'] = key
+    return headers
+  }
+  headers.Authorization = `Bearer ${key}`
+  return headers
+}
+
+/**
+ * 拉**当前专属厂商**的模型清单（设置页模式 A 的下拉框，v23）。
+ *
+ * 【为什么必须真的问远端】厂商出新模型的速度比我们发版快得多。写死一份
+ * 清单的结果是：用户后台明明有 V5，下拉框里永远只有 V4；而改这份清单
+ * 要等下一次发版。清单由接口自己给，出了新模型下一次拉取就能看到。
+ *
+ * 【失败必须如实上报】这是本函数和「兜底」最容易走偏的地方：拉不到时
+ * 绝不能返回一份写死的选项假装成功 —— 用户会以为那是这台 Key 的真实
+ * 能力，选中一个不存在的模型，然后得到一个看不懂的 404。失败就返回
+ * AiResult 的失败分支，界面显示「无法获取模型列表，请检查 Key 或网络」。
+ *
+ * 【不走 withAi】和 listPoolModels 同一条理由：只读列表请求，不该掐掉
+ * 用户正在等的出题/聊天。
+ */
+export async function listProviderModels(deps: AiDeps): Promise<AiResult<AiModelInfo[]>> {
+  const cfg = deps.getConfig()
+  const provider = activeProvider(cfg)
+  const key = activeKey(cfg)
+  if (key === '') return fail('no-key')
+
+  const base = activeBase(cfg)
+  const candidates = modelsUrlCandidates(provider, base)
+  if (candidates.length === 0) return fail('offline', 'base url is empty')
+  if (deps.signal?.aborted) return fail('canceled')
+
+  const ac = new AbortController()
+  let timedOut = false
+  const timer = setTimeout(() => {
+    timedOut = true
+    ac.abort()
+  }, POOL_MODELS_TIMEOUT_MS)
+  const onExternalAbort = (): void => ac.abort()
+  deps.signal?.addEventListener('abort', onExternalAbort, { once: true })
+
+  let lastFail: AiResult<AiModelInfo[]> | null = null
+  try {
+    for (const url of candidates) {
+      const headers = modelsListHeaders(provider, key, url)
+      const res = await deps.fetch(url, { method: 'GET', headers, signal: ac.signal })
+      const raw = await res.text()
+
+      if (!res.ok) {
+        const detail = detailOf(raw, res)
+        /*
+         * 401/403: the key is the problem; another path will not fix it.
+         *
+         * Gemini is the one exception. Its compat surface authenticates with
+         * Bearer, while native /v1beta/models wants x-goog-api-key; there are
+         * reports of a valid key getting 401 on the compat list endpoint.
+         * That is exactly what the second candidate is for, so try it before
+         * declaring the key bad. If the native call also 401s, its detail is
+         * the one we report.
+         */
+        const canFallBack =
+          provider === 'gemini' && url !== candidates[candidates.length - 1]
+        if ((res.status === 401 || res.status === 403) && canFallBack) {
+          lastFail = fail('unauthorized', detail)
+          continue
+        }
+        if (res.status === 401 || res.status === 403) return fail('unauthorized', detail)
+        // 402/429: same key, same host; retrying another path just burns time.
+        if (res.status === 402 || res.status === 429) return fail('quota', detail)
+        if (res.status >= 500) return fail('server', detail)
+        // 404/405/400 are the "wrong path" family for custom gateways: try the
+        // one fallback candidate before giving up.
+        lastFail = fail('bad-response', detail)
+        continue
+      }
+
+      const models = parseAiModelList(raw, provider)
+      if (models !== null) return { ok: true, data: models }
+      lastFail = fail('bad-response', 'no model list in response')
+    }
+    return lastFail ?? fail('bad-response', 'no model list in response')
+  } catch (e) {
+    const name = (e as { name?: string } | null)?.name
+    if (name === 'AbortError' || name === 'TimeoutError') {
+      return fail(timedOut ? 'timeout' : 'canceled')
+    }
+    // Same host for every candidate: a network failure will not improve by
+    // trying the fallback path, so return immediately instead of waiting twice.
+    return fail('offline', e instanceof Error ? e.message : String(e))
+  } finally {
+    clearTimeout(timer)
+    deps.signal?.removeEventListener('abort', onExternalAbort)
+  }
+}
+
+// ---------------------------------------------------------------- 余额查询（V1-30）
+
+/**
+ * 余额查询的等待上限。**比聊天短得多**：它不是"AI 在想"，而是一次读数 ——
+ * 菜单点下去是交互动作，10 秒还问不到就别让用户对着菜单干等（超时后气泡
+ * 会说「过会儿再点点看」，用户随时可以再点）。
+ */
+export const BALANCE_TIMEOUT_MS = 10_000
+
+/**
+ * DeepSeek 余额地址：复用 chatUrl 的归一化规则（2026-10-31 自检 P2）。
+ *
+ * 用户可能填整条 `.../chat/completions` 或 `.../v1`。DeepSeek 的余额端点
+ * 在 `/user/balance`（不在 /v1 下），所以先把两段后缀剥掉再拼。
+ */
+function deepseekBalanceUrl(baseUrl: string): string {
+  let base = baseUrl.trim().replace(/\/+$/, '')
+  base = base.replace(/\/chat\/completions$/i, '')
+  base = base.replace(/\/v1$/i, '')
+  return `${base}/user/balance`
+}
+
+/** Kimi（Moonshot）余额：`/v1/users/me/balance`，base 已经带 /v1 */
+function kimiBalanceUrl(baseUrl: string): string {
+  return `${baseUrl.trim().replace(/\/+$/, '')}/users/me/balance`
+}
+
+/**
+ * 查一次余额。**不花 token、不计费**，但照样走注入的 fetch / 现读配置 /
+ * 结构化失败 —— 与 postChat 同一套纪律（超时掐掉与外部取消靠 `name` 分辨，
+ * 异常一个都不许漏出去）。
+ *
+ * 【多厂商怎么降级】DeepSeek 与 Kimi 有公开的余额接口；OpenAI / Anthropic /
+ * 百炼没有（或要组织管理员 Key），一律返回 `unsupported` —— 这是**如实说明**，
+ * 不是故障，聊天和出题照常可用。界面看到 unsupported 只显示一句
+ * 「该模型不支持余额查询喵」，不拦任何功能。
+ *
+ * 【失败原因码复用 AiFailReason】宿主（host.ts 的 refreshBalance）把它翻成
+ * dsh-pet 的三档 reason（credential-missing / fetch-error / unsupported）；
+ * 这里照旧零中文。
+ */
+export async function fetchBalance(deps: AiDeps): Promise<AiResult<AiBalance>> {
+  const cfg = deps.getConfig()
+  /*
+   * 免费池没有「余额」这个概念：它不是用户的账号，也没有可查的计费后台。
+   * 如实返回 unsupported，界面在池模式下本来就不摆这一行。
+   */
+  if (activeMode(cfg) === 'pool') return fail('unsupported')
+  const provider = activeProvider(cfg)
+  const kind = AI_PROVIDERS[provider].balance
+  if (kind === 'none') return fail('unsupported')
+
+  const apiKey = activeKey(cfg)
+  if (apiKey === '') return fail('no-key')
+  if (deps.signal?.aborted) return fail('canceled')
+
+  const base = activeBase(cfg)
+  if (base === '') return fail('offline', 'base url is empty')
+  const url = kind === 'deepseek' ? deepseekBalanceUrl(base) : kimiBalanceUrl(base)
+
+  const ac = new AbortController()
+  let timedOut = false
+  const timer = setTimeout(() => {
+    timedOut = true
+    ac.abort()
+  }, BALANCE_TIMEOUT_MS)
+  const onExternalAbort = (): void => ac.abort()
+  deps.signal?.addEventListener('abort', onExternalAbort, { once: true })
+
+  try {
+    const res = await deps.fetch(url, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${apiKey}` },
+      signal: ac.signal
+    })
+    const raw = await res.text()
+    if (!res.ok) {
+      // 状态码分档口径与 postChat 逐条一致（同一套"用户下一步动作不同"的理由）
+      if (res.status === 401 || res.status === 403) return fail('unauthorized', detailOf(raw, res))
+      if (res.status === 402 || res.status === 429) return fail('quota', detailOf(raw, res))
+      if (res.status >= 500) return fail('server', detailOf(raw, res))
+      return fail('bad-response', detailOf(raw, res))
+    }
+    return kind === 'deepseek' ? extractDeepseekBalance(raw, provider) : extractKimiBalance(raw, provider)
+  } catch (e) {
+    const name = (e as { name?: string } | null)?.name
+    if (name === 'AbortError' || name === 'TimeoutError') {
+      return fail(timedOut ? 'timeout' : 'canceled')
+    }
+    return fail('offline', e instanceof Error ? e.message : String(e))
+  } finally {
+    clearTimeout(timer)
+    deps.signal?.removeEventListener('abort', onExternalAbort)
+  }
+}
+
+/**
+ * DeepSeek 余额响应：
+ * `{is_available, balance_infos:[{currency, total_balance, granted_balance,
+ * topped_up_balance}]}`。多币种时**优先 CNY** —— 界面上的「¥」是写死的，
+ * 拿到 USD 金额按 ¥ 显示就是报错账；没有 CNY 才退回第一条。
+ * 列表为空算 bad-response（拿不到数就是拿不到，不许编一个 0 出来）。
+ */
+function extractDeepseekBalance(raw: string, provider: AiProviderId): AiResult<AiBalance> {
   let parsed: unknown
   try {
     parsed = JSON.parse(raw)
@@ -502,10 +1188,63 @@ function extractBalance(raw: string): AiResult<DeepseekBalance> {
   return {
     ok: true,
     data: {
+      provider,
       currency: typeof info.currency === 'string' ? info.currency : 'CNY',
       total: info.total_balance,
       granted: typeof info.granted_balance === 'string' ? info.granted_balance : '0',
       toppedUp: typeof info.topped_up_balance === 'string' ? info.topped_up_balance : '0'
+    }
+  }
+}
+
+/** 金额可能是数字也可能是字符串；统一成两位小数字符串。坏值给 null */
+function amountText(v: unknown): string | null {
+  if (typeof v === 'number' && Number.isFinite(v)) return v.toFixed(2)
+  if (typeof v === 'string' && v.trim() !== '') {
+    const n = Number(v)
+    if (Number.isFinite(n)) return n.toFixed(2)
+  }
+  return null
+}
+
+/**
+ * Kimi 余额响应：
+ * `{code:0, status:true, data:{available_balance, voucher_balance, cash_balance}}`
+ * （金额可能是数字也可能是字符串，见 amountText）。
+ * `status` 不是 true、或没有 data / available_balance，都算 bad-response。
+ */
+function extractKimiBalance(raw: string, provider: AiProviderId): AiResult<AiBalance> {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    return fail('bad-response', 'response is not JSON')
+  }
+  const root = parsed as { code?: unknown; status?: unknown; data?: unknown }
+  /*
+   * 显式失败先拦：Kimi 的响应带 `status` / `code`，失败时仍可能给一个
+   * 空的或全是 0 的 data。只看 data 有没有数，会把一次「Key 没权限」读成
+   * 余额 ¥0.00 —— 用户看到「没钱了」就去充值，而真正该做的是换 Key。
+   * 只拒绝**明确表达失败**的取值；字段缺失照旧往下读（不同版本响应形状有差）。
+   */
+  if (root.status === false || (typeof root.code === 'number' && root.code !== 0)) {
+    return fail('bad-response', 'api status not ok')
+  }
+  const data = root?.data
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    return fail('bad-response', 'no data')
+  }
+  const obj = data as Record<string, unknown>
+  const total = amountText(obj.available_balance)
+  if (total === null) return fail('bad-response', 'no available_balance')
+  return {
+    ok: true,
+    data: {
+      provider,
+      currency: 'CNY',
+      total,
+      granted: amountText(obj.voucher_balance) ?? '0.00',
+      toppedUp: amountText(obj.cash_balance) ?? '0.00'
     }
   }
 }
@@ -534,11 +1273,10 @@ export async function chatPet(
       ? `${PET_PROMPT.PERSONA}\n\n${input.memory.trim()}`
       : PET_PROMPT.PERSONA
   return postChat(deps, cfg, {
-    model: cfg.ai.model,
+    model: effectiveAiModel(cfg),
     messages: [{ role: 'system', content: system }, ...history],
     temperature: TEMP_PET,
-    max_tokens: MAX_TOKENS_PET,
-    stream: false
+    max_tokens: MAX_TOKENS_PET
   })
 }
 

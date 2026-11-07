@@ -32,7 +32,10 @@ import type {
   PetCorner,
   QuestionType
 } from '../../../shared/types'
-import type { PetFace } from '../../../shared/pet'
+import type { AiProviderId } from '../../../shared/ai-providers'
+import type { AiMode } from '../../../shared/free-pool'
+import type { AiThinking, AiThinkingNote } from '../../../shared/ai-thinking'
+import type { PetDecayTier, PetFace } from '../../../shared/pet'
 import type { CloudFailureCode } from '../../../shared/cloud/dto'
 import { LANG_LABEL, STAGE_LABEL } from './labels'
 import { MASCOT_SIZE_PX, type MascotPose, type MascotSize } from './mascot'
@@ -121,6 +124,10 @@ export const NAV = {
   MEMO: '📒 备忘录',
   /**
    * 大肥鱼仓库（P3 ⑨）—— 每天复习攒下来的奖励图都摆在这儿。
+   *
+   * 【名字沿革】B5（2026-11-01）一度改成「奖励图仓库」，主人当天晚上又点名
+   * 改回「大肥鱼仓库」：奖励图是对里面**装什么**的解释，不是这个仓库的名字。
+   * 以后再想改，先问主人。
    *
    * 【为什么紧挨备忘录】它和 ⭐ 收藏、📒 备忘录是同一堆东西 ——
    * 「我自己攒下来的」：收藏攒题目、备忘录攒笔记、仓库攒奖励图。
@@ -263,6 +270,15 @@ export const ACTION = {
   /** 知识点页：标记已学（两种状态） */
   MARK_LEARNED: '标记已学',
   LEARNED: '✓ 已学（点此取消）',
+  /** 知识点页：一键把「前面的课」全部点亮（2026-10-31） */
+  SETTLE_HERE: '学到这里啦喵',
+  SETTLE_HERE_LEARNED: '✓ 已经学到这里啦喵',
+  /**
+   * 主按钮下面那行小字（2026-11-01）。
+   * 「学到这里啦喵」只说情绪、不说动作 —— 第一次看到的人分不清它是
+   * 「标记本课已学」还是「跳到下一课」。这句必须在**点之前**把动作说清。
+   */
+  SETTLE_SUB: '点一下记为已学（可取消）',
   /** 知识点页：收藏（两种状态）—— 收的是**课程** */
   FAVORITE: '☆ 收藏',
   FAVORITED: '⭐ 已收藏',
@@ -344,6 +360,87 @@ export const MODAL = {
   CLOSE_TITLE: '关闭（Esc）'
 } as const
 
+// ──────────────────────────────────────────────────────────── 学到这里啦喵（2026-10-31）
+
+/**
+ * 「学到这里啦喵」与关窗拦截的全部文案。
+ *
+ * 【为什么单开一节】它是一套**跨页面**的协议：课文页的按钮、确认框、
+ * 到账提示、关窗拦截框都要说同一件事。散在四个组件里各写一遍，
+ * 迟早出现「按钮说全部变绿、弹窗说只标一课」这种自相矛盾。
+ */
+export const SETTLE = {
+  /**
+   * 未解锁课的「软锁」提示（2026-10-31）：不再拦人，只提醒一句。
+   * 主人点名的原话是「这门课可能有点难哦喵」—— 这半句必须逐字在。
+   */
+  LOCK_WARNING: '这门课可能有点难哦喵～前面的前置课还没全部变绿，不过想学就直接学吧，学完记得点【学到这里啦喵】。',
+  CONFIRM_TITLE: '前面的课要一起点亮吗喵？',
+  /**
+   * `count` = 还没绿的课数（含本课），`rice` = 按每课 2 碗算的**名义**碗数。
+   * 真正到账可能被日上限截断 —— 所以这里说「最多」，到账提示才报实数。
+   */
+  CONFIRM_BODY: (count: number, rice: number): string =>
+    `前面还有 ${count} 节课没有变绿喵。确认后它们会一起变绿，大白饭按新变绿的课数发（最多 ${rice} 碗，已经绿过的不会重复发）。`,
+  CONFIRM_OK: '确认，全部变绿',
+  CONFIRM_CANCEL: '先不要',
+  /** 没有前置要补时的轻提示（直接标本课） */
+  NOTHING_BEFORE: '前面的课都绿啦喵，这一课也帮你点亮～',
+
+  RESULT_TITLE: '结算好啦喵！',
+  /**
+   * `newLessons` = 这次新变绿的课数；`rice === null` = 桌宠没起来，算不出实数；
+   * `affection` 同口径（0 = 今天的学习好感额度已满，不是"没发"）。
+   *
+   * 【为什么必须报好感】帮助里写着「学完一课 +2」，结算只报大白饭的话，
+   * 用户会以为好感没涨（C5，2026-11-01）。批量点亮 51 节时好感有日上限，
+   * 所以这里报的是**实际差值**，不是名义值乘课数。
+   */
+  RESULT_BODY: (newLessons: number, rice: number | null, affection: number | null): string => {
+    const parts = [`${newLessons} 节课已经变绿啦喵！`]
+    if (rice === null) parts.push('大白饭已经交给大肥鱼，碗数等它回来再数给你看～')
+    else if (rice === 0) parts.push('大白饭今天的额度已经用满啦，明天再来领～')
+    else parts.push(`大白饭 +${rice} 已到账喵！`)
+    if (affection !== null && affection > 0) parts.push(`好感度 +${affection} 喵！`)
+    else if (affection === 0) parts.push('今天陪它学习的好感度已经加满啦～')
+    return parts.join('')
+  },
+  RESULT_OK: '好耶，继续学',
+
+  /**
+   * 关窗拦截（2026-11-01 改成动态课名）。
+   *
+   * 旧文案只说「你刚刚学完」，但用户可能是**学了一半**、或者已经切到设置页
+   * 才关窗 —— 那时候他根本不知道自己停在哪儿。所以正文必须带上最后访问的
+   * 那一课，并说清结算会点亮什么、最多发多少饭。
+   *
+   * `where` 形如 `C · 入门 · 第 3 课：变量与小鱼干仓库`（见 lib/close-guard.ts）。
+   * 日上限可能截断实际到账，所以这里只敢说「最多」。
+   */
+  CLOSE_TITLE: '喵？先别急着走喵',
+  CLOSE_BODY: (where: string, count: number, rice: number): string =>
+    `喵？你今天学到了【${where}】。确认学到这里啦喵并领取奖励吗？\n\n结算会让前面还没变绿的 ${count} 节课一起点亮，大白饭最多 +${rice} 碗（今天有领取上限，实际到账以结算为准）。`,
+  /**
+   * 弹窗里课名的兜底代称：课号查不到正文、也没有大纲课名时用它。
+   * 不许在 close-guard.ts 里写中文字面量 —— 文案闸门在扫渲染层源码。
+   */
+  CLOSE_LESSON_FALLBACK: '这一课',
+  /** 弹窗里的课名路径（`C · 入门 · 第 3 课：变量与小鱼干仓库`） */
+  CLOSE_LESSON_PATH: (lang: string, stage: string, order: number, title: string): string =>
+    `${lang} · ${stage} · 第 ${order} 课：${title}`,
+  CLOSE_SETTLE: '结算并关闭',
+  /** 结算进行中：按钮换成这句，避免用户以为没点上又点一次 */
+  CLOSE_BUSY: '正在结算…',
+  CLOSE_SKIP: '不结算直接关闭',
+  /** 弹框的主出口：✕/Esc/遮罩也都走这条 —— 误触不再等于退出应用 */
+  CLOSE_KEEP: '继续学习',
+  /**
+   * 结算失败：弹框留着，错误**内联显示**（不能像旧版那样弹个 toast 就关窗，
+   * 提示会随窗口一起消失，用户误以为存上了）。
+   */
+  CLOSE_ERROR: '结算没走完喵，进度可能没存上。可以再试一次，或选择不结算直接关闭。'
+} as const
+
 // ──────────────────────────────────────────────────────────── 轻提示（toast）
 
 /**
@@ -380,13 +477,11 @@ export const TOAST = {
    * 标记已学 / 取消。
    *
    * 【V1-21 加注释（2026-10-16）：这颗按钮同时是「解锁下一课」的动作】
-   * 顺序解锁的判据只看 learned 集合（shared/unlock.ts 的 computeUnlocked），
-   * 而 learned 的唯一来源就是这枚按钮（markLearned 全仓唯一调用点 =
-   * LessonDetailView 的 @click）。全应用没有第二处文案把「标记已学」和
-   * 「解锁下一课」连起来 —— 主人裁定：先把这层因果钉成注释（见
-   * LOCKED_BY_PREREQ），改这两条前先读 shared/unlock.ts。
+   * 顺序解锁的判据只看 learned 集合（shared/unlock.ts 的 computeUnlocked）。
+   * 2026-10-31 硬锁拆除后它不再拦人，只决定侧栏的 🔒 与「下一课」的提示；
+   * 批量点亮（「学到这里啦喵」/ 挑战跳级）走同一份 learned 集合。
    */
-  MARK_LEARNED_ON: '已标记完成，小鱼干 +1 喵～',
+  MARK_LEARNED_ON: '已标记完成，零食 +1 喵～',
   MARK_LEARNED_OFF: '已取消标记，就当复习一遍喵～',
   /**
    * 收藏 / 取消收藏（课级，⭐ 长在课文页）。
@@ -405,15 +500,6 @@ export const TOAST = {
   /** 开练（知识点页与右侧栏共用） */
   QUIZ_START: '练习开始啦喵～',
 
-  /**
-   * 前置未解锁时点侧栏。
-   *
-   * 【V1-21 加注释（2026-10-16）：这句解释了「结果」，没说出「动作」】
-   * 「学完」在本应用的定义 = 在课文页点「标记已学」（见 MARK_LEARNED_ON 的
-   * 注释）。主人裁定本夜只把因果落成注释，toast/锁定页是否显式点名那颗按钮
-   * 另议 —— 改这句时别忘了它和 EMPTY.LESSON_LOCKED 是同一起事故的两端。
-   */
-  LOCKED_BY_PREREQ: '前面的小鱼干还没吃完喵～按顺序学完前置课就能解锁啦',
   /**
    * 点了一节**大纲里有、但正文还没写**的课。
    *
@@ -783,7 +869,13 @@ export const EMPTY = {
     text: '这一课还没写正文喵～',
     subText: '它不是锁着的，只是还没轮到大肥鱼动笔。先去学已经写好的那几节吧～'
   },
-  /** 知识点页：前置课没学完 */
+  /**
+   * 知识点页：前置课没学完。
+   *
+   * @deprecated 2026-10-31 硬锁拆除后没有调用方。软锁提示见 SETTLE.LOCK_WARNING。
+   * 留着是因为「锁着」这套状态仍然存在于 statusOf/sidebar 的 🔒 图标上，
+   * 哪天要做「查看前置链路」可以复用这段措辞；但**不要再拿它拦人**。
+   */
   LESSON_LOCKED: {
     pose: 'remind',
     text: '这一课还锁着喵～',
@@ -862,6 +954,16 @@ export const EMPTY = {
     pose: 'think',
     text: '本子翻遍了也没找到这条喵～',
     subText: '换个关键词，或者切回「全部」看看喵'
+  },
+  /**
+   * 右栏「有备忘，但当前没选中」——和上面两条都不是一回事（B4）。
+   * 旧版这里复用 MEMO_EMPTY：左边说「还没有备忘」，右边同时又说一遍，
+   * 用户会以为右边那个空状态是另一个坏掉的入口。
+   */
+  MEMO_PICK: {
+    pose: 'expect',
+    text: '从左边挑一条打开喵',
+    subText: '想记新的就点左上的「新建备忘」'
   },
   /** 总览：日历还没点亮 */
   CALENDAR_EMPTY: {
@@ -1276,6 +1378,31 @@ export const CHALLENGE = {
   /** 某门语言三阶段全学完的小标 */
   LOCKED_ROW_DONE: '学完啦',
   LOCKED_ACTION: '去继续学习',
+  /**
+   * 跳级挑战（2026-10-31）：不想从头学完一门语言的人，确认后把该语言
+   * 前面没绿的课一次点亮 —— 和课文页的「学到这里啦喵」同一套结算。
+   */
+  SKIP_ACTION: (count: number): string => `跳过 ${count} 节`,
+  SKIP_ACTION_TITLE: (lang: string, count: number): string =>
+    `把这门语言前面的 ${count} 节还没绿的课一次记为已学（会改写学习进度）`,
+  /**
+   * 进度行上方的说明（A4，2026-11-01）：旧按钮只写「跳到这一门」，
+   * 读起来像导航，点下去却一次点亮 51 节 —— 必须在点之前说清代价。
+   */
+  SKIP_HINT:
+    '想直接开始挑战？点「跳过 N 节」会把前面还没绿的课一次记为已学，学习进度和统计都会跟着变。',
+  /** 没有可跳过的课时（极端边界），别给一颗写着「跳过前 0 节」的按钮 */
+  SKIP_NONE: '没有可跳过的课',
+  SKIP_CONFIRM_TITLE: (count: number): string => `要一次点亮 ${count} 节课吗喵？`,
+  /** `rice` = 按每课名义碗数算出的上限；真正到账可能被每日上限截断 */
+  SKIP_CONFIRM_BODY: (lang: string, count: number, rice: number): string =>
+    `确认后，${lang}前面 ${count} 节还没变绿的课会一起记成「已学」，大白饭按课数发（最多 ${rice} 碗，已经绿过的不会重复发）。跳级之后，每日挑战就会从这门语言的题里出啦喵。`,
+  SKIP_CONFIRM_LEARN: '先去学第一课',
+  SKIP_CONFIRM_OK: (count: number): string => `确认跳过 ${count} 节`,
+  SKIP_CONFIRM_CANCEL: '再学学',
+  SKIP_ALREADY: '这门语言的课已经全绿啦喵～',
+  SKIP_DONE: (lang: string, newLessons: number): string =>
+    `${lang}的 ${newLessons} 节课已经变绿啦喵！去吃大白饭吧～`,
   HOME_CARD_LOCKED: '学完任意一门语言的三个阶段（入门 + 中阶 + 精通）就能解锁喵～',
 
   // ---- 首页那张卡
@@ -1351,6 +1478,13 @@ export const CHALLENGE = {
    * 只在积分行真出现时跟着出现（老批次没积分，也就没上榜）。
    */
   POINTS_TO_BOARD: '今天的分数已计入日榜喵～',
+  /**
+   * 未登录 / 未激活时的真实去向（2026-10-31 自检 P1）：收工单会先排进本机
+   * `.sync/pending-ops.json`，但上行在「盒仍是客人位」时整轮跳过 —— 此时
+   * 说「已计入日榜」是假话。这一局不会丢，登录激活后会补交。
+   */
+  POINTS_TO_BOARD_PENDING:
+    '今天的分数学到本机啦喵～登录并完成激活后才会结算上榜（这一局不会丢，到时候会补交）',
   /** 上一行那句的去处按钮（挑战结算 / 遮罩结果页各一颗，同一句话同一个动作） */
   GO_LEADERBOARD: '去排行榜',
   /** 答错即停的收尾说明。**不写「失败」** —— 连对断了是规则，不是丢人 */
@@ -1457,6 +1591,21 @@ export const CHALLENGE = {
 export const ENV = {
   /** 装好了：后面接版本号 */
   found: (version: string): string => `✅ ${version}`,
+  /**
+   * 找到之后补的那一行（2026-10-31「发现后给一键配置提示」）。
+   *
+   * 本应用没有「编译器路径」这个设置项 —— 检测到就直接用，所以
+   * 真正的「一键配置」是**零键**。这里把地址念出来，是为了让用户能确认
+   * 「用的是不是我以为的那一个」（尤其装了多个编译器的人），
+   * 而不是让他再去填一遍。
+   */
+  FOUND_AUTO: (path: string): string => `已经自动用上它啦喵：${path}`,
+  /**
+   * IDE 自带工具链的额外说明。Dev-C++ / Code::Blocks 都自带一份 MinGW，
+   * 用户常见的疑问是「我装了 Code::Blocks，还要不要再装 MinGW」——答案是不要。
+   */
+  FOUND_IDE: (name: string): string =>
+    `这是 ${name} 自带的编译器，不用再装一次喵～（如果遇到较新的 C++ 语法报错，可能是它版本偏旧：装个新版 WinLibs 解压到 D:\\mingw64，再点「重新检测」）`,
   /** 没找到 */
   MISSING: '😿 还没找到翻译官喵',
   /**
@@ -1471,10 +1620,10 @@ export const ENV = {
    * 网址一律给**官方**站点，不给第三方下载站。
    */
   MISSING_HINT: {
-    c: '装一个 MinGW-w64（WinLibs 版解压即用）：winlibs.com',
-    cpp: '装一个 MinGW-w64（C 和 C++ 是同一套）：winlibs.com',
-    java: '装一个 JDK 21（Eclipse Temurin 版）：adoptium.net',
-    python: '装一个 Python 3：python.org/downloads'
+    c: '装一个 MinGW-w64（WinLibs 版）：winlibs.com 下载后解压到 D:\\mingw64（或 C:\\mingw64），让 gcc.exe 正好在 D:\\mingw64\\bin\\gcc.exe，再点「重新检测」',
+    cpp: '装一个 MinGW-w64（C 和 C++ 是同一套）：winlibs.com 下载后解压到 D:\\mingw64（或 C:\\mingw64），让 g++.exe 正好在 D:\\mingw64\\bin\\g++.exe，再点「重新检测」',
+    java: '装一个 JDK 21（Eclipse Temurin 版）：adoptium.net。装完确认 bin 目录里有 javac.exe，再点「重新检测」',
+    python: '装一个 Python 3：python.org/downloads。安装时勾选「Add python.exe to PATH」，再点「重新检测」'
   } as Record<string, string>,
   /** 检测过至少一次之后的说明行（带时间） */
   lastChecked: (when: string): string =>
@@ -1572,7 +1721,7 @@ export const HOME = {
    * PET_GUIDE_ENTRY（→ 设置页互动说明卡 ?card=pet）。
    */
   INTRO:
-    '这里是猫咪和大肥鱼的编程小窝～通用知识、C、C++、Java、Python 五大模块都在慢慢屯货中。先在左侧挑一个模块开始吧！学完的课会攒成小鱼干，还能喂给大肥鱼——它怎么玩，下面那颗「大肥鱼怎么玩」里写着喵～',
+    '这里是猫咪和大肥鱼的编程小窝～通用知识、C、C++、Java、Python 五大模块都在慢慢屯货中。先在左侧挑一个模块开始吧！学完的课会攒成大白饭，还能喂给大肥鱼——它怎么玩，下面那颗「大肥鱼怎么玩」里写着喵～',
   /** 欢迎卡上的「大肥鱼怎么玩」按钮（V1-51）：跳设置页互动说明卡（?card=pet） */
   PET_GUIDE_ENTRY: '🐟 大肥鱼怎么玩',
   version: (v: string): string => `版本 v${v}`,
@@ -1616,7 +1765,9 @@ export const OVERVIEW = {
    * 所以「N 次」会大于「已学 M 课」。不说明白，用户会以为统计坏了、
    * 怀疑「是不是有课白学了」。
    */
-  STAT_HISTORY_NOTE: '含重复标记',
+  STAT_HISTORY_NOTE: '含重复学习',
+  /** 「含重复学习」的完整解释（B6）：四个字说不清为什么次数会大于课数 */
+  STAT_HISTORY_TIP: '同一节课反复标记已学也会重复计数，所以这个次数可能大于学过的课数喵。',
   /**
    * ⚠️ 开头的空格是文案的一部分，别"顺手"删掉——
    * 渲染出来是「12 课」而不是「12课」。数字由模板插值，单位在这里。
@@ -1630,22 +1781,31 @@ export const OVERVIEW = {
   //      数据 = 宠物镜像快照（stores/pet.ts）。「今日运行奖」的分母由视图传
   //      `PET_RUN_REWARD_DAILY_MAX`、喂饭提示里的 +N 由视图传 `PET_FEED_GAIN` ——
   //      这两个数字在 shared/pet.ts 只有一份，这里不抄第二遍（抄了迟早会漂）。
-  RICE_TITLE: '🍚 大白饭仓库',
-  RICE_BALANCE_LABEL: '大白饭余额',
+  RICE_TITLE: '🍚 大白饭饭盒',
+  RICE_BALANCE_LABEL: '大白饭',
   /** ⚠️ 开头的空格是文案的一部分（同 UNIT_LESSON）：渲染成「7 / 999 碗」
    *  （n / 上限的拼串走 WAREHOUSE.RICE_N，见 OverviewView 的 riceBalance） */
   RICE_BALANCE_UNIT: ' 碗',
   RICE_SATIETY_LABEL: '饱腹度',
   /** 小字：今天已领过几碗「跑通自己代码」的运行奖。
    *  n 允许字符串：快照没到位时画 '--'（V2-24），不画一个假的 0 */
-  RICE_TODAY: (n: number | string, max: number): string => `今日运行奖 ${n}/${max}`,
+  RICE_TODAY: (n: number | string, max: number): string => `今天跑代码领饭 ${n}/${max}`,
+  /** 「今天跑代码领饭」的悬停解释：说清什么算、为什么有上限 */
+  RICE_TODAY_TIP: (max: number): string =>
+    `跑通自己写的代码就能领大白饭，每天最多领 ${max} 次，领满了明天再来喵`,
   RICE_FEED_BTN: '喂它一碗',
   /** 喂得动时按钮旁的提示。+N 从 PET_FEED_GAIN 来，别在这里写死 20 */
   RICE_FEED_HINT_OK: (gain: number): string => `喂一碗 +${gain} 饱腹`,
   /** 饭盒空了：给出下一步动作（去学一课），而不是只说一句「不行」 */
   RICE_FEED_HINT_EMPTY: '饭盒空了，去学一课赚饭喵',
-  /** 已经吃饱：说清是「等饿了再喂」，不是坏了 */
+  /** 已经吃饱：说清是「等饿了再喂」，不是坏了（好感也满了才是真拒喂） */
   RICE_FEED_HINT_FULL: '它撑着呢，等饿了再喂喵',
+  /**
+   * 饱了但好感没满（v7 模块五）：feedPet 走 overflow —— 扣一碗饭、饱腹不变、
+   * 好感照涨。按钮可点，提示必须说清「哪里不变」，否则用户以为饱腹还能再涨。
+   */
+  RICE_FEED_HINT_OVERFLOW: (aff: number): string =>
+    `它已经饱了，不过还想吃：这碗不涨饱腹、好感 +${aff} 喵`,
   /**
    * 快照还没到位（V2-24）：按钮点不动，但理由必须是「还没读到」——
    * 画「饭盒空了」是在替鱼说谎（真实余额此刻未知），照侧栏 '--%' 的同一口径。
@@ -1655,7 +1815,25 @@ export const OVERVIEW = {
    * 刚喂过、冷却期里（V2-26+V2-13）：主进程 1.2 秒内会静默吞掉第二次喂饭，
    * 这个提示就是那次点击的「已受理」回执 —— 不然连点第二下像按钮坏了。
    */
-  RICE_FEED_HINT_COOLING: '刚喂过啦，缓一缓再喂喵'
+  RICE_FEED_HINT_COOLING: '刚喂过啦，缓一缓再喂喵',
+
+  // ---- 零食（v7 模块五，2026-10-31 主人点名）：错题本复习完成发零食，
+  //      桌宠 / 总览卡可以喂它。三条修身的约束都在这几句里说清：
+  //      · 零嘴只填一点肚子（+PET_SNACK_GAIN，真源当参数传）；
+  //      · 好感度另算、每天有上限（由主进程静默封顶，这里只报名义 +2）；
+  //      · 吃饱了仍可喂 —— 饱腹不变、好感照涨（主人点名的那句台词由桌宠自己说）。
+  //      【2026-10-31 主人体验修正】喂食/奖励语境里的「小鱼干」统一改口
+  //      「零食」（课文里的"变量=小鱼干仓库"等世界观比喻保留）。
+  SNACK_BALANCE_LABEL: '零食袋',
+  SNACK_UNIT: ' 份',
+  SNACK_FEED_BTN: '喂零食',
+  SNACK_FEED_HINT_OK: (gain: number, aff: number): string =>
+    `喂一份 +${gain} 饱腹、+${aff} 好感喵`,
+  /** 饱了但好感没满：允许溢喂，说清「哪里变、哪里不变」 */
+  SNACK_FEED_HINT_OVERFLOW: (aff: number): string =>
+    `它已经饱了，不过还能再吃一份：饱腹不变、好感 +${aff} 喵`,
+  SNACK_FEED_HINT_EMPTY: '零食袋空了，复习错题本就能攒喵',
+  SNACK_FEED_HINT_FULL: '吃撑了也美滋滋，等饿了再喂喵'
 } as const
 
 // ──────────────────────────────────────────────────────────── 每日签到（P3 ①）
@@ -1690,7 +1868,7 @@ export const CHECKIN = {
    * 不写"断在哪天"：那是月历的活（哪一格没点亮就是哪天），这里不抄第二份日期。
    */
   HINT_BROKEN: '上次的连签断啦——今天签到就从 1 天重新数起喵',
-  HINT: (n: number): string => `每天签到，鱼盆里都会多 ${n} 碗大白饭`,
+  HINT: (n: number): string => `每天签到，饭盒里都会多 ${n} 碗大白饭`,
   /** 月历表头 = 周一开头（与 buildMonthGrid 的取齐口径必须一致，改一起改） */
   WEEK_HEAD: '一二三四五六日',
   MONTH: (y: number, m: number): string => `${y} 年 ${m} 月`,
@@ -2391,10 +2569,14 @@ export const GALLERY = {
   CLOSE: '收下'
 } as const
 
-// ──────────────────────────────────────────────────────────── 大肥鱼仓库（P3 ⑨）
+// ──────────────────────────────────────────────────────────── 奖励图仓库（P3 ⑨）
 
 /**
- * 仓库页（WarehouseView）：图鉴格子（列数自适应）+ 白饭碗余额 + 逐张另存。
+ * 仓库页（WarehouseView）：图鉴格子（列数自适应）+ 大白饭余额 + 逐张另存。
+ *
+ * 【命名（2026-11-01 深夜主人改口）】页面名回到「大肥鱼仓库」；
+ * 饭的容器只叫「饭盒」，零食的容器只叫「零食袋」。
+ * 旧版同一样东西有「大肥鱼仓库/白饭碗/鱼盆/零食余额」四套叫法。
  *
  * 【下载三态为什么一句都不重写】`SAVE_IMAGE` 与成功/取消/失败三态全部复用
  * 上面 GALLERY 那一组 —— 下载走的是同一条既有 IPC（gallery:save-image，
@@ -2409,8 +2591,8 @@ export const WAREHOUSE = {
    * 这条路的洞口。
    */
   GO_REVIEW: '去复习',
-  /** 饭碗数的标签（数字是 pet.rice，来自宠物快照，不是奖励图那边的账） */
-  RICE: '白饭碗',
+  /** 饭盒里的大白饭碗数（数字是 pet.rice，来自宠物快照，不是奖励图那边的账） */
+  RICE: '大白饭（碗）',
   /**
    * 复习全对次数（V1-38）：`rewards.perfectPasses` 的展示位。
    * 它是"我全对过多少回"的台账 —— 图一天只发一张、集齐之后也不再发，
@@ -2420,6 +2602,10 @@ export const WAREHOUSE = {
   PASSES: '全对次数',
   /** 饭碗数（n / max）。快照还没到时视图画 '--'，不走这个拼串（别把"没读到"画成 0） */
   RICE_N: (n: number, max: number): string => `${n} / ${max}`,
+  /** 零食袋（v7 模块五）：账本与饭盒分开，标签也分开 —— 不许合成一个数 */
+  SNACKS: '零食袋',
+  /** 零食数（n / max）。快照没到位时视图画 '--'（同 RICE_N 口径） */
+  SNACK_N: (n: number, max: number): string => `${n} / ${max}`,
   /** 收集度：n = 档案里认得的已收集张数，total = 图库总张数 */
   COLLECT: (n: number, total: number): string => `已收集 ${n} / ${total} 张`,
   /** 尚未收集的格子里的占位字 */
@@ -2495,6 +2681,9 @@ export const SIDEBAR = {
   /** 好感度那一行的标签（P3 ④：爱心 + 百分比挂在 .progress-row 旁，见 Sidebar.vue） */
   AFFECTION: '好感度',
   STAGE_SELECT: '阶段选择',
+  /** 阶段小方块的悬停说明（C4：方块里多了一行已学/总数） */
+  STAGE_CHIP_TIP: (label: string, learned: number, total: number): string =>
+    total > 0 ? `${label}：已学 ${learned} / ${total} 课` : `${label}：这一阶段还没有课`,
   MODULE_TITLE: '模块',
   LESSONS_TITLE: '知识点',
   /**
@@ -2505,6 +2694,9 @@ export const SIDEBAR = {
   LESSONS_READY: '内容就绪',
   /** 该模块一节课都没有时的占位（这里用短句而不是 MiEmpty —— 侧栏放不下整块空状态） */
   NO_LESSON: '这个模块还没有课喵～',
+  /** 侧栏/右栏状态图标的悬停解释（B3：锁图标不再用 🔒，原因得说出口） */
+  STATUS_LOCKED_TIP: '还没解锁：先学完前面的课',
+  STATUS_DRAFT_TIP: '内容还在准备中，暂时打不开',
 
   // ---- UI 大修轮（2026-10-09）：四分组 + 身份区 + 状态块 + 菜单入口 ----
 
@@ -2549,6 +2741,11 @@ export const SIDEBAR = {
   MENU_BTN_TITLE: '全屏菜单（Ctrl+Shift+M）',
   /** 九点阵按钮上的可见短标签（title 见上一条：可见字管"一眼看懂"，title 管说全快捷键） */
   MENU_BTN: '菜单',
+  /** 侧栏底部的主题切换（C3）：按钮写的是**点下去会切到哪**，不是当前状态 */
+  THEME_TO_DARK: '切换到夜间模式',
+  THEME_TO_LIGHT: '切换到日间模式',
+  THEME_BTN_DARK: '🌙 夜间',
+  THEME_BTN_LIGHT: '☀️ 日间',
 
   /**
    * 饱腹度徽记（🍚 + 百分比）的悬停说明。
@@ -2648,12 +2845,20 @@ export const ZOOM = {
   IN: '放大一点',
   RESET: '点一下回到 100%',
   /** 滑块的读屏标签 —— 它没有可见文字，只能靠这一句说明自己是什么 */
-  SLIDER: '拖动滑块调整正文和代码的大小'
+  SLIDER: '拖动滑块调整正文和代码的大小',
+  /** 收起后只剩一颗小胶囊；提示里带上当前百分比，收着也知道现在多大 */
+  EXPAND: (percent: number): string => `缩放 ${percent}% —— 点开调整`,
+  COLLAPSE: '收起缩放控件（只留一个小胶囊）'
 } as const
 
 // ──────────────────────────────────────────────────────────── 设置页杂项
 
 export const SETTINGS = {
+  /** 设置页第一张卡的四段分组（B7）。旧版十行设置平铺，没有主次。 */
+  GROUP_LEARN: '学习与练习',
+  GROUP_SOUND: '声音',
+  GROUP_APPEARANCE: '外观',
+  ADVANCED_TITLE: '高级设置（运行方式 / IDE 路径）',
   /**
    * 「每日复习」的总开关（字段仍是 `reviewEnabled`，没改名）。
    *
@@ -2765,11 +2970,11 @@ export const SETTINGS = {
    */
   LABEL_NATIVE_IDE_FOR: (lang: LangOfCode): string => `本地 IDE 路径（${langName(lang)}）`,
   NATIVE_IDE_HINT:
-    '给每门语言选一个平时写代码的程序（Dev-C++、VS Code 的 exe 都行），' +
+    '给每门语言选一个平时写代码的程序（Dev-C++、VS Code、IntelliJ IDEA 这类常见 IDE），' +
     '练习场的「🛠 本地 IDE 打开」按当前语言用对应那一格。' +
     '不确定就留空——点「打开」时会自动检测、帮你挑一个合适的，中文注释也不会乱码。' +
     '要选 .exe 本体 —— 桌面快捷方式（.lnk）是点不开的喵。',
-  NATIVE_IDE_PLACEHOLDER: '还没选喵——点「🔍 自动检测」帮你找，或点「选择文件」自己挑（留空 = 打开时自动挑）',
+  NATIVE_IDE_PLACEHOLDER: '留空 = 打开时自动挑，也可以点「自动检测」',
   /**
    * 自动检测的两种结局，**必须分开说**（同 IdeDetectResult 的两档）：
    * 一个是「真没找到」（下一步：手动选），一个是「没查成」（下一步：再点一次）。
@@ -2790,6 +2995,53 @@ export const SETTINGS = {
    * 补排期 —— AI 接口上线后它还写着「AI 接口在 M6 上线」，而 AI 卡就紧贴在下面。
    */
   REST_COMING: '数据都存在本机、你自己手里；登录之后，学习进度、错题本和收藏会跟着你走喵～',
+
+  // ---- 自定义鼠标指针卡片（v7 模块六，2026-10-31）
+  /**
+   * 【为什么把两种素材的代价都写在总说明里】
+   * 图片指针会先自动找箭尖（扫透明通道里的第一个实心像素），找不到要用户
+   * 自己点一个落点；视频指针必须藏掉系统指针，连文字光标/禁止符一起藏。
+   * 这些都不是"坏了"，但不提前说，用户第一反应一定是"我的鼠标出问题了"。
+   *
+   * 【为什么强调"两个都不设置 = 默认猫爪"】
+   * 这个功能是叠加在内置猫爪之上的，不是替换关系。不清不楚的话，用户会以为
+   * 这里是"开关"，不设置就等于关掉了指针主题。
+   */
+  CURSOR_CARD_TITLE: '🖱 自定义鼠标指针',
+  CURSOR_HINT:
+    '常态和点击可以各配一张图片或一段视频喵～ ' +
+    '图片会自动找「箭尖」当落点，找不准就在预览里点一下自己定；' +
+    '视频会把系统指针藏起来，由一小段视频跟着鼠标走（文字光标、禁止符也会一起藏）。' +
+    '两个都不设置 = 默认猫爪，什么都不用管喵。',
+  CURSOR_LABEL_NORMAL: '常态指针（松开鼠标时）',
+  CURSOR_LABEL_CLICK: '点击指针（按下鼠标时）',
+  CURSOR_EMPTY: '未设置（用默认猫爪）',
+  CURSOR_KIND_IMAGE: (name: string): string => `图片 · ${name}`,
+  CURSOR_KIND_VIDEO: (name: string): string => `视频 · ${name}`,
+  CURSOR_BTN_UPLOAD: '选择文件',
+  CURSOR_BTN_REPLACE: '换一个',
+  CURSOR_BTN_CLEAR: '恢复默认',
+  CURSOR_BTN_AUTO: '自动定位',
+  CURSOR_HOTSPOT_AUTO: '落点：自动定位（点预览可以手动改）',
+  CURSOR_HOTSPOT_MANUAL: '落点：手动定位（点「自动定位」交还给系统）',
+  CURSOR_HOTSPOT_CLICK_HINT: '在下面的预览里点一下，落点就是点下去真正生效的位置喵～',
+  CURSOR_PREVIEW_ARIA: '指针落点预览：点一下设置落点；键盘可用方向键移动落点（Shift 微调）、回车确认',
+  CURSOR_PREVIEW_FAILED: '这张素材没能预览出来喵…换一个文件试试？',
+  /**
+   * 视频指针的常驻说明。只在真有视频槽位时出现 ——
+   * 没有视频的时候摆这句话只会让人以为"是不是我哪里没设置好"。
+   */
+  CURSOR_VIDEO_HINT:
+    '现在有视频指针：系统指针已经藏起来了。视频加载失败会自动退回默认猫爪，不会把鼠标弄丢喵～',
+  CURSOR_IMPORT_OK: (name: string): string => `指针换好啦喵：${name}`,
+  CURSOR_CLEAR_OK: '已经换回默认猫爪啦喵～',
+  CURSOR_IMPORT_BAD_EXT:
+    '这个文件当不了指针喵——图片收 png / jpg / webp / gif / bmp，视频收 mp4 / webm',
+  CURSOR_IMPORT_TOO_SMALL: '这个文件太小了喵（像是空文件或者坏图），换一个试试？',
+  CURSOR_IMPORT_TOO_LARGE: '这个文件太大啦喵——指针素材只收 64MB 以内的',
+  CURSOR_IMPORT_FAILED: (detail: string): string =>
+    `拷贝指针文件的时候出了点岔子喵：${detail}`,
+  CURSOR_STORE_FAILED: '指针设置没能存下来喵…再试一次？',
 
   // ---- 动态壁纸卡片（2026-10-04，P3 移植的第一步体验修复）
   /**
@@ -3213,12 +3465,32 @@ export const SETTINGS = {
   REWARD_DIR_LABEL: '🎁 奖励图文件夹',
   REWARD_DIR_BTN: '打开文件夹',
   /**
-   * 行下说明：count = 已认到的替换张数（0 也如实说），range = 在册编号区间
-   * （如 `g01–g200`，调用方按 GALLERY_IDS 现算——2026-10-17 扩池后不再是固定
-   * 的 g01–g50，这里不写死），位置由主进程 storageDir() 算好带来
+   * 打开/创建失败的回执（2026-11-01 补）。此前这两个失败分支都被静默吞掉：
+   * 用户点了按钮，按钮转一圈，什么窗口都没有，界面上也没有一个字解释 ——
+   * 只能反复点。失败必须说出来，并给出可以手动走的路。
    */
-  REWARD_DIR_HINT: (count: number, dir: string, range: string): string =>
-    `已认到 ${count} 张替换图。把 ${range} 命名的图片（png/jpg/webp）放进这个文件夹就会替换对应奖励图，没放的那几张保持原样。位置：${dir}`,
+  REWARD_DIR_OPEN_FAIL: (dir: string): string =>
+    dir ? `没能打开文件夹喵～请手动打开这个位置：${dir}` : '没能打开文件夹喵～',
+  REWARD_DIR_MKDIR_FAIL: (dir: string): string =>
+    dir ? `没能创建奖励图文件夹喵～请检查这个位置能否写入：${dir}` : '没能创建奖励图文件夹喵～',
+  /**
+   * 行下说明（2026-10-31 主人体验修正）。
+   *
+   * 【旧文案为什么撤了】原来第一句是「已认到 0 张替换图」—— 用户刚打开设置页
+   * 看到 0，以为内置图库是空的/功能没生效，完全读不出「本来就有 496 张默认图，
+   * 这个 0 只是"你还没放自己的图"」。现在先讲清默认存量与替换方法，只有真的
+   * 放了自己的图（count > 0）才补一句 "当前已替换 N 张"。
+   *
+   * 参数：count = 已认到的替换张数；total = 内置默认图鉴总数（GALLERY_IDS.length）；
+   * range = 编号区间（如 `g01.png ~ g496.png`，调用方按 GALLERY_IDS 现算）；
+   * dir = 主进程 storageDir() 算好的 rewards 目录。
+   * 【主人点名原句】"内置了 496 张默认图鉴。如果你想换成自己的图，请把图片命名为
+   * g01.png ~ g496.png 放进这个文件夹，即可无缝替换喵！"
+   */
+  REWARD_DIR_HINT: (count: number, total: number, range: string, dir: string): string =>
+    `内置了 ${total} 张默认图鉴。如果你想换成自己的图，请把图片命名为 ${range} 放进这个文件夹，即可无缝替换喵！` +
+    (count > 0 ? ` 当前已替换 ${count} 张喵～` : '') +
+    ` 位置：${dir}`,
 
   /** 选择壁纸弹窗 */
   WALL_PICK_TITLE: '选择壁纸',
@@ -3264,12 +3536,182 @@ export const SETTINGS = {
   // ---- AI 大肥鱼（M6-04；2026-10-16 V2-02 全库统一：这张卡的标题、挑战/回顾页
   //      的「AI 大肥鱼」字样与 🐟 归属标一次对齐，🐱 只剩首页欢迎卡那个品牌位；
   //      头像由 SettingsView 的 <MiMascot pose="think"> 出）
-  AI_CARD_TITLE: 'AI 大肥鱼（DeepSeek）',
+  AI_CARD_TITLE: 'AI 大肥鱼',
   AI_STATUS_ON: '已配置',
   AI_STATUS_OFF: '未配置',
+  /** 免费池模式：没有 Key，但功能是通的，不能显示「未配置」骗人 */
+  AI_STATUS_POOL: '公开池可用',
+  /**
+   * 双模式（2026-11-01 专项）。**模式名是主人点名的原话**，别改字。
+   * 括号里的说明要留在同一行 —— 零基础用户看「专属 API 模式」不知道
+   * 那是什么，括号里的八个字才是他能做判断的依据。
+   */
+  AI_MODE_LABEL: '接入方式',
+  AI_MODE_API: '专属 API 模式（填入自己的 Key）',
+  AI_MODE_POOL: '免费公开池模式（使用团队 OFM 开源项目提供的免费池）',
+  AI_MODE_API_HINT: '用自己的 Key：额度和速度由你选的服务商保证，也能查余额。',
+  AI_MODE_POOL_HINT: '不用填 Key，选一个免费模型就能用；公共资源，可能慢一点。',
+  /**
+   * 免费池免责提示。**逐字是主人 2026-11-01 定的原句，一个字都不许改**。
+   * 它必须和模式 B 的控件同时可见，不能折叠、不能塞到卡片底部 ——
+   * 用户是在选模型的那一刻做「要不要用第三方免费资源」的决定。
+   */
+  AI_POOL_WARN:
+    '🐟 大肥鱼提示：免费公开池由社区爱心提供，可能会有延迟或限流。这属于第三方接口问题，与大肥鱼软件本体无关哦！',
+  /** 免费池的隐私边界：不提 Key，但提示词会经过第三方 */
+  AI_POOL_PRIVACY:
+    '🔒 免费公开池不需要你的 Key；但发出去的提示词会经过第三方服务器，别把隐私内容写进去喵。',
+  AI_POOL_LOADING: '正在取免费池的模型清单…',
+  AI_POOL_LOAD_FAIL: '免费池清单这会儿没取到喵…先用「自动挑一个」也能用。',
+  AI_POOL_RETRY: '重试',
+  /** 自建服务的地址收进折叠区（主人要求：主界面绝不让用户手填服务地址） */
+  AI_LABEL_ADVANCED: '高级设置（自建服务）',
+  /** 按 Key 前缀自动切厂商之后的一句确认，让用户知道刚才发生了什么 */
+  AI_KEY_AUTO_PROVIDER: (name: string): string => `🔍 认出来了，已经自动切到「${name}」喵～`,
+  /**
+   * 厂商下拉框的显示名（2026-11-01 多厂商）。
+   * 键 = shared/ai-providers.ts 的 AiProviderId；少一个 typecheck 直接红。
+   * 名字后面带括号的那几家，是零基础用户更可能认得的叫法。
+   */
+  AI_PROVIDER_LABEL: {
+    deepseek: 'DeepSeek（深度求索）',
+    openai: 'OpenAI',
+    anthropic: 'Anthropic（Claude）',
+    qwen: '阿里云百炼（通义千问）',
+    kimi: 'Kimi（月之暗面）',
+    zhipu: '智谱 GLM（BigModel）',
+    xai: 'xAI（Grok）',
+    gemini: 'Google（Gemini）',
+    baidu: '百度文心一言（千帆）',
+    hunyuan: '腾讯混元（Hunyuan）',
+    custom: '自定义服务（OpenAI 兼容）'
+  } as Record<AiProviderId, string>,
+  /** 每家 Key 去哪拿。**直接给后台地址**，别让人去搜（搜出来多半是广告） */
+  AI_PROVIDER_KEY_WHERE: {
+    deepseek: '在哪拿：https://platform.deepseek.com/api_keys',
+    openai: '在哪拿：https://platform.openai.com/api-keys',
+    anthropic: '在哪拿：https://console.anthropic.com/settings/keys',
+    qwen: '在哪拿：阿里云百炼控制台 → API-KEY 管理',
+    kimi: '在哪拿：https://platform.moonshot.cn/console/api-keys',
+    zhipu: '在哪拿：https://open.bigmodel.cn/usercenter/apikeys',
+    xai: '在哪拿：https://console.x.ai/',
+    gemini: '在哪拿：https://aistudio.google.com/app/apikey',
+    baidu: '在哪拿：百度智能云控制台 → 千帆大模型平台 → API Key',
+    hunyuan: '在哪拿：https://console.cloud.tencent.com/tokenhub/apikey（旧混元平台的 Key 不能用于 TokenHub）',
+    custom: '在哪拿：看你用的这个服务商的文档'
+  } as Record<AiProviderId, string>,
+  AI_LABEL_PROVIDER: '服务商',
+  /** 没 Key 时模型下拉框的静默态说明。**主人 2026-11-01 定的原句，别改字** */
+  AI_NEED_KEY: '喵？大肥鱼还没吃到 API 能量，请先接入 Key 喵~',
   AI_LABEL_KEY: 'API Key',
   AI_LABEL_BASE_URL: '服务地址',
+  /**
+   * 自定义服务的地址说明（2026-11-01 多厂商重构后，只有「自定义」还看得到这一行）。
+   * 官方厂商的地址由 shared/ai-providers.ts 给，用户不需要知道。
+   */
+  AI_BASE_URL_HINT:
+    '填服务商给你的地址（OpenAI 兼容接口，通常以 /v1 结尾；带不带 /v1 都可以）。',
+  AI_BASE_URL_CUSTOM_PH: '例如 https://api.example.com/v1',
+  /**
+   * 服务地址字段级错误（2026-10-31 自检 P2）。主进程 normalizeAiBaseUrl
+   * 抛 ASCII 码（主进程在文案闸门扫描范围内），这里按码翻成人话。
+   */
+  AI_BASE_URL_BAD: '这个服务地址格式不对喵…请填完整地址，例如 https://api.deepseek.com',
+  AI_BASE_URL_SCHEME: '服务地址只支持 http:// 或 https:// 开头的地址喵',
+  AI_BASE_URL_INSECURE:
+    '公网地址不能用 http:// 喵——API Key 会明文发出去。请改成 https://（只有本机 localhost / 127.0.0.1 可以用 http）',
+  AI_BASE_URL_CREDENTIALS: '服务地址里别带用户名和密码喵…凭据请填在 API Key 那一栏',
+  AI_BASE_URL_INVALID: '这个服务地址存不下来喵…检查一下格式再试一次',
   AI_LABEL_MODEL: '模型',
+  /** 自定义服务的模型名输入框占位（官方厂商是下拉框，不走这里） */
+  AI_MODEL_CUSTOM_PH: '填这个服务要用的模型名',
+  /**
+   * 动态模型清单（v23，主人 2026-11-01 专项）。
+   *
+   * 【失败那句是主人点名的原话】`AI_MODELS_FAIL` 一个字都不许改：
+   * 拉不到清单时必须如实说「无法获取」，**绝不能退回一份写死的选项假装
+   * 成功** —— 用户会以为那是这台 Key 的真实能力，选中一个不存在的模型后
+   * 只会拿到 404，而界面上看起来一切正常。
+   */
+  AI_MODELS_LOADING: '正在获取模型列表…',
+  AI_MODELS_FAIL: '无法获取模型列表，请检查 Key 或网络',
+  AI_MODELS_RETRY: '重试',
+  /** 有旧清单、这次刷新失败：旧清单还能用，但要说清楚它不是最新的 */
+  AI_MODELS_STALE: '这次没取到最新清单，下面还是上次的列表喵~',
+  AI_MODELS_COUNT: (n: number): string => `已获取 ${n} 个可用模型`,
+  /** 刚粘了 Key、还没落盘：模型清单要等 Key 存住才能拉 */
+  AI_MODELS_KEY_UNSAVED: '先把 Key 存住（点一下别处或按回车），本喵才能去拿模型列表喵~',
+  /** 还没填 Key：下拉框关着，但要说明它为什么是空的 */
+  AI_MODELS_NEED_KEY: '填好 Key 后自动获取模型列表',
+  /** 当前模型不在远端清单里：保留它（可能是旧别名），但如实提醒 */
+  AI_MODELS_CURRENT_MISSING: (name: string): string =>
+    `当前模型「${name}」不在返回的清单里，仍会按原值发送喵~`,
+  /** 自定义服务的「从清单快速选」辅助下拉 */
+  AI_MODELS_CUSTOM_HELPER: '从拉取到的模型里快速选一个（也可以直接手填）',
+  AI_MODELS_CUSTOM_PICK_PH: '点这里从清单里选',
+  /**
+   * 思考模式（v23）。四档的档名与两句提示语是主人点名的原话，
+   * **高/低两句一个字都不许改**。中/关两句是本批补的，口径与它们一致：
+   * 说清「更快/更慢」「更省/更费 Token」的取舍，不替用户做决定。
+   */
+  AI_THINKING_LABEL: '思考模式',
+  AI_THINKING_OPTIONS: {
+    off: '关闭',
+    low: '低（极速）',
+    medium: '中（平衡）',
+    high: '高（深度推理）'
+  } as Record<AiThinking, string>,
+  AI_THINKING_RECOMMENDED_SUFFIX: '（推荐）',
+  /**
+   * 选了「关闭」但这家做不到完全关闭时的说明。
+   * 不能照抄 off 那句「不额外做深度思考」—— 那是在说一件没发生的事。
+   */
+  AI_THINKING_HINT_CANNOT_OFF:
+    '喵！这个模型关不掉思考，选「关闭」实际会用它能做到的最低档，仍会比低档多花一点 Token 喵~',
+  AI_THINKING_HINT: {
+    off: '喵！模型不额外做深度思考，回答最快、最省 Token，但复杂问题可能要你自己多想一步喵~',
+    low: '喵！模型直接脱口而出，速度飞快，消耗的 Token 更少，但复杂逻辑可能容易出错喵~',
+    medium: '喵！模型会先理清思路再回答，速度和 Token 消耗比较均衡喵~',
+    high: '喵！深度思考会让模型进行更复杂的推理，但也会消耗更多的 Token，回复也会变慢哦！'
+  } as Record<AiThinking, string>,
+  AI_THINKING_RECOMMEND: (label: string): string =>
+    `本喵按这个模型的能力推荐「${label}」喵~`,
+  /**
+   * 各厂商真实能做到什么。**不许把「只改提示词」说成「已经关掉了模型的思考」**：
+   * 用户按这句话判断自己花多少 Token，说错就是让他白花钱。
+   */
+  AI_THINKING_NOTE: {
+    'prompt-only': '这里通过提示词调整思考深度，不会改动请求参数喵~',
+    'always-on': '这个模型默认就会思考，接口不支持完全关闭；这里只能调整提示词喵~',
+    'min-only': '这个模型不支持完全关闭思考，选「关闭」时会用最低档喵~',
+    'model-switch': '选「高」会改用 DeepSeek Reasoner；选「关闭」或「低」会改用 DeepSeek Chat 喵~',
+    pool: '免费池由网关自动分配模型，这里只能通过提示词调整思考深度喵~'
+  } as Record<AiThinkingNote, string>,
+  /**
+   * 免费池的自动路由说明。**主人 2026-11-01 的原话，逐字**：
+   * 「免费池自动路由，当前可用模型：kilo-auto/free（自动选择最优免费通道）」。
+   * 清单里如果还有别的免费模型，下拉框会全部列出来供手动选择；
+   * 这行说明只在选中兜底模型时出现（选别的模型时再说「自动」就是假话）。
+   */
+  AI_POOL_AUTO_NOTE: (model: string): string =>
+    `免费池自动路由，当前可用模型：${model}（自动选择最优免费通道）`,
+  AI_POOL_MANUAL_NOTE: (model: string): string =>
+    `当前选定：${model}。它也是免费池里的模型，具体路由由网关决定喵~`,
+  /** 余额查询（2026-11-01 体验核心） */
+  AI_BALANCE_LABEL: '剩余余额',
+  AI_BALANCE_BTN: '查余额',
+  AI_BALANCE_QUERYING: '正在查余额…',
+  /** 支持查余额的厂商（DeepSeek / Kimi）成功时的那句 */
+  AI_BALANCE_OK: (amount: string, currency: string): string => {
+    const sym = currency === 'CNY' ? '¥' : currency === 'USD' ? '$' : ''
+    return sym
+      ? `💰 剩余余额 ${sym}${amount}`
+      : `💰 剩余余额 ${amount}${currency ? ` ${currency}` : ''}`
+  },
+  /** 优雅降级。**原句，别改字** —— 查不到余额不等于功能不能用了 */
+  AI_BALANCE_UNSUPPORTED: '该模型不支持余额查询喵',
+  /** 查余额自己失败了（断网 / Key 过期 / 接口改版）：不挡聊天与出题 */
+  AI_BALANCE_FAIL: '余额这会儿没查成喵…不影响对话和出题，等会儿再试试',
   /**
    * 「AI 动态出题」总开关（2026-10-21，默认关）。
    *
@@ -3286,21 +3728,28 @@ export const SETTINGS = {
   AI_DYNAMIC_HINT:
     '开启后，每日挑战或题池不足时将调用您配置的 API 生成新题，会消耗少量 Token（大肥鱼提示：每次约几分钱）',
   /**
+   * 免费池模式下的同一条说明。**不能说「约几分钱」** —— 免费池不花用户的钱，
+   * 但会慢、会限流。照抄专属模式的文案就是在说一句不成立的话。
+   */
+  AI_DYNAMIC_HINT_POOL:
+    '开启后，每日挑战或题池不足时会用免费公开池生成新题；它可能慢一点或被限流，题目不够时会自动回退本地题库喵。',
+  /**
    * Key 输入框里那句灰字。**两种状态必须分开写** ——
    * 框里永远是空的（界面拿不到真 Key），所以「有 Key」时如果还写着
    * 「把 Key 粘贴到这里」，用户会以为没配上，把同一把 Key 反复粘进来。
    */
   AI_KEY_PLACEHOLDER_EMPTY: '把 Key 粘贴到这里',
   AI_KEY_PLACEHOLDER_SET: '已保存好了，要换一把就粘新的进来',
-  /** 上哪拿 Key。**直接给网址**，别让人去搜 —— 零基础用户搜出来的多半是广告 */
-  AI_KEY_WHERE: '在哪拿：platform.deepseek.com',
   /**
    * 隐私说明。**主动说「不填也能用」是这句里最要紧的一半** ——
    * 它把「不填」从「功能不全」变成「一种正常选择」，
    * 用户才不会为了「用完整功能」勉强把 Key 填进来。
+   *
+   * 【2026-11-01 多厂商改口】官方厂商的地址是固定的，说「只发给你填的地址」
+   * 已经不准；改成「只发给你选的服务商」——官方与自定义两种配置下都成立。
    */
   AI_PRIVACY:
-    '🔒 你的 Key 只存在这台电脑上，不会发给除 DeepSeek 官方以外的任何人。\n' +
+    '🔒 你的 Key 只存在这台电脑上，请求只会发给你选的服务商。\n' +
     '不填也完全能用，只是没有 AI 功能喵～',
   /**
    * 测试连接成功。**把模型名念出来**，因为这是「真的问过它了」的唯一证据 ——
@@ -3313,6 +3762,8 @@ export const SETTINGS = {
    * 或者 IPC 本身出事。照实说「本喵这边的问题」，别赖到网络或 Key 上。
    */
   AI_TEST_UNEXPECTED: '本喵这边出了点岔子喵…（多半是本喵自己写错了，不是你的问题）',
+  /** Key 没写进配置（磁盘/权限问题）。**别说成网络错**，Key 还没出门呢 */
+  AI_KEY_SAVE_FAILED: 'Key 没存住喵…再点一次「保存并测试」试试；一直这样可能是磁盘写不进去',
   /** 排查用。详情是给能看懂的人看的，所以标出来源，别让人以为是自己的错 */
   AI_DETAIL_PREFIX: '排查用：',
 
@@ -3375,15 +3826,65 @@ export const SETTINGS = {
     '关掉＝它不再自己溜达（饿不饿都老实待着）。被你点、被喂、跑腿、关闭前的挽留都不受影响；' +
     '开着时动多动少看肚子：饱了满屋跑，越饿动得越少，饿狠了基本不动喵。',
   /**
+   * 字体署名（2026-10-31 换掉上游商业字体时一并加上）。
+   * 【为什么这句必须出现在界面里】MiSans 许可证第 1 条原文：「您应在软件中特别注明
+   * 使用了 MiSans 字体。」—— 只写进安装目录的 NOTICE.txt 是对「在软件中」的偷懒解读；
+   * 设置页桌宠卡片是用户真能看到的软件界面，这句放这里才算做到。
+   */
+  PET_FONT_NOTICE: '桌宠气泡字体使用了 MiSans 字体（小米免费商用）喵～',
+
+  // ---- 饱腹度衰减档位（v7 模块五，2026-10-31 主人点名）。
+  //      【为什么好感度要在这段 hint 里点名】主人原话「好感度不可乱调、好感度依然
+  //      遵循饱腹度系统强关联」—— 用户很容易把这条当成「好感度也能调」，所以
+  //      说明句必须明说：这个开关只管肚子，好感度没有可调旋钮。
+  //      【三个数字为什么是参数】在线周期真源在 shared/pet.ts 的
+  //      PET_DECAY_TIER_PERIODS，SettingsView 按真源换算成分钟传进来；
+  //      pet-guide.test.ts 拿那边的表达式与真源对账，这里不写死。
+  //      「互动说明按正常档写的」是**实话**：那张固定说明面板的周期来自
+  //      PET_DECAY_ONLINE_PERIOD_MS（= normal 档），pet-guide.test.ts 钉死了那条算式；
+  //      改档后固定说明面板的数字不会跟着变，所以这里必须提醒读者以档位为准。
+  PET_LABEL_DECAY: '饱腹度下降速度',
+  /** 四档的中文名。键 = PetDecayTier 字面量（漏一个键 typecheck 就红） */
+  PET_DECAY_NAMES: {
+    relaxed: '慢慢饿',
+    normal: '正常',
+    strict: '饿得快',
+    /** 2026-10-31 主人点名新增：保持饱腹、饱腹度不下降 */
+    never: '不会饿（保持饱腹）'
+  } as Record<PetDecayTier, string>,
+  /**
+   * 档位说明。前三个分钟数来自 PET_DECAY_TIER_PERIODS 真源（SettingsView 换算传入）；
+   * 「不会饿」档没有周期可言（Infinity），所以只按文字说明、绝不把 Infinity 印出来。
+   * 【2026-10-31 主人点名原文】"选择此模式后，大肥鱼永远保持吃饱状态，饱腹度不再下降。
+   * 但请注意，好感度依然会正常随时间掉（虽然因为不会饿，好感度基本不怎么掉/下降极慢），
+   * 所以主人依然要多陪陪大肥鱼喵~"
+   */
+  PET_DECAY_HINT: (
+    relaxedOnlineMin: number,
+    normalOnlineMin: number,
+    strictOnlineMin: number
+  ): string =>
+    `只管肚子饿得快慢：慢慢饿＝在线每 ${relaxedOnlineMin} 分钟掉 1 点，` +
+    `正常＝每 ${normalOnlineMin} 分钟，饿得快＝每 ${strictOnlineMin} 分钟（离线都比在线慢）。` +
+    `还有一档「不会饿（保持饱腹）」：选择此模式后，大肥鱼永远保持吃饱状态，饱腹度不再下降。` +
+    `但请注意，好感度依然会正常随时间掉（虽然因为不会饿，好感度基本不怎么掉/下降极慢），` +
+    `所以主人依然要多陪陪大肥鱼喵~ ` +
+    `好感度没有可调的旋钮 —— 它只认你陪它多久、喂了多少，改这个档位不会让本鱼更爱你或更冷淡喵。` +
+    `下面的互动说明按「正常」档写；你换了档，以你选的节奏为准。`,
+  /**
    * 聊天入口说明（2026-10-06 晚补迁聊天时加）。三个事实都要说清：
    * ① 入口在右键菜单里（桌宠没有常驻按钮）；② 有 Key = 真 AI 回话、花自己的 token；
    * ③ 没 Key 也能点 —— 它会用本地台词（shared PET.CHAT_FAIL['no-key']）提醒去插钥匙，
    * 不是坏掉。「AI 大肥鱼」卡片在这张卡的**下方**（DOM 顺序桌宠卡在前）——写反了就成了
-   * 一条指向错误位置的说明，比没有还糟（同 AI_KEY_WHERE 的教训）。
+   * 一条指向错误位置的说明，比没有还糟（同 AI_PROVIDER_KEY_WHERE 的教训）。
    */
   PET_CHAT_HINT:
     '右键点它，选「跟本鱼聊天」就能说悄悄话喵～「AI 大肥鱼」卡片里填过 Key 的话，' +
     '它会接上大脑自由回话（花一点你自己的 token）；没填也能点，它会用本地台词催你去插钥匙。',
+  /** 免费池模式下的同一段说明：没有 Key 也有大脑，别把用户往填 Key 的路上引 */
+  PET_CHAT_HINT_POOL:
+    '右键点它，选「跟本鱼聊天」就能说悄悄话喵～现在是免费公开池模式，不用填 Key 也能接上大脑；' +
+    '免费池偶尔会慢一点或被限流，它答不上来时用本地台词陪你。',
   /**
    * 桌宠聊天的 AI Key 状态行（2026-10-06 加）。桌宠**没有自己的 Key**：
    * 聊天读的就是「设置 → AI」写进 config 的那把全局 Key（同一把，无第二份）。
@@ -3394,6 +3895,8 @@ export const SETTINGS = {
    */
   PET_AI_KEY_ON: '大肥鱼正在用主程序「设置 → AI」里的 API Key，无需单独配置喵～',
   PET_AI_KEY_OFF: '还没接上 AI Key——去下面的「AI 大肥鱼」卡片填一个，本鱼才能开口聊天喵。',
+  /** 免费池模式：没有 Key，但桌宠能聊天；不能再说「还没接上 Key」 */
+  PET_AI_POOL_ON: '大肥鱼正在用免费公开池，不需要 API Key 也能聊天喵～',
 
   // ---- 大肥鱼互动说明（UI 大修轮 2026-10-09）
   //      挂在桌宠卡尾部的小面板（常显，不折叠）：把好感度/饱腹度的涨跌规则和
@@ -3417,14 +3920,17 @@ export const SETTINGS = {
     checkin: number,
     study: number,
     challenge: number,
-    review: number
+    review: number,
+    snack: number
   ): string[] => [
     `喂一碗大白饭 +${feed}`,
     `摸摸鱼头 +${pat}`,
     `每天签到 +${checkin}`,
     `学完一课 +${study}`,
     `完成每日挑战 +${challenge}`,
-    `复习考满分 +${review}`
+    `复习考满分 +${review}`,
+    /** v7 模块五：零食也是好感来源，且饱了溢喂照样涨（feedSnack 的 overflow） */
+    `喂零食 +${snack}`
   ],
   PET_GUIDE_AFF_DOWN_TITLE: '会让好感掉下来的事',
   /**
@@ -3541,8 +4047,67 @@ export const AI_FAIL: Record<AiFailReason, string> = {
   timeout: '等了半分钟还没回话喵…可能是网络慢，等会儿再试一次？',
   canceled: '已经取消啦喵～',
   server: 'DeepSeek 那边好像在打盹喵…过一会儿再试试？',
-  'bad-response': '它回的话本喵没看懂喵…再试一次说不定就好了'
+  'bad-response': '它回的话本喵没看懂喵…再试一次说不定就好了',
+  unsupported: '这家服务没有开放这个接口喵～别的功能不受影响'
 } as const
+
+/**
+ * 自定义服务地址下的失败文案（2026-10-31 自检 P2）。
+ *
+ * 旧版无论用户把服务地址填成哪家中转/自建网关，失败都写「DeepSeek 说」
+ * 并把人指去 platform.deepseek.com 充值 —— 对自定义服务是**方向错误的假话**。
+ * 这里只去掉品牌名与充值链接，下一步动作不变（改 Key / 查余额 / 查网络）。
+ * 2026-11-01 多厂商之后它同时承担 OpenAI / Anthropic / 千问 / Kimi 的文案，
+ * 所以措辞里不再出现「你填的地址」——官方厂商的地址是表里给的。
+ */
+export const AI_FAIL_CUSTOM: Record<AiFailReason, string> = {
+  'no-key': '还没填 API Key 喵～在上面那个框里粘一把就能用了',
+  disabled: '「AI 动态出题」开关还关着喵～想让它现出题，先去设置里把开关拨开',
+  unauthorized: '服务说这把 Key 不对喵…检查一下有没有抄漏、或者复制的时候多带了空格？',
+  quota: '服务说余额不够了喵…去服务商后台充值一下',
+  offline: '连不上服务喵…看看网络通不通，用代理的话确认代理开着',
+  timeout: '等了半分钟还没回话喵…可能是网络慢，等会儿再试一次？',
+  canceled: '已经取消啦喵～',
+  server: '服务那边好像在打盹喵…过一会儿再试试？',
+  'bad-response': '它回的话本喵没看懂喵…再试一次说不定就好了',
+  unsupported: '这家服务没有开放这个接口喵～别的功能不受影响'
+} as const
+
+/**
+ * 免费公开池的失败文案（v22 模式 B）。
+ *
+ * 【为什么不复用 AI_FAIL_CUSTOM】那套里「去服务商后台充值」「检查这把 Key」
+ * 在免费池里都是**不成立的话**：免费池没有 Key，也不收用户的钱。它的失败
+ * 主要是限流、排队、上游抽风 —— 用户该做的是换个模型或等一会儿，
+ * 不是去充值。把这三件事混成一句，用户会去查一个不存在的账户。
+ */
+export const AI_FAIL_POOL: Record<AiFailReason, string> = {
+  'no-key': '免费池不需要 Key 喵～这个是专属模式的提示，先切回专属 API 模式再填',
+  disabled: '「AI 动态出题」开关还关着喵～想让它现出题，先去设置里把开关拨开',
+  unauthorized: '免费池这会儿没认出我们喵…可能规则临时变了，等会儿再试，或切回专属 API 模式',
+  quota: '免费池这会儿被大家用满 / 限流了喵…等一会儿再试，或者换一个免费模型',
+  offline: '连不上免费公开池喵…看看网络通不通；也可以用回专属 API 模式',
+  timeout: '免费池等太久了喵…公共资源有时会慢，换一个模型或等会儿再试',
+  canceled: '已经取消啦喵～',
+  server: '免费池那边好像在打盹喵…过一会儿再试试？',
+  'bad-response': '免费池回的话本喵没看懂喵…换一个模型再试说不定就好了',
+  unsupported: '免费池没有这个接口喵～别的功能不受影响'
+} as const
+
+/**
+ * 按**模式 + 厂商**挑失败文案。
+ *   · 免费池：一律用 AI_FAIL_POOL（不冒充任何厂商）；
+ *   · 专属模式：只有 DeepSeek 用带品牌的版本，其余中性。
+ * （旧签名吃 baseUrl，2026-11-01 起官方厂商的地址不再由用户填，改吃 provider。）
+ */
+export function aiFailText(
+  reason: AiFailReason,
+  provider: AiProviderId,
+  mode: AiMode = 'api'
+): string {
+  if (mode === 'pool') return AI_FAIL_POOL[reason]
+  return provider === 'deepseek' ? AI_FAIL[reason] : AI_FAIL_CUSTOM[reason]
+}
 
 // ──────────────────────────────────────────────────────────── 练习页杂项
 
@@ -3584,11 +4149,21 @@ const SOURCE_LABELS: Record<string, string> = {
 export const PRACTICE = {
   /** 题数选择（5 / 10 / 15 / 20 题） */
   questionCount: (n: number): string => `${n} 题`,
+  /**
+   * 题库不是整档时的「全都拿来」（A2，2026-11-01）：
+   * 7 题时若只给 5，剩下 2 题永远抽不到；给一个「全部 7 题」把尾数交还给用户。
+   */
+  allQuestions: (n: number): string => `全部 ${n} 题`,
   /** 错题被移走时的占位题干 */
   MISSING_STEM: '（题目已被移走喵）',
 
   RANDOM_DESC: '从所有学过的知识点里随机抽题组卷，检验一下小鱼干有没有真的吃到肚子里喵～',
   RANDOM_START: '开始随机练习',
+  /**
+   * 开始键上直接写本次会出几题（A2）：用户不用点完才在 toast 里发现
+   * 「题库只有 7 题」。`n` 来自当前选项，和实际组卷用的是同一个数。
+   */
+  randomStartCount: (n: number): string => `开始随机练习（${n} 题）`,
   /** 随机卡底部：当前题库总量 */
   poolSize: (n: number): string => `当前题库共 ${n} 题喵～`,
   /**
@@ -3771,6 +4346,15 @@ export const FAVORITES = {
   SELECTED_PRACTICE: '练这几道',
   SELECTED_MOVE: '移动到文件夹',
   SELECTED_REMOVE: '取消收藏',
+  /**
+   * 批量取消收藏的确认框（2026-10-31 自检 P1）：这个按钮紧挨着「取消选择」，
+   * 一点就永久删（连收藏笔记一起），旧版没有二次确认也没有撤销。
+   * 讲清楚会丢什么，不只问一句「确定吗」。
+   */
+  selectedRemoveTitle: (n: number): string => `取消收藏这 ${n} 道？`,
+  selectedRemoveBody:
+    '它们会从收藏列表里消失，写过的收藏笔记也会一起没掉喵。这个动作没法撤销——只是想清空勾选的话，点旁边那颗「取消选择」就好。',
+  selectedRemoveOk: '取消收藏',
   /** 移动到文件夹的弹窗 */
   moveTitle: '挪到哪个文件夹？',
   MOVE_UNGROUPED: '未分组',
@@ -3854,7 +4438,14 @@ export const PANEL = {
   /** 一课都没学过时 */
   NO_REVIEW: '先去学一课喵，学过的课才会进复习池～',
 
-  TITLE_RELATED: '🔗 相关知识点'
+  TITLE_RELATED: '🔗 相关知识点',
+
+  /**
+   * 非课文页且右栏没有任何可做的事时，只留这一句（A5）。
+   * 旧版在三段里各塞一张空卡，「本节还没有练习」「先去学一课」「没有相关知识点」
+   * 同时出现 —— 用户只是打开设置/排行榜，却像被布置了三件待办。
+   */
+  IDLE_HINT: '这页没有要处理的事，去左边的课文列表挑一节继续吧喵～'
 } as const
 
 // ──────────────────────────────────────────────────────────── 运行代码 / 练习场
@@ -3908,6 +4499,16 @@ export const RUNNER_UI = {
    * 那句原话（比如 `warning: unused variable 'x'`）本身就是最值钱的线索。
    */
   COMPILE_WARNED: '代码跑起来了喵，不过翻译官喵顺口多念了两句 —— 不是错，是提醒：',
+  /**
+   * Java 单文件里写了多个 public 类时，运行器拆文件后的提示（v7 模块六）。
+   *
+   * 【为什么走界面文案、不走主进程的 message】
+   * `message` 在结果条上会被判成「坏」（见 lib/run-result-view.ts 的 tone 规则）——
+   * 而拆分是运行器替学员做的整理，不是错误。哪怕编译随后失败，这句话也只是
+   * 「本鱼把你的代码拆成了哪几个文件」，用来对上编译器报的行号/文件名。
+   */
+  JAVA_SPLIT: (files: string[], entry: string): string =>
+    `喵～这段代码里有 ${files.length} 个 public 类，本鱼把它们拆成了 ${files.join('、')} 再交给翻译官喵，入口是 ${entry}。`,
   /** 用时。毫秒 → 秒，小于 1 秒也保留两位小数，别显示成 0 秒 */
   duration: (ms: number): string => `用时 ${(ms / 1000).toFixed(2)} 秒`,
   /** 退出码。零基础用户看不懂，只在非 0 时附在角落 */
@@ -3999,6 +4600,14 @@ export const RUNNER_UI = {
   IDE_GO_SETTINGS: '去「设置」页配置',
   /** 配置的路径失效了。**必须带路径** —— 用户要去对照自己填过什么 */
   IDE_MISSING: (path: string): string => `设置里填的程序找不到了喵：${path}`,
+  /**
+   * 路径在、但不是我们支持的那几款 IDE（2026-10-31 自检 P2 起，主进程只
+   * 拉起白名单里的程序，见 shared/ide-profiles.ts 的 IDE_EXE_NAMES）。
+   * 带上路径：用户要对照自己填过什么，也要知道该换成哪一类程序。
+   */
+  IDE_UNSUPPORTED: (path: string): string =>
+    `这个程序不在支持的本地 IDE 名单里喵：${path}。` +
+    '换成 Dev-C++、VS Code、IntelliJ IDEA 这一类程序试试（点「去设置」换一个）喵。',
   /**
    * 启动了但没起来 / 其它意外。带上系统原话（`detail`），但前面那句
    * 先把**最可能的原因**说出来：选的多半是桌面快捷方式（.lnk 点不开）。

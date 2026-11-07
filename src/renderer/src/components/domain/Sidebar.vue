@@ -63,6 +63,18 @@ const allPercent = computed(() => overallPercent(progress.learnedSet, content.bu
 const rail = computed(() => sidebarModeOf(settings.config.layout) === 'rail')
 
 /**
+ * C3（2026-11-01）：主题切换从设置页搬一颗到侧栏底部。
+ * 夜间模式是高频操作（晚上写代码/看课文），埋在设置里要点两层。
+ * 颜色真源仍是 `settings.config.theme`，写盘走 `settings.update`（有失败回滚），
+ * 不在这里自建第二份主题状态。
+ */
+const isDark = computed(() => settings.config.theme === 'dark')
+
+function toggleTheme(): void {
+  void settings.update({ theme: isDark.value ? 'light' : 'dark' })
+}
+
+/**
  * 身份区（UI 大修轮 §1.2 → P10.6 接云账号 → 2026-10-22 用户系统）：
  * 名字来自 account store ——「未登录」就是未登录，登录了显示用户名（重启恢复
  * 的会话先读主进程 session.bin 的资料快照，cloud-sync 启动时的 probeSession
@@ -199,14 +211,36 @@ const { pendingPaper, paperOpen, openPaper, startPaper } = useStagePaperFlow()
  * （纯函数、有单测），总览页和练习页用的是同一份 —— 侧栏自己数一遍的话，
  * 三处的「还差 N 课」迟早对不上。`common` 不显示阶段相关 UI（docs/19 的结论）。
  */
-const stageProgress = computed<StageProgress | null>(() => {
-  if (content.activeLang === 'common') return null
+const activeLangStages = computed<StageProgress[]>(() => {
+  if (content.activeLang === 'common') return []
   const p = computePerLang(content.bundle.outline, content.bundle.lessons, progress.learnedSet).find(
     (x) => x.lang === content.activeLang
   )
-  const s = p?.stages.find((x) => x.stage === content.activeStage)
+  return p?.stages ?? []
+})
+
+const stageProgress = computed<StageProgress | null>(() => {
+  const s = activeLangStages.value.find((x) => x.stage === content.activeStage)
   return s && s.total > 0 ? s : null
 })
+
+/**
+ * C4（2026-11-01）：三个阶段小方块各自带上「已学 / 总数」。
+ * 旧版只有当前阶段的进度（藏在下面的课前列表和综合练习按钮里），
+ * 另两个阶段是黑盒 —— 想比较「哪一阶段快学完了」只能逐个点开。
+ * 数据与 `stageProgress` 同源（`computePerLang`），不在侧栏另算一遍。
+ */
+const stageChips = computed(() =>
+  STAGES.map((s) => {
+    const sp = activeLangStages.value.find((x) => x.stage === s.value)
+    return {
+      ...s,
+      learned: sp?.learned ?? 0,
+      total: sp?.total ?? 0,
+      done: sp?.done ?? false
+    }
+  })
+)
 
 /**
  * 点侧栏这颗按钮 = 直接走「组卷 → 确认框」，和练习页那条路同一个 composable。
@@ -236,9 +270,22 @@ function openStagePaper(): void {
  */
 function statusIcon(status: string): string {
   if (status === 'learned') return '✓'
-  if (status === 'locked') return '🔒'
+  // B3（2026-11-01）：🔒 读起来像「付费/权限锁」，这里的真实含义只是
+  // 「前面的课还没学完」。⏳ 表达等待，锁意交给这一行的 tooltip 说清。
+  if (status === 'locked') return '⏳'
   if (status === 'draft') return '💬'
   return '📖'
+}
+
+/**
+ * 行悬停提示。锁着/备课中的行只有一枚小图标说明原因，
+ * 光看图猜不出「为什么点不开」，所以把原因接在课名后面。
+ */
+function lessonTip(l: { id: string; title: string }): string {
+  const status = content.statusOf(l.id)
+  if (status === 'locked') return `${l.title} —— ${SIDEBAR.STATUS_LOCKED_TIP}`
+  if (status === 'draft') return `${l.title} —— ${SIDEBAR.STATUS_DRAFT_TIP}`
+  return l.title
 }
 
 // ---- 好感度爱心（P3 ④，2026-10-08）
@@ -415,6 +462,7 @@ onBeforeUnmount(() => {
         type="button"
         class="rail-item rail-identity"
         :title="identityTip"
+        :aria-label="identityTip"
         @click="router.push('/login')"
       >
         <span class="avatar avatar-sm">
@@ -426,6 +474,7 @@ onBeforeUnmount(() => {
       <button
         class="rail-item"
         :title="PLACEHOLDER.SIDEBAR_SEARCH"
+        :aria-label="PLACEHOLDER.SIDEBAR_SEARCH"
         @click="search.openPanel(search.query)"
       >
         🔍
@@ -439,6 +488,7 @@ onBeforeUnmount(() => {
         class="rail-item"
         :class="{ active: route.name === 'learn' && content.activeLang === m.lang }"
         :title="m.label"
+        :aria-label="m.label"
         @click="selectModule(m.lang)"
       >
         {{ SIDEBAR.moduleIcon(m.lang) }}
@@ -447,6 +497,7 @@ onBeforeUnmount(() => {
         class="rail-item"
         :class="{ active: route.name === 'practice' }"
         :title="NAV.PRACTICE"
+        :aria-label="NAV.PRACTICE"
         @click="router.push('/practice')"
       >
         {{ NAV_ICON.PRACTICE }}
@@ -455,6 +506,7 @@ onBeforeUnmount(() => {
         class="rail-item"
         :class="{ active: route.name === 'playground' }"
         :title="NAV.PLAYGROUND"
+        :aria-label="NAV.PLAYGROUND"
         @click="router.push('/playground')"
       >
         {{ NAV_ICON.PLAYGROUND }}
@@ -463,6 +515,7 @@ onBeforeUnmount(() => {
         class="rail-item"
         :class="{ active: route.name === 'memo' }"
         :title="NAV.MEMO"
+        :aria-label="NAV.MEMO"
         @click="router.push('/memo')"
       >
         {{ NAV_ICON.MEMO }}
@@ -471,12 +524,13 @@ onBeforeUnmount(() => {
       <div class="rail-divider" aria-hidden="true"></div>
 
       <!-- 复习与挑战：每日复习（v-if reviewEnabled，与整宽态同一条规矩 ——
-           关掉 = 全应用入口消失）→ 每日挑战 → 收藏 → 仓库 -->
+           关掉 = 全应用入口消失）→ 每日挑战 → 收藏 -->
       <button
         v-if="settings.config.reviewEnabled"
         class="rail-item"
         :class="{ active: route.name === 'review' }"
         :title="NAV.REVIEW"
+        :aria-label="NAV.REVIEW"
         @click="router.push('/review')"
       >
         {{ NAV_ICON.REVIEW }}
@@ -485,6 +539,7 @@ onBeforeUnmount(() => {
         class="rail-item"
         :class="{ active: route.name === 'challenge' }"
         :title="NAV.CHALLENGE"
+        :aria-label="NAV.CHALLENGE"
         @click="router.push('/challenge')"
       >
         {{ NAV_ICON.CHALLENGE }}
@@ -493,26 +548,21 @@ onBeforeUnmount(() => {
         class="rail-item"
         :class="{ active: route.name === 'favorites' }"
         :title="NAV.FAVORITES"
+        :aria-label="NAV.FAVORITES"
         @click="router.push('/favorites')"
       >
         {{ NAV_ICON.FAVORITES }}
       </button>
-      <button
-        class="rail-item"
-        :class="{ active: route.name === 'warehouse' }"
-        :title="NAV.WAREHOUSE"
-        @click="router.push('/warehouse')"
-      >
-        {{ NAV_ICON.WAREHOUSE }}
-      </button>
 
       <div class="rail-divider" aria-hidden="true"></div>
 
-      <!-- 个人中心：总览（未签带圆点）→ 排行榜 → 登录（签到并入总览，2026-10-09） -->
+      <!-- 个人中心：总览（未签带圆点）→ 大肥鱼仓库 → 排行榜 → 登录
+           （签到并入总览，2026-10-09；仓库从复习组挪来，v7 模块五 2026-10-31） -->
       <button
         class="rail-item"
         :class="{ active: route.name === 'overview' }"
         :title="NAV.OVERVIEW"
+        :aria-label="NAV.OVERVIEW"
         @click="router.push('/overview')"
       >
         {{ NAV_ICON.OVERVIEW }}
@@ -520,8 +570,18 @@ onBeforeUnmount(() => {
       </button>
       <button
         class="rail-item"
+        :class="{ active: route.name === 'warehouse' }"
+        :title="NAV.WAREHOUSE"
+        :aria-label="NAV.WAREHOUSE"
+        @click="router.push('/warehouse')"
+      >
+        {{ NAV_ICON.WAREHOUSE }}
+      </button>
+      <button
+        class="rail-item"
         :class="{ active: route.name === 'leaderboard' }"
         :title="NAV.LEADERBOARD"
+        :aria-label="NAV.LEADERBOARD"
         @click="router.push('/leaderboard')"
       >
         {{ NAV_ICON.LEADERBOARD }}
@@ -530,16 +590,22 @@ onBeforeUnmount(() => {
         class="rail-item"
         :class="{ active: route.name === 'login' }"
         :title="NAV.LOGIN"
+        :aria-label="NAV.LOGIN"
         @click="router.push('/login')"
       >
         {{ NAV_ICON.LOGIN }}
       </button>
 
-      <!-- 底部工具区（§1.3）：这条分割线的 margin-top:auto 把「线 + 菜单 + 设置」
+      <!-- 底部工具区（§1.3）：这条分割线的 margin-top:auto 把「线 + 菜单 + 主题 + 设置」
            整段钉到列底（全列**唯一**的 auto 外边距；再加第二个会把空白劈成两半），
-           菜单在上、设置在下 —— 与整宽态 .side-footer 的一行两钮一一对应 -->
+           菜单→主题→设置 —— 与整宽态 .side-footer 的一行三钮一一对应 -->
       <div class="rail-divider rail-foot-start" aria-hidden="true"></div>
-      <button class="rail-item" :title="SIDEBAR.MENU_BTN_TITLE" @click="emit('open-menu')">
+      <button
+        class="rail-item"
+        :title="SIDEBAR.MENU_BTN_TITLE"
+        :aria-label="SIDEBAR.MENU_BTN_TITLE"
+        @click="emit('open-menu')"
+      >
         <svg class="grid-icon" viewBox="0 0 18 18" aria-hidden="true">
           <circle cx="3" cy="3" r="1.6" />
           <circle cx="9" cy="3" r="1.6" />
@@ -554,8 +620,17 @@ onBeforeUnmount(() => {
       </button>
       <button
         class="rail-item"
+        :title="isDark ? SIDEBAR.THEME_TO_LIGHT : SIDEBAR.THEME_TO_DARK"
+        :aria-label="isDark ? SIDEBAR.THEME_TO_LIGHT : SIDEBAR.THEME_TO_DARK"
+        @click="toggleTheme"
+      >
+        {{ isDark ? '☀️' : '🌙' }}
+      </button>
+      <button
+        class="rail-item"
         :class="{ active: route.name === 'settings' }"
         :title="NAV.SETTINGS"
+        :aria-label="NAV.SETTINGS"
         @click="router.push('/settings')"
       >
         {{ NAV_ICON.SETTINGS }}
@@ -631,7 +706,12 @@ onBeforeUnmount(() => {
         悬停提示里补一句「点一下看…」（SIDEBAR.METER_GUIDE_TIP）。
       -->
       <div class="status-block">
-        <MiProgressRing :percent="allPercent" :size="56" :stroke="5" :title="SIDEBAR.PROGRESS_LABEL" />
+        <!-- B6：环心里只有百分比，旁边三个徽记各有名字，只有它没有可见标签 ——
+             补一行「学习总进度」，不用悬停也知道这个环在说什么 -->
+        <div class="status-progress">
+          <MiProgressRing :percent="allPercent" :size="56" :stroke="5" :title="SIDEBAR.PROGRESS_LABEL" />
+          <span class="status-progress-label">{{ SIDEBAR.PROGRESS_LABEL }}</span>
+        </div>
         <div class="status-meters">
           <button
             type="button"
@@ -756,15 +836,17 @@ onBeforeUnmount(() => {
                   <!-- V2-34：阶段小方块是键盘党**唯一没有替代路径**的一格
                        （全屏菜单与搜索面板都不提供阶段切换），必须真按钮。 -->
                   <button
-                    v-for="s in STAGES"
+                    v-for="s in stageChips"
                     :key="s.value"
                     type="button"
                     class="stage-chip"
-                    :class="{ active: content.activeStage === s.value }"
+                    :class="{ active: content.activeStage === s.value, done: s.done }"
+                    :title="SIDEBAR.STAGE_CHIP_TIP(s.label, s.learned, s.total)"
                     data-sfx="nav"
                     @click="content.selectStage(s.value)"
                   >
-                    {{ s.label }}
+                    <span class="stage-name">{{ s.label }}</span>
+                    <span class="stage-count">{{ s.total > 0 ? `${s.learned}/${s.total}` : '—' }}</span>
                   </button>
                 </div>
               </div>
@@ -807,7 +889,7 @@ onBeforeUnmount(() => {
                       type="button"
                       class="lesson-item"
                       :class="[content.statusOf(l.id), { current: route.name === 'lesson' && route.params.id === l.id }]"
-                      :title="l.title"
+                      :title="lessonTip(l)"
                       @click="openLesson(l.id)"
                     >
                       <span class="lesson-order">{{ String(l.order).padStart(2, '0') }}</span>
@@ -865,7 +947,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
-        <!-- 复习与挑战：每日复习（开关关 = 入口消失）→ 每日挑战 → 收藏 → 仓库 -->
+        <!-- 复习与挑战：每日复习（开关关 = 入口消失）→ 每日挑战 → 收藏 -->
         <div class="nav-group">
           <button
             type="button"
@@ -905,10 +987,6 @@ onBeforeUnmount(() => {
                 <button type="button" class="module-item func" :class="{ active: route.name === 'favorites' }" @click="router.push('/favorites')">
                   {{ NAV.FAVORITES }}
                 </button>
-                <!-- 仓库（P3 ⑨）紧挨收藏：都是「我自己攒下来的」（收藏攒题、仓库攒奖励图） -->
-                <button type="button" class="module-item func" :class="{ active: route.name === 'warehouse' }" @click="router.push('/warehouse')">
-                  {{ NAV.WAREHOUSE }}
-                </button>
               </div>
             </div>
           </div>
@@ -947,6 +1025,11 @@ onBeforeUnmount(() => {
                   {{ NAV.OVERVIEW }}
                   <span v-if="showCheckinDot" class="checkin-dot" aria-hidden="true"></span>
                 </button>
+                <!-- 大肥鱼仓库（v7 模块五 2026-10-31）：从复习组挪进个人中心组 ——
+                     它是「我自己攒下来的」收藏柜（奖励图），不是复习工具。 -->
+                <button type="button" class="module-item func" :class="{ active: route.name === 'warehouse' }" @click="router.push('/warehouse')">
+                  {{ NAV.WAREHOUSE }}
+                </button>
                 <button class="module-item func" :class="{ active: route.name === 'leaderboard' }" @click="router.push('/leaderboard')">
                   {{ NAV.LEADERBOARD }}
                 </button>
@@ -968,8 +1051,9 @@ onBeforeUnmount(() => {
       </div>
 
       <!--
-        底部工具区（§1.3）：一行两钮 —— [九点阵 菜单] [⚙ 设置]（设置留在原位，
-        不设组标题）。菜单钮开的是 App.vue 的全屏菜单（emit 上去置 menuOpen）。
+        底部工具区（§1.3）：一行三钮 —— [九点阵 菜单] [🌙/☀️ 主题] [⚙ 设置]
+        （C3 新增主题切换；设置留在原位，不设组标题）。菜单钮开的是 App.vue
+        的全屏菜单（emit 上去置 menuOpen）。
         九点阵图标是**内联 SVG**（9 个小圆，currentColor），不是 ⊞/田 字符 ——
         字符在不同机器上会落进不同的 emoji/符号字形，还不跟主题色走。
       -->
@@ -992,6 +1076,14 @@ onBeforeUnmount(() => {
             <circle cx="15" cy="15" r="1.6" />
           </svg>
           {{ SIDEBAR.MENU_BTN }}
+        </button>
+        <button
+          type="button"
+          class="footer-btn"
+          :title="isDark ? SIDEBAR.THEME_TO_LIGHT : SIDEBAR.THEME_TO_DARK"
+          @click="toggleTheme"
+        >
+          {{ isDark ? SIDEBAR.THEME_BTN_LIGHT : SIDEBAR.THEME_BTN_DARK }}
         </button>
         <button
           type="button"
@@ -1202,6 +1294,20 @@ onBeforeUnmount(() => {
   gap: 10px;
   padding: 0 6px 4px;
 }
+/* 进度环 + 它的可见标签（B6）：纵向一组，标签不挤进 56px 的环里 */
+.status-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.status-progress-label {
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--mi-text-3);
+  white-space: nowrap;
+}
 /* 徽记组（❤ 好感度 / 🍚 饱腹度 / 脸色，V1-47）：窄栏放不下就换行，不挤成省略号 */
 .status-meters {
   display: flex;
@@ -1350,9 +1456,14 @@ button.meter:focus-visible {
 }
 .stage-chip {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
   text-align: center;
-  padding: 5px 0;
+  padding: 4px 0;
   font-size: 12px;
+  line-height: 1.3;
   border-radius: var(--mi-radius-sm);
   background: var(--mi-bg);
   color: var(--mi-text-2);
@@ -1365,6 +1476,14 @@ button.meter:focus-visible {
     background var(--mi-dur-fast) var(--mi-ease),
     color var(--mi-dur-fast) var(--mi-ease);
 }
+.stage-count {
+  font-size: 10px;
+  color: var(--mi-text-3);
+  font-variant-numeric: tabular-nums;
+}
+.stage-chip.done .stage-count {
+  color: var(--mi-success-deep);
+}
 .stage-chip:hover {
   background: var(--mi-blue-light);
 }
@@ -1372,6 +1491,12 @@ button.meter:focus-visible {
   background: var(--mi-blue);
   color: var(--mi-text);
   font-weight: 600;
+}
+/* 选中态的深蓝底会把 --mi-text-3 的计数压到 4.5 以下（同 Sidebar 当前行那条账），
+   和当前行一样换成正文色系；.done 的绿色在蓝底上更暗，必须一起压住 */
+.stage-chip.active .stage-count,
+.stage-chip.active.done .stage-count {
+  color: var(--mi-text-2);
 }
 
 /*
@@ -1738,12 +1863,22 @@ button.group-title:focus-visible {
   font-size: 11px;
   color: var(--mi-text-3);
 }
+/*
+ * 课名最多两行（B3，2026-11-01）。旧版单行省略，像「for 与 while——绕鱼干跑圈」
+ * 这种长标题会被截成「for 与 while——绕鱼…」，两节课从侧栏上分不出来。
+ * 固定两行的 clamp 让长标题有第二行，短标题仍然只占一行高。
+ * `overflow-wrap:anywhere` 是给英文长标识符兜底的，否则整串英文没空格可断。
+ */
 .lesson-title {
   flex: 1;
   min-width: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+  white-space: normal;
 }
 .lesson-fav {
   flex-shrink: 0;
@@ -1757,7 +1892,7 @@ button.group-title:focus-visible {
  * 空壳课的气泡压成灰的。
  * emoji 自带颜色、不跟设计令牌走，所以只能整体去色 + 降透明度 ——
  * 而这一压正是它和 📖（写好的课）在余光里的区别：**灰的是死的，亮的是能点的**。
- * 留在 `.draft` 底下而不是 `.lesson-status` 上，是为了不误伤 ✓ 和 🔒。
+ * 留在 `.draft` 底下而不是 `.lesson-status` 上，是为了不误伤 ✓ 和 ⏳。
  */
 .lesson-item.draft .lesson-status {
   filter: grayscale(1);

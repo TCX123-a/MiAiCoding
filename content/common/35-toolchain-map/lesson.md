@@ -2,7 +2,7 @@
 id: common-35
 lang: common
 stage: 0
-order: 35
+order: 47
 title: 大肥鱼带你逛工具链——一行代码的五站路
 tags: [工具链, 工程素养]
 required: ["common-12"]

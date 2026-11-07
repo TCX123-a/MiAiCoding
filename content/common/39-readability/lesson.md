@@ -2,7 +2,7 @@
 id: common-39
 lang: common
 stage: 0
-order: 39
+order: 51
 title: 代码是写给人看的——可读性大于炫技
 tags: [代码规范, 工程素养]
 required: ["common-38"]

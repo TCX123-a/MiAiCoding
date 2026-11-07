@@ -22,6 +22,11 @@ import {
   generateQuestions,
   testConnection,
   fetchBalance,
+  listPoolModels,
+  listProviderModels,
+  effectiveAiModel,
+  aiCacheModelOf,
+  chatPet,
   AI_TIMEOUT_MS,
   QUESTIONS_TIMEOUT_MS,
   BALANCE_TIMEOUT_MS,
@@ -31,6 +36,8 @@ import {
   type HttpResponseLike
 } from '../deepseek'
 import { DEFAULT_APP_CONFIG, type AppConfig, type GlossaryTerm } from '../../../shared/types'
+import { FREE_POOL_BASE, FREE_POOL_DEFAULT_MODEL } from '../../../shared/free-pool'
+import { AI_PROMPT, AI_THINKING_PROMPT, PET_PROMPT } from '../../../shared/copy'
 
 // ---------------------------------------------------------------- 假货
 
@@ -38,8 +45,23 @@ const TERMS: GlossaryTerm[] = [
   { key: 'loop', originals: ['循环'], cat: '绕鱼干跑圈', example: '循环就是让代码绕鱼干跑圈' }
 ]
 
-function cfgWith(ai: Partial<AppConfig['ai']> = {}): AppConfig {
-  return { ...structuredClone(DEFAULT_APP_CONFIG), ai: { ...DEFAULT_APP_CONFIG.ai, apiKey: 'sk-test', ...ai } }
+/**
+ * 测试夹具允许写 `apiKey` 这个便捷字段：多厂商之后真正的存储是
+ * `apiKeys[provider]`，逐个用例写一整张表会把「测什么」淹掉。这里把它
+ * 映射到**当前厂商**的槽位；`apiKeys` 显式给了就按显式值覆盖。
+ */
+type AiPatch = Partial<AppConfig['ai']> & { apiKey?: string }
+
+function cfgWith(ai: AiPatch = {}): AppConfig {
+  const { apiKey, ...rest } = ai
+  const provider = rest.provider ?? DEFAULT_APP_CONFIG.ai.provider
+  const merged = { ...DEFAULT_APP_CONFIG.ai, ...rest, provider }
+  const keys: Record<string, string> = { ...merged.apiKeys, [provider]: 'sk-test' }
+  if (apiKey !== undefined) keys[provider] = apiKey
+  return {
+    ...structuredClone(DEFAULT_APP_CONFIG),
+    ai: { ...merged, apiKeys: keys as AppConfig['ai']['apiKeys'] }
+  }
 }
 
 /** 一个正常的 OpenAI 兼容响应 */
@@ -56,7 +78,10 @@ function errorResponse(status: number, message: string): HttpResponseLike {
 }
 
 /** 记录下每次请求，方便断言「发了什么出去」 */
-function deps(fetchImpl: FetchLike, ai: Partial<AppConfig['ai']> = {}): AiDeps & { calls: { url: string; init: RequestInit }[] } {
+function deps(
+  fetchImpl: FetchLike,
+  ai: AiPatch = {}
+): AiDeps & { calls: { url: string; init: RequestInit }[] } {
   const calls: { url: string; init: RequestInit }[] = []
   return {
     calls,
@@ -68,7 +93,7 @@ function deps(fetchImpl: FetchLike, ai: Partial<AppConfig['ai']> = {}): AiDeps &
   }
 }
 
-const okDeps = (content: string, ai: Partial<AppConfig['ai']> = {}) =>
+const okDeps = (content: string, ai: AiPatch = {}) =>
   deps(() => Promise.resolve(chatResponse(content)), ai)
 
 /** 一次合法的出题响应 */
@@ -319,16 +344,31 @@ describe('超时和取消要分得开', () => {
 // ---------------------------------------------------------------- 请求内容
 
 describe('发出去的请求长什么样', () => {
-  it('URL 是 baseUrl + /chat/completions，结尾斜杠不会拼出双斜杠', async () => {
-    const d = okDeps(GOOD_QUESTIONS, { baseUrl: 'https://api.deepseek.com/' })
+  it('官方厂商**只用目录里的地址**：存档里残留的任何 baseUrl 都不得把 Key 送去别处', async () => {
+    const d = okDeps(GOOD_QUESTIONS, { provider: 'deepseek', baseUrl: 'https://evil.example.com/' })
     await ask(d)
     expect(d.calls[0].url).toBe('https://api.deepseek.com/chat/completions')
   })
 
-  it('用户填了 /v1 也照样能用（OpenAI 兼容写法）', async () => {
-    const d = okDeps(GOOD_QUESTIONS, { baseUrl: 'https://api.deepseek.com/v1' })
+  it('自定义服务填了 /v1 也照样能用（OpenAI 兼容写法）', async () => {
+    const d = okDeps(GOOD_QUESTIONS, { provider: 'custom', baseUrl: 'https://api.deepseek.com/v1' })
     await ask(d)
     expect(d.calls[0].url).toBe('https://api.deepseek.com/v1/chat/completions')
+  })
+
+  it('自定义服务地址可用 —— 第三方中转/自建网关不是官方域名也行，尾斜杠不拼双斜杠', async () => {
+    const d = okDeps(GOOD_QUESTIONS, { provider: 'custom', baseUrl: 'https://api.example.com/v1/' })
+    await ask(d)
+    expect(d.calls[0].url).toBe('https://api.example.com/v1/chat/completions')
+  })
+
+  it('用户直接粘了一整条 chat/completions 端点 → 原样使用，不再叠一层', async () => {
+    const d = okDeps(GOOD_QUESTIONS, {
+      provider: 'custom',
+      baseUrl: 'https://gateway.example.com/v1/chat/completions'
+    })
+    await ask(d)
+    expect(d.calls[0].url).toBe('https://gateway.example.com/v1/chat/completions')
   })
 
   it('Key 放在 Authorization 头里，且是 Bearer 前缀', async () => {
@@ -425,7 +465,7 @@ describe('fetchBalance：菜单「查看余额」走的那一次读数', () => {
     const r = await fetchBalance(balanceDeps(okRes(MULTI)))
     expect(r).toEqual({
       ok: true,
-      data: { currency: 'CNY', total: '88.88', granted: '5.00', toppedUp: '83.88' }
+      data: { provider: 'deepseek', currency: 'CNY', total: '88.88', granted: '5.00', toppedUp: '83.88' }
     })
   })
 
@@ -434,14 +474,21 @@ describe('fetchBalance：菜单「查看余额」走的那一次读数', () => {
       balance_infos: [{ currency: 'USD', total_balance: '12.34', granted_balance: '0', topped_up_balance: '12.34' }]
     })
     const r = await fetchBalance(balanceDeps(okRes(onlyUsd)))
-    expect(r).toEqual({ ok: true, data: { currency: 'USD', total: '12.34', granted: '0', toppedUp: '12.34' } })
+    expect(r).toEqual({
+      ok: true,
+      data: { provider: 'deepseek', currency: 'USD', total: '12.34', granted: '0', toppedUp: '12.34' }
+    })
   })
 
-  it('URL 是 baseUrl + /user/balance，GET，且结尾斜杠不拼双斜杠', async () => {
+  it('URL 是 baseUrl + /user/balance，GET，且官方厂商**不吃存档里的用户地址**', async () => {
     const d = balanceDeps(okRes(MULTI), { baseUrl: 'https://api.deepseek.com/' })
     await fetchBalance(d)
     expect(d.calls[0].url).toBe('https://api.deepseek.com/user/balance')
     expect(d.calls[0].init.method).toBe('GET')
+
+    const hostile = balanceDeps(okRes(MULTI), { baseUrl: 'https://evil.example.com/v1/' })
+    await fetchBalance(hostile)
+    expect(hostile.calls[0].url).toBe('https://api.deepseek.com/user/balance')
   })
 
   it('没配 Key → no-key，一个请求都不发', async () => {
@@ -526,6 +573,199 @@ describe('fetchBalance：菜单「查看余额」走的那一次读数', () => {
       expect(vi.getTimerCount()).toBe(0)
     } finally {
       vi.useRealTimers()
+    }
+  })
+})
+
+// ---------------------------------------------------------------- 多厂商方言
+
+describe('多厂商：每种方言发出去的请求长什么样', () => {
+  const ok = (raw: string): HttpResponseLike => ({
+    ok: true,
+    status: 200,
+    text: () => Promise.resolve(raw)
+  })
+
+  it('Anthropic：/messages 端点、x-api-key + 版本头、绝不带 Authorization', async () => {
+    const d = okDeps('喵', {
+      provider: 'anthropic',
+      model: 'claude-sonnet-5-5',
+      baseUrl: 'https://evil.example.com'
+    })
+    await testConnection(d)
+    expect(d.calls[0].url).toBe('https://api.anthropic.com/v1/messages')
+    const headers = d.calls[0].init.headers as Record<string, string>
+    expect(headers['x-api-key']).toBe('sk-test')
+    expect(headers['anthropic-version']).toBe('2023-06-01')
+    expect(headers['Authorization']).toBeUndefined()
+  })
+
+  it('Anthropic：system 搬到顶层，messages 里不许出现 system；**不发 temperature**', async () => {
+    // 2026-10-21 起现行模型收到 temperature 一律 400（连夹到 0~1 也过不去），
+    // 所以这个字段必须根本不出现 —— 用「选了它会失败」的负面断言钉住。
+    const d = okDeps('喵', { provider: 'anthropic', model: 'claude-haiku-5-5' })
+    await ask(d)
+    const body = JSON.parse(String(d.calls[0].init.body))
+    expect(typeof body.system).toBe('string')
+    expect(body.system.length).toBeGreaterThan(0)
+    expect(
+      (body.messages as { role: string }[]).every((m) => m.role !== 'system')
+    ).toBe(true)
+    expect(body.temperature).toBeUndefined()
+    expect(body.max_tokens).toBe(8192)
+    // 该厂商没有 JSON 模式：不许多发一个它不认的字段
+    expect(body.response_format).toBeUndefined()
+  })
+
+  it('OpenAI 推理模型：max_completion_tokens、无 temperature、system→developer、无 response_format', async () => {
+    const d = okDeps('{}', { provider: 'openai', model: 'o1' })
+    await ask(d)
+    expect(d.calls[0].url).toBe('https://api.openai.com/v1/chat/completions')
+    const body = JSON.parse(String(d.calls[0].init.body))
+    expect(body.max_completion_tokens).toBe(8192)
+    expect(body.max_tokens).toBeUndefined()
+    expect(body.temperature).toBeUndefined()
+    expect(body.response_format).toBeUndefined()
+    expect(body.messages[0].role).toBe('developer')
+  })
+
+  it('普通 OpenAI 模型照旧走 max_tokens + temperature + json 模式', async () => {
+    const d = okDeps('{}', { provider: 'openai', model: 'gpt-4o' })
+    await ask(d)
+    const body = JSON.parse(String(d.calls[0].init.body))
+    expect(body.max_tokens).toBe(8192)
+    expect(body.temperature).toBe(TEMP_QUESTIONS)
+    expect(body.response_format).toEqual({ type: 'json_object' })
+    expect(body.messages[0].role).toBe('system')
+  })
+
+  it('DeepSeek reasoner：保留 max_tokens / system，但不发 temperature 和 response_format', async () => {
+    const d = okDeps('{}', { provider: 'deepseek', model: 'deepseek-reasoner' })
+    await ask(d)
+    const body = JSON.parse(String(d.calls[0].init.body))
+    expect(body.max_tokens).toBe(8192)
+    expect(body.temperature).toBeUndefined()
+    expect(body.response_format).toBeUndefined()
+    expect(body.messages[0].role).toBe('system')
+  })
+
+  it('Gemini：请求体里根本没有 temperature（3.x 会对显式值回 400），出题留足思考额度', async () => {
+    const d = okDeps('喵', { provider: 'gemini', model: 'gemini-2.5-flash' })
+    await ask(d)
+    const body = JSON.parse(String(d.calls[0].init.body))
+    expect(body.temperature).toBeUndefined()
+    // 8192 出题 + 8192 思考余量；只有 8192 时 20 道题的 JSON 会被思考截断
+    expect(body.max_tokens).toBe(16384)
+  })
+
+  it('智谱：温度夹进 (0,1) 开区间；测试用 0、出题/桌宠的 1.0+/1.3 都不会越界 400', async () => {
+    const ping = okDeps('喵', { provider: 'zhipu', model: 'glm-4.7-flash' })
+    await testConnection(ping)
+    expect(JSON.parse(String(ping.calls[0].init.body)).temperature).toBe(0.01)
+
+    const q = okDeps('{}', { provider: 'zhipu', model: 'glm-4.7-flash' })
+    await ask(q)
+    expect(JSON.parse(String(q.calls[0].init.body)).temperature).toBe(0.99)
+
+    const pet = okDeps('喵', { provider: 'zhipu', model: 'glm-4.7-flash' })
+    await chatPet(pet, { messages: [{ role: 'user', content: '在吗' }] })
+    expect(JSON.parse(String(pet.calls[0].init.body)).temperature).toBe(0.99)
+  })
+
+  it('智谱老 GLM-4 的输出上限：glm-4-plus 8192 → 4095，别让老模型一出题就 400', async () => {
+    const plus = okDeps('{}', { provider: 'zhipu', model: 'glm-4-plus' })
+    await ask(plus)
+    expect(JSON.parse(String(plus.calls[0].init.body)).max_tokens).toBe(4095)
+
+    // 带日期的 flash 是 32768 档，不该被 4095 规则误伤
+    const flash = okDeps('{}', { provider: 'zhipu', model: 'glm-4-flash-250414' })
+    await ask(flash)
+    expect(JSON.parse(String(flash.calls[0].init.body)).max_tokens).toBe(8192)
+
+    // 新世代（默认档）不夹：8192 出题 + 8192 思考余量
+    const modern = okDeps('{}', { provider: 'zhipu', model: 'glm-4.7-flash' })
+    await ask(modern)
+    expect(JSON.parse(String(modern.calls[0].init.body)).max_tokens).toBe(16384)
+  })
+
+  it('xAI：走 max_completion_tokens（max_tokens 已是 deprecated），且不吃思考余量', async () => {
+    const d = okDeps('{}', { provider: 'xai', model: 'grok-4.7' })
+    await ask(d)
+    const body = JSON.parse(String(d.calls[0].init.body))
+    expect(body.max_completion_tokens).toBe(8192)
+    expect(body.max_tokens).toBeUndefined()
+    expect(body.temperature).toBe(TEMP_QUESTIONS)
+
+    const ping = okDeps('喵', { provider: 'xai', model: 'grok-4.7' })
+    await testConnection(ping)
+    const pingBody = JSON.parse(String(ping.calls[0].init.body))
+    expect(pingBody.max_completion_tokens).toBe(8)
+    expect(pingBody.max_tokens).toBeUndefined()
+  })
+
+  it('腾讯混元 Hy3：思考与正文共用额度，出题要 8192 + 8192', async () => {
+    const d = okDeps('{}', { provider: 'hunyuan', model: 'hy3' })
+    await ask(d)
+    const body = JSON.parse(String(d.calls[0].init.body))
+    expect(body.max_tokens).toBe(16384)
+    expect(body.max_completion_tokens).toBeUndefined()
+    expect(body.temperature).toBe(TEMP_QUESTIONS)
+  })
+
+  it('百度千帆：不发 xAI 专属字段，max_tokens 原样', async () => {
+    const d = okDeps('{}', { provider: 'baidu', model: 'ernie-5.1' })
+    await ask(d)
+    const body = JSON.parse(String(d.calls[0].init.body))
+    expect(body.max_tokens).toBe(8192)
+    expect(body.max_completion_tokens).toBeUndefined()
+    expect(body.temperature).toBe(TEMP_QUESTIONS)
+  })
+
+  it('Kimi 余额：/v1/users/me/balance，金额按字符串两位小数收下', async () => {
+    const d = deps(
+      () =>
+        Promise.resolve(
+          ok(
+            JSON.stringify({
+              code: 0,
+              status: true,
+              data: { available_balance: 12.5, voucher_balance: '2', cash_balance: 10.5 }
+            })
+          )
+        ),
+      { provider: 'kimi', model: 'kimi-latest' }
+    )
+    const r = await fetchBalance(d)
+    expect(d.calls[0].url).toBe('https://api.moonshot.cn/v1/users/me/balance')
+    expect(r).toEqual({
+      ok: true,
+      data: {
+        provider: 'kimi',
+        currency: 'CNY',
+        total: '12.50',
+        granted: '2.00',
+        toppedUp: '10.50'
+      }
+    })
+  })
+
+  it('Kimi 明确报失败（status:false / code≠0）时不许读成 ¥0.00', async () => {
+    for (const raw of [
+      { status: false, data: { available_balance: 0, voucher_balance: 0, cash_balance: 0 } },
+      { code: 401, data: { available_balance: 0 } }
+    ]) {
+      const r = await fetchBalance(
+        deps(() => Promise.resolve(ok(JSON.stringify(raw))), { provider: 'kimi' })
+      )
+      expect(!r.ok && r.reason).toBe('bad-response')
+    }
+  })
+
+  it('没有余额接口的厂商 → unsupported，而且一个请求都不发（聊天/出题照常）', async () => {
+    for (const provider of ['openai', 'anthropic', 'qwen', 'custom'] as const) {
+      const d = deps(() => Promise.reject(new Error('不该走到这里')), { provider })
+      expect(await fetchBalance(d)).toEqual({ ok: false, reason: 'unsupported' })
+      expect(d.calls, provider).toHaveLength(0)
     }
   })
 })
@@ -635,9 +875,14 @@ describe('generateQuestions：交给校验器之后', () => {
 // ---------------------------------------------------------------- 测试连接
 
 describe('testConnection', () => {
-  it('成功时回报用了哪个模型（设置页要显示出来）', async () => {
+  it('成功时回报用了哪个模型和哪家厂商（设置页要显示出来）', async () => {
     const r = await testConnection(okDeps('喵', { model: 'deepseek-chat' }))
-    expect(r).toEqual({ ok: true, data: { model: 'deepseek-chat' } })
+    // mode 是 v22 双模式加上的：设置页要按它决定「余额那一行显不显示」，
+    // 所以回报里必须带上当前走的是专属 API 还是免费公开池。
+    expect(r).toEqual({
+      ok: true,
+      data: { model: 'deepseek-chat', provider: 'deepseek', mode: 'api' }
+    })
   })
 
   it('Key 不对时如实说 unauthorized', async () => {
@@ -695,3 +940,596 @@ describe('配置每次现读', () => {
     expect(sent).toEqual(['deepseek-chat', 'deepseek-reasoner'])
   })
 })
+
+// ---------------------------------------------------------------- 双模式：免费公开池
+
+/**
+ * 模式 B（免费公开池）走的是**同一个 postChat**，但请求形状有三处必须不同：
+ *   · 地址固定成网关，不读用户配置的 baseUrl；
+ *   · **不带任何认证头**（这是「免费池」的字面含义，带 Key 反而是把凭据
+ *     发给第三方）；
+ *   · 模型名读 poolModel，不读专属模式的 model。
+ *
+ * 另外 `kilo-auto/free` 可能路由到推理模型：推理 token 也吃 max_tokens，
+ * 给太小会返回 `content: null`（实测 32 tokens 时必现）。所以模式 B 统一
+ * 加一段 headroom —— 这条不加上，用户会看到「连上了但一句话都没有」。
+ */
+describe('模式 B：免费公开池', () => {
+  const poolCfg = (over: AiPatch = {}): AiPatch => ({
+    mode: 'pool',
+    poolModel: 'kilo-auto/free',
+    apiKey: '',
+    ...over
+  })
+
+  it('地址固定成网关、无认证头、模型用 poolModel', async () => {
+    const d = deps(() => Promise.resolve(chatResponse(GOOD_QUESTIONS)), poolCfg())
+    const r = await ask(d)
+    expect(r.ok).toBe(true)
+
+    expect(d.calls).toHaveLength(1)
+    expect(d.calls[0].url).toBe(`${FREE_POOL_BASE}/chat/completions`)
+    const headers = d.calls[0].init.headers as Record<string, string>
+    expect(headers['Authorization']).toBeUndefined()
+    expect(headers['x-api-key']).toBeUndefined()
+
+    const body = JSON.parse(String(d.calls[0].init.body))
+    expect(body.model).toBe('kilo-auto/free')
+  })
+
+  it('**没有 Key 也照常发请求**（不再走 no-key 短路）', async () => {
+    const d = deps(() => Promise.resolve(chatResponse(GOOD_QUESTIONS)), poolCfg())
+    const r = await ask(d)
+    expect(r.ok).toBe(true)
+    expect(d.calls).toHaveLength(1)
+  })
+
+  it('给推理模型留 token 余量，且不带 response_format（网关不一定支持）', async () => {
+    // 同一份请求分别用两种模式发，比较实际的 max_tokens
+    const api = okDeps('喵')
+    await ask(api)
+    const apiBody = JSON.parse(String(api.calls[0].init.body))
+
+    const pool = okDeps('喵', poolCfg())
+    await ask(pool)
+    const poolBody = JSON.parse(String(pool.calls[0].init.body))
+
+    expect(poolBody.max_tokens).toBe(Math.min(apiBody.max_tokens + 1024, 8192))
+    expect(poolBody.response_format).toBeUndefined()
+  })
+
+  it('专属模式仍然带 Authorization（不能因为加了池模式把这条弄丢）', async () => {
+    const d = okDeps('喵')
+    await ask(d)
+    expect((d.calls[0].init.headers as Record<string, string>)['Authorization']).toBe('Bearer sk-test')
+  })
+
+  it('免费池**不查余额**：直接 unsupported，一个请求都不发', async () => {
+    const d = deps(() => Promise.reject(new Error('不该走到这里')), poolCfg())
+    expect(await fetchBalance(d)).toEqual({ ok: false, reason: 'unsupported' })
+    expect(d.calls).toHaveLength(0)
+  })
+
+  it('人设锁：两种模式的 system 段都带 PET_PROMPT.PERSONA', async () => {
+    for (const ai of [{}, poolCfg()]) {
+      const d = okDeps('喵', ai)
+      await chatPet(d, { messages: [{ role: 'user', content: '在吗' }] })
+      const body = JSON.parse(String(d.calls[0].init.body))
+      expect(body.messages[0].role).toBe('system')
+      expect(body.messages[0].content).toContain(PET_PROMPT.PERSONA)
+    }
+  })
+
+  it('人设锁：免费池出题仍用同一份猫娘大肥鱼世界观提示词', async () => {
+    const api = okDeps(GOOD_QUESTIONS)
+    await ask(api)
+    const pool = okDeps(GOOD_QUESTIONS, poolCfg())
+    await ask(pool)
+    // 两种模式发出去的 system 段逐字相同 —— 换路由不许换人格
+    const apiSystem = JSON.parse(String(api.calls[0].init.body)).messages[0].content
+    const poolSystem = JSON.parse(String(pool.calls[0].init.body)).messages[0].content
+    expect(poolSystem).toBe(apiSystem)
+    expect(poolSystem).toContain(AI_PROMPT.PERSONA)
+  })
+})
+
+// ---------------------------------------------------------------- 免费池模型清单
+
+describe('listPoolModels', () => {
+  const json = (body: unknown): HttpResponseLike => ({
+    ok: true,
+    status: 200,
+    text: () => Promise.resolve(JSON.stringify(body))
+  })
+
+  it('只留 isFree === true，去重，兜底模型排第一', async () => {
+    const r = await listPoolModels({
+      fetch: () =>
+        Promise.resolve(
+          json({
+            data: [
+              { id: 'paid/one', isFree: false },
+              { id: 'free/b', name: 'B 模型', isFree: true },
+              { id: 'free/a', isFree: true },
+              { id: 'free/a', name: '重复的 A', isFree: true },
+              { id: '', isFree: true },
+              { id: 42, isFree: true },
+              { id: 'kilo-auto/free', name: '自动挑一个', isFree: true }
+            ]
+          })
+        )
+    })
+    expect(r).toEqual({
+      ok: true,
+      data: [
+        { id: 'kilo-auto/free', name: '自动挑一个' },
+        { id: 'free/b', name: 'B 模型' },
+        { id: 'free/a', name: 'free/a' }
+      ]
+    })
+  })
+
+  it('远端清单里没有兜底模型时也要补上（否则空清单时下拉框无项可选）', async () => {
+    const r = await listPoolModels({
+      fetch: () => Promise.resolve(json([{ id: 'free/a', isFree: true }]))
+    })
+    expect(r.ok && r.data.map((m) => m.id)).toEqual([FREE_POOL_DEFAULT_MODEL, 'free/a'])
+  })
+
+  it('兼容 {models:[]} 与裸数组两种形状', async () => {
+    const a = await listPoolModels({
+      fetch: () => Promise.resolve(json({ models: [{ id: 'free/a', isFree: true }] }))
+    })
+    const b = await listPoolModels({
+      fetch: () => Promise.resolve(json([{ id: 'free/b', isFree: true }]))
+    })
+    expect(a.ok && a.data.some((m) => m.id === 'free/a')).toBe(true)
+    expect(b.ok && b.data.some((m) => m.id === 'free/b')).toBe(true)
+  })
+
+  it('401 → unauthorized；429 → quota；5xx → server', async () => {
+    for (const [status, reason] of [
+      [401, 'unauthorized'],
+      [403, 'unauthorized'],
+      [429, 'quota'],
+      [500, 'server']
+    ] as const) {
+      const r = await listPoolModels({
+        fetch: () => Promise.resolve(errorResponse(status, 'nope'))
+      })
+      expect(!r.ok && r.reason, String(status)).toBe(reason)
+    }
+  })
+
+  it('不是 JSON → bad-response（不是抛异常）', async () => {
+    const r = await listPoolModels({
+      fetch: () =>
+        Promise.resolve({ ok: true, status: 200, text: () => Promise.resolve('<html>') })
+    })
+    expect(!r.ok && r.reason).toBe('bad-response')
+  })
+})
+
+// ---------------------------------------------------------------- 专属厂商模型清单（v23）
+
+describe('listProviderModels', () => {
+  const listJson = (body: unknown): HttpResponseLike => ({
+    ok: true,
+    status: 200,
+    text: () => Promise.resolve(JSON.stringify(body))
+  })
+
+  it('DeepSeek：GET /models + Bearer，回来的是易读名但 value 仍是 id', async () => {
+    const d = deps(() =>
+      Promise.resolve(
+        listJson({
+          object: 'list',
+          data: [{ id: 'deepseek-reasoner' }, { id: 'deepseek-chat' }]
+        })
+      )
+    )
+    const r = await listProviderModels(d)
+    expect(d.calls[0].url).toBe('https://api.deepseek.com/models')
+    expect((d.calls[0].init.headers as Record<string, string>).Authorization).toBe(
+      'Bearer sk-test'
+    )
+    expect(r).toEqual({
+      ok: true,
+      data: [
+        { id: 'deepseek-chat', name: 'DeepSeek Chat' },
+        { id: 'deepseek-reasoner', name: 'DeepSeek Reasoner' }
+      ]
+    })
+  })
+
+  it('Anthropic：x-api-key + 版本头，地址是 /v1/models，display_name 优先', async () => {
+    const d = deps(
+      () =>
+        Promise.resolve(
+          listJson({
+            data: [
+              { id: 'claude-sonnet-5-5', display_name: 'Claude Sonnet 5.5' },
+              { id: 'claude-haiku-5-5', display_name: 'Claude Haiku 5.5' }
+            ]
+          })
+        ),
+      { provider: 'anthropic', model: 'claude-sonnet-5-5' }
+    )
+    const r = await listProviderModels(d)
+    expect(d.calls[0].url).toBe('https://api.anthropic.com/v1/models')
+    const headers = d.calls[0].init.headers as Record<string, string>
+    expect(headers['x-api-key']).toBe('sk-test')
+    expect(headers['anthropic-version']).toBe('2023-06-01')
+    expect(headers.Authorization).toBeUndefined()
+    expect(r.ok && r.data.map((m) => m.name)).toEqual(['Claude Sonnet 5.5', 'Claude Haiku 5.5'])
+  })
+
+  it('2026-11-01 新增五家：各走自己的 /models，鉴权一律 Bearer', async () => {
+    const cases = [
+      ['zhipu', 'glm-4.7-flash', 'https://open.bigmodel.cn/api/paas/v4/models'],
+      ['xai', 'grok-4.3', 'https://api.x.ai/v1/models'],
+      ['gemini', 'gemini-2.5-flash', 'https://generativelanguage.googleapis.com/v1beta/openai/models'],
+      ['baidu', 'ernie-5.1', 'https://qianfan.baidubce.com/v2/models'],
+      ['hunyuan', 'hy3', 'https://tokenhub.tencentmaas.com/v1/models']
+    ] as const
+    for (const [provider, model, url] of cases) {
+      const d = deps(
+        () => Promise.resolve(listJson({ object: 'list', data: [{ id: model }] })),
+        { provider, model }
+      )
+      const r = await listProviderModels(d)
+      expect(d.calls[0].url, provider).toBe(url)
+      const headers = d.calls[0].init.headers as Record<string, string>
+      expect(headers.Authorization, provider).toBe('Bearer sk-test')
+      expect(r.ok && r.data[0]?.id, provider).toBe(model)
+    }
+  })
+
+  it('Gemini：兼容层 404 → 原生清单，改用 x-goog-api-key 并把 models/ 前缀剥掉', async () => {
+    const urls: string[] = []
+    const d = deps(
+      (url) => {
+        urls.push(url)
+        if (url.includes('/v1beta/openai/models')) {
+          return Promise.resolve(errorResponse(404, 'not found'))
+        }
+        return Promise.resolve(
+          listJson({
+            models: [
+              { name: 'models/gemini-1.5-pro', displayName: 'Gemini 1.5 Pro' },
+              { name: 'models/gemini-1.5-flash', displayName: 'Gemini 1.5 Flash' }
+            ]
+          })
+        )
+      },
+      { provider: 'gemini', model: 'gemini-1.5-pro' }
+    )
+    const r = await listProviderModels(d)
+    expect(urls).toEqual([
+      'https://generativelanguage.googleapis.com/v1beta/openai/models',
+      'https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000'
+    ])
+    const first = d.calls[0].init.headers as Record<string, string>
+    const second = d.calls[1].init.headers as Record<string, string>
+    expect(first.Authorization).toBe('Bearer sk-test')
+    expect(first['x-goog-api-key']).toBeUndefined()
+    expect(second.Authorization).toBeUndefined()
+    expect(second['x-goog-api-key']).toBe('sk-test')
+    expect(r.ok && r.data.map((m) => m.id)).toEqual([
+      'gemini-1.5-flash',
+      'gemini-1.5-pro'
+    ])
+  })
+
+  it('Gemini：兼容层 401 也先试原生（有效 Key 在兼容层被拒确有报告）', async () => {
+    const urls: string[] = []
+    const d = deps(
+      (url) => {
+        urls.push(url)
+        if (url.includes('/v1beta/openai/models')) {
+          return Promise.resolve(errorResponse(401, 'ACCESS_TOKEN_TYPE_UNSUPPORTED'))
+        }
+        return Promise.resolve(
+          listJson({ models: [{ name: 'models/gemini-2.5-flash' }] })
+        )
+      },
+      { provider: 'gemini', model: 'gemini-2.5-flash' }
+    )
+    const r = await listProviderModels(d)
+    expect(urls).toEqual([
+      'https://generativelanguage.googleapis.com/v1beta/openai/models',
+      'https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000'
+    ])
+    expect(r.ok && r.data[0]?.id).toBe('gemini-2.5-flash')
+  })
+
+  it('Gemini：两条都 401 → unauthorized，绝不拿空清单假装成功', async () => {
+    const d = deps(() => Promise.resolve(errorResponse(401, 'bad key')), {
+      provider: 'gemini',
+      model: 'gemini-2.5-flash'
+    })
+    const r = await listProviderModels(d)
+    expect(r.ok).toBe(false)
+    expect(!r.ok && r.reason).toBe('unauthorized')
+    expect(d.calls).toHaveLength(2)
+  })
+
+  it('别的厂商 401 只发一次：没有第二条路可试，别把 Key 多送一遍', async () => {
+    const d = deps(() => Promise.resolve(errorResponse(401, 'bad key')), {
+      provider: 'zhipu',
+      model: 'glm-4-plus'
+    })
+    const r = await listProviderModels(d)
+    expect(r.ok).toBe(false)
+    expect(!r.ok && r.reason).toBe('unauthorized')
+    expect(d.calls).toHaveLength(1)
+  })
+
+  it('Gemini 兼容层直接成功：不碰原生地址（少一次往返）', async () => {
+    const d = deps(
+      () =>
+        Promise.resolve(
+          listJson({ object: 'list', data: [{ id: 'gemini-1.5-pro' }] })
+        ),
+      { provider: 'gemini', model: 'gemini-1.5-pro' }
+    )
+    const r = await listProviderModels(d)
+    expect(d.calls).toHaveLength(1)
+    expect(d.calls[0].url).toBe(
+      'https://generativelanguage.googleapis.com/v1beta/openai/models'
+    )
+    expect(r.ok).toBe(true)
+  })
+
+  it('没 Key → no-key，一个请求都不发', async () => {
+    const d = deps(() => Promise.reject(new Error('不该走到这里')), { apiKey: '' })
+    expect(await listProviderModels(d)).toEqual({ ok: false, reason: 'no-key' })
+    expect(d.calls).toHaveLength(0)
+  })
+
+  it('401/403 → unauthorized；429 → quota；5xx → server', async () => {
+    for (const [status, reason] of [
+      [401, 'unauthorized'],
+      [403, 'unauthorized'],
+      [429, 'quota'],
+      [500, 'server']
+    ] as const) {
+      const d = deps(() => Promise.resolve(errorResponse(status, 'nope')))
+      const r = await listProviderModels(d)
+      expect(!r.ok && r.reason, String(status)).toBe(reason)
+    }
+  })
+
+  it('自定义网关：第一个地址 404 就试第二个，两个都记在案', async () => {
+    const urls: string[] = []
+    const d = deps(
+      (url) => {
+        urls.push(url)
+        return Promise.resolve(
+          url.endsWith('/v1/models')
+            ? listJson([{ id: 'gw-1' }])
+            : errorResponse(404, 'not found')
+        )
+      },
+      { provider: 'custom', baseUrl: 'https://gw.example.com', model: 'gw-1' }
+    )
+    const r = await listProviderModels(d)
+    expect(urls).toEqual([
+      'https://gw.example.com/models',
+      'https://gw.example.com/v1/models'
+    ])
+    expect(r.ok && r.data.map((m) => m.id)).toEqual(['gw-1'])
+  })
+
+  it('自定义网关两个地址都 404 → bad-response（不是「成功但清空」）', async () => {
+    const d = deps(() => Promise.resolve(errorResponse(404, 'nope')), {
+      provider: 'custom',
+      baseUrl: 'https://gw.example.com',
+      model: 'x'
+    })
+    const r = await listProviderModels(d)
+    expect(!r.ok && r.reason).toBe('bad-response')
+    expect(d.calls).toHaveLength(2)
+  })
+
+  it('200 但不是模型清单 → bad-response', async () => {
+    const d = deps(() =>
+      Promise.resolve(listJson({ error: { message: 'bad key' } }))
+    )
+    const r = await listProviderModels(d)
+    expect(!r.ok && r.reason).toBe('bad-response')
+  })
+
+  it('网络异常 → offline，且不再试第二个地址（同一台主机，重试只多等一次）', async () => {
+    const d = deps(() => Promise.reject(new TypeError('fetch failed')), {
+      provider: 'custom',
+      baseUrl: 'https://gw.example.com',
+      model: 'x'
+    })
+    const r = await listProviderModels(d)
+    expect(!r.ok && r.reason).toBe('offline')
+    expect(d.calls).toHaveLength(1)
+  })
+
+  it('外部取消 → canceled', async () => {
+    const ac = new AbortController()
+    ac.abort()
+    const d = deps(() => Promise.reject(new Error('不该走到这里')), {
+      provider: 'custom',
+      baseUrl: 'https://gw.example.com',
+      model: 'x'
+    })
+    const r = await listProviderModels({ ...d, signal: ac.signal })
+    expect(!r.ok && r.reason).toBe('canceled')
+    expect(d.calls).toHaveLength(0)
+  })
+
+  it('空地址 → offline（没法拼出任何候选地址）', async () => {
+    const d = deps(() => Promise.reject(new Error('不该走到这里')), {
+      provider: 'custom',
+      baseUrl: '   ',
+      model: 'x'
+    })
+    expect(await listProviderModels(d)).toEqual({ ok: false, reason: 'offline', detail: 'base url is empty' })
+    expect(d.calls).toHaveLength(0)
+  })
+})
+
+// ---------------------------------------------------------------- 思考强度（v23）
+
+describe('思考强度：真的发出去的参数', () => {
+  const bodyOf = (d: { calls: { init: RequestInit }[] }): Record<string, unknown> =>
+    JSON.parse(String(d.calls[0].init.body)) as Record<string, unknown>
+
+  it('OpenAI 推理模型：高档真的带 reasoning_effort=high', async () => {
+    const d = okDeps('喵', { provider: 'openai', model: 'o1', thinking: 'high' })
+    await ask(d)
+    expect(bodyOf(d).reasoning_effort).toBe('high')
+    expect(bodyOf(d).max_completion_tokens).toBe(8192)
+  })
+
+  it('OpenAI 推理模型：选「关闭」退到 low（它关不掉，不许假装关掉）', async () => {
+    const d = okDeps('喵', { provider: 'openai', model: 'o1', thinking: 'off' })
+    await ask(d)
+    expect(bodyOf(d).reasoning_effort).toBe('low')
+  })
+
+  it('普通模型不发 reasoning_effort（不认识的字段会 400）', async () => {
+    const d = okDeps('喵', { provider: 'openai', model: 'gpt-4o', thinking: 'high' })
+    await ask(d)
+    expect(bodyOf(d).reasoning_effort).toBeUndefined()
+  })
+
+  it('DeepSeek chat + 高 → 真的改用 deepseek-reasoner，且不再发 temperature/response_format', async () => {
+    const d = okDeps('喵', { provider: 'deepseek', model: 'deepseek-chat', thinking: 'high' })
+    await ask(d)
+    const body = bodyOf(d)
+    expect(body.model).toBe('deepseek-reasoner')
+    expect(body.temperature).toBeUndefined()
+    expect(body.response_format).toBeUndefined()
+  })
+
+  it('DeepSeek reasoner + 关闭 → 改用 deepseek-chat，普通对话字段回来了', async () => {
+    const d = okDeps('喵', { provider: 'deepseek', model: 'deepseek-reasoner', thinking: 'off' })
+    await ask(d)
+    const body = bodyOf(d)
+    expect(body.model).toBe('deepseek-chat')
+    expect(body.temperature).toBe(TEMP_QUESTIONS)
+    expect(body.response_format).toEqual({ type: 'json_object' })
+  })
+
+  it('高档指令**追加在人设之后**：人设一个字都没被替换', async () => {
+    const d = okDeps('喵', { provider: 'deepseek', model: 'deepseek-chat', thinking: 'high' })
+    await ask(d)
+    const system = String((bodyOf(d).messages as { content: string }[])[0].content)
+    expect(system).toContain(AI_PROMPT.PERSONA)
+    expect(system).toContain(AI_THINKING_PROMPT.high)
+  })
+
+  it('2026-11-01 新增五家：高档指令同样只追加在人设之后，且不塞没把握的字段', async () => {
+    for (const [provider, model] of [
+      ['zhipu', 'glm-4.7-flash'],
+      ['xai', 'grok-4.3'],
+      ['gemini', 'gemini-2.5-flash'],
+      ['baidu', 'ernie-5.1'],
+      ['hunyuan', 'hy3']
+    ] as const) {
+      const d = okDeps('喵', { provider, model, thinking: 'high' })
+      await ask(d)
+      const body = bodyOf(d)
+      expect(body.model, provider).toBe(model)
+      expect(body.reasoning_effort, provider).toBeUndefined()
+      expect(body.response_format, provider).toBeUndefined()
+      const system = String((body.messages as { content: string }[])[0].content)
+      expect(system, provider).toContain(AI_PROMPT.PERSONA)
+      expect(system.endsWith(AI_THINKING_PROMPT.high), provider).toBe(true)
+    }
+  })
+
+  it('「关闭」不加任何思考指令 —— 也不许删掉人设', async () => {
+    const d = okDeps('喵', { provider: 'deepseek', model: 'deepseek-chat', thinking: 'off' })
+    await ask(d)
+    const system = String((bodyOf(d).messages as { content: string }[])[0].content)
+    expect(system).toContain(AI_PROMPT.PERSONA)
+    for (const level of ['low', 'medium', 'high'] as const) {
+      expect(system).not.toContain(AI_THINKING_PROMPT[level])
+    }
+  })
+
+  it('免费池：模型永远是池里那个（思考档不许把 deepseek-chat 发去池网关）', async () => {
+    const d = okDeps(GOOD_QUESTIONS, {
+      mode: 'pool',
+      poolModel: 'kilo-auto/free',
+      apiKey: '',
+      model: 'deepseek-chat',
+      thinking: 'high'
+    })
+    await ask(d)
+    const body = bodyOf(d)
+    expect(body.model).toBe('kilo-auto/free')
+    const system = String((body.messages as { content: string }[])[0].content)
+    expect(system).toContain(AI_PROMPT.PERSONA)
+    expect(system).toContain(AI_THINKING_PROMPT.high)
+  })
+
+  it('Anthropic：指令进 system 顶层，且**不发任何 thinking 参数**', async () => {
+    const d = okDeps('喵', {
+      provider: 'anthropic',
+      model: 'claude-sonnet-5-5',
+      thinking: 'high'
+    })
+    await ask(d)
+    const body = bodyOf(d)
+    expect(String(body.system)).toContain(AI_PROMPT.PERSONA)
+    expect(String(body.system)).toContain(AI_THINKING_PROMPT.high)
+    expect(body.thinking).toBeUndefined()
+  })
+
+  it('测试连接：推理模型的最小请求也要留出思考预算（否则空回复被说成连不上）', async () => {
+    const d = okDeps('喵', { provider: 'openai', model: 'o1', thinking: 'medium' })
+    await testConnection(d)
+    expect(bodyOf(d).max_completion_tokens as number).toBeGreaterThan(8)
+  })
+
+  it('缓存判别式带档位：同一个模型 low 与 high 不是同一个键', () => {
+    const low = aiCacheModelOf(cfgWith({ model: 'deepseek-chat', thinking: 'low' }))
+    const high = aiCacheModelOf(cfgWith({ model: 'deepseek-chat', thinking: 'high' }))
+    expect(low).toBe('deepseek-chat|thinking:low')
+    expect(high).toBe('deepseek-reasoner|thinking:high')
+    expect(low).not.toBe(high)
+  })
+
+  it('effectiveAiModel 跟着档位切：设置页显示的模型 = 真正发出去的模型', () => {
+    expect(effectiveAiModel(cfgWith({ model: 'deepseek-chat', thinking: 'high' }))).toBe(
+      'deepseek-reasoner'
+    )
+    expect(effectiveAiModel(cfgWith({ model: 'deepseek-chat', thinking: 'medium' }))).toBe(
+      'deepseek-chat'
+    )
+  })
+
+  it('**红线**：高档 + 换模型之后，code 题仍然必须过沙盒复核，不合格照丢', async () => {
+    const seen: string[] = []
+    const d = okDeps(CODE_RESPONSE, {
+      provider: 'deepseek',
+      model: 'deepseek-chat',
+      thinking: 'high'
+    })
+    const r = await generateQuestions(
+      {
+        ...d,
+        verifyCode: (item) => {
+          seen.push(item.question.stem)
+          return Promise.resolve(false)
+        }
+      },
+      { topics: TOPIC, count: 5, terms: TERMS, dateKey: '2026-09-13' }
+    )
+    // 复核函数被真的调用了（不能因为换了模型/加了思考就跳过）
+    expect(seen).toEqual(['看看这段绕圈代码会打印什么？'])
+    // 唯一一道题被丢 → 整批失败，绝不当成「成功地出了 0 道题」
+    expect(!r.ok && r.reason).toBe('bad-response')
+    expect(!r.ok && r.detail).toContain('code-not-verified')
+  })
+})
+

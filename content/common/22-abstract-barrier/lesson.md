@@ -2,7 +2,7 @@
 id: common-22
 lang: common
 stage: 0
-order: 19
+order: 31
 title: 看不见的墙——抽象屏障
 tags: [面向对象, 抽象屏障]
 required: ["common-21"]

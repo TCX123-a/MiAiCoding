@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useContentStore } from '../stores/content'
 import { useProgressStore } from '../stores/progress'
@@ -20,10 +20,18 @@ import MiCard from '../components/base/MiCard.vue'
 import MiButton from '../components/base/MiButton.vue'
 import MiTag from '../components/base/MiTag.vue'
 import MiEmpty from '../components/base/MiEmpty.vue'
+import MiModal from '../components/base/MiModal.vue'
 import CompareGrid from '../components/domain/CompareGrid.vue'
 import DemoPlayer from '../components/domain/DemoPlayer.vue'
 import { toast } from '../components/base/toast'
-import { ACTION, EMPTY, LESSON, TOAST } from '../lib/copy'
+import {
+  clampScrollTop,
+  readLessonScroll,
+  writeLessonScroll,
+  type ScrollStorage
+} from '../lib/lesson-scroll'
+import { ACTION, EMPTY, LESSON, SETTLE, TOAST } from '../lib/copy'
+import { PET_REWARD_RICE } from '../../../shared/pet'
 
 // M3-02：知识点详情页（元信息 + markdown 正文 + compare 对比区 + 底部操作栏）
 const route = useRoute()
@@ -103,9 +111,237 @@ const referencedBlocks = computed<CompareBlock[]>(() => {
   })
 })
 
-const lockedRequired = computed(() =>
-  lesson.value ? lesson.value.required.map((r) => ({ id: r, title: content.titleOf(r) ?? r })) : []
-)
+// ---- 「学到这里啦喵」（2026-10-31）：一键把前面的课全部点亮 ----
+/** 确认框开着时，这次要变绿的课（含本课） */
+const settleTargets = ref<string[]>([])
+const settleConfirmOpen = ref(false)
+const settleBusy = ref(false)
+/** 结算结果弹窗：{ 新变绿几课, 实际到账几碗, 实际涨几点好感（null = 桌宠没起来算不出） } */
+const settleResult = ref<{
+  newLessons: number
+  rice: number | null
+  affection: number | null
+} | null>(null)
+
+/** 这一次点「学到这里啦喵」会动到哪些还没绿的课（大纲前缀，见 content store） */
+function unlearnedPrefix(): string[] {
+  const prefix = content.writtenPrefixUpTo(id.value)
+  return prefix.filter((x) => !progress.learnedSet.has(x))
+}
+
+async function settle(ids: readonly string[]): Promise<void> {
+  if (ids.length === 0 || settleBusy.value) return
+  settleBusy.value = true
+  try {
+    const res = await progress.markLearnedMany(ids)
+    progress.clearPendingSettle(id.value)
+    settleConfirmOpen.value = false
+    settleTargets.value = []
+    settleResult.value = {
+      newLessons: res.newLessons,
+      rice: res.riceCredited,
+      affection: res.affectionCredited
+    }
+  } catch {
+    // 写盘/桌宠出岔子：不能假装成功。关窗那条路有自己的兜底文案
+    toast(TOAST.PROFILE_SAVE_FAILED, 'error')
+  } finally {
+    settleBusy.value = false
+  }
+}
+
+/**
+ * 按钮入口：没有前置要补就只标本课；有的话先确认。
+ *
+ * 【为什么"只有本课没学"也要走批量函数】
+ * 发饭、history、写协议账本、防抖保存这四件事只有一条实现 ——
+ * 单课路径 `markLearned` 与批量路径各写一份，迟早出现「同一课在两处发不同碗数」。
+ */
+function onSettleClick(): void {
+  if (!lesson.value) return
+  const unlearned = unlearnedPrefix()
+  if (unlearned.length === 0) {
+    toast(SETTLE.NOTHING_BEFORE, 'success')
+    return
+  }
+  if (unlearned.length === 1 && unlearned[0] === id.value) {
+    void settle(unlearned)
+    return
+  }
+  settleTargets.value = unlearned
+  settleConfirmOpen.value = true
+}
+
+/** 取消学习标记（保留旧能力；它不是"学到这里"的反向操作） */
+function unlearn(): void {
+  progress.markLearned(id.value, false)
+  progress.clearPendingSettle(id.value)
+  toast(TOAST.MARK_LEARNED_OFF, 'success')
+}
+
+// ---- 读到末尾就算"刚刚学完"（关窗拦截的判据，见 App.vue） ----
+let scroller: HTMLElement | null = null
+
+/**
+ * 滚动位置的存档（2026-11-01 主人令）。
+ *
+ * 【为什么防抖 400ms 而不是每次 scroll 都写】
+ * 一次滚轮能发几十个 scroll；localStorage 的写是同步的，每次都写会在
+ * 低端机上把滚动拖出顿挫。400ms 在「切页面立刻回来」的场景里也够用：
+ * 离开时 unmount / pagehide 还会各兜一次底（见下）。
+ *
+ * 【为什么恢复期间要挡住「读到末尾」】
+ * 程序化 scrollTo 同样会派发 scroll 事件。不挡的话，恢复到一个存下来的
+ * 底部位置会被当成用户刚读到末尾，悄悄替人记上「刚学完」—— 打开课文
+ * 就触发关窗拦截，正是最烦的那种假状态。
+ */
+const SAVE_DEBOUNCE_MS = 400
+/** 恢复最多试 30 帧（约 0.5s）。内容还没撑开时多等几帧，够了就停。 */
+const RESTORE_MAX_FRAMES = 30
+
+/** 当前这一份课文的内存快照属于哪个课号（路由切换时先写旧号再换） */
+let trackedId = id.value
+let restoring = false
+let userTookOver = false
+let restoreToken = 0
+let saveTimer: ReturnType<typeof setTimeout> | null = null
+
+/** 隐私模式 / 配额满时访问 localStorage 本身就会抛 —— 存储不可用就等于没有记忆 */
+function scrollStorage(): ScrollStorage | null {
+  try {
+    return window.localStorage
+  } catch {
+    return null
+  }
+}
+
+/** 立刻写死当前位置（离开页面、关窗、切后台、切课前各调一次） */
+function saveScrollNow(): void {
+  if (saveTimer !== null) {
+    clearTimeout(saveTimer)
+    saveTimer = null
+  }
+  // 恢复还没落定、用户也没接手：此刻的 scrollTop 是程序刚设的中间值，
+  // 写回去会把原来存下的位置覆盖掉（切页面快一点就能触发）。
+  if (restoring && !userTookOver) return
+  if (!scroller || trackedId === '') return
+  writeLessonScroll(scrollStorage(), trackedId, scroller.scrollTop)
+}
+
+function scheduleScrollSave(): void {
+  if (saveTimer !== null) clearTimeout(saveTimer)
+  saveTimer = setTimeout(() => {
+    saveTimer = null
+    saveScrollNow()
+  }, SAVE_DEBOUNCE_MS)
+}
+
+/** 用户只要真的动手滚/点，就把恢复让给他 —— 不能把人从当前位置硬拽走 */
+function onUserScrollIntent(): void {
+  if (!restoring) return
+  userTookOver = true
+  restoring = false
+}
+
+const SCROLL_KEYS = new Set(['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '])
+function onScrollKey(e: KeyboardEvent): void {
+  if (restoring && SCROLL_KEYS.has(e.key)) onUserScrollIntent()
+}
+
+function onVisibilityChange(): void {
+  if (document.visibilityState === 'hidden') saveScrollNow()
+}
+
+/**
+ * 恢复上次读到的位置。
+ *
+ * 三处必须一起成立，缺一条都会静默失败：
+ * ① 等正文把 DOM 高度撑开（`scrollHeight` 还是 0 时 scrollTo 无处可去）；
+ * ② 每次按**当前**可滚范围夹一遍（课文改版后旧位置可能超出新长度）；
+ * ③ 用户一动手就停（恢复是"接上上次"，不是"抢方向盘"）。
+ */
+function restoreScroll(lessonId: string, saved: number): void {
+  if (saved <= 0) return
+  const token = ++restoreToken
+  restoring = true
+  userTookOver = false
+  let frames = 0
+
+  const tick = (): void => {
+    if (token !== restoreToken || trackedId !== lessonId) return
+    if (!scroller || userTookOver) {
+      restoring = false
+      return
+    }
+    const max = scroller.scrollHeight - scroller.clientHeight
+    const target = clampScrollTop(saved, max)
+    if (Math.abs(scroller.scrollTop - target) > 1) scroller.scrollTop = target
+    frames++
+    if (frames < RESTORE_MAX_FRAMES) {
+      requestAnimationFrame(tick)
+      return
+    }
+    /*
+     * 最后一帧设完 scrollTop 后，浏览器派发的 scroll 事件在**下一次渲染**才到；
+     * 此刻立刻把 restoring 放掉的话，那一发程序滚动会被当成用户滚动 ——
+     * 存档位置恰好在底部时，打开课文就替人记上「读到末尾」。
+     * 多等一帧再解除守卫。
+     */
+    requestAnimationFrame(() => {
+      if (token === restoreToken) restoring = false
+    })
+  }
+  requestAnimationFrame(tick)
+}
+
+/** 这一课没有存档时回到顶部（和旧行为一致，只是不再无条件清掉别的课的存档） */
+function goTop(): void {
+  scroller?.scrollTo({ top: 0 })
+}
+
+/** 挂上这一课的位置记忆：读存档 → 恢复或置顶 */
+function armScrollMemory(lessonId: string): void {
+  if (!scroller) scroller = document.querySelector<HTMLElement>('main.content')
+  if (!scroller) return
+  const saved = readLessonScroll(scrollStorage(), lessonId)
+  if (saved > 0) {
+    restoreScroll(lessonId, saved)
+    return
+  }
+  goTop()
+  restoring = false
+}
+
+function onContentScroll(): void {
+  if (!scroller || trackedId === '') return
+  // 恢复期间的滚动是程序发的：既不存（会把夹过的位置写回去），也不算读完
+  if (restoring) return
+  scheduleScrollSave()
+  if (!lesson.value || isLearned.value) return
+  // 48px 的余量：最后一段代码块/提示框的底边贴着视口底不算"没读完"
+  if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 48) {
+    progress.noteLessonEnd(trackedId)
+  }
+}
+
+/**
+ * 整篇一屏放得下时**根本不会产生滚动事件** —— 只靠 onContentScroll 的话，
+ * 短课永远不算「读到底」，关窗拦截对它们是一道静默失效的闸。
+ * 停留 3 秒再记：刚点开就记会把「只是路过看一眼」也当成学完。
+ */
+let shortPageTimer: ReturnType<typeof setTimeout> | null = null
+function armShortPageCheck(): void {
+  if (shortPageTimer !== null) {
+    clearTimeout(shortPageTimer)
+    shortPageTimer = null
+  }
+  if (!scroller || !lesson.value || isLearned.value) return
+  if (scroller.scrollHeight > scroller.clientHeight + 48) return
+  shortPageTimer = setTimeout(() => {
+    shortPageTimer = null
+    if (!isLearned.value) progress.noteLessonEnd(trackedId)
+  }, 3000)
+}
 
 // 正文内交互（事件委托）：复制按钮 + lesson:// 链接
 function onBodyClick(e: MouseEvent) {
@@ -135,11 +371,6 @@ async function copyText(text: string) {
     document.body.removeChild(ta)
   }
   toast(TOAST.CODE_COPIED, 'success')
-}
-
-function toggleLearned() {
-  progress.markLearned(id.value, !isLearned.value)
-  toast(isLearned.value ? TOAST.MARK_LEARNED_ON : TOAST.MARK_LEARNED_OFF, 'success')
 }
 
 function toggleFavorite() {
@@ -180,12 +411,74 @@ function runCode() {
   router.push('/playground')
 }
 
-// 切课时滚动到顶部
-function scrollTop() {
-  document.querySelector('main.content')?.scrollTo({ top: 0 })
-}
-onMounted(scrollTop)
-watch(id, scrollTop)
+// 切课时滚动到顶部 / 恢复上次位置：见上面的 armScrollMemory（2026-11-01）
+onMounted(() => {
+  // 关窗拦截要知道「最后停在哪一课」：打开就算，不要求滚到底。
+  // 放在 nextTick 外面 —— 即使滚动容器一时找不到，这一课也已经被访问过。
+  progress.noteLessonVisit(trackedId)
+  void nextTick(() => {
+    // 滚动容器是内层 `main.content`，不是 document —— 见 App.vue 的 .content
+    scroller = document.querySelector<HTMLElement>('main.content')
+    if (!scroller) return
+    scroller.addEventListener('scroll', onContentScroll, { passive: true })
+    scroller.addEventListener('wheel', onUserScrollIntent, { passive: true })
+    scroller.addEventListener('touchstart', onUserScrollIntent, { passive: true })
+    scroller.addEventListener('pointerdown', onUserScrollIntent, { passive: true })
+    window.addEventListener('keydown', onScrollKey, { passive: true })
+    // 关窗 / 切后台：防抖还没落地的那一段也要写死
+    window.addEventListener('beforeunload', saveScrollNow)
+    window.addEventListener('pagehide', saveScrollNow)
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    armScrollMemory(trackedId)
+    armShortPageCheck()
+  })
+})
+onBeforeUnmount(() => {
+  // 顺序：先存旧位置，再拆监听，最后让在跑的恢复循环失效
+  saveScrollNow()
+  restoreToken++
+  restoring = false
+  scroller?.removeEventListener('scroll', onContentScroll)
+  scroller?.removeEventListener('wheel', onUserScrollIntent)
+  scroller?.removeEventListener('touchstart', onUserScrollIntent)
+  scroller?.removeEventListener('pointerdown', onUserScrollIntent)
+  window.removeEventListener('keydown', onScrollKey)
+  window.removeEventListener('beforeunload', saveScrollNow)
+  window.removeEventListener('pagehide', saveScrollNow)
+  document.removeEventListener('visibilitychange', onVisibilityChange)
+  scroller = null
+  if (shortPageTimer !== null) {
+    clearTimeout(shortPageTimer)
+    shortPageTimer = null
+  }
+  if (saveTimer !== null) {
+    clearTimeout(saveTimer)
+    saveTimer = null
+  }
+})
+watch(id, (nextId) => {
+  // 同组件内换课（路由 key 保证多数时候会重建；真被复用时也不能把位置带过去）
+  saveScrollNow()
+  trackedId = nextId
+  progress.noteLessonVisit(nextId)
+  restoreToken++
+  // 下一帧 armScrollMemory 之前，旧页面的 scrollTop 会被新正文的高度变化带走；
+  // 先把守卫立起来，避免那一发中间滚动被写进新课的键里
+  restoring = true
+  userTookOver = false
+  void nextTick(() => {
+    armScrollMemory(nextId)
+    armShortPageCheck()
+  })
+})
+// 学完（含答题自动标记）就把"待结算"摘掉 —— 关窗时不该再拦一次
+watch(
+  isLearned,
+  (v) => {
+    if (v) progress.clearPendingSettle(id.value)
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
@@ -211,32 +504,17 @@ watch(id, scrollTop)
       </MiEmpty>
     </MiCard>
 
-    <!-- 锁定：显示前置课 -->
-    <MiCard v-else-if="status === 'locked'" class="block-card">
-      <MiEmpty v-bind="EMPTY.LESSON_LOCKED" />
-      <div class="required-list">
-        <!-- V2-41：锁定页里「先学这门」是屏内最直接的出路 —— div 版
-             键盘党点不开（搜索面板还能按课名兜，但屏内这条路不该断）。
-             升成真 <button>，点击行为不变。 -->
-        <button
-          v-for="r in lockedRequired"
-          :key="r.id"
-          type="button"
-          class="required-item"
-          @click="openLesson(r.id)"
-        >
-          <span class="required-icon">{{ content.statusOf(r.id) === 'learned' ? '✓' : '🔒' }}</span>
-          <span class="required-title">{{ r.title }}</span>
-          <span class="required-arrow">›</span>
-        </button>
-      </div>
-      <div class="block-actions">
-        <MiButton variant="ghost" @click="router.back()">{{ ACTION.BACK }}</MiButton>
-      </div>
-    </MiCard>
-
-    <!-- 正文 -->
+    <!--
+      未解锁 → **软锁**（2026-10-31 主人令）：不再拦人，正文照常渲染，
+      只在顶上提醒一句"这门课可能有点难哦喵"。真正的解锁动作交给课末的
+      「学到这里啦喵」——一键把前面的课全部点亮，见脚本里的 settle()。
+    -->
     <template v-else-if="lesson">
+      <div v-if="status === 'locked'" class="lesson-soft-lock">
+        <span class="lesson-soft-lock-icon">🐟</span>
+        <p class="lesson-soft-lock-text">{{ SETTLE.LOCK_WARNING }}</p>
+      </div>
+
       <div class="lesson-head">
         <div class="lesson-badges">
           <MiTag :color="lesson.lang === 'common' ? 'blue' : 'green'">
@@ -296,11 +574,15 @@ watch(id, scrollTop)
       <CompareGrid v-if="referencedBlocks.length > 0" :blocks="referencedBlocks" />
 
       <div class="lesson-actions">
-        <MiButton
-          :variant="isLearned ? 'ghost' : 'primary'"
-          @click="toggleLearned"
-        >
-          {{ isLearned ? ACTION.LEARNED : ACTION.MARK_LEARNED }}
+        <MiButton :variant="isLearned ? 'ghost' : 'primary'" @click="onSettleClick">
+          <span class="settle-btn-stack">
+            <span>{{ isLearned ? ACTION.SETTLE_HERE_LEARNED : ACTION.SETTLE_HERE }}</span>
+            <span v-if="!isLearned" class="settle-btn-sub">{{ ACTION.SETTLE_SUB }}</span>
+          </span>
+        </MiButton>
+        <!-- 旧的"取消标记"能力保留，但它不再是主按钮 -->
+        <MiButton v-if="isLearned" variant="ghost" @click="unlearn">
+          {{ ACTION.LEARNED }}
         </MiButton>
         <MiButton variant="secondary" @click="startPractice">{{ ACTION.ENTER_QUIZ }}</MiButton>
         <MiButton variant="secondary" @click="runCode">{{ ACTION.RUN_CODE }}</MiButton>
@@ -323,6 +605,49 @@ watch(id, scrollTop)
         </MiButton>
       </div>
     </template>
+
+    <!-- 确认框：前面还有没绿的课，讲清楚会一起点亮、饭按课数发 -->
+    <MiModal
+      v-model:visible="settleConfirmOpen"
+      :title="SETTLE.CONFIRM_TITLE"
+      :width="520"
+      :closable="!settleBusy"
+    >
+      <p class="settle-text">
+        {{ SETTLE.CONFIRM_BODY(settleTargets.length, settleTargets.length * PET_REWARD_RICE.lesson) }}
+      </p>
+      <div class="settle-actions">
+        <MiButton variant="ghost" :disabled="settleBusy" @click="settleConfirmOpen = false">
+          {{ SETTLE.CONFIRM_CANCEL }}
+        </MiButton>
+        <MiButton variant="primary" :disabled="settleBusy" @click="settle(settleTargets)">
+          {{ SETTLE.CONFIRM_OK }}
+        </MiButton>
+      </div>
+    </MiModal>
+
+    <!-- 到账弹窗：显眼位置报「大白饭 +X 已到账喵！」 -->
+    <MiModal
+      :visible="settleResult !== null"
+      :title="SETTLE.RESULT_TITLE"
+      :width="460"
+      @close="settleResult = null"
+    >
+      <p class="settle-text settle-result">
+        {{
+          settleResult
+            ? SETTLE.RESULT_BODY(
+                settleResult.newLessons,
+                settleResult.rice,
+                settleResult.affection
+              )
+            : ''
+        }}
+      </p>
+      <div class="settle-actions">
+        <MiButton variant="primary" @click="settleResult = null">{{ SETTLE.RESULT_OK }}</MiButton>
+      </div>
+    </MiModal>
   </div>
 </template>
 
@@ -334,70 +659,61 @@ watch(id, scrollTop)
 .block-card {
   margin-top: 40px;
 }
-.required-list {
+/* 软锁提醒：不拦人，只把"这课可能有点难"说在前面 */
+.lesson-soft-lock {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-width: 420px;
-  margin: 12px auto 0;
-}
-.required-item {
-  display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
-  padding: 9px 14px;
-  border: 1px solid var(--mi-border);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border: 1px solid var(--mi-warn-edge);
   border-radius: var(--mi-radius-sm);
-  /* glass 令牌：壁纸关时逐字节同 --mi-card；开时按 --mi-panel-alpha 稀释 */
-  background: var(--mi-card-glass);
-  cursor: var(--mi-cursor, pointer);
-  /*
-   * 原先这里是 `transition: all .15s ease`。改成把属性一个个写出来 ——
-   * `all` 会连**你没打算动的东西**一起过渡（这个元素身上有 border-radius、
-   * padding、font-size），将来谁调一下 padding，它会莫名其妙地「滑」过去。
-   * 而且 `all` 和 auto-animate 的内联 transform 会抢同一个属性，埋雷。
-   */
-  transition:
-    background var(--mi-dur-fast) var(--mi-ease),
-    border-color var(--mi-dur-fast) var(--mi-ease),
-    transform var(--mi-dur-fast) var(--mi-ease),
-    box-shadow var(--mi-dur-fast) var(--mi-ease);
+  background: var(--mi-warn-fill);
 }
-/*
- * button.required-item 重置（V2-41）：铺满 + 左对齐 + 字体/行高继承
- * （与 Sidebar button.lesson-item、RightPanel button.ref-item 同一份账）。
- * border 不动 —— 上面类里那条 1px 描边是它的卡片外观。
- */
-button.required-item {
-  width: 100%;
-  text-align: left;
-  color: inherit;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  margin: 0;
-}
-button.required-item:focus-visible {
-  outline: 2px solid var(--mi-blue-deep);
-  outline-offset: 2px;
-}
-.required-item:hover {
-  background: var(--mi-blue-light);
-  border-color: var(--mi-blue);
-  transform: translateX(2px);
-  box-shadow: var(--mi-shadow);
-}
-.required-icon {
+.lesson-soft-lock-icon {
   flex-shrink: 0;
-  font-size: 13px;
+  font-size: 18px;
+  line-height: 1.4;
 }
-.required-title {
-  flex: 1;
+.lesson-soft-lock-text {
+  margin: 0;
   font-size: 13px;
+  line-height: 1.7;
+  color: var(--mi-warn-deep);
+}
+.settle-text {
+  margin: 0 0 18px;
+  font-size: 14px;
+  line-height: 1.8;
   color: var(--mi-text);
 }
-.required-arrow {
-  color: var(--mi-text-3);
+.settle-result {
+  font-size: 15px;
+  font-weight: 600;
+}
+/*
+ * 「学到这里啦喵」两行式：主文案 + 一句小字说明动作。
+ * 一行按钮里塞不下"点了会发生什么"，而这是本页唯一会改写学习进度的按钮 ——
+ * 第一次看到的人有权在点之前知道它只是标记，不是"跳到下一课"。
+ */
+.settle-btn-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  line-height: 1.25;
+}
+.settle-btn-sub {
+  font-size: 10px;
+  font-weight: 400;
+  /* 用当前文字色的 78% 稀释，不写 opacity：整段 opacity 会让 10px 小字连
+     抗锯齿一起变淡，且全库 opacity 闸门要求新增必须先过人工审。 */
+  color: color-mix(in srgb, currentColor 78%, transparent);
+}
+.settle-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 .block-actions {
   display: flex;

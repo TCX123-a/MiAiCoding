@@ -102,7 +102,7 @@ const GROUP_TITLE: Record<MenuGroup, string> = {
  * 宫格顺序 = 侧栏 rail 顺序 = 侧栏整宽分组顺序（§1.1 的 parity 纪律，三处逐项
  * 同序、由 sidebar-groups.test.ts 的静态断言钉住）：学习组（语言 5 → 练习 →
  * 运行代码 → 备忘录）→ 复习与挑战组（复习页按设置开关在场，与 Sidebar 的
- * v-if 同一判据）→ 个人中心组（总览 → 签到 → 排行榜 → 登录）→ 工具（设置）。
+ * v-if 同一判据）→ 个人中心组（总览 → 大肥鱼仓库 → 排行榜 → 登录）→ 工具（设置）。
  *
  * 【为什么是 computed 不是一次性常量】组件在 App.vue 只挂一次（v-if=!isBare），
  * 设置里把「复习」关掉之后菜单要跟着少一格 —— 写死成常量的话，这一格会
@@ -127,10 +127,12 @@ const items = computed<MenuItem[]>(() => [
     : []),
   pageItem('challenge', NAV_ICON.CHALLENGE, NAV.CHALLENGE, '/challenge', 'review'),
   pageItem('favorites', NAV_ICON.FAVORITES, NAV.FAVORITES, '/favorites', 'review'),
-  pageItem('warehouse', NAV_ICON.WAREHOUSE, NAV.WAREHOUSE, '/warehouse', 'review'),
   // 签到（§1.4）已并入总览（2026-10-09 模块三）：独立入口删除 —— 侧栏/菜单/总览
   // 三处只留「总览」一格；未签到时总览自带圆点徽标 + 进页自动闪签到卡引导。
+  // 【v7 模块五，2026-10-31】「大肥鱼仓库」从复习组挪到个人中心组（主人点名）：
+  // 它是「我自己攒下来的」收藏柜，不是复习工具。三处同序，闸门在 sidebar-groups.test.ts。
   pageItem('overview', NAV_ICON.OVERVIEW, NAV.OVERVIEW, '/overview', 'me'),
+  pageItem('warehouse', NAV_ICON.WAREHOUSE, NAV.WAREHOUSE, '/warehouse', 'me'),
   pageItem('leaderboard', NAV_ICON.LEADERBOARD, NAV.LEADERBOARD, '/leaderboard', 'me'),
   pageItem('login', NAV_ICON.LOGIN, NAV.LOGIN, '/login', 'me'),
   pageItem('settings', NAV_ICON.SETTINGS, NAV.SETTINGS, '/settings', 'tools')

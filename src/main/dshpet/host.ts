@@ -10,6 +10,7 @@ import { pickQuip } from '../../shared/pet-quips'
 import { PET, PET_DSH } from '../../shared/copy'
 import { createPetStore } from '../pet/store'
 import { chatPet, fetchBalance } from '../ai/deepseek'
+import { isAiProviderId } from '../../shared/ai-providers'
 import { createPetBrain, PET_HEARTBEAT_MS, type PetBrainDeps } from './brain'
 import { createPetChatService } from './chat'
 import { loadPetConfigFile, normalizePetConfig, type PetConfig } from './config'
@@ -175,6 +176,13 @@ interface BridgeResponse {
 const BRIDGE_PREFIX = 'dsh-pet-bridge:'
 const RESTART_BASE_MS = 750
 const RESTART_MAX_FAILS = 6
+/**
+ * 「连续崩溃」的稳定线（2026-10-31 自检 P2）：helper 活过这么久就把崩溃计数
+ * 归零。不归零的话计数其实是「会话累计」—— 一次会话里零散崩 7 次（每次之间
+ * 正常用了大半天）就永久不再自动拉起桌宠，与判据的本意（连续失败才放弃）
+ * 相反。60s 远大于正常冷启动到可用的时间，又短到用户感知不到计数存在。
+ */
+const STABLE_RESET_MS = 60_000
 /** 碎碎念周期：比官方 300s 密一点（咪爱台词池是纯本地的，不心疼频率） */
 const WHISPER_INTERVAL_MS = 240_000
 const STARTUP_QUIP_DELAY_MS = 80_000
@@ -268,6 +276,8 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
   const expectedExit = new WeakSet<ChildProcessWithoutNullStreams>()
   let fails = 0
   let restarts = 0
+  /** 稳定计时器（见 STABLE_RESET_MS）：每代子进程一个，spawnChild 时换新 */
+  let stableTimer: NodeJS.Timeout | null = null
   let quackServed = 0
   let lastError = ''
   let lastSpawnSettings: PetConfig | null = null
@@ -526,7 +536,8 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
   /**
    * 聊天（编排在 ./chat.ts）。护栏与记账走 brain（pet.json 账本唯一持有者），
    * 台词走 sayText（与碎碎念共用同一只气泡叶子）。chatPet 的 fetch 用
-   * globalThis.fetch——Electron 主进程的 fetch 没有渲染层的 CORS/CSP 约束。
+   * Electron 的 net.fetch（Chromium 网络栈：尊重系统代理与企业证书库，
+   * 见 app.ts 里 cloudFetch 的同一处说明）。
    */
   const chatService = createPetChatService({
     gate: () => brain.chatGate(),
@@ -536,7 +547,7 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
     // 两边都是 (string, string) => void，写错了 typecheck 抓不到，气泡会原样显示 tag。
     say: (text, tag) => sayText(tag, text),
     isOnline: () => net.isOnline(),
-    chat: (input) => chatPet({ fetch: (url, init) => globalThis.fetch(url, init), getConfig: opts.getConfig }, input),
+    chat: (input) => chatPet({ fetch: (url, init) => net.fetch(url, init), getConfig: opts.getConfig }, input),
     log: (line) => log(`chat| ${line}`)
   })
 
@@ -549,10 +560,13 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
    * 大标题本来就不细分，细分原因码进日志）。message 是失败气泡那行小字，
    * 文案在家：shared/copy.ts 的 PET.BALANCE_FAIL。
    */
-  function balanceLeafDataOf(res: Awaited<ReturnType<typeof fetchBalance>>): Record<string, unknown> {
+  function balanceLeafDataOf(
+    res: Awaited<ReturnType<typeof fetchBalance>>,
+    provider: string
+  ): Record<string, unknown> {
     if (res.ok) {
       return {
-        provider: 'deepseek',
+        provider,
         kind: 'deepseek',
         ok: true,
         data: {
@@ -565,13 +579,23 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
     }
     if (res.reason === 'no-key') {
       return {
-        provider: 'deepseek',
+        provider,
         ok: false,
         reason: 'credential-missing',
         message: PET.BALANCE_FAIL['no-key']
       }
     }
-    return { provider: 'deepseek', ok: false, reason: 'fetch-error', message: PET.BALANCE_FAIL.fetch }
+    // unsupported 是「这家没有公开接口」的配置事实，不是抓取失败 ——
+    // 气泡上要如实说这一句，不能让用户以为网络坏了、反复重试。
+    if (res.reason === 'unsupported') {
+      return {
+        provider,
+        ok: false,
+        reason: 'unsupported',
+        message: PET.BALANCE_FAIL.unsupported
+      }
+    }
+    return { provider, ok: false, reason: 'fetch-error', message: PET.BALANCE_FAIL.fetch }
   }
 
   /** 正在查余额。菜单可以连点：在飞时忽略重复请求，落账以第一发为准 */
@@ -586,15 +610,30 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
     if (balanceRefreshing) return
     balanceRefreshing = true
     try {
+      const cfg = opts.getConfig()
+      const provider = isAiProviderId(cfg.ai.provider) ? cfg.ai.provider : 'deepseek'
+      const leaf = state.sections.balance
+      /*
+       * dsh-pet 的气泡只会画 DeepSeek 那种「¥余额 + 峰谷」的读数，
+       * 不认识别家的金额语义（峰谷标签是 DeepSeek 计价特有的，套在 Kimi
+       * 头上就是一句假话）。所以**只有 DeepSeek 真去查**；其余厂商直接
+       * 写 unsupported 叶子 —— 不花一次网络往返，也不会在气泡里报错账。
+       * 设置页自己的余额行仍然支持 Kimi（那边是我们画的界面）。
+       */
+      if (provider !== 'deepseek') {
+        leaf.counter += 1
+        leaf.data = { ...balanceLeafDataOf({ ok: false, reason: 'unsupported' }, provider), manual: true }
+        log(`balance#${leaf.counter} fail:unsupported provider=${provider}`)
+        return
+      }
       const res = await fetchBalance({
-        fetch: (url, init) => globalThis.fetch(url, init),
+        fetch: (url, init) => net.fetch(url, init),
         getConfig: opts.getConfig
       })
-      const leaf = state.sections.balance
       leaf.counter += 1
       // manual:true 随叶子带上：供应商只认它决定「同因也重弹」（连点两次
       // 同一条失败，第二次仍然要有反馈）。
-      leaf.data = { ...balanceLeafDataOf(res), manual: true }
+      leaf.data = { ...balanceLeafDataOf(res, provider), manual: true }
       log(`balance#${leaf.counter} ${res.ok ? 'ok' : 'fail:' + res.reason}`)
     } finally {
       balanceRefreshing = false
@@ -608,8 +647,12 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
   function writeVitals(v: PetVitals): void {
     const leaf = state.pets.main.vitals
     leaf.counter += 1
-    leaf.data = { satiety: v.satiety, rice: v.rice, mood: v.mood, affection: v.affection }
-    log(`vitals#${leaf.counter} satiety=${v.satiety} rice=${v.rice} mood=${v.mood} affection=${v.affection}`)
+    // snacks 是 v7（模块五）加的读数字段；渲染端 extras 目前只画饭/好感，
+    // 但叶子必须带全 —— 少一个字段就是"宿主说了一部分真话"。
+    leaf.data = { satiety: v.satiety, rice: v.rice, snacks: v.snacks, mood: v.mood, affection: v.affection }
+    log(
+      `vitals#${leaf.counter} satiety=${v.satiety} rice=${v.rice} snacks=${v.snacks} mood=${v.mood} affection=${v.affection}`
+    )
   }
 
   /** 现在多饿（归零静默闸门的输入）。读不到读数回 null —— 闸门对 null 放行 */
@@ -1077,6 +1120,25 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
   }
 
   function spawnChild(): void {
+    /*
+     * 【2026-10-31 自检 P2】退避窗口内的重复拉起。
+     *
+     * 崩溃后 exit 处理器挂 restartTimer（750·2^n 退避）。这期间用户保存任意
+     * 设置都会走 applySettings 的启用分支 —— 它只判 `!child`，不知道退避
+     * 定时器正挂着，于是当场 spawn 一个；定时器到点再 spawn 一个（顶替前者），
+     * 前者就成了**没人管**的孤儿宠物进程（还会叠一张宠物窗）。
+     * 两道闸：① 已有活着且不是「正在软停」的实例 → 不重复起；
+     * ② 显式拉起（初始/重载/设置）作废退避定时器 —— 新实例已经起了，
+     *    再按旧计划补一发只会多出一个。
+     */
+    if (child && !expectedExit.has(child)) {
+      log('spawn skipped: helper already running')
+      return
+    }
+    if (restartTimer) {
+      clearTimeout(restartTimer)
+      restartTimer = null
+    }
     const settings = normalizePetConfig(opts.getConfig().pet)
     lastSpawnSettings = settings
     // 新渲染端 = 新的基线：/state 拉取计数归零，欠的问候重新排上
@@ -1131,6 +1193,19 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
       if (text) log(`helper! ${text.split('\n').slice(0, 4).join(' ⏎ ')}`)
     })
     const spawned = child
+    /*
+     * 稳定线：活够 STABLE_RESET_MS 就清崩溃计数（见常量注释）。按**实例**
+     * 判活（child === spawned），旧实例的计时器不会把新实例的计数清掉；
+     * 退避重启会经 spawnChild 换掉上一个计时器。
+     */
+    if (stableTimer) clearTimeout(stableTimer)
+    stableTimer = setTimeout(() => {
+      stableTimer = null
+      if (child === spawned) {
+        if (fails !== 0) log(`helper stable ${STABLE_RESET_MS}ms; crash counter reset (was ${fails})`)
+        fails = 0
+      }
+    }, STABLE_RESET_MS)
     /*
      * spawn 失败（ENOENT/EACCES…）**只发 'error' 不发 'exit'**。没有监听器
      * 就是 uncaughtException —— Electron 弹「A JavaScript error occurred in
@@ -1227,6 +1302,12 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
 
   function killChild(): void {
     childBookkeeping()
+    // 主动收掉的实例没有「稳定」可言：它的计时器到点也只会因 child 不符而空转，
+    // 这里顺手清掉，别留一个 60s 的悬空定时器
+    if (stableTimer) {
+      clearTimeout(stableTimer)
+      stableTimer = null
+    }
     if (child) {
       child.removeAllListeners('exit')
       try {
@@ -1379,7 +1460,18 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
     }
     if (method === 'GET' && path.startsWith('/font/')) {
       const file = decodeURIComponent(path.slice('/font/'.length))
-      return fileResp(resolveAsset(join('fonts', file)), 'font/ttf')
+      // 2026-10-31 字体替换：桌宠气泡从商业的「上首软糖体.ttf」换成 MiSans-Regular.otf。
+      // MIME 必须跟着扩展名走 —— 一直写死 font/ttf 的话 Chromium 会按 TrueType 解析
+      // OpenType/CFF 的 otf，@font-face 静默加载失败 → 回退系统字体（不报错，最难查）。
+      const lower = file.toLowerCase()
+      const contentType = lower.endsWith('.otf')
+        ? 'font/otf'
+        : lower.endsWith('.woff2')
+          ? 'font/woff2'
+          : lower.endsWith('.woff')
+            ? 'font/woff'
+            : 'font/ttf'
+      return fileResp(resolveAsset(join('fonts', file)), contentType)
     }
     if (method === 'POST' && path === '/miai/open-settings') {
       const tab = u.searchParams.get('tab')
@@ -1418,6 +1510,12 @@ export function startDshPetHost(opts: DshPetHostOptions): DshPetHost {
     // 判定（冷却/台词/动画）全在 brain —— 这里只转发与应答，零业务。
     if (method === 'POST' && path === '/miai/feed') {
       brain.act({ action: 'feed' })
+      return { status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) }
+    }
+    if (method === 'POST' && path === '/miai/snack') {
+      // 喂一根小鱼干（v7，模块五 2026-10-31）：菜单「喂一根小鱼干」打这儿。
+      // 判定（冷却/空袋/吃饱/溢出好感）全在 brain，这里零业务，同 feed/pat。
+      brain.act({ action: 'snack' })
       return { status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) }
     }
     if (method === 'POST' && path === '/miai/pat') {

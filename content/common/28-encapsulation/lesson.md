@@ -2,7 +2,7 @@
 id: common-28
 lang: common
 stage: 0
-order: 25
+order: 37
 title: 盒子上留的口子——封装与「藏数据、露行为」
 tags: [面向对象, 封装]
 required: ["common-27"]

@@ -2,7 +2,7 @@
 id: common-25
 lang: common
 stage: 0
-order: 22
+order: 34
 title: 指针的接班人——引用与输出参数的新写法
 tags: [面向对象, 引用]
 required: ["common-24"]

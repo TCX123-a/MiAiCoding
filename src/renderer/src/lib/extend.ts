@@ -57,7 +57,11 @@ export interface ExtendDeps {
 
 /** AI 补题的全部外部依赖 —— 单测注入假货，真调用点见 `startExtend` 的默认 deps */
 export interface ExtendAi {
-  /** 配没配 Key。没配就不问 —— "没配"不是失败，是还没开这个功能（challenge 同款口径） */
+  /**
+   * 现在能不能用 AI。**不等于「有没有 Key」**：免费公开池模式没有 Key，
+   * 但照样能出题。生产接线传的是 PublicAppConfig.ai.ready（主进程算好的），
+   * 这里沿用旧字段名只为不动既有测试夹具。
+   */
   hasKey: boolean
   /**
    * 用户在设置页有没有**主动打开**「AI 动态出题」。
@@ -175,7 +179,8 @@ export function useExtendStarter() {
       findBuiltIn: (lessonId, qid) =>
         content.lessonOf(lessonId)?.questions.find((q) => q.id === qid) ?? null,
       ai: {
-        hasKey: settings.config.ai.hasKey,
+        // ready 已经把「免费池不需要 Key」算进去了
+        hasKey: settings.config.ai.ready,
         dynamicEnabled: settings.config.ai.dynamicEnabled === true,
         dateKey: todayKey(),
         terms: content.bundle.glossary.terms,

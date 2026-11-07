@@ -2,7 +2,7 @@
 id: common-26
 lang: common
 stage: 0
-order: 23
+order: 35
 title: 从租仓库到请猫入住——malloc 与 new 的分水岭
 tags: [面向对象, 内存]
 required: ["common-25"]

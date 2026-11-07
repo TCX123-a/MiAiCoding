@@ -2,7 +2,7 @@
 id: common-23
 lang: common
 stage: 0
-order: 20
+order: 32
 title: 半个对象——结构体+函数，还差的那半
 tags: [结构体, 面向对象, 图纸]
 required: ["common-22"]

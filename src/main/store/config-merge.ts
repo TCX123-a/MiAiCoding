@@ -17,6 +17,7 @@ import {
   DEFAULT_APP_CONFIG,
   LANG_OF_CODE,
   THEME_NAMES,
+  emptyAiKeys,
   emptyIdePaths,
   normalizePetConfig,
   type AppConfig,
@@ -25,6 +26,20 @@ import {
   type MiThemeName,
   type PublicAppConfig
 } from '../../shared/types'
+import {
+  AI_PROVIDER_IDS,
+  aiProviderOf,
+  defaultModelOf,
+  isAiProviderId,
+  type AiProviderId
+} from '../../shared/ai-providers'
+import { aiModeOf, isAiMode, poolModelOf } from '../../shared/free-pool'
+import {
+  aiThinkingKey,
+  isAiThinking,
+  readAiThinking,
+  resolveAiThinking
+} from '../../shared/ai-thinking'
 import {
   clampVolume,
   MAX_SFX_VOLUME,
@@ -92,6 +107,20 @@ function readIdePaths(v: unknown): Record<LangOfCode, string> {
  * `hasKey` 是抹掉 apiKey 之后**必须补上**的那一点点信息，理由见 types.ts 里那段长注释。
  */
 export function toPublicConfig(cfg: AppConfig): PublicAppConfig {
+  const mode = aiModeOf(cfg.ai.mode)
+  const poolModel = poolModelOf(cfg.ai.poolModel)
+  const provider = isAiProviderId(cfg.ai.provider) ? cfg.ai.provider : 'deepseek'
+  // Same second-line guard as every other field here: a config that skipped
+  // migration must still produce a legal level. Read-only on purpose: opening
+  // the settings page must not add entries to the remembered map (that would
+  // make migrateConfig's "already current -> unchanged" promise false).
+  const thinking = readAiThinking({
+    mode,
+    provider,
+    model: mode === 'pool' ? poolModel : cfg.ai.model,
+    rawThinking: cfg.ai.thinking,
+    rawMap: cfg.ai.thinkingByModel
+  })
   return {
     version: cfg.version,
     reviewEnabled: cfg.reviewEnabled,
@@ -159,13 +188,28 @@ export function toPublicConfig(cfg: AppConfig): PublicAppConfig {
     pet: normalizePetConfig(cfg.pet),
     envCache: cfg.envCache,
     ai: {
-      hasKey: cfg.ai.apiKey.trim() !== '',
+      // 第二道保险（同上面 theme 一族）：正常路径一定经过 migrateConfig，
+      // 万一未来某条读路径漏了迁移，坏 mode 会把请求发去一条用户没选过的路。
+      mode,
+      poolModel,
+      // 第二道保险（同上面 theme 一族）：正常路径一定经过 migrateConfig，
+      // 万一未来某条读路径漏了迁移，坏 provider 会让界面列不出模型、
+      // 也找不到 Key。退回 deepseek 与默认配置同方向。
+      provider,
+      // 只报「当前厂商」有没有 Key。其余厂商的真值不出主进程，
+      // 界面也不需要知道 —— 换厂商时主进程会重新算这一格。
+      hasKey: currentAiKey(cfg).trim() !== '',
+      // 「能不能用」与「有没有 Key」是两件事：免费池模式没有 Key 也能用。
+      // 动态出题 / 桌宠提示只认这一个布尔（理由见 PublicAppConfig）。
+      ready: mode === 'pool' || currentAiKey(cfg).trim() !== '',
       baseUrl: cfg.ai.baseUrl,
       model: cfg.ai.model,
       // Same polarity rule as nativeRunEnabled: default false, so `=== true`.
       // An old config with no field must read as "off", never silently opt in
       // to spending the user's own API balance.
-      dynamicEnabled: cfg.ai.dynamicEnabled === true
+      dynamicEnabled: cfg.ai.dynamicEnabled === true,
+      thinking: thinking.thinking,
+      thinkingByModel: thinking.thinkingByModel
     }
   }
 }
@@ -184,6 +228,8 @@ export function toPublicConfig(cfg: AppConfig): PublicAppConfig {
  *   「清空该键」（该语言回到「自动」），和下面 baseUrl/model 的「空=没改」
  *   **方向相反**（理由都写在函数注释里）。
  * - `ai.baseUrl` / `ai.model`：听入参，但**空值算「没改」**（理由见 `pickText`）。
+ *   `baseUrl` 额外过 `normalizeAiBaseUrl`：补 https、只认 http/https、
+ *   公网 http 直接拒（否则 API Key 明文上路）。
  * - `layout`：听入参，但**整节缺失算「没改」**，并且钳进合法区间（理由见下）。
  * - `wallpaper`：同 `layout` 一套（整块听入参、缺失算没改、过 normalizeWallpaper
  *   钳位并整树新造）。
@@ -276,17 +322,7 @@ export function mergeConfigPayload(current: AppConfig, payload: ConfigSavePayloa
     // have no pet key at all: `?? current.pet` is undefined, and normalize(undefined)
     // returns the defaults (enabled, 462px, bottom-right).
     pet: normalizePetConfig(payload.pet ?? current.pet),
-    ai: {
-      apiKey: nextApiKey(current.ai.apiKey, payload.ai.apiKey),
-      baseUrl: pickText(payload.ai.baseUrl, current.ai.baseUrl),
-      model: pickText(payload.ai.model, current.ai.model),
-      // Missing field means "keep what is on disk" (same rule as soundEnabled),
-      // and the fallback uses `=== true` so an old config stays off.
-      dynamicEnabled:
-        typeof payload.ai.dynamicEnabled === 'boolean'
-          ? payload.ai.dynamicEnabled
-          : current.ai.dynamicEnabled === true
-    },
+    ai: mergeAi(current.ai, payload.ai),
     envCache: current.envCache
   }
 }
@@ -330,11 +366,191 @@ export function withPetEnabled(current: AppConfig, enabled: boolean): AppConfig 
  * 而那个异常会被归类成「连不上网」—— 用户会去查路由器，方向全错。
  * 在这一层 trim 掉，代价是零，省掉的是一整类查不出来的问题。
  */
-function nextApiKey(current: string, incoming: string | null | undefined): string {
-  if (incoming === null) return ''
-  if (incoming === undefined) return current
-  const trimmed = incoming.trim()
-  return trimmed === '' ? current : trimmed
+function currentAiKey(cfg: AppConfig): string {
+  const provider: AiProviderId = isAiProviderId(cfg.ai.provider) ? cfg.ai.provider : 'deepseek'
+  const key = cfg.ai.apiKeys?.[provider]
+  return typeof key === 'string' ? key : ''
+}
+
+/**
+ * 合并「每厂商一把 Key」的表。**逐键三态，没传的厂商保持原样**：
+ *
+ * | incoming[provider] | 结果 |
+ * |---|---|
+ * | 不传 / `''` | **不改**（界面拿不到真 Key，它回传的永远是空串） |
+ * | `null` | **删除这一家的 Key**（设置页的「清除 Key」） |
+ * | 非空字符串 | 设置这一家的新 Key（trim 掉复制时带进来的空白） |
+ * | 其他类型 | 抛错（调用方写错了，不许静默糊过去） |
+ *
+ * 【为什么空串不能算删除】界面上没有真 Key，保存任何别的字段时它天然只能
+ * 带空串回来；把空串当删除 = 用户改一次模型就把 Key 抹了，而且不报错。
+ * 删除必须走 `null` 这个「真 Key 不可能是」的值。
+ *
+ * 【为什么输出必须是全新对象】渲染层那份可能是 Vue 的响应式代理，
+ * 进 structuredClone 会炸；同时也不让写盘的那份和来源共用同一个对象。
+ */
+function mergeAiKeys(
+  current: AppConfig['ai']['apiKeys'] | undefined,
+  incoming: ConfigSavePayload['ai']['apiKeys']
+): AppConfig['ai']['apiKeys'] {
+  const out = emptyAiKeys()
+  if (current && typeof current === 'object') {
+    for (const id of AI_PROVIDER_IDS) {
+      const v = current[id]
+      if (typeof v === 'string') out[id] = v
+    }
+  }
+  if (incoming === undefined || incoming === null) return out
+  if (!isObject(incoming)) throw new Error('invalid config payload')
+  for (const id of AI_PROVIDER_IDS) {
+    const v = incoming[id]
+    if (v === undefined) continue
+    if (v === null) {
+      out[id] = ''
+      continue
+    }
+    if (typeof v !== 'string') throw new Error('invalid config payload')
+    const trimmed = v.trim()
+    if (trimmed !== '') out[id] = trimmed
+  }
+  return out
+}
+
+/**
+ * 合并 `ai` 一节（v21 起还有 provider / apiKeys）。
+ *
+ * 【切厂商时模型怎么定】载荷显式带了 `model` 就用它；没带且厂商真的变了，
+ * 用新厂商的第一条常用模型。否则会出现「选了 Kimi、模型还停在 deepseek-chat」——
+ * 必然 404，而界面看起来一切正常。
+ *
+ * 【baseUrl 只对 custom 生效】官方厂商的地址从目录取，**不信任载荷里的值**：
+ * 旧版允许用户手改，改错的人这次自动修好；也防止渲染层把官方厂商的请求
+ * 引到一个奇怪的地址上。`custom` 仍走 normalizeAiBaseUrl（补 https、
+ * 拒公网 http、拒凭据），URL 里带用户名密码会明文上路。
+ */
+function mergeAi(
+  current: AppConfig['ai'],
+  payload: ConfigSavePayload['ai']
+): AppConfig['ai'] {
+  if (payload.provider !== undefined && !isAiProviderId(payload.provider)) {
+    throw new Error('invalid config payload')
+  }
+  const provider: AiProviderId = isAiProviderId(payload.provider)
+    ? payload.provider
+    : isAiProviderId(current.provider)
+      ? current.provider
+      : 'deepseek'
+
+  const baseUrl =
+    provider === 'custom'
+      ? normalizeAiBaseUrl(payload.baseUrl, current.provider === 'custom' ? current.baseUrl : '')
+      : aiProviderOf(provider).baseUrl
+
+  const switched = provider !== current.provider
+  /*
+   * 切厂商时**一定**换模型：载荷显式带了就用它，没带就用新厂商的第一条
+   * 常用模型（custom 没有列表 → 空串，等用户自己填）。
+   *
+   * 【为什么不是 `defaultModelOf(provider) || current.model`】这里的「没带」
+   * 有两种情况：渲染层忘了带，以及用户切到 custom（它的默认值本来就是空）。
+   * 前者用旧厂商的模型名必然 404；后者留着 `deepseek-chat` 会让自定义网关
+   * 收到一个它不认识的模型名 —— 两种都该走新厂商的默认值，而不是旧值。
+   * 不切厂商时照旧走 pickText（空 = 没改），用户误删模型名不会把配置弄坏。
+   */
+  if (payload.model !== undefined && typeof payload.model !== 'string') {
+    throw new Error('invalid config payload')
+  }
+  const explicitModel = typeof payload.model === 'string' ? payload.model.trim() : ''
+  const model = switched
+    ? explicitModel !== ''
+      ? explicitModel
+      : defaultModelOf(provider)
+    : pickText(payload.model, current.model)
+
+  /*
+   * 接入方式（v22）。**未知值抛错而不是退回 api**：这是「请求发去哪条路」
+   * 的开关，静默纠正等于替用户换了一条会经过第三方的路。缺字段才表示
+   * 「这次不改」，此时沿用磁盘上的值。
+   */
+  if (payload.mode !== undefined && !isAiMode(payload.mode)) {
+    throw new Error('invalid config payload')
+  }
+  const mode = payload.mode === undefined ? aiModeOf(current.mode) : payload.mode
+
+  /*
+   * 免费池模型名。和 baseUrl/model 同一条「空 = 没改」规则：用户清空输入框
+   * 不该让下一次请求带一个空模型名；非字符串是调用方写错了，直接抛。
+   * 当前值也坏了时用 poolModelOf 兜到默认模型，保证返回值永远能发请求。
+   */
+  if (payload.poolModel !== undefined && typeof payload.poolModel !== 'string') {
+    throw new Error('invalid config payload')
+  }
+  const poolModel =
+    typeof payload.poolModel === 'string' && payload.poolModel.trim() !== ''
+      ? payload.poolModel.trim()
+      : poolModelOf(current.poolModel)
+
+  /*
+   * Thinking depth (v23). Validation is strict for the active level: it decides
+   * what the next request actually sends, so an unknown value is a caller bug,
+   * not something to guess past. The per-model map is a memory aid; malformed
+   * entries are dropped by resolveAiThinking instead of failing the save.
+   *
+   * Priority matches the UI:
+   *   1. an explicit payload level (the user just moved the control);
+   *   2. if the route did not change, the level already on disk;
+   *   3. the remembered level for the new route;
+   *   4. the recommendation for the new model.
+   *
+   * Step 2 is guarded by the route key on purpose. Carrying the old level into
+   * a newly selected model would silently apply "high" to a small model (or
+   * "low" to a reasoner) even though the user never chose that for it.
+   */
+  if (payload.thinking !== undefined && !isAiThinking(payload.thinking)) {
+    throw new Error('invalid config payload')
+  }
+  if (payload.thinkingByModel !== undefined && !isObject(payload.thinkingByModel)) {
+    throw new Error('invalid config payload')
+  }
+  const effectiveModel = mode === 'pool' ? poolModel : model
+  const oldMode = aiModeOf(current.mode)
+  const oldProvider = isAiProviderId(current.provider) ? current.provider : 'deepseek'
+  const oldModel = oldMode === 'pool' ? poolModelOf(current.poolModel) : current.model
+  const sameRoute =
+    aiThinkingKey(oldMode, oldProvider, oldModel) ===
+    aiThinkingKey(mode, provider, effectiveModel)
+  const thinking = resolveAiThinking({
+    mode,
+    provider,
+    model: effectiveModel,
+    rawThinking:
+      payload.thinking !== undefined
+        ? payload.thinking
+        : sameRoute
+          ? current.thinking
+          : undefined,
+    rawMap:
+      payload.thinkingByModel !== undefined
+        ? payload.thinkingByModel
+        : current.thinkingByModel
+  })
+
+  return {
+    mode,
+    poolModel,
+    provider,
+    apiKeys: mergeAiKeys(current.apiKeys, payload.apiKeys),
+    baseUrl,
+    model,
+    // Missing field means "keep what is on disk" (same rule as soundEnabled),
+    // and the fallback uses `=== true` so an old config stays off.
+    dynamicEnabled:
+      typeof payload.dynamicEnabled === 'boolean'
+        ? payload.dynamicEnabled
+        : current.dynamicEnabled === true,
+    thinking: thinking.thinking,
+    thinkingByModel: thinking.thinkingByModel
+  }
 }
 
 /**
@@ -353,6 +569,55 @@ function pickText(incoming: unknown, fallback: string): string {
   if (typeof incoming !== 'string') throw new Error('invalid config payload')
   const trimmed = incoming.trim()
   return trimmed === '' ? fallback : trimmed
+}
+
+/** 回环主机名（http 只允许这些 —— 见 normalizeAiBaseUrl 的理由） */
+function isLoopbackHost(hostname: string): boolean {
+  const h = hostname.toLowerCase()
+  return h === 'localhost' || h === '127.0.0.1' || h === '[::1]' || h === '::1'
+}
+
+/**
+ * AI 服务地址：补协议 + 协议白名单（2026-10-31 全量自检 P2）。
+ *
+ * 旧版把 `ai.baseUrl` 当普通文本原样写盘：用户随手填 `api.deepseek.com`
+ * （没协议）或 `http://中转站` 都能保存成功，而请求端只会得到一句
+ * 「连不上网络」—— 更糟的是 http 会让 **API Key 以明文** 经公网发出。
+ *
+ * 规则：
+ *   · 空值 = 「没改」，沿用现有值（同 pickText）；
+ *   · 没写协议补 `https://`（这是最常见的输入错误）；
+ *   · 只接受 http / https，其它 scheme（file://、ftp://…）直接拒；
+ *   · http 只允许回环地址（localhost / 127.0.0.1 / [::1]），其余必须 https。
+ *
+ * 拒绝时抛的是 **ASCII 错误码**（`ai-base-url: <reason>`），不是中文句子：
+ * 主进程位于文案闸门的扫描范围，用户可见文案一律住在渲染层 copy.ts；
+ * SettingsView 按码翻译成字段级提示（见 SETTINGS.AI_BASE_URL_*）。
+ */
+export function normalizeAiBaseUrl(incoming: unknown, fallback: string): string {
+  if (incoming === undefined || incoming === null) return fallback
+  if (typeof incoming !== 'string') throw new Error('invalid config payload')
+  let raw = incoming.trim()
+  if (raw === '') return fallback
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)) raw = `https://${raw}`
+  let parsed: URL
+  try {
+    parsed = new URL(raw)
+  } catch {
+    throw new Error('ai-base-url: bad-url')
+  }
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+    throw new Error('ai-base-url: scheme')
+  }
+  if (parsed.protocol === 'http:' && !isLoopbackHost(parsed.hostname)) {
+    throw new Error('ai-base-url: insecure-http')
+  }
+  if (parsed.username !== '' || parsed.password !== '') {
+    throw new Error('ai-base-url: credentials')
+  }
+  // 去掉结尾斜杠：下面 chatUrl/balanceUrl 都会自己拼路径，双斜杠会让某些网关 404。
+  // 保留 path（自定义网关常带 /v1 或 /openai 前缀）。
+  return parsed.toString().replace(/\/+$/, '')
 }
 
 /**

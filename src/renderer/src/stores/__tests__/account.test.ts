@@ -377,6 +377,40 @@ describe('账号状态与动作（P10.6）', () => {
     void w
   })
 
+  /*
+   * P2 #20（2026-10-31 自检）：探测回 ok(null) = 服务端判死令牌，不是"没问到"。
+   * 主进程那一刻已清令牌、把盒收回客人位（app.ts 的 onSessionInvalid 接线）；
+   * 渲染层若不 refresh，界面就永远挂着"已登录 + 上一个人的名字"，cloud-sync
+   * 也收不到 boxAccountId 变化 —— 收编按钮按下去撞上 TypeError 的上游现场。
+   */
+  it('probeSession 发现令牌已死（ok(null)）：状态面翻回未登录，盒回客人位', async () => {
+    const w = stubWorld()
+    const a = useAccountStore()
+    w.st = stateOf({
+      signedIn: true,
+      accountId: 'acc-1',
+      username: 'alice',
+      avatarHash: null,
+      activated: true,
+      boxAccountId: 'acc-1'
+    })
+    await a.refresh()
+    expect(a.signedIn).toBe(true)
+    expect(a.username).toBe('alice')
+
+    // 主进程判死后的读盘面：令牌已清、盒已回客人位（与 app.ts 的接线同一时序）
+    w.st = { ...signedOut }
+    ;(window.miai.cloud as unknown as { session: () => Promise<unknown> }).session = async () => ({
+      ok: true,
+      data: null
+    })
+    await a.probeSession()
+
+    expect(a.signedIn).toBe(false)
+    expect(a.username).toBeNull()
+    expect(a.state?.boxAccountId).toBeNull()
+  })
+
   it('probeSession：旧版服务端回 avatarHash=null 时不冲掉本地快照里的头像', async () => {
     const w = stubWorld()
     const HASH = 'a'.repeat(64)

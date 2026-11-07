@@ -2,7 +2,7 @@
 id: common-30
 lang: common
 stage: 0
-order: 27
+order: 39
 title: 遥控器不是电视机——引用语义的第一张内存图
 tags: [面向对象, 引用]
 required: ["common-29"]

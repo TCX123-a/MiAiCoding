@@ -21,7 +21,7 @@
  *   中文只出现在注释里；用户可见的失败文案由渲染层按 reason 码拼。
  */
 import { existsSync, statSync } from 'fs'
-import { copyFile, mkdir } from 'fs/promises'
+import { copyFile, mkdir, rename, unlink } from 'fs/promises'
 import { basename, join } from 'path'
 import type { MediaImportResult } from '../shared/media-import'
 
@@ -104,6 +104,12 @@ export async function importMedia(opts: {
   allowedExts: readonly string[]
   title: string
   filterName: string
+  /**
+   * 下限注入口（缺省 = MIN_IMPORT_BYTES）。壁纸/开屏用默认的 1KB；
+   * 自定义指针图可以合法地很小（16×16 PNG 只有几百字节），所以调用方
+   * 传一个更小的值 —— 否则「看着能用的小图」会被统一门槛拒掉。
+   */
+  minBytes?: number
   /** 上限注入口（**只给测试**）：缺省 = MAX_IMPORT_BYTES。生产调用方不传 */
   maxBytes?: number
 }): Promise<MediaImportResult> {
@@ -111,6 +117,10 @@ export async function importMedia(opts: {
   if (!picked) return { ok: false, reason: 'cancelled' }
 
   const base = basename(picked)
+  // 以点开头的文件（.hidden.mp4）：扩展名白名单可能放行，但所有素材扫描器
+  // 都会跳过它 —— 收下就变成「提示导入成功、列表里永远没有」。
+  // 在落盘前拒掉，和 README（无扩展名）同一个方向：宁可在这一刻说清楚。
+  if (base.startsWith('.')) return { ok: false, reason: 'bad-ext' }
   const dot = base.lastIndexOf('.')
   const ext = dot > 0 ? base.slice(dot + 1).toLowerCase() : ''
   if (ext === '' || !opts.allowedExts.includes(ext)) return { ok: false, reason: 'bad-ext' }
@@ -123,7 +133,7 @@ export async function importMedia(opts: {
   } catch (err) {
     return { ok: false, reason: 'copy-failed', message: summarize(err) }
   }
-  if (size < MIN_IMPORT_BYTES) return { ok: false, reason: 'too-small' }
+  if (size < (opts.minBytes ?? MIN_IMPORT_BYTES)) return { ok: false, reason: 'too-small' }
   // 上限检查与 too-small 并排、在任何落盘动作（mkdir/copyFile）与自我拷贝
   // no-op **之前**：超限就一个字节都不落 —— 挪到 no-op 后面的话，用户从
   // 素材目录里选中一个超限旧文件会拿到「成功」（与 too-small 的处理不对称，
@@ -145,7 +155,23 @@ export async function importMedia(opts: {
     await mkdir(opts.destDir, { recursive: true })
     const dest = uniqueDestName(opts.destDir, base)
     if (dest === null) return { ok: false, reason: 'copy-failed', message: 'too many name collisions' }
-    await copyFile(picked, join(opts.destDir, dest))
+    const target = join(opts.destDir, dest)
+    // 【先拷到 .partial，再改名】直接 copyFile 到最终名的话，中途断电/取消/
+    // 磁盘满会留下半截视频或图片，而扫描器把它当正常素材列出来 —— 用户点开
+    // 是一段放不动的视频。.partial 以点开头，扫描器本来就跳过；改名成功
+    // 才算「导入完成」，失败则把半截文件清掉。
+    const partial = join(opts.destDir, `.${dest}.partial`)
+    try {
+      await copyFile(picked, partial)
+      await rename(partial, target)
+    } catch (err) {
+      try {
+        await unlink(partial)
+      } catch {
+        /* 清理失败不掩盖原始错误 */
+      }
+      throw err
+    }
     return { ok: true, name: dest }
   } catch (err) {
     return { ok: false, reason: 'copy-failed', message: summarize(err) }

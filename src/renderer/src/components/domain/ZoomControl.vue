@@ -18,12 +18,44 @@
  *     所以这里必须显式 `prevent` 掉，把这条唯一的缝堵死。
  * 两件事合起来的效果是：**没有任何路径能让滚轮改变缩放比例**。
  */
+import { ref } from 'vue'
 import { useZoomStore } from '../../stores/zoom'
 import MiButton from '../base/MiButton.vue'
 import { ZOOM } from '../../lib/copy'
 import { ZOOM_MAX, ZOOM_MIN, ZOOM_SLIDER_STEP } from '../../../../shared/zoom'
 
 const zoom = useZoomStore()
+
+/**
+ * B2（2026-11-01）：这颗胶囊压在正文右下角，长课文读到末尾时正好盖住最后几行。
+ * 收起来之后只剩一颗「🔍 120%」的小胶囊，想调再点开。
+ *
+ * 默认**收起**：第一次打开软件的人不该被一颗占 240px 的控件挡住正文；
+ * 用 `localStorage` 记住他的选择，下次进来保持原样。读写都包 try/catch ——
+ * 隐私模式/配额满时当成「没有记忆」，绝不让缩放控件因为存储异常整颗消失。
+ */
+const COLLAPSE_KEY = 'miai_zoom_ctl_collapsed'
+
+function readCollapsed(): boolean {
+  try {
+    if (window.localStorage.getItem(COLLAPSE_KEY) === '0') return false
+  } catch {
+    /* 存储不可用：按默认收起 */
+  }
+  return true
+}
+
+const collapsed = ref(readCollapsed())
+
+function setCollapsed(value: boolean): void {
+  collapsed.value = value
+  try {
+    window.localStorage.setItem(COLLAPSE_KEY, value ? '1' : '0')
+  } catch {
+    /* 记不住就算了，本次会话内的开合仍然正常 */
+  }
+}
+
 
 /**
  * 拖滑块时每一帧都会走到这里。不做防抖是**故意的**：
@@ -49,7 +81,31 @@ function blockWheel() {
 </script>
 
 <template>
-  <div class="zoom-ctl">
+  <!-- 收起态：只占一颗小胶囊，点它展开 -->
+  <button
+    v-if="collapsed"
+    type="button"
+    class="zoom-mini"
+    :title="ZOOM.EXPAND(zoom.percent)"
+    :aria-label="ZOOM.EXPAND(zoom.percent)"
+    @click="setCollapsed(false)"
+  >
+    <svg class="zoom-glass" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <circle cx="6.9" cy="6.9" r="4.6" fill="none" stroke="currentColor" stroke-width="1.7" />
+      <line
+        x1="10.3"
+        y1="10.3"
+        x2="14"
+        y2="14"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+      />
+    </svg>
+    <span class="zoom-mini-pct">{{ zoom.percent }}%</span>
+  </button>
+
+  <div v-else class="zoom-ctl">
     <!--
       放大镜用内联 SVG 而不是 🔍 那个 emoji：emoji 是彩色的、随系统字体变样，
       压在这个浅蓝的胶囊上会显得脏。SVG 走 currentColor，跟着文字色一起变。
@@ -72,6 +128,7 @@ function blockWheel() {
       variant="ghost"
       size="sm"
       :title="ZOOM.OUT"
+      :aria-label="ZOOM.OUT"
       :disabled="zoom.atMin"
       @click="zoom.smaller()"
     >
@@ -95,6 +152,7 @@ function blockWheel() {
       variant="ghost"
       size="sm"
       :title="ZOOM.IN"
+      :aria-label="ZOOM.IN"
       :disabled="zoom.atMax"
       @click="zoom.bigger()"
     >
@@ -108,10 +166,61 @@ function blockWheel() {
     <MiButton class="zoom-pct" variant="ghost" size="sm" :title="ZOOM.RESET" @click="zoom.reset()">
       {{ zoom.percent }}%
     </MiButton>
+
+    <!-- 收起：向下的小折线比「×」清楚 —— × 会被读成「关掉缩放功能」 -->
+    <MiButton
+      class="zoom-collapse"
+      variant="ghost"
+      size="sm"
+      :title="ZOOM.COLLAPSE"
+      :aria-label="ZOOM.COLLAPSE"
+      @click="setCollapsed(true)"
+    >
+      ⌄
+    </MiButton>
   </div>
 </template>
 
 <style scoped>
+/*
+ * 收起态的小胶囊。位置与展开态完全一致，展开/收起时右上角那颗图标不会跳。
+ * 它同样在 `main.content` 外面，所以不吃 `zoom`。
+ */
+.zoom-mini {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border: 1px solid var(--mi-border);
+  border-radius: 999px;
+  background: var(--mi-bg);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--mi-overlay) 10%, transparent);
+  color: var(--mi-text-2);
+  font: inherit;
+  font-size: 12px;
+  cursor: var(--mi-cursor, pointer);
+  user-select: none;
+}
+.zoom-mini:hover {
+  background: var(--mi-blue-light);
+}
+.zoom-mini:focus-visible {
+  outline: 2px solid var(--mi-blue-deep);
+  outline-offset: 2px;
+}
+.zoom-mini .zoom-glass {
+  margin-right: 0;
+}
+.zoom-mini-pct {
+  min-width: 34px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 .zoom-ctl {
   position: absolute;
   right: 14px;
@@ -168,6 +277,20 @@ function blockWheel() {
   padding: 4px 6px;
   font-variant-numeric: tabular-nums;
   color: var(--mi-text-2);
+}
+
+/* 收起按钮：比 −/+ 再窄一档，只占一颗符号的宽度 */
+.zoom-collapse {
+  position: relative;
+  padding: 4px 4px 2px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--mi-text-3);
+}
+.zoom-collapse::after {
+  content: '';
+  position: absolute;
+  inset: -3px 0;
 }
 
 /*

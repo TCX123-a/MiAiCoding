@@ -5,12 +5,12 @@
  *   ① sprite.js：右键菜单的桌面工具根项整段换成咪爱版（首项「跟着我走 / 别跟着啦」三元
  *      跟随开关；**没资格时**（2026-10-16 V1-49）改画一条置灰不可点的解释行
  *      「跟着我走（差在哪）」，原因来自宿主 /miai/flags.followBlock） / 打开壁纸设置 /
- *      打开 AI 设置 / 喂一碗大白饭 / 摸摸鱼头 / 听大肥鱼碎碎念 /
+ *      打开 AI 设置 / 喂一碗大白饭 / 喂零食 / 摸摸鱼头 / 听大肥鱼碎碎念 /
  *      跟本鱼聊天 / [查看余额·balanceEnabled 时（V1-30）] / 回到初始位置 / 重载宠物 /
  *      关闭大肥鱼），并在 onMenuAction 路由里加
- *      六个新分支：两条 POST /miai/open-settings
- *      通知宿主拉起设置页（照抄该文件 reloadDesktop() 的 fire-and-forget 发法），两条
- *      POST /miai/feed|pat 触发互动（照抄 showBalanceFromMenu() 的「postAction 完再
+ *      七个新分支：两条 POST /miai/open-settings
+ *      通知宿主拉起设置页（照抄该文件 reloadDesktop() 的 fire-and-forget 发法），三条
+ *      POST /miai/feed|snack|pat 触发互动（照抄 showBalanceFromMenu() 的「postAction 完再
  *      pollStateNow」发法，0 延迟可见），一条 POST /miai/pet-off 关闭大肥鱼（同
  *      fire-and-forget 发法：宿主把 enabled 落成 false 并收窗），一条 POST /miai/follow
  *      翻转跟随覆盖（同一 postAction 发法；完成后除了 pollStateNow 还补拉一拍
@@ -156,6 +156,58 @@ const SPRITE_MENUTREE_CALL_NEW = '    const tree = tools.concat(S.buildMenuTree(
 const SPRITE_ROUTE_ANCHOR =
   "    if (!leaf || typeof leaf !== 'object') return;\n    if (leaf.action === 'open-site') {";
 
+// ---------- 气泡淡出版式补丁（2026-10-31 模块七：表情包最后一秒文字突变/闪烁） ----------
+//
+// 【现象】碎碎念/表情包气泡到 10s 到期的那一拍，文字「突然变大、不换行了」，看起来像闪烁。
+// 【根因】renderBubble() 先算 slot，再**无条件**把 is-whisper / has-img 两个版式 class
+//   切到 slot==='none' 对应的 false，然后才走 none 分支只摘 is-on。气泡的 opacity
+//   过渡是 0.25s —— 淡出仍在进行，而字号已从 0.034×size 跳到 0.0455×size、min-width
+//   从 0.1×size 回到 0.26×size、white-space 从 normal 回到 nowrap（index.html 实测）。
+//   表情包还多一刀：has-img 被摘掉，min-width 0.26×size 立刻生效，气泡横向撑开。
+// 【修法】none 分支提到版式切换之前，只摘 is-on；版式 class 留到下一次**非 none**
+//   渲染再算（那一拍本来就在 is-on 之前重算，所以显示内容不受影响）。
+// 【取证】锚点 = 真实供体 renderBubble 里从 whisperImg 到 none 分支 return 的整段，
+//   逐字节照抄（两空格缩进、LF）；铺后自检认 BUBBLE_MARKER。
+const SPRITE_BUBBLE_ANCHOR = [
+  "    const whisperImg = slot === 'whisper' ? S.createMemeImage(this.whisperImage, BASE, this.assetRoot) : null;",
+  '    this.bubble.classList.toggle(',
+  "      'is-whisper',",
+  '      // 余额「文字说明」（不可用状态）同样要换行变体：默认 nowrap 会把长文案顶出宠物宽度',
+  "      slot === 'whisper' || slot === 'work' || (slot === 'balance' && this.balanceWrap),",
+  '    );',
+  '    this.bubble.classList.toggle(S.MEME_BUBBLE_CLASS, !!whisperImg);',
+  "    if (slot === 'none') {",
+  '      // 三者都没有可显示的内容：隐藏（不占位，也就不会挡住任何一层）',
+  "      this.bubble.classList.remove('is-on');",
+  "      window.__dshPetDebug.lastBubbleTitle = '';",
+  '      return;',
+  '    }',
+].join('\n');
+
+/** 气泡补丁标记：替换块独有，vendor 铺后自检与 PATCH_MARKERS 都用它 */
+const SPRITE_BUBBLE_MARKER = '// 咪爱补丁（2026-10-31，模块七）';
+
+const SPRITE_BUBBLE_NEW = [
+  '    // 咪爱补丁（2026-10-31，模块七）：slot 为 none 时**先**隐藏再返回，不碰下面两个',
+  '    // 版式 class —— 原版在 10s 碎碎念/表情包到期的那一拍会把 is-whisper 与 has-img',
+  '    // 摘掉，而气泡还要用 0.25s 淡出：字号 0.034→0.0455、min-width 0.1→0.26、',
+  '    // 换行→nowrap 全在淡出途中生效，肉眼就是「最后一秒文字格式突变、闪烁」。',
+  '    // 版式只影响下一次非 none 的渲染，届时会在 is-on 之前重新算好。',
+  "    if (slot === 'none') {",
+  '      // 三者都没有可显示的内容：隐藏（不占位，也就不会挡住任何一层）',
+  "      this.bubble.classList.remove('is-on');",
+  "      window.__dshPetDebug.lastBubbleTitle = '';",
+  '      return;',
+  '    }',
+  "    const whisperImg = slot === 'whisper' ? S.createMemeImage(this.whisperImage, BASE, this.assetRoot) : null;",
+  '    this.bubble.classList.toggle(',
+  "      'is-whisper',",
+  '      // 余额「文字说明」（不可用状态）同样要换行变体：默认 nowrap 会把长文案顶出宠物宽度',
+  "      slot === 'whisper' || slot === 'work' || (slot === 'balance' && this.balanceWrap),",
+  '    );',
+  '    this.bubble.classList.toggle(S.MEME_BUBBLE_CLASS, !!whisperImg);',
+].join('\n');
+
 /** index.html 注入点：renderer.js 之后、</body> 之前（真实文件里唯一） */
 const HTML_ANCHOR = '    <script src="./renderer.js"></script>\n  </body>';
 
@@ -246,11 +298,13 @@ const PATCH_MARKERS = [
   "action: 'miai-wallpaper'",
   "action: 'miai-ai'",
   "action: 'miai-feed'",
+  "action: 'miai-snack'",
   "action: 'miai-pat'",
   "action: 'miai-pet-off'",
   "BASE + '/miai/open-settings?tab=wallpaper'",
   "BASE + '/miai/open-settings?tab=ai'",
   "BASE + '/miai/feed'",
+  "BASE + '/miai/snack'",
   "BASE + '/miai/pat'",
   "BASE + '/miai/pet-off'",
   "BASE + '/miai/follow'",
@@ -258,6 +312,8 @@ const PATCH_MARKERS = [
   "{ label: '跟本鱼聊天', action: 'chat' }",
   "this.pet.balanceEnabled ? [{ label: '查看余额', action: 'show-balance' }] : []",
   'S.buildMenuTree(this.animations, this.pet.menuEvents)',
+  // 2026-10-31 模块七：气泡淡出版式补丁（none 分支先于 is-whisper/has-img 切换）
+  SPRITE_BUBBLE_MARKER,
 ];
 
 // ---------- 右键菜单定位补丁（2026-10-10 图三/图四；2026-10-13 主人批·三级点不到）的锚点与标记 ----------
@@ -406,7 +462,7 @@ const SHARED_CORE_CHATFIX_MARKER = '咪爱补丁（2026-10-16·V1-37）';
  *  ⚠️ '关闭大肥鱼' 这个字面量被 miai-extras.js 的悬停挽留委托按**字面**匹配（PLEAD_LABEL，见该文件
  *  「右键菜单挽留」节）——改这行文案必须同步改 miai-extras.js，否则挽留静默失效（无报错、无红）。 */
 const NEW_TOOLS_BLOCK = [
-  '    // 咪爱版桌面工具根项（跟着我走/别跟着啦[三元·有资格可点、没资格置灰+写明原因] / 打开壁纸设置 / 打开 AI 设置 / 喂一碗大白饭 / 摸摸鱼头 / 听大肥鱼碎碎念 / 跟本鱼聊天 / [查看余额·balanceEnabled 时] / 回到初始位置 / 重载宠物 / 关闭大肥鱼）+ 共享菜单树（让大肥鱼做点什么→分类→具体动画）',
+  '    // 咪爱版桌面工具根项（跟着我走/别跟着啦[三元·有资格可点、没资格置灰+写明原因] / 打开壁纸设置 / 打开 AI 设置 / 喂一碗大白饭 / 喂零食 / 摸摸鱼头 / 听大肥鱼碎碎念 / 跟本鱼聊天 / [查看余额·balanceEnabled 时] / 回到初始位置 / 重载宠物 / 关闭大肥鱼）+ 共享菜单树（让大肥鱼做点什么→分类→具体动画）',
   '    // 听大肥鱼碎碎念手动触发不受 whisperEnabled 限制（该字段只影响自动周期轮询）；菜单顺序固定。',
   '    // 首项跟随开关的三元读 __miaiExtras.followOn（跟随叶子读数，宿主 /miai/follow 翻转的就是它）。',
   '    // **跟随是「有资格才提」的**（2026-10-10 主人裁定：总闸开 && 饱食度 ≥ 50 && 好感 ≥ 80）。',
@@ -432,6 +488,7 @@ const NEW_TOOLS_BLOCK = [
   "      { label: '打开壁纸设置', action: 'miai-wallpaper' },",
   "      { label: '打开 AI 设置', action: 'miai-ai' },",
   "      { label: '喂一碗大白饭', action: 'miai-feed' },",
+  "      { label: '喂零食', action: 'miai-snack' },",
   "      { label: '摸摸鱼头', action: 'miai-pat' },",
   "      { label: '听大肥鱼碎碎念', action: 'whisper' },",
   "      { label: '跟本鱼聊天', action: 'chat' },",
@@ -442,7 +499,7 @@ const NEW_TOOLS_BLOCK = [
   '    );',
 ].join('\n');
 
-/** onMenuAction 新增的六个分支：设置类与关闭照 reloadDesktop（裸 fetch 火后不管），
+/** onMenuAction 新增的七个分支：设置类与关闭照 reloadDesktop（裸 fetch 火后不管），
  *  互动类照 showBalanceFromMenu（postAction + pollStateNow，0 延迟可见） */
 const NEW_ROUTE_BRANCHES = [
   '',
@@ -473,6 +530,19 @@ const NEW_ROUTE_BRANCHES = [
   '        })',
   '        .catch((e) => {',
   "          console.warn('[dsh-pet] 喂饭请求失败（宿主不可达？）', e);",
+  '        });',
+  '      return;',
+  '    }',
+  "    if (leaf.action === 'miai-snack') {",
+  '      // 喂零食（v7，模块五 2026-10-31）：同喂饭 /miai/snack，大脑那边',
+  '      // 判定冷却/空袋/饱了还吃（溢出好感），这里只转发 + 立刻拉一拍 /state。',
+  "      S.postAction(BASE + '/miai/snack')",
+  '        .then((ok) => {',
+  "          if (!ok) console.warn('[dsh-pet] 菜单喂零食：动作未成功');",
+  '          pollStateNow();',
+  '        })',
+  '        .catch((e) => {',
+  "          console.warn('[dsh-pet] 喂零食请求失败（宿主不可达？）', e);",
   '        });',
   '      return;',
   '    }',
@@ -816,8 +886,18 @@ export function patchSpriteJs(src) {
     'sprite.js onMenuAction 路由插入点',
   );
   applied.push(
-    "sprite.js：onMenuAction 新增 'miai-follow-toggle'（POST /miai/follow 翻转跟随）、'miai-wallpaper'/'miai-ai'（POST /miai/open-settings?tab=…）、'miai-feed'/'miai-pat'（POST+轮询，喂饭/摸头）与 'miai-pet-off'（POST /miai/pet-off 关闭大肥鱼）六个分支",
+    "sprite.js：onMenuAction 新增 'miai-follow-toggle'（POST /miai/follow 翻转跟随）、'miai-wallpaper'/'miai-ai'（POST /miai/open-settings?tab=…）、'miai-feed'/'miai-snack'/'miai-pat'（POST+轮询，喂饭/喂零食/摸头）与 'miai-pet-off'（POST /miai/pet-off 关闭大肥鱼）共七个分支",
   );
+
+  // 步骤 3：气泡淡出版式（模块七）—— none 分支提到 is-whisper/has-img 切换之前。
+  // 见 SPRITE_BUBBLE_ANCHOR 处的现象/根因/取证注释。半打补丁会因锚点不存在而大声 throw。
+  code = replaceOnce(
+    code,
+    SPRITE_BUBBLE_ANCHOR,
+    SPRITE_BUBBLE_NEW,
+    'sprite.js renderBubble 的 whisperImg + 版式切换 + none 分支整段（气泡淡出版式）',
+  );
+  applied.push('sprite.js：renderBubble 的 none 分支先于 is-whisper/has-img 切换（表情包最后 0.25s 淡出不跳字号/换行，模块七）');
 
   return { code, applied };
 }

@@ -157,7 +157,22 @@ function publicConfig(hasKey: boolean, dynamicEnabled = true) {
     reviewEnabled: true,
     runTimeoutSec: 10,
     envCache: {},
-    ai: { hasKey, dynamicEnabled, baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat' }
+    // v22 双模式：生产代码判断「AI 能不能用」看的是 ready（免费池没有 Key 也为真），
+    // 这台假配置只有专属模式，所以 ready 跟 hasKey 同值。
+    ai: {
+      mode: 'api',
+      poolModel: 'kilo-auto/free',
+      hasKey,
+      ready: hasKey,
+      dynamicEnabled,
+      baseUrl: 'https://api.deepseek.com',
+      model: 'deepseek-chat',
+      // v23：这两项是真配置里的必填字段。常量题/缓存题不该因为缺它们而
+      // 在真机上走另一条分支（`thinkingValue` 的兜底值是推荐档）。
+      provider: 'deepseek',
+      thinking: 'medium',
+      thinkingByModel: {}
+    }
   }
 }
 

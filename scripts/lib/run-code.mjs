@@ -90,6 +90,338 @@ export function findJavaClass(code) {
   return any ? any[1] : null
 }
 
+// ---------------------------------------------------------------------------
+// Java 单文件多类拆分（v7 模块六，2026-10-31）—— 抄自 src/shared/java-split.ts
+//
+// 【为什么脚本也要有】内容侧 `check:lesson-code` / `check:questions` 跑的是
+// `.mjs`，进不了 TypeScript。两份实现必须行为一致，否则同一段多类代码
+// 「应用里能跑、内容闸门说跑不了」（或反过来）。行为一致性由
+// src/shared/__tests__/java-split.test.ts 里跨实现逐例对拍钉住。
+// ---------------------------------------------------------------------------
+
+const JAVA_TYPE_KEYWORDS = new Set(['class', 'interface', 'enum', 'record'])
+const JAVA_MODIFIERS = new Set([
+  'public',
+  'protected',
+  'private',
+  'abstract',
+  'final',
+  'static',
+  'sealed',
+  'non-sealed',
+  'strictfp',
+  'default'
+])
+
+function javaIdentChar(ch) {
+  return (
+    (ch >= 'a' && ch <= 'z') ||
+    (ch >= 'A' && ch <= 'Z') ||
+    (ch >= '0' && ch <= '9') ||
+    ch === '_' ||
+    ch === '$'
+  )
+}
+
+function javaSpace(ch) {
+  return ch === ' ' || ch === '\t' || ch === '\r' || ch === '\n' || ch === '\f'
+}
+
+/** 注释 / 字符串 / 字符 / 文本块 → 空格（换行与长度保留） */
+export function maskJavaLiterals(code) {
+  const out = code.split('')
+  const n = code.length
+  const blank = (from, to) => {
+    for (let k = from; k < to; k += 1) {
+      if (out[k] !== '\n' && out[k] !== '\r') out[k] = ' '
+    }
+  }
+  let i = 0
+  while (i < n) {
+    const c = code[i]
+    const d = code[i + 1]
+    if (c === '/' && d === '/') {
+      const start = i
+      i += 2
+      while (i < n && code[i] !== '\n') i += 1
+      blank(start, i)
+      continue
+    }
+    if (c === '/' && d === '*') {
+      const start = i
+      i += 2
+      while (i < n && !(code[i] === '*' && code[i + 1] === '/')) i += 1
+      i = Math.min(n, i + 2)
+      blank(start, i)
+      continue
+    }
+    if (c === '"' && d === '"' && code[i + 2] === '"') {
+      const start = i
+      i += 3
+      while (i < n && !(code[i] === '"' && code[i + 1] === '"' && code[i + 2] === '"')) {
+        if (code[i] === '\\') i += 2
+        else i += 1
+      }
+      i = Math.min(n, i + 3)
+      blank(start, i)
+      continue
+    }
+    if (c === '"' || c === "'") {
+      const quote = c
+      const start = i
+      i += 1
+      while (i < n && code[i] !== quote) {
+        if (code[i] === '\\') i += 2
+        else i += 1
+      }
+      i = Math.min(n, i + 1)
+      blank(start, i)
+      continue
+    }
+    i += 1
+  }
+  return out.join('')
+}
+
+/**
+ * 从「注解名最右一个标识符的左边」往回找限定名链最前面的 `@`（2026-10-31 自检 P2）。
+ * 与 src/shared/java-split.ts 的 qualifiedAnnotationAt 逐行为一致。
+ */
+function javaQualifiedAnnotationAt(masked, k) {
+  let i = k
+  for (;;) {
+    let m = i
+    while (m >= 0 && javaSpace(masked[m])) m -= 1
+    if (m < 0) return -1
+    if (masked[m] === '@') return m
+    if (masked[m] !== '.') return -1
+    m -= 1
+    while (m >= 0 && javaSpace(masked[m])) m -= 1
+    while (m >= 0 && javaIdentChar(masked[m])) m -= 1
+    i = m
+  }
+}
+
+function javaDeclarationStart(masked, keywordAt) {
+  let at = keywordAt
+  for (;;) {
+    let j = at - 1
+    while (j >= 0 && javaSpace(masked[j])) j -= 1
+    if (j < 0) return at
+    if (masked[j] === '@') {
+      at = j
+      continue
+    }
+    if (masked[j] === ')') {
+      let depth = 1
+      let k = j - 1
+      while (k >= 0 && depth > 0) {
+        if (masked[k] === ')') depth += 1
+        else if (masked[k] === '(') depth -= 1
+        k -= 1
+      }
+      if (depth !== 0) return at
+      while (k >= 0 && javaSpace(masked[k])) k -= 1
+      while (k >= 0 && javaIdentChar(masked[k])) k -= 1
+      const annoAt = javaQualifiedAnnotationAt(masked, k)
+      if (annoAt >= 0) {
+        at = annoAt
+        continue
+      }
+      return at
+    }
+    const nameEnd = j + 1
+    while (j >= 0 && javaIdentChar(masked[j])) j -= 1
+    const word = masked.slice(j + 1, nameEnd)
+    if (word === '') return at
+    if (word === 'sealed') {
+      // `non-sealed` 是一个修饰符，但连字符把它拆成两个词。
+      // 走到这里 j 停在 `sealed` 前面那个字符上 —— 也就是 `-`；
+      // `non` 是它左边紧挨着的三个字符（`-` 本身不算），所以窗口是 [k-3, k)。
+      const k = j
+      if (k >= 3 && masked.slice(k - 3, k) === 'non') {
+        at = k - 3
+        continue
+      }
+    }
+    if (JAVA_MODIFIERS.has(word)) {
+      at = j + 1
+      continue
+    }
+    {
+      const annoAt = javaQualifiedAnnotationAt(masked, j)
+      if (annoAt >= 0) {
+        at = annoAt
+        continue
+      }
+    }
+    return at
+  }
+}
+
+function collectJavaTopLevelTypes(masked) {
+  const types = []
+  const n = masked.length
+  let i = 0
+  while (i < n) {
+    const ch = masked[i]
+    // 顶层注解可能带数组参数（@SuppressWarnings({"a", "b"})），里面的 `{`
+    // 会被下面的「顶层花括号 = 不认识」判断误伤 —— 先把整个注解跳过去。
+    // `@interface` 不是注解而是类型声明，必须留给下面的类型识别。
+    if (ch === '@') {
+      let j = i + 1
+      while (j < n && javaSpace(masked[j])) j += 1
+      const annoStart = j
+      while (j < n && javaIdentChar(masked[j])) j += 1
+      const annoWord = masked.slice(annoStart, j)
+      if (annoWord === 'interface') {
+        i += 1
+        continue
+      }
+      // 限定名：@a.b.C
+      let k = j
+      for (;;) {
+        while (k < n && javaSpace(masked[k])) k += 1
+        if (masked[k] !== '.') break
+        k += 1
+        while (k < n && javaSpace(masked[k])) k += 1
+        while (k < n && javaIdentChar(masked[k])) k += 1
+      }
+      if (masked[k] === '(') {
+        let depth = 0
+        while (k < n) {
+          if (masked[k] === '(') depth += 1
+          else if (masked[k] === ')') {
+            depth -= 1
+            if (depth === 0) {
+              k += 1
+              break
+            }
+          }
+          k += 1
+        }
+        i = k
+      } else {
+        i = j
+      }
+      continue
+    }
+    if (ch === '{') return []
+    if (!javaIdentChar(ch)) {
+      i += 1
+      continue
+    }
+    const wordStart = i
+    while (i < n && javaIdentChar(masked[i])) i += 1
+    const word = masked.slice(wordStart, i)
+    if (!JAVA_TYPE_KEYWORDS.has(word)) continue
+    let prev = wordStart - 1
+    while (prev >= 0 && javaSpace(masked[prev])) prev -= 1
+    if (prev >= 0 && masked[prev] === '.') continue
+    let j = i
+    while (j < n && javaSpace(masked[j])) j += 1
+    const nameStart = j
+    while (j < n && javaIdentChar(masked[j])) j += 1
+    const name = masked.slice(nameStart, j)
+    if (name === '' || /^[0-9]/.test(name)) return []
+    let bodyStart = -1
+    let k = j
+    while (k < n) {
+      const c = masked[k]
+      if (c === '{') {
+        bodyStart = k
+        break
+      }
+      if (c === ';' || c === '}') return []
+      k += 1
+    }
+    if (bodyStart === -1) return []
+    let depth = 1
+    let bodyEnd = bodyStart + 1
+    while (bodyEnd < n && depth > 0) {
+      if (masked[bodyEnd] === '{') depth += 1
+      else if (masked[bodyEnd] === '}') depth -= 1
+      bodyEnd += 1
+    }
+    if (depth !== 0) return []
+    const start = javaDeclarationStart(masked, wordStart)
+    const modifiers = masked.slice(start, wordStart)
+    types.push({
+      name,
+      isPublic: /(^|\s)public(\s|$)/.test(modifiers),
+      start,
+      end: bodyEnd,
+      masked: masked.slice(start, bodyEnd)
+    })
+    i = bodyEnd
+  }
+  return types
+}
+
+/**
+ * 这个类型体里有没有 main 方法（只用于挑入口；挑错也只是运行期报错，不会写错文件）。
+ * 与 src/shared/java-split.ts 的 hasMain 逐行为一致：修饰符顺序不枚举、
+ * 参数表必须是 String[] / String...（main() / main(String) 是普通重载）、
+ * 嵌套类里的 main 不算（只在花括号深度 1 处认）。
+ */
+function javaTypeHasMain(type) {
+  const masked = type.masked
+  const depth = new Int32Array(masked.length + 1)
+  let d = 0
+  for (let i = 0; i < masked.length; i += 1) {
+    depth[i] = d
+    if (masked[i] === '{') d += 1
+    else if (masked[i] === '}') d -= 1
+  }
+  depth[masked.length] = d
+  const re =
+    /\b((?:(?:public|protected|private|static|final|abstract|synchronized|strictfp|native|default)\s+)+)void\s+main\s*\(/g
+  const params =
+    /^\s*(?:final\s+)?(?:java\s*\.\s*lang\s*\.\s*)?String\s*(?:(?:\[\s*\]|\.\.\.)\s*[A-Za-z_$][\w$]*|[A-Za-z_$][\w$]*\s*\[\s*\])\s*\)/
+  let m
+  while ((m = re.exec(masked)) !== null) {
+    if (depth[m.index] !== 1) continue
+    if (!/(^|\s)public\s/.test(m[1]) || !/(^|\s)static\s/.test(m[1])) continue
+    if (!params.test(masked.slice(re.lastIndex))) continue
+    return true
+  }
+  return false
+}
+
+/**
+ * 与 src/shared/java-split.ts 同行为：≥2 个顶层 public 类型且无 package 才拆。
+ * @returns {{plan: {entry: string, files: {file: string, content: string}[]}|null, duplicatePublic?: string}}
+ */
+export function splitJavaSource(code) {
+  const masked = maskJavaLiterals(code)
+  const types = collectJavaTopLevelTypes(masked)
+  if (types.length === 0) return { plan: null }
+  const publics = types.filter((t) => t.isPublic)
+  if (publics.length < 2) return { plan: null }
+  const firstStart = types[0].start
+  if (/(^|\s)package\s+[A-Za-z_$][\w$]*(\s*\.\s*[A-Za-z_$][\w$]*)*\s*;/.test(masked.slice(0, firstStart))) {
+    return { plan: null }
+  }
+  const seen = new Set()
+  for (const t of publics) {
+    if (seen.has(t.name)) return { plan: null, duplicatePublic: t.name }
+    seen.add(t.name)
+  }
+  const preamble = code.slice(0, firstStart)
+  // 入口：public 且带真 main 的 → 任何带真 main 的（包内类也能当入口）→ 第一个 public
+  const entryType =
+    types.find((t) => t.isPublic && javaTypeHasMain(t)) ?? types.find(javaTypeHasMain) ?? publics[0]
+  const others = publics.filter((t) => t !== entryType)
+  // 入口自己若是非 public，不能再并进 entryParts 一遍（会重复整段源码）
+  const nonPublics = types.filter((t) => !t.isPublic && t !== entryType)
+  const entryParts = [preamble, code.slice(entryType.start, entryType.end), ...nonPublics.map((t) => code.slice(t.start, t.end))]
+  const files = [
+    { file: `${entryType.name}.java`, content: entryParts.join('\n') },
+    ...others.map((t) => ({ file: `${t.name}.java`, content: preamble + code.slice(t.start, t.end) }))
+  ]
+  return { plan: { entry: entryType.name, files } }
+}
+
 /**
  * 按语言生成完整的编译/运行计划。抄自 `runner.ts` 的 `planForLang()`。
  *
@@ -107,6 +439,43 @@ export function planForLang(lang, code) {
   if (lang !== 'java') {
     return { srcFile: base.src, compile: base.compile, run: base.run, env: base.env }
   }
+
+  // v7 模块六：顶层 public 类 ≥2 时拆分写盘（Person.java + Test.java）。
+  // 判定顺序与 runner.ts 逐行一致：先拆、再报重名、最后才是旧的单文件路径。
+  const split = splitJavaSource(code)
+  if (split.duplicatePublic) {
+    return {
+      srcFile: `${split.duplicatePublic}.java`,
+      run: [],
+      // 真源是 shared/copy.ts 的 RUNNER.JAVA_DUPLICATE_CLASS；理由同下面的 NO_JAVA_CLASS
+      error: `有两个 public 类都叫「${split.duplicatePublic}」喵～一个类名只能对应一个文件，先把其中一个改个名字再试试吧！`
+    }
+  }
+  if (split.plan) {
+    const fileNames = split.plan.files.map((f) => f.file)
+    return {
+      srcFile: fileNames[0],
+      sources: split.plan.files,
+      artifact: `${split.plan.entry}.class`,
+      compile: [
+        'javac',
+        '-J-Duser.language=en',
+        '-J-Duser.country=US',
+        '-encoding',
+        'UTF-8',
+        ...fileNames
+      ],
+      run: [
+        'java',
+        '-Duser.language=en',
+        '-Duser.country=US',
+        '-Dfile.encoding=UTF-8',
+        '-Dstdout.encoding=UTF-8',
+        split.plan.entry
+      ]
+    }
+  }
+
   const cls = findJavaClass(code)
   if (!cls) {
     return {
@@ -120,6 +489,9 @@ export function planForLang(lang, code) {
   }
   return {
     srcFile: `${cls}.java`,
+    // 旧路径的产物名跟着类名走（`Main.class` 只是 LANGS.java 的占位，
+    // 类叫 Cat 时真产物是 Cat.class）—— 编译失败的兜底判据要用它。
+    artifact: `${cls}.class`,
     compile: [
       'javac',
       '-J-Duser.language=en',
@@ -183,11 +555,30 @@ export function normalizeRunOutput(s) {
 }
 
 /**
+ * 宽松版归一化 —— 抄自 `run-grading.ts` 的 `normalizeRunOutputLoose()`。
+ *
+ * 2026-10-31 主人反馈「新手多打一个空格不该判错」后新增。判分用
+ * 「严格相等 **或** 宽松相等」两档：严格档保住内容契约，宽松档放过
+ * 行首/行内多余空格（行与行之间的空行仍然算内容）。
+ */
+export function normalizeRunOutputLoose(s) {
+  return s
+    .replace(/\r\n?/g, '\n')
+    .split('\n')
+    .map((line) => line.replace(/\s+/g, ' ').trim())
+    .join('\n')
+    .replace(/^\n+|\n+$/g, '')
+}
+
+/**
  * 学员跑出来的输出，和内容里写死的 `expectedOutput`，是不是同一份。
  * 抄自 `run-grading.ts` 的 `gradeByRun()` —— 两条链路必须给出同一个判断。
  */
 export function gradeByRun(expectedOutput, actualOutput) {
-  return normalizeRunOutput(actualOutput) === normalizeRunOutput(expectedOutput)
+  return (
+    normalizeRunOutput(actualOutput) === normalizeRunOutput(expectedOutput) ||
+    normalizeRunOutputLoose(actualOutput) === normalizeRunOutputLoose(expectedOutput)
+  )
 }
 
 /**
@@ -220,7 +611,12 @@ export function runBlock(lang, code, opts = {}) {
 
   const dir = mkdtempSync(join(tmpdir(), 'miai-run-'))
   try {
-    writeFileSync(join(dir, plan.srcFile), code, 'utf8')
+    // v7 模块六：拆分过的 Java 每个类写自己的文件；其余情况仍整段写进 srcFile。
+    if (plan.sources) {
+      for (const source of plan.sources) writeFileSync(join(dir, source.file), source.content, 'utf8')
+    } else {
+      writeFileSync(join(dir, plan.srcFile), code, 'utf8')
+    }
     const env = { ...process.env, ...(plan.env ?? {}) }
     /*
      * ⚠️ 这一行在 `runner.ts` 里**没有**（应用直接 `{...process.env}`）。留着是刻意的：
@@ -255,7 +651,7 @@ export function runBlock(lang, code, opts = {}) {
         // 但「非零退出」不等于「没编出产物」：gcc 有 warning-as-error 的怪癖，
         // 产物在的话照样往下跑（这一步是从 check-lesson-code.mjs 原样搬来的）。
         const out = `${decodeOutput(e.stderr)}${decodeOutput(e.stdout)}`
-        if (!existsSync(join(dir, LANGS[lang].artifact))) {
+        if (!existsSync(join(dir, plan.artifact ?? LANGS[lang].artifact))) {
           return { ok: false, phase: 'compile', output: out, stdout: '' }
         }
       }

@@ -29,6 +29,7 @@ import {
   DEFAULT_APP_CONFIG,
   LANG_OF_CODE,
   THEME_NAMES,
+  emptyAiKeys,
   emptyIdePaths,
   normalizePetConfig,
   type AppConfig,
@@ -36,6 +37,16 @@ import {
   type LangOfCode,
   type MiThemeName
 } from './types'
+import {
+  AI_PROVIDER_IDS,
+  aiProviderOf,
+  defaultModelOf,
+  isAiProviderId,
+  providerForBaseUrl,
+  type AiProviderId
+} from './ai-providers'
+import { FREE_POOL_DEFAULT_MODEL, isAiMode } from './free-pool'
+import { readAiThinking } from './ai-thinking'
 import { IDE_PRODUCTS, UNIVERSAL_IDE_PRODUCTS, ideNameOf } from './ide-profiles'
 import { normalizeLayout } from './layout'
 import { normalizeWallpaper } from './wallpaper'
@@ -117,6 +128,81 @@ function text(v: unknown, fallback: string): string {
  */
 function themeName(v: unknown, fallback: MiThemeName): MiThemeName {
   return THEME_NAMES.includes(v as MiThemeName) ? (v as MiThemeName) : fallback
+}
+
+/**
+ * `ai` 一节的迁移（v19 → v20 的 `dynamicEnabled`、v20 → v21 的厂商与 Key 表）。
+ *
+ * 【为什么单独抽出来】这一段有五个字段、三条老口径（Key 原样保留、
+ * dynamicEnabled 只认 true、baseUrl 官方归一一律重算），塞进 migrateConfig
+ * 那个大对象里会把「哪一行属于哪一版」淹掉。抽出来还能单独喂坏值测试。
+ *
+ * 【幂等】已经迁过的配置：`provider` 合法 → 照用；`apiKeys` 是对象 → 逐键读；
+ * 旧 `apiKey` 即使还残留在文件里，也只补当前厂商的空格 —— 不会覆盖新表。
+ */
+function migrateAi(raw: Record<string, unknown>): AppConfig['ai'] {
+  const oldBase = typeof raw.baseUrl === 'string' ? raw.baseUrl.trim() : ''
+  const provider: AiProviderId = isAiProviderId(raw.provider)
+    ? raw.provider
+    : oldBase === ''
+      ? 'deepseek'
+      : providerForBaseUrl(oldBase)
+
+  const apiKeys = emptyAiKeys()
+  const keyMap = isObject(raw.apiKeys) ? raw.apiKeys : null
+  if (keyMap !== null) {
+    for (const id of AI_PROVIDER_IDS) {
+      const v = keyMap[id]
+      if (typeof v === 'string') apiKeys[id] = v
+    }
+  }
+  // ⚠️ 旧 Key 原样带过去。**不要 trim、不要校验、不要「顺手规范化」** ——
+  // 这个字段不是我们写进去的，用户从后台复制什么就是什么。
+  // 真需要 trim 的地方在保存入口（config-merge 的 mergeAiKeys），那里有单测盯着。
+  const legacy = typeof raw.apiKey === 'string' ? raw.apiKey : ''
+  if (legacy !== '' && apiKeys[provider] === '') apiKeys[provider] = legacy
+
+  const mode = isAiMode(raw.mode) ? raw.mode : 'api'
+  const poolModel = text(raw.poolModel, FREE_POOL_DEFAULT_MODEL)
+  const baseUrl =
+    provider === 'custom' ? text(raw.baseUrl, '') : aiProviderOf(provider).baseUrl
+  const model = text(raw.model, defaultModelOf(provider) || DEFAULT_APP_CONFIG.ai.model)
+  // ── v22 → v23 的两行 ──────────────────────────────────────────
+  // 老配置没有 thinking：按当前模型推荐一档（deepseek-chat 是 medium），
+  // 绝不因为缺字段就报错或落到非法值。已经存过的档位（以及按模型记忆的
+  // 那张表）原样保留 —— 迁移只补缺，不替用户改主意。
+  // 读路径用 readAiThinking：它不回写记忆表，迁移对「已经是对的」的配置
+  // 必须严格幂等（往表里补一条也算改了用户文件）。
+  const thinking = readAiThinking({
+    mode,
+    provider,
+    model: mode === 'pool' ? poolModel : model,
+    rawThinking: raw.thinking,
+    rawMap: raw.thinkingByModel
+  })
+
+  return {
+    // ── v21 → v22 的两行 ──────────────────────────────────────────
+    // 老配置没有 mode：**必须读成 api**（继续用用户自己的 Key）。
+    // 只有白名单里的字面量算数；手改坏的值同样退回 api，不许因为一个
+    // 拼错的 "pool" 就悄悄把请求送去第三方免费池。
+    mode,
+    poolModel,
+    provider,
+    apiKeys,
+    // 官方厂商的地址由目录给：旧版把地址做成可编辑，抄错的人这次自动修好；
+    // 自定义服务保留用户填的那一条（空也保留 —— 设置页会让他补）。
+    baseUrl,
+    model,
+    // ── v19 → v20 的那一行 ────────────────────────────────────────
+    // **必须用 `=== true`，不能写 `!== false`**：默认值是 false（AI 花用户
+    // 自己的余额，只能由用户主动授权）。写成 `!== false` 的话，一份从没配过
+    // 这个字段的老配置会静默打开 AI 出题，用户在不知情的情况下开始消耗 Token。
+    dynamicEnabled: raw.dynamicEnabled === true,
+    // ── v22 → v23 的两行 ──────────────────────────────────────────
+    thinking: thinking.thinking,
+    thinkingByModel: thinking.thinkingByModel
+  }
 }
 
 /**
@@ -267,20 +353,16 @@ export function migrateConfig(raw: unknown): AppConfig {
     // 那些门槛在宿主侧，不在这个键上。注意净化只认布尔：'false' 字符串
     // 在 if 里是**真**，见 types.ts normalizePetConfig 的注释。
     pet: normalizePetConfig(raw.pet),
-    ai: {
-      // ⚠️ 原样带过去。**不要 trim、不要校验、不要「顺手规范化」** ——
-      // 这个字段不是我们写进去的，用户从 DeepSeek 后台复制什么就是什么。
-      // 真需要 trim 的地方在保存入口（config-merge 的 nextApiKey），那里有单测盯着。
-      apiKey: typeof ai.apiKey === 'string' ? ai.apiKey : '',
-      baseUrl: text(ai.baseUrl, DEFAULT_APP_CONFIG.ai.baseUrl),
-      model: text(ai.model, DEFAULT_APP_CONFIG.ai.model),
-      // ── v19 → v20 的那一行 ────────────────────────────────────────
-      // 老配置里没有这个字段。**必须用 `=== true`，不能写 `!== false`**：
-      // 它的默认值是 false（AI 花用户自己的余额，只能由用户主动授权）。
-      // 写成 `!== false` 的话，一份从没配过这个字段的老配置会静默打开 AI 出题，
-      // 用户会在不知情的情况下开始消耗 Token —— 正是这次要防的事。
-      dynamicEnabled: ai.dynamicEnabled === true
-    },
+    // ── v20 → v21 的那一段 ───────────────────────────────────────────
+    // 旧配置只有一把 `apiKey` 和一个 `baseUrl`。迁移要做三件事，顺序不能反：
+    //   ① 先认厂商：新字段 `provider` 合法就用它；否则按 baseUrl 的域名认；
+    //      认不出（中转/自建网关）→ `custom`，地址与 Key **原样保留**。
+    //   ② 把旧 Key 搬进 `apiKeys[provider]`。**绝不 trim / 校验 / 丢弃** ——
+    //      用户从后台复制什么就是什么；丢了就要重新生成，而他不会知道是我们弄丢的。
+    //   ③ 官方厂商的 baseUrl 归一到目录里的官方地址（旧版允许用户手改，
+    //      改错的人现在自动修好）；`custom` 保留用户填的地址。
+    // `dynamicEnabled` 的口径不变，仍是 `=== true`（默认关，不许静默打开）。
+    ai: migrateAi(ai),
     // envCache 是主进程写穿的缓存，形状由 env:detect 保证。不是对象就当空的重算一遍，
     // 代价只是多跑一次环境检测，比带着一个坏形状往下走便宜得多。
     envCache: isObject(raw.envCache) ? (raw.envCache as Partial<EnvCache>) : {}

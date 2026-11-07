@@ -142,7 +142,16 @@ function collectStrings(value: unknown, path: string, out: { path: string; text:
   if (typeof value === 'string') {
     out.push({ path, text: value })
   } else if (typeof value === 'function') {
-    const probe = (value as (...a: unknown[]) => unknown)(1, 3)
+    let probe: unknown
+    try {
+      probe = (value as (...a: unknown[]) => unknown)(1, 3)
+    } catch {
+      // 有的文案函数第一个参数是**文件名列表**（RUNNER_UI.JAVA_SPLIT(files, entry)），
+      // 拿数字去探会抛。换成一对像文件名的参数再试一次 ——
+      // 两次都抛的话异常照常冒出去（不静默跳过：那条「收集逻辑没有静默失效」
+      // 的用例就是防这个的）。
+      probe = (value as (...a: unknown[]) => unknown)(['A.java', 'B.java'], 'Main')
+    }
     if (typeof probe === 'string') out.push({ path: `${path}()`, text: probe })
   } else if (Array.isArray(value)) {
     value.forEach((v, i) => collectStrings(v, `${path}[${i}]`, out))

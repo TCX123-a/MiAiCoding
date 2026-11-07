@@ -39,6 +39,7 @@ import {
   PET_RICE_FULL_COOLDOWN_MS,
   PET_RICE_MAX,
   PET_RUN_REWARD_DAILY_MAX,
+  PET_SNACK_GAIN,
   petAffectionTier,
   petDayKey,
   petFace,
@@ -169,6 +170,9 @@ function makeHarness(
     getMainFocused: () => focused,
     log: (line) => logs.push(line),
     now: () => clock,
+    // 喂零食的随机动作池（2026-10-31）默认抽第 0 个 —— 让既有断言不变红，
+    // 要钉边界的用例自己用 deps.random 覆盖。生产不传 = Math.random。
+    random: () => 0,
     ...(opts.deps ?? {})
   })
 
@@ -434,18 +438,152 @@ describe('喂饭与摸头：1200ms 共享冷却', () => {
     ).toEqual([PET.FEED_OK[0], PET.FEED_OK[1]])
   })
 
-  it('吃饱了拒喂："撑着呢"与"饭盒空了"是两码事；不扣饭、不加饱食度', () => {
-    const h = makeHarness({ seed: { rice: 1, satiety: 100 } })
+  it('吃饱了但好感没满 → 继续喂（overflow）；饱腹与好感都满才是真拒喂；不扣/扣饭各有判据', () => {
+    // v7 模块五：饱腹 100、好感 50 —— 饭照扣（真吃下去了），饱腹不变，
+    // 好感走 feed 那一档（brain 的 applyAffection）。台词是主人点名原句。
+    const h = makeHarness({ seed: { rice: 1, satiety: 100, affection: 50 } })
     h.brain.act({ action: 'feed' })
-    expect(h.says).toEqual([{ text: PET.FEED_FULL[0], tag: 'feed-full' }])
-    // 拒喂照空饭盒一样"原样退回"：饭还在、数字不动 —— 喂了没反应才是骗人
-    expect(h.brain.debugState().rice).toBe(1)
+    expect(h.says).toEqual([{ text: PET.FEED_OVERFLOW, tag: 'feed-overflow' }])
+    expect(h.brain.debugState().rice).toBe(0)
     expect(h.brain.debugState().satiety).toBe(100)
-    expect(h.current().fedTotal).toBe(0)
+    expect(h.current().fedTotal).toBe(1) // 这一碗真的喂进嘴了（纪念数字照记）
+    expect(h.anims).toEqual([PET_DSH.ANIM.FEED])
+    // 真吃不下：饱腹与好感都顶格 —— 拒喂不扣饭、不加饱食度，
+    // 台词走 FEED_FULL 池轮播（"撑着呢"与"饭盒空了"仍是两码事）
+    const f = makeHarness({ seed: { rice: 1, satiety: 100, affection: 100 } })
+    f.brain.act({ action: 'feed' })
+    expect(f.says).toEqual([{ text: PET.FEED_FULL[0], tag: 'feed-full' }])
+    expect(f.brain.debugState().rice).toBe(1)
+    expect(f.brain.debugState().satiety).toBe(100)
+    expect(f.current().fedTotal).toBe(0)
     // 轮转：第二句是池子里下一条
-    h.advance(1200)
-    h.brain.act({ action: 'feed' })
-    expect(h.says[1]).toEqual({ text: PET.FEED_FULL[1], tag: 'feed-full' })
+    f.advance(1200)
+    f.brain.act({ action: 'feed' })
+    expect(f.says[1]).toEqual({ text: PET.FEED_FULL[1], tag: 'feed-full' })
+  })
+
+  it('喂小鱼干（v7 模块五）：空袋/正常/溢出三条台词语义 + 专属「大口吃零食」动画', () => {
+    // 空袋：不扣、不加、不播动画
+    const empty = makeHarness({ seed: { snacks: 0 } })
+    empty.brain.act({ action: 'snack' })
+    expect(empty.says).toEqual([{ text: PET.SNACK_EMPTY[0], tag: 'snack-empty' }])
+    expect(empty.anims).toEqual([])
+    expect(empty.current().snacks).toBe(0)
+    // 正常：扣 1 根、饱腹 +PET_SNACK_GAIN、好感走 snack 那一档、专属动画
+    const ok = makeHarness({ seed: { snacks: 2, satiety: 50 } })
+    ok.brain.act({ action: 'snack' })
+    expect(ok.says).toEqual([{ text: PET.SNACK_OK[0], tag: 'snack-ok' }])
+    expect(ok.current().snacks).toBe(1)
+    expect(ok.current().satiety).toBe(50 + PET_SNACK_GAIN)
+    expect(ok.current().affection).toBe(PET_AFFECTION_INITIAL + PET_AFFECTION_RULES.snack.delta)
+    expect(ok.current().fedTotal).toBe(0) // 零嘴不记"喂过几碗饭"
+    // 随机池第 0 个（harness 默认 random=0）；池子内容另有一条专测
+    expect(ok.anims).toEqual([PET_DSH.ANIM.SNACK_POOL[0]])
+    // 溢出：饱腹 100 但好感没满 —— 扣零食、饱腹不变、主人点名原句、动画照播
+    const over = makeHarness({ seed: { snacks: 1, satiety: 100, affection: 50 } })
+    over.brain.act({ action: 'snack' })
+    expect(over.says).toEqual([{ text: PET.FEED_OVERFLOW, tag: 'snack-overflow' }])
+    expect(over.current().snacks).toBe(0)
+    expect(over.current().satiety).toBe(100)
+    expect(over.current().affection).toBe(PET_AFFECTION_INITIAL + PET_AFFECTION_RULES.snack.delta)
+    expect(over.anims).toEqual([PET_DSH.ANIM.SNACK_POOL[0]])
+    // 真吃不下：饱腹与好感都满 —— 拒，零食不动
+    const full = makeHarness({ seed: { snacks: 1, satiety: 100, affection: 100 } })
+    full.brain.act({ action: 'snack' })
+    expect(full.says).toEqual([{ text: PET.SNACK_FULL[0], tag: 'snack-full' }])
+    expect(full.current().snacks).toBe(1)
+  })
+
+  /**
+   * 2026-10-31 主人体验修正："点击喂零食时必须随机触发除了吃大白饭之外的其他
+   * 吃饭动作（比如吃零食、吃糖葫芦等）"。
+   *
+   * 这里不跑概率（跑一百次撞"没见过"只会变成偶发假红）—— 直接注入 random
+   * 逐个钉住池子里每个位置的可达性，再用越界值钉夹取。三条判据缺一不可：
+   *   ① 池子非空、无重复；
+   *   ② 排除吃白饭（喂零食抽到喂饭的专属画面 = 错位）；
+   *   ③ 每个下标都真的能被抽到（不是永远只取第 0 个）。
+   */
+  it('喂零食随机抽「吃什么」动作：池内每个都可达、排除吃白饭、脏随机源夹边界', () => {
+    const pool = PET_DSH.ANIM.SNACK_POOL
+    expect(pool.length).toBeGreaterThanOrEqual(2)
+    expect(new Set(pool).size).toBe(pool.length)
+    expect(pool).not.toContain(PET_DSH.ANIM.FEED)
+
+    for (let i = 0; i < pool.length; i++) {
+      const h = makeHarness({
+        seed: { snacks: 5, satiety: 10 },
+        deps: { random: () => i / pool.length }
+      })
+      h.brain.act({ action: 'snack' })
+      expect(h.anims, `random index ${i}`).toEqual([pool[i]])
+    }
+    // 脏源：负数 / ≥1 / NaN 都夹到池子两端，绝不点播一个不存在的动画名
+    for (const [r, want] of [
+      [-0.5, pool[0]],
+      [1, pool[pool.length - 1]],
+      [Number.NaN, pool[0]]
+    ] as Array<[number, string]>) {
+      const h = makeHarness({ seed: { snacks: 5, satiety: 10 }, deps: { random: () => r } })
+      h.brain.act({ action: 'snack' })
+      expect(h.anims, `random=${String(r)}`).toEqual([want])
+    }
+  })
+
+  it('饱腹衰减档位（v7）：relaxed 4 分钟才掉、strict 90 秒就掉；decay 动作只换档不重锚', () => {
+    // relaxed：3 分钟不够一个周期（normal 的 2 分钟此时早掉了）
+    const relaxed = makeHarness({ seed: { satiety: 80, lastDecayAt: iso(BASE_MS), decayTier: 'relaxed' } })
+    relaxed.advance(3 * 60_000)
+    relaxed.brain.tick()
+    expect(relaxed.brain.debugState().satiety).toBe(80)
+    relaxed.advance(60_001)
+    relaxed.brain.tick()
+    expect(relaxed.brain.debugState().satiety).toBe(79)
+    // strict：90 秒就掉（normal 要 2 分钟）
+    const strict = makeHarness({ seed: { satiety: 80, lastDecayAt: iso(BASE_MS), decayTier: 'strict' } })
+    strict.advance(90_001)
+    strict.brain.tick()
+    expect(strict.brain.debugState().satiety).toBe(79)
+    // decay 动作：换档落盘；饱腹度与锚点原样（改档不是"重新开始饿"）
+    const h = makeHarness({ seed: { satiety: 80, lastDecayAt: iso(BASE_MS) } })
+    const before = h.current()
+    h.brain.act({ action: 'decay', tier: 'relaxed' })
+    expect(h.current().decayTier).toBe('relaxed')
+    expect(h.current().satiety).toBe(before.satiety)
+    expect(h.current().lastDecayAt).toBe(before.lastDecayAt)
+    expect(h.saves.length).toBeGreaterThan(0) // 换档必须落盘（不然重启就丢）
+  })
+
+  /**
+   * 「不会饿（保持饱腹）」在行为大脑里的接线（2026-10-31 主人点名）。
+   * 引擎层（decayPet/holdPetFull）另有 shared 单测；这里钉的是**接线**：
+   *   · decay 动作切到 never 时 must 传 nowIso —— 不传的话设置页刚点完，
+   *     下一次 30 秒心跳之前界面上的饱腹度还是旧值（像开关没生效）；
+   *   · tick 几小时后不扣；
+   *   · 切回 normal 的第一拍不补扣（旧账不许在关掉"不会饿"时爆出来）。
+   */
+  it('不会饿（never）：decay 动作当场钉满、tick 不扣、切回 normal 不补扣旧账', () => {
+    // 故意给一个 90 秒前的旧锚点（小于 normal 的 2 分钟周期，装载时不会先
+    // 衰减并顺带改锚点）：切进 never 若偷偷重锚，下面的断言会红
+    const oldAnchor = iso(BASE_MS - 90_000)
+    const h = makeHarness({ seed: { satiety: 42, affection: 30, lastDecayAt: oldAnchor } })
+    h.brain.act({ action: 'decay', tier: 'never' })
+    expect(h.current().decayTier).toBe('never')
+    expect(h.current().satiety).toBe(100) // 当场满，不等心跳
+    expect(h.current().affection).toBe(30) // 好感不归这个开关管
+    expect(h.current().lastDecayAt).toBe(oldAnchor)
+
+    h.advance(5 * 60 * 60_000) // 五小时
+    h.brain.tick()
+    expect(h.brain.debugState().satiety).toBe(100)
+    // never 期间锚点原地不动（不跟着每拍 30 秒重锚 —— 那会让 pet.json 每拍写一次）
+    expect(h.current().lastDecayAt).toBe(oldAnchor)
+
+    h.brain.act({ action: 'decay', tier: 'normal' })
+    expect(h.current().lastDecayAt).toBe(iso(BASE_MS + 5 * 60 * 60_000)) // 切出时重锚
+    h.advance(60_000) // 一分钟 < normal 周期 2 分钟
+    h.brain.tick()
+    expect(h.brain.debugState().satiety).toBe(100) // 不补扣 never 期间那五小时
   })
 
   it('V1-45 双击死带：摸头后 600ms 到达的喂饭放行 —— 双击真的喂得进去', () => {
@@ -547,10 +685,47 @@ describe('学习发奖（grant）：饭盒 + 台词 + 连学三课彩蛋', () =>
     expect(ev[0].kind).toBe('lesson')
   })
 
-  it('review：+2 碗，另一句台词', () => {
+  it('review：+2 碗 + 1 根小鱼干（v7 模块五），一句话里两种货币都交代', () => {
     const h = makeHarness({})
     h.brain.act({ action: 'grant', reward: 'review' })
-    expect(h.says[0]).toEqual({ text: PET.GRANT_REVIEW(2), tag: 'grant-review' })
+    expect(h.current().rice).toBe(2)
+    expect(h.current().snacks).toBe(1)
+    expect(h.says[0]).toEqual({ text: PET.GRANT_REVIEW(2, 1), tag: 'grant-review' })
+  })
+
+  it('review 双货币被拦的三种组合：谁到账说谁，绝不报没发生的喜报', () => {
+    const day = petDayKey(iso(BASE_MS))
+    // 大白饭当日赚满、小鱼干照发（两条日账独立）
+    const riceCapped = makeHarness({
+      seed: { riceDay: { day, counts: { review: 99 } } }
+    })
+    riceCapped.brain.act({ action: 'grant', reward: 'review' })
+    expect(riceCapped.current().rice).toBe(0)
+    expect(riceCapped.current().snacks).toBe(1)
+    expect(riceCapped.says[0]).toEqual({
+      text: PET.GRANT_REVIEW_SNACK_ONLY(1, true),
+      tag: 'grant-review'
+    })
+    // 饭盒满仓、小鱼干照发（装不下 ≠ 今天赚满）
+    const riceFull = makeHarness({ seed: { rice: PET_RICE_MAX } })
+    riceFull.brain.act({ action: 'grant', reward: 'review' })
+    expect(riceFull.current().rice).toBe(PET_RICE_MAX)
+    expect(riceFull.current().snacks).toBe(1)
+    expect(riceFull.says[0]).toEqual({
+      text: PET.GRANT_REVIEW_SNACK_ONLY(1, false),
+      tag: 'grant-review'
+    })
+    // 大白饭照发、小鱼干当日攒满 —— 说"今天攒满了"，不说"收到小鱼干"
+    const snackCapped = makeHarness({
+      seed: { snackDay: { day, counts: { review: 99 } } }
+    })
+    snackCapped.brain.act({ action: 'grant', reward: 'review' })
+    expect(snackCapped.current().rice).toBe(2)
+    expect(snackCapped.current().snacks).toBe(0)
+    expect(snackCapped.says[0]).toEqual({
+      text: PET.GRANT_REVIEW_RICE_ONLY(2, true),
+      tag: 'grant-review'
+    })
   })
 
   it('满仓（V1-42/空转[1]）：说"饭盒满了"、不报假喜报；冷却内只说一次；earnedTotal/记忆照记', () => {
@@ -1599,6 +1774,7 @@ describe('vitals 推送（P3 ③④）：变才推、指纹去重、affection �
     expect(pushes[0]).toEqual({
       satiety: 50,
       rice: 2,
+      snacks: 0,
       mood: petMood(50),
       affection: PET_AFFECTION_INITIAL
     })
@@ -1612,6 +1788,7 @@ describe('vitals 推送（P3 ③④）：变才推、指纹去重、affection �
     expect(pushes[1]).toEqual({
       satiety: 50 + PET_FEED_GAIN,
       rice: 1,
+      snacks: 0,
       mood: petMood(50 + PET_FEED_GAIN),
       affection: PET_AFFECTION_INITIAL + PET_AFFECTION_RULES.feed.delta
     })
@@ -2100,11 +2277,19 @@ describe('同源闸门：动画名 vs 包内 config.jsonc、菜单标签 vs 补�
   const configPath = join(repo, 'node_modules', 'dsh-pet', 'assets', 'config.jsonc')
   const patchPath = join(repo, 'build', 'dshpet-patch.mjs')
 
-  it('PET_DSH.ANIM 的三个动画名逐字在包内 config.jsonc 里（拼错 = 点播静默丢失）', () => {
+  it('PET_DSH.ANIM 的每个动画名逐字在包内 config.jsonc 里（拼错 = 点播静默丢失）', () => {
     expect(existsSync(configPath), `missing donor file ${configPath}`).toBe(true)
     const src = readFileSync(configPath, 'utf8')
-    for (const [key, name] of Object.entries(PET_DSH.ANIM)) {
-      expect(src.includes(JSON.stringify(name)), `PET_DSH.ANIM.${key} -> ${name} not found in config.jsonc`).toBe(true)
+    for (const [key, value] of Object.entries(PET_DSH.ANIM)) {
+      // SNACK_POOL（2026-10-31）是数组：摊平后逐个校验，别让数组整体
+      // JSON.stringify 成一个查不到的串把整条误判成红。
+      const names = Array.isArray(value) ? value : [value]
+      for (const name of names) {
+        expect(
+          typeof name === 'string' && src.includes(JSON.stringify(name)),
+          `PET_DSH.ANIM.${key} -> ${String(name)} not found in config.jsonc`
+        ).toBe(true)
+      }
     }
     // 尺子自证：编造的动画名必须查不到（防文件读空/匹配恒真还全绿）
     expect(src.includes(JSON.stringify('no-such-animation-xyzzy'))).toBe(false)
@@ -2132,6 +2317,7 @@ describe('同源闸门：动画名 vs 包内 config.jsonc、菜单标签 vs 补�
       [PET.MENU.SETTINGS_WALL, "{ label: '" + PET.MENU.SETTINGS_WALL + "', action: 'miai-wallpaper' }"],
       [PET.MENU.SETTINGS_AI, "{ label: '" + PET.MENU.SETTINGS_AI + "', action: 'miai-ai' }"],
       [PET.MENU.FEED, "{ label: '" + PET.MENU.FEED + "', action: 'miai-feed' }"],
+      [PET.MENU.SNACK, "{ label: '" + PET.MENU.SNACK + "', action: 'miai-snack' }"],
       [PET.MENU.PAT, "{ label: '" + PET.MENU.PAT + "', action: 'miai-pat' }"],
       [PET.MENU.WHISPER, "{ label: '" + PET.MENU.WHISPER + "', action: 'whisper' }"],
       [PET.MENU.HOME, "{ label: '" + PET.MENU.HOME + "', action: 'home' }"],

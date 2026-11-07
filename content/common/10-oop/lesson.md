@@ -2,7 +2,7 @@
 id: common-10
 lang: common
 stage: 0
-order: 32
+order: 44
 title: 猫猫图纸与真猫——面向对象的第一次合成
 tags: [面向对象, 图纸与真猫]
 required: ["common-34"]

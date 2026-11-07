@@ -24,7 +24,7 @@ import { rewardImageUrl } from '../lib/gallery'
 import { refreshRewardOverrides } from '../lib/reward-overrides'
 import { buildWarehouseGrid, saveToastOf } from '../lib/warehouse'
 import { GALLERY, TITLE, WAREHOUSE } from '../lib/copy'
-import { PET_RICE_MAX } from '../../../shared/pet'
+import { PET_RICE_MAX, PET_SNACK_MAX } from '../../../shared/pet'
 import { toast } from '../components/base/toast'
 import MiButton from '../components/base/MiButton.vue'
 import MiCard from '../components/base/MiCard.vue'
@@ -53,6 +53,14 @@ const collectPercent = computed(() =>
  */
 const riceText = computed(() =>
   pet.snap === null ? '--' : WAREHOUSE.RICE_N(pet.snap.rice, PET_RICE_MAX)
+)
+
+/**
+ * 小鱼干袋子（v7 模块五，2026-10-31）：错题本复习完成进账，桌宠/总览可以喂它。
+ * 同饭碗口径 —— 快照没到画 '--'，不画一个假的 0。
+ */
+const snackText = computed(() =>
+  pet.snap === null ? '--' : WAREHOUSE.SNACK_N(pet.snap.snacks, PET_SNACK_MAX)
 )
 
 /** 图名只从 copy.ts 的 GALLERY.TITLES 取，认不出退 id（同 RewardDialog 的口径） */
@@ -127,6 +135,11 @@ onBeforeUnmount(() => {
         <div class="wh-stat">
           <span class="wh-stat-num">{{ riceText }}</span>
           <span class="wh-stat-label">{{ WAREHOUSE.RICE }}</span>
+        </div>
+        <!-- 小鱼干袋子（v7 模块五）：与白饭碗并列，各是各的账 -->
+        <div class="wh-stat">
+          <span class="wh-stat-num">{{ snackText }}</span>
+          <span class="wh-stat-label">{{ WAREHOUSE.SNACKS }}</span>
         </div>
         <!--
           全对次数（V1-38）：perfectPasses 一直在记，但此前**没有任何地方显示它**

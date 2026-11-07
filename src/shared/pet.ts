@@ -51,6 +51,7 @@ export type PetAffectionTier = 'cold' | 'familiar' | 'close' | 'like' | 'love'
  */
 export type PetAffectionKind =
   | 'feed'
+  | 'snack'
   | 'pat'
   | 'study'
   | 'challenge'
@@ -81,6 +82,17 @@ export type PetFace = PetMood | 'sleepy' | PetEmotion
 export type PetRewardKind = 'lesson' | 'review' | 'answer' | 'checkin'
 
 /**
+ * 小鱼干的来源（v7 加）。目前只有一条：**错题本复习完成**（含每日复习）
+ * 随大白饭一起发一根。
+ *
+ * 【为什么小鱼干要单独一份来源表】它是"零食"，不是"主粮"：大白饭是学习
+ * 换来的硬通货（能填饱肚子），小鱼干是复习顺手攒的零嘴（只能哄好感）。
+ * 合成一张表的话，"发饭"和"发零食"两条上限会互相借用对方的语义 ——
+ * 同 PET_RICE_DAILY_CAPS 与 PetRiceDay 拆两本账的理由。
+ */
+export type PetSnackKind = 'review'
+
+/**
  * 体型三档（= 精灵素材的高度 px，见 renderer/public/pet/*_<n>.png）。
  *
  * 【为什么只认这三个数】素材就出了三档（187/238/306）。允许任意数字的话，
@@ -88,6 +100,27 @@ export type PetRewardKind = 'lesson' | 'review' | 'answer' | 'checkin'
  * "图片加载失败"看起来和"桌宠没启动"一模一样。
  */
 export type PetSize = 187 | 238 | 306
+
+/**
+ * 饱腹度衰减档位（v7 加，2026-10-31 模块五）。
+ *
+ * 【为什么给人调这个】饿得快慢是**体感**，不是事实：有人希望桌宠像闹钟一样
+ * 一天催三回，有人只想让它安静陪着。三条轴里只有这一条可以给人调 ——
+ * 好感度**不许**调（见 PetAffectionKind 的注释）：饿是"今天吃没吃"，
+ * 好感是"认识多久、处得怎么样"，后者一调就变成了刷分。
+ *
+ * 档位只改**周期**（多少分钟 -1），不改"喂一碗 +20"与任何上限 ——
+ * 喂食的收益是契约，不能靠调档位白拿。
+ *
+ * 【never（v7 模块五补丁，2026-10-31 主人点名）】「不会饿（保持饱腹）」：
+ * 饱腹度**钉在满值**、永不下降（衰减与干活两条路都不扣，见 decayPet /
+ * exertPet）；好感度不在这个开关的管辖范围，仍按 `decayAffection`
+ * 每 24 小时 -1（只是不再触发"饿到 0"的额外扣分）。
+ * never 期间 `lastDecayAt` **原地不动** —— 心跳每 30 秒重锚会让 pet.json
+ * 每拍都写一次，纯空转；防"补扣旧账"改在**切出时**处理：setPetDecayTier
+ * 把锚点重设到当下，切回后的第一拍从新起点算。
+ */
+export type PetDecayTier = 'relaxed' | 'normal' | 'strict' | 'never'
 
 /** 记忆环里的事件类别（只收**值得回头提一句**的事，不是流水账） */
 export type PetMemoryKind = 'wrong' | 'lesson' | 'run-ok'
@@ -172,6 +205,18 @@ export interface PetRiceDay {
 }
 
 /**
+ * 小鱼干的"当日收入账"（pet.json v7 加，2026-10-31 模块五）。
+ * 与 PetRiceDay 同形不同账：rice 数"大白饭"，snack 数"小鱼干" ——
+ * 两条上限各自独立（一天复习 4 轮，每轮发 1 根，就是这里管的）。
+ */
+export interface PetSnackDay {
+  /** 自然日键（本地时区）。与今天对不上 = 新的一天，counts 归零 */
+  day: string
+  /** 当日各类零食奖已入账的次数（键 = PetSnackKind，normalize 收窄） */
+  counts: Record<string, number>
+}
+
+/**
  * pet.json 的根形状（也会被原地升级）。
  *
  * 【为什么 `version` 从第一天就有】独立文件不等于永远不用迁移：哪天要给
@@ -239,6 +284,19 @@ export interface PetState {
    * 到 PET_RICE_DAILY_CAPS 即拒发（grantPetRice 里收口，brain 明说一句）。
    */
   riceDay: PetRiceDay
+  /**
+   * 小鱼干（零食）0..999（整数，v7 加）。错题本复习完成时随大白饭一起发；
+   * 喂一根 = 少量饱腹 + 一笔好感（见 feedSnack）。它**不是**大白饭的别名：
+   * 大白饭填肚子、小鱼干哄心情，两条支出各记各的账。
+   */
+  snacks: number
+  /** 当日零食奖的入账计数（防刷，v7 加）。老文件没有 → 空账 */
+  snackDay: PetSnackDay
+  /**
+   * 饱腹度衰减档位（v7 加，模块五）：relaxed/normal/strict 三档，人可在设置卡里调。
+   * 只影响 decayPet 的周期（petDecayPeriods），不碰好感度、不碰喂食收益。
+   */
+  decayTier: PetDecayTier
 }
 
 /**
@@ -253,6 +311,8 @@ export interface PetVitals {
   mood: PetMood
   /** 好感度 0..100（P3 ④ 加）。渲染端的读数口之一（右键菜单/侧栏） */
   affection: number
+  /** 小鱼干余额（v7 加）。菜单与总览的「小鱼干」读数都看它 */
+  snacks: number
 }
 
 /** 推给渲染层的公开快照（不含 fedTotal/earnedTotal 这类账本细节） */
@@ -272,6 +332,10 @@ export interface PetSnapshot {
   runRewardsToday: number
   /** 好感度 0..100（P3 ④ 加）。侧栏爱心与将来的好感页看它 */
   affection: number
+  /** 小鱼干余额（v7 加）。总览/设置卡的零食读数看它 */
+  snacks: number
+  /** 饱腹度衰减档位（v7 加）。设置卡的三档选中态看它 */
+  decayTier: PetDecayTier
 }
 
 /**
@@ -321,11 +385,15 @@ export interface PetWorkRect {
 /** 渲染层 → 主进程的动作（pet:act 通道的载荷） */
 export type PetAction =
   | { action: 'feed' }
+  /** 喂一根小鱼干（v7 加）：只走零食账，不碰饭盒 */
+  | { action: 'snack' }
   | { action: 'pat' }
   | { action: 'grant'; reward: PetRewardKind; lessonId?: string }
   | { action: 'mode'; mode: PetMode }
   /** 设置卡选的体型（三档之一）。落盘后广播，宠物窗自己换素材 + 重报命中区 */
   | { action: 'size'; size: PetSize }
+  /** 设置卡选的饱腹度衰减档位（v7 加）：落盘后心跳按新周期走，不用重启 */
+  | { action: 'decay'; tier: PetDecayTier }
   | { action: 'pos'; x: number; y: number }
   | { action: 'show' }
   | { action: 'hide' }
@@ -420,11 +488,14 @@ export interface PetChatResult {
  * v5 → v6（2026-10-15 夜，V1-42）：根上多了 `riceDay`（大白饭的当日收入账 ——
  * 学习奖的日上限，防"改一点跑一次/连刷题"把饭盒轰穿）。同版还改了摸头的
  * 语义（V1-46：只涨好感、不再回饱食度），但那不涉及字段形状，老档照读。
+ * v6 → v7（2026-10-31，模块五）：根上多了 `snacks` / `snackDay`（小鱼干余额与
+ * 当日收入账）与 `decayTier`（饱腹度衰减档位）。老文件没有 → 零食 0 根起步、
+ * 空账、档位 normal（= 老行为，周期一个字节没变）。
  * 迁移策略 = **补默认值**：老文件没有的就是"刚认识"（空记忆、没情绪、
  * 默认体型 187、空运行账），不搬任何东西（normalizePetMemory 里是一份干净的新记忆，
- * 不是映射出来的假历史）。v5/v6 同理：没有好感/大白饭账 → 空账起步。
+ * 不是映射出来的假历史）。v5/v6/v7 同理：没有好感/大白饭账/零食账 → 空账起步。
  */
-export const PET_VERSION = 6
+export const PET_VERSION = 7
 
 /** 体型三档，由小到大（素材高度 px）。宠物窗的 SIZES 表与设置卡都看它 */
 export const PET_SIZES: readonly PetSize[] = [187, 238, 306]
@@ -463,6 +534,46 @@ export const PET_RICE_MAX = 999
  */
 export const PET_DECAY_ONLINE_PERIOD_MS = 2 * 60_000
 export const PET_DECAY_OFFLINE_PERIOD_MS = 6 * 60_000
+
+/**
+ * 四档衰减周期（v7 加，模块五；never 于同日补丁加，主人点名）。
+ * **normal 就是上面那两个老常量** —— 默认档一个字节都没变，升级不改变任何
+ * 既有手感。
+ *
+ *   relaxed：在线 4 分钟 -1（-15/小时）、离线 12 分钟 -1 —— 想让它安静陪着的人用；
+ *   normal ：在线 2 分钟 -1（-30/小时）、离线 6 分钟 -1 —— 拍板原值；
+ *   strict ：在线 90 秒 -1（-40/小时）、离线 4 分钟 -1 —— 想被催着学的用；
+ *   never  ：周期 Infinity —— 饱腹钉满、永不下降；好感仍按 24h -1 正常衰减。
+ *
+ * 【为什么只调周期，不调喂食收益/上限】喂一碗 +20、离线下限 20 是养成闭环的
+ * 契约（见 PET_FEED_GAIN / PET_OFFLINE_DECAY_FLOOR 的长注释）。让档位能改它们
+ * 等于给"把鱼喂到永不饿"开一条合法旁路，那口子比省下的几次点击值钱得多。
+ */
+export const PET_DECAY_TIERS: readonly PetDecayTier[] = ['relaxed', 'normal', 'strict', 'never']
+export const PET_DECAY_TIER_DEFAULT: PetDecayTier = 'normal'
+export const PET_DECAY_TIER_PERIODS: Record<
+  PetDecayTier,
+  { onlineMs: number; offlineMs: number }
+> = {
+  relaxed: { onlineMs: 4 * 60_000, offlineMs: 12 * 60_000 },
+  normal: { onlineMs: PET_DECAY_ONLINE_PERIOD_MS, offlineMs: PET_DECAY_OFFLINE_PERIOD_MS },
+  strict: { onlineMs: 90_000, offlineMs: 4 * 60_000 },
+  /**
+   * 不会饿：周期 = Infinity（数学上"永远等不到下一次 -1"）。
+   * `decayPet` 对非有限周期走 `holdPetFull` 分支（钉饱腹），而不是靠
+   * `Math.floor(x/∞)=0` 蒙混；切回普通档时由 setPetDecayTier 重设锚点，
+   * 不会补扣 never 期间的旧账。
+   */
+  never: { onlineMs: Number.POSITIVE_INFINITY, offlineMs: Number.POSITIVE_INFINITY }
+}
+
+/**
+ * 档位 → 周期（**唯一**换算口）。坏值回 normal 而不是抛：pet.json 是磁盘上的
+ * 一坨 JSON，手改坏一个枚举不该让桌宠起不来（同 normalizePetState 的口径）。
+ */
+export function petDecayPeriods(tier: PetDecayTier): { onlineMs: number; offlineMs: number } {
+  return PET_DECAY_TIER_PERIODS[tier] ?? PET_DECAY_TIER_PERIODS[PET_DECAY_TIER_DEFAULT]
+}
 
 /** 心情分档：≥66 元气、≥33 还行、低于 33 饿扁 */
 export const PET_MOOD_HAPPY_AT = 66
@@ -555,6 +666,12 @@ export const PET_AFFECTION_RULES: Record<
   { delta: number; cap: number }
 > = {
   feed: { delta: 2, cap: 3 },
+  /**
+   * 喂一根小鱼干（v7 加，模块五）：+2/日 6 —— 比喂饭的日上限高，因为它
+   * 本身是稀缺货币（一天复习最多赚 4 根），cap 只防"攒了几十根一口气喂爆"。
+   * 溢出喂食（饱了还吃）也记这一档：吃进嘴里的东西都算交情。
+   */
+  snack: { delta: 2, cap: 6 },
   pat: { delta: 1, cap: 5 },
   study: { delta: 2, cap: 6 },
   challenge: { delta: 3, cap: 1 },
@@ -609,6 +726,34 @@ export const PET_RICE_DAILY_CAPS: Record<PetRewardKind, number> = {
   review: 4,
   checkin: 1
 }
+
+/**
+ * 小鱼干（零食）的容量与收益（v7 加，模块五）。
+ *
+ * 【一根值多少】饱腹 +5（一碗大白饭 +20 的四分之一）：零嘴本来就填不满肚子，
+ * 它的主要作用是**哄好感**（+2，与喂饭同档）。两份收益都写进函数而不是
+ * 视图 —— 文案里的 +N 从这里传，绝不另写一份数字。
+ *
+ * 【上限 999】与饭盒同一个量级：一天最多赚 4 根，攒满要小半年；999 只是
+ * 防手滑/注入的钳位，不是设计目标。
+ */
+export const PET_SNACK_MAX = 999
+export const PET_SNACK_GAIN = 5
+
+/**
+ * 每类零食来源发几根（目前只有 review = 1 根）。
+ * 【为什么是"完成复习"而不是"复习全对"】错题本复习的意义是**把错题再过一遍**，
+ * 不是再考一次满分。全对已经有专属奖励（大白饭 2 碗 + 好感 +5，见 brain 的
+ * doGrant）；零嘴跟着"完成"走，让每次复习都有回响。
+ */
+export const PET_SNACK_REWARD: Record<PetSnackKind, number> = { review: 1 }
+
+/**
+ * 零食奖的日上限（**按笔数**，同 PET_RICE_DAILY_CAPS 的口径）：
+ * review 4 次/天 —— 一天复习 4 轮已经是很重的使用，再多就该去学新东西了。
+ * 满仓（999）那几笔不占额度（credits = 0 不计数，同 grantPetRice 的注释）。
+ */
+export const PET_SNACK_DAILY_CAPS: Record<PetSnackKind, number> = { review: 4 }
 
 /**
  * 跑通"他自己写的代码" → 1 碗。**故意不进 PET_REWARD_RICE 表**：那个表是
@@ -762,6 +907,15 @@ export function isPetRewardKind(v: unknown): v is PetRewardKind {
   return v === 'lesson' || v === 'review' || v === 'answer' || v === 'checkin'
 }
 
+/** 零食来源白名单（目前只有 review）：normalizePetSnackDay 与 grantPetSnack 共用 */
+export function isPetSnackKind(v: unknown): v is PetSnackKind {
+  return v === 'review'
+}
+
+export function isPetDecayTier(v: unknown): v is PetDecayTier {
+  return v === 'relaxed' || v === 'normal' || v === 'strict' || v === 'never'
+}
+
 export function isPetEmotion(v: unknown): v is PetEmotion {
   return v === 'tsundere' || v === 'excited'
 }
@@ -801,7 +955,10 @@ export function defaultPetState(nowIso: string): PetState {
     affection: PET_AFFECTION_INITIAL,
     lastAffectionAt: nowMs,
     affectionDay: defaultPetAffectionDay(nowIso),
-    riceDay: defaultPetRiceDay(nowIso)
+    riceDay: defaultPetRiceDay(nowIso),
+    snacks: 0,
+    snackDay: defaultPetSnackDay(nowIso),
+    decayTier: PET_DECAY_TIER_DEFAULT
   }
 }
 
@@ -883,6 +1040,31 @@ export function normalizePetAffectionDay(raw: unknown, nowIso: string): PetAffec
 /** 空白大白饭收入账：当天起算、什么都没入过 */
 export function defaultPetRiceDay(nowIso: string): PetRiceDay {
   return { day: dayKey(nowIso), counts: {} }
+}
+
+/** 空白零食账：当天起算、什么都没发过 */
+export function defaultPetSnackDay(nowIso: string): PetSnackDay {
+  return { day: dayKey(nowIso), counts: {} }
+}
+
+/**
+ * 清洗零食当日账（同 normalizePetRiceDay 的口径）：白名单 = isPetSnackKind，
+ * 条目级过滤，合法条目留下 —— 一条垃圾条目不该把"今天复习过 2 轮"整账清掉。
+ */
+export function normalizePetSnackDay(raw: unknown, nowIso: string): PetSnackDay {
+  const d = defaultPetSnackDay(nowIso)
+  if (!raw || typeof raw !== 'object') return d
+  const r = raw as Record<string, unknown>
+  const day = typeof r.day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(r.day) ? r.day : d.day
+  const counts: Record<string, number> = {}
+  if (r.counts && typeof r.counts === 'object') {
+    for (const [k, v] of Object.entries(r.counts as Record<string, unknown>)) {
+      if (!isPetSnackKind(k)) continue
+      const n = clampInt(finiteOr(v, 0), 0, 100_000)
+      if (n > 0) counts[k] = n
+    }
+  }
+  return { day, counts }
 }
 
 /**
@@ -968,7 +1150,11 @@ export function normalizePetState(raw: unknown, nowIso: string): PetState {
     lastAffectionAt: msOr(r.lastAffectionAt, d.lastAffectionAt),
     affectionDay: normalizePetAffectionDay(r.affectionDay, nowIso),
     // v5 → v6 同款：老文件没有 riceDay → 一本空大白饭账（当天起算）
-    riceDay: normalizePetRiceDay(r.riceDay, nowIso)
+    riceDay: normalizePetRiceDay(r.riceDay, nowIso),
+    // v6 → v7 同款：老文件没有零食三件套 → 0 根起步、空账、normal 档（= 老手感）
+    snacks: clampInt(finiteOr(r.snacks, d.snacks), 0, PET_SNACK_MAX),
+    snackDay: normalizePetSnackDay(r.snackDay, nowIso),
+    decayTier: isPetDecayTier(r.decayTier) ? r.decayTier : d.decayTier
   }
 }
 
@@ -1060,8 +1246,28 @@ export function snapshotOf(state: PetState, nowIso: string): PetSnapshot {
     x: state.x,
     y: state.y,
     runRewardsToday: state.runLedger.day === dayKey(nowIso) ? state.runLedger.count : 0,
-    affection: state.affection
+    affection: state.affection,
+    snacks: state.snacks,
+    decayTier: state.decayTier
   }
+}
+
+/**
+ * 「不会饿」的保持态：饱腹钉在满值。
+ *
+ * 【为什么不在这里动衰减锚点】never 期间心跳 30 秒一拍，若每拍都把
+ * lastDecayAt 跟到当下，tick 的"锚点变了就落盘"会让 pet.json 每 30 秒写一次
+ * —— 纯属为了一个不衰减的档位空转磁盘。补扣旧账的风险改在**切出时**处理：
+ * setPetDecayTier 从 never 切到普通档会把锚点重设到当下（brain 的 decay
+ * 动作传 nowIso），所以切回后的第一拍从新起点算。
+ *
+ * 【启动装载】decayPet 遇到 Infinity 周期直接返回本函数的结果，饱腹钉满；
+ * 锚点保持盘上原值，不影响任何读数。用户若一直待在 never，锚点冻着也无害。
+ *
+ * 坏时间（NaN）同样只钉饱腹：与 decayPet 的时钟回拨口径一致，不猜时间。
+ */
+export function holdPetFull(state: PetState, _nowIso: string): PetState {
+  return { ...state, satiety: PET_SATIETY_MAX }
 }
 
 /**
@@ -1092,6 +1298,15 @@ export function decayPet(
   const now = Date.parse(nowIso)
   const last = Date.parse(state.lastDecayAt)
   if (!Number.isFinite(now) || periodMs <= 0) return { state, dropped: 0 }
+  /**
+   * 不会饿档（周期 = Infinity）：饱腹钉满；锚点保持盘上原值（切出时由
+   * setPetDecayTier 重设，避免补扣 never 期间的旧账）。
+   * 【为什么在这里判而不是在 brain】启动装载与心跳都经这一个口 ——
+   * 两处各写一份"never 就跳过"的话，将来新增第三条减饱腹的路一定漏一处；
+   * 而且只跳过衰减、不重锚 lastDecayAt，切回普通档时会把这期间的旧账
+   * 一次性补扣掉（喂了一碗却见底，且无法归因）。
+   */
+  if (!Number.isFinite(periodMs)) return { state: holdPetFull(state, nowIso), dropped: 0 }
   if (!Number.isFinite(last) || last > now) {
     return { state: { ...state, lastDecayAt: nowIso }, dropped: 0 }
   }
@@ -1177,27 +1392,69 @@ export function addAffection(
 }
 
 /**
- * 喂一碗大白饭。两种喂不进：饭盒空（reason 'empty'）、已经吃饱（'full'）。
- * 都是 **ok:false 且原样返回** —— 调用方据 reason 出不同的台词。
+ * 喂一碗大白饭。三种喂不进：饭盒空（'empty'）、**吃饱且好感也满了**（'full'）、
+ * 其余情况正常（'ok'）。吃饱但好感没满走 **'overflow'**（v7 加，模块五）：
+ * 饭照扣、饱腹度不变、好感照加 —— 「已经饱了但是勉为其难继续吃吧喵」。
  *
- * 【为什么满了要拒喂】饱腹闭环的"满"是一个状态，不是数字封顶就完事：
- * 允许满碗继续喂，饭就被"存进"上限里白白蒸发（rice 扣了、satiety 没涨），
- * 玩家看到的是"我喂了，它没反应"。拒喂 + 一句"撑着呢"才是诚实反馈，
- * 也把大白饭的稀缺性还给学习（等饿了再喂 = 奖励有节奏）。
+ * 【为什么溢出还要扣饭】这是一笔**交易**，不是白送：用一碗大白饭换 2 点好感。
+ * 不扣饭的话，饱了以后连点就成了一台免费好感机（日上限 3 次也拦不住
+ * 攒了几十碗的人当场刷满）—— 大白饭的稀缺性必须留在每一笔上。
+ *
+ * 【为什么好感满了要拒喂】那是真正的"喂了没反应"：饭扣了、饱腹不动、好感
+ * 顶格 —— 玩家看到的正是 PetState 注释里点名要避免的那种假动作。拒喂 +
+ * 一句"撑着呢"才是诚实的收场。
+ *
+ * 【为什么 'full' 与 'overflow' 是两个值】调用方要各说各的话：前者是
+ * 「吃不下了」，后者是「饱了还要吃」。合成一个值的话，那句傲娇台词就没处挂。
  */
 export function feedPet(state: PetState): {
   state: PetState
   ok: boolean
-  reason: 'ok' | 'empty' | 'full'
+  reason: 'ok' | 'empty' | 'full' | 'overflow'
 } {
   if (state.rice <= 0) return { state, ok: false, reason: 'empty' }
-  if (state.satiety >= PET_SATIETY_MAX) return { state, ok: false, reason: 'full' }
+  if (state.satiety >= PET_SATIETY_MAX) {
+    if (state.affection >= PET_AFFECTION_MAX) return { state, ok: false, reason: 'full' }
+    return {
+      state: { ...state, rice: state.rice - 1, fedTotal: state.fedTotal + 1 },
+      ok: true,
+      reason: 'overflow'
+    }
+  }
   return {
     state: {
       ...state,
       rice: state.rice - 1,
       satiety: Math.min(PET_SATIETY_MAX, state.satiety + PET_FEED_GAIN),
       fedTotal: state.fedTotal + 1
+    },
+    ok: true,
+    reason: 'ok'
+  }
+}
+
+/**
+ * 喂一根小鱼干（v7 加，模块五）。形状照抄 feedPet，只有两处不同：
+ *   · 扣的是 snacks 不是 rice，饱腹只 +PET_SNACK_GAIN（零嘴填不饱肚子）；
+ *   · 不计 fedTotal（那是"喂过几碗**饭**"的纪念数字，零嘴不算）。
+ * 『饱了但好感没满 → 照吃（overflow）』『饱了且好感满 → 拒（full）』
+ * 两条口径与 feedPet **逐字一致**：两个喂食口的语义不许分叉。
+ */
+export function feedSnack(state: PetState): {
+  state: PetState
+  ok: boolean
+  reason: 'ok' | 'empty' | 'full' | 'overflow'
+} {
+  if (state.snacks <= 0) return { state, ok: false, reason: 'empty' }
+  if (state.satiety >= PET_SATIETY_MAX) {
+    if (state.affection >= PET_AFFECTION_MAX) return { state, ok: false, reason: 'full' }
+    return { state: { ...state, snacks: state.snacks - 1 }, ok: true, reason: 'overflow' }
+  }
+  return {
+    state: {
+      ...state,
+      snacks: state.snacks - 1,
+      satiety: Math.min(PET_SATIETY_MAX, state.satiety + PET_SNACK_GAIN)
     },
     ok: true,
     reason: 'ok'
@@ -1263,6 +1520,40 @@ export function grantPetRice(
 }
 
 /**
+ * 学习动作发小鱼干（v7 加，模块五）。形状照抄 grantPetRice：
+ * gained = 名义根数、credited = **真进袋**的根数（999 封顶时可能 0）、
+ * capped = 当日该来源已发满（这笔不计数、不落袋，调用方必须明说）。
+ *
+ * 【为什么不复用小金库（rice）】大白饭是硬通货、有小鱼干没有的上行账本
+ * （rice-journal）。两样东西混一个计数器，省下的是十几行代码，赔上的是
+ * "哪笔来自学习、哪笔来自复习"说不清 —— 账本对不上的时候没人查得动。
+ */
+export function grantPetSnack(
+  state: PetState,
+  kind: PetSnackKind,
+  nowIso: string
+): { state: PetState; gained: number; credited: number; capped: boolean } {
+  const gained = PET_SNACK_REWARD[kind]
+  const day = dayKey(nowIso)
+  const counts = state.snackDay.day === day ? state.snackDay.counts : {}
+  const used = clampInt(finiteOr(counts[kind], 0), 0, 100_000)
+  const cap = PET_SNACK_DAILY_CAPS[kind]
+  if (used >= cap) return { state, gained, credited: 0, capped: true }
+  const credited = Math.min(PET_SNACK_MAX, state.snacks + gained) - state.snacks
+  if (credited <= 0) return { state, gained, credited: 0, capped: false }
+  return {
+    state: {
+      ...state,
+      snacks: state.snacks + credited,
+      snackDay: { day, counts: { ...counts, [kind]: used + 1 } }
+    },
+    gained,
+    credited,
+    capped: false
+  }
+}
+
+/**
  * 跑通"他自己写的代码"发一碗（指纹去重 + 日上限的**唯一**实现）。
  *
  * 【判定为真需要证据】fingerprint 必须是合法指纹（渲染层比对示例后、
@@ -1305,10 +1596,18 @@ export function grantRunReward(
  * "饿扁"是一种状态，不是一个会掉进负数的计数器（负数会让所有 >=0 的比较
  * 悄悄错位）。cost 非正或已饿扁时**原样返回**（零变化不动引用，方便调用方
  * 用 `next !== prev` 判"要不要落盘"）。
+ *
+ * 【不会饿档不扣（2026-11-01 修）】never 档承诺"饱腹度永不下降"，衰减那条
+ * 路已由 decayPet 的 Infinity 分支挡住；干活是**第二条**减饱腹的路 ——
+ * 跑腿（brain）与聊天（petChatCommit，桌宠/旧版 pet 模块两处）都经这里。
+ * 若只挡衰减，never 下跑一次腿会从 100 掉到 99，直到下一拍 30 秒心跳
+ * 才被 holdPetFull 钉回去：设置页写着"永远保持吃饱"，用户当场看到的却是
+ * 掉了一点，而且掉得毫无规律。判在这个唯一入口，将来新增第三条路也不会漏。
  */
 export function exertPet(state: PetState, cost: number): PetState {
   const c = Math.max(0, Math.round(cost))
   if (c === 0 || state.satiety <= 0) return state
+  if (state.decayTier === 'never') return state
   return { ...state, satiety: Math.max(0, state.satiety - c) }
 }
 
@@ -1319,6 +1618,33 @@ export function setPetMode(state: PetState, mode: PetMode): PetState {
 /** 换体型（设置卡的三个按钮）。广播后宠物窗自己换素材、重报命中区 */
 export function setPetSize(state: PetState, size: PetSize): PetState {
   return { ...state, size }
+}
+
+/**
+ * 换饱腹度衰减档位（v7 加，模块五）。普通三档**只是换周期**：当前饱腹度、
+ * 衰减锚点一个字节都不动 —— 改档位不是"重新开始饿"，下一拍心跳按新周期继续算。
+ *
+ * 两个例外都围绕 `never`：
+ *   ① 切**进** never：饱腹立即钉满（主人点名「选择此模式后永远保持吃饱状态」
+ *      —— 等到下一拍 30 秒心跳才满，设置页切完的那一眼会看到数值没动，像没生效）。
+ *      never 期间心跳不衰减，锚点原地不动（理由见 holdPetFull）。
+ *   ② 切**出** never：调用方给了 nowIso 就把锚点重设到当下。否则 first tick
+ *      会按 never 开始时冻住的旧锚点补扣整段旧账（3 天 = 一次掉 200+，被
+ *      floor 兜到 0）—— 用户看到的是"刚关掉不会饿就饿死了"。brain 的 decay
+ *      动作两条都传 nowIso；不传的旧调用（单测）保持纯换档语义。
+ */
+export function setPetDecayTier(
+  state: PetState,
+  tier: PetDecayTier,
+  nowIso?: string
+): PetState {
+  const next = { ...state, decayTier: tier }
+  if (tier === 'never') return holdPetFull(next, nowIso ?? '')
+  const now = nowIso === undefined ? Number.NaN : Date.parse(nowIso)
+  if (state.decayTier === 'never' && Number.isFinite(now)) {
+    return { ...next, lastDecayAt: nowIso as string }
+  }
+  return next
 }
 
 export function setPetPos(state: PetState, x: number, y: number): PetState {
@@ -1470,6 +1796,7 @@ export function parsePetAction(raw: unknown): PetAction | null {
   const r = raw as Record<string, unknown>
   switch (r.action) {
     case 'feed':
+    case 'snack':
     case 'pat':
     case 'show':
     case 'hide':
@@ -1495,6 +1822,10 @@ export function parsePetAction(raw: unknown): PetAction | null {
       return isPetMode(r.mode) ? { action: 'mode', mode: r.mode } : null
     case 'size':
       return isPetSize(r.size) ? { action: 'size', size: r.size } : null
+    case 'decay':
+      // 档位白名单：relaxed/normal/strict 之外（含缺失）→ 整条作废。
+      // 与 size 同口径 —— 三选一的设置没有"能没有、有就用"的余地
+      return isPetDecayTier(r.tier) ? { action: 'decay', tier: r.tier } : null
     case 'rua':
       return { action: 'rua' }
     case 'wrong': {

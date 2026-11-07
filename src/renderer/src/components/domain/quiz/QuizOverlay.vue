@@ -6,6 +6,7 @@ import { useChallengeStore } from '../../../stores/challenge'
 import { useSettingsStore } from '../../../stores/settings'
 import { usePetStore } from '../../../stores/pet'
 import { useProgressStore } from '../../../stores/progress'
+import { useAccountStore } from '../../../stores/account'
 import MiProgressBar from '../../base/MiProgressBar.vue'
 import MiButton from '../../base/MiButton.vue'
 import MiModal from '../../base/MiModal.vue'
@@ -36,11 +37,23 @@ const settings = useSettingsStore()
 const pet = usePetStore()
 // 课后练习结果页的自动已学回写（V2-14）走它 —— 判据与理由见下面 finished 的 watcher
 const progress = useProgressStore()
+// 结果页的「分数去哪了」要照实说：未登录 / 未激活时结算单只排在本机队列里，
+// 不能写「已计入日榜」（2026-10-31 自检 P1）。
+const acct = useAccountStore()
 // 结果页两颗去处按钮（去错题本 V1-22 / 去排行榜 V1-25）跳路由用
 const router = useRouter()
 
 const isChallenge = computed(() => quiz.session?.mode === 'challenge')
 const isReview = computed(() => quiz.session?.mode === 'review')
+
+/**
+ * 积分行的去向句（2026-10-31 自检 P1）。上行 runner 在「盒还是客人位」
+ * （未登录或未激活）时整轮跳过，这时说「已计入日榜」是一句假话 ——
+ * 收工单确实排进了本机队列，但还没到服务端。
+ */
+const boardClaim = computed(() =>
+  acct.signedIn && acct.activated ? CHALLENGE.POINTS_TO_BOARD : CHALLENGE.POINTS_TO_BOARD_PENDING
+)
 
 /**
  * 结果页**不给「再来一遍」**的模式。
@@ -91,6 +104,24 @@ const elapsedText = computed(() => {
 })
 
 const verdict = computed(() => QUIZ.resultOf(total.value === 0 ? 0 : quiz.correctCount / total.value, total.value))
+
+/**
+ * 读屏播报（2026-10-31 自检 P2）。
+ *
+ * 【为什么单独做一条 live region 而不是给解析卡加 aria-live】解析卡是
+ * `v-if` 现挂现卸的：读屏对「整块新插入的节点」是否播报并不保证（各屏幕
+ * 阅读器实现不一）。live region 必须**一直挂在树上**、靠文本变化触发 ——
+ * 所以这里是一条常驻的视觉隐藏节点，文本在「答对/答错」与「交卷总分」之间切换。
+ *
+ * 【播报什么】判分那一刻播对错（和解析卡标题同一句）；交卷后播得分 + 评语
+ * （`QUIZ.score` + `verdict.text`，与结果页可见文字逐字相同）。其余时刻空串，
+ * 空串->文字的变化才是读屏要报的那一下。
+ */
+const liveMessage = computed(() => {
+  if (finished.value) return `${QUIZ.score(quiz.correctCount, total.value)} ${verdict.value.text}`
+  if (quiz.canShowExplanation) return quiz.isCurrentCorrect ? QUIZ.CORRECT : QUIZ.WRONG
+  return ''
+})
 
 /**
  * 挑战里**这一题答错了** —— 也就是「答错即停」落刀的那一刻（2026-10-10 改版）。
@@ -474,6 +505,11 @@ function confirmExit() {
           aria-modal="true"
           :aria-label="QUIZ.DIALOG_LABEL"
         >
+          <!-- 读屏播报区（2026-10-31 自检 P2）：常驻、视觉隐藏，见 liveMessage 的注释。
+               别挪走也别加 v-if —— live region 要先在树上，内容变化才会被念出来。 -->
+          <div class="quiz-live" role="status" aria-live="polite" aria-atomic="true">
+            {{ liveMessage }}
+          </div>
           <!-- 答对回执（V2-22）：饭盒真涨了一碗才闪（判据在 stores/quiz.ts）。
                :key 逐次换新 → 连对时每枚都从头播；aria-hidden 因为它只是
                把刚落下的账念一声，读屏用户从总览页的余额读同一件事。 -->
@@ -527,7 +563,7 @@ function confirmExit() {
             <!-- 积分行下面接一句去向（V1-25）：攒分的地方（这里）和看分的地方
                  （排行榜）此前互不指路，点按钮之前先说清分数落到了哪 -->
             <div v-if="challengePoints" class="result-board">
-              {{ CHALLENGE.POINTS_TO_BOARD }}
+              {{ boardClaim }}
             </div>
             <!-- 错题本毕业行（V1-26）：只在 wrong 模式真毕业过才出现 -->
             <div v-if="graduatedCount > 0" class="result-graduated">
@@ -842,6 +878,22 @@ function confirmExit() {
 .quiz-panel.mi-zoom-layer {
   max-height: min(86vh, calc(100vh / var(--mi-zoom) - 16px));
   max-width: min(92vw, calc(100vw / var(--mi-zoom) - 16px));
+}
+/*
+ * 读屏专用播报区：视觉上 1px 且裁掉，但仍在可访问性树里（不能 display:none /
+ * visibility:hidden —— 那会把 live region 一起摘掉，读屏就永远不会播报）。
+ * 写法就是通行的 visually-hidden 配方，别用 text-indent:-9999px 之类的替代。
+ */
+.quiz-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 .quiz-head {
   display: flex;

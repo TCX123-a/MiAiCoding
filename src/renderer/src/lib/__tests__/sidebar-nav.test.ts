@@ -38,15 +38,16 @@ describe('NAV_GROUP_IDS：键表', () => {
 })
 
 describe('groupOfRoute：路由 → 组', () => {
-  it('复习与挑战组：review / challenge / favorites / warehouse', () => {
+  it('复习与挑战组：review / challenge / favorites（仓库 v7 模块五已挪走）', () => {
     expect(groupOfRoute('review')).toBe('review')
     expect(groupOfRoute('challenge')).toBe('review')
     expect(groupOfRoute('favorites')).toBe('review')
-    expect(groupOfRoute('warehouse')).toBe('review')
+    expect(groupOfRoute('warehouse')).toBe('me')
   })
 
-  it('个人中心组：overview / leaderboard / login', () => {
+  it('个人中心组：overview / warehouse / leaderboard / login', () => {
     expect(groupOfRoute('overview')).toBe('me')
+    expect(groupOfRoute('warehouse')).toBe('me')
     expect(groupOfRoute('leaderboard')).toBe('me')
     expect(groupOfRoute('login')).toBe('me')
   })

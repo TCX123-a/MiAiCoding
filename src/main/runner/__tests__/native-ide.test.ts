@@ -29,7 +29,7 @@
  * 要么 `fakeExe()` 现造的**空文件**（名字对就行 —— 编码判定只认 exe 名，
  * spawn 是假的，不会真跑它）。
  */
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs'
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import iconv from 'iconv-lite'
@@ -167,6 +167,45 @@ describe('writeCodeToFile：文件名和运行路径同源', () => {
     expect(readFileSync(written.file).equals(Buffer.from(code, 'utf8'))).toBe(true)
   })
 
+  it('java 多 public 类 → 每个类一个文件，返回入口文件（v7 模块六）', () => {
+    const code = `public class Person {
+  String name = "大肥鱼";
+}
+
+public class Test {
+  public static void main(String[] args) { }
+}
+`
+    const written = writeCodeToFile('java', code, 'utf8')!
+    createdDirs.push(written.dir)
+    expect(written.file).toBe(join(written.dir, 'Test.java'))
+    expect(readdirSync(written.dir).sort()).toEqual(['Person.java', 'Test.java'])
+    const testSrc = readFileSync(join(written.dir, 'Test.java'), 'utf8')
+    const personSrc = readFileSync(join(written.dir, 'Person.java'), 'utf8')
+    expect(testSrc).toContain('public class Test')
+    // 两个文件内容不串味：同一个 public 类不能出现在两个文件里
+    expect(testSrc).not.toContain('class Person')
+    expect(personSrc).toContain('public class Person')
+    expect(personSrc).not.toContain('class Test')
+  })
+
+  it('java 多文件时每个文件都按同一编码落盘（GBK，不是只编入口那一个）', () => {
+    const code = `public class Person {
+  String name = "大肥鱼";
+}
+
+public class Test {
+  public static void main(String[] args) { }
+}
+`
+    const written = writeCodeToFile('java', code, 'gbk')!
+    createdDirs.push(written.dir)
+    const raw = readFileSync(join(written.dir, 'Person.java'))
+    expect(iconv.decode(raw, 'gbk')).toContain('大肥鱼')
+    // 反证：真按 GBK 写了（UTF-8 字节序列不该出现在里面）
+    expect(raw.indexOf(Buffer.from('大肥鱼', 'utf8'))).toBe(-1)
+  })
+
   it('每次调用一个**全新**目录（两次导出不互相覆盖）', () => {
     const a = writeCodeToFile('c', 'a', 'utf8')!
     const b = writeCodeToFile('c', 'b', 'utf8')!
@@ -222,7 +261,8 @@ describe('openInNativeIde：不是每种失败都叫「失败」', () => {
     const deps = { readConfig: () => configWithIde('c', path), spawn: fake.spawnImpl }
 
     expect((await openInNativeIde('c', 'int main(){}', deps)).ok).toBe(false)
-    path = process.execPath // 一定存在的真 exe（这里只做 existsSync 判定，不会真跑它）
+    // 白名单里的真文件（v13 起 spawn 前要过 ideNameOf；见 openInNativeIde 的自检注释）
+    path = fakeExe('Code.exe')
     const r = await openInNativeIde('c', 'int main(){}', deps)
     expect(r.ok, '改完路径还走旧配置 —— readConfig 被吃成了快照').toBe(true)
     if (r.ok) createdDirs.push(join(r.path, '..'))
@@ -231,8 +271,9 @@ describe('openInNativeIde：不是每种失败都叫「失败」', () => {
   it('★ 起得来 → ok，路径指向真文件，spawn 参数的每一条都对得上', async () => {
     const fake = fakeSpawn('spawn')
     const code = 'int main() { /* 中文 */ return 0; }'
+    const exe = fakeExe('Code.exe')
     const r = await openInNativeIde('c', code, {
-      readConfig: () => configWithIde('c', process.execPath),
+      readConfig: () => configWithIde('c', exe),
       spawn: fake.spawnImpl
     })
 
@@ -240,13 +281,12 @@ describe('openInNativeIde：不是每种失败都叫「失败」', () => {
     if (!r.ok) return
     createdDirs.push(join(r.path, '..'))
     expect(existsSync(r.path), '返回的路径上没有文件 —— IDE 打开会报「文件不存在」').toBe(true)
-    // process.execPath（node.exe）在白名单外 → 编码按语言回退：c → GBK。
-    // 按 GBK 读回必须与原文一致（"白名单外的回退"见下面专门的一组用例）。
-    expect(iconv.decode(readFileSync(r.path), 'gbk')).toBe(code)
+    // Code.exe 在画像表里认作 VS Code → UTF-8（编码跟随目标程序的专门一组在下面）
+    expect(readFileSync(r.path, 'utf8')).toBe(code)
 
     expect(fake.calls).toHaveLength(1)
     const call = fake.calls[0]
-    expect(call.exe).toBe(process.execPath)
+    expect(call.exe).toBe(exe)
     // 数组参数直传、只有文件这一个参数 —— 加了别的东西（比如 shell 包装）就更易出错
     expect(call.args).toEqual([r.path])
     // detached + ignore：IDE 独立于 Electron 存活；windowsHide 不弹多余控制台
@@ -263,7 +303,7 @@ describe('openInNativeIde：不是每种失败都叫「失败」', () => {
     // 的实现也能骗过上面那条 ok 用例。
     const fake = fakeSpawn('error', new Error('spawn EACCES'))
     const r = await openInNativeIde('c', 'int main(){}', {
-      readConfig: () => configWithIde('c', process.execPath),
+      readConfig: () => configWithIde('c', fakeExe('Code.exe')),
       spawn: fake.spawnImpl
     })
     expect(r.ok).toBe(false)
@@ -275,7 +315,7 @@ describe('openInNativeIde：不是每种失败都叫「失败」', () => {
   it('java 定不出类名 → failed，且**不 spawn**', async () => {
     const fake = fakeSpawn('spawn')
     const r = await openInNativeIde('java', 'int x = 1;', {
-      readConfig: () => configWithIde('java', process.execPath),
+      readConfig: () => configWithIde('java', fakeExe('idea64.exe')),
       spawn: fake.spawnImpl
     })
     expect(r.ok).toBe(false)
@@ -286,7 +326,7 @@ describe('openInNativeIde：不是每种失败都叫「失败」', () => {
   it('spawn **同步抛**（参数类型错这类）→ 也落成 failed，绝不把异常冒出去', async () => {
     // 失败即值：调用点（IPC handler）那句 await 上永远不该见到异常。
     const r = await openInNativeIde('c', 'int main(){}', {
-      readConfig: () => configWithIde('c', process.execPath),
+      readConfig: () => configWithIde('c', fakeExe('Code.exe')),
       spawn: () => {
         throw new Error('synchronous boom')
       }
@@ -300,13 +340,28 @@ describe('openInNativeIde：不是每种失败都叫「失败」', () => {
 
   it('配置里路径带首尾空白 → trim 之后再用（照写盘时的规矩）', async () => {
     const fake = fakeSpawn('spawn')
+    const exe = fakeExe('Code.exe')
     const r = await openInNativeIde('c', 'int main(){}', {
-      readConfig: () => configWithIde('c', `  ${process.execPath}  `),
+      readConfig: () => configWithIde('c', `  ${exe}  `),
       spawn: fake.spawnImpl
     })
     expect(r.ok).toBe(true)
     if (r.ok) createdDirs.push(join(r.path, '..'))
-    expect(fake.calls[0].exe).toBe(process.execPath)
+    expect(fake.calls[0].exe).toBe(exe)
+  })
+
+  it('★ 路径在、但不在 IDE 白名单 → **unsupported**，一个进程都不起', async () => {
+    // 【2026-10-31 自检 P2】渲染层能经 config:save 往 nativeIdePaths 写任意
+    // 路径；若 spawn 前只做 existsSync，这条通道就是「任意程序执行」。
+    // 白名单 = shared/ide-profiles 的 IDE_EXE_NAMES（自动检测只会产出这些）。
+    const fake = fakeSpawn('spawn')
+    const exe = fakeExe('cmd.exe')
+    const r = await openInNativeIde('c', 'int main(){}', {
+      readConfig: () => configWithIde('c', exe),
+      spawn: fake.spawnImpl
+    })
+    expect(r).toEqual({ ok: false, reason: 'unsupported', detail: exe })
+    expect(fake.calls, '白名单外的 exe 被真 spawn 了 —— 任意程序执行边界没关上').toHaveLength(0)
   })
 })
 
@@ -350,21 +405,17 @@ describe('openInNativeIde：写盘编码跟随**目标程序**，不跟语言', 
     expect(readFileSync(r.path, 'utf8'), 'VS Code 按 UTF-8 读，写出的必须逐字节是 UTF-8').toBe(code)
   })
 
-  it('★ 白名单外的程序（用户手挑的任意 exe）→ 按语言回退，和升级前逐字节一致', async () => {
-    // 认不出就回退到 v8 的规则（c/cpp→GBK 其余 UTF-8）——「不比现在差」的承诺
-    // 落在这一条上。回退方向也钉住：不是一律 UTF-8。
+  it('★ 白名单外的程序 → **unsupported**（编码回退只走导出那条不 spawn 的路）', async () => {
+    // 2026-10-31 自检 P2 起，openInNativeIde 不再拉起白名单外的程序；
+    // 「认不出就按语言回退」这条画像规则只剩导出在用 —— 见下一组用例。
     const fake = fakeSpawn('spawn')
-    const code = 'int main() { /* 中文 */ return 0; }'
-    const r = await openInNativeIde('c', code, {
-      readConfig: () => configWithIde('c', fakeExe('my-editor.exe')),
+    const exe = fakeExe('my-editor.exe')
+    const r = await openInNativeIde('c', 'int main() { /* 中文 */ return 0; }', {
+      readConfig: () => configWithIde('c', exe),
       spawn: fake.spawnImpl
     })
-    expect(r.ok).toBe(true)
-    if (!r.ok) return
-    createdDirs.push(join(r.path, '..'))
-    const raw = readFileSync(r.path)
-    expect(raw.equals(Buffer.from(code, 'utf8'))).toBe(false)
-    expect(iconv.decode(raw, 'gbk')).toBe(code)
+    expect(r).toEqual({ ok: false, reason: 'unsupported', detail: exe })
+    expect(fake.calls).toHaveLength(0)
   })
 
   it('★ c 配了 Dev-C++、java 空白 → java 仍 **unconfigured**（四键各取各的，绝不串语言）', async () => {
@@ -392,6 +443,22 @@ describe('exportCodeToFile：只写盘，成败都是值', () => {
     createdDirs.push(join(r.path, '..'))
     expect(existsSync(r.path)).toBe(true)
     expect(iconv.decode(readFileSync(r.path), 'gbk')).toBe('#include <iostream> // 中文')
+  })
+
+  it('★ 白名单外的程序（用户手填的任意 exe）→ 按语言回退，和升级前逐字节一致', () => {
+    // 认不出就回退到 v8 的规则（c/cpp→GBK 其余 UTF-8）——「不比现在差」的承诺
+    // 落在这一条上。回退方向也钉住：不是一律 UTF-8。
+    // 导出不 spawn，所以白名单管不到这里（也正因如此，这条回退规则仍有用武之地）。
+    const code = 'int main() { /* 中文 */ return 0; }'
+    const r = exportCodeToFile('c', code, {
+      readConfig: () => configWithIde('c', fakeExe('my-editor.exe'))
+    })
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    createdDirs.push(join(r.path, '..'))
+    const raw = readFileSync(r.path)
+    expect(raw.equals(Buffer.from(code, 'utf8'))).toBe(false)
+    expect(iconv.decode(raw, 'gbk')).toBe(code)
   })
 
   it('★ 该语言配了 VS Code → 导出也跟它走 UTF-8（不留「打开对了、导出还是旧编码」的半修）', () => {

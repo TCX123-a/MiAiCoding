@@ -36,9 +36,9 @@ export function groupOfRoute(name: string | null | undefined): NavGroupId {
     case 'review':
     case 'challenge':
     case 'favorites':
-    case 'warehouse':
       return 'review'
     case 'overview':
+    case 'warehouse': // v7 模块五（2026-10-31）：仓库挪进个人中心组（主人点名）
     case 'leaderboard':
     case 'login':
       return 'me'

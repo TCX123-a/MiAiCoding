@@ -28,6 +28,10 @@ describe('normalizeFill 填空归一化', () => {
   it('中文不受影响', () => {
     expect(normalizeFill(' 小鱼干 ')).toBe('小鱼干')
   })
+  it('全角字母/数字/空格折成半角（新手输入法误触不判错）', () => {
+    expect(normalizeFill('　１２３　')).toBe('123')
+    expect(normalizeFill('ｐｒｉｎｔ')).toBe('print')
+  })
 })
 
 describe('gradeFill 填空判分', () => {
@@ -85,6 +89,12 @@ describe('gradeCode 代码题判分', () => {
   it('只打了换行不算作答（空作答判错那条对多行同样成立）', () => {
     expect(gradeCode('\r\n', 'x')).toBe(false)
     expect(gradeCode('\n\n', 'x')).toBe(false)
+  })
+  it('多打/少打空格不判错（宽松档），但空行与大小写仍算数', () => {
+    expect(gradeCode('a  b', 'a b')).toBe(true)
+    expect(gradeCode('   a\n  bb', 'a\nbb')).toBe(true)
+    expect(gradeCode('a\n\nb', 'a\nb')).toBe(false)
+    expect(gradeCode('Hello', 'hello')).toBe(false)
   })
 })
 
@@ -217,6 +227,20 @@ describe('gradeQuestion 分发：codefill', () => {
   it('复用 fill 的归一规则：大小写不敏感、容忍两端空白', () => {
     const q2: CodeFillQuestion = { ...q, code: '____', blanks: [{ answer: 'Print' }] }
     expect(gradeCodeFill('  print ', q2)).toBe(true)
+  })
+
+  it('**行首空白有意义的空位**（Python 缩进）按层级严格比', () => {
+    // 这个空位挖的就是缩进本身：答案是 4 个空格开头的 `    print`。
+    // 宽松规则会把 4 空格和 2 空格折成同一个串 —— 那等于把缩进层级抹平，
+    // 学员填错层级还判对。所以「答案以空白开头」的空位走保留缩进的那一档。
+    const indent: CodeFillQuestion = {
+      ...q,
+      code: 'def f():\n____print(1)',
+      blanks: [{ answer: '    print' }]
+    }
+    expect(gradeCodeFill('    print', indent)).toBe(true)
+    expect(gradeCodeFill('  print', indent)).toBe(false)
+    expect(gradeCodeFill('\tprint', indent)).toBe(true) // Tab 按 4 空格算
   })
 
   it('每个空各认各的 accept', () => {

@@ -440,7 +440,9 @@ export const useChallengeStore = defineStore('challenge', () => {
 
     // 关着「AI 动态出题」或没配 Key 就直接抽本地的，**不算「退回」** ——
     // 压根没试过 AI，没什么好退回的。开关默认关：老用户升级后行为逐字节不变。
-    if (!settings.config.ai.dynamicEnabled || !settings.config.ai.hasKey) {
+    // ready = 专属模式有 Key，或免费公开池模式（不需要 Key）。
+    // 直接看 hasKey 会把「免费池开着、动态出题永远不生效」变成一个静默 bug。
+    if (!settings.config.ai.dynamicEnabled || !settings.config.ai.ready) {
       return { kind: 'ok', questions: localToChallenge(local), source: 'local' }
     }
 
@@ -662,7 +664,7 @@ export const useChallengeStore = defineStore('challenge', () => {
     if (s.mode !== 'challenge' || s.lessonId !== CHALLENGE_SESSION_ID) return
     if (s.finishedAt) return
     if (refilling) return
-    if (!settings.config.ai.dynamicEnabled || !settings.config.ai.hasKey) return
+    if (!settings.config.ai.dynamicEnabled || !settings.config.ai.ready) return
     // 已经顶到单局结算上界：再补也结算不了，不发这一趟 Token。
     if (s.questions.length >= CHALLENGE_RUN_MAX) return
     if (s.questions.length - s.index - 1 > REFILL_AHEAD) return

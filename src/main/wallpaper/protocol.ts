@@ -11,25 +11,30 @@
 //      路径按段 encodeURIComponent，服务端按段 decode（中文文件名）；
 //   ⑤ 路径围栏：拒绝 `..` / `.` / 空段 / NUL / 反斜杠；根目录白名单前缀（大小写不敏感）。
 
-import { protocol } from 'electron'
+import { protocol, type CustomScheme } from 'electron'
 import { createReadStream } from 'node:fs'
 import { stat } from 'node:fs/promises'
 import { Readable } from 'node:stream'
 
-/** 必须在 app ready 之前调用 */
-export function registerWallSchemePrivileges(): void {
-  protocol.registerSchemesAsPrivileged([
-    {
-      scheme: 'miai-wall',
-      privileges: {
-        standard: true, // URL 按标准解析（有 host 段）
-        secure: true, // 视为安全上下文
-        supportFetchAPI: true, // 渲染端 fetch() 可达（引擎/视频全部走 fetch/media）
-        stream: true, // 允许流式 body（大文件不能整块进内存）
-        corsEnabled: true, // 参与 CORS 校验 —— 因此响应必须自带 CORS 头
-      },
-    },
-  ])
+/**
+ * miai-wall 的 scheme privileges。
+ *
+ * ⚠️ **不要在这里调 registerSchemesAsPrivileged** —— 全进程只能调一次，
+ * 第二次会**整表替换**第一次（2026-10-31 实测：两次调用时第一次的 scheme
+ * fetch 全挂，报 "URL scheme is not supported"）。两个 scheme 由
+ * scheme-privileges.ts 一次提交。
+ *
+ * 必须在 app ready 之前提交（见 scheme-privileges.ts）。
+ */
+export const WALL_SCHEME: CustomScheme = {
+  scheme: 'miai-wall',
+  privileges: {
+    standard: true, // URL 按标准解析（有 host 段）
+    secure: true, // 视为安全上下文
+    supportFetchAPI: true, // 渲染端 fetch() 可达（引擎/视频全部走 fetch/media）
+    stream: true, // 允许流式 body（大文件不能整块进内存）
+    corsEnabled: true, // 参与 CORS 校验 —— 因此响应必须自带 CORS 头
+  },
 }
 
 const MIME: Record<string, string> = {

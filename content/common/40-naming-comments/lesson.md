@@ -2,7 +2,7 @@
 id: common-40
 lang: common
 stage: 0
-order: 40
+order: 52
 title: 起名是门手艺——命名与注释通则
 tags: [代码规范, 工程素养]
 required: ["common-39"]

@@ -8,10 +8,8 @@ import { usePracticeStarter } from '../../lib/startPractice'
 import { useReviewPool } from '../../lib/review-practice'
 import { LANG_LABEL } from '../../lib/labels'
 import MiButton from '../base/MiButton.vue'
-import MiEmpty from '../base/MiEmpty.vue'
 import MiMascot from '../base/MiMascot.vue'
-import { toast } from '../base/toast'
-import { EMPTY, PANEL, REVIEW, TOAST } from '../../lib/copy'
+import { PANEL, REVIEW, SIDEBAR } from '../../lib/copy'
 
 // M2-04：右侧辅助面板（练习入口/复习状态/相关知识点）
 // M3-05：练习入口接入 quiz 会话；相关知识点带状态图标、复用统一打开逻辑
@@ -68,25 +66,48 @@ function startPractice() {
   startLessonPractice(currentLesson.value)
 }
 
+/**
+ * A5（2026-11-01）：右栏在**任何页面**都照着课文页的三段排版，
+ * 于是在设置/排行榜/仓库上堆出三张空卡（「本节还没有练习」最刺眼 ——
+ * 那页根本没有「本节」）。三段各自只在**真有东西**时出现；
+ * 全都没有时只留一句 idle 提示，不再把空白包装成待办。
+ *
+ * 注意：不能改 `App.vue` 把右侧 Pane 整个拿掉 ——
+ * `shared/layout.ts` 的不变量是「显示中的 pane 尺寸和恒等于 100」，
+ * 移除 Pane 会让主区尺寸漂移。收在面板内部最安全。
+ */
+const hasPractice = computed(() => currentLesson.value !== null)
+const hasReview = computed(
+  () => settings.config.reviewEnabled && (pool.value === null || pool.value > 0)
+)
+const hasRelated = computed(() => refs.value.length > 0)
+const showIdle = computed(() => !hasPractice.value && !hasReview.value && !hasRelated.value)
+
 function statusIcon(status: string): string {
   if (status === 'learned') return '✓'
-  if (status === 'locked') return '🔒'
-  if (status === 'draft') return '📦'
+  // 与 Sidebar 同口径：锁是「等前面的课」，不是「没有权限」
+  if (status === 'locked') return '⏳'
+  // 与 Sidebar 同一枚：📦 的箱子形状会被读成「打开它」，而这一格是「还没写好」
+  if (status === 'draft') return '💬'
   return ''
+}
+
+/** 状态图标只有一枚小字符，悬停时把原因说全 */
+function refTip(title: string, status: string): string {
+  if (status === 'locked') return `${title} —— ${SIDEBAR.STATUS_LOCKED_TIP}`
+  if (status === 'draft') return `${title} —— ${SIDEBAR.STATUS_DRAFT_TIP}`
+  return title
 }
 </script>
 
 <template>
   <aside class="right-panel">
-    <div class="panel-section">
+    <div v-if="hasPractice" class="panel-section">
       <div class="panel-title">{{ PANEL.TITLE_PRACTICE }}</div>
-      <template v-if="currentLesson">
-        <p class="panel-desc">{{ PANEL.practiceDesc(currentLesson.title) }}</p>
-        <MiButton size="sm" variant="secondary" @click="startPractice">
-          {{ PANEL.START_PRACTICE }}
-        </MiButton>
-      </template>
-      <div v-else class="panel-card">{{ PANEL.NO_LESSON }}</div>
+      <p class="panel-desc">{{ PANEL.practiceDesc(currentLesson!.title) }}</p>
+      <MiButton size="sm" variant="secondary" @click="startPractice">
+        {{ PANEL.START_PRACTICE }}
+      </MiButton>
     </div>
 
     <!--
@@ -100,7 +121,7 @@ function statusIcon(status: string): string {
       【开关关着时整段藏起来】它是用户自己关掉的功能，入口跟着一起消失，
       和 Sidebar 的处理保持一致。
     -->
-    <div v-if="settings.config.reviewEnabled" class="panel-section">
+    <div v-if="hasReview" class="panel-section">
       <div class="panel-title">{{ PANEL.TITLE_REVIEW }}</div>
       <template v-if="pool !== null && pool > 0">
         <p class="panel-desc">{{ PANEL.reviewDesc(pool) }}</p>
@@ -108,13 +129,12 @@ function statusIcon(status: string): string {
           {{ PANEL.GO_REVIEW }}
         </MiButton>
       </template>
-      <div v-else-if="pool === 0" class="panel-card">{{ PANEL.NO_REVIEW }}</div>
       <p v-else class="panel-desc">{{ REVIEW.LOADING }}</p>
     </div>
 
-    <div class="panel-section">
+    <div v-if="hasRelated" class="panel-section">
       <div class="panel-title">{{ PANEL.TITLE_RELATED }}</div>
-      <div v-if="refs.length > 0" class="ref-list">
+      <div class="ref-list">
         <!-- V2-41：推荐课条目从 div 升成真 <button> —— 同一屏里有的条目
              Tab 停得上、有的停不上，行为不可预期；这里统一成按钮。 -->
         <button
@@ -123,6 +143,7 @@ function statusIcon(status: string): string {
           type="button"
           class="ref-item"
           :class="r.status"
+          :title="refTip(r.title, r.status)"
           @click="openLesson(r.id)"
         >
           <span class="ref-status">{{ statusIcon(r.status) }}</span>
@@ -130,8 +151,9 @@ function statusIcon(status: string): string {
           <span class="ref-title">{{ r.title }}</span>
         </button>
       </div>
-      <MiEmpty v-else v-bind="EMPTY.NO_RELATED" />
     </div>
+
+    <p v-if="showIdle" class="panel-idle">{{ PANEL.IDLE_HINT }}</p>
 
     <!--
       三段之后那条鱼。
@@ -184,6 +206,14 @@ function statusIcon(status: string): string {
   border-radius: var(--mi-radius);
   box-shadow: var(--mi-shadow);
   line-height: 1.8;
+}
+/* idle 提示不套卡片：它只说明「这里没有待办」，再画一张卡又变成第四件待办 */
+.panel-idle {
+  margin: 4px 0 0;
+  padding: 0 2px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--mi-text-3);
 }
 .ref-list {
   display: flex;
@@ -240,7 +270,7 @@ button.ref-item:focus-visible {
  * .ref-lang 只剩 2.95（浅色 3.56 / 2.50）—— 而这两条**仍然可点**（@click 直连
  * openLesson），WCAG 的「禁用组件豁免」站不住，必须 ≥4.5。系数要抬到
  * ≥0.948（深）/ 0.984（浅）才能两处过线，那时「压暗」只剩正常态的 5%~15%，
- * 一眼分不出来 —— 所以锁定感改由状态位图标承担（🔒 / 📦 / ✓，见 .ref-status），
+ * 一眼分不出来 —— 所以锁定感改由状态位图标承担（⏳ / 💬 / ✓，见 .ref-status），
  * 正文颜色一律走正常色系。与 Sidebar 的 .lesson-status 同一口径：
  * 灰的是死的、亮的是能点的，灰留在图标上，不落在整行上。
  */

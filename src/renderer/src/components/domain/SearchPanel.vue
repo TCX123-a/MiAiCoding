@@ -4,6 +4,7 @@ import { useSearchStore } from '../../stores/search'
 import { useLessonOpener } from '../../lib/openLesson'
 import { useSearchStarter } from '../../lib/search-practice'
 import { moveActive, searchActions } from '../../lib/search-panel'
+import { isImeComposing } from '../../lib/ime'
 import { LANG_LABEL } from '../../lib/labels'
 import { EMPTY, PLACEHOLDER, SEARCH } from '../../lib/copy'
 import { wallpaperOverlayDim } from '../../lib/wallpaper/overlay-dim'
@@ -131,6 +132,8 @@ watch(
  * 因为焦点一旦离开输入框，挂在这儿的处理器就再也收不到键了（V2-33 的根因）。
  */
 function onKey(e: KeyboardEvent) {
+  // 组词中的 ↑↓ / Enter 都归输入法（选候选），不是面板导航 —— 见 lib/ime.ts
+  if (isImeComposing(e)) return
   if (e.key === 'ArrowDown') {
     e.preventDefault()
     activeIndex.value = moveActive(activeIndex.value, 1, actions.value.length)
@@ -185,7 +188,12 @@ function escapeHtml(s: string): string {
   <Teleport to="body">
     <Transition name="search">
       <div v-if="search.open" class="search-mask" @click.self="search.closePanel()">
-        <div class="search-panel" role="dialog" aria-modal="true" :aria-label="PLACEHOLDER.SEARCH_PANEL">
+        <div
+          class="search-panel mi-zoom-layer"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="PLACEHOLDER.SEARCH_PANEL"
+        >
           <!--
             combobox 语义（V2-33 键盘可达）：焦点常驻输入框，↑↓ 的选择通过
             aria-activedescendant 报给读屏 —— 结果行因此**不需要** tabindex。
@@ -295,6 +303,18 @@ function escapeHtml(s: string): string {
   border-radius: var(--mi-radius-lg);
   box-shadow: 0 16px 48px color-mix(in srgb, var(--mi-overlay) 28%, transparent);
   overflow: hidden;
+}
+/*
+ * 缩放白名单（2026-10-31 自检 P2）：面板内容卡跟正文一起吃 --mi-zoom，遮罩不缩放
+ * （机制与边界见 styles/zoom.css）。vh/vw 在缩放层里量到的是缩放前视口，两个
+ * 上限都要 ÷zoom 折回本地单位，否则放大后结果列表会把面板顶出屏幕。
+ * 46vh 原值在 zoom=1 时仍是 min() 的严项 —— 逐字不动原行为。
+ */
+.search-panel.mi-zoom-layer {
+  max-width: min(92vw, calc(100vw / var(--mi-zoom) - 16px));
+}
+.search-panel.mi-zoom-layer .search-results {
+  max-height: min(46vh, calc(76vh / var(--mi-zoom) - 120px));
 }
 .search-input {
   width: 100%;

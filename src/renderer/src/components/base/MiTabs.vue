@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { tabNavTarget } from '../../lib/tab-nav'
 
 const props = defineProps<{
@@ -19,6 +19,23 @@ const emit = defineEmits<{ 'update:modelValue': [v: string] }>()
  */
 const btns = ref<HTMLButtonElement[]>([])
 
+/**
+ * 2026-10-31 自检 P2（无障碍）：ARIA tabs 语义 + 漫游 tabindex。
+ *
+ *  · `role="tablist"` / `role="tab"` / `aria-selected` —— 读屏才知道「这一组是
+ *    页签、当前选中哪一个」；在此之前它只是几个普通按钮，选中态只存在于
+ *    颜色里（读屏看不见颜色）。
+ *  · `tabindex` 用漫游式（只有当前选中那格是 0，其余 -1）：Tab 进来落在当前
+ *    页签上，组内用 ←/→ 走（下面 onKeydown 已实现）—— 这既是 WAI-ARIA tabs
+ *    的标准键盘模型，也避免设置页里十几组页签把 Tab 序列撑成几十站。
+ *  · modelValue 万一对不上任何 key（调用方传了坏值），退回第 0 格可聚焦 ——
+ *    否则整组页签都是 -1，键盘用户**彻底进不来**。
+ */
+const activeIndex = computed(() => {
+  const i = props.tabs.findIndex((t) => t.key === props.modelValue)
+  return i === -1 ? 0 : i
+})
+
 // ref 挂在原生 <button> 上，vue 传进来的就是元素本身，不是组件实例 ——
 // 收 unknown 是让 vue-tsc 的 VNodeRef 联合类型（Element | 组件实例）能直接对得上，
 // 真正的资格判定只认 instanceof。
@@ -37,12 +54,15 @@ function onKeydown(e: KeyboardEvent, i: number): void {
 </script>
 
 <template>
-  <div class="mi-tabs" :class="{ 'is-disabled': disabled }">
+  <div class="mi-tabs" role="tablist" :class="{ 'is-disabled': disabled }">
     <button
       v-for="(t, i) in tabs"
       :key="t.key"
       :ref="(el) => setBtn(el, i)"
       class="mi-tab"
+      role="tab"
+      :aria-selected="modelValue === t.key"
+      :tabindex="i === activeIndex ? 0 : -1"
       :class="{ active: modelValue === t.key }"
       :disabled="disabled"
       @click="$emit('update:modelValue', t.key)"

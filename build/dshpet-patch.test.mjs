@@ -21,8 +21,11 @@
  *          './miai-extras.js' 在场，条目顺序固定；设置类与关闭类 POST 与 reloadDesktop 同款
  *          （裸 fetch + .catch），互动类与跟随开关与 showBalanceFromMenu 同款（S.postAction 后
  *          pollStateNow；跟随开关还要先补一拍 __miaiExtras.refreshState —— 见下 4c）；
- *        · 除补丁点外整段字节不变（前缀 / 新拼接线之后→guard / 尾段三处 byte 级比对 +
- *          index.html 全文重建比对）；
+ *        · 模块七（2026-10-31）：renderBubble 的 none 分支先于 is-whisper/has-img 切换，
+ *          气泡 0.25s 淡出期间不再跳字号/换行/宽度（表情包最后一秒「格式突变、闪烁」）；
+ *          补丁标记在场，且把旧顺序塞回去时排序判据必须红；
+ *        · 除补丁点外整段字节不变（前缀 / 新拼接线之后→guard / 尾段两截（气泡补丁前后）
+ *          四处 byte 级比对 + index.html 全文重建比对）；
  *        · shared-core.js 右键菜单补丁（2026-10-10 图三/图四；2026-10-13 主人批·三级点不到；
  *          2026-10-16 V1-49 · 夜 V1-30/V1-37）：「菜单根落 __dshPetClampRect 可见带读数 +
  *          showPanel 行锚定双翼 + mouseleave 兜底 200→300ms + 置灰项分支 + buildMenuTree 白名单
@@ -54,8 +57,10 @@
  *      · 树根标签改回「动作」→ shared-core 判据必须红；
  *      · 对话失败红字改回拼裸枚举 → shared-core 判据必须红；
  *      · 删掉菜单里的余额条件项 → sprite 判据必须红；
- *      · 拼接线改回单参（menuEvents 实参被拿掉）→ sprite 判据必须红。
- *      十八个变体若全绿，本自检自己记红（"没有种坏自检的比较器绿了不算证据"）。
+ *      · 拼接线改回单参（menuEvents 实参被拿掉）→ sprite 判据必须红；
+ *      · 气泡补丁标记被抹 → sprite 判据必须红；
+ *      · 气泡 none 分支挪回版式切换之后（复现原版淡出跳字）→ 排序判据必须红。
+ *      二十个变体若全绿，本自检自己记红（"没有种坏自检的比较器绿了不算证据"）。
  */
 
 import fs from 'node:fs';
@@ -91,6 +96,24 @@ const MINI_SPRITE = [
   "    if (leaf.action === 'open-site') {",
   '      return;',
   '    }',
+  '  }',
+  '',
+  '  renderBubble() {',
+  '    const slot = this.whisperOn ? \'whisper\' : \'none\';',
+  "    const whisperImg = slot === 'whisper' ? S.createMemeImage(this.whisperImage, BASE, this.assetRoot) : null;",
+  '    this.bubble.classList.toggle(',
+  "      'is-whisper',",
+  '      // 余额「文字说明」（不可用状态）同样要换行变体：默认 nowrap 会把长文案顶出宠物宽度',
+  "      slot === 'whisper' || slot === 'work' || (slot === 'balance' && this.balanceWrap),",
+  '    );',
+  '    this.bubble.classList.toggle(S.MEME_BUBBLE_CLASS, !!whisperImg);',
+  "    if (slot === 'none') {",
+  '      // 三者都没有可显示的内容：隐藏（不占位，也就不会挡住任何一层）',
+  "      this.bubble.classList.remove('is-on');",
+  "      window.__dshPetDebug.lastBubbleTitle = '';",
+  '      return;',
+  '    }',
+  "    this.bubble.classList.add('is-on');",
   '  }',
   '}',
 ].join('\n');
@@ -197,13 +220,22 @@ function mutate(src, find, replaceWith) {
 
 console.log('\n[A] 迷你样本（锚点形状仿真实文件）');
 
-check('夹具自检：mini sprite 含两个锚点各 1 次', () => {
+check('夹具自检：mini sprite 含三个锚点各 1 次', () => {
   assertEq(countOccurrences(MINI_SPRITE, '    // 桌面专属工具根项'), 1, 'mini 起点锚点次数');
   assertEq(countOccurrences(MINI_SPRITE, "      { label: '重载配置', action: 'reload' },\n    );"), 1, 'mini 终点锚点次数');
   assertEq(
     countOccurrences(MINI_SPRITE, "    if (!leaf || typeof leaf !== 'object') return;\n    if (leaf.action === 'open-site') {"),
     1,
     'mini 路由锚点次数',
+  );
+  assertEq(
+    countOccurrences(
+      MINI_SPRITE,
+      "    const whisperImg = slot === 'whisper' ? S.createMemeImage(this.whisperImage, BASE, this.assetRoot) : null;\n" +
+        '    this.bubble.classList.toggle(',
+    ),
+    1,
+    'mini 气泡版式锚点次数',
   );
 });
 check('夹具自检：mini html 含注入锚点各 1 次', () => {
@@ -213,9 +245,20 @@ check('夹具自检：mini html 含注入锚点各 1 次', () => {
 
 const mini = patchSpriteJs(MINI_SPRITE);
 
-check('mini：正常替换，applied 记录三步且都是人话', () => {
-  assertEq(mini.applied.length, 3, 'applied 步数（菜单块 / 拼接行 / onMenuAction 分支）');
+check('mini：正常替换，applied 记录四步且都是人话', () => {
+  assertEq(mini.applied.length, 4, 'applied 步数（菜单块 / 拼接行 / onMenuAction 分支 / 气泡淡出版式）');
   assert(mini.applied.every((s) => typeof s === 'string' && s.length > 0), 'applied 条目应为非空字符串');
+});
+check('mini：气泡补丁把 none 分支提到版式 class 切换之前（模块七）', () => {
+  const code = mini.code;
+  assert(code.includes('// 咪爱补丁（2026-10-31，模块七）'), '缺气泡补丁标记');
+  const noneAt = code.indexOf("    if (slot === 'none') {");
+  const whisperAt = code.indexOf("      'is-whisper',");
+  const memeAt = code.indexOf('    this.bubble.classList.toggle(S.MEME_BUBBLE_CLASS, !!whisperImg);');
+  assert(noneAt !== -1 && whisperAt !== -1 && memeAt !== -1, '补丁产物缺少 none 分支或版式切换行');
+  assert(noneAt < whisperAt, 'none 分支应先于 is-whisper 切换（否则淡出中字号突变）');
+  assert(noneAt < memeAt, 'none 分支应先于 has-img 切换（否则淡出中气泡变宽）');
+  assert(code.indexOf("      return;\n    }\n    const whisperImg = slot === 'whisper'") !== -1, 'none 分支应在 whisperImg 之前返回');
 });
 check('mini：补丁后的新菜单条目顺序固定（首项跟随开关三元）、余额条件项就位、拼接线换 menuEvents 版', () => {
   const region = extractMenuRegion(mini.code, 'mini 补丁产物');
@@ -304,6 +347,11 @@ check('mini：幂等——再跑返回原样且 applied=[]', () => {
 
 expectThrow('mini：缺起点锚点必 throw', () => patchSpriteJs(mutate(MINI_SPRITE, '    // 桌面专属工具根项', '    // 被挪走的注释')), '锚点命中 0 次');
 expectThrow('mini：缺路由锚点必 throw', () => patchSpriteJs(mutate(MINI_SPRITE, "    if (!leaf || typeof leaf !== 'object') return;\n", '')), '锚点命中 0 次');
+expectThrow(
+  'mini：缺气泡版式锚点必 throw',
+  () => patchSpriteJs(mutate(MINI_SPRITE, "    this.bubble.classList.toggle(S.MEME_BUBBLE_CLASS, !!whisperImg);\n", '')),
+  '锚点命中 0 次',
+);
 expectThrow(
   'mini：锚点重复命中必 throw（多次命中也不许静默挑一个）',
   () => patchSpriteJs(mutate(MINI_SPRITE, '    const tree = tools.concat(', '    // 桌面专属工具根项（重复锚点）\n    const tree = tools.concat(')),
@@ -519,6 +567,13 @@ if (!haveReal) {
     if (!code.includes("fetch(BASE + '/reload', { method: 'POST' }).catch((e) => {")) {
       problems.push('reloadDesktop 的 POST 样板被误伤');
     }
+    // 6) 模块七：气泡淡出的版式 class 不许在 none 分支之前被摘
+    if (!code.includes('// 咪爱补丁（2026-10-31，模块七）')) problems.push('缺气泡淡出版式补丁标记');
+    const noneAt = code.indexOf("    if (slot === 'none') {");
+    const whisperAt = code.indexOf("      'is-whisper',");
+    const memeAt = code.indexOf('    this.bubble.classList.toggle(S.MEME_BUBBLE_CLASS, !!whisperImg);');
+    if (noneAt === -1 || whisperAt === -1 || memeAt === -1) problems.push('缺 none 分支或气泡版式切换行');
+    else if (!(noneAt < whisperAt && noneAt < memeAt)) problems.push('none 分支未先于 is-whisper/has-img 切换（淡出中会跳字号/换行）');
     return problems;
   }
 
@@ -527,8 +582,8 @@ if (!haveReal) {
     assertEq(problems.length, 0, 'problems: ' + problems.join('；'));
   });
 
-  check('真实 sprite.js：applied 三步、产物确实变了且变长', () => {
-    assertEq(realOut.applied.length, 3, 'applied 步数（菜单块 / 拼接行 / onMenuAction 分支）');
+  check('真实 sprite.js：applied 四步、产物确实变了且变长', () => {
+    assertEq(realOut.applied.length, 4, 'applied 步数（菜单块 / 拼接行 / onMenuAction 分支 / 气泡淡出版式）');
     assert(realOut.code !== realSprite, '补丁后应与原文不同');
     assert(realOut.code.length > realSprite.length, '补丁后应更长（删的菜单段 < 新增段）');
   });
@@ -563,7 +618,24 @@ if (!haveReal) {
     const pO = realOut.code.indexOf(OPEN);
     const oO = realSprite.indexOf(OPEN);
     assert(pO !== -1 && oO !== -1, '定位 open-site 行失败');
-    assertEq(realOut.code.slice(pO), realSprite.slice(oO), '尾段（open-site→EOF）字节应原样');
+    // 尾段中间还有第四个补丁点（模块七气泡版式）：分两截比对 —— open-site→补丁头、补丁尾→EOF。
+    const BUBBLE_OLD_HEAD = "    const whisperImg = slot === 'whisper' ? S.createMemeImage(this.whisperImage, BASE, this.assetRoot) : null;";
+    const BUBBLE_NEW_HEAD = '    // 咪爱补丁（2026-10-31，模块七）';
+    const BUBBLE_NEW_TAIL = '    this.bubble.classList.toggle(S.MEME_BUBBLE_CLASS, !!whisperImg);';
+    const OLD_BUBBLE_END = '      return;\n    }';
+    const pB = realOut.code.indexOf(BUBBLE_NEW_HEAD);
+    const oB = realSprite.indexOf(BUBBLE_OLD_HEAD);
+    assert(pB !== -1 && oB !== -1, '定位气泡补丁头失败');
+    assert(pB > pO, '气泡补丁应在 open-site 之后');
+    assertEq(realOut.code.slice(pO, pB), realSprite.slice(oO, oB), '尾段前半（open-site→气泡补丁头）字节应原样');
+    const pBEnd = realOut.code.indexOf(BUBBLE_NEW_TAIL, pB);
+    const oBEnd = realSprite.indexOf(OLD_BUBBLE_END, oB);
+    assert(pBEnd !== -1 && oBEnd !== -1, '定位气泡补丁尾失败');
+    assertEq(
+      realOut.code.slice(pBEnd + BUBBLE_NEW_TAIL.length),
+      realSprite.slice(oBEnd + OLD_BUBBLE_END.length),
+      '尾段后半（气泡补丁之后→EOF）字节应原样',
+    );
   });
 
   check('真实 sprite.js：补丁产物语法可编译（new Function 只编译不执行）', () => {
@@ -1068,6 +1140,27 @@ if (!haveReal) {
       'S.buildMenuTree(this.animations, this.pet.menuEvents)',
       'S.buildMenuTree(this.animations)',
     );
+    const problems = spriteProblems(broken);
+    assert(problems.length > 0, '坏变体竟全绿——判据失灵');
+  });
+  check('种坏⑲：气泡补丁标记被抹 → sprite 判据必须红', () => {
+    const broken = mutate(realOut.code, '// 咪爱补丁（2026-10-31，模块七）', '// （补丁没了）');
+    const problems = spriteProblems(broken);
+    assert(problems.length > 0, '坏变体竟全绿——判据失灵');
+  });
+  check('种坏⑳：气泡 none 分支挪回版式切换之后（复现原版淡出跳字）→ 排序判据必须红', () => {
+    // 从供体原文切出「whisperImg + 版式切换 + none 分支」旧顺序整段，塞回补丁产物
+    const oldStart = realSprite.indexOf("    const whisperImg = slot === 'whisper'");
+    const oldEndMark = '      return;\n    }';
+    const oldEnd = realSprite.indexOf(oldEndMark, oldStart) + oldEndMark.length;
+    assert(oldStart !== -1 && oldEnd > oldStart, '种坏变体切不出供体旧顺序段');
+    const oldBlock = realSprite.slice(oldStart, oldEnd);
+    const newStart = realOut.code.indexOf("    if (slot === 'none') {");
+    const newEndMark = '    this.bubble.classList.toggle(S.MEME_BUBBLE_CLASS, !!whisperImg);';
+    const newEnd = realOut.code.indexOf(newEndMark, newStart) + newEndMark.length;
+    assert(newStart !== -1 && newEnd > newStart, '种坏变体切不出补丁产物版式段');
+    const broken = realOut.code.slice(0, newStart) + oldBlock + realOut.code.slice(newEnd);
+    assert(broken !== realOut.code, '坏变体没有真的改变内容');
     const problems = spriteProblems(broken);
     assert(problems.length > 0, '坏变体竟全绿——判据失灵');
   });

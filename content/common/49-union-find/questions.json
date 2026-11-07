@@ -1,0 +1,86 @@
+{
+  "lessonId": "common-49",
+  "version": 1,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "choice",
+      "stem": "并查集里，find(x) 是怎么找到 x 所在集合的根的？",
+      "options": [
+        "从 x 出发顺着 parent 一路往上，直到 parent[x] == x，那个点就是根",
+        "直接读 parent[x]，它的值就是根",
+        "把所有点的编号比较一遍，编号最大的那个就是根",
+        "从 x 往下找，编号最小的那个叶子就是根"
+      ],
+      "answer": 0,
+      "explanation": "**从 x 顺着 parent 一路往上，直到 parent[x] == x 才停**，那个自己管自己的点才是根喵。`parent[x]` 只记「我的上级是谁」，不一定是根——比如 parent[2] = 1 时，1 上面可能还有 0。编号大小和根无关，箭头也只会往上指，不会从根往下找。"
+    },
+    {
+      "id": "q2",
+      "type": "choice",
+      "stem": "路径压缩在 find 的过程中做了什么？",
+      "options": [
+        "把沿途经过的每个点直接挂到根下面，缩短下次查找的路",
+        "把 parent 里所有格子都改成同一个数",
+        "每次查找前先把整棵树的点重新编号",
+        "把两个集合的人数加起来，存到根上"
+      ],
+      "answer": 0,
+      "explanation": "**路径压缩只动 find 走过的这一条路**：把沿途每个点直接挂到根下面，下次再问就短了喵。它不改根、不改集合成员，也不会把整棵树的点都改成同一个数（那会毁掉上级关系）。把人数加在根上是按大小合并干的事，不是路径压缩。"
+    },
+    {
+      "id": "q3",
+      "type": "choice",
+      "stem": "按大小合并的作用是什么？",
+      "options": [
+        "把较小的树挂到较大的树下面，控制树高，避免退化成一条长链",
+        "保证每个集合的根一定是编号最小的点",
+        "让 find 不再需要往上爬",
+        "让并查集可以计算两点之间的最短距离"
+      ],
+      "answer": 0,
+      "explanation": "**小树挂到大树下面，树高就不会被拉成一条长链**喵。每次合并后，树高最多涨到 log₂(n) 量级，再配上路径压缩，单次操作的摊还代价才降到 O(α(n))。根不一定是编号最小的点；find 照样要往上走；并查集也求不了最短距离。"
+    },
+    {
+      "id": "q4",
+      "type": "choice",
+      "stem": "用并查集判断无向图有没有环，往图里加一条边 (a, b) 时应该看什么？",
+      "options": [
+        "看 find(a) 和 find(b) 是否相同：相同说明两端已经连通，这条边会成环",
+        "看 find(a) 和 find(b) 是否不同：不同说明这条边会成环",
+        "只看边数是不是大于点数，别的都不用管",
+        "把 a 和 b 从图里删掉，再看剩下的图连不连通"
+      ],
+      "answer": 0,
+      "explanation": "**加边前看两端是否同根**：`find(a) == find(b)` 说明两端本来就连通，再加这条边就会绕出一个环喵。两端不同根时正常合并，不会成环。只看「边数大于点数」不够准——比如四边形四个点四条边，边数不多于点数，却已经有环了。"
+    },
+    {
+      "id": "q5",
+      "type": "fill",
+      "stem": "已知 parent 的值是 [2, 2, 2, 5, 3, 5]，点 4 所在集合的根是几号？（只填编号）",
+      "answer": "5",
+      "accept": ["5"],
+      "explanation": "**5** 喵。走一遍：parent[4] = 3，先到 3；parent[3] = 5，再到 5；parent[5] = 5，自己管自己——根就是 5。注意 parent[4] 只是上级的座位号，不是根；一路爬到 `parent[x] == x` 才算到顶。"
+    },
+    {
+      "id": "q6",
+      "type": "code",
+      "lang": "python",
+      "code": "parent = [0, 1, 2, 3, 4, 5]\nsize = [1, 1, 1, 1, 1, 1]\n\ndef find(x):\n    root = x\n    while parent[root] != root:\n        root = parent[root]\n    while parent[x] != root:\n        nxt = parent[x]\n        parent[x] = root\n        x = nxt\n    return root\n\ndef union(a, b):\n    ra = find(a)\n    rb = find(b)\n    if ra == rb:\n        return\n    if size[ra] < size[rb]:\n        ra, rb = rb, ra\n    parent[rb] = ra\n    size[ra] += size[rb]\n\nfor a, b in [(0, 1), (2, 3), (3, 4)]:\n    union(a, b)\n\ncount = 0\nfor i in range(6):\n    if parent[i] == i:\n        count += 1\nprint(count)",
+      "stem": "这段代码的输出是什么？",
+      "answer": "3",
+      "accept": ["3\n"],
+      "explanation": "**3** 喵。三条边合并完，{0,1} 的根是 0，{2,3,4} 的根是 2，5 自己一伙。扫一遍数 `parent[i] == i`：0、2、5 三个根，所以连通块数量是 3。6 个点不是一伙，别把点数当答案。"
+    },
+    {
+      "id": "q7",
+      "type": "code",
+      "lang": "python",
+      "code": "parent = [0, 1, 2, 3]\n\ndef find(x):\n    root = x\n    while parent[root] != root:\n        root = parent[root]\n    while parent[x] != root:\n        nxt = parent[x]\n        parent[x] = root\n        x = nxt\n    return root\n\ndef union(a, b):\n    ra = find(a)\n    rb = find(b)\n    if ra != rb:\n        parent[rb] = ra\n\nunion(0, 1)\nunion(2, 3)\nunion(1, 2)\nprint(find(0) == find(3))",
+      "stem": "三次合并之后，这段程序印出的结果是什么？",
+      "answer": "True",
+      "accept": ["True\n"],
+      "explanation": "**True** 喵。union(0,1) 后 1 指向 0；union(2,3) 后 3 指向 2；union(1,2) 把 1 的根 0 和 2 的根 2 并到一起。最后 find(0) = 0，find(3) 走 3→2→0 也回到 0，两端同根，所以印出 True。"
+    }
+  ]
+}

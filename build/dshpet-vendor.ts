@@ -47,14 +47,25 @@ import {
   readdirSync,
   statSync,
   copyFileSync,
+  unlinkSync,
   writeFileSync
 } from 'fs'
-import { dirname, join, resolve } from 'path'
+import { createHash } from 'crypto'
+import { dirname, extname, join, resolve } from 'path'
 import { fileURLToPath } from 'node:url'
 import type { Plugin } from 'vite'
 
 /** 手改本文件逻辑时必须 +1：材质不看它，但补丁逻辑/文件清单变了它得说话 */
-const VENDOR_VERSION = 16 // 16：shared-core.js 菜单树白名单（buildMenuTree 收 menuEvents，事件组只列
+const VENDOR_VERSION = 19 // 19：字体替换（2026-10-31 主人点名）—— 上游自带的上首软糖体
+//                            （第三方商业字体）换成 MiSans-Regular.otf（小米免费商用，
+//                            需在软件中注明）；helper 三处字体族名与 @font-face URL 同步改，
+//                            老 ttf 从产物里删掉（loader 若还按旧名请求就是 404 → 回退字体）
+// 18：sprite.js renderBubble 的 none 分支先于 is-whisper/has-img
+//                            切换（模块七 2026-10-31：表情包最后 0.25s 淡出不再跳字号/换行）
+// 17：sprite.js 菜单加「喂一根小鱼干」（POST /miai/snack）+ 新增
+//                            miai-snack 路由分支与两条补丁标记（模块五 2026-10-31：
+//                            小鱼干仓库/喂零食/专属「大口吃零食」动画）
+// 16：shared-core.js 菜单树白名单（buildMenuTree 收 menuEvents，事件组只列
 //                            有数据源的组）+ 树根标签「动作」→「让大肥鱼做点什么」+ 对话弹窗失败/
 //                            异常兜底红字换卖萌文案（裸枚举与英文异常原文转 console.warn）；
 //                            sprite.js 菜单「本地碎碎念」→「听大肥鱼碎碎念」、加「查看余额」条件项、
@@ -86,6 +97,22 @@ const SRC_LICENSE = join(REPO, 'node_modules/dsh-pet/LICENSE')
 const EXTRAS_JS = join(REPO, 'build/dshpet-extras/miai-extras.js')
 const PATCH_MJS = join(REPO, 'build/dshpet-patch.mjs')
 const QUACK_SRC = join(REPO, 'src/renderer/public/pet/duck-click.wav')
+/**
+ * 桌宠字体（2026-10-31 主人点名替换）。
+ * 上游 dsh-pet 自带的 `上首软糖体.ttf` 是第三方商业字体（仓库不跟踪、MIT 不覆盖），
+ * 换成小米 MiSans（免费商用；许可证要求「在软件中特别注明使用了 MiSans 字体」，
+ * 且**不得单独再分发字体软件**——所以这个 otf 不进 Git，靠 `npm run font:fetch`
+ * 从官方渠道取，构建时只把它嵌进产物）。取件脚本见 scripts/fetch-font.mjs。
+ */
+const MISANS_SRC = join(REPO, 'resources/fonts/MiSans-Regular.otf')
+/**
+ * 字体清单（URL / 压缩包内路径 / SHA256）是**单一份**：取件脚本 scripts/fetch-font.mjs
+ * 与这里的构建自检都读它 —— 两边各写一个哈希，迟早出现「脚本下载的版本和构建
+ * 校验的版本不是同一份」，而且报错会指向文件损坏，查不到常量漂移。
+ */
+const FONT_MANIFEST = JSON.parse(
+  readFileSync(join(REPO, 'resources/fonts/font-manifest.json'), 'utf8')
+) as { file: string; sha256: string; size: number }
 
 interface PatchModule {
   isPatched(src: string): boolean
@@ -174,7 +201,8 @@ function fingerprint(outRoot: string): string {
     statSig(EXTRAS_JS),
     statSig(PATCH_MJS),
     statSig(QUACK_SRC),
-    statSig(SRC_LICENSE)
+    statSig(SRC_LICENSE),
+    statSig(MISANS_SRC)
   ]
   // 产物关键件：被手删过就不许短路
   const outputs = [
@@ -187,7 +215,8 @@ function fingerprint(outRoot: string): string {
     'miai-extras.js',
     'NOTICE.txt',
     join('assets', 'config.jsonc'),
-    join('assets', 'miai-assets', 'quack.wav')
+    join('assets', 'miai-assets', 'quack.wav'),
+    join('assets', 'fonts', FONT_MANIFEST.file)
   ]
   for (const rel of outputs) {
     parts.push(existsSync(join(outRoot, rel)) ? `${rel}:ok` : `${rel}:MISSING`)
@@ -205,6 +234,14 @@ async function vendor(outRoot: string): Promise<void> {
   }
   if (!existsSync(QUACK_SRC)) {
     throw new Error(`[dshpet-vendor] 缺少 ${QUACK_SRC}（旧引擎退役前留下的鸭子音效）`)
+  }
+  // 字体缺失要响亮失败：悄悄跳过这一步 = 产物里没有 @font-face 指向的文件，
+  // 桌宠气泡会用系统回退字体 —— 界面照常能看，只有对照过设计稿才知道换了字。
+  // 不从 Git 跟踪它，是因为 MiSans 许可证禁止「单独再分发字体软件」。
+  if (!existsSync(MISANS_SRC)) {
+    throw new Error(
+      `[dshpet-vendor] 缺少 ${MISANS_SRC}；先运行 npm run font:fetch（官方 MiSans 字体，按许可证不随仓库分发）`
+    )
   }
   const stampPath = join(outRoot, '.vendor-stamp')
   const fp = fingerprint(outRoot)
@@ -278,6 +315,77 @@ async function vendor(outRoot: string): Promise<void> {
   log('拷贝素材（首次或素材更新时约 10 秒级）…')
   copyDir(SRC_ASSETS, join(outRoot, 'assets'))
 
+  // 2.5) 字体替换（2026-10-31 主人点名）：把上游的商业字体换成 MiSans。
+  //   ① 放新字体、删旧字体（同目录）；
+  //   ② helper 的三个文件里字体族名 ShangshouSoftCandy → MiSans；
+  //   ③ renderer.js 的 @font-face URL 指向 MiSans-Regular.otf / format("opentype")。
+  // 三步缺一：只换文件不改 URL = 旧名 404（静默回退系统字体，透明窗里看不出来）；
+  // 只改 URL 不换族名 = CSS 请求的族名与 @font-face 声明的族名对不上（同样回退）。
+  const fontBytes = readFileSync(MISANS_SRC)
+  const fontSha = createHash('sha256').update(fontBytes).digest('hex')
+  if (fontSha !== FONT_MANIFEST.sha256 || fontBytes.length !== FONT_MANIFEST.size) {
+    throw new Error(
+      `[dshpet-vendor] MiSans 字体校验失败（期望 ${FONT_MANIFEST.sha256}/${FONT_MANIFEST.size}B，` +
+        `实际 ${fontSha}/${fontBytes.length}B）；重新运行 npm run font:fetch`
+    )
+  }
+  const fontDir = join(outRoot, 'assets', 'fonts')
+  mkdirSync(fontDir, { recursive: true })
+  copyFileSync(MISANS_SRC, join(fontDir, FONT_MANIFEST.file))
+  const legacyFont = join(fontDir, '上首软糖体.ttf')
+  if (existsSync(legacyFont)) unlinkSync(legacyFont)
+  // URL 里的文件名/格式从清单推导，别另写一份字面量：清单换了字重或扩展名时，
+  // 替换规则必须跟着走，否则 @font-face 指向一个不存在的文件（静默回退系统字体）。
+  const fontStem = FONT_MANIFEST.file.slice(0, FONT_MANIFEST.file.length - extname(FONT_MANIFEST.file).length)
+  const fontExt = extname(FONT_MANIFEST.file)
+  const fontFormat = fontExt === '.otf' ? 'opentype' : fontExt === '.woff2' ? 'woff2' : 'truetype'
+  for (const rel of ['renderer.js', 'shared-core.js', 'index.html']) {
+    const abs = join(outRoot, rel)
+    const before = readFileSync(abs, 'utf8')
+    let after = before
+    if (rel === 'renderer.js') {
+      const withNewUrl = after.replace(
+        /encodeURIComponent\('上首软糖体'\)\s*\+\s*'\.ttf"\) format\("truetype"\)/,
+        `encodeURIComponent('${fontStem}') +\n    '${fontExt}") format("${fontFormat}")`
+      )
+      // 这一步没命中必须单独报红：下面那两刀全局替换照样会改到别的旧名，
+      // 只看「after !== before」会把「URL 还指着 .ttf」当成成功放过去。
+      if (withNewUrl === after) {
+        throw new Error('[dshpet-vendor] renderer.js 的 @font-face URL 没匹配上（上游改过写法？）')
+      }
+      after = withNewUrl
+    }
+    // 先改 URL 再改族名：URL 那段必须按旧中文名精确定位；剩下的旧名
+    // （index.html 注释里还有一处「字体经 renderer 注入上首软糖体 @font-face」）
+    // 统一换成 MiSans —— 否则下面的「一个都不许剩」自检会红。
+    after = after.replace(/ShangshouSoftCandy/g, 'MiSans').replace(/上首软糖体/g, 'MiSans')
+    if (after === before) {
+      throw new Error(`[dshpet-vendor] ${rel} 里没有找到字体声明（上游文件结构变了？）`)
+    }
+    writeFileSync(abs, after)
+  }
+  // 产物自检：旧族名/旧文件一个都不许剩（否则某条漏网路径会继续请求商业字体）
+  for (const rel of ['renderer.js', 'shared-core.js', 'index.html']) {
+    const text = readFileSync(join(outRoot, rel), 'utf8')
+    if (text.includes('ShangshouSoftCandy') || text.includes('上首软糖体')) {
+      throw new Error(`[dshpet-vendor] ${rel} 仍引用旧字体`)
+    }
+  }
+  if (existsSync(legacyFont)) throw new Error('[dshpet-vendor] 旧字体文件没删掉')
+  if (!existsSync(join(fontDir, FONT_MANIFEST.file))) {
+    throw new Error('[dshpet-vendor] MiSans 字体没铺进产物')
+  }
+  // URL 本身的自检：族名改对了、URL 还指着 .ttf，是这套替换最容易留下的半成品
+  //（@font-face 404 → 系统回退字体，不报错）。
+  const rendererOut = readFileSync(join(outRoot, 'renderer.js'), 'utf8')
+  if (
+    !rendererOut.includes(`encodeURIComponent('${fontStem}')`) ||
+    !rendererOut.includes(`format("${fontFormat}")`)
+  ) {
+    throw new Error('[dshpet-vendor] renderer.js 的 @font-face URL 没有指向新字体')
+  }
+  log(`字体：上首软糖体 → ${FONT_MANIFEST.file}`)
+
   // 3) 咪爱附加件
   copyFileSync(EXTRAS_JS, join(outRoot, 'miai-extras.js'))
   const quackDir = join(outRoot, 'assets', 'miai-assets')
@@ -297,7 +405,8 @@ async function vendor(outRoot: string): Promise<void> {
     'miai-extras.js',
     'NOTICE.txt',
     join('assets', 'config.jsonc'),
-    join('assets', 'miai-assets', 'quack.wav')
+    join('assets', 'miai-assets', 'quack.wav'),
+    join('assets', 'fonts', FONT_MANIFEST.file)
   ]
   for (const rel of must) {
     if (!existsSync(join(outRoot, rel))) throw new Error(`[dshpet-vendor] 铺完却找不到 ${rel}`)
@@ -305,8 +414,14 @@ async function vendor(outRoot: string): Promise<void> {
   if (!readFileSync(join(outRoot, 'index.html'), 'utf8').includes('miai-extras.js')) {
     throw new Error('[dshpet-vendor] index.html 里没有 miai-extras.js 的脚本行')
   }
-  if (!readFileSync(join(outRoot, 'sprite.js'), 'utf8').includes('miai-wallpaper')) {
+  const spriteOutSrc = readFileSync(join(outRoot, 'sprite.js'), 'utf8')
+  if (!spriteOutSrc.includes('miai-wallpaper')) {
     throw new Error('[dshpet-vendor] sprite.js 里没有咪爱菜单标记')
+  }
+  // 气泡淡出版式补丁（模块七 2026-10-31）：文件在场只证明被拷了，证明不了铺出来的是
+  // 打过这刀的那版 —— 少了它 = 表情包到期最后一拍字号/换行突变（主人报的症状），日志却全绿。
+  if (!spriteOutSrc.includes('// 咪爱补丁（2026-10-31，模块七）')) {
+    throw new Error('[dshpet-vendor] sprite.js 里没有气泡淡出版式补丁（模块七）')
   }
   // main.js 自退补丁的铺后自检：上面「文件在场」只证明被拷了，证明不了拷完还打过补丁
   // （没打补丁 = 关宠又回到 TerminateProcess 慢杀，探针 8s 判据红、日志却全绿）

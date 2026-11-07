@@ -23,6 +23,30 @@ import { CURRENT_CONFIG_VERSION, defaultPetConfig, emptyIdePaths, type ConfigSav
 import { DEFAULT_LAYOUT, SIDEBAR_MAX_SIZE } from '../../../../shared/layout'
 import { defaultWallpaper } from '../../../../shared/wallpaper'
 import { defaultSplash } from '../../../../shared/splash'
+import { FREE_POOL_DEFAULT_MODEL } from '../../../../shared/free-pool'
+
+/**
+ * 造一份 `PublicAppConfig['ai']`。
+ *
+ * 2026-11-01 双模式之后这块多了三个必填字段（mode / poolModel / ready）。
+ * 集中造夹具，别在十几处字面量里各抄一遍 —— 下次再加字段只改这里。
+ * 默认值一律照生产默认：专属模式、兜底池模型、没 Key 不可用。
+ */
+function aiPublic(over: Partial<PublicAppConfig['ai']> = {}): PublicAppConfig['ai'] {
+  return {
+    mode: 'api',
+    poolModel: FREE_POOL_DEFAULT_MODEL,
+    provider: 'deepseek',
+    hasKey: false,
+    ready: false,
+    baseUrl: 'https://api.deepseek.com',
+    model: 'deepseek-chat',
+    dynamicEnabled: false,
+    thinking: 'medium',
+    thinkingByModel: {},
+    ...over
+  }
+}
 
 /**
  * 主进程会发回来的那份（**注意：没有 apiKey**）。
@@ -72,7 +96,7 @@ function publicConfig(over: Partial<PublicAppConfig> = {}): PublicAppConfig {
     // 那类问题测不出来（host 侧 applySettings 正是拿这个块去重启宠物的）。
     pet: defaultPetConfig(),
     envCache: {},
-    ai: { hasKey: false, baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat', dynamicEnabled: false },
+    ai: aiPublic(),
     ...over
   }
 }
@@ -86,14 +110,14 @@ function publicConfig(over: Partial<PublicAppConfig> = {}): PublicAppConfig {
  * 才能让「入参里混进了代理」这类问题在测试里就现形，而不是等用户点保存时才发现。
  * （这个 bug 真的存在过，就是这条抓出来的，详见 settings.ts 的 save()。）
  */
-function stubMiai(cfg: PublicAppConfig = publicConfig()): ConfigSavePayload[] {
+function stubMiai(cfg: PublicAppConfig = publicConfig(), opts: { failSave?: boolean } = {}): ConfigSavePayload[] {
   const sent: ConfigSavePayload[] = []
   ;(globalThis as unknown as { window: unknown }).window = {
     miai: {
       getConfig: () => Promise.resolve(structuredClone(cfg)),
       saveConfig: (p: ConfigSavePayload) => {
         sent.push(structuredClone(p))
-        return Promise.resolve()
+        return opts.failSave === true ? Promise.reject(new Error('disk full')) : Promise.resolve()
       },
       detectEnv: () => Promise.resolve({})
     }
@@ -128,15 +152,22 @@ describe('改别的设置，绝不会碰到 Key', () => {
     await s.update({ runTimeoutSec: 30 })
 
     expect(sent[0].ai).toEqual({
+      mode: 'api',
+      poolModel: FREE_POOL_DEFAULT_MODEL,
+      provider: 'deepseek',
       baseUrl: 'https://api.deepseek.com',
       model: 'deepseek-chat',
-      dynamicEnabled: false
+      dynamicEnabled: false,
+      // v23：思考档位跟着一起带 —— 少了它们，主进程会按推荐值重算，
+      // 用户刚调的那档就在「保存别的设置」时被悄悄改回去。
+      thinking: 'medium',
+      thinkingByModel: {}
     })
     expect(sent[0].runTimeoutSec).toBe(30)
   })
 
   it('保存时**不会把 hasKey 带进入参** —— 它是返回体的字段，不该出现在入参里', async () => {
-    const sent = stubMiai(publicConfig({ ai: { hasKey: true, baseUrl: 'x', model: 'y', dynamicEnabled: false } }))
+    const sent = stubMiai(publicConfig({ ai: aiPublic({ hasKey: true, ready: true, baseUrl: 'x', model: 'y' }) }))
     const s = useSettingsStore()
     await s.load()
     await s.update({ reviewEnabled: true })
@@ -269,11 +300,11 @@ describe('清除 Key 是唯一能真的删掉它的路', () => {
     await s.load()
     await s.clearAiKey()
 
-    expect(sent[0].ai.apiKey).toBeNull()
+    expect(sent[0].ai.apiKeys?.deepseek).toBeNull()
   })
 
   it('清完之后界面立刻显示「未配置」（不用等重新读配置）', async () => {
-    const sent = stubMiai(publicConfig({ ai: { hasKey: true, baseUrl: 'x', model: 'y', dynamicEnabled: false } }))
+    const sent = stubMiai(publicConfig({ ai: aiPublic({ hasKey: true, ready: true, baseUrl: 'x', model: 'y' }) }))
     const s = useSettingsStore()
     await s.load()
     expect(s.config.ai.hasKey).toBe(true)
@@ -283,7 +314,7 @@ describe('清除 Key 是唯一能真的删掉它的路', () => {
   })
 
   it('清 Key 不会连带清掉服务地址和模型', async () => {
-    const sent = stubMiai(publicConfig({ ai: { hasKey: true, baseUrl: 'x', model: 'y', dynamicEnabled: false } }))
+    const sent = stubMiai(publicConfig({ ai: aiPublic({ hasKey: true, ready: true, baseUrl: 'x', model: 'y' }) }))
     const s = useSettingsStore()
     await s.load()
     await s.clearAiKey()
@@ -300,13 +331,13 @@ describe('保存新 Key', () => {
     const sent = stubMiai()
     const s = useSettingsStore()
     await s.load()
-    await s.updateAi({ apiKey: 'sk-new-key' })
+    await s.updateAi({ apiKeys: { deepseek: 'sk-new-key' } })
 
-    expect(sent[0].ai.apiKey).toBe('sk-new-key')
+    expect(sent[0].ai.apiKeys?.deepseek).toBe('sk-new-key')
   })
 
   it('改模型时**不会**把 Key 一起带上（那条路走不通，也不该走）', async () => {
-    const sent = stubMiai(publicConfig({ ai: { hasKey: true, baseUrl: 'x', model: 'old', dynamicEnabled: false } }))
+    const sent = stubMiai(publicConfig({ ai: aiPublic({ hasKey: true, ready: true, baseUrl: 'x', model: 'old' }) }))
     const s = useSettingsStore()
     await s.load()
     await s.updateAi({ model: 'deepseek-reasoner' })
@@ -317,7 +348,7 @@ describe('保存新 Key', () => {
 
   it('AI 动态出题开关能存下来，且**不会顺手带上 Key**', async () => {
     const sent = stubMiai(
-      publicConfig({ ai: { hasKey: true, baseUrl: 'x', model: 'y', dynamicEnabled: false } })
+      publicConfig({ ai: aiPublic({ hasKey: true, ready: true, baseUrl: 'x', model: 'y' }) })
     )
     const s = useSettingsStore()
     await s.load()
@@ -337,6 +368,104 @@ describe('保存新 Key', () => {
 
     s.markKeySaved()
     expect(s.config.ai.hasKey).toBe(true)
+  })
+})
+
+// ---------------------------------------------------------------- 思考档位（v23）
+
+describe('思考档位：保存、换模型、失败回滚', () => {
+  it('显式选档 → 原样发出去，并记进按模型的表、刷新镜像', async () => {
+    const sent = stubMiai(
+      publicConfig({ ai: aiPublic({ hasKey: true, ready: true, model: 'deepseek-chat' }) })
+    )
+    const s = useSettingsStore()
+    await s.load()
+
+    await s.updateAi({ thinking: 'high' })
+
+    expect(sent[0].ai.thinking).toBe('high')
+    expect(sent[0].ai.thinkingByModel?.['api:deepseek:deepseek-chat']).toBe('high')
+    expect(s.config.ai.thinking).toBe('high')
+  })
+
+  it('换模型 → 高档不跟过去：切到小模型后按推荐值落 low', async () => {
+    const sent = stubMiai(
+      publicConfig({
+        ai: aiPublic({
+          hasKey: true,
+          ready: true,
+          provider: 'deepseek',
+          model: 'deepseek-chat',
+          thinking: 'high',
+          thinkingByModel: { 'api:deepseek:deepseek-chat': 'high' }
+        })
+      })
+    )
+    const s = useSettingsStore()
+    await s.load()
+
+    await s.updateAi({ provider: 'qwen', model: 'qwen-turbo' })
+
+    expect(sent[0].ai.thinking).toBe('low')
+    // 旧路由的记忆还留着（切回去还在）
+    expect(sent[0].ai.thinkingByModel?.['api:deepseek:deepseek-chat']).toBe('high')
+    expect(s.config.ai.thinking).toBe('low')
+  })
+
+  it('换回旧路由 → 恢复它记住的档位', async () => {
+    const sent = stubMiai(
+      publicConfig({
+        ai: aiPublic({
+          hasKey: true,
+          ready: true,
+          provider: 'qwen',
+          model: 'qwen-max',
+          thinking: 'medium',
+          thinkingByModel: {
+            'api:deepseek:deepseek-chat': 'off',
+            'api:qwen:qwen-max': 'medium'
+          }
+        })
+      })
+    )
+    const s = useSettingsStore()
+    await s.load()
+
+    await s.updateAi({ provider: 'deepseek', model: 'deepseek-chat' })
+    expect(sent[0].ai.thinking).toBe('off')
+  })
+
+  it('改别的 AI 字段 → 当前的档位原样带上，不被推荐值改掉', async () => {
+    const sent = stubMiai(
+      publicConfig({
+        ai: aiPublic({
+          hasKey: true,
+          ready: true,
+          model: 'deepseek-chat',
+          thinking: 'off',
+          thinkingByModel: { 'api:deepseek:deepseek-chat': 'off' }
+        })
+      })
+    )
+    const s = useSettingsStore()
+    await s.load()
+
+    await s.updateAi({ dynamicEnabled: true })
+    expect(sent[0].ai.thinking).toBe('off')
+  })
+
+  it('★ 写盘失败 → 镜像必须留在旧档（界面不许比盘上的状态乐观）', async () => {
+    stubMiai(
+      publicConfig({
+        ai: aiPublic({ hasKey: true, ready: true, model: 'deepseek-chat', thinking: 'medium' })
+      }),
+      { failSave: true }
+    )
+    const s = useSettingsStore()
+    await s.load()
+
+    await expect(s.updateAi({ thinking: 'high' })).rejects.toThrow('disk full')
+    expect(s.config.ai.thinking).toBe('medium')
   })
 })
 
@@ -381,11 +510,65 @@ describe('入参必须能被结构化克隆（IPC 就靠它）', () => {
   })
 })
 
+// ---------------------------------------------------------------- 保存失败回滚
+
+/*
+ * 【这一节守什么】写盘失败时，界面读的这份**内存镜像**必须退回改之前。
+ *
+ * 旧行为是「先改镜像、再 await save」且失败只弹 toast、不回滚 —— 用户拨了
+ * 开关，界面上停在新值（看着成功），文件里还是旧值，重启才发现"自己变回去了"。
+ * 不报错、不崩、只是骗人，所以只能靠这里钉住。
+ */
+describe('保存失败：内存镜像必须回滚（不许"看着改成功、重启又变回去"）', () => {
+  it('★ saveConfig 报错 → update() 抛出，且开关退回改之前的值', async () => {
+    stubMiai(publicConfig({ theme: 'light' }), { failSave: true })
+    const s = useSettingsStore()
+    await s.load()
+
+    await expect(s.update({ theme: 'dark' })).rejects.toThrow('disk full')
+    expect(s.config.theme, '写盘失败后开关必须退回 light，不能停在新值').toBe('light')
+  })
+
+  it('只回滚失败的那一笔：之前保存成功的值保留', async () => {
+    const opts = { failSave: false }
+    stubMiai(publicConfig({ theme: 'light' }), opts)
+    const s = useSettingsStore()
+    await s.load()
+
+    await s.update({ theme: 'dark' }) // 这一笔成功
+    opts.failSave = true
+
+    await expect(s.update({ reviewEnabled: false })).rejects.toThrow()
+    expect(s.config.theme, '已存住的 dark 不能被后一笔失败连坐').toBe('dark')
+    expect(s.config.reviewEnabled).toBe(true)
+  })
+
+  it('★ 在途失败不抹掉更新的一笔（两次保存背靠背：前者失败、后者成功）', async () => {
+    // 失败那笔的 await 返回时，镜像已经是后一笔设的值 —— 无条件写回旧镜像
+    // 会把后一笔抹掉，而它可能已经写盘成功（盘上反而是新值）。只回滚自己那笔。
+    const opts = { failSave: true }
+    stubMiai(publicConfig({ theme: 'light' }), opts)
+    const s = useSettingsStore()
+    await s.load()
+
+    const first = s.update({ theme: 'dark' }) // 会失败
+    opts.failSave = false
+    const second = s.update({ runTimeoutSec: 30 }) // 会成功
+
+    await expect(first).rejects.toThrow()
+    await second
+    // 第二笔拼载荷时镜像里已经带着 dark，它把 dark 一起写进了盘 ——
+    // 所以镜像里必须留着 dark，才和盘上一致。
+    expect(s.config.theme).toBe('dark')
+    expect(s.config.runTimeoutSec).toBe(30)
+  })
+})
+
 // ---------------------------------------------------------------- 读配置
 
 describe('读配置', () => {
   it('主进程给什么就用什么（界面不自己猜 hasKey）', async () => {
-    stubMiai(publicConfig({ ai: { hasKey: true, baseUrl: 'https://proxy.local', model: 'x', dynamicEnabled: false } }))
+    stubMiai(publicConfig({ ai: aiPublic({ hasKey: true, ready: true, baseUrl: 'https://proxy.local', model: 'x' }) }))
     const s = useSettingsStore()
     await s.load()
 
@@ -398,7 +581,7 @@ describe('读配置', () => {
     // 这条不是在测「它坏了」，是在把一条**前提**写下来：
     // store 初值是 DEFAULT_APP_CONFIG，没 load 就 save 等于拿默认值覆盖真配置。
     // Key 不受影响（入参里没有它），但 baseUrl / 模型会被打回默认。
-    const sent = stubMiai(publicConfig({ ai: { hasKey: true, baseUrl: 'https://proxy.local', model: 'x', dynamicEnabled: false } }))
+    const sent = stubMiai(publicConfig({ ai: aiPublic({ hasKey: true, ready: true, baseUrl: 'https://proxy.local', model: 'x' }) }))
     const s = useSettingsStore()
 
     await s.update({ runTimeoutSec: 30 }) // ← 故意不 load
@@ -984,5 +1167,101 @@ describe('外部配置推送：整份换上、绝不回写', () => {
     await s.setPet({ size: 300 })
     expect(sent[0].pet.enabled).toBe(false)
     expect(sent[0].pet.size).toBe(300)
+  })
+})
+
+// ---------------------------------------------------------------- 双模式（v22）
+
+/**
+ * 模式切换与「免费池下清 Key」的界面状态。
+ *
+ * 【为什么要读回主进程】`hasKey` / `ready` 都是主进程按当前模式算出来的。
+ * 只改渲染层镜像的话，会出现「切到免费池了、状态标签还写着未配置」或者
+ * 「池模式下把 Key 删了、动态出题却被判成不可用」—— 两种都不报错。
+ */
+describe('双模式：setAiMode 与池模式下的 Key 状态', () => {
+  /** 一个会跟着 save 更新的假主进程（stubMiai 是只读快照，测不了切模式） */
+  function stubMutable(): { sent: ConfigSavePayload[]; cfg: PublicAppConfig } {
+    const cfg = publicConfig()
+    const sent: ConfigSavePayload[] = []
+    ;(globalThis as unknown as { window: unknown }).window = {
+      miai: {
+        getConfig: () => Promise.resolve(structuredClone(cfg)),
+        saveConfig: (p: ConfigSavePayload) => {
+          sent.push(structuredClone(p))
+          if (p.ai.mode !== undefined) cfg.ai.mode = p.ai.mode
+          if (p.ai.poolModel !== undefined) cfg.ai.poolModel = p.ai.poolModel
+          // 主进程算出来的两个布尔，跟着这次保存更新到「新事实」
+          const keyCleared = p.ai.apiKeys?.deepseek === null
+          if (keyCleared) cfg.ai.hasKey = false
+          cfg.ai.ready = cfg.ai.mode === 'pool' || cfg.ai.hasKey
+          return Promise.resolve()
+        },
+        detectEnv: () => Promise.resolve({})
+      }
+    }
+    return { sent, cfg }
+  }
+
+  it('切到免费池：载荷带 mode=pool，读回后 ready 为真、hasKey 仍为假', async () => {
+    const { sent, cfg } = stubMutable()
+    const s = useSettingsStore()
+    await s.load()
+
+    await s.setAiMode('pool')
+
+    expect(sent).toHaveLength(1)
+    expect(sent[0].ai.mode).toBe('pool')
+    expect(sent[0].ai.poolModel).toBe(FREE_POOL_DEFAULT_MODEL)
+    // 读回的是主进程算好的值：没有 Key 但可用
+    expect(cfg.ai.ready).toBe(true)
+    expect(s.config.ai.mode).toBe('pool')
+    expect(s.config.ai.ready).toBe(true)
+    expect(s.config.ai.hasKey).toBe(false)
+  })
+
+  it('选的还是当前模式 → 一次 saveConfig 都不发（连点不做无用写盘）', async () => {
+    const { sent } = stubMutable()
+    const s = useSettingsStore()
+    await s.load()
+
+    await s.setAiMode('api')
+    expect(sent).toHaveLength(0)
+  })
+
+  it('池模式清 Key：hasKey 归 false，但 ready 不许跟着变 false（否则 AI 全哑）', async () => {
+    const { cfg } = stubMutable()
+    cfg.ai.mode = 'pool'
+    cfg.ai.hasKey = false
+    cfg.ai.ready = true
+    const s = useSettingsStore()
+    await s.load()
+
+    await s.clearAiKey()
+    expect(s.config.ai.hasKey).toBe(false)
+    expect(s.config.ai.ready).toBe(true)
+  })
+
+  it('保存新 Key 后 hasKey 与 ready **一起**抬起来（挑战/延展读的是 ready）', async () => {
+    stubMutable()
+    const s = useSettingsStore()
+    await s.load()
+    expect(s.config.ai.ready).toBe(false)
+
+    s.markKeySaved()
+    expect(s.config.ai.hasKey).toBe(true)
+    expect(s.config.ai.ready).toBe(true)
+  })
+
+  it('专属模式清 Key：ready 跟着归 false（没有 Key 就是不能用）', async () => {
+    const { cfg } = stubMutable()
+    cfg.ai.hasKey = true
+    cfg.ai.ready = true
+    const s = useSettingsStore()
+    await s.load()
+
+    await s.clearAiKey()
+    expect(s.config.ai.hasKey).toBe(false)
+    expect(s.config.ai.ready).toBe(false)
   })
 })

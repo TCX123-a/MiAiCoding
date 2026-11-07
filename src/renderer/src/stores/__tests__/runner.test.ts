@@ -69,7 +69,8 @@ function publicConfig(over: Partial<PublicAppConfig> = {}): PublicAppConfig {
     sfxVolume: 100,
     layout: { ...DEFAULT_LAYOUT },
     envCache: {},
-    ai: { hasKey: false, baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat', dynamicEnabled: false },
+    // 必填字段（v22 双模式块），照生产默认写：专属模式 / 兜底池模型 / 没 Key
+    ai: { mode: 'api', poolModel: 'kilo-auto/free', provider: 'deepseek', hasKey: false, ready: false, baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat', dynamicEnabled: false, thinking: 'medium', thinkingByModel: {} },
     ...over
   }
 }

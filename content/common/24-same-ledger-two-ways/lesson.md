@@ -2,7 +2,7 @@
 id: common-24
 lang: common
 stage: 0
-order: 21
+order: 33
 title: 同一本账，两种写法——结构体版与类版并排看
 tags: [面向对象, 类与对象, 封装]
 required: ["common-23"]

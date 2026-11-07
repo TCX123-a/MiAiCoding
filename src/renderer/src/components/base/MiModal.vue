@@ -136,7 +136,7 @@ onBeforeUnmount(() => {
       <div v-if="visible" class="mi-modal-mask" @click.self="close">
         <div
           ref="panel"
-          class="mi-modal"
+          class="mi-modal mi-zoom-layer"
           tabindex="-1"
           role="dialog"
           aria-modal="true"
@@ -182,6 +182,17 @@ onBeforeUnmount(() => {
   background: var(--mi-bg);
   border-radius: var(--mi-radius-lg);
   box-shadow: 0 12px 40px color-mix(in srgb, var(--mi-overlay) 25%, transparent);
+}
+/*
+ * 缩放白名单（2026-10-31 自检 P2）：内容卡跟正文一起吃 --mi-zoom，遮罩外壳不缩放。
+ * 规则与边界见 styles/zoom.css 的 `.mi-zoom-layer` 段（只挂内容卡，绝不挂遮罩）。
+ * vh/vw 在缩放层里量到的是**缩放前**视口，所以上限必须按 ÷zoom 折回本地单位，
+ * 否则 160% 用户的弹窗会顶出屏幕、上下被裁。算式与验证见 QuizOverlay 的
+ * `.quiz-panel.mi-zoom-layer`。scoped 权级（0,3,0）压得住上面那条 86vh。
+ */
+.mi-modal.mi-zoom-layer {
+  max-height: min(86vh, calc(100vh / var(--mi-zoom) - 16px));
+  max-width: min(92vw, calc(100vw / var(--mi-zoom) - 16px));
 }
 /* 面板的 tabindex="-1" 只为接住打开时的焦点（V2-36），不是可见控件：
    给整块面板描一圈焦点环既吵又会随主题变化串味，压掉。 */

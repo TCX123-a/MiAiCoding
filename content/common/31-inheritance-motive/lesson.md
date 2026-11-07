@@ -2,7 +2,7 @@
 id: common-31
 lang: common
 stage: 0
-order: 28
+order: 40
 title: 先抄三遍，再抽一张公共图纸——继承的第一动机
 tags: [面向对象, 继承]
 required: ["common-30"]

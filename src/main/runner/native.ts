@@ -277,10 +277,13 @@ export async function runCodeNative(
 ): Promise<RunResult> {
   const started = performance.now()
   let compileWarnings: string | undefined
+  // v7 模块六：Java 多文件拆分的元信息（成功/失败都带出去，同托管模式）
+  let javaSplit: RunResult['javaSplit']
 
   const done = (partial: Omit<RunResult, 'durationMs'>): RunResult => ({
     ...partial,
     ...(compileWarnings && partial.phase === 'run' ? { compileWarnings } : {}),
+    ...(javaSplit ? { javaSplit } : {}),
     native: {
       command,
       ...(resolved ? { resolved } : {}),
@@ -317,6 +320,7 @@ export async function runCodeNative(
   resolved = probe.path
 
   const plan = planForLang(req.lang, command, req.code)
+  javaSplit = plan.javaSplit
   if (plan.error) {
     return done({
       ok: false,
@@ -334,9 +338,30 @@ export async function runCodeNative(
   // 展开顺序和托管模式一致：语言自己的键覆盖外层的。
   const childEnv = { ...env, ...(plan.env ?? {}) }
 
-  const dir = makeRunDir()
+  // 同托管路径（runner.ts 的 runCode）：临时目录建不出来时给一句能照着做的话，
+  // 别让异常抛穿到渲染层被兜成「再点一次试试」。
+  let dir: string
   try {
-    writeFileSync(join(dir, plan.srcFile), req.code, 'utf8')
+    dir = makeRunDir()
+  } catch (e) {
+    console.error('[native] makeRunDir failed:', e)
+    return done({
+      ok: false,
+      phase: 'compile',
+      stdout: '',
+      stderr: '',
+      exitCode: null,
+      timedOut: false,
+      truncated: false,
+      message: RUNNER.TEMP_DIR_FAIL
+    })
+  }
+  try {
+    if (plan.sources) {
+      for (const source of plan.sources) writeFileSync(join(dir, source.file), source.content, 'utf8')
+    } else {
+      writeFileSync(join(dir, plan.srcFile), req.code, 'utf8')
+    }
 
     if (plan.compile) {
       const line = buildCmdLine(plan.compile.exe, plan.compile.args)

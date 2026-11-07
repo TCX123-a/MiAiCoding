@@ -2,7 +2,7 @@
 id: common-27
 lang: common
 stage: 0
-order: 24
+order: 36
 title: 图纸上的第一条说明——构造函数与析构函数
 tags: [面向对象, 构造与析构]
 required: ["common-26"]

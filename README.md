@@ -354,8 +354,10 @@ LoRA `ds_whalemaid` 是**第三方作品**（Civitai 模型 2845839，作者 `og
 > 本项目通过 `build/dshpet-vendor.ts` 把 helper 与素材放进 `out/pet-helper`，
 > 并在该目录保留原作者署名与素材条款。
 >
-> 其中 `上首软糖体.ttf` 是**第三方商业字体**，不适用 MIT，也不在仓库的 Git 跟踪范围内
-> （构建时从 dsh-pet npm 包拷入）。商业分发安装包前请自行取得字体授权或替换字体。
+> 桌宠气泡字体已从上游自带的第三方商业字体 `上首软糖体.ttf` 替换为小米 **MiSans**
+> （免费商用）。MiSans 的许可证允许把字体嵌入 App 并随 App 分发，但要求「在软件中特别
+> 注明使用了 MiSans 字体」且**不得单独再分发字体软件**；因此 `.otf` 文件不在 Git 跟踪
+> 范围内，构建前用 `npm run font:fetch` 从官方包取回并校验 SHA256。设置页已写明字体署名。
 
 ### 4. 动态壁纸与液态玻璃
 
@@ -456,7 +458,7 @@ LoRA `ds_whalemaid` 是**第三方作品**（Civitai 模型 2845839，作者 `og
 | Mediabunny（内嵌库） | **MPL-2.0**，全文见 [`LICENSES/MPL-2.0.txt`](./LICENSES/MPL-2.0.txt) |
 | 桌宠代码 | MIT（上游 dsh-pet） |
 | 桌宠素材 | **允许开源使用，禁止商用**（上游条款） |
-| 桌宠字体 `上首软糖体.ttf` | **第三方商业字体，MIT 不覆盖**；文件不在 Git 跟踪范围，商业分发需自行取得授权 |
+| 桌宠字体 `MiSans-Regular.otf` | **小米 MiSans 字体许可，MIT 不覆盖**；免费商用、可嵌入 App 分发，但不得单独再分发字体文件（故不在 Git 跟踪范围） |
 | Anima 权重与衍生 LoRA | **非商业**（CircleStone Labs Non-Commercial License v1.2） |
 | Anima 生成输出 | 上游允许商用（但第三方 LoRA 另有条款） |
 | `g01`–`g200` 图片 | 项目用 Anima + 第三方 LoRA 生成，随仓库提供（生成输出可商用） |

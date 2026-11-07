@@ -2,7 +2,7 @@
 id: common-32
 lang: common
 stage: 0
-order: 29
+order: 41
 title: 一声开饭，各吃各的——多态与「把 switch 请出去」
 tags: [面向对象, 多态]
 required: ["common-31"]

@@ -2,7 +2,7 @@
 id: common-34
 lang: common
 stage: 0
-order: 31
+order: 43
 title: 这是谁的活？——CRC 卡片与「什么时候别用继承」
 tags: [面向对象, 设计]
 required: ["common-33"]

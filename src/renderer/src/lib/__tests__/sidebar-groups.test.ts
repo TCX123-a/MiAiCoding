@@ -65,17 +65,17 @@ const CANON_ORDER = [
   'review',
   'challenge',
   'favorites',
-  'warehouse', // 复习与挑战组
   'overview',
+  'warehouse', // 个人中心组（v7 模块五 2026-10-31：仓库从复习组挪来）
   'leaderboard',
   'login', // 个人中心组（签到格 2026-10-09 并入总览，三处同删）
   'settings' // 工具区
 ]
 
-/** 契约 §1.1 的三张组表（逐项，含组内顺序） */
+/** 契约 §1.1 的三张组表（逐项，含组内顺序）；仓库的组归属 2026-10-31 变更 */
 const GROUP_LEARN_ITEMS = ['common', 'c', 'cpp', 'java', 'python', 'practice', 'playground', 'memo']
-const GROUP_REVIEW_ITEMS = ['review', 'challenge', 'favorites', 'warehouse']
-const GROUP_ME_ITEMS = ['overview', 'leaderboard', 'login']
+const GROUP_REVIEW_ITEMS = ['review', 'challenge', 'favorites']
+const GROUP_ME_ITEMS = ['overview', 'warehouse', 'leaderboard', 'login']
 
 /** 源码里找标记；找不到就当场红（别让 indexOf 的 -1 悄悄滑进切片里） */
 function idxOrDie(src: string, marker: string, where: string): number {

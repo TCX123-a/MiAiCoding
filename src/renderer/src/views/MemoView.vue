@@ -153,7 +153,7 @@ const bodyKb = computed(() => (utf8Bytes(selected.value?.body ?? '') / 1024).toF
     <h1 class="page-title">{{ TITLE.MEMO }}</h1>
 
     <!-- loaded gate：没读完之前不画列表（否则会先当真地显示一次「还没有备忘喵」） -->
-    <div v-if="memo.loaded" class="memo-grid">
+    <div v-if="memo.loaded" class="memo-grid" :class="{ 'memo-grid-solo': memo.items.length === 0 }">
       <MiCard class="memo-side">
         <div class="memo-tools">
           <div class="memo-chips">
@@ -191,7 +191,9 @@ const bodyKb = computed(() => (utf8Bytes(selected.value?.body ?? '') / 1024).toF
         <MiEmpty v-else v-bind="emptyState" size="s" />
       </MiCard>
 
-      <MiCard class="memo-main">
+      <!-- 一条备忘都没有时右栏整块不画：左栏已经有一份完整的空状态，
+           再画一份只会让人以为两个入口都坏了（B4）。 -->
+      <MiCard v-if="memo.items.length > 0" class="memo-main">
         <div v-if="selected" ref="editRef" class="memo-edit">
           <div class="memo-edit-head">
             <!-- 分类在编辑器里也放一份（同一份 MEMO.* 文案）：列表上只显示当前
@@ -236,7 +238,7 @@ const bodyKb = computed(() => (utf8Bytes(selected.value?.body ?? '') / 1024).toF
             <span class="memo-size">{{ MEMO.SIZE(bodyKb) }}</span>
           </div>
         </div>
-        <MiEmpty v-else v-bind="EMPTY.MEMO_EMPTY" size="s" />
+        <MiEmpty v-else v-bind="EMPTY.MEMO_PICK" size="s" />
       </MiCard>
     </div>
   </div>
@@ -258,6 +260,10 @@ const bodyKb = computed(() => (utf8Bytes(selected.value?.body ?? '') / 1024).toF
   gap: 16px;
   /* 左栏是列表，不该被右栏的长正文拉长 */
   align-items: start;
+}
+/* 空本子只占一栏：列表卡片铺满整行，不再在右边留一张无法使用的空编辑器 */
+.memo-grid-solo {
+  grid-template-columns: 1fr;
 }
 .memo-tools {
   display: flex;

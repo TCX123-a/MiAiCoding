@@ -2,7 +2,7 @@
 id: common-21
 lang: common
 stage: 0
-order: 18
+order: 30
 title: 起个名字就是抽象——函数的真正威力
 tags: [函数, 面向对象]
 required: ["common-20"]

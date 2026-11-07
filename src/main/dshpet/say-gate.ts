@@ -79,6 +79,14 @@ export const SAY_ALLOW_AT_ZERO: ReadonlySet<string> = new Set([
   'feed-ok',
   'feed-empty',
   'feed-full',
+  // v7 模块五（2026-10-31）：溢喂回执（饱了但好感没满）+ 喂小鱼干的四种回执。
+  // 与 feed-* 同族：都是用户刚抬手喂过、必须给出"吃没吃到"的回答；归零档
+  // 正是最需要一根小鱼干救场的时刻，静默 = 点了没反应。
+  'feed-overflow',
+  'snack-ok',
+  'snack-empty',
+  'snack-full',
+  'snack-overflow',
   'greet',
   'greet:away',
   'greet:hungry',

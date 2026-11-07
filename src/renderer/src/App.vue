@@ -13,8 +13,14 @@ import WallpaperLayer from './components/wallpaper/WallpaperLayer.vue'
 import TopBar from './components/domain/TopBar.vue'
 import FullscreenMenu from './components/domain/FullscreenMenu.vue'
 import MiToast from './components/base/MiToast.vue'
-import { LAYOUT } from './lib/copy'
+import MiModal from './components/base/MiModal.vue'
+import MiButton from './components/base/MiButton.vue'
+import { LAYOUT, SETTLE } from './lib/copy'
+import { lessonPathLabel, pickCloseLesson } from './lib/close-guard'
+import { PET_REWARD_RICE } from '../../shared/pet'
 import { useCloudSyncStore } from './stores/cloud-sync'
+import { useContentStore } from './stores/content'
+import { useProgressStore } from './stores/progress'
 import { useSearchStore } from './stores/search'
 import { useSettingsStore } from './stores/settings'
 import {
@@ -45,7 +51,117 @@ import 'splitpanes/dist/splitpanes.css'
  */
 const search = useSearchStore()
 const settings = useSettingsStore()
+const content = useContentStore()
+const progress = useProgressStore()
 const route = useRoute()
+
+// ---- 关窗拦截（2026-10-31「学到这里啦喵」） ----
+const closeAskOpen = ref(false)
+const closeBusy = ref(false)
+/** 结算失败后把弹框留住，用户能重试或明确选择不结算关闭 —— 不能带着错误消失 */
+const closeError = ref(false)
+/** 这次关窗结算要变绿的课（前缀里还没绿的那些） */
+const closeTargets = ref<string[]>([])
+/** 弹窗里那句「你今天学到了【……】」的课名（开框那一刻定下） */
+const closeWhere = ref('')
+const closeBody = computed(() =>
+  SETTLE.CLOSE_BODY(
+    closeWhere.value,
+    closeTargets.value.length,
+    closeTargets.value.length * PET_REWARD_RICE.lesson
+  )
+)
+
+/**
+ * 主进程问「刚刚学完的课结算了没有」。
+ *
+ * 第一件事是回 ack：主进程据此把 5 秒强关定时器换成 10 分钟长兜底，
+ * 用户读弹框、结算写盘的时间不再被硬掐（旧版只有 5 秒，选完也可能被截断）。
+ *
+ * 没有待结算（或那课已经被别的路径标绿）→ 立刻放行，不多弹一个框。
+ */
+function onCloseRequest(): void {
+  window.miai?.ackAppClose?.()
+  /*
+   * 智能拦截（2026-11-01）：不是「有 pending 就弹」。
+   *   · 当前/最后访问的课已经绿了 → 直接放行（主人点名的「别烦我」）；
+   *   · 学了一半没打卡、或者已经切到设置/每日挑战 → 用最后访问的课拦一下；
+   *   · 草稿课没有「学到这里啦喵」，跳过它退到待结算课。
+   * 判定抽在 lib/close-guard.ts，三条分支都有单测。
+   */
+  const target = pickCloseLesson({
+    lastLessonId: progress.lastLessonId,
+    pendingSettleId: progress.pendingSettleId,
+    isLearned: (id) => progress.learnedSet.has(id),
+    isSettleable: (id) => content.lessonOf(id) !== undefined
+  })
+  if (target === null) {
+    progress.clearPendingSettle()
+    window.miai?.confirmAppClose?.()
+    return
+  }
+  const unlearned = content
+    .writtenPrefixUpTo(target)
+    .filter((x) => !progress.learnedSet.has(x))
+  if (unlearned.length === 0) {
+    progress.clearPendingSettle(target)
+    window.miai?.confirmAppClose?.()
+    return
+  }
+  closeWhere.value = lessonPathLabel(content.lessonOf(target), content.titleOf(target))
+  closeTargets.value = unlearned
+  closeError.value = false
+  closeAskOpen.value = true
+}
+
+/**
+ * 结算并关闭：先把饭和进度落盘，**再等写队列真正落定**，最后才放行。
+ *
+ * 旧版在 finally 里无条件 confirm，两个后果都被复核坐实：
+ *   · 结算抛错时窗口照样关，错误提示随窗口一起消失；
+ *   · `flush()` 是 fire-and-forget，档案还在写盘就放行，回来会丢账。
+ * 现在失败就把弹框留住（内联错误 + 重试），成功才 confirm。
+ */
+async function settleAndClose(): Promise<void> {
+  if (closeBusy.value) return
+  closeBusy.value = true
+  closeError.value = false
+  try {
+    await progress.markLearnedMany(closeTargets.value)
+    await progress.whenIdle()
+    progress.clearPendingSettle()
+    closeAskOpen.value = false
+    window.miai?.confirmAppClose?.()
+  } catch {
+    closeError.value = true
+  } finally {
+    closeBusy.value = false
+  }
+}
+
+/** 「不需要」：不结算，直接关 —— 主人点名这条也要能关上 */
+function skipAndClose(): void {
+  if (closeBusy.value) return
+  progress.clearPendingSettle()
+  closeAskOpen.value = false
+  closeError.value = false
+  window.miai?.confirmAppClose?.()
+}
+
+/**
+ * 「继续学习」：取消这次关窗，窗口留着。
+ *
+ * ✕ / Esc / 点遮罩都走这里（旧版走的是 skipAndClose —— 一次误触就退出，
+ * 还没结算）。待结算状态**不清**：下次点 ✕ 还会再问一遍。
+ */
+function keepLearning(): void {
+  if (closeBusy.value) return
+  closeAskOpen.value = false
+  closeError.value = false
+  window.miai?.cancelAppClose?.()
+}
+
+let offCloseRequest: (() => void) | null = null
 
 /**
  * 裸壳路由（⑤ 的登录页，router 里 meta.bare 声明）：
@@ -214,10 +330,15 @@ onMounted(() => {
    * 下一个触发点自愈。不 await：开窗不等网络。
    */
   void useCloudSyncStore().start()
+  if (typeof window.miai?.onAppCloseRequest === 'function') {
+    offCloseRequest = window.miai.onAppCloseRequest(onCloseRequest)
+  }
 })
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', onGlobalKey)
   window.removeEventListener('blur', clearFoldHint)
+  offCloseRequest?.()
+  offCloseRequest = null
 })
 </script>
 
@@ -333,6 +454,7 @@ onBeforeUnmount(() => {
       v-if="!isBare"
       class="panel-toggle panel-toggle--left"
       :title="SIDEBAR_TOGGLE[sidebarMode].title"
+      :aria-label="SIDEBAR_TOGGLE[sidebarMode].title"
       @click="toggleSidebar"
     >
       {{ SIDEBAR_TOGGLE[sidebarMode].icon }}
@@ -342,6 +464,7 @@ onBeforeUnmount(() => {
       v-if="!isBare"
       class="panel-toggle"
       :title="rightPanelOpen ? LAYOUT.COLLAPSE_PANEL : LAYOUT.EXPAND_PANEL"
+      :aria-label="rightPanelOpen ? LAYOUT.COLLAPSE_PANEL : LAYOUT.EXPAND_PANEL"
       @click="togglePanel"
     >
       {{ rightPanelOpen ? '›' : '‹' }}
@@ -370,6 +493,32 @@ onBeforeUnmount(() => {
       见 lib/native-confirm.ts。
     -->
     <NativeRunConfirm />
+
+    <!--
+      关窗拦截（2026-10-31）：用户点了 ✕，但刚刚学完的课还没点「学到这里啦喵」。
+      挂在 App 上而不是课文页：关窗可能发生在任何页面（用户学完就去了设置页）。
+    -->
+    <MiModal
+      :visible="closeAskOpen"
+      :title="SETTLE.CLOSE_TITLE"
+      :width="500"
+      :closable="!closeBusy"
+      @close="keepLearning"
+    >
+      <p class="close-ask-text">{{ closeBody }}</p>
+      <p v-if="closeError" class="close-ask-error">{{ SETTLE.CLOSE_ERROR }}</p>
+      <div class="close-ask-actions">
+        <MiButton variant="ghost" :disabled="closeBusy" @click="keepLearning">
+          {{ SETTLE.CLOSE_KEEP }}
+        </MiButton>
+        <MiButton variant="ghost" :disabled="closeBusy" @click="skipAndClose">
+          {{ SETTLE.CLOSE_SKIP }}
+        </MiButton>
+        <MiButton variant="primary" :disabled="closeBusy" @click="settleAndClose">
+          {{ closeBusy ? SETTLE.CLOSE_BUSY : SETTLE.CLOSE_SETTLE }}
+        </MiButton>
+      </div>
+    </MiModal>
   </div>
 </template>
 
@@ -548,5 +697,26 @@ onBeforeUnmount(() => {
 .layout :deep(.splitpanes__splitter.is-fold-hint)::before {
   width: 4px;
   background: var(--mi-blue-deep);
+}
+
+/* 关窗拦截弹窗（2026-10-31） */
+.close-ask-text {
+  margin: 0 0 18px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--mi-text);
+}
+/* 结算失败的内联说明：用警示色但不用红到像崩溃 —— 用户还能重试 */
+.close-ask-error {
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--mi-warn, #b45309);
+}
+.close-ask-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 </style>

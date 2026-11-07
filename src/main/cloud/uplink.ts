@@ -39,7 +39,7 @@ import type {
 import { applyPull, applyPushResult, pendingEntries, type RiceEntry } from '../../shared/cloud/rice-ledger'
 import type { StoreBox } from '../store/box'
 import type { CloudChallengeClient } from './challenge'
-import { markSettleAttempt, removeSettle, type PendingOpsStore } from './pending-ops'
+import { markSettleAttempt, removeSettle, type PendingOps, type PendingOpsStore } from './pending-ops'
 import type { CloudRiceClient } from './rice'
 import type { RiceJournal } from './rice-journal'
 
@@ -116,7 +116,11 @@ export function adaptPushOutcome(
     .map((r) => ({ entryKey: r.entryKey, reason: `${r.code}: ${r.detail}` }))
   const rejectedKeys = new Set(rejected.map((r) => r.entryKey))
 
-  const conserved = resp.accepted + resp.duplicated + resp.rejected.length === pushed.length
+  // 【2026-10-31 自检 P2】守恒必须用**过滤后**的 rejected 长度。
+  // 用原始 resp.rejected.length 的话，服务端多报一个不在本批里的拒收键
+  // （accepted=N-1 + rejected=1 个幽灵键）也能凑出守恒，随后「除拒收键外
+  // 全部入云」会把真正没收下的那一条标成已入云 —— 一条本地账目永久丢失。
+  const conserved = resp.accepted + resp.duplicated + rejected.length === pushed.length
   if (!conserved) {
     return { accepted: [], duplicated: [], rejected, conservationBroken: true }
   }
@@ -212,8 +216,17 @@ export function createUplink(deps: UplinkDeps): Uplink {
     }
 
     // ---------------------------------------------------------------- 挑战结算
-    let queue = deps.settleQueue.read()
-    for (const op of queue.settles) {
+    /*
+     * 【2026-10-31 自检 P2】这份快照只决定「本轮试哪些条目」，**绝不拿它回写**。
+     * 循环里有 await：等待期间渲染层可能又入队一条结算；用开头读到的旧队列
+     * 写回，会把那条新差事静默抹掉（用户这天的挑战分就永远发不出去了）。
+     * 每次落盘都现读现改，只动当前这一条，不碰别人的增删。
+     */
+    const snapshot = deps.settleQueue.read()
+    const mutateSettleQueue = (fn: (q: PendingOps) => PendingOps): void => {
+      deps.settleQueue.write(fn(deps.settleQueue.read()))
+    }
+    for (const op of snapshot.settles) {
       if (!fresh()) return stale()
       const res = await deps.challenge.settle({
         ...op.payload,
@@ -223,8 +236,7 @@ export function createUplink(deps: UplinkDeps): Uplink {
       if (!fresh()) return stale()
 
       if (res.ok) {
-        queue = removeSettle(queue, op.submissionId)
-        deps.settleQueue.write(queue)
+        mutateSettleQueue((q) => removeSettle(q, op.submissionId))
         result.settlesSent++
         log(`challenge settle: ${op.dateKey} settled (idempotent=${res.data.idempotent})`)
         continue
@@ -234,8 +246,7 @@ export function createUplink(deps: UplinkDeps): Uplink {
       if (code === 'CHALLENGE_DUPLICATE') {
         // 这一天已被别的设备（或本设备先前的另一条 submissionId）结算过：
         // 这条永远不会成功，出队 —— 但不是失败（保持现状 = 重复计分风险已排除）
-        queue = removeSettle(queue, op.submissionId)
-        deps.settleQueue.write(queue)
+        mutateSettleQueue((q) => removeSettle(q, op.submissionId))
         result.settlesDropped++
         log(`challenge settle: ${op.dateKey} already settled, dropped`)
         continue
@@ -246,8 +257,7 @@ export function createUplink(deps: UplinkDeps): Uplink {
         return result
       }
 
-      queue = markSettleAttempt(queue, op.submissionId, `${code}: ${message}`)
-      deps.settleQueue.write(queue)
+      mutateSettleQueue((q) => markSettleAttempt(q, op.submissionId, `${code}: ${message}`))
       result.failures.push({ phase: 'settle', code, message })
       if (httpStatus === null || httpStatus === 429 || httpStatus >= 500) {
         // 网络/限流/服务端故障：后面每条大概率同样失败，停轮等下次触发

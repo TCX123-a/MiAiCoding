@@ -664,3 +664,43 @@ describe('原生失败时 stderr 必须放行（3.0 唯一一处故意偏离老�
     expect(v.nativeLine).toContain('python')
   })
 })
+
+describe('runView：Java 多文件拆分提示（v7 模块六）', () => {
+  const split = { javaSplit: { files: ['Test.java', 'Person.java'], entry: 'Test' } }
+
+  it('拆分成功时仍然判「好」，提示里点名全部文件与入口', () => {
+    const v = runView(r({ stdout: 'hi', ...split }), false)
+    expect(v.tone).toBe('ok')
+    expect(v.statusText).toBe(RUNNER_UI.OK)
+    expect(v.showSplitHint).toBe(true)
+    expect(v.splitHint).toContain('Test.java')
+    expect(v.splitHint).toContain('Person.java')
+    expect(v.splitHint).toContain('Test')
+    // 拆分信息绝不能混进 stdout —— 那是判分依据
+    expect(v.stdout).toBe('hi')
+  })
+
+  it('编译失败时也显示拆分提示（这时最需要对上文件名），但颜色仍是「坏」', () => {
+    const v = runView(
+      r({ ok: false, phase: 'compile', stderr: 'Test.java:3: error: ...', ...split }),
+      false
+    )
+    expect(v.tone).toBe('bad')
+    expect(v.showSplitHint).toBe(true)
+  })
+
+  it('没拆分 / 正在跑 → 不显示', () => {
+    expect(runView(r({ stdout: 'x' }), false).showSplitHint).toBe(false)
+    expect(runView(r({ stdout: 'x', ...split }), true).showSplitHint).toBe(false)
+    expect(runView(null, false).showSplitHint).toBe(false)
+  })
+
+  it('★ 拆分提示不会把 tone 拉坏（走 message 那条例外的反证）', () => {
+    // 这条是「为什么不能用 message 带拆分信息」的机器化理由：
+    // message 非空时 tone 一律 bad（主进程在说「这事没成」）。
+    const withMessage = runView(r({ ok: true, message: '喵', ...split }), false)
+    expect(withMessage.tone).toBe('bad')
+    const noMessage = runView(r({ ok: true, ...split }), false)
+    expect(noMessage.tone).toBe('ok')
+  })
+})

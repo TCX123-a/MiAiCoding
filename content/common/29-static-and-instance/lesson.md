@@ -2,7 +2,7 @@
 id: common-29
 lang: common
 stage: 0
-order: 26
+order: 38
 title: main 只是一扇门——static、蓝图与「一个类能造几只猫」
 tags: [面向对象, 类与对象]
 required: ["common-28"]

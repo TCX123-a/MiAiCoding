@@ -13,6 +13,9 @@ import type {
   PublicAppConfig
 } from '../../../shared/types'
 import { DEFAULT_APP_CONFIG, normalizePetConfig } from '../../../shared/types'
+import { defaultModelOf, type AiProviderId } from '../../../shared/ai-providers'
+import { aiModeOf, type AiMode } from '../../../shared/free-pool'
+import { resolveAiThinking } from '../../../shared/ai-thinking'
 import { normalizeLayout, type LayoutConfig } from '../../../shared/layout'
 import { normalizeWallpaper, type WallpaperConfig } from '../../../shared/wallpaper'
 import { normalizeSplash, type SplashConfig } from '../../../shared/splash'
@@ -21,10 +24,10 @@ import { toast } from '../components/base/toast'
 import { TOAST } from '../lib/copy'
 
 /**
- * 渲染进程这边的配置**天生就少一个字段**：`ai.apiKey`。主进程不会把它发过来。
+ * 渲染进程这边的配置**天生就少一些字段**：`ai.apiKeys`。主进程不会把它发过来。
  *
  * 不是「暂时没实现」，是**设计如此** —— 真 Key 只活在主进程里，界面只用
- * `ai.hasKey` 这个布尔来判断「配没配」。理由见 shared/types.ts。
+ * `ai.hasKey` 这个布尔来判断「当前厂商配没配」。理由见 shared/types.ts。
  */
 function defaultPublicConfig(): PublicAppConfig {
   const c = structuredClone(DEFAULT_APP_CONFIG)
@@ -55,11 +58,20 @@ function toPublic(c: (typeof DEFAULT_APP_CONFIG)): PublicAppConfig {
     pet: normalizePetConfig(c.pet),
     envCache: c.envCache,
     ai: {
-      hasKey: c.ai.apiKey.trim() !== '',
+      mode: aiModeOf(c.ai.mode),
+      poolModel: c.ai.poolModel,
+      provider: c.ai.provider,
+      hasKey: (c.ai.apiKeys[c.ai.provider] ?? '').trim() !== '',
+      // 免费池不需要 Key；这个布尔是「现在能不能用」的唯一判据
+      ready: aiModeOf(c.ai.mode) === 'pool' || (c.ai.apiKeys[c.ai.provider] ?? '').trim() !== '',
       baseUrl: c.ai.baseUrl,
       model: c.ai.model,
       // 缺字段 = 关（老配置/坏载荷都不能静默打开会花钱的开关）
-      dynamicEnabled: c.ai.dynamicEnabled === true
+      dynamicEnabled: c.ai.dynamicEnabled === true,
+      // v23：兜底默认值也带上思考档位与按模型记忆表。少了这两个字段，
+      // 设置页在首次加载失败时会把下拉框绑到一个 undefined 上。
+      thinking: c.ai.thinking,
+      thinkingByModel: { ...c.ai.thinkingByModel }
     }
   }
 }
@@ -102,8 +114,27 @@ export const useSettingsStore = defineStore('settings', () => {
     //
     // 这是个「一次写错、之后每条路都坏」的坑：最初只有这一行有问题，
     // 但表现出来的是 save() 里那句 toRaw 仿佛没生效。找的时候要往上游看。
-    config.value = { ...toRaw(config.value), ...patch }
-    await save()
+    const prev = config.value
+    const next = { ...toRaw(config.value), ...patch }
+    config.value = next
+    try {
+      await save()
+    } catch (err) {
+      /*
+       * 【2026-10-31 自检 P2】写盘失败必须把**内存镜像**也退回去。
+       *
+       * 旧行为：先改镜像、再 await save()，save 抛错只闪一条 toast。界面上的
+       * 开关停在用户刚拨的新值（它读的就是这份镜像），文件里却还是旧值 ——
+       * 用户以为改成功了，下次启动才发现「自己变回去了」。这种「看着成功、
+       * 其实没存」的假象比报错更糟。
+       *
+       * 回滚只回滚**自己这一笔**：await 期间用户可能又改了一次（那是另一笔
+       * update，它的 save 可能已经成功）。无条件写回 prev 会把它抹掉，
+       * 所以先确认镜像还是本次设的 next 才退。
+       */
+      if (toRaw(config.value) === next) config.value = prev
+      throw err
+    }
   }
 
   /**
@@ -205,8 +236,8 @@ export const useSettingsStore = defineStore('settings', () => {
 
   /**
    * 写盘。**调用方一律走这里，别直接调 `window.miai.saveConfig`** ——
-   * `ai.apiKey` 是三态（不传/`''`=不改、`null`=删、非空=设新的），
-   * 这里默认**不带 apiKey**（= 不改），只有 `clearAiKey()` 会显式带 `null`。
+   * `ai.apiKeys` 是三态（不传/`''`=不改、`null`=删该厂商、非空=设新的），
+   * 这里默认**不带 apiKeys**（= 不改），只有 `clearAiKey()` 会显式带 `null`。
    *
    * 【对照】`nativeIdePaths` 恰恰相反：**每次必须带全量值**（空串 = 清空该键，
    * 是它的一种合法来路）—— 两者别被「统一」成同一种写法，方向弄反各毁一半。
@@ -241,10 +272,10 @@ export const useSettingsStore = defineStore('settings', () => {
       nativeRunEnabled: cur.nativeRunEnabled,
       nativeRunQuiet: cur.nativeRunQuiet,
       favWrongToBook: cur.favWrongToBook,
-      // ⚠️ 这个字段**每次必带全量值** —— 和上面 apiKey「默认绝不能带」正好相反。
-      // 原因：它是渲染层持有的全量字段（不像 apiKey，真值只在主进程、界面永远
+      // ⚠️ 这个字段**每次必带全量值** —— 和上面 apiKeys「默认绝不能带」正好相反。
+      // 原因：它是渲染层持有的全量字段（不像 apiKeys，真值只在主进程、界面永远
       // 只能带空串回来），且 `''` 是合法终态（= 清空该键，见 config-merge 的
-      // pickIdePaths）。照 apiKey 的样子少带它，用户就永远清不掉设置里那条路径。
+      // pickIdePaths）。照 apiKeys 的样子少带它，用户就永远清不掉设置里那条路径。
       // v9 起是四键表：**改没改的键都要带上**（空串也照带）—— 缺键会被
       // pickIdePaths 当成「没改」保留旧值，界面上删掉的那一格就会"复活"。
       // 展开成新对象也是必须的：嵌套的响应式对象进不了 structuredClone。
@@ -267,9 +298,16 @@ export const useSettingsStore = defineStore('settings', () => {
       // 带过去倒也不报错（main 侧不读它），但入参里出现一个「语义上属于返回体」
       // 的字段，下一个人读到这里就得停下来想一下这是干嘛的。
       ai: ai ?? {
+        mode: cur.ai.mode,
+        poolModel: cur.ai.poolModel,
+        provider: cur.ai.provider,
         baseUrl: cur.ai.baseUrl,
         model: cur.ai.model,
-        dynamicEnabled: cur.ai.dynamicEnabled === true
+        dynamicEnabled: cur.ai.dynamicEnabled === true,
+        // 同样「逐字段重建」：thinkingByModel 是嵌套对象，展开成新对象
+        // 才能挡住响应式代理进 structuredClone。
+        thinking: cur.ai.thinking,
+        thinkingByModel: { ...cur.ai.thinkingByModel }
       }
     }
     /*
@@ -288,16 +326,103 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
-  /** 改 AI 设置。**这里传的 apiKey 是「新 Key」或什么都不传，绝不会是空串** */
+  /** 改 AI 设置。**这里传的 apiKeys 是「新 Key」或什么都不传，绝不会是空串** */
   async function updateAi(patch: Partial<ConfigSavePayload['ai']>) {
     const cur = toRaw(config.value.ai)
     // 逐字段重建，别展开整只 ai —— 那会把只读的 hasKey 也带进保存载荷。
-    await save({
-      baseUrl: cur.baseUrl,
-      model: cur.model,
-      dynamicEnabled: cur.dynamicEnabled === true,
-      ...patch
+    const mode = aiModeOf(patch.mode ?? cur.mode)
+    const provider = patch.provider ?? cur.provider
+    const poolModel = patch.poolModel ?? cur.poolModel
+    const model = patch.model ?? cur.model
+    const targetModel = mode === 'pool' ? poolModel : model
+
+    /*
+     * v23：思考档位要和「这次真正切到的模型」一起算。
+     *
+     * 用户改模型时如果只把 model 发出去，主进程会按新模型推荐一档；但界面
+     * 手上那份镜像已经先改成了新模型，没法再拿它判断「路由到底变没变」。
+     * 所以这里以**载荷里有没有路由字段**为准：带了 mode/provider/model/
+     * poolModel 就重新解析（显式档位 > 该路由记忆值 > 模型推荐值），
+     * 只带其它字段（如动态出题开关）才沿用当前档位。
+     *
+     * 不沿用旧档位是必须的：给 deepseek-reasoner 调的高档，不能因为切到
+     * deepseek-chat 就悄悄带过去，让每一句闲聊都先烧一段思维链。
+     */
+    const routeChanged =
+      patch.mode !== undefined ||
+      patch.provider !== undefined ||
+      patch.model !== undefined ||
+      patch.poolModel !== undefined
+    const resolved = resolveAiThinking({
+      mode,
+      provider,
+      model: targetModel,
+      rawThinking:
+        patch.thinking !== undefined
+          ? patch.thinking
+          : routeChanged
+            ? undefined
+            : cur.thinking,
+      rawMap: patch.thinkingByModel !== undefined ? patch.thinkingByModel : cur.thinkingByModel
     })
+
+    await save({
+      mode,
+      poolModel,
+      provider,
+      baseUrl: patch.baseUrl ?? cur.baseUrl,
+      model,
+      dynamicEnabled: patch.dynamicEnabled ?? (cur.dynamicEnabled === true),
+      apiKeys: patch.apiKeys,
+      thinking: resolved.thinking,
+      thinkingByModel: resolved.thinkingByModel
+    })
+
+    // 保存成功才改镜像：写盘失败时界面必须继续显示磁盘上的那一档，
+    // 不能出现「看起来调了、其实没存住」的假状态。
+    config.value.ai.thinking = resolved.thinking
+    config.value.ai.thinkingByModel = resolved.thinkingByModel
+  }
+
+  /**
+   * 切换接入方式（v22）。**要先落盘再读回**：`hasKey` / `ready` / 余额能力
+   * 都是主进程按当前 mode 算的，只改镜像会让状态标签和「能不能用」对不上。
+   */
+  async function setAiMode(mode: AiMode): Promise<void> {
+    if (mode === aiModeOf(toRaw(config.value.ai.mode))) return
+    await updateAi({ mode })
+    await load()
+  }
+
+  /**
+   * 切换服务商（2026-11-01 多厂商）。
+   *
+   * 【为什么必须 save 完再 load 一次】渲染层只知道**当前厂商**有没有 Key
+   * （`hasKey`，其余厂商的真值不出主进程）。切过去之后「新厂商有没有存过
+   * Key」只有主进程知道；不读回来，模型下拉框会一直停在「没 Key」的置灰态，
+   * 用户明明存过那把 Key。load() 会把 provider / hasKey / model 一起换新。
+   *
+   * 【为什么带上刚粘的 Key】用户可能先粘 Key 再去点厂商 —— 保存动作还没发生，
+   * 这时切厂商如果只存 provider，输入框会被清空，刚粘的 Key 就丢了。
+   * 传了 `newKey` 就一起落盘；没传就只切厂商（各家 Key 互不覆盖）。
+   *
+   * 【custom 的模型为什么是空串】它没有「常用模型」列表，默认模型只能由用户
+   * 自己填；主进程的 mergeAi 在「切厂商 + 没给模型」时也用这个空串，
+   * 界面于是显示一个待填的输入框，而不是一个必然 404 的旧模型名。
+   */
+  async function setAiProvider(provider: AiProviderId, newKey?: string): Promise<void> {
+    const cur = toRaw(config.value.ai)
+    const key = (newKey ?? '').trim()
+    if (provider === cur.provider && key === '') return
+    const patch: Partial<ConfigSavePayload['ai']> = {}
+    if (provider !== cur.provider) {
+      patch.provider = provider
+      patch.model = defaultModelOf(provider)
+    }
+    if (key !== '') patch.apiKeys = { [provider]: key }
+    await updateAi(patch)
+    // 换厂商后 hasKey / baseUrl / model 的真值都在主进程那边，整份读回来
+    await load()
   }
 
   /**
@@ -307,17 +432,30 @@ export const useSettingsStore = defineStore('settings', () => {
    */
   async function clearAiKey() {
     await save({
+      mode: config.value.ai.mode,
+      poolModel: config.value.ai.poolModel,
+      provider: config.value.ai.provider,
       baseUrl: config.value.ai.baseUrl,
       model: config.value.ai.model,
       dynamicEnabled: config.value.ai.dynamicEnabled === true,
-      apiKey: null
+      thinking: config.value.ai.thinking,
+      thinkingByModel: { ...config.value.ai.thinkingByModel },
+      apiKeys: { [config.value.ai.provider]: null }
     })
     config.value.ai.hasKey = false
+    if (config.value.ai.mode !== 'pool') config.value.ai.ready = false
   }
 
-  /** 保存新 Key 之后调它，让界面立刻从「未配置」变成「已配置」 */
+  /**
+   * 保存新 Key 之后调它，让界面立刻从「未配置」变成「已配置」。
+   *
+   * 【ready 也必须一起抬起来】v22 之后挑战 / 延展 / 桌宠读的是 ready，
+   * 不再读 hasKey。只改 hasKey 的话，用户粘完 Key 直接去出题，
+   * 界面看着「已配置」，动态出题却仍被判成不可用 —— 而且不报任何错。
+   */
   function markKeySaved() {
     config.value.ai.hasKey = true
+    if (config.value.ai.mode !== 'pool') config.value.ai.ready = true
   }
 
   /** 重新检测本机编程环境（M5-01） */
@@ -358,6 +496,8 @@ export const useSettingsStore = defineStore('settings', () => {
     setSplash,
     setPet,
     updateAi,
+    setAiMode,
+    setAiProvider,
     clearAiKey,
     markKeySaved,
     detectEnv,

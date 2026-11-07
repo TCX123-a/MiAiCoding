@@ -99,13 +99,62 @@ function goLearn(): void {
  * **每道题的选项顺序** —— 少了那一步，随机卷虽然题目每次不同，
  * 但每道选择题的正确答案仍然固定在第几位，做两轮就能靠"选第几个"蒙对。
  */
+/**
+ * 随机卷的题量选项（2026-11-01 A2）：
+ *
+ * 【旧口径为什么劝退】选项写死 5/10/15/20、默认 10，而题库只有 7 题 ——
+ * 用户选 10、点开始，才在 toast 里被告知「只出了 7 题」。这是先收钱
+ * 再告诉顾客没货：四个选项里有两个是**这一点下去才作废**的假选项。
+ *
+ * 现在只列题库真拿得出的档位：
+ * - 5 / 10 / 15 / 20 里不超过题库总数的才出现；
+ * - 题库不是整档（7、12、22…）时补一个「全部 N 题」，否则尾数永远抽不到；
+ * - 题库 < 5 时只剩「全部 N 题」，默认值也由下面的 watch 拨到它。
+ */
+const PAPER_TIERS = [5, 10, 15, 20] as const
+const paperSizeOptions = computed<{ value: string; label: string }[]>(() => {
+  const total = pool.value.length
+  if (total <= 0) return []
+  const options: { value: string; label: string }[] = PAPER_TIERS.filter((n) => n <= total).map(
+    (n) => ({ value: String(n), label: PRACTICE.questionCount(n) })
+  )
+  if (!PAPER_TIERS.includes(total as (typeof PAPER_TIERS)[number])) {
+    options.push({ value: String(total), label: PRACTICE.allQuestions(total) })
+  }
+  return options
+})
+
+/**
+ * 题库变了（学完新课、切账号、云同步）就重挑默认值：
+ * `min(10, 题库)`，并且必须落在选项表里 —— 7 题时默认「全部 7 题」，
+ * 而不是一个已经消失的 10。
+ */
+watch(
+  paperSizeOptions,
+  (options) => {
+    if (options.length === 0) return
+    if (options.some((o) => o.value === paperSize.value)) return
+    const preferred = Math.min(10, pool.value.length)
+    paperSize.value =
+      options.find((o) => Number(o.value) === preferred)?.value ??
+      options[options.length - 1].value
+  },
+  { immediate: true }
+)
+
 function startRandom() {
   if (pool.value.length === 0) {
     // V1-55 后按钮已禁用，这条成了兜底（键盘/将来入口到这儿也不许静默）
     toast(TOAST.NO_QUESTIONS_YET, 'warn')
     return
   }
-  const picked = buildPaper(pool.value, Number(paperSize.value))
+  // 再夹一次：选项表已经按题库生成，但「值→题数」这一步不许自己信自己
+  const requested = Number(paperSize.value)
+  const size =
+    Number.isFinite(requested) && requested > 0
+      ? Math.min(Math.floor(requested), pool.value.length)
+      : pool.value.length
+  const picked = buildPaper(pool.value, size)
   // questions 和 keys 必须**同一次挑选**产生，不能用 map 各算一遍：
   // 两次挑选的随机结果不同，配对就会错位，错的题会记到别的题头上。
   const questions = picked.map((p) => p.question)
@@ -411,17 +460,17 @@ watch(
         <p class="card-desc">{{ PRACTICE.RANDOM_DESC }}</p>
         <div class="random-row">
           <MiSelect
+            v-if="paperSizeOptions.length > 0"
             v-model="paperSize"
-            :options="[
-              { value: '5', label: PRACTICE.questionCount(5) },
-              { value: '10', label: PRACTICE.questionCount(10) },
-              { value: '15', label: PRACTICE.questionCount(15) },
-              { value: '20', label: PRACTICE.questionCount(20) }
-            ]"
+            :options="paperSizeOptions"
           />
           <!-- V1-55：池子空 = 按了也不会有卷，禁用而不是点完弹一句警告 -->
           <MiButton variant="primary" :disabled="pool.length === 0" @click="startRandom">
-            {{ PRACTICE.RANDOM_START }}
+            {{
+              pool.length === 0
+                ? PRACTICE.RANDOM_START
+                : PRACTICE.randomStartCount(Number(paperSize))
+            }}
           </MiButton>
         </div>
         <div class="card-hint">

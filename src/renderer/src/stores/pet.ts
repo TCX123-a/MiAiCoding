@@ -16,6 +16,7 @@ import {
   petAffectionTier,
   type PetAction,
   type PetAffectionTier,
+  type PetDecayTier,
   type PetFace,
   type PetMode,
   type PetRewardKind,
@@ -112,6 +113,17 @@ export const usePetStore = defineStore('pet', () => {
 
   const satiety = computed(() => snap.value?.satiety ?? 0)
   const rice = computed(() => snap.value?.rice ?? 0)
+  /**
+   * 小鱼干余额（v7 加，模块五）。`null` = 快照还没到 —— 与 affection 同口径：
+   * 界面画占位（`--`），不许把"还没读到"显示成 0（0 根 = 真的一根都没有）。
+   */
+  const snacks = computed<number | null>(() => snap.value?.snacks ?? null)
+  /**
+   * 饱腹度衰减档位（v7 加，模块五）。`null` = 快照还没到（设置卡三个按钮
+   * 先灰着，等快照到了再高亮当前档）。好感度**没有**对应开关 —— 它只按
+   * shared/pet.ts 的固定表走，不给用户调。
+   */
+  const decayTier = computed<PetDecayTier | null>(() => snap.value?.decayTier ?? null)
   const mood = computed(() => snap.value?.mood ?? null)
   /**
    * 「脸色」= 心情 + 时段 + 瞬时情绪（饿 / 傲娇 / 兴奋 / 夜里打盹）。
@@ -163,6 +175,8 @@ export const usePetStore = defineStore('pet', () => {
     snap,
     satiety,
     rice,
+    snacks,
+    decayTier,
     mood,
     face,
     mode,
@@ -179,7 +193,9 @@ export const usePetStore = defineStore('pet', () => {
     act,
     grant: (reward: PetRewardKind) => act({ action: 'grant', reward }),
     feed: () => act({ action: 'feed' }),
+    snack: () => act({ action: 'snack' }),
     pat: () => act({ action: 'pat' }),
+    setDecay: (tier: PetDecayTier) => act({ action: 'decay', tier }),
     setMode: (m: PetMode) => act({ action: 'mode', mode: m }),
     setSize: (s: PetSize) => act({ action: 'size', size: s }),
     setEnabled: (on: boolean) => act({ action: on ? 'show' : 'hide' })

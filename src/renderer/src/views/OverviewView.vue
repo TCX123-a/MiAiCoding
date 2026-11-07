@@ -19,12 +19,16 @@ import { usePetStore } from '../stores/pet'
 import { localDateKeyOf } from '../../../shared/dates'
 import { today } from '../lib/day-clock'
 import {
+  PET_AFFECTION_MAX,
+  PET_AFFECTION_RULES,
   PET_CHECKIN_RICE,
   PET_FEED_GAIN,
   PET_INTERACT_COOLDOWN_MS,
   PET_RICE_MAX,
   PET_RUN_REWARD_DAILY_MAX,
-  PET_SATIETY_MAX
+  PET_SATIETY_MAX,
+  PET_SNACK_GAIN,
+  PET_SNACK_MAX
 } from '../../../shared/pet'
 import { LANG_LABEL, STAGE_LABEL } from '../lib/labels'
 import { computePerLang, overallPercent } from '../lib/overview'
@@ -369,6 +373,14 @@ const riceBalance = computed(() =>
 )
 
 /**
+ * 小鱼干袋子（v7 模块五，2026-10-31）。与饭碗**两条账**，拼串也分开
+ * （WAREHOUSE.SNACK_N，同「n / max」口径）；快照没到画 '--' 不画 0。
+ */
+const snackBalance = computed(() =>
+  pet.snap === null ? '--' : WAREHOUSE.SNACK_N(pet.snap.snacks, PET_SNACK_MAX)
+)
+
+/**
  * 快照到了没有（V2-24）。这一卡此前只有余额一处做了 null 守卫，
  * 其余三处（饱腹数字 / 进度条配色 / 喂饭提示）会把 `?? 0` 的假值直接画出去：
  * 饱腹显 0/100、`mood` 为 null 时条染成 error 红、「饭盒空了」——一副鱼被饿扁的
@@ -405,24 +417,55 @@ const satietyColor = computed(() => {
 })
 
 /**
- * 喂饭的两个前提任一不满足就点不动：饭盒空 / 已经吃饱（拒喂口径同 shared/pet.ts 的 feedPet）。
- * `!snapReady` 也在内：余额未知时 `pet.rice` 是 `?? 0` 的假 0，放它进来
- * 会得到一个"基于假数据"的禁用（V2-24 的另一半）。
+ * 喂饭点不动的三个前提：饭盒空 / 没读到 / 已经吃饱**且**好感满。
+ * 【v7 模块五改口】「饱了」不再一律禁用 —— shared/pet.ts 的 feedPet 在
+ * 饱腹满、好感没满时走 **overflow**：扣一碗饭、饱腹不变、好感照涨（主人点名
+ * 的"勉为其难继续吃"）。只有两个都满才真拒喂（reason 'full'）。
+ * `!snapReady` 仍在：余额未知时 `pet.rice` 是 `?? 0` 的假 0（V2-24）。
  */
 const feedDisabled = computed(
-  () => !snapReady.value || pet.rice <= 0 || pet.satiety >= PET_SATIETY_MAX
+  () =>
+    !snapReady.value ||
+    pet.rice <= 0 ||
+    (pet.satiety >= PET_SATIETY_MAX && (pet.affection ?? 0) >= PET_AFFECTION_MAX)
 )
 
 /** 按钮旁那行提示：按当前状态说清「为什么点不了 / 点了会怎样」（同「还差 N 课」的口径） */
 const feedHint = computed(() => {
-  // 顺序即优先级：没读到 > 冷却中 > 空 > 满 > 可喂 ——
+  // 顺序即优先级：没读到 > 冷却中 > 空 > 溢喂 > 双满 > 可喂 ——
   // 冷却期里余额与饱腹都正常，放后面会被「喂一碗 +20」盖掉，
   // 那句在刚喂完的当下是假话（按钮点不动，V2-26）。
   if (!snapReady.value) return OVERVIEW.RICE_FEED_HINT_LOADING
   if (feedCooling.value) return OVERVIEW.RICE_FEED_HINT_COOLING
   if (pet.rice <= 0) return OVERVIEW.RICE_FEED_HINT_EMPTY
-  if (pet.satiety >= PET_SATIETY_MAX) return OVERVIEW.RICE_FEED_HINT_FULL
+  if (pet.satiety >= PET_SATIETY_MAX) {
+    if ((pet.affection ?? 0) >= PET_AFFECTION_MAX) return OVERVIEW.RICE_FEED_HINT_FULL
+    return OVERVIEW.RICE_FEED_HINT_OVERFLOW(PET_AFFECTION_RULES.feed.delta)
+  }
   return OVERVIEW.RICE_FEED_HINT_OK(PET_FEED_GAIN)
+})
+
+/**
+ * 喂零食（v7 模块五）：与喂饭同一套禁用判据，但账在 snacks 上。
+ * 溢喂（饱了、好感没满）是**允许**的 —— 饱腹不变、好感照涨（feedSnack 的 overflow）。
+ */
+const snackDisabled = computed(
+  () =>
+    !snapReady.value ||
+    (pet.snacks ?? 0) <= 0 ||
+    (pet.satiety >= PET_SATIETY_MAX && (pet.affection ?? 0) >= PET_AFFECTION_MAX)
+)
+
+/** 零食按钮的提示：同一套优先级；「饱了还能吃」单独一句（主人点名的语义） */
+const snackHint = computed(() => {
+  if (!snapReady.value) return OVERVIEW.RICE_FEED_HINT_LOADING
+  if (feedCooling.value) return OVERVIEW.RICE_FEED_HINT_COOLING
+  if ((pet.snacks ?? 0) <= 0) return OVERVIEW.SNACK_FEED_HINT_EMPTY
+  if (pet.satiety >= PET_SATIETY_MAX) {
+    if ((pet.affection ?? 0) >= PET_AFFECTION_MAX) return OVERVIEW.SNACK_FEED_HINT_FULL
+    return OVERVIEW.SNACK_FEED_HINT_OVERFLOW(PET_AFFECTION_RULES.snack.delta)
+  }
+  return OVERVIEW.SNACK_FEED_HINT_OK(PET_SNACK_GAIN, PET_AFFECTION_RULES.snack.delta)
 })
 
 /**
@@ -446,16 +489,28 @@ let feedCoolTimer: number | null = null
  */
 let cardFlashTimer: number | null = null
 
-/** 喂一碗：走 store 的 `act`，它把主进程返回的新快照直接换上，卡片跟着重画 */
-function feedPet(): void {
-  if (feedCooling.value) return
-  void pet.act({ action: 'feed' })
+/** 进 1.2s 冷却（两个喂食按钮共用同一个窗口 —— 主进程 feed/snack 共用 lastInteractAt） */
+function startFeedCooling(): void {
   feedCooling.value = true
   if (feedCoolTimer !== null) window.clearTimeout(feedCoolTimer)
   feedCoolTimer = window.setTimeout(() => {
     feedCooling.value = false
     feedCoolTimer = null
   }, PET_INTERACT_COOLDOWN_MS)
+}
+
+/** 喂一碗：走 store 的 `act`，它把主进程返回的新快照直接换上，卡片跟着重画 */
+function feedPet(): void {
+  if (feedCooling.value) return
+  void pet.act({ action: 'feed' })
+  startFeedCooling()
+}
+
+/** 喂一根小鱼干（v7 模块五）：同一套冷却/快照口径，动作是 'snack' */
+function feedSnack(): void {
+  if (feedCooling.value) return
+  void pet.act({ action: 'snack' })
+  startFeedCooling()
 }
 
 /**
@@ -696,7 +751,7 @@ onBeforeUnmount(() => {
             <div class="stat-label">{{ OVERVIEW.STAT_HISTORY }}</div>
             <!-- V1-27：history 是流水账（取消标记不减、重复标记再加），
                  「N 次」会大于「已学 M 课」—— 口径小字防"统计坏了"误判 -->
-            <div class="stat-note">{{ OVERVIEW.STAT_HISTORY_NOTE }}</div>
+            <div class="stat-note" :title="OVERVIEW.STAT_HISTORY_TIP">{{ OVERVIEW.STAT_HISTORY_NOTE }}</div>
           </div>
         </div>
       </div>
@@ -715,6 +770,13 @@ onBeforeUnmount(() => {
           </div>
           <div class="stat-label">{{ OVERVIEW.RICE_BALANCE_LABEL }}</div>
         </div>
+        <!-- 小鱼干袋子（v7 模块五）：与饭碗并排、各报各的账 —— 两条余额不许合成一格 -->
+        <div class="stat">
+          <div class="stat-num">
+            {{ snackBalance }}<span class="stat-unit">{{ OVERVIEW.SNACK_UNIT }}</span>
+          </div>
+          <div class="stat-label">{{ OVERVIEW.SNACK_BALANCE_LABEL }}</div>
+        </div>
         <div class="rice-satiety">
           <div class="rice-satiety-head">
             <span>{{ OVERVIEW.RICE_SATIETY_LABEL }}</span>
@@ -728,9 +790,16 @@ onBeforeUnmount(() => {
           {{ OVERVIEW.RICE_FEED_BTN }}
         </MiButton>
         <span class="rice-hint">{{ feedHint }}</span>
-        <span class="rice-today">
+        <span class="rice-today" :title="OVERVIEW.RICE_TODAY_TIP(PET_RUN_REWARD_DAILY_MAX)">
           {{ OVERVIEW.RICE_TODAY(snapReady ? runRewardsToday : '--', PET_RUN_REWARD_DAILY_MAX) }}
         </span>
+      </div>
+      <!-- 喂零食（v7 模块五）：第二行单独放 —— 两套提示各说各的，挤一行会互相盖住 -->
+      <div class="rice-foot">
+        <MiButton size="sm" :disabled="snackDisabled || feedCooling" @click="feedSnack">
+          {{ OVERVIEW.SNACK_FEED_BTN }}
+        </MiButton>
+        <span class="rice-hint">{{ snackHint }}</span>
       </div>
     </MiCard>
 

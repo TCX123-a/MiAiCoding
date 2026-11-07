@@ -329,9 +329,21 @@ function removeOne(it: FavoriteItem): void {
   fav.removeMany([it.key])
 }
 
-function removeSelected(): void {
+/**
+ * 批量取消收藏要先问一句（2026-10-31 自检 P1）：按钮就在「取消选择」旁边，
+ * 旧版一点就永久删（连收藏笔记一起），没有撤销。确认框讲清代价。
+ */
+const removeConfirmVisible = ref(false)
+
+function openRemoveSelected(): void {
+  if (selectedItems.value.length === 0) return
+  removeConfirmVisible.value = true
+}
+
+function confirmRemoveSelected(): void {
   fav.removeMany([...selectedItems.value].map((i) => i.key))
   selected.value = new Set()
+  removeConfirmVisible.value = false
 }
 
 // ---------------------------------------------------------------- 笔记
@@ -655,7 +667,7 @@ function confirmMove(): void {
           >
             {{ FAVORITES.SELECTED_MOVE }}
           </MiButton>
-          <MiButton variant="ghost" size="sm" @click="removeSelected">
+          <MiButton variant="ghost" size="sm" @click="openRemoveSelected">
             {{ FAVORITES.SELECTED_REMOVE }}
           </MiButton>
           <MiButton variant="ghost" size="sm" @click="selected = new Set()">
@@ -707,6 +719,22 @@ function confirmMove(): void {
         </MiButton>
         <MiButton variant="danger" @click="confirmDelete">
           {{ FAVORITES.folderDeleteOk }}
+        </MiButton>
+      </template>
+    </MiModal>
+
+    <MiModal
+      :visible="removeConfirmVisible"
+      :title="FAVORITES.selectedRemoveTitle(selectedItems.length)"
+      @update:visible="removeConfirmVisible = false"
+    >
+      <p class="fav-del-body">{{ FAVORITES.selectedRemoveBody }}</p>
+      <template #footer>
+        <MiButton variant="secondary" @click="removeConfirmVisible = false">
+          {{ FAVORITES.FOLDER_CANCEL }}
+        </MiButton>
+        <MiButton variant="danger" @click="confirmRemoveSelected">
+          {{ FAVORITES.selectedRemoveOk }}
         </MiButton>
       </template>
     </MiModal>

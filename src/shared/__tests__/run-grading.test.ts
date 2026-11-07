@@ -14,7 +14,13 @@
  * "钉住两者不会再分叉"。为什么值得留一组专门盯这件事，见那一组的注释。
  */
 import { describe, expect, it } from 'vitest'
-import { gradeByRun, isRunGraded, normalizeRunOutput, verdictFromRun } from '../run-grading'
+import {
+  gradeByRun,
+  isRunGraded,
+  normalizeRunOutput,
+  normalizeRunOutputLoose,
+  verdictFromRun
+} from '../run-grading'
 import { normalizeCode } from '../quiz-grading'
 import type { CodeFixQuestion, RunResult } from '../types'
 
@@ -98,6 +104,27 @@ describe('normalizeRunOutput：四条契约', () => {
  * 于是这一组从"钉住差异"翻成了"钉住合并" —— 差异已经没有价值了，
  * 剩下的风险变成**有人再把它们拆成两份实现**。
  */
+describe('宽松判分：多打/少打空格不误杀（2026-10-31）', () => {
+  it('行内连续空格、行首空格都折叠；大小写仍敏感', () => {
+    expect(normalizeRunOutputLoose('a  b')).toBe('a b')
+    expect(normalizeRunOutputLoose('   a\n  bb')).toBe('a\nbb')
+    expect(normalizeRunOutputLoose('喵　　喵')).toBe('喵 喵')
+    expect(normalizeRunOutputLoose('Hello')).not.toBe(normalizeRunOutputLoose('hello'))
+  })
+
+  it('中间空行仍然是内容，不因为宽松而合并', () => {
+    expect(normalizeRunOutputLoose('a\n\nb')).toBe('a\n\nb')
+    expect(normalizeRunOutputLoose('a\n\nb')).not.toBe(normalizeRunOutputLoose('a\nb'))
+  })
+
+  it('gradeByRun：严格档判对，或宽松档判对，都算对', () => {
+    expect(gradeByRun('a b', 'a  b')).toBe(true) // 多打空格
+    expect(gradeByRun('   a', 'a')).toBe(true) // 少打行首空格
+    expect(gradeByRun('a\n\nb', 'a\nb')).toBe(false) // 空行不是空格
+    expect(gradeByRun('Hello', 'hello')).toBe(false) // 大小写不是空白
+  })
+})
+
 describe('normalizeCode() 与 normalizeRunOutput() 是同一份契约', () => {
   it('曾经分叉的那一格（CRLF）现在跟真跑那条链路一致', () => {
     expect(normalizeCode('3\r\n')).toBe('3')
@@ -153,10 +180,10 @@ describe('gradeByRun：两份输出算不算同一份', () => {
     expect(gradeByRun('Hello', 'hello')).toBe(false)
   })
 
-  it('少一行、多一行、中间差一个空格 → 都判错', () => {
+  it('少一行、多一行 → 判错；但行内多打一个空格 → 判对（2026-10-31 放宽）', () => {
     expect(gradeByRun('a\nb', 'a')).toBe(false)
     expect(gradeByRun('a', 'a\nb')).toBe(false)
-    expect(gradeByRun('a b', 'a  b')).toBe(false) // 行内空白不折叠（和 fill 不一样）
+    expect(gradeByRun('a b', 'a  b')).toBe(true) // 宽松档：空白差异不算错
   })
 
   it('期望输出是空串时，空输出判对（不特判）', () => {

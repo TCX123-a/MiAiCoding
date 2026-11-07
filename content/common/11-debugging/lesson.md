@@ -2,7 +2,7 @@
 id: common-11
 lang: common
 stage: 0
-order: 33
+order: 45
 title: 调试的基本思路——抓虫小能手
 tags: [调试, 抓虫, 排查]
 required: ["common-10"]

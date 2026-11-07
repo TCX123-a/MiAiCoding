@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, nativeTheme, dialog, session, desktopCapturer, safeStorage, type IpcMainInvokeEvent, type OpenDialogOptions } from 'electron'
+import { app, shell, BrowserWindow, Menu, ipcMain, nativeTheme, dialog, session, net, screen, desktopCapturer, safeStorage, type IpcMainInvokeEvent, type OpenDialogOptions, type WebContents } from 'electron'
 import { extname, join } from 'path'
 import { existsSync, mkdirSync, readdirSync, unlinkSync, writeFileSync } from 'fs'
 import { copyFile, mkdir, rename, rm } from 'fs/promises'
@@ -40,16 +40,42 @@ import { exportCodeToFile, openInNativeIde } from './runner/native-ide'
 import { createNativeWatcher } from './runner/native-watch'
 import { detectIdes } from './runner/detect-ide'
 import { scanRewardOverrides } from './rewards/override'
-import { registerWallSchemePrivileges } from './wallpaper/protocol'
+import { installSceneProtocol } from './wallpaper/scene-protocol'
+import { registerWallpaperSchemes } from './wallpaper/scheme-privileges'
 import { addProtocolRootProvider, getWallpaperCatalog, primeWallProtocol, setCustomWallpaperDirProvider } from './wallpaper/catalog'
 import { attachWindowStatePush, readWindowState } from './wallpaper/window-state'
 import { decideNavigation, isExternalUrlAllowed } from './window-guards'
+import { buildEditMenuTemplate } from './edit-menu'
 import { readWallpaperProps } from './wallpaper/props'
 import { createSplashGate, type SplashGate } from './splash'
 import { startDshPetHost, type DshPetHost } from './dshpet/host'
 import { scanSplashMaterials, splashMaterialDirs } from './splash/material'
 import { importMedia, type PickFileRequest } from './media-import'
-import { explainError, generateQuestions, testConnection, type AiDeps } from './ai/deepseek'
+import {
+  applyCursorFile,
+  clearCursorSlot,
+  cursorStateView,
+  cursorsDir,
+  setCursorHotspot
+} from './cursor-store'
+import {
+  CURSOR_MAX_BYTES,
+  CURSOR_MIN_BYTES,
+  CURSOR_UPLOAD_EXTS,
+  isCursorSlot,
+  sanitizeHotspot,
+  type CursorOpResult
+} from '../shared/cursor'
+import {
+  aiCacheModelOf,
+  explainError,
+  fetchBalance,
+  generateQuestions,
+  listPoolModels,
+  listProviderModels,
+  testConnection,
+  type AiDeps
+} from './ai/deepseek'
 import {
   AccountFlowError,
   accountDirOf,
@@ -163,7 +189,10 @@ if (debugPort) app.commandLine.appendSwitch('remote-debugging-port', debugPort)
  * primeWallProtocol()（见它的注释 —— 渲染进程出生后再装就晚了）；
  * 根白名单不在这里定，挂在 catalog 的扫描快照上（活读口），重扫自动跟上。
  */
-registerWallSchemePrivileges()
+// miai-scene://（场景沙箱文档）与 miai-wall:// 必须**一次登记**：
+// registerSchemesAsPrivileged 第二次调用会整表替换，先登记的 scheme 会静默
+// 失去 fetch 能力（2026-10-31 实测，见 scheme-privileges.ts 的复现记录）。
+registerWallpaperSchemes()
 
 /** 数据目录：便携版随 exe 走（data/ 子目录），安装版走 userData（%APPDATA%\咪爱编程） */
 function storageDir(): string {
@@ -628,7 +657,12 @@ const settleQueue = createPendingOpsStore(() => box.currentDir())
  */
 const cloudBaseUrl = resolveCloudBaseUrl({ packaged: app.isPackaged, env: process.env })
 const cloudTokens = createSessionTokenStore({ baseDir: storageDir(), safe: safeStorage })
-const cloudFetch: FetchLike = (url, init) => globalThis.fetch(url, init)
+// 【2026-10-31 自检 P2】outbound 一律走 Electron 的 net.fetch（Chromium 网络栈）：
+// 它尊重系统代理与企业证书库；Node 的 globalThis.fetch（undici）两者都不认，
+// 在「公司电脑装了根证书 / 走代理才能出网」的环境里会表现为「明明能上网，
+// 应用里一切都连不上」，而且失败原因只剩一句 fetch failed 没法分档。
+// net 要等 app ready 之后才可用 —— 这里是惰性调用（真正发请求时早已 ready）。
+const cloudFetch: FetchLike = (url, init) => net.fetch(url, init)
 
 const cloudRiceClient = createCloudRiceClient({
   baseUrl: cloudBaseUrl,
@@ -815,8 +849,8 @@ async function withAi<T>(run: (deps: AiDeps) => Promise<AiResult<T>>): Promise<A
   aiAbort = ac
   try {
     return await run({
-      // Electron 主进程自带全局 fetch（Node 18+ 的 undici），不用额外引库
-      fetch: (url, init) => globalThis.fetch(url, init),
+      // 【2026-10-31 自检 P2】同 cloudFetch：用 Chromium 网络栈走系统代理/证书库
+      fetch: (url, init) => net.fetch(url, init),
       getConfig: readConfig,
       signal: ac.signal
     })
@@ -1108,6 +1142,41 @@ const nativeWatcher = createNativeWatcher({
  * 也是「开屏期间至少一个窗口存活」的堵法：主窗先构造（隐藏），
  * 开屏窗才是第二个窗口——任何时刻 window-all-closed 都够不着。
  */
+/**
+ * 关窗拦截（2026-10-31「学到这里啦喵」）的三张表。
+ *
+ * `closeAllowed`：这个窗口下次 close 直接放行（用户已确认 / 超时兜底 / 系统关机）
+ * `closePending`：已经发过询问，别重复发（用户连点 ✕ 不该叠一串弹窗）
+ * `closeTimers`：兜底定时器。**两段**：
+ *                · 发问后 5 秒还没收到 `appCloseAck` = 渲染层没反应，强关；
+ *                · 收到 ack 后换成 10 分钟长兜底 = 用户在读弹框/结算还在写盘，
+ *                  不能被旧版的单一 5 秒定时器拦腰截断。
+ */
+const closeAllowed = new WeakSet<BrowserWindow>()
+const closePending = new WeakSet<BrowserWindow>()
+const closeTimers = new WeakMap<BrowserWindow, ReturnType<typeof setTimeout>>()
+/** 渲染层没回 ack 时的强关时限（只防「没人应答」） */
+const CLOSE_ACK_TIMEOUT_MS = 5000
+/** 渲染层已回 ack 后的长兜底（防弹框卡死，但给足读与写盘的时间） */
+const CLOSE_SETTLE_TIMEOUT_MS = 10 * 60 * 1000
+/** `app.quit()` 发起的退出不拦（那是程序自己的决定，不是用户点 ✕） */
+let quitRequested = false
+
+function clearCloseTimer(win: BrowserWindow): void {
+  const timer = closeTimers.get(win)
+  if (timer !== undefined) {
+    clearTimeout(timer)
+    closeTimers.delete(win)
+  }
+}
+
+function forceCloseWindow(win: BrowserWindow): void {
+  clearCloseTimer(win)
+  closePending.delete(win)
+  closeAllowed.add(win)
+  if (!win.isDestroyed()) win.close()
+}
+
 function createWindow(): BrowserWindow {
   /*
    * 原生层底色，跟着主题走。
@@ -1133,11 +1202,31 @@ function createWindow(): BrowserWindow {
   // 先告诉原生层，再建窗口：反过来的话，深色用户开屏会看见一条白标题栏
   // 跳成深色 —— 和 `<html data-theme>` 那个「晚一帧就闪白」是同一个道理。
   applyNativeTheme(theme)
+  /*
+   * 【2026-10-31 自检 P2】窗口尺寸跟着工作区走。
+   *
+   * 旧版写死 1200×780、最小 1000×700：在 1366×768 的笔记本上（工作区
+   * 往往只有 ~1366×728）窗口一出生就比屏幕高 —— 底部（含状态栏/按钮）
+   * 被任务栏和屏幕边缘吃掉，而且用户**缩不回来**：minHeight 700 已经
+   * 卡在工作区高度附近。1024×600 的老机器更糟：最小 1000×700 比屏幕还大。
+   *
+   * 现在三条都按 workAreaSize 封顶（不是「屏幕分辨率」—— 任务栏那几十
+   * 像素必须扣掉，否则窗口仍然会被任务栏盖住一截）：
+   *   · 初始尺寸不超过工作区；
+   *   · 最小尺寸不超过初始尺寸（min > 初始会让窗口建出来就违反自身约束）；
+   *   · 大屏保持原来的 1200×780 / 1000×700 体验，一像素不变。
+   * screen 只能在 app ready 之后用 —— createWindow 都在 ready 之后调（见文件尾）。
+   */
+  const workArea = screen.getPrimaryDisplay().workAreaSize
+  const winWidth = Math.min(1200, workArea.width)
+  const winHeight = Math.min(780, workArea.height)
+  const minWidth = Math.min(1000, winWidth)
+  const minHeight = Math.min(700, winHeight)
   const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 780,
-    minWidth: 1000,
-    minHeight: 700,
+    width: winWidth,
+    height: winHeight,
+    minWidth,
+    minHeight,
     show: false,
     backgroundColor: windowBgOf(theme),
     autoHideMenuBar: true,
@@ -1180,7 +1269,40 @@ function createWindow(): BrowserWindow {
   mainWindow.on('closed', () => {
     winStatePush.detach()
     pokeWinState = null
+    clearCloseTimer(mainWindow)
+    closePending.delete(mainWindow)
   })
+
+  /*
+   * 关窗拦截：用户点右上角 ✕ 时先问渲染层「刚刚学完的课结算了没有」。
+   *
+   * 【三道放行条件，缺一不可】
+   *   ① 已经确认过（closeAllowed）/ 程序自己在退（quitRequested）
+   *   ② 页面还在加载或已经崩了 —— 没人能回答，拦下来只会让窗口关不掉
+   *   ③ 系统关机（session-end）—— 绝不能拖住关机流程
+   * 剩下的情况先 preventDefault，渲染层弹框，回 `appCloseConfirm` 后放行。
+   * 5 秒没收到 `appCloseAck` 才强关（渲染层没反应）；收到 ack 后换成
+   * 10 分钟长兜底，用户的阅读与结算写盘时间不再被掐断。
+   */
+  mainWindow.on('close', (e) => {
+    if (closeAllowed.has(mainWindow) || quitRequested) return
+    if (
+      mainWindow.webContents.isDestroyed() ||
+      mainWindow.webContents.isLoading() ||
+      mainWindow.webContents.isCrashed()
+    ) {
+      return
+    }
+    e.preventDefault()
+    if (closePending.has(mainWindow)) return
+    closePending.add(mainWindow)
+    mainWindow.webContents.send(IPC.appCloseRequest)
+    closeTimers.set(
+      mainWindow,
+      setTimeout(() => forceCloseWindow(mainWindow), CLOSE_ACK_TIMEOUT_MS)
+    )
+  })
+  mainWindow.on('session-end', () => closeAllowed.add(mainWindow))
 
   // 外部链接一律交给系统浏览器，应用内不打开网页。
   // 【P10.1 起不再"盲丢"】旧实现不看 URL 就 shell.openExternal —— 那是
@@ -1201,6 +1323,23 @@ function createWindow(): BrowserWindow {
   // 本应用没有任何 webview，出现即挡 —— 不做例外（将来真要加，走一次显式评审）
   mainWindow.webContents.on('will-attach-webview', (event) => {
     event.preventDefault()
+  })
+
+  /*
+   * 右键编辑菜单（v7 模块六，2026-10-31）。
+   *
+   * 编辑器里的快捷键一直是好的，坏的是「右键没反应」——整仓此前没有一处
+   * context-menu 处理器。原生菜单走 Chromium 的编辑命令（cut/copy/paste 的
+   * role），选区与焦点由浏览器自己维护，我们不去碰（自己画浮层才需要保存/恢复，
+   * 那也正好是最容易把复制粘贴做坏的地方）。
+   *
+   * 模板判定在 edit-menu.ts（纯函数、有单测）；这里只做两件运行时的事：
+   * 建菜单、在窗口里弹出。返回空模板就不弹 —— 非编辑区没选字时右键本就该无反应。
+   */
+  mainWindow.webContents.on('context-menu', (_event, params) => {
+    const template = buildEditMenuTemplate(params)
+    if (template.length === 0) return
+    Menu.buildFromTemplate(template).popup({ window: mainWindow })
   })
 
   return mainWindow
@@ -1868,7 +2007,12 @@ if (!gotTheLock) {
       const cfg = readConfig()
       return questionsWithCache({
         dynamicEnabled: cfg.ai.dynamicEnabled === true,
-        model: cfg.ai.model,
+        // 缓存键必须带上**真正发出去的那个模型**：专属模式和免费池可能用
+        // 同一个模型名（都叫 kilo…不可能，但语义上必须分开），切模式后
+        // 命中上一条路生成的题会让用户以为免费池出了 DeepSeek 的题。
+        // 思考档位也进判别式：低档与高档问的是同一句话，但答案的推理深度
+        // 不同，不能互相命中。
+        model: aiCacheModelOf(cfg),
         input,
         read: () => aiCacheStore.read(),
         write: (f) => aiCacheStore.write(f),
@@ -1883,6 +2027,43 @@ if (!gotTheLock) {
     })
 
     ipcMain.handle(IPC.aiTestConnection, () => withAi((deps) => testConnection(deps)))
+
+    /*
+     * 余额查询（v21 多厂商）。**故意不走 withAi**：那个函数会把在飞的
+     * 出题/聊天请求 abort 掉，而「点一下看还剩多少钱」不该取消用户正在等的
+     * 出题 —— 两件事没有冲突。fetchBalance 自己带 10 秒超时与取消信号，
+     * 这里只把依赖接上。
+     */
+    ipcMain.handle(IPC.aiBalance, () =>
+      fetchBalance({
+        fetch: (url, init) => net.fetch(url, init),
+        getConfig: readConfig
+      })
+    )
+
+    /*
+     * 免费公开池的模型清单（v22 模式 B）。同样**不走 withAi** ——
+     * 它只是一次只读列表请求，不该掐掉用户正在等的出题/聊天。
+     */
+    ipcMain.handle(IPC.aiPoolModels, () =>
+      listPoolModels({ fetch: (url, init) => net.fetch(url, init) })
+    )
+
+    /*
+     * 专属厂商的模型清单（v23 模式 A）。同样**不走 withAi**：它只是一次
+     * 只读列表请求，不该掐掉用户正在等的出题/聊天。
+     *
+     * 失败原样返回（no-key / unauthorized / offline / timeout / bad-response），
+     * 界面显示「无法获取模型列表，请检查 Key 或网络」+ 重试。**绝不在这里
+     * 补一份写死的清单** —— 那会把「拉取失败」伪装成「这台 Key 只有这些
+     * 模型」，用户选中一个不存在的模型后只会拿到 404。
+     */
+    ipcMain.handle(IPC.aiProviderModels, () =>
+      listProviderModels({
+        fetch: (url, init) => net.fetch(url, init),
+        getConfig: readConfig
+      })
+    )
 
     /**
      * 取消。**没有请求在飞时调用它是安全的** —— abort 一个已经结束的控制器
@@ -2078,6 +2259,83 @@ if (!gotTheLock) {
       return result
     })
 
+    // ---- 自定义鼠标指针（v7 模块六，2026-10-31）----
+    //
+    // 三条写口共用同一个存储模块（cursor-store.ts，零 electron 依赖、可单测），
+    // 这里只做「校验入参形状 → 弹框/转发 → 回写后状态」的接线。
+    //
+    // 【失败即值】导入的每一种失败（取消 / 扩展名 / 体积 / 拷贝）都是
+    // `{ok:false, reason}`，不抛 —— 取消是用户的正常选择，弹 native 错误框
+    // 只会让人以为出事了。只有**我们自己传错形状**（槽位名不认识、热点越界）
+    // 才抛 TypeError：那是调用点的 bug，不该伪装成用户可见的失败。
+    ipcMain.handle(IPC.cursorGet, () => cursorStateView(storageDir()))
+
+    ipcMain.handle(IPC.cursorImport, async (event, raw: unknown): Promise<CursorOpResult> => {
+      if (!isCursorSlot(raw)) throw new TypeError('cursor:import: bad slot')
+      const result = await importMedia({
+        pickFile: (req) => pickFileViaDialog(event, req),
+        destDir: cursorsDir(storageDir()),
+        allowedExts: CURSOR_UPLOAD_EXTS,
+        title: MEDIA_IMPORT.CURSOR_TITLE,
+        filterName: MEDIA_IMPORT.CURSOR_FILTER_NAME,
+        minBytes: CURSOR_MIN_BYTES,
+        maxBytes: CURSOR_MAX_BYTES
+      })
+      if (!result.ok) {
+        return { ok: false, reason: result.reason ?? 'copy-failed', message: result.message }
+      }
+      try {
+        applyCursorFile(storageDir(), raw, result.name ?? '')
+      } catch (err) {
+        return {
+          ok: false,
+          reason: 'store-failed',
+          message: err instanceof Error ? err.message : String(err)
+        }
+      }
+      return { ok: true, state: cursorStateView(storageDir()) }
+    })
+
+    ipcMain.handle(IPC.cursorClear, (_e, raw: unknown): CursorOpResult => {
+      if (!isCursorSlot(raw)) throw new TypeError('cursor:clear: bad slot')
+      try {
+        clearCursorSlot(storageDir(), raw)
+      } catch (err) {
+        return {
+          ok: false,
+          reason: 'store-failed',
+          message: err instanceof Error ? err.message : String(err)
+        }
+      }
+      return { ok: true, state: cursorStateView(storageDir()) }
+    })
+
+    ipcMain.handle(IPC.cursorUpdateHotspot, (_e, raw: unknown): CursorOpResult => {
+      const rec = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : null
+      const slot = rec?.['slot']
+      if (!isCursorSlot(slot)) throw new TypeError('cursor:update-hotspot: bad slot')
+      const rawSpot = rec?.['hotspot']
+      let hotspot: { x: number; y: number } | null = null
+      if (rawSpot !== null && rawSpot !== undefined) {
+        const spot = rawSpot as Record<string, unknown>
+        const clean = sanitizeHotspot(spot['x'], spot['y'])
+        if (!clean) throw new RangeError('cursor:update-hotspot: bad hotspot')
+        hotspot = clean
+      }
+      try {
+        setCursorHotspot(storageDir(), slot, hotspot)
+      } catch (err) {
+        // 槽位没设置 / 写盘失败：store-failed（用户看到的是「没存下来」）。
+        // 入参越界在上面已经抛了（那是调用点的 bug）。
+        return {
+          ok: false,
+          reason: 'store-failed',
+          message: err instanceof Error ? err.message : String(err)
+        }
+      }
+      return { ok: true, state: cursorStateView(storageDir()) }
+    })
+
     // 读一次当前窗口状态：订阅建立前的首帧兜底（did-finish-load 的强制推
     // 发生在渲染层挂载之前，那一刻没有任何人在听，见 preload 的契约注释）。
     ipcMain.handle(IPC.wallpaperStateGet, (e): WallpaperWindowState => {
@@ -2086,6 +2344,42 @@ if (!gotTheLock) {
       // 不编一个「全 false」的状态 —— 那会让壁纸永远暂停且查不出原因。
       if (!win) throw new Error('wallpaper:state:get: no window for sender')
       return readWindowState(win, 'poll', () => petWinFocused)
+    })
+
+    // ---- 权限最小化（2026-10-31 全量自检 P1） ----
+    //
+    // 旧版 defaultSession **没有任何权限处理器**：Electron 的默认行为是放行
+    // 一部分权限请求。任何能进渲染世界的脚本（创意工坊场景脚本是一条现成
+    // 入口，见 P0）都可以静默要求屏幕捕获/麦克风/剪贴板；显示媒体处理器
+    // 又完全不看请求来源 —— 等于「谁能跑脚本，谁就能抓整屏 + 系统声」。
+    //
+    // 这里的口径是**默认拒绝**，只给「主窗的主框架」放行显示捕获：
+    //   · 应用真正用到的只有壁纸音频响应的 getDisplayMedia；
+    //   · 没有 getUserMedia / 通知 / 剪贴板读取 / 地理位置等需求；
+    //   · 子框架（第三方 iframe）一律拒绝；
+    //   · 开屏窗、桌宠窗不是主窗，同样拒绝。
+    // 判据用 webContents 身份 + `details.isMainFrame`，不用 URL 字符串 ——
+    // URL 可以被导航改掉，身份不能。
+    const CAPTURE_PERMISSIONS = new Set(['display-capture', 'media'])
+    const isTrustedCaptureSender = (wc: WebContents | null): boolean => {
+      if (!wc || wc.isDestroyed()) return false
+      const main = petMainWin
+      return main !== null && !main.isDestroyed() && wc.id === main.webContents.id
+    }
+    const trustReason = (permission: string, wc: WebContents | null, isMainFrame: boolean): boolean => {
+      const allowed = CAPTURE_PERMISSIONS.has(permission) && isMainFrame && isTrustedCaptureSender(wc)
+      if (!allowed) {
+        console.warn(
+          `[miai] permission denied: ${permission} (mainFrame=${isMainFrame}, sender=${wc?.id ?? 'null'})`
+        )
+      }
+      return allowed
+    }
+    session.defaultSession.setPermissionRequestHandler((wc, permission, callback, details) => {
+      callback(trustReason(permission, wc, details.isMainFrame))
+    })
+    session.defaultSession.setPermissionCheckHandler((wc, permission, _origin, details) => {
+      return trustReason(permission, wc, details.isMainFrame)
     })
 
     // ---- 系统声回采（壁纸「音频响应」的数据源；P3 第三步，2026-10-05）
@@ -2105,7 +2399,22 @@ if (!gotTheLock) {
     // 成功/失败都落一条 console（耗时 + 源数量），getSources 4s 未回即判失败
     // 并 callback(null)：渲染层那边 8s 超时 + 自动重试，这里先给结论不叠等待。
     session.defaultSession.setDisplayMediaRequestHandler(
-      async (_request, callback) => {
+      async (request, callback) => {
+        // 只认主窗主框架：显示媒体处理器本身不校验来源，单靠权限处理器
+        // 不够（两条路都能触发捕获）。frame 可能为 null（请求时框架已销毁）。
+        const main = petMainWin
+        const frame = request.frame
+        const trusted =
+          frame !== null &&
+          !frame.isDestroyed() &&
+          main !== null &&
+          !main.isDestroyed() &&
+          frame.frameTreeNodeId === main.webContents.mainFrame.frameTreeNodeId
+        if (!trusted) {
+          console.warn('[miai] display-media request denied: untrusted frame')
+          callback(null as unknown as Parameters<typeof callback>[0])
+          return
+        }
         const t0 = Date.now()
         let timer: NodeJS.Timeout | undefined
         try {
@@ -2201,7 +2510,22 @@ if (!gotTheLock) {
       baseUrl: cloudBaseUrl,
       fetch: cloudFetch,
       tokens: cloudTokens,
-      clientLabel: device().clientLabel
+      clientLabel: device().clientLabel,
+      /*
+       * 令牌被服务端判死时的收尾（P2 #20）：令牌已经清了，**盒必须跟着回客人位**。
+       * 只清令牌不清盒，就是"未登录却占着账号盒"的悬空态 —— 下一个账号来首激活
+       * 会被 activateAccount 的盒位置断言拒成 TypeError（界面上按按钮毫无反应）。
+       *
+       * 【为什么不 drain】与 cloud:logout 不同，这里没有"用户点了退出"的动作可等：
+       * 判死是探测/同步路上顺带发现的，whenIdle 可能被退避窗口钉住十几秒，把一次
+       * 会话探测变成卡顿。切盒的 epoch 屏障会拒掉在飞轮次的后续写（同 logoutLocal
+       * 的理由，见 account-flow.ts 头注释），已经在网上的那一次请求落在这个账号
+       * 自己的数据上，合并幂等，不构成脏写。
+       */
+      onSessionInvalid: () => {
+        leaveToGuest(accountFlowDeps)
+        syncRiceMirror()
+      }
     })
     ipcMain.handle(IPC.cloudRegister, (_e, input: unknown) => cloudClient.register(cloudRegisterInput(input)))
     ipcMain.handle(IPC.cloudLogin, (_e, input: unknown) => cloudClient.login(cloudCredentials(input)))
@@ -2494,6 +2818,11 @@ if (!gotTheLock) {
     // 存在 —— 白名单是路径字符串比较，第一次往文件夹丢图不需要任何重登记。
     addProtocolRootProvider(() => [rewardsDir()])
 
+    // 自定义鼠标指针素材目录（v7 模块六，2026-10-31）。图片/视频指针都要能被
+    // 渲染层直接加载（CSP 已放行 miai-wall:）；根用活读 provider 登记，
+    // 目录由 cursor 导入手现建，登记这一刻不存在也没关系（同奖励图目录）。
+    addProtocolRootProvider(() => [cursorsDir(storageDir())])
+
     // 自定义壁纸目录：以活读 provider 登记进 catalog（注册时机不受 ready
     // 判定与扫描次序影响，同 extraRootProviders 的理由）。它的 miai-wall://
     // 白名单跟着扫描快照走 —— 导入后 wallpaperImport 的强制重扫会让条目
@@ -2518,6 +2847,37 @@ if (!gotTheLock) {
     // 就定型了，装晚了该窗口里所有壁纸请求都是 ERR_UNKNOWN_URL_SCHEME ——
     // 而主进程 fetch 同一 URL 完全正常（见 primeWallProtocol 的注释，实测定论）
     primeWallProtocol()
+    // 场景沙箱页（miai-scene://）同理：第一个窗口出生前装好。生产环境沙箱
+    // iframe 每次挂载都会请求它；装晚了 mount 一律失败（无提示的空白槽位）。
+    installSceneProtocol({ rendererDir: join(__dirname, '../renderer') })
+
+    // 渲染层说「可以关了」（结算完 / 用户选了不需要 / 本来就没待结算）。
+    // 用 sender 反查窗口而不是抓闭包里的 mainWindow：activate 重建窗口时
+    // 这条监听不需要重装，也不会把消息认到旧窗口身上。
+    // 渲染层回了一张收条：它还活着，把「5 秒没反应就强关」换成 10 分钟长兜底。
+    // 不直接放行 —— 用户可能正在读弹框或结算正在写盘。
+    ipcMain.on(IPC.appCloseAck, (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win || win.isDestroyed() || !closePending.has(win)) return
+      clearCloseTimer(win)
+      closeTimers.set(
+        win,
+        setTimeout(() => forceCloseWindow(win), CLOSE_SETTLE_TIMEOUT_MS)
+      )
+    })
+
+    // 用户选了「继续学习」：撤掉待关状态与定时器，窗口留着。
+    ipcMain.on(IPC.appCloseCancel, (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (!win) return
+      clearCloseTimer(win)
+      closePending.delete(win)
+    })
+
+    ipcMain.on(IPC.appCloseConfirm, (event) => {
+      const win = BrowserWindow.fromWebContents(event.sender)
+      if (win && !win.isDestroyed()) forceCloseWindow(win)
+    })
 
     // 主窗**先构造**（隐藏）——「开屏期间至少一个窗口存活」的堵法（上方
     // createWindow 头注释），随后才轮到开屏窗出生、最后才是加载。
@@ -2562,6 +2922,8 @@ if (!gotTheLock) {
   // 退出前收割还在跑的编译/运行子进程：超时杀树靠主进程定时器，而主人跑着
   // 死循环程序直接点 X 时定时器随进程消亡 —— 不收割就是孤儿进程继续烧 CPU
   app.on('before-quit', () => {
+    // 程序自己发起的退出不拦：close 事件里看到这个标记直接放行
+    quitRequested = true
     killAllLiveChildren()
     // 原生编译观察器收摊（清表 + 停轮询）
     nativeWatcher.stop()

@@ -150,6 +150,16 @@ function perDrivePaths(drive: string): Record<LangOfCode, string[]> {
       P('Program Files\\CodeBlocks\\MinGW\\bin\\gcc.exe'),
       P('Program Files (x86)\\CodeBlocks\\MinGW\\bin\\gcc.exe'),
       P('CodeBlocks\\MinGW\\bin\\gcc.exe'),
+      // ---- Code::Blocks 系列（2026-10-31「强制扫描 Code::Blocks 默认路径」）----
+      // 它的默认落点不止一种写法：产品名是 `Code::Blocks 20.03`，而**安装目录**
+      // 只能叫 `CodeBlocks`（Windows 路径里不允许冒号 —— 曾把 `Code::Blocks*`
+      // 写进表里，实测 expandGlob 连 mkdir 都建不出来，这条属于「想当然」）；
+      // MinGW 那一层则可能是 MinGW / MinGW32 / MinGW64。
+      // 旧表只钉了「无版本号 + MinGW」这一种，换个发行版就静默找不到。
+      // 带 `*` 的条目由 expandGlob 展开，目录不存在时什么都不产出（安全）。
+      P('Program Files\\CodeBlocks*\\MinGW*\\bin\\gcc.exe'),
+      P('Program Files (x86)\\CodeBlocks*\\MinGW*\\bin\\gcc.exe'),
+      P('CodeBlocks*\\MinGW*\\bin\\gcc.exe'),
       P('TDM-GCC-64\\bin\\gcc.exe'),
       P('TDM-GCC-32\\bin\\gcc.exe'),
       P('Program Files\\TDM-GCC-64\\bin\\gcc.exe'),
@@ -175,6 +185,10 @@ function perDrivePaths(drive: string): Record<LangOfCode, string[]> {
       P('Program Files\\CodeBlocks\\MinGW\\bin\\g++.exe'),
       P('Program Files (x86)\\CodeBlocks\\MinGW\\bin\\g++.exe'),
       P('CodeBlocks\\MinGW\\bin\\g++.exe'),
+      // 与 c 表逐条对应（下面有单测钉住「改一边忘另一边」）
+      P('Program Files\\CodeBlocks*\\MinGW*\\bin\\g++.exe'),
+      P('Program Files (x86)\\CodeBlocks*\\MinGW*\\bin\\g++.exe'),
+      P('CodeBlocks*\\MinGW*\\bin\\g++.exe'),
       P('TDM-GCC-64\\bin\\g++.exe'),
       P('TDM-GCC-32\\bin\\g++.exe'),
       P('Program Files\\TDM-GCC-64\\bin\\g++.exe'),
@@ -230,8 +244,13 @@ const userLevelPaths: Record<LangOfCode, string[]> = {
     // 默认机器上两份展开成同一条路径的代价，由 chooseCompiler 的 dedupePaths 收掉。
     '%ProgramFiles(x86)%\\Dev-Cpp\\MinGW*\\bin\\gcc.exe',
     '%ProgramFiles%\\Dev-Cpp\\MinGW*\\bin\\gcc.exe',
+    // 目录名带版本号/不同发行写法（Dev-Cpp 6.x、Code::Blocks 20.03 / 25.03 …）
+    '%ProgramFiles(x86)%\\Dev-Cpp*\\MinGW*\\bin\\gcc.exe',
+    '%ProgramFiles%\\Dev-Cpp*\\MinGW*\\bin\\gcc.exe',
     '%ProgramFiles(x86)%\\CodeBlocks\\MinGW\\bin\\gcc.exe',
-    '%ProgramFiles%\\CodeBlocks\\MinGW\\bin\\gcc.exe'
+    '%ProgramFiles%\\CodeBlocks\\MinGW\\bin\\gcc.exe',
+    '%ProgramFiles(x86)%\\CodeBlocks*\\MinGW*\\bin\\gcc.exe',
+    '%ProgramFiles%\\CodeBlocks*\\MinGW*\\bin\\gcc.exe'
   ],
   cpp: [
     '%USERPROFILE%\\scoop\\shims\\g++.exe',
@@ -240,8 +259,12 @@ const userLevelPaths: Record<LangOfCode, string[]> = {
     // 与 c 表同源，改一边记得改另一边
     '%ProgramFiles(x86)%\\Dev-Cpp\\MinGW*\\bin\\g++.exe',
     '%ProgramFiles%\\Dev-Cpp\\MinGW*\\bin\\g++.exe',
+    '%ProgramFiles(x86)%\\Dev-Cpp*\\MinGW*\\bin\\g++.exe',
+    '%ProgramFiles%\\Dev-Cpp*\\MinGW*\\bin\\g++.exe',
     '%ProgramFiles(x86)%\\CodeBlocks\\MinGW\\bin\\g++.exe',
-    '%ProgramFiles%\\CodeBlocks\\MinGW\\bin\\g++.exe'
+    '%ProgramFiles%\\CodeBlocks\\MinGW\\bin\\g++.exe',
+    '%ProgramFiles(x86)%\\CodeBlocks*\\MinGW*\\bin\\g++.exe',
+    '%ProgramFiles%\\CodeBlocks*\\MinGW*\\bin\\g++.exe'
   ],
   java: [
     '%USERPROFILE%\\scoop\\shims\\javac.exe',
@@ -297,7 +320,10 @@ export function fallbackPathsFor(lang: LangOfCode, drives: string[] = existingDr
 const SPEC: Record<LangOfCode, { cmds: string[]; versionArgs: string[] }> = {
   c: { cmds: ['gcc'], versionArgs: ['--version'] },
   cpp: { cmds: ['g++'], versionArgs: ['--version'] },
-  java: { cmds: ['javac', 'java'], versionArgs: ['-version'] },
+  // java 只认 javac：只有 java.exe 的机器是 JRE，不是 JDK。
+  // 旧表把 java 也算「找到了」，于是「检测 ✓」和「所有 Java 题都编不过」
+  // 同时成立 —— 零基础用户只会以为代码是自己写错的。
+  java: { cmds: ['javac'], versionArgs: ['-version'] },
   python: { cmds: ['python', 'py'], versionArgs: ['--version'] }
 }
 

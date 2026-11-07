@@ -399,6 +399,75 @@ describe('account 会话探测', () => {
     }
   })
 
+  /*
+   * P2 #20（2026-10-31 自检）：判死令牌的收尾钩子。
+   *
+   * 光清 token 不够 —— 数据盒还停在那个账号上，下一个账号首激活会被
+   * activateAccount 的盒位置断言拒成 TypeError，界面上那颗收编按钮按下去
+   * 毫无反应（IPC 抛错无人接）。钩子的判据有两条：**恰好一次**，且**在清
+   * 令牌之后**（app 层的收尾要读到未登录态）。
+   */
+  it('401 判死：通知 onSessionInvalid 恰好一次，且通知时 token 已清', async () => {
+    for (const code of ['UNAUTHENTICATED', 'TOKEN_EXPIRED']) {
+      const tokens = createMemoryTokenStore(FAKE_TOKEN)
+      const fake = makeFetch(() => Promise.resolve(errorRes(401, code)))
+      const seen: Array<string | null> = []
+      const client = createCloudAccountClient({
+        baseUrl: BASE,
+        fetch: fake.fetch,
+        timeoutMs: 50,
+        tokens,
+        onSessionInvalid: () => seen.push(tokens.get())
+      })
+
+      expect(expectOk(await client.session())).toBe(null)
+      expect(seen).toEqual([null])
+    }
+  })
+
+  it('断网 / 形状坏 / 本地没令牌：一律不通知（只有服务端判死才算）', async () => {
+    const refused: FetchLike = () => Promise.reject(new Error('ECONNREFUSED'))
+    const silent = (): void => {
+      throw new Error('onSessionInvalid 不该被调用')
+    }
+
+    // 断网：failure NETWORK、token 保留 —— 不是判死
+    const netTokens = createMemoryTokenStore(FAKE_TOKEN)
+    const netClient = createCloudAccountClient({
+      baseUrl: BASE,
+      fetch: refused,
+      timeoutMs: 50,
+      tokens: netTokens,
+      sleep: async () => {},
+      onSessionInvalid: silent
+    })
+    expect(expectFailure(await netClient.session()).code).toBe('NETWORK')
+    expect(netTokens.get()).toBe(FAKE_TOKEN)
+
+    // 200 形状坏：解析失败 —— 不是判死
+    const badTokens = createMemoryTokenStore(FAKE_TOKEN)
+    const badClient = createCloudAccountClient({
+      baseUrl: BASE,
+      fetch: makeFetch(() => Promise.resolve(jsonRes(200, { nonsense: true }))).fetch,
+      timeoutMs: 50,
+      tokens: badTokens,
+      onSessionInvalid: silent
+    })
+    expect(expectFailure(await badClient.session()).code).toBe('MALFORMED_RESPONSE')
+    expect(badTokens.get()).toBe(FAKE_TOKEN)
+
+    // 本地就没令牌：早退 ok(null)，一个包都不发，也没有"会话"可判死
+    const noTokens = createMemoryTokenStore()
+    const noTokenClient = createCloudAccountClient({
+      baseUrl: BASE,
+      fetch: makeFetch(() => Promise.resolve(jsonRes(200, sessionBody()))).fetch,
+      timeoutMs: 50,
+      tokens: noTokens,
+      onSessionInvalid: silent
+    })
+    expect(expectOk(await noTokenClient.session())).toBe(null)
+  })
+
   it('断网（fetch 抛）→ failure NETWORK、**token 保留**（断网不等于被登出）', async () => {
     const tokens = createMemoryTokenStore(FAKE_TOKEN)
     const refused: FetchLike = () => Promise.reject(new Error('ECONNREFUSED'))

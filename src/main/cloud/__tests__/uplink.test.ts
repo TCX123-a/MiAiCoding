@@ -33,8 +33,8 @@ import type {
 import { RICE_PULL_LIMIT_MAX } from '../../../shared/cloud/protocol'
 import type { StoreBox } from '../../store/box'
 import { createRiceJournal } from '../rice-journal'
-import { createPendingOpsStore, parseSettlePayload, writePendingOps } from '../pending-ops'
-import { createUplink, type UplinkDeps } from '../uplink'
+import { addSettle, createPendingOpsStore, parseSettlePayload, writePendingOps } from '../pending-ops'
+import { adaptPushOutcome, createUplink, type UplinkDeps } from '../uplink'
 
 const INSTALL = 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee'
 const NOW = new Date(2026, 9, 11, 12, 0, 0)
@@ -302,6 +302,47 @@ describe('happy path：推 → 拉 → 结算', () => {
   })
 })
 
+describe('adaptPushOutcome：拒收名单必须先过滤再参与守恒', () => {
+  const entry = (entryKey: string) => ({
+    entryKey,
+    kind: 'lesson' as const,
+    delta: 1,
+    dayKey: '2026-10-11',
+    at: '2026-10-11T12:00:00.000Z',
+    ref: null
+  })
+
+  it('拒收键不在本批 → 不采信；守恒按过滤后的名单算，整批保持 pending', () => {
+    // 【2026-10-31 自检 P2】旧式：1 + 0 + resp.rejected.length(1) === 2 也会
+    // 判「守恒」，于是「除拒收键外全部入云」→ 两条其实只被收下一条，
+    // 另一条被记成已入云，永远不再重推。用过滤后的 0 算：1 + 0 + 0 ≠ 2。
+    const r = adaptPushOutcome([entry('k1'), entry('k2')], {
+      accepted: 1,
+      duplicated: 0,
+      rejected: [{ entryKey: 'ghost', code: 'OVER_DAILY_CAP', detail: 'cap' }],
+      balance: 0,
+      earnedTotal: 0,
+      spentTotal: 0
+    })
+    expect(r.rejected).toEqual([])
+    expect(r.conservationBroken).toBe(true)
+    expect(r.accepted).toEqual([])
+  })
+
+  it('对照臂：正常守恒仍成立（过滤不改变正常路径）', () => {
+    const r = adaptPushOutcome([entry('k1'), entry('k2')], {
+      accepted: 1,
+      duplicated: 1,
+      rejected: [],
+      balance: 0,
+      earnedTotal: 0,
+      spentTotal: 0
+    })
+    expect(r.conservationBroken).toBe(false)
+    expect(r.accepted).toEqual(['k1', 'k2'])
+  })
+})
+
 describe('push 的失败分类与守恒桥接', () => {
   it('守恒（accepted+duplicated+rejected.length === 批大小）：全批摘 cloud', async () => {
     const h = makeUplink()
@@ -424,6 +465,37 @@ describe('结算队列的逐条处置', () => {
     expect(res.settlesSent).toBe(0)
     expect(h.settleQueue.read().settles).toEqual([])
     expect(res.failures).toEqual([])
+  })
+
+  it('结算在途时新入队的条目不会被旧快照回写抹掉', async () => {
+    // 【2026-10-31 自检 P2】结算循环里有 await；等待期间渲染层可能又入队
+    // 一条新结算。旧实现拿本轮开头读到的队列快照回写，后一次写会把这条
+    // 新差事静默删掉 —— 用户那天的挑战分就永远发不出去了。
+    // 判据：两发都成功后，磁盘上只应剩「在途时插入的那条」。
+    const h = makeUplink()
+    queueSettle('2026-10-10', '2026-10-11')
+    h.fakeRice.pullQueue.push(pullOk())
+    h.fakeChallenge.queue.push((b) => {
+      // 第一发还挂着的时候，模拟渲染层入队一条新结算
+      const cur = h.settleQueue.read()
+      h.settleQueue.write(
+        addSettle(cur, {
+          submissionId: '00000000-0000-4000-8000-202610120000',
+          dateKey: '2026-10-12',
+          payload: { ...cur.settles[0].payload, dateKey: '2026-10-12' },
+          attempts: 0,
+          lastError: null,
+          queuedAt: '2026-10-11T12:02:00.000Z'
+        })
+      )
+      return ok(settleOkBody(b.dateKey))
+    })
+    h.fakeChallenge.queue.push((b) => ok(settleOkBody(b.dateKey)))
+
+    const res = await h.uplink.run()
+    expect(res.settlesSent).toBe(2)
+    const q = h.settleQueue.read()
+    expect(q.settles.map((s) => s.dateKey), '在途时入队的那条被旧快照回写覆盖了').toEqual(['2026-10-12'])
   })
 
   it('400：记 attempts 留在队列、继续下一条（一条坏账不堵后面的天）', async () => {

@@ -61,6 +61,27 @@ export const IPC = {
   aiGenerateQuestions: 'ai:generate-questions',
   aiTestConnection: 'ai:test-connection',
   /**
+   * 查一次余额（设置页，v21 多厂商）。**不花 token、不计费**。
+   * 没有公开余额接口的厂商返回 `unsupported`，界面只显示一句说明，
+   * 不拦聊天和出题。
+   */
+  aiBalance: 'ai:balance',
+  /**
+   * 拉免费公开池的模型清单（设置页模式 B，v22）。
+   * 只返回远端标了 `isFree` 的模型，外加永远可用的兜底模型。
+   * **不走 AI 单飞**：拉清单不该取消用户正在等的出题/聊天请求。
+   */
+  aiPoolModels: 'ai:pool-models',
+  /**
+   * 拉**当前专属厂商**的模型清单（设置页模式 A，v23）。
+   *
+   * 和 `aiPoolModels` 一样是只读列表请求，**不走 AI 单飞**：拉清单不该
+   * 掐掉用户正在等的出题/聊天。失败时返回 `reason:'unauthorized'` /
+   * `'offline'` / `'bad-response'`，界面显示「无法获取模型列表，请检查
+   * Key 或网络」并给一个「重试」—— **绝不退回一份写死的选项假装成功**。
+   */
+  aiProviderModels: 'ai:provider-models',
+  /**
    * 掐掉正在飞的那个 AI 请求。
    *
    * 【为什么「取消」必须是一条真通道，而不是「界面不看了」】
@@ -209,6 +230,32 @@ export const IPC = {
    * （miai-wall:// roots）随目录快照一起刷新，不需要任何额外登记。
    */
   wallpaperImport: 'wallpaper:import',
+
+  // ---------------------------------------------------------------- 自定义鼠标指针（v7 模块六，2026-10-31）
+
+  /**
+   * 读一次自定义指针状态（`CursorStateView`，见 shared/cursor.ts）。
+   *
+   * 两个槽位（常态 / 点击）各自可能为空 = 该状态沿用内置猫爪。素材走
+   * miai-wall:// 的**独立根**（`<数据目录>/cursors`，在 app.ts 里以活读
+   * provider 登记），返回的 url 就是可以直接塞进 <img>/<video> 的地址。
+   */
+  cursorGet: 'cursor:get',
+  /**
+   * 导入一个指针素材到某个槽位。入参是槽位名（'normal' | 'click'），
+   * **不是路径** —— 同 wallpaperImport 的安全口径：让渲染层传路径等于开一条
+   * 「任意文件拷进数据目录」的通道。主进程弹框、校验扩展名/体积、拷进
+   * `<数据目录>/cursors/`，再把槽位指过去；旧文件在确认两个槽位都不再
+   * 引用之后删掉。用户取消 = `{ok:false, reason:'cancelled'}`（不是错误）。
+   */
+  cursorImport: 'cursor:import',
+  /** 清空一个槽位（该状态回到内置猫爪）。入参槽位名，回写后的完整状态 */
+  cursorClear: 'cursor:clear',
+  /**
+   * 改一个槽位的热点。入参 `{slot, hotspot: {x,y} | null}`，坐标是
+   * **0~1 的归一化值**（理由见 shared/cursor.ts 文件头）；null = 自动定位。
+   */
+  cursorUpdateHotspot: 'cursor:update-hotspot',
   /**
    * 窗口状态推送（**主工程第一条 main → renderer 推送通道**）。
    *
@@ -387,6 +434,33 @@ export const IPC = {
    * 同 wallpaperState 的订阅契约（回调只收载荷、返回退订函数）。
    */
   appNav: 'app:nav',
+
+  /**
+   * 关窗拦截（2026-10-31「学到这里啦喵」）：主进程 → 渲染层问一句
+   * 「刚刚学完的课结算了没有」。
+   *
+   * 【为什么必须是"主进程先问"而不是渲染层自己拦】窗口右上角的 ✕ 是**原生层**
+   * 画的按钮，点击先到主进程。只有 close 事件能 preventDefault；渲染层
+   * 什么都收不到。所以主进程先 preventDefault、再发这条消息，渲染层弹框，
+   * 用户选完再走 `appCloseConfirm` 放行。
+   *
+   * 【必须有超时兜底】渲染层崩了/还没挂载时没人回话，窗口会永远关不掉。
+   * 主进程侧 5 秒没收到 `appCloseAck` 就无条件放行。
+   *
+   * 【两段超时的分工】5 秒那段只防「渲染层没反应」；渲染层一旦回了 ack，
+   * 说明它还活着、只是用户在读弹框或结算还在写盘，这时换成 10 分钟长兜底 ——
+   * 旧版只有一个 5 秒硬定时器，用户还没读完就被强关，结算也会被拦腰截断。
+   */
+  appCloseRequest: 'app:close-request',
+  /**
+   * 渲染层 → 主进程：「收到了」。**只是收条**，窗口还不会关。
+   * 主进程收到后把 5 秒强关定时器换成 10 分钟长兜底。
+   */
+  appCloseAck: 'app:close-ack',
+  /** 渲染层 → 主进程：可以关了（结算完 / 用户点了不需要 / 本来就没待结算） */
+  appCloseConfirm: 'app:close-confirm',
+  /** 渲染层 → 主进程：用户选择「继续学习」，取消这次关窗 */
+  appCloseCancel: 'app:close-cancel',
 
   /**
    * 主进程 → 全部窗口：配置被**主进程自己**改了（载荷 `PublicAppConfig`）。

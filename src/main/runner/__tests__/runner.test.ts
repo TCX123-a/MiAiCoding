@@ -10,6 +10,7 @@ import {
   killAllLiveChildren,
   killTree,
   makeCollector,
+  makeRunDir,
   MAX_OUTPUT_BYTES,
   pickTempRoot,
   planForLang,
@@ -20,6 +21,7 @@ import {
 } from '../runner'
 import { buildCmdLine } from '../native'
 import { LANG_OF_CODE, type EnvReport } from '../../../shared/types'
+import { RUNNER } from '../../../shared/copy'
 
 describe('decodeOutput 三级回退', () => {
   it('合法 UTF-8 直接解码（含中文）', () => {
@@ -380,6 +382,69 @@ describe('缺陷4：临时目录可能含非 ASCII（中文用户名）', () => 
 
   it('含全角字符也退回兜底', () => {
     expect(pickTempRoot('C:\\用户\\Temp', FB)).toBe(FB)
+  })
+})
+
+describe('★ 临时目录建不出来时（磁盘满 / TEMP 指向坏盘）', () => {
+  /** 造一个「不可能当目录用」的路径：用一个**文件**当目录的父级 */
+  function brokenDirHome(): { home: string; blocker: string } {
+    const home = mkdtempSync(join(tmpdir(), 'miai-tempty-'))
+    const blocker = join(home, 'blocker')
+    writeFileSync(blocker, 'not a directory')
+    return { home, blocker }
+  }
+
+  it('TEMP 坏了、Public 可用 → 照样建得出临时目录（不该让整个练习场瘫掉）', () => {
+    const { home, blocker } = brokenDirHome()
+    const saved = { TEMP: process.env.TEMP, TMP: process.env.TMP }
+    try {
+      process.env.TEMP = blocker
+      process.env.TMP = blocker
+      const dir = makeRunDir()
+      const publicRoot = join(process.env.SystemDrive || 'C:', 'Users', 'Public', 'miai-runner')
+      try {
+        expect(dir.startsWith(publicRoot), `没有退到 Public，实际是 ${dir}`).toBe(true)
+      } finally {
+        rmSync(dir, { recursive: true, force: true })
+      }
+    } finally {
+      process.env.TEMP = saved.TEMP
+      process.env.TMP = saved.TMP
+      rmSync(home, { recursive: true, force: true })
+    }
+  })
+
+  it('两个候选根都不可写 → runCode 给「照着做」的人话，而不是抛穿', async () => {
+    const { home, blocker } = brokenDirHome()
+    const saved = {
+      TEMP: process.env.TEMP,
+      TMP: process.env.TMP,
+      SystemDrive: process.env.SystemDrive
+    }
+    try {
+      process.env.TEMP = blocker
+      process.env.TMP = blocker
+      // 兜底根也落到一个不存在的盘：Public 那条路同样必失败
+      process.env.SystemDrive = 'Q:'
+      const report = {
+        c: { found: true, path: 'miai_no_such_gcc_exe' },
+        cpp: { found: true, path: 'miai_no_such_gcc_exe' },
+        java: { found: true, path: 'miai_no_such_javac_exe' },
+        python: { found: true, path: 'miai_no_such_python_exe' }
+      } as EnvReport
+      const r = await runCode({ lang: 'c', code: 'int main(){return 0;}' }, report)
+      expect(r.ok).toBe(false)
+      expect(r.phase).toBe('compile')
+      expect(r.message).toBe(RUNNER.TEMP_DIR_FAIL)
+      // 这是环境问题，不是编译错误：stderr 留空（不把 ENOSPC 之类的系统原话吓唬小白）
+      expect(r.stderr).toBe('')
+    } finally {
+      process.env.TEMP = saved.TEMP
+      process.env.TMP = saved.TMP
+      if (saved.SystemDrive === undefined) delete process.env.SystemDrive
+      else process.env.SystemDrive = saved.SystemDrive
+      rmSync(home, { recursive: true, force: true })
+    }
   })
 })
 

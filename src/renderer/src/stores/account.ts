@@ -391,6 +391,20 @@ export const useAccountStore = defineStore('account', () => {
     const version = profileVersion.value
     try {
       const res = await window.miai.cloud.session()
+      if (res.ok && res.data === null) {
+        /*
+         * 服务端判死令牌（2026-10-31 自检 P2 #20）：这不是"探测失败"，是权威裁决
+         * ——主进程已经清掉令牌、并把数据盒收回客人位（app.ts 的 onSessionInvalid
+         * 接线）。状态面必须跟着翻到未登录：不刷新的话，界面还挂着上一个人的名字
+         * 和头像，而 cloud-sync 的 watch 也收不到 boxAccountId 的变化，四个 store
+         * 继续摊着账号盒的旧盘面 —— 「显示已登录、实际令牌已死」正是 #20 里那颗
+         * 按了没反应的收编按钮的上游。
+         *
+         * 失败（网络/形状坏）仍然静默：那是"这次没问到"，不是"你不是你"。
+         */
+        await refresh()
+        return
+      }
       if (res.ok && res.data && profileVersion.value === version) {
         username.value = res.data.account.username
         /*

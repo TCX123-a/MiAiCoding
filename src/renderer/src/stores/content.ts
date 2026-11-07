@@ -128,6 +128,37 @@ export const useContentStore = defineStore('content', () => {
     return nextWrittenAfter(bundle.outline, id)
   }
 
+  /**
+   * 「学到这里啦喵」要一次性变绿的课 = **大纲顺序里这一课及其之前所有有正文的课**。
+   *
+   * 【为什么用「大纲前缀」而不是只取 required 的传递闭包】
+   * 主人 2026-10-31 的原话是「之前的全部课程变绿」，并举了「跳过通用知识
+   * 直接学 C」的例子 —— 那时 requirement 链只会点亮 common-01 一节，
+   * 而他期待的是前面的通用课都跟着绿。前缀是用户看得见的那条线
+   * （侧栏从上往下），required 链只是它底下的一张网。
+   *
+   * 【为什么只收 hasContent】没写正文的课本来就不能被标记已学
+   * （见 unlockedIds 的注释）；把它们塞进 learned 会让侧栏出现
+   * 「已学」但点开是「备课中」的自相矛盾。
+   */
+  function writtenPrefixUpTo(id: string): string[] {
+    const written = bundle.outline.flatMap((m) => m.lessons).filter((l) => l.hasContent)
+    const i = written.findIndex((l) => l.id === id)
+    return i === -1 ? [] : written.slice(0, i + 1).map((l) => l.id)
+  }
+
+  /**
+   * 某一门语言里**全部有正文的课**（按大纲顺序）。
+   * 每日挑战「跳级」用：确认后该语言前面的课程全变绿。
+   */
+  function writtenOfLang(lang: Lang): string[] {
+    return bundle.outline
+      .filter((m) => m.lang === lang)
+      .flatMap((m) => m.lessons)
+      .filter((l) => l.hasContent)
+      .map((l) => l.id)
+  }
+
   function selectLang(lang: Lang) {
     activeLang.value = lang
   }
@@ -161,6 +192,8 @@ export const useContentStore = defineStore('content', () => {
     readyCount,
     nextUpId,
     nextWrittenAfterId,
+    writtenPrefixUpTo,
+    writtenOfLang,
     questionIndex,
     lessonOf,
     inOutline,

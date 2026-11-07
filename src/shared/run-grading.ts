@@ -59,6 +59,36 @@ export function normalizeRunOutput(s: string): string {
 }
 
 /**
+ * **宽松版**输出归一化 —— 专治「多打/少打一个空格」的新手误判。
+ *
+ * 和 `normalizeRunOutput()` 的区别只有一条：**每行内部与行首的空白也折叠**。
+ *   · 行尾空白仍去掉
+ *   · 行内连续空格/Tab/全角空格 → 一个半角空格
+ *   · 行首空白 → 去掉
+ *   · 行与行之间的空行**仍算内容**（`1\n\n2` 和 `1\n2` 依然不相等）
+ *   · 大小写仍敏感
+ *
+ * 【为什么判分要"先严后宽"两次比，而不是直接把 `normalizeRunOutput` 改宽】
+ * 严格版是**内容侧契约**：`expectedOutput` 就是按它写的，`check:samples`
+ * 和内容校验器都拿它做对账。把它改宽等于改契约，所有「输出里有前导空格」的
+ * 题都会被悄悄放松。判分这边用「严格相等 **或** 宽松相等」，既保住了
+ * 契约的唯一实现，又让多一个空格的学员不被误杀。
+ *
+ * 【为什么行首空白可以去掉】
+ * 新手最容易多敲的就是每行开头的空格（尤其是手打多行输出时）。真需要
+ * 前导空格的题（比如画图、对齐表格）在严格比较那一档已经判对了；
+ * 宽松档只是**额外**放行"删掉空格也对"的写法，不会把原本判对的题改错。
+ */
+export function normalizeRunOutputLoose(s: string): string {
+  return s
+    .replace(/\r\n?/g, '\n')
+    .split('\n')
+    .map((line) => line.replace(/\s+/g, ' ').trim())
+    .join('\n')
+    .replace(/^\n+|\n+$/g, '')
+}
+
+/**
  * 学员跑出来的输出，和内容里写死的 `expectedOutput`，是不是同一份。
  *
  * 【它只做比较，不做"该不该比"的判断】
@@ -74,7 +104,10 @@ export function normalizeRunOutput(s: string): string {
  * `expectedOutput`（校验器管），不是学员这边。
  */
 export function gradeByRun(expectedOutput: string, actualOutput: string): boolean {
-  return normalizeRunOutput(actualOutput) === normalizeRunOutput(expectedOutput)
+  return (
+    normalizeRunOutput(actualOutput) === normalizeRunOutput(expectedOutput) ||
+    normalizeRunOutputLoose(actualOutput) === normalizeRunOutputLoose(expectedOutput)
+  )
 }
 
 /**

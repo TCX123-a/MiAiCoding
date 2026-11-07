@@ -2,7 +2,7 @@
 id: common-36
 lang: common
 stage: 0
-order: 36
+order: 48
 title: 门牌号与路标——环境变量与 PATH
 tags: [工具链, 命令行]
 required: ["common-35"]

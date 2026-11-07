@@ -74,7 +74,9 @@ function glassUses(file: string): number {
  *   · LearnView 5 处：3 张卡 + 1 个悬浮项的蓝底 + 挑战卡的锁定态
  *     （2026-10-10 解锁闸：locked 与 done 同为「退化的白卡」，
  *     用同一枚 --mi-card-glass 把蓝底收回去，壁纸下也一起透）
- *   · LessonDetailView 2 处：前置课条目 + 底部操作条
+ *   · LessonDetailView 1 处：底部操作条
+ *     （2026-10-31 硬锁拆除：前置课条目那张玻璃卡随「学到这里啦喵」一并下线，
+ *      软锁提示改挂在普通卡片上 —— 它只是提示，不再是独立的容器面）
  *   · 其余各 1：Settings / Challenge / Review 的卡片底
  *   · LoginView 1 处（⑤ 十项升级，2026-10-08）：登录面板的底 ——
  *     裸路由页（meta.bare）上唯一的一块玻璃面，壁纸一定在场，
@@ -90,7 +92,7 @@ const IN_SURFACES: Record<string, number> = {
   'components/domain/Sidebar.vue': 1,
   'views/ChallengeView.vue': 1,
   'views/LearnView.vue': 5,
-  'views/LessonDetailView.vue': 2,
+  'views/LessonDetailView.vue': 1,
   'views/LoginView.vue': 1,
   'views/ReviewView.vue': 1,
   'views/SettingsView.vue': 1
@@ -183,7 +185,7 @@ describe('main.ts：两个变量真的被注入到 <html> 上', () => {
 })
 
 describe('IN/OUT 边界：玻璃令牌全库只许出现在容器面上', () => {
-  it('消费点恰好是 IN 清单那 10 个文件、共 17 处', () => {
+  it('消费点恰好是 IN 清单那 10 个文件、共 16 处', () => {
     const found: Record<string, number> = {}
     // 扫 allFiles（含 .ts）：.ts 也能往元素上写 inline style / 拼 CSS 文本，
     // 只扫 .vue/.css 时这类消费是静默漏过的（2026-10-04 复核）。当前树里

@@ -129,3 +129,22 @@
 html {
   cursor: var(--mi-cursor, auto);
 }
+
+/*
+ * 视频自定义指针（v7 模块六，2026-10-31）
+ *
+ * CSS 的 cursor 只能放图片，视频指针只能靠「一个跟着鼠标走的 <video> 浮层」
+ * （见 lib/custom-cursor.ts）。浮层出现时，系统指针必须整体藏掉 ——
+ * 否则同一时刻会有两个指针（系统箭头 + 视频），看起来像重影。
+ *
+ * 【为什么是 `!important`】这条规则要压过全站所有显式手型（正文、按钮、
+ * 禁用态……），不能在某个组件上漏出一截系统箭头。`cursor: none` 是唯一
+ * 合法的"藏指针"写法；这是全项目极少数允许用 !important 的地方。
+ *
+ * 【代价】文字光标、禁止符、拖宽窄的 col-resize 也会一起消失 ——
+ * 这不是 bug，是视频指针本身的取舍；设置页的 hint 里已经写明。
+ */
+:root[data-cursor-mode='overlay'],
+:root[data-cursor-mode='overlay'] * {
+  cursor: none !important;
+}

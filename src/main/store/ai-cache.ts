@@ -48,7 +48,17 @@ export interface AiCacheFile {
   entries: Record<string, AiCacheEntry>
 }
 
-export const CURRENT_AI_CACHE_VERSION = 1
+/**
+ * 2 = thinking-aware cache (v23).
+ *
+ * The thinking instruction is appended in postChat, **after** questionsWithCache
+ * has already computed the key. The discriminator (`aiCacheModelOf`) now carries
+ * the level, so fresh entries can never mix depths. This bump retires entries
+ * written before that discriminator existed: they were generated without the
+ * thinking instruction, and reusing them would make a "high" request silently
+ * return a low-depth answer.
+ */
+export const CURRENT_AI_CACHE_VERSION = 2
 
 /**
  * 最多留多少条。

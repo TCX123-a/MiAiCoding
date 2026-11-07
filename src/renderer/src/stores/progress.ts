@@ -252,6 +252,133 @@ export const useProgressStore = defineStore('progress', () => {
     profile.value.stats.learnedCount = arr.length
   }
 
+  /**
+   * 一次把「前面的课」全部标成已学（2026-10-31「学到这里啦喵」）。
+   *
+   * 【为什么不循环调 `markLearned`】
+   * 三件事会一起坏：
+   *   ① 每一课都播一次 `lessonDone` 音效 —— 一次跳 50 课就是 50 声琶音；
+   *   ② 每一课都单独 `grantPetRice`，但每次都要先 `petInit` 才知道加了几碗，
+   *      50 次往返既慢又容易被日上限切得七零八落；
+   *   ③ 每一课都触发一次防抖保存的计时器重置，收尾多等 300ms。
+   * 这里只播**一声**、只拉**一次**起始余额、按顺序发饭并统计真实到账。
+   *
+   * 【发饭幂等继承 `markLearned` 的口径】`history` 里出现过这个 lessonId
+   * ⇔ 这一课发过饭。批量标记里已经绿过的课根本不会进这个循环；取消标记后
+   * 重新标记也不会重复发饭 —— 与单课路径完全同一条判断。
+   *
+   * 【riceCredited 为什么可能是 null】
+   * `petInit()` 在桌宠没起来时回 null —— 这时我们不知道起始碗数。
+   * 后面的 grant 可能成功（宠物刚起来），但「涨了几碗」无从算起。
+   * 宁可回 null 让界面说「已经交给大肥鱼啦」，也不编一个数字
+   * （项目铁律：不许默认回退为成功）。
+   */
+  async function markLearnedMany(lessonIds: readonly string[]): Promise<{
+    newLessons: number
+    riceCredited: number | null
+    /** 实际涨的好感（null = 桌宠没起来算不出；0 = 今天的学习额度已满） */
+    affectionCredited: number | null
+    petReachable: boolean
+  }> {
+    const ids = [...new Set(lessonIds)]
+    const at = new Date().toISOString()
+    const fresh: string[] = []
+    for (const lessonId of ids) {
+      if (profile.value.learned.includes(lessonId)) continue
+      // 与 markLearned 同一条：history 里出现过 = 这一课发过饭
+      const riceAlreadyGranted = profile.value.history.some((h) => h.lessonId === lessonId)
+      profile.value.learned.push(lessonId)
+      profile.value.history.push({ lessonId, finishedAt: at })
+      writer.record({ k: 'learned', id: lessonId, on: true, at })
+      if (!riceAlreadyGranted) fresh.push(lessonId)
+    }
+    profile.value.stats.learnedCount = profile.value.learned.length
+    if (fresh.length === 0) {
+      return { newLessons: 0, riceCredited: 0, affectionCredited: 0, petReachable: true }
+    }
+
+    // 一次批量标记只播一声 —— 和「头一次学完」的音效口径一致，不是每课一声
+    playSfx('lessonDone')
+
+    let startRice: number | null = null
+    let startAffection: number | null = null
+    let petReachable = false
+    try {
+      const start = await window.miai.petInit()
+      if (start) {
+        startRice = start.rice
+        startAffection = start.affection
+        petReachable = true
+      }
+    } catch {
+      /* 桌宠通道不在：下面的 grant 照样试，能发多少算多少 */
+    }
+
+    let lastRice = startRice
+    let lastAffection = startAffection
+    let credited = 0
+    let affectionCredited = 0
+    for (const lessonId of fresh) {
+      const snap = await grantPetRice('lesson', lessonId)
+      if (!snap) continue
+      petReachable = true
+      if (lastRice !== null) credited += Math.max(0, snap.rice - lastRice)
+      lastRice = snap.rice
+      // 好感度按快照差值算，不按 PET_AFFECTION_RULES 的名义 +2 乘课数：
+      // 每天有上限（shared/pet.ts 的 study.cap），批量点亮 51 节时
+      // 名义值会把「实际只涨了 6 点」说成 +102。
+      if (lastAffection !== null) affectionCredited += Math.max(0, snap.affection - lastAffection)
+      lastAffection = snap.affection
+    }
+
+    // 结算后立刻落盘：关窗拦截那条路紧接着就要关窗口，等不起防抖
+    flush()
+    return {
+      newLessons: fresh.length,
+      riceCredited: startRice === null ? null : credited,
+      affectionCredited: startAffection === null ? null : affectionCredited,
+      petReachable
+    }
+  }
+
+  /**
+   * 「这一课读到末尾了，但还没点学到这里啦喵」—— 关窗拦截用。
+   *
+   * 【为什么是内存态，不进 profile】它描述的是**这一次打开应用**里的动作：
+   * 用户没点结算就关窗，下次启动不该再弹「你刚刚学完」。持久化反而会把
+   * 陈年未结算的课带回来，变成每次启动都拦一下。
+   */
+  const pendingSettleId = ref<string | null>(null)
+
+  function noteLessonEnd(lessonId: string) {
+    if (profile.value.learned.includes(lessonId)) {
+      if (pendingSettleId.value === lessonId) pendingSettleId.value = null
+      return
+    }
+    pendingSettleId.value = lessonId
+  }
+
+  function clearPendingSettle(lessonId?: string) {
+    if (!lessonId || pendingSettleId.value === lessonId) pendingSettleId.value = null
+  }
+
+  /**
+   * 用户**最近一次真正打开过**的课（内存态，不落盘）。
+   *
+   * 【它和 pendingSettleId 分工不同】pending 只在「读到末尾」时才有值；
+   * 关窗拦截要回答的是「你最后停在哪」—— 学了一半就切去设置页、每日挑战，
+   * 或者干脆没滚到底，都算。只看 pending 的话这些情况全都不拦，
+   * 用户看到的就是「关闭拦截失效了」。
+   *
+   * 【为什么也是内存态】它描述的是这一次打开应用里的动作，下次启动不该
+   * 拿昨天的课来拦人（同 pendingSettleId 的理由）。
+   */
+  const lastLessonId = ref<string | null>(null)
+
+  function noteLessonVisit(lessonId: string) {
+    if (lessonId !== '') lastLessonId.value = lessonId
+  }
+
   function toggleFavorite(lessonId: string) {
     const arr = profile.value.favorites
     const i = arr.indexOf(lessonId)
@@ -383,6 +510,12 @@ export const useProgressStore = defineStore('progress', () => {
     learnedSet,
     favoriteSet,
     markLearned,
+    markLearnedMany,
+    pendingSettleId,
+    noteLessonEnd,
+    clearPendingSettle,
+    lastLessonId,
+    noteLessonVisit,
     toggleFavorite,
     checkin,
     checkedInToday,

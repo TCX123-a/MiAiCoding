@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSettingsStore } from '../stores/settings'
+import { usePetStore } from '../stores/pet'
 import { useWallUiStore } from '../stores/wall-ui'
 import { useWallHiddenStore } from '../stores/wall-hidden'
 import {
@@ -55,7 +56,7 @@ import {
   type WallpaperTransitionSpeed
 } from '../../../shared/wallpaper'
 import { LANG_LABEL } from '../lib/labels'
-import { ACTION, AI_FAIL, ENV, LOADING, SETTINGS, TITLE, TOAST } from '../lib/copy'
+import { ACTION, aiFailText, ENV, LOADING, SETTINGS, TITLE, TOAST } from '../lib/copy'
 import { GALLERY_IDS } from '../../../shared/gallery'
 import { refreshRewardOverrides } from '../lib/reward-overrides'
 import { checkedNames, invertPool, togglePoolItem, allPool } from '../../../shared/media-pool'
@@ -75,11 +76,33 @@ import MiRadio from '../components/base/MiRadio.vue'
 import MiSelect from '../components/base/MiSelect.vue'
 import MiSwitch from '../components/base/MiSwitch.vue'
 import MiTabs from '../components/base/MiTabs.vue'
+import CursorCard from '../components/domain/CursorCard.vue'
 import IdePickerModal from '../components/domain/IdePickerModal.vue'
 import MediaPreviewModal from '../components/domain/MediaPreviewModal.vue'
 import WallpaperPickerModal from '../components/domain/WallpaperPickerModal.vue'
 import WallpaperPropsPanel from '../components/domain/WallpaperPropsPanel.vue'
-import { PET_CORNERS, PET_SIZE_MAX, PET_SIZE_MIN } from '../../../shared/types'
+import { PET_CORNERS, PET_SIZE_MAX, PET_SIZE_MIN, type AiModelInfo } from '../../../shared/types'
+import {
+  AI_PROVIDER_IDS,
+  aiProviderOf,
+  defaultModelOf,
+  detectAiProviderFromKey,
+  isAiProviderId
+} from '../../../shared/ai-providers'
+import type { AiProviderId } from '../../../shared/ai-providers'
+import {
+  FREE_POOL_DEFAULT_MODEL,
+  poolModelOf,
+  type AiMode,
+  type AiPoolModel
+} from '../../../shared/free-pool'
+import {
+  AI_THINKING_LEVELS,
+  aiThinkingCapability,
+  isAiThinking,
+  type AiThinking
+} from '../../../shared/ai-thinking'
+import { prettyAiModelName } from '../../../shared/ai-models'
 import {
   PET_AFFECTION_DECAY_PERIOD_MS,
   PET_AFFECTION_FAMILIAR_AT,
@@ -88,6 +111,8 @@ import {
   PET_CHECKIN_RICE,
   PET_DECAY_OFFLINE_PERIOD_MS,
   PET_DECAY_ONLINE_PERIOD_MS,
+  PET_DECAY_TIERS,
+  PET_DECAY_TIER_PERIODS,
   PET_FEED_GAIN,
   PET_HUNGER_FULL_AT,
   PET_HUNGER_MEDIUM_AT,
@@ -96,9 +121,13 @@ import {
   PET_RICE_MAX,
   PET_REWARD_RICE
 } from '../../../shared/pet'
-import type { AiFailReason, IdeCandidate, LangOfCode } from '../../../shared/types'
+import type { IdeCandidate, LangOfCode } from '../../../shared/types'
 
 const settings = useSettingsStore()
+/** 桌宠快照的镜像读口（v7 模块五）：衰减档位住在 pet.json 里，只读不写 config */
+const pet = usePetStore()
+/** 设置页对桌宠轮询的退订函数（onMounted 挂账、onBeforeUnmount 退还） */
+let releasePetPoller: (() => void) | null = null
 
 const LANGS: LangOfCode[] = ['c', 'cpp', 'java', 'python']
 
@@ -133,6 +162,13 @@ const themeOn = computed({
     settings.config.theme = on ? 'dark' : 'light'
   }
 })
+
+/**
+ * B7：高级设置默认收起。运行方式/IDE 路径/超时是装好环境后很少再动的配置，
+ * 一进来就占半屏会把「每日复习」「音效」这些日常开关挤下去。
+ * 不记忆展开态：默认收起是有意的主次关系，不是一次性的手滑。
+ */
+const advancedOpen = ref(false)
 
 /**
  * 拨动夜间模式。
@@ -477,6 +513,17 @@ function envInfo(lang: LangOfCode) {
   return report ? report[lang] : undefined
 }
 
+/**
+ * 从编译器路径认出它是不是某个 IDE 自带的（只用于说一句「不用再装一次」）。
+ * 认不出就返回空串 —— **不猜**：把 mingw64 说成 Dev-C++ 只会让用户更糊涂。
+ */
+function ideNameOf(path: string): string {
+  if (/code::?blocks/i.test(path)) return 'Code::Blocks'
+  if (/dev-cpp/i.test(path)) return 'Dev-C++'
+  if (/tdm-gcc/i.test(path)) return 'TDM-GCC'
+  return ''
+}
+
 // ---------------------------------------------------------------- AI 区块（M6-04）
 
 /**
@@ -491,6 +538,607 @@ const testing = ref(false)
 /** 测试结果。`null` = 还没测过（不显示任何结果区） */
 const testResult = ref<{ ok: boolean; text: string; detail?: string } | null>(null)
 
+/**
+ * 服务地址字段级错误（2026-10-31 自检 P2）。
+ * 主进程的 normalizeAiBaseUrl 会拒绝「公网 http / 非法 scheme」并说明原因；
+ * toast 一闪看不清，而且输入框会停在那个不能用的值上 —— 这里把原因贴在
+ * 输入框下面，并把配置重新读回来（输入框回到上次成功保存的值）。
+ */
+const aiFieldError = ref<string | null>(null)
+
+/**
+ * 把主进程的 `ai-base-url: <reason>` 错误码翻成字段级提示。
+ * 主进程抛的是 ASCII 码（文案闸门不许主进程写中文），翻译住在这里。
+ */
+function aiBaseUrlErrorText(e: unknown): string {
+  const raw = e instanceof Error ? e.message : String(e)
+  if (raw.includes('ai-base-url: bad-url')) return SETTINGS.AI_BASE_URL_BAD
+  if (raw.includes('ai-base-url: scheme')) return SETTINGS.AI_BASE_URL_SCHEME
+  if (raw.includes('ai-base-url: insecure-http')) return SETTINGS.AI_BASE_URL_INSECURE
+  if (raw.includes('ai-base-url: credentials')) return SETTINGS.AI_BASE_URL_CREDENTIALS
+  return SETTINGS.AI_BASE_URL_INVALID
+}
+
+/**
+ * 保存 AI 卡片里的单字段。baseUrl 的校验拒绝必须**字段级**显示，
+ * 其它字段的失败仍由 settings.save 的统一 toast 负责。
+ */
+async function saveAiField(patch: {
+  baseUrl?: string
+  model?: string
+  poolModel?: string
+  dynamicEnabled?: boolean
+  thinking?: AiThinking
+}): Promise<void> {
+  aiFieldError.value = null
+  try {
+    await settings.updateAi(patch)
+    // 主进程会把「没写协议的地址」补成 https:// 再落盘；读回来让输入框
+    // 显示真正保存下来的形态，而不是用户刚才那句（否则重开才"自己变了"）。
+    // 读回失败不算保存失败 —— 盘上已经写成功了，别给用户一个假错误。
+    if (patch.baseUrl !== undefined) {
+      try {
+        await settings.load()
+      } catch {
+        /* 保存成功、读回失败：下一次进设置页会读到；这里不改判 */
+      }
+    }
+  } catch (e) {
+    if (patch.baseUrl !== undefined) aiFieldError.value = aiBaseUrlErrorText(e)
+    /*
+     * 保存失败时主进程一个字节都没写；把镜像读回磁盘真值，界面不留在坏值上。
+     * 以前只在 baseUrl 失败时回读，模型保存失败会让下拉框停在「看着选中了、
+     * 重启又变回去」的假状态 —— 现在所有字段都回读。
+     */
+    await settings.load().catch(() => {})
+  }
+}
+
+// ---- 双模式 + 多厂商（2026-11-01）：模式 → 厂商 → Key → 模型 → 余额 --------
+
+/**
+ * 当前接入方式（v22）。UI 的一切分支都从这里出发：
+ *   · api：厂商 + Key + 模型 + 余额，地址只在「自定义」的折叠区里出现；
+ *   · pool：不需要 Key，模型从免费池清单里选，醒目的第三方免责提示。
+ */
+const aiMode = computed<AiMode>(() => settings.config.ai.mode)
+const isPoolMode = computed(() => aiMode.value === 'pool')
+
+const modeOptions: { label: string; value: AiMode; hint: string }[] = [
+  { label: SETTINGS.AI_MODE_API, value: 'api', hint: SETTINGS.AI_MODE_API_HINT },
+  { label: SETTINGS.AI_MODE_POOL, value: 'pool', hint: SETTINGS.AI_MODE_POOL_HINT }
+]
+
+/** 切模式在飞：先落 Key、再换模式、再拉清单，三趟 IPC 期间锁住按钮防连点 */
+const switchingMode = ref(false)
+
+/** 按 Key 前缀自动切厂商之后的一句确认（用户得知道刚才发生了什么） */
+const keyNotice = ref<string | null>(null)
+
+/** 免费池清单。拉不到时仍然有兜底模型，所以这不是「不可用」状态 */
+const poolModels = ref<AiPoolModel[]>([])
+const poolLoading = ref(false)
+const poolLoadError = ref(false)
+
+/** 当前厂商与它的模型表 / 余额能力。真源在 shared/ai-providers.ts */
+const aiProvider = computed(() => settings.config.ai.provider)
+const aiMeta = computed(() => aiProviderOf(aiProvider.value))
+
+/** 切厂商在飞：要先把旧厂商的 Key 存住再换，两趟 IPC 期间锁住下拉框防连点 */
+const switchingProvider = ref(false)
+
+/** 余额查询的状态：idle（null）/ loading / 一句结果 */
+const balanceLoading = ref(false)
+const balanceState = ref<{ kind: 'ok' | 'info' | 'bad'; text: string } | null>(null)
+
+/** 结果那一行的样式：成功绿 / 失败红 / 「不支持」走普通灰字（不是故障） */
+const balanceClass = computed(() => {
+  const kind = balanceState.value?.kind
+  if (kind === 'ok') return 'ai-result is-ok'
+  if (kind === 'bad') return 'ai-result is-bad'
+  return 'hint ai-hint'
+})
+
+/** 输入框里有没有新东西要存。空白也算没有 —— 避免把一串空格当成新 Key 存进去 */
+const hasNewKey = computed(() => keyInput.value.trim() !== '')
+
+/**
+ * 模型下拉框的解锁条件：**当前厂商已经有 Key**。
+ * 「刚粘进来还没保存」也算 —— 主人要的是「填了 Key 就唤醒」；真正落盘由
+ * 失焦 / 保存并测试 / 切厂商三处兜住（三处都走 persistPendingKey）。
+ */
+const keyReady = computed(() => hasNewKey.value || settings.config.ai.hasKey)
+
+/**
+ * 「现在能不能用 AI」：专属模式看 Key，免费池模式永远可用。
+ * 模板里所有「解锁模型下拉框」的判据都改用它 —— 别再直接看 hasKey，
+ * 那会把免费池模式判成「没配置」。
+ */
+const aiReady = computed(() => isPoolMode.value || keyReady.value)
+
+/** 状态标签：免费池没有 Key，但功能是通的，不能显示「未配置」 */
+const aiStatusOn = computed(() => isPoolMode.value || settings.config.ai.hasKey)
+const aiStatusText = computed(() =>
+  isPoolMode.value
+    ? SETTINGS.AI_STATUS_POOL
+    : settings.config.ai.hasKey
+      ? SETTINGS.AI_STATUS_ON
+      : SETTINGS.AI_STATUS_OFF
+)
+
+const providerOptions = AI_PROVIDER_IDS.map((id) => ({
+  label: SETTINGS.AI_PROVIDER_LABEL[id],
+  value: id
+}))
+
+/**
+ * 远端模型清单（v23，主人 2026-11-01 专项）。
+ *
+ * 【为什么不再用 aiMeta.models 那张写死的表】厂商出新模型比发版快，写死的
+ * 清单会让用户后台明明有 V5、下拉框里永远只有 V4。清单改为填好 Key 后真的
+ * 去问 `/models`；失败时**绝不退回那张表假装成功** —— 那会把「拉取失败」
+ * 伪装成「这台 Key 只有这些模型」，选中一个不存在的模型只会得到 404。
+ */
+const providerModels = ref<AiModelInfo[]>([])
+const modelsLoading = ref(false)
+const modelsError = ref(false)
+/** 防串台：切厂商/重试时旧请求晚回来，不能覆盖新厂商的清单 */
+let modelsSeq = 0
+
+/** 厂商或地址变了，旧清单立刻作废（它属于另一家服务商） */
+const modelsRouteKey = computed(() =>
+  isPoolMode.value ? '' : `${settings.config.ai.provider}|${settings.config.ai.baseUrl}`
+)
+
+/** 真正触发拉取的条件：专属模式 + 这个厂商已经有 Key（新粘的 Key 要先落盘） */
+const modelsFetchKey = computed(() =>
+  isPoolMode.value
+    ? ''
+    : `${modelsRouteKey.value}|${settings.config.ai.hasKey ? '1' : '0'}`
+)
+
+watch(modelsRouteKey, () => {
+  providerModels.value = []
+  modelsError.value = false
+})
+
+async function loadProviderModels(): Promise<void> {
+  if (isPoolMode.value || !settings.config.ai.hasKey) return
+  // 自定义服务还没填地址：拿不到清单是**已知且正常**的（用户还没走到那一步），
+  // 不该发一次注定 offline 的请求，再把「检查 Key 或网络」摆到他面前。
+  if (settings.config.ai.provider === 'custom' && settings.config.ai.baseUrl.trim() === '') {
+    providerModels.value = []
+    modelsError.value = false
+    modelsLoading.value = false
+    return
+  }
+  const seq = ++modelsSeq
+  modelsLoading.value = true
+  modelsError.value = false
+  try {
+    const r = await window.miai.aiProviderModels()
+    if (seq !== modelsSeq) return
+    if (r.ok) providerModels.value = r.data
+    else modelsError.value = true
+  } catch {
+    // IPC 自己出事（正常失败会走 {ok:false}）——同样只给重试，不编原因
+    if (seq === modelsSeq) modelsError.value = true
+  } finally {
+    if (seq === modelsSeq) modelsLoading.value = false
+  }
+}
+
+// immediate：打开设置页时如果 Key 已经存好，直接拉一次（不用用户再点）
+watch(modelsFetchKey, (key) => {
+  if (key !== '') void loadProviderModels()
+}, { immediate: true })
+
+/** 当前模型不在远端清单里（旧别名/手填值）：保留它，但界面要如实提醒 */
+const currentModelMissing = computed(
+  () =>
+    settings.config.ai.model !== '' &&
+    providerModels.value.length > 0 &&
+    !providerModels.value.some((m) => m.id === settings.config.ai.model)
+)
+
+const currentModelName = computed(() =>
+  prettyAiModelName(aiProvider.value, settings.config.ai.model)
+)
+
+/**
+ * 模型候选。**当前值不在清单里时补在第一项** —— 老配置可能存着旧别名；
+ * 不补的话原生 select 会显示空白，用户以为「模型没配上」，一保存反而把它抹掉。
+ * 清单为空时**一个写死的选项都不给**（那正是主人点名要避免的假成功）。
+ */
+const modelOptions = computed(() => {
+  const cur = settings.config.ai.model
+  const opts = providerModels.value.map((m) => ({ label: m.name, value: m.id }))
+  if (cur !== '' && !providerModels.value.some((m) => m.id === cur)) {
+    opts.unshift({ label: currentModelName.value, value: cur })
+  }
+  return opts
+})
+
+/** 下拉框的占位：只在「还没有任何清单」时出现，说的都是当前真实状态 */
+const modelSelectPlaceholder = computed(() => {
+  if (!keyReady.value) return SETTINGS.AI_MODELS_NEED_KEY
+  if (hasNewKey.value && !settings.config.ai.hasKey) return SETTINGS.AI_MODELS_KEY_UNSAVED
+  if (modelsLoading.value && providerModels.value.length === 0) return SETTINGS.AI_MODELS_LOADING
+  if (modelsError.value && providerModels.value.length === 0) return SETTINGS.AI_MODELS_FAIL
+  return undefined
+})
+
+/**
+ * 自定义服务的「从清单快速选」候选。**不掺当前值**：这一栏是给手填框
+ * 加一个捷径，把当前值也列进下拉只会让人以为要在这里再选一次。
+ */
+const customPickOptions = computed(() => providerModels.value.map((m) => ({ label: m.name, value: m.id })))
+
+/** 占位出现时把 value 也置空，否则原生 select 会拿当前值去匹配一个不存在的项 */
+const modelSelectValue = computed(() =>
+  modelSelectPlaceholder.value ? '' : settings.config.ai.model
+)
+
+const modelSelectDisabled = computed(
+  () =>
+    !keyReady.value ||
+    (hasNewKey.value && !settings.config.ai.hasKey) ||
+    testing.value ||
+    (modelsLoading.value && providerModels.value.length === 0) ||
+    // 清单空着（拉失败/还没回来）时别摆一个点开只有一句占位的下拉框
+    modelOptions.value.length === 0
+)
+
+/** 专属模式的清单状态行：加载 / 失败重试 / 过期 / 数量 */
+const modelsStatus = computed<'loading' | 'fail' | 'stale' | 'ok' | null>(() => {
+  if (isPoolMode.value || !keyReady.value) return null
+  if (hasNewKey.value && !settings.config.ai.hasKey) return null
+  // 自定义服务还没填地址：这不是故障，别把「检查 Key 或网络」摆出来
+  if (settings.config.ai.provider === 'custom' && settings.config.ai.baseUrl.trim() === '') {
+    return null
+  }
+  if (modelsLoading.value && providerModels.value.length === 0) return 'loading'
+  if (modelsError.value) return providerModels.value.length > 0 ? 'stale' : 'fail'
+  if (providerModels.value.length > 0) return 'ok'
+  return null
+})
+
+// ------------------------------------------------------------ 思考模式（v23）
+
+/** 当前这条路由上「真正会被发出去的模型」：免费池看网关模型，专属模式看厂商模型 */
+const activeThinkingModel = computed(() =>
+  isPoolMode.value ? poolModelOf(settings.config.ai.poolModel) : settings.config.ai.model
+)
+
+const thinkingCapability = computed(() =>
+  aiThinkingCapability(aiMode.value, aiProvider.value, activeThinkingModel.value)
+)
+
+/** 当前档位。主进程/迁移层已经保证它是四档之一；这里再兜一层防脏值 */
+const thinkingValue = computed<AiThinking>(() =>
+  isAiThinking(settings.config.ai.thinking)
+    ? settings.config.ai.thinking
+    : thinkingCapability.value.recommended
+)
+
+const thinkingRecommended = computed(() => thinkingCapability.value.recommended)
+
+/**
+ * 四档选项。**推荐档直接标在选项文字里**，而不是另起一行说「推荐高」——
+ * 用户打开下拉框就得看见该选哪个，而不是读完下面再回头找。
+ */
+const thinkingOptions = computed(() =>
+  AI_THINKING_LEVELS.map((level) => ({
+    value: level,
+    label:
+      SETTINGS.AI_THINKING_OPTIONS[level] +
+      (level === thinkingRecommended.value ? SETTINGS.AI_THINKING_RECOMMENDED_SUFFIX : '')
+  }))
+)
+
+/**
+ * 这一档到底会花多少 Token。**做不到的事不许说成做到了**：
+ * 模型关不掉思考时，选「关闭」实际仍会思考，提示语必须改口。
+ */
+const thinkingHint = computed(() =>
+  thinkingValue.value === 'off' && !thinkingCapability.value.canOff
+    ? SETTINGS.AI_THINKING_HINT_CANNOT_OFF
+    : SETTINGS.AI_THINKING_HINT[thinkingValue.value]
+)
+
+const thinkingRecommendHint = computed(() => {
+  const level = thinkingRecommended.value
+  return SETTINGS.AI_THINKING_RECOMMEND(SETTINGS.AI_THINKING_OPTIONS[level])
+})
+
+const thinkingNote = computed(() => SETTINGS.AI_THINKING_NOTE[thinkingCapability.value.note])
+
+const thinkingSaving = ref(false)
+const thinkingDisabled = computed(
+  () => !aiReady.value || switchingMode.value || switchingProvider.value || testing.value
+)
+
+/**
+ * 下拉框显示的值。**不能直接绑 `thinkingValue`**：那是一个 computed，
+ * 保存失败时它不会变，而 MiSelect 拿到的 props 也就没变 —— 子组件不会重渲染，
+ * 浏览器里那个 `<select>` 会继续显示用户刚点的那档，看起来像已保存成功。
+ * 用本地 ref 显式复位，失败时把显示拨回真正生效的档位。
+ */
+const thinkingDraft = ref<AiThinking>(thinkingValue.value)
+watch(thinkingValue, (v) => {
+  thinkingDraft.value = v
+})
+
+/**
+ * 选了一档。保存成功后 `settings.updateAi` 会把镜像刷新，`thinkingValue` 跟着变；
+ * 失败时 config 没变，finally 里把 draft 拨回去 —— 界面绝不比盘上的状态乐观。
+ */
+async function onThinkingChange(next: string): Promise<void> {
+  const cur = thinkingValue.value
+  if (!isAiThinking(next) || next === cur || thinkingSaving.value) {
+    thinkingDraft.value = cur
+    return
+  }
+  thinkingSaving.value = true
+  thinkingDraft.value = next
+  try {
+    await saveAiField({ thinking: next })
+  } finally {
+    thinkingSaving.value = false
+    thinkingDraft.value = thinkingValue.value
+  }
+}
+
+/** 免费池的模型说明：只有真选中自动路由那个模型时才敢说「自动路由」 */
+const poolNote = computed(() => {
+  if (!isPoolMode.value) return ''
+  const cur = poolModelOf(settings.config.ai.poolModel)
+  return cur === FREE_POOL_DEFAULT_MODEL
+    ? SETTINGS.AI_POOL_AUTO_NOTE(FREE_POOL_DEFAULT_MODEL)
+    : SETTINGS.AI_POOL_MANUAL_NOTE(cur)
+})
+
+/**
+ * 免费池的模型候选。**当前值永远补在第一项**：清单可能还没回来（或拉失败），
+ * 这时下拉框也得显示用户上次选的那个模型，不能变成空白。
+ */
+const poolModelOptions = computed(() => {
+  const cur = poolModelOf(settings.config.ai.poolModel)
+  const opts = poolModels.value.map((m) => ({ label: m.name, value: m.id }))
+  if (!opts.some((o) => o.value === cur)) {
+    opts.unshift({ label: prettyAiModelName('pool', cur), value: cur })
+  }
+  return opts
+})
+
+/** 这家厂商有没有余额接口（没有就只显示降级说明，不摆一个注定失败的按钮） */
+const balanceSupported = computed(() => aiMeta.value.balance !== 'none')
+
+/**
+ * 查余额（2026-11-01 体验核心）。
+ *
+ * 【为什么失败文案不细分】查余额是**锦上添花**：断网、Key 过期、接口改版
+ * 都只影响这一行。细分下去会让用户以为「AI 不能用了」，而实际上聊天和出题
+ * 走的是另一条路，完全不受影响 —— 所以统一一句「不影响对话和出题」。
+ * `unsupported` 单独成一句：那不是故障，是这家没开这个接口。
+ */
+async function queryBalance(): Promise<void> {
+  // 免费池没有余额可查；模板里这一行本来就不出现，这里再守一道
+  if (balanceLoading.value || !keyReady.value || isPoolMode.value) return
+  balanceLoading.value = true
+  balanceState.value = null
+  try {
+    const r = await window.miai.aiBalance()
+    if (r.ok) {
+      balanceState.value = {
+        kind: 'ok',
+        text: SETTINGS.AI_BALANCE_OK(r.data.total, r.data.currency)
+      }
+    } else if (r.reason === 'unsupported') {
+      balanceState.value = { kind: 'info', text: SETTINGS.AI_BALANCE_UNSUPPORTED }
+    } else {
+      balanceState.value = { kind: 'bad', text: SETTINGS.AI_BALANCE_FAIL }
+    }
+  } catch {
+    // IPC 自己出事（正常失败会走 {ok:false}）—— 照同一句说，不编造原因
+    balanceState.value = { kind: 'bad', text: SETTINGS.AI_BALANCE_FAIL }
+  } finally {
+    balanceLoading.value = false
+  }
+}
+
+/**
+ * 真正把 Key 落盘的那一段。
+ *
+ * 【自动识别厂商】`sk-ant-` / `sk-proj-` 这类有把握的前缀会**直接切到对应
+ * 厂商再把 Key 存到那一格**。必须先确定厂商再存：存到旧厂商等于把 A 家的
+ * Key 记在 B 家账上，换回来时模型列表和 Key 对不上。
+ *
+ * 【custom 不自动切】用户显式选了「自定义服务」就是在说「我知道自己在用
+ * 什么网关」，那把 Key 可能故意长得像某家的前缀；把他切到官方域名等于
+ * 把代理 Key 发给官方。这一条宁可不猜。
+ */
+async function doPersistPendingKey(k: string): Promise<boolean> {
+  const currentProvider = settings.config.ai.provider
+  const detected = detectAiProviderFromKey(k)
+  const target: AiProviderId =
+    detected !== null && currentProvider !== 'custom' ? detected : currentProvider
+  const keys: Partial<Record<AiProviderId, string | null>> = {}
+  keys[target] = k
+
+  try {
+    if (target !== currentProvider) {
+      await settings.updateAi({
+        provider: target,
+        model: defaultModelOf(target),
+        // 官方厂商的地址由目录给；这里只是把「上一个厂商的地址」清掉，
+        // 防止自定义地址被带进官方请求（主进程也会再兜一道）
+        baseUrl: target === 'custom' ? '' : settings.config.ai.baseUrl,
+        apiKeys: keys
+      })
+      // 换厂商后 hasKey / ready / baseUrl 的真值都在主进程，整份读回来
+      await settings.load().catch(() => {})
+      keyNotice.value = SETTINGS.AI_KEY_AUTO_PROVIDER(SETTINGS.AI_PROVIDER_LABEL[target])
+    } else {
+      await settings.updateAi({ apiKeys: keys })
+    }
+  } catch {
+    return false
+  }
+  settings.markKeySaved()
+  /*
+   * 只在输入框里还是**这一把**时才清空：保存期间用户可能已经又粘了新的，
+   * 把新输入抹掉等于吞掉他刚复制的东西。
+   */
+  if (keyInput.value.trim() === k) keyInput.value = ''
+  return true
+}
+
+/**
+ * 同一时刻只允许一趟存 Key。
+ *
+ * 【为什么必须有这个闸】点「保存并测试」时，浏览器先触发输入框的 `change`
+ * （失焦），再触发按钮的 `click` —— 两个处理函数都会来存同一把 Key。
+ * 没有闸的话，第二趟拿着已经切过厂商的配置再存一次，可能把 Key 记到
+ * 另一个厂商名下（或并发写盘后读回一个中间态）。
+ */
+let keySaveInFlight: Promise<boolean> | null = null
+
+/**
+ * 把输入框里那把**新** Key 存到当前（或自动识别出的）厂商。
+ *
+ * 失败返回 false（settings.save 已经弹过 toast），**绝不清空输入框** ——
+ * 清掉等于让用户重新去后台复制一次，而他手里的 Key 还是好的。
+ */
+function persistPendingKey(): Promise<boolean> {
+  if (keySaveInFlight) return keySaveInFlight
+  const k = keyInput.value.trim()
+  if (k === '') return Promise.resolve(true)
+  keySaveInFlight = doPersistPendingKey(k).finally(() => {
+    keySaveInFlight = null
+  })
+  return keySaveInFlight
+}
+
+/** Key 输入框失焦：粘完就走的人也不丢 Key（「填了就解锁」必须真的存住） */
+async function onKeyBlur(): Promise<void> {
+  if (isPoolMode.value || !hasNewKey.value) return
+  await persistPendingKey()
+}
+
+/**
+ * 拉免费池清单。**失败不清空已有列表**：用户可能已经选好了一个模型，
+ * 一次刷新失败不该把他的选择抹掉；界面只多一行「重试」。
+ */
+async function loadPoolModels(): Promise<void> {
+  if (poolLoading.value) return
+  poolLoading.value = true
+  poolLoadError.value = false
+  try {
+    const r = await window.miai.aiPoolModels()
+    if (r.ok) {
+      poolModels.value = r.data
+    } else {
+      poolLoadError.value = true
+    }
+  } catch {
+    // IPC 自己出事（正常失败会走 {ok:false}）——同样只给重试，不编原因
+    poolLoadError.value = true
+  } finally {
+    poolLoading.value = false
+  }
+}
+
+/** 进免费池模式时自动拉一次清单；已经在这个模式就直接拉（可能刚打开设置页） */
+watch(isPoolMode, (on) => {
+  if (on) void loadPoolModels()
+})
+onMounted(() => {
+  if (isPoolMode.value) void loadPoolModels()
+})
+
+/**
+ * 切接入方式。**从专属切到免费池之前先把输入框里的 Key 存住** ——
+ * 用户可能刚粘完 Key 就点了模式 B；不存的话那条输入会在切模式的渲染里消失。
+ *
+ * 反过来（池 → 专属）不需要存任何东西：池模式根本没有 Key 输入框。
+ */
+async function onModeChange(v: AiMode): Promise<void> {
+  if (v === aiMode.value || switchingMode.value || testing.value) return
+  switchingMode.value = true
+  try {
+    if (hasNewKey.value && aiMode.value === 'api') {
+      if (!(await persistPendingKey())) return
+    }
+    await settings.setAiMode(v)
+    // 换模式后「测试结果 / 余额读数」都是上一套环境的，必须清掉：
+    // 留着会让用户以为免费池也查到了 DeepSeek 的余额。
+    testResult.value = null
+    balanceState.value = null
+    aiFieldError.value = null
+    keyNotice.value = null
+    if (v === 'pool') await loadPoolModels()
+  } catch {
+    // settings.save 已经 toast 过；界面保持原模式（setAiMode 只在写成功后 load）
+  } finally {
+    switchingMode.value = false
+  }
+}
+
+/**
+ * 免费池的模型下拉选了一项。
+ * 下拉框不需要 Key 就能点；这里守的是「程序化触发也不该写坏值」。
+ */
+async function onPoolModelPick(v: string): Promise<void> {
+  if (!isPoolMode.value || v === '' || v === poolModelOf(settings.config.ai.poolModel)) return
+  settings.config.ai.poolModel = v
+  await saveAiField({ poolModel: v })
+}
+
+/**
+ * 换厂商。三件事必须按这个顺序做，反了就会把 Key 记到别人账上：
+ * ① 先把输入框里的新 Key 存给**旧厂商**；② 再换 provider / model；
+ * ③ 读回主进程算的 hasKey（「配没配」是每家各算各的）。
+ *
+ * 切到自定义服务时地址清空（官方厂商的地址从表里取，不能把 DeepSeek 的地址
+ * 带进 custom —— 那会把用户的 Key 发到官方去）。
+ */
+async function onProviderChange(v: string): Promise<void> {
+  if (!isAiProviderId(v) || v === settings.config.ai.provider || switchingProvider.value) return
+  switchingProvider.value = true
+  try {
+    if (hasNewKey.value && !(await persistPendingKey())) return
+    const nextModel = defaultModelOf(v) || settings.config.ai.model
+    await settings.updateAi({
+      provider: v,
+      model: nextModel,
+      baseUrl: v === 'custom' ? '' : settings.config.ai.baseUrl
+    })
+    // 读回真值（hasKey 属于新厂商、官方地址可能被主进程规范化）。
+    // 读回失败不算切换失败 —— 盘上已经写成功了，别给用户一个假错误。
+    await settings.load().catch(() => {})
+  } catch {
+    // settings.save 已经 toast 过；保持原厂商与原输入，不让界面假装换过去了
+  } finally {
+    testResult.value = null
+    balanceState.value = null
+    aiFieldError.value = null
+    keyNotice.value = null
+    showKey.value = false
+    switchingProvider.value = false
+  }
+}
+
+/**
+ * 官方厂商的模型下拉选了一项。
+ * 下拉框只在 keyReady 时可点；这里再守一道（程序化触发也不该写坏值）。
+ */
+async function onModelPick(v: string): Promise<void> {
+  if (!keyReady.value || v === '' || v === settings.config.ai.model) return
+  settings.config.ai.model = v
+  await saveAiField({ model: v })
+}
+
 /** 清 Key 的确认框开着没有（V2-09：红色按钮先开框，确认了才真删） */
 const clearKeyVisible = ref(false)
 /** 清 Key 在飞（2026-10-17 夜间批：弹窗 await 后才关，闸挡重复写盘与重复播报） */
@@ -501,9 +1149,6 @@ const pickingExe = ref(false)
 const openingRewardDir = ref(false)
 /** 卡片高亮的摘类计时器（1900ms，2026-10-17 夜间批挂账，见 flashCardAt） */
 let cardFlashTimer: number | null = null
-
-/** 输入框里有没有新东西要存。空白也算没有 —— 避免把一串空格当成新 Key 存进去 */
-const hasNewKey = computed(() => keyInput.value.trim() !== '')
 
 const keyPlaceholder = computed(() =>
   settings.config.ai.hasKey ? SETTINGS.AI_KEY_PLACEHOLDER_SET : SETTINGS.AI_KEY_PLACEHOLDER_EMPTY
@@ -521,20 +1166,40 @@ const keyPlaceholder = computed(() =>
  * 【为什么必测时也要保存】
  * 不保存就直接测的话，测的是**上一次存进去的 Key**，而用户以为在测刚粘的这把 ——
  * 他会在「明明填对了却提示 Key 不对」里反复打转。
+ *
+ * 【测完顺手查余额】这是用户刚证明 Key 能用的那一刻，余额读数才可信；
+ * 不支持查余额的厂商在模板里只有一句降级说明，不在这里发请求。
  */
 async function saveAndTest() {
   testing.value = true
   testResult.value = null
   try {
-    if (hasNewKey.value) {
-      await settings.updateAi({ apiKey: keyInput.value.trim() })
-      settings.markKeySaved()
-      keyInput.value = ''
+    if (!isPoolMode.value && hasNewKey.value) {
+      const saved = await persistPendingKey()
+      if (!saved) {
+        // 没存住就别测：测的会是上一把 Key，报错方向全错（见上面那段）
+        testResult.value = { ok: false, text: SETTINGS.AI_KEY_SAVE_FAILED }
+        return
+      }
     }
     const r = await window.miai.aiTestConnection()
-    testResult.value = r.ok
-      ? { ok: true, text: SETTINGS.AI_TEST_OK(r.data.model) }
-      : { ok: false, text: AI_FAIL[r.reason], detail: r.detail }
+    if (r.ok) {
+      testResult.value = { ok: true, text: SETTINGS.AI_TEST_OK(r.data.model) }
+      // 免费池没有余额可查；只有专属模式且这家有余额接口时才顺手查一次
+      if (!isPoolMode.value && balanceSupported.value) void queryBalance()
+    } else {
+      testResult.value = {
+        ok: false,
+        // 按模式和厂商挑文案：免费池不冒充任何厂商，专属模式里只有
+        // DeepSeek 用带品牌的说法
+        text: aiFailText(
+          r.reason,
+          settings.config.ai.provider,
+          isPoolMode.value ? 'pool' : 'api'
+        ),
+        detail: r.detail
+      }
+    }
   } catch (e) {
     // AI 请求失败**不会**走到这里（那条路返回 `{ok:false}`）。
     // 能到这里的只有「我们自己传错了参数」或者 IPC 本身出事 —— 说成
@@ -552,6 +1217,9 @@ async function saveAndTest() {
  * （保存时的空串只表示「不改」）。V2-09：入口按钮只负责开确认框 ——
  * 删了要回平台重拿一把，值得停下来问一句。
  *
+ * 【只清当前厂商】apiKeys 是每厂商一把：在 DeepSeek 卡片上点清除，
+ * 不该把用户给 Kimi 配的那把也删了（store 的 clearAiKey 只发当前 provider）。
+ *
  * 【在飞闸（2026-10-17 夜间批）】弹窗是 await 之后才关的，那个往返窗口里
  * 连点就是重复 config:save 写盘 + 重复「已清除」toast。闸挡在入口，
  * 弹窗的关闭时机保持不动（关框 = "真发生了"的信号）。
@@ -563,6 +1231,7 @@ async function clearKey() {
   clearingKey.value = true
   testing.value = false
   testResult.value = null
+  balanceState.value = null
   try {
     await settings.clearAiKey()
   } catch {
@@ -577,16 +1246,38 @@ async function clearKey() {
 // ---------------------------------------------------------------- 桌宠卡片（2026-10-06 换 dsh-pet 引擎）
 
 /**
- * 这张卡只往 `config.pet` 里写三个旋钮（开关 / 体型 / 落点），**一个 pet:xxx
- * IPC 都不碰** —— 引擎（主进程 dshpet 宿主）自己盯着这份配置，落盘即重载，
- * 所以文案敢说「即刻生效，不用重启」。落点四个选项直接从 PET_CORNERS
+ * 这张卡往 `config.pet` 里写三个旋钮（开关 / 体型 / 落点 + 两个主动行为开关），
+ * **一个 pet:xxx IPC 都不碰** —— 引擎（主进程 dshpet 宿主）自己盯着这份配置，
+ * 落盘即重载，所以文案敢说「即刻生效，不用重启」。落点四个选项直接从 PET_CORNERS
  * （与迁移白名单同一个数组）生成，按钮名走 copy.ts 的 PET_CORNER_NAMES。
  * （旧「大肥鱼」的状态行/喂饭/模式随旧引擎一起从这张卡删掉；`stores/pet.ts`
  * 与 pet:xxx 通道留着走「后续统一清理」，本卡不再引用。）
+ *
+ * 【v7 模块五例外：饱和衰减档位】它不是 config.pet 的字段，而是 pet.json 里
+ * 的行为状态（`PetState.decayTier`）—— 由主进程大脑读取并落盘，写 config
+ * 会变成第二份真源（还要动迁移与云同步）。所以这一个旋钮走 `pet:act`
+ * （action:'decay'），读值走 `stores/pet.ts` 的镜像快照；卡片其余旋钮口径不变。
  */
 
 /** MiTabs 的载荷。键 = PetCorner 字面量，标签查 copy 表（漏一键 typecheck 就红） */
 const petCornerTabs = PET_CORNERS.map((c) => ({ key: c, label: SETTINGS.PET_CORNER_NAMES[c] }))
+
+/** 衰减档位四选一（v7 模块五 + 2026-10-31 新增「不会饿」）。键 = PetDecayTier 字面量，标签查 copy 表 */
+const petDecayTabs = PET_DECAY_TIERS.map((t) => ({ key: t, label: SETTINGS.PET_DECAY_NAMES[t] }))
+
+/** 分钟换算基数（衰减档位 hint 与下面的互动说明共用） */
+const MINUTE_MS = 60_000
+
+/**
+ * 衰减档位的说明句：前三个档位的在线周期从 shared/pet.ts 真源换算成分钟传进去
+ * （本段的数字一个都不写死，文案闸门与 pet-guide 的算式闸都扫得到）。
+ * 好感度**不在**这个开关的管辖范围 —— 这句话必须出现在 hint 里（主人点名）。
+ */
+const petDecayHint: string = SETTINGS.PET_DECAY_HINT(
+  PET_DECAY_TIER_PERIODS.relaxed.onlineMs / MINUTE_MS,
+  PET_DECAY_TIER_PERIODS.normal.onlineMs / MINUTE_MS,
+  PET_DECAY_TIER_PERIODS.strict.onlineMs / MINUTE_MS
+)
 
 /** 开关拨动：先同步改视图值（同音效开关口径），再走 setPet 落盘 */
 function onPetEnabledChange(): void {
@@ -602,6 +1293,18 @@ function onPetSizeChange(): void {
 function onPetCornerPick(v: string): void {
   const c = asEnum(PET_CORNERS, v)
   if (c) void settings.setPet({ corner: c })
+}
+
+/**
+ * 衰减档位切换（v7 模块五）。**不走 setPet**：档位住在 pet.json 的 PetState
+ * 里（大脑的落盘状态），不是 config.pet 的字段 —— 见本卡开头那段注释。
+ * 白名单收窄后发 pet:act({action:'decay'})，主进程 setPetDecayTier 落盘；
+ * 快照 5 秒内回来，页签的选中态由 `pet.decayTier` 驱动（不是本地镜像，
+ * 写盘失败时页签不会假装成功）。
+ */
+function onPetDecayPick(v: string): void {
+  const t = asEnum(PET_DECAY_TIERS, v)
+  if (t) void pet.setDecay(t)
 }
 
 /**
@@ -639,7 +1342,6 @@ function onPetPleadHover(): void {
 //     （本段零字面量数字；pet-guide.test.ts 拿下面的表达式与真源逐项对账）；
 //   · 文案**全部**是 copy.ts 的 PET_GUIDE_*（本段与模板零中文字面量，文案闸门扫得到）。
 
-const MINUTE_MS = 60_000
 const DAY_MS = 24 * 60 * 60_000
 
 /**
@@ -653,14 +1355,15 @@ const AFF_DECAY_STEP = 1
 /** 「每天」掉多少 = 每天期数 × 步进（周期一变这个数跟着变，文案里的数字随之变） */
 const AFF_DECAY_PER_DAY = (DAY_MS / PET_AFFECTION_DECAY_PERIOD_MS) * AFF_DECAY_STEP
 
-/** 加分六条（实参顺序 = 函数键形参顺序：feed/pat/checkin/study/challenge/review） */
+/** 加分七条（实参顺序 = 函数键形参顺序：feed/pat/checkin/study/challenge/review/snack） */
 const petGuideAffGain: string[] = SETTINGS.PET_GUIDE_AFF_LINES(
   PET_AFFECTION_RULES.feed.delta,
   PET_AFFECTION_RULES.pat.delta,
   PET_AFFECTION_RULES.checkin.delta,
   PET_AFFECTION_RULES.study.delta,
   PET_AFFECTION_RULES.challenge.delta,
-  PET_AFFECTION_RULES.review.delta
+  PET_AFFECTION_RULES.review.delta,
+  PET_AFFECTION_RULES.snack.delta
 )
 
 /** 扣分三条（函数键要的是「减号后面那个数」= 增量的绝对值） */
@@ -712,12 +1415,14 @@ const petRoamHint: string = SETTINGS.PET_ROAM_HINT
 /**
  * 「丢文件即替换」的入口行（桌宠卡尾部）：只显示「文件夹在哪、认到几张」+
  * 一个打开按钮 —— 投料方式就是往文件夹里丢文件，应用里不再造第二套导入弹框。
- * 刷新点=进设置页 + 点完「打开文件夹」回来（丢完图回来张数立刻能对上）。
+ * 刷新点=进设置页 + 从资源管理器回来（见 onWindowFocus）。
  */
 const rewardDirPath = ref('')
 const rewardDirCount = ref(0)
 /** 在册编号区间（如 g01–g200）——现算，不写死：2026-10-17 扩池后不再是 g01–g50 */
-const rewardIdRange = `${GALLERY_IDS[0]}–${GALLERY_IDS[GALLERY_IDS.length - 1]}`
+// 2026-10-31 主人体验修正：说明句里写的是「命名为 g01.png ~ g496.png」——
+// 所以这里直接把编号拼成带扩展名的区间，别让文案和真编号各写一份。
+const rewardIdRange = `${GALLERY_IDS[0]}.png ~ ${GALLERY_IDS[GALLERY_IDS.length - 1]}.png`
 
 async function refreshRewardDir(): Promise<void> {
   const info = await refreshRewardOverrides()
@@ -725,14 +1430,39 @@ async function refreshRewardDir(): Promise<void> {
   rewardDirCount.value = info.count
 }
 
+/*
+ * 从资源管理器回来后重扫（2026-11-01 修）。
+ * 点「打开文件夹」的那一刻目录里通常还是空的 —— 真正的投料发生在 Explorer
+ * 里，用户切回来时窗口拿到 focus 才是该刷新的时刻。上一版在 IPC 返回后
+ * 立刻刷新（那时还没有文件），且没有任何 focus 监听，丢完图回来张数一直是
+ * 旧值，用户会以为替换没生效。
+ * flag 限定「只扫我们自己打开过的那一次」：从别的程序切回来不白扫目录。
+ */
+let rewardDirOpened = false
+
+function onWindowFocus(): void {
+  if (!rewardDirOpened) return
+  rewardDirOpened = false
+  void refreshRewardDir()
+}
+
 async function openRewardDir(): Promise<void> {
   if (openingRewardDir.value) return // 在飞闸（2026-10-17 夜间批）：连点 = 连开 N 个资源管理器
   openingRewardDir.value = true
   try {
-    await window.miai.openRewardFolder()
+    const r = await window.miai.openRewardFolder()
+    // 失败必须说话（2026-11-01 修）：旧版把 {ok:false} 与异常都吞掉，
+    // 按钮转完一圈什么也没发生，用户根本不知道是被系统拦了。
+    if (r.ok) {
+      rewardDirOpened = true
+    } else if (r.reason === 'mkdir') {
+      toast(SETTINGS.REWARD_DIR_MKDIR_FAIL(rewardDirPath.value), 'error')
+    } else {
+      toast(SETTINGS.REWARD_DIR_OPEN_FAIL(rewardDirPath.value), 'error')
+    }
     await refreshRewardDir()
   } catch {
-    /* 打不开也不弹错：下面刷新会把「认到几张」如实显示 */
+    toast(SETTINGS.REWARD_DIR_OPEN_FAIL(rewardDirPath.value), 'error')
     await refreshRewardDir()
   } finally {
     openingRewardDir.value = false
@@ -752,6 +1482,11 @@ onMounted(() => {
   applyCardQuery()
   // 奖励图覆盖文件夹行：进设置页拉一次（同时把渲染层的覆盖缓存喂新）
   void refreshRewardDir()
+  // 丢完图从资源管理器切回来时重扫（见 onWindowFocus）
+  window.addEventListener('focus', onWindowFocus)
+  // 衰减档位页签的选中态来自桌宠快照：用全应用唯一那条 refcount 轮询
+  //（不是 pet.init() —— 它只订阅一次、第二个引用者拿不到新值，见 stores/pet.ts）
+  releasePetPoller = pet.ensurePetPoller()
 })
 
 // ---------------------------------------------------------------- 动态壁纸卡片（2026-10-04；外观面板 2026-10-05）
@@ -891,6 +1626,9 @@ const route = useRoute()
 const CARD_SELECTOR: Record<string, string> = {
   wall: '.card.wall-card',
   ai: '.card.ai-card',
+  // env = 「本机编程环境」卡（2026-10-31 复核补）：运行报错里的「去设置页装环境」
+  // 之前只 push('/settings')，环境卡又在整页最后一张，用户得自己翻到底。
+  env: '.card.env-card',
   // pet = 大肥鱼互动规则说明（2026-10-09 补充模块一：侧栏状态块点进来）。
   // ⚠️ '.pet-guide' 这个开标签在 pet-guide.test.ts 里是逐字节锚点，别给它加 id/改类名
   pet: '.pet-guide'
@@ -937,6 +1675,12 @@ onBeforeUnmount(() => {
     window.clearTimeout(cardFlashTimer)
     cardFlashTimer = null
   }
+  // 奖励图行的 focus 监听与组件同生共死（2026-11-01 修）
+  window.removeEventListener('focus', onWindowFocus)
+  rewardDirOpened = false
+  // v7 模块五：退还桌宠轮询的引用（不还，离开设置页后 5s 空转就多一条）
+  releasePetPoller?.()
+  releasePetPoller = null
 })
 
 /** 「选择壁纸」弹窗（清单、刷新、选中态都在弹窗里 —— 见 WallpaperPickerModal）
@@ -1306,6 +2050,10 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
   <div class="page">
     <h1 class="page-title">{{ TITLE.SETTINGS }}</h1>
     <div class="card">
+      <!-- B7（2026-11-01）：这卡里原来十行开关、滑块、路径平铺到底，
+           没有分组也没有主次。按用途分四段；运行时/IDE 这类一次性配置
+           收进默认折叠的「高级设置」。 -->
+      <div class="settings-group-title">{{ SETTINGS.GROUP_LEARN }}</div>
       <!-- 开关统一用 MiSwitch（不再用裸 checkbox）。
            【为什么赋值写在模板里、不改成 `onXxxChange(v)`】
            原来的 `v-model` 是**先写值、再触发 change**，下面几个 onXxx 函数
@@ -1337,6 +2085,7 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
         />
       </div>
       <p class="hint">{{ SETTINGS.FAV_WRONG_TO_BOOK_HINT }}</p>
+      <div class="settings-group-title">{{ SETTINGS.GROUP_SOUND }}</div>
       <div class="row">
         <span>{{ SETTINGS.LABEL_SOUND }}</span>
         <MiSwitch
@@ -1368,6 +2117,7 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
         </div>
       </div>
       <p class="hint">{{ SETTINGS.SFX_VOLUME_HINT }}</p>
+      <div class="settings-group-title">{{ SETTINGS.GROUP_APPEARANCE }}</div>
       <div class="row">
         <span>{{ SETTINGS.LABEL_THEME }}</span>
         <MiSwitch
@@ -1376,6 +2126,16 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
         />
       </div>
       <p class="hint">{{ SETTINGS.THEME_HINT }}</p>
+      <button
+        type="button"
+        class="settings-group-toggle"
+        :aria-expanded="advancedOpen"
+        @click="advancedOpen = !advancedOpen"
+      >
+        <span>{{ SETTINGS.ADVANCED_TITLE }}</span>
+        <span class="settings-chev" :class="{ open: advancedOpen }" aria-hidden="true">▸</span>
+      </button>
+      <div v-show="advancedOpen" class="settings-advanced">
       <div class="row">
         <span>{{ SETTINGS.LABEL_NATIVE_RUN }}</span>
         <MiSwitch
@@ -1415,7 +2175,7 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
         现检现荐，而不是在这里逼人选一个。
       -->
       <template v-for="l in LANGS" :key="l">
-        <div class="row">
+        <div class="row ide-row">
           <span>{{ SETTINGS.LABEL_NATIVE_IDE_FOR(l) }}</span>
           <div class="ide-path-wrap">
             <input
@@ -1470,6 +2230,23 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
         />
       </div>
       <p class="hint">{{ SETTINGS.REST_COMING }}</p>
+      </div>
+    </div>
+
+    <!--
+      自定义鼠标指针（v7 模块六，2026-10-31）。
+      排在"整体外观"那张卡后面、开屏卡前面：它和音效/主题一样是**随时生效的
+      外观设置**，而开屏卡只管启动那一刻，两者不该挨着放。
+      卡片正文全在 CursorCard.vue —— 两个槽位、预览、落点拾取都在那边，
+      这里不抄第二份状态（否则设置页和指针装配器会各记各的，迟早对不上）。
+    -->
+    <div class="card">
+      <div class="env-head">
+        <div class="env-title-wrap">
+          <span class="env-title">{{ SETTINGS.CURSOR_CARD_TITLE }}</span>
+        </div>
+      </div>
+      <CursorCard />
     </div>
 
     <!--
@@ -1674,6 +2451,20 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
         @update:model-value="onPetCornerPick"
       />
       <p class="hint">{{ SETTINGS.PET_CORNER_HINT }}</p>
+      <!-- 饱腹度衰减档位（v7 模块五，2026-10-31 主人点名）：档位住在 pet.json
+           的行为状态里，不走 config.pet；选中态等主进程快照回来（写盘失败不会
+           假装成功），动作走 stores/pet.ts 的 setDecay → pet:act。
+           桌宠关着时同其它行一样全灰（总闸仍是 pet.enabled）。 -->
+      <div class="row">
+        <span>{{ SETTINGS.PET_LABEL_DECAY }}</span>
+      </div>
+      <MiTabs
+        :tabs="petDecayTabs"
+        :model-value="pet.decayTier ?? ''"
+        :disabled="!settings.config.pet.enabled"
+        @update:model-value="onPetDecayPick"
+      />
+      <p class="hint">{{ petDecayHint }}</p>
       <!-- 两个主动行为开关（2026-10-09 补充模块一③）：与体型/落点同一条口径 ——
            桌宠关着时全灰（pet.enabled 是总闸），写盘即刻生效。 -->
       <div class="row">
@@ -1694,11 +2485,21 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
         />
       </div>
       <p class="hint">{{ petRoamHint }}</p>
-      <p class="hint">{{ SETTINGS.PET_CHAT_HINT }}</p>
-      <!-- AI Key 状态行：桌宠聊天读的是「设置 → AI」那把全局 Key，这里只说
-           「你现在处于哪种状态」（有 / 没有），不重复上面那条聊天入口说明。 -->
+      <!-- 字体署名（MiSans 许可协议第 1 条要求「在软件中特别注明使用了 MiSans 字体」） -->
+      <p class="hint">{{ SETTINGS.PET_FONT_NOTICE }}</p>
+      <p class="hint">{{ isPoolMode ? SETTINGS.PET_CHAT_HINT_POOL : SETTINGS.PET_CHAT_HINT }}</p>
+      <!-- AI 状态行：桌宠聊天读的是「设置 → AI」的全局配置，这里只说
+           「你现在处于哪种状态」（免费池 / 有 Key / 没有 Key），
+           不重复上面那条聊天入口说明。免费池没有 Key 但照样能聊，
+           不能显示成「未配置」吓人。 -->
       <p class="hint">
-        {{ settings.config.ai.hasKey ? SETTINGS.PET_AI_KEY_ON : SETTINGS.PET_AI_KEY_OFF }}
+        {{
+          isPoolMode
+            ? SETTINGS.PET_AI_POOL_ON
+            : settings.config.ai.hasKey
+              ? SETTINGS.PET_AI_KEY_ON
+              : SETTINGS.PET_AI_KEY_OFF
+        }}
       </p>
       <!-- 大肥鱼互动说明（UI 大修轮 2026-10-09；契约 §2.2）：常显不折叠 ——
            主人反馈「用户看不懂这两项数值怎么变化」。数字全部由脚本从
@@ -1740,7 +2541,7 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
         <span>{{ SETTINGS.REWARD_DIR_LABEL }}</span>
         <MiButton size="sm" :loading="openingRewardDir" @click="openRewardDir">{{ SETTINGS.REWARD_DIR_BTN }}</MiButton>
       </div>
-      <p class="hint">{{ SETTINGS.REWARD_DIR_HINT(rewardDirCount, rewardDirPath, rewardIdRange) }}</p>
+      <p class="hint">{{ SETTINGS.REWARD_DIR_HINT(rewardDirCount, GALLERY_IDS.length, rewardIdRange, rewardDirPath) }}</p>
     </div>
 
     <!--
@@ -2450,55 +3251,243 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
           <!-- 状态标签：它只说「配没配」，不说「能不能用」。
                能不能用由下面的「测试连接」回答 —— 两者别混，否则
                用户会以为标签是绿的就没问题。 -->
-          <span :class="['ai-status', settings.config.ai.hasKey ? 'is-on' : 'is-off']">
-            {{ settings.config.ai.hasKey ? SETTINGS.AI_STATUS_ON : SETTINGS.AI_STATUS_OFF }}
+          <span :class="['ai-status', aiStatusOn ? 'is-on' : 'is-off']">
+            {{ aiStatusText }}
           </span>
         </div>
       </div>
 
-      <div class="row">
-        <!-- 「在哪拿」放在**标签正下方**，不是另起一行。
-             另起一行的话它会掉到这一行的下边框下面去，看着像在说下一行的
-             「服务地址」—— 一条说明文字指向了错误的输入框，比没有还糟。 -->
-        <div class="ai-label-col">
-          <span>{{ SETTINGS.AI_LABEL_KEY }}</span>
-          <span class="hint ai-hint">{{ SETTINGS.AI_KEY_WHERE }}</span>
-        </div>
-        <div class="ai-key-wrap">
-          <input
-            v-model="keyInput"
-            :type="showKey ? 'text' : 'password'"
-            :placeholder="keyPlaceholder"
-            autocomplete="off"
-            spellcheck="false"
-          />
-          <!-- 默认藏起来（旁边可能有人），但必须能点开看 ——
-               零基础用户复制 Key 时最容易多带一个空格或漏掉尾巴，
-               看不见就没法自己发现。 -->
-          <MiButton size="sm" variant="ghost" @click="showKey = !showKey">
-            {{ showKey ? ACTION.HIDE_KEY : ACTION.SHOW_KEY }}
-          </MiButton>
+      <!-- 接入方式（2026-11-01 双模式专项）。**这是整张卡的第一层决定**：
+           先选「用自己的 Key」还是「用免费公开池」，下面的控件再按模式展开。
+           两种模式共用同一套 AI 请求层（main/ai/deepseek.ts），切模式不改
+           任何调用点 —— 这就是为什么测试连接 / 动态出题 / 桌宠聊天不用各写一份。 -->
+      <div class="row ai-mode-row">
+        <span>{{ SETTINGS.AI_MODE_LABEL }}</span>
+        <div class="ai-mode-pick" role="radiogroup" :aria-label="SETTINGS.AI_MODE_LABEL">
+          <button
+            v-for="opt in modeOptions"
+            :key="opt.value"
+            type="button"
+            role="radio"
+            :class="['ai-mode-btn', aiMode === opt.value ? 'is-active' : '']"
+            :aria-checked="aiMode === opt.value"
+            :disabled="switchingMode || testing"
+            @click="onModeChange(opt.value)"
+          >
+            {{ opt.label }}
+          </button>
         </div>
       </div>
+      <p class="hint ai-hint ai-mode-hint">
+        {{ isPoolMode ? SETTINGS.AI_MODE_POOL_HINT : SETTINGS.AI_MODE_API_HINT }}
+      </p>
 
-      <div class="row">
-        <span>{{ SETTINGS.AI_LABEL_BASE_URL }}</span>
-        <input
-          v-model="settings.config.ai.baseUrl"
-          type="text"
-          spellcheck="false"
-          @change="settings.updateAi({ baseUrl: settings.config.ai.baseUrl })"
-        />
-      </div>
-      <div class="row">
-        <span>{{ SETTINGS.AI_LABEL_MODEL }}</span>
-        <input
-          v-model="settings.config.ai.model"
-          type="text"
-          spellcheck="false"
-          @change="settings.updateAi({ model: settings.config.ai.model })"
-        />
-      </div>
+      <!-- ============ 模式 A：专属 API（填自己的 Key） ============ -->
+      <template v-if="!isPoolMode">
+        <!-- 厂商（2026-11-01 多厂商重构）：**用户只选厂商 + 填 Key**，
+             地址由 shared/ai-providers.ts 的目录给。旧版让零基础用户手填
+             BaseURL，抄错一个字母就是「连不上」，而他根本不知道错在哪。
+             参考 FISH Dock / magpie 的渠道归一思路，但适配层住在主进程里
+             （那套网关是独立软件，不能塞进安装包 —— 见 ai-providers.ts 头注释）。 -->
+        <div class="row">
+          <span>{{ SETTINGS.AI_LABEL_PROVIDER }}</span>
+          <MiSelect
+            :options="providerOptions"
+            :model-value="settings.config.ai.provider"
+            :disabled="switchingProvider || testing"
+            @update:model-value="onProviderChange"
+          />
+        </div>
+
+        <div class="row">
+          <!-- 「在哪拿」放在**标签正下方**，不是另起一行。
+               另起一行的话它会掉到这一行的下边框下面去，看着像在说下一行的
+               控件 —— 一条说明文字指向了错误的输入框，比没有还糟。 -->
+          <div class="ai-label-col">
+            <span>{{ SETTINGS.AI_LABEL_KEY }}</span>
+            <span class="hint ai-hint">{{ SETTINGS.AI_PROVIDER_KEY_WHERE[settings.config.ai.provider] }}</span>
+          </div>
+          <div class="ai-key-wrap">
+            <!-- `@change`（失焦/回车才发）= 粘完就走的人也不会丢 Key。
+                 这就是「填了 Key 就唤醒模型下拉框」的落盘那一半：解锁看的是
+                 输入框现值（keyReady），存住由这一下、保存并测试、切厂商三处兜底。
+                 存的那一刻还会按 Key 前缀认厂商（sk-ant- / sk-proj- 这类有把握的）。 -->
+            <input
+              v-model="keyInput"
+              :type="showKey ? 'text' : 'password'"
+              :placeholder="keyPlaceholder"
+              autocomplete="off"
+              spellcheck="false"
+              @change="onKeyBlur"
+            />
+            <!-- 默认藏起来（旁边可能有人），但必须能点开看 ——
+                 零基础用户复制 Key 时最容易多带一个空格或漏掉尾巴，
+                 看不见就没法自己发现。 -->
+            <MiButton size="sm" variant="ghost" @click="showKey = !showKey">
+              {{ showKey ? ACTION.HIDE_KEY : ACTION.SHOW_KEY }}
+            </MiButton>
+          </div>
+        </div>
+        <!-- 自动识别厂商之后的一句确认：用户得知道刚才发生了什么，
+             否则只看到下拉框自己跳了，会以为是界面出错了。 -->
+        <p v-if="keyNotice" class="ai-notice">{{ keyNotice }}</p>
+
+        <div class="row">
+          <span>{{ SETTINGS.AI_LABEL_MODEL }}</span>
+          <!-- 自定义服务没有厂商目录可言，模型名只能手填；下面再给一个
+               「从清单里挑」的辅助下拉，能拉到时就用，拉不到不影响手填。
+               官方厂商一律下拉 —— 手填模型名是「404 之王」。 -->
+          <div v-if="settings.config.ai.provider === 'custom'" class="ai-model-custom">
+            <input
+              v-model="settings.config.ai.model"
+              type="text"
+              spellcheck="false"
+              :placeholder="SETTINGS.AI_MODEL_CUSTOM_PH"
+              :disabled="!keyReady"
+              @change="saveAiField({ model: settings.config.ai.model })"
+            />
+            <MiSelect
+              v-if="customPickOptions.length > 0"
+              :options="customPickOptions"
+              :model-value="''"
+              :placeholder="SETTINGS.AI_MODELS_CUSTOM_PICK_PH"
+              :disabled="testing"
+              @update:model-value="onModelPick"
+            />
+          </div>
+          <MiSelect
+            v-else
+            :options="modelOptions"
+            :model-value="modelSelectValue"
+            :placeholder="modelSelectPlaceholder"
+            :disabled="modelSelectDisabled"
+            @update:model-value="onModelPick"
+          />
+        </div>
+        <!-- 清单状态：加载中 / 失败可重试 / 有旧清单但这次没刷新成功 / 数量。
+             **失败必须在模型这一栏里说**，不能只弹一个 toast 就消失 ——
+             用户回来看到空下拉框却不知道刚才发生了什么。 -->
+        <p v-if="modelsStatus === 'loading'" class="hint ai-hint ai-models-status">
+          {{ SETTINGS.AI_MODELS_LOADING }}
+        </p>
+        <p v-else-if="modelsStatus === 'fail'" class="hint ai-hint ai-models-status is-bad">
+          {{ SETTINGS.AI_MODELS_FAIL }}
+          <button type="button" class="ai-pool-retry" @click="loadProviderModels">
+            {{ SETTINGS.AI_MODELS_RETRY }}
+          </button>
+        </p>
+        <p v-else-if="modelsStatus === 'stale'" class="hint ai-hint ai-models-status">
+          {{ SETTINGS.AI_MODELS_STALE }}
+          <button type="button" class="ai-pool-retry" @click="loadProviderModels">
+            {{ SETTINGS.AI_MODELS_RETRY }}
+          </button>
+        </p>
+        <p v-else-if="modelsStatus === 'ok'" class="hint ai-hint ai-models-status">
+          {{ SETTINGS.AI_MODELS_COUNT(providerModels.length) }}
+          <template v-if="currentModelMissing">
+            · {{ SETTINGS.AI_MODELS_CURRENT_MISSING(currentModelName) }}
+          </template>
+        </p>
+        <p
+          v-if="settings.config.ai.provider === 'custom' && providerModels.length > 0"
+          class="hint ai-hint"
+        >
+          {{ SETTINGS.AI_MODELS_CUSTOM_HELPER }}
+        </p>
+        <p v-if="!keyReady" class="hint ai-hint ai-need-key">
+          {{ SETTINGS.AI_NEED_KEY }}
+        </p>
+
+        <!-- 服务地址收进折叠区（主人 2026-11-01 专项：主界面绝不让用户手填）。
+             只有「自定义服务」才需要它 —— 官方厂商的地址由目录给，多一个
+             可编辑的框只会多一种填错的方式。 -->
+        <details v-if="settings.config.ai.provider === 'custom'" class="ai-advanced">
+          <summary>{{ SETTINGS.AI_LABEL_ADVANCED }}</summary>
+          <div class="row">
+            <span>{{ SETTINGS.AI_LABEL_BASE_URL }}</span>
+            <input
+              v-model="settings.config.ai.baseUrl"
+              type="text"
+              spellcheck="false"
+              :placeholder="SETTINGS.AI_BASE_URL_CUSTOM_PH"
+              @change="saveAiField({ baseUrl: settings.config.ai.baseUrl })"
+            />
+          </div>
+          <p class="hint ai-hint ai-base-url-hint">{{ SETTINGS.AI_BASE_URL_HINT }}</p>
+          <!-- 字段级错误：地址不能存时贴在这里，别让用户只看到一闪而过的 toast -->
+          <p v-if="aiFieldError" class="ai-result is-bad ai-field-error">{{ aiFieldError }}</p>
+        </details>
+
+        <!-- 余额（2026-11-01 体验核心）。有接口的厂商给按钮；没有的**只说一句**
+             降级说明，不摆一个注定失败的按钮（点一次失败一次比没有更烦）。
+             查余额失败不影响聊天与出题 —— 它们是两条独立的路。 -->
+        <div v-if="keyReady" class="row">
+          <span>{{ SETTINGS.AI_BALANCE_LABEL }}</span>
+          <div class="ai-balance-wrap">
+            <MiButton
+              v-if="balanceSupported"
+              size="sm"
+              variant="secondary"
+              :loading="balanceLoading"
+              :disabled="testing"
+              @click="queryBalance"
+            >
+              {{ balanceLoading ? SETTINGS.AI_BALANCE_QUERYING : SETTINGS.AI_BALANCE_BTN }}
+            </MiButton>
+            <span v-else class="hint ai-hint">{{ SETTINGS.AI_BALANCE_UNSUPPORTED }}</span>
+            <span v-if="balanceState" :class="balanceClass">{{ balanceState.text }}</span>
+          </div>
+        </div>
+      </template>
+
+      <!-- ============ 模式 B：免费公开池（不用 Key） ============ -->
+      <template v-else>
+        <div class="row">
+          <span>{{ SETTINGS.AI_LABEL_MODEL }}</span>
+          <!-- 免费池没有「专属 Key」这一步，下拉框直接可点。清单由主进程
+               去网关取（GET /models，只留 isFree），失败也留着兜底模型。 -->
+          <MiSelect
+            :options="poolModelOptions"
+            :model-value="poolModelOf(settings.config.ai.poolModel)"
+            :disabled="poolLoading || testing"
+            @update:model-value="onPoolModelPick"
+          />
+        </div>
+        <p class="ai-pool-note">{{ poolNote }}</p>
+        <p v-if="poolLoading" class="hint ai-hint ai-pool-status">
+          {{ SETTINGS.AI_POOL_LOADING }}
+        </p>
+        <p v-else-if="poolLoadError" class="hint ai-hint ai-pool-status">
+          {{ SETTINGS.AI_POOL_LOAD_FAIL }}
+          <button type="button" class="ai-pool-retry" @click="loadPoolModels">
+            {{ SETTINGS.AI_POOL_RETRY }}
+          </button>
+        </p>
+        <!-- 免责提示：**逐字原句，必须和模型下拉框同时可见**，不能折叠、
+             不能塞到卡片底部。用户是在选模型的那一刻做「要不要用第三方
+             免费资源」的决定。 -->
+        <p class="ai-pool-warn">{{ SETTINGS.AI_POOL_WARN }}</p>
+        <p class="hint ai-privacy">{{ SETTINGS.AI_POOL_PRIVACY }}</p>
+      </template>
+
+      <!-- 思考模式（v23）。放在模型正下方：换模型 → 紧接着就是「这个模型
+           该想多深」。推荐档随模型能力变化，不是写死的默认值。
+           **两种接入方式都有这一栏**：免费池也是模型在思考，只是网关替用户
+           选模型，能力说明如实写成「只能调提示词」。 -->
+      <template v-if="aiReady">
+        <div class="row ai-thinking-row">
+          <span>{{ SETTINGS.AI_THINKING_LABEL }}</span>
+          <MiSelect
+            :options="thinkingOptions"
+            :model-value="thinkingDraft"
+            :disabled="thinkingDisabled || thinkingSaving"
+            @update:model-value="onThinkingChange"
+          />
+        </div>
+        <p class="hint ai-hint ai-thinking-hint">{{ thinkingHint }}</p>
+        <p class="hint ai-hint">{{ thinkingRecommendHint }}</p>
+        <p class="hint ai-hint">{{ thinkingNote }}</p>
+      </template>
 
       <!-- AI 动态出题总开关（2026-10-21，默认关）。
            **默认必须是关的**：老配置里没有这个字段，迁移与合并都按 `=== true`
@@ -2514,14 +3503,18 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
           "
         />
       </div>
-      <p class="hint ai-hint">{{ SETTINGS.AI_DYNAMIC_HINT }}</p>
+      <p class="hint ai-hint">
+        {{ isPoolMode ? SETTINGS.AI_DYNAMIC_HINT_POOL : SETTINGS.AI_DYNAMIC_HINT }}
+      </p>
 
       <div class="ai-actions">
         <MiButton :loading="testing" @click="saveAndTest">
           {{ ACTION.SAVE_AND_TEST }}
         </MiButton>
-        <!-- V2-09：先开确认框，不在这一下里真删（删除逻辑在同名函数里） -->
+        <!-- 免费池模式没有 Key 可清，这个按钮整只收起来（置灰会让人以为
+             还有一步没做完）。V2-09：先开确认框，不在这一下里真删。 -->
         <MiButton
+          v-if="!isPoolMode"
           variant="danger"
           :disabled="!settings.config.ai.hasKey || testing"
           @click="clearKeyVisible = true"
@@ -2541,8 +3534,10 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
       </p>
 
       <!-- 隐私说明放最后：用户读完上面那些才知道自己在权衡什么。
-           放最上面的话，还没搞清这是什么就被一段声明拦住，只会跳过去。 -->
-      <p class="hint ai-privacy">{{ SETTINGS.AI_PRIVACY }}</p>
+           放最上面的话，还没搞清这是什么就被一段声明拦住，只会跳过去。
+           免费池模式的隐私边界不同（提示词会经过第三方），那一句已经贴在
+           模式 B 的块里，这里不再重复专属模式的说法。 -->
+      <p v-if="!isPoolMode" class="hint ai-privacy">{{ SETTINGS.AI_PRIVACY }}</p>
     </div>
 
     <div class="card env-card">
@@ -2575,6 +3570,15 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
           <span v-else-if="envInfo(lang)?.found" class="env-ok">{{ ENV.found(envInfo(lang)!.version ?? '') }}</span>
           <span v-else class="env-miss">{{ ENV.MISSING }}</span>
         </div>
+        <!-- 找到了也要把「用的是哪一个」说清楚（2026-10-31）：
+             应用没有编译器路径设置项，检测到就直接用 —— 这里写明路径，
+             用户才能确认没选错；IDE 自带的再补一句「不用再装一次」。 -->
+        <p v-if="!settings.detecting && envInfo(lang)?.found && envInfo(lang)?.path" class="env-auto">
+          {{ ENV.FOUND_AUTO(envInfo(lang)?.path ?? '') }}
+          <span v-if="ideNameOf(envInfo(lang)?.path ?? '')" class="env-auto-ide">
+            · {{ ENV.FOUND_IDE(ideNameOf(envInfo(lang)?.path ?? '')) }}
+          </span>
+        </p>
         <!-- 没找到时必须给一条照着做就能解决的出路。
              只说「没找到」的话，用户不知道缺的是什么、去哪装，
              最后撞在运行时的「没有翻译官」上，前后两句话对不上。 -->
@@ -2615,6 +3619,8 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
 .page {
   max-width: 760px;
   margin: 0 auto;
+  /* 最后一张卡下面留一口气，滚到底时不贴窗口边（B7） */
+  padding-bottom: 24px;
 }
 .page-title {
   font-family: var(--mi-font-title);
@@ -2754,11 +3760,129 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
   margin-top: 0;
   font-size: 12px;
 }
+/* ---- 双模式开关（2026-11-01 专项） --------------------------------------
+ * 两行铺满整行、竖着排：模式名本身带一长串括号说明，塞进 .row 右侧的
+ * 控件位会被压成窄条、折成四五行。竖排也顺手把「两张卡二选一」的
+ * 视觉关系讲清楚了 —— 这是整张 AI 卡的第一层决定。 */
+.row.ai-mode-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+.ai-mode-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ai-mode-btn {
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-sm);
+  background: var(--mi-card);
+  color: var(--mi-text);
+  font-family: var(--mi-font);
+  font-size: 13px;
+  line-height: 1.55;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.ai-mode-btn:hover:not(:disabled) {
+  border-color: var(--mi-blue-deep);
+}
+.ai-mode-btn.is-active {
+  border-color: var(--mi-blue-deep);
+  background: var(--mi-blue-light);
+  color: var(--mi-blue-deep);
+  font-weight: 600;
+}
+.ai-mode-btn:disabled {
+  /* 不用 opacity：那是整只按钮（含文字）一起变淡，撞「字永远实心」的底线。
+     改用次级文字色，和 Sidebar 锁定课那次改法是同一个理由。 */
+  color: var(--mi-text-3);
+  cursor: default;
+}
+/* 模式说明紧跟选择器下方，和上面两块是一组 */
+.ai-mode-hint {
+  margin-top: -2px;
+}
+/* 自动识别厂商后的确认行：蓝色，和普通灰字提示区分开 */
+.ai-notice {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--mi-blue-deep);
+}
+/* 免费池的免责提示。**不许折叠、不许灰成看不清** —— 这是用户在
+ * 选择使用第三方免费资源那一刻必须读到的内容。 */
+.ai-pool-warn {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--mi-warn-edge);
+  border-radius: var(--mi-radius-sm);
+  background: var(--mi-warn-fill);
+  color: var(--mi-warn-deep);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.ai-pool-status {
+  margin-top: 6px;
+}
+/* 「重试」是行内的文字按钮：不给它做成 MiButton，免得在这一行里
+ * 和说明文字抢视觉重量 */
+.ai-pool-retry {
+  margin-left: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mi-blue-deep);
+  font-family: var(--mi-font);
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+/* 「高级设置」折叠区：平时不占视线，只有自定义服务才出现 */
+.ai-advanced {
+  margin-top: 4px;
+  border-bottom: 1px solid var(--mi-border);
+}
+.ai-advanced summary {
+  padding: 10px 0;
+  font-size: 13px;
+  color: var(--mi-text-2);
+  cursor: pointer;
+  user-select: none;
+}
+.ai-advanced summary:hover {
+  color: var(--mi-blue-deep);
+}
+.ai-advanced[open] summary {
+  color: var(--mi-text);
+}
+/* 折叠区里的最后一行不画分隔线 —— 外面 .ai-advanced 自己有一条 */
+.ai-advanced .row:last-of-type {
+  border-bottom: 0;
+}
 .ai-actions {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-top: 16px;
+}
+/* 余额行的「按钮 + 读数」：同 .ai-key-wrap，允许被压窄（正文缩放时别顶出内容区） */
+.ai-balance-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+/* 读数住在 .row 里，不该再带 .ai-result 的 12px 上边距（那会把这一行撑歪） */
+.ai-balance-wrap .ai-result {
+  margin-top: 0;
 }
 .ai-testing {
   font-size: 13px;
@@ -2831,6 +3955,18 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
   color: var(--mi-text-3);
   line-height: 1.7;
 }
+/* 找到之后那行「已经自动用上」：默认灰字，让路径不抢版本号的注意力 */
+.env-auto {
+  margin: -2px 0 10px 12px;
+  font-size: 12px;
+  color: var(--mi-text-3);
+  line-height: 1.7;
+  word-break: break-all;
+}
+/* IDE 自带工具链的补充说明：用成功色，和上面的 ✅ 是一条消息 */
+.env-auto-ide {
+  color: var(--mi-success-deep);
+}
 .env-lang {
   color: var(--mi-text);
   font-weight: 500;
@@ -2847,6 +3983,77 @@ const wallRateTabs = wallRateValues.map((v) => ({ key: String(v), label: `${v}×
   color: var(--mi-text-3);
   font-size: 13px;
 }
+/* 设置分组标题（B7）：不画成又一条分隔线，只靠字号/颜色分层，
+   免得和每一行自带的 border-bottom 撞在一起 */
+.settings-group-title {
+  margin: 18px 0 0;
+  padding-bottom: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mi-text-3);
+}
+.settings-group-title:first-child {
+  margin-top: 0;
+}
+/* 高级设置折叠头：整行可点，与分组标题同字号但带上下分隔和箭头 */
+.settings-group-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 18px 0 0;
+  padding: 10px 0;
+  border: none;
+  border-top: 1px solid var(--mi-border);
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mi-text-2);
+  text-align: left;
+  cursor: var(--mi-cursor, pointer);
+}
+.settings-group-toggle:hover {
+  color: var(--mi-text);
+}
+.settings-group-toggle:focus-visible {
+  outline: 2px solid var(--mi-blue-deep);
+  outline-offset: 2px;
+}
+.settings-chev {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--mi-text-3);
+  transition: transform var(--mi-dur-fast) var(--mi-ease);
+}
+.settings-chev.open {
+  transform: rotate(90deg);
+}
+/* 高级设置的内容段：折叠时不占高度（v-show 保留输入框的 DOM 状态） */
+.settings-advanced {
+  padding-bottom: 2px;
+}
+/* IDE 路径行：标签独占一行，输入框铺满，三颗按钮在下一行自动换行 ——
+   760px 里四个控件挤一行时，输入框会被压到只能看见路径开头 */
+.ide-row {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.ide-row > span {
+  padding-top: 5px;
+}
+.ide-row .ide-path-wrap {
+  flex: 1 1 100%;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.ide-row .ide-path-wrap input[type='text'] {
+  flex: 1 1 100%;
+  width: 100%;
+  max-width: none;
+}
+
 .row {
   display: flex;
   justify-content: space-between;

@@ -11,15 +11,23 @@
  */
 import type { CodeFillQuestion, Question, RunGradedQuestion } from './types'
 import { splitCodeFillAnswer } from './codefill'
-import { normalizeRunOutput } from './run-grading'
+import { normalizeRunOutput, normalizeRunOutputLoose } from './run-grading'
 
 export function gradeChoice(user: number | null, answer: number): boolean {
   return user === answer
 }
 
-/** fill 归一化：trim + 空白折叠 + 小写化 */
+/**
+ * fill 归一化：NFKC + trim + 空白折叠 + 小写化。
+ *
+ * 【2026-10-31 新增 NFKC】
+ * 新手最常犯的另一种"看着一样却判错"：把 `123` 打成全角 `１２３`、
+ * 把 `print` 打成 `ｐｒｉｎｔ`，或者从中文输入法里带出全角括号。
+ * NFKC 会把全角字母/数字/标点折成半角，这些输入不再被误杀。
+ * 中文汉字不受影响（NFKC 不会把「鱼」变成别的字）。
+ */
 export function normalizeFill(s: string): string {
-  return s.trim().replace(/\s+/g, ' ').toLowerCase()
+  return s.normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase()
 }
 
 export function gradeFill(user: string, answer: string, accept: string[] = []): boolean {
@@ -47,11 +55,22 @@ export function normalizeCode(s: string): string {
   return normalizeRunOutput(s)
 }
 
+/**
+ * `code` 题判分：**严格相等 或 宽松相等**。
+ *
+ * 严格那一档保住的契约见 `normalizeCode()`（内容侧按它写答案）；
+ * 宽松那一档负责「多打/少打空格不判错」（2026-10-31 主人反馈）。
+ * 两档并列而不是替换，理由与 `gradeByRun()` 完全一致：严格版是内容契约，
+ * 改宽会让所有带前导空格的旧答案一起变味；判分这里只是额外放行。
+ */
 export function gradeCode(user: string, answer: string, accept: string[] = []): boolean {
   const u = normalizeCode(user)
   if (u === '') return false
-  if (u === normalizeCode(answer)) return true
-  return accept.some((a) => u === normalizeCode(a))
+  const looseUser = normalizeRunOutputLoose(user)
+  const same = (a: string): boolean =>
+    u === normalizeCode(a) || looseUser === normalizeRunOutputLoose(a)
+  if (same(answer)) return true
+  return accept.some(same)
 }
 
 /**
@@ -89,7 +108,44 @@ export function isMultilineCodeAnswer(answer: string, accept: string[] = []): bo
  */
 export function gradeCodeFillBlanks(user: string, q: CodeFillQuestion): boolean[] {
   const values = splitCodeFillAnswer(user, q.blanks.length)
-  return q.blanks.map((b, i) => gradeFill(values[i] ?? '', b.answer, b.accept ?? []))
+  return q.blanks.map((b, i) => gradeCodeBlank(values[i] ?? '', b.answer, b.accept ?? []))
+}
+
+/**
+ * 一个代码空位的判分。
+ *
+ * 绝大多数空位是 `print` / `+ 1` 这种短标识符，走和 `fill` 一样的宽松规则
+ * （多打空格、全角字符都不算错）。但有一种空位**空格本身就是答案**：
+ * Python 的缩进。把 `"    x"` 和 `"  x"` 折叠成同一个字符串，等于把
+ * 缩进层级悄悄抹平 —— 学员填错了还判对，比误判更糟。
+ *
+ * 判据：**答案（或任一等价答案）以空白开头** ⇒ 这个空位按「保留行首空白」比。
+ * 只对行首空白较真，行尾和行内连续空格仍然折叠（那些不是缩进语义）。
+ */
+function gradeCodeBlank(user: string, answer: string, accept: string[]): boolean {
+  const candidates = [answer, ...accept]
+  if (!candidates.some((c) => /^[ \t　]/.test(c))) {
+    return gradeFill(user, answer, accept)
+  }
+  const u = normalizeIndentSensitive(user)
+  return candidates.some((c) => normalizeIndentSensitive(c) === u)
+}
+
+/** 保留每行行首空白（缩进），折叠其余空白。Tab 按 4 空格算 */
+function normalizeIndentSensitive(s: string): string {
+  return s
+    .replace(/\r\n?/g, '\n')
+    .split('\n')
+    .map((line) => {
+      const lead = /^[ \t　]*/.exec(line)?.[0] ?? ''
+      const rest = line
+        .slice(lead.length)
+        .replace(/[ \t　]+/g, ' ')
+        .replace(/[ \t　]+$/, '')
+      return lead.replace(/\t/g, '    ').replace(/　/g, ' ') + rest
+    })
+    .join('\n')
+    .replace(/^\n+|\n+$/g, '')
 }
 
 /** 整道 codefill 对不对：**每个空都填对**才算对 */

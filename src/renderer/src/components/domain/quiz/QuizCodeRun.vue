@@ -544,6 +544,12 @@ watch(
           </div>
 
           <!--
+            Java 多 public 类拆分（v7 模块六）。中性提示，不是错误；
+            摆在编译器原话前面，帮学员把报错里的文件名对上号。
+          -->
+          <div v-if="view.showSplitHint" class="note">{{ view.splitHint }}</div>
+
+          <!--
             编译告警。摆在 stdout 前面（时间上它就先发生）。
             刻意不并进 stdout：判分是拿 stdout 逐字比的，
             掺一行 warning 学员就会看到"写对了却判错"。
