@@ -2,7 +2,7 @@
 
 > 猫咪口吻 + 大肥鱼陪你学编程的离线学习伴侣。
 >
-> 一款面向编程初学者的 Windows 桌面学习应用：五门语言、266 节课文、6026 道题，代码在本机真编译、真运行。
+> 一款面向编程初学者的 Windows 桌面学习应用：五门语言、278 节课文、6110 道题，代码在本机真编译、真运行。
 
 [![📥 极速下载体验](https://img.shields.io/badge/%F0%9F%93%A5%20%E6%9E%81%E9%80%9F%E4%B8%8B%E8%BD%BD%E4%BD%93%E9%AA%8C-Windows%20x64-ff5c8a?style=for-the-badge)](https://github.com/TCX123-a/MiAiCoding/releases/latest)
 
@@ -72,31 +72,31 @@
 ## 内容规模
 
 统计口径：`src/renderer/src/generated/content-bundle.json`（由 `content/` 构建产物生成），
-2026-10-22 实测。
+2026-11-08 实测。
 
 | 语言 | 课文 | 题目 |
 |---|---:|---:|
-| 公共基础（common） | 41 | 307 |
+| 公共基础（common） | 53 | 391 |
 | C | 51 | 1341 |
 | C++ | 59 | 1392 |
 | Java | 61 | 1555 |
 | Python | 54 | 1431 |
-| **合计** | **266** | **6026** |
+| **合计** | **278** | **6110** |
 
 题目构成：
 
 | 题型 | 数量 | 说明 |
 |---|---:|---|
-| `choice` | 854 | 选择题 |
-| `fill` | 121 | 填空题 |
-| `code` | 488 | 写完整程序，本地真跑 |
+| `choice` | 902 | 选择题 |
+| `fill` | 133 | 填空题 |
+| `code` | 512 | 写完整程序，本地真跑 |
 | `codefill` | 291 | 补全代码空位 |
 | `codewrite` | 2897 | 按需求写代码，结构化判分 |
 | `codefix` | 1375 | 修 bug，比对修复后的行为 |
 
-另有 **243 个 `demo` 演示动画**（课文里的 ```demo 代码块，由前端播放器渲染）。
+另有 **255 个 `demo` 演示动画**（课文里的 ```demo 代码块，由前端播放器渲染）。
 
-其中 1754 道是随课题目（`q*`），4272 道是分课挑战题库（`bank-*`，模板批量生成并逐题经本地真跑校验）。
+其中 1838 道是随课题目（`q*`），4272 道是分课挑战题库（`bank-*`，模板批量生成并逐题经本地真跑校验）。
 两者 id 命名空间不同，不会互相覆盖。
 
 ---
@@ -505,7 +505,7 @@ LoRA `ds_whalemaid` 是**第三方作品**（Civitai 模型 2845839，作者 `og
 ## English summary
 
 **miai-biancheng** is an offline-first Windows desktop companion for learning programming,
-built with Electron, Vue 3 and TypeScript. It ships 266 lessons and 6,026 exercises across
+built with Electron, Vue 3 and TypeScript. It ships 278 lessons and 6,110 exercises across
 C, C++, Java, Python and common fundamentals; code exercises are compiled and executed locally.
 It also includes a study loop (wrong-book, daily review, daily challenge), a WebGL/video wallpaper
 engine, a desktop pet, and an optional self-hosted Fastify + PostgreSQL backend.
