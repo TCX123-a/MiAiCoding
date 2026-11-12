@@ -46,6 +46,18 @@
 - 想要「打开就能写、写完就能跑」，不想先折腾环境；
 - 喜欢桌面宠物、动态壁纸、夜间模式这类让学习不那么苦的东西。
 
+### 界面一览
+
+![课程与世界观：课程列表、猫咪与每日入口](docs/assets/screenshot-learn.png)
+
+| 本地真编译 | 练习与复习 |
+|---|---|
+| ![本地真编译](docs/assets/screenshot-playground.png) | ![练习与复习](docs/assets/screenshot-practice.png) |
+
+<!-- 60 秒实机演示（录制并上传后，把 BV________ 换成真实 BV 号，然后取消下面两行的注释）：
+[▶ 60 秒实机演示](https://www.bilibili.com/video/BV________)
+-->
+
 ---
 
 ## 功能一览
